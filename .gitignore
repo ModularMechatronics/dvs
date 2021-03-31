@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Other
+.DS_Store
+build
+cpp/externals/glog/build
+.vscode

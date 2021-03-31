@@ -1,0 +1,39 @@
+FROM ubuntu:18.04
+
+RUN apt-get update && apt-get install -y \
+          git \
+          build-essential \
+          libssl-dev \
+          libcurl4-openssl-dev \
+          openssh-server \
+          fish \
+          vim \
+          gdb \
+          net-tools \
+        && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+RUN mkdir -p /root/installs
+WORKDIR /root/installs
+
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
+RUN tar -zxvf cmake-3.15.2.tar.gz
+WORKDIR /root/installs/cmake-3.15.2
+RUN ./bootstrap && make && make install
+
+RUN mkdir -p /root/stockwatch
+ADD cpp /root/stockwatch/cpp
+
+ADD db_data /root/db_data
+
+WORKDIR /root/stockwatch/cpp/externals/pistache
+RUN rm -rf /root/stockwatch/cpp/externals/pistache/build
+RUN mkdir -p /root/stockwatch/cpp/externals/pistache/build 
+WORKDIR /root/stockwatch/cpp/externals/pistache/build
+RUN cmake .. && make
+RUN mkdir -p /root/stockwatch/cpp/build_docker
+WORKDIR /root/stockwatch/cpp/build_docker
+RUN cmake .. && make db-app
+
+ENV PATH="/root/stockwatch/cpp/build_docker/applications/db_app:${PATH}"
+RUN cp -r /root/stockwatch/db_data /root/db_data

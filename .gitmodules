@@ -1,0 +1,9 @@
+[submodule "cpp/externals/googletest"]
+	path = cpp/externals/googletest
+	url = git@github.com:google/googletest.git
+[submodule "cpp/externals/nlohmann"]
+	path = cpp/externals/nlohmann
+	url = git@github.com:nlohmann/json.git
+[submodule "cpp/externals/glog"]
+	path = cpp/externals/glog
+	url = git@github.com:google/glog.git
