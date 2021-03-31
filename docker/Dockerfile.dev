@@ -1,0 +1,22 @@
+FROM ubuntu:18.04
+
+RUN apt-get update && apt-get install -y \
+          git \
+          build-essential \
+          libssl-dev \
+          libcurl4-openssl-dev \
+          openssh-server \
+          fish \
+          vim \
+          gdb \
+          net-tools \
+        && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+RUN mkdir -p /root/installs
+WORKDIR /root/installs
+
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2.tar.gz
+RUN tar -zxvf cmake-3.15.2.tar.gz
+WORKDIR /root/installs/cmake-3.15.2
+RUN ./bootstrap && make && make install
