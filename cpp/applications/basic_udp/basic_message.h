@@ -16,17 +16,17 @@ UDP, TCP, websocket, restAPI, shared memory
 
 */
 
-enum class MessageType : uint8_t
+/*enum class MessageType : uint8_t
 {
     DATA,
     COMMAND
 };
 
-/*enum class AttributeType : uint8_t
+enum class AttributeType : uint8_t
 {
     COLOR,
     LINE_WIDTH
-};*/
+};
 
 enum class TensorType : uint8_t
 {
@@ -83,7 +83,7 @@ struct DataMessage
     uint64_t num_rows;
     uint64_t num_cols;
     uint8_t* data;
-};
+};*/
 
 
 
