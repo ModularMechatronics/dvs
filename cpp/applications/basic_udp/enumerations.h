@@ -5,8 +5,9 @@
 
 namespace dvs
 {
-enum class Attribute : uint16_t
+enum class AttributeType : uint16_t
 {
+    UNKNOWN,
     FUNCTION,
     NUM_BUFFERS_REQUIRED,
     NUM_BYTES,
@@ -31,12 +32,12 @@ enum class Attribute : uint16_t
     LINE_STYLE,
     NAME,
     COLOR_MAP,
-    UNKNOWN,
     PERSISTENT
 };
 
 enum class Function : uint8_t
 {
+    UNKNOWN,
     LINE3D,
     PLANE_XY,
     PLANE_XZ,
@@ -58,7 +59,6 @@ enum class Function : uint8_t
     IM_SHOW,
     AXES,
     VIEW,
-    UNKNOWN,
     SOFT_CLEAR
 };
 
@@ -81,6 +81,7 @@ enum class DataType : uint8_t
 
 enum class DataStructure : uint8_t
 {
+    UNKNOWN,
     MATRIX,
     VECTOR,
     IMAGE,
