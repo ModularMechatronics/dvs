@@ -6,9 +6,10 @@
 
 namespace dvs
 {
-namespace internal
+/*namespace internal
 {
-
+    constexpr int num_bytes_in_attr_data = 24;
+    constexpr int max_num_data_bytes = num_bytes_in_attr_data + 2;
 }
 
 enum class AttributeType : uint8_t
@@ -30,32 +31,66 @@ struct Color
 class Attribute
 {
 private:
-    static constexpr int num_data_bytes_ = 24;
-    uint8_t data_[num_data_bytes_];
+    uint8_t data_[internal::num_bytes_in_attr_data];
+    uint8_t num_bytes_used_;
     AttributeType type;
 
 public:
-   
+
+    void fillBufferWithInternalData(uint8_t data_to_fill[internal::max_num_data_bytes])
+    {
+        data_to_fill[0] = static_cast<uint8_t>(type);
+        data_to_fill[1] = num_bytes_used_;
+        for(size_t k = 0; k < num_bytes_used_; k++)
+        {
+            data_to_fill[k + 2] = data_[k];
+        }
+    }
+
     Attribute()
     {
+        
+        std::memset(data_, 0, internal::num_bytes_in_attr_data);
+        num_bytes_used_ = 0;
         type = AttributeType::NO_TYPE;
-        for(size_t k = 0; k < num_data_bytes_; k++)
-        {
-            data_[k] = 0;
-        }
     };
 
-    Attribute(const Color& color)
-    {
-
-    }
-
-    Attribute& operator=(const Color& color)
-    {
-
-    }
-
+    Attribute(const Color& color);
+    Attribute& operator=(const Color& color);
 };
+
+inline Attribute::Attribute(const Color& color)
+{
+    const uint8_t* r_data = reinterpret_cast<const uint8_t*>(&color.r);
+    const uint8_t* g_data = reinterpret_cast<const uint8_t*>(&color.g);
+    const uint8_t* b_data = reinterpret_cast<const uint8_t*>(&color.b);
+
+    std::memcpy(data_, r_data, sizeof(color.r));
+    std::memcpy(&(data_[sizeof(color.r)]), g_data, sizeof(color.g));
+    std::memcpy(&(data_[sizeof(color.r) + sizeof(color.g)]), b_data, sizeof(color.b));
+
+    num_bytes_used_ = sizeof(color.r) + sizeof(color.g) + sizeof(color.b);
+
+    type = AttributeType::COLOR;
+}
+
+inline Attribute& Attribute::operator=(const Color& color)
+{
+    const uint8_t* r_data = reinterpret_cast<const uint8_t*>(&color.r);
+    const uint8_t* g_data = reinterpret_cast<const uint8_t*>(&color.g);
+    const uint8_t* b_data = reinterpret_cast<const uint8_t*>(&color.b);
+
+    std::memcpy(data_, r_data, sizeof(color.r));
+    std::memcpy(&(data_[sizeof(color.r)]), g_data, sizeof(color.g));
+    std::memcpy(&(data_[sizeof(color.r) + sizeof(color.g)]), b_data, sizeof(color.b));
+
+    num_bytes_used_ = sizeof(color.r) + sizeof(color.g) + sizeof(color.b);
+
+    type = AttributeType::COLOR;
+
+    return *this;
+}*/
+
 }
 
 #endif

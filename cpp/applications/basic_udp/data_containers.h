@@ -2,38 +2,38 @@
 #define DATA_CONTAINERS_H_
 
 template <typename T>
-class Matrix
+class Vector
 {
 private:
-    size_t rows_;
-    size_t cols_;
+    size_t num_elements_;
     T* data_;
 
 public:
-    Matrix() : rows_(0), cols_(0), data_(nullptr)
+    Vector() : num_elements_(0), data_(nullptr)
     {
 
     }
 
-    Matrix(const size_t rows_in, const size_t cols_in) : rows_(rows_in), cols_(cols_in)
+    Vector(const size_t num_elements) : num_elements_(num_elements)
     {
-        data_ = new T[rows_in * cols_in];
+        data_ = new T[num_elements_];
     }
 
-    ~Matrix()
+    ~Vector()
     {
-        rows_ = 0;
-        cols_ = 0;
+        num_elements_ = 0;
         delete[] data_;
     }
 
-    void setInternalPointer(const size_t rows_in, const size_t cols_in, T* data_ptr)
+    size_t size() const
     {
-        rows_ = rows_in;
-        cols_ = cols_in;
-        data_ = data_ptr;
+        return num_elements_;
     }
 
+    bool isAllocated() const
+    {
+        return num_elements_ > 0;
+    }
 };
 
 #endif

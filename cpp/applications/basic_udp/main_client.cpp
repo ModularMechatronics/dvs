@@ -17,12 +17,18 @@ using namespace dvs;
 int main( void )
 {
 
-    Color color;
+    /*Color color;
+
+    std::cout << static_cast<int>(static_cast<uint8_t>(dvs::AttributeType::NO_TYPE)) << std::endl;
+    std::cout << static_cast<int>(static_cast<uint8_t>(dvs::AttributeType::COLOR)) << std::endl;
+    std::cout << static_cast<int>(static_cast<uint8_t>(dvs::AttributeType::LINE_WIDTH)) << std::endl;
+    std::cout << static_cast<int>(static_cast<uint8_t>(dvs::AttributeType::LINE_COLOR)) << std::endl;
+    std::cout << static_cast<int>(static_cast<uint8_t>(dvs::AttributeType::FACE_COLOR)) << std::endl;*/
     // Separate functions setRtColor(<color>, <id>), setRtName(<name string>))
     for(size_t k = 0; k < 20; k++)
     {
-        rtPlot(static_cast<float>(k) / 2.3f, 3);
-        rtPlot(static_cast<float>(k) * 2.3f + 1.1f, 2);
+        rtPlot(static_cast<float>(k) / 2.3f, 3, 0);
+        // rtPlot(static_cast<float>(k) * 2.3f + 1.1f, 2);
     }
     /*UdpClient udp_client(9547);
 
