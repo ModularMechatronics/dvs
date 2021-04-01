@@ -30,51 +30,36 @@ struct Linewidth : AttributeBase
 {
 public:
     float data;
+
     Linewidth() : AttributeBase(AttributeType::LINEWIDTH) {}
     Linewidth(const float linewidth) : AttributeBase(AttributeType::LINEWIDTH), data(linewidth) {}
 };
 
 struct Alpha : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     float data;
-    Alpha() = default;
-    Alpha(const float alpha) : plot_setting_(AttributeType::ALPHA), data(alpha) {}
 
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
-    }
+    Alpha() : AttributeBase(AttributeType::ALPHA) {}
+    Alpha(const float alpha) : AttributeBase(AttributeType::ALPHA), data(alpha) {}
 };
 
 struct Name : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     static constexpr size_t name_max_length = 10;
-    char data[name_max_length + 1];  // +1 for zero termination
+    char data[name_max_length + 1];  // +1 for null termination
 
-    Name() : plot_setting_(AttributeType::NAME)
+    Name() : AttributeBase(AttributeType::NAME)
     {
         std::memset(data, 0, name_max_length);
     }
-
-    Name(const char* const name) : plot_setting_(AttributeType::NAME)
+    Name(const char* const name) : AttributeBase(AttributeType::NAME)
     {
         const size_t input_name_length = std::strlen(name);
         assert((input_name_length <= name_max_length) && "Name can't be more than 10 characters!");
         std::memcpy(data, name, input_name_length);
         data[input_name_length] = '\0';
-    }
-
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
     }
 };
 
@@ -85,19 +70,15 @@ inline bool operator==(const Name& n0, const Name& n1)
 
 struct LineStyle : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     static constexpr size_t line_style_max_length = 2;
     char data[line_style_max_length + 1];
 
-    LineStyle() : plot_setting_(AttributeType::LINE_STYLE)
+    LineStyle() : AttributeBase(AttributeType::LINE_STYLE)
     {
         std::memset(data, 0, line_style_max_length);
     }
-
-    LineStyle(const char* const line_style) : plot_setting_(AttributeType::LINE_STYLE)
+    LineStyle(const char* const line_style) : AttributeBase(AttributeType::LINE_STYLE)
     {
         const size_t input_name_length = std::strlen(line_style);
         assert((input_name_length <= line_style_max_length) &&
@@ -105,21 +86,14 @@ public:
         std::memcpy(data, line_style, input_name_length);
         data[input_name_length] = '\0';
     }
-
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
-    }
 };
 
 struct Color : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     float red, green, blue;
 
+    // TODO: Change to chars: 'r', 'b', 'g', 'k', 'w'?
     static constexpr int RED = 1;
     static constexpr int BLUE = 2;
     static constexpr int GREEN = 3;
@@ -128,10 +102,10 @@ public:
     static constexpr int GRAY = 6;
     static constexpr int NONE = 7;
 
-    Color() : plot_setting_(AttributeType::COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
+    Color() : AttributeBase(AttributeType::COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
 
     Color(const float red_, const float green_, const float blue_)
-        : plot_setting_(AttributeType::COLOR), red(red_), green(green_), blue(blue_)
+        : AttributeBase(AttributeType::COLOR), red(red_), green(green_), blue(blue_)
     {
         assert(((red_ >= 0.0f) && (red_ <= 1.0f)) &&
                "Red color out of bounds! Should be constrained between [0.0, 1.0]");
@@ -141,7 +115,7 @@ public:
                "Blue color out of bounds! Should be constrained between [0.0, 1.0]");
     }
 
-    Color(const int i) : plot_setting_(AttributeType::COLOR), red(0.0f), green(0.0f), blue(0.0f)
+    Color(const int i) : AttributeBase(AttributeType::COLOR), red(0.0f), green(0.0f), blue(0.0f)
     {
         assert(((i >= 1) && (i <= 7)) && "Incorrect color input!");
         switch (i)
@@ -181,76 +155,52 @@ public:
                 break;
         }
     }
-
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
-    }
 };
 
 struct EdgeColor : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     float red, green, blue;
 
-    EdgeColor() : plot_setting_(AttributeType::EDGE_COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
+    EdgeColor() : AttributeBase(AttributeType::EDGE_COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
 
     EdgeColor(const float red_, const float green_, const float blue_)
-        : plot_setting_(AttributeType::EDGE_COLOR), red(red_), green(green_), blue(blue_)
+        : AttributeBase(AttributeType::EDGE_COLOR), red(red_), green(green_), blue(blue_)
     {
     }
 
-    EdgeColor(const int i) : plot_setting_(AttributeType::EDGE_COLOR)
+    EdgeColor(const int i) : AttributeBase(AttributeType::EDGE_COLOR)
     {
         const Color color(i);
         red = color.red;
         green = color.green;
         blue = color.blue;
-    }
-
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
     }
 };
 
 struct FaceColor : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     float red, green, blue;
 
-    FaceColor() : plot_setting_(AttributeType::FACE_COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
+    FaceColor() : AttributeBase(AttributeType::FACE_COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
 
     FaceColor(const float red_, const float green_, const float blue_)
-        : plot_setting_(AttributeType::FACE_COLOR), red(red_), green(green_), blue(blue_)
+        : AttributeBase(AttributeType::FACE_COLOR), red(red_), green(green_), blue(blue_)
     {
     }
 
-    FaceColor(const int i) : plot_setting_(AttributeType::FACE_COLOR)
+    FaceColor(const int i) : AttributeBase(AttributeType::FACE_COLOR)
     {
         const Color color(i);
         red = color.red;
         green = color.green;
         blue = color.blue;
     }
-
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
-    }
 };
 
 struct ColorMap : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     int data;
 
@@ -259,51 +209,28 @@ public:
     static constexpr int MAGMA = 3;
     static constexpr int VIRIDIS = 4;
 
-    ColorMap() : plot_setting_(AttributeType::COLOR_MAP), data(JET) {}
-
-    ColorMap(const int i) : plot_setting_(AttributeType::COLOR_MAP), data(i)
+    ColorMap() : AttributeBase(AttributeType::COLOR_MAP), data(JET) {}
+    ColorMap(const int i) : AttributeBase(AttributeType::COLOR_MAP), data(i)
     {
         assert(((i >= 1) && (i <= 4)) && "Incorrect color map input!");
-    }
-
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
     }
 };
 
 struct Persistent : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     int data;
 
-    Persistent() : plot_setting_(AttributeType::PERSISTENT) {}
-
-    Persistent(int data_) : plot_setting_(AttributeType::PERSISTENT), data(data_) {}
-
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
-    }
+    Persistent() : AttributeBase(AttributeType::PERSISTENT) {}
+    Persistent(int data_) : AttributeBase(AttributeType::PERSISTENT), data(data_) {}
 };
 
 struct PointSize : AttributeBase
 {
-private:
-    AttributeType plot_setting_;
-
 public:
     float data;
-    PointSize() = default;
-    PointSize(const float point_size) : plot_setting_(AttributeType::POINT_SIZE), data(point_size) {}
-
-    AttributeType getAttributeType() const
-    {
-        return plot_setting_;
-    }
+    PointSize() : AttributeBase(AttributeType::POINT_SIZE) {}
+    PointSize(const float point_size) : AttributeBase(AttributeType::POINT_SIZE), data(point_size) {}
 };
 
 }
