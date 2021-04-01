@@ -76,7 +76,7 @@ public:
         }
     }
 
-    void sendData(const DataMessage& data_message)
+    /*void sendData(const DataMessage& data_message)
     {
         if(sock_file_descr == -1)
         {
@@ -89,7 +89,7 @@ public:
         {
             perror("sendto failed");
         }
-    }
+    }*/
 };
 
 #endif
