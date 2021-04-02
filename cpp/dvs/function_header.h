@@ -7,6 +7,7 @@
 #include "enumerations.h"
 #include "plot_attributes.h"
 #include "base_types.h"
+#include "utils.h"
 
 namespace dvs
 {
@@ -176,6 +177,10 @@ template <typename U> bool checkTypeValid(const AttributeType& attribute_type)
     {
         return std::is_same<U, PointSize>::value;
     }
+    else if (attribute_type == AttributeType::ATTRIBUTE)
+    {
+        return std::is_same<U, Attribute>::value;
+    }
     else if (attribute_type == AttributeType::POS2D)
     {
         return std::is_same<U, Pos2D>::value;
@@ -198,19 +203,19 @@ template <typename U> constexpr bool isCorrectType()
 class FunctionHeader
 {
 private:
-    std::vector<FunctionHeaderDataPair> vec;
+    std::vector<FunctionHeaderDataPair> values;
 
-    void extendInternal(__attribute__((unused)) std::vector<FunctionHeaderDataPair>& vec)
+    void extendInternal(__attribute__((unused)) std::vector<FunctionHeaderDataPair>& values)
     {
         //  To catch when there are no arguments to extend
     }
 
-    template <typename U> void extendInternal(std::vector<FunctionHeaderDataPair>& vec, const U& obj)
+    template <typename U> void extendInternal(std::vector<FunctionHeaderDataPair>& values, const U& obj)
     {
         static_assert(isCorrectType<U>(), "\n\nError: Input must have correct type!\n");
 
-        vec.push_back(FunctionHeaderDataPair());
-        FunctionHeaderDataPair* const ptr = &(vec[vec.size() - 1]);
+        values.push_back(FunctionHeaderDataPair());
+        FunctionHeaderDataPair* const ptr = &(values[values.size() - 1]);
 
         ptr->attribute_type = obj.getCommandType();
         ptr->num_bytes = sizeof(U);
@@ -221,12 +226,12 @@ private:
     }
 
     template <typename U, typename... Us>
-    void extendInternal(std::vector<FunctionHeaderDataPair>& vec, const U& obj, const Us&... other_objs)
+    void extendInternal(std::vector<FunctionHeaderDataPair>& values, const U& obj, const Us&... other_objs)
     {
         static_assert(isCorrectType<U>(), "\n\nError: Input must have correct type!\n");
 
-        vec.push_back(FunctionHeaderDataPair());
-        FunctionHeaderDataPair* const ptr = &(vec[vec.size() - 1]);
+        values.push_back(FunctionHeaderDataPair());
+        FunctionHeaderDataPair* const ptr = &(values[values.size() - 1]);
 
         ptr->attribute_type = obj.getCommandType();
         ptr->num_bytes = sizeof(U);
@@ -235,26 +240,26 @@ private:
 
         fillBufferWithObjects(ptr->data, obj);
 
-        extendInternal(vec, other_objs...);
+        extendInternal(values, other_objs...);
     }
 
 public:
     FunctionHeader()
     {
-        vec.reserve(16);
+        values.reserve(16);
     }
 
     std::vector<FunctionHeaderDataPair> getVector() const
     {
-        return vec;
+        return values;
     }
 
     template <typename U> void append(const AttributeType& attribute_type, const U& data)
     {
         assert(checkTypeValid<U>(attribute_type) && "Invalid data type for attribute_type data!");
 
-        vec.push_back(FunctionHeaderDataPair());
-        FunctionHeaderDataPair* const ptr = &(vec[vec.size() - 1]);
+        values.push_back(FunctionHeaderDataPair());
+        FunctionHeaderDataPair* const ptr = &(values[values.size() - 1]);
 
         ptr->attribute_type = attribute_type;
         ptr->num_bytes = sizeof(U);
@@ -266,18 +271,18 @@ public:
 
     template <typename... Us> void extend(const Us&... objects)
     {
-        extendInternal(vec, objects...);
+        extendInternal(values, objects...);
     }
 
     size_t totalNumBytesFromBuffer() const
     {
         // 1 for first byte, that indicates how many attributes in buffer, which is
-        // same as vec.size()
+        // same as values.size()
         size_t s = 1;
 
-        for (size_t k = 0; k < vec.size(); k++)
+        for (size_t k = 0; k < values.size(); k++)
         {
-            s = s + sizeof(AttributeType) + vec[k].num_bytes;
+            s = s + sizeof(AttributeType) + values[k].num_bytes;
         }
 
         return s;
@@ -285,21 +290,21 @@ public:
 
     void fillBufferWithData(char* const buffer) const
     {
-        assert(vec.size() < max_num_bytes);
-        buffer[0] = static_cast<char>(vec.size());
+        assert(values.size() < max_num_bytes);
+        buffer[0] = static_cast<char>(values.size());
         size_t idx = 1;
 
-        for (size_t k = 0; k < vec.size(); k++)
+        for (size_t k = 0; k < values.size(); k++)
         {
             const char* const command_type_ptr =
-                reinterpret_cast<const char* const>(&(vec[k].attribute_type));
+                reinterpret_cast<const char* const>(&(values[k].attribute_type));
 
             buffer[idx] = command_type_ptr[0];
             buffer[idx + 1] = command_type_ptr[1];
             idx = idx + 2;
-            for (size_t i = 0; i < static_cast<size_t>(vec[k].num_bytes); i++)
+            for (size_t i = 0; i < static_cast<size_t>(values[k].num_bytes); i++)
             {
-                buffer[idx] = vec[k].data[i];
+                buffer[idx] = values[k].data[i];
                 idx++;
             }
         }

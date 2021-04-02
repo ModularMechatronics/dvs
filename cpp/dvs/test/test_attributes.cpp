@@ -8,6 +8,7 @@
 
 #include "dvs.h"
 
+using namespace dvs;
 using namespace dvs::internal;
 
 class TestAttributes : public testing::Test
@@ -124,7 +125,7 @@ TEST_F(TestAttributes, TestColorBasic)
     ASSERT_EQ(c1.blue, 0.3f);
 }
 
-TEST_F(TestAttributes, TestColorBasic2)
+TEST_F(TestAttributes, TestColorTypes)
 {
     const std::vector<char> colors = {'r', 'g', 'b', 'c', 'm', 'y', 'k', 'w', 'u'};
     const std::vector<Color> expected_colors = {{1.0f, 0.0f, 0.0f},
@@ -140,11 +141,67 @@ TEST_F(TestAttributes, TestColorBasic2)
     for(size_t k = 0; k < expected_colors.size(); k++)
     {
         const Color c(colors[k]);
+        const EdgeColor ec(colors[k]);
+        const FaceColor fc(colors[k]);
 
         ASSERT_EQ(c.getAttributeType(), AttributeType::COLOR);
+        ASSERT_EQ(ec.getAttributeType(), AttributeType::EDGE_COLOR);
+        ASSERT_EQ(fc.getAttributeType(), AttributeType::FACE_COLOR);
 
         ASSERT_EQ(c.red, expected_colors[k].red);
         ASSERT_EQ(c.green, expected_colors[k].green);
         ASSERT_EQ(c.blue, expected_colors[k].blue);
+
+        ASSERT_EQ(ec.red, expected_colors[k].red);
+        ASSERT_EQ(ec.green, expected_colors[k].green);
+        ASSERT_EQ(ec.blue, expected_colors[k].blue);
+
+        ASSERT_EQ(fc.red, expected_colors[k].red);
+        ASSERT_EQ(fc.green, expected_colors[k].green);
+        ASSERT_EQ(fc.blue, expected_colors[k].blue);
     }
+}
+
+TEST_F(TestAttributes, TestEdgeColor)
+{
+    const EdgeColor ec0, ec1(0.1f, 0.2f, 0.3f), ec2('r');
+    ASSERT_EQ(ec0.getAttributeType(), AttributeType::EDGE_COLOR);
+    ASSERT_EQ(ec1.getAttributeType(), AttributeType::EDGE_COLOR);
+    ASSERT_EQ(ec2.getAttributeType(), AttributeType::EDGE_COLOR);
+
+    ASSERT_EQ(ec1.red, 0.1f);
+    ASSERT_EQ(ec1.green, 0.2f);
+    ASSERT_EQ(ec1.blue, 0.3f);
+}
+
+TEST_F(TestAttributes, TestFaceColor)
+{
+    const FaceColor fc0, fc1(0.1f, 0.2f, 0.3f), fc2('r');
+    ASSERT_EQ(fc0.getAttributeType(), AttributeType::FACE_COLOR);
+    ASSERT_EQ(fc1.getAttributeType(), AttributeType::FACE_COLOR);
+    ASSERT_EQ(fc2.getAttributeType(), AttributeType::FACE_COLOR);
+
+    ASSERT_EQ(fc1.red, 0.1f);
+    ASSERT_EQ(fc1.green, 0.2f);
+    ASSERT_EQ(fc1.blue, 0.3f);
+}
+
+TEST_F(TestAttributes, TestPersistent)
+{
+    const bool val = false;
+    const Persistent p0, p1(val);
+    ASSERT_EQ(p0.getAttributeType(), AttributeType::PERSISTENT);
+    ASSERT_EQ(p1.getAttributeType(), AttributeType::PERSISTENT);
+
+    ASSERT_EQ(p1.data, val);
+}
+
+TEST_F(TestAttributes, TestPointSize)
+{
+    const float point_size = 2.71f;
+    const PointSize ps0, ps1(point_size);
+    ASSERT_EQ(ps0.getAttributeType(), AttributeType::POINT_SIZE);
+    ASSERT_EQ(ps1.getAttributeType(), AttributeType::POINT_SIZE);
+
+    ASSERT_EQ(ps1.data, point_size);
 }
