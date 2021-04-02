@@ -5,6 +5,8 @@
 
 namespace dvs
 {
+namespace internal
+{
 enum class AttributeType : uint16_t
 {
     UNKNOWN,
@@ -87,6 +89,8 @@ enum class DataStructure : uint8_t
     IMAGE,
     TEXT
 };
+
+}
 }
 
 
