@@ -44,22 +44,35 @@ public:
     Alpha(const float alpha) : AttributeBase(AttributeType::ALPHA), data(alpha) {}
 };
 
+inline size_t safeStringLenCheck(const char* const str, const size_t max_length)
+{
+    size_t idx = 0;
+    while(str[idx] && (idx < max_length))
+    {
+        idx++;
+    }
+
+    return idx;
+}
+
 struct Name : AttributeBase
 {
 public:
-    static constexpr size_t name_max_length = 10;
-    char data[name_max_length + 1];  // +1 for null termination
+    static constexpr size_t max_length = 10;
+    char data[max_length + 1];  // +1 for null termination
 
     Name() : AttributeBase(AttributeType::NAME)
     {
-        std::memset(data, 0, name_max_length);
+        std::memset(data, 0, max_length + 1);
     }
     Name(const char* const name) : AttributeBase(AttributeType::NAME)
     {
-        const size_t input_name_length = std::strlen(name);
-        assert((input_name_length <= name_max_length) && "Name can't be more than 10 characters!");
-        std::memcpy(data, name, input_name_length);
-        data[input_name_length] = '\0';
+        size_t idx = safeStringLenCheck(name, max_length + 1);
+
+        assert(idx <= max_length && "Name can't be more than 10 characters!");
+
+        std::memcpy(data, name, idx);
+        data[idx] = '\0';
     }
 };
 
