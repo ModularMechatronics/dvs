@@ -95,7 +95,7 @@ TEST_F(TestAttributes, TestSafeStringLenCheck)
 {
     const char* a_name = "a name";
     ASSERT_EQ(std::strlen(a_name), safeStringLenCheck(a_name, 20));
-    ASSERT_EQ(5, safeStringLenCheck(a_name, 5));
+    ASSERT_EQ(static_cast<size_t>(5), safeStringLenCheck(a_name, 5));
 }
 
 TEST_F(TestAttributes, TestLineStyle)
@@ -104,5 +104,47 @@ TEST_F(TestAttributes, TestLineStyle)
     const LineStyle ls0, ls1(ls_str);
     ASSERT_EQ(ls0.getAttributeType(), AttributeType::LINE_STYLE);
     ASSERT_EQ(ls1.getAttributeType(), AttributeType::LINE_STYLE);
-    // ASSERT_EQ(a1.data, alpha_val);
+    
+    for(size_t k = 0; k < (LineStyle::max_length + 1); k++)
+    {
+        ASSERT_EQ(static_cast<char>(0), ls0.data[k]);
+    }
+    ASSERT_EQ(0, std::strcmp(ls1.data, ls_str));
+}
+
+TEST_F(TestAttributes, TestColorBasic)
+{
+    const Color c0, c1(0.1f, 0.2f, 0.3f), c2('r');
+    ASSERT_EQ(c0.getAttributeType(), AttributeType::COLOR);
+    ASSERT_EQ(c1.getAttributeType(), AttributeType::COLOR);
+    ASSERT_EQ(c2.getAttributeType(), AttributeType::COLOR);
+
+    ASSERT_EQ(c1.red, 0.1f);
+    ASSERT_EQ(c1.green, 0.2f);
+    ASSERT_EQ(c1.blue, 0.3f);
+}
+
+TEST_F(TestAttributes, TestColorBasic2)
+{
+    const std::vector<char> colors = {'r', 'g', 'b', 'c', 'm', 'y', 'k', 'w', 'u'};
+    const std::vector<Color> expected_colors = {{1.0f, 0.0f, 0.0f},
+                                                {0.0f, 1.0f, 0.0f},
+                                                {0.0f, 0.0f, 1.0f},
+                                                {0.0f, 1.0f, 1.0f},
+                                                {1.0f, 0.0f, 1.0f},
+                                                {1.0f, 1.0f, 0.0f},
+                                                {0.0f, 0.0f, 0.0f},
+                                                {1.0f, 1.0f, 1.0f},
+                                                {0.5f, 0.5f, 0.5f},};
+
+    for(size_t k = 0; k < expected_colors.size(); k++)
+    {
+        const Color c(colors[k]);
+
+        ASSERT_EQ(c.getAttributeType(), AttributeType::COLOR);
+
+        ASSERT_EQ(c.red, expected_colors[k].red);
+        ASSERT_EQ(c.green, expected_colors[k].green);
+        ASSERT_EQ(c.blue, expected_colors[k].blue);
+    }
 }

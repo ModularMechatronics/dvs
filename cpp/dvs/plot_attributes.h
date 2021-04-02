@@ -9,8 +9,10 @@
 
 namespace dvs
 {
+
 namespace internal
 {
+
 
 struct AttributeBase
 {
@@ -68,7 +70,7 @@ public:
     Name(const char* const name) : AttributeBase(AttributeType::NAME)
     {
         assert(name && "input name string is null!");
-        size_t idx = safeStringLenCheck(name, max_length + 1);
+        const size_t idx = safeStringLenCheck(name, max_length + 1);
 
         assert(idx <= max_length && "Name can't be more than 10 characters!");
 
@@ -90,34 +92,39 @@ public:
 
     LineStyle() : AttributeBase(AttributeType::LINE_STYLE)
     {
-        std::memset(data, 0, max_length +1);
+        std::memset(data, 0, max_length + 1);
     }
     LineStyle(const char* const line_style) : AttributeBase(AttributeType::LINE_STYLE)
     {
         assert(line_style && "input line style string is null!");
         const size_t input_name_length = safeStringLenCheck(line_style, max_length + 1);
-        assert((input_name_length <= max_length) &&
-               "Line style can't be more than 2 characters!");
+
+        assert((input_name_length <= max_length) && "Line style can't be more than 2 characters!");
+
         std::memcpy(data, line_style, input_name_length);
         data[input_name_length] = '\0';
     }
 };
+
+struct Color;
+inline Color charToColor(const char c);
 
 struct Color : AttributeBase
 {
 public:
     float red, green, blue;
 
-    // TODO: Change to chars: 'r', 'b', 'g', 'k', 'w'?
-    static constexpr int RED = 1;
-    static constexpr int BLUE = 2;
-    static constexpr int GREEN = 3;
-    static constexpr int BLACK = 4;
-    static constexpr int WHITE = 5;
-    static constexpr int GRAY = 6;
-    static constexpr int NONE = 7;
+    static constexpr int RED = 'r';
+    static constexpr int GREEN = 'g';
+    static constexpr int BLUE = 'b';
+    static constexpr int CYAN = 'c';
+    static constexpr int MAGENTA = 'm';
+    static constexpr int YELLOW = 'y';
+    static constexpr int BLACK = 'k';
+    static constexpr int WHITE = 'w';
+    static constexpr int GRAY = 'u';
 
-    Color() : AttributeBase(AttributeType::COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
+    Color() : AttributeBase(AttributeType::COLOR) {}
 
     Color(const float red_, const float green_, const float blue_)
         : AttributeBase(AttributeType::COLOR), red(red_), green(green_), blue(blue_)
@@ -130,47 +137,76 @@ public:
                "Blue color out of bounds! Should be constrained between [0.0, 1.0]");
     }
 
-    Color(const int i) : AttributeBase(AttributeType::COLOR), red(0.0f), green(0.0f), blue(0.0f)
+    Color(const char c) : AttributeBase(AttributeType::COLOR), red(0.0f), green(0.0f), blue(0.0f)
     {
-        assert(((i >= 1) && (i <= 7)) && "Incorrect color input!");
-        switch (i)
-        {
-            case RED:
-                red = 1.0f;
-                break;
-            case GREEN:
-                green = 1.0f;
-                break;
-            case BLUE:
-                blue = 1.0f;
-                break;
-            case BLACK:
-                red = 0.0f;
-                green = 0.0f;
-                blue = 0.0f;
-                break;
-            case WHITE:
-                red = 1.0f;
-                green = 1.0f;
-                blue = 1.0f;
-                break;
-            case GRAY:
-                red = 0.5f;
-                green = 0.5f;
-                blue = 0.5f;
-                break;
-            case NONE:
-                red = -1.0f;
-                green = -1.0f;
-                blue = -1.0f;
-                break;
-            default:
-                std::cout << "Incorrect color input!" << std::endl;
-                exit(-1);
-                break;
-        }
+        *this = charToColor(c);
     }
 };
+
+inline Color charToColor(const char c)
+{
+    assert((c == 'r') || 
+           (c == 'g') || 
+           (c == 'b') || 
+           (c == 'c') || 
+           (c == 'm') || 
+           (c == 'y') || 
+           (c == 'k') || 
+           (c == 'w') || 
+           (c == 'u') && "Invalid color input!");
+
+    Color oc;
+    oc.red = 0.0f;
+    oc.green = 0.0f;
+    oc.blue = 0.0f;
+
+    switch (c)
+    {
+        case Color::RED:
+            oc.red = 1.0f;
+            break;
+        case Color::GREEN:
+            oc.green = 1.0f;
+            break;
+        case Color::BLUE:
+            oc.blue = 1.0f;
+            break;
+        case Color::CYAN:
+            oc.green = 1.0f;
+            oc.blue = 1.0f;
+            break;
+        case Color::MAGENTA:
+            oc.red = 1.0f;
+            oc.blue = 1.0f;
+            break;
+        case Color::YELLOW:
+            oc.red = 1.0f;
+            oc.green = 1.0f;
+            break;
+        case Color::BLACK:
+            oc.red = 0.0f;
+            oc.green = 0.0f;
+            oc.blue = 0.0f;
+            break;
+        case Color::WHITE:
+            oc.red = 1.0f;
+            oc.green = 1.0f;
+            oc.blue = 1.0f;
+            break;
+        case Color::GRAY:
+            oc.red = 0.5f;
+            oc.green = 0.5f;
+            oc.blue = 0.5f;
+            break;
+        default:
+            oc.red = 0.0f;
+            oc.green = 0.0f;
+            oc.blue = 0.0f;
+            break;
+    }
+
+    return oc;
+}
 
 struct EdgeColor : AttributeBase
 {
@@ -247,8 +283,8 @@ public:
     PointSize() : AttributeBase(AttributeType::POINT_SIZE) {}
     PointSize(const float point_size) : AttributeBase(AttributeType::POINT_SIZE), data(point_size) {}
 };
-
 }
+
 }
 
 #endif
