@@ -7,6 +7,9 @@ namespace dvs
 {
 namespace internal
 {
+
+// TODO: Add __LAST_TYPE to enums?
+
 enum class AttributeType : uint16_t
 {
     UNKNOWN,
