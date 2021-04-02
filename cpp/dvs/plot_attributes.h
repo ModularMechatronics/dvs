@@ -67,6 +67,7 @@ public:
     }
     Name(const char* const name) : AttributeBase(AttributeType::NAME)
     {
+        assert(name && "input name string is null!");
         size_t idx = safeStringLenCheck(name, max_length + 1);
 
         assert(idx <= max_length && "Name can't be more than 10 characters!");
@@ -84,17 +85,18 @@ inline bool operator==(const Name& n0, const Name& n1)
 struct LineStyle : AttributeBase
 {
 public:
-    static constexpr size_t line_style_max_length = 2;
-    char data[line_style_max_length + 1];
+    static constexpr size_t max_length = 2;
+    char data[max_length + 1];
 
     LineStyle() : AttributeBase(AttributeType::LINE_STYLE)
     {
-        std::memset(data, 0, line_style_max_length);
+        std::memset(data, 0, max_length +1);
     }
     LineStyle(const char* const line_style) : AttributeBase(AttributeType::LINE_STYLE)
     {
-        const size_t input_name_length = std::strlen(line_style);
-        assert((input_name_length <= line_style_max_length) &&
+        assert(line_style && "input line style string is null!");
+        const size_t input_name_length = safeStringLenCheck(line_style, max_length + 1);
+        assert((input_name_length <= max_length) &&
                "Line style can't be more than 2 characters!");
         std::memcpy(data, line_style, input_name_length);
         data[input_name_length] = '\0';

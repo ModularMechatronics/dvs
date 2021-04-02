@@ -29,3 +29,4 @@ set(GTEST_LIB_FILES libgtest.a
 
 # Adding subdirectories
 add_subdirectory(applications/basic_udp)
+add_subdirectory(dvs)
