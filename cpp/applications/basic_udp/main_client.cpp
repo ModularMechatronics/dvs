@@ -16,16 +16,8 @@ using namespace dvs;
 
 int main( void )
 {
-    internal::Linewidth lw(1.0f);
-
-    if(lw.getAttributeType() == AttributeType::LINEWIDTH)
-    {
-        std::cout << "Is Linewidth!!" << std::endl;
-    }
-    else
-    {
-        std::cout << "Is unknown..." << std::endl;
-    }
+    internal::Name n("123");
+    std::cout << n.data << std::endl;
     /*Color color;
 
     std::cout << static_cast<int>(static_cast<uint8_t>(dvs::AttributeType::NO_TYPE)) << std::endl;

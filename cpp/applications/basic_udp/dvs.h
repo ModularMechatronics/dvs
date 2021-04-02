@@ -44,6 +44,7 @@ void plot(const Vector<T_x> x, const Vector<T_y> y, const Us&... settings)
     sendData(x, y, hdr);
     sendData(x, y, z, hdr);
     sendData(values, hdr);
+    sendData(text_data, hdr);
 
     use pushToCore instead of sendData?
     */
