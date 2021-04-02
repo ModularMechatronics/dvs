@@ -1,6 +1,8 @@
 #ifndef DVS_UTILS_H_
 #define DVS_UTILS_H_
 
+#include <stdlib.h>
+
 namespace dvs
 {
 namespace internal

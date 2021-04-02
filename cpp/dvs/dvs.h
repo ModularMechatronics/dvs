@@ -28,12 +28,14 @@ Function (plot, surf...), DataStructure ()
 
 */
 
-template <typename T_x, typename T_y, typename... Us>
-void plot(const Vector<T_x> x, const Vector<T_y> y, const Us&... settings)
+template <typename Wx, typename Wy, typename... Us>
+void plot(const Vector<Wx> x, const Vector<Wy> y, const Us&... settings)
 {
     (void)x;
     (void)y;
     /*
+
+    plot(x, y, Color('r'), Linewidth(1.3f), Attribute::PERSISTENT)
     FunctionHeader hdr;
     hdr.append(HeaderAttributeType::FUNCTION, Function::PLOT2);
     hdr.append(HeaderAttributeType::DATA_STRUCTURE, DataStructure::VECTOR);
@@ -51,7 +53,7 @@ void plot(const Vector<T_x> x, const Vector<T_y> y, const Us&... settings)
 
 }
 
-template <typename... Ts>
+/*template <typename... Ts>
 void sendDataInternal(const Ts&... data_to_be_sent)
 {
 
@@ -61,7 +63,7 @@ template <typename... Ts>
 void sendData(const Ts&... data_to_be_sent)
 {
 
-}
+}*/
 
 // template <typename T, typename... Us>
 // void rtPlot(const T timestamp, const T value, const uint8_t plot_id, const uint8_t line_id, const Us&... settings)

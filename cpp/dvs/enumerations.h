@@ -37,6 +37,7 @@ enum class AttributeType : uint16_t
     LINE_STYLE,
     NAME,
     COLOR_MAP,
+    ATTRIBUTE,
     PERSISTENT
 };
 
@@ -82,8 +83,6 @@ enum class DataType : uint8_t
     UINT64
 };
 
-
-
 enum class DataStructure : uint8_t
 {
     UNKNOWN,
@@ -94,6 +93,13 @@ enum class DataStructure : uint8_t
 };
 
 }
+
+enum class Attribute : uint8_t
+{
+    UNKNOWN,
+    PERSISTENT,
+};
+
 }
 
 
