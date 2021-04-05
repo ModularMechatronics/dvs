@@ -2,7 +2,6 @@
 #define DVS_H_
 
 #include "low_level_com.h"
-#include "attributes.h"
 #include "data_containers.h"
 #include "function_header.h"
 
@@ -68,7 +67,7 @@ void sendData(const Ts&... data_to_be_sent)
 // template <typename T, typename... Us>
 // void rtPlot(const T timestamp, const T value, const uint8_t plot_id, const uint8_t line_id, const Us&... settings)
 
-template <typename T, typename... Us>
+/*template <typename T, typename... Us>
 void rtPlot(const T value, const uint8_t plot_id, const uint8_t line_id, const Us&... settings)
 {
 
@@ -78,7 +77,7 @@ void rtPlot(const T value, const uint8_t plot_id, const uint8_t line_id, const U
     (void)plot_id;
     (void)line_id;
 
-}
+}*/
 
 }
 
