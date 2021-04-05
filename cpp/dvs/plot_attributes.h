@@ -13,23 +13,22 @@ namespace dvs
 namespace internal
 {
 
-
-struct AttributeBase
+struct PropertyBase
 {
 protected:
-    AttributeType attribute_type_;
+    PropertyType property_type_;
 public:
-    AttributeBase() : attribute_type_(AttributeType::UNKNOWN) {}
-    AttributeBase(const AttributeType attribute_type) : attribute_type_(attribute_type) {}
+    PropertyBase() : property_type_(PropertyType::UNKNOWN) {}
+    PropertyBase(const PropertyType property_type) : property_type_(property_type) {}
 
-    AttributeType getAttributeType() const
+    PropertyType getPropertyType() const
     {
-        return attribute_type_;
+        return property_type_;
     };
 
-    void setAttributeType(const AttributeType attr_tp)
+    void setPropertyType(const PropertyType attr_tp)
     {
-        attribute_type_ = attr_tp;
+        property_type_ = attr_tp;
     }
 };
 
@@ -46,35 +45,38 @@ inline size_t safeStringLenCheck(const char* const str, const size_t max_length)
 
 }
 
-struct Linewidth : internal::AttributeBase
+namespace properties
+{
+
+struct LineWidth : internal::PropertyBase
 {
 public:
     float data;
 
-    Linewidth() : internal::AttributeBase(internal::AttributeType::LINEWIDTH) {}
-    Linewidth(const float linewidth) : internal::AttributeBase(internal::AttributeType::LINEWIDTH), data(linewidth) {}
+    LineWidth() : internal::PropertyBase(internal::PropertyType::LINE_WIDTH) {}
+    LineWidth(const float linewidth) : internal::PropertyBase(internal::PropertyType::LINE_WIDTH), data(linewidth) {}
 };
 
-struct Alpha : internal::AttributeBase
+struct Alpha : internal::PropertyBase
 {
 public:
     float data;
 
-    Alpha() : internal::AttributeBase(internal::AttributeType::ALPHA) {}
-    Alpha(const float alpha) : internal::AttributeBase(internal::AttributeType::ALPHA), data(alpha) {}
+    Alpha() : internal::PropertyBase(internal::PropertyType::ALPHA) {}
+    Alpha(const float alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
 };
 
-struct Name : internal::AttributeBase
+struct Name : internal::PropertyBase
 {
 public:
     static constexpr size_t max_length = 10;
     char data[max_length + 1];  // +1 for null termination
 
-    Name() : internal::AttributeBase(internal::AttributeType::NAME)
+    Name() : internal::PropertyBase(internal::PropertyType::NAME)
     {
         std::memset(data, 0, max_length + 1);
     }
-    Name(const char* const name) : internal::AttributeBase(internal::AttributeType::NAME)
+    Name(const char* const name) : internal::PropertyBase(internal::PropertyType::NAME)
     {
         assert(name && "input name string is null!");
         const size_t idx = internal::safeStringLenCheck(name, max_length + 1);
@@ -91,17 +93,17 @@ inline bool operator==(const Name& n0, const Name& n1)
     return strcmp(n0.data, n1.data) == 0;
 }
 
-struct LineStyle : internal::AttributeBase
+struct LineStyle : internal::PropertyBase
 {
 public:
     static constexpr size_t max_length = 2;
     char data[max_length + 1];
 
-    LineStyle() : internal::AttributeBase(internal::AttributeType::LINE_STYLE)
+    LineStyle() : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
     {
         std::memset(data, 0, max_length + 1);
     }
-    LineStyle(const char* const line_style) : internal::AttributeBase(internal::AttributeType::LINE_STYLE)
+    LineStyle(const char* const line_style) : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
     {
         assert(line_style && "input line style string is null!");
         const size_t input_name_length = internal::safeStringLenCheck(line_style, max_length + 1);
@@ -113,15 +115,23 @@ public:
     }
 };
 
+}
+namespace properties
+{
 struct Color;
+}
+
 namespace internal
 {
 
-inline Color charToColor(const char c);
+inline properties::Color charToColor(const char c);
 
 }
 
-struct Color : internal::AttributeBase
+namespace properties
+{
+
+struct Color : internal::PropertyBase
 {
 public:
     float red, green, blue;
@@ -141,10 +151,10 @@ public:
         return Color(1.0f, 0.0f, 0.0f);
     }
 
-    Color() : internal::AttributeBase(internal::AttributeType::COLOR) {}
+    Color() : internal::PropertyBase(internal::PropertyType::COLOR) {}
 
     Color(const float red_, const float green_, const float blue_)
-        : internal::AttributeBase(internal::AttributeType::COLOR), red(red_), green(green_), blue(blue_)
+        : internal::PropertyBase(internal::PropertyType::COLOR), red(red_), green(green_), blue(blue_)
     {
         assert(((red_ >= 0.0f) && (red_ <= 1.0f)) &&
                "Red color out of bounds! Should be constrained between [0.0, 1.0]");
@@ -154,16 +164,121 @@ public:
                "Blue color out of bounds! Should be constrained between [0.0, 1.0]");
     }
 
-    Color(const char c) : internal::AttributeBase(internal::AttributeType::COLOR), red(0.0f), green(0.0f), blue(0.0f)
+    Color(const char c) : internal::PropertyBase(internal::PropertyType::COLOR), red(0.0f), green(0.0f), blue(0.0f)
     {
         *this = internal::charToColor(c);
     }
 };
 
+struct EdgeColor : internal::PropertyBase
+{
+public:
+    float red, green, blue;
+
+    EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR) {}
+
+    EdgeColor(const float red_, const float green_, const float blue_)
+        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), red(red_), green(green_), blue(blue_)
+    {
+    }
+
+    EdgeColor(const char c) : internal::PropertyBase(internal::PropertyType::EDGE_COLOR)
+    {
+        const Color color(c);
+        red = color.red;
+        green = color.green;
+        blue = color.blue;
+    }
+
+    EdgeColor(const Color& color)
+    {
+        property_type_ = internal::PropertyType::EDGE_COLOR;
+        red = color.red;
+        green = color.green;
+        blue = color.blue;
+    }
+
+    EdgeColor& operator=(const Color& color)
+    {
+        this->property_type_ = internal::PropertyType::EDGE_COLOR;
+        this->red = color.red;
+        this->green = color.green;
+        this->blue = color.blue;
+
+        return *this;
+    }
+};
+
+struct FaceColor : internal::PropertyBase
+{
+public:
+    float red, green, blue;
+
+    FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
+
+    FaceColor(const float red_, const float green_, const float blue_)
+        : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(red_), green(green_), blue(blue_)
+    {
+    }
+
+    FaceColor(const char c) : internal::PropertyBase(internal::PropertyType::FACE_COLOR)
+    {
+        const Color color(c);
+        red = color.red;
+        green = color.green;
+        blue = color.blue;
+    }
+
+    FaceColor(const Color& color)
+    {
+        property_type_ = internal::PropertyType::FACE_COLOR;
+        red = color.red;
+        green = color.green;
+        blue = color.blue;
+    }
+
+    FaceColor& operator=(const Color& color)
+    {
+        this->property_type_ = internal::PropertyType::FACE_COLOR;
+        this->red = color.red;
+        this->green = color.green;
+        this->blue = color.blue;
+
+        return *this;
+    }
+};
+
+struct ColorMap : internal::PropertyBase
+{
+public:
+    int data;
+
+    static constexpr int JET = 1;
+    static constexpr int RAINBOW = 2;
+    static constexpr int MAGMA = 3;
+    static constexpr int VIRIDIS = 4;
+
+    ColorMap() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(JET) {}
+    ColorMap(const int i) : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(i)
+    {
+        assert(((i >= 1) && (i <= 4)) && "Incorrect color map input! A value in the interval [1, 4] is expected.");
+    }
+};
+
+struct PointSize : internal::PropertyBase
+{
+public:
+    float data;
+    PointSize() : internal::PropertyBase(internal::PropertyType::POINT_SIZE) {}
+    PointSize(const float point_size) : internal::PropertyBase(internal::PropertyType::POINT_SIZE), data(point_size) {}
+};
+
+}
+
 namespace internal
 {
 
-inline Color charToColor(const char c)
+inline properties::Color charToColor(const char c)
 {
     assert((c == 'r') || 
            (c == 'g') || 
@@ -175,45 +290,45 @@ inline Color charToColor(const char c)
            (c == 'w') || 
            (c == 'u') && "Invalid color input!");
 
-    Color oc;
+    properties::Color oc;
     oc.red = 0.0f;
     oc.green = 0.0f;
     oc.blue = 0.0f;
 
     switch (c)
     {
-        case Color::RED:
+        case properties::Color::RED:
             oc.red = 1.0f;
             break;
-        case Color::GREEN:
+        case properties::Color::GREEN:
             oc.green = 1.0f;
             break;
-        case Color::BLUE:
+        case properties::Color::BLUE:
             oc.blue = 1.0f;
             break;
-        case Color::CYAN:
+        case properties::Color::CYAN:
             oc.green = 1.0f;
             oc.blue = 1.0f;
             break;
-        case Color::MAGENTA:
+        case properties::Color::MAGENTA:
             oc.red = 1.0f;
             oc.blue = 1.0f;
             break;
-        case Color::YELLOW:
+        case properties::Color::YELLOW:
             oc.red = 1.0f;
             oc.green = 1.0f;
             break;
-        case Color::BLACK:
+        case properties::Color::BLACK:
             oc.red = 0.0f;
             oc.green = 0.0f;
             oc.blue = 0.0f;
             break;
-        case Color::WHITE:
+        case properties::Color::WHITE:
             oc.red = 1.0f;
             oc.green = 1.0f;
             oc.blue = 1.0f;
             break;
-        case Color::GRAY:
+        case properties::Color::GRAY:
             oc.red = 0.5f;
             oc.green = 0.5f;
             oc.blue = 0.5f;
@@ -229,110 +344,6 @@ inline Color charToColor(const char c)
 }
 
 }
-
-struct EdgeColor : internal::AttributeBase
-{
-public:
-    float red, green, blue;
-
-    EdgeColor() : internal::AttributeBase(internal::AttributeType::EDGE_COLOR) {}
-
-    EdgeColor(const float red_, const float green_, const float blue_)
-        : internal::AttributeBase(internal::AttributeType::EDGE_COLOR), red(red_), green(green_), blue(blue_)
-    {
-    }
-
-    EdgeColor(const char c) : internal::AttributeBase(internal::AttributeType::EDGE_COLOR)
-    {
-        const Color color(c);
-        red = color.red;
-        green = color.green;
-        blue = color.blue;
-    }
-
-    EdgeColor(const Color& color)
-    {
-        attribute_type_ = internal::AttributeType::EDGE_COLOR;
-        red = color.red;
-        green = color.green;
-        blue = color.blue;
-    }
-
-    EdgeColor& operator=(const Color& color)
-    {
-        this->attribute_type_ = internal::AttributeType::EDGE_COLOR;
-        this->red = color.red;
-        this->green = color.green;
-        this->blue = color.blue;
-
-        return *this;
-    }
-};
-
-struct FaceColor : internal::AttributeBase
-{
-public:
-    float red, green, blue;
-
-    FaceColor() : internal::AttributeBase(internal::AttributeType::FACE_COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
-
-    FaceColor(const float red_, const float green_, const float blue_)
-        : internal::AttributeBase(internal::AttributeType::FACE_COLOR), red(red_), green(green_), blue(blue_)
-    {
-    }
-
-    FaceColor(const char c) : internal::AttributeBase(internal::AttributeType::FACE_COLOR)
-    {
-        const Color color(c);
-        red = color.red;
-        green = color.green;
-        blue = color.blue;
-    }
-
-    FaceColor(const Color& color)
-    {
-        attribute_type_ = internal::AttributeType::FACE_COLOR;
-        red = color.red;
-        green = color.green;
-        blue = color.blue;
-    }
-
-    FaceColor& operator=(const Color& color)
-    {
-        this->attribute_type_ = internal::AttributeType::FACE_COLOR;
-        this->red = color.red;
-        this->green = color.green;
-        this->blue = color.blue;
-
-        return *this;
-    }
-};
-
-struct ColorMap : internal::AttributeBase
-{
-public:
-    int data;
-
-    static constexpr int JET = 1;
-    static constexpr int RAINBOW = 2;
-    static constexpr int MAGMA = 3;
-    static constexpr int VIRIDIS = 4;
-
-    ColorMap() : internal::AttributeBase(internal::AttributeType::COLOR_MAP), data(JET) {}
-    ColorMap(const int i) : internal::AttributeBase(internal::AttributeType::COLOR_MAP), data(i)
-    {
-        assert(((i >= 1) && (i <= 4)) && "Incorrect color map input! A value in the interval [1, 4] is expected.");
-    }
-};
-
-struct PointSize : internal::AttributeBase
-{
-public:
-    float data;
-    PointSize() : internal::AttributeBase(internal::AttributeType::POINT_SIZE) {}
-    PointSize(const float point_size) : internal::AttributeBase(internal::AttributeType::POINT_SIZE), data(point_size) {}
-};
-
 
 }
 

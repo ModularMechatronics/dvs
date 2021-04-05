@@ -17,15 +17,29 @@ namespace internal
 {
 constexpr uint8_t max_num_bytes = SCHAR_MAX;
 
-struct FunctionHeaderDataPair
-{
-    AttributeType attribute_type;
-    uint8_t data[max_num_bytes];
-    uint8_t num_bytes;
 
-    template <typename T> T getAsAttribute()
+struct FunctionHeaderObject
+{
+    FunctionHeaderObjectType type;
+    uint8_t num_bytes;
+    uint8_t data[max_num_bytes];
+
+    template <typename T> T getAs() const
     {
-        static_assert(std::is_base_of<AttributeBase, T>::value, "Must be a child class of AttributeBase!");
+        T out_var;
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
+
+        for(size_t k = 0; k < sizeof(T); k++)
+        {
+            ptr[k] = data[k];
+        }
+
+        return out_var;
+    }
+
+    template <typename T> T getAsProperty() const
+    {
+        // static_assert(std::is_base_of<PropertyBase, T>::value, "Must be a child class of AttributeBase!");
 
         /*
         if(num_bytes != (sizeof(T) + sizeof(AttributeType)))
@@ -35,7 +49,7 @@ struct FunctionHeaderDataPair
         */
 
         T out_var;
-        // out_var.setAttributeType(attribute_type);
+        // out_var.setPropertyType(object_type);
         uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
         
         for(size_t k = 0; k < sizeof(T); k++)
@@ -131,105 +145,105 @@ template <typename T> DataType typeToDataTypeEnum()
     }
 }
 
-template <typename U> bool checkTypeValid(const AttributeType& attribute_type)
+/*template <typename U> bool checkTypeValid(const AttributeType& object_type)
 {
-    if (attribute_type == AttributeType::NUM_BUFFERS_REQUIRED)
+    if (object_type == AttributeType::NUM_BUFFERS_REQUIRED)
     {
         return std::is_same<U, char>::value;
     }
-    else if (attribute_type == AttributeType::NUM_BYTES)
+    else if (object_type == AttributeType::NUM_BYTES)
     {
         return std::is_same<U, size_t>::value;
     }
-    else if (attribute_type == AttributeType::DATA_STRUCTURE)
+    else if (object_type == AttributeType::DATA_STRUCTURE)
     {
         return std::is_same<U, DataStructure>::value;
     }
-    else if (attribute_type == AttributeType::BYTES_PER_ELEMENT)
+    else if (object_type == AttributeType::BYTES_PER_ELEMENT)
     {
         return std::is_same<U, char>::value;
     }
-    else if (attribute_type == AttributeType::DATA_TYPE)
+    else if (object_type == AttributeType::DATA_TYPE)
     {
         return std::is_same<U, DataType>::value;
     }
-    else if (attribute_type == AttributeType::NUM_ELEMENTS)
+    else if (object_type == AttributeType::NUM_ELEMENTS)
     {
         return std::is_same<U, size_t>::value;
     }
-    else if (attribute_type == AttributeType::DIMENSION_2D)
+    else if (object_type == AttributeType::DIMENSION_2D)
     {
         return std::is_same<U, Dimension2D>::value;
     }
-    else if (attribute_type == AttributeType::HAS_PAYLOAD)
+    else if (object_type == AttributeType::HAS_PAYLOAD)
     {
         return std::is_same<U, bool>::value;
     }
-    else if (attribute_type == AttributeType::AZIMUTH)
+    else if (object_type == AttributeType::AZIMUTH)
     {
         return std::is_same<U, float>::value;
     }
-    else if (attribute_type == AttributeType::ELEVATION)
+    else if (object_type == AttributeType::ELEVATION)
     {
         return std::is_same<U, float>::value;
     }
-    else if (attribute_type == AttributeType::AXES_DIMENSIONS)
+    else if (object_type == AttributeType::AXES_DIMENSIONS)
     {
         return std::is_same<U, char>::value;
     }
-    else if (attribute_type == AttributeType::AXIS_MIN_MAX_VEC)
+    else if (object_type == AttributeType::AXIS_MIN_MAX_VEC)
     {
         return std::is_same<U, std::pair<Bound3D, Bound3D>>::value;
     }
-    else if (attribute_type == AttributeType::LINEWIDTH)
+    else if (object_type == AttributeType::LINE_WIDTH)
     {
-        return std::is_same<U, Linewidth>::value;
+        return std::is_same<U, LineWidth>::value;
     }
-    else if (attribute_type == AttributeType::FACE_COLOR)
+    else if (object_type == AttributeType::FACE_COLOR)
     {
         return std::is_same<U, FaceColor>::value;
     }
-    else if (attribute_type == AttributeType::EDGE_COLOR)
+    else if (object_type == AttributeType::EDGE_COLOR)
     {
         return std::is_same<U, EdgeColor>::value;
     }
-    else if (attribute_type == AttributeType::COLOR)
+    else if (object_type == AttributeType::COLOR)
     {
         return std::is_same<U, Color>::value;
     }
-    else if (attribute_type == AttributeType::FIGURE_NUM)
+    else if (object_type == AttributeType::FIGURE_NUM)
     {
         return std::is_same<U, char>::value;
     }
-    else if (attribute_type == AttributeType::ALPHA)
+    else if (object_type == AttributeType::ALPHA)
     {
         return std::is_same<U, Alpha>::value;
     }
-    else if (attribute_type == AttributeType::LINE_STYLE)
+    else if (object_type == AttributeType::LINE_STYLE)
     {
         return std::is_same<U, LineStyle>::value;
     }
-    else if (attribute_type == AttributeType::NAME)
+    else if (object_type == AttributeType::NAME)
     {
         return std::is_same<U, Name>::value;
     }
-    else if (attribute_type == AttributeType::COLOR_MAP)
+    else if (object_type == AttributeType::COLOR_MAP)
     {
         return std::is_same<U, ColorMap>::value;
     }
-    else if (attribute_type == AttributeType::FUNCTION)
+    else if (object_type == AttributeType::FUNCTION)
     {
         return std::is_same<U, Function>::value;
     }
-    else if (attribute_type == AttributeType::POINT_SIZE)
+    else if (object_type == AttributeType::POINT_SIZE)
     {
         return std::is_same<U, PointSize>::value;
     }
-    else if (attribute_type == AttributeType::PROPERTY)
+    else if (object_type == AttributeType::PROPERTY)
     {
         return std::is_same<U, Property>::value;
     }
-    else if (attribute_type == AttributeType::POS2D)
+    else if (object_type == AttributeType::POS2D)
     {
         return std::is_same<U, Pos2D>::value;
     }
@@ -241,31 +255,31 @@ template <typename U> bool checkTypeValid(const AttributeType& attribute_type)
 
 template <typename U> constexpr bool isCorrectType()
 {
-    return std::is_same<U, Linewidth>::value || std::is_same<U, Alpha>::value ||
+    return std::is_same<U, LineWidth>::value || std::is_same<U, Alpha>::value ||
            std::is_same<U, Name>::value || std::is_same<U, LineStyle>::value ||
            std::is_same<U, Color>::value || std::is_same<U, EdgeColor>::value ||
            std::is_same<U, FaceColor>::value || std::is_same<U, ColorMap>::value ||
            std::is_same<U, PointSize>::value || std::is_same<U, Property>::value;
-}
+}*/
 
 class FunctionHeader
 {
 private:
-    std::vector<FunctionHeaderDataPair> values;
+    std::vector<FunctionHeaderObject> values;
 
-    void extendInternal(__attribute__((unused)) std::vector<FunctionHeaderDataPair>& values)
+    void extendInternal(__attribute__((unused)) std::vector<FunctionHeaderObject>& values)
     {
         //  To catch when there are no arguments to extend
     }
 
-    template <typename U> void extendInternal(std::vector<FunctionHeaderDataPair>& values, const U& obj)
+    template <typename U> void extendInternal(std::vector<FunctionHeaderObject>& values, const U& obj)
     {
-        static_assert(isCorrectType<U>(), "\n\nError: Input must have correct type!\n");
+        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value, "Incorrect type!");
 
-        values.push_back(FunctionHeaderDataPair());
-        FunctionHeaderDataPair* const ptr = &(values[values.size() - 1]);
+        values.push_back(FunctionHeaderObject());
+        FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
 
-        ptr->attribute_type = obj.getAttributeType();
+        ptr->type = FunctionHeaderObjectType::PROPERTY;
         ptr->num_bytes = sizeof(U);
 
         assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
@@ -274,14 +288,14 @@ private:
     }
 
     template <typename U, typename... Us>
-    void extendInternal(std::vector<FunctionHeaderDataPair>& values, const U& obj, const Us&... other_objs)
+    void extendInternal(std::vector<FunctionHeaderObject>& values, const U& obj, const Us&... other_objs)
     {
-        static_assert(isCorrectType<U>(), "\n\nError: Input must have correct type!\n");
+        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value, "Incorrect type!");
 
-        values.push_back(FunctionHeaderDataPair());
-        FunctionHeaderDataPair* const ptr = &(values[values.size() - 1]);
+        values.push_back(FunctionHeaderObject());
+        FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
 
-        ptr->attribute_type = obj.getAttributeType();
+        ptr->type = FunctionHeaderObjectType::PROPERTY;
         ptr->num_bytes = sizeof(U);
 
         assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
@@ -297,14 +311,43 @@ public:
         values.reserve(16);
     }
 
-    template <typename U> void append(const AttributeType& attribute_type, const U& data)
+    FunctionHeader(const uint8_t* const buffer)
     {
-        assert(checkTypeValid<U>(attribute_type) && "Invalid data type for attribute_type data!");
+        const size_t num_expected_values = buffer[0];
+        values.reserve(num_expected_values);
 
-        values.push_back(FunctionHeaderDataPair());
-        FunctionHeaderDataPair* const ptr = &(values[values.size() - 1]);
+        size_t idx = 1;
 
-        ptr->attribute_type = attribute_type;
+        size_t num_values = 0;
+
+        while(num_values < num_expected_values)
+        {
+            values.push_back(FunctionHeaderObject());
+            FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
+
+            std::memcpy(&(ptr->type), &(buffer[idx]), sizeof(FunctionHeaderObjectType));
+            idx += sizeof(FunctionHeaderObjectType);
+
+            std::memcpy(&(ptr->num_bytes), &(buffer[idx]), sizeof(FunctionHeaderObject::num_bytes));
+            idx += sizeof(FunctionHeaderObject::num_bytes);
+
+            std::memcpy(ptr->data, &(buffer[idx]), ptr->num_bytes);
+            idx += ptr->num_bytes;
+
+            num_values++;
+        }
+
+        assert(num_values == values.size());
+    }
+
+    template <typename U> void append(const FunctionHeaderObjectType& object_type, const U& data)
+    {
+        // assert(checkTypeValid<U>(object_type) && "Invalid data type for object_type data!");
+
+        values.push_back(FunctionHeaderObject());
+        FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
+
+        ptr->type = object_type;
         ptr->num_bytes = sizeof(U);
 
         assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
@@ -312,9 +355,14 @@ public:
         fillBufferWithObjects(ptr->data, data);
     }
 
-    std::vector<FunctionHeaderDataPair> getVector() const
+    std::vector<FunctionHeaderObject> getValues() const
     {
         return values;
+    }
+
+    size_t getNumValues() const
+    {
+        return values.size();
     }
 
     template <typename... Us> void extend(const Us&... objects)
@@ -330,33 +378,33 @@ public:
 
         for (size_t k = 0; k < values.size(); k++)
         {
-            s = s + sizeof(AttributeType) + values[k].num_bytes;
+            s = s + sizeof(FunctionHeaderObjectType) + 
+                    sizeof(FunctionHeaderObject::num_bytes) + 
+                    values[k].num_bytes;
         }
 
         return s;
     }
 
-    void fillBufferWithData(char* const buffer) const
+    void fillBufferWithData(uint8_t* const buffer) const
     {
-        assert(values.size() < max_num_bytes);
-        buffer[0] = static_cast<char>(values.size());
         size_t idx = 1;
+        buffer[0] = static_cast<uint8_t>(values.size());
 
         for (size_t k = 0; k < values.size(); k++)
         {
-            const char* const command_type_ptr =
-                reinterpret_cast<const char* const>(&(values[k].attribute_type));
+            std::memcpy(&(buffer[idx]), &(values[k].type), sizeof(FunctionHeaderObjectType));
+            idx += sizeof(FunctionHeaderObjectType);
 
-            buffer[idx] = command_type_ptr[0];
-            buffer[idx + 1] = command_type_ptr[1];
-            idx = idx + 2;
-            for (size_t i = 0; i < static_cast<size_t>(values[k].num_bytes); i++)
-            {
-                buffer[idx] = values[k].data[i];
-                idx++;
-            }
+            std::memcpy(&(buffer[idx]), &(values[k].num_bytes), sizeof(FunctionHeaderObject::num_bytes));
+            idx += sizeof(FunctionHeaderObject::num_bytes);
+
+            std::memcpy(&(buffer[idx]), values[k].data, values[k].num_bytes);
+            idx += values[k].num_bytes;
         }
     }
+    
+
 };
 
 }
