@@ -2,6 +2,8 @@
 #define FUNCTION_HEADER_H_
 
 #include <vector>
+#include <exception>
+
 #include <cassert>
 
 #include "enumerations.h"
@@ -13,13 +15,63 @@ namespace dvs
 {
 namespace internal
 {
-constexpr char max_num_bytes = SCHAR_MAX;
+constexpr uint8_t max_num_bytes = SCHAR_MAX;
 
 struct FunctionHeaderDataPair
 {
     AttributeType attribute_type;
-    char data[max_num_bytes];
-    char num_bytes;
+    uint8_t data[max_num_bytes];
+    uint8_t num_bytes;
+
+    template <typename T> T getAsAttribute()
+    {
+        static_assert(std::is_base_of<AttributeBase, T>::value, "Must be a child class of AttributeBase!");
+
+        /*
+        if(num_bytes != (sizeof(T) + sizeof(AttributeType)))
+        {
+            throw std::exception("Mismatch in expected size!");
+        }
+        */
+
+        T out_var;
+        // out_var.setAttributeType(attribute_type);
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
+        
+        for(size_t k = 0; k < sizeof(T); k++)
+        {
+            ptr[k] = data[k];
+        }
+
+        return out_var;
+    }
+
+    template <typename T> T getAsPlainOldData()
+    {
+        static_assert(std::is_same<T, float>::value ||
+                      std::is_same<T, double>::value ||
+                      std::is_same<T, int>::value ||
+                      std::is_same<T, uint64_t>::value ||
+                      std::is_same<T, uint32_t>::value ||
+                      std::is_same<T, uint16_t>::value ||
+                      std::is_same<T, uint8_t>::value ||
+                      std::is_same<T, int64_t>::value ||
+                      std::is_same<T, int32_t>::value ||
+                      std::is_same<T, int16_t>::value ||
+                      std::is_same<T, int8_t>::value ||
+                      std::is_same<T, char>::value ||
+                      std::is_same<T, unsigned char>::value, "Must be a POD type!");
+
+        T out_var;
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
+
+        for(size_t k = 0; k < sizeof(T); k++)
+        {
+            ptr[k] = data[k];
+        }
+
+        return out_var;
+    }
 };
 
 template <typename T> DataType typeToDataTypeEnum()
@@ -169,17 +221,13 @@ template <typename U> bool checkTypeValid(const AttributeType& attribute_type)
     {
         return std::is_same<U, Function>::value;
     }
-    else if (attribute_type == AttributeType::PERSISTENT)
-    {
-        return std::is_same<U, Persistent>::value;
-    }
     else if (attribute_type == AttributeType::POINT_SIZE)
     {
         return std::is_same<U, PointSize>::value;
     }
-    else if (attribute_type == AttributeType::ATTRIBUTE)
+    else if (attribute_type == AttributeType::PROPERTY)
     {
-        return std::is_same<U, Attribute>::value;
+        return std::is_same<U, Property>::value;
     }
     else if (attribute_type == AttributeType::POS2D)
     {
@@ -197,7 +245,7 @@ template <typename U> constexpr bool isCorrectType()
            std::is_same<U, Name>::value || std::is_same<U, LineStyle>::value ||
            std::is_same<U, Color>::value || std::is_same<U, EdgeColor>::value ||
            std::is_same<U, FaceColor>::value || std::is_same<U, ColorMap>::value ||
-           std::is_same<U, Persistent>::value || std::is_same<U, PointSize>::value;
+           std::is_same<U, PointSize>::value || std::is_same<U, Property>::value;
 }
 
 class FunctionHeader
@@ -217,7 +265,7 @@ private:
         values.push_back(FunctionHeaderDataPair());
         FunctionHeaderDataPair* const ptr = &(values[values.size() - 1]);
 
-        ptr->attribute_type = obj.getCommandType();
+        ptr->attribute_type = obj.getAttributeType();
         ptr->num_bytes = sizeof(U);
 
         assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
@@ -233,7 +281,7 @@ private:
         values.push_back(FunctionHeaderDataPair());
         FunctionHeaderDataPair* const ptr = &(values[values.size() - 1]);
 
-        ptr->attribute_type = obj.getCommandType();
+        ptr->attribute_type = obj.getAttributeType();
         ptr->num_bytes = sizeof(U);
 
         assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
@@ -249,11 +297,6 @@ public:
         values.reserve(16);
     }
 
-    std::vector<FunctionHeaderDataPair> getVector() const
-    {
-        return values;
-    }
-
     template <typename U> void append(const AttributeType& attribute_type, const U& data)
     {
         assert(checkTypeValid<U>(attribute_type) && "Invalid data type for attribute_type data!");
@@ -267,6 +310,11 @@ public:
         assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
 
         fillBufferWithObjects(ptr->data, data);
+    }
+
+    std::vector<FunctionHeaderDataPair> getVector() const
+    {
+        return values;
     }
 
     template <typename... Us> void extend(const Us&... objects)

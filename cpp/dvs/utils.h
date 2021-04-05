@@ -19,9 +19,9 @@ constexpr size_t totalSizeOfObjects(__attribute__((unused)) const U& obj, const 
 }
 
 template <typename U>
-void fillBufferWithObjectsInternal(size_t idx, char* const buffer, const U& obj)
+void fillBufferWithObjectsInternal(size_t idx, uint8_t* const buffer, const U& obj)
 {
-    const char* const obj_ptr = reinterpret_cast<const char* const>(&obj);
+    const uint8_t* const obj_ptr = reinterpret_cast<const uint8_t* const>(&obj);
 
     for (size_t k = 0; k < sizeof(U); k++)
     {
@@ -32,11 +32,11 @@ void fillBufferWithObjectsInternal(size_t idx, char* const buffer, const U& obj)
 
 template <typename U, typename... Us>
 void fillBufferWithObjectsInternal(size_t idx,
-                                   char* const buffer,
+                                   uint8_t* const buffer,
                                    const U& obj,
                                    const Us&... objects)
 {
-    const char* const obj_ptr = reinterpret_cast<const char* const>(&obj);
+    const uint8_t* const obj_ptr = reinterpret_cast<const uint8_t* const>(&obj);
 
     for (size_t k = 0; k < sizeof(U); k++)
     {
@@ -46,16 +46,16 @@ void fillBufferWithObjectsInternal(size_t idx,
     fillBufferWithObjectsInternal(idx, buffer, objects...);
 }
 
-template <typename... Us> void fillBufferWithObjects(char* const buffer, const Us&... objects)
+template <typename... Us> void fillBufferWithObjects(uint8_t* const buffer, const Us&... objects)
 {
     size_t idx = 0;
     fillBufferWithObjectsInternal(idx, buffer, objects...);
 }
 
 template <typename U>
-void fillObjectsFromBufferInternal(size_t idx, const char* const buffer, U& obj)
+void fillObjectsFromBufferInternal(size_t idx, const uint8_t* const buffer, U& obj)
 {
-    char* const obj_ptr = reinterpret_cast<char* const>(&obj);
+    uint8_t* const obj_ptr = reinterpret_cast<uint8_t* const>(&obj);
 
     for (size_t k = 0; k < sizeof(U); k++)
     {
@@ -65,9 +65,9 @@ void fillObjectsFromBufferInternal(size_t idx, const char* const buffer, U& obj)
 }
 
 template <typename U, typename... Us>
-void fillObjectsFromBufferInternal(size_t idx, const char* const buffer, U& obj, Us&... objects)
+void fillObjectsFromBufferInternal(size_t idx, const uint8_t* const buffer, U& obj, Us&... objects)
 {
-    char* const obj_ptr = reinterpret_cast<char* const>(&obj);
+    uint8_t* const obj_ptr = reinterpret_cast<uint8_t* const>(&obj);
 
     for (size_t k = 0; k < sizeof(U); k++)
     {
@@ -77,7 +77,7 @@ void fillObjectsFromBufferInternal(size_t idx, const char* const buffer, U& obj,
     fillObjectsFromBufferInternal(idx, buffer, objects...);
 }
 
-template <typename... Us> void fillObjectsFromBuffer(const char* const buffer, Us&... objects)
+template <typename... Us> void fillObjectsFromBuffer(const uint8_t* const buffer, Us&... objects)
 {
     size_t idx = 0;
     fillObjectsFromBufferInternal(idx, buffer, objects...);

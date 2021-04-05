@@ -30,7 +30,6 @@ TEST_F(TestAttributes, TestBasic)
     static_assert(std::is_base_of<AttributeBase, EdgeColor>::value);
     static_assert(std::is_base_of<AttributeBase, FaceColor>::value);
     static_assert(std::is_base_of<AttributeBase, ColorMap>::value);
-    static_assert(std::is_base_of<AttributeBase, Persistent>::value);
     static_assert(std::is_base_of<AttributeBase, PointSize>::value);
 }
 
@@ -39,7 +38,7 @@ TEST_F(TestAttributes, TestAttributeBase)
     const AttributeBase ab0;
     ASSERT_EQ(ab0.getAttributeType(), AttributeType::UNKNOWN);
 
-    for(size_t k = 0; k < static_cast<int>(AttributeType::PERSISTENT); k++)
+    for(size_t k = 0; k < static_cast<int>(AttributeType::PROPERTY); k++)
     {
         const AttributeType at_type = static_cast<AttributeType>(k);
         const AttributeBase ab1(at_type);
@@ -184,16 +183,6 @@ TEST_F(TestAttributes, TestFaceColor)
     ASSERT_EQ(fc1.red, 0.1f);
     ASSERT_EQ(fc1.green, 0.2f);
     ASSERT_EQ(fc1.blue, 0.3f);
-}
-
-TEST_F(TestAttributes, TestPersistent)
-{
-    const bool val = false;
-    const Persistent p0, p1(val);
-    ASSERT_EQ(p0.getAttributeType(), AttributeType::PERSISTENT);
-    ASSERT_EQ(p1.getAttributeType(), AttributeType::PERSISTENT);
-
-    ASSERT_EQ(p1.data, val);
 }
 
 TEST_F(TestAttributes, TestPointSize)

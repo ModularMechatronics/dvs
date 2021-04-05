@@ -26,6 +26,11 @@ public:
     {
         return attribute_type_;
     };
+
+    void setAttributeType(const AttributeType attr_tp)
+    {
+        attribute_type_ = attr_tp;
+    }
 };
 
 inline size_t safeStringLenCheck(const char* const str, const size_t max_length)
@@ -130,6 +135,11 @@ public:
     static constexpr int BLACK = 'k';
     static constexpr int WHITE = 'w';
     static constexpr int GRAY = 'u';
+
+    static Color makeRed()
+    {
+        return Color(1.0f, 0.0f, 0.0f);
+    }
 
     Color() : internal::AttributeBase(internal::AttributeType::COLOR) {}
 
@@ -239,6 +249,24 @@ public:
         green = color.green;
         blue = color.blue;
     }
+
+    EdgeColor(const Color& color)
+    {
+        attribute_type_ = internal::AttributeType::EDGE_COLOR;
+        red = color.red;
+        green = color.green;
+        blue = color.blue;
+    }
+
+    EdgeColor& operator=(const Color& color)
+    {
+        this->attribute_type_ = internal::AttributeType::EDGE_COLOR;
+        this->red = color.red;
+        this->green = color.green;
+        this->blue = color.blue;
+
+        return *this;
+    }
 };
 
 struct FaceColor : internal::AttributeBase
@@ -260,6 +288,24 @@ public:
         green = color.green;
         blue = color.blue;
     }
+
+    FaceColor(const Color& color)
+    {
+        attribute_type_ = internal::AttributeType::FACE_COLOR;
+        red = color.red;
+        green = color.green;
+        blue = color.blue;
+    }
+
+    FaceColor& operator=(const Color& color)
+    {
+        this->attribute_type_ = internal::AttributeType::FACE_COLOR;
+        this->red = color.red;
+        this->green = color.green;
+        this->blue = color.blue;
+
+        return *this;
+    }
 };
 
 struct ColorMap : internal::AttributeBase
@@ -277,15 +323,6 @@ public:
     {
         assert(((i >= 1) && (i <= 4)) && "Incorrect color map input! A value in the interval [1, 4] is expected.");
     }
-};
-
-struct Persistent : internal::AttributeBase
-{
-public:
-    bool data;
-
-    Persistent() : internal::AttributeBase(internal::AttributeType::PERSISTENT) {}
-    Persistent(bool data_) : internal::AttributeBase(internal::AttributeType::PERSISTENT), data(data_) {}
 };
 
 struct PointSize : internal::AttributeBase
