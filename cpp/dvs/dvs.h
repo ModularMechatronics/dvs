@@ -27,14 +27,14 @@ Function (plot, surf...), DataStructure ()
 
 */
 
-template <typename Wx, typename Wy, typename... Us>
+/*template <typename Wx, typename Wy, typename... Us>
 void plot(const Vector<Wx> x, const Vector<Wy> y, const Us&... settings)
 {
     (void)x;
     (void)y;
-    /*
+    
 
-    plot(x, y, Color('r'), Linewidth(1.3f), Attribute::PERSISTENT)
+    plot(x, y, Color('r'), LineWidth(1.3f), Attribute::PERSISTENT)
     FunctionHeader hdr;
     hdr.append(HeaderAttributeType::FUNCTION, Function::PLOT2);
     hdr.append(HeaderAttributeType::DATA_STRUCTURE, DataStructure::VECTOR);
@@ -48,9 +48,9 @@ void plot(const Vector<Wx> x, const Vector<Wy> y, const Us&... settings)
     sendData(text_data, hdr);
 
     use pushToCore instead of sendData?
-    */
+    
 
-}
+}*/
 
 /*template <typename... Ts>
 void sendDataInternal(const Ts&... data_to_be_sent)

@@ -10,7 +10,7 @@ namespace internal
 
 // TODO: Add __LAST_TYPE to enums?
 
-enum class AttributeType : uint16_t
+enum class FunctionHeaderObjectType : uint16_t
 {
     UNKNOWN,
     FUNCTION,
@@ -26,18 +26,24 @@ enum class AttributeType : uint16_t
     ELEVATION,
     AXES_DIMENSIONS,
     AXIS_MIN_MAX_VEC,
-    LINEWIDTH,
-    POINT_SIZE,
-    FACE_COLOR,
     POS2D,
-    EDGE_COLOR,
-    COLOR,
     FIGURE_NUM,
-    ALPHA,
-    LINE_STYLE,
-    NAME,
-    COLOR_MAP,
     PROPERTY
+};
+
+enum class PropertyType : uint8_t
+{
+    UNKNOWN,
+    LINE_WIDTH,
+    ALPHA,
+    NAME,
+    LINE_STYLE,
+    COLOR,
+    EDGE_COLOR,
+    FACE_COLOR,
+    COLOR_MAP,
+    POINT_SIZE,
+    _PERSISTENT,
 };
 
 enum class Function : uint8_t
@@ -93,11 +99,10 @@ enum class DataStructure : uint8_t
 
 }
 
-enum class Property : uint8_t
+namespace properties
 {
-    UNKNOWN,
-    PERSISTENT,
-};
+    constexpr internal::PropertyType PERSISTENT = internal::PropertyType::_PERSISTENT;
+}
 
 }
 
