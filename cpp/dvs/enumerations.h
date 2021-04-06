@@ -22,7 +22,7 @@ enum class FunctionHeaderObjectType : uint16_t
     HAS_PAYLOAD,
     AZIMUTH,
     ELEVATION,
-    AXES_DIMENSIONS,
+    NUM_AXES,
     AXIS_MIN_MAX_VEC,
     POS2D,
     FIGURE_NUM,

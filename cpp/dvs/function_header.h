@@ -17,6 +17,17 @@ namespace internal
 {
 constexpr uint8_t max_num_bytes = SCHAR_MAX;
 
+template <typename T>
+uint8_t toUInt8(const T v)
+{
+    return static_cast<uint8_t>(v);
+}
+
+template <typename T>
+uint32_t toUInt32(const T v)
+{
+    return static_cast<uint32_t>(v);
+}
 
 struct FunctionHeaderObject
 {
@@ -145,105 +156,69 @@ template <typename T> DataType typeToDataTypeEnum()
     }
 }
 
-/*template <typename U> bool checkTypeValid(const AttributeType& object_type)
+template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object_type)
 {
-    if (object_type == AttributeType::NUM_BUFFERS_REQUIRED)
+    if (object_type == FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED)
     {
-        return std::is_same<U, char>::value;
+        return std::is_same<U, uint8_t>::value;
     }
-    else if (object_type == AttributeType::NUM_BYTES)
+    else if (object_type == FunctionHeaderObjectType::NUM_BYTES)
     {
-        return std::is_same<U, size_t>::value;
+        return std::is_same<U, uint32_t>::value;
     }
-    else if (object_type == AttributeType::DATA_STRUCTURE)
+    else if (object_type == FunctionHeaderObjectType::DATA_STRUCTURE)
     {
         return std::is_same<U, DataStructure>::value;
     }
-    else if (object_type == AttributeType::BYTES_PER_ELEMENT)
+    else if (object_type == FunctionHeaderObjectType::BYTES_PER_ELEMENT)
     {
-        return std::is_same<U, char>::value;
+        return std::is_same<U, uint8_t>::value;
     }
-    else if (object_type == AttributeType::DATA_TYPE)
+    else if (object_type == FunctionHeaderObjectType::DATA_TYPE)
     {
         return std::is_same<U, DataType>::value;
     }
-    else if (object_type == AttributeType::NUM_ELEMENTS)
+    else if (object_type == FunctionHeaderObjectType::NUM_ELEMENTS)
     {
-        return std::is_same<U, size_t>::value;
+        return std::is_same<U, uint32_t>::value;
     }
-    else if (object_type == AttributeType::DIMENSION_2D)
+    else if (object_type == FunctionHeaderObjectType::DIMENSION_2D)
     {
         return std::is_same<U, Dimension2D>::value;
     }
-    else if (object_type == AttributeType::HAS_PAYLOAD)
+    else if (object_type == FunctionHeaderObjectType::HAS_PAYLOAD)
     {
         return std::is_same<U, bool>::value;
     }
-    else if (object_type == AttributeType::AZIMUTH)
+    else if (object_type == FunctionHeaderObjectType::AZIMUTH)
     {
         return std::is_same<U, float>::value;
     }
-    else if (object_type == AttributeType::ELEVATION)
+    else if (object_type == FunctionHeaderObjectType::ELEVATION)
     {
         return std::is_same<U, float>::value;
     }
-    else if (object_type == AttributeType::AXES_DIMENSIONS)
+    else if (object_type == FunctionHeaderObjectType::NUM_AXES)
     {
-        return std::is_same<U, char>::value;
+        return std::is_same<U, uint8_t>::value;
     }
-    else if (object_type == AttributeType::AXIS_MIN_MAX_VEC)
+    else if (object_type == FunctionHeaderObjectType::AXIS_MIN_MAX_VEC)
     {
         return std::is_same<U, std::pair<Bound3D, Bound3D>>::value;
     }
-    else if (object_type == AttributeType::LINE_WIDTH)
+    else if (object_type == FunctionHeaderObjectType::FIGURE_NUM)
     {
-        return std::is_same<U, LineWidth>::value;
+        return std::is_same<U, uint8_t>::value;
     }
-    else if (object_type == AttributeType::FACE_COLOR)
-    {
-        return std::is_same<U, FaceColor>::value;
-    }
-    else if (object_type == AttributeType::EDGE_COLOR)
-    {
-        return std::is_same<U, EdgeColor>::value;
-    }
-    else if (object_type == AttributeType::COLOR)
-    {
-        return std::is_same<U, Color>::value;
-    }
-    else if (object_type == AttributeType::FIGURE_NUM)
-    {
-        return std::is_same<U, char>::value;
-    }
-    else if (object_type == AttributeType::ALPHA)
-    {
-        return std::is_same<U, Alpha>::value;
-    }
-    else if (object_type == AttributeType::LINE_STYLE)
-    {
-        return std::is_same<U, LineStyle>::value;
-    }
-    else if (object_type == AttributeType::NAME)
-    {
-        return std::is_same<U, Name>::value;
-    }
-    else if (object_type == AttributeType::COLOR_MAP)
-    {
-        return std::is_same<U, ColorMap>::value;
-    }
-    else if (object_type == AttributeType::FUNCTION)
+    else if (object_type == FunctionHeaderObjectType::FUNCTION)
     {
         return std::is_same<U, Function>::value;
     }
-    else if (object_type == AttributeType::POINT_SIZE)
+    else if (object_type == FunctionHeaderObjectType::PROPERTY)
     {
-        return std::is_same<U, PointSize>::value;
+        return std::is_base_of<PropertyBase, U>::value;
     }
-    else if (object_type == AttributeType::PROPERTY)
-    {
-        return std::is_same<U, Property>::value;
-    }
-    else if (object_type == AttributeType::POS2D)
+    else if (object_type == FunctionHeaderObjectType::POS2D)
     {
         return std::is_same<U, Pos2D>::value;
     }
@@ -253,7 +228,7 @@ template <typename T> DataType typeToDataTypeEnum()
     }
 }
 
-template <typename U> constexpr bool isCorrectType()
+/*template <typename U> constexpr bool isCorrectType()
 {
     return std::is_same<U, LineWidth>::value || std::is_same<U, Alpha>::value ||
            std::is_same<U, Name>::value || std::is_same<U, LineStyle>::value ||
@@ -342,7 +317,7 @@ public:
 
     template <typename U> void append(const FunctionHeaderObjectType& object_type, const U& data)
     {
-        // assert(checkTypeValid<U>(object_type) && "Invalid data type for object_type data!");
+        assert(checkTypeValid<U>(object_type) && "Invalid data type for object_type data!");
 
         values.push_back(FunctionHeaderObject());
         FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
@@ -353,6 +328,13 @@ public:
         assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
 
         fillBufferWithObjects(ptr->data, data);
+    }
+
+    bool hasType(const FunctionHeaderObjectType tp) const
+    {
+        return std::find_if(values.begin(), values.end(), [&tp] (const FunctionHeaderObject& fo) -> bool {
+            return fo.type == tp;
+        }) != values.end();
     }
 
     std::vector<FunctionHeaderObject> getValues() const
