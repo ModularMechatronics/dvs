@@ -115,27 +115,27 @@ TEST_F(TestProperties, TestLineStyle)
 
 TEST_F(TestProperties, TestColorBasic)
 {
-    const Color c0, c1(0.1f, 0.2f, 0.3f), c2 = Color::RED();
+    const Color c0, c1(1, 2, 3), c2 = Color::RED();
     ASSERT_EQ(c0.getPropertyType(), PropertyType::COLOR);
     ASSERT_EQ(c1.getPropertyType(), PropertyType::COLOR);
     ASSERT_EQ(c2.getPropertyType(), PropertyType::COLOR);
 
-    ASSERT_EQ(c1.red, 0.1f);
-    ASSERT_EQ(c1.green, 0.2f);
-    ASSERT_EQ(c1.blue, 0.3f);
+    ASSERT_EQ(c1.red, 1);
+    ASSERT_EQ(c1.green, 2);
+    ASSERT_EQ(c1.blue, 3);
 }
 
 TEST_F(TestProperties, TestColorTypes)
 {
-    const std::vector<Color> expected_colors = {{1.0f, 0.0f, 0.0f},
-                                                {0.0f, 1.0f, 0.0f},
-                                                {0.0f, 0.0f, 1.0f},
-                                                {0.0f, 1.0f, 1.0f},
-                                                {1.0f, 0.0f, 1.0f},
-                                                {1.0f, 1.0f, 0.0f},
-                                                {0.0f, 0.0f, 0.0f},
-                                                {1.0f, 1.0f, 1.0f},
-                                                {0.5f, 0.5f, 0.5f}};
+    const std::vector<Color> expected_colors = {{255, 0, 0},
+                                                {0, 255, 0},
+                                                {0, 0, 255},
+                                                {0, 255, 255},
+                                                {255, 0, 255},
+                                                {255, 255, 0},
+                                                {0, 0, 0},
+                                                {255, 255, 255},
+                                                {127, 127, 127}};
 
     const std::vector<std::function<Color(void)>> colors = {Color::RED, Color::GREEN, Color::BLUE,
                                                             Color::CYAN, Color::MAGENTA, Color::YELLOW,
@@ -172,26 +172,26 @@ TEST_F(TestProperties, TestColorTypes)
 
 TEST_F(TestProperties, TestEdgeColor)
 {
-    const EdgeColor ec0, ec1(0.1f, 0.2f, 0.3f), ec2 = EdgeColor::RED();
+    const EdgeColor ec0, ec1(1, 2, 3), ec2 = EdgeColor::RED();
     ASSERT_EQ(ec0.getPropertyType(), PropertyType::EDGE_COLOR);
     ASSERT_EQ(ec1.getPropertyType(), PropertyType::EDGE_COLOR);
     ASSERT_EQ(ec2.getPropertyType(), PropertyType::EDGE_COLOR);
 
-    ASSERT_EQ(ec1.red, 0.1f);
-    ASSERT_EQ(ec1.green, 0.2f);
-    ASSERT_EQ(ec1.blue, 0.3f);
+    ASSERT_EQ(ec1.red, 1);
+    ASSERT_EQ(ec1.green, 2);
+    ASSERT_EQ(ec1.blue, 3);
 }
 
 TEST_F(TestProperties, TestFaceColor)
 {
-    const FaceColor fc0, fc1(0.1f, 0.2f, 0.3f), fc2 = FaceColor::RED();
+    const FaceColor fc0, fc1(1, 2, 3), fc2 = FaceColor::RED();
     ASSERT_EQ(fc0.getPropertyType(), PropertyType::FACE_COLOR);
     ASSERT_EQ(fc1.getPropertyType(), PropertyType::FACE_COLOR);
     ASSERT_EQ(fc2.getPropertyType(), PropertyType::FACE_COLOR);
 
-    ASSERT_EQ(fc1.red, 0.1f);
-    ASSERT_EQ(fc1.green, 0.2f);
-    ASSERT_EQ(fc1.blue, 0.3f);
+    ASSERT_EQ(fc1.red, 1);
+    ASSERT_EQ(fc1.green, 2);
+    ASSERT_EQ(fc1.blue, 3);
 }
 
 TEST_F(TestProperties, TestColorMap)
