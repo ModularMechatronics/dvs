@@ -41,7 +41,7 @@ enum class PropertyType : uint8_t
     FACE_COLOR,
     COLOR_MAP,
     POINT_SIZE,
-    _PERSISTENT,
+    PERSISTENT,
 };
 
 enum class Function : uint8_t
@@ -108,7 +108,7 @@ enum class ColorMapType : uint8_t
 
 namespace properties
 {
-    constexpr internal::PropertyType PERSISTENT = internal::PropertyType::_PERSISTENT;
+    constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
 }
 
 }

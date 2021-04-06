@@ -113,7 +113,7 @@ TEST_F(TestFunctionHeader, TestBasic)
                     case dvs::internal::PropertyType::LINE_WIDTH:
                         ASSERT_EQ(values[k].getAs<prp::LineWidth>().data, lw.data);
                         break;
-                    case dvs::internal::PropertyType::_PERSISTENT:
+                    case dvs::internal::PropertyType::PERSISTENT:
                         ASSERT_EQ(values[k].getAs<PropertyType>(), prp::PERSISTENT);
                         break;
                     case dvs::internal::PropertyType::POINT_SIZE:
