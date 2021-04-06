@@ -36,11 +36,7 @@ TEST_F(TestFunctionHeader, TestBasic0)
     hdr.append(FunctionHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
     hdr.append(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
 
-    const prp::Color col(14, 56, 72);
-    const prp::Alpha alpha(0.1f);
-    const prp::LineWidth lw(0.4f);
-
-    variadicTemplateFunction(hdr, col, alpha, lw, prp::PERSISTENT);
+    variadicTemplateFunction(hdr, prp::Color(14, 56, 72), prp::Alpha(187), prp::LineWidth(4), prp::PERSISTENT);
 
     ASSERT_TRUE(hdr.hasType(FunctionHeaderObjectType::FUNCTION));
     ASSERT_TRUE(hdr.hasType(FunctionHeaderObjectType::DATA_STRUCTURE));
@@ -72,9 +68,9 @@ TEST_F(TestFunctionHeader, TestBasic)
     hdr.append(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
 
     const prp::Color col(14, 56, 72);
-    const prp::Alpha alpha(0.1f);
-    const prp::LineWidth lw(0.4f);
-    const prp::PointSize ps(0.634f);
+    const prp::Alpha alpha(187);
+    const prp::LineWidth lw(4);
+    const prp::PointSize ps(63);
 
     variadicTemplateFunction(hdr, col, alpha, lw, prp::PERSISTENT, ps);
 

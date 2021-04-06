@@ -51,19 +51,19 @@ namespace properties
 struct LineWidth : internal::PropertyBase
 {
 public:
-    float data;
+    uint8_t data;
 
     LineWidth() : internal::PropertyBase(internal::PropertyType::LINE_WIDTH) {}
-    LineWidth(const float linewidth) : internal::PropertyBase(internal::PropertyType::LINE_WIDTH), data(linewidth) {}
+    LineWidth(const uint8_t line_width) : internal::PropertyBase(internal::PropertyType::LINE_WIDTH), data(line_width) {}
 };
 
 struct Alpha : internal::PropertyBase
 {
 public:
-    float data;
+    uint8_t data;
 
     Alpha() : internal::PropertyBase(internal::PropertyType::ALPHA) {}
-    Alpha(const float alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
+    Alpha(const uint8_t alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
 };
 
 struct Name : internal::PropertyBase
@@ -330,9 +330,9 @@ public:
 struct PointSize : internal::PropertyBase
 {
 public:
-    float data;
+    uint8_t data;
     PointSize() : internal::PropertyBase(internal::PropertyType::POINT_SIZE) {}
-    PointSize(const float point_size) : internal::PropertyBase(internal::PropertyType::POINT_SIZE), data(point_size) {}
+    PointSize(const uint8_t point_size) : internal::PropertyBase(internal::PropertyType::POINT_SIZE), data(point_size) {}
 };
 
 }
