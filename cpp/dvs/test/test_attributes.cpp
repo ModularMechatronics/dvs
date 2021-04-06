@@ -10,8 +10,9 @@
 
 using namespace dvs;
 using namespace dvs::internal;
+using namespace dvs::properties;
 
-class TestAttributes : public testing::Test
+class TestProperties : public testing::Test
 {
 protected:
 
@@ -20,58 +21,58 @@ protected:
     void TearDown() override {}
 };
 
-/*TEST_F(TestAttributes, TestBasic)
+TEST_F(TestProperties, TestBasic)
 {
-    static_assert(std::is_base_of<AttributeBase, LineWidth>::value);
-    static_assert(std::is_base_of<AttributeBase, Alpha>::value);
-    static_assert(std::is_base_of<AttributeBase, Name>::value);
-    static_assert(std::is_base_of<AttributeBase, LineStyle>::value);
-    static_assert(std::is_base_of<AttributeBase, Color>::value);
-    static_assert(std::is_base_of<AttributeBase, EdgeColor>::value);
-    static_assert(std::is_base_of<AttributeBase, FaceColor>::value);
-    static_assert(std::is_base_of<AttributeBase, ColorMap>::value);
-    static_assert(std::is_base_of<AttributeBase, PointSize>::value);
+    static_assert(std::is_base_of<PropertyBase, LineWidth>::value);
+    static_assert(std::is_base_of<PropertyBase, Alpha>::value);
+    static_assert(std::is_base_of<PropertyBase, Name>::value);
+    static_assert(std::is_base_of<PropertyBase, LineStyle>::value);
+    static_assert(std::is_base_of<PropertyBase, Color>::value);
+    static_assert(std::is_base_of<PropertyBase, EdgeColor>::value);
+    static_assert(std::is_base_of<PropertyBase, FaceColor>::value);
+    static_assert(std::is_base_of<PropertyBase, ColorMap>::value);
+    static_assert(std::is_base_of<PropertyBase, PointSize>::value);
 }
 
-TEST_F(TestAttributes, TestAttributeBase)
+TEST_F(TestProperties, TestPropertyBase)
 {
-    const AttributeBase ab0;
-    ASSERT_EQ(ab0.getAttributeType(), AttributeType::UNKNOWN);
+    const PropertyBase pty0;
+    ASSERT_EQ(pty0.getPropertyType(), PropertyType::UNKNOWN);
 
-    for(size_t k = 0; k < static_cast<int>(AttributeType::PROPERTY); k++)
+    for(size_t k = 0; k < static_cast<int>(PropertyType::_PERSISTENT); k++)
     {
-        const AttributeType at_type = static_cast<AttributeType>(k);
-        const AttributeBase ab1(at_type);
-        ASSERT_EQ(ab1.getAttributeType(), at_type);
+        const PropertyType at_type = static_cast<PropertyType>(k);
+        const PropertyBase ab1(at_type);
+        ASSERT_EQ(ab1.getPropertyType(), at_type);
     }
 }
 
-TEST_F(TestAttributes, TestLinewidth)
+TEST_F(TestProperties, TestLinewidth)
 {
     const float lw_val = 3.14f;
     const LineWidth lw0, lw1(lw_val);
-    ASSERT_EQ(lw0.getAttributeType(), AttributeType::LINE_WIDTH);
-    ASSERT_EQ(lw1.getAttributeType(), AttributeType::LINE_WIDTH);
+    ASSERT_EQ(lw0.getPropertyType(), PropertyType::LINE_WIDTH);
+    ASSERT_EQ(lw1.getPropertyType(), PropertyType::LINE_WIDTH);
     ASSERT_EQ(lw1.data, lw_val);
 }
 
-TEST_F(TestAttributes, TestAlpha)
+TEST_F(TestProperties, TestAlpha)
 {
     const float alpha_val = 3.14f;
     const Alpha a0, a1(alpha_val);
-    ASSERT_EQ(a0.getAttributeType(), AttributeType::ALPHA);
-    ASSERT_EQ(a1.getAttributeType(), AttributeType::ALPHA);
+    ASSERT_EQ(a0.getPropertyType(), PropertyType::ALPHA);
+    ASSERT_EQ(a1.getPropertyType(), PropertyType::ALPHA);
     ASSERT_EQ(a1.data, alpha_val);
 }
 
-TEST_F(TestAttributes, TestNameBasic)
+TEST_F(TestProperties, TestNameBasic)
 {
     static_assert(Name::max_length == 10);  // Can be changed, just as long at it's a conscious decision
 
     const char* name_str = "a name";
     const Name n0, n1(name_str);
-    ASSERT_EQ(n0.getAttributeType(), AttributeType::NAME);
-    ASSERT_EQ(n1.getAttributeType(), AttributeType::NAME);
+    ASSERT_EQ(n0.getPropertyType(), PropertyType::NAME);
+    ASSERT_EQ(n1.getPropertyType(), PropertyType::NAME);
 
     for(size_t k = 0; k < (Name::max_length + 1); k++)
     {
@@ -80,7 +81,7 @@ TEST_F(TestAttributes, TestNameBasic)
     ASSERT_EQ(0, std::strcmp(n1.data, name_str));
 }
 
-TEST_F(TestAttributes, TestNameEqualityOperator)
+TEST_F(TestProperties, TestNameEqualityOperator)
 {
     const char* a_name = "a name";
     const char* another_name = "anoth name";
@@ -91,19 +92,19 @@ TEST_F(TestAttributes, TestNameEqualityOperator)
     ASSERT_FALSE(n0 == n2);
 }
 
-TEST_F(TestAttributes, TestSafeStringLenCheck)
+TEST_F(TestProperties, TestSafeStringLenCheck)
 {
     const char* a_name = "a name";
     ASSERT_EQ(std::strlen(a_name), safeStringLenCheck(a_name, 20));
     ASSERT_EQ(static_cast<size_t>(5), safeStringLenCheck(a_name, 5));
 }
 
-TEST_F(TestAttributes, TestLineStyle)
+TEST_F(TestProperties, TestLineStyle)
 {
     const char* ls_str = "o+";
     const LineStyle ls0, ls1(ls_str);
-    ASSERT_EQ(ls0.getAttributeType(), AttributeType::LINE_STYLE);
-    ASSERT_EQ(ls1.getAttributeType(), AttributeType::LINE_STYLE);
+    ASSERT_EQ(ls0.getPropertyType(), PropertyType::LINE_STYLE);
+    ASSERT_EQ(ls1.getPropertyType(), PropertyType::LINE_STYLE);
     
     for(size_t k = 0; k < (LineStyle::max_length + 1); k++)
     {
@@ -112,21 +113,22 @@ TEST_F(TestAttributes, TestLineStyle)
     ASSERT_EQ(0, std::strcmp(ls1.data, ls_str));
 }
 
-TEST_F(TestAttributes, TestColorBasic)
+TEST_F(TestProperties, TestColorBasic)
 {
-    const Color c0, c1(0.1f, 0.2f, 0.3f), c2('r');
-    ASSERT_EQ(c0.getAttributeType(), AttributeType::COLOR);
-    ASSERT_EQ(c1.getAttributeType(), AttributeType::COLOR);
-    ASSERT_EQ(c2.getAttributeType(), AttributeType::COLOR);
+    const Color c0, c1(0.1f, 0.2f, 0.3f), c2 = Color::RED();
+    ASSERT_EQ(c0.getPropertyType(), PropertyType::COLOR);
+    ASSERT_EQ(c1.getPropertyType(), PropertyType::COLOR);
+    ASSERT_EQ(c2.getPropertyType(), PropertyType::COLOR);
 
     ASSERT_EQ(c1.red, 0.1f);
     ASSERT_EQ(c1.green, 0.2f);
     ASSERT_EQ(c1.blue, 0.3f);
 }
 
-TEST_F(TestAttributes, TestColorTypes)
+#include <functional>
+
+TEST_F(TestProperties, TestColorTypes)
 {
-    const std::vector<char> colors = {'r', 'g', 'b', 'c', 'm', 'y', 'k', 'w', 'u'};
     const std::vector<Color> expected_colors = {{1.0f, 0.0f, 0.0f},
                                                 {0.0f, 1.0f, 0.0f},
                                                 {0.0f, 0.0f, 1.0f},
@@ -135,17 +137,26 @@ TEST_F(TestAttributes, TestColorTypes)
                                                 {1.0f, 1.0f, 0.0f},
                                                 {0.0f, 0.0f, 0.0f},
                                                 {1.0f, 1.0f, 1.0f},
-                                                {0.5f, 0.5f, 0.5f},};
+                                                {0.5f, 0.5f, 0.5f}};
 
+    const std::vector<std::function<Color(void)>> colors = {Color::RED, Color::GREEN, Color::BLUE,
+                                                            Color::CYAN, Color::MAGENTA, Color::YELLOW,
+                                                            Color::BLACK, Color::WHITE, Color::GRAY};
+    const std::vector<std::function<FaceColor(void)>> face_colors = {FaceColor::RED, FaceColor::GREEN, FaceColor::BLUE,
+                                                                     FaceColor::CYAN, FaceColor::MAGENTA, FaceColor::YELLOW,
+                                                                     FaceColor::BLACK, FaceColor::WHITE, FaceColor::GRAY};
+    const std::vector<std::function<EdgeColor(void)>> edge_colors = {EdgeColor::RED, EdgeColor::GREEN, EdgeColor::BLUE,
+                                                                     EdgeColor::CYAN, EdgeColor::MAGENTA, EdgeColor::YELLOW,
+                                                                     EdgeColor::BLACK, EdgeColor::WHITE, EdgeColor::GRAY};
     for(size_t k = 0; k < expected_colors.size(); k++)
     {
-        const Color c(colors[k]);
-        const EdgeColor ec(colors[k]);
-        const FaceColor fc(colors[k]);
+        const Color c = colors[k]();
+        const EdgeColor ec = edge_colors[k]();
+        const FaceColor fc = face_colors[k]();
 
-        ASSERT_EQ(c.getAttributeType(), AttributeType::COLOR);
-        ASSERT_EQ(ec.getAttributeType(), AttributeType::EDGE_COLOR);
-        ASSERT_EQ(fc.getAttributeType(), AttributeType::FACE_COLOR);
+        ASSERT_EQ(c.getPropertyType(), PropertyType::COLOR);
+        ASSERT_EQ(ec.getPropertyType(), PropertyType::EDGE_COLOR);
+        ASSERT_EQ(fc.getPropertyType(), PropertyType::FACE_COLOR);
 
         ASSERT_EQ(c.red, expected_colors[k].red);
         ASSERT_EQ(c.green, expected_colors[k].green);
@@ -161,37 +172,36 @@ TEST_F(TestAttributes, TestColorTypes)
     }
 }
 
-TEST_F(TestAttributes, TestEdgeColor)
+TEST_F(TestProperties, TestEdgeColor)
 {
-    const EdgeColor ec0, ec1(0.1f, 0.2f, 0.3f), ec2('r');
-    ASSERT_EQ(ec0.getAttributeType(), AttributeType::EDGE_COLOR);
-    ASSERT_EQ(ec1.getAttributeType(), AttributeType::EDGE_COLOR);
-    ASSERT_EQ(ec2.getAttributeType(), AttributeType::EDGE_COLOR);
+    const EdgeColor ec0, ec1(0.1f, 0.2f, 0.3f), ec2 = EdgeColor::RED();
+    ASSERT_EQ(ec0.getPropertyType(), PropertyType::EDGE_COLOR);
+    ASSERT_EQ(ec1.getPropertyType(), PropertyType::EDGE_COLOR);
+    ASSERT_EQ(ec2.getPropertyType(), PropertyType::EDGE_COLOR);
 
     ASSERT_EQ(ec1.red, 0.1f);
     ASSERT_EQ(ec1.green, 0.2f);
     ASSERT_EQ(ec1.blue, 0.3f);
 }
 
-TEST_F(TestAttributes, TestFaceColor)
+TEST_F(TestProperties, TestFaceColor)
 {
-    const FaceColor fc0, fc1(0.1f, 0.2f, 0.3f), fc2('r');
-    ASSERT_EQ(fc0.getAttributeType(), AttributeType::FACE_COLOR);
-    ASSERT_EQ(fc1.getAttributeType(), AttributeType::FACE_COLOR);
-    ASSERT_EQ(fc2.getAttributeType(), AttributeType::FACE_COLOR);
+    const FaceColor fc0, fc1(0.1f, 0.2f, 0.3f), fc2 = FaceColor::RED();
+    ASSERT_EQ(fc0.getPropertyType(), PropertyType::FACE_COLOR);
+    ASSERT_EQ(fc1.getPropertyType(), PropertyType::FACE_COLOR);
+    ASSERT_EQ(fc2.getPropertyType(), PropertyType::FACE_COLOR);
 
     ASSERT_EQ(fc1.red, 0.1f);
     ASSERT_EQ(fc1.green, 0.2f);
     ASSERT_EQ(fc1.blue, 0.3f);
 }
 
-TEST_F(TestAttributes, TestPointSize)
+TEST_F(TestProperties, TestPointSize)
 {
     const float point_size = 2.71f;
     const PointSize ps0, ps1(point_size);
-    ASSERT_EQ(ps0.getAttributeType(), AttributeType::POINT_SIZE);
-    ASSERT_EQ(ps1.getAttributeType(), AttributeType::POINT_SIZE);
+    ASSERT_EQ(ps0.getPropertyType(), PropertyType::POINT_SIZE);
+    ASSERT_EQ(ps1.getPropertyType(), PropertyType::POINT_SIZE);
 
     ASSERT_EQ(ps1.data, point_size);
 }
-*/
