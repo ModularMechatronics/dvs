@@ -115,40 +115,54 @@ public:
     }
 };
 
-}
-namespace properties
-{
-struct Color;
-}
-
-namespace internal
-{
-
-inline properties::Color charToColor(const char c);
-
-}
-
-namespace properties
-{
-
 struct Color : internal::PropertyBase
 {
 public:
     float red, green, blue;
 
-    static constexpr int RED = 'r';
-    static constexpr int GREEN = 'g';
-    static constexpr int BLUE = 'b';
-    static constexpr int CYAN = 'c';
-    static constexpr int MAGENTA = 'm';
-    static constexpr int YELLOW = 'y';
-    static constexpr int BLACK = 'k';
-    static constexpr int WHITE = 'w';
-    static constexpr int GRAY = 'u';
-
-    static Color makeRed()
+    static Color RED()
     {
         return Color(1.0f, 0.0f, 0.0f);
+    }
+
+    static Color GREEN()
+    {
+        return Color(0.0f, 1.0f, 0.0f);
+    }
+
+    static Color BLUE()
+    {
+        return Color(0.0f, 0.0f, 1.0f);
+    }
+
+    static Color CYAN()
+    {
+        return Color(0.0f, 1.0f, 1.0f);
+    }
+
+    static Color MAGENTA()
+    {
+        return Color(1.0f, 0.0f, 1.0f);
+    }
+
+    static Color YELLOW()
+    {
+        return Color(1.0f, 1.0f, 0.0f);
+    }
+
+    static Color BLACK()
+    {
+        return Color(0.0f, 0.0f, 0.0f);
+    }
+
+    static Color WHITE()
+    {
+        return Color(1.0f, 1.0f, 1.0f);
+    }
+
+    static Color GRAY()
+    {
+        return Color(0.5f, 0.5f, 0.5f);
     }
 
     Color() : internal::PropertyBase(internal::PropertyType::COLOR) {}
@@ -156,17 +170,9 @@ public:
     Color(const float red_, const float green_, const float blue_)
         : internal::PropertyBase(internal::PropertyType::COLOR), red(red_), green(green_), blue(blue_)
     {
-        assert(((red_ >= 0.0f) && (red_ <= 1.0f)) &&
-               "Red color out of bounds! Should be constrained between [0.0, 1.0]");
-        assert(((green_ >= 0.0f) && (green_ <= 1.0f)) &&
-               "Green color out of bounds! Should be constrained between [0.0, 1.0]");
-        assert(((blue_ >= 0.0f) && (blue_ <= 1.0f)) &&
-               "Blue color out of bounds! Should be constrained between [0.0, 1.0]");
-    }
-
-    Color(const char c) : internal::PropertyBase(internal::PropertyType::COLOR), red(0.0f), green(0.0f), blue(0.0f)
-    {
-        *this = internal::charToColor(c);
+        red = std::min(1.0f, std::max(red, 0.0f));
+        green = std::min(1.0f, std::max(green, 0.0f));
+        blue = std::min(1.0f, std::max(blue, 0.0f));
     }
 };
 
@@ -175,37 +181,59 @@ struct EdgeColor : internal::PropertyBase
 public:
     float red, green, blue;
 
+    static EdgeColor RED()
+    {
+        return EdgeColor(1.0f, 0.0f, 0.0f);
+    }
+
+    static EdgeColor GREEN()
+    {
+        return EdgeColor(0.0f, 1.0f, 0.0f);
+    }
+
+    static EdgeColor BLUE()
+    {
+        return EdgeColor(0.0f, 0.0f, 1.0f);
+    }
+
+    static EdgeColor CYAN()
+    {
+        return EdgeColor(0.0f, 1.0f, 1.0f);
+    }
+
+    static EdgeColor MAGENTA()
+    {
+        return EdgeColor(1.0f, 0.0f, 1.0f);
+    }
+
+    static EdgeColor YELLOW()
+    {
+        return EdgeColor(1.0f, 1.0f, 0.0f);
+    }
+
+    static EdgeColor BLACK()
+    {
+        return EdgeColor(0.0f, 0.0f, 0.0f);
+    }
+
+    static EdgeColor WHITE()
+    {
+        return EdgeColor(1.0f, 1.0f, 1.0f);
+    }
+
+    static EdgeColor GRAY()
+    {
+        return EdgeColor(0.5f, 0.5f, 0.5f);
+    }
+
     EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR) {}
 
     EdgeColor(const float red_, const float green_, const float blue_)
         : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), red(red_), green(green_), blue(blue_)
     {
-    }
-
-    EdgeColor(const char c) : internal::PropertyBase(internal::PropertyType::EDGE_COLOR)
-    {
-        const Color color(c);
-        red = color.red;
-        green = color.green;
-        blue = color.blue;
-    }
-
-    EdgeColor(const Color& color)
-    {
-        property_type_ = internal::PropertyType::EDGE_COLOR;
-        red = color.red;
-        green = color.green;
-        blue = color.blue;
-    }
-
-    EdgeColor& operator=(const Color& color)
-    {
-        this->property_type_ = internal::PropertyType::EDGE_COLOR;
-        this->red = color.red;
-        this->green = color.green;
-        this->blue = color.blue;
-
-        return *this;
+        red = std::min(1.0f, std::max(red, 0.0f));
+        green = std::min(1.0f, std::max(green, 0.0f));
+        blue = std::min(1.0f, std::max(blue, 0.0f));
     }
 };
 
@@ -214,37 +242,59 @@ struct FaceColor : internal::PropertyBase
 public:
     float red, green, blue;
 
+    static FaceColor RED()
+    {
+        return FaceColor(1.0f, 0.0f, 0.0f);
+    }
+
+    static FaceColor GREEN()
+    {
+        return FaceColor(0.0f, 1.0f, 0.0f);
+    }
+
+    static FaceColor BLUE()
+    {
+        return FaceColor(0.0f, 0.0f, 1.0f);
+    }
+
+    static FaceColor CYAN()
+    {
+        return FaceColor(0.0f, 1.0f, 1.0f);
+    }
+
+    static FaceColor MAGENTA()
+    {
+        return FaceColor(1.0f, 0.0f, 1.0f);
+    }
+
+    static FaceColor YELLOW()
+    {
+        return FaceColor(1.0f, 1.0f, 0.0f);
+    }
+
+    static FaceColor BLACK()
+    {
+        return FaceColor(0.0f, 0.0f, 0.0f);
+    }
+
+    static FaceColor WHITE()
+    {
+        return FaceColor(1.0f, 1.0f, 1.0f);
+    }
+
+    static FaceColor GRAY()
+    {
+        return FaceColor(0.5f, 0.5f, 0.5f);
+    }
+
     FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
 
     FaceColor(const float red_, const float green_, const float blue_)
         : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(red_), green(green_), blue(blue_)
     {
-    }
-
-    FaceColor(const char c) : internal::PropertyBase(internal::PropertyType::FACE_COLOR)
-    {
-        const Color color(c);
-        red = color.red;
-        green = color.green;
-        blue = color.blue;
-    }
-
-    FaceColor(const Color& color)
-    {
-        property_type_ = internal::PropertyType::FACE_COLOR;
-        red = color.red;
-        green = color.green;
-        blue = color.blue;
-    }
-
-    FaceColor& operator=(const Color& color)
-    {
-        this->property_type_ = internal::PropertyType::FACE_COLOR;
-        this->red = color.red;
-        this->green = color.green;
-        this->blue = color.blue;
-
-        return *this;
+        red = std::min(1.0f, std::max(red, 0.0f));
+        green = std::min(1.0f, std::max(green, 0.0f));
+        blue = std::min(1.0f, std::max(blue, 0.0f));
     }
 };
 
@@ -272,76 +322,6 @@ public:
     PointSize() : internal::PropertyBase(internal::PropertyType::POINT_SIZE) {}
     PointSize(const float point_size) : internal::PropertyBase(internal::PropertyType::POINT_SIZE), data(point_size) {}
 };
-
-}
-
-namespace internal
-{
-
-inline properties::Color charToColor(const char c)
-{
-    assert((c == 'r') || 
-           (c == 'g') || 
-           (c == 'b') || 
-           (c == 'c') || 
-           (c == 'm') || 
-           (c == 'y') || 
-           (c == 'k') || 
-           (c == 'w') || 
-           (c == 'u') && "Invalid color input!");
-
-    properties::Color oc;
-    oc.red = 0.0f;
-    oc.green = 0.0f;
-    oc.blue = 0.0f;
-
-    switch (c)
-    {
-        case properties::Color::RED:
-            oc.red = 1.0f;
-            break;
-        case properties::Color::GREEN:
-            oc.green = 1.0f;
-            break;
-        case properties::Color::BLUE:
-            oc.blue = 1.0f;
-            break;
-        case properties::Color::CYAN:
-            oc.green = 1.0f;
-            oc.blue = 1.0f;
-            break;
-        case properties::Color::MAGENTA:
-            oc.red = 1.0f;
-            oc.blue = 1.0f;
-            break;
-        case properties::Color::YELLOW:
-            oc.red = 1.0f;
-            oc.green = 1.0f;
-            break;
-        case properties::Color::BLACK:
-            oc.red = 0.0f;
-            oc.green = 0.0f;
-            oc.blue = 0.0f;
-            break;
-        case properties::Color::WHITE:
-            oc.red = 1.0f;
-            oc.green = 1.0f;
-            oc.blue = 1.0f;
-            break;
-        case properties::Color::GRAY:
-            oc.red = 0.5f;
-            oc.green = 0.5f;
-            oc.blue = 0.5f;
-            break;
-        default:
-            oc.red = 0.0f;
-            oc.green = 0.0f;
-            oc.blue = 0.0f;
-            break;
-    }
-
-    return oc;
-}
 
 }
 
