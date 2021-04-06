@@ -39,7 +39,7 @@ TEST_F(TestProperties, TestPropertyBase)
     const PropertyBase pty0;
     ASSERT_EQ(pty0.getPropertyType(), PropertyType::UNKNOWN);
 
-    for(size_t k = 0; k < static_cast<int>(PropertyType::_PERSISTENT); k++)
+    for(size_t k = 0; k < static_cast<int>(PropertyType::PERSISTENT); k++)
     {
         const PropertyType at_type = static_cast<PropertyType>(k);
         const PropertyBase ab1(at_type);
