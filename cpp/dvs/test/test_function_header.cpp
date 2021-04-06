@@ -36,7 +36,7 @@ TEST_F(TestFunctionHeader, TestBasic0)
     hdr.append(FunctionHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
     hdr.append(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
 
-    const prp::Color col(0.14f, 0.56f, 0.72f);
+    const prp::Color col(14, 56, 72);
     const prp::Alpha alpha(0.1f);
     const prp::LineWidth lw(0.4f);
 
@@ -71,7 +71,7 @@ TEST_F(TestFunctionHeader, TestBasic)
     hdr.append(FunctionHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
     hdr.append(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
 
-    const prp::Color col(0.14f, 0.56f, 0.72f);
+    const prp::Color col(14, 56, 72);
     const prp::Alpha alpha(0.1f);
     const prp::LineWidth lw(0.4f);
     const prp::PointSize ps(0.634f);

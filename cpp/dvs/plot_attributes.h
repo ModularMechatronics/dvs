@@ -118,183 +118,183 @@ public:
 struct Color : internal::PropertyBase
 {
 public:
-    float red, green, blue;
+    uint8_t red, green, blue;
 
     static Color RED()
     {
-        return Color(1.0f, 0.0f, 0.0f);
+        return Color(255, 0, 0);
     }
 
     static Color GREEN()
     {
-        return Color(0.0f, 1.0f, 0.0f);
+        return Color(0, 255, 0);
     }
 
     static Color BLUE()
     {
-        return Color(0.0f, 0.0f, 1.0f);
+        return Color(0, 0, 255);
     }
 
     static Color CYAN()
     {
-        return Color(0.0f, 1.0f, 1.0f);
+        return Color(0, 255, 255);
     }
 
     static Color MAGENTA()
     {
-        return Color(1.0f, 0.0f, 1.0f);
+        return Color(255, 0, 255);
     }
 
     static Color YELLOW()
     {
-        return Color(1.0f, 1.0f, 0.0f);
+        return Color(255, 255, 0);
     }
 
     static Color BLACK()
     {
-        return Color(0.0f, 0.0f, 0.0f);
+        return Color(0, 0, 0);
     }
 
     static Color WHITE()
     {
-        return Color(1.0f, 1.0f, 1.0f);
+        return Color(255, 255, 255);
     }
 
     static Color GRAY()
     {
-        return Color(0.5f, 0.5f, 0.5f);
+        return Color(127, 127, 127);
     }
 
     Color() : internal::PropertyBase(internal::PropertyType::COLOR) {}
 
-    Color(const float red_, const float green_, const float blue_)
+    Color(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::COLOR), red(red_), green(green_), blue(blue_)
     {
-        red = std::min(1.0f, std::max(red, 0.0f));
-        green = std::min(1.0f, std::max(green, 0.0f));
-        blue = std::min(1.0f, std::max(blue, 0.0f));
+        // red = std::min(255, std::max(red, 0));
+        // green = std::min(255, std::max(green, 0));
+        // blue = std::min(255, std::max(blue, 0));
     }
 };
 
 struct EdgeColor : internal::PropertyBase
 {
 public:
-    float red, green, blue;
+    uint8_t red, green, blue;
 
     static EdgeColor RED()
     {
-        return EdgeColor(1.0f, 0.0f, 0.0f);
+        return EdgeColor(255, 0, 0);
     }
 
     static EdgeColor GREEN()
     {
-        return EdgeColor(0.0f, 1.0f, 0.0f);
+        return EdgeColor(0, 255, 0);
     }
 
     static EdgeColor BLUE()
     {
-        return EdgeColor(0.0f, 0.0f, 1.0f);
+        return EdgeColor(0, 0, 255);
     }
 
     static EdgeColor CYAN()
     {
-        return EdgeColor(0.0f, 1.0f, 1.0f);
+        return EdgeColor(0, 255, 255);
     }
 
     static EdgeColor MAGENTA()
     {
-        return EdgeColor(1.0f, 0.0f, 1.0f);
+        return EdgeColor(255, 0, 255);
     }
 
     static EdgeColor YELLOW()
     {
-        return EdgeColor(1.0f, 1.0f, 0.0f);
+        return EdgeColor(255, 255, 0);
     }
 
     static EdgeColor BLACK()
     {
-        return EdgeColor(0.0f, 0.0f, 0.0f);
+        return EdgeColor(0, 0, 0);
     }
 
     static EdgeColor WHITE()
     {
-        return EdgeColor(1.0f, 1.0f, 1.0f);
+        return EdgeColor(255, 255, 255);
     }
 
     static EdgeColor GRAY()
     {
-        return EdgeColor(0.5f, 0.5f, 0.5f);
+        return EdgeColor(127, 127, 127);
     }
 
     EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR) {}
 
-    EdgeColor(const float red_, const float green_, const float blue_)
+    EdgeColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), red(red_), green(green_), blue(blue_)
     {
-        red = std::min(1.0f, std::max(red, 0.0f));
-        green = std::min(1.0f, std::max(green, 0.0f));
-        blue = std::min(1.0f, std::max(blue, 0.0f));
+        // red = std::min(255, std::max(red, 0));
+        // green = std::min(255, std::max(green, 0));
+        // blue = std::min(255, std::max(blue, 0));
     }
 };
 
 struct FaceColor : internal::PropertyBase
 {
 public:
-    float red, green, blue;
+    uint8_t red, green, blue;
 
     static FaceColor RED()
     {
-        return FaceColor(1.0f, 0.0f, 0.0f);
+        return FaceColor(255, 0, 0);
     }
 
     static FaceColor GREEN()
     {
-        return FaceColor(0.0f, 1.0f, 0.0f);
+        return FaceColor(0, 255, 0);
     }
 
     static FaceColor BLUE()
     {
-        return FaceColor(0.0f, 0.0f, 1.0f);
+        return FaceColor(0, 0, 255);
     }
 
     static FaceColor CYAN()
     {
-        return FaceColor(0.0f, 1.0f, 1.0f);
+        return FaceColor(0, 255, 255);
     }
 
     static FaceColor MAGENTA()
     {
-        return FaceColor(1.0f, 0.0f, 1.0f);
+        return FaceColor(255, 0, 255);
     }
 
     static FaceColor YELLOW()
     {
-        return FaceColor(1.0f, 1.0f, 0.0f);
+        return FaceColor(255, 255, 0);
     }
 
     static FaceColor BLACK()
     {
-        return FaceColor(0.0f, 0.0f, 0.0f);
+        return FaceColor(0, 0, 0);
     }
 
     static FaceColor WHITE()
     {
-        return FaceColor(1.0f, 1.0f, 1.0f);
+        return FaceColor(255, 255, 255);
     }
 
     static FaceColor GRAY()
     {
-        return FaceColor(0.5f, 0.5f, 0.5f);
+        return FaceColor(127, 127, 127);
     }
 
-    FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(0.0f), green(0.0f), blue(0.0f) {}
+    FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(0), green(0), blue(0) {}
 
-    FaceColor(const float red_, const float green_, const float blue_)
+    FaceColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(red_), green(green_), blue(blue_)
     {
-        red = std::min(1.0f, std::max(red, 0.0f));
-        green = std::min(1.0f, std::max(green, 0.0f));
-        blue = std::min(1.0f, std::max(blue, 0.0f));
+        // red = std::min(255, std::max(red, 0));
+        // green = std::min(255, std::max(green, 0));
+        // blue = std::min(255, std::max(blue, 0));
     }
 };
 
