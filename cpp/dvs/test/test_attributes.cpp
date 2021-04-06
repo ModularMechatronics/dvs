@@ -49,7 +49,7 @@ TEST_F(TestProperties, TestPropertyBase)
 
 TEST_F(TestProperties, TestLinewidth)
 {
-    const float lw_val = 3.14f;
+    const uint8_t lw_val = 243;
     const LineWidth lw0, lw1(lw_val);
     ASSERT_EQ(lw0.getPropertyType(), PropertyType::LINE_WIDTH);
     ASSERT_EQ(lw1.getPropertyType(), PropertyType::LINE_WIDTH);
@@ -58,7 +58,7 @@ TEST_F(TestProperties, TestLinewidth)
 
 TEST_F(TestProperties, TestAlpha)
 {
-    const float alpha_val = 3.14f;
+    const uint8_t alpha_val = 243;
     const Alpha a0, a1(alpha_val);
     ASSERT_EQ(a0.getPropertyType(), PropertyType::ALPHA);
     ASSERT_EQ(a1.getPropertyType(), PropertyType::ALPHA);
@@ -207,7 +207,7 @@ TEST_F(TestProperties, TestColorMap)
 
 TEST_F(TestProperties, TestPointSize)
 {
-    const float point_size = 2.71f;
+    const uint8_t point_size = 172;
     const PointSize ps0, ps1(point_size);
     ASSERT_EQ(ps0.getPropertyType(), PropertyType::POINT_SIZE);
     ASSERT_EQ(ps1.getPropertyType(), PropertyType::POINT_SIZE);
