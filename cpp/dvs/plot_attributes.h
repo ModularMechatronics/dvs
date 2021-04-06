@@ -301,18 +301,30 @@ public:
 struct ColorMap : internal::PropertyBase
 {
 public:
-    int data;
+    internal::ColorMapType data;
 
-    static constexpr int JET = 1;
-    static constexpr int RAINBOW = 2;
-    static constexpr int MAGMA = 3;
-    static constexpr int VIRIDIS = 4;
-
-    ColorMap() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(JET) {}
-    ColorMap(const int i) : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(i)
+    static ColorMap JET()
     {
-        assert(((i >= 1) && (i <= 4)) && "Incorrect color map input! A value in the interval [1, 4] is expected.");
+        return ColorMap(internal::ColorMapType::JET);
     }
+
+    static ColorMap RAINBOW()
+    {
+        return ColorMap(internal::ColorMapType::RAINBOW);
+    }
+
+    static ColorMap MAGMA()
+    {
+        return ColorMap(internal::ColorMapType::MAGMA);
+    }
+
+    static ColorMap VIRIDIS()
+    {
+        return ColorMap(internal::ColorMapType::VIRIDIS);
+    }
+
+    ColorMap() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(internal::ColorMapType::JET) {}
+    ColorMap(const internal::ColorMapType ct) : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(ct) {}
 };
 
 struct PointSize : internal::PropertyBase
