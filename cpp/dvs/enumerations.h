@@ -95,6 +95,15 @@ enum class DataStructure : uint8_t
     TEXT
 };
 
+enum class ColorMapType : uint8_t
+{
+    UNKNOWN,
+    JET,
+    RAINBOW,
+    MAGMA,
+    VIRIDIS
+};
+
 }
 
 namespace properties

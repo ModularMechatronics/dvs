@@ -105,7 +105,7 @@ TEST_F(TestProperties, TestLineStyle)
     const LineStyle ls0, ls1(ls_str);
     ASSERT_EQ(ls0.getPropertyType(), PropertyType::LINE_STYLE);
     ASSERT_EQ(ls1.getPropertyType(), PropertyType::LINE_STYLE);
-    
+
     for(size_t k = 0; k < (LineStyle::max_length + 1); k++)
     {
         ASSERT_EQ(static_cast<char>(0), ls0.data[k]);
@@ -124,8 +124,6 @@ TEST_F(TestProperties, TestColorBasic)
     ASSERT_EQ(c1.green, 0.2f);
     ASSERT_EQ(c1.blue, 0.3f);
 }
-
-#include <functional>
 
 TEST_F(TestProperties, TestColorTypes)
 {
@@ -194,6 +192,17 @@ TEST_F(TestProperties, TestFaceColor)
     ASSERT_EQ(fc1.red, 0.1f);
     ASSERT_EQ(fc1.green, 0.2f);
     ASSERT_EQ(fc1.blue, 0.3f);
+}
+
+TEST_F(TestProperties, TestColorMap)
+{
+    const internal::ColorMapType cm_type = ColorMapType::MAGMA;
+    const ColorMap cm0, cm1(cm_type), cm2 = ColorMap::MAGMA();
+    ASSERT_EQ(cm0.getPropertyType(), PropertyType::COLOR_MAP);
+    ASSERT_EQ(cm1.getPropertyType(), PropertyType::COLOR_MAP);
+
+    ASSERT_EQ(cm1.data, cm_type);
+    ASSERT_EQ(cm2.data, cm_type);
 }
 
 TEST_F(TestProperties, TestPointSize)
