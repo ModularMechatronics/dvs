@@ -11,6 +11,8 @@
 using namespace dvs;
 using namespace dvs::internal;
 
+namespace prp = dvs::properties;
+
 class TestFunctionHeader : public testing::Test
 {
 protected:
@@ -26,7 +28,40 @@ void variadicTemplateFunction(FunctionHeader &hdr, const Us&... settings)
     hdr.extend(settings...);
 }
 
-namespace prp = dvs::properties;
+TEST_F(TestFunctionHeader, TestBasic0)
+{
+    FunctionHeader hdr;
+    hdr.append(FunctionHeaderObjectType::FUNCTION, Function::PLOT2);
+    hdr.append(FunctionHeaderObjectType::DATA_STRUCTURE, DataStructure::VECTOR);
+    hdr.append(FunctionHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
+    hdr.append(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
+
+    const prp::Color col(0.14f, 0.56f, 0.72f);
+    const prp::Alpha alpha(0.1f);
+    const prp::LineWidth lw(0.4f);
+
+    variadicTemplateFunction(hdr, col, alpha, lw, prp::PERSISTENT);
+
+    ASSERT_TRUE(hdr.hasType(FunctionHeaderObjectType::FUNCTION));
+    ASSERT_TRUE(hdr.hasType(FunctionHeaderObjectType::DATA_STRUCTURE));
+    ASSERT_TRUE(hdr.hasType(FunctionHeaderObjectType::DATA_TYPE));
+    ASSERT_TRUE(hdr.hasType(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED));
+    ASSERT_TRUE(hdr.hasType(FunctionHeaderObjectType::PROPERTY));
+
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::UNKNOWN));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::NUM_BYTES));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::BYTES_PER_ELEMENT));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::NUM_ELEMENTS));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::DIMENSION_2D));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::HAS_PAYLOAD));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::AZIMUTH));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::ELEVATION));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::NUM_AXES));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::POS2D));
+    ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::FIGURE_NUM));
+    
+}
 
 TEST_F(TestFunctionHeader, TestBasic)
 {
@@ -34,13 +69,18 @@ TEST_F(TestFunctionHeader, TestBasic)
     hdr.append(FunctionHeaderObjectType::FUNCTION, Function::PLOT2);
     hdr.append(FunctionHeaderObjectType::DATA_STRUCTURE, DataStructure::VECTOR);
     hdr.append(FunctionHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
-    hdr.append(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, 2);
+    hdr.append(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
 
-    variadicTemplateFunction(hdr, prp::Color(0.14f, 0.56f, 0.72f), prp::Alpha(0.1f), prp::LineWidth(0.4f), prp::PERSISTENT);
+    const prp::Color col(0.14f, 0.56f, 0.72f);
+    const prp::Alpha alpha(0.1f);
+    const prp::LineWidth lw(0.4f);
+    const prp::PointSize ps(0.634f);
+
+    variadicTemplateFunction(hdr, col, alpha, lw, prp::PERSISTENT, ps);
 
     const size_t num_bytes_required = hdr.totalNumBytesFromBuffer();
 
-    uint8_t* data_bytes = new uint8_t[num_bytes_required];
+    uint8_t* const data_bytes = new uint8_t[num_bytes_required];
     hdr.fillBufferWithData(data_bytes);
 
     const FunctionHeader received_hdr(data_bytes);
@@ -67,18 +107,21 @@ TEST_F(TestFunctionHeader, TestBasic)
                 switch (values[k].getAs<PropertyBase>().getPropertyType())
                 {
                     case dvs::internal::PropertyType::COLOR:
-                        ASSERT_EQ(values[k].getAs<prp::Color>().red, 0.14f);
-                        ASSERT_EQ(values[k].getAs<prp::Color>().green, 0.56f);
-                        ASSERT_EQ(values[k].getAs<prp::Color>().blue, 0.72f);
+                        ASSERT_EQ(values[k].getAs<prp::Color>().red, col.red);
+                        ASSERT_EQ(values[k].getAs<prp::Color>().green, col.green);
+                        ASSERT_EQ(values[k].getAs<prp::Color>().blue, col.blue);
                         break;
                     case dvs::internal::PropertyType::ALPHA:
-                        ASSERT_EQ(values[k].getAs<prp::Alpha>().data, 0.1f);
+                        ASSERT_EQ(values[k].getAs<prp::Alpha>().data, alpha.data);
                         break;
                     case dvs::internal::PropertyType::LINE_WIDTH:
-                        ASSERT_EQ(values[k].getAs<prp::LineWidth>().data, 0.4f);
+                        ASSERT_EQ(values[k].getAs<prp::LineWidth>().data, lw.data);
                         break;
                     case dvs::internal::PropertyType::_PERSISTENT:
                         ASSERT_EQ(values[k].getAs<PropertyType>(), prp::PERSISTENT);
+                        break;
+                    case dvs::internal::PropertyType::POINT_SIZE:
+                        ASSERT_EQ(values[k].getAs<prp::PointSize>().data, ps.data);
                         break;
                     default:
                         ASSERT_TRUE(false) << "This should not be reached!";
@@ -90,8 +133,8 @@ TEST_F(TestFunctionHeader, TestBasic)
         }
     }
 
-    ASSERT_EQ(hdr.getNumValues(), 8UL);
-    ASSERT_EQ(received_hdr.getNumValues(), 8UL);
+    ASSERT_EQ(hdr.getNumValues(), 9UL);
+    ASSERT_EQ(received_hdr.getNumValues(), 9UL);
 
     delete[] data_bytes;
 
