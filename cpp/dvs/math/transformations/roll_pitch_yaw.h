@@ -5,7 +5,7 @@
 
 #include "logging.h"
 #include "math/lin_alg.h"
-#include "math/transformations/class_defs/quaternion_class_def.h"
+#include "math/transformations/class_defs/roll_pitch_yaw_class_def.h"
 
 namespace dvs
 {

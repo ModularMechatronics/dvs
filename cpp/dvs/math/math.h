@@ -13,9 +13,6 @@
 #include "math/lin_alg/vector_low_dim/vec3d.h"
 #include "math/lin_alg/vector_low_dim/vec4d.h"
 
-#include "math/geometry/line_3d.h"
-#include "math/geometry/plane.h"
-
 #include "math/transformations/axis_angle.h"
 #include "math/transformations/quaternion.h"
 #include "math/transformations/roll_pitch_yaw.h"
@@ -32,6 +29,10 @@
 #include "math/geometry/plane.h"
 #include "math/geometry/sphere.h"
 #include "math/geometry/triangle.h"
+
+#include "math/structures/end_index.h"
+#include "math/structures/index_span.h"
+#include "math/structures/interval_1d.h"
 
 // clang-format on
 

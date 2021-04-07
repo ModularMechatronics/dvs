@@ -7,7 +7,7 @@
 
 #include "logging.h"
 #include "math/lin_alg.h"
-#include "math/geometry/class_defs/circle_class_def.h"
+#include "math/geometry/class_defs/line_2d_class_def.h"
 
 namespace dvs
 {
