@@ -1,12 +1,13 @@
-
 #ifndef DVS_MATRIX_DYNAMIC_H_
 #define DVS_MATRIX_DYNAMIC_H_
 
 #include <cmath>
 
-#include "logging.h"
 #include "math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic_class_def.h"
+#include "logging.h"
 #include "math/misc/math_macros.h"
+#include "math/structures/index_span.h"
+#include "math/structures/end_index.h"
 
 namespace dvs
 {

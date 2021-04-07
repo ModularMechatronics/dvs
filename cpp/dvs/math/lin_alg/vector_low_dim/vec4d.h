@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "logging.h"
-#include "math/lin_alg/vector_low_dim/class_defs/vec2d_class_def.h"
+#include "math/lin_alg/vector_low_dim/class_defs/vec4d_class_def.h"
 
 namespace dvs
 {

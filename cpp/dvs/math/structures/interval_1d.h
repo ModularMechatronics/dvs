@@ -2,6 +2,7 @@
 #define DVS_INTERVAL_1D_H_
 
 #include <cmath>
+#include <iostream>
 
 namespace dvs
 {

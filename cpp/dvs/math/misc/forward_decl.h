@@ -63,7 +63,7 @@ template <typename T> using PointYZ = VecYZ<T>;
 }  // namespace dvs
 
 // clang-format off
-#include "math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic_class_def.h"
+/*#include "math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic_class_def.h"
 #include "math/lin_alg/vector_dynamic/class_defs/vector_dynamic_class_def.h"
 #include "math/lin_alg/vector_low_dim/class_defs/vec2d_class_def.h"
 #include "math/lin_alg/vector_low_dim/class_defs/vec3d_class_def.h"
@@ -80,7 +80,7 @@ template <typename T> using PointYZ = VecYZ<T>;
 
 #include "math/structures/end_index.h"
 #include "math/structures/index_span.h"
-#include "math/structures/interval_1d.h"
+#include "math/structures/interval_1d.h"*/
 // clang-format on
 
 #endif
