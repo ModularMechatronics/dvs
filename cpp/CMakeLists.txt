@@ -23,10 +23,18 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/googletest/googletest/
 # Nlohmann
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/nlohmann/include)
 
+# ****** wxWidgets ******
+find_package(wxWidgets COMPONENTS core base gl)
+include_directories(${wxWidgets_INCLUDE_DIRS})
+link_directories(${wxWidgets_LIBRARY_DIRS})
+include(${wxWidgets_USE_FILE})
+
 set(GTEST_LIB_FILES libgtest.a
                     libgtest_main.a
                     pthread)
 
+
 # Adding subdirectories
 add_subdirectory(applications/basic_udp)
 add_subdirectory(dvs)
+add_subdirectory(main_application)
