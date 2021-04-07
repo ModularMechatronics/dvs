@@ -1,6 +1,8 @@
 #ifndef DVS_SPHERICAL_CLASS_H_
 #define DVS_SPHERICAL_CLASS_H_
 
+#include "math/misc/forward_decl.h"
+
 namespace dvs
 {
 template <typename T> struct SphericalCoord

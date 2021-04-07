@@ -1,7 +1,7 @@
 #ifndef DVS_ANGLE_AXIS_CLASS_H_
 #define DVS_ANGLE_AXIS_CLASS_H_
 
-// #include "math_core.h"
+#include "math/misc/forward_decl.h"
 
 namespace dvs
 {

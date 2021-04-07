@@ -7,7 +7,7 @@
 
 #include "logging.h"
 #include "math/lin_alg.h"
-#include "math/math_core.h"
+#include "math/geometry/class_defs/line_3d_class_def.h"
 
 namespace dvs
 {

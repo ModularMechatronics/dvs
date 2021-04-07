@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "math/misc/forward_decl.h"
+
 namespace dvs
 {
 template <typename T> struct Sphere

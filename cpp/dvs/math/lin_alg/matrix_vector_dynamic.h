@@ -9,7 +9,7 @@
 #include "math/lin_alg/vector_low_dim/vec2d.h"
 #include "math/lin_alg/vector_low_dim/vec3d.h"
 #include "math/lin_alg/vector_low_dim/vec4d.h"
-#include "math/math_core.h"
+#include "math/misc/forward_decl.h"
 #include "math/misc/math_macros.h"
 
 namespace dvs

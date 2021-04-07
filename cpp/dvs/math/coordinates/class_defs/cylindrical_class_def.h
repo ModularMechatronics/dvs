@@ -1,6 +1,8 @@
 #ifndef DVS_CYLINDRICAL_CLASS_H_
 #define DVS_CYLINDRICAL_CLASS_H_
 
+#include "math/misc/forward_decl.h"
+
 namespace dvs
 {
 template <typename T> struct CylindricalCoord

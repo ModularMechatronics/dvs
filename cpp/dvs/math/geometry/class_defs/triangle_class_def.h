@@ -1,6 +1,8 @@
 #ifndef DVS_TRIANGLE_CLASS_H_
 #define DVS_TRIANGLE_CLASS_H_
 
+#include "math/misc/forward_decl.h"
+
 namespace dvs
 {
 template <typename T> struct Triangle2D
