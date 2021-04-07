@@ -6,7 +6,7 @@
 
 #include "logging.h"
 #include "math/lin_alg.h"
-#include "math/math_core.h"
+#include "math/coordinates/class_defs/complex_class_def.h"
 
 // Reference: https://github.com/N1ckK/MandelbrotZoom/blob/master/complex.h
 

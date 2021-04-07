@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "logging.h"
-#include "math/math_core.h"
+#include "math/misc/forward_decl.h"
 
 namespace dvs
 {

@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "logging.h"
-#include "math/math_core.h"
+#include "math/misc/forward_decl.h"
 
 // TODO:
 //  - Angle between 2d and 3d vectors

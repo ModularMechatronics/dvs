@@ -1,7 +1,7 @@
 #ifndef DVS_MATH_TYPE_DEFINITIONS_H_
 #define DVS_MATH_TYPE_DEFINITIONS_H_
 
-#include "math/math_core.h"
+#include "math/misc/forward_decl.h"
 
 namespace dvs
 {
@@ -13,13 +13,11 @@ typedef ComplexCoord<double> ComplexCoordd;
 typedef HomogeneousLine2D<double> HomogeneousLine2Dd;
 typedef ParametricLine2D<double> ParametricLine2Dd;
 typedef Line3D<double> Line3Dd;
-typedef OrderedSet2D<double> OrderedSet2Dd;
 typedef Plane<double> Planed;
 typedef PolarCoord<double> PolarCoordd;
 typedef SphericalCoord<double> SphericalCoordd;
 typedef CylindricalCoord<double> CylindricalCoordd;
 typedef Quaternion<double> Quaterniond;
-typedef Rect2D<double> Rect2Dd;
 typedef RollPitchYaw<double> RollPitchYawd;
 typedef Sphere<double> Sphered;
 typedef Triangle2D<double> Triangle2Dd;
@@ -42,13 +40,11 @@ typedef ComplexCoord<float> Complexf;
 typedef HomogeneousLine2D<float> HomogeneousLine2Df;
 typedef ParametricLine2D<float> ParametricLine2Df;
 typedef Line3D<float> Line3Df;
-typedef OrderedSet2D<float> OrderedSet2Df;
 typedef Plane<float> Planef;
 typedef PolarCoord<float> PolarVecf;
 typedef SphericalCoord<float> SphericalCoordf;
 typedef CylindricalCoord<float> CylindricalVecf;
 typedef Quaternion<float> Quaternionf;
-typedef Rect2D<float> Rect2Df;
 typedef RollPitchYaw<float> RollPitchYawf;
 typedef Sphere<float> Spheref;
 typedef Triangle2D<float> Triangle2Df;

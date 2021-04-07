@@ -6,7 +6,7 @@
 
 #include "logging.h"
 #include "math/lin_alg.h"
-#include "math/math_core.h"
+#include "math/coordinates/class_defs/spherical_class_def.h"
 
 namespace dvs
 {

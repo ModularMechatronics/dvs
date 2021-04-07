@@ -1,6 +1,6 @@
 
-#ifndef DVS_MATH_CORE_H_
-#define DVS_MATH_CORE_H_
+#ifndef DVS_FORWARD_DECL_H_
+#define DVS_FORWARD_DECL_H_
 
 #include <cassert>
 #include <cmath>
@@ -44,11 +44,6 @@ template <typename T> struct RollPitchYaw;
 template <typename T> struct AxisAngle;
 template <typename T> class PoseSE3;
 
-template <typename T> struct Rect2D;
-template <typename T> class PolygonNVertices2D;
-template <typename T> class PolygonNVertices3D;
-template <typename T> class OrderedSet3D;
-template <typename T> class OrderedSet2D;
 template <typename T> struct Triangle2D;
 template <typename T> struct Triangle3D;
 

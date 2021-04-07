@@ -28,43 +28,36 @@ TEST_F(TestMathFunctions, TestBasic0)
     Vec3D<double> v3;
     Vec4D<double> v4;
 
-/*VecXY;
-VecXZ;
-VecYZ;
+    VecXY<double> vXY;
+    VecXZ<double> vXZ;
+    VecYZ<double> vYZ;
 
+    ComplexCoord<double> cc;
+    PolarCoord<double> pc;
+    CylindricalCoord<double> cyl_coord;
+    SphericalCoord<double> sc;
 
-ComplexCoord;
-PolarCoord;
-CylindricalCoord;
-SphericalCoord;
+    Circle3D<double> c3d;
+    Circle2D<double> c2d;
+    Line3D<double> l3d;
+    ParametricLine2D<double> pl;
+    HomogeneousLine2D<double> hl;
+    Plane<double> plane;
+    Sphere<double> sphere;
 
-Circle3D;
-Circle2D;
-Line3D;
-ParametricLine2D;
-HomogeneousLine2D;
-Plane;
-Sphere;
+    Quaternion<double> q;
+    RollPitchYaw<double> rpy;
+    AxisAngle<double> aa;
+    PoseSE3<double> pse3;
 
-Quaternion;
-RollPitchYaw;
-AxisAngle;
-PoseSE3;
-Rect2D;
-PolygonNVertices2D;
-PolygonNVertices3D;
-OrderedSet3D;
-OrderedSet2D;
-Triangle2D;
-Triangle3D;
-Interval1D;
-IndexSpan;
-EndIndex;
-Point2D;
-Point3D;
-Point4D;
-Point;
-PointXY;
-PointXZ;
-PointYZ;*/
+    Interval1D<int> intrvl;
+    IndexSpan idx_span(2, 30);
+    EndIndex end_idx;
+    Point2D<double> pt2D;
+    Point3D<double> pt3D;
+    Point4D<double> pt4D;
+    Point<double> ptnt;
+    PointXY<double> ptXY;
+    PointXZ<double> ptXZ;
+    PointYZ<double> ptYZ;
 }
