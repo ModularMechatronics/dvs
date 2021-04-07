@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "logging.h"
-#include "math/misc/forward_decl.h"
+#include "math/lin_alg/vector_dynamic/class_defs/vector_dynamic_class_def.h"
 #include "math/misc/math_macros.h"
 
 namespace dvs

@@ -7,7 +7,7 @@
 #include <tuple>
 
 #include "logging.h"
-#include "math/misc/forward_decl.h"
+#include "math/lin_alg/matrix_dynamic/matrix_dynamic.h"
 
 namespace dvs
 {

@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "math/math.h"
+#include "math/pre_defs.h"
 
 using namespace dvs;
 
@@ -22,7 +23,8 @@ protected:
 TEST_F(TestMathFunctions, TestBasic0)
 {
     Vector<double> v;
-    Matrix<double> m;
+    Matrix<double> m(3, 3), m2(3, 3);
+    m = m2;
 
     Vec2D<double> v2;
     Vec3D<double> v3;
@@ -44,6 +46,8 @@ TEST_F(TestMathFunctions, TestBasic0)
     HomogeneousLine2D<double> hl;
     Plane<double> plane;
     Sphere<double> sphere;
+    Triangle2D<double> tri2d;
+    Triangle3D<double> tri3d;
 
     Quaternion<double> q;
     RollPitchYaw<double> rpy;
@@ -60,4 +64,6 @@ TEST_F(TestMathFunctions, TestBasic0)
     PointXY<double> ptXY;
     PointXZ<double> ptXZ;
     PointYZ<double> ptYZ;
+
+    Vectord vd;
 }
