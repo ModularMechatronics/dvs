@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "logging.h"
-#include "math/misc/forward_decl.h"
+#include "math/lin_alg/vector_dynamic/vector_dynamic.h"
 
 namespace dvs
 {

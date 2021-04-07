@@ -6,5 +6,6 @@
 #include "math/geometry/line_3d.h"
 #include "math/geometry/plane.h"
 #include "math/geometry/sphere.h"
+#include "math/geometry/triangle.h"
 
 #endif

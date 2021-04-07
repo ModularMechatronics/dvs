@@ -4,8 +4,6 @@
 // clang-format off
 #include "math/misc/forward_decl.h"
 
-#include "math/misc/math_type_definitions.h"
-
 #include "math/lin_alg/matrix_dynamic/matrix_dynamic.h"
 #include "math/lin_alg/matrix_dynamic/matrix_math_functions.h"
 #include "math/lin_alg/matrix_vector_dynamic.h"
@@ -33,7 +31,7 @@
 #include "math/geometry/line_3d.h"
 #include "math/geometry/plane.h"
 #include "math/geometry/sphere.h"
-// #include "math/geometry/triangle.h"
+#include "math/geometry/triangle.h"
 
 // clang-format on
 

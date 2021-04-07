@@ -3,6 +3,8 @@
 
 #include <iterator>
 
+#include "math/misc/forward_decl.h"
+
 namespace dvs
 {
 template <typename T> class Vector

@@ -1,6 +1,8 @@
 #ifndef DVS_MATRIX_DYNAMIC_CLASS_H_
 #define DVS_MATRIX_DYNAMIC_CLASS_H_
 
+#include "math/misc/forward_decl.h"
+
 namespace dvs
 {
 template <typename T> class Matrix
@@ -19,7 +21,6 @@ public:
     Matrix(const std::vector<std::vector<T>>& vm);
     Matrix(const std::initializer_list<std::initializer_list<T>>& il);
     Matrix(Matrix<T>&& m);
-    Matrix(const T a[3][3]);
     ~Matrix();
 
     Matrix<T>&& move();
