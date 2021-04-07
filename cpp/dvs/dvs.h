@@ -2,7 +2,7 @@
 #define DVS_H_
 
 #include "low_level_com.h"
-#include "data_containers.h"
+#include "math/math.h"
 #include "function_header.h"
 
 namespace dvs
@@ -11,19 +11,6 @@ namespace dvs
 /*
 In the header, there will be a series of bytes specifying different attributes
 [attribute_type|num_bytes|<data bytes>] [attribute_type|num_bytes|<data bytes>]
-
-CommandInformationList
-InformationList
-CommandList
-LowLevelAttributeList
-TransmissionAttributes
-DataAttributes
-FunctionAttributes
-CommandHeader
-FunctionHeader
-
-Commands:
-Function (plot, surf...), DataStructure ()
 
 */
 
