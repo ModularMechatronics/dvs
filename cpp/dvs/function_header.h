@@ -288,12 +288,12 @@ public:
 
     FunctionHeader(const uint8_t* const buffer)
     {
-        const size_t num_expected_values = buffer[0];
+        const uint8_t num_expected_values = buffer[0];
         values.reserve(num_expected_values);
 
         size_t idx = 1;
 
-        size_t num_values = 0;
+        uint8_t num_values = 0;
 
         while(num_values < num_expected_values)
         {
@@ -312,7 +312,7 @@ public:
             num_values++;
         }
 
-        assert(num_values == values.size());
+        assert(static_cast<size_t>(num_values) == values.size());
     }
 
     template <typename U> void append(const FunctionHeaderObjectType& object_type, const U& data)
@@ -350,6 +350,11 @@ public:
     template <typename... Us> void extend(const Us&... objects)
     {
         extendInternal(values, objects...);
+    }
+
+    size_t numBytes() const
+    {
+        return totalNumBytesFromBuffer();
     }
 
     size_t totalNumBytesFromBuffer() const

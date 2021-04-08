@@ -30,6 +30,8 @@ public:
 
     ~Vector();
 
+    void fillBufferWithData(uint8_t* const buffer) const;
+
     Vector<T>&& move();
 
     Vector<T>& operator=(const Vector<T>& v);
@@ -46,6 +48,7 @@ public:
     void removeElementsAtIndices(const IndexSpan& idx_span);
     size_t size() const;
     size_t numElements() const;
+    size_t numBytes() const;
     bool isAllocated() const;
     void fill(const T& val);
     void resize(const size_t vector_length);

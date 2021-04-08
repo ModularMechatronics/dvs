@@ -1,5 +1,7 @@
 #include "main_window.h"
 
+#include "math/math.h"
+
 #include <unistd.h>
 
 #include <csignal>
