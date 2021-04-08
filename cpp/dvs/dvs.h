@@ -51,7 +51,6 @@ inline void sendThroughInterface(const uint8_t* const data_blob, const uint64_t 
         exit(-1);
     }
     UdpClient udp_client(9547);
-    printData(data_blob);
     udp_client.sendData(data_blob, num_bytes);
 }
 
@@ -79,39 +78,85 @@ uint64_t countNumBytes(const Us&... datas)
 }
 
 template <typename U>
-void fillBuffer(uint8_t* data_blob, const U& data_to_be_sent)
+void fillBuffer(uint8_t* const data_blob, const U& data_to_be_sent)
 {
     data_to_be_sent.fillBufferWithData(data_blob);
 }
 
 template <typename U, typename... Us>
-void fillBuffer(uint8_t* data_blob, const U& data_to_be_sent, const Us&... datas)
+void fillBuffer(uint8_t* const data_blob, const U& data_to_be_sent, const Us&... other_elements)
 {
     const uint64_t num_bytes = data_to_be_sent.numBytes();
 
     data_to_be_sent.fillBufferWithData(data_blob);
-    fillBuffer(&(data_blob[num_bytes]), datas...);
+    fillBuffer(&(data_blob[num_bytes]), other_elements...);
 }
 
-template <typename U, typename... Us>
-void sendData(const U& data_to_be_sent, const Us&... datas)
+template <typename U>
+void sendHeaderAndData(const FunctionHeader& hdr, const U& first_element)
 {
-    const uint64_t num_bytes_of_first = data_to_be_sent.numBytes();
+    const uint64_t num_bytes_hdr = hdr.numBytes();
+    const uint64_t num_bytes_first = first_element.numBytes();
 
-    const uint64_t num_bytes_from_object = countNumBytes(datas...) + num_bytes_of_first;
+    const uint64_t num_bytes_from_object = num_bytes_hdr + num_bytes_first;
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
     const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
-    uint8_t* data_blob = new uint8_t[num_bytes];
-    data_blob[0] = isBigEndian();
 
-    std::memcpy(&(data_blob[1]), &magic_num, sizeof(uint64_t));
+    uint8_t* const data_blob = new uint8_t[num_bytes];
+
+    uint64_t idx = 0;
+    data_blob[idx] = isBigEndian();
+    idx += 1;
+
+    std::memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
     std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
 
+    hdr.fillBufferWithData(&(data_blob[idx]));
+    idx += num_bytes_hdr;
 
-    data_to_be_sent.fillBufferWithData(data_blob);
-    // fillBuffer(&(data_blob[num_bytes_of_first]), datas...);
+    first_element.fillBufferWithData(&(data_blob[idx]));
+
+    sendThroughInterface(data_blob, num_bytes);
+
+    delete[] data_blob;
+}
+
+template <typename U, typename... Us>
+void sendHeaderAndData(const FunctionHeader& hdr, const U& first_element, const Us&... other_elements)
+{
+    const uint64_t num_bytes_hdr = hdr.numBytes();
+    const uint64_t num_bytes_first = first_element.numBytes();
+
+    const uint64_t num_bytes_from_object = countNumBytes(other_elements...) + num_bytes_hdr + num_bytes_first;
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
+
+    uint8_t* const data_blob = new uint8_t[num_bytes];
+
+    uint64_t idx = 0;
+    data_blob[idx] = isBigEndian();
+    idx += 1;
+
+    std::memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    hdr.fillBufferWithData(&(data_blob[idx]));
+    idx += num_bytes_hdr;
+
+    first_element.fillBufferWithData(&(data_blob[idx]));
+    idx += num_bytes_first;
+
+    fillBuffer(&(data_blob[idx]), other_elements...);
 
     sendThroughInterface(data_blob, num_bytes);
 
@@ -130,8 +175,7 @@ void plot(const Vector<Wx>& x, const Vector<Wy>& y, const Us&... settings)
     hdr.append(internal::FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, internal::toUInt8(2));
     hdr.extend(settings...);
 
-    // TODO: change "sendData" to always take FunctionHeader as first argument
-    internal::sendData(hdr, x, y);
+    internal::sendHeaderAndData(hdr, x, y);
 
     /*sendData(x, y, hdr);
     sendData(x, y, z, hdr);
