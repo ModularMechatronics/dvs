@@ -23,6 +23,8 @@ public:
     Matrix(Matrix<T>&& m);
     ~Matrix();
 
+    void fillBufferWithData(uint8_t* const buffer) const;
+
     Matrix<T>&& move();
 
     T& operator()(const size_t r, const size_t c);
@@ -50,6 +52,7 @@ public:
     size_t cols() const;
     size_t size() const;
     size_t numElements() const;
+    size_t numBytes() const;
     void hCat(const Vector<T>& v);
     void vCat(const Vector<T>& v);
 

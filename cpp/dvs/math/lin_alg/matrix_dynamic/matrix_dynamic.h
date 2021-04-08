@@ -74,6 +74,14 @@ Matrix<T>::Matrix(const Matrix<Y>& m) : is_allocated_(true)
     }
 }
 
+template <typename T>
+void Matrix<T>::fillBufferWithData(uint8_t* const buffer) const
+{
+    const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
+    const size_t num_bytes = num_rows_ * num_cols_ * sizeof(T);
+    std::memcpy(buffer, internal_ptr, num_bytes);
+}
+
 template <typename T> Matrix<T>&& Matrix<T>::move()
 {
     return std::move(*this);
@@ -422,6 +430,11 @@ template <typename T> size_t Matrix<T>::numElements() const
 {
     // Returns totalt number of elements in matrix
     return num_rows_ * num_cols_;
+}
+
+template <typename T> size_t Matrix<T>::numBytes() const
+{
+    return num_rows_ * num_cols_ * sizeof(T);
 }
 
 template <typename T> bool Matrix<T>::isAllocated() const

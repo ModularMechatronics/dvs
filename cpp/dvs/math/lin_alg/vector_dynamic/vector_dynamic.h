@@ -75,6 +75,15 @@ template <typename T> Vector<T>::~Vector()
     }
 }
 
+template <typename T>
+void Vector<T>::fillBufferWithData(uint8_t* const buffer) const
+{
+    const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
+    const size_t num_bytes = vector_length_ * sizeof(T);
+
+    std::memcpy(buffer, internal_ptr, num_bytes);
+}
+
 template <typename T> Vector<T>& Vector<T>::operator=(const Vector<T>& v)
 {
     PT_ASSERT(v.isAllocated()) << "Input vector not allocated before assignment!";
@@ -369,6 +378,11 @@ template <typename T> size_t Vector<T>::size() const
 template <typename T> size_t Vector<T>::numElements() const
 {
     return vector_length_;
+}
+
+template <typename T> size_t Vector<T>::numBytes() const
+{
+    return vector_length_ * sizeof(T);
 }
 
 template <typename T> bool Vector<T>::isAllocated() const

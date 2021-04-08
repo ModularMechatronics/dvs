@@ -16,6 +16,8 @@
 #include <unistd.h>
 #include <vector>
 
+#include <sys/ioctl.h>
+#include <net/if.h>
 #include <arpa/inet.h>
 #include <netinet/if_ether.h>
 #include <netinet/in.h>
@@ -24,6 +26,8 @@
 #include <sys/types.h>
 
 #include "basic_message.h"
+
+#define DVS_PORT_NUM 9547
 
 inline int& Var_socket_file_descr()
 {
@@ -44,7 +48,7 @@ public:
 
     }
 
-    UdpClient(const size_t port_num)
+    UdpClient(const uint64_t port_num)
     {
         if ( (sock_file_descr = socket(AF_INET, SOCK_DGRAM, 0)) < 0 )
         {
@@ -64,8 +68,13 @@ public:
         close(sock_file_descr);
     }
 
-    void sendData(const uint8_t* const data, const size_t num_bytes)
+    void sendData(const uint8_t* const data, const uint64_t num_bytes)
     {
+
+        /*for(size_t k = 0; k < 100; k++)
+        {
+            std::cout << static_cast<int>(data[k]) << std::endl;
+        }*/
         if(sock_file_descr == -1)
         {
             perror("Invalid socket!");
