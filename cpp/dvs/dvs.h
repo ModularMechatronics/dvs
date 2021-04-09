@@ -1,6 +1,8 @@
 #ifndef DVS_H_
 #define DVS_H_
 
+#include <functional>
+
 #include "low_level_com.h"
 #include "math/math.h"
 #include "function_header.h"
@@ -10,7 +12,7 @@ namespace dvs
 namespace internal
 {
 constexpr uint64_t magic_num = 0xdeadbeefcafebabe;
-
+using SendFunctionType = std::function<void(const uint8_t* const data_blob, const uint64_t num_bytes)>;
 
 /*
 In the header, there will be a series of bytes specifying different attributes
@@ -54,6 +56,11 @@ inline void sendThroughInterface(const uint8_t* const data_blob, const uint64_t 
     udp_client.sendData(data_blob, num_bytes);
 }
 
+inline SendFunctionType getSendFunction()
+{
+    return sendThroughInterface;
+}
+
 template <typename U>
 void countNumBytes(uint64_t& num_bytes, const U& data_to_be_sent)
 {
@@ -93,7 +100,9 @@ void fillBuffer(uint8_t* const data_blob, const U& data_to_be_sent, const Us&...
 }
 
 template <typename U>
-void sendHeaderAndData(const FunctionHeader& hdr, const U& first_element)
+void sendHeaderAndData(const SendFunctionType& send_function,
+                       const FunctionHeader& hdr,
+                       const U& first_element)
 {
     const uint64_t num_bytes_hdr = hdr.numBytes();
     const uint64_t num_bytes_first = first_element.numBytes();
@@ -121,13 +130,15 @@ void sendHeaderAndData(const FunctionHeader& hdr, const U& first_element)
 
     first_element.fillBufferWithData(&(data_blob[idx]));
 
-    sendThroughInterface(data_blob, num_bytes);
+    send_function(data_blob, num_bytes);
 
     delete[] data_blob;
 }
 
 template <typename U, typename... Us>
-void sendHeaderAndData(const FunctionHeader& hdr, const U& first_element, const Us&... other_elements)
+void sendHeaderAndData(const SendFunctionType& send_function,
+                       const FunctionHeader& hdr,
+                       const U& first_element, const Us&... other_elements)
 {
     const uint64_t num_bytes_hdr = hdr.numBytes();
     const uint64_t num_bytes_first = first_element.numBytes();
@@ -158,7 +169,7 @@ void sendHeaderAndData(const FunctionHeader& hdr, const U& first_element, const 
 
     fillBuffer(&(data_blob[idx]), other_elements...);
 
-    sendThroughInterface(data_blob, num_bytes);
+    send_function(data_blob, num_bytes);
 
     delete[] data_blob;
 }
@@ -175,7 +186,7 @@ void plot(const Vector<Wx>& x, const Vector<Wy>& y, const Us&... settings)
     hdr.append(internal::FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, internal::toUInt8(2));
     hdr.extend(settings...);
 
-    internal::sendHeaderAndData(hdr, x, y);
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 
     /*sendData(x, y, hdr);
     sendData(x, y, z, hdr);
