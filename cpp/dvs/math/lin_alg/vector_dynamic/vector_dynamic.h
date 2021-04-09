@@ -44,6 +44,15 @@ template <typename T> Vector<T>::Vector(Vector<T>&& v)
     v.setInternalData(nullptr, 0);
 }
 
+template <typename T>
+Vector<T>::Vector(const T* const ptr, const size_t vector_length) : is_allocated_(true)
+{
+    vector_length_ = vector_length;
+    DATA_ALLOCATION(data_, vector_length, T, "Vector");
+
+    std::memcpy(data_, ptr, sizeof(T) * vector_length);
+}
+
 template <typename T> Vector<T>& Vector<T>::operator=(Vector<T>&& v)
 {
     if (this != &v)
@@ -538,6 +547,18 @@ template <typename T> T Vector<T>::angleBetweenVectors(const Vector<T>& v) const
 {
     const T dot_product = (*this) * v;
     return std::acos(dot_product / ((this->norm()) * (v.norm())));
+}
+
+template <typename T> bool Vector<T>::all() const
+{
+    for(size_t k = 0; k < vector_length_; k++)
+    {
+        if(!(data_[k]))
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 // Non class methods

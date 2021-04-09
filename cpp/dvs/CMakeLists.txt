@@ -8,5 +8,6 @@ include_directories(${REPO_DIR}/cpp/dvs)
 # test-stockdb executable
 add_executable(test-dvs test/test_attributes.cpp
                         test/test_function_header.cpp
-                        test/test_new.cpp)
+                        test/test_new.cpp
+                        test/test_transmission.cpp)
 target_link_libraries(test-dvs ${GTEST_LIB_FILES})

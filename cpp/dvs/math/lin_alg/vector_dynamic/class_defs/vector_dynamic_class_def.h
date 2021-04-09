@@ -19,6 +19,7 @@ public:
     Vector(const size_t vector_length);
     Vector(const Vector<T>& v);
     Vector(Vector<T>&& v);
+    Vector(const T* const ptr, const size_t vector_length);
     template <typename Y> Vector(const Vector<Y>& v);
 
     Vec2D<T> toVec2D() const;
@@ -44,6 +45,7 @@ public:
     template <typename Y> Vector<T> operator()(const Vector<Y>& idx_vector) const;
     Vector<T> operator()(const IndexSpan& idx_span) const;
 
+    bool all() const;
     void removeElementAtIndex(const size_t idx);
     void removeElementsAtIndices(const IndexSpan& idx_span);
     size_t size() const;
