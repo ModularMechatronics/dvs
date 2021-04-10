@@ -13,11 +13,15 @@
 #include <utility>
 #include <vector>
 
+#include "udp_server.h"
+
 wxDEFINE_EVENT(EVENT_TYPE_HANDLE_NEW_DATA, wxCommandEvent);
 
 class MainWindow : public wxFrame
 {
 private:
+
+    UdpServer* udp_server_;
 
 public:
     MainWindow();

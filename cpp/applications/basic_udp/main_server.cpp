@@ -39,14 +39,14 @@ void receiveBuffer(const char* const data, const uint64_t num_received_bytes)
     uint64_t rec_num_bytes;
     std::memcpy(&rec_num_bytes, &(data[sizeof(uint64_t) + 1]), sizeof(uint64_t));
 
-    std::cout << "Is big endian: " << is_big_endian << std::endl << std::endl;
+    const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(data);
+
+    const dvs::internal::FunctionHeader hdr(&(uint8_ptr[2 * sizeof(uint64_t) + 1]));
+
+    std::cout << "Num values: " << hdr.getNumValues() << std::endl;
+    std::cout << "Is big endian: " << is_big_endian << std::endl;
     std::cout << "magic num: " << dvs::internal::magic_num << ", rec magic num: " << rec_magic_num << std::endl;
     std::cout << "num_received_bytes: " << num_received_bytes << ", rec_num_bytes: " << rec_num_bytes << std::endl;
-
-    for(size_t k = 0; k < 100; k++)
-    {
-        std::cout << static_cast<int>(data[k]) << std::endl;
-    }
 
 }
 
@@ -87,10 +87,6 @@ int main(int argc, char **argv)
             return 0;
         }
         receiveBuffer(buf, recvlen);
-        printf("Received %ld bytes\n",recvlen);
-        // buf[recvlen] = 0;
-        // printf("Received message: \"%s\"\n",buf);
-
     }
 
     delete[] buf;

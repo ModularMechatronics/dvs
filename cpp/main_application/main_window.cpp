@@ -10,7 +10,8 @@
 MainWindow::MainWindow(const wxString& title)
     : wxFrame(NULL, wxID_ANY, title, wxPoint(30, 30), wxSize(700, 700))
 {
-
+    udp_server_ = new UdpServer(9752);
+    udp_server_->start();
 }
 
 void MainWindow::OnClose(wxCloseEvent& event)
