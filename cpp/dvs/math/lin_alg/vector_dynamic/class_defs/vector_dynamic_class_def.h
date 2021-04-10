@@ -19,8 +19,10 @@ public:
     Vector(const size_t vector_length);
     Vector(const Vector<T>& v);
     Vector(Vector<T>&& v);
-    Vector(const T* const ptr, const size_t vector_length);
     template <typename Y> Vector(const Vector<Y>& v);
+
+    template <typename Y>
+    friend void fillWithPtr(Vector<Y>& v, const Y* const ptr, const size_t vector_length);
 
     Vec2D<T> toVec2D() const;
     Vec3D<T> toVec3D() const;
@@ -86,6 +88,7 @@ public:
     T min() const;
     T sum() const;
 };
+
 }  // namespace dvs
 
 #endif

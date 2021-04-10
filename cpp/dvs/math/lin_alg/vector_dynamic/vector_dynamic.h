@@ -44,15 +44,6 @@ template <typename T> Vector<T>::Vector(Vector<T>&& v)
     v.setInternalData(nullptr, 0);
 }
 
-template <typename T>
-Vector<T>::Vector(const T* const ptr, const size_t vector_length) : is_allocated_(true)
-{
-    vector_length_ = vector_length;
-    DATA_ALLOCATION(data_, vector_length, T, "Vector");
-
-    std::memcpy(data_, ptr, sizeof(T) * vector_length);
-}
-
 template <typename T> Vector<T>& Vector<T>::operator=(Vector<T>&& v)
 {
     if (this != &v)
@@ -1214,6 +1205,16 @@ template <typename T> T Vector<T>::sum() const
     }
 
     return s;
+}
+
+template <typename Y>
+void fillWithPtr(Vector<Y>& v, const Y* const ptr, const size_t vector_length)
+{
+    v.is_allocated_ = true;
+    v.vector_length_ = vector_length;
+    DATA_ALLOCATION(v.data_, vector_length, Y, "Vector");
+
+    std::memcpy(v.data_, ptr, sizeof(Y) * vector_length);
 }
 
 }  // namespace dvs
