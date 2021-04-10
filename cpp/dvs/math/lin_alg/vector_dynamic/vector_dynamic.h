@@ -1208,7 +1208,7 @@ template <typename T> T Vector<T>::sum() const
 }
 
 template <typename Y>
-void fillWithPtr(Vector<Y>& v, const Y* const ptr, const size_t vector_length)
+void fillWithPtr(Vector<Y>& v, const void* const ptr, const size_t vector_length)
 {
     v.is_allocated_ = true;
     v.vector_length_ = vector_length;

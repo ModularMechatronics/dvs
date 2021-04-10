@@ -145,17 +145,13 @@ TEST_F(TestTransmission, TestBasic)
 
     uint64_t data_idx = received_header.numBytes() + 1 + 2 * sizeof(uint64_t);
 
-    uint16_t* const data_ptr_x = reinterpret_cast<uint16_t* const>(&(buffer[data_idx]));
-
     Vector<uint16_t> x_rec;
-    fillWithPtr(x_rec, data_ptr_x, num_elements);
+    fillWithPtr(x_rec, &(buffer[data_idx]), num_elements);
 
     data_idx += x_rec.numBytes();
 
-    uint16_t* const data_ptr_y = reinterpret_cast<uint16_t* const>(&(buffer[data_idx]));
-
     Vector<uint16_t> y_rec;
-    fillWithPtr(y_rec, data_ptr_y, num_elements);
+    fillWithPtr(y_rec, &(buffer[data_idx]), num_elements);
 
     ASSERT_TRUE((x == x_rec).all());
     ASSERT_TRUE((y == y_rec).all());
