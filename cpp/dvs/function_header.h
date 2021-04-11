@@ -288,6 +288,7 @@ public:
 
     FunctionHeader(const uint8_t* const buffer, const bool is_big_endian)
     {
+        (void)is_big_endian;
         const uint8_t num_expected_values = buffer[0];
         values.reserve(num_expected_values);
 

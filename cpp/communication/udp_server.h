@@ -21,6 +21,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <thread>
+#include <mutex>
+#include <atomic>
 #include <stdexcept>
 
 #include "dvs.h"
@@ -29,14 +31,15 @@ class ReceivedData
 {
 private:
     dvs::internal::FunctionHeader hdr_;
-    uint8_t* data_;
+    uint8_t* payload_data_;
     uint64_t num_data_bytes_;
 
 public:
     ReceivedData() = delete;
     ReceivedData(const ReceivedData& other) = delete;
+    ReceivedData(ReceivedData&& other) = delete;
 
-    ReceivedData(ReceivedData&& other)
+    /*ReceivedData(ReceivedData&& other)
     {
         (void)other;
 
@@ -47,7 +50,7 @@ public:
         other.setNumDataBytes(0);
 
         hdr_ = other.getFunctionHeader();
-    }
+    }*/
 
     ReceivedData(const uint8_t* const data, const uint64_t num_received_bytes) : hdr_(&(data[2 * sizeof(uint64_t) + 1]), data[0])
     {
@@ -59,18 +62,22 @@ public:
         }
 
         num_data_bytes_ = num_received_bytes - idx;
-        data_ = new uint8_t[num_data_bytes_];
+        payload_data_ = new uint8_t[num_data_bytes_];
+    }
 
+    ~ReceivedData()
+    {
+        delete[] payload_data_;
     }
 
     uint8_t* getDataPointer() const
     {
-        return data_;
+        return payload_data_;
     }
 
     void setDataPointer(uint8_t* ptr)
     {
-        data_ = ptr;
+        payload_data_ = ptr;
     }
 
     void setNumDataBytes(const uint64_t ndb)
@@ -94,16 +101,24 @@ class UdpServer
 private:
     int port_num_;
     std::thread* receive_thread_;
-    bool data_cleared_from_buffer_;
+    std::atomic<bool> data_in_buffer_;
     int file_descr_;
     socklen_t client_len;
     struct sockaddr_in claddr;
     struct sockaddr_in myaddr;
-    char* buf;
+    char* receive_buffer_;
+    std::mutex mtx_;
+
+    std::unique_ptr<const ReceivedData> received_data_;
 
 public:
     
     static constexpr size_t max_buffer_size = 1000000;
+
+    bool hasReceivedData() const
+    {
+        return data_in_buffer_;
+    }
 
     UdpServer() = delete;
     UdpServer(const UdpServer& other) = delete;
@@ -111,7 +126,7 @@ public:
 
     UdpServer(const int port_num) : port_num_(port_num)
     {
-        buf = new char[max_buffer_size];
+        receive_buffer_ = new char[max_buffer_size];
 
         if((file_descr_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         {
@@ -122,6 +137,8 @@ public:
         myaddr.sin_family = AF_INET;
         myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
         myaddr.sin_port = htons(port_num_);
+
+        data_in_buffer_ = false;
 
         if(bind(file_descr_, (struct sockaddr *)&myaddr, sizeof(myaddr)) < 0)
         {
@@ -134,6 +151,20 @@ public:
         receive_thread_ = new std::thread(&UdpServer::receiveThreadFunction, this);
     }
 
+    void waitUntilBufferCleared()
+    {
+        while(data_in_buffer_)
+        {
+            usleep(1000);
+        }
+    }
+
+    std::unique_ptr<const ReceivedData> getReceivedData()
+    {
+        data_in_buffer_ = false;
+        return std::move(received_data_);
+    }
+
     void receiveThreadFunction()
     {
         client_len = sizeof(claddr);
@@ -141,17 +172,27 @@ public:
         bool should_run = true;
         while(should_run)
         {
-            const int recvlen = recvfrom(file_descr_, buf, max_buffer_size, 0, (struct sockaddr *)&claddr, &client_len);
-            if (recvlen < 0)
+            const int num_received_bytes = recvfrom(file_descr_, receive_buffer_, max_buffer_size, 0, (struct sockaddr *)&claddr, &client_len);
+            if (num_received_bytes < 0)
             {
                 should_run = false;
                 throw std::runtime_error("recvfrom returned error!");
             }
-            else if(recvlen >= max_buffer_size)
+            else if(num_received_bytes >= max_buffer_size)
             {
                 should_run = false;
                 throw std::runtime_error("Too many bytes received!");
             }
+
+            if(data_in_buffer_)
+            {
+                throw std::runtime_error("Buffer not cleared before filling it with more data!");
+            }
+
+            const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(receive_buffer_);
+
+            received_data_ = std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes);
+            waitUntilBufferCleared();
 
             /*
             uint64_t rec_magic_num;
