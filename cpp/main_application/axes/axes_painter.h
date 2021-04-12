@@ -1,8 +1,6 @@
 #ifndef AXES_PAINTER_H_
 #define AXES_PAINTER_H_
 
-#include <arl/math/math.h>
-
 #include <cmath>
 #include <utility>
 #include <vector>

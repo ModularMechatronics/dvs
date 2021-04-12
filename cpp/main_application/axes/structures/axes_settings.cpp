@@ -1,9 +1,5 @@
 #include "axes/structures/axes_settings.h"
 
-#include <arl/math/math.h>
-
-using namespace arl;
-
 AxesSettings::AxesSettings()
 {
     plot_box_wall_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
@@ -55,12 +51,12 @@ double AxesSettings::getPlotBoxSizeFactor() const
     return plot_box_size_factor_;
 }
 
-arl::Vec3Dd AxesSettings::getMinVec() const
+Vec3Dd AxesSettings::getMinVec() const
 {
     return min_vec_;
 }
 
-arl::Vec3Dd AxesSettings::getMaxVec() const
+Vec3Dd AxesSettings::getMaxVec() const
 {
     return max_vec_;
 }

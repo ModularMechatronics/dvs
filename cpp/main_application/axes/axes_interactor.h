@@ -1,7 +1,7 @@
 #ifndef AXES_INTERACTOR_H_
 #define AXES_INTERACTOR_H_
 
-#include <arl/math/math.h>
+#include "math/math.h"
 
 #include <cmath>
 #include <utility>
@@ -14,6 +14,8 @@
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "io_devices/io_devices.h"
+
+using namespace dvs;
 
 double findFirstPointInInterval(const double min_point,
                                 const double max_point,
@@ -41,7 +43,7 @@ private:
 
     CoordinateConverter coord_converter_;
 
-    arl::Vec3Dd inc0;
+    Vec3Dd inc0;
 
     // Functions
     void changePan(const double dx, const double dy);
@@ -56,8 +58,8 @@ public:
                 const int window_height);
     void resetView();
     void setViewAngles(const double azimuth, const double elevation);
-    void setAxesLimits(const arl::Vec3Dd& min_vec, const arl::Vec3Dd& max_vec);
-    void setAxesLimits(const arl::Vec2Dd& min_vec, const arl::Vec2Dd& max_vec);
+    void setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
+    void setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec);
 
     void registerMouseDragInput(const int dx, const int dy);
     void updateMouseActivity(const InteractionType interaction_type);

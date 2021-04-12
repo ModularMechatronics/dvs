@@ -1,7 +1,7 @@
 #ifndef PLOT_BOX_GRID_H_
 #define PLOT_BOX_GRID_H_
 
-#include <arl/math/math.h>
+#include "math/math.h"
 
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"

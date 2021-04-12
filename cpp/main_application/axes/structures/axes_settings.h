@@ -1,12 +1,13 @@
 #ifndef AXES_SETTINGS_H_
 #define AXES_SETTINGS_H_
 
-#include <arl/math/math.h>
 #include <unistd.h>
-
 #include <string>
 
+#include "math/math.h"
 #include "opengl_low_level/opengl_low_level.h"
+
+using namespace dvs;
 
 enum class AxesState
 {
@@ -35,12 +36,12 @@ private:
 
     AxesState axes_state_;
 
-    arl::Vec3Dd min_vec_;
-    arl::Vec3Dd max_vec_;
+    Vec3Dd min_vec_;
+    Vec3Dd max_vec_;
 
 public:
     AxesSettings();
-    AxesSettings(const arl::Vec3Dd& min_vec, const arl::Vec3Dd& max_vec);
+    AxesSettings(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
 
     AxesState getAxesState() const;
     std::string getXLabel() const;
@@ -52,8 +53,8 @@ public:
     bool getCoordinateAxesOn() const;
     RGBTripletf getPlotBoxWallColor() const;
     double getCoordAxExtFac() const;
-    arl::Vec3Dd getMinVec() const;
-    arl::Vec3Dd getMaxVec() const;
+    Vec3Dd getMinVec() const;
+    Vec3Dd getMaxVec() const;
     double getPlotBoxSizeFactor() const;
 };
 

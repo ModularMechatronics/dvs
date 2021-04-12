@@ -1,10 +1,6 @@
 #include "axes/plot_box/plot_box_outline.h"
 
-#include <arl/math/math.h>
-
 #include "opengl_low_level/opengl_low_level.h"
-
-using namespace arl;
 
 void drawOutline(const AxesSettings& axes_settings, const ViewAngles& view_angles)
 {

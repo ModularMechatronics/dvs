@@ -1,7 +1,9 @@
 #ifndef VIEW_ANGLES_H_
 #define VIEW_ANGLES_H_
 
-#include <arl/math/math.h>
+#include "math/math.h"
+
+using namespace dvs;
 
 class ViewAngles
 {
@@ -26,10 +28,10 @@ public:
     double getElevation() const;
     double getSnappedAzimuth() const;
     double getSnappedElevation() const;
-    arl::AxisAngled getAngleAxis() const;
-    arl::Matrixd getRotationMatrix() const;
-    arl::AxisAngled getSnappedAngleAxis() const;
-    arl::Matrixd getSnappedRotationMatrix() const;
+    AxisAngled getAngleAxis() const;
+    Matrixd getRotationMatrix() const;
+    AxisAngled getSnappedAngleAxis() const;
+    Matrixd getSnappedRotationMatrix() const;
     bool isCloseToSnap() const;
     bool bothSnappedBelowAngleLimitAroundZero() const;
     double getAngleLimit() const;

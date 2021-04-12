@@ -1,7 +1,9 @@
 #ifndef GRID_VECTORS_H_
 #define GRID_VECTORS_H_
 
-#include <arl/math/math.h>
+#include "math/math.h"
+
+using namespace dvs;
 
 enum class InteractionType
 {
@@ -14,9 +16,9 @@ enum class InteractionType
 
 struct GridVectors
 {
-    arl::Vectord x;
-    arl::Vectord y;
-    arl::Vectord z;
+    Vectord x;
+    Vectord y;
+    Vectord z;
     GridVectors(const size_t num_lines)
     {
         x.resize(num_lines);

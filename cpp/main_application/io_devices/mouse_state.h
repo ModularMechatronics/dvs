@@ -1,7 +1,9 @@
 #ifndef MOUSE_STATE_H_
 #define MOUSE_STATE_H_
 
-#include <arl/math/math.h>
+#include "math/math.h"
+
+using namespace dvs;
 
 enum class MouseActivity
 {
@@ -13,9 +15,9 @@ enum class MouseActivity
 class MouseButtonState
 {
 private:
-    arl::Vec2Di curr_pos_;
-    arl::Vec2Di prev_pos_;
-    arl::Vec2Di delta_pos_;
+    Vec2Di curr_pos_;
+    Vec2Di prev_pos_;
+    Vec2Di delta_pos_;
 
     bool is_pressed_;
 
@@ -30,9 +32,9 @@ public:
 
     void print() const;
 
-    arl::Vec2Di getCurrPos() const;
-    arl::Vec2Di getPrevPos() const;
-    arl::Vec2Di getDeltaPos() const;
+    Vec2Di getCurrPos() const;
+    Vec2Di getPrevPos() const;
+    Vec2Di getDeltaPos() const;
 };
 
 #endif

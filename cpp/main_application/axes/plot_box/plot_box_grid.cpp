@@ -4,8 +4,6 @@
 
 #include "opengl_low_level/opengl_low_level.h"
 
-using namespace arl;
-
 void drawXZGrid(const double y_coord,
                 const Vectord& x_values,
                 const Vectord& z_values,

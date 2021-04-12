@@ -33,6 +33,11 @@ set(GTEST_LIB_FILES libgtest.a
                     libgtest_main.a
                     pthread)
 
+# ****** OpenGL ******
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+
+include_directories(${OPENGL_INCLUDE_DIRS})
 
 # Adding subdirectories
 add_subdirectory(applications/basic_udp)

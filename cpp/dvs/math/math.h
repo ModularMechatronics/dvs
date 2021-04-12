@@ -34,6 +34,8 @@
 #include "math/structures/index_span.h"
 #include "math/structures/interval_1d.h"
 
+#include "math/pre_defs.h"
+
 // clang-format on
 
 #endif

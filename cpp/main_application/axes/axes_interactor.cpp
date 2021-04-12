@@ -1,7 +1,6 @@
 #include "axes/axes_interactor.h"
 
-#include <arl/math/math.h>
-#include <arl/utilities/logging.h>
+#include "math/math.h"
 
 #include <cassert>
 #include <cmath>
@@ -11,13 +10,11 @@
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_low_level.h"
 
-using namespace arl;
-
 AxesInteractor::AxesInteractor(const AxesSettings& axes_settings)
 {
-    ASSERT(axes_settings.getMinVec().x < axes_settings.getMaxVec().x) << "x min larger than x max!";
-    ASSERT(axes_settings.getMinVec().y < axes_settings.getMaxVec().y) << "y min larger than y max!";
-    ASSERT(axes_settings.getMinVec().z < axes_settings.getMaxVec().z) << "z min larger than z max!";
+    assert(axes_settings.getMinVec().x < axes_settings.getMaxVec().x && "x min larger than x max!");
+    assert(axes_settings.getMinVec().y < axes_settings.getMaxVec().y && "y min larger than y max!");
+    assert(axes_settings.getMinVec().z < axes_settings.getMaxVec().z && "z min larger than z max!");
 
     axes_limits_ = AxesLimits(axes_settings.getMinVec(), axes_settings.getMaxVec());
     default_axes_limits_ = axes_limits_;
@@ -205,7 +202,7 @@ void AxesInteractor::setViewAngles(const double azimuth, const double elevation)
     default_view_angles_.setAngles(azimuth, elevation);
 }
 
-void AxesInteractor::setAxesLimits(const arl::Vec3Dd& min_vec, const arl::Vec3Dd& max_vec)
+void AxesInteractor::setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec)
 {
     axes_limits_ = AxesLimits(min_vec, max_vec);
     default_axes_limits_ = axes_limits_;
@@ -216,7 +213,7 @@ void AxesInteractor::setAxesLimits(const arl::Vec3Dd& min_vec, const arl::Vec3Dd
            static_cast<double>(num_lines - 1);
 }
 
-void AxesInteractor::setAxesLimits(const arl::Vec2Dd& min_vec, const arl::Vec2Dd& max_vec)
+void AxesInteractor::setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec)
 {
     axes_limits_ = AxesLimits({min_vec.x, min_vec.y, axes_limits_.getMin().z},
                               {max_vec.x, max_vec.y, axes_limits_.getMax().z});
@@ -252,7 +249,7 @@ Vectord generateAxisVector(const double min_val,
         it++;
         if (it > static_cast<int>(num_lines * 3))
         {
-            EXIT() << "Number of lines grew a lot!";
+            std::cout << "ERROR: Number of lines grew a lot!" << std::endl;
         }
     }
 

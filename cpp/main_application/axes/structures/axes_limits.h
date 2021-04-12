@@ -1,34 +1,36 @@
 #ifndef AXES_LIMITS_H_
 #define AXES_LIMITS_H_
 
-#include <arl/math/math.h>
+#include "math/math.h"
+
+using namespace dvs;
 
 class AxesLimits
 {
 private:
-    arl::Vec3Dd lim_min_;
-    arl::Vec3Dd lim_max_;
-    arl::Vec3Dd tick_begin_;
+    Vec3Dd lim_min_;
+    Vec3Dd lim_max_;
+    Vec3Dd tick_begin_;
 
 public:
     AxesLimits() = default;
-    AxesLimits(const arl::Vec3Dd& min_vec, const arl::Vec3Dd& max_vec);
+    AxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
 
-    void setTickBegin(const arl::Vec3Dd& tick_begin_vec);
+    void setTickBegin(const Vec3Dd& tick_begin_vec);
 
-    void setMin(const arl::Vec3Dd& min_vec);
-    void setMax(const arl::Vec3Dd& max_vec);
+    void setMin(const Vec3Dd& min_vec);
+    void setMax(const Vec3Dd& max_vec);
 
-    void incrementMinMax(const arl::Vec3Dd& dv);
+    void incrementMinMax(const Vec3Dd& dv);
 
-    arl::Vec3Dd getMin() const;
-    arl::Vec3Dd getMax() const;
+    Vec3Dd getMin() const;
+    Vec3Dd getMax() const;
 
-    arl::Vec3Dd getTickBegin() const;
+    Vec3Dd getTickBegin() const;
 
-    arl::Vec3Dd getAxesCenter() const;
+    Vec3Dd getAxesCenter() const;
 
-    arl::Vec3Dd getAxesScale() const;
+    Vec3Dd getAxesScale() const;
 };
 
 #endif

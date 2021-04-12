@@ -1,18 +1,15 @@
 
 #include "opengl_low_level/3d/opengl_3d_functions.h"
 
-#include <arl/math/math.h>
 #include <assert.h>
 
 #include <vector>
 
 #include "opengl_low_level/opengl_header.h"
 
-using namespace arl;
-
-void drawLines3D(const arl::Vectord& x_values,
-                 const arl::Vectord& y_values,
-                 const arl::Vectord& z_values)
+void drawLines3D(const Vectord& x_values,
+                 const Vectord& y_values,
+                 const Vectord& z_values)
 {
     assert(x_values.size() > 1);
     assert(x_values.size() == y_values.size());
@@ -28,9 +25,9 @@ void drawLines3D(const arl::Vectord& x_values,
     glEnd();
 }
 
-void drawPoints3D(const arl::Vectord& x_values,
-                  const arl::Vectord& y_values,
-                  const arl::Vectord& z_values)
+void drawPoints3D(const Vectord& x_values,
+                  const Vectord& y_values,
+                  const Vectord& z_values)
 {
     assert(x_values.size() > 1);
     assert(x_values.size() == y_values.size());
@@ -47,7 +44,7 @@ void drawPoints3D(const arl::Vectord& x_values,
 
 void drawRectangle3D() {}
 
-void drawTriangle3D(const arl::Vec3Dd& v0, const arl::Vec3Dd& v1, const arl::Vec3Dd& v2)
+void drawTriangle3D(const Vec3Dd& v0, const Vec3Dd& v1, const Vec3Dd& v2)
 {
     glBegin(GL_TRIANGLES);
     glVertex3f(v0.x, v0.y, v0.z);
@@ -69,7 +66,7 @@ void drawLine3D(const double x0,
     glEnd();
 }
 
-void drawLine3D(const arl::Vec3Dd& v0, const arl::Vec3Dd& v1)
+void drawLine3D(const Vec3Dd& v0, const Vec3Dd& v1)
 {
     glBegin(GL_LINES);
     glVertex3f(v0.x, v0.y, v0.z);

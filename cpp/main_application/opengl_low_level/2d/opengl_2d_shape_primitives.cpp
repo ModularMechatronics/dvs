@@ -1,6 +1,5 @@
 #include "opengl_low_level/2d/opengl_2d_shape_primitives.h"
 
-#include <arl/math/math.h>
 #include <assert.h>
 
 #include <cmath>
@@ -9,10 +8,9 @@
 #include <iostream>
 #include <vector>
 
+#include "math/math.h"
 #include "opengl_low_level/2d/opengl_2d_functions.h"
 #include "opengl_low_level/opengl_header.h"
-
-using namespace arl;
 
 void drawSquare2D(const float xc, const float yc, const float r)
 {
