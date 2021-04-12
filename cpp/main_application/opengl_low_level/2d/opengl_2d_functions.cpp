@@ -1,6 +1,6 @@
 #include "opengl_low_level/2d/opengl_2d_functions.h"
 
-#include <arl/math/math.h>
+#include "math/math.h"
 #include <assert.h>
 
 #include <cmath>
@@ -10,8 +10,6 @@
 #include <vector>
 
 #include "opengl_low_level/opengl_header.h"
-
-using namespace arl;
 
 void setColor(const float r, const float g, const float b)
 {
@@ -33,7 +31,7 @@ void setPointSize(const float point_size)
     glPointSize(point_size);
 }
 
-void drawPoints2D(const arl::Vectord& x_values, const arl::Vectord& y_values)
+void drawPoints2D(const Vectord& x_values, const Vectord& y_values)
 {
     assert(x_values.size() > 1);
     assert(x_values.size() == y_values.size());
@@ -55,7 +53,7 @@ void drawLine2D(const float x0, const float y0, const float x1, const float y1)
     glEnd();
 }
 
-void drawLines2D(const arl::Vectord& x_values, const arl::Vectord& y_values)
+void drawLines2D(const Vectord& x_values, const Vectord& y_values)
 {
     assert(x_values.size() > 1);
     assert(x_values.size() == y_values.size());

@@ -1,4 +1,0 @@
-#ifndef OPENGL_3D_SHAPE_PRIMITIVES_H_
-#define OPENGL_3D_SHAPE_PRIMITIVES_H_
-
-#endif

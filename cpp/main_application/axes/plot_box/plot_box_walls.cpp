@@ -1,10 +1,6 @@
 #include "axes/plot_box/plot_box_walls.h"
 
-#include <arl/math/math.h>
-
 #include "opengl_low_level/opengl_low_level.h"
-
-using namespace arl;
 
 void drawPlotBoxWalls(const AxesSettings& axes_settings, const ViewAngles& view_angles)
 {

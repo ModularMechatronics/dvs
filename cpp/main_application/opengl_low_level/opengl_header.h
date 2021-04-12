@@ -8,12 +8,12 @@
 // clang-format on
 #endif
 
-#ifdef PLATFORM_APPLE_M
+// #ifdef PLATFORM_APPLE_M
 
 #include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #include <OpenGl/glu.h>
 
-#endif
+// #endif
 
 #endif

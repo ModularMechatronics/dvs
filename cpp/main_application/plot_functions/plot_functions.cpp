@@ -1,6 +1,6 @@
 #include "plot_functions/plot_functions.h"
 
-#include <arl/math/math.h>
+#include "math/math.h"
 #include <arl/utilities/color_map.h>
 #include <arl/utilities/logging.h>
 

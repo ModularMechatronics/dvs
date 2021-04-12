@@ -1,7 +1,5 @@
 #include "io_devices/mouse_state.h"
 
-using namespace arl;
-
 #include <iostream>
 #include <string>
 #include <vector>

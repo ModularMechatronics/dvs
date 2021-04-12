@@ -5,8 +5,6 @@
 #include "misc/misc.h"
 #include "opengl_low_level/opengl_low_level.h"
 
-using namespace arl;
-
 void drawNumbersForYAxis(const Vectord& y_values,
                          const double x_offset,
                          const double z_offset,

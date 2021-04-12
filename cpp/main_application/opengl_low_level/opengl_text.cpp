@@ -1,13 +1,9 @@
 #include "opengl_low_level/opengl_text.h"
 
-#include <arl/math/math.h>
-
 #include <string>
 
 #include "opengl_low_level/2d/opengl_2d_functions.h"
 #include "opengl_low_level/opengl_header.h"
-
-using namespace arl;
 
 /*Vec2Dd screenToViewCoordinates(const Vec2Dd& screen_coord)
 {
@@ -86,11 +82,11 @@ void drawTextFromTopLeft(const std::string s, float x, float y)
     }
 }*/
 
-void putTextAt(const std::string& s, const arl::Vec2Dd& v)
+void putTextAt(const std::string& s, const Vec2Dd& v)
 {
     putTextAt(s, v.x, v.y);
 }
-void putTextAt3D(const std::string& s, const arl::Vec3Dd& v)
+void putTextAt3D(const std::string& s, const Vec3Dd& v)
 {
     putTextAt3D(s, v.x, v.y, v.z);
 }

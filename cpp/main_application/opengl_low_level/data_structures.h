@@ -1,8 +1,8 @@
 #ifndef DATA_STRUCTURES_H_
 #define DATA_STRUCTURES_H_
 
-#include <arl/utilities/color_map.h>
+#include "misc/color_map.h"
 
-using RGBTripletf = arl::RGBTriplet<float>;
+using RGBTripletf = RGBTriplet<float>;
 
 #endif

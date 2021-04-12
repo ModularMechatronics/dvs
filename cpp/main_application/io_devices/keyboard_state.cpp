@@ -1,7 +1,5 @@
 #include "io_devices/keyboard_state.h"
 
-#include <arl/utilities/logging.h>
-
 #include <algorithm>
 
 bool KeyboardState::isPressed() const

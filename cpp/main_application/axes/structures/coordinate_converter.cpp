@@ -1,7 +1,5 @@
 #include "axes/structures/coordinate_converter.h"
 
-using namespace arl;
-
 #include <cassert>
 
 CoordinateConverter::CoordinateConverter(const Vec2Dd& window_size,

@@ -100,28 +100,28 @@ double ViewAngles::getSnappedElevation() const
     return snapped_elevation_;
 }
 
-arl::AxisAngled ViewAngles::getAngleAxis() const
+AxisAngled ViewAngles::getAngleAxis() const
 {
-    const arl::Matrixd rotation_mat =
-        arl::rotationMatrixX(getElevation()) * arl::rotationMatrixY(getAzimuth());
-    return arl::rotationMatrixToAxisAngle(rotation_mat);
+    const Matrixd rotation_mat =
+        rotationMatrixX(getElevation()) * rotationMatrixY(getAzimuth());
+    return rotationMatrixToAxisAngle(rotation_mat);
 }
 
-arl::Matrixd ViewAngles::getRotationMatrix() const
+Matrixd ViewAngles::getRotationMatrix() const
 {
-    return arl::rotationMatrixX(getElevation()) * arl::rotationMatrixY(getAzimuth());
+    return rotationMatrixX(getElevation()) * rotationMatrixY(getAzimuth());
 }
 
-arl::AxisAngled ViewAngles::getSnappedAngleAxis() const
+AxisAngled ViewAngles::getSnappedAngleAxis() const
 {
-    const arl::Matrixd rotation_mat =
-        arl::rotationMatrixX(getSnappedElevation()) * arl::rotationMatrixY(getSnappedAzimuth());
-    return arl::rotationMatrixToAxisAngle(rotation_mat);
+    const Matrixd rotation_mat =
+        rotationMatrixX(getSnappedElevation()) * rotationMatrixY(getSnappedAzimuth());
+    return rotationMatrixToAxisAngle(rotation_mat);
 }
 
-arl::Matrixd ViewAngles::getSnappedRotationMatrix() const
+Matrixd ViewAngles::getSnappedRotationMatrix() const
 {
-    return arl::rotationMatrixX(getSnappedElevation()) * arl::rotationMatrixY(getSnappedAzimuth());
+    return rotationMatrixX(getSnappedElevation()) * rotationMatrixY(getSnappedAzimuth());
 }
 
 double ViewAngles::calcElevationSnapAngle() const

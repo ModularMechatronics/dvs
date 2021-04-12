@@ -1,7 +1,6 @@
 #include "axes/axes_painter.h"
 
-#include <arl/utilities/logging.h>
-
+#include "math/math.h"
 #include "axes/plot_box/plot_box_coordinate_arrows.h"
 #include "axes/plot_box/plot_box_grid.h"
 #include "axes/plot_box/plot_box_grid_numbers.h"
@@ -9,7 +8,7 @@
 #include "axes/plot_box/plot_box_walls.h"
 #include "misc/misc.h"
 
-using namespace arl;
+using namespace dvs;
 
 AxesPainter::AxesPainter(const AxesSettings& axes_settings) : axes_settings_(axes_settings) {}
 

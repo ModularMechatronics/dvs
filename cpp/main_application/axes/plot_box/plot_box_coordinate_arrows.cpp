@@ -1,10 +1,6 @@
 #include "axes/plot_box/plot_box_coordinate_arrows.h"
 
-#include <arl/math/math.h>
-
 #include "opengl_low_level/opengl_low_level.h"
-
-using namespace arl;
 
 void drawCoordinateAxesLines(const AxesSettings& axes_settings)
 {
