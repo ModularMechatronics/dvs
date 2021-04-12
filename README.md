@@ -4,3 +4,4 @@
 
 Links:
 https://stackoverflow.com/questions/54236612/is-there-a-way-to-draw-a-circle-with-the-fragment-shader-at-the-position-of-a-po
+https://zetcode.com/gui/wxwidgets/layoutmanagement/

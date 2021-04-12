@@ -23,8 +23,8 @@ EVT_KEY_UP(PlotWindowGLPane::keyReleased)
 EVT_PAINT(PlotWindowGLPane::render)
 END_EVENT_TABLE()
 
-PlotWindowGLPane::PlotWindowGLPane(wxFrame* parent, int* args, const wxPoint& position)
-    : wxGLCanvas(parent, wxID_ANY, args, position, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
+PlotWindowGLPane::PlotWindowGLPane(wxPanel* parent, const wxPoint& position, const wxSize& size)
+    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE)
 {
     m_context = new wxGLContext(this);
 
@@ -50,6 +50,21 @@ PlotWindowGLPane::PlotWindowGLPane(wxFrame* parent, int* args, const wxPoint& po
     glEnable(GL_MULTISAMPLE);
 
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+}
+
+int* PlotWindowGLPane::getArgsPtr()
+{
+    args[0] = WX_GL_RGBA;
+    args[1] = WX_GL_DOUBLEBUFFER;
+    args[2] = WX_GL_DEPTH_SIZE;
+    args[3] = 16;
+    args[4] = WX_GL_SAMPLES;
+    args[5] = 4;
+    args[6] = WX_GL_SAMPLE_BUFFERS;
+    args[7] = 1;
+    args[8] = 0;
+
+    return args;
 }
 
 PlotWindowGLPane::~PlotWindowGLPane()

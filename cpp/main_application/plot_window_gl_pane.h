@@ -23,10 +23,14 @@ private:
     bool hold_on_;
     bool axes_set_;
 
+    int args[9];
+
+    int* getArgsPtr();
+
     // PlotDataHandler plot_data_handler_;
 
 public:
-    PlotWindowGLPane(wxFrame* parent, int* args, const wxPoint& position);
+    PlotWindowGLPane(wxPanel* parent, const wxPoint& position, const wxSize& size);
     virtual ~PlotWindowGLPane();
 
     void resized(wxSizeEvent& evt);
