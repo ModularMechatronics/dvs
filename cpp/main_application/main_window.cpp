@@ -10,7 +10,7 @@
 MainWindow::MainWindow(const wxString& title)
     : wxFrame(NULL, wxID_ANY, title, wxPoint(30, 30), wxSize(700, 700))
 {
-    udp_server_ = new UdpServer(9752);
+    // udp_server_ = new UdpServer(9752);
     // udp_server_->start();
 
     wxPanel *panel_00 = new wxPanel(this, wxID_ANY);
@@ -25,20 +25,31 @@ MainWindow::MainWindow(const wxString& title)
     wxPanel *panel_11 = new wxPanel(this, wxID_ANY);
     PlotWindowGLPane* gl_pane_11 = new PlotWindowGLPane(panel_11, wxPoint(0, 0), wxSize(150, 150));
 
+    wxPanel *panel_2 = new wxPanel(this, wxID_ANY);
+    PlotWindowGLPane* gl_pane_2 = new PlotWindowGLPane(panel_2, wxPoint(0, 0), wxSize(300, 150));
+
+    wxPanel *panel_3 = new wxPanel(this, wxID_ANY);
+    PlotWindowGLPane* gl_pane_3 = new PlotWindowGLPane(panel_3, wxPoint(0, 0), wxSize(150, 450));
+
     wxBoxSizer* sizer0 = new wxBoxSizer(wxHORIZONTAL);
     sizer0->Add(panel_00, 0, 0, 0);
     sizer0->Add(panel_10, 0, 0, 0);
 
     wxBoxSizer* sizer1 = new wxBoxSizer(wxHORIZONTAL);
-    sizer0->Add(panel_01, 0, 0, 0);
-    sizer0->Add(panel_11, 0, 0, 0);
+    sizer1->Add(panel_01, 0, 0, 0);
+    sizer1->Add(panel_11, 0, 0, 0);
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* sizer2 = new wxBoxSizer(wxHORIZONTAL);
 
     sizer->Add(sizer0, 0, 0, 0);
     sizer->Add(sizer1, 0, 0, 0);
+    sizer->Add(panel_2, 0, 0, 0);
 
-    SetSizer(sizer);
+    sizer2->Add(sizer);
+    sizer2->Add(panel_3);
+
+    SetSizer(sizer2);
 
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     // timer_.Start(100);

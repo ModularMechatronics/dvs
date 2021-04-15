@@ -52,6 +52,35 @@ PlotWindowGLPane::PlotWindowGLPane(wxPanel* parent, const wxPoint& position, con
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 }
 
+PlotWindowGLPane::PlotWindowGLPane(wxFrame* parent, const wxPoint& position, const wxSize& size)
+    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE)
+{
+    m_context = new wxGLContext(this);
+
+    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
+    const float min_x = -1.0;
+    const float max_x = 1.0;
+    const float min_y = -1.0;
+    const float max_y = 1.0;
+    const float min_z = -1.0;
+    const float max_z = 1.0;
+
+    const AxesSettings axes_settings({min_x, min_y, min_z}, {max_x, max_y, max_z});
+
+    Bind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
+
+    axes_interactor_ = new AxesInteractor(axes_settings);
+    axes_painter_ = new AxesPainter(axes_settings);
+
+    hold_on_ = false;
+    axes_set_ = false;
+
+    glEnable(GL_MULTISAMPLE);
+
+    glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+}
+
 int* PlotWindowGLPane::getArgsPtr()
 {
     args[0] = WX_GL_RGBA;

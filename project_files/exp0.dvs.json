@@ -1,0 +1,79 @@
+{
+    "settings":
+    {
+        "comments":
+        [
+            "This ('settings') should be moved to a separate file and not be in the project file",
+            "Can the tab-type be 'grid' and 'freeform'?"
+        ],
+        "show-splash": false
+    },
+    "layout":
+    {
+        "tabs":
+        [
+            {
+                "name": "main_view",
+                "type": "grid",
+                "rows":
+                [
+                    {
+                        "columns":
+                        [
+                            {
+                                "rows":
+                                [
+                                    {
+                                        "columns":
+                                        [
+                                            {
+                                                "name": "view_small00",
+                                                "type": "plot"
+                                            },
+                                            {
+                                                "name": "view_small01",
+                                                "type": "plot"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "columns":
+                                        [
+                                            {
+                                                "name": "view_small10",
+                                                "type": "plot"
+                                            },
+                                            {
+                                                "name": "view_small11",
+                                                "type": "plot"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "view_wide",
+                                        "type": "plot"
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "view_tall",
+                                "type": "plot"
+                            }
+                            
+                            
+                        ]
+                    }
+                ]
+            }
+        ],
+        "windows":
+        [
+            {
+                "name": "figure_0",
+                "type": "plot",
+                "position": [10, 10],
+                "size": [150, 150]
+            }
+        ]
+    }
+}

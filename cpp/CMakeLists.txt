@@ -24,7 +24,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/googletest/googletest/
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/nlohmann/include)
 
 # ****** wxWidgets ******
-find_package(wxWidgets COMPONENTS core base gl)
+find_package(wxWidgets COMPONENTS core base gl adv)
 include_directories(${wxWidgets_INCLUDE_DIRS})
 link_directories(${wxWidgets_LIBRARY_DIRS})
 include(${wxWidgets_USE_FILE})
