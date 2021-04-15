@@ -1,4 +1,5 @@
 #include <wx/wx.h>
+#include <wx/splash.h>
 
 #include <csignal>
 #include <iostream>
@@ -19,6 +20,20 @@ IMPLEMENT_APP(MainApp)
 
 bool MainApp::OnInit()
 {
+#if 0
+    const std::string splash_img_path = "../splash_trans_small.png";
+    wxInitAllImageHandlers();
+    wxImage splash_img(splash_img_path, wxBITMAP_TYPE_PNG);
+    wxSplashScreen *scrn = new wxSplashScreen(splash_img,
+                                              wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
+                                              2500,
+                                              NULL,
+                                              wxID_ANY,
+                                              wxDefaultPosition,
+                                              wxSize(500, 500),
+                                              wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP | wxTRANSPARENT_WINDOW);
+#endif
+    
     main_window = new MainWindow("DVS v0.1");
     main_window->Show();
 

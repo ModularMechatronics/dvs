@@ -31,6 +31,7 @@ private:
 
 public:
     PlotWindowGLPane(wxPanel* parent, const wxPoint& position, const wxSize& size);
+    PlotWindowGLPane(wxFrame* parent, const wxPoint& position, const wxSize& size);
     virtual ~PlotWindowGLPane();
 
     void resized(wxSizeEvent& evt);

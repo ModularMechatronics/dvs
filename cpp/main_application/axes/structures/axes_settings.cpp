@@ -25,7 +25,8 @@ AxesSettings::AxesSettings()
 
 AxesSettings::AxesSettings(const Vec3Dd& min_vec, const Vec3Dd& max_vec)
 {
-    plot_box_wall_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
+    // plot_box_wall_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
+    plot_box_wall_color_ = RGBTripletf(0x86972);
     plot_box_size_factor_ = 0.5;
 
     grid_on_ = false;

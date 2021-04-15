@@ -36,4 +36,5 @@ set(CPP_SOURCE_FILES main.cpp
 add_executable(dvs ${CPP_SOURCE_FILES})
 target_link_libraries(dvs ${wxWidgets_LIBRARIES}
                           ${OPENGL_LIBRARIES}
-                          ${GLUT_LIBRARY})
+                          ${GLUT_LIBRARY}
+                          X11)

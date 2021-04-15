@@ -18,6 +18,13 @@ template <typename T> struct RGBTriplet
     RGBTriplet(const T red_, const T green_, const T blue_) : red(red_), green(green_), blue(blue_)
     {
     }
+
+    RGBTriplet(const uint32_t hex_color_code)
+    {
+        red = static_cast<float>((hex_color_code >> 16) & 0xFF) / 255.0f;
+        green = static_cast<float>((hex_color_code >> 8) & 0xFF) / 255.0f;
+        blue = static_cast<float>(hex_color_code & 0xFF) / 255.0f;
+    }
 };
 
 // ******************************************************
