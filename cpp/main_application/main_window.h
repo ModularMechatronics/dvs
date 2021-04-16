@@ -18,6 +18,7 @@
 #include "udp_server.h"
 #include "gui_element.h"
 #include "plot_window_gl_pane.h"
+// #include "project_file_parser.h"
 
 wxDEFINE_EVENT(EVENT_TYPE_HANDLE_NEW_DATA, wxCommandEvent);
 
@@ -27,6 +28,7 @@ private:
 
     UdpServer* udp_server_;
     wxTimer timer_;
+    // ProjectFile project_file_;
     // std::vector<std::shared_ptr<GuiElement>> gui_elements_;
 
     // std::vector<
