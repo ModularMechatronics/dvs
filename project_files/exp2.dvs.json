@@ -66,6 +66,37 @@
                         "type": "plot"
                     }
                 ]
+            },
+            {
+                "name": "second_view",
+                "type": "grid",
+                "rows":
+                [
+                    {
+                        "name": "view_tall",
+                        "type": "plot"
+                    }
+                ]
+            },
+            {
+                "name": "third_view",
+                "type": "freeform",
+                "elements":
+                [
+                    {
+                        "name": "view_tall",
+                        "type": "plot"
+                    }
+                ]
+            }
+        ],
+        "windows":
+        [
+            {
+                "name": "figure_0",
+                "type": "plot",
+                "position": [10, 10],
+                "size": [150, 150]
             }
         ]
     }

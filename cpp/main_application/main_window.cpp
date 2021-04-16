@@ -7,8 +7,13 @@
 
 #include "math/math.h"
 
+std::string getProjectFilePath()
+{
+    return "../../project_files/exp0.dvs.json";
+}
+
 MainWindow::MainWindow(const wxString& title)
-    : wxFrame(NULL, wxID_ANY, title, wxPoint(30, 30), wxSize(700, 700))
+    : wxFrame(NULL, wxID_ANY, title, wxPoint(30, 30), wxSize(700, 700)) //, project_file_(getProjectFilePath())
 {
     // udp_server_ = new UdpServer(9752);
     // udp_server_->start();

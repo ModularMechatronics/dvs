@@ -16,7 +16,7 @@ public:
 
 MainWindow* main_window;
 
-IMPLEMENT_APP(MainApp)
+/*IMPLEMENT_APP(MainApp)
 
 bool MainApp::OnInit()
 {
@@ -46,4 +46,26 @@ int MainApp::OnExit()
 {
     std::cout << "Exit!" << std::endl;
     return true;
+}*/
+
+#include "project_file.h"
+
+int main()
+{
+    try
+    {
+        project_file::ProjectFile pf("../../project_files/exp0.dvs.json");
+        auto v = pf.getElements();
+
+        for(auto e : v)
+        {
+            std::cout << e->getName() << std::endl;
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << '\n';
+    }
+    
+    
 }
