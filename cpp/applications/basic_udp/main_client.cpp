@@ -24,11 +24,15 @@ int main( void )
         y(k) = 2 * k;
     }
 
-    plot(x, y, properties::Color(12, 14, 55),
+    /*plot(x, y, properties::Color(12, 14, 55),
                properties::Alpha(137),
                properties::Name("SimpleName"),
                properties::LineStyle("-*"),
-               properties::LineWidth(22));
+               properties::LineWidth(22));*/
+    setCurrentElement("view_small00");
+    setCurrentElement("view_small01");
+    setCurrentElement("view_small10");
+    setCurrentElement("view_small11");
 
     /*UdpClient udp_client(9547);
 

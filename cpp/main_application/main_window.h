@@ -10,6 +10,7 @@
 
 #include <mutex>
 #include <string>
+#include <map>
 #include <thread>
 #include <tuple>
 #include <utility>
@@ -18,7 +19,7 @@
 #include "udp_server.h"
 #include "gui_element.h"
 #include "plot_window_gl_pane.h"
-// #include "project_file_parser.h"
+#include "project_file.h"
 
 wxDEFINE_EVENT(EVENT_TYPE_HANDLE_NEW_DATA, wxCommandEvent);
 
@@ -28,16 +29,20 @@ private:
 
     UdpServer* udp_server_;
     wxTimer timer_;
-    // ProjectFile project_file_;
-    // std::vector<std::shared_ptr<GuiElement>> gui_elements_;
+    project_file::ProjectFile project_file_;
+    std::map<std::string, GuiElement*> gui_elements_;
 
-    // std::vector<
+    GuiElement* current_gui_element_;
+    bool current_gui_element_set_;
 
     void OnTimer(wxTimerEvent&);
+    void setupGui();
 
 public:
     MainWindow();
     MainWindow(const wxString& title);
+    ~MainWindow();
+
     virtual void OnClose(wxCloseEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 };

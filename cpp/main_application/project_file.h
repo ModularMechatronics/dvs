@@ -219,12 +219,6 @@ private:
         Level level;
 
         constructElements(j_, level, all_elements_, elements_);
-
-        /*for(size_t k = 0; k < j_["rows"].size(); k++)
-        {
-            std::shared_ptr<Row> row(new Row(j_["rows"][k], level));
-            all_elements_.push_back(std::dynamic_pointer_cast<ElementBase>(row));
-        }*/
     }
 
     void checkFields()

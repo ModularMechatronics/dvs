@@ -56,13 +56,22 @@ public:
     {
         const uint64_t idx = hdr_.numBytes() + 2 * sizeof(uint64_t) + 1;
 
-        if(idx >= num_received_bytes)
+        std::cout << "num_received_bytes: " << num_received_bytes << std::endl;
+
+        if(idx > num_received_bytes)
         {
             throw std::runtime_error("idx can't be bigger than num_received_bytes");
         }
 
         num_data_bytes_ = num_received_bytes - idx;
-        payload_data_ = new uint8_t[num_data_bytes_];
+        if(num_data_bytes_ == 0)
+        {
+            payload_data_ = nullptr;
+        }
+        else
+        {
+            payload_data_ = new uint8_t[num_data_bytes_];
+        }
     }
 
     ~ReceivedData()
@@ -90,7 +99,7 @@ public:
         return num_data_bytes_;
     }
 
-    dvs::internal::FunctionHeader getFunctionHeader()
+    dvs::internal::FunctionHeader getFunctionHeader() const
     {
         return hdr_;
     }

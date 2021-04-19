@@ -26,6 +26,8 @@ enum class FunctionHeaderObjectType : uint16_t
     AXIS_MIN_MAX_VEC,
     POS2D,
     FIGURE_NUM,
+    ELEMENT_NAME,
+    GUI_ELEMENT_TYPE,
     PROPERTY
 };
 
@@ -55,6 +57,8 @@ enum class Function : uint8_t
     GRID_OFF,
     PLOT2,
     PLOT3,
+    SET_CURRENT_ELEMENT,
+    NEW_ELEMENT,
     SCATTER2,
     SCATTER3,
     LINE_BETWEEN_POINTS_3D,
@@ -110,6 +114,14 @@ namespace properties
 {
     constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
 }
+
+enum class GuiElementType
+{
+    PLOT,
+    IMAGE,
+    BUTTON,
+    TEXT_FIELD
+};
 
 }
 
