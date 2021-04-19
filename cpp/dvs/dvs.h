@@ -80,8 +80,6 @@ uint64_t countNumBytes(const Us&... datas)
     uint64_t num_bytes = 0;
     countNumBytes(num_bytes, datas...);
     return num_bytes;
-    // std::cout << data_to_be_sent.numBytes() << std::endl;
-    
 }
 
 template <typename U>
@@ -174,6 +172,33 @@ void sendHeaderAndData(const SendFunctionType& send_function,
     delete[] data_blob;
 }
 
+inline void sendHeaderOnly(const SendFunctionType& send_function, const FunctionHeader& hdr)
+{
+    const uint64_t num_bytes_hdr = hdr.numBytes();
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_hdr + 1 + 2 * sizeof(uint64_t);
+
+    uint8_t* const data_blob = new uint8_t[num_bytes];
+
+    uint64_t idx = 0;
+    data_blob[idx] = isBigEndian();
+    idx += 1;
+
+    std::memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    hdr.fillBufferWithData(&(data_blob[idx]));
+
+    send_function(data_blob, num_bytes);
+
+    delete[] data_blob;
+}
+
 }
 
 template <typename Wx, typename Wy, typename... Us>
@@ -197,6 +222,36 @@ void plot(const Vector<Wx>& x, const Vector<Wy>& y, const Us&... settings)
     
 
 }
+
+inline void newElement(const GuiElementType element_type, const std::string& name)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::NEW_ELEMENT);
+    hdr.append(internal::FunctionHeaderObjectType::GUI_ELEMENT_TYPE, element_type);
+    hdr.append(internal::FunctionHeaderObjectType::ELEMENT_NAME, name);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void setCurrentElement(const std::string& name)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SET_CURRENT_ELEMENT);
+    hdr.append(internal::FunctionHeaderObjectType::ELEMENT_NAME, name);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+/*inline void figure(const std::string figure_name)
+{
+    TxList tx_list;
+    tx_list.append(Command::FUNCTION, Function::FIGURE_NAME);
+    tx_list.append(Command::HAS_PAYLOAD, false);
+    // tx_list.append(Command::FIGURE_NAME, static_cast<char>(figure_number));
+
+    sendTxList(tx_list);
+}*/
+
 
 /*template <typename... Ts>
 void sendDataInternal(const Ts&... data_to_be_sent)

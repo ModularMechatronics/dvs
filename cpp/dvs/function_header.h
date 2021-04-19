@@ -206,6 +206,10 @@ template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object
     {
         return std::is_same<U, std::pair<Bound3D, Bound3D>>::value;
     }
+    else if (object_type == FunctionHeaderObjectType::ELEMENT_NAME)
+    {
+        return std::is_same<U, std::string>::value;
+    }
     else if (object_type == FunctionHeaderObjectType::FIGURE_NUM)
     {
         return std::is_same<U, uint8_t>::value;
