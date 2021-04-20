@@ -335,6 +335,21 @@ public:
         fillBufferWithObjects(ptr->data, data);
     }
 
+    template <typename U> void appendProperty(const FunctionHeaderObjectType& object_type, const U& data)
+    {
+        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value, "Incorrect type!");
+
+        values.push_back(FunctionHeaderObject());
+        FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
+
+        ptr->type = object_type;
+        ptr->num_bytes = sizeof(U);
+
+        assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
+
+        fillBufferWithObjects(ptr->data, data);
+    }
+
     bool hasType(const FunctionHeaderObjectType tp) const
     {
         return std::find_if(values.begin(), values.end(), [&tp] (const FunctionHeaderObject& fo) -> bool {
@@ -345,6 +360,31 @@ public:
     std::vector<FunctionHeaderObject> getValues() const
     {
         return values;
+    }
+
+    FunctionHeaderObject getObjectAtIdx(const size_t idx) const
+    {
+        return values.at(idx);
+    }
+
+    FunctionHeaderObject getObjectFromType(const FunctionHeaderObjectType tp) const
+    {
+        if(!hasType(tp))
+        {
+            throw std::runtime_error("Requested object that is not in value list!");
+        }
+
+        FunctionHeaderObject obj;
+
+        for(size_t k = 0; k < values.size(); k++)
+        {
+            if(values[k].type == tp)
+            {
+                obj = values[k];
+            }
+        }
+
+        return obj;
     }
 
     size_t getNumValues() const

@@ -30,9 +30,14 @@ int main( void )
                properties::LineStyle("-*"),
                properties::LineWidth(22));*/
     setCurrentElement("view_small00");
+    usleep(20000);
     setCurrentElement("view_small01");
+    usleep(20000);
     setCurrentElement("view_small10");
+    usleep(20000);
     setCurrentElement("view_small11");
+    usleep(20000);
+    setCurrentElement("view_small22");
 
     /*UdpClient udp_client(9547);
 

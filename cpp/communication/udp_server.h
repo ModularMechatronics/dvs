@@ -164,7 +164,7 @@ public:
     {
         while(data_in_buffer_)
         {
-            usleep(1000);
+            usleep(100);
         }
     }
 
@@ -200,22 +200,17 @@ public:
 
             const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(receive_buffer_);
 
-            received_data_ = std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes);
-            waitUntilBufferCleared();
-
-            /*
-            uint64_t rec_magic_num;
-            std::memcpy(&rec_magic_num, &(data[1]), sizeof(uint64_t));
             // TODO: Convert to other endianness and check also
-            if(rec_magic_num != magic_num)
+            uint64_t rec_magic_num;
+            std::memcpy(&rec_magic_num, &(uint8_ptr[1]), sizeof(uint64_t));
+            
+            if(rec_magic_num != dvs::internal::magic_num)
             {
                 throw std::runtime_error("Invalid magic number!");
             }
-            
-            
-            */
-            
-            // receiveBuffer(buf, recvlen);
+
+            received_data_ = std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes);
+            waitUntilBufferCleared();
         }
     }
 
