@@ -15,6 +15,7 @@ private:
     GuiElementType type_;
 
     PlotWindowGLPane* gl_pane_;
+    std::string name_;
 
     bool is_dockable_;
     bool is_docked_;
@@ -24,6 +25,7 @@ public:
     {
         is_dockable_ = false;
         is_docked_ = false;
+        name_ = name;
 
         gl_pane_ = new PlotWindowGLPane(parent, wxPoint(0, 0), size);
     }
@@ -32,6 +34,8 @@ public:
     {
         is_dockable_ = false;
         is_docked_ = false;
+
+        name_ = name;
 
         gl_pane_ = new PlotWindowGLPane(parent, wxPoint(0, 0), size);
     }

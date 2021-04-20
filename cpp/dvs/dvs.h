@@ -223,6 +223,12 @@ void plot(const Vector<Wx>& x, const Vector<Wy>& y, const Us&... settings)
 
 }
 
+/*
+TODO:
+Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc)
+from flags?
+*/
+
 inline void newElement(const GuiElementType element_type, const std::string& name)
 {
     internal::FunctionHeader hdr;
@@ -237,7 +243,7 @@ inline void setCurrentElement(const std::string& name)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SET_CURRENT_ELEMENT);
-    hdr.append(internal::FunctionHeaderObjectType::ELEMENT_NAME, name);
+    hdr.appendProperty(internal::FunctionHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
