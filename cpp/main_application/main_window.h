@@ -38,6 +38,7 @@ private:
     void OnTimer(wxTimerEvent&);
     void setupGui();
     void setCurrentElement(const internal::FunctionHeader& hdr);
+    void receiveData();
 
 public:
     MainWindow();

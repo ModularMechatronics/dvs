@@ -4,6 +4,7 @@
 
 #include <csignal>
 #include <iostream>
+#include <stdexcept>
 
 #include "math/math.h"
 
@@ -96,58 +97,16 @@ MainWindow::MainWindow(const wxString& title)
     timer_.Start(10);
 }
 
-void MainWindow::setCurrentElement(const FunctionHeader& hdr)
-{
-    const FunctionHeaderObject elem_obj = hdr.getObjectFromType(FunctionHeaderObjectType::ELEMENT_NAME);
-    const properties::Name elem_name = elem_obj.getAs<properties::Name>();
-    const std::string element_name_str = elem_name.data;
-
-    if(gui_elements_.count(element_name_str) > 0)
-    {
-        std::cout << "Current element name: " << element_name_str << std::endl;
-        current_gui_element_ = gui_elements_[element_name_str];
-    }
-    else
-    {
-        std::cout << "I don't have name: " << element_name_str << std::endl;
-    }
-}
-
 void MainWindow::OnTimer(wxTimerEvent&)
 {
     try
     {
-        std::unique_ptr<const ReceivedData> received_data = udp_server_->getReceivedData();
-        if(received_data)
-        {
-            const FunctionHeader hdr = received_data->getFunctionHeader();
-
-            const FunctionHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
-            if(fcn_obj.type != FunctionHeaderObjectType::FUNCTION)
-            {
-                std::cout << "Function was not at element 0!" << std::endl;
-                return;
-            }
-
-            const Function fcn = fcn_obj.getAs<Function>();
-
-            switch(fcn)
-            {
-                case Function::SET_CURRENT_ELEMENT:
-                    setCurrentElement(hdr);
-
-                    break;
-                default:
-                    std::cout << "Got default" << std::endl;
-            }
-        }
+        receiveData();
     }
     catch(const std::exception& e)
     {
         std::cerr << "Got exception when receiving: " << e.what() << std::endl;
     }
-    
-    
 }
 
 void MainWindow::OnClose(wxCloseEvent& event)

@@ -30,7 +30,8 @@ set(CPP_SOURCE_FILES main.cpp
                      misc/number_formatting.cpp
 
                      plot_window_gl_pane.cpp
-                     main_window.cpp)
+                     main_window.cpp
+                     main_window_receive.cpp)
 
 
 add_executable(dvs ${CPP_SOURCE_FILES})

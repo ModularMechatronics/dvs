@@ -204,7 +204,7 @@ template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object
     }
     else if (object_type == FunctionHeaderObjectType::AXIS_MIN_MAX_VEC)
     {
-        return std::is_same<U, std::pair<Bound3D, Bound3D>>::value;
+        return std::is_same<U, AxesBounds>::value;
     }
     else if (object_type == FunctionHeaderObjectType::ELEMENT_NAME)
     {

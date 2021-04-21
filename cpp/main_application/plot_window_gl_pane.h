@@ -9,6 +9,8 @@
 #include "io_devices/io_devices.h"
 #include "plot_data.h"
 #include "opengl_low_level/opengl_header.h"
+#include "dvs.h"
+#include "udp_server.h"
 
 class PlotWindowGLPane : public wxGLCanvas
 {
@@ -42,6 +44,7 @@ public:
     void render(wxPaintEvent& evt);
 
     // void addData(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec);
+    void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr);
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);
