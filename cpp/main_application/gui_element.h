@@ -12,7 +12,7 @@
 class GuiElement
 {
 private:
-    GuiElementType type_;
+    // GuiElementType type_;
 
     PlotWindowGLPane* gl_pane_;
     std::string name_;
@@ -40,6 +40,10 @@ public:
         gl_pane_ = new PlotWindowGLPane(parent, wxPoint(0, 0), size);
     }
 
+    void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr)
+    {
+        gl_pane_->addData(std::move(received_data), hdr);
+    }
 
 };
 

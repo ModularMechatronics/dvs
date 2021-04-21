@@ -101,47 +101,54 @@ PlotWindowGLPane::~PlotWindowGLPane()
     delete m_context;
 }
 
-/*void PlotWindowGLPane::addData(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec)
+void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr)
 {
-    const Function function_type = rx_list.getObjectData<FunctionRx>();
+    const internal::Function fcn = hdr.getObjectAtIdx(0).getAs<internal::Function>();
 
-    if (function_type == Function::HOLD_ON)
+    if (fcn == Function::HOLD_ON)
     {
         hold_on_ = true;
     }
-    else if (function_type == Function::AXES)
+    else if (fcn == Function::AXES)
     {
         axes_set_ = true;
-        const int num_dimensions = rx_list.getObjectData<AxesDimensionsRx>();
+        const uint8_t num_dimensions = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_AXES).getAs<uint8_t>();
+        if((num_dimensions != 2) && (num_dimensions != 3))
+        {
+            throw std::runtime_error("Got an incorrect number of dimensions: " +  std::to_string(num_dimensions));
+        }
 
-        ASSERT((num_dimensions == 2) || (num_dimensions == 3))
-            << "Error in dimension: " << num_dimensions;
-        const auto new_ax_lim = rx_list.getObjectData<AxesMinMaxVecRx>();
+        const AxesBounds axes_bnd = hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
 
         if (num_dimensions == 2)
         {
-            axes_interactor_->setAxesLimits(Vec2Dd(new_ax_lim.first.x, new_ax_lim.first.y),
-                                            Vec2Dd(new_ax_lim.second.x, new_ax_lim.second.y));
+            axes_interactor_->setAxesLimits(Vec2Dd(axes_bnd.lower.x, axes_bnd.lower.y),
+                                            Vec2Dd(axes_bnd.upper.x, axes_bnd.upper.y));
         }
         else
         {
-            axes_interactor_->setAxesLimits(new_ax_lim.first, new_ax_lim.second);
+            axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.lower.x, axes_bnd.lower.y, axes_bnd.lower.z),
+                                            Vec3Dd(axes_bnd.upper.x, axes_bnd.upper.y, axes_bnd.upper.z));
         }
+
+        std::cout << "Got axes: " << static_cast<int>(num_dimensions) << std::endl;
+        std::cout << "Axes bound: [" << axes_bnd.lower.x << ", " << axes_bnd.lower.y << ", " << axes_bnd.lower.z << "], [" <<
+                                        axes_bnd.upper.x << ", " << axes_bnd.upper.y << ", " << axes_bnd.upper.z << "]" << std::endl;
     }
-    else if (function_type == Function::VIEW)
+    else if (fcn == Function::VIEW)
     {
-        const float azimuth = rx_list.getObjectData<AzimuthRx>();
-        const float elevation = rx_list.getObjectData<ElevationRx>();
+        const float azimuth = hdr.getObjectFromType(internal::FunctionHeaderObjectType::AZIMUTH).getAs<float>();
+        const float elevation = hdr.getObjectFromType(internal::FunctionHeaderObjectType::ELEVATION).getAs<float>();
 
         axes_interactor_->setViewAngles(azimuth, elevation);
     }
-    else if (function_type == Function::CLEAR)
+    else if (fcn == Function::CLEAR)
     {
         axes_set_ = false;
         hold_on_ = false;
         // plot_data_handler_.clear();
     }
-    else if (function_type == Function::SOFT_CLEAR)
+    else if (fcn == Function::SOFT_CLEAR)
     {
         // plot_data_handler_.softClear();
     }
@@ -153,18 +160,18 @@ PlotWindowGLPane::~PlotWindowGLPane()
         }
         // plot_data_handler_.addData(rx_list, data_vec);
 
-        if (!axes_set_)
+        /*if (!axes_set_)
         {
             const std::pair<Vec3Dd, Vec3Dd> min_max =
                 // plot_data_handler_.getMinMaxVectors();
             axes_interactor_->setAxesLimits(min_max.first, min_max.second);
-        }
+        }*/
     }
 
     // TODO: Add "holdClear" that only clears when new data comes in, to avoid flashing
 
     Refresh();
-}*/
+}
 
 void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
 {
