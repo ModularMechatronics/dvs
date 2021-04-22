@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "udp_server.h"
+#include "received_data.h"
 #include "gui_element.h"
 #include "plot_window_gl_pane.h"
 #include "project_file.h"

@@ -1,15 +1,17 @@
 #ifndef PLOT_DATA_H_
 #define PLOT_DATA_H_
 
-// #include <arl/math/math.h>
-
 #include "math/math.h"
 
 #include <string>
 #include <vector>
 
-// #include "communication/rx_list.h"
+#include "received_data.h"
 #include "opengl_low_level/data_structures.h"
+#include "dvs.h"
+
+using namespace dvs;
+using namespace dvs::internal;
 
 class PlotObjectBase;
 
@@ -22,7 +24,7 @@ public:
     PlotDataHandler();
     void clear();
     void softClear();
-    // void addData(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec);
+    void addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     void visualize() const;
 };
 

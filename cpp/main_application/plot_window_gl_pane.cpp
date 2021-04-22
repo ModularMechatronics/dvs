@@ -146,18 +146,20 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     {
         axes_set_ = false;
         hold_on_ = false;
-        // plot_data_handler_.clear();
+        plot_data_handler_.clear();
     }
     else if (fcn == Function::SOFT_CLEAR)
     {
-        // plot_data_handler_.softClear();
+        plot_data_handler_.softClear();
     }
     else
     {
         if (!hold_on_)
         {
-            // plot_data_handler_.clear();
+            plot_data_handler_.clear();
         }
+        plot_data_handler_.addData(std::move(received_data), hdr);
+        std::cout << "Adding data..." << std::endl;
         // plot_data_handler_.addData(rx_list, data_vec);
 
         /*if (!axes_set_)
@@ -306,7 +308,7 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?
     axes_painter_->plotBegin();
 
-    // plot_data_handler_.visualize();
+    plot_data_handler_.visualize();
 
     axes_painter_->plotEnd();
     glDisable(GL_DEPTH_TEST);

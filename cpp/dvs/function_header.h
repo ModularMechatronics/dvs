@@ -392,6 +392,24 @@ public:
         return values.size();
     }
 
+    std::vector<std::shared_ptr<PropertyBase>> getProperties()
+    {
+        assert(false && "not implemented yet");
+        std::vector<std::shared_ptr<PropertyBase>> res;
+
+        for(size_t k = 0; k < values.size(); k++)
+        {
+            if(values[k].type == FunctionHeaderObjectType::PROPERTY)
+            {
+                // values[k].getAs<PropertyBase>()
+                // res.push_back();
+            }
+            
+        }
+
+        return res;
+    }
+
     template <typename... Us> void extend(const Us&... objects)
     {
         extendInternal(values, objects...);
