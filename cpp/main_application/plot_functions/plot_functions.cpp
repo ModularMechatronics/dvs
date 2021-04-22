@@ -1,21 +1,17 @@
 #include "plot_functions/plot_functions.h"
 
 #include "math/math.h"
-#include <arl/utilities/color_map.h>
-#include <arl/utilities/logging.h>
-
 #include "opengl_low_level/opengl_low_level.h"
 
-using namespace arl;
 
-void plot(const arl::Vectord& x, const arl::Vectord& y)
+void plot(const Vectord& x, const Vectord& y)
 {
     assert(x.isAllocated() && (x.size() > 1));
     assert(y.isAllocated() && (y.size() > 1));
     drawLines2D(x, y);
 }
 
-void plot3(const arl::Vectord& x, const arl::Vectord& y, const arl::Vectord& z)
+void plot3(const Vectord& x, const Vectord& y, const Vectord& z)
 {
     assert(x.isAllocated() && (x.size() > 1));
     assert(y.isAllocated() && (y.size() > 1));
@@ -23,7 +19,7 @@ void plot3(const arl::Vectord& x, const arl::Vectord& y, const arl::Vectord& z)
     drawLines3D(x, y, z);
 }
 
-void scatter3(const arl::Vectord& x, const arl::Vectord& y, const arl::Vectord& z)
+void scatter3(const Vectord& x, const Vectord& y, const Vectord& z)
 {
     assert(x.isAllocated() && (x.size() > 1));
     assert(y.isAllocated() && (y.size() > 1));
@@ -31,18 +27,18 @@ void scatter3(const arl::Vectord& x, const arl::Vectord& y, const arl::Vectord& 
     drawPoints3D(x, y, z);
 }
 
-void scatter(const arl::Vectord& x, const arl::Vectord& y)
+void scatter(const Vectord& x, const Vectord& y)
 {
     assert(x.isAllocated() && (x.size() > 1));
     assert(y.isAllocated() && (y.size() > 1));
     drawPoints2D(x, y);
 }
 
-void surf(const arl::Matrixd& x,
-          const arl::Matrixd& y,
-          const arl::Matrixd& z,
+void surf(const Matrixd& x,
+          const Matrixd& y,
+          const Matrixd& z,
           const Interval1D<double> min_max_interval,
-          arl::RGBColorMap<float> c_map)
+          RGBColorMap<float> c_map)
 {
     assert((x.rows() == y.rows()) && (x.rows() == z.rows()));
     assert((x.cols() == y.cols()) && (x.cols() == z.cols()));
@@ -61,7 +57,7 @@ void surf(const arl::Matrixd& x,
             const double mean_val = (y(r, c) + y(r, c + 1) + y(r + 1, c + 1) + y(r + 1, c)) * 0.25;
 
             const double color_val =
-                arl::mapAndClampValueToInterval(mean_val, min_max_interval, target_interval);
+                mapAndClampValueToInterval(mean_val, min_max_interval, target_interval);
             const RGBTripletf color = c_map(color_val);
             setColor(color);
             // setColor(input_color);
@@ -70,7 +66,7 @@ void surf(const arl::Matrixd& x,
     }
 }
 
-void surf(const arl::Matrixd& x, const arl::Matrixd& y, const arl::Matrixd& z)
+void surf(const Matrixd& x, const Matrixd& y, const Matrixd& z)
 {
     assert((x.rows() == y.rows()) && (x.rows() == z.rows()));
     assert((x.cols() == y.cols()) && (x.cols() == z.cols()));
@@ -89,7 +85,7 @@ void surf(const arl::Matrixd& x, const arl::Matrixd& y, const arl::Matrixd& z)
     }
 }
 
-void drawGrid3D(const arl::Matrixd& x, const arl::Matrixd& y, const arl::Matrixd& z)
+void drawGrid3D(const Matrixd& x, const Matrixd& y, const Matrixd& z)
 {
     assert((x.rows() == y.rows()) && (x.rows() == z.rows()));
     assert((x.cols() == y.cols()) && (x.cols() == z.cols()));
@@ -110,7 +106,7 @@ void drawGrid3D(const arl::Matrixd& x, const arl::Matrixd& y, const arl::Matrixd
     }
 }
 
-void drawArrow3D(const arl::Point3Dd& p, const arl::Vec3Dd& v)
+void drawArrow3D(const Point3Dd& p, const Vec3Dd& v)
 {
     drawLine3D(p, p + v);
 }

@@ -3,7 +3,9 @@
 #include "math/math.h"
 
 #include "utils.h"
-#include "main_application/plot_objects/plot_objects.h"
+#include "plot_objects/plot_object_base.h"
+#include "plot_objects/plot_objects.h"
+
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
@@ -19,65 +21,67 @@ void PlotDataHandler::clear()
     plot_datas_.clear();
 }
 
-/*void PlotDataHandler::addData(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec)
+void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
 {
-    const plot_tool::Function fcn_type = rx_list.getObjectData<FunctionRx>();
-    switch (fcn_type)
+    const FunctionHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
+    Function fcn = fcn_obj.getAs<Function>();
+
+    switch (fcn)
     {
-        case plot_tool::Function::PLOT2:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot2D(rx_list, data_vec)));
+        case Function::PLOT2:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot2D(std::move(received_data), hdr)));
 
             break;
-        case plot_tool::Function::PLOT3:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot3D(rx_list, data_vec)));
+        case Function::PLOT3:
+            // plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot3D(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::SURF:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Surf(rx_list, data_vec)));
+        case Function::SURF:
+            // plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Surf(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::LINE3D:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(rx_list, data_vec)));
+        case Function::LINE3D:
+            // plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::LINE_BETWEEN_POINTS_3D:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawLineBetweenPoints3D(rx_list, data_vec)));
+        case Function::LINE_BETWEEN_POINTS_3D:
+            // plot_datas_.push_back(
+            //     dynamic_cast<PlotObjectBase*>(new DrawLineBetweenPoints3D(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::PLANE_XY:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawPlaneXY(rx_list, data_vec)));
+        case Function::PLANE_XY:
+            // plot_datas_.push_back(
+            //     dynamic_cast<PlotObjectBase*>(new DrawPlaneXY(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::PLANE_XZ:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawPlaneXZ(rx_list, data_vec)));
+        case Function::PLANE_XZ:
+            // plot_datas_.push_back(
+            //     dynamic_cast<PlotObjectBase*>(new DrawPlaneXZ(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::PLANE_YZ:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawPlaneYZ(rx_list, data_vec)));
+        case Function::PLANE_YZ:
+            // plot_datas_.push_back(
+            //     dynamic_cast<PlotObjectBase*>(new DrawPlaneYZ(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::POLYGON_FROM_4_POINTS:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawPolygon4Points(rx_list, data_vec)));
+        case Function::POLYGON_FROM_4_POINTS:
+            // plot_datas_.push_back(
+            //     dynamic_cast<PlotObjectBase*>(new DrawPolygon4Points(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::SCATTER3:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter3D(rx_list, data_vec)));
+        case Function::SCATTER3:
+            // plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter3D(rx_list, data_vec)));
 
             break;
-        case plot_tool::Function::SCATTER2:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(rx_list, data_vec)));
+        case Function::SCATTER2:
+            // plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(rx_list, data_vec)));
 
             break;
         default:
-            EXIT() << "Unsupported function!";
+            throw std::runtime_error("Invalid function!");
             break;
     }
-}*/
+}
 
 void PlotDataHandler::visualize() const
 {
@@ -133,11 +137,11 @@ std::pair<Vec3Dd, Vec3Dd> PlotDataHandler::getMinMaxVectors() const
             max_vec.z = 1.0;
         }
 
-        const arl::Vec3Dd diff_vec = max_vec - min_vec;
+        const Vec3Dd diff_vec = max_vec - min_vec;
 
-        const arl::Vectord v = {diff_vec.x, diff_vec.y, diff_vec.z};
+        const Vectord v = {diff_vec.x, diff_vec.y, diff_vec.z};
 
-        const double largest_diff = arl::max(v);
+        const double largest_diff = dvs::max(v);
 
         // If some of the axes turns out to have a very small difference
         // between min and max, we have to modify this

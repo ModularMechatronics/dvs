@@ -11,6 +11,7 @@
 #include "opengl_low_level/opengl_header.h"
 #include "dvs.h"
 #include "udp_server.h"
+#include "received_data.h"
 
 class PlotWindowGLPane : public wxGLCanvas
 {
@@ -29,7 +30,7 @@ private:
 
     int* getArgsPtr();
 
-    // PlotDataHandler plot_data_handler_;
+    PlotDataHandler plot_data_handler_;
 
 public:
     PlotWindowGLPane(wxPanel* parent, const wxPoint& position, const wxSize& size);
@@ -43,7 +44,6 @@ public:
 
     void render(wxPaintEvent& evt);
 
-    // void addData(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec);
     void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr);
 
     // Event callback function

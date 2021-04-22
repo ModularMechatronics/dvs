@@ -208,6 +208,7 @@ void plot(const Vector<Wx>& x, const Vector<Wy>& y, const Us&... settings)
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT2);
     hdr.append(internal::FunctionHeaderObjectType::DATA_STRUCTURE, internal::DataStructure::VECTOR);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<double>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.append(internal::FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, internal::toUInt8(2));
     hdr.extend(settings...);
 

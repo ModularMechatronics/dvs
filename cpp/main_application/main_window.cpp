@@ -22,7 +22,7 @@ void MainWindow::setupGui()
     {
         const std::string name = e->getName();
         wxPanel *panel = new wxPanel(this, wxID_ANY);
-        gui_elements_[name] = new GuiElement(panel, wxSize(150, 150), name);
+        gui_elements_[name] = new GuiElement(panel, wxSize(350, 350), name);
         sizer->Add(panel);
     }
 
@@ -84,7 +84,7 @@ MainWindow::~MainWindow()
 }
 
 MainWindow::MainWindow(const wxString& title)
-    : wxFrame(NULL, wxID_ANY, title, wxPoint(30, 30), wxSize(700, 700)), project_file_(getProjectFilePath())
+    : wxFrame(NULL, wxID_ANY, title, wxPoint(30, 30), wxSize(1500, 700)), project_file_(getProjectFilePath())
 {
     udp_server_ = new UdpServer(9752);
     udp_server_->start();
@@ -92,6 +92,10 @@ MainWindow::MainWindow(const wxString& title)
     current_gui_element_set_ = false;
 
     setupGui();
+
+    // SplashScreen?
+    // wxFrame *frame = new wxFrame(NULL, wxID_ANY, "Something", wxPoint(300, 300), wxSize(200, 200), wxFRAME_TOOL_WINDOW | wxNO_BORDER);
+    // frame->Show(true);
 
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);

@@ -2,25 +2,27 @@
 #define PLOT_FUNCTIONS_H_
 
 #include "math/math.h"
-#include <arl/utilities/color_map.h>
 
 #include <utility>
 
 #include "opengl_low_level/data_structures.h"
+#include "misc/color_map.h"
 
-void plot(const arl::Vectord& x, const arl::Vectord& y);
-void plot3(const arl::Vectord& x, const arl::Vectord& y, const arl::Vectord& z);
-void scatter3(const arl::Vectord& x, const arl::Vectord& y, const arl::Vectord& z);
-void scatter(const arl::Vectord& x, const arl::Vectord& y);
+using namespace dvs;
 
-void drawGrid3D(const arl::Matrixd& x, const arl::Matrixd& y, const arl::Matrixd& z);
-void surf(const arl::Matrixd& x,
-          const arl::Matrixd& y,
-          const arl::Matrixd& z,
-          const arl::Interval1D<double> min_max_interval,
-          arl::RGBColorMap<float> c_map);
-void surf(const arl::Matrixd& x, const arl::Matrixd& y, const arl::Matrixd& z);
-void drawArrow3D(const arl::Point3Dd& p, const arl::Vec3Dd& v);
+void plot(const Vectord& x, const Vectord& y);
+void plot3(const Vectord& x, const Vectord& y, const Vectord& z);
+void scatter3(const Vectord& x, const Vectord& y, const Vectord& z);
+void scatter(const Vectord& x, const Vectord& y);
+
+void drawGrid3D(const Matrixd& x, const Matrixd& y, const Matrixd& z);
+void surf(const Matrixd& x,
+          const Matrixd& y,
+          const Matrixd& z,
+          const Interval1D<double> min_max_interval,
+          RGBColorMap<float> c_map);
+void surf(const Matrixd& x, const Matrixd& y, const Matrixd& z);
+void drawArrow3D(const Point3Dd& p, const Vec3Dd& v);
 void setSettings(const std::vector<std::pair<std::string, std::string>>& settings_vector);
 
 #endif
