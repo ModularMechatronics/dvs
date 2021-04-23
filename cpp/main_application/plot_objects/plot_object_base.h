@@ -23,14 +23,11 @@ class PlotObjectBase
 {
 protected:
     std::unique_ptr<const ReceivedData> received_data_;
-    size_t num_bytes_;
-    size_t num_buffers_required_;
+    size_t num_dimensions_;
     size_t num_bytes_per_element_;
 
     Function type_;                 // Plot, surf, stem etc.
     DataType data_type_;            // float, int, double etc.
-    DataStructure data_structure_;  // vector, matrix, image etc.
-    Function function_;
     bool is_persistent_;
 
     Vec3Dd min_vec;
@@ -47,16 +44,17 @@ protected:
     float line_width_;
     float point_size_;
 
+    void assignProperties(const Properties& props);
+
 public:
     size_t getNumDimensions() const;
     virtual ~PlotObjectBase();
     PlotObjectBase();
-    // PlotObjectBase(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec);
     PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     virtual void visualize() const = 0;
     std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors() const;
     bool isPersistent() const;
-    properties::Name getName() const;
+    std::string getName() const;
 };
 
 bool PlotObjectBase::isPersistent() const
@@ -64,9 +62,9 @@ bool PlotObjectBase::isPersistent() const
     return is_persistent_;
 }
 
-properties::Name PlotObjectBase::getName() const
+std::string PlotObjectBase::getName() const
 {
-    return name_;
+    return name_.data;
 }
 
 std::pair<Vec3Dd, Vec3Dd> PlotObjectBase::getMinMaxVectors() const
@@ -76,26 +74,23 @@ std::pair<Vec3Dd, Vec3Dd> PlotObjectBase::getMinMaxVectors() const
 
 size_t PlotObjectBase::getNumDimensions() const
 {
-    return num_buffers_required_;
+    return num_dimensions_;
 }
 
 PlotObjectBase::PlotObjectBase() {}
 
-PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
+PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr) : received_data_(std::move(received_data))
 {
-    received_data_ = std::move(received_data);
+    type_ = hdr.getObjectFromType(FunctionHeaderObjectType::FUNCTION).getAs<Function>();
+    data_type_ = hdr.getObjectFromType(FunctionHeaderObjectType::DATA_TYPE).getAs<DataType>();
+    num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
+    num_dimensions_ = 0;
 
     const Properties props = hdr.getProperties();
+}
 
-    data_type_ = hdr.getObjectFromType(FunctionHeaderObjectType::DATA_TYPE).getAs<DataType>();
-    /*size_t num_bytes_;
-    size_t num_buffers_required_;
-    size_t num_bytes_per_element_;
-
-    Function type_;                 // Plot, surf, stem etc.
-    DataStructure data_structure_;  // vector, matrix, image etc.
-    Function function_;*/
-
+void PlotObjectBase::assignProperties(const Properties& props)
+{
     is_persistent_ = props.hasProperty(PropertyType::PERSISTENT);
 
     if(props.hasProperty(PropertyType::NAME))
@@ -190,68 +185,8 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     {
         line_style_ = LineStyle("");
     }
-
-    std::map<ColorMapType, std::string> cms = {{ColorMapType::JET, "JET"},
-                                               {ColorMapType::RAINBOW, "RAINBOW"},
-                                               {ColorMapType::MAGMA, "MAGMA"},
-                                               {ColorMapType::VIRIDIS, "VIRIDIS"}};
-
-    std::cout << "Color map: " << cms[color_map_] << std::endl;
-    std::cout << "Color: " << color_.red * 255.0f << ", " << color_.green * 255.0f << ", " << color_.blue * 255.0f << std::endl;
-    std::cout << "EdgeColor: " << edge_color_.red * 255.0f << ", " << edge_color_.green * 255.0f << ", " << edge_color_.blue * 255.0f << std::endl;
-    std::cout << "FaceColor: " << face_color_.red * 255.0f << ", " << face_color_.green * 255.0f << ", " << face_color_.blue * 255.0f << std::endl;
-    std::cout << "Name: " << name_.data << std::endl;
-    std::cout << "LineStyle: " << line_style_.data << std::endl;
-    std::cout << "Alpha: " << alpha_ * 255.0f << std::endl;
-    std::cout << "Point size: " << point_size_ * 100.0f << std::endl;
-    std::cout << "Line width: " << line_width_ * 100.0f << std::endl;
-    /*
-    float alpha_;
-    float line_width_;
-    float point_size_;*/
 }
 
-/*PlotObjectBase::PlotObjectBase(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec)
-{
-    type_ = rx_list.getObjectData<FunctionRx>();
-    num_bytes_ = rx_list.getObjectData<NumBytesRx>();
-    num_buffers_required_ = rx_list.getObjectData<NumBuffersRequiredRx>();
-    num_bytes_per_element_ = rx_list.getObjectData<BytesPerElementRx>();
-    data_type_ = rx_list.getObjectData<DataTypeRx>();
-
-    for (size_t k = 0; k < num_buffers_required_; k++)
-    {
-        char* new_data = new char[num_bytes_];
-        char* incoming_data = data_vec[k];
-
-        for (size_t i = 0; i < num_bytes_; i++)
-        {
-            new_data[i] = incoming_data[i];
-        }
-        data_.push_back(new_data);
-    }
-
-    is_persistent_ = rx_list.hasKey(Command::PERSISTENT) ? true : false;
-
-    name_ = rx_list.hasKey(Command::NAME) ? rx_list.getObjectData<NameRx>() : Name("");
-
-    color_ = RGBTripletf(0.1, 0.2, 0.1);
-
-    if (rx_list.hasKey(Command::COLOR))
-    {
-        Color c = rx_list.getObjectData<ColorRx>();
-        color_.red = c.red;
-        color_.green = c.green;
-        color_.blue = c.blue;
-    }
-}*/
-
-PlotObjectBase::~PlotObjectBase()
-{
-    /*for (size_t k = 0; k < data_.size(); k++)
-    {
-        delete[] data_[k];
-    }*/
-}
+PlotObjectBase::~PlotObjectBase() {}
 
 #endif

@@ -206,28 +206,12 @@ void plot(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT2);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_STRUCTURE, internal::DataStructure::VECTOR);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
-
-    /*sendData(x, y, hdr);
-    sendData(x, y, z, hdr);
-    sendData(values, hdr);
-    sendData(text_data, hdr);
-
-    use pushToCore instead of sendData?*/
-    
-
 }
-
-/*
-TODO:
-Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc)
-from flags?
-*/
 
 inline void newElement(const GuiElementType element_type, const std::string& name)
 {

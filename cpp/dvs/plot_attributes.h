@@ -229,11 +229,7 @@ public:
 
     EdgeColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), red(red_), green(green_), blue(blue_)
-    {
-        // red = std::min(255, std::max(red, 0));
-        // green = std::min(255, std::max(green, 0));
-        // blue = std::min(255, std::max(blue, 0));
-    }
+    {}
 };
 
 struct FaceColor : internal::PropertyBase
@@ -290,11 +286,7 @@ public:
 
     FaceColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(red_), green(green_), blue(blue_)
-    {
-        // red = std::min(255, std::max(red, 0));
-        // green = std::min(255, std::max(green, 0));
-        // blue = std::min(255, std::max(blue, 0));
-    }
+    {}
 };
 
 struct ColorMap : internal::PropertyBase

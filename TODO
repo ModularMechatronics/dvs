@@ -1,0 +1,5 @@
+ - setCurrentElement doesn't send any information to dvs, only sets internal variable on client side which is sent with the next command
+ - Add another byte in the transmission which indicates if the transmission is sent over several segments (segmented transmission)
+ - The class Properties should be moved so that it is not included in the C++ client interface.
+ - use pushToCore instead of sendData?
+ - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
