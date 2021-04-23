@@ -99,6 +99,52 @@ struct FunctionHeaderObject
     }
 };
 
+inline uint8_t dataTypeToNumBytes(const DataType data_type)
+{
+    uint8_t num_bytes = 0;
+    switch(data_type)
+    {
+        case DataType::FLOAT:
+            num_bytes = sizeof(float);
+            break;
+        case DataType::DOUBLE:
+            num_bytes = sizeof(double);
+            break;
+        case DataType::INT8:
+            num_bytes = sizeof(int8_t);
+            break;
+        case DataType::INT16:
+            num_bytes = sizeof(int16_t);
+            break;
+        case DataType::INT32:
+            num_bytes = sizeof(int32_t);
+            break;
+        case DataType::INT64:
+            num_bytes = sizeof(int64_t);
+            break;
+        case DataType::UINT8:
+            num_bytes = sizeof(uint8_t);
+            break;
+        case DataType::UINT16:
+            num_bytes = sizeof(uint16_t);
+            break;
+        case DataType::UINT32:
+            num_bytes = sizeof(uint32_t);
+            break;
+        case DataType::UINT64:
+            num_bytes = sizeof(uint64_t);
+            break;
+        case DataType::UNKNOWN:
+            throw std::runtime_error("Got unknown data type!");
+            break;
+        default:
+            throw std::runtime_error("Didn't find valid data type!");
+            break;
+    }
+
+    return num_bytes;
+}
+
 template <typename T> DataType typeToDataTypeEnum()
 {
     if (std::is_same<T, float>::value)
@@ -296,7 +342,6 @@ private:
     std::vector<std::shared_ptr<PropertyBase>> props;
 
 public:
-    // TODO: This class (Properties) should be moved so that it is not included in the C++ client interface. 
     Properties() = default;
     Properties(const std::vector<FunctionHeaderObject>& values)
     {
@@ -306,8 +351,6 @@ public:
             {
                 const PropertyBase pb = values[k].getAs<PropertyBase>();
                 std::shared_ptr<PropertyBase> ptr;
-
-                // const PropertyType pt = pb.getPropertyType();
 
                 switch(pb.getPropertyType())
                 {
