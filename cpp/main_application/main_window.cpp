@@ -107,6 +107,10 @@ void MainWindow::OnTimer(wxTimerEvent&)
     {
         receiveData();
     }
+    catch(const std::runtime_error& e)
+    {
+        std::cerr << "Got runtime_error when receiving: " << e.what() << std::endl;
+    }
     catch(const std::exception& e)
     {
         std::cerr << "Got exception when receiving: " << e.what() << std::endl;

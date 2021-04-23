@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 
 #include "received_data.h"
 #include "opengl_low_level/data_structures.h"
@@ -16,13 +17,12 @@
 
 using namespace dvs;
 using namespace dvs::internal;
-
+using namespace dvs::properties;
 
 class PlotObjectBase
 {
 protected:
     std::unique_ptr<const ReceivedData> received_data_;
-    std::vector<char*> data_;
     size_t num_bytes_;
     size_t num_buffers_required_;
     size_t num_bytes_per_element_;
@@ -36,9 +36,16 @@ protected:
     Vec3Dd min_vec;
     Vec3Dd max_vec;
 
-    properties::Name name_;
-
+    // Properties
+    Name name_;
     RGBTripletf color_;
+    RGBTripletf edge_color_;
+    RGBTripletf face_color_;
+    ColorMapType color_map_;
+    LineStyle line_style_;
+    float alpha_;
+    float line_width_;
+    float point_size_;
 
 public:
     size_t getNumDimensions() const;
@@ -77,6 +84,131 @@ PlotObjectBase::PlotObjectBase() {}
 PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
 {
     received_data_ = std::move(received_data);
+
+    const Properties props = hdr.getProperties();
+
+    data_type_ = hdr.getObjectFromType(FunctionHeaderObjectType::DATA_TYPE).getAs<DataType>();
+    /*size_t num_bytes_;
+    size_t num_buffers_required_;
+    size_t num_bytes_per_element_;
+
+    Function type_;                 // Plot, surf, stem etc.
+    DataStructure data_structure_;  // vector, matrix, image etc.
+    Function function_;*/
+
+    is_persistent_ = props.hasProperty(PropertyType::PERSISTENT);
+
+    if(props.hasProperty(PropertyType::NAME))
+    {
+        name_ = props.getProperty<Name>();
+    }
+    else
+    {
+        name_ = Name("<undef-name>");
+    }
+
+    if(props.hasProperty(PropertyType::COLOR))
+    {
+        const Color col = props.getProperty<Color>();
+        color_.red = static_cast<float>(col.red) / 255.0f;
+        color_.green = static_cast<float>(col.green) / 255.0f;
+        color_.blue = static_cast<float>(col.blue) / 255.0f;
+    }
+    else
+    {
+        color_ = RGBTripletf(0.1, 0.2, 0.1);
+    }
+
+    if(props.hasProperty(PropertyType::ALPHA))
+    {
+        const Alpha alp = props.getProperty<Alpha>();
+        alpha_ = static_cast<float>(alp.data) / 255.0f;
+    }
+    else
+    {
+        alpha_ = 1.0f;
+    }
+
+    if(props.hasProperty(PropertyType::EDGE_COLOR))
+    {
+        const EdgeColor ec = props.getProperty<EdgeColor>();
+        edge_color_.red = static_cast<float>(ec.red) / 255.0f;
+        edge_color_.green = static_cast<float>(ec.green) / 255.0f;
+        edge_color_.blue = static_cast<float>(ec.blue) / 255.0f;
+    }
+    else
+    {
+        edge_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
+    }
+
+    if(props.hasProperty(PropertyType::FACE_COLOR))
+    {
+        const FaceColor fc = props.getProperty<FaceColor>();
+        face_color_.red = static_cast<float>(fc.red) / 255.0f;
+        face_color_.green = static_cast<float>(fc.green) / 255.0f;
+        face_color_.blue = static_cast<float>(fc.blue) / 255.0f;
+    }
+    else
+    {
+        face_color_ = RGBTripletf(0.1f, 0.2f, 0.3f);
+    }
+
+    if(props.hasProperty(PropertyType::COLOR_MAP))
+    {
+        color_map_ = props.getProperty<ColorMap>().data;
+    }
+    else
+    {
+        color_map_ = ColorMapType::JET;
+    }
+
+    if(props.hasProperty(PropertyType::LINE_WIDTH))
+    {
+        const LineWidth lw = props.getProperty<LineWidth>();
+        line_width_ = static_cast<float>(lw.data) / 100.0f;
+    }
+    else
+    {
+        line_width_ = 1.0f;
+    }
+
+    if(props.hasProperty(PropertyType::POINT_SIZE))
+    {
+        const PointSize ps = props.getProperty<PointSize>();
+        point_size_ = static_cast<float>(ps.data) / 100.0f;
+    }
+    else
+    {
+        point_size_ = 1.0f;
+    }
+
+    if(props.hasProperty(PropertyType::LINE_STYLE))
+    {
+        line_style_ = props.getProperty<LineStyle>();
+    }
+    else
+    {
+        line_style_ = LineStyle("");
+    }
+
+    std::map<ColorMapType, std::string> cms = {{ColorMapType::JET, "JET"},
+                                               {ColorMapType::RAINBOW, "RAINBOW"},
+                                               {ColorMapType::MAGMA, "MAGMA"},
+                                               {ColorMapType::VIRIDIS, "VIRIDIS"}};
+
+    std::cout << "Color map: " << cms[color_map_] << std::endl;
+    std::cout << "Color: " << color_.red * 255.0f << ", " << color_.green * 255.0f << ", " << color_.blue * 255.0f << std::endl;
+    std::cout << "EdgeColor: " << edge_color_.red * 255.0f << ", " << edge_color_.green * 255.0f << ", " << edge_color_.blue * 255.0f << std::endl;
+    std::cout << "FaceColor: " << face_color_.red * 255.0f << ", " << face_color_.green * 255.0f << ", " << face_color_.blue * 255.0f << std::endl;
+    std::cout << "Name: " << name_.data << std::endl;
+    std::cout << "LineStyle: " << line_style_.data << std::endl;
+    std::cout << "Alpha: " << alpha_ * 255.0f << std::endl;
+    std::cout << "Point size: " << point_size_ * 100.0f << std::endl;
+    std::cout << "Line width: " << line_width_ * 100.0f << std::endl;
+    /*
+    float alpha_;
+    float line_width_;
+    float point_size_;*/
 }
 
 /*PlotObjectBase::PlotObjectBase(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec)
@@ -116,10 +248,10 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
 
 PlotObjectBase::~PlotObjectBase()
 {
-    for (size_t k = 0; k < data_.size(); k++)
+    /*for (size_t k = 0; k < data_.size(); k++)
     {
         delete[] data_[k];
-    }
+    }*/
 }
 
 #endif

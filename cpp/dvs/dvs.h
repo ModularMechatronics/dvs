@@ -201,15 +201,14 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Function
 
 }
 
-template <typename Wx, typename Wy, typename... Us>
-void plot(const Vector<Wx>& x, const Vector<Wy>& y, const Us&... settings)
+template <typename T, typename... Us>
+void plot(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT2);
     hdr.append(internal::FunctionHeaderObjectType::DATA_STRUCTURE, internal::DataStructure::VECTOR);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<double>());
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
-    hdr.append(internal::FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, internal::toUInt8(2));
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);

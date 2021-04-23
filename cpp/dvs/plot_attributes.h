@@ -30,6 +30,8 @@ public:
     {
         property_type_ = attr_tp;
     }
+
+    virtual ~PropertyBase() {}
 };
 
 inline size_t safeStringLenCheck(const char* const str, const size_t max_length)
@@ -170,11 +172,7 @@ public:
 
     Color(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::COLOR), red(red_), green(green_), blue(blue_)
-    {
-        // red = std::min(255, std::max(red, 0));
-        // green = std::min(255, std::max(green, 0));
-        // blue = std::min(255, std::max(blue, 0));
-    }
+    {}
 };
 
 struct EdgeColor : internal::PropertyBase
