@@ -17,7 +17,6 @@ class Plot2D : public PlotObjectBase
 {
 private:
     uint32_t num_elements_;
-    float line_width_;
 
     Vectord x_vec, y_vec;
 
@@ -38,8 +37,6 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
     {
         throw std::runtime_error("Invalid data structure for function plot2!");
     }
-
-    const DataType data_type = hdr.getObjectFromType(FunctionHeaderObjectType::DATA_TYPE).getAs<DataType>();
 
     num_elements_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_ELEMENTS).getAs<uint32_t>();
     const uint64_t num_data_bytes = received_data_->getNumDataBytes();
