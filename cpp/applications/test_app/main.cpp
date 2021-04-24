@@ -6,12 +6,13 @@ using namespace dvs;
 
 int main( void )
 {
-    Vector<double> x(20), y(20);
+    Vector<double> x(20), y(20), z(20);
 
     for(size_t k = 0; k < 20; k++)
     {
         x(k) = k;
         y(k) = 2 * x(k);
+        z(k) = 2 * std::sin(x(k));
     }
 
     setCurrentElement("view_small00");
@@ -29,4 +30,16 @@ int main( void )
                properties::FaceColor(52, 26, 3),
                properties::ColorMap::MAGMA(),
                properties::PointSize(137));
+    usleep(20000);
+    setCurrentElement("view_small01");
+    usleep(20000);
+    plot3(x, y, z, properties::Color(12, 14, 55),
+                   properties::Alpha(137),
+                   properties::Name("SimpleName"),
+                   properties::LineStyle("-*"),
+                   properties::LineWidth(22),
+                   properties::EdgeColor(55, 21, 7),
+                   properties::FaceColor(52, 26, 3),
+                   properties::ColorMap::MAGMA(),
+                   properties::PointSize(137));
 }

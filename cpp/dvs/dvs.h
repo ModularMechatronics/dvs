@@ -213,6 +213,18 @@ void plot(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
+template <typename T, typename... Us>
+void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT3);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
+}
+
 inline void newElement(const GuiElementType element_type, const std::string& name)
 {
     internal::FunctionHeader hdr;
