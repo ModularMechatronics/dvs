@@ -22,7 +22,6 @@ enum class FunctionHeaderObjectType : uint16_t
     HAS_PAYLOAD,
     AZIMUTH,
     ELEVATION,
-    NUM_AXES,
     AXIS_MIN_MAX_VEC,
     POS2D,
     FIGURE_NUM,
@@ -70,7 +69,8 @@ enum class Function : uint8_t
     POSITION,
     SURF,
     IM_SHOW,
-    AXES,
+    AXES_2D,
+    AXES_3D,
     VIEW,
     SOFT_CLEAR
 };

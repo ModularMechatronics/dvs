@@ -48,7 +48,8 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::POSITION) ||
            (fcn == Function::SURF) ||
            (fcn == Function::IM_SHOW) ||
-           (fcn == Function::AXES) ||
+           (fcn == Function::AXES_2D) ||
+           (fcn == Function::AXES_3D) ||
            (fcn == Function::VIEW) ||
            (fcn == Function::SOFT_CLEAR);
 }
