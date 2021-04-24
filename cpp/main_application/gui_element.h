@@ -45,6 +45,11 @@ public:
         gl_pane_->addData(std::move(received_data), hdr);
     }
 
+    std::string name() const
+    {
+        return name_;
+    }
+
 };
 
 class GuiElementDocked : GuiElement

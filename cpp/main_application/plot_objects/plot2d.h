@@ -11,8 +11,6 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
 
-using namespace plot_tool;
-
 class Plot2D : public PlotObjectBase
 {
 private:
@@ -47,18 +45,16 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
 
     const uint64_t num_bytes_for_one_vec = num_bytes_per_element_ * num_elements_;
 
-    if((2 * num_bytes_for_one_vec) != num_data_bytes)
+    if((num_dimensions_ * num_bytes_for_one_vec) != num_data_bytes)
     {
         throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
     }
 
-    uint8_t* ptr = received_data_->getDataPointer();
+    uint8_t* const ptr = received_data_->getDataPointer();
     x_vec.setInternalData(reinterpret_cast<double*>(ptr), num_elements_);
     y_vec.setInternalData(reinterpret_cast<double*>(&(ptr[num_bytes_for_one_vec])), num_elements_);
 
-    // num_elements_ = rx_list.getObjectData<NumElementsRx>();
-
-    // findMinMax();
+    findMinMax();
 }
 
 void Plot2D::findMinMax()

@@ -1,4 +1,5 @@
  - setCurrentElement doesn't send any information to dvs, only sets internal variable on client side which is sent with the next command
+  - This way, a property type could be added, so that the current element can be specified in the function call
  - Add another byte in the transmission which indicates if the transmission is sent over several segments (segmented transmission)
  - The class Properties should be moved so that it is not included in the C++ client interface.
  - use pushToCore instead of sendData?

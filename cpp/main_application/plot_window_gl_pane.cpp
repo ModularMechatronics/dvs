@@ -130,10 +130,6 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
             axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.lower.x, axes_bnd.lower.y, axes_bnd.lower.z),
                                             Vec3Dd(axes_bnd.upper.x, axes_bnd.upper.y, axes_bnd.upper.z));
         }
-
-        std::cout << "Got axes: " << static_cast<int>(num_dimensions) << std::endl;
-        std::cout << "Axes bound: [" << axes_bnd.lower.x << ", " << axes_bnd.lower.y << ", " << axes_bnd.lower.z << "], [" <<
-                                        axes_bnd.upper.x << ", " << axes_bnd.upper.y << ", " << axes_bnd.upper.z << "]" << std::endl;
     }
     else if (fcn == Function::VIEW)
     {
@@ -160,7 +156,6 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         }
         plot_data_handler_.addData(std::move(received_data), hdr);
         std::cout << "Adding data..." << std::endl;
-        // plot_data_handler_.addData(rx_list, data_vec);
 
         /*if (!axes_set_)
         {

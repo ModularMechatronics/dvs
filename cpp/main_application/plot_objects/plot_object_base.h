@@ -26,9 +26,8 @@ protected:
     size_t num_dimensions_;
     size_t num_bytes_per_element_;
 
-    Function type_;                 // Plot, surf, stem etc.
-    DataType data_type_;            // float, int, double etc.
-    bool is_persistent_;
+    Function type_; 
+    DataType data_type_;
 
     Vec3Dd min_vec;
     Vec3Dd max_vec;
@@ -43,6 +42,7 @@ protected:
     float alpha_;
     float line_width_;
     float point_size_;
+    bool is_persistent_;
 
     void assignProperties(const Properties& props);
 
@@ -160,7 +160,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     if(props.hasProperty(PropertyType::LINE_WIDTH))
     {
         const LineWidth lw = props.getProperty<LineWidth>();
-        line_width_ = static_cast<float>(lw.data) / 100.0f;
+        line_width_ = lw.data;
     }
     else
     {
@@ -170,7 +170,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     if(props.hasProperty(PropertyType::POINT_SIZE))
     {
         const PointSize ps = props.getProperty<PointSize>();
-        point_size_ = static_cast<float>(ps.data) / 100.0f;
+        point_size_ = ps.data;
     }
     else
     {
