@@ -109,27 +109,21 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     {
         hold_on_ = true;
     }
-    else if (fcn == Function::AXES)
+    else if (fcn == Function::AXES_2D)
     {
         axes_set_ = true;
-        const uint8_t num_dimensions = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_AXES).getAs<uint8_t>();
-        if((num_dimensions != 2) && (num_dimensions != 3))
-        {
-            throw std::runtime_error("Got an incorrect number of dimensions: " +  std::to_string(num_dimensions));
-        }
 
         const AxesBounds axes_bnd = hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
+        axes_interactor_->setAxesLimits(Vec2Dd(axes_bnd.lower.x, axes_bnd.lower.y),
+                                        Vec2Dd(axes_bnd.upper.x, axes_bnd.upper.y));
+    }
+    else if (fcn == Function::AXES_3D)
+    {
+        axes_set_ = true;
 
-        if (num_dimensions == 2)
-        {
-            axes_interactor_->setAxesLimits(Vec2Dd(axes_bnd.lower.x, axes_bnd.lower.y),
-                                            Vec2Dd(axes_bnd.upper.x, axes_bnd.upper.y));
-        }
-        else
-        {
-            axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.lower.x, axes_bnd.lower.y, axes_bnd.lower.z),
-                                            Vec3Dd(axes_bnd.upper.x, axes_bnd.upper.y, axes_bnd.upper.z));
-        }
+        const AxesBounds axes_bnd = hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
+        axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.lower.x, axes_bnd.lower.y, axes_bnd.lower.z),
+                                        Vec3Dd(axes_bnd.upper.x, axes_bnd.upper.y, axes_bnd.upper.z));
     }
     else if (fcn == Function::VIEW)
     {

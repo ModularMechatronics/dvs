@@ -244,10 +244,6 @@ template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object
     {
         return std::is_same<U, float>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::NUM_AXES)
-    {
-        return std::is_same<U, uint8_t>::value;
-    }
     else if (object_type == FunctionHeaderObjectType::AXIS_MIN_MAX_VEC)
     {
         return std::is_same<U, AxesBounds>::value;

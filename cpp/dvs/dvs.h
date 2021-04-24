@@ -257,8 +257,7 @@ inline void view(const float azimuth, const float elevation)
 inline void axis(const Bound3D& min_bound, const Bound3D& max_bound)
 {
     internal::FunctionHeader hdr;
-    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES);
-    hdr.append(internal::FunctionHeaderObjectType::NUM_AXES, static_cast<uint8_t>(3));
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES_3D);
     hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, AxesBounds(min_bound, max_bound));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
