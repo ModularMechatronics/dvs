@@ -4,8 +4,8 @@
 
 void drawOutline(const AxesSettings& axes_settings, const ViewAngles& view_angles)
 {
-    setLinewidth(1.5f);
-    setColor(0.0f, 0.0f, 0.0f);
+    setLinewidth(0.1f);
+    setColor(0.6f, 0.6f, 0.6f);
     const double width = axes_settings.getPlotBoxSizeFactor();
     const double height = axes_settings.getPlotBoxSizeFactor();
     const double depth = axes_settings.getPlotBoxSizeFactor();
@@ -53,7 +53,7 @@ void drawDottedBox(const AxesSettings& axes_settings)
 {
     setLinewidth(1.0f);
     glPushAttrib(GL_ENABLE_BIT);
-    setColor(0.0f, 0.0f, 0.0f);
+    setColor(0.7f, 0.7f, 0.7f);
     glLineStipple(1, 4450);
     glEnable(GL_LINE_STIPPLE);
     const double f = axes_settings.getPlotBoxSizeFactor();

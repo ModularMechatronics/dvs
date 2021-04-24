@@ -66,7 +66,7 @@ void drawGrid(const GridVectors& gv,
               const AxesLimits& axes_limits,
               const ViewAngles& view_angles)
 {
-    glLineWidth(1.0f);
+    glLineWidth(0.1f);
     setColor(axes_settings.getGridColor());
 
     const Vec3Dd s = axes_limits.getAxesScale();

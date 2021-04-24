@@ -45,7 +45,12 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
         throw std::runtime_error("No data bytes!");
     }
 
-    const uint64_t num_bytes_for_one_vec = sizeof(double) * num_elements_;
+    const uint64_t num_bytes_for_one_vec = num_bytes_per_element_ * num_elements_;
+
+    if((2 * num_bytes_for_one_vec) != num_data_bytes)
+    {
+        throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
+    }
 
     uint8_t* ptr = received_data_->getDataPointer();
     x_vec.setInternalData(reinterpret_cast<double*>(ptr), num_elements_);
