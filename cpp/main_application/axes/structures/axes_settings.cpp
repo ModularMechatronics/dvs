@@ -30,7 +30,8 @@ AxesSettings::AxesSettings(const Vec3Dd& min_vec, const Vec3Dd& max_vec)
     plot_box_size_factor_ = 0.5;
 
     grid_on_ = false;
-    grid_color_ = RGBTripletf(127.0f / 255.0f, 127.0f / 255.0f, 127.0f / 255.0f);
+    // grid_color_ = RGBTripletf(127.0f / 255.0f, 127.0f / 255.0f, 127.0f / 255.0f);
+    grid_color_ = RGBTripletf(0.7f, 0.7f, 0.7f);
 
     coordinate_axes_on_ = true;
     coord_axes_extension_factor_ = 1.5;
