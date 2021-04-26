@@ -3,6 +3,7 @@
 
 #include <wx/button.h>
 #include <wx/frame.h>
+#include <wx/notebook.h>
 #include <wx/textctrl.h>
 #include <wx/timer.h>
 #include <wx/menu.h>
@@ -61,10 +62,17 @@ private:
     GuiElement* current_gui_element_;
     bool current_gui_element_set_;
 
+    wxNotebook* tabs_view;
+
+    int initial_width_;
+    int initial_height_;
+
     void OnTimer(wxTimerEvent&);
     void setupGui();
     void setCurrentElement(const internal::FunctionHeader& hdr);
     void receiveData();
+
+    void addNewTab(wxCommandEvent & event);
 
 public:
     MainWindow();
