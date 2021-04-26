@@ -21,23 +21,22 @@ private:
     bool is_docked_;
 public:
     GuiElement() = delete;
-    GuiElement(wxPanel* parent, wxSize size, const std::string& name)
+    GuiElement(wxPanel* parent, const wxPoint& position, const wxSize& size, const std::string& name)
     {
         is_dockable_ = false;
         is_docked_ = false;
         name_ = name;
 
-        gl_pane_ = new PlotWindowGLPane(parent, wxPoint(0, 0), size);
+        gl_pane_ = new PlotWindowGLPane(parent, position, size);
     }
 
-    GuiElement(wxFrame* parent, wxSize size, const std::string& name)
+    GuiElement(wxFrame* parent, const wxPoint& position, const wxSize& size, const std::string& name)
     {
         is_dockable_ = false;
         is_docked_ = false;
-
         name_ = name;
 
-        gl_pane_ = new PlotWindowGLPane(parent, wxPoint(0, 0), size);
+        gl_pane_ = new PlotWindowGLPane(parent, position, size);
     }
 
     void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr)
@@ -48,6 +47,11 @@ public:
     std::string name() const
     {
         return name_;
+    }
+
+    void windowSizeChanged(wxSizeEvent& event)
+    {
+        // std::cout << "Size changed from" << name_ << std::endl;
     }
 
 };

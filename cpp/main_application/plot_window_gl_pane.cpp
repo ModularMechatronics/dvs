@@ -197,6 +197,18 @@ void PlotWindowGLPane::keyPressed(wxKeyEvent& event)
 {
     const int key_code = event.GetKeyCode();
 
+    /*if(key_code == 68)
+    {
+        wxSize s = this->GetSize();
+        wxPoint p = this->GetPosition();
+        p.x = p.x + 1;
+        
+        s.DecBy(1, 1);
+        this->SetPosition(p);
+        this->SetSize(s);
+        std::cout << p.x << std::endl;
+    }*/
+
     // Only add alpha numeric keys due to errors when clicking outside of window
     if (std::isalnum(key_code))
     {
@@ -221,6 +233,7 @@ void PlotWindowGLPane::resized(wxSizeEvent& evt)
 {
     // (void)evt;
     this->SetSize(evt.GetSize());
+    std::cout << "Resized!" << std::endl;
 
     Refresh();
 }
