@@ -33,7 +33,8 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_functions/plot_functions.cpp
                      plot_window_gl_pane.cpp
                      main_window.cpp
-                     main_window_receive.cpp)
+                     main_window_receive.cpp
+                     main_window_gui.cpp)
 
 
 add_executable(dvs ${CPP_SOURCE_FILES})
