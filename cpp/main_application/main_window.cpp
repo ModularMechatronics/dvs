@@ -20,8 +20,8 @@ void MainWindow::setupGui()
 {
     const int nx = 13;
     const int ny = 9;
-    int dx = 1500 / nx;
-    int dy = 700 / ny;
+    int dx = initial_width_ / nx;
+    int dy = initial_height_ / ny; 
     int xpos = 0;
     int ypos = 0;
 
@@ -63,12 +63,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::OnSize(wxSizeEvent& event)
 {
+    wxFrame::OnSize(event);
+    std::cout << "Size changed" << std::endl;
     /*for(auto it : gui_elements_)
     {
         it.second->windowSizeChanged(event);
     }*/
 
-    wxSize new_size = event.GetSize();
+    /*wxSize new_size = event.GetSize();
     const int nx = 13;
     const int ny = 9;
     float dx = static_cast<float>(new_size.GetWidth()) / static_cast<float>(nx);
@@ -93,18 +95,62 @@ void MainWindow::OnSize(wxSizeEvent& event)
             ypos += dy;
         }
         xpos += dx;
-    }
+    }*/
+}
+
+void MainWindow::addNewTab(wxCommandEvent & event)
+{
+    std::cout << "Add new tab" << std::endl;
+    tabs_view->AddPage( new wxNotebookPage(tabs_view, -1), L"TEST 4");
 }
 
 MainWindow::MainWindow(const wxString& title)
-    : wxFrame(NULL, wxID_ANY, title, wxPoint(30, 30), wxSize(1500, 700)), project_file_(getProjectFilePath())
+    : wxFrame(NULL, wxID_ANY, title, wxPoint(0, 30), wxSize(1500, 700)), project_file_(getProjectFilePath())
 {
     udp_server_ = new UdpServer(9752);
     udp_server_->start();
     current_gui_element_ = nullptr;
     current_gui_element_set_ = false;
 
-    setupGui();
+    initial_width_ = 1500;
+    initial_height_ = 700;
+
+    wxPanel* tab_container = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(600, 600));
+    tab_container->SetBackgroundColour(wxColor(203, 111, 33));
+
+    wxButton* new_tab_button = new wxButton(this, wxID_ANY, "New tab", wxPoint(0, 0));
+    wxButton* delete_tab_button = new wxButton(this, wxID_ANY, "Delete current tab", wxPoint(0, 0));
+    wxButton* edit_tab_button = new wxButton(this, wxID_ANY, "Edit tab", wxPoint(0, 0));
+
+    new_tab_button->Bind(wxEVT_BUTTON, &MainWindow::addNewTab, this);
+
+    wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);
+    button_sizer->Add(edit_tab_button, 0, 0, 0);
+    button_sizer->Add(delete_tab_button, 0, 0, 0);
+    button_sizer->Add(new_tab_button, 0, 0, 0);
+
+    wxBoxSizer* big_sizer = new wxBoxSizer(wxVERTICAL);
+    big_sizer->Add(button_sizer, 0, wxEXPAND);
+    big_sizer->Add(tab_container, 1, wxEXPAND);
+
+    this->SetSizer(big_sizer);
+
+    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500), wxNB_MULTILINE);
+    tabs_view->AddPage( new wxNotebookPage(tabs_view, -1), L"TEST 1");
+    tabs_view->AddPage( new wxNotebookPage(tabs_view, -1), L"TEST 2");
+    tabs_view->AddPage( new wxNotebookPage(tabs_view, -1), L"TEST 3");
+    tabs_view->AddPage( new wxNotebookPage(tabs_view, -1), L"TEST 4");
+    tabs_view->Layout();
+
+    wxBoxSizer* tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
+    tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
+
+    wxBoxSizer* tabs_sizer_h = new wxBoxSizer(wxHORIZONTAL);
+    tabs_sizer_h->Add(tabs_sizer_v, 1, wxEXPAND);
+
+    tab_container->SetSizer(tabs_sizer_h);
+
+    // setupGui();
 
     Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
     // SplashScreen?
