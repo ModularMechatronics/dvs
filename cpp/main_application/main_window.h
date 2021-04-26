@@ -24,10 +24,35 @@
 
 wxDEFINE_EVENT(EVENT_TYPE_HANDLE_NEW_DATA, wxCommandEvent);
 
+class ResizablePanel : wxPanel
+{
+private:
+
+public:
+
+    ResizablePanel() = default;
+    ResizablePanel(wxFrame* parent, wxPoint pos, wxSize size) : wxPanel(parent, wxID_ANY, pos, size)
+    {
+
+    }
+
+    void setBackgroundColour(wxColor col)
+    {
+        this->SetBackgroundColour(col);
+    }
+
+    void setSize(wxPoint pos, wxSize size)
+    {
+        this->SetPosition(pos);
+        this->SetSize(size);
+    }
+};
+
 class MainWindow : public wxFrame
 {
 private:
 
+    std::vector<ResizablePanel*> panels_;
     UdpServer* udp_server_;
     wxTimer timer_;
     project_file::ProjectFile project_file_;
@@ -47,6 +72,7 @@ public:
     ~MainWindow();
 
     virtual void OnClose(wxCloseEvent& event);
+    virtual void OnSize(wxSizeEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 };
 

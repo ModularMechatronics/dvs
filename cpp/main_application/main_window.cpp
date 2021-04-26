@@ -15,62 +15,40 @@ std::string getProjectFilePath()
     return "../../project_files/exp1.dvs.json";
 }
 
+
 void MainWindow::setupGui()
 {
-    wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+    const int nx = 13;
+    const int ny = 9;
+    int dx = 1500 / nx;
+    int dy = 700 / ny;
+    int xpos = 0;
+    int ypos = 0;
+
+    // x: 1500, y: 700
+    for(int x = 0; x < nx; x++)
+    {
+        ypos = 0;
+        for(int y = 0; y < ny; y++)
+        {
+            const wxPoint pos(xpos, ypos);
+            const wxSize size(dx, dy);
+            
+            ResizablePanel* panel = new ResizablePanel(this, pos, size);
+            panel->setBackgroundColour(wxColor(((10 * y) % 255), ((10 * x) % 255), (((x + y) * 10) * x) % 255));
+            panels_.push_back(panel);
+            ypos += dy;
+        }
+        xpos += dx;
+    }
+    /*std::vector<int> x = {0, 350, 2 * 350, 3 * 350};
+    int idx = 0;
     for(auto e : project_file_.getElements())
     {
         const std::string name = e->getName();
-        wxPanel *panel = new wxPanel(this, wxID_ANY);
-        gui_elements_[name] = new GuiElement(panel, wxSize(350, 350), name);
-        sizer->Add(panel);
-    }
-
-    /*wxPanel *panel_00 = new wxPanel(this, wxID_ANY);
-    GuiElement* gl_pane_00 = new GuiElement(panel_00, wxSize(150, 150), true, true);
-
-    wxPanel *panel_10 = new wxPanel(this, wxID_ANY);
-    GuiElement* gl_pane_10 = new GuiElement(panel_10, wxSize(150, 150), true, true);
-
-    wxPanel *panel_01 = new wxPanel(this, wxID_ANY);
-    GuiElement* gl_pane_01 = new GuiElement(panel_01, wxSize(150, 150), true, true);
-
-    wxPanel *panel_11 = new wxPanel(this, wxID_ANY);
-    GuiElement* gl_pane_11 = new GuiElement(panel_11, wxSize(150, 150), true, true);
-
-    wxPanel *panel_2 = new wxPanel(this, wxID_ANY);
-    GuiElement* gl_pane_2 = new GuiElement(panel_2, wxSize(300, 150), true, true);
-
-    wxPanel *panel_3 = new wxPanel(this, wxID_ANY);
-    GuiElement* gl_pane_3 = new GuiElement(panel_3, wxSize(150, 450), true, true);
-
-    gui_elements_.push_back(gl_pane_00);
-    gui_elements_.push_back(gl_pane_10);
-    gui_elements_.push_back(gl_pane_01);
-    gui_elements_.push_back(gl_pane_11);
-    gui_elements_.push_back(gl_pane_2);
-    gui_elements_.push_back(gl_pane_3);*/
-
-
-    /*wxBoxSizer* sizer0 = new wxBoxSizer(wxHORIZONTAL);
-    sizer0->Add(panel_00, 0, wxALL, 5);
-    sizer0->Add(panel_10, 0, wxALL, 5);
-
-    wxBoxSizer* sizer1 = new wxBoxSizer(wxHORIZONTAL);
-    sizer1->Add(panel_01, 0, wxALL, 5);
-    sizer1->Add(panel_11, 0, wxALL, 5);
-
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-    wxBoxSizer* sizer2 = new wxBoxSizer(wxHORIZONTAL);
-
-    sizer->Add(sizer0, 0, wxALL, 5);
-    sizer->Add(sizer1, 0, wxALL, 5);
-    sizer->Add(panel_2, 0, wxALL, 5);
-
-    sizer2->Add(sizer, 0, wxALL, 5);
-    sizer2->Add(panel_3);*/
-
-    SetSizer(sizer);
+        gui_elements_[name] = new GuiElement(this, wxPoint(x[idx], 0), wxSize(350, 350), name);
+        idx++;
+    }*/
 }
 
 MainWindow::~MainWindow()
@@ -80,6 +58,41 @@ MainWindow::~MainWindow()
     for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
     {
         delete it->second;
+    }
+}
+
+void MainWindow::OnSize(wxSizeEvent& event)
+{
+    /*for(auto it : gui_elements_)
+    {
+        it.second->windowSizeChanged(event);
+    }*/
+
+    wxSize new_size = event.GetSize();
+    const int nx = 13;
+    const int ny = 9;
+    float dx = static_cast<float>(new_size.GetWidth()) / static_cast<float>(nx);
+    float dy = static_cast<float>(new_size.GetHeight() - 30) / static_cast<float>(ny);
+    float xpos = 0;
+    float ypos = 0;
+
+    // x: 1500, y: 700
+    for(int x = 0; x < nx; x++)
+    {
+        ypos = 0;
+        for(int y = 0; y < ny; y++)
+        {
+            const int idx = x + nx * y;
+            const wxPoint pos(std::round(xpos), std::round(ypos));
+            const wxSize size(dx, dy);
+            panels_.at(idx)->setSize(pos, size);
+            
+            // ResizablePanel* panel = new ResizablePanel(this, pos, size);
+            // panel->setBackgroundColour(wxColor(100, 100, (((x + y) * 10) * x) % 255));
+            // panels_.push_back(panel);
+            ypos += dy;
+        }
+        xpos += dx;
     }
 }
 
@@ -93,6 +106,7 @@ MainWindow::MainWindow(const wxString& title)
 
     setupGui();
 
+    Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
     // SplashScreen?
     // wxFrame *frame = new wxFrame(NULL, wxID_ANY, "Something", wxPoint(300, 300), wxSize(200, 200), wxFRAME_TOOL_WINDOW | wxNO_BORDER);
     // frame->Show(true);
