@@ -39,6 +39,8 @@ public:
 
     void resized(wxSizeEvent& evt);
 
+    void setPosAndSize(const wxPoint pos, const wxSize size);
+
     int getWidth();
     int getHeight();
 

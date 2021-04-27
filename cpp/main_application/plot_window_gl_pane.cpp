@@ -81,6 +81,12 @@ PlotWindowGLPane::PlotWindowGLPane(wxFrame* parent, const wxPoint& position, con
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 }
 
+void PlotWindowGLPane::setPosAndSize(const wxPoint pos, const wxSize size)
+{
+    this->SetPosition(pos);
+    this->SetSize(size);
+}
+
 int* PlotWindowGLPane::getArgsPtr()
 {
     args[0] = WX_GL_RGBA;
