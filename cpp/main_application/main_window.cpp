@@ -12,9 +12,8 @@ using namespace dvs::internal;
 
 std::string getProjectFilePath()
 {
-    return "../../project_files/exp1.dvs.json";
+    return "../../project_files/exp0.dvs.json";
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -24,43 +23,6 @@ MainWindow::~MainWindow()
     {
         delete it->second;
     }
-}
-
-void MainWindow::OnSize(wxSizeEvent& event)
-{
-    wxFrame::OnSize(event);
-    std::cout << "Size changed" << std::endl;
-    /*for(auto it : gui_elements_)
-    {
-        it.second->windowSizeChanged(event);
-    }*/
-
-    /*wxSize new_size = event.GetSize();
-    const int nx = 13;
-    const int ny = 9;
-    float dx = static_cast<float>(new_size.GetWidth()) / static_cast<float>(nx);
-    float dy = static_cast<float>(new_size.GetHeight() - 30) / static_cast<float>(ny);
-    float xpos = 0;
-    float ypos = 0;
-
-    // x: 1500, y: 700
-    for(int x = 0; x < nx; x++)
-    {
-        ypos = 0;
-        for(int y = 0; y < ny; y++)
-        {
-            const int idx = x + nx * y;
-            const wxPoint pos(std::round(xpos), std::round(ypos));
-            const wxSize size(dx, dy);
-            panels_.at(idx)->setSize(pos, size);
-            
-            // ResizablePanel* panel = new ResizablePanel(this, pos, size);
-            // panel->setBackgroundColour(wxColor(100, 100, (((x + y) * 10) * x) % 255));
-            // panels_.push_back(panel);
-            ypos += dy;
-        }
-        xpos += dx;
-    }*/
 }
 
 MainWindow::MainWindow(const wxString& title)

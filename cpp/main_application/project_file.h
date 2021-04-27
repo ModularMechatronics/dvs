@@ -43,159 +43,26 @@ enum class TabType
 constexpr char* grid_str = "grid";
 constexpr char* freeform_str = "freeform";
 
-struct Level
+class Element
 {
+public:
     int row;
-    int column;
-    Level() : row(0), column(0) {}
-};
+    int col;
+    int width;
+    int height;
+    std::string name;
 
-class ElementBase
-{
-protected:
-    nlohmann::json j_;
-    Level level_;
-    ElementType type_;
-    std::string name_;
-
-    std::vector<std::shared_ptr<ElementBase>> all_elements_;
-    std::vector<std::shared_ptr<ElementBase>> elements_;
-
-public:
-
-    std::vector<std::shared_ptr<ElementBase>> getElements() const
+    Element() = default;
+    Element(const nlohmann::json& j)
     {
-        std::vector<std::shared_ptr<ElementBase>> output;
-        std::copy(elements_.begin(), elements_.end(), std::back_inserter(output));
+        name = j["name"];
 
-        for(auto e : all_elements_)
-        {
-            auto elems = e->getElements();
-            std::copy(elems.begin(), elems.end(), std::back_inserter(output));
-        }
-        return output;
-    }
-
-    Level getLevel() const
-    {
-        return level_;
-    }
-
-    ElementType getType() const
-    {
-        return type_;
-    }
-
-    std::string getName() const
-    {
-        return name_;
-    }
-
-    ElementBase(const nlohmann::json& j, const Level& level, const ElementType type) : j_(j), level_(level), type_(type) {}
-    ElementBase() : type_(ElementType::BASE) {}
-};
-
-inline void constructElements(const nlohmann::json& j_,
-                              Level& level,
-                              std::vector<std::shared_ptr<ElementBase>>& all_elements,
-                              std::vector<std::shared_ptr<ElementBase>>& elements);
-
-class Element : public ElementBase
-{
-private:
-
-public:
-    Element() = delete;
-    Element(const nlohmann::json& j, Level& level) : ElementBase(j, level, ElementType::ELEMENT)
-    {
-        name_ = j["name"];
+        row = j["row-idx"];
+        col = j["col-idx"];
+        width = j["width"];
+        height = j["height"];
     }
 };
-
-class Column : public ElementBase
-{
-private:
-
-public:
-    Column() = delete;
-    Column(const nlohmann::json& j, Level& level) : ElementBase(j, level, ElementType::COLUMN)
-    {
-        name_ = "<column," + std::to_string(level.row) + "," + std::to_string(level.column) + ">";
-        level.column += 1;
-
-        constructElements(j_, level, all_elements_, elements_);
-    }
-};
-
-class Row : public ElementBase
-{
-private:
-    void checkFields()
-    {
-
-    }
-
-public:
-    Row() = delete;
-    Row(const nlohmann::json& j, Level& level) : ElementBase(j, level, ElementType::ROW)
-    {
-        name_ = "<row," + std::to_string(level.row) + "," + std::to_string(level.column) + ">";
-        level.row += 1;
-
-        constructElements(j_, level, all_elements_, elements_);
-    }
-};
-
-void constructElements(const nlohmann::json& j_,
-                       Level& level,
-                       std::vector<std::shared_ptr<ElementBase>>& all_elements,
-                       std::vector<std::shared_ptr<ElementBase>>& elements)
-{
-    if(j_.count("columns") == 1 || j_.count("rows") == 1)
-    {
-        if(j_.count("columns") == 1 && j_.count("rows") == 1)
-        {
-            throw std::runtime_error("Found both 'rows' and 'columns' on the same level, which is ambiguous!");
-        }
-        std::string key = "";
-        if(j_.count("rows") == 1)
-        {
-            key = "rows";
-        }
-        else if(j_.count("columns") == 1)
-        {
-            key = "columns";
-        }
-
-        for(size_t k = 0; k < j_[key].size(); k++)
-        {
-            if(j_[key][k].count("type") == 1)
-            {
-                std::shared_ptr<Element> elem(new Element(j_[key][k], level));
-                all_elements.push_back(std::dynamic_pointer_cast<ElementBase>(elem));
-                elements.push_back(std::dynamic_pointer_cast<ElementBase>(elem));
-            }
-            else if(j_[key][k].count("columns") == 1)
-            {
-                std::shared_ptr<Column> col(new Column(j_[key][k], level));
-                all_elements.push_back(std::dynamic_pointer_cast<ElementBase>(col));
-            }
-            else if(j_[key][k].count("rows") == 1)
-            {
-                std::shared_ptr<Row> row(new Row(j_[key][k], level));
-                all_elements.push_back(std::dynamic_pointer_cast<ElementBase>(row));
-            }
-            else
-            {
-                throw std::runtime_error("U oh!");
-            }
-        }
-    }
-    else
-    {
-        throw std::runtime_error("Can't find valid key!");
-    }
-}
 
 class Tab
 {
@@ -203,77 +70,52 @@ private:
     nlohmann::json j_;
     int tab_idx_;
 
-    std::vector<std::shared_ptr<ElementBase>> all_elements_;
-    std::vector<std::shared_ptr<ElementBase>> elements_;
+    std::vector<Element> elements_;
 
     std::string name_;
-    TabType type_;
 
-    void parseFreeformElements()
+    void parseElements()
     {
+        num_rows = j_["grid-settings"]["num-rows"];
+        num_cols = j_["grid-settings"]["num-cols"];
+        spacing_rows = j_["grid-settings"]["spacing-rows"];
+        spacing_cols = j_["grid-settings"]["spacing-columns"];
+        margin_top_bottom = j_["grid-settings"]["margin-top-bottom"];
+        margin_left_right = j_["grid-settings"]["margin-left-right"];
 
-    }
-
-    void parseGridElements()
-    {
-        Level level;
-
-        constructElements(j_, level, all_elements_, elements_);
+        for(size_t k = 0; k < j_["elements"].size(); k++)
+        {
+            elements_.emplace_back(j_["elements"][k]);
+        }
     }
 
     void checkFields()
     {
-        throwIfMissing(j_, "name", "Field 'name' is missing from tab with index: " + std::to_string(tab_idx_) + "!");
-        throwIfMissing(j_, "type", "Field 'type' is missing from tab with index: " + std::to_string(tab_idx_) + "!");
-
-        const std::string tt = j_["type"];
-
-        if(tt == grid_str)
-        {
-            type_ = TabType::GRID;
-            throwIfMissing(j_, "rows", "Field 'rows' (needed for type 'grid') is missing from tab with index: " + std::to_string(tab_idx_) + "!");
-        }
-        else if(tt == freeform_str)
-        {
-            type_ = TabType::FREEFORM;
-            throwIfMissing(j_, "elements", "Field 'elements' (needed for type 'freeform') is missing from tab with index: " + std::to_string(tab_idx_) + "!");
-        }
-        else
-        {
-            throw std::runtime_error("Invalid tab type '" + tt + " in tab with index " + std::to_string(tab_idx_));
-        }
+        
     }
 
 public:
+
+    int num_rows;
+    int num_cols;
+    int spacing_rows;
+    int spacing_cols;
+    int margin_top_bottom;
+    int margin_left_right;
+
     Tab() = delete;
     Tab(const nlohmann::json& j, const int tab_idx) : j_(j), tab_idx_(tab_idx)
     {
         checkFields();
         name_ = j_["name"];
 
-        if(type_ == TabType::GRID)
-        {
-            parseGridElements();
-        }
-        else
-        {
-            parseFreeformElements();
-        }
+        parseElements();
     }
 
-    std::vector<std::shared_ptr<ElementBase>> getElements() const
+    std::vector<Element> getElements() const
     {
-        std::vector<std::shared_ptr<ElementBase>> output;
-        std::copy(elements_.begin(), elements_.end(), std::back_inserter(output));
-
-        for(auto e : all_elements_)
-        {
-            auto elems = e->getElements();
-            std::copy(elems.begin(), elems.end(), std::back_inserter(output));
-        }
-        return output;
+        return elements_;
     }
-
 };
 
 class ProjectFile
@@ -286,16 +128,16 @@ private:
 
     void parseTabs()
     {
-        for(size_t k = 0; k < j_["layout"]["tabs"].size(); k++)
+        for(size_t k = 0; k < j_["tabs"].size(); k++)
         {
-            tabs_.emplace_back(j_["layout"]["tabs"][k], k);
+            tabs_.emplace_back(j_["tabs"][k], k);
         }
     }
 
     void checkFields()
     {
-        throwIfMissing(j_, "layout", "Field 'layout' is missing!");
-        throwIfMissing(j_["layout"], "tabs", "Field 'tabs' is missing in the 'layout' field!");
+        // throwIfMissing(j_, "layout", "Field 'layout' is missing!");
+        // throwIfMissing(j_["layout"], "tabs", "Field 'tabs' is missing in the 'layout' field!");
     }
 
 public:
@@ -308,13 +150,18 @@ public:
         parseTabs();
     }
 
-    std::vector<std::shared_ptr<ElementBase>> getElements() const
+    Tab getTabFromIdx(const size_t idx) const
     {
-        std::vector<std::shared_ptr<ElementBase>> all_elements;
+        return tabs_.at(idx);
+    }
+
+    std::vector<Element> getElements() const
+    {
+        std::vector<Element> all_elements;
 
         for(auto t : tabs_)
         {
-            std::vector<std::shared_ptr<ElementBase>> v = t.getElements();
+            std::vector<Element> v = t.getElements();
             for(auto tv : v)
             {
                 all_elements.push_back(tv);

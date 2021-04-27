@@ -32,7 +32,7 @@ private:
 public:
 
     ResizablePanel() = default;
-    ResizablePanel(wxFrame* parent, wxPoint pos, wxSize size) : wxPanel(parent, wxID_ANY, pos, size)
+    ResizablePanel(wxPanel* parent, wxPoint pos, wxSize size) : wxPanel(parent, wxID_ANY, pos, size)
     {
 
     }
@@ -63,6 +63,7 @@ private:
     bool current_gui_element_set_;
 
     wxNotebook* tabs_view;
+    wxPanel* tab_container;
 
     int initial_width_;
     int initial_height_;
