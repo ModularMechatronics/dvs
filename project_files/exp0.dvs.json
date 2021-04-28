@@ -14,7 +14,8 @@
             "name": "main_view",
             "grid-settings":
             {
-                "cell-size": 10,
+                "num-cells-x": 10,
+                "num-cells-y": 12,
                 "margin-x": 12,
                 "margin-y": 10
             },
