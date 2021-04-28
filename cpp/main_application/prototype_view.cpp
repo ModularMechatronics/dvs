@@ -32,8 +32,7 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
 
     size_ = size;
 
-    grid_settings_.num_cells_x = 10;
-    grid_settings_.num_cells_y = 10;
+    grid_settings_.cell_size = 10;
     grid_settings_.margin_x = 20;
     grid_settings_.margin_y = 20;
 
@@ -54,26 +53,15 @@ void PrototypeView::setPosAndSize(const wxPoint pos, const wxSize size)
     size_ = size;
 }
 
-void PrototypeView::setParameters(const GridSettings& grid_settings)
+void PrototypeView::changeCellSize(const int change)
 {
-    grid_settings_ = grid_settings;
-}
-
-void PrototypeView::changeNumGridCellsX(const int change)
-{
-    grid_settings_.num_cells_x = std::min(200, std::max(2, grid_settings_.num_cells_x + change));
-    Refresh();
-}
-
-void PrototypeView::changeNumGridCellsY(const int change)
-{
-    grid_settings_.num_cells_y = std::min(200, std::max(2, grid_settings_.num_cells_y + change));
+    grid_settings_.cell_size = std::min(200, std::max(1, grid_settings_.cell_size + change));
     Refresh();
 }
 
 void PrototypeView::changeMarginX(const int change)
 {
-    grid_settings_.margin_x = std::min(200, std::max(0, grid_settings_.margin_x + change));
+    grid_settings_.cell_size = std::min(200, std::max(0, grid_settings_.cell_size + change));
     Refresh();
 }
 
@@ -89,8 +77,7 @@ void PrototypeView::render(wxPaintEvent& evt)
     if (!IsShown())
         return;
 
-    grid_settings_.num_cells_x = std::min(200, std::max(grid_settings_.num_cells_x, 0));
-    grid_settings_.num_cells_y = std::min(200, std::max(grid_settings_.num_cells_y, 0));
+    grid_settings_.cell_size = std::min(200, std::max(grid_settings_.cell_size, 1));
 
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this);
@@ -105,16 +92,19 @@ void PrototypeView::render(wxPaintEvent& evt)
     glLineWidth(0.1f);
     glColor3f(0.0f, 0.0f, 0.0f);
 
+    const int num_cells_x = static_cast<float>(size_.GetWidth() - grid_settings_.margin_x * 2) / static_cast<float>(grid_settings_.cell_size);
+    const int num_cells_y = static_cast<float>(size_.GetHeight() - grid_settings_.margin_y * 2) / static_cast<float>(grid_settings_.cell_size);
+
     const float normalized_offset_x = grid_settings_.margin_x / static_cast<float>(size_.GetWidth());
     const float normalized_offset_y = grid_settings_.margin_y / static_cast<float>(size_.GetHeight());
 
     const float window_x = 2.0f - 2.0f * normalized_offset_x;
     const float window_y = 2.0f - 2.0f * normalized_offset_y;
 
-    const float dx = window_x / static_cast<float>(grid_settings_.num_cells_x);
-    const float dy = window_y / static_cast<float>(grid_settings_.num_cells_y);
+    const float dx = window_x * grid_settings_.cell_size / (static_cast<float>(size_.GetWidth() - grid_settings_.margin_x * 2));
+    const float dy = window_y * grid_settings_.cell_size / (static_cast<float>(size_.GetHeight() - grid_settings_.margin_y * 2));
 
-    for(int idx_x = 0; idx_x < (grid_settings_.num_cells_x + 1); idx_x++)
+    for(int idx_x = 0; idx_x < (num_cells_x + 1); idx_x++)
     {
         const float x0 = static_cast<float>(idx_x) * dx - 1.0f + normalized_offset_x;
         const float x1 = x0;
@@ -126,7 +116,7 @@ void PrototypeView::render(wxPaintEvent& evt)
         glEnd();
     }
 
-    for(int idx_y = 0; idx_y < (grid_settings_.num_cells_y + 1); idx_y++)
+    for(int idx_y = 0; idx_y < (num_cells_y + 1); idx_y++)
     {
         const float x0 = -1.0f + normalized_offset_x;
         const float x1 = 1.0f - normalized_offset_x;

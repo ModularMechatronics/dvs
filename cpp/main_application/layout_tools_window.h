@@ -30,7 +30,6 @@ public:
     LayoutToolsWindow() = default;
     LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize size);
     void setPosAndSize(wxPoint pos, wxSize size);
-    void onButtonClickX(wxCommandEvent& event);
 };
 
 #endif

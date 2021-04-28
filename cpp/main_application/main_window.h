@@ -87,10 +87,8 @@ public:
     virtual void OnSize(wxSizeEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
-    void numCellsXInc(wxCommandEvent& event);
-    void numCellsXDec(wxCommandEvent& event);
-    void numCellsYInc(wxCommandEvent& event);
-    void numCellsYDec(wxCommandEvent& event);
+    void cellSizeInc(wxCommandEvent& event);
+    void cellSizeDec(wxCommandEvent& event);
     void marginXInc(wxCommandEvent& event);
     void marginXDec(wxCommandEvent& event);
     void marginYInc(wxCommandEvent& event);

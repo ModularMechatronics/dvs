@@ -14,17 +14,15 @@
 
 struct GridSettings
 {
-    int num_cells_x;
-    int num_cells_y;
+    int cell_size;
     int margin_x;
     int margin_y;
 
     GridSettings() = default;
 
-    GridSettings(const int num_cells_x_, const int num_cells_y_, const int margin_x_, const int margin_y_)
+    GridSettings(const int cell_size_, const int margin_x_, const int margin_y_)
     {
-        num_cells_x = num_cells_x_;
-        num_cells_y = num_cells_y_;
+        cell_size = cell_size_;
         margin_x = margin_x_;
         margin_y = margin_y_;
     }
@@ -46,13 +44,11 @@ public:
     PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size);
     virtual ~PrototypeView();
 
-    void setParameters(const GridSettings& grid_settings);
     void setPosAndSize(const wxPoint pos, const wxSize size);
     void render(wxPaintEvent& evt);
     void mouseLeftPressed(wxMouseEvent& event);
 
-    void changeNumGridCellsX(const int change);
-    void changeNumGridCellsY(const int change);
+    void changeCellSize(const int change);
     void changeMarginX(const int change);
     void changeMarginY(const int change);
 
