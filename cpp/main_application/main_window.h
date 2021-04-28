@@ -21,7 +21,9 @@
 #include "received_data.h"
 #include "gui_element.h"
 #include "plot_window_gl_pane.h"
+#include "layout_tools_window.h"
 #include "project_file.h"
+#include "prototype_view.h"
 
 wxDEFINE_EVENT(EVENT_TYPE_HANDLE_NEW_DATA, wxCommandEvent);
 
@@ -53,7 +55,6 @@ class MainWindow : public wxFrame
 {
 private:
 
-    std::vector<ResizablePanel*> panels_;
     UdpServer* udp_server_;
     wxTimer timer_;
     project_file::ProjectFile project_file_;
@@ -64,6 +65,8 @@ private:
 
     wxNotebook* tabs_view;
     wxPanel* tab_container;
+    LayoutToolsWindow* layout_tools_window_;
+    PrototypeView* prototype_view;
 
     int initial_width_;
     int initial_height_;

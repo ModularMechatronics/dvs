@@ -46,8 +46,8 @@ constexpr char* freeform_str = "freeform";
 class Element
 {
 public:
-    int row;
-    int col;
+    int cell_idx_x;
+    int cell_idx_y;
     int width;
     int height;
     std::string name;
@@ -57,8 +57,8 @@ public:
     {
         name = j["name"];
 
-        row = j["row-idx"];
-        col = j["col-idx"];
+        cell_idx_x = j["cell-idx-x"];
+        cell_idx_y = j["cell-idx-y"];
         width = j["width"];
         height = j["height"];
     }
@@ -76,12 +76,10 @@ private:
 
     void parseElements()
     {
-        num_rows = j_["grid-settings"]["num-rows"];
-        num_cols = j_["grid-settings"]["num-cols"];
-        spacing_rows = j_["grid-settings"]["spacing-rows"];
-        spacing_cols = j_["grid-settings"]["spacing-columns"];
         margin_top_bottom = j_["grid-settings"]["margin-top-bottom"];
         margin_left_right = j_["grid-settings"]["margin-left-right"];
+        num_cells_x = j_["grid-settings"]["num-cells-x"];
+        num_cells_y = j_["grid-settings"]["num-cells-y"];
 
         for(size_t k = 0; k < j_["elements"].size(); k++)
         {
@@ -95,11 +93,8 @@ private:
     }
 
 public:
-
-    int num_rows;
-    int num_cols;
-    int spacing_rows;
-    int spacing_cols;
+    int num_cells_x;
+    int num_cells_y;
     int margin_top_bottom;
     int margin_left_right;
 

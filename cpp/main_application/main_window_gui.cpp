@@ -55,32 +55,9 @@ void MainWindow::setupGui()
 
     wxSize s0 = tab_container->GetSize();
 
-    const int nx = tab.num_cols;
-    const int ny = tab.num_rows;
+    prototype_view = new PrototypeView(tab_container, wxPoint(0, 0), s0);
 
-    float dx = static_cast<float>(s0.GetWidth() - tab.margin_left_right * 2) / static_cast<float>(nx) - tab.spacing_cols * 2;
-    float dy = static_cast<float>(s0.GetHeight() - tab.margin_top_bottom * 2) / static_cast<float>(ny) - tab.spacing_rows * 2;
-    float inc_x = static_cast<float>(s0.GetWidth() - tab.margin_left_right * 2) / static_cast<float>(nx);
-    float inc_y = static_cast<float>(s0.GetHeight() - tab.margin_top_bottom * 2) / static_cast<float>(ny);
-    float xpos = tab.margin_left_right + tab.spacing_cols;
-    float ypos = tab.margin_top_bottom + tab.spacing_rows;
-
-    const wxSize size(dx, dy);
-
-    for(int x = 0; x < nx; x++)
-    {
-        for(int y = 0; y < ny; y++)
-        {
-            xpos = tab.margin_left_right + x * inc_x + tab.spacing_cols;
-            ypos = tab.margin_top_bottom + y * inc_y + tab.spacing_rows;
-            const wxPoint pos(xpos, ypos);
-            
-            // ResizablePanel* panel = new ResizablePanel(tab_container, pos, size);
-            // panel->setBackgroundColour(wxColor(((10 * y) % 255), ((10 * x) % 255), (((x + y) * 10) * x) % 255));
-            // panels_.push_back(panel);
-        }
-    }
-    std::vector<project_file::Element> elements = tab.getElements();
+    /*std::vector<project_file::Element> elements = tab.getElements();
 
     for(auto e : elements)
     {
@@ -88,7 +65,7 @@ void MainWindow::setupGui()
         ypos = tab.margin_top_bottom + e.row * inc_y + tab.spacing_rows;
         wxSize sq(e.width * inc_x - tab.spacing_cols * 2, e.height * inc_y - tab.spacing_rows * 2);
         gui_elements_[e.name] = new GuiElement(tab_container, wxPoint(xpos, ypos), sq, e.name, e);
-    }
+    }*/
 }
 
 void MainWindow::OnSize(wxSizeEvent& event)
@@ -97,63 +74,12 @@ void MainWindow::OnSize(wxSizeEvent& event)
     std::cout << "Size changed" << std::endl;
     wxSize s0 = tab_container->GetSize();
 
-    std::cout << s0.GetWidth() << ", " << s0.GetHeight() << std::endl;
-    const project_file::Tab tab = project_file_.getTabFromIdx(0);
+    prototype_view->setPosAndSize(wxPoint(0, 0), s0);
 
-    const int nx = tab.num_cols;
-    const int ny = tab.num_rows;
-
-    float dx = static_cast<float>(s0.GetWidth() - tab.margin_left_right * 2) / static_cast<float>(nx) - tab.spacing_cols * 2;
-    float dy = static_cast<float>(s0.GetHeight() - tab.margin_top_bottom * 2) / static_cast<float>(ny) - tab.spacing_rows * 2;
-    float inc_x = static_cast<float>(s0.GetWidth() - tab.margin_left_right * 2) / static_cast<float>(nx);
-    float inc_y = static_cast<float>(s0.GetHeight() - tab.margin_top_bottom * 2) / static_cast<float>(ny);
-    float xpos = tab.margin_left_right + tab.spacing_cols;
-    float ypos = tab.margin_top_bottom + tab.spacing_rows;
-
-    const wxSize size(dx, dy);
-
-    for(int x = 0; x < nx; x++)
-    {
-        for(int y = 0; y < ny; y++)
-        {
-            xpos = tab.margin_left_right + x * inc_x + tab.spacing_cols;
-            ypos = tab.margin_top_bottom + y * inc_y + tab.spacing_rows;
-            const int idx = x + nx * y;
-            const wxPoint pos(xpos, ypos);
-
-            // panels_.at(idx)->setSize(pos, size);
-        }
-    }
+    /*const project_file::Tab tab = project_file_.getTabFromIdx(0);
 
     for(auto it : gui_elements_)
     {
         it.second->windowSizeChanged(s0, tab);
-    }
-
-    /*wxSize new_size = event.GetSize();
-    const int nx = 13;
-    const int ny = 9;
-    float dx = static_cast<float>(new_size.GetWidth()) / static_cast<float>(nx);
-    float dy = static_cast<float>(new_size.GetHeight() - 30) / static_cast<float>(ny);
-    float xpos = 0;
-    float ypos = 0;
-
-    // x: 1500, y: 700
-    for(int x = 0; x < nx; x++)
-    {
-        ypos = 0;
-        for(int y = 0; y < ny; y++)
-        {
-            const int idx = x + nx * y;
-            const wxPoint pos(std::round(xpos), std::round(ypos));
-            const wxSize size(dx, dy);
-            panels_.at(idx)->setSize(pos, size);
-            
-            // ResizablePanel* panel = new ResizablePanel(this, pos, size);
-            // panel->setBackgroundColour(wxColor(100, 100, (((x + y) * 10) * x) % 255));
-            // panels_.push_back(panel);
-            ypos += dy;
-        }
-        xpos += dx;
     }*/
 }
