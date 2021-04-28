@@ -32,6 +32,9 @@ bool MainApp::OnInit()
                                               wxDefaultPosition,
                                               wxSize(500, 500),
                                               wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP | wxTRANSPARENT_WINDOW);
+    // SplashScreen?
+    // wxFrame *frame = new wxFrame(NULL, wxID_ANY, "Something", wxPoint(300, 300), wxSize(200, 200), wxFRAME_TOOL_WINDOW | wxNO_BORDER);
+    // frame->Show(true);
 #endif
     
     main_window = new MainWindow("DVS v0.1");

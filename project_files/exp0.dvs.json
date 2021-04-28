@@ -14,46 +14,44 @@
             "name": "main_view",
             "grid-settings":
             {
-                "num-rows": 14,
-                "num-cols": 18,
+                "num-cells-x": 10,
+                "num-cells-y": 10,
                 "margin-top-bottom": 12,
-                "margin-left-right": 10,
-                "spacing-rows": 2,
-                "spacing-columns": 3
+                "margin-left-right": 10
             },
             "elements":
             [
                 {
                     "name": "view1",
                     "type": "plot",
-                    "row-idx": 0,
-                    "col-idx": 0,
-                    "height": 3,
-                    "width": 3
+                    "cell-idx-x": 0,
+                    "cell-idx-y": 0,
+                    "height": 6,
+                    "width": 6
                 },
                 {
                     "name": "view2",
                     "type": "plot",
-                    "row-idx": 0,
-                    "col-idx": 3,
-                    "height": 2,
-                    "width": 2
+                    "cell-idx-x": 0,
+                    "cell-idx-y": 6,
+                    "height": 6,
+                    "width": 6
                 },
                 {
                     "name": "view3",
                     "type": "plot",
-                    "row-idx": 3,
-                    "col-idx": 0,
-                    "height": 2,
-                    "width": 5
+                    "cell-idx-x": 6,
+                    "cell-idx-y": 0,
+                    "height": 3,
+                    "width": 6
                 },
                 {
                     "name": "view4",
                     "type": "plot",
-                    "row-idx": 0,
-                    "col-idx": 5,
-                    "height": 5,
-                    "width": 2
+                    "cell-idx-x": 6,
+                    "cell-idx-y": 6,
+                    "height": 7,
+                    "width": 10
                 }
 
             ]

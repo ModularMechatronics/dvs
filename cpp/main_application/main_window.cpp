@@ -36,12 +36,12 @@ MainWindow::MainWindow(const wxString& title)
     initial_width_ = 1500;
     initial_height_ = 700;
 
+    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(30, 500), wxSize(300, 300));
+    layout_tools_window_->Show();
+
     setupGui();
 
     Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
-    // SplashScreen?
-    // wxFrame *frame = new wxFrame(NULL, wxID_ANY, "Something", wxPoint(300, 300), wxSize(200, 200), wxFRAME_TOOL_WINDOW | wxNO_BORDER);
-    // frame->Show(true);
 
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);
