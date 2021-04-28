@@ -78,7 +78,8 @@ private:
     {
         margin_x = j_["grid-settings"]["margin-x"];
         margin_y = j_["grid-settings"]["margin-y"];
-        cell_size = j_["grid-settings"]["cell-size"];
+        num_cells_x = j_["grid-settings"]["num-cells-x"];
+        num_cells_y = j_["grid-settings"]["num-cells-y"];
 
         for(size_t k = 0; k < j_["elements"].size(); k++)
         {
@@ -92,7 +93,8 @@ private:
     }
 
 public:
-    int cell_size;
+    int num_cells_x;
+    int num_cells_y;
     int margin_x;
     int margin_y;
 

@@ -84,14 +84,24 @@ void MainWindow::OnSize(wxSizeEvent& event)
     }*/
 }
 
-void MainWindow::cellSizeInc(wxCommandEvent& event)
+void MainWindow::numCellsXInc(wxCommandEvent& event)
 {
-    prototype_view_->changeCellSize(1);
+    prototype_view_->changeNumCellsX(1);
 }
 
-void MainWindow::cellSizeDec(wxCommandEvent& event)
+void MainWindow::numCellsXDec(wxCommandEvent& event)
 {
-    prototype_view_->changeCellSize(-1);
+    prototype_view_->changeNumCellsX(-1);
+}
+
+void MainWindow::numCellsYInc(wxCommandEvent& event)
+{
+    prototype_view_->changeNumCellsY(1);
+}
+
+void MainWindow::numCellsYDec(wxCommandEvent& event)
+{
+    prototype_view_->changeNumCellsY(-1);
 }
 
 void MainWindow::marginXInc(wxCommandEvent& event)

@@ -14,18 +14,12 @@
 
 struct GridSettings
 {
-    int cell_size;
+    int num_cells_x;
+    int num_cells_y;
     int margin_x;
     int margin_y;
 
     GridSettings() = default;
-
-    GridSettings(const int cell_size_, const int margin_x_, const int margin_y_)
-    {
-        cell_size = cell_size_;
-        margin_x = margin_x_;
-        margin_y = margin_y_;
-    }
 };
 
 class PrototypeView : public wxGLCanvas
@@ -48,7 +42,8 @@ public:
     void render(wxPaintEvent& evt);
     void mouseLeftPressed(wxMouseEvent& event);
 
-    void changeCellSize(const int change);
+    void changeNumCellsX(const int change);
+    void changeNumCellsY(const int change);
     void changeMarginX(const int change);
     void changeMarginY(const int change);
 
