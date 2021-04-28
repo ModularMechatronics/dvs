@@ -55,7 +55,7 @@ void MainWindow::setupGui()
 
     wxSize s0 = tab_container->GetSize();
 
-    prototype_view = new PrototypeView(tab_container, wxPoint(0, 0), s0);
+    prototype_view_ = new PrototypeView(tab_container, wxPoint(0, 0), s0);
 
     /*std::vector<project_file::Element> elements = tab.getElements();
 
@@ -74,7 +74,7 @@ void MainWindow::OnSize(wxSizeEvent& event)
     std::cout << "Size changed" << std::endl;
     wxSize s0 = tab_container->GetSize();
 
-    prototype_view->setPosAndSize(wxPoint(0, 0), s0);
+    prototype_view_->setPosAndSize(wxPoint(0, 0), s0);
 
     /*const project_file::Tab tab = project_file_.getTabFromIdx(0);
 
@@ -82,4 +82,44 @@ void MainWindow::OnSize(wxSizeEvent& event)
     {
         it.second->windowSizeChanged(s0, tab);
     }*/
+}
+
+void MainWindow::numCellsXInc(wxCommandEvent& event)
+{
+    prototype_view_->changeNumGridCellsX(1);
+}
+
+void MainWindow::numCellsXDec(wxCommandEvent& event)
+{
+    prototype_view_->changeNumGridCellsX(-1);
+}
+
+void MainWindow::numCellsYInc(wxCommandEvent& event)
+{
+    prototype_view_->changeNumGridCellsY(1);
+}
+
+void MainWindow::numCellsYDec(wxCommandEvent& event)
+{
+    prototype_view_->changeNumGridCellsY(-1);
+}
+
+void MainWindow::marginXInc(wxCommandEvent& event)
+{
+    prototype_view_->changeMarginX(1);
+}
+
+void MainWindow::marginXDec(wxCommandEvent& event)
+{
+    prototype_view_->changeMarginX(-1);
+}
+
+void MainWindow::marginYInc(wxCommandEvent& event)
+{
+    prototype_view_->changeMarginY(1);
+}
+
+void MainWindow::marginYDec(wxCommandEvent& event)
+{
+    prototype_view_->changeMarginY(-1);
 }

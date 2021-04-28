@@ -3,6 +3,8 @@
 
 #include "prototype_view.h"
 
+#include <cmath>
+
 BEGIN_EVENT_TABLE(PrototypeView, wxGLCanvas)
 EVT_LEFT_DOWN(PrototypeView::mouseLeftPressed)
 EVT_PAINT(PrototypeView::render)
@@ -55,6 +57,30 @@ void PrototypeView::setPosAndSize(const wxPoint pos, const wxSize size)
 void PrototypeView::setParameters(const GridSettings& grid_settings)
 {
     grid_settings_ = grid_settings;
+}
+
+void PrototypeView::changeNumGridCellsX(const int change)
+{
+    grid_settings_.num_cells_x = std::min(200, std::max(2, grid_settings_.num_cells_x + change));
+    Refresh();
+}
+
+void PrototypeView::changeNumGridCellsY(const int change)
+{
+    grid_settings_.num_cells_y = std::min(200, std::max(2, grid_settings_.num_cells_y + change));
+    Refresh();
+}
+
+void PrototypeView::changeMarginX(const int change)
+{
+    grid_settings_.margin_x = std::min(200, std::max(0, grid_settings_.margin_x + change));
+    Refresh();
+}
+
+void PrototypeView::changeMarginY(const int change)
+{
+    grid_settings_.margin_y = std::min(200, std::max(0, grid_settings_.margin_y + change));
+    Refresh();
 }
 
 void PrototypeView::render(wxPaintEvent& evt)

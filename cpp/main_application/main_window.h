@@ -66,7 +66,7 @@ private:
     wxNotebook* tabs_view;
     wxPanel* tab_container;
     LayoutToolsWindow* layout_tools_window_;
-    PrototypeView* prototype_view;
+    PrototypeView* prototype_view_;
 
     int initial_width_;
     int initial_height_;
@@ -86,6 +86,15 @@ public:
     virtual void OnClose(wxCloseEvent& event);
     virtual void OnSize(wxSizeEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
+
+    void numCellsXInc(wxCommandEvent& event);
+    void numCellsXDec(wxCommandEvent& event);
+    void numCellsYInc(wxCommandEvent& event);
+    void numCellsYDec(wxCommandEvent& event);
+    void marginXInc(wxCommandEvent& event);
+    void marginXDec(wxCommandEvent& event);
+    void marginYInc(wxCommandEvent& event);
+    void marginYDec(wxCommandEvent& event);
 };
 
 #endif

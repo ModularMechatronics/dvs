@@ -16,12 +16,12 @@ struct GridSettings
 {
     int num_cells_x;
     int num_cells_y;
-    float margin_x;
-    float margin_y;
+    int margin_x;
+    int margin_y;
 
     GridSettings() = default;
 
-    GridSettings(const int num_cells_x_, const int num_cells_y_, const float margin_x_, const float margin_y_)
+    GridSettings(const int num_cells_x_, const int num_cells_y_, const int margin_x_, const int margin_y_)
     {
         num_cells_x = num_cells_x_;
         num_cells_y = num_cells_y_;
@@ -50,6 +50,11 @@ public:
     void setPosAndSize(const wxPoint pos, const wxSize size);
     void render(wxPaintEvent& evt);
     void mouseLeftPressed(wxMouseEvent& event);
+
+    void changeNumGridCellsX(const int change);
+    void changeNumGridCellsY(const int change);
+    void changeMarginX(const int change);
+    void changeMarginY(const int change);
 
     DECLARE_EVENT_TABLE()
 };

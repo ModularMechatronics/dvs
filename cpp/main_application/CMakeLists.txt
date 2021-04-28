@@ -29,6 +29,7 @@ set(CPP_SOURCE_FILES main.cpp
 
                      misc/number_formatting.cpp
 
+                     layout_tools_window.cpp
                      prototype_view.cpp
                      plot_data.cpp
                      plot_functions/plot_functions.cpp

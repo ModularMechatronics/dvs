@@ -14,10 +14,9 @@
             "name": "main_view",
             "grid-settings":
             {
-                "num-cells-x": 10,
-                "num-cells-y": 10,
-                "margin-top-bottom": 12,
-                "margin-left-right": 10
+                "cell-size": 10,
+                "margin-x": 12,
+                "margin-y": 10
             },
             "elements":
             [

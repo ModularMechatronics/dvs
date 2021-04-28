@@ -76,10 +76,9 @@ private:
 
     void parseElements()
     {
-        margin_top_bottom = j_["grid-settings"]["margin-top-bottom"];
-        margin_left_right = j_["grid-settings"]["margin-left-right"];
-        num_cells_x = j_["grid-settings"]["num-cells-x"];
-        num_cells_y = j_["grid-settings"]["num-cells-y"];
+        margin_x = j_["grid-settings"]["margin-x"];
+        margin_y = j_["grid-settings"]["margin-y"];
+        cell_size = j_["grid-settings"]["cell-size"];
 
         for(size_t k = 0; k < j_["elements"].size(); k++)
         {
@@ -93,10 +92,9 @@ private:
     }
 
 public:
-    int num_cells_x;
-    int num_cells_y;
-    int margin_top_bottom;
-    int margin_left_right;
+    int cell_size;
+    int margin_x;
+    int margin_y;
 
     Tab() = delete;
     Tab(const nlohmann::json& j, const int tab_idx) : j_(j), tab_idx_(tab_idx)
