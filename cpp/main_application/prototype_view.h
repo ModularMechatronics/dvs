@@ -26,15 +26,9 @@ struct Size2Df
 {
     float width;
     float height;
+
     Size2Df() = default;
     Size2Df(const float width_, const float height_) : width(width_), height(height_) {}
-};
-
-struct GridSettings
-{
-    Vec2Df num_cells;
-
-    GridSettings() = default;
 };
 
 struct GridState
@@ -77,26 +71,6 @@ public:
     Size2Df getSize() const
     {
         return size;
-    }
-
-    float getX() const
-    {
-        return pos.x;
-    }
-
-    float getY() const
-    {
-        return pos.y;
-    }
-
-    float getWidth() const
-    {
-        return size.width;
-    }
-
-    float getHeight() const
-    {
-        return size.height;
     }
 
     CursorSquareState mouseState(const Vec2Df mouse_pos) const
@@ -192,7 +166,7 @@ public:
         glEnd();
     }
 
-    void updateInternals(const GridSettings& grid_settings, const GridState& screen_grid_state, const GridState& gl_grid_state)
+    void updateInternals(const GridState& screen_grid_state, const GridState& gl_grid_state)
     {
         screen_bound.x_min = pos.x * screen_grid_state.cell_size.x;
         screen_bound.x_max = screen_bound.x_min + size.width * screen_grid_state.cell_size.x;
@@ -243,14 +217,12 @@ private:
 
     int* getArgsPtr();
 
-    GridSettings grid_settings_;
+    Vec2Df num_grid_cells_;
 
     std::vector<Square> squares_;
     int idx_of_selected_square_;
 
     void updateGridStates();
-
-    
 
 public:
     PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size);
@@ -264,8 +236,6 @@ public:
 
     void changeNumCellsX(const float change);
     void changeNumCellsY(const float change);
-
-    DECLARE_EVENT_TABLE()
 };
 
 
