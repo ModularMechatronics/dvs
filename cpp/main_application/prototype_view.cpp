@@ -26,20 +26,18 @@ int* PrototypeView::getArgsPtr()
 
 void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
 {
-    const Vec2Df mouse_pos(event.GetX(), size_.GetHeight() - event.GetY());
+    const Vec2Df mouse_pos(event.GetX(), panel_size_.GetHeight() - event.GetY());
 
     left_button_pressed_ = true;
 
     if(is_inside_square_)
     {
-        pos_of_pressed_x_ = squares_[idx_of_selected_square_].getX();
-        pos_of_pressed_y_ = squares_[idx_of_selected_square_].getY();
+        pos_of_pressed_sq_ = squares_[idx_of_selected_square_].getPos();
 
-        size_of_pressed_width_ = squares_[idx_of_selected_square_].getWidth();
-        size_of_pressed_height_ = squares_[idx_of_selected_square_].getHeight();
+        size_of_pressed_ = squares_[idx_of_selected_square_].getSize();
 
-        grid_pos_pressed_x_ = std::floor(mouse_pos.x / screen_grid_state_.cell_size.x);
-        grid_pos_pressed_y_ = std::floor(mouse_pos.y / screen_grid_state_.cell_size.y);
+        grid_pos_pressed_.x = std::floor(mouse_pos.x / screen_grid_state_.cell_size.x);
+        grid_pos_pressed_.y = std::floor(mouse_pos.y / screen_grid_state_.cell_size.y);
 
         is_editing_ = true;
     }
@@ -54,7 +52,7 @@ void PrototypeView::mouseLeftReleased(wxMouseEvent& event)
 
 void PrototypeView::mouseMoved(wxMouseEvent& event)
 {
-    const Vec2Df mouse_pos(event.GetX(), size_.GetHeight() - event.GetY());
+    const Vec2Df mouse_pos(event.GetX(), panel_size_.GetHeight() - event.GetY());
 
     if(is_editing_)
     {
@@ -62,17 +60,17 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
         {
             const float trunc_x = std::floor(mouse_pos.x / screen_grid_state_.cell_size.x);
             const float trunc_y = std::floor(mouse_pos.y / screen_grid_state_.cell_size.y);
-            const float diff_x = grid_pos_pressed_x_ - trunc_x;
-            const float diff_y = grid_pos_pressed_y_ - trunc_y;
+            const float diff_x = grid_pos_pressed_.x - trunc_x;
+            const float diff_y = grid_pos_pressed_.y - trunc_y;
 
-            const float new_pos_x = pos_of_pressed_x_ - diff_x;
-            const float new_pos_y = pos_of_pressed_y_ - diff_y;
+            const float new_pos_x = pos_of_pressed_sq_.x - diff_x;
+            const float new_pos_y = pos_of_pressed_sq_.y - diff_y;
 
-            const float new_width = std::max(1.0f, size_of_pressed_width_ - diff_x);
-            const float new_height = std::max(1.0f, size_of_pressed_height_ - diff_y);
+            const float new_width = std::max(1.0f, size_of_pressed_.width - diff_x);
+            const float new_height = std::max(1.0f, size_of_pressed_.height - diff_y);
 
-            const float new_width_positive = std::max(1.0f, size_of_pressed_width_ + diff_x);
-            const float new_height_positive = std::max(1.0f, size_of_pressed_height_ + diff_y);
+            const float new_width_positive = std::max(1.0f, size_of_pressed_.width + diff_x);
+            const float new_height_positive = std::max(1.0f, size_of_pressed_.height + diff_y);
 
             switch(cursor_square_state)
             {
@@ -187,10 +185,10 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
     squares_.push_back(Square(2, 2, 5, 5));
     squares_.push_back(Square(10, 2, 7, 7));
 
-    grid_pos_pressed_x_ = 0.0f;
-    grid_pos_pressed_y_ = 0.0f;
+    grid_pos_pressed_.x = 0.0f;
+    grid_pos_pressed_.y = 0.0f;
 
-    size_ = size;
+    panel_size_ = size;
     left_button_pressed_ = false;
     is_editing_ = false;
 
@@ -224,7 +222,7 @@ PrototypeView::~PrototypeView()
 void PrototypeView::setPosAndSize(const wxPoint pos, const wxSize size)
 {
     this->SetSize(size);
-    size_ = size;
+    panel_size_ = size;
     updateGridStates();
 }
 
@@ -245,7 +243,7 @@ void PrototypeView::changeNumCellsY(const float change)
 void PrototypeView::updateGridStates()
 {
     // Screen
-    screen_grid_state_.grid_size = Vec2Df(size_.GetWidth(), size_.GetHeight());
+    screen_grid_state_.grid_size = Vec2Df(panel_size_.GetWidth(), panel_size_.GetHeight());
 
     screen_grid_state_.cell_size = Vec2Df(screen_grid_state_.grid_size.x / grid_settings_.num_cells.x,
                                           screen_grid_state_.grid_size.y / grid_settings_.num_cells.y);
