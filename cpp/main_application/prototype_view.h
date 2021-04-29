@@ -60,8 +60,50 @@ private:
 
     Vec2Df pos_;
     Size2Df size_;
+    Vec3Df color_;
+
+    bool is_selected_;
+
+    wxTextCtrl* name_field_;
+    wxPanel* parent_;
 
 public:
+
+    Square() = delete;
+    Square(wxPanel* parent, const float x_, const float y_, const float width_, const float height_, const Vec3Df& color)
+        : pos_(x_, y_), size_(width_, height_)
+    {
+        parent_ = parent;
+        name_field_ = new wxTextCtrl(parent, wxID_ANY, "<no name>");
+        color_ = color;
+        is_selected_ = false;
+    }
+
+    Square(const Square& other)
+    {
+        screen_bound_ = other.screen_bound_;
+        screen_bound_margin_ = other.screen_bound_margin_;
+        gl_bound_ = other.gl_bound_;
+        pos_ = other.pos_;
+        size_ = other.size_;
+        color_ = other.color_;
+        is_selected_ = other.is_selected_;
+        parent_ = other.parent_;
+
+        const std::string s = other.getText();
+
+        name_field_ = new wxTextCtrl(other.parent_, wxID_ANY, s);
+    }
+
+    std::string getText() const
+    {
+        return std::string(name_field_->GetValue().mb_str());
+    }
+
+    ~Square()
+    {
+        name_field_->Destroy();
+    }
 
     Vec2Df getPos() const
     {
@@ -155,15 +197,51 @@ public:
         pos_.y = y;
     }
 
+    bool isSelected() const
+    {
+        return is_selected_;
+    }
+
+    void setIsSelected(bool is_selected)
+    {
+        is_selected_ = is_selected;
+    }
+
     void render() const
     {
-        glColor3f(0.0f, 0.0f, 1.0f);
+        glColor3f(color_.x, color_.y, color_.z);
         glBegin(GL_POLYGON);
         glVertex2f(gl_bound_.x_min, gl_bound_.y_max);
         glVertex2f(gl_bound_.x_min, gl_bound_.y_min);
         glVertex2f(gl_bound_.x_max, gl_bound_.y_min);
         glVertex2f(gl_bound_.x_max, gl_bound_.y_max);
         glEnd();
+
+        if(is_selected_)
+        {
+            glLineWidth(3.0f);
+            glColor3f(1.0f, 0.0f, 1.0f);
+
+            glBegin(GL_LINES);
+            glVertex2f(gl_bound_.x_min, gl_bound_.y_min);
+            glVertex2f(gl_bound_.x_min, gl_bound_.y_max);
+            glEnd();
+
+            glBegin(GL_LINES);
+            glVertex2f(gl_bound_.x_min, gl_bound_.y_max);
+            glVertex2f(gl_bound_.x_max, gl_bound_.y_max);
+            glEnd();
+
+            glBegin(GL_LINES);
+            glVertex2f(gl_bound_.x_max, gl_bound_.y_max);
+            glVertex2f(gl_bound_.x_max, gl_bound_.y_min);
+            glEnd();
+
+            glBegin(GL_LINES);
+            glVertex2f(gl_bound_.x_max, gl_bound_.y_min);
+            glVertex2f(gl_bound_.x_min, gl_bound_.y_min);
+            glEnd();
+        }
     }
 
     void updateInternals(const GridState& screen_grid_state, const GridState& gl_grid_state)
@@ -185,16 +263,16 @@ public:
         gl_bound_.x_max = -1.0f + (pos_.x + size_.width) * gl_grid_state.cell_size.x;
         gl_bound_.y_min = -1.0f + pos_.y * gl_grid_state.cell_size.y;
         gl_bound_.y_max = -1.0f + (pos_.y + size_.height) * gl_grid_state.cell_size.y;
-    }
 
-    Square() = default;
-    Square(const float x_, const float y_, const float width_, const float height_) : pos_(x_, y_), size_(width_, height_) {}
+        name_field_->SetPosition(wxPoint(screen_bound_.x_min, screen_grid_state.grid_size.y - screen_bound_.y_min));
+    }
 };
 
 class PrototypeView : public wxGLCanvas
 {
 private:
     wxGLContext* m_context;
+    wxPanel* parent_;
     wxSize panel_size_;
 
     int args[9];
@@ -228,7 +306,7 @@ public:
     PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size_);
     virtual ~PrototypeView();
 
-    void setPosAndSize(const wxPoint pos_, const wxSize size_);
+    void setSize(const wxSize size_);
     void render(wxPaintEvent& evt);
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
@@ -236,6 +314,8 @@ public:
 
     void changeNumCellsX(const float change);
     void changeNumCellsY(const float change);
+    void newElement();
+    void deleteElement();
 };
 
 

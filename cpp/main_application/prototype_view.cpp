@@ -5,18 +5,15 @@
 
 #include <cmath>
 
-// BEGIN_EVENT_TABLE(PrototypeView, wxGLCanvas)
-// EVT_PAINT(PrototypeView::render)
-// END_EVENT_TABLE()
-
 PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size)
      : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE)
 {
     m_context = new wxGLContext(this);
+    parent_ = parent;
 
-    squares_.push_back(Square(20, 13, 15, 15));
-    squares_.push_back(Square(2, 2, 5, 5));
-    squares_.push_back(Square(10, 2, 7, 7));
+    squares_.emplace_back(parent_, 20, 13, 15, 15, Vec3Df(0.0f, 0.0f, 1.0f));
+    squares_.emplace_back(parent_, 2, 2, 5, 5, Vec3Df(0.0f, 1.0f, 0.0f));
+    squares_.emplace_back(parent_, 10, 2, 7, 7, Vec3Df(1.0f, 0.0f, 0.0f));
 
     grid_pos_pressed_.x = 0.0f;
     grid_pos_pressed_.y = 0.0f;
@@ -53,6 +50,37 @@ PrototypeView::~PrototypeView()
     delete m_context;
 }
 
+void PrototypeView::deleteElement()
+{
+    int idx_to_delete = -1;
+    for(int k = 0; k < static_cast<int>(squares_.size()); k++)
+    {
+        if(squares_[k].isSelected())
+        {
+            idx_to_delete = k;
+            break;
+        }
+    }
+
+    if(idx_to_delete != -1)
+    {
+        squares_.erase(squares_.begin() + idx_to_delete);
+    }
+
+    Refresh();
+}
+
+void PrototypeView::newElement()
+{
+    const float r = (rand() % 1001) / 1000.0f;
+    const float g = (rand() % 1001) / 1000.0f;
+    const float b = (rand() % 1001) / 1000.0f;
+    squares_.emplace_back(parent_, 2, 2, 6, 6, Vec3Df(r, g, b));
+
+    updateGridStates();
+    Refresh();
+}
+
 int* PrototypeView::getArgsPtr()
 {
     args[0] = WX_GL_RGBA;
@@ -74,9 +102,18 @@ void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
 
     left_button_pressed_ = true;
 
+    for(size_t k = 0; k < squares_.size(); k++)
+    {
+        if(squares_[k].isSelected())
+        {
+            squares_[k].setIsSelected(false);
+        }
+    }
+
     if(is_inside_square_)
     {
         pos_of_pressed_sq_ = squares_[idx_of_selected_square_].getPos();
+        squares_[idx_of_selected_square_].setIsSelected(true);
 
         size_of_pressed_ = squares_[idx_of_selected_square_].getSize();
 
@@ -85,12 +122,18 @@ void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
 
         is_editing_ = true;
     }
+
+    Refresh();
 }
 
 void PrototypeView::mouseLeftReleased(wxMouseEvent& event)
 {
     left_button_pressed_ = false;
     is_editing_ = false;
+    if(idx_of_selected_square_ != -1)
+    {
+        // squares_[idx_of_selected_square_].setIsSelected(false);
+    }
     idx_of_selected_square_ = -1;
 }
 
@@ -220,7 +263,7 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
     }
 }
 
-void PrototypeView::setPosAndSize(const wxPoint pos, const wxSize size)
+void PrototypeView::setSize(const wxSize size)
 {
     this->SetSize(size);
     panel_size_ = size;
