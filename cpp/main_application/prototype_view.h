@@ -59,6 +59,11 @@ private:
     float y_min_screen;
     float y_max_screen;
 
+    float x_min_screen_margin;
+    float x_max_screen_margin;
+    float y_min_screen_margin;
+    float y_max_screen_margin;
+
     float x_min_gl;
     float x_max_gl;
     float y_min_gl;
@@ -75,7 +80,48 @@ public:
     {
         if((x_min_screen <= mouse_x) && (mouse_x <= x_max_screen) && (y_min_screen <= mouse_y) && (mouse_y <= y_max_screen))
         {
-            return CursorSquareState::INSIDE;
+            if(mouse_x <= x_min_screen_margin)
+            {
+                if(mouse_y <= y_min_screen_margin)
+                {
+                    return CursorSquareState::BOTTOM_LEFT;
+                }
+                else if(y_max_screen_margin <= mouse_y)
+                {
+                    return CursorSquareState::TOP_LEFT;
+                }
+                else
+                {
+                    return CursorSquareState::LEFT;
+                }
+            }
+            else if(x_max_screen_margin <= mouse_x)
+            {
+                if(mouse_y <= y_min_screen_margin)
+                {
+                    return CursorSquareState::BOTTOM_RIGHT;
+                }
+                else if(y_max_screen_margin <= mouse_y)
+                {
+                    return CursorSquareState::TOP_RIGHT;
+                }
+                else
+                {
+                    return CursorSquareState::RIGHT;
+                }
+            }
+            else if(mouse_y <= y_min_screen_margin)
+            {
+                return CursorSquareState::BOTTOM;
+            }
+            else if(y_max_screen_margin <= mouse_y)
+            {
+                return CursorSquareState::TOP;
+            }
+            else
+            {
+                return CursorSquareState::INSIDE;
+            }
         }
         else
         {
@@ -100,6 +146,14 @@ public:
         x_max_screen = x_min_screen + width * screen_grid_state.cell_size_x;
         y_min_screen = grid_settings.margin_y + y * screen_grid_state.cell_size_y;
         y_max_screen = y_min_screen + height * screen_grid_state.cell_size_y;
+
+        const float center_x = (x_min_screen + x_max_screen) / 2.0f;
+        const float center_y = (y_min_screen + y_max_screen) / 2.0f;
+
+        x_min_screen_margin = std::min(x_min_screen + 20.0f, center_x);
+        x_max_screen_margin = std::max(x_max_screen - 20.0f, center_x);
+        y_min_screen_margin = std::min(y_min_screen + 20.0f, center_y);
+        y_max_screen_margin = std::max(y_max_screen - 20.0f, center_y);
 
         x_min_gl = -1.0f + gl_grid_state.offset_x + x * gl_grid_state.cell_size_x;
         x_max_gl = -1.0f + gl_grid_state.offset_x + (x + width) * gl_grid_state.cell_size_x;
