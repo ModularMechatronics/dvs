@@ -69,6 +69,16 @@ private:
 
 public:
 
+    Vec2Df getPos() const
+    {
+        return pos;
+    }
+
+    Size2Df getSize() const
+    {
+        return size;
+    }
+
     float getX() const
     {
         return pos.x;
@@ -211,10 +221,7 @@ class PrototypeView : public wxGLCanvas
 {
 private:
     wxGLContext* m_context;
-    wxSize size_;
-
-    GridState screen_grid_state_;
-    GridState gl_grid_state_;
+    wxSize panel_size_;
 
     int args[9];
 
@@ -222,17 +229,15 @@ private:
     bool is_inside_square_;
     bool is_editing_;
 
-    float mouse_x;
-    float mouse_y;
+    GridState screen_grid_state_;
+    GridState gl_grid_state_;
 
-    float grid_pos_pressed_x_;
-    float grid_pos_pressed_y_;
+    Vec2Df grid_pos_pressed_;
 
-    float pos_of_pressed_x_;
-    float pos_of_pressed_y_;
+    Vec2Df pos_of_pressed_sq_;
+    Size2Df size_of_pressed_;
 
-    float size_of_pressed_width_;
-    float size_of_pressed_height_;
+    Bound2Df gl_bounds_;
 
     CursorSquareState cursor_square_state;
 
@@ -245,7 +250,7 @@ private:
 
     void updateGridStates();
 
-    Bound2Df gl_bounds_;
+    
 
 public:
     PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size);
