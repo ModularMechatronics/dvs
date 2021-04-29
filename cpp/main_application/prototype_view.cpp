@@ -32,9 +32,12 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
 
     bool is_inside = false;
 
+    CursorSquareState cursor_square_state = CursorSquareState::OUTSIDE;
+
     for(size_t k = 0; k < squares_.size(); k++)
     {
-        if(squares_[k].mouseState(mouse_x, mouse_y) != CursorSquareState::OUTSIDE)
+        cursor_square_state = squares_[k].mouseState(mouse_x, mouse_y);
+        if(cursor_square_state != CursorSquareState::OUTSIDE)
         {
             is_inside = true;
             break;
@@ -45,7 +48,38 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
 
     if(is_inside)
     {
-        wxSetCursor(wxCursor(wxCURSOR_HAND));
+        switch(cursor_square_state)
+        {
+            case CursorSquareState::LEFT:
+                wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
+                break;
+            case CursorSquareState::RIGHT:
+                wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
+                break;
+            case CursorSquareState::TOP:
+                wxSetCursor(wxCursor(wxCURSOR_SIZENS));
+                break;
+            case CursorSquareState::BOTTOM:
+                wxSetCursor(wxCursor(wxCURSOR_SIZENS));
+                break;
+            case CursorSquareState::BOTTOM_RIGHT:
+                wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
+                break;
+            case CursorSquareState::BOTTOM_LEFT:
+                wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
+                break;
+            case CursorSquareState::TOP_RIGHT:
+                wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
+                break;
+            case CursorSquareState::TOP_LEFT:
+                wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
+                break;
+            case CursorSquareState::INSIDE:
+                wxSetCursor(wxCursor(wxCURSOR_HAND));
+                break;
+            default:
+                wxSetCursor(wxCursor(wxCURSOR_HAND));
+        }
     }
     else
     {
