@@ -25,19 +25,55 @@ int* PrototypeView::getArgsPtr()
     return args;
 }
 
+void PrototypeView::mouseMoved(wxMouseEvent& event)
+{
+    const float mouse_x = event.GetX();
+    const float mouse_y = size_.GetHeight() - event.GetY();
+
+    bool is_inside = false;
+
+    for(size_t k = 0; k < squares_.size(); k++)
+    {
+        if(squares_[k].mouseState(mouse_x, mouse_y) != CursorSquareState::OUTSIDE)
+        {
+            is_inside = true;
+            break;
+        }
+    }
+
+    std::cout << "Mouse: " << mouse_x << ", " << mouse_y << std::endl;
+
+    if(is_inside)
+    {
+        wxSetCursor(wxCursor(wxCURSOR_HAND));
+    }
+    else
+    {
+        wxSetCursor(wxCursor(wxCURSOR_ARROW));
+    }
+}
+
 PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size)
      : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE)
 {
     m_context = new wxGLContext(this);
 
+    squares_.push_back(Square(20, 13, 15, 15));
+    squares_.push_back(Square(2, 2, 5, 5));
+    squares_.push_back(Square(10, 2, 7, 7));
+
     size_ = size;
 
-    grid_settings_.num_cells_x = 10;
-    grid_settings_.num_cells_y = 10;
-    grid_settings_.margin_x = 20;
-    grid_settings_.margin_y = 20;
+    grid_settings_.num_cells_x = 100;
+    grid_settings_.num_cells_y = 100;
+    grid_settings_.margin_x = 30;
+    grid_settings_.margin_y = 30;
+
+    updateGridStates();
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
+    Bind(wxEVT_MOTION, &PrototypeView::mouseMoved, this);
 
     glEnable(GL_MULTISAMPLE);
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
@@ -52,30 +88,68 @@ void PrototypeView::setPosAndSize(const wxPoint pos, const wxSize size)
 {
     this->SetSize(size);
     size_ = size;
+    updateGridStates();
 }
 
-void PrototypeView::changeNumCellsX(const int change)
+void PrototypeView::changeNumCellsX(const float change)
 {
-    grid_settings_.num_cells_x = std::min(200, std::max(1, grid_settings_.num_cells_x + change));
+    grid_settings_.num_cells_x = std::min(200.0f, std::max(1.0f, grid_settings_.num_cells_x + change));
+    updateGridStates();
     Refresh();
 }
 
-void PrototypeView::changeNumCellsY(const int change)
+void PrototypeView::changeNumCellsY(const float change)
 {
-    grid_settings_.num_cells_y = std::min(200, std::max(1, grid_settings_.num_cells_y + change));
+    grid_settings_.num_cells_y = std::min(200.0f, std::max(1.0f, grid_settings_.num_cells_y + change));
+    updateGridStates();
     Refresh();
 }
 
-void PrototypeView::changeMarginX(const int change)
+void PrototypeView::changeMarginX(const float change)
 {
-    grid_settings_.margin_x = std::min(200, std::max(0, grid_settings_.margin_x + change));
+    grid_settings_.margin_x = std::min(200.0f, std::max(0.0f, grid_settings_.margin_x + change));
+    updateGridStates();
     Refresh();
 }
 
-void PrototypeView::changeMarginY(const int change)
+void PrototypeView::changeMarginY(const float change)
 {
-    grid_settings_.margin_y = std::min(200, std::max(0, grid_settings_.margin_y + change));
+    grid_settings_.margin_y = std::min(200.0f, std::max(0.0f, grid_settings_.margin_y + change));
+    updateGridStates();
     Refresh();
+}
+
+void PrototypeView::updateGridStates()
+{
+    // Screen
+    screen_grid_state_.offset_x = grid_settings_.margin_x;
+    screen_grid_state_.offset_y = grid_settings_.margin_y;
+
+    screen_grid_state_.grid_size_x = static_cast<float>(size_.GetWidth()) - 2.0f * grid_settings_.margin_x;
+    screen_grid_state_.grid_size_y = static_cast<float>(size_.GetHeight()) - 2.0f * grid_settings_.margin_y;
+
+    screen_grid_state_.cell_size_x = screen_grid_state_.grid_size_x / static_cast<float>(grid_settings_.num_cells_x);
+    screen_grid_state_.cell_size_y = screen_grid_state_.grid_size_y / static_cast<float>(grid_settings_.num_cells_y);
+
+    // GL
+    gl_grid_state_.offset_x = 2.0f * static_cast<float>(grid_settings_.margin_x) / static_cast<float>(size_.GetWidth());
+    gl_grid_state_.offset_y = 2.0f * static_cast<float>(grid_settings_.margin_y) / static_cast<float>(size_.GetHeight());
+
+    gl_grid_state_.grid_size_x = 2.0f - 2.0f * gl_grid_state_.offset_x;
+    gl_grid_state_.grid_size_y = 2.0f - 2.0f * gl_grid_state_.offset_y;
+
+    gl_grid_state_.cell_size_x = gl_grid_state_.grid_size_x / static_cast<float>(grid_settings_.num_cells_x);
+    gl_grid_state_.cell_size_y = gl_grid_state_.grid_size_y / static_cast<float>(grid_settings_.num_cells_y);
+
+    gl_grid_state_.x_min = -1.0f + gl_grid_state_.offset_x;
+    gl_grid_state_.x_max = 1.0f - gl_grid_state_.offset_x;
+    gl_grid_state_.y_min = -1.0f + gl_grid_state_.offset_y;
+    gl_grid_state_.y_max = 1.0f - gl_grid_state_.offset_y;
+
+    for(size_t k = 0; k < squares_.size(); k++)
+    {
+        squares_[k].updateInternals(grid_settings_, screen_grid_state_, gl_grid_state_);
+    }
 }
 
 void PrototypeView::render(wxPaintEvent& evt)
@@ -83,9 +157,6 @@ void PrototypeView::render(wxPaintEvent& evt)
     (void)evt;
     if (!IsShown())
         return;
-
-    grid_settings_.num_cells_x = std::min(200, std::max(grid_settings_.num_cells_x, 1));
-    grid_settings_.num_cells_y = std::min(200, std::max(grid_settings_.num_cells_y, 1));
 
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this);
@@ -100,43 +171,29 @@ void PrototypeView::render(wxPaintEvent& evt)
     glLineWidth(0.1f);
     glColor3f(0.0f, 0.0f, 0.0f);
 
-    const float normalized_offset_x = static_cast<float>(grid_settings_.margin_x) / static_cast<float>(size_.GetWidth());
-    const float normalized_offset_y = static_cast<float>(grid_settings_.margin_y) / static_cast<float>(size_.GetHeight());
-
-    const float window_x = 2.0f - 2.0f * normalized_offset_x;
-    const float window_y = 2.0f - 2.0f * normalized_offset_y;
-
-    const float dx = window_x / static_cast<float>(grid_settings_.num_cells_x);
-    const float dy = window_y / static_cast<float>(grid_settings_.num_cells_y);
-
-    const float y_min = -1.0f + normalized_offset_y;
-    const float y_max = 1.0f - normalized_offset_y;
-
-    const float x_min = -1.0f + normalized_offset_x;
-    const float x_max = 1.0f - normalized_offset_x;
-
     // Drawing vertical lines
     for(int idx_x = 0; idx_x < (grid_settings_.num_cells_x + 1); idx_x++)
     {
-        const float x0 = static_cast<float>(idx_x) * dx - 1.0f + normalized_offset_x;
-        const float x1 = x0;
+        const float x_val = gl_grid_state_.x_min + static_cast<float>(idx_x) * gl_grid_state_.cell_size_x;
         glBegin(GL_LINES);
-        glVertex2f(x0, y_min);
-        glVertex2f(x1, y_max);
+        glVertex2f(x_val, gl_grid_state_.y_min);
+        glVertex2f(x_val, gl_grid_state_.y_max);
         glEnd();
     }
 
     // Drawing horizontal lines
     for(int idx_y = 0; idx_y < (grid_settings_.num_cells_y + 1); idx_y++)
     {
-        const float x0 = x_min;
-        const float x1 = x_max;
-        const float y0 = 1.0f - normalized_offset_y - static_cast<float>(idx_y) * dy;
-        const float y1 = y0;
+        const float y_val = gl_grid_state_.y_max - static_cast<float>(idx_y) * gl_grid_state_.cell_size_y;
         glBegin(GL_LINES);
-        glVertex2f(x0, y0);
-        glVertex2f(x1, y1);
+        glVertex2f(gl_grid_state_.x_min, y_val);
+        glVertex2f(gl_grid_state_.x_max, y_val);
         glEnd();
+    }
+
+    for(size_t k = 0; k < squares_.size(); k++)
+    {
+        squares_[k].render();
     }
 
     SwapBuffers();
