@@ -91,6 +91,9 @@ public:
     void numCellsXDec(wxCommandEvent& event);
     void numCellsYInc(wxCommandEvent& event);
     void numCellsYDec(wxCommandEvent& event);
+
+    void newElement(wxCommandEvent& event);
+    void deleteElement(wxCommandEvent& event);
 };
 
 #endif

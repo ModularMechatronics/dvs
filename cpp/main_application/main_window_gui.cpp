@@ -74,7 +74,7 @@ void MainWindow::OnSize(wxSizeEvent& event)
     std::cout << "Size changed" << std::endl;
     wxSize s0 = tab_container->GetSize();
 
-    prototype_view_->setPosAndSize(wxPoint(0, 0), s0);
+    prototype_view_->setSize(s0);
 
     /*const project_file::Tab tab = project_file_.getTabFromIdx(0);
 
@@ -106,4 +106,16 @@ void MainWindow::numCellsYDec(wxCommandEvent& event)
 {
     (void)event;
     prototype_view_->changeNumCellsY(-1);
+}
+
+void MainWindow::newElement(wxCommandEvent& event)
+{
+    (void)event;
+    prototype_view_->newElement();
+}
+
+void MainWindow::deleteElement(wxCommandEvent& event)
+{
+    (void)event;
+    prototype_view_->deleteElement();
 }

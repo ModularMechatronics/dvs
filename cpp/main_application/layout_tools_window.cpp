@@ -51,6 +51,18 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
         num_cells_y_box->SetSizer(sizer_inside);
     }
 
+    {
+        wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
+        wxButton* new_element_button = new wxButton(right_box, wxID_ANY, "New element", wxPoint(0, 0));
+        wxButton* delete_element_button = new wxButton(right_box, wxID_ANY, "Delete element", wxPoint(0, 0));
+        new_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::newElement, main_window_ptr);
+        delete_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::deleteElement, main_window_ptr);
+
+        sizer_inside->Add(new_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
+        sizer_inside->Add(delete_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
+        right_box->SetSizer(sizer_inside);
+    }
+
     this->SetSizer(global_sizer);
 }
 
