@@ -103,23 +103,3 @@ void MainWindow::numCellsYDec(wxCommandEvent& event)
 {
     prototype_view_->changeNumCellsY(-1);
 }
-
-void MainWindow::marginXInc(wxCommandEvent& event)
-{
-    prototype_view_->changeMarginX(1);
-}
-
-void MainWindow::marginXDec(wxCommandEvent& event)
-{
-    prototype_view_->changeMarginX(-1);
-}
-
-void MainWindow::marginYInc(wxCommandEvent& event)
-{
-    prototype_view_->changeMarginY(1);
-}
-
-void MainWindow::marginYDec(wxCommandEvent& event)
-{
-    prototype_view_->changeMarginY(-1);
-}

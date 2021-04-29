@@ -39,8 +39,8 @@ void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
         size_of_pressed_width_ = squares_[idx_of_selected_square_].getWidth();
         size_of_pressed_height_ = squares_[idx_of_selected_square_].getHeight();
 
-        grid_pos_pressed_x_ = std::floor((mouse_x - screen_grid_state_.offset_x) / screen_grid_state_.cell_size_x);
-        grid_pos_pressed_y_ = std::floor((mouse_y - screen_grid_state_.offset_y) / screen_grid_state_.cell_size_y);
+        grid_pos_pressed_x_ = std::floor(mouse_x / screen_grid_state_.cell_size_x);
+        grid_pos_pressed_y_ = std::floor(mouse_y / screen_grid_state_.cell_size_y);
 
         is_editing_ = true;
     }
@@ -70,8 +70,8 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
     {
         if(idx_of_selected_square_ != -1)
         {
-            const float trunc_x = std::floor((mouse_x - screen_grid_state_.offset_x) / screen_grid_state_.cell_size_x);
-            const float trunc_y = std::floor((mouse_y - screen_grid_state_.offset_y) / screen_grid_state_.cell_size_y);
+            const float trunc_x = std::floor(mouse_x / screen_grid_state_.cell_size_x);
+            const float trunc_y = std::floor(mouse_y / screen_grid_state_.cell_size_y);
             const float diff_x = grid_pos_pressed_x_ - trunc_x;
             const float diff_y = grid_pos_pressed_y_ - trunc_y;
 
@@ -216,8 +216,6 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
 
     grid_settings_.num_cells_x = 100;
     grid_settings_.num_cells_y = 100;
-    grid_settings_.margin_x = 30;
-    grid_settings_.margin_y = 30;
 
     updateGridStates();
 
@@ -257,46 +255,26 @@ void PrototypeView::changeNumCellsY(const float change)
     Refresh();
 }
 
-void PrototypeView::changeMarginX(const float change)
-{
-    grid_settings_.margin_x = std::min(200.0f, std::max(0.0f, grid_settings_.margin_x + change));
-    updateGridStates();
-    Refresh();
-}
-
-void PrototypeView::changeMarginY(const float change)
-{
-    grid_settings_.margin_y = std::min(200.0f, std::max(0.0f, grid_settings_.margin_y + change));
-    updateGridStates();
-    Refresh();
-}
-
 void PrototypeView::updateGridStates()
 {
     // Screen
-    screen_grid_state_.offset_x = grid_settings_.margin_x;
-    screen_grid_state_.offset_y = grid_settings_.margin_y;
-
-    screen_grid_state_.grid_size_x = static_cast<float>(size_.GetWidth()) - 2.0f * grid_settings_.margin_x;
-    screen_grid_state_.grid_size_y = static_cast<float>(size_.GetHeight()) - 2.0f * grid_settings_.margin_y;
+    screen_grid_state_.grid_size_x = static_cast<float>(size_.GetWidth());
+    screen_grid_state_.grid_size_y = static_cast<float>(size_.GetHeight());
 
     screen_grid_state_.cell_size_x = screen_grid_state_.grid_size_x / static_cast<float>(grid_settings_.num_cells_x);
     screen_grid_state_.cell_size_y = screen_grid_state_.grid_size_y / static_cast<float>(grid_settings_.num_cells_y);
 
     // GL
-    gl_grid_state_.offset_x = 2.0f * static_cast<float>(grid_settings_.margin_x) / static_cast<float>(size_.GetWidth());
-    gl_grid_state_.offset_y = 2.0f * static_cast<float>(grid_settings_.margin_y) / static_cast<float>(size_.GetHeight());
-
-    gl_grid_state_.grid_size_x = 2.0f - 2.0f * gl_grid_state_.offset_x;
-    gl_grid_state_.grid_size_y = 2.0f - 2.0f * gl_grid_state_.offset_y;
+    gl_grid_state_.grid_size_x = 2.0f;
+    gl_grid_state_.grid_size_y = 2.0f;
 
     gl_grid_state_.cell_size_x = gl_grid_state_.grid_size_x / static_cast<float>(grid_settings_.num_cells_x);
     gl_grid_state_.cell_size_y = gl_grid_state_.grid_size_y / static_cast<float>(grid_settings_.num_cells_y);
 
-    gl_grid_state_.x_min = -1.0f + gl_grid_state_.offset_x;
-    gl_grid_state_.x_max = 1.0f - gl_grid_state_.offset_x;
-    gl_grid_state_.y_min = -1.0f + gl_grid_state_.offset_y;
-    gl_grid_state_.y_max = 1.0f - gl_grid_state_.offset_y;
+    gl_grid_state_.x_min = -1.0f;
+    gl_grid_state_.x_max = 1.0f;
+    gl_grid_state_.y_min = -1.0f;
+    gl_grid_state_.y_max = 1.0f;
 
     for(size_t k = 0; k < squares_.size(); k++)
     {

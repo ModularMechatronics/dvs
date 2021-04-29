@@ -42,8 +42,6 @@ struct GridState
     float grid_size_y;
     float cell_size_x;
     float cell_size_y;
-    float offset_x;
-    float offset_y;
 
     float x_min;
     float x_max;
@@ -190,9 +188,9 @@ public:
 
     void updateInternals(const GridSettings& grid_settings, const GridState& screen_grid_state, const GridState& gl_grid_state)
     {
-        x_min_screen = grid_settings.margin_x + x * screen_grid_state.cell_size_x;
+        x_min_screen = x * screen_grid_state.cell_size_x;
         x_max_screen = x_min_screen + width * screen_grid_state.cell_size_x;
-        y_min_screen = grid_settings.margin_y + y * screen_grid_state.cell_size_y;
+        y_min_screen = y * screen_grid_state.cell_size_y;
         y_max_screen = y_min_screen + height * screen_grid_state.cell_size_y;
 
         const float center_x = (x_min_screen + x_max_screen) / 2.0f;
@@ -203,10 +201,10 @@ public:
         y_min_screen_margin = std::min(y_min_screen + 20.0f, center_y - 5.0f);
         y_max_screen_margin = std::max(y_max_screen - 20.0f, center_y + 5.0f);
 
-        x_min_gl = -1.0f + gl_grid_state.offset_x + x * gl_grid_state.cell_size_x;
-        x_max_gl = -1.0f + gl_grid_state.offset_x + (x + width) * gl_grid_state.cell_size_x;
-        y_min_gl = -1.0f + gl_grid_state.offset_y + y * gl_grid_state.cell_size_y;
-        y_max_gl = -1.0f + gl_grid_state.offset_y + (y + height) * gl_grid_state.cell_size_y;
+        x_min_gl = -1.0f + x * gl_grid_state.cell_size_x;
+        x_max_gl = -1.0f + (x + width) * gl_grid_state.cell_size_x;
+        y_min_gl = -1.0f + y * gl_grid_state.cell_size_y;
+        y_max_gl = -1.0f + (y + height) * gl_grid_state.cell_size_y;
     }
 
     Square() = default;
@@ -265,8 +263,6 @@ public:
 
     void changeNumCellsX(const float change);
     void changeNumCellsY(const float change);
-    void changeMarginX(const float change);
-    void changeMarginY(const float change);
 
     DECLARE_EVENT_TABLE()
 };
