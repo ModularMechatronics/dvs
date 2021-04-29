@@ -79,21 +79,7 @@ public:
         is_selected_ = false;
     }
 
-    Square(const Square& other)
-    {
-        screen_bound_ = other.screen_bound_;
-        screen_bound_margin_ = other.screen_bound_margin_;
-        gl_bound_ = other.gl_bound_;
-        pos_ = other.pos_;
-        size_ = other.size_;
-        color_ = other.color_;
-        is_selected_ = other.is_selected_;
-        parent_ = other.parent_;
-
-        const std::string s = other.getText();
-
-        name_field_ = new wxTextCtrl(other.parent_, wxID_ANY, s);
-    }
+    Square(const Square& other) = delete;
 
     std::string getText() const
     {
@@ -102,7 +88,7 @@ public:
 
     ~Square()
     {
-        name_field_->Destroy();
+        delete name_field_;
     }
 
     Vec2Df getPos() const
@@ -297,7 +283,7 @@ private:
 
     Vec2Df num_grid_cells_;
 
-    std::vector<Square> squares_;
+    std::vector<Square*> squares_;
     int idx_of_selected_square_;
 
     void updateGridStates();

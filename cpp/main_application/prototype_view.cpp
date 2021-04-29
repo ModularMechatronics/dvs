@@ -11,9 +11,9 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
     m_context = new wxGLContext(this);
     parent_ = parent;
 
-    squares_.emplace_back(parent_, 20, 13, 15, 15, Vec3Df(0.0f, 0.0f, 1.0f));
-    squares_.emplace_back(parent_, 2, 2, 5, 5, Vec3Df(0.0f, 1.0f, 0.0f));
-    squares_.emplace_back(parent_, 10, 2, 7, 7, Vec3Df(1.0f, 0.0f, 0.0f));
+    squares_.push_back(new Square(parent_, 20, 13, 15, 15, Vec3Df(0.0f, 0.0f, 1.0f)));
+    squares_.push_back(new Square(parent_, 2, 2, 5, 5, Vec3Df(0.0f, 1.0f, 0.0f)));
+    squares_.push_back(new Square(parent_, 10, 2, 7, 7, Vec3Df(1.0f, 0.0f, 0.0f)));
 
     grid_pos_pressed_.x = 0.0f;
     grid_pos_pressed_.y = 0.0f;
@@ -55,7 +55,7 @@ void PrototypeView::deleteElement()
     int idx_to_delete = -1;
     for(int k = 0; k < static_cast<int>(squares_.size()); k++)
     {
-        if(squares_[k].isSelected())
+        if(squares_[k]->isSelected())
         {
             idx_to_delete = k;
             break;
@@ -64,6 +64,7 @@ void PrototypeView::deleteElement()
 
     if(idx_to_delete != -1)
     {
+        delete squares_[idx_to_delete];
         squares_.erase(squares_.begin() + idx_to_delete);
     }
 
@@ -75,7 +76,7 @@ void PrototypeView::newElement()
     const float r = (rand() % 1001) / 1000.0f;
     const float g = (rand() % 1001) / 1000.0f;
     const float b = (rand() % 1001) / 1000.0f;
-    squares_.emplace_back(parent_, 2, 2, 6, 6, Vec3Df(r, g, b));
+    squares_.push_back(new Square(parent_, 2, 2, 6, 6, Vec3Df(r, g, b)));
 
     updateGridStates();
     Refresh();
@@ -104,18 +105,18 @@ void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
 
     for(size_t k = 0; k < squares_.size(); k++)
     {
-        if(squares_[k].isSelected())
+        if(squares_[k]->isSelected())
         {
-            squares_[k].setIsSelected(false);
+            squares_[k]->setIsSelected(false);
         }
     }
 
     if(is_inside_square_)
     {
-        pos_of_pressed_sq_ = squares_[idx_of_selected_square_].getPos();
-        squares_[idx_of_selected_square_].setIsSelected(true);
+        pos_of_pressed_sq_ = squares_[idx_of_selected_square_]->getPos();
+        squares_[idx_of_selected_square_]->setIsSelected(true);
 
-        size_of_pressed_ = squares_[idx_of_selected_square_].getSize();
+        size_of_pressed_ = squares_[idx_of_selected_square_]->getSize();
 
         grid_pos_pressed_.x = std::floor(mouse_pos.x / screen_grid_state_.cell_size.x);
         grid_pos_pressed_.y = std::floor(mouse_pos.y / screen_grid_state_.cell_size.y);
@@ -162,35 +163,35 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
             switch(cursor_square_state)
             {
                 case CursorSquareState::LEFT:
-                    squares_[idx_of_selected_square_].setWidthAndX(new_width_positive, new_pos_x);
+                    squares_[idx_of_selected_square_]->setWidthAndX(new_width_positive, new_pos_x);
                     break;
                 case CursorSquareState::RIGHT:
-                    squares_[idx_of_selected_square_].setWidth(new_width);
+                    squares_[idx_of_selected_square_]->setWidth(new_width);
                     break;
                 case CursorSquareState::TOP:
-                    squares_[idx_of_selected_square_].setHeight(new_height);
+                    squares_[idx_of_selected_square_]->setHeight(new_height);
                     break;
                 case CursorSquareState::BOTTOM:
-                    squares_[idx_of_selected_square_].setHeightAndY(new_height_positive, new_pos_y);
+                    squares_[idx_of_selected_square_]->setHeightAndY(new_height_positive, new_pos_y);
                     break;
                 case CursorSquareState::BOTTOM_RIGHT:
-                    squares_[idx_of_selected_square_].setHeightAndY(new_height_positive, new_pos_y);
-                    squares_[idx_of_selected_square_].setWidth(new_width);
+                    squares_[idx_of_selected_square_]->setHeightAndY(new_height_positive, new_pos_y);
+                    squares_[idx_of_selected_square_]->setWidth(new_width);
                     break;
                 case CursorSquareState::BOTTOM_LEFT:
-                    squares_[idx_of_selected_square_].setHeightAndY(new_height_positive, new_pos_y);
-                    squares_[idx_of_selected_square_].setWidthAndX(new_width_positive, new_pos_x);
+                    squares_[idx_of_selected_square_]->setHeightAndY(new_height_positive, new_pos_y);
+                    squares_[idx_of_selected_square_]->setWidthAndX(new_width_positive, new_pos_x);
                     break;
                 case CursorSquareState::TOP_RIGHT:
-                    squares_[idx_of_selected_square_].setWidth(new_width);
-                    squares_[idx_of_selected_square_].setHeight(new_height);
+                    squares_[idx_of_selected_square_]->setWidth(new_width);
+                    squares_[idx_of_selected_square_]->setHeight(new_height);
                     break;
                 case CursorSquareState::TOP_LEFT:
-                    squares_[idx_of_selected_square_].setHeight(new_height);
-                    squares_[idx_of_selected_square_].setWidthAndX(new_width_positive, new_pos_x);
+                    squares_[idx_of_selected_square_]->setHeight(new_height);
+                    squares_[idx_of_selected_square_]->setWidthAndX(new_width_positive, new_pos_x);
                     break;
                 case CursorSquareState::INSIDE:
-                    squares_[idx_of_selected_square_].setPosition(new_pos_x, new_pos_y);
+                    squares_[idx_of_selected_square_]->setPosition(new_pos_x, new_pos_y);
                     break;
                 default:
                     std::cout << "Do nothing..." << std::endl;
@@ -212,7 +213,7 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
 
         for(size_t k = 0; k < squares_.size(); k++)
         {
-            cursor_square_state = squares_[k].mouseState(mouse_pos);
+            cursor_square_state = squares_[k]->mouseState(mouse_pos);
             if(cursor_square_state != CursorSquareState::OUTSIDE)
             {
                 is_inside_square_ = true;
@@ -300,7 +301,7 @@ void PrototypeView::updateGridStates()
 
     for(size_t k = 0; k < squares_.size(); k++)
     {
-        squares_[k].updateInternals(screen_grid_state_, gl_grid_state_);
+        squares_[k]->updateInternals(screen_grid_state_, gl_grid_state_);
     }
 }
 
@@ -345,7 +346,7 @@ void PrototypeView::render(wxPaintEvent& evt)
 
     for(size_t k = 0; k < squares_.size(); k++)
     {
-        squares_[k].render();
+        squares_[k]->render();
     }
 
     SwapBuffers();
