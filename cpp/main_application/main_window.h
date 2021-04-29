@@ -91,10 +91,6 @@ public:
     void numCellsXDec(wxCommandEvent& event);
     void numCellsYInc(wxCommandEvent& event);
     void numCellsYDec(wxCommandEvent& event);
-    void marginXInc(wxCommandEvent& event);
-    void marginXDec(wxCommandEvent& event);
-    void marginYInc(wxCommandEvent& event);
-    void marginYDec(wxCommandEvent& event);
 };
 
 #endif
