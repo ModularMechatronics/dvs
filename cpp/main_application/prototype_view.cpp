@@ -26,8 +26,7 @@ int* PrototypeView::getArgsPtr()
 
 void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
 {
-    mouse_x = event.GetX();
-    mouse_y = size_.GetHeight() - event.GetY();
+    const Vec2Df mouse_pos(event.GetX(), size_.GetHeight() - event.GetY());
 
     left_button_pressed_ = true;
 
@@ -39,15 +38,11 @@ void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
         size_of_pressed_width_ = squares_[idx_of_selected_square_].getWidth();
         size_of_pressed_height_ = squares_[idx_of_selected_square_].getHeight();
 
-        grid_pos_pressed_x_ = std::floor(mouse_x / screen_grid_state_.cell_size_x);
-        grid_pos_pressed_y_ = std::floor(mouse_y / screen_grid_state_.cell_size_y);
+        grid_pos_pressed_x_ = std::floor(mouse_pos.x / screen_grid_state_.cell_size_x);
+        grid_pos_pressed_y_ = std::floor(mouse_pos.y / screen_grid_state_.cell_size_y);
 
         is_editing_ = true;
     }
-    
-    
-
-    std::cout << "Left pushed!" << std::endl;
 }
 
 void PrototypeView::mouseLeftReleased(wxMouseEvent& event)
@@ -63,15 +58,14 @@ void PrototypeView::mouseLeftReleased(wxMouseEvent& event)
 
 void PrototypeView::mouseMoved(wxMouseEvent& event)
 {
-    mouse_x = event.GetX();
-    mouse_y = size_.GetHeight() - event.GetY();
+    const Vec2Df mouse_pos(event.GetX(), size_.GetHeight() - event.GetY());
 
     if(is_editing_)
     {
         if(idx_of_selected_square_ != -1)
         {
-            const float trunc_x = std::floor(mouse_x / screen_grid_state_.cell_size_x);
-            const float trunc_y = std::floor(mouse_y / screen_grid_state_.cell_size_y);
+            const float trunc_x = std::floor(mouse_pos.x / screen_grid_state_.cell_size_x);
+            const float trunc_y = std::floor(mouse_pos.y / screen_grid_state_.cell_size_y);
             const float diff_x = grid_pos_pressed_x_ - trunc_x;
             const float diff_y = grid_pos_pressed_y_ - trunc_y;
 
@@ -137,7 +131,7 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
 
         for(size_t k = 0; k < squares_.size(); k++)
         {
-            cursor_square_state = squares_[k].mouseState(mouse_x, mouse_y);
+            cursor_square_state = squares_[k].mouseState(mouse_pos);
             if(cursor_square_state != CursorSquareState::OUTSIDE)
             {
                 is_inside_square_ = true;
@@ -145,8 +139,6 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
                 break;
             }
         }
-
-        // std::cout << "Mouse: " << mouse_x << ", " << mouse_y << std::endl;
 
         if(is_inside_square_)
         {
@@ -188,9 +180,6 @@ void PrototypeView::mouseMoved(wxMouseEvent& event)
             wxSetCursor(wxCursor(wxCURSOR_ARROW));
         }
     }
-
-    prev_mouse_x = mouse_x;
-    prev_mouse_y = mouse_x;
 }
 
 PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size)
@@ -208,11 +197,14 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
     size_ = size;
     left_button_pressed_ = false;
     is_editing_ = false;
-    mouse_x = 0.0f;
-    mouse_y = 0.0f;
-    prev_mouse_x = 0.0f;
-    prev_mouse_y = 0.0f;
+
     idx_of_selected_square_ = -1;
+
+    
+    gl_bounds_.x_min = -1.0f;
+    gl_bounds_.x_max = 1.0f;
+    gl_bounds_.y_min = -1.0f;
+    gl_bounds_.y_max = 1.0f;
 
     grid_settings_.num_cells_x = 100;
     grid_settings_.num_cells_y = 100;
@@ -271,11 +263,6 @@ void PrototypeView::updateGridStates()
     gl_grid_state_.cell_size_x = gl_grid_state_.grid_size_x / static_cast<float>(grid_settings_.num_cells_x);
     gl_grid_state_.cell_size_y = gl_grid_state_.grid_size_y / static_cast<float>(grid_settings_.num_cells_y);
 
-    gl_grid_state_.x_min = -1.0f;
-    gl_grid_state_.x_max = 1.0f;
-    gl_grid_state_.y_min = -1.0f;
-    gl_grid_state_.y_max = 1.0f;
-
     for(size_t k = 0; k < squares_.size(); k++)
     {
         squares_[k].updateInternals(grid_settings_, screen_grid_state_, gl_grid_state_);
@@ -304,20 +291,20 @@ void PrototypeView::render(wxPaintEvent& evt)
     // Drawing vertical lines
     for(int idx_x = 0; idx_x < (grid_settings_.num_cells_x + 1); idx_x++)
     {
-        const float x_val = gl_grid_state_.x_min + static_cast<float>(idx_x) * gl_grid_state_.cell_size_x;
+        const float x_val = gl_bounds_.x_min + static_cast<float>(idx_x) * gl_grid_state_.cell_size_x;
         glBegin(GL_LINES);
-        glVertex2f(x_val, gl_grid_state_.y_min);
-        glVertex2f(x_val, gl_grid_state_.y_max);
+        glVertex2f(x_val, gl_bounds_.y_min);
+        glVertex2f(x_val, gl_bounds_.y_max);
         glEnd();
     }
 
     // Drawing horizontal lines
     for(int idx_y = 0; idx_y < (grid_settings_.num_cells_y + 1); idx_y++)
     {
-        const float y_val = gl_grid_state_.y_max - static_cast<float>(idx_y) * gl_grid_state_.cell_size_y;
+        const float y_val = gl_bounds_.y_max - static_cast<float>(idx_y) * gl_grid_state_.cell_size_y;
         glBegin(GL_LINES);
-        glVertex2f(gl_grid_state_.x_min, y_val);
-        glVertex2f(gl_grid_state_.x_max, y_val);
+        glVertex2f(gl_bounds_.x_min, y_val);
+        glVertex2f(gl_bounds_.x_max, y_val);
         glEnd();
     }
 
