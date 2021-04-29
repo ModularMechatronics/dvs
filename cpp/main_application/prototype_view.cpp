@@ -6,7 +6,6 @@
 #include <cmath>
 
 BEGIN_EVENT_TABLE(PrototypeView, wxGLCanvas)
-EVT_LEFT_DOWN(PrototypeView::mouseLeftPressed)
 EVT_PAINT(PrototypeView::render)
 END_EVENT_TABLE()
 
@@ -25,66 +24,173 @@ int* PrototypeView::getArgsPtr()
     return args;
 }
 
+void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
+{
+    mouse_x = event.GetX();
+    mouse_y = size_.GetHeight() - event.GetY();
+
+    left_button_pressed_ = true;
+
+    if(is_inside_square_)
+    {
+        pos_of_pressed_x_ = squares_[idx_of_selected_square_].getX();
+        pos_of_pressed_y_ = squares_[idx_of_selected_square_].getY();
+
+        size_of_pressed_width_ = squares_[idx_of_selected_square_].getWidth();
+        size_of_pressed_height_ = squares_[idx_of_selected_square_].getHeight();
+
+        grid_pos_pressed_x_ = std::floor((mouse_x - screen_grid_state_.offset_x) / screen_grid_state_.cell_size_x);
+        grid_pos_pressed_y_ = std::floor((mouse_y - screen_grid_state_.offset_y) / screen_grid_state_.cell_size_y);
+
+        is_editing_ = true;
+    }
+    
+    
+
+    std::cout << "Left pushed!" << std::endl;
+}
+
+void PrototypeView::mouseLeftReleased(wxMouseEvent& event)
+{
+    left_button_pressed_ = false;
+    is_editing_ = false;
+    idx_of_selected_square_ = -1;
+    std::cout << "Left released!" << std::endl;
+    // (void)event;
+    // left_mouse_button_.setIsReleased();
+    // Refresh();
+}
+
 void PrototypeView::mouseMoved(wxMouseEvent& event)
 {
-    const float mouse_x = event.GetX();
-    const float mouse_y = size_.GetHeight() - event.GetY();
+    mouse_x = event.GetX();
+    mouse_y = size_.GetHeight() - event.GetY();
 
-    bool is_inside = false;
-
-    CursorSquareState cursor_square_state = CursorSquareState::OUTSIDE;
-
-    for(size_t k = 0; k < squares_.size(); k++)
+    if(is_editing_)
     {
-        cursor_square_state = squares_[k].mouseState(mouse_x, mouse_y);
-        if(cursor_square_state != CursorSquareState::OUTSIDE)
+        if(idx_of_selected_square_ != -1)
         {
-            is_inside = true;
-            break;
+            const float trunc_x = std::floor((mouse_x - screen_grid_state_.offset_x) / screen_grid_state_.cell_size_x);
+            const float trunc_y = std::floor((mouse_y - screen_grid_state_.offset_y) / screen_grid_state_.cell_size_y);
+            const float diff_x = grid_pos_pressed_x_ - trunc_x;
+            const float diff_y = grid_pos_pressed_y_ - trunc_y;
+
+            const float new_pos_x = pos_of_pressed_x_ - diff_x;
+            const float new_pos_y = pos_of_pressed_y_ - diff_y;
+
+            const float new_width = std::max(1.0f, size_of_pressed_width_ - diff_x);
+            const float new_height = std::max(1.0f, size_of_pressed_height_ - diff_y);
+
+            const float new_width_positive = std::max(1.0f, size_of_pressed_width_ + diff_x);
+            const float new_height_positive = std::max(1.0f, size_of_pressed_height_ + diff_y);
+
+            switch(cursor_square_state)
+            {
+                case CursorSquareState::LEFT:
+                    squares_[idx_of_selected_square_].setWidthAndX(new_width_positive, new_pos_x);
+                    break;
+                case CursorSquareState::RIGHT:
+                    squares_[idx_of_selected_square_].setWidth(new_width);
+                    break;
+                case CursorSquareState::TOP:
+                    squares_[idx_of_selected_square_].setHeight(new_height);
+                    break;
+                case CursorSquareState::BOTTOM:
+                    squares_[idx_of_selected_square_].setHeightAndY(new_height_positive, new_pos_y);
+                    break;
+                case CursorSquareState::BOTTOM_RIGHT:
+                    squares_[idx_of_selected_square_].setHeightAndY(new_height_positive, new_pos_y);
+                    squares_[idx_of_selected_square_].setWidth(new_width);
+                    break;
+                case CursorSquareState::BOTTOM_LEFT:
+                    squares_[idx_of_selected_square_].setHeightAndY(new_height_positive, new_pos_y);
+                    squares_[idx_of_selected_square_].setWidthAndX(new_width_positive, new_pos_x);
+                    break;
+                case CursorSquareState::TOP_RIGHT:
+                    squares_[idx_of_selected_square_].setWidth(new_width);
+                    squares_[idx_of_selected_square_].setHeight(new_height);
+                    break;
+                case CursorSquareState::TOP_LEFT:
+                    squares_[idx_of_selected_square_].setHeight(new_height);
+                    squares_[idx_of_selected_square_].setWidthAndX(new_width_positive, new_pos_x);
+                    break;
+                case CursorSquareState::INSIDE:
+                    squares_[idx_of_selected_square_].setPosition(new_pos_x, new_pos_y);
+                    break;
+                default:
+                    std::cout << "Do nothing..." << std::endl;
+            }
+
+            updateGridStates();
+
+            Refresh();
         }
-    }
-
-    std::cout << "Mouse: " << mouse_x << ", " << mouse_y << std::endl;
-
-    if(is_inside)
-    {
-        switch(cursor_square_state)
+        else
         {
-            case CursorSquareState::LEFT:
-                wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
-                break;
-            case CursorSquareState::RIGHT:
-                wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
-                break;
-            case CursorSquareState::TOP:
-                wxSetCursor(wxCursor(wxCURSOR_SIZENS));
-                break;
-            case CursorSquareState::BOTTOM:
-                wxSetCursor(wxCursor(wxCURSOR_SIZENS));
-                break;
-            case CursorSquareState::BOTTOM_RIGHT:
-                wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
-                break;
-            case CursorSquareState::BOTTOM_LEFT:
-                wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
-                break;
-            case CursorSquareState::TOP_RIGHT:
-                wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
-                break;
-            case CursorSquareState::TOP_LEFT:
-                wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
-                break;
-            case CursorSquareState::INSIDE:
-                wxSetCursor(wxCursor(wxCURSOR_HAND));
-                break;
-            default:
-                wxSetCursor(wxCursor(wxCURSOR_HAND));
+            std::cout << "Got editing with negative square index!" << std::endl;
         }
     }
     else
     {
-        wxSetCursor(wxCursor(wxCURSOR_ARROW));
+        is_inside_square_ = false;
+        cursor_square_state = CursorSquareState::OUTSIDE;
+
+        for(size_t k = 0; k < squares_.size(); k++)
+        {
+            cursor_square_state = squares_[k].mouseState(mouse_x, mouse_y);
+            if(cursor_square_state != CursorSquareState::OUTSIDE)
+            {
+                is_inside_square_ = true;
+                idx_of_selected_square_ = k;
+                break;
+            }
+        }
+
+        // std::cout << "Mouse: " << mouse_x << ", " << mouse_y << std::endl;
+
+        if(is_inside_square_)
+        {
+            switch(cursor_square_state)
+            {
+                case CursorSquareState::LEFT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
+                    break;
+                case CursorSquareState::RIGHT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
+                    break;
+                case CursorSquareState::TOP:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENS));
+                    break;
+                case CursorSquareState::BOTTOM:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENS));
+                    break;
+                case CursorSquareState::BOTTOM_RIGHT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
+                    break;
+                case CursorSquareState::BOTTOM_LEFT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
+                    break;
+                case CursorSquareState::TOP_RIGHT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
+                    break;
+                case CursorSquareState::TOP_LEFT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
+                    break;
+                case CursorSquareState::INSIDE:
+                    wxSetCursor(wxCursor(wxCURSOR_HAND));
+                    break;
+                default:
+                    wxSetCursor(wxCursor(wxCURSOR_HAND));
+            }
+        }
+        else
+        {
+            wxSetCursor(wxCursor(wxCURSOR_ARROW));
+        }
     }
+
+    prev_mouse_x = mouse_x;
+    prev_mouse_y = mouse_x;
 }
 
 PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size)
@@ -96,7 +202,17 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
     squares_.push_back(Square(2, 2, 5, 5));
     squares_.push_back(Square(10, 2, 7, 7));
 
+    grid_pos_pressed_x_ = 0.0f;
+    grid_pos_pressed_y_ = 0.0f;
+
     size_ = size;
+    left_button_pressed_ = false;
+    is_editing_ = false;
+    mouse_x = 0.0f;
+    mouse_y = 0.0f;
+    prev_mouse_x = 0.0f;
+    prev_mouse_y = 0.0f;
+    idx_of_selected_square_ = -1;
 
     grid_settings_.num_cells_x = 100;
     grid_settings_.num_cells_y = 100;
@@ -108,6 +224,8 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     Bind(wxEVT_MOTION, &PrototypeView::mouseMoved, this);
+    Bind(wxEVT_LEFT_DOWN, &PrototypeView::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &PrototypeView::mouseLeftReleased, this);
 
     glEnable(GL_MULTISAMPLE);
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
@@ -231,9 +349,4 @@ void PrototypeView::render(wxPaintEvent& evt)
     }
 
     SwapBuffers();
-}
-
-void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
-{
-    Refresh();
 }

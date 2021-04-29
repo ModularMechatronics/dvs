@@ -76,6 +76,26 @@ private:
 
 public:
 
+    float getX() const
+    {
+        return x;
+    }
+
+    float getY() const
+    {
+        return y;
+    }
+
+    float getWidth() const
+    {
+        return width;
+    }
+
+    float getHeight() const
+    {
+        return height;
+    }
+
     CursorSquareState mouseState(const float mouse_x, const float mouse_y)
     {
         if((x_min_screen <= mouse_x) && (mouse_x <= x_max_screen) && (y_min_screen <= mouse_y) && (mouse_y <= y_max_screen))
@@ -129,6 +149,34 @@ public:
         }
     }
 
+    void setWidth(const float width_in)
+    {
+        width = width_in;
+    }
+
+    void setWidthAndX(const float width_in, const float x_in)
+    {
+        width = width_in;
+        x = x_in;
+    }
+
+    void setHeightAndY(const float height_in, const float y_in)
+    {
+        height = height_in;
+        y = y_in;
+    }
+
+    void setHeight(const float height_in)
+    {
+        height = height_in;
+    }
+
+    void setPosition(const float x_in, const float y_in)
+    {
+        x = x_in;
+        y = y_in;
+    }
+
     void render() const
     {
         glColor3f(0.0f, 0.0f, 1.0f);
@@ -150,10 +198,10 @@ public:
         const float center_x = (x_min_screen + x_max_screen) / 2.0f;
         const float center_y = (y_min_screen + y_max_screen) / 2.0f;
 
-        x_min_screen_margin = std::min(x_min_screen + 20.0f, center_x);
-        x_max_screen_margin = std::max(x_max_screen - 20.0f, center_x);
-        y_min_screen_margin = std::min(y_min_screen + 20.0f, center_y);
-        y_max_screen_margin = std::max(y_max_screen - 20.0f, center_y);
+        x_min_screen_margin = std::min(x_min_screen + 20.0f, center_x - 5.0f);
+        x_max_screen_margin = std::max(x_max_screen - 20.0f, center_x + 5.0f);
+        y_min_screen_margin = std::min(y_min_screen + 20.0f, center_y - 5.0f);
+        y_max_screen_margin = std::max(y_max_screen - 20.0f, center_y + 5.0f);
 
         x_min_gl = -1.0f + gl_grid_state.offset_x + x * gl_grid_state.cell_size_x;
         x_max_gl = -1.0f + gl_grid_state.offset_x + (x + width) * gl_grid_state.cell_size_x;
@@ -176,11 +224,32 @@ private:
 
     int args[9];
 
+    bool left_button_pressed_;
+    bool is_inside_square_;
+    bool is_editing_;
+
+    float mouse_x;
+    float mouse_y;
+    float prev_mouse_x;
+    float prev_mouse_y;
+
+    float grid_pos_pressed_x_;
+    float grid_pos_pressed_y_;
+
+    float pos_of_pressed_x_;
+    float pos_of_pressed_y_;
+
+    float size_of_pressed_width_;
+    float size_of_pressed_height_;
+
+    CursorSquareState cursor_square_state;
+
     int* getArgsPtr();
 
     GridSettings grid_settings_;
 
     std::vector<Square> squares_;
+    int idx_of_selected_square_;
 
     void updateGridStates();
 
@@ -191,6 +260,7 @@ public:
     void setPosAndSize(const wxPoint pos, const wxSize size);
     void render(wxPaintEvent& evt);
     void mouseLeftPressed(wxMouseEvent& event);
+    void mouseLeftReleased(wxMouseEvent& event);
     void mouseMoved(wxMouseEvent& event);
 
     void changeNumCellsX(const float change);
