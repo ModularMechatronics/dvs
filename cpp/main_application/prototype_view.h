@@ -26,14 +26,21 @@ struct Size2Df
 {
     float width;
     float height;
+    Size2Df() = default;
+    Size2Df(const float width_, const float height_) : width(width_), height(height_) {}
 };
 
 struct GridSettings
 {
-    float num_cells_x;
-    float num_cells_y;
+    Vec2Df num_cells;
 
     GridSettings() = default;
+};
+
+struct GridState
+{
+    Vec2Df grid_size;
+    Vec2Df cell_size;
 };
 
 enum class CursorSquareState
@@ -50,14 +57,6 @@ enum class CursorSquareState
     BOTTOM_RIGHT
 };
 
-struct GridState
-{
-    float grid_size_x;
-    float grid_size_y;
-    float cell_size_x;
-    float cell_size_y;
-};
-
 class Square
 {
 private:
@@ -65,36 +64,35 @@ private:
     Bound2Df screen_bound_margin;
     Bound2Df gl_bound;
 
-    float x;
-    float y;
-    float width;
-    float height;
+    Vec2Df pos;
+    Size2Df size;
 
 public:
 
     float getX() const
     {
-        return x;
+        return pos.x;
     }
 
     float getY() const
     {
-        return y;
+        return pos.y;
     }
 
     float getWidth() const
     {
-        return width;
+        return size.width;
     }
 
     float getHeight() const
     {
-        return height;
+        return size.height;
     }
 
     CursorSquareState mouseState(const Vec2Df mouse_pos) const
     {
-        if((screen_bound.x_min <= mouse_pos.x) && (mouse_pos.x <= screen_bound.x_max) && (screen_bound.y_min <= mouse_pos.y) && (mouse_pos.y <= screen_bound.y_max))
+        if((screen_bound.x_min <= mouse_pos.x) && (mouse_pos.x <= screen_bound.x_max) &&
+           (screen_bound.y_min <= mouse_pos.y) && (mouse_pos.y <= screen_bound.y_max))
         {
             if(mouse_pos.x <= screen_bound_margin.x_min)
             {
@@ -147,30 +145,30 @@ public:
 
     void setWidth(const float width_in)
     {
-        width = width_in;
+        size.width = width_in;
     }
 
     void setWidthAndX(const float width_in, const float x_in)
     {
-        width = width_in;
-        x = x_in;
+        size.width = width_in;
+        pos.x = x_in;
     }
 
     void setHeightAndY(const float height_in, const float y_in)
     {
-        height = height_in;
-        y = y_in;
+        size.height = height_in;
+        pos.y = y_in;
     }
 
     void setHeight(const float height_in)
     {
-        height = height_in;
+        size.height = height_in;
     }
 
     void setPosition(const float x_in, const float y_in)
     {
-        x = x_in;
-        y = y_in;
+        pos.x = x_in;
+        pos.y = y_in;
     }
 
     void render() const
@@ -186,10 +184,10 @@ public:
 
     void updateInternals(const GridSettings& grid_settings, const GridState& screen_grid_state, const GridState& gl_grid_state)
     {
-        screen_bound.x_min = x * screen_grid_state.cell_size_x;
-        screen_bound.x_max = screen_bound.x_min + width * screen_grid_state.cell_size_x;
-        screen_bound.y_min = y * screen_grid_state.cell_size_y;
-        screen_bound.y_max = screen_bound.y_min + height * screen_grid_state.cell_size_y;
+        screen_bound.x_min = pos.x * screen_grid_state.cell_size.x;
+        screen_bound.x_max = screen_bound.x_min + size.width * screen_grid_state.cell_size.x;
+        screen_bound.y_min = pos.y * screen_grid_state.cell_size.y;
+        screen_bound.y_max = screen_bound.y_min + size.height * screen_grid_state.cell_size.y;
 
         const float center_x = (screen_bound.x_min + screen_bound.x_max) / 2.0f;
         const float center_y = (screen_bound.y_min + screen_bound.y_max) / 2.0f;
@@ -199,14 +197,14 @@ public:
         screen_bound_margin.y_min = std::min(screen_bound.y_min + 20.0f, center_y - 5.0f);
         screen_bound_margin.y_max = std::max(screen_bound.y_max - 20.0f, center_y + 5.0f);
 
-        gl_bound.x_min = -1.0f + x * gl_grid_state.cell_size_x;
-        gl_bound.x_max = -1.0f + (x + width) * gl_grid_state.cell_size_x;
-        gl_bound.y_min = -1.0f + y * gl_grid_state.cell_size_y;
-        gl_bound.y_max = -1.0f + (y + height) * gl_grid_state.cell_size_y;
+        gl_bound.x_min = -1.0f + pos.x * gl_grid_state.cell_size.x;
+        gl_bound.x_max = -1.0f + (pos.x + size.width) * gl_grid_state.cell_size.x;
+        gl_bound.y_min = -1.0f + pos.y * gl_grid_state.cell_size.y;
+        gl_bound.y_max = -1.0f + (pos.y + size.height) * gl_grid_state.cell_size.y;
     }
 
     Square() = default;
-    Square(const float x_, const float y_, const float width_, const float height_) : x(x_), y(y_), width(width_), height(height_) {}
+    Square(const float x_, const float y_, const float width_, const float height_) : pos(x_, y_), size(width_, height_) {}
 };
 
 class PrototypeView : public wxGLCanvas
