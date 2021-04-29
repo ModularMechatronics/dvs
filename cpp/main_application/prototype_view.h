@@ -54,37 +54,37 @@ enum class CursorSquareState
 class Square
 {
 private:
-    Bound2Df screen_bound;
-    Bound2Df screen_bound_margin;
-    Bound2Df gl_bound;
+    Bound2Df screen_bound_;
+    Bound2Df screen_bound_margin_;
+    Bound2Df gl_bound_;
 
-    Vec2Df pos;
-    Size2Df size;
+    Vec2Df pos_;
+    Size2Df size_;
 
 public:
 
     Vec2Df getPos() const
     {
-        return pos;
+        return pos_;
     }
 
     Size2Df getSize() const
     {
-        return size;
+        return size_;
     }
 
     CursorSquareState mouseState(const Vec2Df mouse_pos) const
     {
-        if((screen_bound.x_min <= mouse_pos.x) && (mouse_pos.x <= screen_bound.x_max) &&
-           (screen_bound.y_min <= mouse_pos.y) && (mouse_pos.y <= screen_bound.y_max))
+        if((screen_bound_.x_min <= mouse_pos.x) && (mouse_pos.x <= screen_bound_.x_max) &&
+           (screen_bound_.y_min <= mouse_pos.y) && (mouse_pos.y <= screen_bound_.y_max))
         {
-            if(mouse_pos.x <= screen_bound_margin.x_min)
+            if(mouse_pos.x <= screen_bound_margin_.x_min)
             {
-                if(mouse_pos.y <= screen_bound_margin.y_min)
+                if(mouse_pos.y <= screen_bound_margin_.y_min)
                 {
                     return CursorSquareState::BOTTOM_LEFT;
                 }
-                else if(screen_bound_margin.y_max <= mouse_pos.y)
+                else if(screen_bound_margin_.y_max <= mouse_pos.y)
                 {
                     return CursorSquareState::TOP_LEFT;
                 }
@@ -93,13 +93,13 @@ public:
                     return CursorSquareState::LEFT;
                 }
             }
-            else if(screen_bound_margin.x_max <= mouse_pos.x)
+            else if(screen_bound_margin_.x_max <= mouse_pos.x)
             {
-                if(mouse_pos.y <= screen_bound_margin.y_min)
+                if(mouse_pos.y <= screen_bound_margin_.y_min)
                 {
                     return CursorSquareState::BOTTOM_RIGHT;
                 }
-                else if(screen_bound_margin.y_max <= mouse_pos.y)
+                else if(screen_bound_margin_.y_max <= mouse_pos.y)
                 {
                     return CursorSquareState::TOP_RIGHT;
                 }
@@ -108,11 +108,11 @@ public:
                     return CursorSquareState::RIGHT;
                 }
             }
-            else if(mouse_pos.y <= screen_bound_margin.y_min)
+            else if(mouse_pos.y <= screen_bound_margin_.y_min)
             {
                 return CursorSquareState::BOTTOM;
             }
-            else if(screen_bound_margin.y_max <= mouse_pos.y)
+            else if(screen_bound_margin_.y_max <= mouse_pos.y)
             {
                 return CursorSquareState::TOP;
             }
@@ -127,68 +127,68 @@ public:
         }
     }
 
-    void setWidth(const float width_in)
+    void setWidth(const float width)
     {
-        size.width = width_in;
+        size_.width = width;
     }
 
-    void setWidthAndX(const float width_in, const float x_in)
+    void setWidthAndX(const float width, const float x)
     {
-        size.width = width_in;
-        pos.x = x_in;
+        size_.width = width;
+        pos_.x = x;
     }
 
-    void setHeightAndY(const float height_in, const float y_in)
+    void setHeightAndY(const float height, const float y)
     {
-        size.height = height_in;
-        pos.y = y_in;
+        size_.height = height;
+        pos_.y = y;
     }
 
-    void setHeight(const float height_in)
+    void setHeight(const float height)
     {
-        size.height = height_in;
+        size_.height = height;
     }
 
-    void setPosition(const float x_in, const float y_in)
+    void setPosition(const float x, const float y)
     {
-        pos.x = x_in;
-        pos.y = y_in;
+        pos_.x = x;
+        pos_.y = y;
     }
 
     void render() const
     {
         glColor3f(0.0f, 0.0f, 1.0f);
         glBegin(GL_POLYGON);
-        glVertex2f(gl_bound.x_min, gl_bound.y_max);
-        glVertex2f(gl_bound.x_min, gl_bound.y_min);
-        glVertex2f(gl_bound.x_max, gl_bound.y_min);
-        glVertex2f(gl_bound.x_max, gl_bound.y_max);
+        glVertex2f(gl_bound_.x_min, gl_bound_.y_max);
+        glVertex2f(gl_bound_.x_min, gl_bound_.y_min);
+        glVertex2f(gl_bound_.x_max, gl_bound_.y_min);
+        glVertex2f(gl_bound_.x_max, gl_bound_.y_max);
         glEnd();
     }
 
     void updateInternals(const GridState& screen_grid_state, const GridState& gl_grid_state)
     {
-        screen_bound.x_min = pos.x * screen_grid_state.cell_size.x;
-        screen_bound.x_max = screen_bound.x_min + size.width * screen_grid_state.cell_size.x;
-        screen_bound.y_min = pos.y * screen_grid_state.cell_size.y;
-        screen_bound.y_max = screen_bound.y_min + size.height * screen_grid_state.cell_size.y;
+        screen_bound_.x_min = pos_.x * screen_grid_state.cell_size.x;
+        screen_bound_.x_max = screen_bound_.x_min + size_.width * screen_grid_state.cell_size.x;
+        screen_bound_.y_min = pos_.y * screen_grid_state.cell_size.y;
+        screen_bound_.y_max = screen_bound_.y_min + size_.height * screen_grid_state.cell_size.y;
 
-        const float center_x = (screen_bound.x_min + screen_bound.x_max) / 2.0f;
-        const float center_y = (screen_bound.y_min + screen_bound.y_max) / 2.0f;
+        const float center_x = (screen_bound_.x_min + screen_bound_.x_max) / 2.0f;
+        const float center_y = (screen_bound_.y_min + screen_bound_.y_max) / 2.0f;
 
-        screen_bound_margin.x_min = std::min(screen_bound.x_min + 20.0f, center_x - 5.0f);
-        screen_bound_margin.x_max = std::max(screen_bound.x_max - 20.0f, center_x + 5.0f);
-        screen_bound_margin.y_min = std::min(screen_bound.y_min + 20.0f, center_y - 5.0f);
-        screen_bound_margin.y_max = std::max(screen_bound.y_max - 20.0f, center_y + 5.0f);
+        screen_bound_margin_.x_min = std::min(screen_bound_.x_min + 20.0f, center_x - 5.0f);
+        screen_bound_margin_.x_max = std::max(screen_bound_.x_max - 20.0f, center_x + 5.0f);
+        screen_bound_margin_.y_min = std::min(screen_bound_.y_min + 20.0f, center_y - 5.0f);
+        screen_bound_margin_.y_max = std::max(screen_bound_.y_max - 20.0f, center_y + 5.0f);
 
-        gl_bound.x_min = -1.0f + pos.x * gl_grid_state.cell_size.x;
-        gl_bound.x_max = -1.0f + (pos.x + size.width) * gl_grid_state.cell_size.x;
-        gl_bound.y_min = -1.0f + pos.y * gl_grid_state.cell_size.y;
-        gl_bound.y_max = -1.0f + (pos.y + size.height) * gl_grid_state.cell_size.y;
+        gl_bound_.x_min = -1.0f + pos_.x * gl_grid_state.cell_size.x;
+        gl_bound_.x_max = -1.0f + (pos_.x + size_.width) * gl_grid_state.cell_size.x;
+        gl_bound_.y_min = -1.0f + pos_.y * gl_grid_state.cell_size.y;
+        gl_bound_.y_max = -1.0f + (pos_.y + size_.height) * gl_grid_state.cell_size.y;
     }
 
     Square() = default;
-    Square(const float x_, const float y_, const float width_, const float height_) : pos(x_, y_), size(width_, height_) {}
+    Square(const float x_, const float y_, const float width_, const float height_) : pos_(x_, y_), size_(width_, height_) {}
 };
 
 class PrototypeView : public wxGLCanvas
@@ -225,10 +225,10 @@ private:
     void updateGridStates();
 
 public:
-    PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size);
+    PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size_);
     virtual ~PrototypeView();
 
-    void setPosAndSize(const wxPoint pos, const wxSize size);
+    void setPosAndSize(const wxPoint pos_, const wxSize size_);
     void render(wxPaintEvent& evt);
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
