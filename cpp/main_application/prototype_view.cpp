@@ -320,9 +320,10 @@ void PrototypeView::render(wxPaintEvent& evt)
 
     glClearColor(bg_color / 255.0f, bg_color / 255.0f, bg_color / 255.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLineWidth(0.1f);
-    glColor3f(0.0f, 0.0f, 0.0f);
+    glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
 
     // Drawing vertical lines
     for(int idx_x = 0; idx_x < (static_cast<int>(num_grid_cells_.x) + 1); idx_x++)
