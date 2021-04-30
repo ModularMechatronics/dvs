@@ -285,13 +285,11 @@ public:
     {
         const Bound2Df shadow_bnd = gl_bound_ + Vec2Df(0.01f, -0.01f);
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glColor4f(0.1f, 0.1f, 0.1f, 0.4f);
         drawRoundedRectangle(shadow_bnd, 0.02f);
 
         glColor3f(color_.red, color_.green, color_.blue);
-        drawRoundedRectangle(gl_bound_, 0.02f);
+        drawRoundedRectangle(gl_bound_, 0.01f);
 
         if(is_selected_)
         {
@@ -330,10 +328,12 @@ public:
         const float center_x = (screen_bound_.x_min + screen_bound_.x_max) / 2.0f;
         const float center_y = (screen_bound_.y_min + screen_bound_.y_max) / 2.0f;
 
-        screen_bound_margin_.x_min = std::min(screen_bound_.x_min + 20.0f, center_x - 5.0f);
-        screen_bound_margin_.x_max = std::max(screen_bound_.x_max - 20.0f, center_x + 5.0f);
-        screen_bound_margin_.y_min = std::min(screen_bound_.y_min + 20.0f, center_y - 5.0f);
-        screen_bound_margin_.y_max = std::max(screen_bound_.y_max - 20.0f, center_y + 5.0f);
+        const float margin_offset = 10.0f;
+
+        screen_bound_margin_.x_min = std::min(screen_bound_.x_min + margin_offset, center_x - 5.0f);
+        screen_bound_margin_.x_max = std::max(screen_bound_.x_max - margin_offset, center_x + 5.0f);
+        screen_bound_margin_.y_min = std::min(screen_bound_.y_min + margin_offset, center_y - 5.0f);
+        screen_bound_margin_.y_max = std::max(screen_bound_.y_max - margin_offset, center_y + 5.0f);
 
         gl_bound_.x_min = -1.0f + pos_.x * gl_grid_state.cell_size.x;
         gl_bound_.x_max = -1.0f + (pos_.x + size_.width) * gl_grid_state.cell_size.x;

@@ -76,7 +76,9 @@ private:
     void setCurrentElement(const internal::FunctionHeader& hdr);
     void receiveData();
 
-    void addNewTab(wxCommandEvent & event);
+    void addNewTab(wxCommandEvent& event);
+    void deleteTab(wxCommandEvent& event);
+    void editLayout(wxCommandEvent& event);
 
 public:
     MainWindow();

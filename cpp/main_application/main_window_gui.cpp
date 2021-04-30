@@ -10,28 +10,12 @@
 
 using namespace dvs::internal;
 
-
-void MainWindow::addNewTab(wxCommandEvent & event)
-{
-    std::cout << "Add new tab" << std::endl;
-    // tabs_view->AddPage( new wxNotebookPage(tabs_view, -1), L"TEST 4");
-}
-
 void MainWindow::setupGui()
 {
     tab_container = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(600, 600));
     tab_container->SetBackgroundColour(wxColor(203, 111, 33));
 
-    wxButton* new_tab_button = new wxButton(this, wxID_ANY, "New tab", wxPoint(0, 0));
-    wxButton* delete_tab_button = new wxButton(this, wxID_ANY, "Delete current tab", wxPoint(0, 0));
-    wxButton* edit_tab_button = new wxButton(this, wxID_ANY, "Edit tab", wxPoint(0, 0));
-
-    new_tab_button->Bind(wxEVT_BUTTON, &MainWindow::addNewTab, this);
-
     wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);
-    button_sizer->Add(edit_tab_button, 0, 0, 0);
-    button_sizer->Add(delete_tab_button, 0, 0, 0);
-    button_sizer->Add(new_tab_button, 0, 0, 0);
 
     wxBoxSizer* big_sizer = new wxBoxSizer(wxVERTICAL);
     big_sizer->Add(button_sizer, 0, wxEXPAND);
