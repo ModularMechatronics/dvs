@@ -64,6 +64,16 @@ public:
         gl_pane_ = new PlotWindowGLPane(parent, position, size);
     }
 
+    void show()
+    {
+        gl_pane_->Show();
+    }
+
+    void hide()
+    {
+        gl_pane_->Hide();
+    }
+
     void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr)
     {
         gl_pane_->addData(std::move(received_data), hdr);

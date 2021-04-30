@@ -38,7 +38,21 @@ void MainWindow::deleteTab(wxCommandEvent& event)
 
 void MainWindow::editLayout(wxCommandEvent& event)
 {
-    std::cout << "Edit tab!" << std::endl;
+    if(is_editing_)
+    {
+        for(auto te : tab_elements_)
+        {
+            te->stopEdit();
+        }
+    }
+    else
+    {
+        for(auto te : tab_elements_)
+        {
+            te->startEdit();
+        }
+    }
+    is_editing_ = !is_editing_;
 }
 
 MainWindow::MainWindow(const wxString& title)
@@ -48,6 +62,7 @@ MainWindow::MainWindow(const wxString& title)
     udp_server_->start();
     current_gui_element_ = nullptr;
     current_gui_element_set_ = false;
+    is_editing_ = false;
 
     wxImage::AddHandler(new wxPNGHandler);
 

@@ -42,6 +42,8 @@ private:
     GuiElement* current_gui_element_;
     bool current_gui_element_set_;
 
+    bool is_editing_;
+
     wxNotebook* tabs_view;
     wxPanel* tab_container;
     LayoutToolsWindow* layout_tools_window_;

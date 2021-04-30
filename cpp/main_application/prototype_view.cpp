@@ -5,15 +5,28 @@
 
 #include <cmath>
 
-PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size)
+PrototypeView::PrototypeView(wxNotebookPage* parent,
+                             const wxPoint& position,
+                             const wxSize& size,
+                             const Vec2Df& num_grid_cells,
+                             const std::vector<project_file::Element>& elements)
      : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE)
 {
     m_context = new wxGLContext(this);
     parent_ = parent;
 
-    squares_.push_back(new Square(parent_, 20, 50, 15, 15, RGBTripletf(0x98DDCA)));
-    squares_.push_back(new Square(parent_, 2, 10, 10, 10, RGBTripletf(0xD5ECC2)));
-    squares_.push_back(new Square(parent_, 20, 10, 7, 7, RGBTripletf(0xFFAAA7)));
+    current_color_index_ = 0;
+
+    colors_ = {RGBTripletf(0x98DDCA), RGBTripletf(0xD5ECC2), RGBTripletf(0xFFAAA7)};
+
+    for(size_t k = 0; k < elements.size(); k++)
+    {
+        squares_.push_back(new Square(parent_, elements[k].cell_idx_x,
+                                               elements[k].cell_idx_y,
+                                               elements[k].width,
+                                               elements[k].height, colors_.at(current_color_index_)));
+        current_color_index_ = current_color_index_ >= (static_cast<int>(colors_.size()) - 1) ? 0 : current_color_index_ + 1;
+    }
 
     grid_pos_pressed_.x = 0.0f;
     grid_pos_pressed_.y = 0.0f;
@@ -29,8 +42,9 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
     gl_bounds_.y_min = -1.0f;
     gl_bounds_.y_max = 1.0f;
 
-    num_grid_cells_.x = 100;
-    num_grid_cells_.y = 100;
+    // num_grid_cells_.x = 100;
+    // num_grid_cells_.y = 100;
+    num_grid_cells_ = num_grid_cells;
 
     updateGridStates();
 
@@ -44,6 +58,25 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
     glEnable(GL_MULTISAMPLE);
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 }
+
+void PrototypeView::show()
+{
+    for(auto sq : squares_)
+    {
+        sq->show();
+    }
+    this->Show();
+}
+
+void PrototypeView::hide()
+{
+    for(auto sq : squares_)
+    {
+        sq->hide();
+    }
+    this->Hide();
+}
+
 
 PrototypeView::~PrototypeView()
 {
@@ -73,10 +106,9 @@ void PrototypeView::deleteElement()
 
 void PrototypeView::newElement()
 {
-    const float r = (rand() % 1001) / 1000.0f;
-    const float g = (rand() % 1001) / 1000.0f;
-    const float b = (rand() % 1001) / 1000.0f;
-    squares_.push_back(new Square(parent_, 2, 2, 6, 6, RGBTripletf(r, g, b)));
+    squares_.push_back(new Square(parent_, 2, 2, 6, 6, colors_.at(current_color_index_)));
+
+    current_color_index_ = current_color_index_ >= (static_cast<int>(colors_.size()) - 1) ? 0 : current_color_index_ + 1;
 
     updateGridStates();
     Refresh();
