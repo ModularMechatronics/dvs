@@ -93,7 +93,7 @@ public:
     int num_cells_x;
     int num_cells_y;
 
-    Tab() = delete;
+    Tab() = default;
     Tab(const nlohmann::json& j) : j_(j)
     {
         checkFields();
