@@ -27,7 +27,6 @@ private:
     std::string name_;
     project_file::Tab tab_;
     std::map<std::string, GuiElement*> gui_elements_;
-    PrototypeView* prototype_view_;
 
 public:
     TabView() = default;

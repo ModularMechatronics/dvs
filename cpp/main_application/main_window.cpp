@@ -15,15 +15,7 @@ std::string getProjectFilePath()
     return "../../project_files/exp0.dvs.json";
 }
 
-MainWindow::~MainWindow()
-{
-    std::map<std::string, GuiElement*>::iterator it;
-
-    for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
-    {
-        delete it->second;
-    }
-}
+MainWindow::~MainWindow() {}
 
 void MainWindow::addNewTab(wxCommandEvent& event)
 {
@@ -60,7 +52,7 @@ MainWindow::MainWindow(const wxString& title)
 {
     udp_server_ = new UdpServer(9752);
     udp_server_->start();
-    current_gui_element_ = nullptr;
+    // current_gui_element_ = nullptr;
     current_gui_element_set_ = false;
     is_editing_ = false;
 

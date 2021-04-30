@@ -17,16 +17,16 @@ void MainWindow::setCurrentElement(const FunctionHeader& hdr)
     const properties::Name elem_name = elem_obj.getAs<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
-    if(gui_elements_.count(element_name_str) > 0)
+    /*if(gui_elements_.count(element_name_str) > 0)
     {
         std::cout << "Current element name: " << element_name_str << std::endl;
-        current_gui_element_ = gui_elements_[element_name_str];
+        // current_gui_element_ = gui_elements_[element_name_str];
         current_gui_element_set_ = true;
     }
     else
     {
         std::cout << "I don't have name: " << element_name_str << std::endl;
-    }
+    }*/
 }
 
 bool isGuiElementFunction(const Function fcn)
@@ -73,7 +73,7 @@ void MainWindow::receiveData()
         {
             if(current_gui_element_set_)
             {
-                current_gui_element_->addData(std::move(received_data), hdr);
+                // current_gui_element_->addData(std::move(received_data), hdr);
             }
             else
             {

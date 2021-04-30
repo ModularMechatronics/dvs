@@ -12,8 +12,11 @@
 #include "dvs.h"
 #include "udp_server.h"
 #include "received_data.h"
+#include "gui_element.h"
 
-class PlotWindowGLPane : public wxGLCanvas
+using namespace project_file;
+
+class PlotWindowGLPane : public wxGLCanvas, public GuiElement
 {
 private:
     wxGLContext* m_context;
@@ -29,23 +32,24 @@ private:
     int args[9];
 
     int* getArgsPtr();
+    Vec2Df pos_at_press_;
 
     PlotDataHandler plot_data_handler_;
 
 public:
-    PlotWindowGLPane(wxPanel* parent, const wxPoint& position, const wxSize& size);
-    PlotWindowGLPane(wxFrame* parent, const wxPoint& position, const wxSize& size);
-    PlotWindowGLPane(wxNotebookPage* parent, const wxPoint& position, const wxSize& size);
-    virtual ~PlotWindowGLPane();
-
-    void setPosAndSize(const wxPoint pos, const wxSize size);
+    PlotWindowGLPane(wxNotebookPage* parent, const Element& element_settings, const wxPoint& position, const wxSize& size);
+    ~PlotWindowGLPane();
 
     int getWidth();
     int getHeight();
 
     void render(wxPaintEvent& evt);
 
-    void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr);
+    void setPosAndSize(const wxPoint& pos, const wxSize& size) override;
+    void updateSize(const Vec2Df& tab_cell_size) override;
+    void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr) override;
+    void show() override;
+    void hide() override;
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);
