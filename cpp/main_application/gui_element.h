@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <wx/wx.h>
+#include <wx/notebook.h>
 
 #include "enumerations.h"
 #include "math/math.h"
@@ -25,6 +26,20 @@ private:
 public:
     GuiElement() = delete;
     GuiElement(wxPanel* parent,
+               const wxPoint& position,
+               const wxSize& size,
+               const std::string& name,
+               project_file::Element& element)
+    {
+        is_dockable_ = false;
+        is_docked_ = false;
+        name_ = name;
+        element_ = element;
+
+        gl_pane_ = new PlotWindowGLPane(parent, position, size);
+    }
+
+    GuiElement(wxNotebookPage* parent,
                const wxPoint& position,
                const wxSize& size,
                const std::string& name,

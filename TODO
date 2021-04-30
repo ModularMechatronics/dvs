@@ -6,3 +6,4 @@
  - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
  - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
  - Default layouts with simple names and ex 2x2 plots, 3x3 plots etc
+ - Delete/add tab only available in edit mode

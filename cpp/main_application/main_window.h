@@ -60,6 +60,9 @@ private:
     project_file::ProjectFile project_file_;
     std::map<std::string, GuiElement*> gui_elements_;
 
+    std::vector<wxNotebookPage*> tab_elements_;
+    std::vector<project_file::Tab> tabs_;
+
     GuiElement* current_gui_element_;
     bool current_gui_element_set_;
 

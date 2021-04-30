@@ -15,14 +15,12 @@
             "grid-settings":
             {
                 "num-cells-x": 10,
-                "num-cells-y": 12,
-                "margin-x": 12,
-                "margin-y": 10
+                "num-cells-y": 12
             },
             "elements":
             [
                 {
-                    "name": "view1",
+                    "name": "view11",
                     "type": "plot",
                     "cell-idx-x": 0,
                     "cell-idx-y": 0,
@@ -30,7 +28,7 @@
                     "width": 6
                 },
                 {
-                    "name": "view2",
+                    "name": "view12",
                     "type": "plot",
                     "cell-idx-x": 0,
                     "cell-idx-y": 6,
@@ -38,7 +36,7 @@
                     "width": 6
                 },
                 {
-                    "name": "view3",
+                    "name": "view13",
                     "type": "plot",
                     "cell-idx-x": 6,
                     "cell-idx-y": 0,
@@ -46,7 +44,7 @@
                     "width": 6
                 },
                 {
-                    "name": "view4",
+                    "name": "view14",
                     "type": "plot",
                     "cell-idx-x": 6,
                     "cell-idx-y": 6,
@@ -54,6 +52,45 @@
                     "width": 10
                 }
 
+            ]
+        },
+        {
+            "name": "secondary_view",
+            "grid-settings":
+            {
+                "num-cells-x": 10,
+                "num-cells-y": 12
+            },
+            "elements":
+            [
+                {
+                    "name": "view2",
+                    "type": "plot",
+                    "cell-idx-x": 0,
+                    "cell-idx-y": 0,
+                    "height": 6,
+                    "width": 6
+                }
+            ]
+        }
+        ,
+        {
+            "name": "third_view",
+            "grid-settings":
+            {
+                "num-cells-x": 10,
+                "num-cells-y": 12
+            },
+            "elements":
+            [
+                {
+                    "name": "view3",
+                    "type": "plot",
+                    "cell-idx-x": 0,
+                    "cell-idx-y": 0,
+                    "height": 6,
+                    "width": 6
+                }
             ]
         }
     ]

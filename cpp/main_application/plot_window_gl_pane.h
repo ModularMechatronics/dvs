@@ -3,6 +3,7 @@
 
 #include <wx/glcanvas.h>
 #include <wx/wx.h>
+#include <wx/notebook.h>
 
 #include "axes/axes.h"
 // #include "communication/rx_list.h"
@@ -35,6 +36,7 @@ private:
 public:
     PlotWindowGLPane(wxPanel* parent, const wxPoint& position, const wxSize& size);
     PlotWindowGLPane(wxFrame* parent, const wxPoint& position, const wxSize& size);
+    PlotWindowGLPane(wxNotebookPage* parent, const wxPoint& position, const wxSize& size);
     virtual ~PlotWindowGLPane();
 
     void resized(wxSizeEvent& evt);
