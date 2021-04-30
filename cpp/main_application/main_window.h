@@ -24,32 +24,9 @@
 #include "layout_tools_window.h"
 #include "project_file.h"
 #include "prototype_view.h"
+#include "tab_view.h"
 
 wxDEFINE_EVENT(EVENT_TYPE_HANDLE_NEW_DATA, wxCommandEvent);
-
-class ResizablePanel : wxPanel
-{
-private:
-
-public:
-
-    ResizablePanel() = default;
-    ResizablePanel(wxPanel* parent, wxPoint pos, wxSize size) : wxPanel(parent, wxID_ANY, pos, size)
-    {
-
-    }
-
-    void setBackgroundColour(wxColor col)
-    {
-        this->SetBackgroundColour(col);
-    }
-
-    void setSize(wxPoint pos, wxSize size)
-    {
-        this->SetPosition(pos);
-        this->SetSize(size);
-    }
-};
 
 class MainWindow : public wxFrame
 {
@@ -60,8 +37,7 @@ private:
     project_file::ProjectFile project_file_;
     std::map<std::string, GuiElement*> gui_elements_;
 
-    std::vector<wxNotebookPage*> tab_elements_;
-    std::vector<project_file::Tab> tabs_;
+    std::vector<TabView*> tab_elements_;
 
     GuiElement* current_gui_element_;
     bool current_gui_element_set_;

@@ -266,10 +266,7 @@ void PlotWindowGLPane::keyReleased(wxKeyEvent& event)
 
 void PlotWindowGLPane::resized(wxSizeEvent& evt)
 {
-    // (void)evt;
     this->SetSize(evt.GetSize());
-    std::cout << "Resized!" << std::endl;
-
     Refresh();
 }
 

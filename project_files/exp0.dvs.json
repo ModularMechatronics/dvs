@@ -14,8 +14,8 @@
             "name": "main_view",
             "grid-settings":
             {
-                "num-cells-x": 10,
-                "num-cells-y": 12
+                "num-cells-x": 20,
+                "num-cells-y": 20
             },
             "elements":
             [
@@ -58,7 +58,7 @@
             "name": "secondary_view",
             "grid-settings":
             {
-                "num-cells-x": 10,
+                "num-cells-x": 12,
                 "num-cells-y": 12
             },
             "elements":
@@ -68,8 +68,8 @@
                     "type": "plot",
                     "cell-idx-x": 0,
                     "cell-idx-y": 0,
-                    "height": 6,
-                    "width": 6
+                    "height": 4,
+                    "width": 4
                 }
             ]
         }
@@ -78,7 +78,7 @@
             "name": "third_view",
             "grid-settings":
             {
-                "num-cells-x": 10,
+                "num-cells-x": 12,
                 "num-cells-y": 12
             },
             "elements":
