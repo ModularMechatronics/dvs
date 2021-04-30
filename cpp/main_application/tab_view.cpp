@@ -1,5 +1,7 @@
 #include "tab_view.h"
 
+#include "plot_window_gl_pane.h"
+
 TabView::TabView(wxNotebook* parent, const project_file::Tab tab) : wxNotebookPage(parent, -1), name_(tab.getName()), tab_(tab)
 {
     const wxSize tab_size = this->GetSize();
@@ -11,43 +13,38 @@ TabView::TabView(wxNotebook* parent, const project_file::Tab tab) : wxNotebookPa
     const std::vector<project_file::Element> elements = tab.getElements();
     const Vec2Df num_grid_cells(tab.num_cells_x, tab.num_cells_y);
 
-    // prototype_view_ = new PrototypeView(dynamic_cast<wxNotebookPage*>(this), wxPoint(0, 0), tab_size, num_grid_cells, elements);
-    // prototype_view_->hide();
-    
-    for(const auto e : elements)
+    for(const auto elem : elements)
     {
-        float xpos = e.cell_idx_x * tab_dx;
-        float ypos = e.cell_idx_y * tab_dy;
+        float xpos = elem.cell_idx_x * tab_dx;
+        float ypos = elem.cell_idx_y * tab_dy;
 
-        wxSize gui_element_size(e.width * tab_dx, e.height * tab_dy);
-        GuiElement* ge = new GuiElement(dynamic_cast<wxNotebookPage*>(this), e);
-        ge->changeSize(tab_cell_size);
-        gui_elements_[e.name] = ge;
+        const wxSize gui_element_size(elem.width * tab_dx, elem.height * tab_dy);
+        GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this), elem, wxPoint(xpos, ypos), gui_element_size);
+
+        ge->updateSize(tab_cell_size);
+        gui_elements_[elem.name] = ge;
     }
 }
 
 void TabView::startEdit()
 {
-    /*for(auto it : gui_elements_)
+    for(auto it : gui_elements_)
     {
-        it.second->hide();
+        it.second->setIsEditing(true);
     }
-    prototype_view_->show();*/
 }
 
 void TabView::stopEdit()
 {
-    /*prototype_view_->hide();
     for(auto it : gui_elements_)
     {
-        it.second->show();
-    }*/
+        it.second->setIsEditing(false);
+    }
 }
 
 void TabView::changeSize(const wxSize& new_size)
 {
     const wxSize tab_size = this->GetSize();
-    // prototype_view_->setSize(tab_size);
 
     const float tab_dx = static_cast<float>(tab_size.GetWidth()) / static_cast<float>(tab_.num_cells_x);
     const float tab_dy = static_cast<float>(tab_size.GetHeight()) / static_cast<float>(tab_.num_cells_y);
@@ -56,6 +53,6 @@ void TabView::changeSize(const wxSize& new_size)
 
     for(auto it : gui_elements_)
     {
-        it.second->changeSize(tab_cell_size);
+        it.second->updateSize(tab_cell_size);
     }
 }

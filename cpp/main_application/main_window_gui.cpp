@@ -29,20 +29,13 @@ void MainWindow::setupGui()
     wxBoxSizer* tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
-    // wxBoxSizer* tabs_sizer_h = new wxBoxSizer(wxHORIZONTAL);
-    // tabs_sizer_h->Add(tabs_sizer_v, 1, wxEXPAND);
-
     tab_container->SetSizer(tabs_sizer_v);
 
-    std::vector<project_file::Tab> tabs = project_file_.getTabs();
-
-    const wxSize s0 = tab_container->GetSize();
-
-    for(size_t k = 0; k < tabs.size(); k++)
+    for(const Tab tab : project_file_.getTabs())
     {
-        const std::string tab_name = tabs[k].getName();
+        const std::string tab_name = tab.getName();
 
-        TabView* tab_element = new TabView(tabs_view, tabs[k]);
+        TabView* tab_element = new TabView(tabs_view, tab);
         tab_elements_.push_back(tab_element);
 
         tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);

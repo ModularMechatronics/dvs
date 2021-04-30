@@ -35,11 +35,10 @@ private:
     UdpServer* udp_server_;
     wxTimer timer_;
     project_file::ProjectFile project_file_;
-    std::map<std::string, GuiElement*> gui_elements_;
 
     std::vector<TabView*> tab_elements_;
 
-    GuiElement* current_gui_element_;
+    // GuiElement* current_gui_element_;
     bool current_gui_element_set_;
 
     bool is_editing_;
