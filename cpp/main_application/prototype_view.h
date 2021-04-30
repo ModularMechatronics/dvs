@@ -3,6 +3,7 @@
 
 #include <wx/glcanvas.h>
 #include <wx/wx.h>
+#include <wx/notebook.h>
 
 #include "axes/axes.h"
 #include "io_devices/io_devices.h"
@@ -11,6 +12,7 @@
 #include "dvs.h"
 #include "udp_server.h"
 #include "received_data.h"
+#include "project_file.h"
 
 struct Bound2Df
 {
@@ -153,12 +155,12 @@ private:
     bool is_selected_;
 
     wxTextCtrl* name_field_;
-    wxPanel* parent_;
+    wxNotebookPage* parent_;
 
 public:
 
     Square() = delete;
-    Square(wxPanel* parent, const float x_, const float y_, const float width_, const float height_, const RGBTripletf& color)
+    Square(wxNotebookPage* parent, const float x_, const float y_, const float width_, const float height_, const RGBTripletf& color)
         : pos_(x_, y_), size_(width_, height_)
     {
         parent_ = parent;
@@ -168,6 +170,16 @@ public:
     }
 
     Square(const Square& other) = delete;
+
+    void show()
+    {
+        name_field_->Show();
+    }
+
+    void hide()
+    {
+        name_field_->Hide();
+    }
 
     std::string getText() const
     {
@@ -348,7 +360,7 @@ class PrototypeView : public wxGLCanvas
 {
 private:
     wxGLContext* m_context;
-    wxPanel* parent_;
+    wxNotebookPage* parent_;
     wxSize panel_size_;
 
     int args[9];
@@ -378,8 +390,16 @@ private:
 
     void updateGridStates();
 
+    int current_color_index_;
+
+    std::vector<RGBTripletf> colors_;
+
 public:
-    PrototypeView(wxPanel* parent, const wxPoint& position, const wxSize& size_);
+    PrototypeView(wxNotebookPage* parent,
+                  const wxPoint& position,
+                  const wxSize& size,
+                  const Vec2Df& num_grid_cells,
+                  const std::vector<project_file::Element>& elements);
     virtual ~PrototypeView();
 
     void setSize(const wxSize size_);
@@ -392,6 +412,9 @@ public:
     void changeNumCellsY(const float change);
     void newElement();
     void deleteElement();
+
+    void show();
+    void hide();
 };
 
 

@@ -25,7 +25,6 @@ void MainWindow::setupGui()
 
     tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500), wxNB_MULTILINE);
     tabs_view->Layout();
-    tabs_view->SetBackgroundColour(wxColor(1, 174, 254));
 
     wxBoxSizer* tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);

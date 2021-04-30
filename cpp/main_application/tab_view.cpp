@@ -8,7 +8,13 @@ TabView::TabView(wxNotebook* parent, const project_file::Tab tab) : wxNotebookPa
 
     const Vec2Df tab_cell_size(tab_dx, tab_dy);
 
-    for(const auto e : tab.getElements())
+    const std::vector<project_file::Element> elements = tab.getElements();
+    const Vec2Df num_grid_cells(tab.num_cells_x, tab.num_cells_y);
+
+    prototype_view_ = new PrototypeView(dynamic_cast<wxNotebookPage*>(this), wxPoint(0, 0), tab_size, num_grid_cells, elements);
+    prototype_view_->hide();
+
+    for(const auto e : elements)
     {
         float xpos = e.cell_idx_x * tab_dx;
         float ypos = e.cell_idx_y * tab_dy;
@@ -20,9 +26,29 @@ TabView::TabView(wxNotebook* parent, const project_file::Tab tab) : wxNotebookPa
     }
 }
 
+void TabView::startEdit()
+{
+    for(auto it : gui_elements_)
+    {
+        it.second->hide();
+    }
+    prototype_view_->show();
+}
+
+void TabView::stopEdit()
+{
+    prototype_view_->hide();
+    for(auto it : gui_elements_)
+    {
+        it.second->show();
+    }
+}
+
 void TabView::changeSize(const wxSize& new_size)
 {
     const wxSize tab_size = this->GetSize();
+    prototype_view_->setSize(tab_size);
+
     const float tab_dx = static_cast<float>(tab_size.GetWidth()) / static_cast<float>(tab_.num_cells_x);
     const float tab_dy = static_cast<float>(tab_size.GetHeight()) / static_cast<float>(tab_.num_cells_y);
 
