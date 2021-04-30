@@ -46,25 +46,7 @@ void MainWindow::setupGui()
         tab_elements_.push_back(tab_element);
 
         tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
-
-        // const wxSize tab_size = tab_element->getSize();
-
-        // const std::vector<project_file::Element> elements = tabs[k].getElements();
-
-        // const float tab_dx = static_cast<float>(tab_size.GetWidth()) / static_cast<float>(tabs[k].num_cells_x);
-        // const float tab_dy = static_cast<float>(tab_size.GetHeight()) / static_cast<float>(tabs[k].num_cells_y);
-
-        /*for(auto e : elements)
-        {
-            float xpos = e.cell_idx_x * tab_dx;
-            float ypos = e.cell_idx_y * tab_dy;
-
-            wxSize gui_element_size(e.width * tab_dx, e.height * tab_dy);
-            gui_elements_[e.name] = new GuiElement(tab_element, wxPoint(xpos, ypos), gui_element_size, e.name, e);
-        }*/
     }
-
-    // prototype_view_ = new PrototypeView(tab_container, wxPoint(0, 0), s0);
 }
 
 void MainWindow::OnSize(wxSizeEvent& event)

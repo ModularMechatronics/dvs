@@ -42,8 +42,6 @@ PrototypeView::PrototypeView(wxNotebookPage* parent,
     gl_bounds_.y_min = -1.0f;
     gl_bounds_.y_max = 1.0f;
 
-    // num_grid_cells_.x = 100;
-    // num_grid_cells_.y = 100;
     num_grid_cells_ = num_grid_cells;
 
     updateGridStates();
@@ -163,10 +161,6 @@ void PrototypeView::mouseLeftReleased(wxMouseEvent& event)
 {
     left_button_pressed_ = false;
     is_editing_ = false;
-    if(idx_of_selected_square_ != -1)
-    {
-        // squares_[idx_of_selected_square_].setIsSelected(false);
-    }
     idx_of_selected_square_ = -1;
 }
 
