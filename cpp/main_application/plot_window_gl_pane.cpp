@@ -14,14 +14,6 @@
 
 using namespace dvs::internal;
 
-BEGIN_EVENT_TABLE(PlotWindowGLPane, wxGLCanvas)
-EVT_LEFT_DOWN(PlotWindowGLPane::mouseLeftPressed)
-EVT_LEFT_UP(PlotWindowGLPane::mouseLeftReleased)
-EVT_SIZE(PlotWindowGLPane::resized)
-EVT_KEY_DOWN(PlotWindowGLPane::keyPressed)
-EVT_KEY_UP(PlotWindowGLPane::keyReleased)
-EVT_PAINT(PlotWindowGLPane::render)
-END_EVENT_TABLE()
 
 PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const wxPoint& position, const wxSize& size)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE)
@@ -39,7 +31,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const wxPoint& positi
 
     const AxesSettings axes_settings({min_x, min_y, min_z}, {max_x, max_y, max_z});
 
-    Bind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
+    bindCallbacks();
 
     axes_interactor_ = new AxesInteractor(axes_settings);
     axes_painter_ = new AxesPainter(axes_settings);
@@ -58,6 +50,8 @@ PlotWindowGLPane::PlotWindowGLPane(wxPanel* parent, const wxPoint& position, con
     m_context = new wxGLContext(this);
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
+    bindCallbacks();
 
     const float min_x = -1.0;
     const float max_x = 1.0;
@@ -95,6 +89,8 @@ PlotWindowGLPane::PlotWindowGLPane(wxFrame* parent, const wxPoint& position, con
     const float min_z = -1.0;
     const float max_z = 1.0;
 
+    bindCallbacks();
+
     const AxesSettings axes_settings({min_x, min_y, min_z}, {max_x, max_y, max_z});
 
     Bind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
@@ -109,6 +105,27 @@ PlotWindowGLPane::PlotWindowGLPane(wxFrame* parent, const wxPoint& position, con
 
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 }
+
+void PlotWindowGLPane::bindCallbacks()
+{
+    Bind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
+    Bind(wxEVT_LEFT_DOWN, &PlotWindowGLPane::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &PlotWindowGLPane::mouseLeftReleased, this);
+    Bind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
+    Bind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
+    Bind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
+}
+
+void PlotWindowGLPane::unbindCallbacks()
+{
+    Unbind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
+    Unbind(wxEVT_LEFT_DOWN, &PlotWindowGLPane::mouseLeftPressed, this);
+    Unbind(wxEVT_LEFT_UP, &PlotWindowGLPane::mouseLeftReleased, this);
+    Unbind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
+    Unbind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
+    Unbind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
+}
+
 
 void PlotWindowGLPane::setPosAndSize(const wxPoint pos, const wxSize size)
 {
@@ -261,12 +278,6 @@ void PlotWindowGLPane::keyReleased(wxKeyEvent& event)
     {
         keyboard_state_.keyGotReleased(key_code);
     }
-    Refresh();
-}
-
-void PlotWindowGLPane::resized(wxSizeEvent& evt)
-{
-    this->SetSize(evt.GetSize());
     Refresh();
 }
 

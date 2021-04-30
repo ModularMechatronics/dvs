@@ -6,7 +6,6 @@
 #include <wx/notebook.h>
 
 #include "axes/axes.h"
-// #include "communication/rx_list.h"
 #include "io_devices/io_devices.h"
 #include "plot_data.h"
 #include "opengl_low_level/opengl_header.h"
@@ -39,8 +38,6 @@ public:
     PlotWindowGLPane(wxNotebookPage* parent, const wxPoint& position, const wxSize& size);
     virtual ~PlotWindowGLPane();
 
-    void resized(wxSizeEvent& evt);
-
     void setPosAndSize(const wxPoint pos, const wxSize size);
 
     int getWidth();
@@ -57,6 +54,8 @@ public:
     void keyPressed(wxKeyEvent& event);
     void keyReleased(wxKeyEvent& event);
 
-    DECLARE_EVENT_TABLE()
+    void bindCallbacks();
+    void unbindCallbacks();
 };
+
 #endif
