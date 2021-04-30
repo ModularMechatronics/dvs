@@ -22,6 +22,18 @@ struct Bound2Df
     Bound2Df() = default;
 };
 
+inline Bound2Df operator+(const Bound2Df& bnd, const Vec2Df& offset)
+{
+    Bound2Df new_bnd;
+    new_bnd.x_min = bnd.x_min + offset.x;
+    new_bnd.x_max = bnd.x_max + offset.x;
+    new_bnd.y_min = bnd.y_min + offset.y;
+    new_bnd.y_max = bnd.y_max + offset.y;
+
+    return new_bnd;
+}
+
+
 struct Size2Df
 {
     float width;
@@ -51,6 +63,82 @@ enum class CursorSquareState
     BOTTOM_RIGHT
 };
 
+inline void drawCircle(const Vec2Df& pos, const float r)
+{
+    const int num_elements = 20;
+
+    float t = 0.0f;
+    const float inc = (2.0f * M_PI) / static_cast<float>(num_elements - 1);
+    glBegin(GL_POLYGON);
+    for(size_t k = 0; k < num_elements; k++)
+    {
+        const float x = r * std::cos(t) + pos.x;
+        const float y = r * std::sin(t) + pos.y;
+        glVertex2f(x, y);
+        t = t + inc;
+    }
+    glEnd();
+}
+
+inline void drawCircularSegment(const Vec2Df& pos, const float r, const float from_angle, const float to_angle)
+{
+    const int num_elements = 10;
+
+    float t = from_angle;
+    const float inc = (to_angle - from_angle) / static_cast<float>(num_elements-1);
+    glBegin(GL_POLYGON);
+    glVertex2f(pos.x, pos.y);
+    for(size_t k = 0; k < num_elements; k++)
+    {
+        const float x = r * std::cos(t) + pos.x;
+        const float y = r * std::sin(t) + pos.y;
+        glVertex2f(x, y);
+        t = t + inc;
+    }
+
+    glEnd();
+}
+
+inline void drawRoundedRectangle(const Bound2Df& bounds, const float r)
+{
+    const Vec2Df start(bounds.x_min + r, bounds.y_min + r);
+    Vec2Df vec = start;
+    const float y_dist = (bounds.y_max - bounds.y_min) - 2.0f * r;
+    const float x_dist = (bounds.x_max - bounds.x_min) - 2.0f * r;
+
+    glBegin(GL_POLYGON);
+    glVertex2f(vec.x, vec.y);
+    vec.x -= r;
+    glVertex2f(vec.x, vec.y);
+    vec.y += y_dist;
+    glVertex2f(vec.x, vec.y);
+    vec.x += r;
+    glVertex2f(vec.x, vec.y);
+    vec.y += r;
+    glVertex2f(vec.x, vec.y);
+    vec.x += x_dist;
+    glVertex2f(vec.x, vec.y);
+    vec.y -= r;
+    glVertex2f(vec.x, vec.y);
+    vec.x += r;
+    glVertex2f(vec.x, vec.y);
+    vec.y -= y_dist;
+    glVertex2f(vec.x, vec.y);
+    vec.x -= r;
+    glVertex2f(vec.x, vec.y);
+    vec.y -= r;
+    glVertex2f(vec.x, vec.y);
+    vec.x -= x_dist;
+    glVertex2f(vec.x, vec.y);
+    glVertex2f(start.x, start.y);
+    glEnd();
+
+    drawCircularSegment(Vec2Df(bounds.x_min, bounds.y_min) + r, r, M_PI, 3.0f * M_PI / 2.0f);
+    drawCircularSegment(Vec2Df(bounds.x_max, bounds.y_max) - r, r, 0, M_PI / 2.0f);
+    drawCircularSegment(Vec2Df(bounds.x_min + r, bounds.y_max - r), r, M_PI / 2.0f, M_PI);
+    drawCircularSegment(Vec2Df(bounds.x_max - r, bounds.y_min + r), r, 3.0f * M_PI / 2.0f, 2.0f * M_PI);
+}
+
 class Square
 {
 private:
@@ -60,7 +148,7 @@ private:
 
     Vec2Df pos_;
     Size2Df size_;
-    Vec3Df color_;
+    RGBTripletf color_;
 
     bool is_selected_;
 
@@ -70,7 +158,7 @@ private:
 public:
 
     Square() = delete;
-    Square(wxPanel* parent, const float x_, const float y_, const float width_, const float height_, const Vec3Df& color)
+    Square(wxPanel* parent, const float x_, const float y_, const float width_, const float height_, const RGBTripletf& color)
         : pos_(x_, y_), size_(width_, height_)
     {
         parent_ = parent;
@@ -195,13 +283,15 @@ public:
 
     void render() const
     {
-        glColor3f(color_.x, color_.y, color_.z);
-        glBegin(GL_POLYGON);
-        glVertex2f(gl_bound_.x_min, gl_bound_.y_max);
-        glVertex2f(gl_bound_.x_min, gl_bound_.y_min);
-        glVertex2f(gl_bound_.x_max, gl_bound_.y_min);
-        glVertex2f(gl_bound_.x_max, gl_bound_.y_max);
-        glEnd();
+        const Bound2Df shadow_bnd = gl_bound_ + Vec2Df(0.01f, -0.01f);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4f(0.1f, 0.1f, 0.1f, 0.4f);
+        drawRoundedRectangle(shadow_bnd, 0.02f);
+
+        glColor3f(color_.red, color_.green, color_.blue);
+        drawRoundedRectangle(gl_bound_, 0.02f);
 
         if(is_selected_)
         {

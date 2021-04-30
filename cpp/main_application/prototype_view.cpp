@@ -11,9 +11,9 @@ PrototypeView::PrototypeView(wxPanel* parent, const wxPoint& position, const wxS
     m_context = new wxGLContext(this);
     parent_ = parent;
 
-    squares_.push_back(new Square(parent_, 20, 13, 15, 15, Vec3Df(0.0f, 0.0f, 1.0f)));
-    squares_.push_back(new Square(parent_, 2, 2, 5, 5, Vec3Df(0.0f, 1.0f, 0.0f)));
-    squares_.push_back(new Square(parent_, 10, 2, 7, 7, Vec3Df(1.0f, 0.0f, 0.0f)));
+    squares_.push_back(new Square(parent_, 20, 50, 15, 15, RGBTripletf(0x98DDCA)));
+    squares_.push_back(new Square(parent_, 2, 10, 10, 10, RGBTripletf(0xD5ECC2)));
+    squares_.push_back(new Square(parent_, 20, 10, 7, 7, RGBTripletf(0xFFAAA7)));
 
     grid_pos_pressed_.x = 0.0f;
     grid_pos_pressed_.y = 0.0f;
@@ -76,7 +76,7 @@ void PrototypeView::newElement()
     const float r = (rand() % 1001) / 1000.0f;
     const float g = (rand() % 1001) / 1000.0f;
     const float b = (rand() % 1001) / 1000.0f;
-    squares_.push_back(new Square(parent_, 2, 2, 6, 6, Vec3Df(r, g, b)));
+    squares_.push_back(new Square(parent_, 2, 2, 6, 6, RGBTripletf(r, g, b)));
 
     updateGridStates();
     Refresh();
