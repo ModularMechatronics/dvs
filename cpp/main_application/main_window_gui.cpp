@@ -23,42 +23,63 @@ void MainWindow::setupGui()
 
     this->SetSizer(big_sizer);
 
-    /*tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500), wxNB_MULTILINE);
+    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500), wxNB_MULTILINE);
     tabs_view->Layout();
     tabs_view->SetBackgroundColour(wxColor(1, 174, 254));
 
     wxBoxSizer* tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
-    wxBoxSizer* tabs_sizer_h = new wxBoxSizer(wxHORIZONTAL);
-    tabs_sizer_h->Add(tabs_sizer_v, 1, wxEXPAND);
+    // wxBoxSizer* tabs_sizer_h = new wxBoxSizer(wxHORIZONTAL);
+    // tabs_sizer_h->Add(tabs_sizer_v, 1, wxEXPAND);
 
-    tab_container->SetSizer(tabs_sizer_h);*/
+    tab_container->SetSizer(tabs_sizer_v);
 
-    project_file::Tab tab = project_file_.getTabFromIdx(0);
+    tabs_ = project_file_.getTabs();
 
-    wxSize s0 = tab_container->GetSize();
+    const wxSize s0 = tab_container->GetSize();
 
-    prototype_view_ = new PrototypeView(tab_container, wxPoint(0, 0), s0);
-
-    /*std::vector<project_file::Element> elements = tab.getElements();
-
-    for(auto e : elements)
+    for(size_t k = 0; k < tabs_.size(); k++)
     {
-        xpos = tab.margin_left_right + e.col * inc_x + tab.spacing_cols;
-        ypos = tab.margin_top_bottom + e.row * inc_y + tab.spacing_rows;
-        wxSize sq(e.width * inc_x - tab.spacing_cols * 2, e.height * inc_y - tab.spacing_rows * 2);
-        gui_elements_[e.name] = new GuiElement(tab_container, wxPoint(xpos, ypos), sq, e.name, e);
-    }*/
+        const std::string tab_name = tabs_[k].getName();
+        wxNotebookPage* tab_element = new wxNotebookPage(tabs_view, -1);
+        tab_elements_.push_back(tab_element);
+        tabs_view->AddPage(tab_element, tab_name);
+        const wxSize tab_size = tab_element->GetSize();
+
+        const std::vector<project_file::Element> elements = tabs_[k].getElements();
+
+        const float tab_dx = static_cast<float>(tab_size.GetWidth()) / static_cast<float>(tabs_[k].num_cells_x);
+        const float tab_dy = static_cast<float>(tab_size.GetHeight()) / static_cast<float>(tabs_[k].num_cells_y);
+
+        for(auto e : elements)
+        {
+            float xpos = e.cell_idx_x * tab_dx;
+            float ypos = e.cell_idx_y * tab_dy;
+
+            wxSize gui_element_size(e.width * tab_dx, e.height * tab_dy);
+            gui_elements_[e.name] = new GuiElement(tab_element, wxPoint(xpos, ypos), gui_element_size, e.name, e);
+        }
+    }
+
+    // prototype_view_ = new PrototypeView(tab_container, wxPoint(0, 0), s0);
 }
 
 void MainWindow::OnSize(wxSizeEvent& event)
 {
     wxFrame::OnSize(event);
     std::cout << "Size changed" << std::endl;
-    wxSize s0 = tab_container->GetSize();
+    const wxSize s0 = tab_container->GetSize();
 
-    prototype_view_->setSize(s0);
+    for(size_t k = 0; k < tabs_.size(); k++)
+    {
+        wxNotebookPage* tab_element = tab_elements_[k];
+        const wxSize tab_size = tab_element->GetSize();
+        // it.second->windowSizeChanged(s0, tab);
+
+    }
+
+    // prototype_view_->setSize(s0);
 
     /*const project_file::Tab tab = project_file_.getTabFromIdx(0);
 

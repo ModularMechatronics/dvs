@@ -68,7 +68,6 @@ class Tab
 {
 private:
     nlohmann::json j_;
-    int tab_idx_;
 
     std::vector<Element> elements_;
 
@@ -76,8 +75,6 @@ private:
 
     void parseElements()
     {
-        margin_x = j_["grid-settings"]["margin-x"];
-        margin_y = j_["grid-settings"]["margin-y"];
         num_cells_x = j_["grid-settings"]["num-cells-x"];
         num_cells_y = j_["grid-settings"]["num-cells-y"];
 
@@ -95,16 +92,19 @@ private:
 public:
     int num_cells_x;
     int num_cells_y;
-    int margin_x;
-    int margin_y;
 
     Tab() = delete;
-    Tab(const nlohmann::json& j, const int tab_idx) : j_(j), tab_idx_(tab_idx)
+    Tab(const nlohmann::json& j) : j_(j)
     {
         checkFields();
         name_ = j_["name"];
 
         parseElements();
+    }
+
+    std::string getName() const
+    {
+        return name_;
     }
 
     std::vector<Element> getElements() const
@@ -125,7 +125,7 @@ private:
     {
         for(size_t k = 0; k < j_["tabs"].size(); k++)
         {
-            tabs_.emplace_back(j_["tabs"][k], k);
+            tabs_.emplace_back(j_["tabs"][k]);
         }
     }
 
@@ -148,6 +148,11 @@ public:
     Tab getTabFromIdx(const size_t idx) const
     {
         return tabs_.at(idx);
+    }
+
+    std::vector<Tab> getTabs() const
+    {
+        return tabs_;
     }
 
     std::vector<Element> getElements() const
