@@ -39,6 +39,34 @@
                     "height": 0.5
                 }
             ]
+        },
+        {
+            "name": "sec_view",
+            "elements":
+            [
+                {
+                    "name": "view2",
+                    "type": "plot",
+                    "x": -1.0,
+                    "y": -1.0,
+                    "width": 0.5,
+                    "height": 0.5
+                }
+            ]
+        },
+        {
+            "name": "third_view",
+            "elements":
+            [
+                {
+                    "name": "view3",
+                    "type": "plot",
+                    "x": -1.0,
+                    "y": -1.0,
+                    "width": 0.5,
+                    "height": 0.5
+                }
+            ]
         }
     ]
 }
