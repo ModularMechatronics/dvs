@@ -23,7 +23,6 @@
 #include "plot_window_gl_pane.h"
 #include "layout_tools_window.h"
 #include "project_file.h"
-#include "prototype_view.h"
 #include "tab_view.h"
 
 wxDEFINE_EVENT(EVENT_TYPE_HANDLE_NEW_DATA, wxCommandEvent);
@@ -46,7 +45,6 @@ private:
     wxNotebook* tabs_view;
     wxPanel* tab_container;
     LayoutToolsWindow* layout_tools_window_;
-    PrototypeView* prototype_view_;
 
     int initial_width_;
     int initial_height_;

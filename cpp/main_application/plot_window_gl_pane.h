@@ -13,6 +13,7 @@
 #include "udp_server.h"
 #include "received_data.h"
 #include "gui_element.h"
+#include "prototype_view.h"
 
 using namespace project_file;
 
@@ -25,6 +26,7 @@ private:
     AxesPainter* axes_painter_;
     MouseButtonState left_mouse_button_;
     KeyboardState keyboard_state_;
+    CursorSquareState cursor_state_at_press_;
 
     bool hold_on_;
     bool axes_set_;
@@ -32,12 +34,17 @@ private:
     int args[9];
 
     int* getArgsPtr();
-    Vec2Df pos_at_press_;
+    wxSize parent_size_;
+    Vec2Df mouse_pos_at_press_;
+    wxPoint pos_at_press_;
+    wxSize size_at_press_;
+    float grid_size_;
 
     PlotDataHandler plot_data_handler_;
+    
 
 public:
-    PlotWindowGLPane(wxNotebookPage* parent, const Element& element_settings, const wxPoint& position, const wxSize& size);
+    PlotWindowGLPane(wxNotebookPage* parent, const Element& element_settings, const float grid_size);
     ~PlotWindowGLPane();
 
     int getWidth();
@@ -46,13 +53,14 @@ public:
     void render(wxPaintEvent& evt);
 
     void setPosAndSize(const wxPoint& pos, const wxSize& size) override;
-    void updateSize(const Vec2Df& tab_cell_size) override;
+    void updateSize(const wxSize& parent_size) override;
     void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr) override;
     void show() override;
     void hide() override;
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);
+    void mouseLeftWindow(wxMouseEvent& event);
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
     void keyPressed(wxKeyEvent& event);

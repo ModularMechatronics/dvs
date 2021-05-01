@@ -76,7 +76,7 @@ MainWindow::MainWindow(const wxString& title)
     initial_width_ = 1500;
     initial_height_ = 700;
 
-    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(30, 500), wxSize(300, 300));
+    // layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(30, 500), wxSize(300, 300));
     // layout_tools_window_->Show();
 
     setupGui();

@@ -12,12 +12,67 @@
 
 using namespace dvs::internal;
 
+CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, const Vec2Df mouse_pos)
+{
+    if((bound.x_min <= mouse_pos.x) && (mouse_pos.x <= bound.x_max) &&
+        (bound.y_min <= mouse_pos.y) && (mouse_pos.y <= bound.y_max))
+    {
+        if(mouse_pos.x <= bound_margin.x_min)
+        {
+            if(mouse_pos.y <= bound_margin.y_min)
+            {
+                return CursorSquareState::TOP_LEFT;
+            }
+            else if(bound_margin.y_max <= mouse_pos.y)
+            {
+                return CursorSquareState::BOTTOM_LEFT;
+            }
+            else
+            {
+                return CursorSquareState::LEFT;
+            }
+        }
+        else if(bound_margin.x_max <= mouse_pos.x)
+        {
+            if(mouse_pos.y <= bound_margin.y_min)
+            {
+                return CursorSquareState::TOP_RIGHT;
+            }
+            else if(bound_margin.y_max <= mouse_pos.y)
+            {
+                return CursorSquareState::BOTTOM_RIGHT;
+            }
+            else
+            {
+                return CursorSquareState::RIGHT;
+            }
+        }
+        else if(mouse_pos.y <= bound_margin.y_min)
+        {
+            return CursorSquareState::TOP;
+        }
+        else if(bound_margin.y_max <= mouse_pos.y)
+        {
+            return CursorSquareState::BOTTOM;
+        }
+        else
+        {
+            return CursorSquareState::INSIDE;
+        }
+    }
+    else
+    {
+        return CursorSquareState::OUTSIDE;
+    }
+}
 
-PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const Element& element_settings, const wxPoint& position, const wxSize& size)
-    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE), GuiElement(element_settings)
+PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const Element& element_settings, const float grid_size)
+    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE), GuiElement(element_settings)
 {
     m_context = new wxGLContext(this);
-    is_editing_ = false;
+    is_editing_ = true;
+    parent_size_ = parent->GetSize();
+    grid_size_ = grid_size;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -43,11 +98,20 @@ PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const Element& elemen
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 }
 
-void PlotWindowGLPane::updateSize(const Vec2Df& tab_cell_size)
+void PlotWindowGLPane::updateSize(const wxSize& parent_size)
 {
-    const wxSize size(element_settings_.width * tab_cell_size.x, element_settings_.height * tab_cell_size.y);
-    const wxPoint pos(element_settings_.cell_idx_x * tab_cell_size.x, element_settings_.cell_idx_y * tab_cell_size.y);
+    parent_size_ = parent_size;
+    const float px = parent_size_.GetWidth();
+    const float py = parent_size_.GetHeight();
 
+    const float xpos = px * (element_settings_.x + 1.0f) / 2.0f;
+    const float ypos = py * (element_settings_.y + 1.0f) / 2.0f;
+
+    const float width = px * element_settings_.width / 2.0f;
+    const float height = py * element_settings_.height / 2.0f;
+
+    const wxSize size(width, height);
+    const wxPoint pos(xpos, py - ypos - height);
     this->SetPosition(pos);
     this->SetSize(size);
 }
@@ -70,6 +134,7 @@ void PlotWindowGLPane::bindCallbacks()
     Bind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
     Bind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
     Bind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
+    Bind(wxEVT_LEAVE_WINDOW, &PlotWindowGLPane::mouseLeftWindow, this);
 }
 
 void PlotWindowGLPane::unbindCallbacks()
@@ -80,6 +145,7 @@ void PlotWindowGLPane::unbindCallbacks()
     Unbind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
     Unbind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
     Unbind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
+    Bind(wxEVT_LEAVE_WINDOW, &PlotWindowGLPane::mouseLeftWindow, this);
 }
 
 void PlotWindowGLPane::setPosAndSize(const wxPoint& pos, const wxSize& size)
@@ -174,7 +240,24 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
-    pos_at_press_ = Vec2Df(current_point.x, current_point.y);
+    
+    Bound2Df bnd;
+    bnd.x_min = 0.0f;
+    bnd.x_max = this->GetSize().GetWidth();
+    bnd.y_min = 0.0f;
+    bnd.y_max = this->GetSize().GetHeight();
+
+    Bound2Df bnd_margin;
+    bnd_margin.x_min = bnd.x_min + 10.0f;
+    bnd_margin.x_max = bnd.x_max - 10.0f;
+    bnd_margin.y_min = bnd.y_min + 10.0f;
+    bnd_margin.y_max = bnd.y_max - 10.0f;
+
+    cursor_state_at_press_ = mouseState(bnd, bnd_margin, Vec2Df(current_point.x, current_point.y));
+
+    mouse_pos_at_press_ = Vec2Df(current_point.x, current_point.y);
+    pos_at_press_ = this->GetPosition();
+    size_at_press_ = this->GetSize();
 
     left_mouse_button_.setIsPressed(current_point.x, current_point.y);
     Refresh();
@@ -186,21 +269,66 @@ void PlotWindowGLPane::mouseLeftReleased(wxMouseEvent& event)
     Refresh();
 }
 
+void PlotWindowGLPane::mouseLeftWindow(wxMouseEvent& event)
+{
+    wxSetCursor(wxCursor(wxCURSOR_ARROW));
+}
+
 void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
 {
+    const wxPoint current_point = event.GetPosition();
+
     if (left_mouse_button_.isPressed())
     {
-        const wxPoint current_point = event.GetPosition();
-
         if(is_editing_)
         {
             const Vec2Df mouse_pos = Vec2Df(current_point.x, current_point.y);
-            const Vec2Df delta = mouse_pos - pos_at_press_;
+            Vec2Df delta = mouse_pos - mouse_pos_at_press_;
+
+            delta = Vec2Df(std::round(delta.x / grid_size_) * grid_size_,
+                           std::round(delta.y / grid_size_) * grid_size_);
             const Vec2Df current_pos(this->GetPosition().x, this->GetPosition().y);
             const Vec2Df changed_pos = current_pos + delta;
+
             const wxSize size_now = this->GetSize();
 
-            setPosAndSize(wxPoint(changed_pos.x, changed_pos.y), size_now);
+            switch(cursor_state_at_press_)
+            {
+                case CursorSquareState::LEFT:
+                    this->SetPosition(wxPoint(changed_pos.x, pos_at_press_.y));
+                    this->SetSize(wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight()));
+                    break;
+                case CursorSquareState::RIGHT:
+                    this->SetSize(wxSize(size_at_press_.GetWidth() + delta.x, size_at_press_.GetHeight()));
+                    break;
+                case CursorSquareState::TOP:
+                    this->SetPosition(wxPoint(pos_at_press_.x, changed_pos.y));
+                    this->SetSize(wxSize(size_now.GetWidth(), size_now.GetHeight() - delta.y));
+                    break;
+                case CursorSquareState::BOTTOM:
+                    this->SetSize(wxSize(size_at_press_.GetWidth(), size_at_press_.GetHeight() + delta.y));
+                    break;
+                case CursorSquareState::BOTTOM_RIGHT:
+                    this->SetSize(wxSize(size_at_press_.GetWidth() + delta.x, size_at_press_.GetHeight() + delta.y));
+                    break;
+                case CursorSquareState::BOTTOM_LEFT:
+                    this->SetPosition(wxPoint(changed_pos.x, pos_at_press_.y));
+                    this->SetSize(wxSize(size_now.GetWidth() - delta.x, size_at_press_.GetHeight() + delta.y));
+                    break;
+                case CursorSquareState::TOP_RIGHT:
+                    this->SetPosition(wxPoint(pos_at_press_.x, changed_pos.y));
+                    this->SetSize(wxSize(size_at_press_.GetWidth() + delta.x, size_now.GetHeight() - delta.y));
+                    break;
+                case CursorSquareState::TOP_LEFT:
+                    this->SetPosition(wxPoint(changed_pos.x, changed_pos.y)); // Left
+                    this->SetSize(wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y));
+                    break;
+                case CursorSquareState::INSIDE:
+                    setPosAndSize(wxPoint(changed_pos.x, changed_pos.y), size_at_press_);
+                    break;
+                default:
+                    std::cout << "Do nothing..." << std::endl;
+            }
         }
         else
         {
@@ -210,6 +338,56 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
         }
 
         Refresh();
+    }
+    else
+    {
+        if(is_editing_)
+        {
+            Bound2Df bnd;
+            bnd.x_min = 0.0f;
+            bnd.x_max = this->GetSize().GetWidth();
+            bnd.y_min = 0.0f;
+            bnd.y_max = this->GetSize().GetHeight();
+
+            Bound2Df bnd_margin;
+            bnd_margin.x_min = bnd.x_min + 10.0f;
+            bnd_margin.x_max = bnd.x_max - 10.0f;
+            bnd_margin.y_min = bnd.y_min + 10.0f;
+            bnd_margin.y_max = bnd.y_max - 10.0f;
+            const CursorSquareState cms = mouseState(bnd, bnd_margin, Vec2Df(current_point.x, current_point.y));
+            switch(cms)
+            {
+                case CursorSquareState::LEFT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
+                    break;
+                case CursorSquareState::RIGHT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
+                    break;
+                case CursorSquareState::TOP:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENS));
+                    break;
+                case CursorSquareState::BOTTOM:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENS));
+                    break;
+                case CursorSquareState::BOTTOM_RIGHT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENWSE)); // 
+                    break;
+                case CursorSquareState::BOTTOM_LEFT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
+                    break;
+                case CursorSquareState::TOP_RIGHT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
+                    break;
+                case CursorSquareState::TOP_LEFT:
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
+                    break;
+                case CursorSquareState::INSIDE:
+                    wxSetCursor(wxCursor(wxCURSOR_HAND));
+                    break;
+                default:
+                    wxSetCursor(wxCursor(wxCURSOR_HAND));
+            }
+        }
     }
 }
 
