@@ -22,6 +22,8 @@ protected:
     Element element_settings_;
     bool is_editing_;
 
+    Vec2Df parent_size_; // Pixels
+
 public:
 
     GuiElement() = delete;
@@ -42,7 +44,7 @@ public:
         is_editing_ = is_editing;
     }
 
-    virtual void updateSize(const Vec2Df& tab_cell_size) = 0;
+    virtual void updateSize(const wxSize& parent_size) = 0;
     virtual void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr) = 0;
     virtual void setPosAndSize(const wxPoint& pos, const wxSize& size) = 0;
     virtual void show() = 0;

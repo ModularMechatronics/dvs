@@ -19,7 +19,6 @@
 
 #include "project_file.h"
 #include "gui_element.h"
-#include "prototype_view.h"
 
 class TabView : public wxNotebookPage
 {
@@ -27,10 +26,11 @@ private:
     std::string name_;
     project_file::Tab tab_;
     std::map<std::string, GuiElement*> gui_elements_;
+    float grid_size_;
 
 public:
     TabView() = default;
-    TabView(wxNotebook* parent, const project_file::Tab tab);
+    TabView(wxNotebook* parent, const project_file::Tab& tab);
     void changeSize(const wxSize& new_size);
 
     void startEdit();

@@ -2,11 +2,13 @@
 
 #include "plot_window_gl_pane.h"
 
-TabView::TabView(wxNotebook* parent, const project_file::Tab tab) : wxNotebookPage(parent, -1), name_(tab.getName()), tab_(tab)
+TabView::TabView(wxNotebook* parent, const project_file::Tab& tab) : wxNotebookPage(parent, -1), name_(tab.getName()), tab_(tab)
 {
     const wxSize tab_size = this->GetSize();
     const float tab_dx = static_cast<float>(tab_size.GetWidth()) / static_cast<float>(tab.num_cells_x);
     const float tab_dy = static_cast<float>(tab_size.GetHeight()) / static_cast<float>(tab.num_cells_y);
+
+    grid_size_ = 5.0f;
 
     const Vec2Df tab_cell_size(tab_dx, tab_dy);
 
@@ -15,13 +17,9 @@ TabView::TabView(wxNotebook* parent, const project_file::Tab tab) : wxNotebookPa
 
     for(const auto elem : elements)
     {
-        float xpos = elem.cell_idx_x * tab_dx;
-        float ypos = elem.cell_idx_y * tab_dy;
+        GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this), elem, grid_size_);
 
-        const wxSize gui_element_size(elem.width * tab_dx, elem.height * tab_dy);
-        GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this), elem, wxPoint(xpos, ypos), gui_element_size);
-
-        ge->updateSize(tab_cell_size);
+        ge->updateSize(this->GetSize());
         gui_elements_[elem.name] = ge;
     }
 }
@@ -53,6 +51,6 @@ void TabView::changeSize(const wxSize& new_size)
 
     for(auto it : gui_elements_)
     {
-        it.second->updateSize(tab_cell_size);
+        it.second->updateSize(this->GetSize());
     }
 }

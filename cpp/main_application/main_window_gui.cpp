@@ -57,35 +57,35 @@ void MainWindow::OnSize(wxSizeEvent& event)
 void MainWindow::numCellsXInc(wxCommandEvent& event)
 {
     (void)event;
-    prototype_view_->changeNumCellsX(1);
+    // prototype_view_->changeNumCellsX(1);
 }
 
 void MainWindow::numCellsXDec(wxCommandEvent& event)
 {
     (void)event;
-    prototype_view_->changeNumCellsX(-1);
+    // prototype_view_->changeNumCellsX(-1);
 }
 
 void MainWindow::numCellsYInc(wxCommandEvent& event)
 {
     (void)event;
-    prototype_view_->changeNumCellsY(1);
+    // prototype_view_->changeNumCellsY(1);
 }
 
 void MainWindow::numCellsYDec(wxCommandEvent& event)
 {
     (void)event;
-    prototype_view_->changeNumCellsY(-1);
+    // prototype_view_->changeNumCellsY(-1);
 }
 
 void MainWindow::newElement(wxCommandEvent& event)
 {
     (void)event;
-    prototype_view_->newElement();
+    // prototype_view_->newElement();
 }
 
 void MainWindow::deleteElement(wxCommandEvent& event)
 {
     (void)event;
-    prototype_view_->deleteElement();
+    // prototype_view_->deleteElement();
 }

@@ -46,10 +46,11 @@ constexpr char* freeform_str = "freeform";
 class Element
 {
 public:
-    int cell_idx_x;
-    int cell_idx_y;
-    int width;
-    int height;
+    float x;
+    float y;
+    float width;
+    float height;
+
     std::string name;
 
     Element() = default;
@@ -57,8 +58,8 @@ public:
     {
         name = j["name"];
 
-        cell_idx_x = j["cell-idx-x"];
-        cell_idx_y = j["cell-idx-y"];
+        x = j["x"];
+        y = j["y"];
         width = j["width"];
         height = j["height"];
     }
@@ -75,9 +76,6 @@ private:
 
     void parseElements()
     {
-        num_cells_x = j_["grid-settings"]["num-cells-x"];
-        num_cells_y = j_["grid-settings"]["num-cells-y"];
-
         for(size_t k = 0; k < j_["elements"].size(); k++)
         {
             elements_.emplace_back(j_["elements"][k]);

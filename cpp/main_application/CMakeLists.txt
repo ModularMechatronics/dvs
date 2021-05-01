@@ -31,7 +31,6 @@ set(CPP_SOURCE_FILES main.cpp
 
                      tab_view.cpp
                      layout_tools_window.cpp
-                     prototype_view.cpp
                      plot_data.cpp
                      plot_functions/plot_functions.cpp
                      plot_window_gl_pane.cpp
