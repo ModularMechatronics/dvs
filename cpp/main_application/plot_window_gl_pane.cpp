@@ -292,43 +292,51 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
 
             const wxSize size_now = this->GetSize();
 
+            wxPoint new_position = this->GetPosition();
+            wxSize new_size = this->GetSize();
+
             switch(cursor_state_at_press_)
             {
                 case CursorSquareState::LEFT:
-                    this->SetPosition(wxPoint(changed_pos.x, pos_at_press_.y));
-                    this->SetSize(wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight()));
+                    new_position = wxPoint(changed_pos.x, pos_at_press_.y);
+                    new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight());
                     break;
                 case CursorSquareState::RIGHT:
-                    this->SetSize(wxSize(size_at_press_.GetWidth() + delta.x, size_at_press_.GetHeight()));
+                    new_size = wxSize(size_at_press_.GetWidth() + delta.x, size_at_press_.GetHeight());
                     break;
                 case CursorSquareState::TOP:
-                    this->SetPosition(wxPoint(pos_at_press_.x, changed_pos.y));
-                    this->SetSize(wxSize(size_now.GetWidth(), size_now.GetHeight() - delta.y));
+                    new_position = wxPoint(pos_at_press_.x, changed_pos.y);
+                    new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() - delta.y);
                     break;
                 case CursorSquareState::BOTTOM:
-                    this->SetSize(wxSize(size_at_press_.GetWidth(), size_at_press_.GetHeight() + delta.y));
+                    new_size = wxSize(size_at_press_.GetWidth(), size_at_press_.GetHeight() + delta.y);
                     break;
                 case CursorSquareState::BOTTOM_RIGHT:
-                    this->SetSize(wxSize(size_at_press_.GetWidth() + delta.x, size_at_press_.GetHeight() + delta.y));
+                    new_size = wxSize(size_at_press_.GetWidth() + delta.x, size_at_press_.GetHeight() + delta.y);
                     break;
                 case CursorSquareState::BOTTOM_LEFT:
-                    this->SetPosition(wxPoint(changed_pos.x, pos_at_press_.y));
-                    this->SetSize(wxSize(size_now.GetWidth() - delta.x, size_at_press_.GetHeight() + delta.y));
+                    new_position = wxPoint(changed_pos.x, pos_at_press_.y);
+                    new_size = wxSize(size_now.GetWidth() - delta.x, size_at_press_.GetHeight() + delta.y);
                     break;
                 case CursorSquareState::TOP_RIGHT:
-                    this->SetPosition(wxPoint(pos_at_press_.x, changed_pos.y));
-                    this->SetSize(wxSize(size_at_press_.GetWidth() + delta.x, size_now.GetHeight() - delta.y));
+                    new_position = wxPoint(pos_at_press_.x, changed_pos.y);
+                    new_size = wxSize(size_at_press_.GetWidth() + delta.x, size_now.GetHeight() - delta.y);
                     break;
                 case CursorSquareState::TOP_LEFT:
-                    this->SetPosition(wxPoint(changed_pos.x, changed_pos.y)); // Left
-                    this->SetSize(wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y));
+                    new_position = wxPoint(changed_pos.x, changed_pos.y);
+                    new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y);
                     break;
                 case CursorSquareState::INSIDE:
-                    setPosAndSize(wxPoint(changed_pos.x, changed_pos.y), size_at_press_);
+                    new_position = wxPoint(changed_pos.x, changed_pos.y);
+                    new_size = size_at_press_;
                     break;
                 default:
                     std::cout << "Do nothing..." << std::endl;
             }
+            new_size.SetWidth(std::max(50, new_size.GetWidth()));
+            new_size.SetHeight(std::max(50, new_size.GetHeight()));
+            this->SetPosition(new_position);
+            this->SetSize(new_size);
         }
         else
         {
@@ -370,7 +378,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
                     wxSetCursor(wxCursor(wxCURSOR_SIZENS));
                     break;
                 case CursorSquareState::BOTTOM_RIGHT:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZENWSE)); // 
+                    wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
                     break;
                 case CursorSquareState::BOTTOM_LEFT:
                     wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
