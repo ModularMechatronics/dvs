@@ -70,7 +70,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const Element& elemen
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE), GuiElement(element_settings)
 {
     m_context = new wxGLContext(this);
-    is_editing_ = true;
+    is_editing_ = false;
     parent_size_ = parent->GetSize();
     grid_size_ = grid_size;
 
@@ -337,6 +337,14 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             new_size.SetHeight(std::max(50, new_size.GetHeight()));
             this->SetPosition(new_position);
             this->SetSize(new_size);
+
+            const float px = parent_size_.GetWidth();
+            const float py = parent_size_.GetHeight();
+
+            element_settings_.width = static_cast<float>(new_size.GetWidth()) * 2.0f / px;
+            element_settings_.height = static_cast<float>(new_size.GetHeight()) * 2.0f / py;
+            element_settings_.x = static_cast<float>(new_position.x) * 2.0f / px - 1.0f;
+            element_settings_.y = (py + static_cast<float>(-new_position.y - new_size.GetHeight())) * 2.0f / py - 1.0f;
         }
         else
         {
