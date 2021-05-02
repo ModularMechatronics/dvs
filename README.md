@@ -8,3 +8,5 @@ https://zetcode.com/gui/wxwidgets/layoutmanagement/
 https://github.com/memononen/NanoVG
 https://stackoverflow.com/questions/22722161/fast-line-drawing-in-opengl
 https://vitaliburkov.wordpress.com/2016/09/17/simple-and-fast-high-quality-antialiased-lines-with-opengl/
+Display dpi: https://forums.wxwidgets.org/viewtopic.php?p=74002#74002
+             https://forums.wxwidgets.org/viewtopic.php?t=46418

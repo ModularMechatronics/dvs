@@ -98,23 +98,33 @@ PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const Element& elemen
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 }
 
-void PlotWindowGLPane::updateSize(const wxSize& parent_size)
+void PlotWindowGLPane::updateSizeFromParent(const wxSize& parent_size)
 {
     parent_size_ = parent_size;
     const float px = parent_size_.GetWidth();
     const float py = parent_size_.GetHeight();
 
-    const float xpos = px * (element_settings_.x + 1.0f) / 2.0f;
-    const float ypos = py * (element_settings_.y + 1.0f) / 2.0f;
+    const float xpos = px * element_settings_.x;
+    const float ypos = py * element_settings_.y;
 
-    const float width = px * element_settings_.width / 2.0f;
-    const float height = py * element_settings_.height / 2.0f;
+    const float width = px * element_settings_.width;
+    const float height = py * element_settings_.height;
 
-    const wxSize size(width, height);
-    const wxPoint pos(xpos, py - ypos - height);
-    this->SetPosition(pos);
-    this->SetSize(size);
-    axes_painter_->setWindowSize(width, height);
+    this->setPosition(wxPoint(xpos, ypos));
+    this->setSize(wxSize(width, height));
+}
+
+void PlotWindowGLPane::setPosition(const wxPoint& new_pos)
+{
+    this->SetPosition(new_pos);
+}
+
+void PlotWindowGLPane::setSize(const wxSize& new_size)
+{
+    axes_painter_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
+
+
+    this->SetSize(new_size);
 }
 
 void PlotWindowGLPane::show()
@@ -135,17 +145,6 @@ void PlotWindowGLPane::bindCallbacks()
     Bind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
     Bind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
     Bind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
-    Bind(wxEVT_LEAVE_WINDOW, &PlotWindowGLPane::mouseLeftWindow, this);
-}
-
-void PlotWindowGLPane::unbindCallbacks()
-{
-    Unbind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
-    Unbind(wxEVT_LEFT_DOWN, &PlotWindowGLPane::mouseLeftPressed, this);
-    Unbind(wxEVT_LEFT_UP, &PlotWindowGLPane::mouseLeftReleased, this);
-    Unbind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
-    Unbind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
-    Unbind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
     Bind(wxEVT_LEAVE_WINDOW, &PlotWindowGLPane::mouseLeftWindow, this);
 }
 
@@ -336,17 +335,17 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             }
             new_size.SetWidth(std::max(50, new_size.GetWidth()));
             new_size.SetHeight(std::max(50, new_size.GetHeight()));
-            axes_painter_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
-            this->SetPosition(new_position);
-            this->SetSize(new_size);
 
             const float px = parent_size_.GetWidth();
             const float py = parent_size_.GetHeight();
 
-            element_settings_.width = static_cast<float>(new_size.GetWidth()) * 2.0f / px;
-            element_settings_.height = static_cast<float>(new_size.GetHeight()) * 2.0f / py;
-            element_settings_.x = static_cast<float>(new_position.x) * 2.0f / px - 1.0f;
-            element_settings_.y = (py + static_cast<float>(-new_position.y - new_size.GetHeight())) * 2.0f / py - 1.0f;
+            element_settings_.width = static_cast<float>(new_size.GetWidth()) / px;
+            element_settings_.height = static_cast<float>(new_size.GetHeight()) / py;
+            element_settings_.x = static_cast<float>(new_position.x) / px;
+            element_settings_.y = static_cast<float>(new_position.y) / py;
+
+            this->setPosition(new_position);
+            this->setSize(new_size);
         }
         else
         {

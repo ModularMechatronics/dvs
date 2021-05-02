@@ -31,7 +31,7 @@ private:
 public:
     TabView() = default;
     TabView(wxNotebook* parent, const project_file::Tab& tab);
-    void changeSize(const wxSize& new_size);
+    void setSize(const wxSize& new_size);
 
     void startEdit();
     void stopEdit();
