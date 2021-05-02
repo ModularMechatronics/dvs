@@ -114,6 +114,7 @@ void PlotWindowGLPane::updateSize(const wxSize& parent_size)
     const wxPoint pos(xpos, py - ypos - height);
     this->SetPosition(pos);
     this->SetSize(size);
+    axes_painter_->setWindowSize(width, height);
 }
 
 void PlotWindowGLPane::show()
@@ -335,6 +336,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             }
             new_size.SetWidth(std::max(50, new_size.GetWidth()));
             new_size.SetHeight(std::max(50, new_size.GetHeight()));
+            axes_painter_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
             this->SetPosition(new_position);
             this->SetSize(new_size);
 

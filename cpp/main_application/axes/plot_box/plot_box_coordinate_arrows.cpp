@@ -74,7 +74,7 @@ void drawCoordinateAxesLetters(const AxesSettings& axes_settings,
     const Vec2Dd z_vec = coord_conv.modelToViewCoordinate(zpos);
 
     setColor(0.0, 0.0, 0.0);
-    putTextAt("X", x_vec.x, x_vec.y);
-    putTextAt("Y", y_vec.x, y_vec.y);
-    putTextAt("Z", z_vec.x, z_vec.y);
+    putTextAt_Old("X", x_vec.x, x_vec.y);
+    putTextAt_Old("Y", y_vec.x, y_vec.y);
+    putTextAt_Old("Z", z_vec.x, z_vec.y);
 }

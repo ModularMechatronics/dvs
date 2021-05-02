@@ -11,6 +11,8 @@
 void drawAxisNumbers(const GridVectors& gv,
                      const AxesLimits& axes_limits,
                      const ViewAngles& view_angles,
-                     const CoordinateConverter& coord_converter);
+                     const CoordinateConverter& coord_converter,
+                     const float width,
+                     const float height);
 
 #endif
