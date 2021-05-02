@@ -50,7 +50,7 @@ void MainWindow::OnSize(wxSizeEvent& event)
 
     for(size_t k = 0; k < tab_elements_.size(); k++)
     {
-        tab_elements_[k]->changeSize(new_size);
+        tab_elements_[k]->setSize(new_size);
     }
 }
 

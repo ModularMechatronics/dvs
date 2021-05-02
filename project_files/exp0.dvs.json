@@ -17,26 +17,26 @@
                 {
                     "name": "view11",
                     "type": "plot",
-                    "x": -1.0,
-                    "y": -1.0,
-                    "width": 0.5,
-                    "height": 0.5
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 0.2,
+                    "height": 0.2
                 },
                 {
                     "name": "view12",
                     "type": "plot",
-                    "x": -0.9,
-                    "y": -0.1,
-                    "width": 0.5,
-                    "height": 0.5
+                    "x": 0.2,
+                    "y": 0.0,
+                    "width": 0.2,
+                    "height": 0.2
                 },
                 {
                     "name": "view13",
                     "type": "plot",
-                    "x": -0.5,
-                    "y": -0.2,
-                    "width": 0.5,
-                    "height": 0.5
+                    "x": 0.2,
+                    "y": 0.2,
+                    "width": 0.3,
+                    "height": 0.3
                 }
             ]
         },
@@ -47,10 +47,10 @@
                 {
                     "name": "view2",
                     "type": "plot",
-                    "x": -1.0,
-                    "y": -1.0,
-                    "width": 0.5,
-                    "height": 0.5
+                    "x": 0.0,
+                    "y": 0.2,
+                    "width": 0.25,
+                    "height": 0.25
                 }
             ]
         },
@@ -61,12 +61,21 @@
                 {
                     "name": "view3",
                     "type": "plot",
-                    "x": -1.0,
-                    "y": -1.0,
+                    "x": 0.0,
+                    "y": 0.0,
                     "width": 0.5,
-                    "height": 0.5
+                    "height": 0.25
                 }
             ]
+        }
+    ],
+    "windows":
+    [
+        {
+            "name": "figure_0",
+            "type": "plot",
+            "position": [10, 10],
+            "size": [150, 150]
         }
     ]
 }
