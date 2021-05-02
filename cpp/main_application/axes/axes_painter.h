@@ -21,6 +21,8 @@ class AxesPainter
     AxesSettings axes_settings_;
     CoordinateConverter coord_converter_;
 
+    float width_, height_;
+
     GridVectors gv_;
 
     // Functions
@@ -37,6 +39,8 @@ class AxesPainter
 public:
     void plotBegin();
     void plotEnd();
+
+    void setWindowSize(const float width, const float height);
 
     AxesPainter() = default;
     AxesPainter(const AxesSettings& axes_settings);

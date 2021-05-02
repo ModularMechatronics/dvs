@@ -58,7 +58,7 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
 
     glPopMatrix();
 
-    drawAxisNumbers(gv_, axes_limits_, view_angles_, coord_converter_);
+    drawAxisNumbers(gv_, axes_limits_, view_angles_, coord_converter_, width_, height_);
 
     printViewAnglesInPlotWindow();
     drawDebugSilhouette();
@@ -180,6 +180,12 @@ void AxesPainter::drawAxesArrows() const
     drawCoordinateArrowHead(axes_settings_, coord_converter_);
 }
 
+void AxesPainter::setWindowSize(const float width, const float height)
+{
+    width_ = width;
+    height_ = height;
+}
+
 void AxesPainter::printViewAnglesInPlotWindow() const
 {
     setColor(0.0f, 0.0f, 0.0f);
@@ -188,6 +194,9 @@ void AxesPainter::printViewAnglesInPlotWindow() const
             ", " +
             toStringWithNumDecimalPlaces(view_angles_.getSnappedElevation() * 180.0 / M_PI, 1) +
             ")",
+        -0.95,
         -0.9,
-        -0.9);
+        width_,
+        height_,
+        100.0f);
 }

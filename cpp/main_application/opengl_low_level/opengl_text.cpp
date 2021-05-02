@@ -82,16 +82,33 @@ void drawTextFromTopLeft(const std::string s, float x, float y)
     }
 }*/
 
-void putTextAt(const std::string& s, const Vec2Dd& v)
+void putTextAt_Old(const std::string& s, const Vec2Dd& v)
 {
-    putTextAt(s, v.x, v.y);
+    putTextAt_Old(s, v.x, v.y);
 }
+
 void putTextAt3D(const std::string& s, const Vec3Dd& v)
 {
     putTextAt3D(s, v.x, v.y, v.z);
 }
 
-void putTextAt(const std::string& s, const double x, const double y)
+void putTextAt(const std::string& text, const double x, const double y, const float size_x, const float size_y, const float scale)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    const float s = 1.0f / 800.0f;
+    const float sx = scale * s / size_x;
+    const float sy = scale * s / size_y;
+    glScalef(sx, sy, 1.0);
+
+    for (size_t i = 0; i < text.length(); i++)
+    {
+        glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, text[i]);
+    }
+    glPopMatrix();
+}
+
+void putTextAt_Old(const std::string& s, const double x, const double y)
 {
     glRasterPos2f(x, y);
 
