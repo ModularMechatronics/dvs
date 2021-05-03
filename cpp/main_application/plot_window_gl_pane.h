@@ -14,6 +14,7 @@
 #include "received_data.h"
 #include "gui_element.h"
 #include "prototype_view.h"
+#include "tab_view.h"
 
 using namespace project_file;
 
@@ -42,6 +43,7 @@ private:
 
     PlotDataHandler plot_data_handler_;
     
+    TabView* tab_view_parent_;
 
 public:
     PlotWindowGLPane(wxNotebookPage* parent, const Element& element_settings, const float grid_size);
@@ -59,6 +61,8 @@ public:
     void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr) override;
     void show() override;
     void hide() override;
+    void resetSelection() override;
+    void destroy() override;
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);

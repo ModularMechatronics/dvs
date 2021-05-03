@@ -27,14 +27,24 @@ private:
     project_file::Tab tab_;
     std::map<std::string, GuiElement*> gui_elements_;
     float grid_size_;
+    int current_unnamed_idx_;
+    bool is_editing_;
 
 public:
     TabView() = default;
     TabView(wxNotebook* parent, const project_file::Tab& tab);
     void setSize(const wxSize& new_size);
+    void newElement();
 
     void startEdit();
     void stopEdit();
+
+    void resetSelectionForAllChildren();
+
+    void deleteSelectedElement();
+
+    void mouseLeftPressed(wxMouseEvent& event);
+    void mouseLeftReleased(wxMouseEvent& event);
 
 };
 

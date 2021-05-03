@@ -19,13 +19,27 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::addNewTab(wxCommandEvent& event)
 {
-    // tabs_view->AddPage( new wxNotebookPage(tabs_view, -1), L"TEST 4");
-    std::cout << "New tab!" << std::endl;
+    Tab tab;
+    TabView* tab_element = new TabView(tabs_view, tab);
+    tab_elements_.push_back(tab_element);
+
+    tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), "New tab");
+
+    if(is_editing_)
+    {
+        tab_element->startEdit();
+    }
 }
 
 void MainWindow::deleteTab(wxCommandEvent& event)
 {
-    std::cout << "Delete tab!" << std::endl;
+    
+    const int current_tab_idx = tabs_view->GetSelection();
+    if(current_tab_idx != wxNOT_FOUND)
+    {
+        tabs_view->DeletePage(current_tab_idx);
+        tab_elements_.erase(tab_elements_.begin() + current_tab_idx);
+    }
 }
 
 void MainWindow::editLayout(wxCommandEvent& event)
@@ -76,8 +90,8 @@ MainWindow::MainWindow(const wxString& title)
     initial_width_ = 1500;
     initial_height_ = 700;
 
-    // layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(30, 500), wxSize(300, 300));
-    // layout_tools_window_->Show();
+    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(300, 300));
+    layout_tools_window_->Show();
 
     setupGui();
 
