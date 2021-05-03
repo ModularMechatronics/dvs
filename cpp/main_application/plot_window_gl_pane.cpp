@@ -83,6 +83,10 @@ PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const Element& elemen
     const float min_z = -1.0;
     const float max_z = 1.0;
 
+    tab_view_parent_ = dynamic_cast<TabView*>(parent);
+
+    is_selected_ = false;
+
     const AxesSettings axes_settings({min_x, min_y, min_z}, {max_x, max_y, max_z});
 
     bindCallbacks();
@@ -237,10 +241,23 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     Refresh();
 }
 
+void PlotWindowGLPane::resetSelection()
+{
+    is_selected_ = false;
+}
+
+void PlotWindowGLPane::destroy()
+{
+    this->Destroy();
+}
+
 void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
 {
+    tab_view_parent_->resetSelectionForAllChildren();
+    is_selected_ = true;
+
     const wxPoint current_point = event.GetPosition();
-    
+
     Bound2Df bnd;
     bnd.x_min = 0.0f;
     bnd.x_max = this->GetSize().GetWidth();

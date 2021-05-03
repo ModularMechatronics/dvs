@@ -23,7 +23,7 @@ void MainWindow::setupGui()
 
     this->SetSizer(big_sizer);
 
-    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500), wxNB_MULTILINE);
+    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
     wxBoxSizer* tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
@@ -81,11 +81,19 @@ void MainWindow::numCellsYDec(wxCommandEvent& event)
 void MainWindow::newElement(wxCommandEvent& event)
 {
     (void)event;
-    // prototype_view_->newElement();
+    const int current_tab_idx = tabs_view->GetSelection();
+    if(current_tab_idx != wxNOT_FOUND)
+    {
+        tab_elements_.at(current_tab_idx)->newElement();
+    }
 }
 
 void MainWindow::deleteElement(wxCommandEvent& event)
 {
     (void)event;
-    // prototype_view_->deleteElement();
+    const int current_tab_idx = tabs_view->GetSelection();
+    if(current_tab_idx != wxNOT_FOUND)
+    {
+        tab_elements_.at(current_tab_idx)->deleteSelectedElement();
+    }
 }
