@@ -103,6 +103,11 @@ public:
         return name_;
     }
 
+    void setName(const std::string name)
+    {
+        name_ = name;
+    }
+
     std::vector<Element> getElements() const
     {
         return elements_;
@@ -149,6 +154,11 @@ public:
     std::vector<Tab> getTabs() const
     {
         return tabs_;
+    }
+
+    nlohmann::json getJsonObject() const
+    {
+        return j_;
     }
 
     std::vector<Element> getElements() const

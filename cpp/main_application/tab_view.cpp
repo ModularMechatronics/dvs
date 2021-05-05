@@ -24,6 +24,18 @@ TabView::TabView(wxNotebook* parent, const project_file::Tab& tab) : wxNotebookP
     }
 }
 
+std::vector<Element> TabView::getElements() const
+{
+    std::vector<Element> elements;
+
+    for(auto it : gui_elements_)
+    {
+        elements.push_back(it.second->getElementSettings());
+    }
+
+    return elements;
+}
+
 void TabView::deleteSelectedElement()
 {
     std::string key_to_delete = "";
