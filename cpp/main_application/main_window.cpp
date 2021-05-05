@@ -17,23 +17,61 @@ std::string getProjectFilePath()
 
 MainWindow::~MainWindow() {}
 
+void MainWindow::saveProject() const
+{
+    const std::string proj_file_path = getProjectFilePath();
+
+    nlohmann::json j_to_save = project_file_.getJsonObject();
+    j_to_save["tabs"] = nlohmann::json::array();
+
+    for(auto te : tab_elements_)
+    {
+        nlohmann::json objects = nlohmann::json::array();
+
+        const std::vector<Element> elems = te->getElements();
+        for(const auto elem : elems)
+        {
+            nlohmann::json j;
+            j["x"] = elem.x;
+            j["y"] = elem.y;
+            j["width"] = elem.width;
+            j["height"] = elem.height;
+            j["name"] = elem.name;
+            objects.push_back(j);
+        }
+
+        nlohmann::json tab_obj = nlohmann::json();
+        tab_obj["name"] = te->getName();
+        tab_obj["elements"] = objects;
+
+        j_to_save["tabs"].push_back(tab_obj);
+        
+    }
+
+    std::ofstream output_file(proj_file_path);
+    output_file << std::setw(4) << j_to_save << std::endl;
+}
+
 void MainWindow::addNewTab(wxCommandEvent& event)
 {
+    const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
     Tab tab;
+    tab.setName(tab_name);
     TabView* tab_element = new TabView(tabs_view, tab);
     tab_elements_.push_back(tab_element);
 
-    tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), "New tab");
+    tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
 
     if(is_editing_)
     {
         tab_element->startEdit();
     }
+
+    current_tab_num_++;
 }
 
 void MainWindow::deleteTab(wxCommandEvent& event)
 {
-    
     const int current_tab_idx = tabs_view->GetSelection();
     if(current_tab_idx != wxNOT_FOUND)
     {
@@ -69,6 +107,8 @@ MainWindow::MainWindow(const wxString& title)
     // current_gui_element_ = nullptr;
     current_gui_element_set_ = false;
     is_editing_ = false;
+
+    current_tab_num_ = 0;
 
     wxImage::AddHandler(new wxPNGHandler);
 

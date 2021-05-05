@@ -36,6 +36,11 @@ public:
     void setSize(const wxSize& new_size);
     void newElement();
 
+    std::string getName() const
+    {
+        return name_;
+    }
+
     void startEdit();
     void stopEdit();
 
@@ -45,6 +50,8 @@ public:
 
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
+
+    std::vector<Element> getElements() const;
 
 };
 

@@ -39,6 +39,7 @@ private:
 
     // GuiElement* current_gui_element_;
     bool current_gui_element_set_;
+    int current_tab_num_;
 
     bool is_editing_;
 
@@ -57,6 +58,8 @@ private:
     void addNewTab(wxCommandEvent& event);
     void deleteTab(wxCommandEvent& event);
     void editLayout(wxCommandEvent& event);
+
+    void saveProject() const;
 
 public:
     MainWindow();
