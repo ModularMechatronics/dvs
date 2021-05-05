@@ -1,6 +1,7 @@
 #include "main_window.h"
 
 #include <unistd.h>
+#include <wx/wxprec.h>
 
 #include <csignal>
 #include <iostream>
@@ -99,6 +100,30 @@ void MainWindow::editLayout(wxCommandEvent& event)
     is_editing_ = !is_editing_;
 }
 
+/*void MainWindow::onRightClickMenu(wxCommandEvent& event)
+{
+    std::cout << "Menu!" << std::endl;
+    wxTextEntryDialog* wx_te_dialog = new wxTextEntryDialog(this, "Change name", "Enter a new tab name", "<old-name>", wxOK | wxCANCEL | wxCENTRE);
+    
+    if ( wx_te_dialog->ShowModal() == wxID_OK )
+    {
+        const wxString value = wx_te_dialog->GetValue();
+        std::cout << std::string(value.mb_str()) << std::endl;
+    }
+}
+
+void MainWindow::onShowContextMenu(wxContextMenuEvent& event)
+{
+    std::cout << event.GetString() << std::endl;
+    wxMenu menu;
+
+    menu.Append(MENU_ID_CONTEXT_1, "Context Menu command 1");
+    menu.Append(MENU_ID_CONTEXT_2, "Context Menu command 2");
+    menu.Append(MENU_ID_CONTEXT_3, "Context Menu command 3");
+    
+    PopupMenu(&menu);        
+}*/
+
 MainWindow::MainWindow(const wxString& title)
     : wxFrame(NULL, wxID_ANY, title, wxPoint(0, 30), wxSize(1500, 700)), project_file_(getProjectFilePath())
 {
@@ -107,6 +132,9 @@ MainWindow::MainWindow(const wxString& title)
     // current_gui_element_ = nullptr;
     current_gui_element_set_ = false;
     is_editing_ = false;
+
+    // Bind(wxEVT_CONTEXT_MENU, &MainWindow::onShowContextMenu, this);
+    // Bind(wxEVT_COMMAND_MENU_SELECTED, &MainWindow::onRightClickMenu, this, MENU_ID_CONTEXT_1, MENU_ID_CONTEXT_3);
 
     current_tab_num_ = 0;
 

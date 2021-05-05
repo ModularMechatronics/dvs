@@ -61,6 +61,10 @@ private:
 
     void saveProject() const;
 
+    // void onRightClickMenu(wxCommandEvent& event);
+    // void onShowContextMenu(wxContextMenuEvent& event);
+    // enum MenuIDs { MENU_ID_CONTEXT_1 = wxID_HIGHEST + 4, MENU_ID_CONTEXT_2, MENU_ID_CONTEXT_3 };
+
 public:
     MainWindow();
     MainWindow(const wxString& title);
