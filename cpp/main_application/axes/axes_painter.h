@@ -48,7 +48,8 @@ public:
     void paint(const AxesLimits& axes_limits,
                const ViewAngles& view_angles,
                const GridVectors& gv,
-               const CoordinateConverter& coord_converter);
+               const CoordinateConverter& coord_converter,
+               const bool is_selected);
 };
 
 #endif

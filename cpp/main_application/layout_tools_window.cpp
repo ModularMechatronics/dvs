@@ -6,64 +6,65 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
 {
     this->SetMinSize(size);
     this->SetMaxSize(size);
+    main_window_ = main_window;
 
-    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window);
+    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
 
-    wxStaticBox* num_cells_x_box = new wxStaticBox(this, wxID_ANY, "Num cells x");
-    wxStaticBox* num_cells_y_box = new wxStaticBox(this, wxID_ANY, "Num cells y");
-    wxStaticBox* right_box = new wxStaticBox(this, wxID_ANY, "Shapes");
+    shapes_box_ = new wxStaticBox(this, wxID_ANY, "Shapes");
+    inspector_box_ = new wxStaticBox(this, wxID_ANY, "Inspector");
 
-    wxBoxSizer* left_sizer = new wxBoxSizer(wxVERTICAL);
-    left_sizer->Add(num_cells_x_box, 1, wxEXPAND);
-    left_sizer->Add(num_cells_y_box, 1, wxEXPAND);
+    wxBoxSizer* global_sizer = new wxBoxSizer(wxVERTICAL);
+    global_sizer->Add(shapes_box_, 1);
+    global_sizer->Add(inspector_box_, 1);
 
-    wxBoxSizer* global_sizer = new wxBoxSizer(wxHORIZONTAL);
-    global_sizer->Add(left_sizer, 1);
-    global_sizer->Add(right_box, 1);
+    setupInspector();
+    setupShapes();
 
-    {
-        wxBoxSizer* sizer_inside = new wxBoxSizer(wxHORIZONTAL);
-        wxButton* num_cells_x_dec = new wxButton(num_cells_x_box, wxID_ANY, "-", wxPoint(0, 0), wxSize(30, 20));
-        wxButton* num_cells_x_inc = new wxButton(num_cells_x_box, wxID_ANY, "+", wxPoint(0, 0), wxSize(30, 20));
-        num_cells_x_dec->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::numCellsXDec, main_window_ptr);
-        num_cells_x_inc->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::numCellsXInc, main_window_ptr);
+    this->SetSizer(global_sizer);
+}
 
-        wxStaticText* num_cells_x_text = new wxStaticText(num_cells_x_box, wxID_ANY, "5", wxPoint(0, 0), wxSize(30, 20));
+void LayoutToolsWindow::onTextEnter(wxCommandEvent& event)
+{
+    std::cout << "Enter!!" << std::endl;
 
-        sizer_inside->Add(num_cells_x_dec, 0, wxALIGN_CENTER_HORIZONTAL);
-        sizer_inside->Add(num_cells_x_text, 0, wxALIGN_CENTER_HORIZONTAL);
-        sizer_inside->Add(num_cells_x_inc, 0, wxALIGN_CENTER_HORIZONTAL);
-        num_cells_x_box->SetSizer(sizer_inside);
-    }
+    const wxString value = tab_name_ctrl_->GetValue();
+    std::cout << std::string(value.mb_str()) << std::endl;
+}
 
-    {
-        wxBoxSizer* sizer_inside = new wxBoxSizer(wxHORIZONTAL);
-        wxButton* num_cells_y_dec = new wxButton(num_cells_y_box, wxID_ANY, "-", wxPoint(0, 0), wxSize(30, 20));
-        wxButton* num_cells_y_inc = new wxButton(num_cells_y_box, wxID_ANY, "+", wxPoint(0, 0), wxSize(30, 20));
-        num_cells_y_dec->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::numCellsYDec, main_window_ptr);
-        num_cells_y_inc->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::numCellsYInc, main_window_ptr);
-
-        wxStaticText* num_cells_y_text = new wxStaticText(num_cells_y_box, wxID_ANY, "5", wxPoint(0, 0), wxSize(30, 20));
-
-        sizer_inside->Add(num_cells_y_dec, 0, wxALIGN_CENTER_HORIZONTAL);
-        sizer_inside->Add(num_cells_y_text, 0, wxALIGN_CENTER_HORIZONTAL);
-        sizer_inside->Add(num_cells_y_inc, 0, wxALIGN_CENTER_HORIZONTAL);
-        num_cells_y_box->SetSizer(sizer_inside);
-    }
+void LayoutToolsWindow::setupInspector()
+{
+    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
 
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
-        wxButton* new_element_button = new wxButton(right_box, wxID_ANY, "New element", wxPoint(0, 0));
-        wxButton* delete_element_button = new wxButton(right_box, wxID_ANY, "Delete element", wxPoint(0, 0));
+        wxStaticText* tab_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Tab name", wxDefaultPosition, wxDefaultSize);
+        tab_name_ctrl_ = new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+        // tab_name_ctrl_->Bind(wxEVT_TEXT_ENTER, &LayoutToolsWindow::onTextEnter, this);
+        tab_name_ctrl_->Bind(wxEVT_TEXT_ENTER, &MainWindow::changeCurrentTabName, main_window_ptr);
+        // num_cells_x_dec->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::numCellsXDec, main_window_ptr);
+        // num_cells_x_inc->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::numCellsXInc, main_window_ptr);
+
+        sizer_inside->Add(tab_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
+        sizer_inside->Add(tab_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);
+        inspector_box_->SetSizer(sizer_inside);
+    }
+}
+
+void LayoutToolsWindow::setupShapes()
+{
+    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
+
+    {
+        wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
+        wxButton* new_element_button = new wxButton(shapes_box_, wxID_ANY, "New element", wxDefaultPosition);
+        wxButton* delete_element_button = new wxButton(shapes_box_, wxID_ANY, "Delete element", wxDefaultPosition);
         new_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::newElement, main_window_ptr);
         delete_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::deleteElement, main_window_ptr);
 
         sizer_inside->Add(new_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(delete_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
-        right_box->SetSizer(sizer_inside);
+        shapes_box_->SetSizer(sizer_inside);
     }
-
-    this->SetSizer(global_sizer);
 }
 
 void LayoutToolsWindow::setPosAndSize(wxPoint pos, wxSize size)

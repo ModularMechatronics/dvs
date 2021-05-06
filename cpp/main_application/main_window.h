@@ -78,6 +78,7 @@ public:
     void numCellsXDec(wxCommandEvent& event);
     void numCellsYInc(wxCommandEvent& event);
     void numCellsYDec(wxCommandEvent& event);
+    void changeCurrentTabName(wxCommandEvent& event);
 
     void newElement(wxCommandEvent& event);
     void deleteElement(wxCommandEvent& event);

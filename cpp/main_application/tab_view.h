@@ -41,6 +41,11 @@ public:
         return name_;
     }
 
+    void setName(const std::string& new_name)
+    {
+        name_ = new_name;
+    }
+
     void startEdit();
     void stopEdit();
 
