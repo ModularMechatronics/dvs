@@ -54,6 +54,22 @@ void MainWindow::OnSize(wxSizeEvent& event)
     }
 }
 
+void MainWindow::changeCurrentTabName(wxCommandEvent& event)
+{
+    const wxString value = event.GetString();
+
+    if(std::string(value.mb_str()) != "")
+    {
+        const int current_tab_idx = tabs_view->GetSelection();
+        if(current_tab_idx != wxNOT_FOUND)
+        {
+            tabs_view->SetPageText(current_tab_idx, value);
+            tab_elements_.at(current_tab_idx)->setName(std::string(value.mb_str()));
+
+        }
+    }
+}
+
 void MainWindow::numCellsXInc(wxCommandEvent& event)
 {
     (void)event;

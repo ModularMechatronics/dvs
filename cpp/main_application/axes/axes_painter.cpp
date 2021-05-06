@@ -12,6 +12,20 @@ using namespace dvs;
 
 AxesPainter::AxesPainter(const AxesSettings& axes_settings) : axes_settings_(axes_settings) {}
 
+void drawSelectedSilhouette()
+{
+    setColor(0.0f, 0.0f, 0.0f);
+    glLineWidth(5.0f);
+    const float f = 1.0f;
+    const float ymin = -1.0f;
+    drawLine2D(-f, ymin, -f, f);
+    drawLine2D(-f, ymin, f, ymin);
+
+    drawLine2D(-f, f, f, f);
+    drawLine2D(f, ymin, f, f);
+    glLineWidth(1.0f);
+}
+
 void drawDebugSilhouette()
 {
     setColor(0.0f, 0.0f, 0.0f);
@@ -29,7 +43,8 @@ void drawDebugSilhouette()
 void AxesPainter::paint(const AxesLimits& axes_limits,
                         const ViewAngles& view_angles,
                         const GridVectors& gv,
-                        const CoordinateConverter& coord_converter)
+                        const CoordinateConverter& coord_converter,
+                        const bool is_selected)
 {
     // TODO: Set state variable that increments for every call, and assert in the beginning
     // of every call that it has the right value (thus asserting that the call order is correct)
@@ -61,6 +76,10 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
     drawAxisNumbers(gv_, axes_limits_, view_angles_, coord_converter_, width_, height_);
 
     printViewAnglesInPlotWindow();
+    if(is_selected)
+    {
+        drawSelectedSilhouette();
+    }
     drawDebugSilhouette();
 }
 

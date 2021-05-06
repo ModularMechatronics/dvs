@@ -59,20 +59,18 @@ void TabView::resetSelectionForAllChildren()
     for(auto it : gui_elements_)
     {
         it.second->resetSelection();
+        it.second->refresh();
     }
 }
 
 void TabView::mouseLeftPressed(wxMouseEvent& event)
 {
-    for(auto it : gui_elements_)
-    {
-        it.second->resetSelection();
-    }
+    resetSelectionForAllChildren();
 }
 
 void TabView::mouseLeftReleased(wxMouseEvent& event)
 {
-    std::cout << "Mouse released" << std::endl;
+
 }
 
 void TabView::newElement()

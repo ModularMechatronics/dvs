@@ -63,6 +63,7 @@ public:
     void hide() override;
     void resetSelection() override;
     void destroy() override;
+    void refresh() override;
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);

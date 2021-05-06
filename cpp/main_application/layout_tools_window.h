@@ -24,12 +24,20 @@
 class LayoutToolsWindow : public wxFrame
 {
 private:
+    wxStaticBox* shapes_box_;
+    wxStaticBox* inspector_box_;
+    wxTextCtrl* tab_name_ctrl_;
+    wxFrame* main_window_;
+
+    void onTextEnter(wxCommandEvent& event);
 
 public:
 
     LayoutToolsWindow() = default;
     LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize size);
     void setPosAndSize(wxPoint pos, wxSize size);
+    void setupInspector();
+    void setupShapes();
 };
 
 #endif
