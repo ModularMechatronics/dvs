@@ -9,6 +9,8 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
     main_window_ = main_window;
 
     MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
+    Bind(wxEVT_CLOSE_WINDOW, &LayoutToolsWindow::OnClose, this);
+    // Bind(wxEVT_CLOSE_WINDOW, &MainWindow::OnClose, this);
 
     shapes_box_ = new wxStaticBox(this, wxID_ANY, "Shapes");
     inspector_box_ = new wxStaticBox(this, wxID_ANY, "Inspector");
@@ -23,12 +25,11 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
     this->SetSizer(global_sizer);
 }
 
-void LayoutToolsWindow::onTextEnter(wxCommandEvent& event)
+void LayoutToolsWindow::OnClose(wxCloseEvent &event)
 {
-    std::cout << "Enter!!" << std::endl;
-
-    const wxString value = tab_name_ctrl_->GetValue();
-    std::cout << std::string(value.mb_str()) << std::endl;
+    this->Hide();
+    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
+    main_window_ptr->disableEditing();
 }
 
 void LayoutToolsWindow::setupInspector()

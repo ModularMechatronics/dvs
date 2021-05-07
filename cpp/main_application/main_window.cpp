@@ -71,6 +71,17 @@ void MainWindow::addNewTab(wxCommandEvent& event)
     current_tab_num_++;
 }
 
+void MainWindow::disableEditing()
+{
+    is_editing_ = false;
+    for(auto te : tab_elements_)
+    {
+        te->stopEdit();
+    }
+    toolbar_->DeleteTool(wxID_HIGHEST + 2);
+    toolbar_->DeleteTool(wxID_HIGHEST + 3);
+}
+
 void MainWindow::deleteTab(wxCommandEvent& event)
 {
     const int current_tab_idx = tabs_view->GetSelection();
@@ -85,17 +96,24 @@ void MainWindow::editLayout(wxCommandEvent& event)
 {
     if(is_editing_)
     {
+        layout_tools_window_->Hide();
         for(auto te : tab_elements_)
         {
             te->stopEdit();
         }
+        toolbar_->DeleteTool(wxID_HIGHEST + 2);
+        toolbar_->DeleteTool(wxID_HIGHEST + 3);
     }
     else
     {
+        layout_tools_window_->Show();
         for(auto te : tab_elements_)
         {
             te->startEdit();
         }
+        toolbar_->AddTool(wxID_HIGHEST + 2, wxT("Delete current tab"), tb_delete);
+        toolbar_->AddTool(wxID_HIGHEST + 3, wxT("New tab"), tb_add);
+        toolbar_->Realize();
     }
     is_editing_ = !is_editing_;
 }
@@ -136,20 +154,41 @@ MainWindow::MainWindow(const wxString& title)
     // Bind(wxEVT_CONTEXT_MENU, &MainWindow::onShowContextMenu, this);
     // Bind(wxEVT_COMMAND_MENU_SELECTED, &MainWindow::onRightClickMenu, this, MENU_ID_CONTEXT_1, MENU_ID_CONTEXT_3);
 
+
+    wxMenuBar* m_pMenuBar = new wxMenuBar();
+    // File Menu
+    wxMenu* m_pFileMenu = new wxMenu();
+    m_pFileMenu->Append(wxID_OPEN, _T("&Open"));
+    m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
+    m_pFileMenu->Append(wxID_SAVE, _T("&Save As..."));
+    m_pFileMenu->AppendSeparator();
+    m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
+    m_pMenuBar->Append(m_pFileMenu, _T("&File"));
+    // About menu
+    wxMenu* m_pHelpMenu = new wxMenu();
+    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
+    m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
+
+    // Bind(wxID_SAVE, &MainWindow::saveProjCallback, this);
+
+    SetMenuBar(m_pMenuBar);
+    wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
+
     current_tab_num_ = 0;
 
     wxImage::AddHandler(new wxPNGHandler);
 
-    wxBitmap tb_edit(wxT("../icons/edit.png"), wxBITMAP_TYPE_PNG);
-    wxBitmap tb_delete(wxT("../icons/delete.png"), wxBITMAP_TYPE_PNG);
-    wxBitmap tb_done(wxT("../icons/done.png"), wxBITMAP_TYPE_PNG);
-    wxBitmap tb_add(wxT("../icons/add.png"), wxBITMAP_TYPE_PNG);
+    tb_edit = wxBitmap(wxT("../icons/edit.png"), wxBITMAP_TYPE_PNG);
+    tb_delete = wxBitmap(wxT("../icons/delete.png"), wxBITMAP_TYPE_PNG);
+    tb_done = wxBitmap(wxT("../icons/done.png"), wxBITMAP_TYPE_PNG);
+    tb_add = wxBitmap(wxT("../icons/add.png"), wxBITMAP_TYPE_PNG);
 
-    wxToolBar *toolbar = CreateToolBar();
-    toolbar->AddTool(wxID_HIGHEST + 1, wxT("Edit layout"), tb_edit);
-    toolbar->AddTool(wxID_HIGHEST + 2, wxT("Delete current tab"), tb_delete);
-    toolbar->AddTool(wxID_HIGHEST + 3, wxT("New tab"), tb_add);
-    toolbar->Realize();
+    toolbar_ = CreateToolBar();
+
+    toolbar_->AddTool(wxID_HIGHEST + 1, wxT("Edit layout"), tb_edit);
+    // toolbar_->AddTool(wxID_HIGHEST + 2, wxT("Delete current tab"), tb_delete);
+    // toolbar_->AddTool(wxID_HIGHEST + 3, wxT("New tab"), tb_add);
+    toolbar_->Realize();
 
     Connect(wxID_HIGHEST + 1, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::editLayout));
     Connect(wxID_HIGHEST + 2, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::deleteTab));
@@ -159,7 +198,7 @@ MainWindow::MainWindow(const wxString& title)
     initial_height_ = 700;
 
     layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(300, 300));
-    layout_tools_window_->Show();
+    layout_tools_window_->Hide();
 
     setupGui();
 
@@ -167,6 +206,11 @@ MainWindow::MainWindow(const wxString& title)
 
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);
+}
+
+void MainWindow::saveProjCallback(wxCommandEvent& event)
+{
+    std::cout << "Save!!" << std::endl;
 }
 
 void MainWindow::OnTimer(wxTimerEvent&)

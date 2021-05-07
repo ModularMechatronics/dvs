@@ -1,0 +1,4 @@
+./configure --prefix=/usr/local/Cellar/wxmac/HEAD-0585c96_1 --enable-clipboard --enable-controls --enable-dataviewctrl --enable-display --enable-dnd --enable-graphics_ctx --enable-std_string --enable-svg --enable-unicode --enable-webkit --enable-we
+ --enable-unicode --with-expat --with-libjpeg --with-libpng --with-libtiff --with-opengl --with-osx_cocoa --with-zlib --disable-precomp-headers --with-macosx-version-min=10.15
+
+./configure --with-opengl --with-osx_cocoa --disable-shared --disable-dynamicloader --enable-svg=off --enable-unicode --with-expat --with-libjpeg --with-libpng --with-libtiff --with-opengl --with-osx_cocoa --with-zlib --disable-precomp-headers --with-macosx-version-min=10.15

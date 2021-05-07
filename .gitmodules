@@ -7,3 +7,6 @@
 [submodule "cpp/externals/glog"]
 	path = cpp/externals/glog
 	url = git@github.com:google/glog.git
+[submodule "cpp/externals/wxwidgets"]
+	path = cpp/externals/wxwidgets
+	url = git@github.com:wxWidgets/wxWidgets.git

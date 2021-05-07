@@ -29,8 +29,6 @@ private:
     wxTextCtrl* tab_name_ctrl_;
     wxFrame* main_window_;
 
-    void onTextEnter(wxCommandEvent& event);
-
 public:
 
     LayoutToolsWindow() = default;
@@ -38,6 +36,8 @@ public:
     void setPosAndSize(wxPoint pos, wxSize size);
     void setupInspector();
     void setupShapes();
+
+    virtual void OnClose(wxCloseEvent &event);
 };
 
 #endif
