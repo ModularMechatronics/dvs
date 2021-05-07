@@ -65,9 +65,7 @@ private:
     void deleteTab(wxCommandEvent& event);
     void editLayout(wxCommandEvent& event);
 
-    void saveProject() const;
-    void saveProjCallback(wxCommandEvent& event);
-
+    void saveProject(wxCommandEvent& event);
     // void onRightClickMenu(wxCommandEvent& event);
     // void onShowContextMenu(wxContextMenuEvent& event);
     // enum MenuIDs { MENU_ID_CONTEXT_1 = wxID_HIGHEST + 4, MENU_ID_CONTEXT_2, MENU_ID_CONTEXT_3 };
