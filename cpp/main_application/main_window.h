@@ -41,6 +41,12 @@ private:
     bool current_gui_element_set_;
     int current_tab_num_;
 
+    wxToolBar* toolbar_;
+    wxBitmap tb_edit;
+    wxBitmap tb_delete;
+    wxBitmap tb_done;
+    wxBitmap tb_add;
+
     bool is_editing_;
 
     wxNotebook* tabs_view;
@@ -60,6 +66,7 @@ private:
     void editLayout(wxCommandEvent& event);
 
     void saveProject() const;
+    void saveProjCallback(wxCommandEvent& event);
 
     // void onRightClickMenu(wxCommandEvent& event);
     // void onShowContextMenu(wxContextMenuEvent& event);
@@ -82,6 +89,8 @@ public:
 
     void newElement(wxCommandEvent& event);
     void deleteElement(wxCommandEvent& event);
+
+    void disableEditing();
 };
 
 #endif
