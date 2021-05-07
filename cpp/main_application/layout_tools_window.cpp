@@ -39,7 +39,7 @@ void LayoutToolsWindow::setupInspector()
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxStaticText* tab_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Tab name", wxDefaultPosition, wxDefaultSize);
         tab_name_ctrl_ = new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-        tab_name_ctrl_->Bind(wxEVT_TEXT_ENTER, &MainWindow::changeCurrentTabName, main_window_ptr);
+        tab_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::changeCurrentTabName, main_window_ptr);
 
         sizer_inside->Add(tab_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(tab_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);
