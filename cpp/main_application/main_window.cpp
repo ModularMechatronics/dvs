@@ -18,7 +18,7 @@ std::string getProjectFilePath()
 
 MainWindow::~MainWindow() {}
 
-void MainWindow::saveProject() const
+void MainWindow::saveProject(wxCommandEvent& event)
 {
     const std::string proj_file_path = getProjectFilePath();
 
@@ -169,7 +169,7 @@ MainWindow::MainWindow(const wxString& title)
     m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
     m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
 
-    // Bind(wxID_SAVE, &MainWindow::saveProjCallback, this);
+    Bind(wxEVT_MENU, &MainWindow::saveProject, this, wxID_SAVE);
 
     SetMenuBar(m_pMenuBar);
     wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
@@ -186,8 +186,6 @@ MainWindow::MainWindow(const wxString& title)
     toolbar_ = CreateToolBar();
 
     toolbar_->AddTool(wxID_HIGHEST + 1, wxT("Edit layout"), tb_edit);
-    // toolbar_->AddTool(wxID_HIGHEST + 2, wxT("Delete current tab"), tb_delete);
-    // toolbar_->AddTool(wxID_HIGHEST + 3, wxT("New tab"), tb_add);
     toolbar_->Realize();
 
     Connect(wxID_HIGHEST + 1, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::editLayout));
@@ -206,11 +204,6 @@ MainWindow::MainWindow(const wxString& title)
 
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);
-}
-
-void MainWindow::saveProjCallback(wxCommandEvent& event)
-{
-    std::cout << "Save!!" << std::endl;
 }
 
 void MainWindow::OnTimer(wxTimerEvent&)

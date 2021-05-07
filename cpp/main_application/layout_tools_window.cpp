@@ -10,7 +10,6 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
 
     MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
     Bind(wxEVT_CLOSE_WINDOW, &LayoutToolsWindow::OnClose, this);
-    // Bind(wxEVT_CLOSE_WINDOW, &MainWindow::OnClose, this);
 
     shapes_box_ = new wxStaticBox(this, wxID_ANY, "Shapes");
     inspector_box_ = new wxStaticBox(this, wxID_ANY, "Inspector");
@@ -40,10 +39,7 @@ void LayoutToolsWindow::setupInspector()
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxStaticText* tab_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Tab name", wxDefaultPosition, wxDefaultSize);
         tab_name_ctrl_ = new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-        // tab_name_ctrl_->Bind(wxEVT_TEXT_ENTER, &LayoutToolsWindow::onTextEnter, this);
         tab_name_ctrl_->Bind(wxEVT_TEXT_ENTER, &MainWindow::changeCurrentTabName, main_window_ptr);
-        // num_cells_x_dec->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::numCellsXDec, main_window_ptr);
-        // num_cells_x_inc->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::numCellsXInc, main_window_ptr);
 
         sizer_inside->Add(tab_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(tab_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);
