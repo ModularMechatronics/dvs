@@ -35,6 +35,8 @@ void LayoutToolsWindow::setupInspector()
 {
     MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
 
+    wxBoxSizer* global_sizer = new wxBoxSizer(wxVERTICAL);
+
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxStaticText* tab_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Tab name", wxDefaultPosition, wxDefaultSize);
@@ -43,8 +45,19 @@ void LayoutToolsWindow::setupInspector()
 
         sizer_inside->Add(tab_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(tab_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);
-        inspector_box_->SetSizer(sizer_inside);
+        global_sizer->Add(sizer_inside);
     }
+    {
+        wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
+        wxStaticText* element_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Element name", wxDefaultPosition, wxDefaultSize);
+        element_name_ctrl_ = new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+        element_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::changeCurrentElementName, main_window_ptr);
+
+        sizer_inside->Add(element_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
+        sizer_inside->Add(element_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);
+        global_sizer->Add(sizer_inside);
+    }
+    inspector_box_->SetSizer(global_sizer);
 }
 
 void LayoutToolsWindow::setupShapes()
@@ -62,6 +75,16 @@ void LayoutToolsWindow::setupShapes()
         sizer_inside->Add(delete_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
         shapes_box_->SetSizer(sizer_inside);
     }
+}
+
+void LayoutToolsWindow::currentTabChanged(const std::string& tab_name)
+{
+    tab_name_ctrl_->SetValue(tab_name);
+}
+
+void LayoutToolsWindow::currentElementChanged(const std::string& element_name)
+{
+    element_name_ctrl_->SetValue(element_name);
 }
 
 void LayoutToolsWindow::setPosAndSize(wxPoint pos, wxSize size)

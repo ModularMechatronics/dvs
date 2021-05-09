@@ -254,6 +254,7 @@ void PlotWindowGLPane::destroy()
 void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
 {
     tab_view_parent_->resetSelectionForAllChildren();
+    tab_view_parent_->setSelectedElementName(element_settings_.name);
     is_selected_ = true;
 
     const wxPoint current_point = event.GetPosition();

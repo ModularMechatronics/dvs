@@ -92,7 +92,7 @@ void MainWindow::deleteTab(wxCommandEvent& event)
     }
 }
 
-void MainWindow::editLayout(wxCommandEvent& event)
+void MainWindow::toggleEditLayout(wxCommandEvent& event)
 {
     if(is_editing_)
     {
@@ -188,7 +188,7 @@ MainWindow::MainWindow(const wxString& title)
     toolbar_->AddTool(wxID_HIGHEST + 1, wxT("Edit layout"), tb_edit);
     toolbar_->Realize();
 
-    Connect(wxID_HIGHEST + 1, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::editLayout));
+    Connect(wxID_HIGHEST + 1, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::toggleEditLayout));
     Connect(wxID_HIGHEST + 2, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::deleteTab));
     Connect(wxID_HIGHEST + 3, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::addNewTab));
 

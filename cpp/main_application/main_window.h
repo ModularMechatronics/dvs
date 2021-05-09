@@ -56,14 +56,18 @@ private:
     int initial_width_;
     int initial_height_;
 
+    std::string current_tab_name_;
+    std::string current_element_name_;
+
     void OnTimer(wxTimerEvent&);
     void setupGui();
     void setCurrentElement(const internal::FunctionHeader& hdr);
     void receiveData();
 
+    void tabChanged(wxCommandEvent& event);
     void addNewTab(wxCommandEvent& event);
     void deleteTab(wxCommandEvent& event);
-    void editLayout(wxCommandEvent& event);
+    void toggleEditLayout(wxCommandEvent& event);
 
     void saveProject(wxCommandEvent& event);
     // void onRightClickMenu(wxCommandEvent& event);
@@ -79,11 +83,8 @@ public:
     virtual void OnSize(wxSizeEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
-    void numCellsXInc(wxCommandEvent& event);
-    void numCellsXDec(wxCommandEvent& event);
-    void numCellsYInc(wxCommandEvent& event);
-    void numCellsYDec(wxCommandEvent& event);
     void changeCurrentTabName(wxCommandEvent& event);
+    void changeCurrentElementName(wxCommandEvent& event);
 
     void newElement(wxCommandEvent& event);
     void deleteElement(wxCommandEvent& event);

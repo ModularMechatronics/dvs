@@ -29,12 +29,15 @@ private:
     float grid_size_;
     int current_unnamed_idx_;
     bool is_editing_;
+    std::string name_of_selected_element_;
 
 public:
     TabView() = default;
     TabView(wxNotebook* parent, const project_file::Tab& tab);
     void setSize(const wxSize& new_size);
     void newElement();
+    void setSelectedElementName(const std::string& new_name);
+    std::string getSelectedElementName() const;
 
     std::string getName() const
     {

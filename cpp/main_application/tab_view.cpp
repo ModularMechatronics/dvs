@@ -63,14 +63,27 @@ void TabView::resetSelectionForAllChildren()
     }
 }
 
+void TabView::setSelectedElementName(const std::string& new_name)
+{
+    name_of_selected_element_ = new_name;
+}
+
 void TabView::mouseLeftPressed(wxMouseEvent& event)
 {
+    // Since this event will only be caught if the mouse is pressed outside of an
+    // element, we know we can deselect all elements.
     resetSelectionForAllChildren();
+    name_of_selected_element_ = "";
 }
 
 void TabView::mouseLeftReleased(wxMouseEvent& event)
 {
 
+}
+
+std::string TabView::getSelectedElementName() const
+{
+    return name_of_selected_element_;
 }
 
 void TabView::newElement()
