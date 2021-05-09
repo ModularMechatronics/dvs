@@ -27,6 +27,7 @@ private:
     wxStaticBox* shapes_box_;
     wxStaticBox* inspector_box_;
     wxTextCtrl* tab_name_ctrl_;
+    wxTextCtrl* element_name_ctrl_;
     wxFrame* main_window_;
 
 public:
@@ -36,6 +37,9 @@ public:
     void setPosAndSize(wxPoint pos, wxSize size);
     void setupInspector();
     void setupShapes();
+
+    void currentTabChanged(const std::string& tab_name);
+    void currentElementChanged(const std::string& element_name);
 
     virtual void OnClose(wxCloseEvent &event);
 };

@@ -26,6 +26,8 @@ void MainWindow::setupGui()
     tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
+    Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MainWindow::tabChanged, this);
+
     wxBoxSizer* tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
@@ -40,6 +42,23 @@ void MainWindow::setupGui()
 
         tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
     }
+
+    const int current_tab_idx = tabs_view->GetSelection();
+    if(current_tab_idx != wxNOT_FOUND)
+    {
+        current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
+    }
+    layout_tools_window_->currentTabChanged(current_tab_name_);
+}
+
+void MainWindow::tabChanged(wxCommandEvent& event)
+{
+    const int current_tab_idx = tabs_view->GetSelection();
+    if(current_tab_idx != wxNOT_FOUND)
+    {
+        current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
+    }
+    layout_tools_window_->currentTabChanged(current_tab_name_);
 }
 
 void MainWindow::OnSize(wxSizeEvent& event)
@@ -52,6 +71,13 @@ void MainWindow::OnSize(wxSizeEvent& event)
     {
         tab_elements_[k]->setSize(new_size);
     }
+}
+
+void MainWindow::changeCurrentElementName(wxCommandEvent& event)
+{
+    const wxString value = event.GetString();
+
+    std::cout << std::string(value.mb_str()) << std::endl;
 }
 
 void MainWindow::changeCurrentTabName(wxCommandEvent& event)
@@ -68,30 +94,6 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
 
         }
     }
-}
-
-void MainWindow::numCellsXInc(wxCommandEvent& event)
-{
-    (void)event;
-    // prototype_view_->changeNumCellsX(1);
-}
-
-void MainWindow::numCellsXDec(wxCommandEvent& event)
-{
-    (void)event;
-    // prototype_view_->changeNumCellsX(-1);
-}
-
-void MainWindow::numCellsYInc(wxCommandEvent& event)
-{
-    (void)event;
-    // prototype_view_->changeNumCellsY(1);
-}
-
-void MainWindow::numCellsYDec(wxCommandEvent& event)
-{
-    (void)event;
-    // prototype_view_->changeNumCellsY(-1);
 }
 
 void MainWindow::newElement(wxCommandEvent& event)
