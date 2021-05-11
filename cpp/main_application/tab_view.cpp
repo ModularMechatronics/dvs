@@ -81,8 +81,24 @@ void TabView::mouseLeftReleased(wxMouseEvent& event)
 
 }
 
-std::string TabView::getSelectedElementName() const
+void TabView::setFirstElementSelected()
 {
+    if(gui_elements_.size() > 0)
+    {
+        gui_elements_.begin()->second->setSelection();
+        gui_elements_.begin()->second->refresh();
+    }
+}
+
+std::string TabView::getSelectedElementName()
+{
+    for(auto it : gui_elements_)
+    {
+        if(it.second->isSelected())
+        {
+            name_of_selected_element_ = it.second->getName();
+        }
+    }
     return name_of_selected_element_;
 }
 

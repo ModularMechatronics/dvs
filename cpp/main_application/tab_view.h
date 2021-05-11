@@ -37,7 +37,8 @@ public:
     void setSize(const wxSize& new_size);
     void newElement();
     void setSelectedElementName(const std::string& new_name);
-    std::string getSelectedElementName() const;
+    void setFirstElementSelected();
+    std::string getSelectedElementName();
 
     std::string getName() const
     {

@@ -24,8 +24,8 @@
 #include "layout_tools_window.h"
 #include "project_file.h"
 #include "tab_view.h"
+#include "events.h"
 
-wxDEFINE_EVENT(EVENT_TYPE_HANDLE_NEW_DATA, wxCommandEvent);
 
 class MainWindow : public wxFrame
 {
@@ -84,7 +84,8 @@ public:
     void OnChildDestroy(wxCloseEvent& event);
 
     void changeCurrentTabName(wxCommandEvent& event);
-    void changeCurrentElementName(wxCommandEvent& event);
+    void currentElementNameChanged(wxCommandEvent& event);
+    void currentElementSelectionChanged(wxCommandEvent& event);
 
     void newElement(wxCommandEvent& event);
     void deleteElement(wxCommandEvent& event);

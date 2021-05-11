@@ -62,6 +62,7 @@ public:
     void show() override;
     void hide() override;
     void resetSelection() override;
+    void setSelection() override;
     void destroy() override;
     void refresh() override;
 

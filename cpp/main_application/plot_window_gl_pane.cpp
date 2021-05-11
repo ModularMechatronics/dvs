@@ -7,7 +7,7 @@
 #include "axes/axes.h"
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_low_level.h"
-
+#include "events.h"
 #include "enumerations.h"
 
 using namespace dvs::internal;
@@ -241,6 +241,11 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     Refresh();
 }
 
+void PlotWindowGLPane::setSelection()
+{
+    is_selected_ = true;
+}
+
 void PlotWindowGLPane::resetSelection()
 {
     is_selected_ = false;
@@ -254,7 +259,11 @@ void PlotWindowGLPane::destroy()
 void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
 {
     tab_view_parent_->resetSelectionForAllChildren();
-    tab_view_parent_->setSelectedElementName(element_settings_.name);
+    wxCommandEvent evt(MY_EVENT, GetId());
+    evt.SetEventObject(this);
+    evt.SetString(element_settings_.name);
+    ProcessWindowEvent(evt);
+
     is_selected_ = true;
 
     const wxPoint current_point = event.GetPosition();
