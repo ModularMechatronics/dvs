@@ -59,6 +59,7 @@ public:
     virtual void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr) = 0;
     virtual void setPosAndSize(const wxPoint& pos, const wxSize& size) = 0;
     virtual void resetSelection() = 0;
+    virtual void setSelection() = 0;
     virtual void show() = 0;
     virtual void hide() = 0;
     virtual void destroy() = 0;

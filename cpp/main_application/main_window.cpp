@@ -7,6 +7,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "layout_tools_window.h"
+#include "events.h"
 #include "math/math.h"
 
 using namespace dvs::internal;
@@ -197,6 +199,8 @@ MainWindow::MainWindow(const wxString& title)
 
     layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(300, 300));
     layout_tools_window_->Hide();
+
+    Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
 
     setupGui();
 

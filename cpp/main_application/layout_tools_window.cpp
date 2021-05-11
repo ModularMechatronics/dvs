@@ -1,6 +1,7 @@
 #include "layout_tools_window.h"
 
 #include "main_window.h"
+#include "events.h"
 
 LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize size) : wxFrame(main_window, wxID_ANY, "Layout tools", pos, size)
 {
@@ -22,6 +23,8 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
     setupShapes();
 
     this->SetSizer(global_sizer);
+
+    // Bind(MY_EVENT, &LayoutToolsWindow::currentElementNameChanged, this);
 }
 
 void LayoutToolsWindow::OnClose(wxCloseEvent &event)
@@ -51,7 +54,7 @@ void LayoutToolsWindow::setupInspector()
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxStaticText* element_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Element name", wxDefaultPosition, wxDefaultSize);
         element_name_ctrl_ = new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-        element_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::changeCurrentElementName, main_window_ptr);
+        // element_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::currentElementChanged, main_window_ptr);
 
         sizer_inside->Add(element_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(element_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);
@@ -82,9 +85,17 @@ void LayoutToolsWindow::currentTabChanged(const std::string& tab_name)
     tab_name_ctrl_->SetValue(tab_name);
 }
 
-void LayoutToolsWindow::currentElementChanged(const std::string& element_name)
+void LayoutToolsWindow::currentElementSelectionChanged(const std::string& name_of_selected)
 {
-    element_name_ctrl_->SetValue(element_name);
+    element_name_ctrl_->SetValue(name_of_selected);
+}
+
+void LayoutToolsWindow::currentElementNameChanged(wxCommandEvent& event)
+{
+    const wxString value = event.GetString();
+    std::cout << "New element 34 selected: " << std::string(value) << std::endl;
+
+    element_name_ctrl_->SetValue(value);
 }
 
 void LayoutToolsWindow::setPosAndSize(wxPoint pos, wxSize size)

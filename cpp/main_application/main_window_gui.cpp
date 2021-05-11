@@ -53,12 +53,20 @@ void MainWindow::setupGui()
 
 void MainWindow::tabChanged(wxCommandEvent& event)
 {
+    for(auto te : tab_elements_)
+    {
+        te->resetSelectionForAllChildren();
+        te->setFirstElementSelected();
+    }
+
     const int current_tab_idx = tabs_view->GetSelection();
     if(current_tab_idx != wxNOT_FOUND)
     {
         current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
+        current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
     }
     layout_tools_window_->currentTabChanged(current_tab_name_);
+    layout_tools_window_->currentElementSelectionChanged(current_element_name_);
 }
 
 void MainWindow::OnSize(wxSizeEvent& event)
@@ -73,12 +81,18 @@ void MainWindow::OnSize(wxSizeEvent& event)
     }
 }
 
-void MainWindow::changeCurrentElementName(wxCommandEvent& event)
+void MainWindow::currentElementNameChanged(wxCommandEvent& event)
+{
+    const wxString value = event.GetString();
+}
+
+void MainWindow::currentElementSelectionChanged(wxCommandEvent& event)
 {
     const wxString value = event.GetString();
 
-    std::cout << std::string(value.mb_str()) << std::endl;
+    layout_tools_window_->currentElementSelectionChanged(std::string(value.mb_str()));
 }
+
 
 void MainWindow::changeCurrentTabName(wxCommandEvent& event)
 {
@@ -91,7 +105,6 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
         {
             tabs_view->SetPageText(current_tab_idx, value);
             tab_elements_.at(current_tab_idx)->setName(std::string(value.mb_str()));
-
         }
     }
 }

@@ -31,7 +31,6 @@ private:
     wxFrame* main_window_;
 
 public:
-
     LayoutToolsWindow() = default;
     LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize size);
     void setPosAndSize(wxPoint pos, wxSize size);
@@ -39,7 +38,8 @@ public:
     void setupShapes();
 
     void currentTabChanged(const std::string& tab_name);
-    void currentElementChanged(const std::string& element_name);
+    void currentElementNameChanged(wxCommandEvent& event);
+    void currentElementSelectionChanged(const std::string& name_of_selected);
 
     virtual void OnClose(wxCloseEvent &event);
 };
