@@ -40,6 +40,7 @@ private:
     wxPoint pos_at_press_;
     wxSize size_at_press_;
     float grid_size_;
+    float edit_size_margin_;
 
     PlotDataHandler plot_data_handler_;
     

@@ -73,6 +73,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const Element& elemen
     is_editing_ = false;
     parent_size_ = parent->GetSize();
     grid_size_ = grid_size;
+    edit_size_margin_ = 20.0f;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -275,10 +276,10 @@ void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
     bnd.y_max = this->GetSize().GetHeight();
 
     Bound2Df bnd_margin;
-    bnd_margin.x_min = bnd.x_min + 10.0f;
-    bnd_margin.x_max = bnd.x_max - 10.0f;
-    bnd_margin.y_min = bnd.y_min + 10.0f;
-    bnd_margin.y_max = bnd.y_max - 10.0f;
+    bnd_margin.x_min = bnd.x_min + edit_size_margin_;
+    bnd_margin.x_max = bnd.x_max - edit_size_margin_;
+    bnd_margin.y_min = bnd.y_min + edit_size_margin_;
+    bnd_margin.y_max = bnd.y_max - edit_size_margin_;
 
     cursor_state_at_press_ = mouseState(bnd, bnd_margin, Vec2Df(current_point.x, current_point.y));
 
@@ -394,10 +395,10 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             bnd.y_max = this->GetSize().GetHeight();
 
             Bound2Df bnd_margin;
-            bnd_margin.x_min = bnd.x_min + 10.0f;
-            bnd_margin.x_max = bnd.x_max - 10.0f;
-            bnd_margin.y_min = bnd.y_min + 10.0f;
-            bnd_margin.y_max = bnd.y_max - 10.0f;
+            bnd_margin.x_min = bnd.x_min + edit_size_margin_;
+            bnd_margin.x_max = bnd.x_max - edit_size_margin_;
+            bnd_margin.y_min = bnd.y_min + edit_size_margin_;
+            bnd_margin.y_max = bnd.y_max - edit_size_margin_;
             const CursorSquareState cms = mouseState(bnd, bnd_margin, Vec2Df(current_point.x, current_point.y));
             switch(cms)
             {
