@@ -20,6 +20,12 @@ std::string getProjectFilePath()
 
 MainWindow::~MainWindow() {}
 
+void MainWindow::editingFinished(wxCommandEvent& event)
+{
+    disableEditing();
+    layout_tools_window_->Hide();
+}
+
 void MainWindow::saveProject(wxCommandEvent& event)
 {
     const std::string proj_file_path = getProjectFilePath();
@@ -75,13 +81,13 @@ void MainWindow::addNewTab(wxCommandEvent& event)
 
 void MainWindow::disableEditing()
 {
+    edit_layout_menu_option_->SetName("Edit layout");
     is_editing_ = false;
     for(auto te : tab_elements_)
     {
         te->stopEdit();
     }
-    toolbar_->DeleteTool(wxID_HIGHEST + 2);
-    toolbar_->DeleteTool(wxID_HIGHEST + 3);
+    toolbar_->Hide();
 }
 
 void MainWindow::deleteTab(wxCommandEvent& event)
@@ -98,24 +104,23 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
 {
     if(is_editing_)
     {
+        edit_layout_menu_option_->SetName("Edit layout");
         layout_tools_window_->Hide();
+        toolbar_->Hide();
         for(auto te : tab_elements_)
         {
             te->stopEdit();
         }
-        toolbar_->DeleteTool(wxID_HIGHEST + 2);
-        toolbar_->DeleteTool(wxID_HIGHEST + 3);
     }
     else
     {
+        edit_layout_menu_option_->SetName("Stop editing");
         layout_tools_window_->Show();
+        toolbar_->Show();
         for(auto te : tab_elements_)
         {
             te->startEdit();
         }
-        toolbar_->AddTool(wxID_HIGHEST + 2, wxT("Delete current tab"), tb_delete);
-        toolbar_->AddTool(wxID_HIGHEST + 3, wxT("New tab"), tb_add);
-        toolbar_->Realize();
     }
     is_editing_ = !is_editing_;
 }
@@ -166,15 +171,21 @@ MainWindow::MainWindow(const wxString& title)
     m_pFileMenu->AppendSeparator();
     m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
     m_pMenuBar->Append(m_pFileMenu, _T("&File"));
+
+    wxMenu* m_edit_menu = new wxMenu();
+
+    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
+    m_pMenuBar->Append(m_edit_menu, _T("Edit"));
     // About menu
     wxMenu* m_pHelpMenu = new wxMenu();
     m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
     m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
 
     Bind(wxEVT_MENU, &MainWindow::saveProject, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &MainWindow::toggleEditLayout, this, dvs_ids::EDIT_LAYOUT);
 
     SetMenuBar(m_pMenuBar);
-    wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
+    // wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
 
     current_tab_num_ = 0;
 
@@ -182,17 +193,20 @@ MainWindow::MainWindow(const wxString& title)
 
     tb_edit = wxBitmap(wxT("../icons/edit.png"), wxBITMAP_TYPE_PNG);
     tb_delete = wxBitmap(wxT("../icons/delete.png"), wxBITMAP_TYPE_PNG);
-    tb_done = wxBitmap(wxT("../icons/done.png"), wxBITMAP_TYPE_PNG);
+    tb_done = wxBitmap(wxT("../icons/done2.png"), wxBITMAP_TYPE_PNG);
     tb_add = wxBitmap(wxT("../icons/add.png"), wxBITMAP_TYPE_PNG);
 
     toolbar_ = CreateToolBar();
 
-    toolbar_->AddTool(wxID_HIGHEST + 1, wxT("Edit layout"), tb_edit);
+    toolbar_->AddTool(dvs_ids::EDITING_DONE, wxT("Done"), tb_done);
+    toolbar_->AddTool(dvs_ids::DELETE_TAB, wxT("Delete current tab"), tb_delete);
+    toolbar_->AddTool(dvs_ids::ADD_TAB, wxT("New tab"), tb_add);
     toolbar_->Realize();
+    toolbar_->Hide();
 
-    Connect(wxID_HIGHEST + 1, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::toggleEditLayout));
-    Connect(wxID_HIGHEST + 2, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::deleteTab));
-    Connect(wxID_HIGHEST + 3, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::addNewTab));
+    Connect(dvs_ids::EDITING_DONE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::editingFinished));
+    Connect(dvs_ids::DELETE_TAB, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::deleteTab));
+    Connect(dvs_ids::ADD_TAB, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::addNewTab));
 
     initial_width_ = 1500;
     initial_height_ = 700;
