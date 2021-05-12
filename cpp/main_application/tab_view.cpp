@@ -7,7 +7,7 @@ TabView::TabView(wxNotebook* parent, const project_file::Tab& tab) : wxNotebookP
     grid_size_ = 5.0f;
 
     const std::vector<project_file::Element> elements = tab.getElements();
-    this->SetBackgroundColour(wxColor(110, 2, 65));
+    // this->SetBackgroundColour(wxColor(110, 2, 65));
 
     current_unnamed_idx_ = 0;
     is_editing_ = false;

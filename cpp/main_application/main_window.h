@@ -53,6 +53,8 @@ private:
     wxPanel* tab_container;
     LayoutToolsWindow* layout_tools_window_;
 
+    wxMenuItem* edit_layout_menu_option_;
+
     int initial_width_;
     int initial_height_;
 
@@ -68,6 +70,7 @@ private:
     void addNewTab(wxCommandEvent& event);
     void deleteTab(wxCommandEvent& event);
     void toggleEditLayout(wxCommandEvent& event);
+    void editingFinished(wxCommandEvent& event);
 
     void saveProject(wxCommandEvent& event);
     // void onRightClickMenu(wxCommandEvent& event);
