@@ -81,9 +81,15 @@ void MainWindow::OnSize(wxSizeEvent& event)
     }
 }
 
-void MainWindow::currentElementNameChanged(wxCommandEvent& event)
+void MainWindow::changeCurrentElementName(wxCommandEvent& event)
 {
     const wxString value = event.GetString();
+    // std::cout << std::string(value) << std::endl;
+    const int current_tab_idx = tabs_view->GetSelection();
+    if(current_tab_idx != wxNOT_FOUND)
+    {
+        tab_elements_.at(current_tab_idx)->setSelectedElementName(std::string(value.mb_str()));
+    }
 }
 
 void MainWindow::currentElementSelectionChanged(wxCommandEvent& event)

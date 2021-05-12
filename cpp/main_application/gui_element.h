@@ -40,6 +40,12 @@ public:
         return name_;
     }
 
+    void setName(const std::string& new_name)
+    {
+        element_settings_.name = new_name;
+        name_ = new_name;
+    }
+
     void setIsEditing(const bool is_editing)
     {
         is_editing_ = is_editing;

@@ -54,7 +54,7 @@ void LayoutToolsWindow::setupInspector()
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxStaticText* element_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Element name", wxDefaultPosition, wxDefaultSize);
         element_name_ctrl_ = new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-        // element_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::currentElementChanged, main_window_ptr);
+        element_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::changeCurrentElementName, main_window_ptr);
 
         sizer_inside->Add(element_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(element_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);

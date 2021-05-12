@@ -87,7 +87,7 @@ public:
     void OnChildDestroy(wxCloseEvent& event);
 
     void changeCurrentTabName(wxCommandEvent& event);
-    void currentElementNameChanged(wxCommandEvent& event);
+    void changeCurrentElementName(wxCommandEvent& event);
     void currentElementSelectionChanged(wxCommandEvent& event);
 
     void newElement(wxCommandEvent& event);

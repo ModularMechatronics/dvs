@@ -66,6 +66,13 @@ void TabView::resetSelectionForAllChildren()
 void TabView::setSelectedElementName(const std::string& new_name)
 {
     name_of_selected_element_ = new_name;
+    for(auto it : gui_elements_)
+    {
+        if(it.second->isSelected())
+        {
+            it.second->setName(new_name);
+        }
+    }
 }
 
 void TabView::mouseLeftPressed(wxMouseEvent& event)
