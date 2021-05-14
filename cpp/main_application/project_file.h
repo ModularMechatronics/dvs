@@ -43,7 +43,7 @@ enum class TabType
 constexpr char* grid_str = "grid";
 constexpr char* freeform_str = "freeform";
 
-class Element
+class ElementSettings
 {
 public:
     float x;
@@ -53,12 +53,12 @@ public:
 
     std::string name;
 
-    Element() = default;
-    Element(const float x_, const float y_, const float width_, const float height_, const std::string& name_) 
+    ElementSettings() = default;
+    ElementSettings(const float x_, const float y_, const float width_, const float height_, const std::string& name_) 
         : x(x_), y(y_), width(width_), height(height_), name(name_)
     {}
 
-    Element(const nlohmann::json& j)
+    ElementSettings(const nlohmann::json& j)
     {
         name = j["name"];
 
@@ -68,7 +68,7 @@ public:
         height = j["height"];
     }
 
-    /*bool operator==(const Element& other)
+    /*bool operator==(const ElementSettings& other)
     {
         return (x == other.x) && 
             (y == other.y) && 
@@ -77,7 +77,7 @@ public:
             (name == other.name);
     }
 
-    bool operator!=(const Element& other)
+    bool operator!=(const ElementSettings& other)
     {
         return !(*this == other);
     }*/
@@ -86,7 +86,7 @@ public:
 class Tab
 {
 private:
-    std::vector<Element> elements_;
+    std::vector<ElementSettings> elements_;
 
     std::string name_;
 
@@ -112,14 +112,14 @@ public:
         name_ = name;
     }
 
-    std::vector<Element> getElements() const
+    std::vector<ElementSettings> getElementSettingsList() const
     {
         return elements_;
     }
 
     bool hasElementWithName(const std::string& name) const
     {
-        for(const Element& e : elements_)
+        for(const ElementSettings& e : elements_)
         {
             if(e.name == name)
             {
@@ -129,10 +129,10 @@ public:
         return false;
     }
 
-    Element getElementWithName(const std::string& name) const
+    ElementSettings getElementWithName(const std::string& name) const
     {
-        Element res(0.0f, 0.0f, 0.0f, 0.0f, "");
-        for(const Element& e : elements_)
+        ElementSettings res(0.0f, 0.0f, 0.0f, 0.0f, "");
+        for(const ElementSettings& e : elements_)
         {
             if(e.name == name)
             {
@@ -154,7 +154,7 @@ public:
         {
             if(other.hasElementWithName(elements_[k].name))
             {
-                const Element other_element = other.getElementWithName(elements_[k].name);
+                const ElementSettings other_element = other.getElementWithName(elements_[k].name);
                 /*if(other_element != elements_[k])
                 {
                     return false;
@@ -217,13 +217,13 @@ public:
         return j_;
     }
 
-    std::vector<Element> getElements() const
+    std::vector<ElementSettings> getElementSettingsList() const
     {
-        std::vector<Element> all_elements;
+        std::vector<ElementSettings> all_elements;
 
         for(auto t : tabs_)
         {
-            std::vector<Element> v = t.getElements();
+            std::vector<ElementSettings> v = t.getElementSettingsList();
             for(auto tv : v)
             {
                 all_elements.push_back(tv);

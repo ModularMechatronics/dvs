@@ -399,7 +399,7 @@ public:
                   const wxPoint& position,
                   const wxSize& size,
                   const Vec2Df& num_grid_cells,
-                  const std::vector<project_file::Element>& elements);
+                  const std::vector<project_file::ElementSettings>& elements);
     virtual ~PrototypeView();
 
     void setSize(const wxSize size_);

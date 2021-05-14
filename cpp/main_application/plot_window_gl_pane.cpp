@@ -66,7 +66,7 @@ CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, 
     }
 }
 
-PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const Element& element_settings, const float grid_size)
+PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings& element_settings, const float grid_size)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE), GuiElement(element_settings)
 {
     m_context = new wxGLContext(this);

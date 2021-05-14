@@ -60,7 +60,7 @@ public:
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
 
-    std::vector<Element> getElements() const;
+    std::vector<ElementSettings> getElementSettingsList() const;
 
 };
 

@@ -37,7 +37,7 @@ void MainWindow::saveProject(wxCommandEvent& event)
     {
         nlohmann::json objects = nlohmann::json::array();
 
-        const std::vector<Element> elems = te->getElements();
+        const std::vector<ElementSettings> elems = te->getElementSettingsList();
         for(const auto elem : elems)
         {
             nlohmann::json j;
