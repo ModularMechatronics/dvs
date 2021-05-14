@@ -40,6 +40,8 @@ public:
     void setFirstElementSelected();
     std::string getSelectedElementName();
 
+    TabSettings getTabSettings() const;
+
     std::string getName() const
     {
         return name_;
