@@ -28,13 +28,16 @@ void MainWindow::setupGui()
 
     Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MainWindow::tabChanged, this);
 
-    wxBoxSizer* tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
+    tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
     tab_container->SetSizer(tabs_sizer_v);
 
-    project_file::ProjectFile project_file = save_manager_->getCurrentProjectFile();
+    setupTabs(save_manager_->getCurrentProjectFile());
+}
 
+void MainWindow::setupTabs(const ProjectFile& project_file)
+{
     for(const TabSettings tab : project_file.getTabs())
     {
         const std::string tab_name = tab.getName();

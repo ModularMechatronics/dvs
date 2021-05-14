@@ -39,6 +39,17 @@ public:
         }
     }
 
+    std::string getCurrentFilePath() const
+    {
+        return file_path_;
+    }
+
+    void openExistingFile(const std::string& file_path)
+    {
+        file_path_ = file_path;
+        project_file_ = ProjectFile(file_path);
+    }
+
     ProjectFile getCurrentProjectFile() const
     {
         return project_file_;
