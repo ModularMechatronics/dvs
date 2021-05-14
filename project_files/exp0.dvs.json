@@ -1,11 +1,4 @@
 {
-    "settings": {
-        "comments": [
-            "This ('settings') should be moved to a separate file and not be in the project file",
-            "Can the tab-type be 'grid' and 'freeform'?"
-        ],
-        "show-splash": false
-    },
     "tabs": [
         {
             "elements": [
