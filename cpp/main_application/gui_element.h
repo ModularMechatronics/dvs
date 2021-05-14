@@ -19,7 +19,7 @@ class GuiElement
 protected:
     // GuiElementType type_;
     std::string name_;
-    Element element_settings_;
+    ElementSettings element_settings_;
     bool is_editing_;
     bool is_selected_;
 
@@ -28,7 +28,7 @@ protected:
 public:
 
     GuiElement() = delete;
-    GuiElement(const Element& element_settings)
+    GuiElement(const ElementSettings& element_settings)
     {
         is_editing_ = false;
         name_ = element_settings.name;
@@ -56,7 +56,7 @@ public:
         return is_selected_;
     }
 
-    Element getElementSettings() const
+    ElementSettings getElementSettings() const
     {
         return element_settings_;
     }

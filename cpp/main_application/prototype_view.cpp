@@ -9,7 +9,7 @@ PrototypeView::PrototypeView(wxNotebookPage* parent,
                              const wxPoint& position,
                              const wxSize& size,
                              const Vec2Df& num_grid_cells,
-                             const std::vector<project_file::Element>& elements)
+                             const std::vector<project_file::ElementSettings>& elements)
      : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE)
 {
     m_context = new wxGLContext(this);

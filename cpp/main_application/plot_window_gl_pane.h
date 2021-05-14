@@ -47,7 +47,7 @@ private:
     TabView* tab_view_parent_;
 
 public:
-    PlotWindowGLPane(wxNotebookPage* parent, const Element& element_settings, const float grid_size);
+    PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings& element_settings, const float grid_size);
     ~PlotWindowGLPane();
 
     int getWidth();
