@@ -33,7 +33,7 @@ void MainWindow::setupGui()
 
     tab_container->SetSizer(tabs_sizer_v);
 
-    for(const Tab tab : project_file_.getTabs())
+    for(const TabSettings tab : project_file_.getTabs())
     {
         const std::string tab_name = tab.getName();
 

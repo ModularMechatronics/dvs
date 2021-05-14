@@ -24,7 +24,7 @@ class TabView : public wxNotebookPage
 {
 private:
     std::string name_;
-    project_file::Tab tab_;
+    project_file::TabSettings tab_;
     std::map<std::string, GuiElement*> gui_elements_;
     float grid_size_;
     int current_unnamed_idx_;
@@ -33,7 +33,7 @@ private:
 
 public:
     TabView() = default;
-    TabView(wxNotebook* parent, const project_file::Tab& tab);
+    TabView(wxNotebook* parent, const project_file::TabSettings& tab);
     void setSize(const wxSize& new_size);
     void newElement();
     void setSelectedElementName(const std::string& new_name);

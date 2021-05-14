@@ -64,7 +64,7 @@ void MainWindow::saveProject(wxCommandEvent& event)
 void MainWindow::addNewTab(wxCommandEvent& event)
 {
     const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
-    Tab tab;
+    TabSettings tab;
     tab.setName(tab_name);
     TabView* tab_element = new TabView(tabs_view, tab);
     tab_elements_.push_back(tab_element);

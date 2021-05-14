@@ -83,7 +83,7 @@ public:
     }*/
 };
 
-class Tab
+class TabSettings
 {
 private:
     std::vector<ElementSettings> elements_;
@@ -92,8 +92,8 @@ private:
 
 public:
 
-    Tab() = default;
-    Tab(const nlohmann::json& j)
+    TabSettings() = default;
+    TabSettings(const nlohmann::json& j)
     {
         name_ = j["name"];
         for(size_t k = 0; k < j["elements"].size(); k++)
@@ -143,7 +143,7 @@ public:
         return res;
     }
 
-    bool operator==(const Tab& other) const
+    bool operator==(const TabSettings& other) const
     {
         if((name_ != other.name_) || (elements_.size() != other.elements_.size()))
         {
@@ -176,7 +176,7 @@ private:
     nlohmann::json j_;
     std::string file_path_;
 
-    std::vector<Tab> tabs_;
+    std::vector<TabSettings> tabs_;
 
     void parseTabs()
     {
@@ -202,12 +202,12 @@ public:
         parseTabs();
     }
 
-    Tab getTabFromIdx(const size_t idx) const
+    TabSettings getTabFromIdx(const size_t idx) const
     {
         return tabs_.at(idx);
     }
 
-    std::vector<Tab> getTabs() const
+    std::vector<TabSettings> getTabs() const
     {
         return tabs_;
     }
