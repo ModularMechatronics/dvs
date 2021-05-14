@@ -73,10 +73,12 @@ private:
     void deleteTab(wxCommandEvent& event);
     void toggleEditLayout(wxCommandEvent& event);
     void editingFinished(wxCommandEvent& event);
+    void guiElementModified(wxCommandEvent& event);
 
     void saveProject(wxCommandEvent& event);
 
     void setupTabs(const ProjectFile& project_file);
+    void fileModified();
     // void onRightClickMenu(wxCommandEvent& event);
     // void onShowContextMenu(wxContextMenuEvent& event);
     // enum MenuIDs { MENU_ID_CONTEXT_1 = wxID_HIGHEST + 4, MENU_ID_CONTEXT_2, MENU_ID_CONTEXT_3 };

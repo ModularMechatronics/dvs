@@ -37,7 +37,7 @@ bool MainApp::OnInit()
     // frame->Show(true);
 #endif
     
-    main_window = new MainWindow("DVS v0.1");
+    main_window = new MainWindow("");
     main_window->Show();
 
     SetTopWindow(main_window);
