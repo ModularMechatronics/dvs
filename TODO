@@ -8,3 +8,4 @@
  - Default layouts with simple names and ex 2x2 plots, 3x3 plots etc
  - Delete/add tab only available in edit mode
  - Rename 'Tab' and 'Element' to 'TabSettings' and 'ElementSettings'
+ - Saving, despite not having made any changes, changes the project json file
