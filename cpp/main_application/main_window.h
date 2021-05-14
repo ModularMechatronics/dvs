@@ -25,11 +25,13 @@
 #include "project_file.h"
 #include "tab_view.h"
 #include "events.h"
-
+#include "save_manager.h"
 
 class MainWindow : public wxFrame
 {
 private:
+
+    SaveManager* save_manager_;
 
     UdpServer* udp_server_;
     wxTimer timer_;

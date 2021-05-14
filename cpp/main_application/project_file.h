@@ -54,6 +54,10 @@ public:
     std::string name;
 
     Element() = default;
+    Element(const float x_, const float y_, const float width_, const float height_, const std::string& name_) 
+        : x(x_), y(y_), width(width_), height(height_), name(name_)
+    {}
+
     Element(const nlohmann::json& j)
     {
         name = j["name"];
@@ -63,39 +67,39 @@ public:
         width = j["width"];
         height = j["height"];
     }
+
+    /*bool operator==(const Element& other)
+    {
+        return (x == other.x) && 
+            (y == other.y) && 
+            (width == other.width) && 
+            (height == other.height) && 
+            (name == other.name);
+    }
+
+    bool operator!=(const Element& other)
+    {
+        return !(*this == other);
+    }*/
 };
 
 class Tab
 {
 private:
-    nlohmann::json j_;
-
     std::vector<Element> elements_;
 
     std::string name_;
 
-    void parseElements()
-    {
-        for(size_t k = 0; k < j_["elements"].size(); k++)
-        {
-            elements_.emplace_back(j_["elements"][k]);
-        }
-    }
-
-    void checkFields()
-    {
-        
-    }
-
 public:
 
     Tab() = default;
-    Tab(const nlohmann::json& j) : j_(j)
+    Tab(const nlohmann::json& j)
     {
-        checkFields();
-        name_ = j_["name"];
-
-        parseElements();
+        name_ = j["name"];
+        for(size_t k = 0; k < j["elements"].size(); k++)
+        {
+            elements_.emplace_back(j["elements"][k]);
+        }
     }
 
     std::string getName() const
@@ -111,6 +115,58 @@ public:
     std::vector<Element> getElements() const
     {
         return elements_;
+    }
+
+    bool hasElementWithName(const std::string& name) const
+    {
+        for(const Element& e : elements_)
+        {
+            if(e.name == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Element getElementWithName(const std::string& name) const
+    {
+        Element res(0.0f, 0.0f, 0.0f, 0.0f, "");
+        for(const Element& e : elements_)
+        {
+            if(e.name == name)
+            {
+                res = e;
+                break;
+            }
+        }
+        return res;
+    }
+
+    bool operator==(const Tab& other) const
+    {
+        if((name_ != other.name_) || (elements_.size() != other.elements_.size()))
+        {
+            return false;
+        }
+
+        for(size_t k = 0; k < elements_.size(); k++)
+        {
+            if(other.hasElementWithName(elements_[k].name))
+            {
+                const Element other_element = other.getElementWithName(elements_[k].name);
+                /*if(other_element != elements_[k])
+                {
+                    return false;
+                }*/
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 };
 
@@ -176,6 +232,17 @@ public:
 
         return all_elements;
     }
+
+    bool operator==(const ProjectFile& other) const
+    {
+        return file_path_ == other.file_path_;
+    }
+
+    bool operator!=(const ProjectFile& other) const
+    {
+        return !(*this == other.file_path_);
+    }
+
 };
 
 }

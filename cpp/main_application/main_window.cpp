@@ -161,11 +161,13 @@ MainWindow::MainWindow(const wxString& title)
     // Bind(wxEVT_CONTEXT_MENU, &MainWindow::onShowContextMenu, this);
     // Bind(wxEVT_COMMAND_MENU_SELECTED, &MainWindow::onRightClickMenu, this, MENU_ID_CONTEXT_1, MENU_ID_CONTEXT_3);
 
+    save_manager_ = new SaveManager(getProjectFilePath());
 
     wxMenuBar* m_pMenuBar = new wxMenuBar();
     // File Menu
     wxMenu* m_pFileMenu = new wxMenu();
-    m_pFileMenu->Append(wxID_OPEN, _T("&Open"));
+    m_pFileMenu->Append(wxID_NEW, _T("&New"));
+    m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
     m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
     m_pFileMenu->Append(wxID_SAVE, _T("&Save As..."));
     m_pFileMenu->AppendSeparator();
