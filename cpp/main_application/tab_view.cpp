@@ -2,7 +2,7 @@
 
 #include "plot_window_gl_pane.h"
 
-TabView::TabView(wxNotebook* parent, const project_file::Tab& tab) : wxNotebookPage(parent, -1), name_(tab.getName()), tab_(tab)
+TabView::TabView(wxNotebook* parent, const project_file::TabSettings& tab) : wxNotebookPage(parent, -1), name_(tab.getName()), tab_(tab)
 {
     grid_size_ = 5.0f;
 
