@@ -41,6 +41,7 @@ public:
     std::string getSelectedElementName();
 
     TabSettings getTabSettings() const;
+    void childModified(wxCommandEvent& event);
 
     std::string getName() const
     {

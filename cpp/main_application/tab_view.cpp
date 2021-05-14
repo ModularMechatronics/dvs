@@ -2,6 +2,8 @@
 
 #include "plot_window_gl_pane.h"
 
+#include "events.h"
+
 TabView::TabView(wxNotebook* parent, const project_file::TabSettings& tab) : wxNotebookPage(parent, -1), name_(tab.getName()), tab_(tab)
 {
     grid_size_ = 5.0f;
@@ -14,6 +16,7 @@ TabView::TabView(wxNotebook* parent, const project_file::TabSettings& tab) : wxN
 
     Bind(wxEVT_LEFT_DOWN, &TabView::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &TabView::mouseLeftReleased, this);
+    Bind(GUI_ELEMENT_CHANGED_EVENT, &TabView::childModified, this, wxID_ANY);
 
     for(const auto elem : elements)
     {
@@ -120,6 +123,12 @@ std::string TabView::getSelectedElementName()
         }
     }
     return name_of_selected_element_;
+}
+
+void TabView::childModified(wxCommandEvent& event)
+{
+    wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
+    wxPostEvent(GetParent(), parent_event);
 }
 
 void TabView::newElement()

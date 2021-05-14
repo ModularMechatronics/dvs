@@ -56,6 +56,12 @@ void MainWindow::setupTabs(const ProjectFile& project_file)
     layout_tools_window_->currentTabChanged(current_tab_name_);
 }
 
+void MainWindow::fileModified()
+{
+    SetLabel(save_manager_->getCurrentFileName() + "*");
+    save_manager_->setIsModified();
+}
+
 void MainWindow::tabChanged(wxCommandEvent& event)
 {
     for(auto te : tab_elements_)
@@ -128,6 +134,7 @@ void MainWindow::newElement(wxCommandEvent& event)
     {
         tab_elements_.at(current_tab_idx)->newElement();
     }
+    fileModified();
 }
 
 void MainWindow::deleteElement(wxCommandEvent& event)
@@ -138,4 +145,5 @@ void MainWindow::deleteElement(wxCommandEvent& event)
     {
         tab_elements_.at(current_tab_idx)->deleteSelectedElement();
     }
+    fileModified();
 }

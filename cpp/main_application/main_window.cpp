@@ -35,6 +35,8 @@ void MainWindow::saveProject(wxCommandEvent& event)
         pf.pushBackTabSettings(te->getTabSettings());
     }
 
+    SetLabel(save_manager_->getCurrentFileName());
+
     save_manager_->save(pf);
 }
 
@@ -54,6 +56,7 @@ void MainWindow::addNewTab(wxCommandEvent& event)
     }
 
     current_tab_num_++;
+    fileModified();
 }
 
 void MainWindow::disableEditing()
@@ -67,6 +70,11 @@ void MainWindow::disableEditing()
     toolbar_->Hide();
 }
 
+void MainWindow::guiElementModified(wxCommandEvent& event)
+{
+    fileModified();
+}
+
 void MainWindow::deleteTab(wxCommandEvent& event)
 {
     const int current_tab_idx = tabs_view->GetSelection();
@@ -75,6 +83,8 @@ void MainWindow::deleteTab(wxCommandEvent& event)
         tabs_view->DeletePage(current_tab_idx);
         tab_elements_.erase(tab_elements_.begin() + current_tab_idx);
     }
+
+    fileModified();
 }
 
 void MainWindow::toggleEditLayout(wxCommandEvent& event)
@@ -197,6 +207,9 @@ MainWindow::MainWindow(const wxString& title)
     // Bind(wxEVT_COMMAND_MENU_SELECTED, &MainWindow::onRightClickMenu, this, MENU_ID_CONTEXT_1, MENU_ID_CONTEXT_3);
 
     save_manager_ = new SaveManager(getProjectFilePath());
+
+    SetLabel(save_manager_->getCurrentFileName());
+    Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
 
     wxMenuBar* m_pMenuBar = new wxMenuBar();
     // File Menu

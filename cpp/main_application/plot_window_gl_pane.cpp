@@ -302,6 +302,12 @@ void PlotWindowGLPane::mouseLeftWindow(wxMouseEvent& event)
     wxSetCursor(wxCursor(wxCURSOR_ARROW));
 }
 
+void PlotWindowGLPane::notifyParentAboutModification()
+{
+    wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
+    wxPostEvent(GetParent(), parent_event);
+}
+
 void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
@@ -310,6 +316,8 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
     {
         if(is_editing_)
         {
+            notifyParentAboutModification();
+
             const Vec2Df mouse_pos = Vec2Df(current_point.x, current_point.y);
             Vec2Df delta = mouse_pos - mouse_pos_at_press_;
 
@@ -516,8 +524,7 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     // glLoadMatrixd(m);
 
     wxGLCanvas::SetCurrent(*m_context);
-    wxPaintDC(
-        this);
+    wxPaintDC(this);
 
     glEnable(GL_MULTISAMPLE);
 

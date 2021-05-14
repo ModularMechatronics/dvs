@@ -13,12 +13,39 @@ private:
     std::string file_path_;
     ProjectFile project_file_;
 
+    bool is_saved_;
+
 public:
     SaveManager() = delete;
     SaveManager(const std::string& file_path)
     {
         file_path_ = file_path;
         project_file_ = ProjectFile(file_path);
+        is_saved_ = true;
+    }
+
+    void setIsModified()
+    {
+        is_saved_ = false;
+    }
+
+    bool isSaved() const
+    {
+        return is_saved_;
+    }
+
+    std::string getCurrentFileName() const
+    {
+        size_t last = 0;
+        size_t next = 0;
+        while ((next = file_path_.find("/", last)) != std::string::npos)
+        {
+            // cout << s.substr(last, next-last) << endl;
+            last = next + 1;
+        }
+        // cout << s.substr(last) << endl;
+
+        return file_path_.substr(last);
     }
 
     void save(const ProjectFile& changed_project_file)
@@ -31,11 +58,8 @@ public:
             output_file << std::setw(4) << j_to_save << std::endl;
 
             project_file_ = changed_project_file;
-            std::cout << "Saved settings!" << std::endl;
-        }
-        else
-        {
-            std::cout << "Nothing has changed!" << std::endl;
+
+            is_saved_ = true;
         }
     }
 

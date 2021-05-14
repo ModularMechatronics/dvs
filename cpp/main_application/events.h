@@ -5,6 +5,7 @@
 
 wxDECLARE_EVENT(MY_EVENT, wxCommandEvent);
 wxDECLARE_EVENT(EDIT_EVENT, wxCommandEvent);
+wxDECLARE_EVENT(GUI_ELEMENT_CHANGED_EVENT, wxCommandEvent);
 
 namespace dvs_ids
 {
