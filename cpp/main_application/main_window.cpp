@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <wx/wxprec.h>
+#include <wx/wfstream.h>
 
 #include <csignal>
 #include <iostream>
@@ -15,7 +16,7 @@ using namespace dvs::internal;
 
 std::string getProjectFilePath()
 {
-    return "../../project_files/exp0.dvs.json";
+    return "/Users/annotelldaniel/work/repos/dvs/project_files/exp0.dvs.json";
 }
 
 MainWindow::~MainWindow() {}
@@ -35,37 +36,6 @@ void MainWindow::saveProject(wxCommandEvent& event)
     }
 
     save_manager_->save(pf);
-    /*const std::string proj_file_path = getProjectFilePath();
-
-    nlohmann::json j_to_save = project_file_.getJsonObject();
-    j_to_save["tabs"] = nlohmann::json::array();
-
-    for(auto te : tab_elements_)
-    {
-        nlohmann::json objects = nlohmann::json::array();
-
-        const std::vector<ElementSettings> elems = te->getElementSettingsList();
-        for(const auto elem : elems)
-        {
-            nlohmann::json j;
-            j["x"] = elem.x;
-            j["y"] = elem.y;
-            j["width"] = elem.width;
-            j["height"] = elem.height;
-            j["name"] = elem.name;
-            objects.push_back(j);
-        }
-
-        nlohmann::json tab_obj = nlohmann::json();
-        tab_obj["name"] = te->getName();
-        tab_obj["elements"] = objects;
-
-        j_to_save["tabs"].push_back(tab_obj);
-        
-    }
-
-    std::ofstream output_file(proj_file_path);
-    output_file << std::setw(4) << j_to_save << std::endl;*/
 }
 
 void MainWindow::addNewTab(wxCommandEvent& event)
@@ -156,6 +126,64 @@ void MainWindow::onShowContextMenu(wxContextMenuEvent& event)
     PopupMenu(&menu);        
 }*/
 
+void MainWindow::openExistingFile(wxCommandEvent& event)
+{
+    /*if (...current content has not been saved...)
+    {
+        if (wxMessageBox(_("Current content has not been saved! Proceed?"), _("Please confirm"),
+                         wxICON_QUESTION | wxYES_NO, this) == wxNO )
+            return;
+        //else: proceed asking to the user the new file to open
+    }*/
+
+    wxFileDialog openFileDialog(this, _("Open dvs.json file"), "", "",
+                       "dvs.json files (*.json)|*.json", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if (openFileDialog.ShowModal() == wxID_CANCEL)
+    {
+        return;
+    }
+
+    if(save_manager_->getCurrentFilePath() == std::string(openFileDialog.GetPath().mb_str()))
+    {
+        return;
+    }
+
+    save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
+
+    tabs_view->DeleteAllPages();
+    tabs_view->Destroy();
+
+    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
+    tabs_view->Layout();
+
+    tab_elements_ = std::vector<TabView*>();
+    tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
+
+    setupTabs(save_manager_->getCurrentProjectFile());
+
+    SendSizeEvent();
+    Refresh();
+}
+
+void MainWindow::onSaveAs(wxCommandEvent& event)
+{
+    wxFileDialog saveFileDialog(this, _("Save XYZ file"), "", "",
+                       "XYZ files (*.xyz)|*.xyz", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    if (saveFileDialog.ShowModal() == wxID_CANCEL)
+    {
+        return;
+    }
+    // save the current contents in the file;
+    // this can be done with e.g. wxWidgets output streams:
+    wxFileOutputStream output_stream(saveFileDialog.GetPath());
+    if (!output_stream.IsOk())
+    {
+        wxLogError("Cannot save current contents in file '%s'.", saveFileDialog.GetPath());
+        return;
+    }
+    
+}
+
 MainWindow::MainWindow(const wxString& title)
     : wxFrame(NULL, wxID_ANY, title, wxPoint(0, 30), wxSize(1500, 700))
 {
@@ -176,7 +204,7 @@ MainWindow::MainWindow(const wxString& title)
     m_pFileMenu->Append(wxID_NEW, _T("&New"));
     m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
     m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
-    m_pFileMenu->Append(wxID_SAVE, _T("&Save As..."));
+    m_pFileMenu->Append(wxID_SAVEAS, _T("&Save As..."));
     m_pFileMenu->AppendSeparator();
     m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
     m_pMenuBar->Append(m_pFileMenu, _T("&File"));
@@ -192,6 +220,8 @@ MainWindow::MainWindow(const wxString& title)
 
     Bind(wxEVT_MENU, &MainWindow::saveProject, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::toggleEditLayout, this, dvs_ids::EDIT_LAYOUT);
+    Bind(wxEVT_MENU, &MainWindow::openExistingFile, this, wxID_OPEN);
+    Bind(wxEVT_MENU, &MainWindow::onSaveAs, this, wxID_SAVEAS);
 
     SetMenuBar(m_pMenuBar);
     // wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);

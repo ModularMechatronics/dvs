@@ -53,6 +53,7 @@ private:
     wxNotebook* tabs_view;
     wxPanel* tab_container;
     LayoutToolsWindow* layout_tools_window_;
+    wxBoxSizer* tabs_sizer_v;
 
     wxMenuItem* edit_layout_menu_option_;
 
@@ -74,6 +75,8 @@ private:
     void editingFinished(wxCommandEvent& event);
 
     void saveProject(wxCommandEvent& event);
+
+    void setupTabs(const ProjectFile& project_file);
     // void onRightClickMenu(wxCommandEvent& event);
     // void onShowContextMenu(wxContextMenuEvent& event);
     // enum MenuIDs { MENU_ID_CONTEXT_1 = wxID_HIGHEST + 4, MENU_ID_CONTEXT_2, MENU_ID_CONTEXT_3 };
@@ -87,6 +90,8 @@ public:
     virtual void OnSize(wxSizeEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
+    void openExistingFile(wxCommandEvent& event);
+    void onSaveAs(wxCommandEvent& event);
     void changeCurrentTabName(wxCommandEvent& event);
     void changeCurrentElementName(wxCommandEvent& event);
     void currentElementSelectionChanged(wxCommandEvent& event);
