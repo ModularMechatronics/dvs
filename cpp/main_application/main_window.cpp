@@ -138,13 +138,14 @@ void MainWindow::onShowContextMenu(wxContextMenuEvent& event)
 
 void MainWindow::openExistingFile(wxCommandEvent& event)
 {
-    /*if (...current content has not been saved...)
+    if (!save_manager_->isSaved())
     {
         if (wxMessageBox(_("Current content has not been saved! Proceed?"), _("Please confirm"),
                          wxICON_QUESTION | wxYES_NO, this) == wxNO )
+        {
             return;
-        //else: proceed asking to the user the new file to open
-    }*/
+        }
+    }
 
     wxFileDialog openFileDialog(this, _("Open dvs.json file"), "", "",
                        "dvs.json files (*.json)|*.json", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
@@ -158,7 +159,14 @@ void MainWindow::openExistingFile(wxCommandEvent& event)
         return;
     }
 
+    if(is_editing_)
+    {
+        disableEditing();
+        layout_tools_window_->Hide();
+    }
+
     save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
+    SetLabel(save_manager_->getCurrentFileName());
 
     tabs_view->DeleteAllPages();
     tabs_view->Destroy();
