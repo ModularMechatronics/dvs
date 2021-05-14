@@ -183,26 +183,20 @@ public:
 class ProjectFile
 {
 private:
-    nlohmann::json j_;
     std::string file_path_;
-
     std::vector<TabSettings> tabs_;
-
-    void parseTabs()
-    {
-        for(size_t k = 0; k < j_["tabs"].size(); k++)
-        {
-            tabs_.emplace_back(j_["tabs"][k]);
-        }
-    }
 
 public:
     ProjectFile() = default;
     ProjectFile(const std::string& file_path) : file_path_(file_path)
     {
         std::ifstream input_file(file_path);
-        input_file >> j_;
-        parseTabs();
+        nlohmann::json j;
+        input_file >> j;
+        for(size_t k = 0; k < j["tabs"].size(); k++)
+        {
+            tabs_.emplace_back(j["tabs"][k]);
+        }
     }
 
     void pushBackTabSettings(const TabSettings& ts)
@@ -218,11 +212,6 @@ public:
     std::vector<TabSettings> getTabs() const
     {
         return tabs_;
-    }
-
-    nlohmann::json getJsonObject() const
-    {
-        return j_;
     }
 
     nlohmann::json toJson() const
@@ -324,7 +313,7 @@ public:
 
     bool operator!=(const ProjectFile& other) const
     {
-        return !(*this == other.file_path_);
+        return !(*this == other);
     }
 
 };
