@@ -28,7 +28,14 @@ void MainWindow::editingFinished(wxCommandEvent& event)
 
 void MainWindow::saveProject(wxCommandEvent& event)
 {
-    const std::string proj_file_path = getProjectFilePath();
+    ProjectFile pf;
+    for(const TabView* te : tab_elements_)
+    {
+        pf.pushBackTabSettings(te->getTabSettings());
+    }
+
+    save_manager_->save(pf);
+    /*const std::string proj_file_path = getProjectFilePath();
 
     nlohmann::json j_to_save = project_file_.getJsonObject();
     j_to_save["tabs"] = nlohmann::json::array();
@@ -58,7 +65,7 @@ void MainWindow::saveProject(wxCommandEvent& event)
     }
 
     std::ofstream output_file(proj_file_path);
-    output_file << std::setw(4) << j_to_save << std::endl;
+    output_file << std::setw(4) << j_to_save << std::endl;*/
 }
 
 void MainWindow::addNewTab(wxCommandEvent& event)
@@ -150,7 +157,7 @@ void MainWindow::onShowContextMenu(wxContextMenuEvent& event)
 }*/
 
 MainWindow::MainWindow(const wxString& title)
-    : wxFrame(NULL, wxID_ANY, title, wxPoint(0, 30), wxSize(1500, 700)), project_file_(getProjectFilePath())
+    : wxFrame(NULL, wxID_ANY, title, wxPoint(0, 30), wxSize(1500, 700))
 {
     udp_server_ = new UdpServer(9752);
     udp_server_->start();

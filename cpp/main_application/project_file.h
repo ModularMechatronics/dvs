@@ -68,19 +68,19 @@ public:
         height = j["height"];
     }
 
-    /*bool operator==(const ElementSettings& other)
+    bool operator==(const ElementSettings& other) const
     {
         return (x == other.x) && 
-            (y == other.y) && 
-            (width == other.width) && 
-            (height == other.height) && 
-            (name == other.name);
+               (y == other.y) && 
+               (width == other.width) && 
+               (height == other.height) && 
+               (name == other.name);
     }
 
-    bool operator!=(const ElementSettings& other)
+    bool operator!=(const ElementSettings& other) const
     {
         return !(*this == other);
-    }*/
+    }
 };
 
 class TabSettings
@@ -100,6 +100,11 @@ public:
         {
             elements_.emplace_back(j["elements"][k]);
         }
+    }
+
+    void pushBackElementSettings(const ElementSettings& es)
+    {
+        elements_.push_back(es);
     }
 
     std::string getName() const
@@ -155,10 +160,10 @@ public:
             if(other.hasElementWithName(elements_[k].name))
             {
                 const ElementSettings other_element = other.getElementWithName(elements_[k].name);
-                /*if(other_element != elements_[k])
+                if(other_element != elements_[k])
                 {
                     return false;
-                }*/
+                }
             }
             else
             {
@@ -167,6 +172,11 @@ public:
         }
 
         return true;
+    }
+
+    bool operator!=(const TabSettings& other) const
+    {
+        return !(*this == other);
     }
 };
 
@@ -186,20 +196,18 @@ private:
         }
     }
 
-    void checkFields()
-    {
-        // throwIfMissing(j_, "layout", "Field 'layout' is missing!");
-        // throwIfMissing(j_["layout"], "tabs", "Field 'tabs' is missing in the 'layout' field!");
-    }
-
 public:
     ProjectFile() = default;
     ProjectFile(const std::string& file_path) : file_path_(file_path)
     {
         std::ifstream input_file(file_path);
         input_file >> j_;
-        checkFields();
         parseTabs();
+    }
+
+    void pushBackTabSettings(const TabSettings& ts)
+    {
+        tabs_.push_back(ts);
     }
 
     TabSettings getTabFromIdx(const size_t idx) const
@@ -215,6 +223,37 @@ public:
     nlohmann::json getJsonObject() const
     {
         return j_;
+    }
+
+    nlohmann::json toJson() const
+    {
+        nlohmann::json j_to_save;
+        j_to_save["tabs"] = nlohmann::json::array();
+
+        for(auto te : tabs_)
+        {
+            nlohmann::json elements = nlohmann::json::array();
+
+            const std::vector<ElementSettings> elems = te.getElementSettingsList();
+            for(const ElementSettings& elem : elems)
+            {
+                nlohmann::json j;
+                j["x"] = elem.x;
+                j["y"] = elem.y;
+                j["width"] = elem.width;
+                j["height"] = elem.height;
+                j["name"] = elem.name;
+                elements.push_back(j);
+            }
+
+            nlohmann::json tab_obj = nlohmann::json();
+            tab_obj["name"] = te.getName();
+            tab_obj["elements"] = elements;
+
+            j_to_save["tabs"].push_back(tab_obj);
+        }
+
+        return j_to_save;
     }
 
     std::vector<ElementSettings> getElementSettingsList() const
@@ -233,9 +272,54 @@ public:
         return all_elements;
     }
 
+    bool hasTabWithName(const std::string& name) const
+    {
+        for(const TabSettings& t : tabs_)
+        {
+            if(t.getName() == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    TabSettings getTabWithName(const std::string& name) const
+    {
+        TabSettings res;
+        for(const TabSettings& ts : tabs_)
+        {
+            if(ts.getName() == name)
+            {
+                res = ts;
+                break;
+            }
+        }
+        return res;
+    }
+
     bool operator==(const ProjectFile& other) const
     {
-        return file_path_ == other.file_path_;
+        if(tabs_.size() != other.tabs_.size())
+        {
+            return false;
+        }
+
+        for(const TabSettings ts : tabs_)
+        {
+            if(other.hasTabWithName(ts.getName()))
+            {
+                if(other.getTabWithName(ts.getName()) != ts)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     bool operator!=(const ProjectFile& other) const

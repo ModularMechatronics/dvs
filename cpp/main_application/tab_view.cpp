@@ -24,6 +24,19 @@ TabView::TabView(wxNotebook* parent, const project_file::TabSettings& tab) : wxN
     }
 }
 
+TabSettings TabView::getTabSettings() const
+{
+    TabSettings ts;
+    ts.setName(name_);
+
+    for(auto it : gui_elements_)
+    {
+        ts.pushBackElementSettings(it.second->getElementSettings());
+    }
+
+    return ts;
+}
+
 std::vector<ElementSettings> TabView::getElementSettingsList() const
 {
     std::vector<ElementSettings> elements;

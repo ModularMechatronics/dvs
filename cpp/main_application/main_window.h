@@ -35,7 +35,6 @@ private:
 
     UdpServer* udp_server_;
     wxTimer timer_;
-    project_file::ProjectFile project_file_;
 
     std::vector<TabView*> tab_elements_;
 

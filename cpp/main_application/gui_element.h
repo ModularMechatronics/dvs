@@ -18,7 +18,6 @@ class GuiElement
 {
 protected:
     // GuiElementType type_;
-    std::string name_;
     ElementSettings element_settings_;
     bool is_editing_;
     bool is_selected_;
@@ -31,19 +30,17 @@ public:
     GuiElement(const ElementSettings& element_settings)
     {
         is_editing_ = false;
-        name_ = element_settings.name;
         element_settings_ = element_settings;
     }
 
     std::string getName() const
     {
-        return name_;
+        return element_settings_.name;
     }
 
     void setName(const std::string& new_name)
     {
         element_settings_.name = new_name;
-        name_ = new_name;
     }
 
     void setIsEditing(const bool is_editing)
