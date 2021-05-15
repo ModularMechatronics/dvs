@@ -67,6 +67,19 @@ void LayoutToolsWindow::setupShapes()
 {
     MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
 
+    wxBoxSizer* global_sizer = new wxBoxSizer(wxVERTICAL);
+
+    {
+        wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
+        wxButton* new_tab_button = new wxButton(shapes_box_, wxID_ANY, "New tab", wxDefaultPosition);
+        wxButton* delete_tab_button = new wxButton(shapes_box_, wxID_ANY, "Delete tab", wxDefaultPosition);
+        new_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::addNewTab, main_window_ptr);
+        delete_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::deleteTab, main_window_ptr);
+
+        sizer_inside->Add(new_tab_button, 0, wxALIGN_CENTER_HORIZONTAL);
+        sizer_inside->Add(delete_tab_button, 0, wxALIGN_CENTER_HORIZONTAL);
+        global_sizer->Add(sizer_inside);
+    }
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxButton* new_element_button = new wxButton(shapes_box_, wxID_ANY, "New element", wxDefaultPosition);
@@ -76,8 +89,9 @@ void LayoutToolsWindow::setupShapes()
 
         sizer_inside->Add(new_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(delete_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
-        shapes_box_->SetSizer(sizer_inside);
+        global_sizer->Add(sizer_inside);
     }
+    shapes_box_->SetSizer(global_sizer);
 }
 
 void LayoutToolsWindow::currentTabChanged(const std::string& tab_name)

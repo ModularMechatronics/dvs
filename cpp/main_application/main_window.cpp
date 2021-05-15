@@ -19,6 +19,80 @@ std::string getProjectFilePath()
     return "/Users/annotelldaniel/work/repos/dvs/project_files/exp0.dvs.json";
 }
 
+MainWindow::MainWindow(const wxString& title)
+    : wxFrame(NULL, wxID_ANY, title, wxPoint(0, 30), wxSize(1500, 700))
+{
+    udp_server_ = new UdpServer(9752);
+    udp_server_->start();
+    // current_gui_element_ = nullptr;
+    current_gui_element_set_ = false;
+    is_editing_ = false;
+
+    // Bind(wxEVT_CONTEXT_MENU, &MainWindow::onShowContextMenu, this);
+    // Bind(wxEVT_COMMAND_MENU_SELECTED, &MainWindow::onRightClickMenu, this, MENU_ID_CONTEXT_1, MENU_ID_CONTEXT_3);
+
+    save_manager_ = new SaveManager(getProjectFilePath());
+
+    SetLabel(save_manager_->getCurrentFileName());
+    Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
+
+    wxMenuBar* m_pMenuBar = new wxMenuBar();
+    // File Menu
+    wxMenu* m_pFileMenu = new wxMenu();
+    m_pFileMenu->Append(wxID_NEW, _T("&New"));
+    m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
+    m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
+    m_pFileMenu->Append(wxID_SAVEAS, _T("&Save As..."));
+    m_pFileMenu->AppendSeparator();
+    m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
+    m_pMenuBar->Append(m_pFileMenu, _T("&File"));
+
+    wxMenu* m_edit_menu = new wxMenu();
+
+    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
+    m_pMenuBar->Append(m_edit_menu, _T("Edit"));
+    // About menu
+    wxMenu* m_pHelpMenu = new wxMenu();
+    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
+    m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
+
+    Bind(wxEVT_MENU, &MainWindow::saveProject, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &MainWindow::toggleEditLayout, this, dvs_ids::EDIT_LAYOUT);
+    Bind(wxEVT_MENU, &MainWindow::openExistingFile, this, wxID_OPEN);
+    Bind(wxEVT_MENU, &MainWindow::onSaveAs, this, wxID_SAVEAS);
+
+    SetMenuBar(m_pMenuBar);
+    // wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
+
+    current_tab_num_ = 0;
+
+    wxImage::AddHandler(new wxPNGHandler);
+
+    tb_edit = wxBitmap(wxT("../icons/edit.png"), wxBITMAP_TYPE_PNG);
+    tb_delete = wxBitmap(wxT("../icons/delete.png"), wxBITMAP_TYPE_PNG);
+    tb_done = wxBitmap(wxT("../icons/done2.png"), wxBITMAP_TYPE_PNG);
+    tb_add = wxBitmap(wxT("../icons/add.png"), wxBITMAP_TYPE_PNG);
+
+    Connect(dvs_ids::EDITING_DONE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::editingFinished));
+    Connect(dvs_ids::DELETE_TAB, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::deleteTab));
+    Connect(dvs_ids::ADD_TAB, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::addNewTab));
+
+    initial_width_ = 1500;
+    initial_height_ = 700;
+
+    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(300, 300));
+    layout_tools_window_->Hide();
+
+    Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
+
+    setupGui();
+
+    Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
+
+    timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
+    timer_.Start(10);
+}
+
 MainWindow::~MainWindow() {}
 
 void MainWindow::editingFinished(wxCommandEvent& event)
@@ -67,7 +141,6 @@ void MainWindow::disableEditing()
     {
         te->stopEdit();
     }
-    toolbar_->Hide();
 }
 
 void MainWindow::guiElementModified(wxCommandEvent& event)
@@ -93,7 +166,6 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
     {
         edit_layout_menu_option_->SetName("Edit layout");
         layout_tools_window_->Hide();
-        toolbar_->Hide();
         for(auto te : tab_elements_)
         {
             te->stopEdit();
@@ -103,7 +175,6 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
     {
         edit_layout_menu_option_->SetName("Stop editing");
         layout_tools_window_->Show();
-        toolbar_->Show();
         for(auto te : tab_elements_)
         {
             te->startEdit();
@@ -200,88 +271,6 @@ void MainWindow::onSaveAs(wxCommandEvent& event)
         return;
     }
     
-}
-
-MainWindow::MainWindow(const wxString& title)
-    : wxFrame(NULL, wxID_ANY, title, wxPoint(0, 30), wxSize(1500, 700))
-{
-    udp_server_ = new UdpServer(9752);
-    udp_server_->start();
-    // current_gui_element_ = nullptr;
-    current_gui_element_set_ = false;
-    is_editing_ = false;
-
-    // Bind(wxEVT_CONTEXT_MENU, &MainWindow::onShowContextMenu, this);
-    // Bind(wxEVT_COMMAND_MENU_SELECTED, &MainWindow::onRightClickMenu, this, MENU_ID_CONTEXT_1, MENU_ID_CONTEXT_3);
-
-    save_manager_ = new SaveManager(getProjectFilePath());
-
-    SetLabel(save_manager_->getCurrentFileName());
-    Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
-
-    wxMenuBar* m_pMenuBar = new wxMenuBar();
-    // File Menu
-    wxMenu* m_pFileMenu = new wxMenu();
-    m_pFileMenu->Append(wxID_NEW, _T("&New"));
-    m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
-    m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
-    m_pFileMenu->Append(wxID_SAVEAS, _T("&Save As..."));
-    m_pFileMenu->AppendSeparator();
-    m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
-    m_pMenuBar->Append(m_pFileMenu, _T("&File"));
-
-    wxMenu* m_edit_menu = new wxMenu();
-
-    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
-    m_pMenuBar->Append(m_edit_menu, _T("Edit"));
-    // About menu
-    wxMenu* m_pHelpMenu = new wxMenu();
-    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
-    m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
-
-    Bind(wxEVT_MENU, &MainWindow::saveProject, this, wxID_SAVE);
-    Bind(wxEVT_MENU, &MainWindow::toggleEditLayout, this, dvs_ids::EDIT_LAYOUT);
-    Bind(wxEVT_MENU, &MainWindow::openExistingFile, this, wxID_OPEN);
-    Bind(wxEVT_MENU, &MainWindow::onSaveAs, this, wxID_SAVEAS);
-
-    SetMenuBar(m_pMenuBar);
-    // wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
-
-    current_tab_num_ = 0;
-
-    wxImage::AddHandler(new wxPNGHandler);
-
-    tb_edit = wxBitmap(wxT("../icons/edit.png"), wxBITMAP_TYPE_PNG);
-    tb_delete = wxBitmap(wxT("../icons/delete.png"), wxBITMAP_TYPE_PNG);
-    tb_done = wxBitmap(wxT("../icons/done2.png"), wxBITMAP_TYPE_PNG);
-    tb_add = wxBitmap(wxT("../icons/add.png"), wxBITMAP_TYPE_PNG);
-
-    toolbar_ = CreateToolBar();
-
-    toolbar_->AddTool(dvs_ids::EDITING_DONE, wxT("Done"), tb_done);
-    toolbar_->AddTool(dvs_ids::DELETE_TAB, wxT("Delete current tab"), tb_delete);
-    toolbar_->AddTool(dvs_ids::ADD_TAB, wxT("New tab"), tb_add);
-    toolbar_->Realize();
-    toolbar_->Hide();
-
-    Connect(dvs_ids::EDITING_DONE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::editingFinished));
-    Connect(dvs_ids::DELETE_TAB, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::deleteTab));
-    Connect(dvs_ids::ADD_TAB, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::addNewTab));
-
-    initial_width_ = 1500;
-    initial_height_ = 700;
-
-    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(300, 300));
-    layout_tools_window_->Hide();
-
-    Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
-
-    setupGui();
-
-    Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
-
-    timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
-    timer_.Start(10);
 }
 
 void MainWindow::OnTimer(wxTimerEvent&)

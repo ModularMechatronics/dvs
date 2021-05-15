@@ -40,10 +40,8 @@ public:
         size_t next = 0;
         while ((next = file_path_.find("/", last)) != std::string::npos)
         {
-            // cout << s.substr(last, next-last) << endl;
             last = next + 1;
         }
-        // cout << s.substr(last) << endl;
 
         return file_path_.substr(last);
     }

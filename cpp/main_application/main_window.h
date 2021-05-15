@@ -42,7 +42,6 @@ private:
     bool current_gui_element_set_;
     int current_tab_num_;
 
-    wxToolBar* toolbar_;
     wxBitmap tb_edit;
     wxBitmap tb_delete;
     wxBitmap tb_done;
@@ -69,8 +68,6 @@ private:
     void receiveData();
 
     void tabChanged(wxCommandEvent& event);
-    void addNewTab(wxCommandEvent& event);
-    void deleteTab(wxCommandEvent& event);
     void toggleEditLayout(wxCommandEvent& event);
     void editingFinished(wxCommandEvent& event);
     void guiElementModified(wxCommandEvent& event);
@@ -97,6 +94,8 @@ public:
     void changeCurrentTabName(wxCommandEvent& event);
     void changeCurrentElementName(wxCommandEvent& event);
     void currentElementSelectionChanged(wxCommandEvent& event);
+    void addNewTab(wxCommandEvent& event);
+    void deleteTab(wxCommandEvent& event);
 
     void newElement(wxCommandEvent& event);
     void deleteElement(wxCommandEvent& event);
