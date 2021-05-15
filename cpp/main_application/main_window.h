@@ -72,7 +72,9 @@ private:
     void editingFinished(wxCommandEvent& event);
     void guiElementModified(wxCommandEvent& event);
 
-    void saveProject(wxCommandEvent& event);
+    void saveProject();
+    void saveProjectCallback(wxCommandEvent& event);
+    void saveProjectAs(wxCommandEvent& event);
 
     void setupTabs(const ProjectFile& project_file);
     void fileModified();

@@ -379,7 +379,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             element_settings_.y = static_cast<float>(new_position.y) / py;
 
             if((this->GetPosition().x != new_position.x) || (this->GetPosition().y != new_position.y) || 
-               (new_size.GetWidth() != new_size.GetWidth()) || (new_size.GetHeight() != new_size.GetHeight()))
+               (new_size.GetWidth() != this->GetSize().GetWidth()) || (new_size.GetHeight() != this->GetSize().GetHeight()))
             {
                 notifyParentAboutModification();
                 this->setPosition(new_position);

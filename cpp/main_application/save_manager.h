@@ -72,6 +72,21 @@ public:
         project_file_ = ProjectFile(file_path);
     }
 
+    void saveToNewFile(const std::string& file_path, const ProjectFile& changed_project_file)
+    {
+        file_path_ = file_path;
+        project_file_ = changed_project_file;
+
+        const nlohmann::json j_to_save = changed_project_file.toJson();
+
+        std::ofstream output_file(file_path_);
+        output_file << std::setw(4) << j_to_save << std::endl;
+
+        project_file_ = changed_project_file;
+
+        is_saved_ = true;
+    }
+
     ProjectFile getCurrentProjectFile() const
     {
         return project_file_;
