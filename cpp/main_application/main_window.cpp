@@ -56,10 +56,10 @@ MainWindow::MainWindow(const wxString& title)
     m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
     m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
 
-    Bind(wxEVT_MENU, &MainWindow::saveProject, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::toggleEditLayout, this, dvs_ids::EDIT_LAYOUT);
     Bind(wxEVT_MENU, &MainWindow::openExistingFile, this, wxID_OPEN);
-    Bind(wxEVT_MENU, &MainWindow::onSaveAs, this, wxID_SAVEAS);
+    Bind(wxEVT_MENU, &MainWindow::saveProjectAs, this, wxID_SAVEAS);
 
     SetMenuBar(m_pMenuBar);
     // wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
@@ -101,7 +101,34 @@ void MainWindow::editingFinished(wxCommandEvent& event)
     layout_tools_window_->Hide();
 }
 
-void MainWindow::saveProject(wxCommandEvent& event)
+void MainWindow::saveProjectAs(wxCommandEvent& event)
+{
+    wxFileDialog openFileDialog(this, _("Choose file to save to"), "", "",
+                       "dvs.json files (*.json)|*.json", wxFD_SAVE);
+    if (openFileDialog.ShowModal() == wxID_CANCEL)
+    {
+        return;
+    }
+
+    const std::string new_save_path = std::string(openFileDialog.GetPath().mb_str());
+
+    if(new_save_path == save_manager_->getCurrentFilePath())
+    {
+        saveProject();
+        return;
+    }
+
+    ProjectFile pf;
+    for(const TabView* te : tab_elements_)
+    {
+        pf.pushBackTabSettings(te->getTabSettings());
+    }
+
+    save_manager_->saveToNewFile(new_save_path, pf);
+    SetLabel(save_manager_->getCurrentFileName());
+}
+
+void MainWindow::saveProject()
 {
     ProjectFile pf;
     for(const TabView* te : tab_elements_)
@@ -112,6 +139,11 @@ void MainWindow::saveProject(wxCommandEvent& event)
     SetLabel(save_manager_->getCurrentFileName());
 
     save_manager_->save(pf);
+}
+
+void MainWindow::saveProjectCallback(wxCommandEvent& event)
+{
+    saveProject();
 }
 
 void MainWindow::addNewTab(wxCommandEvent& event)
