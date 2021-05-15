@@ -316,8 +316,6 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
     {
         if(is_editing_)
         {
-            notifyParentAboutModification();
-
             const Vec2Df mouse_pos = Vec2Df(current_point.x, current_point.y);
             Vec2Df delta = mouse_pos - mouse_pos_at_press_;
 
@@ -380,8 +378,13 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             element_settings_.x = static_cast<float>(new_position.x) / px;
             element_settings_.y = static_cast<float>(new_position.y) / py;
 
-            this->setPosition(new_position);
-            this->setSize(new_size);
+            if((this->GetPosition().x != new_position.x) || (this->GetPosition().y != new_position.y) || 
+               (new_size.GetWidth() != new_size.GetWidth()) || (new_size.GetHeight() != new_size.GetHeight()))
+            {
+                notifyParentAboutModification();
+                this->setPosition(new_position);
+                this->setSize(new_size);
+            }
         }
         else
         {
