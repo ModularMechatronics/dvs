@@ -82,20 +82,25 @@ void LayoutToolsWindow::setupShapes()
 
 void LayoutToolsWindow::currentTabChanged(const std::string& tab_name)
 {
+    tab_name_ctrl_->SetEvtHandlerEnabled(false);
     tab_name_ctrl_->SetValue(tab_name);
+    tab_name_ctrl_->SetEvtHandlerEnabled(true);
 }
 
 void LayoutToolsWindow::currentElementSelectionChanged(const std::string& name_of_selected)
 {
+    element_name_ctrl_->SetEvtHandlerEnabled(false);
     element_name_ctrl_->SetValue(name_of_selected);
+    element_name_ctrl_->SetEvtHandlerEnabled(true);
 }
 
 void LayoutToolsWindow::currentElementNameChanged(wxCommandEvent& event)
 {
     const wxString value = event.GetString();
-    std::cout << "New element 34 selected: " << std::string(value) << std::endl;
 
+    element_name_ctrl_->SetEvtHandlerEnabled(false);
     element_name_ctrl_->SetValue(value);
+    element_name_ctrl_->SetEvtHandlerEnabled(true);
 }
 
 void LayoutToolsWindow::setPosAndSize(wxPoint pos, wxSize size)
