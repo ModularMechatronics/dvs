@@ -80,6 +80,8 @@ MainWindow::MainWindow(const wxString& title)
 
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);
+
+    refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
 }
 
 MainWindow::~MainWindow() {}
@@ -164,7 +166,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& event)
         layout_tools_window_->Hide();
     }
 
-    SetLabel(save_manager_->getCurrentFileName());
+    SetLabel(save_manager_->getCurrentFileName() + "*");
 
     tabs_view->DeleteAllPages();
     tabs_view->Destroy();
@@ -297,6 +299,18 @@ void MainWindow::openExistingFile(wxCommandEvent& event)
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
     setupTabs(save_manager_->getCurrentProjectFile());
+
+    refresh_timer_.Start(10);
+
+    SendSizeEvent();
+    Refresh();
+}
+
+void MainWindow::OnRefreshTimer(wxTimerEvent&)
+{
+    refresh_timer_.Stop();
+    tab_container->Refresh();
+    tabs_view->Refresh();
 
     SendSizeEvent();
     Refresh();
