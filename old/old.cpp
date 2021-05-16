@@ -4,6 +4,43 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+/*void MainWindow::onRightClickMenu(wxCommandEvent& event)
+{
+    std::cout << "Menu!" << std::endl;
+    wxTextEntryDialog* wx_te_dialog = new wxTextEntryDialog(this, "Change name", "Enter a new tab name", "<old-name>", wxOK | wxCANCEL | wxCENTRE);
+    
+    if ( wx_te_dialog->ShowModal() == wxID_OK )
+    {
+        const wxString value = wx_te_dialog->GetValue();
+        std::cout << std::string(value.mb_str()) << std::endl;
+    }
+}
+
+void MainWindow::onShowContextMenu(wxContextMenuEvent& event)
+{
+    std::cout << event.GetString() << std::endl;
+    wxMenu menu;
+
+    menu.Append(MENU_ID_CONTEXT_1, "Context Menu command 1");
+    menu.Append(MENU_ID_CONTEXT_2, "Context Menu command 2");
+    menu.Append(MENU_ID_CONTEXT_3, "Context Menu command 3");
+    
+    PopupMenu(&menu);        
+}*/
+
+// void onRightClickMenu(wxCommandEvent& event);
+// void onShowContextMenu(wxContextMenuEvent& event);
+// enum MenuIDs { MENU_ID_CONTEXT_1 = wxID_HIGHEST + 4, MENU_ID_CONTEXT_2, MENU_ID_CONTEXT_3 };
+
+// Bind(wxEVT_CONTEXT_MENU, &MainWindow::onShowContextMenu, this);
+// Bind(wxEVT_COMMAND_MENU_SELECTED, &MainWindow::onRightClickMenu, this, MENU_ID_CONTEXT_1, MENU_ID_CONTEXT_3);
+
+tb_edit = wxBitmap(wxT("../icons/edit.png"), wxBITMAP_TYPE_PNG);
+tb_delete = wxBitmap(wxT("../icons/delete.png"), wxBITMAP_TYPE_PNG);
+tb_done = wxBitmap(wxT("../icons/done2.png"), wxBITMAP_TYPE_PNG);
+tb_add = wxBitmap(wxT("../icons/add.png"), wxBITMAP_TYPE_PNG);
+
+
 namespace dvs
 {
 /*namespace internal
