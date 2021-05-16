@@ -28,9 +28,6 @@ MainWindow::MainWindow(const wxString& title)
     current_gui_element_set_ = false;
     is_editing_ = false;
 
-    // Bind(wxEVT_CONTEXT_MENU, &MainWindow::onShowContextMenu, this);
-    // Bind(wxEVT_COMMAND_MENU_SELECTED, &MainWindow::onRightClickMenu, this, MENU_ID_CONTEXT_1, MENU_ID_CONTEXT_3);
-
     save_manager_ = new SaveManager(getProjectFilePath());
 
     SetLabel(save_manager_->getCurrentFileName());
@@ -56,10 +53,11 @@ MainWindow::MainWindow(const wxString& title)
     m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
     m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
 
+    Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
     Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::toggleEditLayout, this, dvs_ids::EDIT_LAYOUT);
     Bind(wxEVT_MENU, &MainWindow::openExistingFile, this, wxID_OPEN);
-    Bind(wxEVT_MENU, &MainWindow::saveProjectAs, this, wxID_SAVEAS);
+    Bind(wxEVT_MENU, &MainWindow::saveProjectAsCallback, this, wxID_SAVEAS);
 
     SetMenuBar(m_pMenuBar);
     // wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
@@ -67,15 +65,6 @@ MainWindow::MainWindow(const wxString& title)
     current_tab_num_ = 0;
 
     wxImage::AddHandler(new wxPNGHandler);
-
-    tb_edit = wxBitmap(wxT("../icons/edit.png"), wxBITMAP_TYPE_PNG);
-    tb_delete = wxBitmap(wxT("../icons/delete.png"), wxBITMAP_TYPE_PNG);
-    tb_done = wxBitmap(wxT("../icons/done2.png"), wxBITMAP_TYPE_PNG);
-    tb_add = wxBitmap(wxT("../icons/add.png"), wxBITMAP_TYPE_PNG);
-
-    Connect(dvs_ids::EDITING_DONE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::editingFinished));
-    Connect(dvs_ids::DELETE_TAB, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::deleteTab));
-    Connect(dvs_ids::ADD_TAB, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainWindow::addNewTab));
 
     initial_width_ = 1500;
     initial_height_ = 700;
@@ -101,7 +90,12 @@ void MainWindow::editingFinished(wxCommandEvent& event)
     layout_tools_window_->Hide();
 }
 
-void MainWindow::saveProjectAs(wxCommandEvent& event)
+void MainWindow::saveProjectAsCallback(wxCommandEvent& event)
+{
+    saveProjectAs();
+}
+
+void MainWindow::saveProjectAs()
 {
     wxFileDialog openFileDialog(this, _("Choose file to save to"), "", "",
                        "dvs.json files (*.json)|*.json", wxFD_SAVE);
@@ -130,15 +124,58 @@ void MainWindow::saveProjectAs(wxCommandEvent& event)
 
 void MainWindow::saveProject()
 {
-    ProjectFile pf;
-    for(const TabView* te : tab_elements_)
+    if(!save_manager_->pathIsSet())
     {
-        pf.pushBackTabSettings(te->getTabSettings());
+        saveProjectAs();
+    }
+    else
+    {
+        ProjectFile pf;
+        for(const TabView* te : tab_elements_)
+        {
+            pf.pushBackTabSettings(te->getTabSettings());
+        }
+
+        SetLabel(save_manager_->getCurrentFileName());
+
+        save_manager_->save(pf);
+    }
+}
+
+void MainWindow::newProjectCallback(wxCommandEvent& event)
+{
+    if (!save_manager_->isSaved())
+    {
+        if (wxMessageBox(_("Current content has not been saved! Proceed?"), _("Please confirm"),
+                         wxICON_QUESTION | wxYES_NO, this) == wxNO )
+        {
+            return;
+        }
+    }
+
+    save_manager_->reset();
+
+    if(is_editing_)
+    {
+        disableEditing();
+        layout_tools_window_->Hide();
     }
 
     SetLabel(save_manager_->getCurrentFileName());
 
-    save_manager_->save(pf);
+    tabs_view->DeleteAllPages();
+    tabs_view->Destroy();
+
+    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
+    tabs_view->Layout();
+
+    tab_elements_ = std::vector<TabView*>();
+    tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
+
+    setupTabs(save_manager_->getCurrentProjectFile());
+
+    SendSizeEvent();
+    Refresh();
 }
 
 void MainWindow::saveProjectCallback(wxCommandEvent& event)
@@ -215,30 +252,6 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
     is_editing_ = !is_editing_;
 }
 
-/*void MainWindow::onRightClickMenu(wxCommandEvent& event)
-{
-    std::cout << "Menu!" << std::endl;
-    wxTextEntryDialog* wx_te_dialog = new wxTextEntryDialog(this, "Change name", "Enter a new tab name", "<old-name>", wxOK | wxCANCEL | wxCENTRE);
-    
-    if ( wx_te_dialog->ShowModal() == wxID_OK )
-    {
-        const wxString value = wx_te_dialog->GetValue();
-        std::cout << std::string(value.mb_str()) << std::endl;
-    }
-}
-
-void MainWindow::onShowContextMenu(wxContextMenuEvent& event)
-{
-    std::cout << event.GetString() << std::endl;
-    wxMenu menu;
-
-    menu.Append(MENU_ID_CONTEXT_1, "Context Menu command 1");
-    menu.Append(MENU_ID_CONTEXT_2, "Context Menu command 2");
-    menu.Append(MENU_ID_CONTEXT_3, "Context Menu command 3");
-    
-    PopupMenu(&menu);        
-}*/
-
 void MainWindow::openExistingFile(wxCommandEvent& event)
 {
     if (!save_manager_->isSaved())
@@ -284,25 +297,6 @@ void MainWindow::openExistingFile(wxCommandEvent& event)
 
     SendSizeEvent();
     Refresh();
-}
-
-void MainWindow::onSaveAs(wxCommandEvent& event)
-{
-    wxFileDialog saveFileDialog(this, _("Save XYZ file"), "", "",
-                       "XYZ files (*.xyz)|*.xyz", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-    if (saveFileDialog.ShowModal() == wxID_CANCEL)
-    {
-        return;
-    }
-    // save the current contents in the file;
-    // this can be done with e.g. wxWidgets output streams:
-    wxFileOutputStream output_stream(saveFileDialog.GetPath());
-    if (!output_stream.IsOk())
-    {
-        wxLogError("Cannot save current contents in file '%s'.", saveFileDialog.GetPath());
-        return;
-    }
-    
 }
 
 void MainWindow::OnTimer(wxTimerEvent&)

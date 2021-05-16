@@ -74,13 +74,12 @@ private:
 
     void saveProject();
     void saveProjectCallback(wxCommandEvent& event);
-    void saveProjectAs(wxCommandEvent& event);
+    void newProjectCallback(wxCommandEvent& event);
+    void saveProjectAs();
+    void saveProjectAsCallback(wxCommandEvent& event);
 
     void setupTabs(const ProjectFile& project_file);
     void fileModified();
-    // void onRightClickMenu(wxCommandEvent& event);
-    // void onShowContextMenu(wxContextMenuEvent& event);
-    // enum MenuIDs { MENU_ID_CONTEXT_1 = wxID_HIGHEST + 4, MENU_ID_CONTEXT_2, MENU_ID_CONTEXT_3 };
 
 public:
     MainWindow();
@@ -92,7 +91,6 @@ public:
     void OnChildDestroy(wxCloseEvent& event);
 
     void openExistingFile(wxCommandEvent& event);
-    void onSaveAs(wxCommandEvent& event);
     void changeCurrentTabName(wxCommandEvent& event);
     void changeCurrentElementName(wxCommandEvent& event);
     void currentElementSelectionChanged(wxCommandEvent& event);

@@ -14,6 +14,7 @@ private:
     ProjectFile project_file_;
 
     bool is_saved_;
+    bool path_is_set_;
 
 public:
     SaveManager() = delete;
@@ -22,6 +23,7 @@ public:
         file_path_ = file_path;
         project_file_ = ProjectFile(file_path);
         is_saved_ = true;
+        path_is_set_ = true;
     }
 
     void setIsModified()
@@ -34,16 +36,35 @@ public:
         return is_saved_;
     }
 
+    bool pathIsSet() const
+    {
+        return path_is_set_;
+    }
+
+    void reset()
+    {
+        path_is_set_ = false;
+        file_path_ = "";
+        project_file_ = ProjectFile();
+    }
+
     std::string getCurrentFileName() const
     {
-        size_t last = 0;
-        size_t next = 0;
-        while ((next = file_path_.find("/", last)) != std::string::npos)
+        if(!path_is_set_)
         {
-            last = next + 1;
+            return "Untitled";
         }
+        else
+        {
+            size_t last = 0;
+            size_t next = 0;
+            while ((next = file_path_.find("/", last)) != std::string::npos)
+            {
+                last = next + 1;
+            }
 
-        return file_path_.substr(last);
+            return file_path_.substr(last);
+        }
     }
 
     void save(const ProjectFile& changed_project_file)
@@ -76,6 +97,7 @@ public:
     {
         file_path_ = file_path;
         project_file_ = changed_project_file;
+        path_is_set_ = true;
 
         const nlohmann::json j_to_save = changed_project_file.toJson();
 
