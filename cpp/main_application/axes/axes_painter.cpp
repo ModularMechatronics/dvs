@@ -44,7 +44,7 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
                         const ViewAngles& view_angles,
                         const GridVectors& gv,
                         const CoordinateConverter& coord_converter,
-                        const bool is_selected)
+                        const bool draw_selected_bb)
 {
     // TODO: Set state variable that increments for every call, and assert in the beginning
     // of every call that it has the right value (thus asserting that the call order is correct)
@@ -76,7 +76,7 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
     drawAxisNumbers(gv_, axes_limits_, view_angles_, coord_converter_, width_, height_);
 
     printViewAnglesInPlotWindow();
-    if(is_selected)
+    if(draw_selected_bb)
     {
         drawSelectedSilhouette();
     }

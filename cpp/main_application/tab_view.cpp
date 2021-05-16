@@ -25,6 +25,11 @@ TabView::TabView(wxNotebook* parent, const project_file::TabSettings& tab) : wxN
         ge->updateSizeFromParent(this->GetSize());
         gui_elements_[elem.name] = ge;
     }
+
+    if(gui_elements_.size() > 0)
+    {
+        gui_elements_.begin()->second->setIsSelected();
+    }
 }
 
 TabSettings TabView::getTabSettings() const
