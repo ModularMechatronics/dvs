@@ -35,17 +35,13 @@ private:
 
     UdpServer* udp_server_;
     wxTimer timer_;
+    wxTimer refresh_timer_;
 
     std::vector<TabView*> tab_elements_;
 
     // GuiElement* current_gui_element_;
     bool current_gui_element_set_;
     int current_tab_num_;
-
-    wxBitmap tb_edit;
-    wxBitmap tb_delete;
-    wxBitmap tb_done;
-    wxBitmap tb_add;
 
     bool is_editing_;
 
@@ -63,6 +59,7 @@ private:
     std::string current_element_name_;
 
     void OnTimer(wxTimerEvent&);
+    void OnRefreshTimer(wxTimerEvent&);
     void setupGui();
     void setCurrentElement(const internal::FunctionHeader& hdr);
     void receiveData();

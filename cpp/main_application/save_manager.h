@@ -45,6 +45,7 @@ public:
     {
         path_is_set_ = false;
         file_path_ = "";
+        is_saved_ = true;
         project_file_ = ProjectFile();
     }
 
@@ -91,6 +92,8 @@ public:
     {
         file_path_ = file_path;
         project_file_ = ProjectFile(file_path);
+        path_is_set_ = true;
+        is_saved_ = true;
     }
 
     void saveToNewFile(const std::string& file_path, const ProjectFile& changed_project_file)
