@@ -539,11 +539,13 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     axes_interactor_->update(
         keyboardStateToInteractionType(keyboard_state_), getWidth(), getHeight());
 
+    const bool draw_selected_bb = is_selected_ && is_editing_;
+
     axes_painter_->paint(axes_interactor_->getAxesLimits(),
                          axes_interactor_->getViewAngles(),
                          axes_interactor_->generateGridVectors(),
                          axes_interactor_->getCoordConverter(),
-                         is_selected_);
+                         draw_selected_bb);
 
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?
     axes_painter_->plotBegin();

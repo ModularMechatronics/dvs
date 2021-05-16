@@ -46,11 +46,17 @@ public:
     void setIsEditing(const bool is_editing)
     {
         is_editing_ = is_editing;
+        refresh();
     }
 
     bool isSelected()
     {
         return is_selected_;
+    }
+
+    void setIsSelected()
+    {
+        is_selected_ = true;
     }
 
     ElementSettings getElementSettings() const

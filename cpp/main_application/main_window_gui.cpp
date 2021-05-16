@@ -52,8 +52,10 @@ void MainWindow::setupTabs(const ProjectFile& project_file)
     if(current_tab_idx != wxNOT_FOUND)
     {
         current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
+        current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
     }
     layout_tools_window_->currentTabChanged(current_tab_name_);
+    layout_tools_window_->currentElementSelectionChanged(current_element_name_);
 }
 
 void MainWindow::fileModified()

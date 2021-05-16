@@ -153,6 +153,9 @@ void MainWindow::newProjectCallback(wxCommandEvent& event)
         }
     }
 
+    current_tab_name_ = "";
+    current_element_name_ = "";
+
     save_manager_->reset();
 
     if(is_editing_)

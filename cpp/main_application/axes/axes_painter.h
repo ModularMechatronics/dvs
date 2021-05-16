@@ -49,7 +49,7 @@ public:
                const ViewAngles& view_angles,
                const GridVectors& gv,
                const CoordinateConverter& coord_converter,
-               const bool is_selected);
+               const bool draw_selected_bb);
 };
 
 #endif
