@@ -15,7 +15,6 @@ class Plot3D : public PlotObjectBase
 {
 private:
     size_t num_elements_;
-    float line_width_;
 
     Vectord x_vec, y_vec, z_vec;
 

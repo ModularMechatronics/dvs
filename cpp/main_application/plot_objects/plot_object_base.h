@@ -87,6 +87,8 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     num_dimensions_ = 0;
 
     const Properties props = hdr.getProperties();
+
+    assignProperties(props);
 }
 
 void PlotObjectBase::assignProperties(const Properties& props)
