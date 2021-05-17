@@ -46,6 +46,8 @@ void MainWindow::setupTabs(const ProjectFile& project_file)
         tab_elements_.push_back(tab_element);
 
         tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
+        const std::map<std::string, GuiElement*> ges = tab_element->getGuiElements();
+        gui_elements_.insert(ges.begin(), ges.end());
     }
 
     const int current_tab_idx = tabs_view->GetSelection();
