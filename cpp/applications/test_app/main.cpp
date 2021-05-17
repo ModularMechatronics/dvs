@@ -32,7 +32,7 @@ int main( void )
                properties::Alpha(137),
                properties::Name("SimpleName"),
                properties::LineStyle("-*"),
-               properties::LineWidth(22),
+               properties::LineWidth(1),
                properties::EdgeColor(55, 21, 7),
                properties::FaceColor(52, 26, 3),
                properties::ColorMap::MAGMA(),
@@ -44,7 +44,7 @@ int main( void )
                    properties::Alpha(137),
                    properties::Name("SimpleName"),
                    properties::LineStyle("-*"),
-                   properties::LineWidth(22),
+                   properties::LineWidth(1),
                    properties::EdgeColor(55, 21, 7),
                    properties::FaceColor(52, 26, 3),
                    properties::ColorMap::MAGMA(),
@@ -56,7 +56,7 @@ int main( void )
                    properties::Alpha(137),
                    properties::Name("SimpleName"),
                    properties::LineStyle("-*"),
-                   properties::LineWidth(22),
+                   properties::LineWidth(1),
                    properties::EdgeColor(55, 21, 7),
                    properties::FaceColor(52, 26, 3),
                    properties::ColorMap::MAGMA(),
@@ -64,7 +64,7 @@ int main( void )
     sleepMS(20);
     setCurrentElement("view_02");
 
-    for(int i = 0; i < 1000; i++)
+    for(int i = 0; i < 100; i++)
     {
         sleepMS(20);
         plotSomething(i);
@@ -83,6 +83,6 @@ void plotSomething(int i)
         z(k) = 2 * std::sin(x(k) + static_cast<double>(i));
     }
     plot3(x, y, z, properties::Color(12, 14, 55),
-                       properties::LineWidth(22),
+                       properties::LineWidth(1),
                        properties::PointSize(137));
 }
