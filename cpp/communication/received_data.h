@@ -32,7 +32,7 @@ public:
     {
         const uint64_t idx = hdr_.numBytes() + 2 * sizeof(uint64_t) + 1;
 
-        std::cout << "num_received_bytes: " << num_received_bytes << std::endl;
+        // std::cout << "num_received_bytes: " << num_received_bytes << std::endl;
 
         if(idx > num_received_bytes)
         {

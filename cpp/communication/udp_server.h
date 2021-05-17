@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <queue>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -33,7 +34,6 @@ class UdpServer
 private:
     int port_num_;
     std::thread* receive_thread_;
-    std::atomic<bool> data_in_buffer_;
     int file_descr_;
     socklen_t client_len;
     struct sockaddr_in claddr;
@@ -42,14 +42,16 @@ private:
     std::mutex mtx_;
 
     std::unique_ptr<const ReceivedData> received_data_;
+    std::queue<std::unique_ptr<const ReceivedData>> received_data_buffer_;
 
 public:
     
     static constexpr size_t max_buffer_size = 1000000;
 
-    bool hasReceivedData() const
+    bool hasReceivedData()
     {
-        return data_in_buffer_;
+        const std::lock_guard lg(mtx_);
+        return received_data_buffer_.size() > 0;
     }
 
     UdpServer() = delete;
@@ -70,8 +72,6 @@ public:
         myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
         myaddr.sin_port = htons(port_num_);
 
-        data_in_buffer_ = false;
-
         if(bind(file_descr_, (struct sockaddr *)&myaddr, sizeof(myaddr)) < 0)
         {
             throw std::runtime_error("Cannot bind");
@@ -83,18 +83,19 @@ public:
         receive_thread_ = new std::thread(&UdpServer::receiveThreadFunction, this);
     }
 
-    void waitUntilBufferCleared()
-    {
-        while(data_in_buffer_)
-        {
-            usleep(100);
-        }
-    }
-
     std::unique_ptr<const ReceivedData> getReceivedData()
     {
-        data_in_buffer_ = false;
-        return std::move(received_data_);
+        const std::lock_guard lg(mtx_);
+        if(received_data_buffer_.size() > 0)
+        {
+            std::unique_ptr<const ReceivedData> res(std::move(received_data_buffer_.front()));
+            received_data_buffer_.pop();
+            return res;
+        }
+        else
+        {
+            return std::unique_ptr<const ReceivedData>();
+        }
     }
 
     void receiveThreadFunction()
@@ -110,15 +111,10 @@ public:
                 should_run = false;
                 throw std::runtime_error("recvfrom returned error!");
             }
-            else if(num_received_bytes >= max_buffer_size)
+            else if(static_cast<size_t>(num_received_bytes) >= max_buffer_size)
             {
                 should_run = false;
                 throw std::runtime_error("Too many bytes received!");
-            }
-
-            if(data_in_buffer_)
-            {
-                throw std::runtime_error("Buffer not cleared before filling it with more data!");
             }
 
             const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(receive_buffer_);
@@ -133,31 +129,12 @@ public:
             }
 
             received_data_ = std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes);
-            waitUntilBufferCleared();
+            {
+                const std::lock_guard lg(mtx_);
+                received_data_buffer_.push(std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes));
+            }
         }
     }
-
-    /*void receiveBuffer(const char* const data, const uint64_t num_received_bytes)
-    {
-        const uint32_t is_big_endian = data[0];
-
-        uint64_t rec_magic_num;
-        std::memcpy(&rec_magic_num, &(data[1]), sizeof(uint64_t));
-
-        uint64_t rec_num_bytes;
-        std::memcpy(&rec_num_bytes, &(data[sizeof(uint64_t) + 1]), sizeof(uint64_t));
-
-        const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(data);
-
-        const dvs::internal::FunctionHeader hdr(&(uint8_ptr[2 * sizeof(uint64_t) + 1]));
-
-        std::cout << "Num values: " << hdr.getNumValues() << std::endl;
-        std::cout << "Is big endian: " << is_big_endian << std::endl;
-        std::cout << "magic num: " << dvs::internal::magic_num << ", rec magic num: " << rec_magic_num << std::endl;
-        std::cout << "num_received_bytes: " << num_received_bytes << ", rec_num_bytes: " << rec_num_bytes << std::endl;
-
-    }*/
-
 
     ~UdpServer()
     {
