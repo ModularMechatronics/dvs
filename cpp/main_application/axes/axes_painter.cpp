@@ -46,15 +46,10 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
                         const CoordinateConverter& coord_converter,
                         const bool draw_selected_bb)
 {
-    // TODO: Set state variable that increments for every call, and assert in the beginning
-    // of every call that it has the right value (thus asserting that the call order is correct)
-
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
     gv_ = gv;
     coord_converter_ = coord_converter;
-
-    // ------------
 
     // Plot box
     setOpenGLStateForPlotBox();

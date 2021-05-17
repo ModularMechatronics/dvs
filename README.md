@@ -13,3 +13,4 @@ Display dpi: https://forums.wxwidgets.org/viewtopic.php?p=74002#74002
 https://hasenj.wordpress.com/2009/04/14/making-a-fancy-window-in-wxpython/
 Fullscreen: https://forums.wxwidgets.org/viewtopic.php?t=28067
 wxwidgets and opengl: https://forums.wxwidgets.org/viewtopic.php?f=27&t=45552
+https://stackoverflow.com/questions/4052940/how-to-make-an-opengl-rendering-context-with-transparent-background/9215724#9215724

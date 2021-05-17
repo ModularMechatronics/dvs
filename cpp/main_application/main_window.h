@@ -38,8 +38,9 @@ private:
     wxTimer refresh_timer_;
 
     std::vector<TabView*> tab_elements_;
+    std::map<std::string, GuiElement*> gui_elements_;
 
-    // GuiElement* current_gui_element_;
+    GuiElement* current_gui_element_;
     bool current_gui_element_set_;
     int current_tab_num_;
 

@@ -42,6 +42,10 @@ public:
 
     TabSettings getTabSettings() const;
     void childModified(wxCommandEvent& event);
+    std::map<std::string, GuiElement*> getGuiElements() const
+    {
+        return gui_elements_;
+    }
 
     std::string getName() const
     {
