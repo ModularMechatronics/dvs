@@ -36,8 +36,13 @@ bool MainApp::OnInit()
     // wxFrame *frame = new wxFrame(NULL, wxID_ANY, "Something", wxPoint(300, 300), wxSize(200, 200), wxFRAME_TOOL_WINDOW | wxNO_BORDER);
     // frame->Show(true);
 #endif
-    
-    main_window = new MainWindow("");
+
+    std::vector<std::string> cmdl_args;
+    for(int k = 0; k < wxAppConsole::argc; k++)
+    {
+        cmdl_args.emplace_back(wxAppConsole::argv[k].mb_str());
+    }
+    main_window = new MainWindow(cmdl_args);
     main_window->Show();
 
     SetTopWindow(main_window);

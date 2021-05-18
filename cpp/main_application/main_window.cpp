@@ -1,11 +1,13 @@
 #include "main_window.h"
 
 #include <unistd.h>
+#include <mach-o/dyld.h>
 #include <wx/wxprec.h>
 #include <wx/wfstream.h>
 
 #include <csignal>
 #include <iostream>
+#include <filesystem>
 #include <stdexcept>
 
 #include "layout_tools_window.h"
@@ -19,16 +21,40 @@ std::string getProjectFilePath()
     return "/Users/annotelldaniel/work/repos/dvs/project_files/exp0.dvs.json";
 }
 
-MainWindow::MainWindow(const wxString& title)
-    : wxFrame(NULL, wxID_ANY, title, wxPoint(0, 30), wxSize(1500, 700))
+std::string getExecutablePath()
+{
+    char path[2048];
+    uint32_t size = sizeof(path);
+
+    if (_NSGetExecutablePath(path, &size) != 0)
+    {
+        printf("Buffer too small; need size %u\n", size);
+    }
+    
+    return std::string(path);
+}
+
+MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(0, 30), wxSize(1500, 700))
 {
     udp_server_ = new UdpServer(9752);
     udp_server_->start();
-    // current_gui_element_ = nullptr;
+    current_gui_element_ = nullptr;
     current_gui_element_set_ = false;
     is_editing_ = false;
 
-    save_manager_ = new SaveManager(getProjectFilePath());
+    std::filesystem::path pa = std::filesystem::absolute(getExecutablePath());
+    cache_reader_ = new CacheReader(pa.remove_filename());
+
+    if(cache_reader_->hasKey("last_opened_file") && std::filesystem::exists(cache_reader_->readCache<std::string>("last_opened_file")))
+    {
+        save_manager_ = new SaveManager(cache_reader_->readCache<std::string>("last_opened_file"));
+    }
+    else
+    {
+        save_manager_ = new SaveManager();
+    }
+    
 
     SetLabel(save_manager_->getCurrentFileName());
     Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
@@ -84,7 +110,10 @@ MainWindow::MainWindow(const wxString& title)
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow()
+{
+    delete cache_reader_;
+}
 
 void MainWindow::editingFinished(wxCommandEvent& event)
 {
@@ -107,6 +136,8 @@ void MainWindow::saveProjectAs()
     }
 
     const std::string new_save_path = std::string(openFileDialog.GetPath().mb_str());
+
+    cache_reader_->writeToCache("last_opened_file", new_save_path);
 
     if(new_save_path == save_manager_->getCurrentFilePath())
     {
@@ -139,6 +170,7 @@ void MainWindow::saveProject()
         }
 
         SetLabel(save_manager_->getCurrentFileName());
+        cache_reader_->writeToCache("last_opened_file", save_manager_->getCurrentFileName());
 
         save_manager_->save(pf);
     }
@@ -285,6 +317,8 @@ void MainWindow::openExistingFile(wxCommandEvent& event)
         disableEditing();
         layout_tools_window_->Hide();
     }
+
+    cache_reader_->writeToCache("last_opened_file", std::string(openFileDialog.GetPath().mb_str()));
 
     save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
     SetLabel(save_manager_->getCurrentFileName());
