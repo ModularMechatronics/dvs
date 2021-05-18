@@ -98,6 +98,31 @@ public:
         }
     }
 
+    void sendData(char data[256], const int num_bytes_to_send)
+    {
+        struct sockaddr* tx_addr_ptr;
+        tx_addr_ptr = (struct sockaddr *)&claddr;
+        if(file_descr_ == -1)
+        {
+            perror("Invalid socket!");
+        }
+        else if (sendto(file_descr_, data, num_bytes_to_send, 0, tx_addr_ptr, sizeof(struct sockaddr_in)) < 0 )
+        {
+            perror("sendto failed");
+        }
+    }
+
+    void sendAck()
+    {
+        char data[256];
+        data[0] = 'a';
+        data[1] = 'c';
+        data[2] = 'k';
+        data[3] = '#';
+        data[4] = '\0';
+        sendData(data, 5);
+    }
+
     void receiveThreadFunction()
     {
         client_len = sizeof(claddr);
@@ -116,6 +141,7 @@ public:
                 should_run = false;
                 throw std::runtime_error("Too many bytes received!");
             }
+            sendAck();
 
             const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(receive_buffer_);
 
