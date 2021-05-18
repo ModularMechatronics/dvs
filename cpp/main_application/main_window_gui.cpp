@@ -38,6 +38,7 @@ void MainWindow::setupGui()
 
 void MainWindow::setupTabs(const ProjectFile& project_file)
 {
+    gui_elements_ = std::map<std::string, GuiElement*>();
     for(const TabSettings tab : project_file.getTabs())
     {
         const std::string tab_name = tab.getName();

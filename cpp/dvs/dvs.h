@@ -45,7 +45,17 @@ inline uint8_t isBigEndian()
     }
 }
 
-inline void sendThroughInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
+inline bool checkAck(char data[256])
+{
+    const bool ar = data[0] == 'a' &&
+                    data[1] == 'c' &&
+                    data[2] == 'k' &&
+                    data[3] == '#' &&
+                    data[4] == '\0';
+    return ar;
+}
+
+inline void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
 {
     if(num_bytes > 1380)
     {
@@ -54,11 +64,25 @@ inline void sendThroughInterface(const uint8_t* const data_blob, const uint64_t 
     }
     UdpClient udp_client(9752);
     udp_client.sendData(data_blob, num_bytes);
+
+    char data[256];
+    const int num_received_bytes = udp_client.receiveData(data);
+
+    bool ack_received = checkAck(data);
+
+    if(!ack_received)
+    {
+        throw std::runtime_error("No ack received!");
+    }
+    else if(num_received_bytes != 5)
+    {
+        throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
+    }
 }
 
 inline SendFunctionType getSendFunction()
 {
-    return sendThroughInterface;
+    return sendThroughUdpInterface;
 }
 
 template <typename U>

@@ -41,6 +41,7 @@ private:
     int sock_file_descr;
     struct sockaddr_in tx_addr;
     struct sockaddr* tx_addr_ptr;
+    socklen_t client_len;
 
 public:
     UdpClient() : sock_file_descr(-1), tx_addr_ptr(nullptr)
@@ -66,6 +67,15 @@ public:
     ~UdpClient()
     {
         close(sock_file_descr);
+    }
+
+    int receiveData(char data[256])
+    {
+        client_len = sizeof(tx_addr);
+        const int num_received_bytes = recvfrom(sock_file_descr,
+                                                data,
+                                                256, 0, (struct sockaddr *)&tx_addr, &client_len);
+        return num_received_bytes;
     }
 
     void sendData(const uint8_t* const data, const uint64_t num_bytes)

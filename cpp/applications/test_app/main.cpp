@@ -6,7 +6,7 @@ using namespace dvs;
 
 void sleepMS(const int ms)
 {
-    usleep(ms * 1000);
+    // usleep(ms * 1000);
 }
 
 void plotSomething(int i);
@@ -62,7 +62,7 @@ int main( void )
                    properties::ColorMap::MAGMA(),
                    properties::PointSize(137));
     sleepMS(20);
-    setCurrentElement("view_02");
+    setCurrentElement("view_00");
 
     for(int i = 0; i < 100; i++)
     {
