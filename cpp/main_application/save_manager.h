@@ -17,7 +17,14 @@ private:
     bool path_is_set_;
 
 public:
-    SaveManager() = delete;
+    SaveManager()
+    {
+        file_path_ = "";
+        project_file_;
+        is_saved_ = false;
+        path_is_set_ = false;
+    }
+
     SaveManager(const std::string& file_path)
     {
         file_path_ = file_path;

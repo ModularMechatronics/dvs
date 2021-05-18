@@ -26,12 +26,14 @@
 #include "tab_view.h"
 #include "events.h"
 #include "save_manager.h"
+#include "cache_reader.h"
 
 class MainWindow : public wxFrame
 {
 private:
 
     SaveManager* save_manager_;
+    CacheReader* cache_reader_;
 
     UdpServer* udp_server_;
     wxTimer timer_;
@@ -81,7 +83,7 @@ private:
 
 public:
     MainWindow();
-    MainWindow(const wxString& title);
+    MainWindow(const std::vector<std::string>& cmdl_args);
     ~MainWindow();
 
     virtual void OnClose(wxCloseEvent& event);
