@@ -25,7 +25,7 @@ class WindowView : public wxFrame
 {
 private:
     std::string name_;
-    project_file::WindowSettings window_;
+    // project_file::WindowSettings window_;
     std::map<std::string, GuiElement*> gui_elements_;
     float grid_size_;
     int current_unnamed_idx_;
