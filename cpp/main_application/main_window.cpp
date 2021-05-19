@@ -38,6 +38,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     current_gui_element_set_ = false;
     is_editing_ = false;
 
+    WindowView* vv = new WindowView(this);
+
     std::filesystem::path pa = std::filesystem::absolute(getExecutablePath());
     cache_reader_ = new CacheReader(pa.remove_filename());
 

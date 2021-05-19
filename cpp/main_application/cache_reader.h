@@ -27,12 +27,10 @@ public:
 
         if(!std::filesystem::exists(cache_file_path_))
         {
-            std::cout << "File doesn't exist! Creating..." << std::endl;
             createCacheFile();
         }
         else
         {
-            std::cout << "File exists! Reading..." << std::endl;
             try
             {
                 readCacheFile();

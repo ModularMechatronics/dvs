@@ -85,7 +85,7 @@ public:
 
 class TabSettings
 {
-private:
+protected:
     std::vector<ElementSettings> elements_;
 
     std::string name_;
@@ -177,6 +177,17 @@ public:
     bool operator!=(const TabSettings& other) const
     {
         return !(*this == other);
+    }
+};
+
+class WindowSettings : public TabSettings
+{
+private:
+
+public:
+    WindowSettings() {}
+    WindowSettings(const nlohmann::json& j) : TabSettings(j)
+    {
     }
 };
 
