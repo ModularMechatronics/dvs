@@ -10,7 +10,7 @@
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_low_level.h"
 
-AxesInteractor::AxesInteractor(const AxesSettings& axes_settings)
+AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width)
 {
     assert(axes_settings.getMinVec().x < axes_settings.getMaxVec().x && "x min larger than x max!");
     assert(axes_settings.getMinVec().y < axes_settings.getMaxVec().y && "y min larger than y max!");
@@ -18,6 +18,9 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings)
 
     axes_limits_ = AxesLimits(axes_settings.getMinVec(), axes_settings.getMaxVec());
     default_axes_limits_ = axes_limits_;
+
+    current_window_width = window_width;
+    current_window_height = window_height;
 
     view_angles_ = ViewAngles(-30.0 * M_PI / 180.0, 20.0 * M_PI / 180.0, 5.0 * M_PI / 180.0);
     default_view_angles_ = view_angles_;
@@ -60,6 +63,9 @@ void AxesInteractor::update(const InteractionType interaction_type,
                             const int window_width,
                             const int window_height)
 {
+    current_window_width = window_width;
+    current_window_height = window_height;
+
     if (interaction_type == InteractionType::RESET)
     {
         resetView();
@@ -81,16 +87,18 @@ void AxesInteractor::resetView()
 
 void AxesInteractor::registerMouseDragInput(const int dx, const int dy)
 {
+    const float dx_mod = 250.0f * static_cast<float>(dx) / current_window_width;
+    const float dy_mod = 250.0f * static_cast<float>(dy) / current_window_height;
     switch (current_mouse_activity)
     {
         case MouseActivity::ROTATE:
-            changeRotation(dx * rotation_mouse_gain, dy * rotation_mouse_gain);
+            changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain);
             break;
         case MouseActivity::ZOOM:
-            changeZoom(dy * zoom_mouse_gain);
+            changeZoom(dy_mod * zoom_mouse_gain);
             break;
         case MouseActivity::PAN:
-            changePan(dx * pan_mouse_gain, dy * pan_mouse_gain);
+            changePan(dx_mod * pan_mouse_gain, dy_mod * pan_mouse_gain);
             break;
         default:
             break;

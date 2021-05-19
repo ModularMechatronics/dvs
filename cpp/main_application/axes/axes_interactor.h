@@ -31,6 +31,9 @@ private:
     const double pan_mouse_gain = 0.005;
     const double zoom_mouse_gain = 0.005;
 
+    double current_window_width;
+    double current_window_height;
+
     MouseActivity current_mouse_activity;
 
     ViewAngles view_angles_;
@@ -51,7 +54,7 @@ private:
     void changeRotation(const double dx, const double dy);
 
 public:
-    AxesInteractor(const AxesSettings& axes_settings);
+    AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width);
 
     void update(const InteractionType interaction_type,
                 const int window_width,
