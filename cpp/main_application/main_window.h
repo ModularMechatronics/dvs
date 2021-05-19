@@ -27,6 +27,7 @@
 #include "events.h"
 #include "save_manager.h"
 #include "cache_reader.h"
+#include "window_view.h"
 
 class MainWindow : public wxFrame
 {
