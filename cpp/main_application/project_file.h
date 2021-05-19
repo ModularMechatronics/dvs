@@ -83,17 +83,15 @@ public:
     }
 };
 
-class TabSettings
+class SettingsBase
 {
 protected:
     std::vector<ElementSettings> elements_;
-
     std::string name_;
 
 public:
-
-    TabSettings() = default;
-    TabSettings(const nlohmann::json& j)
+    SettingsBase() {}
+    SettingsBase(const nlohmann::json& j)
     {
         name_ = j["name"];
         for(size_t k = 0; k < j["elements"].size(); k++)
@@ -148,7 +146,7 @@ public:
         return res;
     }
 
-    bool operator==(const TabSettings& other) const
+    bool operator==(const SettingsBase& other) const
     {
         if((name_ != other.name_) || (elements_.size() != other.elements_.size()))
         {
@@ -174,19 +172,27 @@ public:
         return true;
     }
 
-    bool operator!=(const TabSettings& other) const
+    bool operator!=(const SettingsBase& other) const
     {
         return !(*this == other);
     }
 };
 
-class WindowSettings : public TabSettings
+class TabSettings : public SettingsBase
+{
+public:
+
+    TabSettings() : SettingsBase() {}
+    TabSettings(const nlohmann::json& j) : SettingsBase(j) {}
+};
+
+class WindowSettings : public SettingsBase
 {
 private:
 
 public:
     WindowSettings() {}
-    WindowSettings(const nlohmann::json& j) : TabSettings(j)
+    WindowSettings(const nlohmann::json& j) : SettingsBase(j)
     {
     }
 };
