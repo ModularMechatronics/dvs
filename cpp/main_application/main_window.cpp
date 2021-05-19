@@ -172,7 +172,7 @@ void MainWindow::saveProject()
         }
 
         SetLabel(save_manager_->getCurrentFileName());
-        cache_reader_->writeToCache("last_opened_file", save_manager_->getCurrentFileName());
+        cache_reader_->writeToCache("last_opened_file", save_manager_->getCurrentFilePath());
 
         save_manager_->save(pf);
     }

@@ -92,7 +92,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings
 
     bindCallbacks();
 
-    axes_interactor_ = new AxesInteractor(axes_settings);
+    axes_interactor_ = new AxesInteractor(axes_settings, getWidth(), getHeight());
     axes_painter_ = new AxesPainter(axes_settings);
 
     hold_on_ = false;
