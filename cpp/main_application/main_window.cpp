@@ -49,9 +49,16 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     {
         save_manager_ = new SaveManager();
     }
-    
 
-    SetLabel(save_manager_->getCurrentFileName());
+    if(save_manager_->pathIsSet())
+    {
+        SetLabel(save_manager_->getCurrentFileName());
+    }
+    else
+    {
+        SetLabel(save_manager_->getCurrentFileName() + "*");
+    }
+
     Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
 
     wxMenuBar* m_pMenuBar = new wxMenuBar();
