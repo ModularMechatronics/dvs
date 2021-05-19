@@ -16,11 +16,6 @@
 
 using namespace dvs::internal;
 
-std::string getProjectFilePath()
-{
-    return "/Users/annotelldaniel/work/repos/dvs/project_files/exp0.dvs.json";
-}
-
 std::string getExecutablePath()
 {
     char path[2048];
@@ -239,6 +234,26 @@ void MainWindow::addNewTab(wxCommandEvent& event)
     fileModified();
 }
 
+void MainWindow::deleteTab(wxCommandEvent& event)
+{
+    const int current_tab_idx = tabs_view->GetSelection();
+    if(current_tab_idx != wxNOT_FOUND)
+    {
+
+        const std::map<std::string, GuiElement*> tab_gui_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+
+        for(const auto& q : tab_gui_elements)
+        {
+            gui_elements_.erase(q.first);
+        }
+
+        tabs_view->DeletePage(current_tab_idx);
+        tab_elements_.erase(tab_elements_.begin() + current_tab_idx);
+    }
+
+    fileModified();
+}
+
 void MainWindow::disableEditing()
 {
     edit_layout_menu_option_->SetName("Edit layout");
@@ -251,18 +266,6 @@ void MainWindow::disableEditing()
 
 void MainWindow::guiElementModified(wxCommandEvent& event)
 {
-    fileModified();
-}
-
-void MainWindow::deleteTab(wxCommandEvent& event)
-{
-    const int current_tab_idx = tabs_view->GetSelection();
-    if(current_tab_idx != wxNOT_FOUND)
-    {
-        tabs_view->DeletePage(current_tab_idx);
-        tab_elements_.erase(tab_elements_.begin() + current_tab_idx);
-    }
-
     fileModified();
 }
 

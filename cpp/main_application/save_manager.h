@@ -20,7 +20,6 @@ public:
     SaveManager()
     {
         file_path_ = "";
-        project_file_;
         is_saved_ = false;
         path_is_set_ = false;
     }

@@ -139,6 +139,16 @@ void MainWindow::newElement(wxCommandEvent& event)
     if(current_tab_idx != wxNOT_FOUND)
     {
         tab_elements_.at(current_tab_idx)->newElement();
+        const std::map<std::string, GuiElement*> new_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+
+        for(const auto& q : new_elements)
+        {
+            if(gui_elements_.count(q.first) == 0)
+            {
+                gui_elements_[q.first] = q.second;
+            }
+        }
+
     }
     fileModified();
 }
@@ -149,7 +159,20 @@ void MainWindow::deleteElement(wxCommandEvent& event)
     const int current_tab_idx = tabs_view->GetSelection();
     if(current_tab_idx != wxNOT_FOUND)
     {
+        const std::map<std::string, GuiElement*> all_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+
         tab_elements_.at(current_tab_idx)->deleteSelectedElement();
+
+        const std::map<std::string, GuiElement*> elements_after_delete = tab_elements_.at(current_tab_idx)->getGuiElements();
+
+        for(const auto& q : all_elements)
+        {
+            if(elements_after_delete.count(q.first) == 0)
+            {
+                gui_elements_.erase(q.first);
+                break;
+            }
+        }
     }
     fileModified();
 }
