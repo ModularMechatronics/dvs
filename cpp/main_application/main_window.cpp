@@ -124,7 +124,7 @@ void MainWindow::saveProjectAsCallback(wxCommandEvent& event)
 void MainWindow::saveProjectAs()
 {
     wxFileDialog openFileDialog(this, _("Choose file to save to"), "", "",
-                       "dvs.json files (*.json)|*.json", wxFD_SAVE);
+                       "dvs files (*.dvs)|*.dvs", wxFD_SAVE);
     if (openFileDialog.ShowModal() == wxID_CANCEL)
     {
         return;
@@ -303,8 +303,8 @@ void MainWindow::openExistingFile(wxCommandEvent& event)
         }
     }
 
-    wxFileDialog openFileDialog(this, _("Open dvs.json file"), "", "",
-                       "dvs.json files (*.json)|*.json", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog openFileDialog(this, _("Open dvs file"), "", "",
+                       "dvs files (*.dvs)|*.dvs", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (openFileDialog.ShowModal() == wxID_CANCEL)
     {
         return;
