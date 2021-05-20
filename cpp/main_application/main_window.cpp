@@ -81,6 +81,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
     m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
 
+    wxMenu* m_pWindowsMenu = new wxMenu();
+    m_pWindowsMenu->Append(wxID_NEW, _T("Window 0"));
+    m_pWindowsMenu->Append(wxID_OPEN, _T("Window 1"));
+    m_pWindowsMenu->Append(wxID_SAVE, _T("Window 0"));
+    m_pMenuBar->Append(m_pWindowsMenu, _T("&Windows"));
+
     Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
     Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::toggleEditLayout, this, dvs_ids::EDIT_LAYOUT);
@@ -94,16 +100,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     wxImage::AddHandler(new wxPNGHandler);
 
-    initial_width_ = 1500;
-    initial_height_ = 700;
-
     layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(300, 300));
     layout_tools_window_->Hide();
 
     Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
 
     setupGui();
-    setupWindows(save_manager_->getCurrentProjectFile());
 
     Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
 
@@ -118,6 +120,8 @@ void MainWindow::setupWindows(const ProjectFile& project_file)
     for(const WindowSettings& ws : project_file.getWindows())
     {
         windows_.emplace_back(new WindowView(this, ws));
+        const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
+        gui_elements_.insert(ges.begin(), ges.end());
     }
 }
 
@@ -221,6 +225,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& event)
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
     setupTabs(save_manager_->getCurrentProjectFile());
+    setupWindows(save_manager_->getCurrentProjectFile());
 
     SendSizeEvent();
     Refresh();
@@ -367,6 +372,7 @@ void MainWindow::openExistingFile(wxCommandEvent& event)
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
     setupTabs(save_manager_->getCurrentProjectFile());
+    setupWindows(save_manager_->getCurrentProjectFile());
 
     refresh_timer_.Start(10);
 
