@@ -278,6 +278,11 @@ void MainWindow::disableEditing()
     {
         te->stopEdit();
     }
+
+    for(auto we : windows_)
+    {
+        we->stopEdit();
+    }
 }
 
 void MainWindow::guiElementModified(wxCommandEvent& event)
@@ -295,6 +300,11 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
         {
             te->stopEdit();
         }
+
+        for(auto we : windows_)
+        {
+            we->stopEdit();
+        }
     }
     else
     {
@@ -303,6 +313,11 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
         for(auto te : tab_elements_)
         {
             te->startEdit();
+        }
+
+        for(auto we : windows_)
+        {
+            we->startEdit();
         }
     }
     is_editing_ = !is_editing_;

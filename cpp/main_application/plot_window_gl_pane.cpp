@@ -66,7 +66,7 @@ CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, 
     }
 }
 
-PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings& element_settings, const float grid_size)
+PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& element_settings, const float grid_size)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE), GuiElement(element_settings)
 {
     m_context = new wxGLContext(this);
@@ -84,7 +84,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings
     const float min_z = -1.0;
     const float max_z = 1.0;
 
-    tab_view_parent_ = dynamic_cast<TabView*>(parent);
+    view_parent_ = dynamic_cast<SuperBase*>(parent);
 
     is_selected_ = false;
 
@@ -259,7 +259,7 @@ void PlotWindowGLPane::destroy()
 
 void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
 {
-    tab_view_parent_->resetSelectionForAllChildren();
+    view_parent_->resetSelectionForAllChildren();
     wxCommandEvent evt(MY_EVENT, GetId());
     evt.SetEventObject(this);
     evt.SetString(element_settings_.name);

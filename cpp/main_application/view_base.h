@@ -19,11 +19,20 @@
 
 #include "project_file.h"
 #include "gui_element.h"
+#include "events.h"
+
+class SuperBase
+{
+public:
+    SuperBase() = default;
+    virtual void resetSelectionForAllChildren() = 0;
+
+};
 
 template <class BaseClass>
-class ViewBase : public BaseClass
+class ViewBase : public BaseClass, public SuperBase
 {
-private:
+protected:
     std::string name_;
     std::map<std::string, GuiElement*> gui_elements_;
     float grid_size_;
@@ -35,23 +44,25 @@ private:
 public:
     ViewBase() = delete;
     ViewBase(wxFrame* parent, const WindowSettings& window_settings);
-    ViewBase(wxNotebookPage* parent);
+    ViewBase(wxNotebookPage* parent, const TabSettings& tab_settings);
 
     std::map<std::string, GuiElement*> getGuiElements() const;
     std::string getName() const;
     void setName(const std::string& new_name);
     std::vector<ElementSettings> getElementSettingsList() const;
     void deleteSelectedElement();
-    void resetSelectionForAllChildren();
+    void resetSelectionForAllChildren() override;
     void setSelectedElementName(const std::string& new_name);
     void mouseLeftPressed(wxMouseEvent& event);
     void setFirstElementSelected();
     std::string getSelectedElementName();
     void childModified(wxCommandEvent& event);
-    void newElement();
     void startEdit();
     void stopEdit();
     void setSize(const wxSize& new_size);
+    TabSettings getTabSettings() const;
+
+    virtual void newElement() = 0;
 
 };
 
@@ -61,35 +72,35 @@ ViewBase<T>::ViewBase(wxFrame* parent, const WindowSettings& window_settings) : 
               "Figure 1")
 {
     grid_size_ = 5.0f;
+    name_ = window_settings.getName();
 
     WindowSettings* st = new WindowSettings(window_settings);
     settings_ = static_cast<SettingsBase*>(st);
 
     this->setSize(wxSize(st->width, st->height));
     this->SetPosition(wxPoint(st->x, st->y));
-    
-
-    const std::vector<project_file::ElementSettings> elements = settings_->getElementSettingsList();
-    this->SetBackgroundColour(wxColor(110, 2, 65));
 
     current_unnamed_idx_ = 0;
     is_editing_ = false;
 
     this->Bind(wxEVT_LEFT_DOWN, &ViewBase<T>::mouseLeftPressed, this);
     this->Bind(GUI_ELEMENT_CHANGED_EVENT, &ViewBase<T>::childModified, this, wxID_ANY);
+}
 
-    for(const auto elem : elements)
-    {
-        GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxFrame*>(this), elem, grid_size_);
+template <typename T>
+ViewBase<T>::ViewBase(wxNotebookPage* parent, const TabSettings& tab_settings) : wxNotebookPage(parent, -1)
+{
+    grid_size_ = 5.0f;
+    name_ = tab_settings.getName();
 
-        ge->updateSizeFromParent(this->GetSize());
-        gui_elements_[elem.name] = ge;
-    }
+    TabSettings* st = new TabSettings(tab_settings);
+    settings_ = static_cast<SettingsBase*>(st);
 
-    if(gui_elements_.size() > 0)
-    {
-        gui_elements_.begin()->second->setIsSelected();
-    }
+    current_unnamed_idx_ = 0;
+    is_editing_ = false;
+
+    this->Bind(wxEVT_LEFT_DOWN, &ViewBase<T>::mouseLeftPressed, this);
+    this->Bind(GUI_ELEMENT_CHANGED_EVENT, &ViewBase<T>::childModified, this, wxID_ANY);
 }
 
 template <class BaseClass>
@@ -110,7 +121,8 @@ std::map<std::string, GuiElement*> ViewBase<BaseClass>::getGuiElements() const
     return gui_elements_;
 }
 
-/*TabSettings ViewBase<BaseClass>::getTabSettings() const
+template <class BaseClass>
+TabSettings ViewBase<BaseClass>::getTabSettings() const
 {
     TabSettings ts;
     ts.setName(name_);
@@ -121,7 +133,7 @@ std::map<std::string, GuiElement*> ViewBase<BaseClass>::getGuiElements() const
     }
 
     return ts;
-}*/
+}
 
 template <class BaseClass>
 std::vector<ElementSettings> ViewBase<BaseClass>::getElementSettingsList() const
@@ -217,7 +229,7 @@ void ViewBase<BaseClass>::childModified(wxCommandEvent& event)
     wxPostEvent(this->GetParent(), parent_event);
 }
 
-template <class BaseClass>
+/*template <class BaseClass>
 void ViewBase<BaseClass>::newElement()
 {
     current_unnamed_idx_++;
@@ -236,7 +248,7 @@ void ViewBase<BaseClass>::newElement()
         ge->setIsEditing(true);
     }
     gui_elements_[elem.name] = ge;
-}
+}*/
 
 template <class BaseClass>
 void ViewBase<BaseClass>::startEdit()
