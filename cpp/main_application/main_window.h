@@ -41,6 +41,7 @@ private:
     wxTimer refresh_timer_;
 
     std::vector<TabView*> tab_elements_;
+    std::vector<WindowView*> windows_;
     std::map<std::string, GuiElement*> gui_elements_;
 
     GuiElement* current_gui_element_;
@@ -80,6 +81,7 @@ private:
     void saveProjectAsCallback(wxCommandEvent& event);
 
     void setupTabs(const ProjectFile& project_file);
+    void setupWindows(const ProjectFile& project_file);
     void fileModified();
 
 public:

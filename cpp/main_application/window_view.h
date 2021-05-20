@@ -20,25 +20,22 @@
 
 #include "project_file.h"
 #include "gui_element.h"
+#include "view_base.h"
 
-class WindowView : public wxFrame
+class WindowView : public ViewBase<wxFrame>
 {
 private:
-    std::string name_;
+    // std::string name_;
     // project_file::WindowSettings window_;
-    std::map<std::string, GuiElement*> gui_elements_;
-    float grid_size_;
-    int current_unnamed_idx_;
-    bool is_editing_;
-    std::string name_of_selected_element_;
+    // std::map<std::string, GuiElement*> gui_elements_;
+    // float grid_size_;
+    // int current_unnamed_idx_;
+    // bool is_editing_;
+    // std::string name_of_selected_element_;
 
 public:
     WindowView() = default;
-    WindowView(wxWindow* parent) : wxFrame(parent,
-              wxID_ANY,
-              "Figure 1",
-              wxPoint(30, 30),
-              wxSize(600, 628))
+    WindowView(wxFrame* parent, const WindowSettings& window_settings) : ViewBase<wxFrame>(parent, window_settings)
     {
         // , const project_file::WindowSettings& tab
         this->Show();

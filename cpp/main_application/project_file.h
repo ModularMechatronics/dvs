@@ -188,12 +188,19 @@ public:
 
 class WindowSettings : public SettingsBase
 {
-private:
-
 public:
+    float x;
+    float y;
+    float width;
+    float height;
+
     WindowSettings() {}
     WindowSettings(const nlohmann::json& j) : SettingsBase(j)
     {
+        x = j["x"];
+        y = j["y"];
+        width = j["width"];
+        height = j["height"];
     }
 };
 
@@ -202,6 +209,7 @@ class ProjectFile
 private:
     std::string file_path_;
     std::vector<TabSettings> tabs_;
+    std::vector<WindowSettings> windows_;
 
 public:
     ProjectFile() = default;
@@ -213,6 +221,11 @@ public:
         for(size_t k = 0; k < j["tabs"].size(); k++)
         {
             tabs_.emplace_back(j["tabs"][k]);
+        }
+
+        for(size_t k = 0; k < j["windows"].size(); k++)
+        {
+            windows_.emplace_back(j["windows"][k]);
         }
     }
 
@@ -229,6 +242,11 @@ public:
     std::vector<TabSettings> getTabs() const
     {
         return tabs_;
+    }
+
+    std::vector<WindowSettings> getWindows() const
+    {
+        return windows_;
     }
 
     nlohmann::json toJson() const

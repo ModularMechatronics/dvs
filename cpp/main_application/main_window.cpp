@@ -38,8 +38,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     current_gui_element_set_ = false;
     is_editing_ = false;
 
-    WindowView* vv = new WindowView(this);
-
     std::filesystem::path pa = std::filesystem::absolute(getExecutablePath());
     cache_reader_ = new CacheReader(pa.remove_filename());
 
@@ -105,6 +103,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
 
     setupGui();
+    setupWindows(save_manager_->getCurrentProjectFile());
 
     Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
 
@@ -112,6 +111,14 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     timer_.Start(10);
 
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
+}
+
+void MainWindow::setupWindows(const ProjectFile& project_file)
+{
+    for(const WindowSettings& ws : project_file.getWindows())
+    {
+        windows_.emplace_back(new WindowView(this, ws));
+    }
 }
 
 MainWindow::~MainWindow()
