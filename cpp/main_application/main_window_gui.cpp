@@ -34,6 +34,7 @@ void MainWindow::setupGui()
     tab_container->SetSizer(tabs_sizer_v);
 
     setupTabs(save_manager_->getCurrentProjectFile());
+    setupWindows(save_manager_->getCurrentProjectFile());
 }
 
 void MainWindow::setupTabs(const ProjectFile& project_file)
