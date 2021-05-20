@@ -14,7 +14,7 @@
 #include "received_data.h"
 #include "gui_element.h"
 #include "prototype_view.h"
-#include "tab_view.h"
+#include "view_base.h"
 
 using namespace project_file;
 
@@ -43,8 +43,11 @@ private:
     float edit_size_margin_;
 
     PlotDataHandler plot_data_handler_;
-    
-    TabView* tab_view_parent_;
+
+    SuperBase* view_parent_;
+
+    // ViewBase<wxNotebookPage>* tab_view_parent_;
+    // ViewBase<wxFrame>* window_view_parent_;
 
     void notifyParentAboutModification();
 

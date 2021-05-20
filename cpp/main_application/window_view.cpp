@@ -1,19 +1,22 @@
-#include "tab_view.h"
+#include "window_view.h"
 
 #include "plot_window_gl_pane.h"
+
 #include "events.h"
 
-TabView::TabView(wxNotebookPage* parent, const TabSettings& tab_settings) : ViewBase<wxNotebookPage>(parent, tab_settings)
+WindowView::WindowView(wxFrame* parent, const WindowSettings& window_settings) : ViewBase<wxFrame>(parent, window_settings)
 {
     const std::vector<project_file::ElementSettings> elements = settings_->getElementSettingsList();
 
     for(const auto elem : elements)
     {
-        GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxWindow*>(this), elem, grid_size_);
+        GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxFrame*>(this), elem, grid_size_);
 
         ge->updateSizeFromParent(this->GetSize());
         gui_elements_[elem.name] = ge;
     }
+
+    this->SetLabel(window_settings.getName());
 
     if(gui_elements_.size() > 0)
     {
@@ -22,7 +25,7 @@ TabView::TabView(wxNotebookPage* parent, const TabSettings& tab_settings) : View
     this->Show();
 }
 
-void TabView::newElement()
+void WindowView::newElement()
 {
     current_unnamed_idx_++;
     ElementSettings elem;

@@ -41,8 +41,6 @@ public:
                 createCacheFile();
             }
         }
-        std::cout << cache_file_path_ << std::endl;
-
     }
 
     bool hasKey(const std::string& key)
