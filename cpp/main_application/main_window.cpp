@@ -37,7 +37,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     current_gui_element_ = nullptr;
     current_gui_element_set_ = false;
     is_editing_ = false;
-
+    window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
     std::filesystem::path pa = std::filesystem::absolute(getExecutablePath());
     cache_reader_ = new CacheReader(pa.remove_filename());
 
@@ -60,6 +60,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     }
 
     Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
+    Bind(CHILD_WINDOW_CLOSED_EVENT, &MainWindow::childWindowClosed, this, wxID_ANY);
+    Bind(CHILD_WINDOW_IN_FOCUS_EVENT, &MainWindow::childWindowInFocus, this, wxID_ANY);
 
     wxMenuBar* m_pMenuBar = new wxMenuBar();
     // File Menu
@@ -81,10 +83,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
     m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
 
-    wxMenu* m_pWindowsMenu = new wxMenu();
-    m_pWindowsMenu->Append(wxID_NEW, _T("Window 0"));
-    m_pWindowsMenu->Append(wxID_OPEN, _T("Window 1"));
-    m_pWindowsMenu->Append(wxID_SAVE, _T("Window 0"));
+    m_pWindowsMenu = new wxMenu();
     m_pMenuBar->Append(m_pWindowsMenu, _T("&Windows"));
 
     Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
@@ -107,6 +106,13 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     setupGui();
 
+    window_id_offset = 0;
+    for(auto we : windows_)
+    {
+        m_pWindowsMenu->Append(we->getCallbackId(), we->getName());
+        Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, we->getCallbackId());
+    }
+
     Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
 
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
@@ -115,11 +121,38 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
 }
 
+void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
+{
+    for(auto te : tab_elements_)
+    {
+        te->resetSelectionForAllChildren();
+        te->setFirstElementSelected();
+    }
+
+    for(auto we : windows_)
+    {
+        we->resetSelectionForAllChildren();
+        we->setFirstElementSelected();
+        if(we->getCallbackId() == event.GetId())
+        {
+            current_tab_name_ = we->getName();
+            current_element_name_ = we->getSelectedElementName();
+            // we->show();
+            we->Hide();
+            we->Show();
+            std::cout << "Setting focus" << std::endl;
+        }
+    }
+    layout_tools_window_->currentTabChanged(current_tab_name_);
+    layout_tools_window_->currentElementSelectionChanged(current_element_name_);
+}
+
 void MainWindow::setupWindows(const ProjectFile& project_file)
 {
     for(const WindowSettings& ws : project_file.getWindows())
     {
-        windows_.emplace_back(new WindowView(this, ws));
+        windows_.emplace_back(new WindowView(this, ws, window_callback_id_));
+        window_callback_id_++;
         const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
         gui_elements_.insert(ges.begin(), ges.end());
     }
@@ -218,6 +251,11 @@ void MainWindow::newProjectCallback(wxCommandEvent& event)
     tabs_view->DeleteAllPages();
     tabs_view->Destroy();
 
+    for(auto we : windows_)
+    {
+        we->Destroy();
+    }
+
     tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
@@ -295,6 +333,34 @@ void MainWindow::guiElementModified(wxCommandEvent& event)
     fileModified();
 }
 
+void MainWindow::childWindowClosed(wxCommandEvent& event)
+{
+
+}
+
+void MainWindow::childWindowInFocus(wxCommandEvent& event)
+{
+    /*for(auto te : tab_elements_)
+    {
+        te->resetSelectionForAllChildren();
+        te->setFirstElementSelected();
+    }
+
+    for(auto we : windows_)
+    {
+        we->resetSelectionForAllChildren();
+        we->setFirstElementSelected();
+        if(we->getCallbackId() == event.GetId())
+        {
+            std::cout << we->getName() << std::endl;
+            current_tab_name_ = we->getName();
+            current_element_name_ = we->getSelectedElementName();
+        }
+    }
+    layout_tools_window_->currentTabChanged(current_tab_name_);
+    layout_tools_window_->currentElementSelectionChanged(current_element_name_);*/
+}
+
 void MainWindow::toggleEditLayout(wxCommandEvent& event)
 {
     if(is_editing_)
@@ -364,6 +430,11 @@ void MainWindow::openExistingFile(wxCommandEvent& event)
 
     tabs_view->DeleteAllPages();
     tabs_view->Destroy();
+
+    for(auto we : windows_)
+    {
+        we->Destroy();
+    }
 
     tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();

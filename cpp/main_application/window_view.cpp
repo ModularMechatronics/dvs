@@ -4,8 +4,10 @@
 
 #include "events.h"
 
-WindowView::WindowView(wxFrame* parent, const WindowSettings& window_settings) : ViewBase<wxFrame>(parent, window_settings)
+WindowView::WindowView(wxFrame* parent, const WindowSettings& window_settings, const int callback_id) : 
+    ViewBase<wxFrame>(parent, window_settings)
 {
+    callback_id_ = callback_id;
     const std::vector<project_file::ElementSettings> elements = settings_->getElementSettingsList();
 
     for(const auto elem : elements)
@@ -22,7 +24,43 @@ WindowView::WindowView(wxFrame* parent, const WindowSettings& window_settings) :
     {
         gui_elements_.begin()->second->setIsSelected();
     }
+
+    Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
+
+    show();
+}
+
+int WindowView::getCallbackId() const
+{
+    return callback_id_;
+}
+
+void WindowView::onActivate(wxActivateEvent& event)
+{
+    if(event.GetActive())
+    {
+        wxCommandEvent parent_event(CHILD_WINDOW_IN_FOCUS_EVENT);
+        wxPostEvent(GetParent(), parent_event);
+    }
+}
+
+void WindowView::hide()
+{
+    Unbind(wxEVT_ACTIVATE, &WindowView::onActivate, this);
+    this->Hide();
+}
+
+void WindowView::show()
+{
     this->Show();
+    Bind(wxEVT_ACTIVATE, &WindowView::onActivate, this);
+}
+
+void WindowView::OnClose(wxCloseEvent& WXUNUSED(event))
+{
+    wxCommandEvent parent_event(CHILD_WINDOW_CLOSED_EVENT);
+    wxPostEvent(GetParent(), parent_event);
+    hide();
 }
 
 void WindowView::newElement()

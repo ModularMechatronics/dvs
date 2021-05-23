@@ -31,5 +31,30 @@
             ],
             "name": "a tab"
         }
+    ],
+    "windows": [
+        {
+            "elements": [
+                {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 0.4,
+                    "height": 0.3,
+                    "name": "view_200"
+                },
+                {
+                    "x": 0.4,
+                    "y": 0.0,
+                    "width": 0.5,
+                    "height": 0.5,
+                    "name": "view_201"
+                }
+            ],
+            "name": "Figure_1",
+            "height": 628,
+            "width": 600,
+            "x": 30,
+            "y": 30
+        }
     ]
 }
