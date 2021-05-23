@@ -25,7 +25,7 @@ class TabView : public ViewBase<wxNotebookPage>
 {
 private:
 public:
-    TabView() = default;
+    TabView() = delete;
     TabView(wxNotebookPage* parent, const TabSettings& tab_settings);
 
     void newElement() override;

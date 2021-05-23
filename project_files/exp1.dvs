@@ -45,5 +45,30 @@
             ],
             "name": "view_2"
         }
+    ],
+    "windows": [
+        {
+            "elements": [
+                {
+                    "height": 0.3,
+                    "name": "view_100",
+                    "width": 0.2,
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                {
+                    "height": 0.5,
+                    "name": "view_101",
+                    "width": 0.6,
+                    "x": 0.4,
+                    "y": 0.0
+                }
+            ],
+            "name": "Figure_0",
+            "height": 628,
+            "width": 600,
+            "x": 30,
+            "y": 30
+        }
     ]
 }

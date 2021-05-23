@@ -56,6 +56,9 @@ private:
     wxBoxSizer* tabs_sizer_v;
 
     wxMenuItem* edit_layout_menu_option_;
+    wxMenu* m_pWindowsMenu;
+    int window_id_offset;
+    int window_callback_id_;
 
     int initial_width_;
     int initial_height_;
@@ -73,6 +76,8 @@ private:
     void toggleEditLayout(wxCommandEvent& event);
     void editingFinished(wxCommandEvent& event);
     void guiElementModified(wxCommandEvent& event);
+    void childWindowClosed(wxCommandEvent& event);
+    void childWindowInFocus(wxCommandEvent& event);
 
     void saveProject();
     void saveProjectCallback(wxCommandEvent& event);
@@ -93,6 +98,7 @@ public:
     virtual void OnSize(wxSizeEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
+    void toggleWindowVisibility(wxCommandEvent& event);
     void openExistingFile(wxCommandEvent& event);
     void changeCurrentTabName(wxCommandEvent& event);
     void changeCurrentElementName(wxCommandEvent& event);

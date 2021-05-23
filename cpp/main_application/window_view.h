@@ -25,11 +25,19 @@
 class WindowView : public ViewBase<wxFrame>
 {
 private:
+    int callback_id_;
 public:
-    WindowView() = default;
-    WindowView(wxFrame* parent, const WindowSettings& window_settings);
+    WindowView() = delete;
+    WindowView(wxFrame* parent, const WindowSettings& window_settings, const int callback_id);
 
     void newElement() override;
+    int getCallbackId() const;
+
+    void onActivate(wxActivateEvent& event);
+    void hide();
+    void show();
+
+    virtual void OnClose(wxCloseEvent& event);
 };
 
 #endif
