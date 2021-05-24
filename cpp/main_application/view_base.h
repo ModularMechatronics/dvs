@@ -139,8 +139,13 @@ TabSettings ViewBase<BaseClass>::getTabSettings() const
 template <class BaseClass>
 WindowSettings ViewBase<BaseClass>::getWindowSettings() const
 {
-    WindowSettings ws = *static_cast<WindowSettings*>(settings_);
+    WindowSettings* wsp = static_cast<WindowSettings*>(settings_);
+    WindowSettings ws;
     ws.setName(name_);
+    ws.x = wsp->x;
+    ws.y = wsp->y;
+    ws.width = wsp->width;
+    ws.height = wsp->height;
 
     for(auto it : gui_elements_)
     {
