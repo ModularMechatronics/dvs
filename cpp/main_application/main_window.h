@@ -72,6 +72,7 @@ private:
     void setCurrentElement(const internal::FunctionHeader& hdr);
     void receiveData();
 
+    void onActivate(wxActivateEvent& event);
     void tabChanged(wxCommandEvent& event);
     void toggleEditLayout(wxCommandEvent& event);
     void editingFinished(wxCommandEvent& event);
@@ -105,6 +106,8 @@ public:
     void currentElementSelectionChanged(wxCommandEvent& event);
     void addNewTab(wxCommandEvent& event);
     void deleteTab(wxCommandEvent& event);
+    void addNewWindow(wxCommandEvent& event);
+    void deleteWindow(wxCommandEvent& event);
 
     void newElement(wxCommandEvent& event);
     void deleteElement(wxCommandEvent& event);

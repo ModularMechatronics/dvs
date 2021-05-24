@@ -82,6 +82,17 @@ void LayoutToolsWindow::setupShapes()
     }
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
+        wxButton* new_window_button = new wxButton(shapes_box_, wxID_ANY, "New window", wxDefaultPosition);
+        wxButton* delete_window_button = new wxButton(shapes_box_, wxID_ANY, "Delete window", wxDefaultPosition);
+        new_window_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::addNewWindow, main_window_ptr);
+        delete_window_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::deleteWindow, main_window_ptr);
+
+        sizer_inside->Add(new_window_button, 0, wxALIGN_CENTER_HORIZONTAL);
+        sizer_inside->Add(delete_window_button, 0, wxALIGN_CENTER_HORIZONTAL);
+        global_sizer->Add(sizer_inside);
+    }
+    {
+        wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxButton* new_element_button = new wxButton(shapes_box_, wxID_ANY, "New element", wxDefaultPosition);
         wxButton* delete_element_button = new wxButton(shapes_box_, wxID_ANY, "Delete element", wxDefaultPosition);
         new_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::newElement, main_window_ptr);

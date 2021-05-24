@@ -61,6 +61,7 @@ public:
     void stopEdit();
     void setSize(const wxSize& new_size);
     TabSettings getTabSettings() const;
+    WindowSettings getWindowSettings() const;
 
     virtual void newElement() = 0;
 
@@ -133,6 +134,20 @@ TabSettings ViewBase<BaseClass>::getTabSettings() const
     }
 
     return ts;
+}
+
+template <class BaseClass>
+WindowSettings ViewBase<BaseClass>::getWindowSettings() const
+{
+    WindowSettings ws = *static_cast<WindowSettings*>(settings_);
+    ws.setName(name_);
+
+    for(auto it : gui_elements_)
+    {
+        ws.pushBackElementSettings(it.second->getElementSettings());
+    }
+
+    return ws;
 }
 
 template <class BaseClass>
