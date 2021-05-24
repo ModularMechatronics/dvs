@@ -234,6 +234,11 @@ public:
         tabs_.push_back(ts);
     }
 
+    void pushBackWindowSettings(const WindowSettings& ws)
+    {
+        windows_.push_back(ws);
+    }
+
     TabSettings getTabFromIdx(const size_t idx) const
     {
         return tabs_.at(idx);
@@ -277,6 +282,33 @@ public:
             j_to_save["tabs"].push_back(tab_obj);
         }
 
+        for(auto we : windows_)
+        {
+            nlohmann::json elements = nlohmann::json::array();
+
+            const std::vector<ElementSettings> elems = we.getElementSettingsList();
+            for(const ElementSettings& elem : elems)
+            {
+                nlohmann::json j;
+                j["x"] = elem.x;
+                j["y"] = elem.y;
+                j["width"] = elem.width;
+                j["height"] = elem.height;
+                j["name"] = elem.name;
+                elements.push_back(j);
+            }
+
+            nlohmann::json window_obj = nlohmann::json();
+            window_obj["name"] = we.getName();
+            window_obj["height"] = we.height;
+            window_obj["width"] = we.width;
+            window_obj["x"] = we.x;
+            window_obj["y"] = we.y;
+            window_obj["elements"] = elements;
+
+            j_to_save["windows"].push_back(window_obj);
+        }
+
         return j_to_save;
     }
 
@@ -298,9 +330,9 @@ public:
 
     bool hasTabWithName(const std::string& name) const
     {
-        for(const TabSettings& t : tabs_)
+        for(const TabSettings& ts : tabs_)
         {
-            if(t.getName() == name)
+            if(ts.getName() == name)
             {
                 return true;
             }
@@ -316,6 +348,32 @@ public:
             if(ts.getName() == name)
             {
                 res = ts;
+                break;
+            }
+        }
+        return res;
+    }
+
+    bool hasWindowWithName(const std::string& name) const
+    {
+        for(const WindowSettings& ws : windows_)
+        {
+            if(ws.getName() == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    WindowSettings getWindowWithName(const std::string& name) const
+    {
+        WindowSettings res;
+        for(const WindowSettings& ws : windows_)
+        {
+            if(ws.getName() == name)
+            {
+                res = ws;
                 break;
             }
         }
@@ -343,6 +401,22 @@ public:
                 return false;
             }
         }
+
+        for(const WindowSettings ws : windows_)
+        {
+            if(other.hasWindowWithName(ws.getName()))
+            {
+                if(other.getWindowWithName(ws.getName()) != ws)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 

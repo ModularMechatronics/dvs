@@ -114,11 +114,22 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     }
 
     Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
+    Bind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
 
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);
 
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
+}
+
+void MainWindow::onActivate(wxActivateEvent& event)
+{
+    if(event.GetActive())
+    {
+        std::cout << "Main window active" << std::endl;
+        // wxCommandEvent parent_event(CHILD_WINDOW_IN_FOCUS_EVENT);
+        // wxPostEvent(GetParent(), parent_event);
+    }
 }
 
 void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
@@ -198,6 +209,10 @@ void MainWindow::saveProjectAs()
     {
         pf.pushBackTabSettings(te->getTabSettings());
     }
+    for(const WindowView* we : windows_)
+    {
+        pf.pushBackWindowSettings(we->getWindowSettings());
+    }
 
     save_manager_->saveToNewFile(new_save_path, pf);
     SetLabel(save_manager_->getCurrentFileName());
@@ -215,6 +230,10 @@ void MainWindow::saveProject()
         for(const TabView* te : tab_elements_)
         {
             pf.pushBackTabSettings(te->getTabSettings());
+        }
+        for(const WindowView* we : windows_)
+        {
+            pf.pushBackWindowSettings(we->getWindowSettings());
         }
 
         SetLabel(save_manager_->getCurrentFileName());
@@ -311,6 +330,48 @@ void MainWindow::deleteTab(wxCommandEvent& event)
     }
 
     fileModified();
+}
+
+void MainWindow::addNewWindow(wxCommandEvent& event)
+{
+    const std::string window_name = "New Window " + std::to_string(current_tab_num_);
+    WindowSettings window_settings;
+    window_settings.setName(window_name);
+    window_settings.x = 30;
+    window_settings.y = 30;
+    window_settings.width = 600;
+    window_settings.height = 628;
+    WindowView* window_element = new WindowView(this, window_settings, window_callback_id_);
+    window_callback_id_++;
+    windows_.push_back(window_element);
+
+    if(is_editing_)
+    {
+        window_element->startEdit();
+    }
+
+    current_tab_num_++;
+    fileModified();
+}
+
+void MainWindow::deleteWindow(wxCommandEvent& event)
+{
+    /*const int current_tab_idx = tabs_view->GetSelection();
+    if(current_tab_idx != wxNOT_FOUND)
+    {
+
+        const std::map<std::string, GuiElement*> tab_gui_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+
+        for(const auto& q : tab_gui_elements)
+        {
+            gui_elements_.erase(q.first);
+        }
+
+        tabs_view->DeletePage(current_tab_idx);
+        tab_elements_.erase(tab_elements_.begin() + current_tab_idx);
+    }
+
+    fileModified();*/
 }
 
 void MainWindow::disableEditing()
