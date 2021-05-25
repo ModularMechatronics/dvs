@@ -5,6 +5,7 @@
 #include <wx/frame.h>
 #include <wx/notebook.h>
 #include <wx/textctrl.h>
+#include <wx/grid.h>
 #include <wx/timer.h>
 #include <wx/menu.h>
 #include <wx/wx.h>
