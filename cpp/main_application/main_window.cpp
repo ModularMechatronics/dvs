@@ -78,13 +78,13 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
     m_pMenuBar->Append(m_edit_menu, _T("Edit"));
-    // About menu
-    wxMenu* m_pHelpMenu = new wxMenu();
-    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
-    m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
 
     m_pWindowsMenu = new wxMenu();
     m_pMenuBar->Append(m_pWindowsMenu, _T("&Windows"));
+
+    wxMenu* m_pHelpMenu = new wxMenu();
+    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
+    m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
 
     Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
     Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
@@ -99,7 +99,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     wxImage::AddHandler(new wxPNGHandler);
 
-    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(300, 300));
+    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(300, 600));
     layout_tools_window_->Hide();
 
     Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
