@@ -40,6 +40,7 @@ void WindowView::onActivate(wxActivateEvent& event)
     if(event.GetActive())
     {
         wxCommandEvent parent_event(CHILD_WINDOW_IN_FOCUS_EVENT);
+        parent_event.SetId(callback_id_);
         wxPostEvent(GetParent(), parent_event);
     }
 }
