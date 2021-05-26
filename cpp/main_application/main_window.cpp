@@ -126,9 +126,25 @@ void MainWindow::onActivate(wxActivateEvent& event)
 {
     if(event.GetActive())
     {
-        std::cout << "Main window active" << std::endl;
-        // wxCommandEvent parent_event(CHILD_WINDOW_IN_FOCUS_EVENT);
-        // wxPostEvent(GetParent(), parent_event);
+        for(auto we : windows_)
+        {
+            we->resetSelectionForAllChildren();
+        }
+
+        for(auto te : tab_elements_)
+        {
+            te->resetSelectionForAllChildren();
+            te->setFirstElementSelected();
+        }
+
+        const int current_tab_idx = tabs_view->GetSelection();
+        if(current_tab_idx != wxNOT_FOUND)
+        {
+            current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
+            current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
+        }
+        layout_tools_window_->currentTabChanged(current_tab_name_);
+        layout_tools_window_->currentElementSelectionChanged(current_element_name_);
     }
 }
 
@@ -137,18 +153,16 @@ void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
     for(auto te : tab_elements_)
     {
         te->resetSelectionForAllChildren();
-        te->setFirstElementSelected();
     }
 
     for(auto we : windows_)
     {
         we->resetSelectionForAllChildren();
-        we->setFirstElementSelected();
         if(we->getCallbackId() == event.GetId())
         {
+            we->setFirstElementSelected();
             current_tab_name_ = we->getName();
             current_element_name_ = we->getSelectedElementName();
-            // we->show();
             we->Hide();
             we->Show();
             std::cout << "Setting focus" << std::endl;
@@ -401,25 +415,24 @@ void MainWindow::childWindowClosed(wxCommandEvent& event)
 
 void MainWindow::childWindowInFocus(wxCommandEvent& event)
 {
-    /*for(auto te : tab_elements_)
+    for(auto te : tab_elements_)
     {
         te->resetSelectionForAllChildren();
-        te->setFirstElementSelected();
     }
 
     for(auto we : windows_)
     {
         we->resetSelectionForAllChildren();
-        we->setFirstElementSelected();
         if(we->getCallbackId() == event.GetId())
         {
+            we->setFirstElementSelected();
             std::cout << we->getName() << std::endl;
             current_tab_name_ = we->getName();
             current_element_name_ = we->getSelectedElementName();
         }
     }
     layout_tools_window_->currentTabChanged(current_tab_name_);
-    layout_tools_window_->currentElementSelectionChanged(current_element_name_);*/
+    layout_tools_window_->currentElementSelectionChanged(current_element_name_);
 }
 
 void MainWindow::toggleEditLayout(wxCommandEvent& event)
