@@ -21,17 +21,21 @@
 #include "project_file.h"
 #include "gui_element.h"
 #include "view_base.h"
+#include "background_panel.h"
 
 class WindowView : public ViewBase<wxFrame>
 {
 private:
     int callback_id_;
+    BackgroundPanel* background_panel_;
+
 public:
     WindowView() = delete;
     WindowView(wxFrame* parent, const WindowSettings& window_settings, const int callback_id);
 
     void newElement() override;
     int getCallbackId() const;
+    void OnSize(wxSizeEvent& event);
 
     void onActivate(wxActivateEvent& event);
     void hide();

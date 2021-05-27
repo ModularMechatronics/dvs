@@ -13,7 +13,6 @@ using namespace dvs::internal;
 void MainWindow::setupGui()
 {
     tab_container = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(600, 600));
-    tab_container->SetBackgroundColour(wxColor(234, 231, 220));
 
     wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -96,6 +95,8 @@ void MainWindow::OnSize(wxSizeEvent& event)
     {
         tab_elements_[k]->setSize(new_size);
     }
+
+    background_panel_->resize(this->GetSize());
 }
 
 void MainWindow::changeCurrentElementName(wxCommandEvent& event)
