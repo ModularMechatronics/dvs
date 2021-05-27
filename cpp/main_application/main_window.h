@@ -108,11 +108,13 @@ public:
     void changeCurrentTabName(wxCommandEvent& event);
     void changeCurrentElementName(wxCommandEvent& event);
     void currentElementSelectionChanged(wxCommandEvent& event);
-    void addNewTab(wxCommandEvent& event);
+    void addNewTabCallback(wxCommandEvent& event);
+    void addNewTab();
     void deleteTab(wxCommandEvent& event);
     void addNewWindow(wxCommandEvent& event);
     void deleteWindow(wxCommandEvent& event);
 
+    void newNamedElement(const std::string& element_name);
     void newElement(wxCommandEvent& event);
     void deleteElement(wxCommandEvent& event);
 

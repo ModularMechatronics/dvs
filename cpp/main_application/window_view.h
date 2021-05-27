@@ -33,6 +33,7 @@ public:
     WindowView() = delete;
     WindowView(wxFrame* parent, const WindowSettings& window_settings, const int callback_id);
 
+    void newElement(const std::string& element_name);
     void newElement() override;
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);

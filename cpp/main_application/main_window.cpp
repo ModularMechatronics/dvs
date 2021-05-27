@@ -314,7 +314,7 @@ void MainWindow::saveProjectCallback(wxCommandEvent& event)
     saveProject();
 }
 
-void MainWindow::addNewTab(wxCommandEvent& event)
+void MainWindow::addNewTab()
 {
     const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
     TabSettings tab;
@@ -331,6 +331,11 @@ void MainWindow::addNewTab(wxCommandEvent& event)
 
     current_tab_num_++;
     fileModified();
+}
+
+void MainWindow::addNewTabCallback(wxCommandEvent& event)
+{
+    addNewTab();
 }
 
 void MainWindow::deleteTab(wxCommandEvent& event)

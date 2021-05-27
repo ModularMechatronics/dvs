@@ -28,6 +28,7 @@ public:
     TabView() = delete;
     TabView(wxNotebookPage* parent, const TabSettings& tab_settings);
 
+    void newElement(const std::string& element_name);
     void newElement() override;
 };
 
