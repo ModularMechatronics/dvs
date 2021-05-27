@@ -29,6 +29,7 @@
 #include "cache_reader.h"
 #include "window_view.h"
 #include "custom_button.h"
+#include "background_panel.h"
 
 class MainWindow : public wxFrame
 {
@@ -63,6 +64,8 @@ private:
 
     int initial_width_;
     int initial_height_;
+
+    BackgroundPanel* background_panel_;
 
     std::string current_tab_name_;
     std::string current_element_name_;
