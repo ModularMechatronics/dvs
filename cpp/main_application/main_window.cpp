@@ -114,7 +114,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     setupGui();
 
-    window_id_offset = 0;
     for(auto we : windows_)
     {
         m_pWindowsMenu->Append(we->getCallbackId(), we->getName());
@@ -174,7 +173,6 @@ void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
             current_element_name_ = we->getSelectedElementName();
             we->Hide();
             we->Show();
-            std::cout << "Setting focus" << std::endl;
         }
     }
     layout_tools_window_->currentTabChanged(current_tab_name_);
@@ -373,12 +371,59 @@ void MainWindow::addNewWindow(wxCommandEvent& event)
         window_element->startEdit();
     }
 
+    m_pWindowsMenu->Append(window_element->getCallbackId(), window_element->getName());
+    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, window_element->getCallbackId());
+
+    main_window_last_in_focus_ = false;
+    for(auto te : tab_elements_)
+    {
+        te->resetSelectionForAllChildren();
+    }
+
+    for(auto we : windows_)
+    {
+        we->resetSelectionForAllChildren();
+    }
+
+    current_tab_name_ = window_element->getName();
+    current_element_name_ = window_element->getSelectedElementName();
+
     current_tab_num_++;
     fileModified();
 }
 
 void MainWindow::deleteWindow(wxCommandEvent& event)
 {
+    int window_idx = 0;
+    if(!main_window_last_in_focus_)
+    {
+        for(auto we : windows_)
+        {
+            if(we->getName() == current_tab_name_)
+            {
+                Unbind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, we->getCallbackId());
+
+                const int menu_id = m_pWindowsMenu->FindItem(we->getName());
+                m_pWindowsMenu->Destroy(menu_id);
+
+                const std::map<std::string, GuiElement*> window_gui_elements = we->getGuiElements();
+                for(const auto& q : window_gui_elements)
+                {
+                    gui_elements_.erase(q.first);
+                }
+                we->Destroy();
+
+                this->Hide();
+                this->Show();
+
+                main_window_last_in_focus_ = true;
+                break;
+            }
+
+            window_idx++;
+        }
+        windows_.erase(windows_.begin() + window_idx);
+    }
     /*const int current_tab_idx = tabs_view->GetSelection();
     if(current_tab_idx != wxNOT_FOUND)
     {
