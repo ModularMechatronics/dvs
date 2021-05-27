@@ -179,21 +179,47 @@ void MainWindow::newElement(wxCommandEvent& event)
 void MainWindow::deleteElement(wxCommandEvent& event)
 {
     (void)event;
-    const int current_tab_idx = tabs_view->GetSelection();
-    if(current_tab_idx != wxNOT_FOUND)
+    if(main_window_last_in_focus_)
     {
-        const std::map<std::string, GuiElement*> all_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
-
-        tab_elements_.at(current_tab_idx)->deleteSelectedElement();
-
-        const std::map<std::string, GuiElement*> elements_after_delete = tab_elements_.at(current_tab_idx)->getGuiElements();
-
-        for(const auto& q : all_elements)
+        const int current_tab_idx = tabs_view->GetSelection();
+        if(current_tab_idx != wxNOT_FOUND)
         {
-            if(elements_after_delete.count(q.first) == 0)
+            const std::map<std::string, GuiElement*> all_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+
+            tab_elements_.at(current_tab_idx)->deleteSelectedElement();
+
+            const std::map<std::string, GuiElement*> elements_after_delete = tab_elements_.at(current_tab_idx)->getGuiElements();
+
+            for(const auto& q : all_elements)
             {
-                gui_elements_.erase(q.first);
-                break;
+                if(elements_after_delete.count(q.first) == 0)
+                {
+                    gui_elements_.erase(q.first);
+                    break;
+                }
+            }
+        }
+    }
+    else
+    {
+        for(auto we : windows_)
+        {
+            if(we->getName() == current_tab_name_)
+            {
+                const std::map<std::string, GuiElement*> all_elements = we->getGuiElements();
+
+                we->deleteSelectedElement();
+
+                const std::map<std::string, GuiElement*> elements_after_delete = we->getGuiElements();
+
+                for(const auto& q : all_elements)
+                {
+                    if(elements_after_delete.count(q.first) == 0)
+                    {
+                        gui_elements_.erase(q.first);
+                        break;
+                    }
+                }
             }
         }
     }

@@ -59,7 +59,6 @@ private:
 
     wxMenuItem* edit_layout_menu_option_;
     wxMenu* m_pWindowsMenu;
-    int window_id_offset;
     int window_callback_id_;
     bool main_window_last_in_focus_;
 
