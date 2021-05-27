@@ -40,6 +40,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
     std::filesystem::path pa = std::filesystem::absolute(getExecutablePath());
     cache_reader_ = new CacheReader(pa.remove_filename());
+    main_window_last_in_focus_ = true;
 
     const int outer = 245;
     const int middle = 200;
@@ -131,6 +132,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
 void MainWindow::onActivate(wxActivateEvent& event)
 {
+    main_window_last_in_focus_ = true;
     if(event.GetActive())
     {
         for(auto we : windows_)
@@ -422,6 +424,7 @@ void MainWindow::childWindowClosed(wxCommandEvent& event)
 
 void MainWindow::childWindowInFocus(wxCommandEvent& event)
 {
+    main_window_last_in_focus_ = false;
     for(auto te : tab_elements_)
     {
         te->resetSelectionForAllChildren();
@@ -433,7 +436,6 @@ void MainWindow::childWindowInFocus(wxCommandEvent& event)
         if(we->getCallbackId() == event.GetId())
         {
             we->setFirstElementSelected();
-            std::cout << we->getName() << std::endl;
             current_tab_name_ = we->getName();
             current_element_name_ = we->getSelectedElementName();
         }

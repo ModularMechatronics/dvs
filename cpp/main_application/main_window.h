@@ -61,6 +61,7 @@ private:
     wxMenu* m_pWindowsMenu;
     int window_id_offset;
     int window_callback_id_;
+    bool main_window_last_in_focus_;
 
     int initial_width_;
     int initial_height_;

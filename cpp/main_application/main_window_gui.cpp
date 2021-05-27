@@ -137,20 +137,41 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
 void MainWindow::newElement(wxCommandEvent& event)
 {
     (void)event;
-    const int current_tab_idx = tabs_view->GetSelection();
-    if(current_tab_idx != wxNOT_FOUND)
+    if(main_window_last_in_focus_)
     {
-        tab_elements_.at(current_tab_idx)->newElement();
-        const std::map<std::string, GuiElement*> new_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
-
-        for(const auto& q : new_elements)
+        const int current_tab_idx = tabs_view->GetSelection();
+        if(current_tab_idx != wxNOT_FOUND)
         {
-            if(gui_elements_.count(q.first) == 0)
+            tab_elements_.at(current_tab_idx)->newElement();
+            const std::map<std::string, GuiElement*> new_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+
+            for(const auto& q : new_elements)
             {
-                gui_elements_[q.first] = q.second;
+                if(gui_elements_.count(q.first) == 0)
+                {
+                    gui_elements_[q.first] = q.second;
+                }
             }
         }
+    }
+    else
+    {
+        for(auto we : windows_)
+        {
+            if(we->getName() == current_tab_name_)
+            {
+                we->newElement();
+                const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
 
+                for(const auto& q : new_elements)
+                {
+                    if(gui_elements_.count(q.first) == 0)
+                    {
+                        gui_elements_[q.first] = q.second;
+                    }
+                }
+            }
+        }
     }
     fileModified();
 }
