@@ -73,7 +73,7 @@ void LayoutToolsWindow::setupShapes()
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxButton* new_tab_button = new wxButton(shapes_box_, wxID_ANY, "New tab", wxDefaultPosition);
         wxButton* delete_tab_button = new wxButton(shapes_box_, wxID_ANY, "Delete tab", wxDefaultPosition);
-        new_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::addNewTab, main_window_ptr);
+        new_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::addNewTabCallback, main_window_ptr);
         delete_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::deleteTab, main_window_ptr);
 
         sizer_inside->Add(new_tab_button, 0, wxALIGN_CENTER_HORIZONTAL);

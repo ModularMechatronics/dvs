@@ -134,6 +134,47 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
     fileModified();
 }
 
+void MainWindow::newNamedElement(const std::string& element_name)
+{
+    if(main_window_last_in_focus_)
+    {
+        const int current_tab_idx = tabs_view->GetSelection();
+        if(current_tab_idx != wxNOT_FOUND)
+        {
+            tab_elements_.at(current_tab_idx)->newElement(element_name);
+            const std::map<std::string, GuiElement*> new_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+
+            for(const auto& q : new_elements)
+            {
+                if(gui_elements_.count(q.first) == 0)
+                {
+                    gui_elements_[q.first] = q.second;
+                }
+            }
+        }
+    }
+    else
+    {
+        for(auto we : windows_)
+        {
+            if(we->getName() == current_tab_name_)
+            {
+                we->newElement(element_name);
+                const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
+
+                for(const auto& q : new_elements)
+                {
+                    if(gui_elements_.count(q.first) == 0)
+                    {
+                        gui_elements_[q.first] = q.second;
+                    }
+                }
+            }
+        }
+    }
+    fileModified();
+}
+
 void MainWindow::newElement(wxCommandEvent& event)
 {
     (void)event;

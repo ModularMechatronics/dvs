@@ -25,7 +25,12 @@ void MainWindow::setCurrentElement(const FunctionHeader& hdr)
     }
     else
     {
-        std::cout << "I don't have name: " << element_name_str << std::endl;
+        if(tab_elements_.size() == 0)
+        {
+            addNewTab();
+        }
+
+        newNamedElement(element_name_str);
     }
 }
 
