@@ -19,7 +19,6 @@ void MainWindow::setCurrentElement(const FunctionHeader& hdr)
 
     if(gui_elements_.count(element_name_str) > 0)
     {
-        std::cout << "Current element name: " << element_name_str << std::endl;
         current_gui_element_ = gui_elements_[element_name_str];
         current_gui_element_set_ = true;
     }
@@ -27,7 +26,62 @@ void MainWindow::setCurrentElement(const FunctionHeader& hdr)
     {
         if(tab_elements_.size() == 0)
         {
-            addNewTab();
+            const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
+            current_tab_num_++;
+            addNewTab(tab_name);
+        }
+
+        newNamedElement(element_name_str);
+    }
+}
+
+void MainWindow::createNewElement(const FunctionHeader& hdr)
+{
+    const FunctionHeaderObject elem_obj = hdr.getObjectFromType(FunctionHeaderObjectType::ELEMENT_NAME);
+    const properties::Name elem_name = elem_obj.getAs<properties::Name>();
+    const std::string element_name_str = elem_name.data;
+
+    if(gui_elements_.count(element_name_str) > 0)
+    {
+        std::cout << "Current element name: " << element_name_str << std::endl;
+        current_gui_element_ = gui_elements_[element_name_str];
+        current_gui_element_set_ = true;
+    }
+    else
+    {
+        const FunctionHeaderObject parent_name_obj = hdr.getObjectFromType(FunctionHeaderObjectType::PARENT_NAME);
+        std::string parent_name = parent_name_obj.getAs<properties::Name>().data;
+
+        const FunctionHeaderObject parent_type_obj = hdr.getObjectFromType(FunctionHeaderObjectType::PARENT_TYPE);
+        const dvs::ElementParent parent_type = parent_type_obj.getAs<dvs::ElementParent>();
+
+        const FunctionHeaderObject element_type_obj = hdr.getObjectFromType(FunctionHeaderObjectType::GUI_ELEMENT_TYPE);
+        const dvs::ElementType element_type = element_type_obj.getAs<dvs::ElementType>();
+
+        if(parent_name == "#DEFAULTNAME#")
+        {
+            parent_name = "New figure " + std::to_string(current_tab_num_);
+            current_tab_num_++;
+        }
+
+        if(parent_type == ElementParent::TAB)
+        {
+            if(!hasTabWithName(parent_name))
+            {
+                addNewTab(parent_name);
+            }
+            main_window_last_in_focus_ = true;
+        }
+        else if(parent_type == ElementParent::WINDOW)
+        {
+            if(!hasWindowWithName(parent_name))
+            {
+                addNewWindow(parent_name);
+            }
+            else
+            {
+                // TODO: Set focus of the window with this name
+            }
         }
 
         newNamedElement(element_name_str);
@@ -91,6 +145,10 @@ void MainWindow::receiveData()
             {
                 case Function::SET_CURRENT_ELEMENT:
                     setCurrentElement(hdr);
+
+                    break;
+                case Function::CREATE_NEW_ELEMENT:
+                    createNewElement(hdr);
 
                     break;
                 default:

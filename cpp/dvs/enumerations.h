@@ -25,6 +25,8 @@ enum class FunctionHeaderObjectType : uint16_t
     AXIS_MIN_MAX_VEC,
     POS2D,
     FIGURE_NUM,
+    PARENT_NAME,
+    PARENT_TYPE,
     ELEMENT_NAME,
     GUI_ELEMENT_TYPE,
     PROPERTY
@@ -57,6 +59,7 @@ enum class Function : uint8_t
     PLOT2,
     PLOT3,
     SET_CURRENT_ELEMENT,
+    CREATE_NEW_ELEMENT,
     NEW_ELEMENT,
     SCATTER2,
     SCATTER3,
@@ -115,12 +118,19 @@ namespace properties
     constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
 }
 
-enum class GuiElementType
+enum class ElementType
 {
     PLOT,
     IMAGE,
+    WORLD,
     BUTTON,
     TEXT_FIELD
+};
+
+enum class ElementParent
+{
+    TAB,
+    WINDOW
 };
 
 }

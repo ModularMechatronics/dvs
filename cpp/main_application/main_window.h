@@ -74,8 +74,13 @@ private:
     void OnRefreshTimer(wxTimerEvent&);
     void setupGui();
     void setCurrentElement(const internal::FunctionHeader& hdr);
+    void createNewElement(const internal::FunctionHeader& hdr);
     void receiveData();
 
+    bool hasTabWithName(const std::string& tab_name);
+    TabView* getTabWithName(const std::string& tab_name);
+    bool hasWindowWithName(const std::string& window_name);
+    WindowView* getWindowWithName(const std::string& window_name);
     void onActivate(wxActivateEvent& event);
     void tabChanged(wxCommandEvent& event);
     void toggleEditLayout(wxCommandEvent& event);
@@ -109,9 +114,10 @@ public:
     void changeCurrentElementName(wxCommandEvent& event);
     void currentElementSelectionChanged(wxCommandEvent& event);
     void addNewTabCallback(wxCommandEvent& event);
-    void addNewTab();
+    void addNewTab(const std::string& tab_name);
     void deleteTab(wxCommandEvent& event);
-    void addNewWindow(wxCommandEvent& event);
+    void addNewWindow(const std::string& window_name);
+    void addNewWindowCallback(wxCommandEvent& event);
     void deleteWindow(wxCommandEvent& event);
 
     void newNamedElement(const std::string& element_name);

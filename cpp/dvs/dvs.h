@@ -249,12 +249,14 @@ void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
-inline void newElement(const GuiElementType element_type, const std::string& name)
+inline void setCurrentElement(const std::string& name, const ElementType element_type, const std::string& parent_name="#DEFAULTNAME#", const ElementParent element_parent=ElementParent::TAB)
 {
     internal::FunctionHeader hdr;
-    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::NEW_ELEMENT);
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::CREATE_NEW_ELEMENT);
+    hdr.append(internal::FunctionHeaderObjectType::PARENT_NAME, properties::Name(parent_name.c_str()));
     hdr.append(internal::FunctionHeaderObjectType::GUI_ELEMENT_TYPE, element_type);
-    hdr.append(internal::FunctionHeaderObjectType::ELEMENT_NAME, name);
+    hdr.append(internal::FunctionHeaderObjectType::PARENT_TYPE, element_parent);
+    hdr.appendProperty(internal::FunctionHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
