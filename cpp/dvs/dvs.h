@@ -249,6 +249,19 @@ void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
+template <typename T, typename... Us>
+void scatter(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
+
 inline void setCurrentElement(const std::string& name, const ElementType element_type, const std::string& parent_name="#DEFAULTNAME#", const ElementParent element_parent=ElementParent::TAB)
 {
     internal::FunctionHeader hdr;
@@ -288,6 +301,20 @@ inline void axis(const Bound3D& min_bound, const Bound3D& max_bound)
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
+
+/*
+
+inline void setElementPositionAndSize(const int x, const int y)
+inline void setWindowPositionAndSize(const int x, const int y)
+{
+    TxList tx_list;
+    tx_list.append(Command::FUNCTION, Function::POSITION);
+    tx_list.append(Command::HAS_PAYLOAD, false);
+    tx_list.append(Command::POS2D, Pos2D(x, y));
+
+    sendTxList(tx_list);
+}
+*/
 
 /*inline void axis(const Bound2D& min_bound, const Bound2D& max_bound)
 {

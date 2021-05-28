@@ -14,8 +14,6 @@
 class Plot2D : public PlotObjectBase
 {
 private:
-    uint32_t num_elements_;
-
     Vectord x_vec, y_vec;
 
     void findMinMax();

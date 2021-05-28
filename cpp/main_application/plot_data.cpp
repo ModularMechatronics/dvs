@@ -74,7 +74,7 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 
             break;
         case Function::SCATTER2:
-            // plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(rx_list, data_vec)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(std::move(received_data), hdr)));
 
             break;
         default:

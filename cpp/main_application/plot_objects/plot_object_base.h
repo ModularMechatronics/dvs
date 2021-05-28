@@ -25,6 +25,7 @@ protected:
     std::unique_ptr<const ReceivedData> received_data_;
     size_t num_dimensions_;
     size_t num_bytes_per_element_;
+    uint32_t num_elements_;
 
     Function type_; 
     DataType data_type_;
