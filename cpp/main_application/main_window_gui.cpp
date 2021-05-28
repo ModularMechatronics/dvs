@@ -266,3 +266,52 @@ void MainWindow::deleteElement(wxCommandEvent& event)
     }
     fileModified();
 }
+
+bool MainWindow::hasTabWithName(const std::string& tab_name)
+{
+    for(const auto te : tab_elements_)
+    {
+        if(te->getName() == tab_name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+TabView* MainWindow::getTabWithName(const std::string& tab_name)
+{
+    for(const auto te : tab_elements_)
+    {
+        if(te->getName() == tab_name)
+        {
+            return te;
+        }
+    }
+    return nullptr;
+}
+
+bool MainWindow::hasWindowWithName(const std::string& window_name)
+{
+    for(const auto we : windows_)
+    {
+        if(we->getName() == window_name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+WindowView* MainWindow::getWindowWithName(const std::string& window_name)
+{
+    for(const auto we : windows_)
+    {
+        if(we->getName() == window_name)
+        {
+            return we;
+        }
+    }
+    return nullptr;
+}
+

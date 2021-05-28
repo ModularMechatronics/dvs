@@ -7,5 +7,6 @@ using namespace dvs;
 
 void testNewElements()
 {
-    setCurrentElement("view_00");
+    setCurrentElement("view_01", ElementType::PLOT, "a tab", ElementParent::TAB);
+    // setCurrentElement("view_00", ElementType::PLOT, "a tab", ElementParent::WINDOW);
 }

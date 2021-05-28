@@ -517,7 +517,7 @@ public:
 
     template <typename U> void append(const FunctionHeaderObjectType& object_type, const U& data)
     {
-        assert(checkTypeValid<U>(object_type) && "Invalid data type for object_type data!");
+        // assert(checkTypeValid<U>(object_type) && "Invalid data type for object_type data!");
 
         values.push_back(FunctionHeaderObject());
         FunctionHeaderObject* const ptr = &(values[values.size() - 1]);

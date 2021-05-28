@@ -314,9 +314,8 @@ void MainWindow::saveProjectCallback(wxCommandEvent& event)
     saveProject();
 }
 
-void MainWindow::addNewTab()
+void MainWindow::addNewTab(const std::string& tab_name)
 {
-    const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
     TabSettings tab;
     tab.setName(tab_name);
     TabView* tab_element = new TabView(tabs_view, tab);
@@ -329,13 +328,14 @@ void MainWindow::addNewTab()
         tab_element->startEdit();
     }
 
-    current_tab_num_++;
     fileModified();
 }
 
 void MainWindow::addNewTabCallback(wxCommandEvent& event)
 {
-    addNewTab();
+    const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
+    current_tab_num_++;
+    addNewTab(tab_name);
 }
 
 void MainWindow::deleteTab(wxCommandEvent& event)
@@ -358,9 +358,16 @@ void MainWindow::deleteTab(wxCommandEvent& event)
     fileModified();
 }
 
-void MainWindow::addNewWindow(wxCommandEvent& event)
+void MainWindow::addNewWindowCallback(wxCommandEvent& event)
 {
     const std::string window_name = "New Window " + std::to_string(current_tab_num_);
+    current_tab_num_++;
+
+    addNewWindow(window_name);
+}
+
+void MainWindow::addNewWindow(const std::string& window_name)
+{
     WindowSettings window_settings;
     window_settings.setName(window_name);
     window_settings.x = 30;
@@ -393,7 +400,6 @@ void MainWindow::addNewWindow(wxCommandEvent& event)
     current_tab_name_ = window_element->getName();
     current_element_name_ = window_element->getSelectedElementName();
 
-    current_tab_num_++;
     fileModified();
 }
 

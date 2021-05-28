@@ -26,23 +26,6 @@ enum class GuiElementType
     BUTTON
 };
 
-enum class ElementType
-{
-    BASE,
-    ROW,
-    COLUMN,
-    ELEMENT
-};
-
-enum class TabType
-{
-    GRID,
-    FREEFORM
-};
-
-constexpr char* grid_str = "grid";
-constexpr char* freeform_str = "freeform";
-
 class ElementSettings
 {
 public:
