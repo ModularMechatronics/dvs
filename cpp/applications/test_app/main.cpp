@@ -4,9 +4,10 @@
 
 extern void testBasic();
 extern void testNewElements();
+extern void testScatter();
 
 int main( void )
 {
-    testNewElements();
+    testScatter();
 
 }

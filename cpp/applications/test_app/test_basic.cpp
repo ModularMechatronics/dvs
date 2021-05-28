@@ -79,3 +79,22 @@ void testBasic()
         plotSomething(i);
     }
 }
+
+void testScatter()
+{
+    Vector<double> x(20), y(20);
+
+    for(size_t k = 0; k < 20; k++)
+    {
+        x(k) = k;
+        y(k) = 2 * std::sin(x(k));
+    }
+
+    setCurrentElement("view_00");
+    sleepMS(20);
+    view(22.4f, 0.14f);
+    sleepMS(20);
+    axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
+    sleepMS(20);
+    scatter(x, y, properties::Color(12, 14, 55));
+}
