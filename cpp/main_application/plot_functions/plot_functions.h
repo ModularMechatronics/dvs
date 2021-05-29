@@ -16,7 +16,7 @@ void scatter3(const Vectord& x, const Vectord& y, const Vectord& z);
 void scatter(const Vectord& x, const Vectord& y);
 
 void drawGrid3D(const Matrixd& x, const Matrixd& y, const Matrixd& z);
-void surf(const Matrixd& x,
+void surfInternal(const Matrixd& x,
           const Matrixd& y,
           const Matrixd& z,
           const Interval1D<double> min_max_interval,

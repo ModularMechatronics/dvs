@@ -34,7 +34,6 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
     }
 
     num_dimensions_ = 2;
-    num_elements_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_ELEMENTS).getAs<uint32_t>();
     const uint64_t num_data_bytes = received_data_->getNumDataBytes();
     if(num_data_bytes == 0)
     {

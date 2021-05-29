@@ -34,7 +34,7 @@ void scatter(const Vectord& x, const Vectord& y)
     drawPoints2D(x, y);
 }
 
-void surf(const Matrixd& x,
+void surfInternal(const Matrixd& x,
           const Matrixd& y,
           const Matrixd& z,
           const Interval1D<double> min_max_interval,

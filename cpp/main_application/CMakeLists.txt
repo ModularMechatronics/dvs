@@ -28,6 +28,7 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/plot_box/plot_box_walls.cpp
 
                      misc/number_formatting.cpp
+                     misc/color_map.cpp
 
                      tab_view.cpp
                      window_view.cpp

@@ -5,9 +5,11 @@
 extern void testBasic();
 extern void testNewElements();
 extern void testScatter();
+extern void testSurf();
 
 int main( void )
 {
-    testScatter();
+    // testScatter();
+    testSurf();
 
 }

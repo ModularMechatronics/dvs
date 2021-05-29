@@ -278,6 +278,11 @@ template <typename T> Matrix<T>::~Matrix()
     }
 }
 
+template <typename T> size_t Matrix<T>::size() const
+{
+    return num_rows_ * num_cols_;
+}
+
 template <typename T> void Matrix<T>::resize(const size_t num_rows, const size_t num_cols)
 {
     if (is_allocated_)
