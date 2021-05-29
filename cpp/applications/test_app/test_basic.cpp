@@ -59,7 +59,7 @@ void testBasic()
                    properties::ColorMap::MAGMA(),
                    properties::PointSize(137));
     sleepMS(20);
-    setCurrentElement("view_10");
+    setCurrentElement("view_02");
     sleepMS(20);
     plot3(x, y, z, properties::Color(12, 14, 55),
                    properties::Alpha(137),

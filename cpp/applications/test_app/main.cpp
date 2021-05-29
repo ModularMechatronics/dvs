@@ -9,7 +9,8 @@ extern void testSurf();
 
 int main( void )
 {
+    // testBasic();
+    // testNewElements();
     // testScatter();
     testSurf();
-
 }
