@@ -33,23 +33,8 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    num_dimensions_ = 2;
-    const uint64_t num_data_bytes = received_data_->getNumDataBytes();
-    if(num_data_bytes == 0)
-    {
-        throw std::runtime_error("No data bytes!");
-    }
-
-    const uint64_t num_bytes_for_one_vec = num_bytes_per_element_ * num_elements_;
-
-    if((num_dimensions_ * num_bytes_for_one_vec) != num_data_bytes)
-    {
-        throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
-    }
-
-    uint8_t* const ptr = received_data_->getDataPointer();
-    x_vec.setInternalData(reinterpret_cast<double*>(ptr), num_elements_);
-    y_vec.setInternalData(reinterpret_cast<double*>(&(ptr[num_bytes_for_one_vec])), num_elements_);
+    x_vec.setInternalData(reinterpret_cast<double*>(data_ptr_), num_elements_);
+    y_vec.setInternalData(reinterpret_cast<double*>(&(data_ptr_[num_bytes_for_one_vec_])), num_elements_);
 
     findMinMax();
 }

@@ -14,6 +14,7 @@
 #include "plot_functions/plot_functions.h"
 #include "enumerations.h"
 #include "plot_attributes.h"
+#include "plot_objects/utils.h"
 
 using namespace dvs;
 using namespace dvs::internal;
@@ -26,6 +27,9 @@ protected:
     size_t num_dimensions_;
     size_t num_bytes_per_element_;
     uint32_t num_elements_;
+    size_t num_data_bytes_;
+    uint64_t num_bytes_for_one_vec_;
+    uint8_t* data_ptr_;
 
     Function type_; 
     DataType data_type_;
@@ -82,15 +86,32 @@ PlotObjectBase::PlotObjectBase() {}
 
 PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr) : received_data_(std::move(received_data))
 {
+    const uint64_t num_data_bytes = received_data_->getNumDataBytes();
+    if(num_data_bytes == 0)
+    {
+        throw std::runtime_error("No data bytes!");
+    }
+
     type_ = hdr.getObjectFromType(FunctionHeaderObjectType::FUNCTION).getAs<Function>();
     data_type_ = hdr.getObjectFromType(FunctionHeaderObjectType::DATA_TYPE).getAs<DataType>();
+
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
     num_elements_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_ELEMENTS).getAs<uint32_t>();
-    num_dimensions_ = 0;
+    num_data_bytes_ = received_data_->getNumDataBytes();
+    num_dimensions_ = getNumDimensionsFromFunction(type_);
+
+    num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
+
+    if((num_dimensions_ * num_bytes_for_one_vec_) != num_data_bytes_)
+    {
+        throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
+    }
 
     const Properties props = hdr.getProperties();
 
     assignProperties(props);
+
+    data_ptr_ = received_data_->getDataPointer();
 }
 
 void PlotObjectBase::assignProperties(const Properties& props)
@@ -120,6 +141,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
 
     if(props.hasProperty(PropertyType::ALPHA))
     {
+        // TODO: Alpha should be a number between 0-100
         const Alpha alp = props.getProperty<Alpha>();
         alpha_ = static_cast<float>(alp.data) / 255.0f;
     }

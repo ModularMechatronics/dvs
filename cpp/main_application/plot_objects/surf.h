@@ -43,93 +43,16 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
         throw std::runtime_error("Invalid function type for Surf!");
     }
 
-    num_dimensions_ = 3;
-    const uint64_t num_data_bytes = received_data_->getNumDataBytes();
-    if(num_data_bytes == 0)
-    {
-        throw std::runtime_error("No data bytes!");
-    }
-
-    const uint64_t num_bytes_for_one_vec = num_bytes_per_element_ * num_elements_;
-
-    if((num_dimensions_ * num_bytes_for_one_vec) != num_data_bytes)
-    {
-        throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
-    }
     dims_ = hdr.getObjectFromType(FunctionHeaderObjectType::DIMENSION_2D).getAs<internal::Dimension2D>();
 
     color_map_ = color_maps::rainbowf;
 
-    uint8_t* const ptr = received_data_->getDataPointer();
-    x_mat.setInternalData(reinterpret_cast<double*>(ptr), dims_.rows, dims_.cols);
-    y_mat.setInternalData(reinterpret_cast<double*>(&(ptr[num_bytes_for_one_vec])), dims_.rows, dims_.cols);
-    z_mat.setInternalData(reinterpret_cast<double*>(&(ptr[2 * num_bytes_for_one_vec])), dims_.rows, dims_.cols);
+    x_mat.setInternalData(reinterpret_cast<double*>(data_ptr_), dims_.rows, dims_.cols);
+    y_mat.setInternalData(reinterpret_cast<double*>(&(data_ptr_[num_bytes_for_one_vec_])), dims_.rows, dims_.cols);
+    z_mat.setInternalData(reinterpret_cast<double*>(&(data_ptr_[2 * num_bytes_for_one_vec_])), dims_.rows, dims_.cols);
     face_color_set_ = true;
 
     findMinMax();
-    /*// num_elements is actual number of elements, not number of bytes
-    ASSERT(rx_list.getObjectData<FunctionRx>() == Function::SURF);
-    ASSERT(rx_list.getObjectData<NumBuffersRequiredRx>() == 3);
-    ASSERT(rx_list.getObjectData<DataStructureRx>() == DataStructure::MATRIX);
-
-    num_elements_ = rx_list.getObjectData<NumElementsRx>();
-    face_color_set_ = false;
-    color_map_ = arl::color_maps::jetf;
-
-    face_color_ = RGBTripletf(0.1, 0.2, 0.1);
-    edge_color_ = RGBTripletf(0.0, 0.0, 0.0);
-
-    ASSERT(rx_list.hasKey(Command::DIMENSION_2D)) << "Missing dimensions message!";
-
-    dim_ = rx_list.getObjectData<Dimension2dRx>();
-
-    if (rx_list.hasKey(Command::FACE_COLOR))
-    {
-        FaceColor c = rx_list.getObjectData<FaceColorRx>();
-        face_color_.red = c.red;
-        face_color_.green = c.green;
-        face_color_.blue = c.blue;
-        face_color_set_ = true;
-    }
-    if (rx_list.hasKey(Command::EDGE_COLOR))
-    {
-        EdgeColor c = rx_list.getObjectData<EdgeColorRx>();
-        edge_color_.red = c.red;
-        edge_color_.green = c.green;
-        edge_color_.blue = c.blue;
-    }
-    if (rx_list.hasKey(Command::COLOR_MAP))
-    {
-        face_color_set_ = false;
-        ColorMap cm = rx_list.getObjectData<ColorMapRx>();
-        switch (cm.data)
-        {
-            case ColorMap::RAINBOW:
-                color_map_ = arl::color_maps::rainbowf;
-                break;
-            case ColorMap::MAGMA:
-                color_map_ = arl::color_maps::magmaf;
-                break;
-            case ColorMap::VIRIDIS:
-                color_map_ = arl::color_maps::viridisf;
-                break;
-            case ColorMap::JET:
-                color_map_ = arl::color_maps::jetf;
-                break;
-            default:
-                color_map_ = arl::color_maps::jetf;
-                break;
-        }
-    }
-
-    line_width_ =
-        rx_list.hasKey(Command::LINEWIDTH) ? rx_list.getObjectData<LinewidthRx>().data : 1.0f;
-
-    x_mat.setInternalData(reinterpret_cast<double*>(data_[0]), dim_.rows, dim_.cols);
-    y_mat.setInternalData(reinterpret_cast<double*>(data_[1]), dim_.rows, dim_.cols);
-    z_mat.setInternalData(reinterpret_cast<double*>(data_[2]), dim_.rows, dim_.cols);
-
-    findMinMax();*/
 }
 
 void Surf::findMinMax()
