@@ -85,6 +85,7 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     type_ = hdr.getObjectFromType(FunctionHeaderObjectType::FUNCTION).getAs<Function>();
     data_type_ = hdr.getObjectFromType(FunctionHeaderObjectType::DATA_TYPE).getAs<DataType>();
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
+    num_elements_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_ELEMENTS).getAs<uint32_t>();
     num_dimensions_ = 0;
 
     const Properties props = hdr.getProperties();

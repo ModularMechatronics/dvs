@@ -7,6 +7,7 @@
 #include <cmath>
 #include <type_traits>
 #include <vector>
+#include <iostream>
 
 template <typename T> struct RGBTriplet
 {

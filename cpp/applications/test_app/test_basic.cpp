@@ -80,6 +80,28 @@ void testBasic()
     }
 }
 
+void testSurf()
+{
+    setCurrentElement("view_00");
+
+    const size_t num_rows = 3, num_cols = 3;
+    Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+
+    for(size_t r = 0; r < num_rows; r++)
+    {
+        for(size_t c = 0; c < num_cols; c++)
+        {
+            x(r, c) = c;
+            y(r, c) = r;
+            z(r, c) = 2.0 * std::sin(x(r * c));
+        }
+    }
+
+    surf(x, y, z, properties::Alpha(137),
+                  properties::Name("SimpleName"),
+                  properties::LineStyle("-*"));
+}
+
 void testScatter()
 {
     Vector<double> x(20), y(20);

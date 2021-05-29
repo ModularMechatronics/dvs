@@ -14,8 +14,6 @@
 class Plot3D : public PlotObjectBase
 {
 private:
-    size_t num_elements_;
-
     Vectord x_vec, y_vec, z_vec;
 
     void findMinMax();
@@ -33,11 +31,10 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data, const Function
 {
     if(type_ != Function::PLOT3)
     {
-        throw std::runtime_error("Invalid function type for Plot2D!");
+        throw std::runtime_error("Invalid function type for Plot3D!");
     }
 
     num_dimensions_ = 3;
-    num_elements_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_ELEMENTS).getAs<uint32_t>();
     const uint64_t num_data_bytes = received_data_->getNumDataBytes();
     if(num_data_bytes == 0)
     {

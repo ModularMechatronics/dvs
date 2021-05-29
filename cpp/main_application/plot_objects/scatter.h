@@ -11,13 +11,9 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
 
-using namespace plot_tool;
-
 class Scatter2D : public PlotObjectBase
 {
 private:
-    float point_size_;
-
     Vectord x_vec, y_vec;
 
     void findMinMax();
@@ -35,11 +31,10 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const Fu
 {
     if(type_ != Function::SCATTER2)
     {
-        throw std::runtime_error("Invalid function type for Plot2D!");
+        throw std::runtime_error("Invalid function type for Scatter2D!");
     }
 
     num_dimensions_ = 2;
-    num_elements_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_ELEMENTS).getAs<uint32_t>();
     const uint64_t num_data_bytes = received_data_->getNumDataBytes();
     if(num_data_bytes == 0)
     {
@@ -58,19 +53,6 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const Fu
     y_vec.setInternalData(reinterpret_cast<double*>(&(ptr[num_bytes_for_one_vec])), num_elements_);
 
     findMinMax();
-    /*// num_elements is actual number of elements, not number of bytes
-    ASSERT(rx_list.getObjectData<FunctionRx>() == Function::SCATTER2);
-    ASSERT(rx_list.getObjectData<NumBuffersRequiredRx>() == 2);
-    ASSERT(rx_list.getObjectData<DataStructureRx>() == DataStructure::VECTOR);
-
-    num_elements_ = rx_list.getObjectData<NumElementsRx>();
-    point_size_ =
-        rx_list.hasKey(Command::POINT_SIZE) ? rx_list.getObjectData<PointSizeRx>().data : 1.0f;
-
-    x_vec.setInternalData(reinterpret_cast<double*>(data_[0]), num_elements_);
-    y_vec.setInternalData(reinterpret_cast<double*>(data_[1]), num_elements_);
-
-    findMinMax();*/
 }
 
 void Scatter2D::findMinMax()
