@@ -30,7 +30,7 @@ void drawDebugSilhouette()
 {
     setColor(0.0f, 0.0f, 0.0f);
     glLineWidth(1.0f);
-    const float f = 1.0f;
+    const float f = 0.9999f;
     const float ymin = -1.0f;
     drawLine2D(-f, ymin, -f, f);
     drawLine2D(-f, ymin, f, ymin);
@@ -166,7 +166,6 @@ void AxesPainter::setOpenGLStateForPlotBox() const
     const AxisAngled ax_ang = view_angles_.getSnappedAngleAxis();
 
     glPushMatrix();
-
     glRotatef(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
 }
 

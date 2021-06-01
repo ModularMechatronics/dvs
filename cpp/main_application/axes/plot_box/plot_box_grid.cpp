@@ -78,7 +78,7 @@ void drawGrid(const GridVectors& gv,
     const double azimuth = view_angles.getSnappedAzimuth();
     const double elevation = view_angles.getSnappedElevation();
 
-    if ((azimuth > -M_PI_2) && (azimuth < M_PI_2))
+    if (elevation > 0.0)
     {
         drawXYGrid(-box_z_2, gv.x, gv.y, -box_x_2, box_x_2, -box_y_2, box_y_2);
     }
@@ -96,7 +96,7 @@ void drawGrid(const GridVectors& gv,
         drawYZGrid(-box_x_2, gv.y, gv.z, -box_y_2, box_y_2, -box_z_2, box_z_2);
     }
 
-    if (elevation < 0.0)
+    if ((azimuth > -M_PI_2) && (azimuth < M_PI_2))
     {
         drawXZGrid(box_y_2, gv.x, gv.z, -box_x_2, box_x_2, -box_z_2, box_z_2);
     }
