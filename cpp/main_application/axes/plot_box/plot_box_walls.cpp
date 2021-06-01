@@ -8,7 +8,7 @@ void drawPlotBoxWalls(const AxesSettings& axes_settings, const ViewAngles& view_
     setColor(axes_settings.getPlotBoxWallColor());
     const Vec3Dd s = Vec3Dd(1.0, 1.0, 1.0) * axes_settings.getPlotBoxSizeFactor();
 
-    if ((view_angles.getSnappedAzimuth() > -M_PI_2) && (view_angles.getSnappedAzimuth() < M_PI_2))
+    if (view_angles.getSnappedElevation() > 0.0f)
     {
         glBegin(GL_QUADS);
         glVertex3f(s.x, s.y, -s.z);
@@ -46,7 +46,7 @@ void drawPlotBoxWalls(const AxesSettings& axes_settings, const ViewAngles& view_
         glEnd();
     }
 
-    if (view_angles.getSnappedElevation() < 0.0f)
+    if ((view_angles.getSnappedAzimuth() > -M_PI_2) && (view_angles.getSnappedAzimuth() < M_PI_2))
     {
         glBegin(GL_QUADS);
         glVertex3f(s.x, s.y, s.z);

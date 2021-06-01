@@ -106,32 +106,25 @@ void drawAxisNumbers(const GridVectors& gv,
         x_value_to_use = 1.05 * box_x / 2.0;
     }
 
-    // Magic numbers are for moving text away from the plot box
-    if ((view_angles.getSnappedAzimuth() > 0) && (view_angles.getSnappedAzimuth() <= M_PI_2))
+    if (view_angles.getSnappedElevation() > 0)
     {
         z_value_to_use_vert = -box_z / 2.0;
-        x_value_to_use_vert = -box_x / 2.0;
-    }
-    else if ((view_angles.getSnappedAzimuth() > M_PI_2) &&
-             (view_angles.getSnappedAzimuth() <= M_PI))
-    {
-        z_value_to_use_vert = -box_z / 2.0;
-        x_value_to_use_vert = box_x / 2.0;
-    }
-    else if ((view_angles.getSnappedAzimuth() <= 0.0) &&
-             (view_angles.getSnappedAzimuth() > -M_PI_2))
-    {
-        z_value_to_use_vert = box_z / 2.0;
-        x_value_to_use_vert = -box_x / 2.0;
     }
     else
     {
         z_value_to_use_vert = box_z / 2.0;
+    }
+    if((view_angles.getSnappedAzimuth() > 0.0f) && (view_angles.getSnappedAzimuth() <= M_PI))
+    {
+        x_value_to_use_vert = -box_x / 2.0;
+    }
+    else
+    {
         x_value_to_use_vert = box_x / 2.0;
     }
 
-    drawNumbersForXAxis(gv.x, y_value_to_use, -z_value_to_use, axes_limits, coord_converter, width, height);
-    drawNumbersForZAxis(gv.z, x_value_to_use, y_value_to_use, axes_limits, coord_converter, width, height);
+    drawNumbersForXAxis(gv.x, z_value_to_use, y_value_to_use, axes_limits, coord_converter, width, height);
+    drawNumbersForZAxis(gv.z, x_value_to_use, -z_value_to_use, axes_limits, coord_converter, width, height);
     drawNumbersForYAxis(
         gv.y, x_value_to_use_vert, z_value_to_use_vert, axes_limits, coord_converter, width, height);
 }

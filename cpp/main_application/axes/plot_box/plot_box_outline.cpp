@@ -12,7 +12,7 @@ void drawOutline(const AxesSettings& axes_settings, const ViewAngles& view_angle
 
     double width_to_use, height_to_use, depth_to_use;
 
-    if ((view_angles.getSnappedAzimuth() > -M_PI_2) && (view_angles.getSnappedAzimuth() < M_PI_2))
+    if (view_angles.getSnappedElevation() > 0.0f)
     {
         depth_to_use = depth;
     }
@@ -30,7 +30,7 @@ void drawOutline(const AxesSettings& axes_settings, const ViewAngles& view_angle
         width_to_use = width;
     }
 
-    if (view_angles.getSnappedElevation() < 0.0f)
+    if ((view_angles.getSnappedAzimuth() > -M_PI_2) && (view_angles.getSnappedAzimuth() < M_PI_2))
     {
         height_to_use = height;
     }

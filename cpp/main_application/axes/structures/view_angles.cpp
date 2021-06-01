@@ -114,14 +114,12 @@ Matrixd ViewAngles::getRotationMatrix() const
 
 AxisAngled ViewAngles::getSnappedAngleAxis() const
 {
-    const Matrixd rotation_mat =
-        rotationMatrixX(getSnappedElevation()) * rotationMatrixY(getSnappedAzimuth());
-    return rotationMatrixToAxisAngle(rotation_mat);
+    return rotationMatrixToAxisAngle(getSnappedRotationMatrix());
 }
 
 Matrixd ViewAngles::getSnappedRotationMatrix() const
 {
-    return rotationMatrixX(getSnappedElevation()) * rotationMatrixY(getSnappedAzimuth());
+    return rotationMatrixX(-M_PI / 2.0) * rotationMatrixX(getSnappedElevation()) * rotationMatrixZ(getSnappedAzimuth());
 }
 
 double ViewAngles::calcElevationSnapAngle() const
