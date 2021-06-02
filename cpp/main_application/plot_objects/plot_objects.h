@@ -8,6 +8,7 @@
 #include "plot_objects/scatter.h"
 #include "plot_objects/scatter3.h"
 #include "plot_objects/surf.h"
+#include "plot_objects/im_show.h"
 // #include "plot_objects/draw_line_between_points_3d.h"
 // #include "plot_objects/draw_polygon_4_points.h"
 // #include "plot_objects/draw_line3d.h"
