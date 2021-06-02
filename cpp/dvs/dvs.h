@@ -287,6 +287,20 @@ void surf(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& z, const Us&.
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
+template <typename T, typename... Us>
+void imShow(const Matrix<T>& img, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.size())); // TODO: Needed?
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.rows(), img.cols()));
+    
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
+}
+
 inline void setCurrentElement(const std::string& name, const ElementType element_type, const std::string& parent_name="#DEFAULTNAME#", const ElementParent element_parent=ElementParent::TAB)
 {
     internal::FunctionHeader hdr;
