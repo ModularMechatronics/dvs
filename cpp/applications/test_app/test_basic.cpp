@@ -84,7 +84,7 @@ void testSurf()
 {
     setCurrentElement("view_00");
 
-    const size_t num_rows = 3, num_cols = 3;
+    const size_t num_rows = 4, num_cols = 5;
     Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
 
     for(size_t r = 0; r < num_rows; r++)
