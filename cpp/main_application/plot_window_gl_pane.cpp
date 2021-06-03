@@ -2,6 +2,7 @@
 
 
 #include <wx/event.h>
+#include <wx/glcanvas.h>
 
 #include "math/math.h"
 #include "axes/axes.h"
@@ -69,7 +70,11 @@ CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, 
 PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& element_settings, const float grid_size)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE), GuiElement(element_settings)
 {
-    m_context = new wxGLContext(this);
+    wxGLContextAttrs cxtAttrs;
+    cxtAttrs.PlatformDefaults().OGLVersion(99, 2).EndList();
+    // https://stackoverflow.com/questions/41145024/wxwidgets-and-modern-opengl-3-3
+    m_context = new wxGLContext(this, NULL, &cxtAttrs);
+
     is_editing_ = false;
     parent_size_ = parent->GetSize();
     grid_size_ = grid_size;

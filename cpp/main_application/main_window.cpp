@@ -455,7 +455,7 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
 
 void MainWindow::disableEditing()
 {
-    edit_layout_menu_option_->SetName("Edit layout");
+    edit_layout_menu_option_->SetItemLabel("Edit layout");
     is_editing_ = false;
     for(auto te : tab_elements_)
     {
@@ -504,7 +504,7 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
 {
     if(is_editing_)
     {
-        edit_layout_menu_option_->SetName("Edit layout");
+        edit_layout_menu_option_->SetItemLabel("Edit layout");
         layout_tools_window_->Hide();
         for(auto te : tab_elements_)
         {
@@ -518,7 +518,7 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
     }
     else
     {
-        edit_layout_menu_option_->SetName("Stop editing");
+        edit_layout_menu_option_->SetItemLabel("Stop editing");
         layout_tools_window_->Show();
         for(auto te : tab_elements_)
         {
