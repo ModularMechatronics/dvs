@@ -49,6 +49,11 @@ int main(int argc, char* argv[])
             std::cout << "Running scatter3..." << std::endl;
             testScatter3();
         }
+        else if(arg == "surf")
+        {
+            std::cout << "Running surf..." << std::endl;
+            testSurf();
+        }
         else if(arg == "imshow")
         {
             std::cout << "Running imshow..." << std::endl;

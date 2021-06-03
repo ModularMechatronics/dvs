@@ -38,6 +38,7 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             break;
         case Function::SURF:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Surf(std::move(received_data), hdr)));
+            break;
 
         case Function::IM_SHOW:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new ImShow(std::move(received_data), hdr)));
