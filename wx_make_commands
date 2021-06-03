@@ -2,3 +2,9 @@
  --enable-unicode --with-expat --with-libjpeg --with-libpng --with-libtiff --with-opengl --with-osx_cocoa --with-zlib --disable-precomp-headers --with-macosx-version-min=10.15
 
 ./configure --with-opengl --with-osx_cocoa --disable-shared --disable-dynamicloader --enable-svg=off --enable-unicode --with-expat --with-libjpeg --with-libpng --with-libtiff --with-opengl --with-osx_cocoa --with-zlib --disable-precomp-headers --with-macosx-version-min=10.15
+./configure --with-opengl --with-osx_cocoa --disable-shared --disable-dynamicloader --enable-svg=off --enable-unicode --with-opengl --with-osx_cocoa --with-zlib --disable-precomp-headers --with-macosx-version-min=10.15
+
+
+./configure --enable-clipboard --enable-controls --disable-shared --enable-dataviewctrl --enable-display --enable-dnd --enable-graphics_ctx --enable-std_string --enable-svg --enable-unicode --enable-webkit --enable-webview --with-expat --with-libjpeg --with-libpng --with-libtiff --with-opengl --with-zlib --disable-precomp-headers
+# This is the default option, but be explicit
+"--disable-monolithic",

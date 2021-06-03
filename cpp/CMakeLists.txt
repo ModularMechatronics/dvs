@@ -14,8 +14,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -Wno-deprecated \
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++17")
 # endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/Users/annotelldaniel/work/repos/dvs/cpp/externals/wxwidgets/lib/wx/include/osx_cocoa-unicode-static-3.1 -I/Users/annotelldaniel/work/repos/dvs/cpp/externals/wxwidgets/include -D_FILE_OFFSET_BITS=64 -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__")
+
 include_directories(${REPO_DIR}/cpp/)
 
+link_directories(/usr/local/Cellar/libpng/1.6.37/lib)
 # Googletest
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/googletest/build/lib)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/googletest/googletest/include)
@@ -24,10 +27,18 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/googletest/googletest/
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/nlohmann/include)
 
 # ****** wxWidgets ******
-find_package(wxWidgets COMPONENTS core base gl adv)
-include_directories(${wxWidgets_INCLUDE_DIRS})
-link_directories(${wxWidgets_LIBRARY_DIRS})
-include(${wxWidgets_USE_FILE})
+# find_package(wxWidgets COMPONENTS core base gl adv)
+
+set(WX_CUSTOM_INC_PATH /Users/annotelldaniel/work/repos/dvs/cpp/externals/wxwidgets/include)
+set(WX_CUSTOM_LIB_PATH /Users/annotelldaniel/work/repos/dvs/cpp/externals/wxwidgets/lib)
+
+include_directories(${WX_CUSTOM_INC_PATH})
+link_directories(${WX_CUSTOM_LIB_PATH})
+
+set(wxWidgets_LIBRARIES -lwx_osx_cocoau_core-3.1
+                        -lwx_baseu-3.1
+                        -lwx_osx_cocoau_gl-3.1
+                        -lwx_osx_cocoau_adv-3.1)
 
 set(GTEST_LIB_FILES libgtest.a
                     libgtest_main.a
