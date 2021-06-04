@@ -181,11 +181,14 @@ void testdrawXYPlane()
     VecYZ<double> p0_yz(0.0, 0.0),
                   p1_yz(1.0, 1.0);
     setCurrentElement("view_00");
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
     drawPlaneXY(p0_xy, p1_xy, Plane<double>(0.1, 0.1, 0.1, 0.4));
     
-    // setCurrentElement("view_01");
-    // drawPlaneXZ(p0_xz, p1_xz, Plane<double>(0.1, 0.1, 0.1, 0.4));
+    setCurrentElement("view_01");
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+    drawPlaneXZ(p0_xz, p1_xz, Plane<double>(0.1, 0.1, 0.1, 0.4));
     
-    // setCurrentElement("view_02");
-    // drawPlaneYZ(p0_yz, p1_yz, Plane<double>(0.1, 0.1, 0.1, 0.4));
+    setCurrentElement("view_02");
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+    drawPlaneYZ(p0_yz, p1_yz, Plane<double>(0.1, 0.1, 0.1, 0.4));
 }
