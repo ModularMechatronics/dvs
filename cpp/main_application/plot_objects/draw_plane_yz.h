@@ -1,77 +1,77 @@
 #ifndef DRAW_PLANE_YZ_H_
 #define DRAW_PLANE_YZ_H_
 
-#include <arl/math/math.h>
+
+#include "math/math.h"
 
 #include <string>
 #include <vector>
 
-#include "communication/rx_list.h"
-#include "main_application/plot_objects/plot_object_base.h"
+#include "plot_objects/plot_object_base.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
-
-using namespace plot_tool;
 
 class DrawPlaneYZ : public PlotObjectBase
 {
 private:
     void findMinMax();
-    void setupInternalData();
 
-    arl::Point3Dd p00;
-    arl::Point3Dd p11;
-    arl::Point3Dd p01;
-    arl::Point3Dd p10;
+    Point3Dd p00;
+    Point3Dd p11;
+    Point3Dd p01;
+    Point3Dd p10;
+    Planed plane;
 
 public:
     DrawPlaneYZ();
-    DrawPlaneYZ(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec);
+    DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
 
     void visualize() const override;
 };
 
-DrawPlaneYZ::DrawPlaneYZ(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec)
-    : PlotObjectBase(rx_list, data_vec)
+DrawPlaneYZ::DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
+    : PlotObjectBase(std::move(received_data), hdr)
 {
-    ASSERT(rx_list.getObjectData<FunctionRx>() == Function::PLANE_YZ);
-    ASSERT(rx_list.getObjectData<NumBuffersRequiredRx>() == 1);
+    if(type_ != Function::PLANE_YZ)
+    {
+        throw std::runtime_error("Invalid function type for DrawPolygon4Points!");
+    }
 
-    setupInternalData();
+    Vector<PointYZ<double>> points;
+    points.setInternalData(reinterpret_cast<PointYZ<double>*>(data_ptr_), 2);
+    PointYZ<double> p0 = points(0);
+    PointYZ<double> p1 = points(1);
+
+    points.setInternalData(nullptr, 0);
+
+    Vector<Plane<double>> planes;
+    planes.setInternalData(reinterpret_cast<Plane<double>*>(data_ptr_ + sizeof(PointYZ<double>) * 2), 1);
+    plane = planes(0);
+
+    planes.setInternalData(nullptr, 0);
+
+    p00 = Point3Dd(plane.evalYZ(p0.y, p0.z), p0.y, p0.z);
+    p11 = Point3Dd(plane.evalYZ(p1.y, p1.z), p1.y, p1.z);
+    p01 = Point3Dd(plane.evalYZ(p0.y, p1.z), p0.y, p1.z);
+    p10 = Point3Dd(plane.evalYZ(p1.y, p0.z), p1.y, p0.z);
 
     findMinMax();
 }
 
-void DrawPlaneYZ::setupInternalData()
-{
-    arl::Planed plane;
-    arl::PointYZ<double> p0;
-    arl::PointYZ<double> p1;
-
-    const char* const data_ptr = data_[0];
-
-    fillObjectsFromBuffer(data_ptr, plane, p0, p1);
-
-    p00 = arl::Point3Dd(plane.evalYZ(p0.y, p0.z), p0.y, p0.z);
-    p11 = arl::Point3Dd(plane.evalYZ(p1.y, p1.z), p1.y, p1.z);
-    p01 = arl::Point3Dd(plane.evalYZ(p0.y, p1.z), p0.y, p1.z);
-    p10 = arl::Point3Dd(plane.evalYZ(p1.y, p0.z), p1.y, p0.z);
-}
-
 void DrawPlaneYZ::findMinMax()
 {
-    const arl::Vectord vx = {p00.x, p01.x, p10.x, p11.x};
-    const arl::Vectord vy = {p00.y, p01.y, p10.y, p11.y};
-    const arl::Vectord vz = {p00.z, p01.z, p10.z, p11.z};
+    const Vectord vx = {p00.x, p01.x, p10.x, p11.x};
+    const Vectord vy = {p00.y, p01.y, p10.y, p11.y};
+    const Vectord vz = {p00.z, p01.z, p10.z, p11.z};
 
-    min_vec.x = arl::min(vx);
-    min_vec.y = arl::min(vy);
-    min_vec.z = arl::min(vz);
+    min_vec.x = min(vx);
+    min_vec.y = min(vy);
+    min_vec.z = min(vz);
 
-    max_vec.x = arl::max(vx);
-    max_vec.y = arl::max(vy);
-    max_vec.z = arl::max(vz);
+    max_vec.x = max(vx);
+    max_vec.y = max(vy);
+    max_vec.z = max(vz);
 }
 
 void DrawPlaneYZ::visualize() const

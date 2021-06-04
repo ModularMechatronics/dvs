@@ -102,10 +102,10 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
 
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
-    if((num_dimensions_ * num_bytes_for_one_vec_) != num_data_bytes_)
+    /*if((num_dimensions_ * num_bytes_for_one_vec_) != num_data_bytes_)
     {
         throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
-    }
+    }*/
 
     const Properties props = hdr.getProperties();
 
