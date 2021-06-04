@@ -159,3 +159,33 @@ void testImShow()
 
     imShow(img, properties::Alpha(137));
 }
+
+void testPolygonFrom4Points()
+{
+    setCurrentElement("view_00");
+
+    Point3D<double> p0(0.0, 0.0, 0.0),
+                    p1(1.0, 0.0, 1.0),
+                    p2(1.0, 1.0, 2.0),
+                    p3(0.0, 1.0, 3.0);
+    drawPolygonFrom4Points(p0, p1, p2, p3);
+}
+
+
+void testdrawXYPlane()
+{
+    VecXY<double> p0_xy(0.0, 0.0),
+                  p1_xy(1.0, 1.0);
+    VecXZ<double> p0_xz(0.0, 0.0),
+                  p1_xz(1.0, 1.0);
+    VecYZ<double> p0_yz(0.0, 0.0),
+                  p1_yz(1.0, 1.0);
+    setCurrentElement("view_00");
+    drawPlaneXY(p0_xy, p1_xy, Plane<double>(0.1, 0.1, 0.1, 0.4));
+    
+    // setCurrentElement("view_01");
+    // drawPlaneXZ(p0_xz, p1_xz, Plane<double>(0.1, 0.1, 0.1, 0.4));
+    
+    // setCurrentElement("view_02");
+    // drawPlaneYZ(p0_yz, p1_yz, Plane<double>(0.1, 0.1, 0.1, 0.4));
+}

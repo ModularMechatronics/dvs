@@ -30,56 +30,50 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
     {
         case Function::PLOT2:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot2D(std::move(received_data), hdr)));
-
             break;
+
         case Function::PLOT3:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot3D(std::move(received_data), hdr)));
-
             break;
+
+        case Function::SCATTER2:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(std::move(received_data), hdr)));
+            break;
+
+        case Function::SCATTER3:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter3D(std::move(received_data), hdr)));
+            break;
+
         case Function::SURF:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Surf(std::move(received_data), hdr)));
             break;
 
         case Function::IM_SHOW:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new ImShow(std::move(received_data), hdr)));
-
             break;
+
+        case Function::POLYGON_FROM_4_POINTS:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPolygon4Points(std::move(received_data), hdr)));
+            break;
+
+        case Function::PLANE_XY:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneXY(std::move(received_data), hdr)));
+            break;
+
+        case Function::PLANE_XZ:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneXZ(std::move(received_data), hdr)));
+            break;
+
+        case Function::PLANE_YZ:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneYZ(std::move(received_data), hdr)));
+            break;
+
         case Function::LINE3D:
             // plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(rx_list, data_vec)));
-
             break;
         case Function::LINE_BETWEEN_POINTS_3D:
             // plot_datas_.push_back(
             //     dynamic_cast<PlotObjectBase*>(new DrawLineBetweenPoints3D(rx_list, data_vec)));
-
-            break;
-        case Function::PLANE_XY:
-            // plot_datas_.push_back(
-            //     dynamic_cast<PlotObjectBase*>(new DrawPlaneXY(rx_list, data_vec)));
-
-            break;
-        case Function::PLANE_XZ:
-            // plot_datas_.push_back(
-            //     dynamic_cast<PlotObjectBase*>(new DrawPlaneXZ(rx_list, data_vec)));
-
-            break;
-        case Function::PLANE_YZ:
-            // plot_datas_.push_back(
-            //     dynamic_cast<PlotObjectBase*>(new DrawPlaneYZ(rx_list, data_vec)));
-
-            break;
-        case Function::POLYGON_FROM_4_POINTS:
-            // plot_datas_.push_back(
-            //     dynamic_cast<PlotObjectBase*>(new DrawPolygon4Points(rx_list, data_vec)));
-
-            break;
-        case Function::SCATTER3:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter3D(std::move(received_data), hdr)));
-            // plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter3D(rx_list, data_vec)));
-
-            break;
-        case Function::SCATTER2:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(std::move(received_data), hdr)));
 
             break;
         default:

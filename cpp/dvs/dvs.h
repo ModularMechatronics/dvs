@@ -301,6 +301,78 @@ void imShow(const Matrix<T>& img, const Us&... settings)
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
+template <typename T, typename... Us>
+void drawPolygonFrom4Points(const Point3D<T>& p0,
+                            const Point3D<T>& p1,
+                            const Point3D<T>& p2,
+                            const Point3D<T>& p3,
+                            const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::POLYGON_FROM_4_POINTS);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(4));
+    Vector<Point3D<T>> points = {p0, p1, p2, p3};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
+}
+
+template <typename T, typename... Us>
+void drawPlaneXY(const PointXY<T>& p0,
+                 const PointXY<T>& p1,
+                 const Plane<T>& plane,
+                 const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLANE_XY);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
+    Vector<PointXY<T>> points = {p0, p1};
+    Vector<Plane<T>> planes = {plane};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
+}
+
+template <typename T, typename... Us>
+void drawPlaneXZ(const PointXZ<T>& p0,
+                 const PointXZ<T>& p1,
+                 const Plane<T>& plane,
+                 const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLANE_XZ);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
+    Vector<PointXZ<T>> points = {p0, p1};
+    Vector<Plane<T>> planes = {plane};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
+}
+
+template <typename T, typename... Us>
+void drawPlaneYZ(const PointYZ<T>& p0,
+                 const PointYZ<T>& p1,
+                 const Plane<T>& plane,
+                 const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLANE_YZ);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
+    Vector<PointYZ<T>> points = {p0, p1};
+    Vector<Plane<T>> planes = {plane};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
+}
+
 inline void setCurrentElement(const std::string& name, const ElementType element_type, const std::string& parent_name="#DEFAULTNAME#", const ElementParent element_parent=ElementParent::TAB)
 {
     internal::FunctionHeader hdr;

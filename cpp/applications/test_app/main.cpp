@@ -8,10 +8,12 @@ extern void testScatter();
 extern void testScatter3();
 extern void testSurf();
 extern void testImShow();
+extern void testPolygonFrom4Points();
+extern void testdrawXYPlane();
 
 void displayHelp()
 {
-    std::cout << "Usage: ./test-app [-h, --help, help] [basic, new-elements, scatter, scatter3, surf, imshow]" << std::endl;
+    std::cout << "Usage: ./test-app [-h, --help, help] [basic, new-elements, scatter, scatter3, surf, imshow, polygon-4-points, xy-plane]" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -58,6 +60,16 @@ int main(int argc, char* argv[])
         {
             std::cout << "Running imshow..." << std::endl;
             testImShow();
+        }
+        else if(arg == "polygon-4-points")
+        {
+            std::cout << "Running polygonFrom4Points..." << std::endl;
+            testPolygonFrom4Points();
+        }
+        else if(arg == "xy-plane")
+        {
+            std::cout << "Running xy-plane..." << std::endl;
+            testdrawXYPlane();
         }
     }
 }

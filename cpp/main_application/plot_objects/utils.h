@@ -13,6 +13,7 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
 {
     // TODO: This shouldn't be "num dimensions", as it becomes weird when using imShow, which is 2D
     // but it's only one "dimension" (the image), as opposed to surf, which has 3 "dimensions": x, y, z matrices
+    // Name it 'num_components'?
     switch(fcn)
     {
         case Function::PLOT2:
@@ -26,6 +27,14 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
         case Function::SURF:
             return 3;
         case Function::IM_SHOW:
+            return 1;
+        case Function::POLYGON_FROM_4_POINTS:
+            return 1;
+        case Function::PLANE_XY:
+            return 1;
+        case Function::PLANE_XZ:
+            return 1;
+        case Function::PLANE_YZ:
             return 1;
         default:
             std::cout << "You haven't defined number of dimensions in utils.h for Function type " << static_cast<int>(fcn) << std::endl;
