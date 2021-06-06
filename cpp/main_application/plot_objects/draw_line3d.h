@@ -28,7 +28,7 @@ public:
     DrawLine3D();
     DrawLine3D(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec);
 
-    void visualize() const override;
+    void visualize() override;
 };
 
 DrawLine3D::DrawLine3D(const plot_tool::RxList& rx_list, const std::vector<char*> data_vec)
@@ -71,7 +71,7 @@ void DrawLine3D::findMinMax()
     max_vec.z = std::max(p0.z, p1.z);
 }
 
-void DrawLine3D::visualize() const
+void DrawLine3D::visualize()
 {
     setColor(color_);
     setLinewidth(line_width_);

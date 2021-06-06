@@ -34,7 +34,7 @@ public:
     ImShow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~ImShow();
 
-    void visualize() const override;
+    void visualize() override;
 };
 
 static const GLfloat g_vertex_buffer_data[] = {
@@ -109,7 +109,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
 
 
 
-void ImShow::visualize() const
+void ImShow::visualize()
 {
     // if(!has_run_)
     {

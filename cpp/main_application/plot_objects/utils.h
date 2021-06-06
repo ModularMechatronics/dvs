@@ -137,4 +137,52 @@ inline GLuint LoadShaders(const std::string& vertex_file_path, const std::string
     return ProgramID;
 }
 
+inline GLint dataTypeToGLInt(const DataType& data_type)
+{
+    GLint gl_type = 0;
+    switch(data_type)
+    {
+        case DataType::FLOAT:
+            gl_type = GL_FLOAT;
+            break;
+        case DataType::DOUBLE:
+            gl_type = GL_DOUBLE;
+            break;
+        case DataType::INT8:
+            gl_type = GL_BYTE;
+            break;
+        case DataType::INT16:
+            gl_type = GL_SHORT;
+            break;
+        case DataType::INT32:
+            gl_type = GL_INT;
+            break;
+        case DataType::INT64:
+            gl_type = GL_FLOAT;
+            assert(false); // Haven't fround int64 in opengl enums yet...
+            break;
+        case DataType::UINT8:
+            gl_type = GL_UNSIGNED_BYTE;
+            break;
+        case DataType::UINT16:
+            gl_type = GL_UNSIGNED_SHORT;
+            break;
+        case DataType::UINT32:
+            gl_type = GL_UNSIGNED_INT;
+            break;
+        case DataType::UINT64:
+            assert(false); // Haven't fround uint64 in opengl enums yet...
+            gl_type = GL_FLOAT;
+            break;
+        case DataType::UNKNOWN:
+            throw std::runtime_error("Got unknown data type!");
+            break;
+        default:
+            throw std::runtime_error("Didn't find valid data type!");
+            break;
+    }
+
+    return gl_type;
+}
+
 #endif

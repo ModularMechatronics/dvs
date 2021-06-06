@@ -23,7 +23,7 @@ public:
     Plot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~Plot2D();
 
-    void visualize() const override;
+    void visualize() override;
 };
 
 Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr) : PlotObjectBase(std::move(received_data), hdr)
@@ -51,7 +51,7 @@ void Plot2D::findMinMax()
     max_vec.y = dvs::max(y_vec);
 }
 
-void Plot2D::visualize() const
+void Plot2D::visualize()
 {
     setColor(color_);
     setLinewidth(line_width_);
