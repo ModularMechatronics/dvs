@@ -32,7 +32,7 @@ public:
     Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~Surf();
 
-    void visualize() const override;
+    void visualize() override;
 };
 
 Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -70,7 +70,7 @@ void Surf::findMinMax()
     max_vec.z = dvs::max(z_mat);
 }
 
-void Surf::visualize() const
+void Surf::visualize()
 {
     if (face_color_set_)
     {

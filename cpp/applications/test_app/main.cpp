@@ -6,6 +6,7 @@ extern void testBasic();
 extern void testNewElements();
 extern void testScatter();
 extern void testScatter3();
+extern void testPlot3();
 extern void testSurf();
 extern void testImShow();
 extern void testPolygonFrom4Points();
@@ -13,7 +14,8 @@ extern void testdrawXYPlane();
 
 void displayHelp()
 {
-    std::cout << "Usage: ./test-app [-h, --help, help] [basic, new-elements, scatter, scatter3, surf, imshow, polygon-4-points, xy-plane]" << std::endl;
+    std::cout << "Usage: ./test-app [-h, --help, help] [basic, new-elements, scatter,"
+                " scatter3, plot3, surf, imshow, polygon-4-points, xy-plane]" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -50,6 +52,11 @@ int main(int argc, char* argv[])
         {
             std::cout << "Running scatter3..." << std::endl;
             testScatter3();
+        }
+        else if(arg == "plot3")
+        {
+            std::cout << "Running plot3..." << std::endl;
+            testPlot3();
         }
         else if(arg == "surf")
         {

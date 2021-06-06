@@ -26,7 +26,7 @@ public:
     DrawPlaneXY();
     DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
 
-    void visualize() const override;
+    void visualize() override;
 };
 
 DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -73,7 +73,7 @@ void DrawPlaneXY::findMinMax()
     max_vec.z = max(vz);
 }
 
-void DrawPlaneXY::visualize() const
+void DrawPlaneXY::visualize()
 {
     setColor(color_);
     drawPolygon3D(p00, p01, p11, p10);

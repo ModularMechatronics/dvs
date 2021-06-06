@@ -123,13 +123,17 @@ void testScatter()
 
 void testScatter3()
 {
-    Vector<double> x(20), y(20), z(20);
+    const size_t num_elements = 50;
+    Vector<float> x(num_elements), y(num_elements), z(num_elements);
 
-    for(size_t k = 0; k < 20; k++)
+    double t = 0.0;
+
+    for(size_t k = 0; k < num_elements; k++)
     {
-        x(k) = k;
-        y(k) = 2 * std::sin(x(k)) + k;
-        z(k) = 2 * k;
+        x(k) = 3.0 * cos(t);
+        y(k) = 3.0 * sin(t);
+        z(k) = t;
+        t = t + 0.3;
     }
 
     setCurrentElement("view_00");
@@ -138,7 +142,31 @@ void testScatter3()
     sleepMS(20);
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
     sleepMS(20);
-    scatter3(x, y, z, properties::Color(12, 14, 55));
+    scatter3(x, y, z, properties::Color(12, 14, 55), properties::PointSize(3));
+}
+
+void testPlot3()
+{
+    const size_t num_elements = 50;
+    Vector<uint32_t> x(num_elements), y(num_elements), z(num_elements);
+
+    double t = 0.0;
+
+    for(size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = std::abs(10.0 * cos(t));
+        y(k) = std::abs(10.0 * sin(t));
+        z(k) = k;
+        t = t + 0.3;
+    }
+
+    setCurrentElement("view_00");
+    sleepMS(20);
+    view(22.4f, 0.14f);
+    sleepMS(20);
+    axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
+    sleepMS(20);
+    plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1));
 }
 
 void testImShow()
