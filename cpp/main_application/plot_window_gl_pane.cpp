@@ -192,6 +192,10 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     {
         hold_on_ = true;
     }
+    else if (fcn == Function::HOLD_OFF)
+    {
+        hold_on_ = false;
+    }
     else if (fcn == Function::AXES_2D)
     {
         axes_set_ = true;
@@ -213,7 +217,10 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         const float azimuth = hdr.getObjectFromType(internal::FunctionHeaderObjectType::AZIMUTH).getAs<float>();
         const float elevation = hdr.getObjectFromType(internal::FunctionHeaderObjectType::ELEVATION).getAs<float>();
 
-        axes_interactor_->setViewAngles(azimuth, elevation);
+        const float azimuth_rad = azimuth * M_PI / 180.0f;
+        const float elevation_rad = elevation * M_PI / 180.0f;
+
+        axes_interactor_->setViewAngles(azimuth_rad, elevation_rad);
     }
     else if (fcn == Function::CLEAR)
     {
@@ -232,7 +239,6 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
             plot_data_handler_.clear();
         }
         plot_data_handler_.addData(std::move(received_data), hdr);
-        std::cout << "Adding data..." << std::endl;
 
         /*if (!axes_set_)
         {

@@ -43,7 +43,6 @@ void MainWindow::createNewElement(const FunctionHeader& hdr)
 
     if(gui_elements_.count(element_name_str) > 0)
     {
-        std::cout << "Current element name: " << element_name_str << std::endl;
         current_gui_element_ = gui_elements_[element_name_str];
         current_gui_element_set_ = true;
     }
@@ -81,6 +80,7 @@ void MainWindow::createNewElement(const FunctionHeader& hdr)
             else
             {
                 // TODO: Set focus of the window with this name
+                // TODO2: No, don't set focus of window, will be annoying
             }
         }
 

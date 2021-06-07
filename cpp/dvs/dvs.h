@@ -413,6 +413,30 @@ inline void axis(const Bound3D& min_bound, const Bound3D& max_bound)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void holdOn()
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::HOLD_ON);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void clearFigure()
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SOFT_CLEAR);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void hardClearFigure()
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::CLEAR);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 /*
 
 inline void setElementPositionAndSize(const int x, const int y)
