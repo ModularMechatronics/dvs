@@ -11,11 +11,13 @@ extern void testSurf();
 extern void testImShow();
 extern void testPolygonFrom4Points();
 extern void testdrawXYPlane();
+extern void testMultipleStuff();
 
 void displayHelp()
 {
     std::cout << "Usage: ./test-app [-h, --help, help] [basic, new-elements, scatter,"
-                " scatter3, plot3, surf, imshow, polygon-4-points, xy-plane]" << std::endl;
+                " scatter3, plot3, surf, imshow, polygon-4-points, xy-plane"
+                ", multiple]" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -78,5 +80,20 @@ int main(int argc, char* argv[])
             std::cout << "Running xy-plane..." << std::endl;
             testdrawXYPlane();
         }
+        else if(arg == "xy-plane")
+        {
+            std::cout << "Running xy-plane..." << std::endl;
+            testdrawXYPlane();
+        }
+        else if(arg == "multiple")
+        {
+            std::cout << "Running multiple..." << std::endl;
+            testMultipleStuff();
+        }
+        else
+        {
+            std::cout << "ERROR: No matching arg!" << std::endl;
+        }
+        
     }
 }

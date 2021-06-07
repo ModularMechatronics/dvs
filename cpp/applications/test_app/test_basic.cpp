@@ -220,3 +220,27 @@ void testdrawXYPlane()
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
     drawPlaneYZ(p0_yz, p1_yz, Plane<double>(0.1, 0.1, 0.1, 0.4));
 }
+
+void testMultipleStuff()
+{
+    const size_t num_elements = 50;
+    Vector<float> x(num_elements), y(num_elements), z(num_elements);
+
+    double t = 0.0;
+
+    for(size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = 10.0 * cos(t);
+        y(k) = 10.0 * sin(t);
+        z(k) = t;
+        t = t + 0.3;
+    }
+
+    setCurrentElement("view_00");
+    hardClearFigure();
+    holdOn();
+    view(-106.5f, 16.3f);
+    axis({-5.0, -5.0, -5.0}, {5.0, 5.0, 5.0});
+    plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1));
+    scatter3(x, y, z, properties::Color(255, 0, 0), properties::PointSize(3));
+}
