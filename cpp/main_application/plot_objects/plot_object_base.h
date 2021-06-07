@@ -48,8 +48,11 @@ protected:
     float line_width_;
     float point_size_;
     bool is_persistent_;
+    bool min_max_calculated_;
+    bool visualize_has_run_;
 
     void assignProperties(const Properties& props);
+    virtual void findMinMax() = 0;
 
 public:
     size_t getNumDimensions() const;
@@ -57,7 +60,8 @@ public:
     PlotObjectBase();
     PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     virtual void visualize() = 0;
-    std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors() const;
+    std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors();
+
     bool isPersistent() const;
     std::string getName() const;
 };
@@ -72,8 +76,13 @@ std::string PlotObjectBase::getName() const
     return name_.data;
 }
 
-std::pair<Vec3Dd, Vec3Dd> PlotObjectBase::getMinMaxVectors() const
+std::pair<Vec3Dd, Vec3Dd> PlotObjectBase::getMinMaxVectors()
 {
+    if(!min_max_calculated_)
+    {
+        min_max_calculated_ = true;
+        findMinMax();
+    }
     return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
 }
 
@@ -91,6 +100,8 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     {
         throw std::runtime_error("No data bytes!");
     }
+    min_max_calculated_ = false;
+    visualize_has_run_ = false;
 
     type_ = hdr.getObjectFromType(FunctionHeaderObjectType::FUNCTION).getAs<Function>();
     data_type_ = hdr.getObjectFromType(FunctionHeaderObjectType::DATA_TYPE).getAs<DataType>();

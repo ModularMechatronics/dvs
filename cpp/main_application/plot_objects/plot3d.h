@@ -18,10 +18,9 @@ private:
     Vector<uint32_t> x_vec, y_vec, z_vec;
 
     uint8_t* points_ptr_;
-    bool has_run_;
     GLuint buffer_idx_;
 
-    void findMinMax();
+    void findMinMax() override;
 
 public:
     Plot3D();
@@ -39,23 +38,7 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data, const Function
         throw std::runtime_error("Invalid function type for Plot3D!");
     }
 
-    x_vec.setInternalData(reinterpret_cast<uint32_t*>(data_ptr_), num_elements_);
-    y_vec.setInternalData(reinterpret_cast<uint32_t*>(&(data_ptr_[num_bytes_for_one_vec_])), num_elements_);
-    z_vec.setInternalData(reinterpret_cast<uint32_t*>(&(data_ptr_[2 * num_bytes_for_one_vec_])), num_elements_);
-
-    std::cout << x_vec << std::endl;
-    std::cout << y_vec << std::endl;
-    std::cout << z_vec << std::endl;
-
-    x_vec.setInternalData(nullptr, 0);
-    y_vec.setInternalData(nullptr, 0);
-    z_vec.setInternalData(nullptr, 0);
-
-    has_run_ = false;
-
     points_ptr_ = new uint8_t[num_elements_ * num_bytes_per_element_ * 3];
-
-    std::cout << "Num bytes per elements: " << num_bytes_per_element_ << std::endl;
 
     size_t idx_x = 0;
     size_t idx_y = num_bytes_per_element_;
@@ -80,38 +63,18 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data, const Function
         idx_y += num_bytes_per_element_ * 3;
         idx_z += num_bytes_per_element_ * 3;
     }
-
-    findMinMax();
 }
 
 void Plot3D::findMinMax()
 {
-    /*assert(x_vec.isAllocated() && "Vector x not allocated when checking min/max!");
-    assert(y_vec.isAllocated() && "Vector y not allocated when checking min/max!");
-    assert(z_vec.isAllocated() && "Vector z not allocated when checking min/max!");
-
-    min_vec.x = dvs::min(x_vec);
-    min_vec.y = dvs::min(y_vec);
-    min_vec.z = dvs::min(z_vec);
-
-    max_vec.x = dvs::max(x_vec);
-    max_vec.y = dvs::max(y_vec);
-    max_vec.z = dvs::max(z_vec);*/
-
-    min_vec.x = -1.0;
-    min_vec.y = -1.0;
-    min_vec.z = -1.0;
-
-    max_vec.x = 1.0;
-    max_vec.y = 1.0;
-    max_vec.z = 1.0;
+    std::tie<Vec3Dd, Vec3Dd>(min_vec, max_vec) = findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 }
 
 void Plot3D::visualize()
 {
-    if(!has_run_)
+    if(!visualize_has_run_)
     {
-        has_run_ = true;
+        visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);
         glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
         glBufferData(GL_ARRAY_BUFFER, num_bytes_per_element_ * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);
@@ -120,7 +83,7 @@ void Plot3D::visualize()
     setLinewidth(line_width_);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glVertexAttribPointer(0, 3, dataTypeToGLInt(data_type_), GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(0, 3, dataTypeToGLInt(data_type_), GL_FALSE, 0, 0);
 
     glDrawArrays(GL_LINE_STRIP, 0, num_elements_);
     glDisableVertexAttribArray(0);
@@ -128,9 +91,7 @@ void Plot3D::visualize()
 
 Plot3D::~Plot3D()
 {
-    x_vec.setInternalData(nullptr, 0);  // Hack
-    y_vec.setInternalData(nullptr, 0);
-    z_vec.setInternalData(nullptr, 0);
+    delete[] points_ptr_;
 }
 
 #endif

@@ -16,8 +16,6 @@ using namespace plot_tool;
 class DrawPolygon4Points : public PlotObjectBase
 {
 private:
-    void findMinMax();
-
     RGBTripletf edge_color_;
     RGBTripletf face_color_;
     float line_width_;
@@ -26,6 +24,8 @@ private:
     Point3Dd p1;
     Point3Dd p2;
     Point3Dd p3;
+
+    void findMinMax() override;
 
 public:
     DrawPolygon4Points();
@@ -51,10 +51,7 @@ DrawPolygon4Points::DrawPolygon4Points(std::unique_ptr<const ReceivedData> recei
     p3 = points(3);
 
     points.setInternalData(nullptr, 0);
-
-    findMinMax();
 }
-
 
 void DrawPolygon4Points::findMinMax()
 {
@@ -83,7 +80,5 @@ void DrawPolygon4Points::visualize()
     drawLine3D(p2, p3);
     drawLine3D(p3, p0);
 }
-
-// DrawPolygon4Points::~DrawPolygon4Points() {}
 
 #endif

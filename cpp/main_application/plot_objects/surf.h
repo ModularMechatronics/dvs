@@ -25,7 +25,7 @@ private:
 
     bool face_color_set_;
 
-    void findMinMax();
+    void findMinMax() override;
 
 public:
     Surf();

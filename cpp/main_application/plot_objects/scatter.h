@@ -16,7 +16,7 @@ class Scatter2D : public PlotObjectBase
 private:
     Vectord x_vec, y_vec;
 
-    void findMinMax();
+    void findMinMax() override;
 
 public:
     Scatter2D();
@@ -36,20 +36,20 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const Fu
 
     x_vec.setInternalData(reinterpret_cast<double*>(data_ptr_), num_elements_);
     y_vec.setInternalData(reinterpret_cast<double*>(&(data_ptr_[num_bytes_for_one_vec_])), num_elements_);
-
-    findMinMax();
 }
 
 void Scatter2D::findMinMax()
 {
-    assert(x_vec.isAllocated() && "Vector not allocated when checking min/max!");
-    assert(y_vec.isAllocated() && "Vector not allocated when checking min/max!");
+    Vec2Dd min_vec_2d, max_vec_2d;
+    std::tie<Vec2Dd, Vec2Dd>(min_vec_2d, max_vec_2d) = findMinMaxFromTwoVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 
-    min_vec.x = dvs::min(x_vec);
-    min_vec.y = dvs::min(y_vec);
+    min_vec.x = min_vec_2d.x;
+    min_vec.y = min_vec_2d.y;
+    min_vec.z = -1.0;
 
-    max_vec.x = dvs::max(x_vec);
-    max_vec.y = dvs::max(y_vec);
+    max_vec.x = max_vec_2d.x;
+    max_vec.y = max_vec_2d.y;
+    max_vec.z = 1.0;
 }
 
 void Scatter2D::visualize()
