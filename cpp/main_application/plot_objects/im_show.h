@@ -27,7 +27,7 @@ private:
     GLuint texture_id_;
     int width;
     int height;
-   
+    void findMinMax() override;
 
 public:
     ImShow();
@@ -36,6 +36,17 @@ public:
 
     void visualize() override;
 };
+
+void ImShow::findMinMax()
+{
+    min_vec.x = 0;
+    min_vec.y = 0;
+    min_vec.z = -1.0;
+
+    max_vec.x = width;
+    max_vec.y = height;
+    max_vec.z = 1.0;
+}
 
 static const GLfloat g_vertex_buffer_data[] = {
    -1.0f, -1.0f, 0.0f,

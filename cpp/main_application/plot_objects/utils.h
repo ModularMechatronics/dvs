@@ -185,4 +185,608 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
     return gl_type;
 }
 
+void fillBufferWithData(uint8_t* const points_ptr,
+                        const uint8_t* const data_ptr,
+                        const size_t num_elements,
+                        const size_t num_bytes_per_element,
+                        const size_t num_bytes_for_one_vec)
+{
+    
+    size_t idx_x = 0;
+    size_t idx_y = num_bytes_per_element;
+    size_t idx_z = 2 * num_bytes_per_element;
+    const size_t num_bytes_per_element_times_3 = num_bytes_per_element * 3;
+    const size_t num_bytes_for_one_vec_times_2 = num_bytes_for_one_vec * 2;
+
+    for(size_t k = 0; k < num_elements; k++)
+    {
+        const size_t idx_0 = k * num_bytes_per_element;
+        const size_t idx_1 = num_bytes_for_one_vec + idx_0;
+        const size_t idx_2 = num_bytes_for_one_vec_times_2 + idx_0;
+        const uint8_t* const tmp_ptr_0 = &(data_ptr[idx_0]);
+        const uint8_t* const tmp_ptr_1 = &(data_ptr[idx_1]);
+        const uint8_t* const tmp_ptr_2 = &(data_ptr[idx_2]);
+
+        for(size_t i = 0; i < num_bytes_per_element; i++)
+        {
+            points_ptr[idx_x + i] = tmp_ptr_0[i];
+            points_ptr[idx_y + i] = tmp_ptr_1[i];
+            points_ptr[idx_z + i] = tmp_ptr_2[i];
+        }
+        idx_x += num_bytes_per_element_times_3;
+        idx_y += num_bytes_per_element_times_3;
+        idx_z += num_bytes_per_element_times_3;
+    }
+}
+
+inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_buffer,
+                                                            const size_t num_elements,
+                                                            const size_t num_bytes_for_one_vec,
+                                                            const DataType data_type)
+{
+    Vec3Dd min_vec, max_vec;
+
+    if(data_type == DataType::FLOAT)
+    {
+        Vector<float> x, y, z;
+
+        x.setInternalData(reinterpret_cast<float*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<float*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<float*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::DOUBLE)
+    {
+        Vector<double> x, y, z;
+
+        x.setInternalData(reinterpret_cast<double*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<double*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<double*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::INT8)
+    {
+        Vector<int8_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<int8_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<int8_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<int8_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::INT16)
+    {
+        Vector<int16_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<int16_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<int16_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<int16_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::INT32)
+    {
+        Vector<int32_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<int32_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<int32_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<int32_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::INT64)
+    {
+        Vector<int64_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<int64_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<int64_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<int64_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UINT8)
+    {
+        Vector<uint8_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<uint8_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<uint8_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<uint8_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UINT16)
+    {
+        Vector<uint16_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<uint16_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<uint16_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<uint16_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UINT32)
+    {
+        Vector<uint32_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<uint32_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<uint32_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<uint32_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UINT64)
+    {
+        Vector<uint64_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<uint64_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<uint64_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        z.setInternalData(reinterpret_cast<uint64_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+        z.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UNKNOWN)
+    {
+        throw std::runtime_error("Unknown data type!");
+    }
+    else
+    {
+        throw std::runtime_error("Got default in data type switch!");
+    }
+
+    return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
+}
+
+
+inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_buffer,
+                                                          const size_t num_elements,
+                                                          const size_t num_bytes_for_one_vec,
+                                                          const DataType data_type)
+{
+    Vec2Dd min_vec, max_vec;
+
+    if(data_type == DataType::FLOAT)
+    {
+        Vector<float> x, y;
+
+        x.setInternalData(reinterpret_cast<float*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<float*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::DOUBLE)
+    {
+        Vector<double> x, y;
+
+        x.setInternalData(reinterpret_cast<double*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<double*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::INT8)
+    {
+        Vector<int8_t> x, y;
+
+        x.setInternalData(reinterpret_cast<int8_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<int8_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::INT16)
+    {
+        Vector<int16_t> x, y;
+
+        x.setInternalData(reinterpret_cast<int16_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<int16_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::INT32)
+    {
+        Vector<int32_t> x, y;
+
+        x.setInternalData(reinterpret_cast<int32_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<int32_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::INT64)
+    {
+        Vector<int64_t> x, y;
+
+        x.setInternalData(reinterpret_cast<int64_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<int64_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UINT8)
+    {
+        Vector<uint8_t> x, y;
+
+        x.setInternalData(reinterpret_cast<uint8_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<uint8_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UINT16)
+    {
+        Vector<uint16_t> x, y;
+
+        x.setInternalData(reinterpret_cast<uint16_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<uint16_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UINT32)
+    {
+        Vector<uint32_t> x, y;
+
+        x.setInternalData(reinterpret_cast<uint32_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<uint32_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UINT64)
+    {
+        Vector<uint64_t> x, y;
+
+        x.setInternalData(reinterpret_cast<uint64_t*>(data_buffer), num_elements);
+        y.setInternalData(reinterpret_cast<uint64_t*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        x.setInternalData(nullptr, 0);
+        y.setInternalData(nullptr, 0);
+    }
+    else if(data_type == DataType::UNKNOWN)
+    {
+        throw std::runtime_error("Unknown data type!");
+    }
+    else
+    {
+        throw std::runtime_error("Got default in data type switch!");
+    }
+
+    return std::pair<Vec2Dd, Vec2Dd>(min_vec, max_vec);
+}
+
+
+inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data_buffer,
+                                                             const size_t num_rows,
+                                                             const size_t num_cols,
+                                                             const size_t num_bytes_for_one_vec,
+                                                             const DataType data_type)
+{
+    Vec3Dd min_vec, max_vec;
+
+    if(data_type == DataType::FLOAT)
+    {
+        Matrix<float> x, y, z;
+
+        x.setInternalData(reinterpret_cast<float*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<float*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<float*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::DOUBLE)
+    {
+        Matrix<double> x, y, z;
+
+        x.setInternalData(reinterpret_cast<double*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<double*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<double*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::INT8)
+    {
+        Matrix<int8_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<int8_t*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<int8_t*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<int8_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::INT16)
+    {
+        Matrix<int16_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<int16_t*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<int16_t*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<int16_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::INT32)
+    {
+        Matrix<int32_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<int32_t*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<int32_t*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<int32_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::INT64)
+    {
+        Matrix<int64_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<int64_t*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<int64_t*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<int64_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::UINT8)
+    {
+        Matrix<uint8_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<uint8_t*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<uint8_t*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<uint8_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::UINT16)
+    {
+        Matrix<uint16_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<uint16_t*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<uint16_t*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<uint16_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::UINT32)
+    {
+        Matrix<uint32_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<uint32_t*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<uint32_t*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<uint32_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::UINT64)
+    {
+        Matrix<uint64_t> x, y, z;
+
+        x.setInternalData(reinterpret_cast<uint64_t*>(data_buffer), num_rows, num_cols);
+        y.setInternalData(reinterpret_cast<uint64_t*>(&(data_buffer[num_bytes_for_one_vec])), num_rows, num_cols);
+        z.setInternalData(reinterpret_cast<uint64_t*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_rows, num_cols);
+        min_vec.x = dvs::min(x);
+        min_vec.y = dvs::min(y);
+        min_vec.z = dvs::min(z);
+
+        max_vec.x = dvs::max(x);
+        max_vec.y = dvs::max(y);
+        max_vec.z = dvs::max(z);
+        x.setInternalData(nullptr, 0, 0);
+        y.setInternalData(nullptr, 0, 0);
+        z.setInternalData(nullptr, 0, 0);
+    }
+    else if(data_type == DataType::UNKNOWN)
+    {
+        throw std::runtime_error("Unknown data type!");
+    }
+    else
+    {
+        throw std::runtime_error("Got default in data type switch!");
+    }
+
+    return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
+}
+
 #endif

@@ -15,13 +15,10 @@
 class Scatter3D : public PlotObjectBase
 {
 private:
-    Vectorf x_vec, y_vec, z_vec;
-
     uint8_t* points_ptr_;
-    bool has_run_;
     GLuint buffer_idx_;
 
-    void findMinMax();
+    void findMinMax() override;
 
 public:
     Scatter3D();
@@ -38,12 +35,6 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const Fu
     {
         throw std::runtime_error("Invalid function type for Scatter3D!");
     }
-
-    x_vec.setInternalData(reinterpret_cast<float*>(data_ptr_), num_elements_);
-    y_vec.setInternalData(reinterpret_cast<float*>(&(data_ptr_[num_bytes_for_one_vec_])), num_elements_);
-    z_vec.setInternalData(reinterpret_cast<float*>(&(data_ptr_[2 * num_bytes_for_one_vec_])), num_elements_);
-
-    has_run_ = false;
 
     points_ptr_ = new uint8_t[num_elements_ * num_bytes_per_element_ * 3];
 
@@ -70,30 +61,18 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const Fu
         idx_y += num_bytes_per_element_ * 3;
         idx_z += num_bytes_per_element_ * 3;
     }
-
-    findMinMax();
 }
 
 void Scatter3D::findMinMax()
 {
-    assert(x_vec.isAllocated() && "Vector x not allocated when checking min/max!");
-    assert(y_vec.isAllocated() && "Vector y not allocated when checking min/max!");
-    assert(z_vec.isAllocated() && "Vector z not allocated when checking min/max!");
-
-    min_vec.x = dvs::min(x_vec);
-    min_vec.y = dvs::min(y_vec);
-    min_vec.z = dvs::min(z_vec);
-
-    max_vec.x = dvs::max(x_vec);
-    max_vec.y = dvs::max(y_vec);
-    max_vec.z = dvs::max(z_vec);
+    std::tie<Vec3Dd, Vec3Dd>(min_vec, max_vec) = findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 }
 
 void Scatter3D::visualize()
 {
-    if(!has_run_)
+    if(!visualize_has_run_)
     {
-        has_run_ = true;
+        visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);
         glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
         glBufferData(GL_ARRAY_BUFFER, num_bytes_per_element_ * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);
@@ -102,7 +81,7 @@ void Scatter3D::visualize()
     setPointSize(point_size_);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     glDrawArrays(GL_POINTS, 0, num_elements_);
     glDisableVertexAttribArray(0);
@@ -110,9 +89,7 @@ void Scatter3D::visualize()
 
 Scatter3D::~Scatter3D()
 {
-    x_vec.setInternalData(nullptr, 0);  // Hack
-    y_vec.setInternalData(nullptr, 0);
-    z_vec.setInternalData(nullptr, 0);
+    delete[] points_ptr_;
 }
 
 #endif

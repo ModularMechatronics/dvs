@@ -15,13 +15,13 @@
 class DrawPlaneYZ : public PlotObjectBase
 {
 private:
-    void findMinMax();
-
     Point3Dd p00;
     Point3Dd p11;
     Point3Dd p01;
     Point3Dd p10;
     Planed plane;
+
+    void findMinMax() override;
 
 public:
     DrawPlaneYZ();
@@ -56,7 +56,6 @@ DrawPlaneYZ::DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, cons
     p01 = Point3Dd(plane.evalYZ(p0.y, p1.z), p0.y, p1.z);
     p10 = Point3Dd(plane.evalYZ(p1.y, p0.z), p1.y, p0.z);
 
-    findMinMax();
 }
 
 void DrawPlaneYZ::findMinMax()

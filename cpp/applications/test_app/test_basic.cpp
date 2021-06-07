@@ -148,15 +148,15 @@ void testScatter3()
 void testPlot3()
 {
     const size_t num_elements = 50;
-    Vector<uint32_t> x(num_elements), y(num_elements), z(num_elements);
+    Vector<float> x(num_elements), y(num_elements), z(num_elements);
 
     double t = 0.0;
 
     for(size_t k = 0; k < num_elements; k++)
     {
-        x(k) = std::abs(10.0 * cos(t));
-        y(k) = std::abs(10.0 * sin(t));
-        z(k) = k;
+        x(k) = 10.0 * cos(t);
+        y(k) = 10.0 * sin(t);
+        z(k) = t;
         t = t + 0.3;
     }
 
