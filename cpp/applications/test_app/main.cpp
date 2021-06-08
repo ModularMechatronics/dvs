@@ -12,12 +12,14 @@ extern void testImShow();
 extern void testPolygonFrom4Points();
 extern void testdrawXYPlane();
 extern void testMultipleStuff();
+extern void testAxis2D();
+extern void testAxis3D();
 
 void displayHelp()
 {
     std::cout << "Usage: ./test-app [-h, --help, help] [basic, new-elements, scatter,"
                 " scatter3, plot3, surf, imshow, polygon-4-points, xy-plane"
-                ", multiple]" << std::endl;
+                ", multiple, axis2d, axis3d]" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -89,6 +91,16 @@ int main(int argc, char* argv[])
         {
             std::cout << "Running multiple..." << std::endl;
             testMultipleStuff();
+        }
+        else if(arg == "axis2d")
+        {
+            std::cout << "Running axis2d..." << std::endl;
+            testAxis2D();
+        }
+        else if(arg == "axis3d")
+        {
+            std::cout << "Running axis3d..." << std::endl;
+            testAxis3D();
         }
         else
         {
