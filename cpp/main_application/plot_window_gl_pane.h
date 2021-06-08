@@ -31,6 +31,7 @@ private:
 
     bool hold_on_;
     bool axes_set_;
+    bool view_set_;
 
     int args[9];
 
@@ -50,6 +51,7 @@ private:
     // ViewBase<wxFrame>* window_view_parent_;
 
     void notifyParentAboutModification();
+    bool is3DFunction(const Function fcn);
 
 public:
     PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings& element_settings, const float grid_size);

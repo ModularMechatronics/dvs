@@ -109,7 +109,7 @@ std::pair<Vec3Dd, Vec3Dd> PlotDataHandler::getMinMaxVectors() const
         {
             const std::pair<Vec3Dd, Vec3Dd> current_min_max = plot_datas_[0]->getMinMaxVectors();
 
-            size_t current_num_dimensions = plot_datas_[k]->getNumDimensions();
+            const size_t current_num_dimensions = plot_datas_[k]->getNumDimensions();
             num_dimensions = std::max(num_dimensions, current_num_dimensions);
 
             if (current_num_dimensions == 3)

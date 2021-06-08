@@ -9,3 +9,4 @@
  - Delete/add tab only available in edit mode
  - Rename 'ProjectFile' to 'ProjectSettings'
  - Saving, despite not having made any changes, changes the project json file
+ - TODO: Add "holdClear" that only clears when new data comes in, to avoid flashing

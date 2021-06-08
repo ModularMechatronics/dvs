@@ -102,6 +102,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
 
     hold_on_ = false;
     axes_set_ = false;
+    view_set_ = false;
 
     glEnable(GL_MULTISAMPLE);
 
@@ -214,6 +215,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     }
     else if (fcn == Function::VIEW)
     {
+        view_set_ = true;
         const float azimuth = hdr.getObjectFromType(internal::FunctionHeaderObjectType::AZIMUTH).getAs<float>();
         const float elevation = hdr.getObjectFromType(internal::FunctionHeaderObjectType::ELEVATION).getAs<float>();
 
@@ -226,7 +228,12 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     {
         axes_set_ = false;
         hold_on_ = false;
+        view_set_ = false;
+
         plot_data_handler_.clear();
+        axes_interactor_->setViewAngles(0, M_PI);
+        axes_interactor_->setAxesLimits(Vec3Dd(-1.0, -1.0, -1.0),
+                                        Vec3Dd(1.0, 1.0, 1.0));
     }
     else if (fcn == Function::SOFT_CLEAR)
     {
@@ -240,17 +247,33 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         }
         plot_data_handler_.addData(std::move(received_data), hdr);
 
-        /*if (!axes_set_)
+        if (!axes_set_)
         {
-            const std::pair<Vec3Dd, Vec3Dd> min_max =
-                // plot_data_handler_.getMinMaxVectors();
+            const std::pair<Vec3Dd, Vec3Dd> min_max = plot_data_handler_.getMinMaxVectors();
             axes_interactor_->setAxesLimits(min_max.first, min_max.second);
-        }*/
+        }
+        if (!view_set_ && is3DFunction(fcn))
+        {
+            const float azimuth = -64 * M_PI / 180.0f;
+            const float elevation = 34 * M_PI / 180.0f;
+
+            axes_interactor_->setViewAngles(azimuth, elevation);
+        }
     }
 
-    // TODO: Add "holdClear" that only clears when new data comes in, to avoid flashing
-
     Refresh();
+}
+
+bool PlotWindowGLPane::is3DFunction(const Function fcn)
+{
+    return (fcn == Function::LINE3D) ||
+           (fcn == Function::PLANE_XY) ||
+           (fcn == Function::PLANE_XZ) ||
+           (fcn == Function::PLANE_YZ) ||
+           (fcn == Function::PLOT3) ||
+           (fcn == Function::SCATTER3) ||
+           (fcn == Function::LINE_BETWEEN_POINTS_3D) ||
+           (fcn == Function::POLYGON_FROM_4_POINTS);
 }
 
 void PlotWindowGLPane::setSelection()

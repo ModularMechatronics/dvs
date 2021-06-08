@@ -413,6 +413,18 @@ inline void axis(const Bound3D& min_bound, const Bound3D& max_bound)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void axis(const Bound2D& min_bound, const Bound2D& max_bound)
+{
+    const Bound3D min_bound_3d(min_bound.x, min_bound.y, -1.0);
+    const Bound3D max_bound_3d(max_bound.x, max_bound.y, 1.0);
+
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES_2D);
+    hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, AxesBounds(min_bound_3d, max_bound_3d));
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void holdOn()
 {
     internal::FunctionHeader hdr;
@@ -450,21 +462,6 @@ inline void setWindowPositionAndSize(const int x, const int y)
     sendTxList(tx_list);
 }
 */
-
-/*inline void axis(const Bound2D& min_bound, const Bound2D& max_bound)
-{
-    assert(false && "Function not supported yet...");
-    const Bound3D min_bound_3d(min_bound.x, min_bound.y, -1.0);
-    const Bound3D max_bound_3d(max_bound.x, max_bound.y, 1.0);
-
-    internal::FunctionHeader hdr;
-    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, Function::AXES);
-    hdr.append(internal::FunctionHeaderObjectType::NUM_AXES, static_cast<uint8_t>(2));
-    hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC,
-                   std::pair<Bound3D, Bound3D>(min_bound_3d, max_bound_3d));
-
-    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
-}*/
 
 /*inline void figure(const std::string figure_name)
 {

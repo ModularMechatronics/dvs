@@ -28,6 +28,8 @@ struct Pos2D
     Pos2D(const int x_, const int y_) : x(x_), y(y_) {}
 };
 
+}
+
 struct Bound2D
 {
     double x;
@@ -36,8 +38,6 @@ struct Bound2D
     Bound2D() : x(0), y(0) {}
     Bound2D(const double x_, const double y_) : x(x_), y(y_) {}
 };
-
-}
 
 struct Bound3D
 {
