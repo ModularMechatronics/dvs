@@ -14,12 +14,13 @@ extern void testdrawXYPlane();
 extern void testMultipleStuff();
 extern void testAxis2D();
 extern void testAxis3D();
+extern void testDrawTriangles();
 
 void displayHelp()
 {
     std::cout << "Usage: ./test-app [-h, --help, help] [basic, new-elements, scatter,"
                 " scatter3, plot3, surf, imshow, polygon-4-points, xy-plane"
-                ", multiple, axis2d, axis3d]" << std::endl;
+                ", multiple, axis2d, axis3d, triangles]" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -101,6 +102,11 @@ int main(int argc, char* argv[])
         {
             std::cout << "Running axis3d..." << std::endl;
             testAxis3D();
+        }
+        else if(arg == "triangles")
+        {
+            std::cout << "Running triangles..." << std::endl;
+            testDrawTriangles();
         }
         else
         {

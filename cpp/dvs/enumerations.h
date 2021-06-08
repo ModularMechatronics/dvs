@@ -65,6 +65,7 @@ enum class Function : uint8_t
     SCATTER3,
     LINE_BETWEEN_POINTS_3D,
     POLYGON_FROM_4_POINTS,
+    DRAW_TRIANGLES_3D,
     FIGURE,
     CLEAR,
     HOLD_ON,

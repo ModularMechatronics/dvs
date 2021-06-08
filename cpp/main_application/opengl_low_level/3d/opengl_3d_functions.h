@@ -28,4 +28,7 @@ void drawPolygon3D(const Vec3Dd& c0,
 void drawPoints3D(const Vectord& x_values,
                   const Vectord& y_values,
                   const Vectord& z_values);
+void drawTriangle3D(const Triangle3D<double>& triangle);
+void drawTriangleEdge3D(const Triangle3D<double>& triangle);
+
 #endif

@@ -95,7 +95,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     height = dims_.rows;
 
     pixel_data_ = new unsigned char[width * height * 3];
-    for(size_t k = 0; k < (width * height * 3); k++)
+    for(int k = 0; k < (width * height * 3); k++)
     {
         pixel_data_[k] = 2 * k + 3;
     }
@@ -110,7 +110,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     // Give the image to OpenGL
     texture_id_ = loadTexture(width, height, pixel_data_);
 
-    const float x = 0, y = 0;
+    // const float x = 0, y = 0;
     // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 

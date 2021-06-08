@@ -83,3 +83,21 @@ void drawPolygon3D(const Vec3Dd& c0, const Vec3Dd& c1, const Vec3Dd& c2, const V
     glVertex3f(c3.x, c3.y, c3.z);
     glEnd();
 }
+
+void drawTriangle3D(const Triangle3D<double>& triangle)
+{
+    glBegin(GL_POLYGON);
+    glVertex3f(triangle.p0.x, triangle.p0.y, triangle.p0.z);
+    glVertex3f(triangle.p1.x, triangle.p1.y, triangle.p1.z);
+    glVertex3f(triangle.p2.x, triangle.p2.y, triangle.p2.z);
+    glEnd();
+}
+
+void drawTriangleEdge3D(const Triangle3D<double>& triangle)
+{
+    glBegin(GL_LINES);
+    drawLine3D(triangle.p0, triangle.p1);
+    drawLine3D(triangle.p1, triangle.p2);
+    drawLine3D(triangle.p2, triangle.p0);
+    glEnd();
+}

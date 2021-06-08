@@ -286,3 +286,33 @@ void testAxis3D()
     plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1));
     scatter3(x, y, z, properties::Color(255, 0, 0), properties::PointSize(3));
 }
+
+void testDrawTriangles()
+{
+    const size_t num_elements = 10;
+    using tp = double;
+    Vector<Triangle3D<tp>> triangles(num_elements);
+
+    double t = 0.0;
+    Point3D<tp> p0(-1.0, -1.0, 0.0), p1(1.0, -1.0, 0.0), p2(0.0, 1.0, 0.0);
+
+    for(size_t k = 0; k < num_elements; k++)
+    {
+        const Matrix<tp> r = rotationMatrixZ(t);
+
+        const Point3D<tp> p0r = r * p0 + Point3D<tp>(0.0, 0.0, t);
+        const Point3D<tp> p1r = r * p1 + Point3D<tp>(0.0, 0.0, t);
+        const Point3D<tp> p2r = r * p2 + Point3D<tp>(0.0, 0.0, t);
+
+        Triangle3D<tp> tri(p0r, p1r, p2r);
+        triangles(k) = tri;
+
+        t = t + 0.3;
+    }
+
+    setCurrentElement("view_00");
+    hardClearFigure();
+    holdOn();
+
+    drawTriangles(triangles, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
+}

@@ -97,6 +97,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::GRID_OFF) ||
            (fcn == Function::PLOT2) ||
            (fcn == Function::PLOT3) ||
+           (fcn == Function::DRAW_TRIANGLES_3D) ||
            (fcn == Function::SCATTER2) ||
            (fcn == Function::SCATTER3) ||
            (fcn == Function::LINE_BETWEEN_POINTS_3D) ||
