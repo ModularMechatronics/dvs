@@ -36,6 +36,8 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 1;
         case Function::PLANE_YZ:
             return 1;
+        case Function::DRAW_TRIANGLES_3D:
+            return 3;
         default:
             std::cout << "You haven't defined number of dimensions in utils.h for Function type " << static_cast<int>(fcn) << std::endl;
             exit(-1);

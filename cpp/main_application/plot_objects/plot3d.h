@@ -15,8 +15,6 @@
 class Plot3D : public PlotObjectBase
 {
 private:
-    Vector<uint32_t> x_vec, y_vec, z_vec;
-
     uint8_t* points_ptr_;
     GLuint buffer_idx_;
 

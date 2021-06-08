@@ -320,6 +320,19 @@ void drawPolygonFrom4Points(const Point3D<T>& p0,
 }
 
 template <typename T, typename... Us>
+void drawTriangles(const Vector<Triangle3D<T>>& triangles,
+                   const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_TRIANGLES_3D);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(triangles.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, triangles);
+}
+
+template <typename T, typename... Us>
 void drawPlaneXY(const PointXY<T>& p0,
                  const PointXY<T>& p1,
                  const Plane<T>& plane,
@@ -450,6 +463,9 @@ inline void hardClearFigure()
 }
 
 /*
+
+void drawVoxels(Vector x, Vector y, Vector z)
+void drawVoxels(Vector<Point3D> points, size)
 
 inline void setElementPositionAndSize(const int x, const int y)
 inline void setWindowPositionAndSize(const int x, const int y)

@@ -13,8 +13,8 @@
 #include "plot_objects/draw_plane_xy.h"
 #include "plot_objects/draw_plane_xz.h"
 #include "plot_objects/draw_plane_yz.h"
+#include "plot_objects/draw_triangles_3d.h"
 // #include "plot_objects/draw_line_between_points_3d.h"
-// #include "plot_objects/draw_polygon_4_points.h"
 // #include "plot_objects/draw_line3d.h"
 
 // clang-format on
