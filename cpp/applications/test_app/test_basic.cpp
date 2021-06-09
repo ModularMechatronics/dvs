@@ -340,3 +340,21 @@ void testDrawMesh()
 
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
+
+
+void testDrawSingleTriangle()
+{
+    using tp = double;
+
+    Triangle3D<tp> triangle;
+    triangle.p0 = Point3D<tp>(-1.0, -1.0, -1.0);
+    triangle.p1 = Point3D<tp>(1.0, -1.0, -1.0);
+    triangle.p2 = Point3D<tp>(1.0, 1.0, 1.0);
+
+    setCurrentElement("view_00");
+    hardClearFigure();
+    holdOn();
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    drawTriangle(triangle, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
+}
