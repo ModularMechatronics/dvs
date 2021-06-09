@@ -341,7 +341,7 @@ void drawLine(const Line3D<T>& line, const T t0, const T t1, const Us&... settin
     const size_t num_bytes = sizeof(Line3D<double>) + sizeof(double) * 2;
 
     TxList tx_list;
-    tx_list.append(Command::FUNCTION, Function::LINE3D);
+    tx_list.append(Command::FUNCTION, Function::DRAW_LINE3D);
     tx_list.append(Command::DATA_TYPE, typeToDataTypeEnum<double>());
     tx_list.append(Command::NUM_BUFFERS_REQUIRED, static_cast<char>(1));
     tx_list.append(Command::BYTES_PER_ELEMENT, static_cast<char>(sizeof(double)));

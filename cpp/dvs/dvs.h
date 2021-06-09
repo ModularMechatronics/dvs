@@ -418,6 +418,21 @@ void drawPlaneYZ(const PointYZ<T>& p0,
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
 }
 
+template <typename T, typename... Us>
+void drawLine(const Line3D<T>& line, const T t0, const T t1, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
+    Vector<Line3D<T>> lines = {line};
+    Vector<T> ts = {t0, t1};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, lines, ts);
+}
+
 inline void setCurrentElement(const std::string& name, const ElementType element_type, const std::string& parent_name="#DEFAULTNAME#", const ElementParent element_parent=ElementParent::TAB)
 {
     internal::FunctionHeader hdr;
