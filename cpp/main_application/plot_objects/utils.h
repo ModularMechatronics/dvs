@@ -44,6 +44,8 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 3;
         case Function::DRAW_LINE3D:
             return 3;
+        case Function::DRAW_LINE_BETWEEN_POINTS_3D:
+            return 3;
         
         default:
             std::cout << "You haven't defined number of dimensions in utils.h for Function type " << static_cast<int>(fcn) << std::endl;

@@ -30,26 +30,40 @@ public:
 DrawLine3D::DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
-    if(type_ != Function::DRAW_LINE3D)
+    if((type_ != Function::DRAW_LINE3D) && (type_ != Function::DRAW_LINE_BETWEEN_POINTS_3D))
     {
-        throw std::runtime_error("Invalid function type for DrawPolygon4Points!");
+        throw std::runtime_error("Invalid function type for DrawLine3D!");
     }
 
-    Vector<Line3D<double>> lines;
-    Vector<double> ts;
+    if(type_ == Function::DRAW_LINE3D)
+    {
+        Vector<Line3D<double>> lines;
+        Vector<double> ts;
 
-    lines.setInternalData(reinterpret_cast<Line3D<double>*>(data_ptr_), 1);
-    ts.setInternalData(reinterpret_cast<double*>(&(data_ptr_[sizeof(Line3D<double>)])), 2);
+        lines.setInternalData(reinterpret_cast<Line3D<double>*>(data_ptr_), 1);
+        ts.setInternalData(reinterpret_cast<double*>(&(data_ptr_[sizeof(Line3D<double>)])), 2);
 
-    Line3D<double> line = lines(0);
-    double t0 = ts(0);
-    double t1 = ts(1);
+        Line3D<double> line = lines(0);
+        double t0 = ts(0);
+        double t1 = ts(1);
 
-    lines.setInternalData(nullptr, 0);
-    ts.setInternalData(nullptr, 0);
+        lines.setInternalData(nullptr, 0);
+        ts.setInternalData(nullptr, 0);
 
-    p0_ = line.eval(t0);
-    p1_ = line.eval(t1);
+        p0_ = line.eval(t0);
+        p1_ = line.eval(t1);
+    }
+    else
+    {
+        Vector<Point3D<double>> points;
+
+        points.setInternalData(reinterpret_cast<Point3D<double>*>(data_ptr_), 2);
+
+        p0_ = points(0);
+        p1_ = points(1);
+
+        points.setInternalData(nullptr, 0);
+    }
 
     findMinMax();
 }
