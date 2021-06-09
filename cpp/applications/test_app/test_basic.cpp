@@ -316,3 +316,27 @@ void testDrawTriangles()
 
     drawTriangles(triangles, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
+
+void testDrawMesh()
+{
+    using tp = double;
+
+    Vector<Point3D<tp>> vertices(4);
+    vertices(0) = Point3D<tp>(-1.0, -1.0, -1.0);
+    vertices(1) = Point3D<tp>(1.0, -1.0, -1.0);
+    vertices(2) = Point3D<tp>(1.0, 1.0, -1.0);
+    vertices(3) = Point3D<tp>(0.0, 0.0, 1.0);
+
+    Vector<IndexTriplet> indices(4);
+    indices(0) = IndexTriplet(0, 1, 2);
+    indices(1) = IndexTriplet(0, 1, 3);
+    indices(2) = IndexTriplet(1, 2, 3);
+    indices(3) = IndexTriplet(2, 0, 3);
+
+    setCurrentElement("view_00");
+    hardClearFigure();
+    holdOn();
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
+}
