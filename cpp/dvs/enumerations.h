@@ -68,6 +68,7 @@ enum class Function : uint8_t
     LINE_BETWEEN_POINTS_3D,
     POLYGON_FROM_4_POINTS,
     DRAW_TRIANGLES_3D,
+    DRAW_TRIANGLE_3D,
     DRAW_MESH,
     FIGURE,
     CLEAR,

@@ -333,6 +333,21 @@ void drawTriangles(const Vector<Triangle3D<T>>& triangles,
 }
 
 template <typename T, typename... Us>
+void drawTriangle(const Triangle3D<T>& triangle,
+                  const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_TRIANGLES_3D);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1));
+    hdr.extend(settings...);
+
+    const Vector<Triangle3D<T>> triangles = {triangle};
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, triangles);
+}
+
+template <typename T, typename... Us>
 void drawMesh(const Vector<Point3D<T>>& vertices,
               const Vector<IndexTriplet>& indices,
               const Us&... settings)

@@ -1,4 +1,7 @@
 #include <algorithm>
+#include <vector>
+#include <functional>
+#include <map>
 
 #include "dvs.h"
 
@@ -16,17 +19,42 @@ extern void testAxis2D();
 extern void testAxis3D();
 extern void testDrawTriangles();
 extern void testDrawMesh();
+extern void testDrawSingleTriangle();
+
+std::map<std::string, std::function<void()>> fcns;
 
 void displayHelp()
 {
-    std::cout << "Usage: ./test-app [-h, --help, help] [basic, new-elements, scatter,"
-                " scatter3, plot3, surf, imshow, polygon-4-points, xy-plane"
-                ", multiple, axis2d, axis3d, triangles, mesh]" << std::endl;
+    std::cout << "Usage: ./test-app [-h, --help, help] [";
+    std::map<std::string, std::function<void()>>::iterator it;
+
+    for (it = fcns.begin(); it != fcns.end(); it++)
+    {
+        std::cout << it->first << ", ";
+    }
+
+    std::cout << "]" << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
-    if(argc == 0)
+    fcns["new-elements"] = testNewElements;
+    fcns["scatter"] = testScatter;
+    fcns["scatter3"] = testScatter3;
+    fcns["plot3"] = testPlot3;
+    fcns["surf"] = testSurf;
+    fcns["imshow"] = testImShow;
+    fcns["polygon-4-points"] = testPolygonFrom4Points;
+    fcns["xy-plane"] = testdrawXYPlane;
+    fcns["xy-plane"] = testdrawXYPlane;
+    fcns["multiple"] = testMultipleStuff;
+    fcns["axis2d"] = testAxis2D;
+    fcns["axis3d"] = testAxis3D;
+    fcns["triangles"] = testDrawTriangles;
+    fcns["mesh"] = testDrawMesh;
+    fcns["single-triangle"] = testDrawSingleTriangle;
+
+    if(argc == 1)
     {
         std::cout << "Running basic..." << std::endl;
         testBasic();
@@ -39,85 +67,22 @@ int main(int argc, char* argv[])
         {
             displayHelp();
         }
-        else if(arg == "basic")
+        else if(fcns.count(arg) > 0)
         {
-            std::cout << "Running basic..." << std::endl;
-            testBasic();
-        }
-        else if(arg == "new-elements")
-        {
-            std::cout << "Running new-elements..." << std::endl;
-            testNewElements();
-        }
-        else if(arg == "scatter")
-        {
-            std::cout << "Running scatter..." << std::endl;
-            testScatter();
-        }
-        else if(arg == "scatter3")
-        {
-            std::cout << "Running scatter3..." << std::endl;
-            testScatter3();
-        }
-        else if(arg == "plot3")
-        {
-            std::cout << "Running plot3..." << std::endl;
-            testPlot3();
-        }
-        else if(arg == "surf")
-        {
-            std::cout << "Running surf..." << std::endl;
-            testSurf();
-        }
-        else if(arg == "imshow")
-        {
-            std::cout << "Running imshow..." << std::endl;
-            testImShow();
-        }
-        else if(arg == "polygon-4-points")
-        {
-            std::cout << "Running polygonFrom4Points..." << std::endl;
-            testPolygonFrom4Points();
-        }
-        else if(arg == "xy-plane")
-        {
-            std::cout << "Running xy-plane..." << std::endl;
-            testdrawXYPlane();
-        }
-        else if(arg == "xy-plane")
-        {
-            std::cout << "Running xy-plane..." << std::endl;
-            testdrawXYPlane();
-        }
-        else if(arg == "multiple")
-        {
-            std::cout << "Running multiple..." << std::endl;
-            testMultipleStuff();
-        }
-        else if(arg == "axis2d")
-        {
-            std::cout << "Running axis2d..." << std::endl;
-            testAxis2D();
-        }
-        else if(arg == "axis3d")
-        {
-            std::cout << "Running axis3d..." << std::endl;
-            testAxis3D();
-        }
-        else if(arg == "triangles")
-        {
-            std::cout << "Running triangles..." << std::endl;
-            testDrawTriangles();
-        }
-        else if(arg == "mesh")
-        {
-            std::cout << "Running drawMesh..." << std::endl;
-            testDrawMesh();
+            std::map<std::string, std::function<void()>>::iterator it;
+
+            for (it = fcns.begin(); it != fcns.end(); it++)
+            {
+                if(arg == it->first)
+                {
+                    it->second();
+                    break;
+                }
+            }
         }
         else
         {
-            std::cout << "ERROR: No matching arg!" << std::endl;
+            std::cout << "ERROR: No matching arg for: " << arg << std::endl;
         }
-        
     }
 }

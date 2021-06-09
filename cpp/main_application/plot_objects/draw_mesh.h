@@ -112,7 +112,6 @@ void DrawMesh::visualize()
 
 DrawMesh::~DrawMesh()
 {
-    // triangles_.setInternalData(nullptr, 0);
 }
 
 #endif
