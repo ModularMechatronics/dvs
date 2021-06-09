@@ -84,9 +84,9 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr)));
             break;
 
-        case Function::LINE_BETWEEN_POINTS_3D:
-            // plot_datas_.push_back(
-            //     dynamic_cast<PlotObjectBase*>(new DrawLineBetweenPoints3D(rx_list, data_vec)));
+        case Function::DRAW_LINE_BETWEEN_POINTS_3D:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr)));
+            break;
 
             break;
         default:

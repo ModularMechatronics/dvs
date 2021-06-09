@@ -373,3 +373,18 @@ void testDrawLine3D()
 
     drawLine(line, t0, t1, properties::Color(12, 244, 244));
 }
+
+void testDrawLineBetweenPoints3D()
+{
+    using tp = double;
+
+    Point3D<tp> p0(0.1, 0.2, 0.2);
+    Point3D<tp> p1(2.0, 1.0, 1.0);
+    
+    setCurrentElement("view_00");
+    hardClearFigure();
+    holdOn();
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    drawLineBetweenPoints(p0, p1, properties::Color(12, 244, 0));
+}

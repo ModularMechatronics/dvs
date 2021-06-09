@@ -433,6 +433,21 @@ void drawLine(const Line3D<T>& line, const T t0, const T t1, const Us&... settin
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, lines, ts);
 }
 
+
+template <typename T, typename... Us>
+void drawLineBetweenPoints(const Point3D<T>& p0, const Point3D<T>& p1, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE_BETWEEN_POINTS_3D);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
+    Vector<Point3D<T>> points = {p0, p1};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
+}
+
 inline void setCurrentElement(const std::string& name, const ElementType element_type, const std::string& parent_name="#DEFAULTNAME#", const ElementParent element_parent=ElementParent::TAB)
 {
     internal::FunctionHeader hdr;

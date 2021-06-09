@@ -100,7 +100,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::DRAW_TRIANGLES_3D) ||
            (fcn == Function::SCATTER2) ||
            (fcn == Function::SCATTER3) ||
-           (fcn == Function::LINE_BETWEEN_POINTS_3D) ||
+           (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
            (fcn == Function::POLYGON_FROM_4_POINTS) ||
            (fcn == Function::DRAW_MESH) ||
            (fcn == Function::DRAW_LINE3D) ||
