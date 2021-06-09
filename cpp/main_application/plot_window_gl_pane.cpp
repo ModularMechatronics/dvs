@@ -266,7 +266,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 
 bool PlotWindowGLPane::is3DFunction(const Function fcn)
 {
-    return (fcn == Function::LINE3D) ||
+    return (fcn == Function::DRAW_LINE3D) ||
            (fcn == Function::PLANE_XY) ||
            (fcn == Function::PLANE_XZ) ||
            (fcn == Function::PLANE_YZ) ||

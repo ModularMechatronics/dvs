@@ -103,6 +103,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::LINE_BETWEEN_POINTS_3D) ||
            (fcn == Function::POLYGON_FROM_4_POINTS) ||
            (fcn == Function::DRAW_MESH) ||
+           (fcn == Function::DRAW_LINE3D) ||
            (fcn == Function::CLEAR) ||
            (fcn == Function::HOLD_ON) ||
            (fcn == Function::HOLD_OFF) ||

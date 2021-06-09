@@ -16,8 +16,8 @@
 #include "plot_objects/draw_triangles_3d.h"
 #include "plot_objects/draw_triangle_3d.h"
 #include "plot_objects/draw_mesh.h"
+#include "plot_objects/draw_line3d.h"
 // #include "plot_objects/draw_line_between_points_3d.h"
-// #include "plot_objects/draw_line3d.h"
 
 // clang-format on
 

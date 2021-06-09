@@ -11,8 +11,6 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
 
-using namespace plot_tool;
-
 class DrawPolygon4Points : public PlotObjectBase
 {
 private:

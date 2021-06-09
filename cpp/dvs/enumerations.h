@@ -52,7 +52,7 @@ enum class PropertyType : uint8_t
 enum class Function : uint8_t
 {
     UNKNOWN,
-    LINE3D,
+    DRAW_LINE3D,
     PLANE_XY,
     PLANE_XZ,
     PLANE_YZ,

@@ -20,6 +20,7 @@ extern void testAxis3D();
 extern void testDrawTriangles();
 extern void testDrawMesh();
 extern void testDrawSingleTriangle();
+extern void testDrawLine3D();
 
 std::map<std::string, std::function<void()>> fcns;
 
@@ -53,6 +54,7 @@ int main(int argc, char* argv[])
     fcns["triangles"] = testDrawTriangles;
     fcns["mesh"] = testDrawMesh;
     fcns["single-triangle"] = testDrawSingleTriangle;
+    fcns["draw-line-3d"] = testDrawLine3D;
 
     if(argc == 1)
     {

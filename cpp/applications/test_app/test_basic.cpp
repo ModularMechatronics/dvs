@@ -175,7 +175,7 @@ void testImShow()
 
     const uint32_t num_rows = 8, num_cols = 10;
     Matrix<uint32_t> img(num_rows, num_cols);
-    const uint32_t max_val = num_rows * num_cols;
+    // const uint32_t max_val = num_rows * num_cols;
 
     for(uint32_t r = 0; r < num_rows; r++)
     {
@@ -341,7 +341,6 @@ void testDrawMesh()
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
 
-
 void testDrawSingleTriangle()
 {
     using tp = double;
@@ -357,4 +356,20 @@ void testDrawSingleTriangle()
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawTriangle(triangle, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
+}
+
+void testDrawLine3D()
+{
+    using tp = double;
+
+    Line3D<tp> line(Point3D<tp>(0.1, 0.2, 0.2), Vec3D<tp>(1.0, 1.0, 1.0));
+    tp t0 = 0;
+    tp t1 = 1.0;
+
+    setCurrentElement("view_00");
+    hardClearFigure();
+    holdOn();
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    drawLine(line, t0, t1, properties::Color(12, 244, 244));
 }

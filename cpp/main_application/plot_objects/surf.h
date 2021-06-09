@@ -13,8 +13,6 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
 
-using namespace plot_tool;
-
 class Surf : public PlotObjectBase
 {
 private:
