@@ -155,6 +155,22 @@ template <typename T> DataType typeToDataTypeEnum()
     {
         return DataType::DOUBLE;
     }
+    else if (std::is_same<T, int>::value)
+    {
+        return DataType::INT32;
+    }
+    else if (std::is_same<T, unsigned int>::value)
+    {
+        return DataType::UINT32;
+    }
+    else if (std::is_same<T, char>::value)
+    {
+        return DataType::INT8;
+    }
+    else if (std::is_same<T, unsigned char>::value)
+    {
+        return DataType::UINT8;
+    }
     else
     {
         if(std::is_signed<T>::value)

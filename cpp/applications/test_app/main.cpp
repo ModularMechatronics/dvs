@@ -9,6 +9,7 @@ extern void testBasic();
 extern void testNewElements();
 extern void testScatter();
 extern void testScatter3();
+extern void testPlot2();
 extern void testPlot3();
 extern void testSurf();
 extern void testImShow();
@@ -44,6 +45,7 @@ int main(int argc, char* argv[])
     fcns["scatter"] = testScatter;
     fcns["scatter3"] = testScatter3;
     fcns["plot3"] = testPlot3;
+    fcns["plot2"] = testPlot2;
     fcns["surf"] = testSurf;
     fcns["imshow"] = testImShow;
     fcns["polygon-4-points"] = testPolygonFrom4Points;
