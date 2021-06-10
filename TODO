@@ -5,10 +5,10 @@
  - use pushToCore instead of sendData?
  - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
  - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
- - Default layouts with simple names and ex 2x2 plots, 3x3 plots etc
+ - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
  - Delete/add tab only available in edit mode
  - Rename 'ProjectFile' to 'ProjectSettings'
- - Saving, despite not having made any changes, changes the project json file
+ - Add "owns_memory_" field to Matrix, Vector, to signify if data should be freed
  - Add "holdClear" that only clears when new data comes in, to avoid flashing
  - More general plot interface with "templated templates": plot(const VectorType<T>& x, ...), where VectorType itself is a template
  - Edge and Facecolor transparent
