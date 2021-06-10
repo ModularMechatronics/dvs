@@ -38,7 +38,6 @@ DrawTriangles3D::DrawTriangles3D(std::unique_ptr<const ReceivedData> received_da
         throw std::runtime_error("Invalid function type for DrawTriangles3D!");
     }
 
-    
     triangles_.setInternalData(reinterpret_cast<Triangle3D<double>*>(data_ptr_), num_elements_);
 }
 

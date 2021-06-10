@@ -14,7 +14,6 @@
 class Plot2D : public PlotObjectBase
 {
 private:
-    Vectord x_vec, y_vec;
     uint8_t* points_ptr_;
     GLuint buffer_idx_;
 

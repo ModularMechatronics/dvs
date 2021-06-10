@@ -105,44 +105,55 @@ void testSurf()
 void testScatter()
 {
     Vector<double> x(20), y(20);
+    Vector<float> xf(20), yf(20);
+
+    double t = 0.0;
 
     for(size_t k = 0; k < 20; k++)
     {
-        x(k) = k;
-        y(k) = 2 * std::sin(x(k)) + k;
+        xf(k) = k;
+        yf(k) = 5.0 * std::sin(3.0 * t);
+
+        x(k) = xf(k);
+        y(k) = yf(k);
+
+        t = t + 0.1;
     }
 
     setCurrentElement("view_00");
-    sleepMS(20);
-    view(22.4f, 0.14f);
-    sleepMS(20);
+    hardClearFigure();
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
-    sleepMS(20);
-    scatter(x, y, properties::Color(12, 14, 55));
+    holdOn();
+    plot(xf, yf, properties::Color(212, 14, 55));
+    scatter(x, y, properties::Color(12, 14, 55), properties::PointSize(3));
 }
 
 void testScatter3()
 {
-    const size_t num_elements = 50;
-    Vector<float> x(num_elements), y(num_elements), z(num_elements);
+    const size_t num_elements = 30;
+    Vector<int16_t> x(num_elements), y(num_elements), z(num_elements);
+    Vector<float> xf(num_elements), yf(num_elements), zf(num_elements);
 
     double t = 0.0;
 
     for(size_t k = 0; k < num_elements; k++)
     {
-        x(k) = 3.0 * cos(t);
-        y(k) = 3.0 * sin(t);
-        z(k) = t;
+        xf(k) = 10.0 * cos(t) + 20.0;
+        yf(k) = 10.0 * sin(t) + 20.0;
+        zf(k) = k;
+
+        x(k) = xf(k);
+        y(k) = yf(k);
+        z(k) = k;
         t = t + 0.3;
     }
 
     setCurrentElement("view_00");
-    sleepMS(20);
-    view(22.4f, 0.14f);
-    sleepMS(20);
+    hardClearFigure();
+    holdOn();
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
-    sleepMS(20);
-    scatter3(x, y, z, properties::Color(12, 14, 55), properties::PointSize(3));
+    scatter3(x, y, z, properties::Color(212, 14, 55), properties::PointSize(3));
+    plot3(xf, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(1));
 }
 
 void testPlot2()

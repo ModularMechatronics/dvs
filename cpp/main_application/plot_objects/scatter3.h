@@ -36,31 +36,7 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const Fu
         throw std::runtime_error("Invalid function type for Scatter3D!");
     }
 
-    points_ptr_ = new uint8_t[num_elements_ * num_bytes_per_element_ * 3];
-
-    size_t idx_x = 0;
-    size_t idx_y = num_bytes_per_element_;
-    size_t idx_z = 2 * num_bytes_per_element_;
-
-    for(size_t k = 0; k < num_elements_; k++)
-    {
-        const size_t idx_0 = k * num_bytes_per_element_;
-        const size_t idx_1 = num_bytes_for_one_vec_ + k * num_bytes_per_element_;;
-        const size_t idx_2 = num_bytes_for_one_vec_ * 2 + k * num_bytes_per_element_;
-        const uint8_t* const tmp_ptr_0 = &(data_ptr_[idx_0]);
-        const uint8_t* const tmp_ptr_1 = &(data_ptr_[idx_1]);
-        const uint8_t* const tmp_ptr_2 = &(data_ptr_[idx_2]);
-
-        for(size_t i = 0; i < num_bytes_per_element_; i++)
-        {
-            points_ptr_[idx_x + i] = tmp_ptr_0[i];
-            points_ptr_[idx_y + i] = tmp_ptr_1[i];
-            points_ptr_[idx_z + i] = tmp_ptr_2[i];
-        }
-        idx_x += num_bytes_per_element_ * 3;
-        idx_y += num_bytes_per_element_ * 3;
-        idx_z += num_bytes_per_element_ * 3;
-    }
+    points_ptr_ = convertData3DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 }
 
 void Scatter3D::findMinMax()
@@ -75,7 +51,7 @@ void Scatter3D::visualize()
         visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);
         glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, num_bytes_per_element_ * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);
     }
     setColor(color_);
     setPointSize(point_size_);
