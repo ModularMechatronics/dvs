@@ -82,24 +82,25 @@ void testBasic()
 
 void testSurf()
 {
-    setCurrentElement("view_00");
+    const size_t num_rows = 20, num_cols = 20;
+    Matrix<int8_t> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
 
-    const size_t num_rows = 4, num_cols = 5;
-    Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
-
-    for(size_t r = 0; r < num_rows; r++)
+    double inc = 0.4;
+    for(int r = 0; r < num_rows; r++)
     {
-        for(size_t c = 0; c < num_cols; c++)
+        for(int c = 0; c < num_cols; c++)
         {
+            const double rd = static_cast<double>(r - 5) * inc;
+            const double cd = static_cast<double>(c - 5) * inc * 2;
             x(r, c) = c;
             y(r, c) = r;
-            z(r, c) = 2.0 * std::sin(x(r * c));
+            z(r, c) = 50.0 * std::sin(std::sqrt(rd * rd + cd * cd));
         }
     }
 
-    surf(x, y, z, properties::Alpha(137),
-                  properties::Name("SimpleName"),
-                  properties::LineStyle("-*"));
+    setCurrentElement("view_00");
+    hardClearFigure();
+    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(150, 244, 244));
 }
 
 void testScatter()
