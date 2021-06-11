@@ -18,8 +18,10 @@ class Surf : public PlotObjectBase
 private:
     Dimension2D dims_;
     RGBColorMap<float> color_map_;
+    GLuint buffer_idx_;
 
-    Matrixd x_mat, y_mat, z_mat;
+    Matrix<float> x_mat, y_mat, z_mat;
+    float* points_ptr_;
 
     bool face_color_set_;
 
@@ -45,9 +47,70 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
 
     color_map_ = color_maps::rainbowf;
 
-    x_mat.setInternalData(reinterpret_cast<double*>(data_ptr_), dims_.rows, dims_.cols);
-    y_mat.setInternalData(reinterpret_cast<double*>(&(data_ptr_[num_bytes_for_one_vec_])), dims_.rows, dims_.cols);
-    z_mat.setInternalData(reinterpret_cast<double*>(&(data_ptr_[2 * num_bytes_for_one_vec_])), dims_.rows, dims_.cols);
+    Matrix<int8_t> x, y, z;
+
+    x_mat.resize(dims_.rows, dims_.cols);
+    y_mat.resize(dims_.rows, dims_.cols);
+    z_mat.resize(dims_.rows, dims_.cols);
+
+    x.setInternalData(reinterpret_cast<int8_t*>(data_ptr_), dims_.rows, dims_.cols);
+    y.setInternalData(reinterpret_cast<int8_t*>(&(data_ptr_[num_bytes_for_one_vec_])), dims_.rows, dims_.cols);
+    z.setInternalData(reinterpret_cast<int8_t*>(&(data_ptr_[2 * num_bytes_for_one_vec_])), dims_.rows, dims_.cols);
+
+    for(size_t r = 0; r < dims_.rows; r++)
+    {
+        for(size_t c = 0; c < dims_.cols; c++)
+        {
+            x_mat(r, c) = x(r, c);
+            y_mat(r, c) = y(r, c);
+            z_mat(r, c) = z(r, c);
+        }
+    }
+
+    points_ptr_ = new float[(dims_.rows - 1) * (dims_.cols - 1) * 4 * 3];
+    size_t idx = 0;
+    for(size_t r = 0; r < (dims_.rows - 1); r++)
+    {
+        for(size_t c = 0; c < (dims_.cols - 1); c++)
+        {
+            const size_t idx0_x = idx;
+            const size_t idx0_y = idx + 1;
+            const size_t idx0_z = idx + 2;
+
+            const size_t idx1_x = idx + 3;
+            const size_t idx1_y = idx + 4;
+            const size_t idx1_z = idx + 5;
+
+            const size_t idx2_x = idx + 6;
+            const size_t idx2_y = idx + 7;
+            const size_t idx2_z = idx + 8;
+
+            const size_t idx3_x = idx + 9;
+            const size_t idx3_y = idx + 10;
+            const size_t idx3_z = idx + 11;
+            idx = idx + 12;
+
+            points_ptr_[idx0_x] = x_mat(r, c);
+            points_ptr_[idx1_x] = x_mat(r + 1, c);
+            points_ptr_[idx2_x] = x_mat(r + 1, c + 1);
+            points_ptr_[idx3_x] = x_mat(r, c + 1);
+
+            points_ptr_[idx0_y] = y_mat(r, c);
+            points_ptr_[idx1_y] = y_mat(r + 1, c);
+            points_ptr_[idx2_y] = y_mat(r + 1, c + 1);
+            points_ptr_[idx3_y] = y_mat(r, c + 1);
+
+            points_ptr_[idx0_z] = z_mat(r, c);
+            points_ptr_[idx1_z] = z_mat(r + 1, c);
+            points_ptr_[idx2_z] = z_mat(r + 1, c + 1);
+            points_ptr_[idx3_z] = z_mat(r, c + 1);
+        }
+    }
+
+    x.setInternalData(nullptr, 0, 0);
+    y.setInternalData(nullptr, 0, 0);
+    z.setInternalData(nullptr, 0, 0);
+
     face_color_set_ = true;
 
     findMinMax();
@@ -55,30 +118,26 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
 
 void Surf::findMinMax()
 {
-    assert(x_mat.isAllocated() && "Matrix not allocated when checking min/max!");
-    assert(y_mat.isAllocated() && "Matrix not allocated when checking min/max!");
-    assert(z_mat.isAllocated() && "Matrix not allocated when checking min/max!");
-
-    min_vec.x = dvs::min(x_mat);
-    min_vec.y = dvs::min(y_mat);
-    min_vec.z = dvs::min(z_mat);
-
-    max_vec.x = dvs::max(x_mat);
-    max_vec.y = dvs::max(y_mat);
-    max_vec.z = dvs::max(z_mat);
+    std::tie<Vec3Dd, Vec3Dd>(min_vec, max_vec) = findMinMaxFromThreeMatrices(data_ptr_, dims_.rows, dims_.cols, num_bytes_for_one_vec_, data_type_);
 }
 
 void Surf::visualize()
 {
-    if (face_color_set_)
+    if(!visualize_has_run_)
     {
-        setColor(face_color_);
-        surf(x_mat, y_mat, z_mat);
+        visualize_has_run_ = true;
+        glGenBuffers(1, &buffer_idx_);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * (dims_.rows - 1) * (dims_.cols - 1), points_ptr_, GL_STATIC_DRAW);
     }
-    else
-    {
-        surfInternal(x_mat, y_mat, z_mat, {min_vec.y, max_vec.y}, color_map_);
-    }
+
+    setColor(face_color_);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glDrawArrays(GL_QUADS, 0, 4 * 3 * (dims_.rows - 1) * (dims_.cols - 1));
+    glDisableVertexAttribArray(0);
 
     setColor(edge_color_);
     setLinewidth(line_width_);
@@ -87,9 +146,7 @@ void Surf::visualize()
 
 Surf::~Surf()
 {
-    x_mat.setInternalData(nullptr, 0, 0);  // Hack
-    y_mat.setInternalData(nullptr, 0, 0);
-    z_mat.setInternalData(nullptr, 0, 0);
+    delete[] points_ptr_;
 }
 
 #endif
