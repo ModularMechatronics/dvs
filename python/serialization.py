@@ -5,7 +5,8 @@ from enums import *
 from internal_types import *
 
 def serialize_color(col: Color):
-    return col.r.to_bytes(1, sys.byteorder) + col.g.to_bytes(1, sys.byteorder) + col.b.to_bytes(1, sys.byteorder)
+    return PropertyType.COLOR.value.to_bytes(1, sys.byteorder) + col.r.to_bytes(1, sys.byteorder) + \
+        col.g.to_bytes(1, sys.byteorder) + col.b.to_bytes(1, sys.byteorder)
 
 def serialize_one_byte_num(num):
     return np.uint8(num).tobytes()
@@ -89,5 +90,5 @@ SIZE_OF_FUNCTION_HEADER_OBJECT = {FunctionHeaderObjectType.FUNCTION: 1,
                                   FunctionHeaderObjectType.PARENT_TYPE: None,
                                   FunctionHeaderObjectType.ELEMENT_NAME: None,
                                   FunctionHeaderObjectType.GUI_ELEMENT_TYPE: None,
-                                  FunctionHeaderObjectType.PROPERTY: None,
+                                  FunctionHeaderObjectType.PROPERTY: 1,
                                   FunctionHeaderObjectType.UNKNOWN: None}

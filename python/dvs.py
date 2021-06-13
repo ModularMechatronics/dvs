@@ -61,25 +61,28 @@ class FunctionHeader:
     def num_bytes(self):
         total_size = 0
         for key, val in self.properties.items():
-            # + 2 for FunctionHeaderObjectType, + 1 for PropertyType
+            # + 2 for FunctionHeaderObjectType, + 1 for num bytes of setting, + 1 for type of property
             total_size += SIZE_OF_PROPERTY[key] + 2 + 1 + 1
 
         for key, val in self.settings.items():
-            # + 2 for FunctionHeaderObjectType
+            # + 2 for FunctionHeaderObjectType,  + 1 for num bytes of setting
             total_size += SIZE_OF_FUNCTION_HEADER_OBJECT[key] + 2 + 1
+
         # + 1 for number of header elements
         return total_size + 1
 
     def to_bytes(self):
         bts = bytearray()
         bts += (len(self.properties) + len(self.settings)).to_bytes(1, sys.byteorder)
-        for key, val in self.properties.items():
-            bts += FunctionHeaderObjectType.PROPERTY.value.to_bytes(2, sys.byteorder) + \
-                    key.value.to_bytes(1, sys.byteorder) + PROPERTY_SERIALIZATION_FUNCTIONS[key](val)
 
         for key, val in self.settings.items():
             bts += key.value.to_bytes(2, sys.byteorder) + SIZE_OF_FUNCTION_HEADER_OBJECT[key].to_bytes(1, sys.byteorder) \
                  + FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
+
+        for key, val in self.properties.items():
+            bts += FunctionHeaderObjectType.PROPERTY.value.to_bytes(2, sys.byteorder) + \
+                SIZE_OF_PROPERTY[key].to_bytes(1, sys.byteorder) + \
+                PROPERTY_SERIALIZATION_FUNCTIONS[key](val)
 
         return bts
 
@@ -115,7 +118,7 @@ def send_header_and_data(send_fcn, hdr, *args):
         total_num_bytes += num_bytes_from_array(arg)
 
     total_num_bytes += 1 + 2 * 8
-    print("Total num bytes: {}".format(total_num_bytes))
+
     buffer_to_send = Buffer(total_num_bytes)
 
     is_big_endian = sys.byteorder == 'big'
@@ -132,39 +135,6 @@ def send_header_and_data(send_fcn, hdr, *args):
         buffer_to_send.append(arg.tobytes())
     
     send_fcn(buffer_to_send.data)
-
-    """
-    const uint64_t num_bytes_hdr = hdr.numBytes();
-    const uint64_t num_bytes_first = first_element.numBytes();
-
-    const uint64_t num_bytes_from_object = countNumBytes(other_elements...) + num_bytes_hdr + num_bytes_first;
-
-    // + 1 bytes for endianness byte
-    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
-    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
-
-    uint8_t* const data_blob = new uint8_t[num_bytes];
-
-    uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
-    idx += 1;
-
-    std::memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
-
-    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
-
-    hdr.fillBufferWithData(&(data_blob[idx]));
-    idx += num_bytes_hdr;
-
-    first_element.fillBufferWithData(&(data_blob[idx]));
-    idx += num_bytes_first;
-
-    fillBuffer(&(data_blob[idx]), other_elements...);
-
-    send_function(data_blob, num_bytes);
-    """
 
 
 def plot(x: np.array, y: np.array, **properties):
@@ -185,13 +155,3 @@ def plot(x: np.array, y: np.array, **properties):
             print("Argument {} not a valid property".format(key))
 
     send_header_and_data(send_with_udp, hdr, x, y)
-
-    """
-    internal::FunctionHeader hdr;
-    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT2);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
-    """
