@@ -191,7 +191,6 @@ template <typename T> DataType typeToDataTypeEnum()
                     break;
                 default:
                     return DataType::UNKNOWN;
-                    break;
             }
         }
         else
@@ -212,7 +211,6 @@ template <typename T> DataType typeToDataTypeEnum()
                     break;
                 default:
                     return DataType::UNKNOWN;
-                    break;
             }
         }
     }
@@ -534,21 +532,6 @@ public:
     template <typename U> void append(const FunctionHeaderObjectType& object_type, const U& data)
     {
         // assert(checkTypeValid<U>(object_type) && "Invalid data type for object_type data!");
-
-        values.push_back(FunctionHeaderObject());
-        FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
-
-        ptr->type = object_type;
-        ptr->num_bytes = sizeof(U);
-
-        assert((ptr->num_bytes <= max_num_bytes) && "Too many data bytes!");
-
-        fillBufferWithObjects(ptr->data, data);
-    }
-
-    template <typename U> void appendProperty(const FunctionHeaderObjectType& object_type, const U& data)
-    {
-        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value, "Incorrect type!");
 
         values.push_back(FunctionHeaderObject());
         FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
