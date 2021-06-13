@@ -216,14 +216,14 @@ void testImShow()
     setCurrentElement("view_00");
 
     const uint32_t num_rows = 8, num_cols = 10;
-    Matrix<uint32_t> img(num_rows, num_cols);
-    // const uint32_t max_val = num_rows * num_cols;
+    Matrix<double> img(num_rows, num_cols);
+    const double max_val = num_rows * num_cols;
 
     for(uint32_t r = 0; r < num_rows; r++)
     {
         for(uint32_t c = 0; c < num_cols; c++)
         {
-            img(r, c) = (r + c) * 300;
+            img(r, c) = (r * c) / max_val;
         }
     }
 

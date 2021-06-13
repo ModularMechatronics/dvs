@@ -19,6 +19,11 @@ class ImShow : public PlotObjectBase
 {
 private:
     RGBColorMap<float> color_map_;
+    GLuint buffer_idx_;
+    GLuint color_buffer_;
+
+    float* points_ptr_;
+    float* colors_ptr_;
 
     Matrixd img_;
     internal::Dimension2D dims_;
@@ -47,12 +52,6 @@ void ImShow::findMinMax()
     max_vec.y = height;
     max_vec.z = 1.0;
 }
-
-static const GLfloat g_vertex_buffer_data[] = {
-   -1.0f, -1.0f, 0.0f,
-   1.0f, -1.0f, 0.0f,
-   0.0f,  1.0f, 0.0f,
-};
 
 template <typename T>
 GLuint loadTexture(const int width, const int height, const T* data)
@@ -85,7 +84,6 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     }
 
     dims_ = hdr.getObjectFromType(FunctionHeaderObjectType::DIMENSION_2D).getAs<internal::Dimension2D>();
-    has_run_ = false;
 
     color_map_ = color_maps::rainbowf;
 
@@ -94,146 +92,105 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     width = dims_.cols;
     height = dims_.rows;
 
-    pixel_data_ = new unsigned char[width * height * 3];
-    for(int k = 0; k < (width * height * 3); k++)
+    // 4 vertices, 6 "elements" (xyz rgb) per vertex
+    points_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
+    colors_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
+    size_t idx = 0;
+    for(size_t r = 0; r < dims_.rows; r++)
     {
-        pixel_data_[k] = 2 * k + 3;
+        for(size_t c = 0; c < dims_.cols; c++)
+        {
+            const size_t idx0_x = idx;
+            const size_t idx0_y = idx + 1;
+            const size_t idx0_z = idx + 2;
+
+            const size_t idx1_x = idx + 3;
+            const size_t idx1_y = idx + 4;
+            const size_t idx1_z = idx + 5;
+
+            const size_t idx2_x = idx + 6;
+            const size_t idx2_y = idx + 7;
+            const size_t idx2_z = idx + 8;
+
+            const size_t idx3_x = idx + 9;
+            const size_t idx3_y = idx + 10;
+            const size_t idx3_z = idx + 11;
+            idx = idx + 12;
+
+            points_ptr_[idx0_x] = c;
+            points_ptr_[idx1_x] = c + 1;
+            points_ptr_[idx2_x] = c + 1;
+            points_ptr_[idx3_x] = c;
+
+            points_ptr_[idx0_y] = r;
+            points_ptr_[idx1_y] = r;
+            points_ptr_[idx2_y] = r + 1;
+            points_ptr_[idx3_y] = r + 1;
+
+            points_ptr_[idx0_z] = 0.0f;
+            points_ptr_[idx1_z] = 0.0f;
+            points_ptr_[idx2_z] = 0.0f;
+            points_ptr_[idx3_z] = 0.0f;
+
+            const float color_val = img_(r, c);
+
+            colors_ptr_[idx0_x] = color_val;
+            colors_ptr_[idx1_x] = color_val;
+            colors_ptr_[idx2_x] = color_val;
+            colors_ptr_[idx3_x] = color_val;
+
+            colors_ptr_[idx0_y] = color_val;
+            colors_ptr_[idx1_y] = color_val;
+            colors_ptr_[idx2_y] = color_val;
+            colors_ptr_[idx3_y] = color_val;
+
+            colors_ptr_[idx0_z] = color_val;
+            colors_ptr_[idx1_z] = color_val;
+            colors_ptr_[idx2_z] = color_val;
+            colors_ptr_[idx3_z] = color_val;
+        }
     }
 
-    // const std::string vtx_path = "/Users/annotelldaniel/work/repos/dvs/cpp/main_application/plot_objects/img_shader.vertex";
-    // const std::string frg_path = "/Users/annotelldaniel/work/repos/dvs/cpp/main_application/plot_objects/img_shader.fragment";
+    img_.setInternalData(nullptr, 0, 0);  // Hack
 
-    const std::string vtx_path = "/Users/annotelldaniel/work/repos/dvs/cpp/main_application/plot_objects/tri.vertex";
-    const std::string frg_path = "/Users/annotelldaniel/work/repos/dvs/cpp/main_application/plot_objects/tri.fragment";
-    program_id_ = LoadShaders(vtx_path, frg_path);
-
-    // Give the image to OpenGL
-    texture_id_ = loadTexture(width, height, pixel_data_);
-
-    // const float x = 0, y = 0;
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    // if (blendFlag) glEnable(GL_BLEND);
-
+    findMinMax();
 }
-
-
 
 void ImShow::visualize()
 {
-    // if(!has_run_)
+    if(!visualize_has_run_)
     {
-        has_run_ = true;
+        visualize_has_run_ = true;
+        glGenBuffers(1, &buffer_idx_);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * dims_.rows * dims_.cols, points_ptr_, GL_STATIC_DRAW);
 
-        
-        GLuint VertexArrayID;
-        glGenVertexArraysAPPLE(1, &VertexArrayID);
-        glBindVertexArrayAPPLE(VertexArrayID);
-
-        GLuint vertexbuffer;
-        glGenBuffers(1, &vertexbuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
+        program_id_ = LoadShaders("/Users/annotelldaniel/work/repos/dvs/cpp/main_application/plot_objects/img_shader.vertex",
+                                  "/Users/annotelldaniel/work/repos/dvs/cpp/main_application/plot_objects/img_shader.fragment");
         glUseProgram(program_id_);
-
-        glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 3); // 3 indices starting at 0 -> 1 triangle
-
-		glDisableVertexAttribArray(0);
-
-
-        // glDrawArrays(GL_TRIANGLES, 0, 3*3);
-        /*glUseProgram(program_id_);
-        
-        GLuint textureID;
-        glGenTextures(1, &textureID);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-
-        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, pixel_data_);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        GLuint VertexArrayID;
-        glGenVertexArraysAPPLE(1, &VertexArrayID);
-        glBindVertexArrayAPPLE(VertexArrayID);
-        GLuint vertexbuffer;
-        // Generate 1 buffer, put the resulting identifier in vertexbuffer
-        glGenBuffers(1, &vertexbuffer);
-        // The following commands will talk about our 'vertexbuffer' buffer
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        // Give our vertices to OpenGL.
-        glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glVertexAttribPointer(
-        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
-        );
-        // Draw the triangle !
-        glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-        glBindVertexArrayAPPLE(0);
-        glDisableVertexAttribArray(0);*/
-
-        /*
-        glEnable(GL_BLEND);
-
-        GLuint textureID;
-        glGenTextures(1, &textureID);
-
-        // "Bind" the newly created texture : all future texture functions will modify this texture
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, data_ptr_);
-
-
-        const float x = 0, y = 0;
-
-        GLfloat TexCoord[] = {0, 0,
-            1, 0,
-            1, 1,
-            0, 1,
-        };
-
-        GLubyte indices[] = {0, 1, 2,
-                             0, 2, 3};
-
-        GLfloat Vertices[] = {(float)x, (float)y, 0,
-                            (float)x + width, (float)y, 0,
-                            (float)x + (float)width, (float)y + (float)height, 0,
-                            (float)x, (float)y + (float)height, 0};
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, Vertices);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, TexCoord);
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);*/
+        //glGenBuffers(1, &color_buffer_);
+        //glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
+        //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * dims_.rows * dims_.cols, colors_ptr_, GL_STATIC_DRAW);
     }
+
+    
+    // setColor(face_color_);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // glEnableVertexAttribArray(1);
+    // glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glDrawArrays(GL_QUADS, 0, 4 * 3 * dims_.rows * dims_.cols);
+    glDisableVertexAttribArray(0);
+    // glDisableVertexAttribArray(1);
+
 }
 
 ImShow::~ImShow()
 {
-    img_.setInternalData(nullptr, 0, 0);  // Hack
 }
 
 #endif
