@@ -455,7 +455,7 @@ inline void setCurrentElement(const std::string& name, const ElementType element
     hdr.append(internal::FunctionHeaderObjectType::PARENT_NAME, properties::Name(parent_name.c_str()));
     hdr.append(internal::FunctionHeaderObjectType::GUI_ELEMENT_TYPE, element_type);
     hdr.append(internal::FunctionHeaderObjectType::PARENT_TYPE, element_parent);
-    hdr.appendProperty(internal::FunctionHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
+    hdr.append(internal::FunctionHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
@@ -464,7 +464,7 @@ inline void setCurrentElement(const std::string& name)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SET_CURRENT_ELEMENT);
-    hdr.appendProperty(internal::FunctionHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
+    hdr.append(internal::FunctionHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
