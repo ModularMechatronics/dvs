@@ -10,7 +10,6 @@ namespace internal
 
 enum class FunctionHeaderObjectType : uint16_t
 {
-    UNKNOWN,
     FUNCTION,
     NUM_BUFFERS_REQUIRED,
     NUM_BYTES,
@@ -31,12 +30,12 @@ enum class FunctionHeaderObjectType : uint16_t
     PARENT_TYPE,
     ELEMENT_NAME,
     GUI_ELEMENT_TYPE,
-    PROPERTY
+    PROPERTY,
+    UNKNOWN
 };
 
 enum class PropertyType : uint8_t
 {
-    UNKNOWN,
     LINE_WIDTH,
     ALPHA,
     NAME,
@@ -47,11 +46,11 @@ enum class PropertyType : uint8_t
     COLOR_MAP,
     POINT_SIZE,
     PERSISTENT,
+    UNKNOWN
 };
 
 enum class Function : uint8_t
 {
-    UNKNOWN,
     DRAW_LINE3D,
     PLANE_XY,
     PLANE_XZ,
@@ -80,12 +79,12 @@ enum class Function : uint8_t
     AXES_2D,
     AXES_3D,
     VIEW,
-    SOFT_CLEAR
+    SOFT_CLEAR,
+    UNKNOWN
 };
 
 enum class DataType : uint8_t
 {
-    UNKNOWN,
     FLOAT,
     DOUBLE,
     INT8,
@@ -95,25 +94,26 @@ enum class DataType : uint8_t
     UINT8,
     UINT16,
     UINT32,
-    UINT64
+    UINT64,
+    UNKNOWN
 };
 
 enum class DataStructure : uint8_t
 {
-    UNKNOWN,
     MATRIX,
     VECTOR,
     IMAGE,
-    TEXT
+    TEXT,
+    UNKNOWN
 };
 
 enum class ColorMapType : uint8_t
 {
-    UNKNOWN,
     JET,
     RAINBOW,
     MAGMA,
-    VIRIDIS
+    VIRIDIS,
+    UNKNOWN
 };
 
 }
@@ -129,13 +129,15 @@ enum class ElementType
     IMAGE,
     WORLD,
     BUTTON,
-    TEXT_FIELD
+    TEXT_FIELD,
+    UNKNOWN
 };
 
 enum class ElementParent
 {
     TAB,
-    WINDOW
+    WINDOW,
+    UNKNOWN
 };
 
 }

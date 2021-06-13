@@ -1,5 +1,6 @@
 material-design-icons
-
+*.pyc
+__pycache__
 
 # Prerequisites
 *.d
