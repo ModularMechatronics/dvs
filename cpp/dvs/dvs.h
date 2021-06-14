@@ -57,26 +57,51 @@ inline bool checkAck(char data[256])
 
 inline void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
 {
-    if(num_bytes > 1380)
-    {
-        std::cout << "Tried to send too many bytes: " << num_bytes << "! MTU is 1380..." << std::endl;
-        exit(-1);
-    }
+    const size_t max_bytes_for_one_msg = 1380;
     UdpClient udp_client(9752);
-    udp_client.sendData(data_blob, num_bytes);
-
     char data[256];
-    const int num_received_bytes = udp_client.receiveData(data);
 
-    bool ack_received = checkAck(data);
-
-    if(!ack_received)
+    if(num_bytes > max_bytes_for_one_msg)
     {
-        throw std::runtime_error("No ack received!");
+        size_t num_sent_bytes = 0;
+
+        while(num_sent_bytes < num_bytes)
+        {
+            const size_t num_bytes_to_send = std::min(max_bytes_for_one_msg, static_cast<size_t>(num_bytes) - num_sent_bytes);
+
+            udp_client.sendData(&(data_blob[num_sent_bytes]), num_bytes_to_send);
+            num_sent_bytes += num_bytes_to_send;
+
+            const int num_received_bytes = udp_client.receiveData(data);
+
+            bool ack_received = checkAck(data);
+
+            if(!ack_received)
+            {
+                throw std::runtime_error("No ack received!");
+            }
+            else if(num_received_bytes != 5)
+            {
+                throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
+            }
+        }
     }
-    else if(num_received_bytes != 5)
+    else
     {
-        throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
+        udp_client.sendData(data_blob, num_bytes);
+
+        const int num_received_bytes = udp_client.receiveData(data);
+
+        bool ack_received = checkAck(data);
+
+        if(!ack_received)
+        {
+            throw std::runtime_error("No ack received!");
+        }
+        else if(num_received_bytes != 5)
+        {
+            throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
+        }
     }
 }
 

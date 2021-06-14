@@ -127,25 +127,43 @@ public:
     {
         client_len = sizeof(claddr);
 
+        const size_t max_bytes_for_one_msg = 1380;
+
         bool should_run = true;
         while(should_run)
         {
-            const int num_received_bytes = recvfrom(file_descr_, receive_buffer_, max_buffer_size, 0, (struct sockaddr *)&claddr, &client_len);
+            int num_received_bytes_total = 0;
+            int num_received_bytes = recvfrom(file_descr_, receive_buffer_, max_buffer_size, 0, (struct sockaddr *)&claddr, &client_len);
+            num_received_bytes_total += num_received_bytes;
+
             if (num_received_bytes < 0)
             {
-                should_run = false;
                 throw std::runtime_error("recvfrom returned error!");
             }
-            else if(static_cast<size_t>(num_received_bytes) >= max_buffer_size)
+
+            uint64_t num_expected_bytes;
+            std::memcpy(&num_expected_bytes, &(receive_buffer_[sizeof(uint64_t) + 1]), sizeof(uint64_t));
+
+            if(static_cast<size_t>(num_expected_bytes) >= max_buffer_size)
             {
-                should_run = false;
                 throw std::runtime_error("Too many bytes received!");
             }
             sendAck();
 
+            if(num_expected_bytes > max_bytes_for_one_msg)
+            {
+                while(num_received_bytes_total < num_expected_bytes)
+                {
+                    num_received_bytes = recvfrom(file_descr_, &(receive_buffer_[num_received_bytes_total]), max_buffer_size, 0, (struct sockaddr *)&claddr, &client_len);
+
+                    num_received_bytes_total += num_received_bytes;
+                    sendAck();
+                }
+            }
+
             const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(receive_buffer_);
 
-            // TODO: Convert to other endianness and check also
+            // TODO: Convert to other endianness and check also if magic number if valid for other endianness
             uint64_t rec_magic_num;
             std::memcpy(&rec_magic_num, &(uint8_ptr[1]), sizeof(uint64_t));
             
@@ -154,10 +172,10 @@ public:
                 throw std::runtime_error("Invalid magic number!");
             }
 
-            received_data_ = std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes);
+            // received_data_ = std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes_total);
             {
                 const std::lock_guard lg(mtx_);
-                received_data_buffer_.push(std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes));
+                received_data_buffer_.push(std::make_unique<const ReceivedData>(uint8_ptr, num_received_bytes_total));
             }
         }
     }
