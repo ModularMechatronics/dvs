@@ -131,30 +131,36 @@ void testScatter()
 
 void testScatter3()
 {
-    const size_t num_elements = 30;
-    Vector<int16_t> x(num_elements), y(num_elements), z(num_elements);
-    Vector<float> xf(num_elements), yf(num_elements), zf(num_elements);
+    const size_t num_elements = 14600;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements);
 
-    double t = 0.0;
+    double t0 = 0.0f, t1 = 0.0f, t2 = 0.0f, y0 = 0.0f, z0 = 0.0f;
 
     for(size_t k = 0; k < num_elements; k++)
     {
-        xf(k) = 10.0 * cos(t) + 20.0;
-        yf(k) = 10.0 * sin(t) + 20.0;
-        zf(k) = k;
+        const float xf = 7.0 * cos(t0) + 20.0f;
+        const float yf = 7.0 * sin(t0) - 110.0f;
+        const float zf = 0.0f;
 
-        x(k) = xf(k);
-        y(k) = yf(k);
-        z(k) = k;
-        t = t + 0.3;
+        const Vec3Df v0 = rotationMatrixY<float>(t1) * Vec3Df(xf, yf, zf);
+        const Vec3Df v1 = rotationMatrixZ<float>(t2) * (v0 + Vec3Df(50.0f, y0, 0.0f));
+
+        x(k) = v1.x;
+        y(k) = v1.y;
+        z(k) = v1.z + z0 - 70;
+        t0 = t0 + 0.3;
+        t1 = t1 - 0.01;
+        t2 = t2 + 0.002;
+        y0 = y0 + 0.05;
+        z0 = z0 + 0.02;
     }
 
     setCurrentElement("view_00");
     hardClearFigure();
     holdOn();
-    axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
+    axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
     scatter3(x, y, z, properties::Color(212, 14, 55), properties::PointSize(3));
-    plot3(xf, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(1));
+    plot3(x, y, z, properties::Color(21, 14, 55), properties::LineWidth(1));
 }
 
 void testPlot2()
