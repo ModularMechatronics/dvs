@@ -430,6 +430,30 @@ void testDrawLine3D()
     scatter3(x, y, z, properties::Color(0, 0, 0), properties::PointSize(3));
 }
 
+void testDrawLine2D()
+{
+    using tp = double;
+
+    ParametricLine2D<tp> line(Point2D<tp>(0.0, 0.0), Vec2D<tp>(1.0, 1.0));
+    HomogeneousLine2D<tp> line_h(0.1, 0.2, 0.3);
+    tp t0 = 0;
+    tp t1 = 1.0;
+
+    Vector<double> x = {0.0, 1.0};
+    Vector<double> y = {0.0, 1.0};
+    Vector<double> z = {0.0, 0.0};
+
+    setCurrentElement("view_00");
+    hardClearFigure();
+    holdOn();
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    drawLine2D(line, t0, t1, properties::Color(12, 244, 244));
+    drawLine2DBetweenXValues(line_h, -3.0, 3.0, properties::Color(12, 15, 244));
+    drawLine2DBetweenYValues(line_h, -2.0, 2.0, properties::Color(12, 15, 244));
+    scatter3(x, y, z, properties::Color(0, 0, 0), properties::PointSize(3));
+}
+
 void testDrawLineBetweenPoints3D()
 {
     using tp = double;
