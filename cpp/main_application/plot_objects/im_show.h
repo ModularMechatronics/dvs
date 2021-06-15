@@ -83,6 +83,8 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
         throw std::runtime_error("Invalid function type for Surf!");
     }
 
+    // https://stackoverflow.com/questions/34963324/c-opengl-mesh-rendering
+
     dims_ = hdr.getObjectFromType(FunctionHeaderObjectType::DIMENSION_2D).getAs<internal::Dimension2D>();
 
     color_map_ = color_maps::rainbowf;
@@ -115,7 +117,6 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
             const size_t idx3_x = idx + 9;
             const size_t idx3_y = idx + 10;
             const size_t idx3_z = idx + 11;
-            idx = idx + 12;
 
             points_ptr_[idx0_x] = c;
             points_ptr_[idx1_x] = c + 1;
@@ -148,6 +149,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
             colors_ptr_[idx1_z] = color_val;
             colors_ptr_[idx2_z] = color_val;
             colors_ptr_[idx3_z] = color_val;
+            idx = idx + 12;
         }
     }
 
@@ -158,35 +160,20 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
 
 void ImShow::visualize()
 {
+    // TODO: Make sure that the image is not mirrored
     if(!visualize_has_run_)
     {
         visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_idx_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * dims_.rows * dims_.cols, points_ptr_, GL_STATIC_DRAW);
-
-        program_id_ = LoadShaders("/Users/annotelldaniel/work/repos/dvs/cpp/main_application/plot_objects/img_shader.vertex",
-                                  "/Users/annotelldaniel/work/repos/dvs/cpp/main_application/plot_objects/img_shader.fragment");
-        glUseProgram(program_id_);
-        //glGenBuffers(1, &color_buffer_);
-        //glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * dims_.rows * dims_.cols, colors_ptr_, GL_STATIC_DRAW);
+        glVertexPointer(3, GL_FLOAT, 0, points_ptr_);
+        glColorPointer(3, GL_FLOAT, 0, colors_ptr_);
     }
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-    
-    // setColor(face_color_);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glDrawArrays(GL_QUADS, 0, 4 * dims_.rows * dims_.cols);
 
-    // glEnableVertexAttribArray(1);
-    // glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glDrawArrays(GL_QUADS, 0, 4 * 3 * dims_.rows * dims_.cols);
-    glDisableVertexAttribArray(0);
-    // glDisableVertexAttribArray(1);
-
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 }
 
 ImShow::~ImShow()

@@ -19,9 +19,11 @@ private:
     Dimension2D dims_;
     RGBColorMap<float> color_map_;
     GLuint buffer_idx_;
+    GLuint lines_buffer_;
 
     Matrix<float> x_mat, y_mat, z_mat;
     float* points_ptr_;
+    float* lines_ptr_;
 
     bool face_color_set_;
 
@@ -44,8 +46,6 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
     }
 
     dims_ = hdr.getObjectFromType(FunctionHeaderObjectType::DIMENSION_2D).getAs<internal::Dimension2D>();
-
-    color_map_ = color_maps::rainbowf;
 
     Matrix<int8_t> x, y, z;
 
@@ -107,11 +107,19 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
         }
     }
 
+    lines_ptr_ = new float[3 * 3];
+
+    for(size_t r = 0; r < (dims_.rows - 1); r++)
+    {
+        for(size_t c = 0; c < (dims_.cols - 1); c++)
+        {
+
+        }
+    }
+
     x.setInternalData(nullptr, 0, 0);
     y.setInternalData(nullptr, 0, 0);
     z.setInternalData(nullptr, 0, 0);
-
-    face_color_set_ = true;
 
     findMinMax();
 }
@@ -131,17 +139,20 @@ void Surf::visualize()
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * (dims_.rows - 1) * (dims_.cols - 1), points_ptr_, GL_STATIC_DRAW);
     }
 
-    setColor(face_color_);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+    setColor(face_color_);
     glDrawArrays(GL_QUADS, 0, 4 * 3 * (dims_.rows - 1) * (dims_.cols - 1));
-    glDisableVertexAttribArray(0);
 
     setColor(edge_color_);
-    setLinewidth(line_width_);
-    drawGrid3D(x_mat, y_mat, z_mat);
+    glDrawArrays(GL_LINE_STRIP, 0, 4 * 3 * (dims_.rows - 1) * (dims_.cols - 1));
+
+    glDisableVertexAttribArray(0);
+
+    // setLinewidth(line_width_);
+    // drawGrid3D(x_mat, y_mat, z_mat);
 }
 
 Surf::~Surf()
