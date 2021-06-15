@@ -443,30 +443,31 @@ void drawPlaneYZ(const PointYZ<double>& p0,
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
 }
 
-template <typename T, typename... Us>
-void drawLine(const Line3D<T>& line, const T t0, const T t1, const Us&... settings)
+template <typename... Us>
+void drawLine(const Line3D<double>& line, const double t0, const double t1, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    Vector<Line3D<T>> lines = {line};
-    Vector<T> ts = {t0, t1};
+    const Point3D<double> p0 = line.eval(t0);
+    const Point3D<double> p1 = line.eval(t1);
+    Vector<Point3D<double>> points = {p0, p1};
 
     hdr.extend(settings...);
 
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, lines, ts);
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
 }
 
 
-template <typename T, typename... Us>
-void drawLineBetweenPoints(const Point3D<T>& p0, const Point3D<T>& p1, const Us&... settings)
+template <typename... Us>
+void drawLineBetweenPoints(const Point3D<double>& p0, const Point3D<double>& p1, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE_BETWEEN_POINTS_3D);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    Vector<Point3D<T>> points = {p0, p1};
+    Vector<Point3D<double>> points = {p0, p1};
 
     hdr.extend(settings...);
 

@@ -413,9 +413,13 @@ void testDrawLine3D()
 {
     using tp = double;
 
-    Line3D<tp> line(Point3D<tp>(0.1, 0.2, 0.2), Vec3D<tp>(1.0, 1.0, 1.0));
+    Line3D<tp> line(Point3D<tp>(0.0, 0.0, 0.0), Vec3D<tp>(1.0, 1.0, 1.0));
     tp t0 = 0;
     tp t1 = 1.0;
+
+    Vector<double> x = {0.0, 1.0};
+    Vector<double> y = {0.0, 1.0};
+    Vector<double> z = {0.0, 1.0};
 
     setCurrentElement("view_00");
     hardClearFigure();
@@ -423,6 +427,7 @@ void testDrawLine3D()
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawLine(line, t0, t1, properties::Color(12, 244, 244));
+    scatter3(x, y, z, properties::Color(0, 0, 0), properties::PointSize(3));
 }
 
 void testDrawLineBetweenPoints3D()
@@ -431,6 +436,10 @@ void testDrawLineBetweenPoints3D()
 
     Point3D<tp> p0(0.1, 0.2, 0.2);
     Point3D<tp> p1(2.0, 1.0, 1.0);
+
+    Vector<double> x = {p0.x, p1.x};
+    Vector<double> y = {p0.y, p1.y};
+    Vector<double> z = {p0.z, p1.z};
     
     setCurrentElement("view_00");
     hardClearFigure();
@@ -438,4 +447,5 @@ void testDrawLineBetweenPoints3D()
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawLineBetweenPoints(p0, p1, properties::Color(12, 244, 0));
+    scatter3(x, y, z, properties::Color(0, 0, 0), properties::PointSize(3));
 }
