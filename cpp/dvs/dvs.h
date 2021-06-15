@@ -389,54 +389,54 @@ void drawMesh(const Vector<Point3D<T>>& vertices,
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, vertices, indices);
 }
 
-template <typename T, typename... Us>
-void drawPlaneXY(const PointXY<T>& p0,
-                 const PointXY<T>& p1,
-                 const Plane<T>& plane,
+template <typename... Us>
+void drawPlaneXY(const PointXY<double>& p0,
+                 const PointXY<double>& p1,
+                 const Plane<double>& plane,
                  const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLANE_XY);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
-    Vector<PointXY<T>> points = {p0, p1};
-    Vector<Plane<T>> planes = {plane};
+    Vector<PointXY<double>> points = {p0, p1};
+    Vector<Plane<double>> planes = {plane};
 
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
 }
 
-template <typename T, typename... Us>
-void drawPlaneXZ(const PointXZ<T>& p0,
-                 const PointXZ<T>& p1,
-                 const Plane<T>& plane,
+template <typename... Us>
+void drawPlaneXZ(const PointXZ<double>& p0,
+                 const PointXZ<double>& p1,
+                 const Plane<double>& plane,
                  const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLANE_XZ);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
-    Vector<PointXZ<T>> points = {p0, p1};
-    Vector<Plane<T>> planes = {plane};
+    Vector<PointXZ<double>> points = {p0, p1};
+    Vector<Plane<double>> planes = {plane};
 
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
 }
 
-template <typename T, typename... Us>
-void drawPlaneYZ(const PointYZ<T>& p0,
-                 const PointYZ<T>& p1,
-                 const Plane<T>& plane,
+template <typename... Us>
+void drawPlaneYZ(const PointYZ<double>& p0,
+                 const PointYZ<double>& p1,
+                 const Plane<double>& plane,
                  const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLANE_YZ);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
-    Vector<PointYZ<T>> points = {p0, p1};
-    Vector<Plane<T>> planes = {plane};
+    Vector<PointYZ<double>> points = {p0, p1};
+    Vector<Plane<double>> planes = {plane};
 
     hdr.extend(settings...);
 

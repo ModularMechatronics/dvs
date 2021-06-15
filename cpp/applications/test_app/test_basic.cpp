@@ -252,21 +252,24 @@ void testdrawXYPlane()
 {
     VecXY<double> p0_xy(0.0, 0.0),
                   p1_xy(1.0, 1.0);
-    VecXZ<double> p0_xz(0.0, 0.0),
-                  p1_xz(1.0, 1.0);
-    VecYZ<double> p0_yz(0.0, 0.0),
-                  p1_yz(1.0, 1.0);
+    VecXZ<float> p0_xz(0.0, 0.0),
+                 p1_xz(1.0, 1.0);
+    VecYZ<int16_t> p0_yz(0.0, 0.0),
+                   p1_yz(1.0, 1.0);
     setCurrentElement("view_00");
-    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
-    drawPlaneXY(p0_xy, p1_xy, Plane<double>(0.1, 0.1, 0.1, 0.4));
-    
+    hardClearFigure();
+    drawPlaneXY(p0_xy, p1_xy, Plane<float>(0.1, 0.1, 0.1, 0.4), 
+        properties::FaceColor(126, 225, 12), properties::EdgeColor(0, 0, 0));
+
     setCurrentElement("view_01");
-    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
-    drawPlaneXZ(p0_xz, p1_xz, Plane<double>(0.1, 0.1, 0.1, 0.4));
+    hardClearFigure();
+    drawPlaneXZ(p0_xz, p1_xz, Plane<double>(0.1, 0.1, 0.1, 0.4), 
+        properties::FaceColor(126, 225, 12), properties::EdgeColor(0, 0, 0));
     
     setCurrentElement("view_02");
-    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
-    drawPlaneYZ(p0_yz, p1_yz, Plane<double>(0.1, 0.1, 0.1, 0.4));
+    hardClearFigure();
+    drawPlaneYZ(p0_yz, p1_yz, Plane<double>(0.1, 0.1, 0.1, 0.4), 
+        properties::FaceColor(126, 225, 12), properties::EdgeColor(0, 0, 0));
 }
 
 void testMultipleStuff()

@@ -23,10 +23,10 @@ template <typename T> struct Plane
     Point3D<T> lineIntersection(const Line3D<T>& line) const;
     Point3D<T> closestPointOnPlaneFromPoint(const Point3D<T>& p) const;
     T pointDistanceFromPlane(const Point3D<T>& p) const;
-    T eval(const Point3D<T>& p);
-    T evalXY(const T x, const T y);
-    T evalXZ(const T x, const T z);
-    T evalYZ(const T y, const T z);
+    T eval(const Point3D<T>& p) const;
+    T evalXY(const T x, const T y) const;
+    T evalXZ(const T x, const T z) const;
+    T evalYZ(const T y, const T z) const;
 
     Plane<T> rotatePlaneAroundLine(const Line3D<T>& line) const;
     Point3D<T> mirroredPoint(const Point3D<T>& point) const;

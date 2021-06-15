@@ -44,22 +44,22 @@ template <typename T> Plane<T> Plane<T>::normalized() const
     return Plane<T>(a / nvl, b / nvl, c / nvl, d / nvl);
 }
 
-template <typename T> T Plane<T>::eval(const Point3D<T>& p)
+template <typename T> T Plane<T>::eval(const Point3D<T>& p) const
 {
     return a * p.x + b * p.y + c * p.z + d;
 }
 
-template <typename T> T Plane<T>::evalXY(const T x, const T y)
+template <typename T> T Plane<T>::evalXY(const T x, const T y) const
 {
     return -(a * x + b * y + d) / c;
 }
 
-template <typename T> T Plane<T>::evalXZ(const T x, const T z)
+template <typename T> T Plane<T>::evalXZ(const T x, const T z) const
 {
     return -(a * x + c * z + d) / b;
 }
 
-template <typename T> T Plane<T>::evalYZ(const T y, const T z)
+template <typename T> T Plane<T>::evalYZ(const T y, const T z) const
 {
     return -(b * y + c * z + d) / a;
 }

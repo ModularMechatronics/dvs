@@ -18,13 +18,16 @@ private:
     Point3Dd p11;
     Point3Dd p01;
     Point3Dd p10;
-    Planed plane;
+
+    GLuint buffer_idx_;
+    float* points_ptr_;
 
     void findMinMax() override;
 
 public:
     DrawPlaneXY();
     DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    ~DrawPlaneXY();
 
     void visualize() override;
 };
@@ -46,7 +49,7 @@ DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, cons
 
     Vector<Plane<double>> planes;
     planes.setInternalData(reinterpret_cast<Plane<double>*>(data_ptr_ + sizeof(PointXY<double>) * 2), 1);
-    plane = planes(0);
+    const Planed plane = planes(0);
 
     planes.setInternalData(nullptr, 0);
 
@@ -54,6 +57,24 @@ DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, cons
     p11 = Point3Dd(p1.x, p1.y, plane.evalXY(p1.x, p1.y));
     p01 = Point3Dd(p0.x, p1.y, plane.evalXY(p0.x, p1.y));
     p10 = Point3Dd(p1.x, p0.y, plane.evalXY(p1.x, p0.y));
+
+    points_ptr_ = new float[4 * 3];
+    points_ptr_[0] = p00.x;
+    points_ptr_[1] = p00.y;
+    points_ptr_[2] = p00.z;
+
+    points_ptr_[3] = p01.x;
+    points_ptr_[4] = p01.y;
+    points_ptr_[5] = p01.z;
+
+    points_ptr_[6] = p11.x;
+    points_ptr_[7] = p11.y;
+    points_ptr_[8] = p11.z;
+
+    points_ptr_[9] = p10.x;
+    points_ptr_[10] = p10.y;
+    points_ptr_[11] = p10.z;
+
 }
 
 void DrawPlaneXY::findMinMax()
@@ -73,8 +94,30 @@ void DrawPlaneXY::findMinMax()
 
 void DrawPlaneXY::visualize()
 {
-    setColor(color_);
-    drawPolygon3D(p00, p01, p11, p10);
+    if(!visualize_has_run_)
+    {
+        visualize_has_run_ = true;
+        glGenBuffers(1, &buffer_idx_);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4, points_ptr_, GL_STATIC_DRAW);
+    }
+
+    setColor(face_color_);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    setColor(face_color_);
+    glDrawArrays(GL_QUADS, 0, 4 * 3);
+    setColor(edge_color_);
+    glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+    glDisableVertexAttribArray(0);
+}
+
+DrawPlaneXY::~DrawPlaneXY()
+{
+    delete[] points_ptr_;
 }
 
 #endif
