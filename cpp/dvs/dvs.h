@@ -459,6 +459,53 @@ void drawLine(const Line3D<double>& line, const double t0, const double t1, cons
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
 }
 
+template <typename... Us>
+void drawLine2D(const ParametricLine2D<double>& line, const double t0, const double t1, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
+    const Point2D<double> p0 = line.eval(t0);
+    const Point2D<double> p1 = line.eval(t1);
+    Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
+}
+
+template <typename... Us>
+void drawLine2DBetweenXValues(const HomogeneousLine2D<double>& line, const double x0, const double x1, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
+    const Point2D<double> p0(x0, line.evalX(x0));
+    const Point2D<double> p1(x1, line.evalX(x1));
+    Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
+}
+
+template <typename... Us>
+void drawLine2DBetweenYValues(const HomogeneousLine2D<double>& line, const double y0, const double y1, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
+    const Point2D<double> p0(line.evalX(y0), y0);
+    const Point2D<double> p1(line.evalX(y1), y1);
+    Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
+}
 
 template <typename... Us>
 void drawLineBetweenPoints(const Point3D<double>& p0, const Point3D<double>& p1, const Us&... settings)

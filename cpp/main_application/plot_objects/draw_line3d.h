@@ -84,7 +84,7 @@ void DrawLine3D::visualize()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     setColor(color_);
-    glDrawArrays(GL_LINES, 0, 4);
+    glDrawArrays(GL_LINES, 0, 2);
 
     glDisableVertexAttribArray(0);
 }

@@ -25,6 +25,13 @@ template <typename T> HomogeneousLine2D<T>::HomogeneousLine2D(const ParametricLi
 
 template <typename T> HomogeneousLine2D<T>::HomogeneousLine2D() {}
 
+template <typename T> template <typename Y> HomogeneousLine2D<T>::HomogeneousLine2D(const HomogeneousLine2D<Y>& l)
+{
+    a = l.a;
+    b = l.b;
+    c = l.c;
+}
+
 template <typename T> Vec2D<T> HomogeneousLine2D<T>::normal() const
 {
     const Vec2D<T> v(a, b);
@@ -258,6 +265,12 @@ template <typename T> ParametricLine2D<T>::ParametricLine2D(const HomogeneousLin
 }
 
 template <typename T> ParametricLine2D<T>::ParametricLine2D() {}
+
+template <typename T> template <typename Y> ParametricLine2D<T>::ParametricLine2D(const ParametricLine2D<Y>& l)
+{
+    p = l.p;
+    v = l.v;
+}
 
 template <typename T> T ParametricLine2D<T>::tFromX(const T x) const
 {

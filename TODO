@@ -14,3 +14,4 @@
  - Edge and Facecolor transparent
  - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
  - Remove need to always specify num_elements
+ - Remove need for "holdOn"
