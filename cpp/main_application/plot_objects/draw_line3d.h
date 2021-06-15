@@ -17,6 +17,9 @@ class DrawLine3D : public PlotObjectBase
 private:
     void findMinMax() override;
 
+    float* points_ptr_;
+    GLuint buffer_idx_;
+
     Point3Dd p0_;
     Point3Dd p1_;
 
@@ -35,37 +38,23 @@ DrawLine3D::DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const 
         throw std::runtime_error("Invalid function type for DrawLine3D!");
     }
 
-    if(type_ == Function::DRAW_LINE3D)
-    {
-        Vector<Line3D<double>> lines;
-        Vector<double> ts;
+    Vector<Point3D<double>> points;
 
-        lines.setInternalData(reinterpret_cast<Line3D<double>*>(data_ptr_), 1);
-        ts.setInternalData(reinterpret_cast<double*>(&(data_ptr_[sizeof(Line3D<double>)])), 2);
+    points.setInternalData(reinterpret_cast<Point3D<double>*>(data_ptr_), 2);
 
-        Line3D<double> line = lines(0);
-        double t0 = ts(0);
-        double t1 = ts(1);
+    p0_ = points(0);
+    p1_ = points(1);
 
-        lines.setInternalData(nullptr, 0);
-        ts.setInternalData(nullptr, 0);
+    points.setInternalData(nullptr, 0);
 
-        p0_ = line.eval(t0);
-        p1_ = line.eval(t1);
-    }
-    else
-    {
-        Vector<Point3D<double>> points;
+    points_ptr_ = new float[2 * 3];
+    points_ptr_[0] = p0_.x;
+    points_ptr_[1] = p0_.y;
+    points_ptr_[2] = p0_.z;
 
-        points.setInternalData(reinterpret_cast<Point3D<double>*>(data_ptr_), 2);
-
-        p0_ = points(0);
-        p1_ = points(1);
-
-        points.setInternalData(nullptr, 0);
-    }
-
-    findMinMax();
+    points_ptr_[3] = p1_.x;
+    points_ptr_[4] = p1_.y;
+    points_ptr_[5] = p1_.z;
 }
 
 void DrawLine3D::findMinMax()
@@ -81,9 +70,23 @@ void DrawLine3D::findMinMax()
 
 void DrawLine3D::visualize()
 {
+    if(!visualize_has_run_)
+    {
+        visualize_has_run_ = true;
+        glGenBuffers(1, &buffer_idx_);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4, points_ptr_, GL_STATIC_DRAW);
+    }
+
+    setColor(face_color_);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
     setColor(color_);
-    setLinewidth(line_width_);
-    drawLine3D(p0_, p1_);
+    glDrawArrays(GL_LINES, 0, 4);
+
+    glDisableVertexAttribArray(0);
 }
 
 #endif
