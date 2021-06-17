@@ -124,7 +124,7 @@ void testScatter()
     setCurrentElement("view_00");
     hardClearFigure();
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
-    holdOn();
+
     plot(xf, yf, properties::Color(212, 14, 55));
     scatter(x, y, properties::Color(12, 14, 55), properties::PointSize(3));
 }
@@ -157,7 +157,7 @@ void testScatter3()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
     scatter3(x, y, z, properties::Color(212, 14, 55), properties::PointSize(3));
     plot3(x, y, z, properties::Color(21, 14, 55), properties::LineWidth(1));
@@ -183,7 +183,7 @@ void testPlot2()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
     plot(x, y, properties::Color(212, 14, 55), properties::LineWidth(1));
     plot(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(1));
@@ -211,7 +211,7 @@ void testPlot3()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
     plot3(xf, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(1));
@@ -308,7 +308,7 @@ void testMultipleStuff()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     view(-106.5f, 16.3f);
     axis({-5.0, -5.0, -5.0}, {5.0, 5.0, 5.0});
     plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1));
@@ -331,7 +331,7 @@ void testAxis2D()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     plot(x, y, properties::Color(12, 14, 55), properties::LineWidth(1));
 }
 
@@ -352,7 +352,7 @@ void testAxis3D()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1));
     scatter3(x, y, z, properties::Color(255, 0, 0), properties::PointSize(3));
 }
@@ -382,7 +382,7 @@ void testDrawTriangles()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
 
     drawTriangles(triangles, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
@@ -405,7 +405,7 @@ void testDrawMesh()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
@@ -422,7 +422,7 @@ void testDrawSingleTriangle()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawTriangle(triangle, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
@@ -442,7 +442,7 @@ void testDrawLine3D()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawLine(line, t0, t1, properties::Color(12, 244, 244));
@@ -464,7 +464,7 @@ void testDrawLine2D()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawLine2D(line, t0, t1, properties::Color(12, 244, 244));
@@ -486,7 +486,7 @@ void testDrawLineBetweenPoints3D()
     
     setCurrentElement("view_00");
     hardClearFigure();
-    holdOn();
+
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawLineBetweenPoints(p0, p1, properties::Color(12, 244, 0));

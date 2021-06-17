@@ -100,7 +100,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
     axes_interactor_ = new AxesInteractor(axes_settings, getWidth(), getHeight());
     axes_painter_ = new AxesPainter(axes_settings);
 
-    hold_on_ = false;
+    hold_on_ = true;
     axes_set_ = false;
     view_set_ = false;
 
@@ -227,7 +227,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     else if (fcn == Function::CLEAR)
     {
         axes_set_ = false;
-        hold_on_ = false;
+        hold_on_ = true;
         view_set_ = false;
 
         plot_data_handler_.clear();
