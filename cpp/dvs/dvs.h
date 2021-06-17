@@ -313,14 +313,30 @@ void surf(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& z, const Us&.
 }
 
 template <typename T, typename... Us>
-void imShow(const Matrix<T>& img, const Us&... settings)
+void imShow(const ImageC1<T>& img, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_CHANNELS, internal::toUInt8(2));
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.size())); // TODO: Needed?
     hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.rows(), img.cols()));
-    
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
+}
+
+template <typename T, typename... Us>
+void imShow(const ImageC3<T>& img, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_CHANNELS, internal::toUInt8(3));
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.size())); // TODO: Needed?
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.rows(), img.cols()));
+
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);

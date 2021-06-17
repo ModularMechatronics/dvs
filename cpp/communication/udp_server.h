@@ -46,7 +46,7 @@ private:
 
 public:
     
-    static constexpr size_t max_buffer_size = 1000000;
+    static constexpr size_t max_buffer_size = 100000000;
 
     bool hasReceivedData()
     {
