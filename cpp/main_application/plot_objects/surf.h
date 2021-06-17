@@ -122,6 +122,9 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
     z.setInternalData(nullptr, 0, 0);
 
     findMinMax();
+
+    std::cout << "Min: " << min_vec << std::endl;
+    std::cout << "Max: " << max_vec << std::endl;
 }
 
 void Surf::findMinMax()
@@ -147,12 +150,12 @@ void Surf::visualize()
     glDrawArrays(GL_QUADS, 0, 4 * 3 * (dims_.rows - 1) * (dims_.cols - 1));
 
     setColor(edge_color_);
-    glDrawArrays(GL_LINE_STRIP, 0, 4 * 3 * (dims_.rows - 1) * (dims_.cols - 1));
+    // glDrawArrays(GL_LINE_STRIP, 0, 4 * 3 * (dims_.rows - 1) * (dims_.cols - 1));
 
     glDisableVertexAttribArray(0);
 
-    // setLinewidth(line_width_);
-    // drawGrid3D(x_mat, y_mat, z_mat);
+    setLinewidth(line_width_);
+    drawGrid3D(x_mat, y_mat, z_mat);
 }
 
 Surf::~Surf()

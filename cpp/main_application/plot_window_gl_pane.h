@@ -52,6 +52,7 @@ private:
 
     void notifyParentAboutModification();
     bool is3DFunction(const Function fcn);
+    bool isImageFunction(const Function fcn);
 
 public:
     PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings& element_settings, const float grid_size);

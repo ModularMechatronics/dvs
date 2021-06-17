@@ -184,7 +184,7 @@ void testPlot2()
     setCurrentElement("view_00");
     hardClearFigure();
 
-    axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
+    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
     plot(x, y, properties::Color(212, 14, 55), properties::LineWidth(1));
     plot(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(1));
 }
