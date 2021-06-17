@@ -164,7 +164,6 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
 
 void ImShow::visualize()
 {
-    // TODO: Make sure that the image is not mirrored
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
