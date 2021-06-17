@@ -35,6 +35,8 @@
 #include "math/structures/interval_1d.h"
 #include "math/structures/index_triplet.h"
 
+#include "math/image.h"
+
 #include "math/pre_defs.h"
 
 // clang-format on

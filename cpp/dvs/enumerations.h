@@ -16,6 +16,7 @@ enum class FunctionHeaderObjectType : uint16_t
     DATA_STRUCTURE,
     BYTES_PER_ELEMENT,
     DATA_TYPE,
+    NUM_CHANNELS,
     NUM_ELEMENTS,
     NUM_VERTICES,
     NUM_INDICES,

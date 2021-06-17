@@ -25,7 +25,9 @@ private:
     float* points_ptr_;
     float* colors_ptr_;
 
-    Matrixd img_;
+    uint8_t num_channels_;
+
+    ImageC3<float> img_;
     internal::Dimension2D dims_;
     unsigned char* pixel_data_;
     GLuint program_id_;
@@ -59,17 +61,14 @@ GLuint loadTexture(const int width, const int height, const T* data)
     GLuint textureID;
 	glGenTextures(1, &textureID);
 	
-	// "Bind" the newly created texture : all future texture functions will modify this texture
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
-	// Give the image to OpenGL
 	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	// ... which requires mipmaps. Generate them automatically.
 	glGenerateMipmap(GL_TEXTURE_2D);
 
     return textureID;
@@ -86,18 +85,20 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     // https://stackoverflow.com/questions/34963324/c-opengl-mesh-rendering
 
     dims_ = hdr.getObjectFromType(FunctionHeaderObjectType::DIMENSION_2D).getAs<internal::Dimension2D>();
+    num_channels_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_CHANNELS).getAs<uint8_t>();
 
     color_map_ = color_maps::rainbowf;
 
-    img_.setInternalData(reinterpret_cast<double*>(data_ptr_), dims_.rows, dims_.cols);
+    img_.setInternalData(reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols);
 
     width = dims_.cols;
     height = dims_.rows;
 
-    // 4 vertices, 6 "elements" (xyz rgb) per vertex
+    // 4 vertices, 3 "elements" (xyz/rgb) per vertex
     points_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
     colors_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
     size_t idx = 0;
+
     for(size_t r = 0; r < dims_.rows; r++)
     {
         for(size_t c = 0; c < dims_.cols; c++)
@@ -133,22 +134,25 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
             points_ptr_[idx2_z] = 0.0f;
             points_ptr_[idx3_z] = 0.0f;
 
-            const float color_val = img_(r, c);
+            const float color_val_r = img_(r, c, 0);
+            const float color_val_g = img_(r, c, 1);
+            const float color_val_b = img_(r, c, 2);
 
-            colors_ptr_[idx0_x] = color_val;
-            colors_ptr_[idx1_x] = color_val;
-            colors_ptr_[idx2_x] = color_val;
-            colors_ptr_[idx3_x] = color_val;
+            colors_ptr_[idx0_x] = color_val_r;
+            colors_ptr_[idx1_x] = color_val_r;
+            colors_ptr_[idx2_x] = color_val_r;
+            colors_ptr_[idx3_x] = color_val_r;
 
-            colors_ptr_[idx0_y] = color_val;
-            colors_ptr_[idx1_y] = color_val;
-            colors_ptr_[idx2_y] = color_val;
-            colors_ptr_[idx3_y] = color_val;
+            colors_ptr_[idx0_y] = color_val_g;
+            colors_ptr_[idx1_y] = color_val_g;
+            colors_ptr_[idx2_y] = color_val_g;
+            colors_ptr_[idx3_y] = color_val_g;
 
-            colors_ptr_[idx0_z] = color_val;
-            colors_ptr_[idx1_z] = color_val;
-            colors_ptr_[idx2_z] = color_val;
-            colors_ptr_[idx3_z] = color_val;
+            colors_ptr_[idx0_z] = color_val_b;
+            colors_ptr_[idx1_z] = color_val_b;
+            colors_ptr_[idx2_z] = color_val_b;
+            colors_ptr_[idx3_z] = color_val_b;
+
             idx = idx + 12;
         }
     }
@@ -161,14 +165,16 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
 void ImShow::visualize()
 {
     // TODO: Make sure that the image is not mirrored
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
     if(!visualize_has_run_)
     {
         visualize_has_run_ = true;
         glVertexPointer(3, GL_FLOAT, 0, points_ptr_);
         glColorPointer(3, GL_FLOAT, 0, colors_ptr_);
     }
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    
 
     glDrawArrays(GL_QUADS, 0, 4 * dims_.rows * dims_.cols);
 
@@ -178,6 +184,8 @@ void ImShow::visualize()
 
 ImShow::~ImShow()
 {
+    delete[] points_ptr_;
+    delete[] colors_ptr_;
 }
 
 #endif

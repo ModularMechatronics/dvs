@@ -222,16 +222,35 @@ void testImShow()
     setCurrentElement("view_00");
 
     const uint32_t num_rows = 800, num_cols = 800;
-    Matrix<double> img(num_rows, num_cols);
+    ImageC3<float> img(num_rows, num_cols);
     const double max_val = num_rows * num_cols;
 
     for(uint32_t r = 0; r < num_rows; r++)
     {
         for(uint32_t c = 0; c < num_cols; c++)
         {
-            img(r, c) = (r * c) / max_val;
+            const float xr = 3.0f * (static_cast<float>(c) - 300.5f) / 800.0f;
+            const float yr = 3.0f * (static_cast<float>(r) - 400.5f) / 800.0f;
+            const float rr = std::sqrt(xr * xr + yr * yr);
+
+            const float xg = 2.0f * (static_cast<float>(c) - 500.5f) / 800.0f;
+            const float yg = 2.0f * (static_cast<float>(r) - 350.5f) / 800.0f;
+            const float rg = std::sqrt(xg * xg + yg * yg);
+
+            const float xb = 4.0f * (static_cast<float>(c) - 200.5f) / 800.0f;
+            const float yb = 4.0f * (static_cast<float>(r) - 600.5f) / 800.0f;
+            const float rb = std::sqrt(xb * xb + yb * yb);
+
+            img(r, c, 0) = (std::sin(rb) / rr + 1.0f) * 0.5f;
+            img(r, c, 1) = (std::sin(rb) / rg + 1.0f) * 0.5f;
+            img(r, c, 2) = (std::sin(rb) / rb + 1.0f) * 0.5f;
+
+            // img(r, c, 0) = (r * c) / max_val;
+            // img(r, c, 1) = 1.0f - (r * c) / max_val;
+            // img(r, c, 2) = (r * (num_cols - 1 - c)) / max_val;
         }
     }
+
 
     imShow(img, properties::Alpha(137));
 }
