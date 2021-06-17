@@ -77,7 +77,7 @@ void drawAxisNumbers(const GridVectors& gv,
     setColor(0.0, 0.0, 0.0);
 
     double x_value_to_use_vert, z_value_to_use_vert;
-    double x_value_to_use, y_value_to_use, z_value_to_use;
+    double x_value_to_use, y_value_to_use, z_value_to_use, y_value_to_use_2;
     if (view_angles.getSnappedElevation() < 0.0)
     {
         y_value_to_use = box_y / 2.0;
@@ -91,10 +91,12 @@ void drawAxisNumbers(const GridVectors& gv,
     if ((view_angles.getSnappedAzimuth() > -M_PI_2) && (view_angles.getSnappedAzimuth() < M_PI_2))
     {
         z_value_to_use = -1.1 * box_z / 2.0;
+        y_value_to_use_2 = box_y / 2.0;
     }
     else
     {
         z_value_to_use = box_z / 2.0;
+        y_value_to_use_2 = -box_y / 2.0;
     }
 
     if ((view_angles.getSnappedAzimuth() > 0.0) && (view_angles.getSnappedAzimuth() < M_PI))
@@ -114,6 +116,7 @@ void drawAxisNumbers(const GridVectors& gv,
     {
         z_value_to_use_vert = box_z / 2.0;
     }
+
     if((view_angles.getSnappedAzimuth() > 0.0f) && (view_angles.getSnappedAzimuth() <= M_PI))
     {
         x_value_to_use_vert = -box_x / 2.0;
@@ -123,8 +126,8 @@ void drawAxisNumbers(const GridVectors& gv,
         x_value_to_use_vert = box_x / 2.0;
     }
 
-    drawNumbersForXAxis(gv.x, z_value_to_use, y_value_to_use, axes_limits, coord_converter, width, height);
-    drawNumbersForZAxis(gv.z, x_value_to_use, -z_value_to_use, axes_limits, coord_converter, width, height);
+    drawNumbersForXAxis(gv.x, y_value_to_use, z_value_to_use, axes_limits, coord_converter, width, height);
+    drawNumbersForZAxis(gv.z, x_value_to_use, y_value_to_use_2, axes_limits, coord_converter, width, height);
     drawNumbersForYAxis(
         gv.y, x_value_to_use_vert, z_value_to_use_vert, axes_limits, coord_converter, width, height);
 }

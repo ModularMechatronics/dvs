@@ -250,18 +250,43 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         if (!axes_set_)
         {
             const std::pair<Vec3Dd, Vec3Dd> min_max = plot_data_handler_.getMinMaxVectors();
+            std::cout << "Min: " << min_max.first << ", max: " << min_max.second << std::endl;
             axes_interactor_->setAxesLimits(min_max.first, min_max.second);
         }
-        if (!view_set_ && is3DFunction(fcn))
+        if (!view_set_)
         {
-            const float azimuth = -64 * M_PI / 180.0f;
-            const float elevation = 34 * M_PI / 180.0f;
+            if(is3DFunction(fcn))
+            {
+                const float azimuth = -64.0f * M_PI / 180.0f;
+                const float elevation = 34.0f * M_PI / 180.0f;
 
-            axes_interactor_->setViewAngles(azimuth, elevation);
+                axes_interactor_->setViewAngles(azimuth, elevation);
+            }
+            else if(isImageFunction(fcn))
+            {
+                const float azimuth = 0.0f * M_PI / 180.0f;
+                const float elevation = -90.0f * M_PI / 180.0f;
+
+                axes_interactor_->setViewAngles(azimuth, elevation);
+                view_set_ = true; // Let imshow be dominant once used
+            }
+            else
+            {
+                const float azimuth = 0.0f * M_PI / 180.0f;
+                const float elevation = 90.0f * M_PI / 180.0f;
+
+                axes_interactor_->setViewAngles(azimuth, elevation);
+            }
         }
+
     }
 
     Refresh();
+}
+
+bool PlotWindowGLPane::isImageFunction(const Function fcn)
+{
+    return fcn == Function::IM_SHOW;
 }
 
 bool PlotWindowGLPane::is3DFunction(const Function fcn)
@@ -270,6 +295,7 @@ bool PlotWindowGLPane::is3DFunction(const Function fcn)
            (fcn == Function::PLANE_XY) ||
            (fcn == Function::PLANE_XZ) ||
            (fcn == Function::PLANE_YZ) ||
+           (fcn == Function::SURF) ||
            (fcn == Function::PLOT3) ||
            (fcn == Function::SCATTER3) ||
            (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
