@@ -342,18 +342,18 @@ void imShow(const ImageC3<T>& img, const Us&... settings)
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us>
-void drawPolygonFrom4Points(const Point3D<T>& p0,
-                            const Point3D<T>& p1,
-                            const Point3D<T>& p2,
-                            const Point3D<T>& p3,
+template <typename... Us>
+void drawPolygonFrom4Points(const Point3D<double>& p0,
+                            const Point3D<double>& p1,
+                            const Point3D<double>& p2,
+                            const Point3D<double>& p3,
                             const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::POLYGON_FROM_4_POINTS);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(4));
-    Vector<Point3D<T>> points = {p0, p1, p2, p3};
+    Vector<Point3D<double>> points = {p0, p1, p2, p3};
 
     hdr.extend(settings...);
 
@@ -373,17 +373,17 @@ void drawTriangles(const Vector<Triangle3D<T>>& triangles,
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, triangles);
 }
 
-template <typename T, typename... Us>
-void drawTriangle(const Triangle3D<T>& triangle,
+template <typename... Us>
+void drawTriangle(const Triangle3D<double>& triangle,
                   const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_TRIANGLES_3D);
-    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1));
     hdr.extend(settings...);
 
-    const Vector<Triangle3D<T>> triangles = {triangle};
+    const Vector<Triangle3D<double>> triangles = {triangle};
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, triangles);
 }
