@@ -35,6 +35,10 @@ public:
     bool isCloseToSnap() const;
     bool bothSnappedBelowAngleLimitAroundZero() const;
     double getAngleLimit() const;
+
+    bool isSnappedAlongX() const;
+    bool isSnappedAlongY() const;
+    bool isSnappedAlongZ() const;
 };
 
 #endif

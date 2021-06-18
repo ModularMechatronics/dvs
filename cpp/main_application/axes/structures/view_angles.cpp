@@ -95,6 +95,27 @@ double ViewAngles::getSnappedAzimuth() const
     return snapped_azimuth_;
 }
 
+bool ViewAngles::isSnappedAlongX() const
+{
+    const float abs_az = std::abs(azimuth_);
+    const float abs_el = std::abs(elevation_);
+
+    return (std::abs(M_PI_2 - abs_az) < angle_limit_) && (abs_el < angle_limit_);
+}
+
+bool ViewAngles::isSnappedAlongY() const
+{
+    const float abs_az = std::abs(azimuth_);
+    const float abs_el = std::abs(elevation_);
+    return ((abs_az < angle_limit_) || (std::abs(M_PI - abs_az) < angle_limit_)) && (abs_el < angle_limit_);
+}
+
+bool ViewAngles::isSnappedAlongZ() const
+{
+    const float abs_el = std::abs(elevation_);
+    return (std::abs(M_PI_2 - abs_el) < angle_limit_);
+}
+
 double ViewAngles::getSnappedElevation() const
 {
     return snapped_elevation_;
