@@ -518,7 +518,7 @@ const T& Matrix<T>::operator()(const size_t r, const EndIndex& col_end_idx) cons
     return data_[r * num_cols_ + col_idx];
 }
 
-template <typename T>
+/*template <typename T>
 Matrix<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const
 {
     const size_t new_num_rows = row_idx_span.to - row_idx_span.from + 1;
@@ -534,6 +534,133 @@ Matrix<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const IndexSpan& 
         }
     }
     return mat;
+}*/
+
+template <typename T>
+Matrix<T>& Matrix<T>::operator=(const MatrixView<T>& mv)
+{
+    if (is_allocated_)
+    {
+        delete[] data_;
+    }
+
+    num_rows_ = mv.rows();
+    num_cols_ = mv.cols();
+    is_allocated_ = true;
+
+    DATA_ALLOCATION(data_, num_rows_ * num_cols_, T, "Matrix");
+    for (size_t r = 0; r < num_rows_; r++)
+    {
+        for (size_t c = 0; c < num_cols_; c++)
+        {
+            data_[r * num_cols_ + c] = mv(r, c);
+        }
+    }
+
+    return *this;
+}
+
+template <typename T>
+T& MatrixView<T>::operator()(const size_t r, const size_t c)
+{
+    const size_t idx = start_idx_ + num_cols_parent_ * r + c;
+
+    return data_[idx];
+}
+
+template <typename T>
+const T& MatrixView<T>::operator()(const size_t r, const size_t c) const
+{
+    const size_t idx = start_idx_ + num_cols_parent_ * r + c;
+
+    return data_[idx];
+}
+
+template <typename T>
+size_t MatrixView<T>::rows() const
+{
+    return num_rows_;
+}
+
+template <typename T>
+size_t MatrixView<T>::cols() const
+{
+    return num_cols_;
+}
+
+template <typename T>
+Matrix<T>::Matrix(const MatrixView<T>& mv)
+{
+    is_allocated_ = true;
+    num_rows_ = mv.rows();
+    num_cols_ = mv.cols();
+
+    DATA_ALLOCATION(data_, num_rows_ * num_cols_, T, "Matrix");
+    for (size_t r = 0; r < num_rows_; r++)
+    {
+        for (size_t c = 0; c < num_cols_; c++)
+        {
+            data_[r * num_cols_ + c] = mv(r, c);
+        }
+    }
+}
+
+template <typename T>
+MatrixView<T>::MatrixView(const MatrixView<T>& m)
+{
+    data_ = m.data_;
+    num_rows_parent_ = m.num_rows_parent_;
+    num_cols_parent_ = m.num_cols_parent_;
+    num_rows_ = m.num_rows_;
+    num_cols_ = m.num_cols_;
+    start_row_ = m.start_row_;
+    start_col_ = m.start_col_;
+    start_idx_ = m.start_idx_;
+}
+
+template <typename T>
+MatrixView<T>& MatrixView<T>::operator=(const MatrixView<T>& other)
+{
+    for (size_t r = 0; r < num_rows_; r++)
+    {
+        for (size_t c = 0; c < num_cols_; c++)
+        {
+            data_[r * num_cols_ + c] = other(r, c);
+        }
+    }
+
+    return *this;
+}
+
+template <typename T>
+MatrixView<T>::MatrixView(T* data,
+               const size_t start_row,
+               const size_t start_col,
+               const size_t num_rows_parent,
+               const size_t num_cols_parent,
+               const size_t num_rows,
+               const size_t num_cols)
+{
+    data_ = data;
+    num_rows_parent_ = num_rows_parent;
+    num_cols_parent_ = num_cols_parent;
+    num_rows_ = num_rows;
+    num_cols_ = num_cols;
+    start_row_ = start_row;
+    start_col_ = start_col;
+    start_idx_ = num_cols_parent_ * start_row_ + start_col_;
+}
+
+template <typename T>
+MatrixView<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const
+{
+    return MatrixView<T>(data_,
+                         row_idx_span.from,
+                         col_idx_span.from,
+                         num_rows_,
+                         num_cols_,
+                         row_idx_span.to - row_idx_span.from,
+                         col_idx_span.to - col_idx_span.from);
 }
 
 template <typename T>

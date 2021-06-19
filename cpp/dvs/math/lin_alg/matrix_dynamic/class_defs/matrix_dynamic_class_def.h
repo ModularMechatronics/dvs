@@ -17,6 +17,7 @@ public:
     Matrix();
     Matrix(const size_t num_rows, const size_t num_cols);
     Matrix(const Matrix<T>& m);
+    Matrix(const MatrixView<T>& mv);
     template <typename Y> Matrix(const Matrix<Y>& m);
     Matrix(const std::vector<std::vector<T>>& vm);
     Matrix(const std::initializer_list<std::initializer_list<T>>& il);
@@ -34,7 +35,8 @@ public:
 
     Matrix<T> operator()(const size_t row, const IndexSpan& col_idx_span) const;
     Matrix<T> operator()(const IndexSpan& row_idx_span, const size_t col) const;
-    Matrix<T> operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const;
+    // Matrix<T> operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const;
+    MatrixView<T> operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const;
 
     T& operator()(const EndIndex& row_end_idx, const size_t c);
     const T& operator()(const EndIndex& row_end_idx, const size_t c) const;
@@ -42,6 +44,7 @@ public:
     const T& operator()(const size_t r, const EndIndex& col_end_idx) const;
     Matrix<T>& operator=(const Matrix<T>& m);
     Matrix<T>& operator=(Matrix<T>&& m);
+    Matrix<T>& operator=(const MatrixView<T>& m);
 
     void removeRowAtIndex(const size_t row_idx);
     void removeRowsAtIndices(const IndexSpan& idx_span);
@@ -104,6 +107,43 @@ public:
     Matrix<T> sumAlongRows() const;
     Matrix<T> sumAlongCols() const;
 };
+
+template <typename T> class MatrixView
+{
+private:
+    T* data_;
+    size_t num_rows_parent_;
+    size_t num_cols_parent_;
+    size_t num_rows_;
+    size_t num_cols_;
+    size_t start_row_;
+    size_t start_col_;
+
+    size_t start_idx_;
+
+public:
+    MatrixView() = delete;
+    MatrixView(const MatrixView<T>& m);
+    MatrixView(MatrixView&& m) = delete;
+    MatrixView(T* data,
+               const size_t start_row,
+               const size_t start_col,
+               const size_t num_rows_parent,
+               const size_t num_cols_parent,
+               const size_t num_rows,
+               const size_t num_cols);
+    // operator=(const T val);
+    MatrixView<T>& operator=(const MatrixView<T>& other);
+    T& operator()(const size_t r, const size_t c);
+    const T& operator()(const size_t r, const size_t c) const;
+
+    size_t rows() const;
+    size_t cols() const;
+
+};
+
+
+
 }  // namespace dvs
 
 #endif

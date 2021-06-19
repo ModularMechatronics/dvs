@@ -25,6 +25,7 @@ template <typename T> struct VecYZ;
 
 template <typename T> class Vector;
 template <typename T> class Matrix;
+template <typename T> class MatrixView;
 
 template <typename T> struct ComplexCoord;
 template <typename T> struct PolarCoord;
