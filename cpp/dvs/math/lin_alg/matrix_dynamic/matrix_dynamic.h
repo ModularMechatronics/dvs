@@ -625,7 +625,8 @@ MatrixView<T>& MatrixView<T>::operator=(const MatrixView<T>& other)
     {
         for (size_t c = 0; c < num_cols_; c++)
         {
-            data_[r * num_cols_ + c] = other(r, c);
+            const size_t idx = start_idx_ + num_cols_parent_ * r + c;
+            data_[idx] = other(r, c);
         }
     }
 
@@ -654,6 +655,8 @@ MatrixView<T>::MatrixView(T* data,
 template <typename T>
 MatrixView<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const
 {
+    assert(row_idx_span.to <= num_rows_);
+    assert(col_idx_span.to <= num_cols_);
     return MatrixView<T>(data_,
                          row_idx_span.from,
                          col_idx_span.from,
