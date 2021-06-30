@@ -24,6 +24,7 @@ extern void testDrawSingleTriangle();
 extern void testDrawLine3D();
 extern void testDrawLineBetweenPoints3D();
 extern void testDrawLine2D();
+extern void testMatrices();
 
 std::map<std::string, std::function<void()>> fcns;
 
@@ -61,6 +62,7 @@ int main(int argc, char* argv[])
     fcns["draw-line-3d"] = testDrawLine3D;
     fcns["draw-line-2d"] = testDrawLine2D;
     fcns["draw-line-between-points"] = testDrawLineBetweenPoints3D;
+    fcns["matrices"] = testMatrices;
 
     if(argc == 1)
     {
