@@ -51,6 +51,7 @@ template <typename T> struct Triangle3D;
 template <typename T> struct Interval1D;
 struct IndexSpan;
 struct EndIndex;
+struct AllIndices;
 
 template <typename T> using Point2D = Vec2D<T>;
 template <typename T> using Point3D = Vec3D<T>;

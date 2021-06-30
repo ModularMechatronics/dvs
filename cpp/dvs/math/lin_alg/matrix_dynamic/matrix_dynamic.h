@@ -643,13 +643,91 @@ MatrixView<T>::MatrixView(T* data,
                const size_t num_cols)
 {
     data_ = data;
+    start_row_ = start_row;
+    start_col_ = start_col;
     num_rows_parent_ = num_rows_parent;
     num_cols_parent_ = num_cols_parent;
     num_rows_ = num_rows;
     num_cols_ = num_cols;
-    start_row_ = start_row;
-    start_col_ = start_col;
     start_idx_ = num_cols_parent_ * start_row_ + start_col_;
+}
+
+template <typename T>
+MatrixView<T> Matrix<T>::operator()(const EndIndex& row_end_idx, const IndexSpan& col_idx_span) const
+{
+    return MatrixView<T>(data_,
+                         num_rows_ - 1 + row_end_idx.offset,
+                         col_idx_span.from,
+                         num_rows_,
+                         num_cols_,
+                         1,
+                         col_idx_span.to - col_idx_span.from);
+}
+
+template <typename T>
+MatrixView<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const EndIndex& col_end_idx) const
+{
+    return MatrixView<T>(data_,
+                         row_idx_span.from,
+                         num_cols_ - 1 + col_end_idx.offset,
+                         num_rows_,
+                         num_cols_,
+                         row_idx_span.to - row_idx_span.from,
+                         1);
+}
+template <typename T>
+MatrixView<T> Matrix<T>::operator()(const AllIndices& all_indices, const IndexSpan& col_idx_span) const
+{
+    static_cast<void>(all_indices);
+    assert(col_idx_span.to <= num_cols_);
+    return MatrixView<T>(data_,
+                         0,
+                         col_idx_span.from,
+                         num_rows_,
+                         num_cols_,
+                         num_rows_,
+                         col_idx_span.to - col_idx_span.from);
+}
+template <typename T>
+MatrixView<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const AllIndices& all_indices) const
+{
+    static_cast<void>(all_indices);
+    assert(row_idx_span.to <= num_rows_);
+    return MatrixView<T>(data_,
+                         row_idx_span.from,
+                         0,
+                         num_rows_,
+                         num_cols_,
+                         row_idx_span.to - row_idx_span.from,
+                         num_cols_);
+}
+
+template <typename T>
+MatrixView<T> Matrix<T>::operator()(const AllIndices& all_indices, const size_t col) const
+{
+    static_cast<void>(all_indices);
+    assert(col < num_cols_);
+    return MatrixView<T>(data_,
+                         0,
+                         col,
+                         num_rows_,
+                         num_cols_,
+                         num_rows_,
+                         1);
+}
+
+template <typename T>
+MatrixView<T> Matrix<T>::operator()(const size_t row, const AllIndices& all_indices) const
+{
+    static_cast<void>(all_indices);
+    assert(row <= num_rows_);
+    return MatrixView<T>(data_,
+                         row,
+                         0,
+                         num_rows_,
+                         num_cols_,
+                         1,
+                         num_cols_);
 }
 
 template <typename T>

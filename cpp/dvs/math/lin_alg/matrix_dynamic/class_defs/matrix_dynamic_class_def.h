@@ -35,8 +35,16 @@ public:
 
     Matrix<T> operator()(const size_t row, const IndexSpan& col_idx_span) const;
     Matrix<T> operator()(const IndexSpan& row_idx_span, const size_t col) const;
-    // Matrix<T> operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const;
     MatrixView<T> operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const;
+
+    MatrixView<T> operator()(const EndIndex& row_end_idx, const IndexSpan& col_idx_span) const;
+    MatrixView<T> operator()(const IndexSpan& row_idx_span, const EndIndex& col_end_idx) const;
+
+    MatrixView<T> operator()(const AllIndices& all_indices, const IndexSpan& col_idx_span) const;
+    MatrixView<T> operator()(const IndexSpan& row_idx_span, const AllIndices& all_indices) const;
+
+    MatrixView<T> operator()(const AllIndices& all_indices, const size_t col) const;
+    MatrixView<T> operator()(const size_t row, const AllIndices& all_indices) const;
 
     T& operator()(const EndIndex& row_end_idx, const size_t c);
     const T& operator()(const EndIndex& row_end_idx, const size_t c) const;
