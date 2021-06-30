@@ -518,24 +518,6 @@ const T& Matrix<T>::operator()(const size_t r, const EndIndex& col_end_idx) cons
     return data_[r * num_cols_ + col_idx];
 }
 
-/*template <typename T>
-Matrix<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const
-{
-    const size_t new_num_rows = row_idx_span.to - row_idx_span.from + 1;
-    const size_t new_num_cols = col_idx_span.to - col_idx_span.from + 1;
-    assert((row_idx_span.to < num_rows_) && (col_idx_span.to < num_cols_));
-    Matrix<T> mat(new_num_rows, new_num_cols);
-
-    for (size_t r = 0; r < new_num_rows; r++)
-    {
-        for (size_t c = 0; c < new_num_cols; c++)
-        {
-            mat(r, c) = data_[(row_idx_span.from + r) * num_cols_ + c + col_idx_span.from];
-        }
-    }
-    return mat;
-}*/
-
 template <typename T>
 Matrix<T>& Matrix<T>::operator=(const MatrixView<T>& mv)
 {
