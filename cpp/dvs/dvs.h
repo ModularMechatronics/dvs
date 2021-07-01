@@ -537,6 +537,21 @@ void drawLineBetweenPoints(const Point3D<double>& p0, const Point3D<double>& p1,
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
 }
 
+template <typename... Us>
+void drawLineBetweenPoints(const Point2D<double>& p0, const Point2D<double>& p1, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE_BETWEEN_POINTS_3D);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
+    const Point3D<double> p0_3d(p0.x, p0.y, 0.0), p1_3d(p1.x, p1.y, 0.0);
+    Vector<Point3D<double>> points = {p0_3d, p1_3d};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
+}
+
 inline void setCurrentElement(const std::string& name, const ElementType element_type, const std::string& parent_name="#DEFAULTNAME#", const ElementParent element_parent=ElementParent::TAB)
 {
     internal::FunctionHeader hdr;

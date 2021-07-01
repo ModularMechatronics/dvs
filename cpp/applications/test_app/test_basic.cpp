@@ -82,7 +82,7 @@ void testBasic()
 
 void testSurf()
 {
-    const size_t num_rows = 20, num_cols = 20;
+    const size_t num_rows = 20, num_cols = 24;
     Matrix<int8_t> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
 
     double inc = 0.4;

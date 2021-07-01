@@ -16,7 +16,7 @@ struct EndIndex
     }
 };
 
-EndIndex operator-(const EndIndex& end_idx, int offset)
+inline EndIndex operator-(const EndIndex& end_idx, int offset)
 {
     return EndIndex(end_idx.offset - offset);
 }

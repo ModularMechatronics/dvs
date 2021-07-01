@@ -250,8 +250,12 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         if (!axes_set_)
         {
             const std::pair<Vec3Dd, Vec3Dd> min_max = plot_data_handler_.getMinMaxVectors();
-            std::cout << "Min: " << min_max.first << ", max: " << min_max.second << std::endl;
-            axes_interactor_->setAxesLimits(min_max.first, min_max.second);
+            const Vec3Dd mean_vec = (min_max.second + min_max.first) / 2.0;
+
+            const Vec3Dd min_vec = (min_max.first - mean_vec) * 1.001 + mean_vec;
+            const Vec3Dd max_vec = (min_max.second - mean_vec) * 1.001 + mean_vec;
+
+            axes_interactor_->setAxesLimits(min_vec, max_vec);
         }
         if (!view_set_)
         {
