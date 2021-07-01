@@ -107,13 +107,74 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
         }
     }
 
-    lines_ptr_ = new float[3 * 3];
+    lines_ptr_ = new float[2 * 3 * dims_.rows * dims_.cols];
 
-    for(size_t r = 0; r < (dims_.rows - 1); r++)
+    idx = 0;
+    for(size_t r = 0; r < dims_.rows; r++)
     {
-        for(size_t c = 0; c < (dims_.cols - 1); c++)
+        if((r % 2) == 0)
         {
+            for(size_t c = 0; c < dims_.cols; c++)
+            {
+                lines_ptr_[idx] = x_mat(r, c);
+                idx++;
 
+                lines_ptr_[idx] = y_mat(r, c);
+                idx++;
+
+                lines_ptr_[idx] = z_mat(r, c);
+                idx++;
+            }
+        }
+        else
+        {
+            for(int c = dims_.cols - 1; c >= 0; c--)
+            {
+                lines_ptr_[idx] = x_mat(r, c);
+                idx++;
+
+                lines_ptr_[idx] = y_mat(r, c);
+                idx++;
+
+                lines_ptr_[idx] = z_mat(r, c);
+                idx++;
+            }
+        }
+    }
+
+    const bool n_rows_is_even = ((dims_.rows % 2) == 0);
+    const int c_inc = n_rows_is_even ? 1 : -1;
+    const int c_start = n_rows_is_even ? 0 : dims_.cols - 1;
+
+    for(int c = c_start; (c < dims_.cols) && (c >= 0); c += c_inc)
+    {
+        if((c % 2) == 1)
+        {
+            for(size_t r = 0; r < dims_.rows; r++)
+            {
+                lines_ptr_[idx] = x_mat(r, c);
+                idx++;
+
+                lines_ptr_[idx] = y_mat(r, c);
+                idx++;
+
+                lines_ptr_[idx] = z_mat(r, c);
+                idx++;
+            }
+        }
+        else
+        {
+            for(int r = dims_.rows - 1; r >= 0; r--)
+            {
+                lines_ptr_[idx] = x_mat(r, c);
+                idx++;
+
+                lines_ptr_[idx] = y_mat(r, c);
+                idx++;
+
+                lines_ptr_[idx] = z_mat(r, c);
+                idx++;
+            }
         }
     }
 
@@ -122,9 +183,6 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
     z.setInternalData(nullptr, 0, 0);
 
     findMinMax();
-
-    std::cout << "Min: " << min_vec << std::endl;
-    std::cout << "Max: " << max_vec << std::endl;
 }
 
 void Surf::findMinMax()
@@ -140,27 +198,34 @@ void Surf::visualize()
         glGenBuffers(1, &buffer_idx_);
         glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * (dims_.rows - 1) * (dims_.cols - 1), points_ptr_, GL_STATIC_DRAW);
+
+        glGenBuffers(1, &lines_buffer_);
+        glBindBuffer(GL_ARRAY_BUFFER, lines_buffer_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 3 * dims_.rows * dims_.cols, lines_ptr_, GL_STATIC_DRAW);
     }
 
     glEnableVertexAttribArray(0);
+
     glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
     setColor(face_color_);
-    glDrawArrays(GL_QUADS, 0, 4 * 3 * (dims_.rows - 1) * (dims_.cols - 1));
+    glDrawArrays(GL_QUADS, 0, 4 * (dims_.rows - 1) * (dims_.cols - 1));
 
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, lines_buffer_);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     setColor(edge_color_);
-    // glDrawArrays(GL_LINE_STRIP, 0, 4 * 3 * (dims_.rows - 1) * (dims_.cols - 1));
+    glDrawArrays(GL_LINE_STRIP, 0, 2 * dims_.rows * dims_.cols);
 
     glDisableVertexAttribArray(0);
-
-    setLinewidth(line_width_);
-    drawGrid3D(x_mat, y_mat, z_mat);
+    glDisableVertexAttribArray(1);
 }
 
 Surf::~Surf()
 {
     delete[] points_ptr_;
+    delete[] lines_ptr_;
 }
 
 #endif
