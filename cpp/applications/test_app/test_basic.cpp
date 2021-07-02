@@ -82,7 +82,7 @@ void testBasic()
 
 void testSurf()
 {
-    const size_t num_rows = 20, num_cols = 24;
+    const size_t num_rows = 20, num_cols = 25;
     Matrix<int8_t> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
 
     double inc = 0.4;
@@ -100,7 +100,7 @@ void testSurf()
 
     setCurrentElement("view_00");
     hardClearFigure();
-    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(150, 244, 244));
+    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(150, 244, 244), properties::LineWidth(1));
 }
 
 void testScatter()

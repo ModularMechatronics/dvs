@@ -19,7 +19,6 @@ private:
     Dimension2D dims_;
     RGBColorMap<float> color_map_;
     GLuint buffer_idx_;
-    GLuint lines_buffer_;
 
     Matrix<float> x_mat, y_mat, z_mat;
     float* points_ptr_;
@@ -107,77 +106,6 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
         }
     }
 
-    lines_ptr_ = new float[2 * 3 * dims_.rows * dims_.cols];
-
-    idx = 0;
-    for(size_t r = 0; r < dims_.rows; r++)
-    {
-        if((r % 2) == 0)
-        {
-            for(size_t c = 0; c < dims_.cols; c++)
-            {
-                lines_ptr_[idx] = x_mat(r, c);
-                idx++;
-
-                lines_ptr_[idx] = y_mat(r, c);
-                idx++;
-
-                lines_ptr_[idx] = z_mat(r, c);
-                idx++;
-            }
-        }
-        else
-        {
-            for(int c = dims_.cols - 1; c >= 0; c--)
-            {
-                lines_ptr_[idx] = x_mat(r, c);
-                idx++;
-
-                lines_ptr_[idx] = y_mat(r, c);
-                idx++;
-
-                lines_ptr_[idx] = z_mat(r, c);
-                idx++;
-            }
-        }
-    }
-
-    const bool n_rows_is_even = ((dims_.rows % 2) == 0);
-    const int c_inc = n_rows_is_even ? 1 : -1;
-    const int c_start = n_rows_is_even ? 0 : dims_.cols - 1;
-
-    for(int c = c_start; (c < dims_.cols) && (c >= 0); c += c_inc)
-    {
-        if((c % 2) == 1)
-        {
-            for(size_t r = 0; r < dims_.rows; r++)
-            {
-                lines_ptr_[idx] = x_mat(r, c);
-                idx++;
-
-                lines_ptr_[idx] = y_mat(r, c);
-                idx++;
-
-                lines_ptr_[idx] = z_mat(r, c);
-                idx++;
-            }
-        }
-        else
-        {
-            for(int r = dims_.rows - 1; r >= 0; r--)
-            {
-                lines_ptr_[idx] = x_mat(r, c);
-                idx++;
-
-                lines_ptr_[idx] = y_mat(r, c);
-                idx++;
-
-                lines_ptr_[idx] = z_mat(r, c);
-                idx++;
-            }
-        }
-    }
-
     x.setInternalData(nullptr, 0, 0);
     y.setInternalData(nullptr, 0, 0);
     z.setInternalData(nullptr, 0, 0);
@@ -198,34 +126,33 @@ void Surf::visualize()
         glGenBuffers(1, &buffer_idx_);
         glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * (dims_.rows - 1) * (dims_.cols - 1), points_ptr_, GL_STATIC_DRAW);
-
-        glGenBuffers(1, &lines_buffer_);
-        glBindBuffer(GL_ARRAY_BUFFER, lines_buffer_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 3 * dims_.rows * dims_.cols, lines_ptr_, GL_STATIC_DRAW);
     }
 
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    setLinewidth(line_width_);
+
+    glPolygonOffset(1, -1);
+    glEnable(GL_POLYGON_OFFSET_FILL);
     setColor(face_color_);
     glDrawArrays(GL_QUADS, 0, 4 * (dims_.rows - 1) * (dims_.cols - 1));
-
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, lines_buffer_);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     setColor(edge_color_);
-    glDrawArrays(GL_LINE_STRIP, 0, 2 * dims_.rows * dims_.cols);
+    
+    glPolygonMode(GL_FRONT, GL_LINE);
+    glPolygonMode(GL_BACK, GL_LINE);
+    glDrawArrays(GL_QUADS, 0, 4 * (dims_.rows - 1) * (dims_.cols - 1));
+    glPolygonMode(GL_FRONT, GL_FILL);
+    glPolygonMode(GL_BACK, GL_FILL);
+    glDisable(GL_POLYGON_OFFSET_FILL);
 
     glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
 }
 
 Surf::~Surf()
 {
     delete[] points_ptr_;
-    delete[] lines_ptr_;
 }
 
 #endif
