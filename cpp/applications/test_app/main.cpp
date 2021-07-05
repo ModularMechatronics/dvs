@@ -20,6 +20,7 @@ extern void testAxis2D();
 extern void testAxis3D();
 extern void testDrawTriangles();
 extern void testDrawMesh();
+extern void testDrawMeshAdvanced();
 extern void testDrawSingleTriangle();
 extern void testDrawLine3D();
 extern void testDrawLineBetweenPoints3D();
@@ -57,6 +58,7 @@ int main(int argc, char* argv[])
     fcns["axis3d"] = testAxis3D;
     fcns["triangles"] = testDrawTriangles;
     fcns["mesh"] = testDrawMesh;
+    fcns["mesh-adv"] = testDrawMeshAdvanced;
     fcns["single-triangle"] = testDrawSingleTriangle;
     fcns["draw-line-3d"] = testDrawLine3D;
     fcns["draw-line-2d"] = testDrawLine2D;

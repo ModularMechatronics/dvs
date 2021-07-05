@@ -17,8 +17,9 @@ class DrawMesh : public PlotObjectBase
 private:
     Vector<Triangle3D<double>> triangles_;
 
-    uint8_t* points_ptr_;
-    GLuint buffer_idx_;
+    float* points_ptr_;
+
+    GLuint buffer_handle_;
     uint32_t num_vertices_;
     uint32_t num_indices_;
 
@@ -50,6 +51,29 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const Func
 
     vertices.setInternalData(reinterpret_cast<Point3D<double>*>(data_ptr_), num_vertices_);
     indices.setInternalData(reinterpret_cast<IndexTriplet*>(&(data_ptr_[num_vertices_ * sizeof(Point3D<double>)])), num_indices_);
+
+    points_ptr_ = new float[num_indices_ * 3 * 3];
+    size_t idx = 0;
+
+    for(size_t k = 0; k < num_indices_; k++)
+    {
+        const Point3D<double> p0 = vertices(indices(k).i0);
+        const Point3D<double> p1 = vertices(indices(k).i1);
+        const Point3D<double> p2 = vertices(indices(k).i2);
+
+        points_ptr_[idx] = p0.x;
+        points_ptr_[idx + 1] = p0.y;
+        points_ptr_[idx + 2] = p0.z;
+
+        points_ptr_[idx + 3] = p1.x;
+        points_ptr_[idx + 4] = p1.y;
+        points_ptr_[idx + 5] = p1.z;
+
+        points_ptr_[idx + 6] = p2.x;
+        points_ptr_[idx + 7] = p2.y;
+        points_ptr_[idx + 8] = p2.z;
+        idx += 9;
+    }
 
     for(size_t k = 0; k < num_indices_; k++)
     {
@@ -96,18 +120,34 @@ void DrawMesh::findMinMax()
 
 void DrawMesh::visualize()
 {
-    setColor(face_color_);
-    for(size_t k = 0; k < num_elements_; k++)
+    if(!visualize_has_run_)
     {
-        drawTriangle3D(triangles_(k));
+        visualize_has_run_ = true;
+        glGenBuffers(1, &buffer_handle_);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer_handle_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_indices_ * 3 * 3, points_ptr_, GL_STATIC_DRAW);
     }
 
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_handle_);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     setLinewidth(line_width_);
+
+    glPolygonOffset(1, -1);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    setColor(face_color_);
+    glDrawArrays(GL_TRIANGLES, 0, num_indices_ * 3);
     setColor(edge_color_);
-    for(size_t k = 0; k < num_elements_; k++)
-    {
-        drawTriangleEdge3D(triangles_(k));
-    }
+
+    glPolygonMode(GL_FRONT, GL_LINE);
+    glPolygonMode(GL_BACK, GL_LINE);
+    glDrawArrays(GL_TRIANGLES, 0, num_indices_ * 3);
+    glPolygonMode(GL_FRONT, GL_FILL);
+    glPolygonMode(GL_BACK, GL_FILL);
+    glDisable(GL_POLYGON_OFFSET_FILL);
+
+    glDisableVertexAttribArray(0);
 }
 
 DrawMesh::~DrawMesh()
