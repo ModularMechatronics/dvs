@@ -299,6 +299,9 @@ bool PlotWindowGLPane::is3DFunction(const Function fcn)
            (fcn == Function::PLANE_XY) ||
            (fcn == Function::PLANE_XZ) ||
            (fcn == Function::PLANE_YZ) ||
+           (fcn == Function::DRAW_MESH) ||
+           (fcn == Function::DRAW_TRIANGLES_3D) ||
+           (fcn == Function::DRAW_TRIANGLE_3D) ||
            (fcn == Function::SURF) ||
            (fcn == Function::PLOT3) ||
            (fcn == Function::SCATTER3) ||
