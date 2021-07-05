@@ -411,6 +411,52 @@ void testDrawMesh()
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
 
+void testDrawMeshAdvanced()
+{
+    using tp = double;
+
+    const int num_rows = 20, num_cols = 25;
+    const int num_triangles = (num_rows - 1) * (num_cols - 1) * 2;
+
+    Vector<Point3D<tp>> vertices(num_rows * num_cols);
+    Vector<IndexTriplet> indices(num_triangles);
+    
+    for(int r = 0; r < num_rows; r++)
+    {
+        for(int c = 0; c < num_cols; c++)
+        {
+            const double x = static_cast<double>(c - num_cols / 2) * 0.1 + 0.05;
+            const double y = static_cast<double>(r - num_rows / 2) * 0.1 + 0.05;
+            const double r0 = 10.0 * (x * x + y * y);
+            const double z = std::sin(r0) / r0;
+
+            vertices(r * num_cols + c) = Point3D<tp>(x, y, z);
+        }
+    }
+
+    int idx = 0;
+    for(int r = 0; r < (num_rows - 1); r++)
+    {
+        for(int c = 0; c < (num_cols - 1); c++)
+        {
+            const int idx0 = r * num_cols + c;
+            const int idx1 = r * num_cols + c + 1;
+            const int idx2 = (r + 1) * num_cols + c + 1;
+            const int idx3 = (r + 1) * num_cols + c;
+            indices(idx) = IndexTriplet(idx0, idx1, idx2);
+            indices(idx + 1) = IndexTriplet(idx0, idx3, idx2);
+            idx += 2;
+        }
+    }
+
+    setCurrentElement("view_00");
+    hardClearFigure();
+
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
+}
+
 void testDrawSingleTriangle()
 {
     using tp = double;

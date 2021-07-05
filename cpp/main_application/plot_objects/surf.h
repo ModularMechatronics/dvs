@@ -22,7 +22,6 @@ private:
 
     Matrix<float> x_mat, y_mat, z_mat;
     float* points_ptr_;
-    float* lines_ptr_;
 
     bool face_color_set_;
 
