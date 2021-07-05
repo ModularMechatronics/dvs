@@ -1120,4 +1120,100 @@ inline float* convertMatrixDataOuter(uint8_t* input_data,
     return output_data;
 }
 
+template <typename T>
+inline float* convertVerticesData(uint8_t* input_data,
+                                  const uint32_t num_vertices,
+                                  const uint32_t num_indices,
+                                  const uint32_t num_bytes_per_element)
+{
+    float* output_data = new float[num_indices * 3 * 3];
+    Vector<Point3D<T>> vertices;
+    Vector<IndexTriplet> indices;
+ 
+    vertices.setInternalData(reinterpret_cast<Point3D<T>*>(input_data), num_vertices);
+    indices.setInternalData(reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices);
+
+    size_t idx = 0;
+
+    for(size_t k = 0; k < num_indices; k++)
+    {
+        const Point3D<T> p0 = vertices(indices(k).i0);
+        const Point3D<T> p1 = vertices(indices(k).i1);
+        const Point3D<T> p2 = vertices(indices(k).i2);
+
+        output_data[idx] = p0.x;
+        output_data[idx + 1] = p0.y;
+        output_data[idx + 2] = p0.z;
+
+        output_data[idx + 3] = p1.x;
+        output_data[idx + 4] = p1.y;
+        output_data[idx + 5] = p1.z;
+
+        output_data[idx + 6] = p2.x;
+        output_data[idx + 7] = p2.y;
+        output_data[idx + 8] = p2.z;
+        idx += 9;
+    }
+
+    vertices.setInternalData(nullptr, 0);
+    indices.setInternalData(nullptr, 0);
+
+    return output_data;
+}
+
+inline float* convertVerticesDataOuter(uint8_t* input_data,
+                                       const DataType data_type,
+                                       const uint32_t num_vertices,
+                                       const uint32_t num_indices,
+                                       const uint32_t num_bytes_per_element)
+{
+    float* output_data;
+    if(data_type == DataType::FLOAT)
+    {
+        output_data = convertVerticesData<float>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::DOUBLE)
+    {
+        output_data = convertVerticesData<double>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::INT8)
+    {
+        output_data = convertVerticesData<int8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::INT16)
+    {
+        output_data = convertVerticesData<int16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::INT32)
+    {
+        output_data = convertVerticesData<int32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::INT64)
+    {
+        output_data = convertVerticesData<int64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::UINT8)
+    {
+        output_data = convertVerticesData<uint8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::UINT16)
+    {
+        output_data = convertVerticesData<uint16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::UINT32)
+    {
+        output_data = convertVerticesData<uint32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else if(data_type == DataType::UINT64)
+    {
+        output_data = convertVerticesData<uint64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else
+    {
+        throw std::runtime_error("Invalid data type!");
+    }
+
+    return output_data;
+}
+
 #endif

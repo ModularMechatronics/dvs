@@ -420,7 +420,7 @@ void testDrawMeshAdvanced()
 
     Vector<Point3D<tp>> vertices(num_rows * num_cols);
     Vector<IndexTriplet> indices(num_triangles);
-    
+
     for(int r = 0; r < num_rows; r++)
     {
         for(int c = 0; c < num_cols; c++)
@@ -430,7 +430,7 @@ void testDrawMeshAdvanced()
             const double r0 = 10.0 * (x * x + y * y);
             const double z = std::sin(r0) / r0;
 
-            vertices(r * num_cols + c) = Point3D<tp>(x, y, z);
+            vertices(r * num_cols + c) = Point3D<tp>(x * 100.0, y * 100.0, z * 100.0);
         }
     }
 

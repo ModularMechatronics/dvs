@@ -15,8 +15,6 @@
 class DrawMesh : public PlotObjectBase
 {
 private:
-    Vector<Triangle3D<double>> triangles_;
-
     float* points_ptr_;
 
     GLuint buffer_handle_;
@@ -44,77 +42,23 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const Func
     num_vertices_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_VERTICES).getAs<uint32_t>();
     num_indices_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_INDICES).getAs<uint32_t>();
 
-    triangles_.resize(num_indices_);
-
-    Vector<Point3D<double>> vertices;
-    Vector<IndexTriplet> indices;
-
-    vertices.setInternalData(reinterpret_cast<Point3D<double>*>(data_ptr_), num_vertices_);
-    indices.setInternalData(reinterpret_cast<IndexTriplet*>(&(data_ptr_[num_vertices_ * sizeof(Point3D<double>)])), num_indices_);
-
-    points_ptr_ = new float[num_indices_ * 3 * 3];
-    size_t idx = 0;
-
-    for(size_t k = 0; k < num_indices_; k++)
-    {
-        const Point3D<double> p0 = vertices(indices(k).i0);
-        const Point3D<double> p1 = vertices(indices(k).i1);
-        const Point3D<double> p2 = vertices(indices(k).i2);
-
-        points_ptr_[idx] = p0.x;
-        points_ptr_[idx + 1] = p0.y;
-        points_ptr_[idx + 2] = p0.z;
-
-        points_ptr_[idx + 3] = p1.x;
-        points_ptr_[idx + 4] = p1.y;
-        points_ptr_[idx + 5] = p1.z;
-
-        points_ptr_[idx + 6] = p2.x;
-        points_ptr_[idx + 7] = p2.y;
-        points_ptr_[idx + 8] = p2.z;
-        idx += 9;
-    }
-
-    for(size_t k = 0; k < num_indices_; k++)
-    {
-        Triangle3D<double> tri(vertices(indices(k).i0), vertices(indices(k).i1), vertices(indices(k).i2));
-        triangles_(k) = tri;
-    }
-
-    vertices.setInternalData(nullptr, 0);
-    indices.setInternalData(nullptr, 0);
-
+    points_ptr_ = convertVerticesDataOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
 }
 
 void DrawMesh::findMinMax()
 {
-    min_vec = triangles_(0).p0;
-    max_vec = triangles_(0).p0;
+    min_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
+    max_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
     for(size_t k = 0; k < num_elements_; k++)
     {
-        min_vec.x = std::min(triangles_(k).p0.x, min_vec.x);
-        min_vec.x = std::min(triangles_(k).p1.x, min_vec.x);
-        min_vec.x = std::min(triangles_(k).p2.x, min_vec.x);
+        const Point3Dd current_point(points_ptr_[k], points_ptr_[k + 1], points_ptr_[k + 2]);
+        min_vec.x = std::min(current_point.x, min_vec.x);
+        min_vec.y = std::min(current_point.y, min_vec.y);
+        min_vec.z = std::min(current_point.z, min_vec.z);
 
-        min_vec.y = std::min(triangles_(k).p0.y, min_vec.y);
-        min_vec.y = std::min(triangles_(k).p1.y, min_vec.y);
-        min_vec.y = std::min(triangles_(k).p2.y, min_vec.y);
-
-        min_vec.z = std::min(triangles_(k).p0.z, min_vec.z);
-        min_vec.z = std::min(triangles_(k).p1.z, min_vec.z);
-        min_vec.z = std::min(triangles_(k).p2.z, min_vec.z);
-
-        max_vec.x = std::max(triangles_(k).p0.x, min_vec.x);
-        max_vec.x = std::max(triangles_(k).p1.x, min_vec.x);
-        max_vec.x = std::max(triangles_(k).p2.x, min_vec.x);
-
-        max_vec.y = std::max(triangles_(k).p0.y, min_vec.y);
-        max_vec.y = std::max(triangles_(k).p1.y, min_vec.y);
-        max_vec.y = std::max(triangles_(k).p2.y, min_vec.y);
-
-        max_vec.z = std::max(triangles_(k).p0.z, min_vec.z);
-        max_vec.z = std::max(triangles_(k).p1.z, min_vec.z);
-        max_vec.z = std::max(triangles_(k).p2.z, min_vec.z);
+        max_vec.x = std::max(current_point.x, min_vec.x);
+        max_vec.y = std::max(current_point.y, min_vec.y);
+        max_vec.z = std::max(current_point.z, min_vec.z);
     }
 }
 
