@@ -360,7 +360,7 @@ void testAxis3D()
 void testDrawTriangles()
 {
     const size_t num_elements = 10;
-    using tp = int8_t;
+    using tp = float;
     Vector<Triangle3D<tp>> triangles(num_elements);
 
     double t = 0.0;
@@ -370,14 +370,14 @@ void testDrawTriangles()
     {
         const Matrix<double> r = rotationMatrixZ(t);
 
-        const Point3D<double> p0r = r * p0 + Point3D<double>(0.0, 0.0, t);
-        const Point3D<double> p1r = r * p1 + Point3D<double>(0.0, 0.0, t);
-        const Point3D<double> p2r = r * p2 + Point3D<double>(0.0, 0.0, t);
+        const Point3D<double> p0r = r * p0 + Point3D<double>(0.0, 0.0, t * 3);
+        const Point3D<double> p1r = r * p1 + Point3D<double>(0.0, 0.0, t * 3);
+        const Point3D<double> p2r = r * p2 + Point3D<double>(0.0, 0.0, t * 3);
 
         Triangle3D<tp> tri(p0r, p1r, p2r);
         triangles(k) = tri;
 
-        t = t + 4.3;
+        t = t + 0.3;
     }
 
     setCurrentElement("view_00");

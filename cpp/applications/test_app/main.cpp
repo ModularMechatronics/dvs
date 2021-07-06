@@ -38,7 +38,7 @@ void displayHelp()
         std::cout << it->first << ", ";
     }
 
-    std::cout << "]" << std::endl;
+    std::cout << ", all]" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -76,6 +76,18 @@ int main(int argc, char* argv[])
         if((arg == "-h") || (arg == "--help") || (arg == "help"))
         {
             displayHelp();
+        }
+        if(arg == "all")
+        {
+            std::map<std::string, std::function<void()>>::iterator it;
+
+            for (it = fcns.begin(); it != fcns.end(); it++)
+            {
+                std::cout << "Running " << it->first << "..." << std::endl;
+                it->second();
+                std::cout << it->first << " ran successfully. Press any key to continue." << std::endl << std::endl;
+                std::cin.ignore();
+            }
         }
         else if(fcns.count(arg) > 0)
         {
