@@ -49,16 +49,19 @@ void DrawMesh::findMinMax()
 {
     min_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
     max_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
-    for(size_t k = 0; k < num_elements_; k++)
+    size_t idx = 0;
+    for(size_t k = 0; k < (num_indices_ * 3 * 3); k += 3)
     {
         const Point3Dd current_point(points_ptr_[k], points_ptr_[k + 1], points_ptr_[k + 2]);
         min_vec.x = std::min(current_point.x, min_vec.x);
         min_vec.y = std::min(current_point.y, min_vec.y);
         min_vec.z = std::min(current_point.z, min_vec.z);
 
-        max_vec.x = std::max(current_point.x, min_vec.x);
-        max_vec.y = std::max(current_point.y, min_vec.y);
-        max_vec.z = std::max(current_point.z, min_vec.z);
+        max_vec.x = std::max(current_point.x, max_vec.x);
+        max_vec.y = std::max(current_point.y, max_vec.y);
+        max_vec.z = std::max(current_point.z, max_vec.z);
+
+        idx += 3;
     }
 }
 
