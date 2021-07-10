@@ -25,8 +25,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-#include "basic_message.h"
-
 #define DVS_PORT_NUM 9547
 
 inline int& Var_socket_file_descr()

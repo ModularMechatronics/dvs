@@ -14,3 +14,5 @@
  - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
  - Remove need to always specify num_elements
  - Verify that image is not mirrored
+ - Function "view" is the one that sets/creates the current element
+   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window

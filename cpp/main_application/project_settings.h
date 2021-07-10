@@ -16,14 +16,6 @@ inline void throwIfMissing(const nlohmann::json& j, const std::string& field_nam
     }
 }
 
-enum class GuiElementType
-{
-    PLOT,
-    IMAGE,
-    TEXT,
-    BUTTON
-};
-
 class ElementSettings
 {
 public:

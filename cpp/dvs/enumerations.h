@@ -70,8 +70,6 @@ enum class Function : uint8_t
     DRAW_TRIANGLES_3D,
     DRAW_TRIANGLE_3D,
     DRAW_MESH,
-    FIGURE,
-    CLEAR,
     HOLD_ON,
     HOLD_OFF,
     POSITION,
@@ -80,6 +78,7 @@ enum class Function : uint8_t
     AXES_2D,
     AXES_3D,
     VIEW,
+    CLEAR,
     SOFT_CLEAR,
     UNKNOWN
 };
@@ -124,17 +123,17 @@ namespace properties
     constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
 }
 
-enum class ElementType
+enum class ElementType : uint8_t
 {
     PLOT,
     IMAGE,
-    WORLD,
+    WORLD_3D,
     BUTTON,
     TEXT_FIELD,
     UNKNOWN
 };
 
-enum class ElementParent
+enum class ElementParent : uint8_t
 {
     TAB,
     WINDOW,
