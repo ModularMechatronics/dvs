@@ -8,12 +8,6 @@ WindowView::WindowView(wxFrame* parent, const WindowSettings& window_settings, c
     ViewBase<wxFrame>(parent, window_settings)
 {
     callback_id_ = callback_id;
-    const int outer = 245;
-    const int middle = 200;
-    const wxColor outer_color(outer, outer, outer);
-    const wxColor middle_color(middle, middle, middle);
-
-    background_panel_ = new BackgroundPanel(this, this->GetSize(), outer_color, middle_color);
 
     const std::vector<ElementSettings> elements = settings_->getElementSettingsList();
 
@@ -47,8 +41,6 @@ void WindowView::OnSize(wxSizeEvent& event)
     {
         it.second->updateSizeFromParent(new_size);
     }
-
-    background_panel_->resize(new_size);
 }
 
 int WindowView::getCallbackId() const
