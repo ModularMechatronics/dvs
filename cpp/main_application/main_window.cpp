@@ -48,8 +48,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     const wxColor outer_color(outer, outer, outer);
     const wxColor middle_color(middle, middle, middle);
 
-    background_panel_ = new BackgroundPanel(this, this->GetSize(), outer_color, middle_color);
-
     if(cache_reader_->hasKey("last_opened_file") && std::filesystem::exists(cache_reader_->readCache<std::string>("last_opened_file")))
     {
         save_manager_ = new SaveManager(cache_reader_->readCache<std::string>("last_opened_file"));

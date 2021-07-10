@@ -95,8 +95,6 @@ void MainWindow::OnSize(wxSizeEvent& event)
     {
         tab_elements_[k]->setSize(new_size);
     }
-
-    background_panel_->resize(this->GetSize());
 }
 
 void MainWindow::changeCurrentElementName(wxCommandEvent& event)
