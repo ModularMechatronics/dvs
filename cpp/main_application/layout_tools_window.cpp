@@ -9,7 +9,6 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
     this->SetMaxSize(size);
     main_window_ = main_window;
 
-    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
     Bind(wxEVT_CLOSE_WINDOW, &LayoutToolsWindow::OnClose, this);
 
     shapes_box_ = new wxStaticBox(this, wxID_ANY, "Shapes");
@@ -27,7 +26,7 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
     // Bind(MY_EVENT, &LayoutToolsWindow::currentElementNameChanged, this);
 }
 
-void LayoutToolsWindow::OnClose(wxCloseEvent &event)
+void LayoutToolsWindow::OnClose(wxCloseEvent &WXUNUSED(event))
 {
     this->Hide();
     MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);

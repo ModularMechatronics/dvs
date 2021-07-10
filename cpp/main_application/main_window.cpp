@@ -32,6 +32,7 @@ std::string getExecutablePath()
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     : wxFrame(NULL, wxID_ANY, "", wxPoint(0, 30), wxSize(1500, 700))
 {
+    static_cast<void>(cmdl_args);
     udp_server_ = new UdpServer(9752);
     udp_server_->start();
     current_gui_element_ = nullptr;
@@ -195,13 +196,13 @@ MainWindow::~MainWindow()
     delete cache_reader_;
 }
 
-void MainWindow::editingFinished(wxCommandEvent& event)
+void MainWindow::editingFinished(wxCommandEvent& WXUNUSED(event))
 {
     disableEditing();
     layout_tools_window_->Hide();
 }
 
-void MainWindow::saveProjectAsCallback(wxCommandEvent& event)
+void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
 {
     saveProjectAs();
 }
@@ -264,7 +265,7 @@ void MainWindow::saveProject()
     }
 }
 
-void MainWindow::newProjectCallback(wxCommandEvent& event)
+void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
 {
     if (!save_manager_->isSaved())
     {
@@ -309,7 +310,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& event)
     Refresh();
 }
 
-void MainWindow::saveProjectCallback(wxCommandEvent& event)
+void MainWindow::saveProjectCallback(wxCommandEvent& WXUNUSED(event))
 {
     saveProject();
 }
@@ -331,14 +332,14 @@ void MainWindow::addNewTab(const std::string& tab_name)
     fileModified();
 }
 
-void MainWindow::addNewTabCallback(wxCommandEvent& event)
+void MainWindow::addNewTabCallback(wxCommandEvent& WXUNUSED(event))
 {
     const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
     current_tab_num_++;
     addNewTab(tab_name);
 }
 
-void MainWindow::deleteTab(wxCommandEvent& event)
+void MainWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
 {
     const int current_tab_idx = tabs_view->GetSelection();
     if(current_tab_idx != wxNOT_FOUND)
@@ -358,7 +359,7 @@ void MainWindow::deleteTab(wxCommandEvent& event)
     fileModified();
 }
 
-void MainWindow::addNewWindowCallback(wxCommandEvent& event)
+void MainWindow::addNewWindowCallback(wxCommandEvent& WXUNUSED(event))
 {
     const std::string window_name = "New Window " + std::to_string(current_tab_num_);
     current_tab_num_++;
@@ -403,7 +404,7 @@ void MainWindow::addNewWindow(const std::string& window_name)
     fileModified();
 }
 
-void MainWindow::deleteWindow(wxCommandEvent& event)
+void MainWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
 {
     int window_idx = 0;
     if(!main_window_last_in_focus_)
@@ -468,12 +469,12 @@ void MainWindow::disableEditing()
     }
 }
 
-void MainWindow::guiElementModified(wxCommandEvent& event)
+void MainWindow::guiElementModified(wxCommandEvent& WXUNUSED(event))
 {
     fileModified();
 }
 
-void MainWindow::childWindowClosed(wxCommandEvent& event)
+void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event))
 {
 
 }
@@ -500,7 +501,7 @@ void MainWindow::childWindowInFocus(wxCommandEvent& event)
     layout_tools_window_->currentElementSelectionChanged(current_element_name_);
 }
 
-void MainWindow::toggleEditLayout(wxCommandEvent& event)
+void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))
 {
     if(is_editing_)
     {
@@ -533,7 +534,7 @@ void MainWindow::toggleEditLayout(wxCommandEvent& event)
     is_editing_ = !is_editing_;
 }
 
-void MainWindow::openExistingFile(wxCommandEvent& event)
+void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
 {
     if (!save_manager_->isSaved())
     {
@@ -616,9 +617,8 @@ void MainWindow::OnTimer(wxTimerEvent&)
     }
 }
 
-void MainWindow::OnClose(wxCloseEvent& event)
+void MainWindow::OnClose(wxCloseEvent& WXUNUSED(event))
 {
-    (void)event;
     if (wxMessageBox("Are you sure you want to exit?",
                      "Please confirm",
                      wxICON_QUESTION | wxYES_NO) != wxYES)

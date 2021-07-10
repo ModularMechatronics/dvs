@@ -38,7 +38,7 @@ private:
     wxColor bottom_color_;
     wxColor top_color_;
 
-    void OnPaint(wxPaintEvent& event)
+    void OnPaint(wxPaintEvent& WXUNUSED(event))
     {
         wxPaintDC dc(this);
         wxPen pen = wxPen(wxColor(0, 0, 0, 255), 1);
