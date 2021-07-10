@@ -15,8 +15,6 @@
 #include "gui_element.h"
 #include "view_base.h"
 
-using namespace project_file;
-
 
 struct Bound2Df
 {

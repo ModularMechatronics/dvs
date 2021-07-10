@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "project_file.h"
+#include "project_settings.h"
 #include "gui_element.h"
 #include "view_base.h"
 

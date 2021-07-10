@@ -15,7 +15,7 @@ WindowView::WindowView(wxFrame* parent, const WindowSettings& window_settings, c
 
     background_panel_ = new BackgroundPanel(this, this->GetSize(), outer_color, middle_color);
 
-    const std::vector<project_file::ElementSettings> elements = settings_->getElementSettingsList();
+    const std::vector<ElementSettings> elements = settings_->getElementSettingsList();
 
     for(const auto elem : elements)
     {
