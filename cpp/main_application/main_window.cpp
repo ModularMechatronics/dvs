@@ -180,9 +180,9 @@ void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
     layout_tools_window_->currentElementSelectionChanged(current_element_name_);
 }
 
-void MainWindow::setupWindows(const ProjectFile& project_file)
+void MainWindow::setupWindows(const ProjectSettings& project_settings)
 {
-    for(const WindowSettings& ws : project_file.getWindows())
+    for(const WindowSettings& ws : project_settings.getWindows())
     {
         windows_.emplace_back(new WindowView(this, ws, window_callback_id_));
         window_callback_id_++;
@@ -226,17 +226,17 @@ void MainWindow::saveProjectAs()
         return;
     }
 
-    ProjectFile pf;
+    ProjectSettings ps;
     for(const TabView* te : tab_elements_)
     {
-        pf.pushBackTabSettings(te->getTabSettings());
+        ps.pushBackTabSettings(te->getTabSettings());
     }
     for(const WindowView* we : windows_)
     {
-        pf.pushBackWindowSettings(we->getWindowSettings());
+        ps.pushBackWindowSettings(we->getWindowSettings());
     }
 
-    save_manager_->saveToNewFile(new_save_path, pf);
+    save_manager_->saveToNewFile(new_save_path, ps);
     SetLabel(save_manager_->getCurrentFileName());
 }
 
@@ -248,20 +248,20 @@ void MainWindow::saveProject()
     }
     else
     {
-        ProjectFile pf;
+        ProjectSettings ps;
         for(const TabView* te : tab_elements_)
         {
-            pf.pushBackTabSettings(te->getTabSettings());
+            ps.pushBackTabSettings(te->getTabSettings());
         }
         for(const WindowView* we : windows_)
         {
-            pf.pushBackWindowSettings(we->getWindowSettings());
+            ps.pushBackWindowSettings(we->getWindowSettings());
         }
 
         SetLabel(save_manager_->getCurrentFileName());
         cache_reader_->writeToCache("last_opened_file", save_manager_->getCurrentFilePath());
 
-        save_manager_->save(pf);
+        save_manager_->save(ps);
     }
 }
 
@@ -303,8 +303,8 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
     tab_elements_ = std::vector<TabView*>();
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
-    setupTabs(save_manager_->getCurrentProjectFile());
-    setupWindows(save_manager_->getCurrentProjectFile());
+    setupTabs(save_manager_->getCurrentProjectSettings());
+    setupWindows(save_manager_->getCurrentProjectSettings());
 
     SendSizeEvent();
     Refresh();
@@ -582,8 +582,8 @@ void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
     tab_elements_ = std::vector<TabView*>();
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
-    setupTabs(save_manager_->getCurrentProjectFile());
-    setupWindows(save_manager_->getCurrentProjectFile());
+    setupTabs(save_manager_->getCurrentProjectSettings());
+    setupWindows(save_manager_->getCurrentProjectSettings());
 
     refresh_timer_.Start(10);
 

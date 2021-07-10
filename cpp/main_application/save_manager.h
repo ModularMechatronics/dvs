@@ -5,13 +5,13 @@
 
 #include <nlohmann/json.hpp>
 
-#include "project_file.h"
+#include "project_settings.h"
 
 class SaveManager
 {
 private:
     std::string file_path_;
-    ProjectFile project_file_;
+    ProjectSettings project_settings_;
 
     bool is_saved_;
     bool path_is_set_;
@@ -27,7 +27,7 @@ public:
     SaveManager(const std::string& file_path)
     {
         file_path_ = file_path;
-        project_file_ = ProjectFile(file_path);
+        project_settings_ = ProjectSettings(file_path);
         is_saved_ = true;
         path_is_set_ = true;
     }
@@ -52,7 +52,7 @@ public:
         path_is_set_ = false;
         file_path_ = "";
         is_saved_ = true;
-        project_file_ = ProjectFile();
+        project_settings_ = ProjectSettings();
     }
 
     std::string getCurrentFileName() const
@@ -74,16 +74,16 @@ public:
         }
     }
 
-    void save(const ProjectFile& changed_project_file)
+    void save(const ProjectSettings& changed_project_settings)
     {
-        if(changed_project_file != project_file_)
+        if(changed_project_settings != project_settings_)
         {
-            const nlohmann::json j_to_save = changed_project_file.toJson();
+            const nlohmann::json j_to_save = changed_project_settings.toJson();
 
             std::ofstream output_file(file_path_);
             output_file << std::setw(4) << j_to_save << std::endl;
 
-            project_file_ = changed_project_file;
+            project_settings_ = changed_project_settings;
 
             is_saved_ = true;
         }
@@ -97,30 +97,30 @@ public:
     void openExistingFile(const std::string& file_path)
     {
         file_path_ = file_path;
-        project_file_ = ProjectFile(file_path);
+        project_settings_ = ProjectSettings(file_path);
         path_is_set_ = true;
         is_saved_ = true;
     }
 
-    void saveToNewFile(const std::string& file_path, const ProjectFile& changed_project_file)
+    void saveToNewFile(const std::string& file_path, const ProjectSettings& changed_project_settings)
     {
         file_path_ = file_path;
-        project_file_ = changed_project_file;
+        project_settings_ = changed_project_settings;
         path_is_set_ = true;
 
-        const nlohmann::json j_to_save = changed_project_file.toJson();
+        const nlohmann::json j_to_save = changed_project_settings.toJson();
 
         std::ofstream output_file(file_path_);
         output_file << std::setw(4) << j_to_save << std::endl;
 
-        project_file_ = changed_project_file;
+        project_settings_ = changed_project_settings;
 
         is_saved_ = true;
     }
 
-    ProjectFile getCurrentProjectFile() const
+    ProjectSettings getCurrentProjectSettings() const
     {
-        return project_file_;
+        return project_settings_;
     }
 
 };

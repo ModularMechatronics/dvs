@@ -12,7 +12,7 @@
 #include "dvs.h"
 #include "udp_server.h"
 #include "received_data.h"
-#include "project_file.h"
+#include "project_settings.h"
 
 struct Bound2Df
 {
@@ -399,7 +399,7 @@ public:
                   const wxPoint& position,
                   const wxSize& size,
                   const Vec2Df& num_grid_cells,
-                  const std::vector<project_file::ElementSettings>& elements);
+                  const std::vector<ElementSettings>& elements);
     virtual ~PrototypeView();
 
     void setSize(const wxSize size_);

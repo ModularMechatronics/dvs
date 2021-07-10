@@ -5,7 +5,7 @@
 
 TabView::TabView(wxNotebookPage* parent, const TabSettings& tab_settings) : ViewBase<wxNotebookPage>(parent, tab_settings)
 {
-    const std::vector<project_file::ElementSettings> elements = settings_->getElementSettingsList();
+    const std::vector<ElementSettings> elements = settings_->getElementSettingsList();
 
     for(const auto elem : elements)
     {

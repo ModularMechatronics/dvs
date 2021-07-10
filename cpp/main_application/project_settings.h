@@ -1,5 +1,5 @@
-#ifndef PROJECT_FILE_H_
-#define PROJECT_FILE_H_
+#ifndef PROJECT_SETTINGS_H_
+#define PROJECT_SETTINGS_H_
 
 #include <fstream>
 #include <stdexcept>
@@ -7,8 +7,6 @@
 
 #include <nlohmann/json.hpp>
 
-namespace project_file
-{
 
 inline void throwIfMissing(const nlohmann::json& j, const std::string& field_name, const std::string& exception_string)
 {
@@ -187,16 +185,15 @@ public:
     }
 };
 
-class ProjectFile
+class ProjectSettings
 {
 private:
-    std::string file_path_;
     std::vector<TabSettings> tabs_;
     std::vector<WindowSettings> windows_;
 
 public:
-    ProjectFile() = default;
-    ProjectFile(const std::string& file_path) : file_path_(file_path)
+    ProjectSettings() = default;
+    ProjectSettings(const std::string& file_path)
     {
         std::ifstream input_file(file_path);
         nlohmann::json j;
@@ -363,7 +360,7 @@ public:
         return res;
     }
 
-    bool operator==(const ProjectFile& other) const
+    bool operator==(const ProjectSettings& other) const
     {
         if(tabs_.size() != other.tabs_.size())
         {
@@ -403,13 +400,12 @@ public:
         return true;
     }
 
-    bool operator!=(const ProjectFile& other) const
+    bool operator!=(const ProjectSettings& other) const
     {
         return !(*this == other);
     }
 
 };
 
-}
 
 #endif

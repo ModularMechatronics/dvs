@@ -8,11 +8,10 @@
 
 #include "enumerations.h"
 #include "math/math.h"
-#include "project_file.h"
+#include "project_settings.h"
 #include "received_data.h"
 
 using namespace dvs;
-using namespace project_file;
 
 class GuiElement
 {

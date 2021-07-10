@@ -22,7 +22,7 @@
 #include "gui_element.h"
 #include "plot_window_gl_pane.h"
 #include "layout_tools_window.h"
-#include "project_file.h"
+#include "project_settings.h"
 #include "tab_view.h"
 #include "events.h"
 #include "save_manager.h"
@@ -95,8 +95,8 @@ private:
     void saveProjectAs();
     void saveProjectAsCallback(wxCommandEvent& event);
 
-    void setupTabs(const ProjectFile& project_file);
-    void setupWindows(const ProjectFile& project_file);
+    void setupTabs(const ProjectSettings& project_settings);
+    void setupWindows(const ProjectSettings& project_settings);
     void fileModified();
 
 public:
