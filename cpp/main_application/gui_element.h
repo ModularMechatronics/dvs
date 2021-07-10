@@ -16,7 +16,6 @@ using namespace dvs;
 class GuiElement
 {
 protected:
-    // GuiElementType type_;
     ElementSettings element_settings_;
     bool is_editing_;
     bool is_selected_;
