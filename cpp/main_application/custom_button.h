@@ -128,12 +128,12 @@ inline void CustomButton::drawNormal()
     }
 }
 
-inline void CustomButton::OnPaint(wxPaintEvent& event)
+inline void CustomButton::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
     drawNormal();
 }
 
-inline void CustomButton::mouseEntered(wxMouseEvent& event)
+inline void CustomButton::mouseEntered(wxMouseEvent& WXUNUSED(event))
 {
     wxSetCursor(wxCursor(wxCURSOR_HAND));
 
@@ -149,7 +149,7 @@ inline void CustomButton::mouseEntered(wxMouseEvent& event)
     // }
 }
 
-inline void CustomButton::mouseExited(wxMouseEvent& event)
+inline void CustomButton::mouseExited(wxMouseEvent& WXUNUSED(event))
 {
     wxSetCursor(wxCursor(wxCURSOR_ARROW));
 
@@ -183,7 +183,7 @@ inline void CustomButton::mouseLeftPressed(wxMouseEvent& event)
     click_timer_.Start(kCirclePeriod);
 }
 
-inline void CustomButton::OnClickedTimer(wxTimerEvent& event)
+inline void CustomButton::OnClickedTimer(wxTimerEvent& WXUNUSED(event))
 {
     if(num_timer_iterations_clicked_ > kNumCircleIterationsMax)
     {
@@ -203,7 +203,7 @@ inline void CustomButton::OnClickedTimer(wxTimerEvent& event)
     circle_alpha_ = std::max(0, circle_alpha_ - kCircleAlphaDec);
 }
 
-inline void CustomButton::OnExitedTimer(wxTimerEvent& event)
+inline void CustomButton::OnExitedTimer(wxTimerEvent& WXUNUSED(event))
 {
     button_color_ = wxColour(button_color_.Red() + color_inc_,
                              button_color_.Green() + color_inc_,
@@ -225,7 +225,7 @@ inline void CustomButton::OnExitedTimer(wxTimerEvent& event)
     }
 }
 
-inline void CustomButton::OnEnteredTimer(wxTimerEvent& event)
+inline void CustomButton::OnEnteredTimer(wxTimerEvent& WXUNUSED(event))
 {
     button_color_ = wxColour(button_color_.Red() + color_inc_,
                              button_color_.Green() + color_inc_,
@@ -246,7 +246,7 @@ inline void CustomButton::OnEnteredTimer(wxTimerEvent& event)
     }
 }
 
-inline void CustomButton::OnSize(wxSizeEvent& event)
+inline void CustomButton::OnSize(wxSizeEvent& WXUNUSED(event))
 {
     // this->Set
 }

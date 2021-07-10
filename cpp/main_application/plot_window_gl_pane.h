@@ -13,10 +13,45 @@
 #include "udp_server.h"
 #include "received_data.h"
 #include "gui_element.h"
-#include "prototype_view.h"
 #include "view_base.h"
 
 using namespace project_file;
+
+
+struct Bound2Df
+{
+    float x_min;
+    float x_max;
+    float y_min;
+    float y_max;
+
+    Bound2Df() = default;
+};
+
+inline Bound2Df operator+(const Bound2Df& bnd, const Vec2Df& offset)
+{
+    Bound2Df new_bnd;
+    new_bnd.x_min = bnd.x_min + offset.x;
+    new_bnd.x_max = bnd.x_max + offset.x;
+    new_bnd.y_min = bnd.y_min + offset.y;
+    new_bnd.y_max = bnd.y_max + offset.y;
+
+    return new_bnd;
+}
+
+enum class CursorSquareState
+{
+    INSIDE,
+    OUTSIDE,
+    LEFT,
+    RIGHT,
+    TOP,
+    BOTTOM,
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
+};
 
 class PlotWindowGLPane : public wxGLCanvas, public GuiElement
 {

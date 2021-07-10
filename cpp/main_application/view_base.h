@@ -211,7 +211,7 @@ void ViewBase<BaseClass>::setSelectedElementName(const std::string& new_name)
 }
 
 template <class BaseClass>
-void ViewBase<BaseClass>::mouseLeftPressed(wxMouseEvent& event)
+void ViewBase<BaseClass>::mouseLeftPressed(wxMouseEvent& WXUNUSED(event))
 {
     // Since this event will only be caught if the mouse is pressed outside of an
     // element, we know we can deselect all elements.
@@ -243,7 +243,7 @@ std::string ViewBase<BaseClass>::getSelectedElementName()
 }
 
 template <class BaseClass>
-void ViewBase<BaseClass>::childModified(wxCommandEvent& event)
+void ViewBase<BaseClass>::childModified(wxCommandEvent& WXUNUSED(event))
 {
     wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
     wxPostEvent(this->GetParent(), parent_event);

@@ -54,9 +54,6 @@ void MainWindow::createNewElement(const FunctionHeader& hdr)
         const FunctionHeaderObject parent_type_obj = hdr.getObjectFromType(FunctionHeaderObjectType::PARENT_TYPE);
         const dvs::ElementParent parent_type = parent_type_obj.getAs<dvs::ElementParent>();
 
-        const FunctionHeaderObject element_type_obj = hdr.getObjectFromType(FunctionHeaderObjectType::GUI_ELEMENT_TYPE);
-        const dvs::ElementType element_type = element_type_obj.getAs<dvs::ElementType>();
-
         if(parent_name == "#DEFAULTNAME#")
         {
             parent_name = "New figure " + std::to_string(current_tab_num_);

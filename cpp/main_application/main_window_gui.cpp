@@ -67,7 +67,7 @@ void MainWindow::fileModified()
     save_manager_->setIsModified();
 }
 
-void MainWindow::tabChanged(wxCommandEvent& event)
+void MainWindow::tabChanged(wxCommandEvent& WXUNUSED(event))
 {
     for(auto te : tab_elements_)
     {
@@ -175,9 +175,8 @@ void MainWindow::newNamedElement(const std::string& element_name)
     fileModified();
 }
 
-void MainWindow::newElement(wxCommandEvent& event)
+void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
 {
-    (void)event;
     if(main_window_last_in_focus_)
     {
         const int current_tab_idx = tabs_view->GetSelection();
@@ -217,9 +216,8 @@ void MainWindow::newElement(wxCommandEvent& event)
     fileModified();
 }
 
-void MainWindow::deleteElement(wxCommandEvent& event)
+void MainWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
 {
-    (void)event;
     if(main_window_last_in_focus_)
     {
         const int current_tab_idx = tabs_view->GetSelection();

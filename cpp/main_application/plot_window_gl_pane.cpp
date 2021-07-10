@@ -359,13 +359,13 @@ void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
     Refresh();
 }
 
-void PlotWindowGLPane::mouseLeftReleased(wxMouseEvent& event)
+void PlotWindowGLPane::mouseLeftReleased(wxMouseEvent& WXUNUSED(event))
 {
     left_mouse_button_.setIsReleased();
     Refresh();
 }
 
-void PlotWindowGLPane::mouseLeftWindow(wxMouseEvent& event)
+void PlotWindowGLPane::mouseLeftWindow(wxMouseEvent& WXUNUSED(event))
 {
     wxSetCursor(wxCursor(wxCURSOR_ARROW));
 }

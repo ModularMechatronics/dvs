@@ -132,14 +132,15 @@ public:
         bool should_run = true;
         while(should_run)
         {
-            int num_received_bytes_total = 0;
+            size_t num_received_bytes_total = 0;
             int num_received_bytes = recvfrom(file_descr_, receive_buffer_, max_buffer_size, 0, (struct sockaddr *)&claddr, &client_len);
-            num_received_bytes_total += num_received_bytes;
 
             if (num_received_bytes < 0)
             {
                 throw std::runtime_error("recvfrom returned error!");
             }
+
+            num_received_bytes_total += num_received_bytes;
 
             uint64_t num_expected_bytes;
             std::memcpy(&num_expected_bytes, &(receive_buffer_[sizeof(uint64_t) + 1]), sizeof(uint64_t));
