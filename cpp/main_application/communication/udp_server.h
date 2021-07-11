@@ -27,7 +27,7 @@
 #include <stdexcept>
 
 #include "dvs.h"
-#include "received_data.h"
+#include "communication/received_data.h"
 
 class UdpServer
 {

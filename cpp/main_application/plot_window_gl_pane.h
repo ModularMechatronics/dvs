@@ -10,8 +10,8 @@
 #include "plot_data.h"
 #include "opengl_low_level/opengl_header.h"
 #include "dvs.h"
-#include "udp_server.h"
-#include "received_data.h"
+#include "communication/udp_server.h"
+#include "communication/received_data.h"
 #include "gui_element.h"
 #include "view_base.h"
 

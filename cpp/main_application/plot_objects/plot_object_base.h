@@ -8,7 +8,7 @@
 #include <memory>
 #include <map>
 
-#include "received_data.h"
+#include "communication/received_data.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
