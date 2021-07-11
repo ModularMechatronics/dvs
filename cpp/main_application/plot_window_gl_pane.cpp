@@ -201,19 +201,19 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     {
         axes_set_ = true;
 
-        const AxesBounds axes_bnd =
-            hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
-        axes_interactor_->setAxesLimits(Vec2Dd(axes_bnd.lower.x, axes_bnd.lower.y),
-                                        Vec2Dd(axes_bnd.upper.x, axes_bnd.upper.y));
+        const std::pair<Bound3D, Bound3D> axes_bnd =
+            hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<std::pair<Bound3D, Bound3D>>();
+        axes_interactor_->setAxesLimits(Vec2Dd(axes_bnd.first.x, axes_bnd.first.y),
+                                        Vec2Dd(axes_bnd.second.x, axes_bnd.second.y));
     }
     else if (fcn == Function::AXES_3D)
     {
         axes_set_ = true;
 
-        const AxesBounds axes_bnd =
-            hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
-        axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.lower.x, axes_bnd.lower.y, axes_bnd.lower.z),
-                                        Vec3Dd(axes_bnd.upper.x, axes_bnd.upper.y, axes_bnd.upper.z));
+        const std::pair<Bound3D, Bound3D> axes_bnd =
+            hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<std::pair<Bound3D, Bound3D>>();
+        axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
+                                        Vec3Dd(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
     else if (fcn == Function::VIEW)
     {
