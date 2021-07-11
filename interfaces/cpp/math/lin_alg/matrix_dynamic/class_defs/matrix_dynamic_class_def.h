@@ -147,10 +147,7 @@ public:
 
     size_t rows() const;
     size_t cols() const;
-
 };
-
-
 
 }  // namespace dvs
 

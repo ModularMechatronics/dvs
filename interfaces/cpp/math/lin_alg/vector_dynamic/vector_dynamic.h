@@ -11,9 +11,7 @@
 
 namespace dvs
 {
-template <typename T> Vector<T>::Vector() : data_(nullptr), vector_length_(0), is_allocated_(false)
-{
-}
+template <typename T> Vector<T>::Vector() : data_(nullptr), vector_length_(0), is_allocated_(false) {}
 
 template <typename T> Vector<T>::Vector(const size_t vector_length) : is_allocated_(true)
 {
@@ -75,8 +73,7 @@ template <typename T> Vector<T>::~Vector()
     }
 }
 
-template <typename T>
-void Vector<T>::fillBufferWithData(uint8_t* const buffer) const
+template <typename T> void Vector<T>::fillBufferWithData(uint8_t* const buffer) const
 {
     const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
     const size_t num_bytes = vector_length_ * sizeof(T);
@@ -115,9 +112,7 @@ template <typename T> Vector<T>& Vector<T>::operator=(const Vector<T>& v)
     return *this;
 }
 
-template <typename T>
-template <typename Y>
-Vector<T>::Vector(const Vector<Y>& v) : is_allocated_(true)
+template <typename T> template <typename Y> Vector<T>::Vector(const Vector<Y>& v) : is_allocated_(true)
 {
     vector_length_ = v.size();
 
@@ -301,12 +296,9 @@ template <typename T> const T& Vector<T>::operator()(const EndIndex& end_idx) co
     return data_[idx];
 }
 
-template <typename T>
-template <typename Y>
-Vector<T> Vector<T>::operator()(const Vector<Y>& idx_vector) const
+template <typename T> template <typename Y> Vector<T> Vector<T>::operator()(const Vector<Y>& idx_vector) const
 {
-    static_assert(std::is_same<Y, bool>::value || std::is_same<Y, size_t>::value ||
-                      std::is_same<Y, int>::value,
+    static_assert(std::is_same<Y, bool>::value || std::is_same<Y, size_t>::value || std::is_same<Y, int>::value,
                   "You must use either integer or boolean for indexing type!");
     std::vector<T> std_vec;
     if (std::is_same<Y, bool>::value)
@@ -542,9 +534,9 @@ template <typename T> T Vector<T>::angleBetweenVectors(const Vector<T>& v) const
 
 template <typename T> bool Vector<T>::all() const
 {
-    for(size_t k = 0; k < vector_length_; k++)
+    for (size_t k = 0; k < vector_length_; k++)
     {
-        if(!(data_[k]))
+        if (!(data_[k]))
         {
             return false;
         }
@@ -1151,8 +1143,7 @@ template <typename T> Vector<T> Vector<T>::vectorBetweenPoints(const Point<T>& e
     return end_point - *this;
 }
 
-template <typename T>
-Vector<T> Vector<T>::normalizedVectorBetweenPoints(const Point<T>& end_point) const
+template <typename T> Vector<T> Vector<T>::normalizedVectorBetweenPoints(const Point<T>& end_point) const
 {
     // "This" is start point
     return (end_point - *this).normalized();
@@ -1207,8 +1198,7 @@ template <typename T> T Vector<T>::sum() const
     return s;
 }
 
-template <typename Y>
-void fillWithPtr(Vector<Y>& v, const void* const ptr, const size_t vector_length)
+template <typename Y> void fillWithPtr(Vector<Y>& v, const void* const ptr, const size_t vector_length)
 {
     v.is_allocated_ = true;
     v.vector_length_ = vector_length;

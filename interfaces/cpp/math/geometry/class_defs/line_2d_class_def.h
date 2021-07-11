@@ -33,8 +33,7 @@ template <typename T> struct HomogeneousLine2D
     bool isOnNormalVectorSide(const Point2D<T>& p) const;
     HomogeneousLine2D<T> calculateLineRotatedAroundPoint(const Point2D<T>& p, const T angle) const;
     HomogeneousLine2D<T> translatedLine(const Vec2D<T>& v) const;
-    std::pair<Point2D<T>, Vec2D<T>> projectPointAndVectorOntoLine(const Point2D<T>& p,
-                                                                  const Vec2D<T>& v) const;
+    std::pair<Point2D<T>, Vec2D<T>> projectPointAndVectorOntoLine(const Point2D<T>& p, const Vec2D<T>& v) const;
     T angleBetweenLines(const HomogeneousLine2D<T>& line) const;
 };
 

@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "logging.h"
-#include "math/lin_alg.h"
 #include "math/coordinates/class_defs/complex_class_def.h"
+#include "math/lin_alg.h"
 
 // Reference: https://github.com/N1ckK/MandelbrotZoom/blob/master/complex.h
 
@@ -56,21 +56,17 @@ template <typename T> ComplexCoord<T> operator*(const T f, const ComplexCoord<T>
     return ComplexCoord<T>(f * c.real, f * c.imag);
 }
 
-template <typename T>
-ComplexCoord<T> operator*(const ComplexCoord<T>& c0, const ComplexCoord<T>& c1)
+template <typename T> ComplexCoord<T> operator*(const ComplexCoord<T>& c0, const ComplexCoord<T>& c1)
 {
-    return ComplexCoord<T>(c0.real * c1.real - c0.imag * c1.imag,
-                           c0.real * c1.imag + c0.imag * c1.real);
+    return ComplexCoord<T>(c0.real * c1.real - c0.imag * c1.imag, c0.real * c1.imag + c0.imag * c1.real);
 }
 
-template <typename T>
-ComplexCoord<T> operator+(const ComplexCoord<T>& c0, const ComplexCoord<T>& c1)
+template <typename T> ComplexCoord<T> operator+(const ComplexCoord<T>& c0, const ComplexCoord<T>& c1)
 {
     return ComplexCoord<T>(c0.real + c1.real, c0.imag + c1.imag);
 }
 
-template <typename T>
-ComplexCoord<T> operator-(const ComplexCoord<T>& c0, const ComplexCoord<T>& c1)
+template <typename T> ComplexCoord<T> operator-(const ComplexCoord<T>& c0, const ComplexCoord<T>& c1)
 {
     return ComplexCoord<T>(c0.real - c1.real, c0.imag - c1.imag);
 }
@@ -95,8 +91,7 @@ template <typename T> T pow(const ComplexCoord<T>& c, int n)
     }
 }
 
-template <typename T>
-ComplexCoord<T> operator/(const ComplexCoord<T>& c0, const ComplexCoord<T>& c1)
+template <typename T> ComplexCoord<T> operator/(const ComplexCoord<T>& c0, const ComplexCoord<T>& c1)
 {
     return c0 * c1.inv();
 }

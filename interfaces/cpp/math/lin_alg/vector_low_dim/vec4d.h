@@ -51,16 +51,13 @@ template <typename T> T Vec4D<T>::norm() const
 
 template <typename T> Vec4D<T> Vec4D<T>::elementWiseMultiply(const Vec4D<T>& factor_vector) const
 {
-    return Vec4D<T>(
-        x * factor_vector.x, y * factor_vector.y, z * factor_vector.z, w * factor_vector.w);
+    return Vec4D<T>(x * factor_vector.x, y * factor_vector.y, z * factor_vector.z, w * factor_vector.w);
 }
 
 template <typename T> Vec4D<T> Vec4D<T>::elementWiseDivide(const Vec4D<T>& denominator_vector) const
 {
-    return Vec4D<T>(x / denominator_vector.x,
-                    y / denominator_vector.y,
-                    z / denominator_vector.z,
-                    w / denominator_vector.w);
+    return Vec4D<T>(
+        x / denominator_vector.x, y / denominator_vector.y, z / denominator_vector.z, w / denominator_vector.w);
 }
 
 template <typename T> Vec4D<T> Vec4D<T>::vectorBetweenPoints(const Point4D<T>& end_point) const
@@ -69,15 +66,13 @@ template <typename T> Vec4D<T> Vec4D<T>::vectorBetweenPoints(const Point4D<T>& e
     return end_point - *this;
 }
 
-template <typename T>
-Vec4D<T> Vec4D<T>::normalizedVectorBetweenPoints(const Point4D<T>& end_point) const
+template <typename T> Vec4D<T> Vec4D<T>::normalizedVectorBetweenPoints(const Point4D<T>& end_point) const
 {
     // "This" is start point
     return (end_point - *this).normalized();
 }
 
-template <typename T>
-Point4D<T> Vec4D<T>::mirrorPointInThis(const Point4D<T>& point_to_mirror) const
+template <typename T> Point4D<T> Vec4D<T>::mirrorPointInThis(const Point4D<T>& point_to_mirror) const
 {
     // Mirrors "point_to_mirror" in "this"
     return *this - this->vectorBetweenPoints(point_to_mirror);
@@ -189,8 +184,8 @@ template <typename T> Vec4D<T> operator-(const Vec4D<T>& v)
 
 template <typename T> std::ostream& operator<<(std::ostream& os, const Vec4D<T>& v)
 {
-    std::string s = "[ " + std::to_string(v.x) + ", " + std::to_string(v.y) + ", " +
-                    std::to_string(v.z) + ", " + std::to_string(v.w) + " ]";
+    std::string s = "[ " + std::to_string(v.x) + ", " + std::to_string(v.y) + ", " + std::to_string(v.z) + ", " +
+                    std::to_string(v.w) + " ]";
     os << s;
     return os;
 }

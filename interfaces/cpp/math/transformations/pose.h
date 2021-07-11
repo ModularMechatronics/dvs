@@ -67,8 +67,7 @@ template <typename T> void PoseSE3<T>::invert() {}
 
 // Non class functions
 template <typename T>
-Matrix<T> poseMatrixFromMatrixAndVector(const Matrix<T>& rotation_matrix,
-                                        const Vec3D<T>& translation_vector)
+Matrix<T> poseMatrixFromMatrixAndVector(const Matrix<T>& rotation_matrix, const Vec3D<T>& translation_vector)
 {
     Matrix<T> pose_matrix(4, 4);
     for (int r = 0; r < 3; r++)

@@ -3,11 +3,11 @@
 
 #include <cmath>
 
-#include "math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic_class_def.h"
 #include "logging.h"
+#include "math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic_class_def.h"
 #include "math/misc/math_macros.h"
-#include "math/structures/index_span.h"
 #include "math/structures/end_index.h"
+#include "math/structures/index_span.h"
 
 namespace dvs
 {
@@ -56,9 +56,7 @@ template <typename T> Matrix<T>::Matrix(Matrix<T>&& m)
     m.setInternalData(nullptr, 0, 0);
 }
 
-template <typename T>
-template <typename Y>
-Matrix<T>::Matrix(const Matrix<Y>& m) : is_allocated_(true)
+template <typename T> template <typename Y> Matrix<T>::Matrix(const Matrix<Y>& m) : is_allocated_(true)
 {
     PT_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
     num_rows_ = m.rows();
@@ -74,8 +72,7 @@ Matrix<T>::Matrix(const Matrix<Y>& m) : is_allocated_(true)
     }
 }
 
-template <typename T>
-void Matrix<T>::fillBufferWithData(uint8_t* const buffer) const
+template <typename T> void Matrix<T>::fillBufferWithData(uint8_t* const buffer) const
 {
     const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
     const size_t num_bytes = num_rows_ * num_cols_ * sizeof(T);
@@ -188,13 +185,9 @@ template <typename T> Matrix<T> rotationMatrix2D(const T angle)
     return rotation_matrix;
 }
 
-template <typename T>
-Matrix<T>::Matrix() : data_(nullptr), num_rows_(0), num_cols_(0), is_allocated_(false)
-{
-}
+template <typename T> Matrix<T>::Matrix() : data_(nullptr), num_rows_(0), num_cols_(0), is_allocated_(false) {}
 
-template <typename T>
-Matrix<T>::Matrix(const size_t num_rows, const size_t num_cols) : is_allocated_(true)
+template <typename T> Matrix<T>::Matrix(const size_t num_rows, const size_t num_cols) : is_allocated_(true)
 {
     num_rows_ = num_rows;
     num_cols_ = num_cols;
@@ -250,8 +243,7 @@ template <typename T> Matrix<T>::Matrix(const std::vector<std::vector<T>>& vm)
 
     for (size_t r = 0; r < vm.size(); r++)
     {
-        PT_ASSERT(vm[0].size() == vm[r].size())
-            << "All row vectors in input std vectors do not have the same size!";
+        PT_ASSERT(vm[0].size() == vm[r].size()) << "All row vectors in input std vectors do not have the same size!";
     }
 
     num_rows_ = vm.size();
@@ -303,8 +295,7 @@ template <typename T> void Matrix<T>::switchRows(size_t r0, size_t r1)
     assert(r0 < num_rows_ && r1 < num_rows_);
     if (r0 == r1)
     {
-        std::cout << "WARNING: When calling \"switchRows\", you tried to switch a row with itself!"
-                  << std::endl;
+        std::cout << "WARNING: When calling \"switchRows\", you tried to switch a row with itself!" << std::endl;
     }
 
     T tmp_var;
@@ -321,9 +312,7 @@ template <typename T> void Matrix<T>::switchColumns(size_t c0, size_t c1)
     assert(c0 < num_cols_ && c1 < num_cols_);
     if (c0 == c1)
     {
-        std::cout
-            << "WARNING: When calling \"swithCols\", you tried to switch a column with itself!"
-            << std::endl;
+        std::cout << "WARNING: When calling \"swithCols\", you tried to switch a column with itself!" << std::endl;
     }
 
     T tmp_var;
@@ -335,8 +324,7 @@ template <typename T> void Matrix<T>::switchColumns(size_t c0, size_t c1)
     }
 }
 
-template <typename T>
-void Matrix<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
+template <typename T> void Matrix<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
 {
     if (input_ptr == nullptr)
     {
@@ -486,40 +474,33 @@ template <typename T> const T& Matrix<T>::operator()(const size_t r, const size_
 
 template <typename T> T& Matrix<T>::operator()(const EndIndex& row_end_idx, const size_t c)
 {
-    const size_t row_idx =
-        static_cast<size_t>(static_cast<int>(num_rows_) - 1 + row_end_idx.offset);
+    const size_t row_idx = static_cast<size_t>(static_cast<int>(num_rows_) - 1 + row_end_idx.offset);
     assert((row_idx < num_rows_) && is_allocated_);
     return data_[row_idx * num_cols_ + c];
 }
 
-template <typename T>
-const T& Matrix<T>::operator()(const EndIndex& row_end_idx, const size_t c) const
+template <typename T> const T& Matrix<T>::operator()(const EndIndex& row_end_idx, const size_t c) const
 {
-    const size_t row_idx =
-        static_cast<size_t>(static_cast<int>(num_rows_) - 1 + row_end_idx.offset);
+    const size_t row_idx = static_cast<size_t>(static_cast<int>(num_rows_) - 1 + row_end_idx.offset);
     assert((row_idx < num_rows_) && is_allocated_);
     return data_[row_idx * num_cols_ + c];
 }
 
 template <typename T> T& Matrix<T>::operator()(const size_t r, const EndIndex& col_end_idx)
 {
-    const size_t col_idx =
-        static_cast<size_t>(static_cast<int>(num_cols_) - 1 + col_end_idx.offset);
+    const size_t col_idx = static_cast<size_t>(static_cast<int>(num_cols_) - 1 + col_end_idx.offset);
     assert((col_idx < num_cols_) && is_allocated_);
     return data_[r * num_cols_ + col_idx];
 }
 
-template <typename T>
-const T& Matrix<T>::operator()(const size_t r, const EndIndex& col_end_idx) const
+template <typename T> const T& Matrix<T>::operator()(const size_t r, const EndIndex& col_end_idx) const
 {
-    const size_t col_idx =
-        static_cast<size_t>(static_cast<int>(num_cols_) - 1 + col_end_idx.offset);
+    const size_t col_idx = static_cast<size_t>(static_cast<int>(num_cols_) - 1 + col_end_idx.offset);
     assert((col_idx < num_cols_) && is_allocated_);
     return data_[r * num_cols_ + col_idx];
 }
 
-template <typename T>
-Matrix<T>& Matrix<T>::operator=(const MatrixView<T>& mv)
+template <typename T> Matrix<T>& Matrix<T>::operator=(const MatrixView<T>& mv)
 {
     if (is_allocated_)
     {
@@ -542,36 +523,31 @@ Matrix<T>& Matrix<T>::operator=(const MatrixView<T>& mv)
     return *this;
 }
 
-template <typename T>
-T& MatrixView<T>::operator()(const size_t r, const size_t c)
+template <typename T> T& MatrixView<T>::operator()(const size_t r, const size_t c)
 {
     const size_t idx = start_idx_ + num_cols_parent_ * r + c;
 
     return data_[idx];
 }
 
-template <typename T>
-const T& MatrixView<T>::operator()(const size_t r, const size_t c) const
+template <typename T> const T& MatrixView<T>::operator()(const size_t r, const size_t c) const
 {
     const size_t idx = start_idx_ + num_cols_parent_ * r + c;
 
     return data_[idx];
 }
 
-template <typename T>
-size_t MatrixView<T>::rows() const
+template <typename T> size_t MatrixView<T>::rows() const
 {
     return num_rows_;
 }
 
-template <typename T>
-size_t MatrixView<T>::cols() const
+template <typename T> size_t MatrixView<T>::cols() const
 {
     return num_cols_;
 }
 
-template <typename T>
-Matrix<T>::Matrix(const MatrixView<T>& mv)
+template <typename T> Matrix<T>::Matrix(const MatrixView<T>& mv)
 {
     is_allocated_ = true;
     num_rows_ = mv.rows();
@@ -587,8 +563,7 @@ Matrix<T>::Matrix(const MatrixView<T>& mv)
     }
 }
 
-template <typename T>
-MatrixView<T>::MatrixView(const MatrixView<T>& m)
+template <typename T> MatrixView<T>::MatrixView(const MatrixView<T>& m)
 {
     data_ = m.data_;
     num_rows_parent_ = m.num_rows_parent_;
@@ -600,8 +575,7 @@ MatrixView<T>::MatrixView(const MatrixView<T>& m)
     start_idx_ = m.start_idx_;
 }
 
-template <typename T>
-MatrixView<T>& MatrixView<T>::operator=(const MatrixView<T>& other)
+template <typename T> MatrixView<T>& MatrixView<T>::operator=(const MatrixView<T>& other)
 {
     for (size_t r = 0; r < num_rows_; r++)
     {
@@ -617,12 +591,12 @@ MatrixView<T>& MatrixView<T>::operator=(const MatrixView<T>& other)
 
 template <typename T>
 MatrixView<T>::MatrixView(T* data,
-               const size_t start_row,
-               const size_t start_col,
-               const size_t num_rows_parent,
-               const size_t num_cols_parent,
-               const size_t num_rows,
-               const size_t num_cols)
+                          const size_t start_row,
+                          const size_t start_col,
+                          const size_t num_rows_parent,
+                          const size_t num_cols_parent,
+                          const size_t num_rows,
+                          const size_t num_cols)
 {
     data_ = data;
     start_row_ = start_row;
@@ -662,54 +636,30 @@ MatrixView<T> Matrix<T>::operator()(const AllIndices& all_indices, const IndexSp
 {
     static_cast<void>(all_indices);
     assert(col_idx_span.to <= num_cols_);
-    return MatrixView<T>(data_,
-                         0,
-                         col_idx_span.from,
-                         num_rows_,
-                         num_cols_,
-                         num_rows_,
-                         col_idx_span.to - col_idx_span.from);
+    return MatrixView<T>(
+        data_, 0, col_idx_span.from, num_rows_, num_cols_, num_rows_, col_idx_span.to - col_idx_span.from);
 }
 template <typename T>
 MatrixView<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const AllIndices& all_indices) const
 {
     static_cast<void>(all_indices);
     assert(row_idx_span.to <= num_rows_);
-    return MatrixView<T>(data_,
-                         row_idx_span.from,
-                         0,
-                         num_rows_,
-                         num_cols_,
-                         row_idx_span.to - row_idx_span.from,
-                         num_cols_);
+    return MatrixView<T>(
+        data_, row_idx_span.from, 0, num_rows_, num_cols_, row_idx_span.to - row_idx_span.from, num_cols_);
 }
 
-template <typename T>
-MatrixView<T> Matrix<T>::operator()(const AllIndices& all_indices, const size_t col) const
+template <typename T> MatrixView<T> Matrix<T>::operator()(const AllIndices& all_indices, const size_t col) const
 {
     static_cast<void>(all_indices);
     assert(col < num_cols_);
-    return MatrixView<T>(data_,
-                         0,
-                         col,
-                         num_rows_,
-                         num_cols_,
-                         num_rows_,
-                         1);
+    return MatrixView<T>(data_, 0, col, num_rows_, num_cols_, num_rows_, 1);
 }
 
-template <typename T>
-MatrixView<T> Matrix<T>::operator()(const size_t row, const AllIndices& all_indices) const
+template <typename T> MatrixView<T> Matrix<T>::operator()(const size_t row, const AllIndices& all_indices) const
 {
     static_cast<void>(all_indices);
     assert(row <= num_rows_);
-    return MatrixView<T>(data_,
-                         row,
-                         0,
-                         num_rows_,
-                         num_cols_,
-                         1,
-                         num_cols_);
+    return MatrixView<T>(data_, row, 0, num_rows_, num_cols_, 1, num_cols_);
 }
 
 template <typename T>
@@ -726,8 +676,7 @@ MatrixView<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const IndexSp
                          col_idx_span.to - col_idx_span.from);
 }
 
-template <typename T>
-Matrix<T> Matrix<T>::operator()(const size_t row, const IndexSpan& col_idx_span) const
+template <typename T> Matrix<T> Matrix<T>::operator()(const size_t row, const IndexSpan& col_idx_span) const
 {
     const size_t new_vec_length = col_idx_span.to - col_idx_span.from + 1;
 
@@ -743,8 +692,7 @@ Matrix<T> Matrix<T>::operator()(const size_t row, const IndexSpan& col_idx_span)
     return mat;
 }
 
-template <typename T>
-Matrix<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const size_t col) const
+template <typename T> Matrix<T> Matrix<T>::operator()(const IndexSpan& row_idx_span, const size_t col) const
 {
     const size_t new_vec_length = row_idx_span.to - row_idx_span.from + 1;
 
@@ -1153,8 +1101,7 @@ template <typename T> void Matrix<T>::removeColsAtIndices(const IndexSpan& idx_s
         {
             if (current_col_idx < idx_span.from || current_col_idx > idx_span.to)
             {
-                temp_data[current_col_idx * (num_cols_ - num_cols_to_remove) + c] =
-                    data_[r * num_cols_ + c];
+                temp_data[current_col_idx * (num_cols_ - num_cols_to_remove) + c] = data_[r * num_cols_ + c];
                 current_col_idx++;
             }
         }
@@ -1515,8 +1462,7 @@ template <typename T> Matrix<T> Matrix<T>::sumAlongCols() const
     return mres;
 }
 
-template <typename T>
-Matrix<T> uniqueMatrix(const size_t rows, const size_t cols, const T offset = 0.0)
+template <typename T> Matrix<T> uniqueMatrix(const size_t rows, const size_t cols, const T offset = 0.0)
 {
     Matrix<T> mres(rows, cols);
     for (size_t r = 0; r < rows; r++)

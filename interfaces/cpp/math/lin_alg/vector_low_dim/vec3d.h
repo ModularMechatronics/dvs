@@ -73,8 +73,7 @@ template <typename T> Vec3D<T> Vec3D<T>::vectorBetweenPoints(const Point3D<T>& e
     return end_point - *this;
 }
 
-template <typename T>
-Vec3D<T> Vec3D<T>::normalizedVectorBetweenPoints(const Point3D<T>& end_point) const
+template <typename T> Vec3D<T> Vec3D<T>::normalizedVectorBetweenPoints(const Point3D<T>& end_point) const
 {
     // "This" is start point
     return (end_point - *this).normalized();
@@ -107,8 +106,7 @@ template <typename T> Vec3D<T> Vec3D<T>::crossProduct(const Vec3D<T>& right_vect
                     x * right_vector.y - y * right_vector.x);
 }
 
-template <typename T>
-Point3D<T> Vec3D<T>::mirrorPointInThis(const Point3D<T>& point_to_mirror) const
+template <typename T> Point3D<T> Vec3D<T>::mirrorPointInThis(const Point3D<T>& point_to_mirror) const
 {
     // Mirrors "point_to_mirror" in "this"
     return *this - this->vectorBetweenPoints(point_to_mirror);
@@ -223,8 +221,7 @@ template <typename T> Vec3D<T> operator-(const Vec3D<T>& v)
 
 template <typename T> std::ostream& operator<<(std::ostream& os, const Vec3D<T>& v)
 {
-    std::string s =
-        "[ " + std::to_string(v.x) + ", " + std::to_string(v.y) + ", " + std::to_string(v.z) + " ]";
+    std::string s = "[ " + std::to_string(v.x) + ", " + std::to_string(v.y) + ", " + std::to_string(v.z) + " ]";
     os << s;
     return os;
 }

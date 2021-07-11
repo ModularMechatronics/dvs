@@ -77,14 +77,12 @@ template <typename T> Matrix<T> AxisAngle<T>::toRotationMatrix() const
     AxisAngle<T> normalized_axis_angle = normalized();
 
     const Matrix<T> k_matrix =
-        Vec3D<T>(normalized_axis_angle.x, normalized_axis_angle.y, normalized_axis_angle.z)
-            .toCrossProductMatrix();
+        Vec3D<T>(normalized_axis_angle.x, normalized_axis_angle.y, normalized_axis_angle.z).toCrossProductMatrix();
 
     const Matrix<T> unit_matrix = unitMatrix<T>(3, 3);
 
-    const Matrix<T> rotation_matrix =
-        unit_matrix + std::sin(normalized_axis_angle.phi) * k_matrix +
-        (1.0 - std::cos(normalized_axis_angle.phi)) * k_matrix * k_matrix;
+    const Matrix<T> rotation_matrix = unit_matrix + std::sin(normalized_axis_angle.phi) * k_matrix +
+                                      (1.0 - std::cos(normalized_axis_angle.phi)) * k_matrix * k_matrix;
 
     return rotation_matrix;
 }

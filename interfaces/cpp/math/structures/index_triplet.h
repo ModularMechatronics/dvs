@@ -5,7 +5,6 @@
 
 namespace dvs
 {
-
 struct IndexTriplet
 {
     uint32_t i0;
@@ -19,9 +18,8 @@ struct IndexTriplet
         i1 = i1_;
         i2 = i2_;
     }
-
 };
 
-}
+}  // namespace dvs
 
 #endif

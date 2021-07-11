@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "logging.h"
-#include "math/lin_alg.h"
 #include "math/geometry/class_defs/circle_class_def.h"
+#include "math/lin_alg.h"
 
 namespace dvs
 {
@@ -36,8 +36,7 @@ template <typename T> HomogeneousLine2D<T> Circle2D<T>::tangentLine(const T angl
     const Point2D<T> perimiter_point = radius * Point2D<T>(std::cos(angle), std::sin(angle));
     const Vec2D<T> center_to_perimiter_vector = center.vectorBetweenPoints(perimiter_point);
 
-    HomogeneousLine2D<T> line =
-        HomogeneousLine2D<T>(center_to_perimiter_vector.x, center_to_perimiter_vector.y, 0);
+    HomogeneousLine2D<T> line = HomogeneousLine2D<T>(center_to_perimiter_vector.x, center_to_perimiter_vector.y, 0);
     line.c = -(line.a * perimiter_point.x + line.b * perimiter_point.y);
 
     return line;
@@ -56,16 +55,14 @@ template <typename T> bool Circle2D<T>::doesLineIntersect(const HomogeneousLine2
     }
 }
 
-template <typename T>
-Point2D<T> Circle2D<T>::closestPointOnPerimeterFromPoint(const Point2D<T>& p) const
+template <typename T> Point2D<T> Circle2D<T>::closestPointOnPerimeterFromPoint(const Point2D<T>& p) const
 {
     const Vec2D<T> center_to_point_vector = center.normalizedVectorBetweenPoints(p);
     return center + radius * center_to_point_vector;
 }
 
 template <typename T>
-std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::lineIntersectionPoints(
-    const HomogeneousLine2D<T>& line) const
+std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::lineIntersectionPoints(const HomogeneousLine2D<T>& line) const
 {
     // Derived using
     // E1 = cy - sqrt(r^2 - (x - cx)^2) == -(a*x + c)/b
@@ -94,18 +91,16 @@ std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::lineIntersectionPoints(
         // 2*b*c*cy
         // - c^2)^(1/2) - b^2*cx + a*b*cy)/(a^2 + b^2);
         // TODO: Check content of sqrt() to make sure it isn't negative
-        const T x0 =
-            -(a * c +
-              b * std::sqrt(-a2 * cx2 + a2 * r2 - 2.0f * a * b * cx * cy - 2.0f * a * c * cx -
-                            b2 * cy2 + b2 * r2 - 2.0f * b * c * cy - c2) -
-              b2 * cx + a * b * cy) /
-            a2b2;
-        const T x1 =
-            -(a * c -
-              b * std::sqrt(-a2 * cx2 + a2 * r2 - 2.0f * a * b * cx * cy - 2.0f * a * c * cx -
-                            b2 * cy2 + b2 * r2 - 2.0f * b * c * cy - c2) -
-              b2 * cx + a * b * cy) /
-            a2b2;
+        const T x0 = -(a * c +
+                       b * std::sqrt(-a2 * cx2 + a2 * r2 - 2.0f * a * b * cx * cy - 2.0f * a * c * cx - b2 * cy2 +
+                                     b2 * r2 - 2.0f * b * c * cy - c2) -
+                       b2 * cx + a * b * cy) /
+                     a2b2;
+        const T x1 = -(a * c -
+                       b * std::sqrt(-a2 * cx2 + a2 * r2 - 2.0f * a * b * cx * cy - 2.0f * a * c * cx - b2 * cy2 +
+                                     b2 * r2 - 2.0f * b * c * cy - c2) -
+                       b2 * cx + a * b * cy) /
+                     a2b2;
         return_points.first = Point2D<T>(x0, line.evalX(x0));
         return_points.second = Point2D<T>(x1, line.evalX(x1));
     }
@@ -144,8 +139,7 @@ template <typename T> bool Circle2D<T>::doesCircleIntersect(const Circle2D<T>& c
     }
 }
 
-template <typename T>
-std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::circleIntersection(const Circle2D<T>& circle) const
+template <typename T> std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::circleIntersection(const Circle2D<T>& circle) const
 {
     if (!doesCircleIntersect(circle))
     {
@@ -160,67 +154,59 @@ std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::circleIntersection(const Circle2D
 
         const Point2D<T> s0, s1;
 
-        s0.x =
-            (c0.x * c0.y * c0.y - c0.x * c0.x * c1.x - c0.x * c1.x * c1.x + c0.x * c1.y * c1.y +
-                 c1.x * c0.y * c0.y + c1.x * c1.y * c1.y - c0.x * r0 * r0 + c0.x * r1 * r1 +
-                 c1.x * r0 * r0 - c1.x * r1 * r1 + c0.x * c0.x * c0.x + c1.x * c1.x * c1.x -
-                 c0.y * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y +
-                          2.0 * c0.y * c1.y - c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
-                         (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                          2.0 * c0.y * c1.y + c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
-             0.5 + c1.y * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y +
-                            2.0 * c0.y * c1.y - c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
-                           (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                            2.0 * c0.y * c1.y + c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
-             0.5 - 2.0 * c0.x * c0.y * c1.y - 2.0 * c1.x * c0.y * c1.y) /
-            (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                    2.0 * c0.y * c1.y + c1.y * c1.y));
-        s1.x =
-            (c0.x * c0.y * c0.y - c0.x * c0.x * c1.x - c0.x * c1.x * c1.x + c0.x * c1.y * c1.y +
-                 c1.x * c0.y * c0.y + c1.x * c1.y * c1.y - c0.x * r0 * r0 + c0.x * r1 * r1 +
-                 c1.x * r0 * r0 - c1.x * r1 * r1 + c0.x * c0.x * c0.x + c1.x * c1.x * c1.x +
-                 c0.y * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y +
-                          2.0 * c0.y * c1.y - c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
-                         (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                          2.0 * c0.y * c1.y + c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
-             0.5 - c1.y * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y +
-                            2.0 * c0.y * c1.y - c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
-                           (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                            2.0 * c0.y * c1.y + c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
-             0.5 - 2.0 * c0.x * c0.y * c1.y - 2.0 * c1.x * c0.y * c1.y) /
-            (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                    2.0 * c0.y * c1.y + c1.y * c1.y));
+        s0.x = (c0.x * c0.y * c0.y - c0.x * c0.x * c1.x - c0.x * c1.x * c1.x + c0.x * c1.y * c1.y + c1.x * c0.y * c0.y +
+                    c1.x * c1.y * c1.y - c0.x * r0 * r0 + c0.x * r1 * r1 + c1.x * r0 * r0 - c1.x * r1 * r1 +
+                    c0.x * c0.x * c0.x + c1.x * c1.x * c1.x -
+                    c0.y * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y + 2.0 * c0.y * c1.y -
+                             c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
+                            (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y +
+                             c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
+                0.5 + c1.y * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y + 2.0 * c0.y * c1.y -
+                               c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
+                              (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y +
+                               c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
+                0.5 - 2.0 * c0.x * c0.y * c1.y - 2.0 * c1.x * c0.y * c1.y) /
+               (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y + c1.y * c1.y));
+        s1.x = (c0.x * c0.y * c0.y - c0.x * c0.x * c1.x - c0.x * c1.x * c1.x + c0.x * c1.y * c1.y + c1.x * c0.y * c0.y +
+                    c1.x * c1.y * c1.y - c0.x * r0 * r0 + c0.x * r1 * r1 + c1.x * r0 * r0 - c1.x * r1 * r1 +
+                    c0.x * c0.x * c0.x + c1.x * c1.x * c1.x +
+                    c0.y * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y + 2.0 * c0.y * c1.y -
+                             c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
+                            (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y +
+                             c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
+                0.5 - c1.y * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y + 2.0 * c0.y * c1.y -
+                               c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
+                              (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y +
+                               c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
+                0.5 - 2.0 * c0.x * c0.y * c1.y - 2.0 * c1.x * c0.y * c1.y) /
+               (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y + c1.y * c1.y));
 
-        s0.y =
-            (c0.x * c0.x * c0.y + c0.x * c0.x * c1.y + c1.x * c1.x * c0.y + c1.x * c1.x * c1.y -
-                 c0.y * c1.y * c1.y - c0.y * c0.y * c1.y - c0.y * r0 * r0 + c0.y * r1 * r1 +
-                 c1.y * r0 * r0 - c1.y * r1 * r1 + c0.y * c0.y * c0.y + c1.y * c1.y * c1.y +
-                 c0.x * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y +
-                          2.0 * c0.y * c1.y - c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
-                         (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                          2.0 * c0.y * c1.y + c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
-             0.5 - c1.x * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y +
-                            2.0 * c0.y * c1.y - c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
-                           (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                            2.0 * c0.y * c1.y + c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
-             0.5 - 2.0 * c0.x * c1.x * c0.y - 2.0 * c0.x * c1.x * c1.y) /
-            (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                    2.0 * c0.y * c1.y + c1.y * c1.y));
-        s1.y =
-            (c0.x * c0.x * c0.y + c0.x * c0.x * c1.y + c1.x * c1.x * c0.y + c1.x * c1.x * c1.y -
-                 c0.y * c1.y * c1.y - c0.y * c0.y * c1.y - c0.y * r0 * r0 + c0.y * r1 * r1 +
-                 c1.y * r0 * r0 - c1.y * r1 * r1 + c0.y * c0.y * c0.y + c1.y * c1.y * c1.y -
-                 c0.x * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y +
-                          2.0 * c0.y * c1.y - c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
-                         (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                          2.0 * c0.y * c1.y + c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
-             0.5 + c1.x * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y +
-                            2.0 * c0.y * c1.y - c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
-                           (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                            2.0 * c0.y * c1.y + c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
-             0.5 - 2.0 * c0.x * c1.x * c0.y - 2.0 * c0.x * c1.x * c1.y) /
-            (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y -
-                    2.0 * c0.y * c1.y + c1.y * c1.y));
+        s0.y = (c0.x * c0.x * c0.y + c0.x * c0.x * c1.y + c1.x * c1.x * c0.y + c1.x * c1.x * c1.y - c0.y * c1.y * c1.y -
+                    c0.y * c0.y * c1.y - c0.y * r0 * r0 + c0.y * r1 * r1 + c1.y * r0 * r0 - c1.y * r1 * r1 +
+                    c0.y * c0.y * c0.y + c1.y * c1.y * c1.y +
+                    c0.x * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y + 2.0 * c0.y * c1.y -
+                             c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
+                            (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y +
+                             c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
+                0.5 - c1.x * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y + 2.0 * c0.y * c1.y -
+                               c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
+                              (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y +
+                               c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
+                0.5 - 2.0 * c0.x * c1.x * c0.y - 2.0 * c0.x * c1.x * c1.y) /
+               (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y + c1.y * c1.y));
+        s1.y = (c0.x * c0.x * c0.y + c0.x * c0.x * c1.y + c1.x * c1.x * c0.y + c1.x * c1.x * c1.y - c0.y * c1.y * c1.y -
+                    c0.y * c0.y * c1.y - c0.y * r0 * r0 + c0.y * r1 * r1 + c1.y * r0 * r0 - c1.y * r1 * r1 +
+                    c0.y * c0.y * c0.y + c1.y * c1.y * c1.y -
+                    c0.x * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y + 2.0 * c0.y * c1.y -
+                             c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
+                            (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y +
+                             c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
+                0.5 + c1.x * ((-c0.x * c0.x + 2.0 * c0.x * c1.x - c1.x * c1.x - c0.y * c0.y + 2.0 * c0.y * c1.y -
+                               c1.y * c1.y + r0 * r0 + 2.0 * r0 * r1 + r1 * r1) *
+                              (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y +
+                               c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
+                0.5 - 2.0 * c0.x * c1.x * c0.y - 2.0 * c0.x * c1.x * c1.y) /
+               (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y + c1.y * c1.y));
         return std::pair<Point2D<T>, Point2D<T>>(s0, s1);
     }
 }
@@ -230,8 +216,7 @@ std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::circleIntersection(const Circle2D
 /* **************************************************************** */
 
 template <typename T>
-Circle3D<T>::Circle3D(const Vec3D<T>& v_vec_, const Vec3D<T>& center_)
-    : v_vec(v_vec_), center(center_)
+Circle3D<T>::Circle3D(const Vec3D<T>& v_vec_, const Vec3D<T>& center_) : v_vec(v_vec_), center(center_)
 {
     calculateOrthogonalVectors();
 }

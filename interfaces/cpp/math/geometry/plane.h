@@ -6,8 +6,8 @@
 #include <utility>
 
 #include "logging.h"
-#include "math/lin_alg.h"
 #include "math/geometry/class_defs/plane_class_def.h"
+#include "math/lin_alg.h"
 
 namespace dvs
 {
@@ -76,8 +76,7 @@ template <typename T> Vec3D<T> Plane<T>::normalizedNormal() const
 
 template <typename T> Point3D<T> Plane<T>::lineIntersection(const Line3D<T>& line) const
 {
-    const T t =
-        -(d + a * line.px + b * line.py + c * line.pz) / (a * line.vx + b * line.vy + c * line.vz);
+    const T t = -(d + a * line.px + b * line.py + c * line.pz) / (a * line.vx + b * line.vy + c * line.vz);
     return line.eval(t);
 }
 
@@ -118,8 +117,7 @@ template <typename T> Point3D<T> Plane<T>::closestPointOnPlaneFromPoint(const Po
     m(1, 0) = 2.0 * a1 * a / c;
     m(1, 1) = 2.0 + 2.0 * a1 * b / c;
 
-    Vec2D<T> b_vec(2.0 * p.x - 2.0 * a0 * d / c - 2.0 * a0 * p.z,
-                   2.0 * p.y - 2.0 * a1 * d / c - 2.0 * a1 * p.z);
+    Vec2D<T> b_vec(2.0 * p.x - 2.0 * a0 * d / c - 2.0 * a0 * p.z, 2.0 * p.y - 2.0 * a1 * d / c - 2.0 * a1 * p.z);
 
     Point2D<T> sol = m.solve(b_vec);
     return Point2D<T>(sol.x, sol.y, this->evalXY(sol.x, sol.y));
@@ -151,8 +149,7 @@ template <typename T> Plane<T> Plane<T>::translatePlane(const Vec3D<T>& vec) con
     return planeFromThreePoints(p0, p1, p2);
 }
 
-template <typename T>
-Plane<T> planeFromThreePoints(const Point3D<T>& p0, const Point3D<T>& p1, const Point3D<T>& p2)
+template <typename T> Plane<T> planeFromThreePoints(const Point3D<T>& p0, const Point3D<T>& p1, const Point3D<T>& p2)
 {
     Vec3D<T> v10 = p1.normalizedVectorBetweenPoints(p0);
     Vec3D<T> v12 = p1.normalizedVectorBetweenPoints(p2);

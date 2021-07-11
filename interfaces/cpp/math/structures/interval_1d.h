@@ -101,9 +101,7 @@ template <typename T> Interval1D<T> operator/(const Interval1D<T>& interval, con
 }
 
 template <typename T>
-T mapValueToInterval(const T value,
-                     const Interval1D<T>& value_interval,
-                     const Interval1D<T>& target_interval)
+T mapValueToInterval(const T value, const Interval1D<T>& value_interval, const Interval1D<T>& target_interval)
 {
     // 'value' is in [value_interval.from, value_interval.to]
     // map 'value' to [target_interval.from, target_interval.to]
@@ -113,15 +111,12 @@ T mapValueToInterval(const T value,
 }
 
 template <typename T>
-T mapAndClampValueToInterval(const T value,
-                             const Interval1D<T>& value_interval,
-                             const Interval1D<T>& target_interval)
+T mapAndClampValueToInterval(const T value, const Interval1D<T>& value_interval, const Interval1D<T>& target_interval)
 {
     // 'value' is in [value_interval.from, value_interval.to]
     // map 'value' to [target_interval.from, target_interval.to]
     const T mapped_value = (value - value_interval.from) / value_interval.length();
-    const T clamped_value =
-        std::min(std::max(value_interval.from, mapped_value), value_interval.to);
+    const T clamped_value = std::min(std::max(value_interval.from, mapped_value), value_interval.to);
     const T target_value = clamped_value * target_interval.length() + target_interval.from;
     return target_value;
 }
