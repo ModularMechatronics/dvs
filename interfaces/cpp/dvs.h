@@ -587,7 +587,7 @@ inline void axis(const Bound3D& min_bound, const Bound3D& max_bound)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES_3D);
-    hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, AxesBounds(min_bound, max_bound));
+    hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, std::pair<Bound3D, Bound3D>(min_bound, max_bound));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
@@ -599,7 +599,7 @@ inline void axis(const Bound2D& min_bound, const Bound2D& max_bound)
 
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES_2D);
-    hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, AxesBounds(min_bound_3d, max_bound_3d));
+    hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, std::pair<Bound3D, Bound3D>(min_bound_3d, max_bound_3d));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
@@ -627,61 +627,6 @@ inline void hardClearFigure()
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
-
-/*
-
-void drawVoxels(Vector x, Vector y, Vector z)
-void drawVoxels(Vector<Point3D> points, size)
-
-inline void setElementPositionAndSize(const int x, const int y)
-inline void setWindowPositionAndSize(const int x, const int y)
-{
-    TxList tx_list;
-    tx_list.append(Command::FUNCTION, Function::POSITION);
-    tx_list.append(Command::HAS_PAYLOAD, false);
-    tx_list.append(Command::POS2D, Pos2D(x, y));
-
-    sendTxList(tx_list);
-}
-*/
-
-/*inline void figure(const std::string figure_name)
-{
-    TxList tx_list;
-    tx_list.append(Command::FUNCTION, Function::FIGURE_NAME);
-    tx_list.append(Command::HAS_PAYLOAD, false);
-    // tx_list.append(Command::FIGURE_NAME, static_cast<char>(figure_number));
-
-    sendTxList(tx_list);
-}*/
-
-
-/*template <typename... Ts>
-void sendDataInternal(const Ts&... data_to_be_sent)
-{
-
-}
-
-template <typename... Ts>
-void sendData(const Ts&... data_to_be_sent)
-{
-
-}*/
-
-// template <typename T, typename... Us>
-// void rtPlot(const T timestamp, const T value, const uint8_t plot_id, const uint8_t line_id, const Us&... settings)
-
-/*template <typename T, typename... Us>
-void rtPlot(const T value, const uint8_t plot_id, const uint8_t line_id, const Us&... settings)
-{
-
-    // std::vector<Attribute> attributes;
-    // CommandType command_type = CommandType::RT_PLOT;
-    (void)value;
-    (void)plot_id;
-    (void)line_id;
-
-}*/
 
 }
 

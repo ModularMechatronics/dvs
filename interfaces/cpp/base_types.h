@@ -19,15 +19,6 @@ struct Dimension2D
     Dimension2D(const size_t r, const size_t c) : rows(r), cols(c) {}
 };
 
-struct Pos2D
-{
-    int x;
-    int y;
-
-    Pos2D() : x(0), y(0) {}
-    Pos2D(const int x_, const int y_) : x(x_), y(y_) {}
-};
-
 }
 
 struct Bound2D
@@ -47,14 +38,6 @@ struct Bound3D
 
     Bound3D() : x(0), y(0), z(0) {}
     Bound3D(const double x_, const double y_, const double z_) : x(x_), y(y_), z(z_) {}
-};
-
-struct AxesBounds
-{
-    Bound3D lower;
-    Bound3D upper;
-    AxesBounds() : lower(0, 0, 0), upper(0, 0, 0) {}
-    AxesBounds(const Bound3D lower_, const Bound3D upper_) : lower(lower_), upper(upper_) {}
 };
 
 }
