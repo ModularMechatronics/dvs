@@ -51,7 +51,6 @@ find_package(GLUT REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
 # Adding subdirectories
-add_subdirectory(applications/basic_udp)
 add_subdirectory(applications/test_app)
-add_subdirectory(dvs)
+add_subdirectory(test)
 add_subdirectory(main_application)
