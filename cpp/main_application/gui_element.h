@@ -9,7 +9,7 @@
 #include "enumerations.h"
 #include "math/math.h"
 #include "project_settings.h"
-#include "received_data.h"
+#include "communication/received_data.h"
 
 using namespace dvs;
 

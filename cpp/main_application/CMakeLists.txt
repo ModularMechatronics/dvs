@@ -3,8 +3,7 @@ cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 project(main-app)
 
 include_directories(${REPO_DIR}/cpp/main_application)
-include_directories(${REPO_DIR}/cpp/dvs)
-include_directories(${REPO_DIR}/cpp/communication)
+include_directories(${REPO_DIR}/interfaces/cpp)
 
 set(CPP_SOURCE_FILES main.cpp
                      opengl_low_level/3d/opengl_3d_functions.cpp

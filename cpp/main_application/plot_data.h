@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "received_data.h"
+#include "communication/received_data.h"
 #include "opengl_low_level/data_structures.h"
 #include "dvs.h"
 
