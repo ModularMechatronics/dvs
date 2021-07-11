@@ -1,14 +1,12 @@
 #include "main_application/plot_data.h"
 
 #include "math/math.h"
-
-#include "utils.h"
-#include "plot_objects/plot_object_base.h"
-#include "plot_objects/plot_objects.h"
-
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
+#include "plot_objects/plot_object_base.h"
+#include "plot_objects/plot_objects.h"
+#include "utils.h"
 
 PlotDataHandler::PlotDataHandler() {}
 
@@ -71,11 +69,11 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
         case Function::DRAW_TRIANGLES_3D:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTriangles3D(std::move(received_data), hdr)));
             break;
-        
+
         case Function::DRAW_TRIANGLE_3D:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTriangle3D(std::move(received_data), hdr)));
             break;
-        
+
         case Function::DRAW_MESH:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), hdr)));
             break;

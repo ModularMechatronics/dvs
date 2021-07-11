@@ -1,11 +1,11 @@
 #include "axes/axes_painter.h"
 
-#include "math/math.h"
 #include "axes/plot_box/plot_box_coordinate_arrows.h"
 #include "axes/plot_box/plot_box_grid.h"
 #include "axes/plot_box/plot_box_grid_numbers.h"
 #include "axes/plot_box/plot_box_outline.h"
 #include "axes/plot_box/plot_box_walls.h"
+#include "math/math.h"
 #include "misc/misc.h"
 
 using namespace dvs;
@@ -71,7 +71,7 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
     drawAxisNumbers(gv_, axes_limits_, view_angles_, coord_converter_, width_, height_);
 
     printViewAnglesInPlotWindow();
-    if(draw_selected_bb)
+    if (draw_selected_bb)
     {
         drawSelectedSilhouette();
     }
@@ -107,8 +107,7 @@ void AxesPainter::enableClipPlanes() const
 {
     const double f = axes_settings_.getPlotBoxSizeFactor();
 
-    const ViewAngles view_ang(
-        -view_angles_.getAzimuth(), -view_angles_.getElevation(), view_angles_.getAngleLimit());
+    const ViewAngles view_ang(-view_angles_.getAzimuth(), -view_angles_.getElevation(), view_angles_.getAngleLimit());
 
     const Matrixd rot_mat = view_ang.getSnappedRotationMatrix();
 
@@ -137,8 +136,7 @@ void AxesPainter::plotBegin()
     // Must be closed with glPopMatrix()
     // const AxisAngled ax_ang = view_angles_.getSnappedAngleAxis();
     // TODO: Why do angles need to be negated? Because matrix is not popped from drawing plot box?
-    const ViewAngles view_ang(
-        -view_angles_.getAzimuth(), -view_angles_.getElevation(), view_angles_.getAngleLimit());
+    const ViewAngles view_ang(-view_angles_.getAzimuth(), -view_angles_.getElevation(), view_angles_.getAngleLimit());
     const AxisAngled ax_ang = view_ang.getSnappedAngleAxis();
 
     const Vec3Dd s = axes_limits_.getAxesScale();
@@ -202,14 +200,11 @@ void AxesPainter::setWindowSize(const float width, const float height)
 void AxesPainter::printViewAnglesInPlotWindow() const
 {
     setColor(0.0f, 0.0f, 0.0f);
-    putTextAt(
-        "(" + toStringWithNumDecimalPlaces(view_angles_.getSnappedAzimuth() * 180.0 / M_PI, 1) +
-            ", " +
-            toStringWithNumDecimalPlaces(view_angles_.getSnappedElevation() * 180.0 / M_PI, 1) +
-            ")",
-        -0.95,
-        -0.9,
-        width_,
-        height_,
-        100.0f);
+    putTextAt("(" + toStringWithNumDecimalPlaces(view_angles_.getSnappedAzimuth() * 180.0 / M_PI, 1) + ", " +
+                  toStringWithNumDecimalPlaces(view_angles_.getSnappedElevation() * 180.0 / M_PI, 1) + ")",
+              -0.95,
+              -0.9,
+              width_,
+              height_,
+              100.0f);
 }

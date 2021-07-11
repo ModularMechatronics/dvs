@@ -3,34 +3,32 @@
 
 #include <wx/button.h>
 #include <wx/frame.h>
+#include <wx/menu.h>
 #include <wx/notebook.h>
 #include <wx/textctrl.h>
 #include <wx/timer.h>
-#include <wx/menu.h>
 #include <wx/wx.h>
 
+#include <map>
 #include <mutex>
 #include <string>
-#include <map>
 #include <thread>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "project_settings.h"
-#include "gui_element.h"
 #include "events.h"
+#include "gui_element.h"
+#include "project_settings.h"
 
 class SuperBase
 {
 public:
     SuperBase() = default;
     virtual void resetSelectionForAllChildren() = 0;
-
 };
 
-template <class BaseClass>
-class ViewBase : public BaseClass, public SuperBase
+template <class BaseClass> class ViewBase : public BaseClass, public SuperBase
 {
 protected:
     std::string name_;
@@ -64,13 +62,10 @@ public:
     WindowSettings getWindowSettings() const;
 
     virtual void newElement() = 0;
-
 };
 
 template <typename T>
-ViewBase<T>::ViewBase(wxFrame* parent, const WindowSettings& window_settings) : wxFrame(parent,
-              wxID_ANY,
-              "Figure 1")
+ViewBase<T>::ViewBase(wxFrame* parent, const WindowSettings& window_settings) : wxFrame(parent, wxID_ANY, "Figure 1")
 {
     grid_size_ = 5.0f;
     name_ = window_settings.getName();
@@ -104,31 +99,27 @@ ViewBase<T>::ViewBase(wxNotebookPage* parent, const TabSettings& tab_settings) :
     this->Bind(GUI_ELEMENT_CHANGED_EVENT, &ViewBase<T>::childModified, this, wxID_ANY);
 }
 
-template <class BaseClass>
-std::string ViewBase<BaseClass>::getName() const
+template <class BaseClass> std::string ViewBase<BaseClass>::getName() const
 {
     return name_;
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::setName(const std::string& new_name)
+template <class BaseClass> void ViewBase<BaseClass>::setName(const std::string& new_name)
 {
     name_ = new_name;
 }
 
-template <class BaseClass>
-std::map<std::string, GuiElement*> ViewBase<BaseClass>::getGuiElements() const
+template <class BaseClass> std::map<std::string, GuiElement*> ViewBase<BaseClass>::getGuiElements() const
 {
     return gui_elements_;
 }
 
-template <class BaseClass>
-TabSettings ViewBase<BaseClass>::getTabSettings() const
+template <class BaseClass> TabSettings ViewBase<BaseClass>::getTabSettings() const
 {
     TabSettings ts;
     ts.setName(name_);
 
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
         ts.pushBackElementSettings(it.second->getElementSettings());
     }
@@ -136,8 +127,7 @@ TabSettings ViewBase<BaseClass>::getTabSettings() const
     return ts;
 }
 
-template <class BaseClass>
-WindowSettings ViewBase<BaseClass>::getWindowSettings() const
+template <class BaseClass> WindowSettings ViewBase<BaseClass>::getWindowSettings() const
 {
     WindowSettings* wsp = static_cast<WindowSettings*>(settings_);
     WindowSettings ws;
@@ -147,7 +137,7 @@ WindowSettings ViewBase<BaseClass>::getWindowSettings() const
     ws.width = wsp->width;
     ws.height = wsp->height;
 
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
         ws.pushBackElementSettings(it.second->getElementSettings());
     }
@@ -155,12 +145,11 @@ WindowSettings ViewBase<BaseClass>::getWindowSettings() const
     return ws;
 }
 
-template <class BaseClass>
-std::vector<ElementSettings> ViewBase<BaseClass>::getElementSettingsList() const
+template <class BaseClass> std::vector<ElementSettings> ViewBase<BaseClass>::getElementSettingsList() const
 {
     std::vector<ElementSettings> elements;
 
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
         elements.push_back(it.second->getElementSettings());
     }
@@ -168,50 +157,46 @@ std::vector<ElementSettings> ViewBase<BaseClass>::getElementSettingsList() const
     return elements;
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::deleteSelectedElement()
+template <class BaseClass> void ViewBase<BaseClass>::deleteSelectedElement()
 {
     std::string key_to_delete = "";
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
-        if(it.second->isSelected())
+        if (it.second->isSelected())
         {
             key_to_delete = it.first;
         }
     }
 
-    if(key_to_delete != "")
+    if (key_to_delete != "")
     {
         gui_elements_[key_to_delete]->destroy();
         gui_elements_.erase(key_to_delete);
     }
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::resetSelectionForAllChildren()
+template <class BaseClass> void ViewBase<BaseClass>::resetSelectionForAllChildren()
 {
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
         it.second->resetSelection();
         it.second->refresh();
     }
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::setSelectedElementName(const std::string& new_name)
+template <class BaseClass> void ViewBase<BaseClass>::setSelectedElementName(const std::string& new_name)
 {
     name_of_selected_element_ = new_name;
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
-        if(it.second->isSelected())
+        if (it.second->isSelected())
         {
             it.second->setName(new_name);
         }
     }
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::mouseLeftPressed(wxMouseEvent& WXUNUSED(event))
+template <class BaseClass> void ViewBase<BaseClass>::mouseLeftPressed(wxMouseEvent& WXUNUSED(event))
 {
     // Since this event will only be caught if the mouse is pressed outside of an
     // element, we know we can deselect all elements.
@@ -219,22 +204,20 @@ void ViewBase<BaseClass>::mouseLeftPressed(wxMouseEvent& WXUNUSED(event))
     name_of_selected_element_ = "";
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::setFirstElementSelected()
+template <class BaseClass> void ViewBase<BaseClass>::setFirstElementSelected()
 {
-    if(gui_elements_.size() > 0)
+    if (gui_elements_.size() > 0)
     {
         gui_elements_.begin()->second->setSelection();
         gui_elements_.begin()->second->refresh();
     }
 }
 
-template <class BaseClass>
-std::string ViewBase<BaseClass>::getSelectedElementName()
+template <class BaseClass> std::string ViewBase<BaseClass>::getSelectedElementName()
 {
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
-        if(it.second->isSelected())
+        if (it.second->isSelected())
         {
             name_of_selected_element_ = it.second->getName();
         }
@@ -242,8 +225,7 @@ std::string ViewBase<BaseClass>::getSelectedElementName()
     return name_of_selected_element_;
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::childModified(wxCommandEvent& WXUNUSED(event))
+template <class BaseClass> void ViewBase<BaseClass>::childModified(wxCommandEvent& WXUNUSED(event))
 {
     wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
     wxPostEvent(this->GetParent(), parent_event);
@@ -270,35 +252,31 @@ void ViewBase<BaseClass>::newElement()
     gui_elements_[elem.name] = ge;
 }*/
 
-template <class BaseClass>
-void ViewBase<BaseClass>::startEdit()
+template <class BaseClass> void ViewBase<BaseClass>::startEdit()
 {
     is_editing_ = true;
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
         it.second->setIsEditing(true);
     }
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::stopEdit()
+template <class BaseClass> void ViewBase<BaseClass>::stopEdit()
 {
     is_editing_ = false;
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
         it.second->setIsEditing(false);
     }
 }
 
-template <class BaseClass>
-void ViewBase<BaseClass>::setSize(const wxSize& new_size)
+template <class BaseClass> void ViewBase<BaseClass>::setSize(const wxSize& new_size)
 {
     this->SetSize(new_size);
-    for(auto it : gui_elements_)
+    for (auto it : gui_elements_)
     {
         it.second->updateSizeFromParent(new_size);
     }
 }
-
 
 #endif

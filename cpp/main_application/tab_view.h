@@ -3,22 +3,22 @@
 
 #include <wx/button.h>
 #include <wx/frame.h>
+#include <wx/menu.h>
 #include <wx/notebook.h>
 #include <wx/textctrl.h>
 #include <wx/timer.h>
-#include <wx/menu.h>
 #include <wx/wx.h>
 
+#include <map>
 #include <mutex>
 #include <string>
-#include <map>
 #include <thread>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "project_settings.h"
 #include "gui_element.h"
+#include "project_settings.h"
 #include "view_base.h"
 
 class TabView : public ViewBase<wxNotebookPage>

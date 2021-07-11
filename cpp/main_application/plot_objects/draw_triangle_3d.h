@@ -1,16 +1,15 @@
 #ifndef DRAW_TRIANGLE_2D_H_
 #define DRAW_TRIANGLE_2D_H_
 
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
-#include "plot_objects/plot_object_base.h"
+#include "main_application/plot_objects/utils.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
-#include "main_application/plot_objects/utils.h"
+#include "plot_objects/plot_object_base.h"
 
 class DrawTriangle3D : public PlotObjectBase
 {
@@ -33,7 +32,7 @@ public:
 DrawTriangle3D::DrawTriangle3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
-    if(type_ != Function::DRAW_TRIANGLE_3D)
+    if (type_ != Function::DRAW_TRIANGLE_3D)
     {
         throw std::runtime_error("Invalid function type for DrawTriangle3D!");
     }
@@ -79,11 +78,8 @@ void DrawTriangle3D::visualize()
     setLinewidth(line_width_);
     setColor(edge_color_);
     drawTriangleEdge3D(triangle_);
-
 }
 
-DrawTriangle3D::~DrawTriangle3D()
-{
-}
+DrawTriangle3D::~DrawTriangle3D() {}
 
 #endif

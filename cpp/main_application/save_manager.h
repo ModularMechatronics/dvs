@@ -1,9 +1,8 @@
 #ifndef SAVE_MANAGER_H_
 #define SAVE_MANAGER_H_
 
-#include <string>
-
 #include <nlohmann/json.hpp>
+#include <string>
 
 #include "project_settings.h"
 
@@ -57,7 +56,7 @@ public:
 
     std::string getCurrentFileName() const
     {
-        if(!path_is_set_)
+        if (!path_is_set_)
         {
             return "Untitled";
         }
@@ -76,7 +75,7 @@ public:
 
     void save(const ProjectSettings& changed_project_settings)
     {
-        if(changed_project_settings != project_settings_)
+        if (changed_project_settings != project_settings_)
         {
             const nlohmann::json j_to_save = changed_project_settings.toJson();
 
@@ -122,8 +121,6 @@ public:
     {
         return project_settings_;
     }
-
 };
-
 
 #endif

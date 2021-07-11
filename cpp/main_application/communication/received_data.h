@@ -28,26 +28,27 @@ public:
         hdr_ = other.getFunctionHeader();
     }*/
 
-    ReceivedData(const uint8_t* const data, const uint64_t num_received_bytes) : hdr_(&(data[2 * sizeof(uint64_t) + 1]), data[0])
+    ReceivedData(const uint8_t* const data, const uint64_t num_received_bytes)
+        : hdr_(&(data[2 * sizeof(uint64_t) + 1]), data[0])
     {
         const uint64_t idx = hdr_.numBytes() + 2 * sizeof(uint64_t) + 1;
 
         // std::cout << "num_received_bytes: " << num_received_bytes << std::endl;
 
-        if(idx > num_received_bytes)
+        if (idx > num_received_bytes)
         {
             throw std::runtime_error("idx can't be bigger than num_received_bytes");
         }
 
         num_data_bytes_ = num_received_bytes - idx;
-        if(num_data_bytes_ == 0)
+        if (num_data_bytes_ == 0)
         {
             payload_data_ = nullptr;
         }
         else
         {
             payload_data_ = new uint8_t[num_data_bytes_];
-            for(size_t k = 0; k < num_data_bytes_; k++)
+            for (size_t k = 0; k < num_data_bytes_; k++)
             {
                 payload_data_[k] = data[idx + k];
             }

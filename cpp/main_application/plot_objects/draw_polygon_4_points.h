@@ -1,15 +1,14 @@
 #ifndef DRAW_POLYGON_4_POINTS_H_
 #define DRAW_POLYGON_4_POINTS_H_
 
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
-#include "plot_objects/plot_object_base.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
+#include "plot_objects/plot_object_base.h"
 
 class DrawPolygon4Points : public PlotObjectBase
 {
@@ -32,11 +31,10 @@ public:
     void visualize() override;
 };
 
-DrawPolygon4Points::DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data,
-                                       const FunctionHeader& hdr)
+DrawPolygon4Points::DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
-    if(type_ != Function::POLYGON_FROM_4_POINTS)
+    if (type_ != Function::POLYGON_FROM_4_POINTS)
     {
         throw std::runtime_error("Invalid function type for DrawPolygon4Points!");
     }

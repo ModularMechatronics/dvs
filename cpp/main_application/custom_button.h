@@ -3,12 +3,11 @@
 
 #include <wx/button.h>
 #include <wx/frame.h>
+#include <wx/menu.h>
 #include <wx/notebook.h>
 #include <wx/textctrl.h>
 #include <wx/timer.h>
-#include <wx/menu.h>
 #include <wx/wx.h>
-
 
 constexpr int kCirclePeriod = 20;
 constexpr int kEnteredPeriod = 10;
@@ -25,8 +24,7 @@ class CustomButton : public wxPanel
 {
 public:
     CustomButton() = delete;
-    CustomButton(wxFrame* parent, const wxPoint& pos, const wxSize& size) : 
-        wxPanel(parent, wxID_ANY, pos, size)
+    CustomButton(wxFrame* parent, const wxPoint& pos, const wxSize& size) : wxPanel(parent, wxID_ANY, pos, size)
     {
         num_timer_iterations_clicked_ = 0;
         num_timer_iterations_entered_ = 0;
@@ -119,7 +117,7 @@ inline void CustomButton::drawNormal()
 
     // dc.DrawText("Some text", wxPoint(0, 0));
 
-    if(draw_circle_)
+    if (draw_circle_)
     {
         circle_brush.SetColour(wxColour(255, 255, 255, circle_alpha_));
         dc.SetPen(circle_pen);
@@ -138,14 +136,14 @@ inline void CustomButton::mouseEntered(wxMouseEvent& WXUNUSED(event))
     wxSetCursor(wxCursor(wxCURSOR_HAND));
 
     exited_timer_.Stop();
-    while(exited_timer_.IsRunning())
+    while (exited_timer_.IsRunning())
     {
         wxMilliSleep(1);
     }
     // if(!entered_timer_.IsRunning())
     // {
-        color_inc_ = -kColorInc;
-        entered_timer_.Start(kEnteredPeriod);
+    color_inc_ = -kColorInc;
+    entered_timer_.Start(kEnteredPeriod);
     // }
 }
 
@@ -154,7 +152,7 @@ inline void CustomButton::mouseExited(wxMouseEvent& WXUNUSED(event))
     wxSetCursor(wxCursor(wxCURSOR_ARROW));
 
     entered_timer_.Stop();
-    while(entered_timer_.IsRunning())
+    while (entered_timer_.IsRunning())
     {
         wxMilliSleep(1);
     }
@@ -170,7 +168,7 @@ inline void CustomButton::mouseExited(wxMouseEvent& WXUNUSED(event))
 
 inline void CustomButton::mouseLeftPressed(wxMouseEvent& event)
 {
-    if(click_timer_.IsRunning())
+    if (click_timer_.IsRunning())
     {
         click_timer_.Stop();
         num_timer_iterations_clicked_ = 0;
@@ -185,7 +183,7 @@ inline void CustomButton::mouseLeftPressed(wxMouseEvent& event)
 
 inline void CustomButton::OnClickedTimer(wxTimerEvent& WXUNUSED(event))
 {
-    if(num_timer_iterations_clicked_ > kNumCircleIterationsMax)
+    if (num_timer_iterations_clicked_ > kNumCircleIterationsMax)
     {
         click_timer_.Stop();
         num_timer_iterations_clicked_ = 0;
@@ -205,15 +203,14 @@ inline void CustomButton::OnClickedTimer(wxTimerEvent& WXUNUSED(event))
 
 inline void CustomButton::OnExitedTimer(wxTimerEvent& WXUNUSED(event))
 {
-    button_color_ = wxColour(button_color_.Red() + color_inc_,
-                             button_color_.Green() + color_inc_,
-                             button_color_.Blue() + color_inc_);
+    button_color_ = wxColour(
+        button_color_.Red() + color_inc_, button_color_.Green() + color_inc_, button_color_.Blue() + color_inc_);
     pen = wxPen(button_color_, 1);
     brush = wxBrush(button_color_, wxBRUSHSTYLE_SOLID);
 
     Refresh();
 
-    if(num_timer_iterations_entered_ <= 0)
+    if (num_timer_iterations_entered_ <= 0)
     {
         exited_timer_.Stop();
         num_timer_iterations_entered_ = 0;
@@ -227,15 +224,14 @@ inline void CustomButton::OnExitedTimer(wxTimerEvent& WXUNUSED(event))
 
 inline void CustomButton::OnEnteredTimer(wxTimerEvent& WXUNUSED(event))
 {
-    button_color_ = wxColour(button_color_.Red() + color_inc_,
-                             button_color_.Green() + color_inc_,
-                             button_color_.Blue() + color_inc_);
+    button_color_ = wxColour(
+        button_color_.Red() + color_inc_, button_color_.Green() + color_inc_, button_color_.Blue() + color_inc_);
     pen = wxPen(button_color_, 1);
     brush = wxBrush(button_color_, wxBRUSHSTYLE_SOLID);
 
     Refresh();
 
-    if(num_timer_iterations_entered_ >= (kNumEnteredIterationsMax - 1))
+    if (num_timer_iterations_entered_ >= (kNumEnteredIterationsMax - 1))
     {
         entered_timer_.Stop();
         // num_timer_iterations_entered_ = 0;

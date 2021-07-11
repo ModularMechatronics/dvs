@@ -1,6 +1,5 @@
 #include "opengl_low_level/2d/opengl_2d_functions.h"
 
-#include "math/math.h"
 #include <assert.h>
 
 #include <cmath>
@@ -9,6 +8,7 @@
 #include <iostream>
 #include <vector>
 
+#include "math/math.h"
 #include "opengl_low_level/opengl_header.h"
 
 void setColor(const float r, const float g, const float b)

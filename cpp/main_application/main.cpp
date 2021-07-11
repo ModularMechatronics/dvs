@@ -1,5 +1,5 @@
-#include <wx/wx.h>
 #include <wx/splash.h>
+#include <wx/wx.h>
 
 #include <csignal>
 #include <iostream>
@@ -38,7 +38,7 @@ bool MainApp::OnInit()
 #endif
 
     std::vector<std::string> cmdl_args;
-    for(int k = 0; k < wxAppConsole::argc; k++)
+    for (int k = 0; k < wxAppConsole::argc; k++)
     {
         cmdl_args.emplace_back(wxAppConsole::argv[k].mb_str());
     }

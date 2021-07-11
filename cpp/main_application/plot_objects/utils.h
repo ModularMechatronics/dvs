@@ -1,8 +1,9 @@
 #ifndef PLOT_OBJECTS_UTILS_H_
 #define PLOT_OBJECTS_UTILS_H_
 
-#include <iostream>
 #include <stdint.h>
+
+#include <iostream>
 
 #include "enumerations.h"
 #include "opengl_low_level/opengl_header.h"
@@ -14,7 +15,7 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
     // TODO: This shouldn't be "num dimensions", as it becomes weird when using imShow, which is 2D
     // but it's only one "dimension" (the image), as opposed to surf, which has 3 "dimensions": x, y, z matrices
     // Name it 'num_components'?
-    switch(fcn)
+    switch (fcn)
     {
         case Function::PLOT2:
             return 2;
@@ -46,9 +47,10 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 3;
         case Function::DRAW_LINE_BETWEEN_POINTS_3D:
             return 3;
-        
+
         default:
-            std::cout << "You haven't defined number of dimensions in utils.h for Function type " << static_cast<int>(fcn) << std::endl;
+            std::cout << "You haven't defined number of dimensions in utils.h for Function type "
+                      << static_cast<int>(fcn) << std::endl;
             exit(-1);
             return -1;
     }
@@ -56,7 +58,6 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
 
 inline GLuint LoadShaders(const std::string& vertex_file_path, const std::string& fragment_file_path)
 {
-
     // Create the shaders
     GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
     GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -92,7 +93,7 @@ inline GLuint LoadShaders(const std::string& vertex_file_path, const std::string
     int InfoLogLength;
 
     // Compile Vertex Shader
-    char const *VertexSourcePointer = VertexShaderCode.c_str();
+    char const* VertexSourcePointer = VertexShaderCode.c_str();
     glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
     glCompileShader(VertexShaderID);
 
@@ -108,7 +109,7 @@ inline GLuint LoadShaders(const std::string& vertex_file_path, const std::string
     }
 
     // Compile Fragment Shader
-    char const *FragmentSourcePointer = FragmentShaderCode.c_str();
+    char const* FragmentSourcePointer = FragmentShaderCode.c_str();
     glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
     glCompileShader(FragmentShaderID);
 
@@ -151,7 +152,7 @@ inline GLuint LoadShaders(const std::string& vertex_file_path, const std::string
 inline GLint dataTypeToGLInt(const DataType& data_type)
 {
     GLint gl_type = 0;
-    switch(data_type)
+    switch (data_type)
     {
         case DataType::FLOAT:
             gl_type = GL_FLOAT;
@@ -170,7 +171,7 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
             break;
         case DataType::INT64:
             gl_type = GL_FLOAT;
-            assert(false); // Haven't fround int64 in opengl enums yet...
+            assert(false);  // Haven't fround int64 in opengl enums yet...
             break;
         case DataType::UINT8:
             gl_type = GL_UNSIGNED_BYTE;
@@ -182,7 +183,7 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
             gl_type = GL_UNSIGNED_INT;
             break;
         case DataType::UINT64:
-            assert(false); // Haven't fround uint64 in opengl enums yet...
+            assert(false);  // Haven't fround uint64 in opengl enums yet...
             gl_type = GL_FLOAT;
             break;
         case DataType::UNKNOWN:
@@ -202,14 +203,13 @@ void fillBufferWithData(uint8_t* const points_ptr,
                         const size_t num_bytes_per_element,
                         const size_t num_bytes_for_one_vec)
 {
-    
     size_t idx_x = 0;
     size_t idx_y = num_bytes_per_element;
     size_t idx_z = 2 * num_bytes_per_element;
     const size_t num_bytes_per_elementtimes_3 = num_bytes_per_element * 3;
     const size_t num_bytes_for_one_vectimes_2 = num_bytes_for_one_vec * 2;
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         const size_t idx_0 = k * num_bytes_per_element;
         const size_t idx_1 = num_bytes_for_one_vec + idx_0;
@@ -218,7 +218,7 @@ void fillBufferWithData(uint8_t* const points_ptr,
         const uint8_t* const tmp_ptr_1 = &(data_ptr[idx_1]);
         const uint8_t* const tmp_ptr_2 = &(data_ptr[idx_2]);
 
-        for(size_t i = 0; i < num_bytes_per_element; i++)
+        for (size_t i = 0; i < num_bytes_per_element; i++)
         {
             points_ptr[idx_x + i] = tmp_ptr_0[i];
             points_ptr[idx_y + i] = tmp_ptr_1[i];
@@ -237,7 +237,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
 {
     Vec3Dd min_vec, max_vec;
 
-    if(data_type == DataType::FLOAT)
+    if (data_type == DataType::FLOAT)
     {
         Vector<float> x, y, z;
 
@@ -251,12 +251,12 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         max_vec.x = dvs::max(x);
         max_vec.y = dvs::max(y);
         max_vec.z = dvs::max(z);
-        
+
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::DOUBLE)
+    else if (data_type == DataType::DOUBLE)
     {
         Vector<double> x, y, z;
 
@@ -270,12 +270,12 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         max_vec.x = dvs::max(x);
         max_vec.y = dvs::max(y);
         max_vec.z = dvs::max(z);
-        
+
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::INT8)
+    else if (data_type == DataType::INT8)
     {
         Vector<int8_t> x, y, z;
 
@@ -289,12 +289,12 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         max_vec.x = dvs::max(x);
         max_vec.y = dvs::max(y);
         max_vec.z = dvs::max(z);
-        
+
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::INT16)
+    else if (data_type == DataType::INT16)
     {
         Vector<int16_t> x, y, z;
 
@@ -313,7 +313,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::INT32)
+    else if (data_type == DataType::INT32)
     {
         Vector<int32_t> x, y, z;
 
@@ -332,7 +332,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::INT64)
+    else if (data_type == DataType::INT64)
     {
         Vector<int64_t> x, y, z;
 
@@ -351,7 +351,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UINT8)
+    else if (data_type == DataType::UINT8)
     {
         Vector<uint8_t> x, y, z;
 
@@ -370,7 +370,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UINT16)
+    else if (data_type == DataType::UINT16)
     {
         Vector<uint16_t> x, y, z;
 
@@ -389,7 +389,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UINT32)
+    else if (data_type == DataType::UINT32)
     {
         Vector<uint32_t> x, y, z;
 
@@ -408,7 +408,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UINT64)
+    else if (data_type == DataType::UINT64)
     {
         Vector<uint64_t> x, y, z;
 
@@ -427,7 +427,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         y.setInternalData(nullptr, 0);
         z.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UNKNOWN)
+    else if (data_type == DataType::UNKNOWN)
     {
         throw std::runtime_error("Unknown data type!");
     }
@@ -439,7 +439,6 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
     return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
 }
 
-
 inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_buffer,
                                                           const size_t num_elements,
                                                           const size_t num_bytes_for_one_vec,
@@ -447,7 +446,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
 {
     Vec2Dd min_vec, max_vec;
 
-    if(data_type == DataType::FLOAT)
+    if (data_type == DataType::FLOAT)
     {
         Vector<float> x, y;
 
@@ -461,7 +460,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::DOUBLE)
+    else if (data_type == DataType::DOUBLE)
     {
         Vector<double> x, y;
 
@@ -475,7 +474,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::INT8)
+    else if (data_type == DataType::INT8)
     {
         Vector<int8_t> x, y;
 
@@ -489,7 +488,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::INT16)
+    else if (data_type == DataType::INT16)
     {
         Vector<int16_t> x, y;
 
@@ -503,7 +502,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::INT32)
+    else if (data_type == DataType::INT32)
     {
         Vector<int32_t> x, y;
 
@@ -517,7 +516,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::INT64)
+    else if (data_type == DataType::INT64)
     {
         Vector<int64_t> x, y;
 
@@ -531,7 +530,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UINT8)
+    else if (data_type == DataType::UINT8)
     {
         Vector<uint8_t> x, y;
 
@@ -545,7 +544,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UINT16)
+    else if (data_type == DataType::UINT16)
     {
         Vector<uint16_t> x, y;
 
@@ -559,7 +558,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UINT32)
+    else if (data_type == DataType::UINT32)
     {
         Vector<uint32_t> x, y;
 
@@ -573,7 +572,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UINT64)
+    else if (data_type == DataType::UINT64)
     {
         Vector<uint64_t> x, y;
 
@@ -587,7 +586,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         x.setInternalData(nullptr, 0);
         y.setInternalData(nullptr, 0);
     }
-    else if(data_type == DataType::UNKNOWN)
+    else if (data_type == DataType::UNKNOWN)
     {
         throw std::runtime_error("Unknown data type!");
     }
@@ -599,7 +598,6 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
     return std::pair<Vec2Dd, Vec2Dd>(min_vec, max_vec);
 }
 
-
 inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data_buffer,
                                                              const size_t num_rows,
                                                              const size_t num_cols,
@@ -608,7 +606,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
 {
     Vec3Dd min_vec, max_vec;
 
-    if(data_type == DataType::FLOAT)
+    if (data_type == DataType::FLOAT)
     {
         Matrix<float> x, y, z;
 
@@ -626,7 +624,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::DOUBLE)
+    else if (data_type == DataType::DOUBLE)
     {
         Matrix<double> x, y, z;
 
@@ -644,7 +642,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::INT8)
+    else if (data_type == DataType::INT8)
     {
         Matrix<int8_t> x, y, z;
 
@@ -662,7 +660,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::INT16)
+    else if (data_type == DataType::INT16)
     {
         Matrix<int16_t> x, y, z;
 
@@ -680,7 +678,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::INT32)
+    else if (data_type == DataType::INT32)
     {
         Matrix<int32_t> x, y, z;
 
@@ -698,7 +696,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::INT64)
+    else if (data_type == DataType::INT64)
     {
         Matrix<int64_t> x, y, z;
 
@@ -716,7 +714,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::UINT8)
+    else if (data_type == DataType::UINT8)
     {
         Matrix<uint8_t> x, y, z;
 
@@ -734,7 +732,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::UINT16)
+    else if (data_type == DataType::UINT16)
     {
         Matrix<uint16_t> x, y, z;
 
@@ -752,7 +750,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::UINT32)
+    else if (data_type == DataType::UINT32)
     {
         Matrix<uint32_t> x, y, z;
 
@@ -770,7 +768,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::UINT64)
+    else if (data_type == DataType::UINT64)
     {
         Matrix<uint64_t> x, y, z;
 
@@ -788,7 +786,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
         y.setInternalData(nullptr, 0, 0);
         z.setInternalData(nullptr, 0, 0);
     }
-    else if(data_type == DataType::UNKNOWN)
+    else if (data_type == DataType::UNKNOWN)
     {
         throw std::runtime_error("Unknown data type!");
     }
@@ -800,10 +798,11 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
     return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
 }
 
-template <typename T> uint8_t* convertData2D(const uint8_t* const input_data,
-                                             const size_t num_elements,
-                                             const size_t num_bytes_per_element,
-                                             const size_t num_bytes_for_one_vec)
+template <typename T>
+uint8_t* convertData2D(const uint8_t* const input_data,
+                       const size_t num_elements,
+                       const size_t num_bytes_per_element,
+                       const size_t num_bytes_for_one_vec)
 {
     uint8_t* output_data = new uint8_t[sizeof(float) * 2 * num_elements];
 
@@ -817,14 +816,14 @@ template <typename T> uint8_t* convertData2D(const uint8_t* const input_data,
     size_t idx_x = 0;
     size_t idx_y = sizeof(float);
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         const size_t idx_0 = k * num_bytes_per_element;
         const size_t idx_1 = num_bytes_for_one_vec + k * num_bytes_per_element;
         const uint8_t* const tmp_ptr_0 = &(input_data[idx_0]);
         const uint8_t* const tmp_ptr_1 = &(input_data[idx_1]);
 
-        for(size_t i = 0; i < num_bytes_per_element; i++)
+        for (size_t i = 0; i < num_bytes_per_element; i++)
         {
             t0_data[i] = tmp_ptr_0[i];
             t1_data[i] = tmp_ptr_1[i];
@@ -833,7 +832,7 @@ template <typename T> uint8_t* convertData2D(const uint8_t* const input_data,
         f0 = t0;
         f1 = t1;
 
-        for(size_t i = 0; i < sizeof(float); i++)
+        for (size_t i = 0; i < sizeof(float); i++)
         {
             output_data[idx_x + i] = f0_data[i];
             output_data[idx_y + i] = f1_data[i];
@@ -852,43 +851,43 @@ inline uint8_t* convertData2DOuter(const uint8_t* const input_data,
                                    const size_t num_bytes_for_one_vec)
 {
     uint8_t* output_data;
-    if(data_type == DataType::FLOAT)
+    if (data_type == DataType::FLOAT)
     {
         output_data = convertData2D<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::DOUBLE)
+    else if (data_type == DataType::DOUBLE)
     {
         output_data = convertData2D<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT8)
+    else if (data_type == DataType::INT8)
     {
         output_data = convertData2D<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT16)
+    else if (data_type == DataType::INT16)
     {
         output_data = convertData2D<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT32)
+    else if (data_type == DataType::INT32)
     {
         output_data = convertData2D<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT64)
+    else if (data_type == DataType::INT64)
     {
         output_data = convertData2D<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT8)
+    else if (data_type == DataType::UINT8)
     {
         output_data = convertData2D<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT16)
+    else if (data_type == DataType::UINT16)
     {
         output_data = convertData2D<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT32)
+    else if (data_type == DataType::UINT32)
     {
         output_data = convertData2D<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT64)
+    else if (data_type == DataType::UINT64)
     {
         output_data = convertData2D<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
@@ -900,10 +899,11 @@ inline uint8_t* convertData2DOuter(const uint8_t* const input_data,
     return output_data;
 }
 
-template <typename T> uint8_t* convertData3D(const uint8_t* const input_data,
-                                             const size_t num_elements,
-                                             const size_t num_bytes_per_element,
-                                             const size_t num_bytes_for_one_vec)
+template <typename T>
+uint8_t* convertData3D(const uint8_t* const input_data,
+                       const size_t num_elements,
+                       const size_t num_bytes_per_element,
+                       const size_t num_bytes_for_one_vec)
 {
     uint8_t* output_data = new uint8_t[sizeof(float) * 3 * num_elements];
 
@@ -920,7 +920,7 @@ template <typename T> uint8_t* convertData3D(const uint8_t* const input_data,
     size_t idx_y = sizeof(float);
     size_t idx_z = 2 * sizeof(float);
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         const size_t idx_0 = k * num_bytes_per_element;
         const size_t idx_1 = num_bytes_for_one_vec + k * num_bytes_per_element;
@@ -929,7 +929,7 @@ template <typename T> uint8_t* convertData3D(const uint8_t* const input_data,
         const uint8_t* const tmp_ptr_1 = &(input_data[idx_1]);
         const uint8_t* const tmp_ptr_2 = &(input_data[idx_2]);
 
-        for(size_t i = 0; i < num_bytes_per_element; i++)
+        for (size_t i = 0; i < num_bytes_per_element; i++)
         {
             t0_data[i] = tmp_ptr_0[i];
             t1_data[i] = tmp_ptr_1[i];
@@ -940,7 +940,7 @@ template <typename T> uint8_t* convertData3D(const uint8_t* const input_data,
         f1 = t1;
         f2 = t2;
 
-        for(size_t i = 0; i < sizeof(float); i++)
+        for (size_t i = 0; i < sizeof(float); i++)
         {
             output_data[idx_x + i] = f0_data[i];
             output_data[idx_y + i] = f1_data[i];
@@ -961,43 +961,43 @@ inline uint8_t* convertData3DOuter(const uint8_t* const input_data,
                                    const size_t num_bytes_for_one_vec)
 {
     uint8_t* output_data;
-    if(data_type == DataType::FLOAT)
+    if (data_type == DataType::FLOAT)
     {
         output_data = convertData3D<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::DOUBLE)
+    else if (data_type == DataType::DOUBLE)
     {
         output_data = convertData3D<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT8)
+    else if (data_type == DataType::INT8)
     {
         output_data = convertData3D<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT16)
+    else if (data_type == DataType::INT16)
     {
         output_data = convertData3D<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT32)
+    else if (data_type == DataType::INT32)
     {
         output_data = convertData3D<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT64)
+    else if (data_type == DataType::INT64)
     {
         output_data = convertData3D<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT8)
+    else if (data_type == DataType::UINT8)
     {
         output_data = convertData3D<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT16)
+    else if (data_type == DataType::UINT16)
     {
         output_data = convertData3D<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT32)
+    else if (data_type == DataType::UINT32)
     {
         output_data = convertData3D<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT64)
+    else if (data_type == DataType::UINT64)
     {
         output_data = convertData3D<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
@@ -1010,9 +1010,7 @@ inline uint8_t* convertData3DOuter(const uint8_t* const input_data,
 }
 
 template <typename T>
-float* convertMatrixData(uint8_t* input_data,
-                         const Dimension2D dims,
-                         const size_t num_bytes_for_one_vec)
+float* convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size_t num_bytes_for_one_vec)
 {
     Matrix<T> x, y, z;
     x.setInternalData(reinterpret_cast<T*>(input_data), dims.rows, dims.cols);
@@ -1021,9 +1019,9 @@ float* convertMatrixData(uint8_t* input_data,
 
     float* output_data = new float[(dims.rows - 1) * (dims.cols - 1) * 4 * 3];
     size_t idx = 0;
-    for(size_t r = 0; r < (dims.rows - 1); r++)
+    for (size_t r = 0; r < (dims.rows - 1); r++)
     {
-        for(size_t c = 0; c < (dims.cols - 1); c++)
+        for (size_t c = 0; c < (dims.cols - 1); c++)
         {
             const size_t idx0_x = idx;
             const size_t idx0_y = idx + 1;
@@ -1072,43 +1070,43 @@ inline float* convertMatrixDataOuter(uint8_t* input_data,
                                      const size_t num_bytes_for_one_vec)
 {
     float* output_data;
-    if(data_type == DataType::FLOAT)
+    if (data_type == DataType::FLOAT)
     {
         output_data = convertMatrixData<float>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::DOUBLE)
+    else if (data_type == DataType::DOUBLE)
     {
         output_data = convertMatrixData<double>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT8)
+    else if (data_type == DataType::INT8)
     {
         output_data = convertMatrixData<int8_t>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT16)
+    else if (data_type == DataType::INT16)
     {
         output_data = convertMatrixData<int16_t>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT32)
+    else if (data_type == DataType::INT32)
     {
         output_data = convertMatrixData<int32_t>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::INT64)
+    else if (data_type == DataType::INT64)
     {
         output_data = convertMatrixData<int64_t>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT8)
+    else if (data_type == DataType::UINT8)
     {
         output_data = convertMatrixData<uint8_t>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT16)
+    else if (data_type == DataType::UINT16)
     {
         output_data = convertMatrixData<uint16_t>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT32)
+    else if (data_type == DataType::UINT32)
     {
         output_data = convertMatrixData<uint32_t>(input_data, dims, num_bytes_for_one_vec);
     }
-    else if(data_type == DataType::UINT64)
+    else if (data_type == DataType::UINT64)
     {
         output_data = convertMatrixData<uint64_t>(input_data, dims, num_bytes_for_one_vec);
     }
@@ -1129,13 +1127,14 @@ inline float* convertVerticesData(uint8_t* input_data,
     float* output_data = new float[num_indices * 3 * 3];
     Vector<Point3D<T>> vertices;
     Vector<IndexTriplet> indices;
- 
+
     vertices.setInternalData(reinterpret_cast<Point3D<T>*>(input_data), num_vertices);
-    indices.setInternalData(reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices);
+    indices.setInternalData(reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])),
+                            num_indices);
 
     size_t idx = 0;
 
-    for(size_t k = 0; k < num_indices; k++)
+    for (size_t k = 0; k < num_indices; k++)
     {
         const Point3D<T> p0 = vertices(indices(k).i0);
         const Point3D<T> p1 = vertices(indices(k).i1);
@@ -1168,43 +1167,43 @@ inline float* convertVerticesDataOuter(uint8_t* input_data,
                                        const uint32_t num_bytes_per_element)
 {
     float* output_data;
-    if(data_type == DataType::FLOAT)
+    if (data_type == DataType::FLOAT)
     {
         output_data = convertVerticesData<float>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::DOUBLE)
+    else if (data_type == DataType::DOUBLE)
     {
         output_data = convertVerticesData<double>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::INT8)
+    else if (data_type == DataType::INT8)
     {
         output_data = convertVerticesData<int8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::INT16)
+    else if (data_type == DataType::INT16)
     {
         output_data = convertVerticesData<int16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::INT32)
+    else if (data_type == DataType::INT32)
     {
         output_data = convertVerticesData<int32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::INT64)
+    else if (data_type == DataType::INT64)
     {
         output_data = convertVerticesData<int64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::UINT8)
+    else if (data_type == DataType::UINT8)
     {
         output_data = convertVerticesData<uint8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::UINT16)
+    else if (data_type == DataType::UINT16)
     {
         output_data = convertVerticesData<uint16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::UINT32)
+    else if (data_type == DataType::UINT32)
     {
         output_data = convertVerticesData<uint32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
-    else if(data_type == DataType::UINT64)
+    else if (data_type == DataType::UINT64)
     {
         output_data = convertVerticesData<uint64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
@@ -1216,18 +1215,16 @@ inline float* convertVerticesDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-template <typename T>
-inline float* convertTrianglesDataInner(uint8_t* input_data,
-                                   const uint32_t num_elements)
+template <typename T> inline float* convertTrianglesDataInner(uint8_t* input_data, const uint32_t num_elements)
 {
     float* output_data = new float[num_elements * 3 * 3];
     Vector<Triangle3D<T>> vertices;
- 
+
     vertices.setInternalData(reinterpret_cast<Triangle3D<T>*>(input_data), num_elements);
 
     size_t idx = 0;
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         const Triangle3D<T> tri = vertices(k);
 
@@ -1250,48 +1247,46 @@ inline float* convertTrianglesDataInner(uint8_t* input_data,
     return output_data;
 }
 
-inline float* convertTrianglesData(uint8_t* input_data,
-                                   const DataType data_type,
-                                   const uint32_t num_elements)
+inline float* convertTrianglesData(uint8_t* input_data, const DataType data_type, const uint32_t num_elements)
 {
     float* output_data;
-    if(data_type == DataType::FLOAT)
+    if (data_type == DataType::FLOAT)
     {
         output_data = convertTrianglesDataInner<float>(input_data, num_elements);
     }
-    else if(data_type == DataType::DOUBLE)
+    else if (data_type == DataType::DOUBLE)
     {
         output_data = convertTrianglesDataInner<double>(input_data, num_elements);
     }
-    else if(data_type == DataType::INT8)
+    else if (data_type == DataType::INT8)
     {
         output_data = convertTrianglesDataInner<int8_t>(input_data, num_elements);
     }
-    else if(data_type == DataType::INT16)
+    else if (data_type == DataType::INT16)
     {
         output_data = convertTrianglesDataInner<int16_t>(input_data, num_elements);
     }
-    else if(data_type == DataType::INT32)
+    else if (data_type == DataType::INT32)
     {
         output_data = convertTrianglesDataInner<int32_t>(input_data, num_elements);
     }
-    else if(data_type == DataType::INT64)
+    else if (data_type == DataType::INT64)
     {
         output_data = convertTrianglesDataInner<int64_t>(input_data, num_elements);
     }
-    else if(data_type == DataType::UINT8)
+    else if (data_type == DataType::UINT8)
     {
         output_data = convertTrianglesDataInner<uint8_t>(input_data, num_elements);
     }
-    else if(data_type == DataType::UINT16)
+    else if (data_type == DataType::UINT16)
     {
         output_data = convertTrianglesDataInner<uint16_t>(input_data, num_elements);
     }
-    else if(data_type == DataType::UINT32)
+    else if (data_type == DataType::UINT32)
     {
         output_data = convertTrianglesDataInner<uint32_t>(input_data, num_elements);
     }
-    else if(data_type == DataType::UINT64)
+    else if (data_type == DataType::UINT64)
     {
         output_data = convertTrianglesDataInner<uint64_t>(input_data, num_elements);
     }

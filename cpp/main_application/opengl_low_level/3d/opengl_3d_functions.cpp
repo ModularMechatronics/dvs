@@ -7,9 +7,7 @@
 
 #include "opengl_low_level/opengl_header.h"
 
-void drawLines3D(const Vectord& x_values,
-                 const Vectord& y_values,
-                 const Vectord& z_values)
+void drawLines3D(const Vectord& x_values, const Vectord& y_values, const Vectord& z_values)
 {
     assert(x_values.size() > 1);
     assert(x_values.size() == y_values.size());
@@ -25,9 +23,7 @@ void drawLines3D(const Vectord& x_values,
     glEnd();
 }
 
-void drawPoints3D(const Vectord& x_values,
-                  const Vectord& y_values,
-                  const Vectord& z_values)
+void drawPoints3D(const Vectord& x_values, const Vectord& y_values, const Vectord& z_values)
 {
     assert(x_values.size() > 1);
     assert(x_values.size() == y_values.size());
@@ -53,12 +49,7 @@ void drawTriangle3D(const Vec3Dd& v0, const Vec3Dd& v1, const Vec3Dd& v2)
     glEnd();
 }
 
-void drawLine3D(const double x0,
-                const double y0,
-                const double z0,
-                const double x1,
-                const double y1,
-                const double z1)
+void drawLine3D(const double x0, const double y0, const double z0, const double x1, const double y1, const double z1)
 {
     glBegin(GL_LINES);
     glVertex3f(x0, y0, z0);

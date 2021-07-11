@@ -1,10 +1,9 @@
 #ifndef COORDINATE_CONVERTER_H_
 #define COORDINATE_CONVERTER_H_
 
-#include "math/math.h"
-
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/view_angles.h"
+#include "math/math.h"
 
 // Model - view - screen
 // Model: 3D coordinates, world, defined with axes_limits_
@@ -23,12 +22,8 @@ private:
 
 public:
     CoordinateConverter() = default;
-    CoordinateConverter(const Vec2Dd& window_size,
-                        const ViewAngles& view_angles,
-                        const AxesLimits& axes_limits);
-    void updateInternalState(const Vec2Dd& window_size,
-                             const ViewAngles& view_angles,
-                             const AxesLimits& axes_limits);
+    CoordinateConverter(const Vec2Dd& window_size, const ViewAngles& view_angles, const AxesLimits& axes_limits);
+    void updateInternalState(const Vec2Dd& window_size, const ViewAngles& view_angles, const AxesLimits& axes_limits);
 
     Vec2Dd orthogonalViewToModelCoordinate(const Vec2Dd& view_coord) const;
     Vec2Dd screenToViewCoordinate(const Vec2Dd& screen_coord) const;

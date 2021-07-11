@@ -81,6 +81,5 @@ bool MouseButtonState::isPressed() const
 void MouseButtonState::print() const
 {
     const std::string p = is_pressed_ ? "pressed" : "not pressed";
-    std::cout << "Button is " << p << " with xy coords [ " << curr_pos_.x << ", " << curr_pos_.y
-              << " ]" << std::endl;
+    std::cout << "Button is " << p << " with xy coords [ " << curr_pos_.x << ", " << curr_pos_.y << " ]" << std::endl;
 }

@@ -92,7 +92,8 @@ void putTextAt3D(const std::string& s, const Vec3Dd& v)
     putTextAt3D(s, v.x, v.y, v.z);
 }
 
-void putTextAt(const std::string& text, const double x, const double y, const float size_x, const float size_y, const float scale)
+void putTextAt(
+    const std::string& text, const double x, const double y, const float size_x, const float size_y, const float scale)
 {
     glPushMatrix();
     glTranslatef(x, y, 0);

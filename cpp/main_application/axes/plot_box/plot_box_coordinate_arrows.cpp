@@ -36,8 +36,7 @@ void drawArrowHead(const Vec3Dd& v0, const Vec3Dd& v1, const CoordinateConverter
     drawLine2D(v1_2d.x, v1_2d.y, v1_2d.x + a1.x * f, v1_2d.y + a1.y * f);
 }
 
-void drawCoordinateArrowHead(const AxesSettings& axes_settings,
-                             const CoordinateConverter& coord_conv)
+void drawCoordinateArrowHead(const AxesSettings& axes_settings, const CoordinateConverter& coord_conv)
 {
     const double ext_fac = axes_settings.getCoordAxExtFac();
 
@@ -58,8 +57,7 @@ void drawCoordinateArrowHead(const AxesSettings& axes_settings,
     drawArrowHead(z0, z1, coord_conv);
 }
 
-void drawCoordinateAxesLetters(const AxesSettings& axes_settings,
-                               const CoordinateConverter& coord_conv)
+void drawCoordinateAxesLetters(const AxesSettings& axes_settings, const CoordinateConverter& coord_conv)
 {
     // Extend a little bit (1.1) so letters are not "on" the arrow head
     const double ext_fac = axes_settings.getCoordAxExtFac() * 1.1;

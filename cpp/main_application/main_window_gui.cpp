@@ -1,11 +1,10 @@
-#include "main_window.h"
-
 #include <unistd.h>
 
 #include <csignal>
 #include <iostream>
 #include <stdexcept>
 
+#include "main_window.h"
 #include "math/math.h"
 
 using namespace dvs::internal;
@@ -39,7 +38,7 @@ void MainWindow::setupGui()
 void MainWindow::setupTabs(const ProjectSettings& project_settings)
 {
     gui_elements_ = std::map<std::string, GuiElement*>();
-    for(const TabSettings tab : project_settings.getTabs())
+    for (const TabSettings tab : project_settings.getTabs())
     {
         const std::string tab_name = tab.getName();
 
@@ -52,7 +51,7 @@ void MainWindow::setupTabs(const ProjectSettings& project_settings)
     }
 
     const int current_tab_idx = tabs_view->GetSelection();
-    if(current_tab_idx != wxNOT_FOUND)
+    if (current_tab_idx != wxNOT_FOUND)
     {
         current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
         current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
@@ -69,14 +68,14 @@ void MainWindow::fileModified()
 
 void MainWindow::tabChanged(wxCommandEvent& WXUNUSED(event))
 {
-    for(auto te : tab_elements_)
+    for (auto te : tab_elements_)
     {
         te->resetSelectionForAllChildren();
         te->setFirstElementSelected();
     }
 
     const int current_tab_idx = tabs_view->GetSelection();
-    if(current_tab_idx != wxNOT_FOUND)
+    if (current_tab_idx != wxNOT_FOUND)
     {
         current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
         current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
@@ -91,7 +90,7 @@ void MainWindow::OnSize(wxSizeEvent& event)
 
     const wxSize new_size = tab_container->GetSize();
 
-    for(size_t k = 0; k < tab_elements_.size(); k++)
+    for (size_t k = 0; k < tab_elements_.size(); k++)
     {
         tab_elements_[k]->setSize(new_size);
     }
@@ -101,7 +100,7 @@ void MainWindow::changeCurrentElementName(wxCommandEvent& event)
 {
     const wxString value = event.GetString();
     const int current_tab_idx = tabs_view->GetSelection();
-    if(current_tab_idx != wxNOT_FOUND)
+    if (current_tab_idx != wxNOT_FOUND)
     {
         tab_elements_.at(current_tab_idx)->setSelectedElementName(std::string(value.mb_str()));
     }
@@ -115,15 +114,14 @@ void MainWindow::currentElementSelectionChanged(wxCommandEvent& event)
     layout_tools_window_->currentElementSelectionChanged(std::string(value.mb_str()));
 }
 
-
 void MainWindow::changeCurrentTabName(wxCommandEvent& event)
 {
     const wxString value = event.GetString();
 
-    if(std::string(value.mb_str()) != "")
+    if (std::string(value.mb_str()) != "")
     {
         const int current_tab_idx = tabs_view->GetSelection();
-        if(current_tab_idx != wxNOT_FOUND)
+        if (current_tab_idx != wxNOT_FOUND)
         {
             tabs_view->SetPageText(current_tab_idx, value);
             tab_elements_.at(current_tab_idx)->setName(std::string(value.mb_str()));
@@ -134,17 +132,17 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
 
 void MainWindow::newNamedElement(const std::string& element_name)
 {
-    if(main_window_last_in_focus_)
+    if (main_window_last_in_focus_)
     {
         const int current_tab_idx = tabs_view->GetSelection();
-        if(current_tab_idx != wxNOT_FOUND)
+        if (current_tab_idx != wxNOT_FOUND)
         {
             tab_elements_.at(current_tab_idx)->newElement(element_name);
             const std::map<std::string, GuiElement*> new_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
 
-            for(const auto& q : new_elements)
+            for (const auto& q : new_elements)
             {
-                if(gui_elements_.count(q.first) == 0)
+                if (gui_elements_.count(q.first) == 0)
                 {
                     gui_elements_[q.first] = q.second;
                 }
@@ -153,16 +151,16 @@ void MainWindow::newNamedElement(const std::string& element_name)
     }
     else
     {
-        for(auto we : windows_)
+        for (auto we : windows_)
         {
-            if(we->getName() == current_tab_name_)
+            if (we->getName() == current_tab_name_)
             {
                 we->newElement(element_name);
                 const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
 
-                for(const auto& q : new_elements)
+                for (const auto& q : new_elements)
                 {
-                    if(gui_elements_.count(q.first) == 0)
+                    if (gui_elements_.count(q.first) == 0)
                     {
                         gui_elements_[q.first] = q.second;
                     }
@@ -175,17 +173,17 @@ void MainWindow::newNamedElement(const std::string& element_name)
 
 void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
 {
-    if(main_window_last_in_focus_)
+    if (main_window_last_in_focus_)
     {
         const int current_tab_idx = tabs_view->GetSelection();
-        if(current_tab_idx != wxNOT_FOUND)
+        if (current_tab_idx != wxNOT_FOUND)
         {
             tab_elements_.at(current_tab_idx)->newElement();
             const std::map<std::string, GuiElement*> new_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
 
-            for(const auto& q : new_elements)
+            for (const auto& q : new_elements)
             {
-                if(gui_elements_.count(q.first) == 0)
+                if (gui_elements_.count(q.first) == 0)
                 {
                     gui_elements_[q.first] = q.second;
                 }
@@ -194,16 +192,16 @@ void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
     }
     else
     {
-        for(auto we : windows_)
+        for (auto we : windows_)
         {
-            if(we->getName() == current_tab_name_)
+            if (we->getName() == current_tab_name_)
             {
                 we->newElement();
                 const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
 
-                for(const auto& q : new_elements)
+                for (const auto& q : new_elements)
                 {
-                    if(gui_elements_.count(q.first) == 0)
+                    if (gui_elements_.count(q.first) == 0)
                     {
                         gui_elements_[q.first] = q.second;
                     }
@@ -216,20 +214,21 @@ void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
 {
-    if(main_window_last_in_focus_)
+    if (main_window_last_in_focus_)
     {
         const int current_tab_idx = tabs_view->GetSelection();
-        if(current_tab_idx != wxNOT_FOUND)
+        if (current_tab_idx != wxNOT_FOUND)
         {
             const std::map<std::string, GuiElement*> all_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
 
             tab_elements_.at(current_tab_idx)->deleteSelectedElement();
 
-            const std::map<std::string, GuiElement*> elements_after_delete = tab_elements_.at(current_tab_idx)->getGuiElements();
+            const std::map<std::string, GuiElement*> elements_after_delete =
+                tab_elements_.at(current_tab_idx)->getGuiElements();
 
-            for(const auto& q : all_elements)
+            for (const auto& q : all_elements)
             {
-                if(elements_after_delete.count(q.first) == 0)
+                if (elements_after_delete.count(q.first) == 0)
                 {
                     gui_elements_.erase(q.first);
                     break;
@@ -239,9 +238,9 @@ void MainWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
     }
     else
     {
-        for(auto we : windows_)
+        for (auto we : windows_)
         {
-            if(we->getName() == current_tab_name_)
+            if (we->getName() == current_tab_name_)
             {
                 const std::map<std::string, GuiElement*> all_elements = we->getGuiElements();
 
@@ -249,9 +248,9 @@ void MainWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
 
                 const std::map<std::string, GuiElement*> elements_after_delete = we->getGuiElements();
 
-                for(const auto& q : all_elements)
+                for (const auto& q : all_elements)
                 {
-                    if(elements_after_delete.count(q.first) == 0)
+                    if (elements_after_delete.count(q.first) == 0)
                     {
                         gui_elements_.erase(q.first);
                         break;
@@ -265,9 +264,9 @@ void MainWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
 
 bool MainWindow::hasTabWithName(const std::string& tab_name)
 {
-    for(const auto te : tab_elements_)
+    for (const auto te : tab_elements_)
     {
-        if(te->getName() == tab_name)
+        if (te->getName() == tab_name)
         {
             return true;
         }
@@ -277,9 +276,9 @@ bool MainWindow::hasTabWithName(const std::string& tab_name)
 
 TabView* MainWindow::getTabWithName(const std::string& tab_name)
 {
-    for(const auto te : tab_elements_)
+    for (const auto te : tab_elements_)
     {
-        if(te->getName() == tab_name)
+        if (te->getName() == tab_name)
         {
             return te;
         }
@@ -289,9 +288,9 @@ TabView* MainWindow::getTabWithName(const std::string& tab_name)
 
 bool MainWindow::hasWindowWithName(const std::string& window_name)
 {
-    for(const auto we : windows_)
+    for (const auto we : windows_)
     {
-        if(we->getName() == window_name)
+        if (we->getName() == window_name)
         {
             return true;
         }
@@ -301,13 +300,12 @@ bool MainWindow::hasWindowWithName(const std::string& window_name)
 
 WindowView* MainWindow::getWindowWithName(const std::string& window_name)
 {
-    for(const auto we : windows_)
+    for (const auto we : windows_)
     {
-        if(we->getName() == window_name)
+        if (we->getName() == window_name)
         {
             return we;
         }
     }
     return nullptr;
 }
-

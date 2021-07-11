@@ -1,11 +1,7 @@
 #include "axes/structures/view_angles.h"
 
 ViewAngles::ViewAngles()
-    : azimuth_(0.0),
-      snapped_azimuth_(0.0),
-      elevation_(0.0),
-      snapped_elevation_(0.0),
-      angle_limit_(5.0 * M_PI / 180.0)
+    : azimuth_(0.0), snapped_azimuth_(0.0), elevation_(0.0), snapped_elevation_(0.0), angle_limit_(5.0 * M_PI / 180.0)
 {
 }
 
@@ -15,16 +11,14 @@ ViewAngles::ViewAngles(const double azimuth, const double elevation, const doubl
     setAngles(azimuth, elevation);
 }
 
-ViewAngles::ViewAngles(const double azimuth, const double elevation)
-    : angle_limit_(5.0 * M_PI / 180.0)
+ViewAngles::ViewAngles(const double azimuth, const double elevation) : angle_limit_(5.0 * M_PI / 180.0)
 {
     setAngles(azimuth, elevation);
 }
 
 bool ViewAngles::bothSnappedBelowAngleLimitAroundZero() const
 {
-    return (std::fabs(getSnappedAzimuth()) < angle_limit_) &&
-           (std::fabs(getSnappedElevation()) < angle_limit_);
+    return (std::fabs(getSnappedAzimuth()) < angle_limit_) && (std::fabs(getSnappedElevation()) < angle_limit_);
 }
 
 double ViewAngles::getAngleLimit() const
@@ -123,8 +117,7 @@ double ViewAngles::getSnappedElevation() const
 
 AxisAngled ViewAngles::getAngleAxis() const
 {
-    const Matrixd rotation_mat =
-        rotationMatrixX(getElevation()) * rotationMatrixY(getAzimuth());
+    const Matrixd rotation_mat = rotationMatrixX(getElevation()) * rotationMatrixY(getAzimuth());
     return rotationMatrixToAxisAngle(rotation_mat);
 }
 
@@ -196,8 +189,7 @@ bool ViewAngles::isCloseToSnap() const
     const bool c0 = (std::fabs(getElevation()) < angle_limit_) ||
                     (std::fabs(getElevation() - M_PI / 2.0) < angle_limit_) ||
                     (std::fabs(getElevation() + M_PI / 2.0) < angle_limit_);
-    const bool c1 = (std::fabs(getAzimuth()) < angle_limit_) ||
-                    (std::fabs(getAzimuth() - M_PI / 2.0) < angle_limit_) ||
+    const bool c1 = (std::fabs(getAzimuth()) < angle_limit_) || (std::fabs(getAzimuth() - M_PI / 2.0) < angle_limit_) ||
                     (std::fabs(getAzimuth() - M_PI) < angle_limit_) ||
                     (std::fabs(getAzimuth() + M_PI / 2.0) < angle_limit_) ||
                     (std::fabs(getAzimuth() + M_PI) < angle_limit_);

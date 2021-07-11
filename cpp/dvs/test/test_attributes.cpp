@@ -15,7 +15,6 @@ using namespace dvs::properties;
 class TestProperties : public testing::Test
 {
 protected:
-
     void SetUp() override {}
 
     void TearDown() override {}
@@ -39,7 +38,7 @@ TEST_F(TestProperties, TestPropertyBase)
     const PropertyBase pty0;
     ASSERT_EQ(pty0.getPropertyType(), PropertyType::UNKNOWN);
 
-    for(size_t k = 0; k < static_cast<int>(PropertyType::PERSISTENT); k++)
+    for (size_t k = 0; k < static_cast<int>(PropertyType::PERSISTENT); k++)
     {
         const PropertyType at_type = static_cast<PropertyType>(k);
         const PropertyBase ab1(at_type);
@@ -74,7 +73,7 @@ TEST_F(TestProperties, TestNameBasic)
     ASSERT_EQ(n0.getPropertyType(), PropertyType::NAME);
     ASSERT_EQ(n1.getPropertyType(), PropertyType::NAME);
 
-    for(size_t k = 0; k < (Name::max_length + 1); k++)
+    for (size_t k = 0; k < (Name::max_length + 1); k++)
     {
         ASSERT_EQ(static_cast<char>(0), n0.data[k]);
     }
@@ -106,7 +105,7 @@ TEST_F(TestProperties, TestLineStyle)
     ASSERT_EQ(ls0.getPropertyType(), PropertyType::LINE_STYLE);
     ASSERT_EQ(ls1.getPropertyType(), PropertyType::LINE_STYLE);
 
-    for(size_t k = 0; k < (LineStyle::max_length + 1); k++)
+    for (size_t k = 0; k < (LineStyle::max_length + 1); k++)
     {
         ASSERT_EQ(static_cast<char>(0), ls0.data[k]);
     }
@@ -137,16 +136,34 @@ TEST_F(TestProperties, TestColorTypes)
                                                 {255, 255, 255},
                                                 {127, 127, 127}};
 
-    const std::vector<std::function<Color(void)>> colors = {Color::RED, Color::GREEN, Color::BLUE,
-                                                            Color::CYAN, Color::MAGENTA, Color::YELLOW,
-                                                            Color::BLACK, Color::WHITE, Color::GRAY};
-    const std::vector<std::function<FaceColor(void)>> face_colors = {FaceColor::RED, FaceColor::GREEN, FaceColor::BLUE,
-                                                                     FaceColor::CYAN, FaceColor::MAGENTA, FaceColor::YELLOW,
-                                                                     FaceColor::BLACK, FaceColor::WHITE, FaceColor::GRAY};
-    const std::vector<std::function<EdgeColor(void)>> edge_colors = {EdgeColor::RED, EdgeColor::GREEN, EdgeColor::BLUE,
-                                                                     EdgeColor::CYAN, EdgeColor::MAGENTA, EdgeColor::YELLOW,
-                                                                     EdgeColor::BLACK, EdgeColor::WHITE, EdgeColor::GRAY};
-    for(size_t k = 0; k < expected_colors.size(); k++)
+    const std::vector<std::function<Color(void)>> colors = {Color::RED,
+                                                            Color::GREEN,
+                                                            Color::BLUE,
+                                                            Color::CYAN,
+                                                            Color::MAGENTA,
+                                                            Color::YELLOW,
+                                                            Color::BLACK,
+                                                            Color::WHITE,
+                                                            Color::GRAY};
+    const std::vector<std::function<FaceColor(void)>> face_colors = {FaceColor::RED,
+                                                                     FaceColor::GREEN,
+                                                                     FaceColor::BLUE,
+                                                                     FaceColor::CYAN,
+                                                                     FaceColor::MAGENTA,
+                                                                     FaceColor::YELLOW,
+                                                                     FaceColor::BLACK,
+                                                                     FaceColor::WHITE,
+                                                                     FaceColor::GRAY};
+    const std::vector<std::function<EdgeColor(void)>> edge_colors = {EdgeColor::RED,
+                                                                     EdgeColor::GREEN,
+                                                                     EdgeColor::BLUE,
+                                                                     EdgeColor::CYAN,
+                                                                     EdgeColor::MAGENTA,
+                                                                     EdgeColor::YELLOW,
+                                                                     EdgeColor::BLACK,
+                                                                     EdgeColor::WHITE,
+                                                                     EdgeColor::GRAY};
+    for (size_t k = 0; k < expected_colors.size(); k++)
     {
         const Color c = colors[k]();
         const EdgeColor ec = edge_colors[k]();

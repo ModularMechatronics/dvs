@@ -1,14 +1,13 @@
 #ifndef PLOT_DATA_H_
 #define PLOT_DATA_H_
 
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
 #include "communication/received_data.h"
-#include "opengl_low_level/data_structures.h"
 #include "dvs.h"
+#include "math/math.h"
+#include "opengl_low_level/data_structures.h"
 
 using namespace dvs;
 using namespace dvs::internal;

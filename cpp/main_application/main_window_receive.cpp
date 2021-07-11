@@ -1,15 +1,13 @@
-#include "main_window.h"
-
 #include <unistd.h>
 
 #include <csignal>
 #include <iostream>
 #include <stdexcept>
 
+#include "main_window.h"
 #include "math/math.h"
 
 using namespace dvs::internal;
-
 
 void MainWindow::setCurrentElement(const FunctionHeader& hdr)
 {
@@ -17,14 +15,14 @@ void MainWindow::setCurrentElement(const FunctionHeader& hdr)
     const properties::Name elem_name = elem_obj.getAs<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
-    if(gui_elements_.count(element_name_str) > 0)
+    if (gui_elements_.count(element_name_str) > 0)
     {
         current_gui_element_ = gui_elements_[element_name_str];
         current_gui_element_set_ = true;
     }
     else
     {
-        if(tab_elements_.size() == 0)
+        if (tab_elements_.size() == 0)
         {
             const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
             current_tab_num_++;
@@ -41,7 +39,7 @@ void MainWindow::createNewElement(const FunctionHeader& hdr)
     const properties::Name elem_name = elem_obj.getAs<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
-    if(gui_elements_.count(element_name_str) > 0)
+    if (gui_elements_.count(element_name_str) > 0)
     {
         current_gui_element_ = gui_elements_[element_name_str];
         current_gui_element_set_ = true;
@@ -54,23 +52,23 @@ void MainWindow::createNewElement(const FunctionHeader& hdr)
         const FunctionHeaderObject parent_type_obj = hdr.getObjectFromType(FunctionHeaderObjectType::PARENT_TYPE);
         const dvs::ElementParent parent_type = parent_type_obj.getAs<dvs::ElementParent>();
 
-        if(parent_name == "#DEFAULTNAME#")
+        if (parent_name == "#DEFAULTNAME#")
         {
             parent_name = "New figure " + std::to_string(current_tab_num_);
             current_tab_num_++;
         }
 
-        if(parent_type == ElementParent::TAB)
+        if (parent_type == ElementParent::TAB)
         {
-            if(!hasTabWithName(parent_name))
+            if (!hasTabWithName(parent_name))
             {
                 addNewTab(parent_name);
             }
             main_window_last_in_focus_ = true;
         }
-        else if(parent_type == ElementParent::WINDOW)
+        else if (parent_type == ElementParent::WINDOW)
         {
-            if(!hasWindowWithName(parent_name))
+            if (!hasWindowWithName(parent_name))
             {
                 addNewWindow(parent_name);
             }
@@ -87,50 +85,35 @@ void MainWindow::createNewElement(const FunctionHeader& hdr)
 
 bool isGuiElementFunction(const Function fcn)
 {
-    return (fcn == Function::PLANE_XY) ||
-           (fcn == Function::PLANE_XZ) ||
-           (fcn == Function::PLANE_YZ) ||
-           (fcn == Function::GRID_ON) ||
-           (fcn == Function::GRID_OFF) ||
-           (fcn == Function::PLOT2) ||
-           (fcn == Function::PLOT3) ||
-           (fcn == Function::DRAW_TRIANGLES_3D) ||
-           (fcn == Function::SCATTER2) ||
-           (fcn == Function::SCATTER3) ||
-           (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
-           (fcn == Function::POLYGON_FROM_4_POINTS) ||
-           (fcn == Function::DRAW_MESH) ||
-           (fcn == Function::DRAW_LINE3D) ||
-           (fcn == Function::CLEAR) ||
-           (fcn == Function::HOLD_ON) ||
-           (fcn == Function::HOLD_OFF) ||
-           (fcn == Function::POSITION) ||
-           (fcn == Function::SURF) ||
-           (fcn == Function::IM_SHOW) ||
-           (fcn == Function::AXES_2D) ||
-           (fcn == Function::AXES_3D) ||
-           (fcn == Function::VIEW) ||
+    return (fcn == Function::PLANE_XY) || (fcn == Function::PLANE_XZ) || (fcn == Function::PLANE_YZ) ||
+           (fcn == Function::GRID_ON) || (fcn == Function::GRID_OFF) || (fcn == Function::PLOT2) ||
+           (fcn == Function::PLOT3) || (fcn == Function::DRAW_TRIANGLES_3D) || (fcn == Function::SCATTER2) ||
+           (fcn == Function::SCATTER3) || (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
+           (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_MESH) || (fcn == Function::DRAW_LINE3D) ||
+           (fcn == Function::CLEAR) || (fcn == Function::HOLD_ON) || (fcn == Function::HOLD_OFF) ||
+           (fcn == Function::POSITION) || (fcn == Function::SURF) || (fcn == Function::IM_SHOW) ||
+           (fcn == Function::AXES_2D) || (fcn == Function::AXES_3D) || (fcn == Function::VIEW) ||
            (fcn == Function::SOFT_CLEAR);
 }
 
 void MainWindow::receiveData()
 {
     std::unique_ptr<const ReceivedData> received_data = udp_server_->getReceivedData();
-    if(received_data)
+    if (received_data)
     {
         const FunctionHeader hdr = received_data->getFunctionHeader();
 
         const FunctionHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
-        if(fcn_obj.type != FunctionHeaderObjectType::FUNCTION)
+        if (fcn_obj.type != FunctionHeaderObjectType::FUNCTION)
         {
             throw std::runtime_error("Function object was not at element 0 in function header!");
         }
 
         const Function fcn = fcn_obj.getAs<Function>();
 
-        if(isGuiElementFunction(fcn))
+        if (isGuiElementFunction(fcn))
         {
-            if(current_gui_element_set_)
+            if (current_gui_element_set_)
             {
                 current_gui_element_->addData(std::move(received_data), hdr);
             }
@@ -141,7 +124,7 @@ void MainWindow::receiveData()
         }
         else
         {
-            switch(fcn)
+            switch (fcn)
             {
                 case Function::SET_CURRENT_ELEMENT:
                     setCurrentElement(hdr);

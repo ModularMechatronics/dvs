@@ -11,7 +11,6 @@ wxDECLARE_EVENT(CHILD_WINDOW_IN_FOCUS_EVENT, wxCommandEvent);
 
 namespace dvs_ids
 {
-
 enum DvsIds : uint16_t
 {
     EDITING_DONE = wxID_HIGHEST,

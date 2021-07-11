@@ -16,14 +16,12 @@ namespace prp = dvs::properties;
 class TestFunctionHeader : public testing::Test
 {
 protected:
-
     void SetUp() override {}
 
     void TearDown() override {}
 };
 
-template <typename... Us>
-void variadicTemplateFunction(FunctionHeader &hdr, const Us&... settings)
+template <typename... Us> void variadicTemplateFunction(FunctionHeader& hdr, const Us&... settings)
 {
     hdr.extend(settings...);
 }
@@ -56,7 +54,6 @@ TEST_F(TestFunctionHeader, TestBasic0)
     ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC));
     ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::POS2D));
     ASSERT_FALSE(hdr.hasType(FunctionHeaderObjectType::FIGURE_NUM));
-    
 }
 
 TEST_F(TestFunctionHeader, TestBasic)
@@ -83,7 +80,7 @@ TEST_F(TestFunctionHeader, TestBasic)
 
     const std::vector<FunctionHeaderObject> values = received_hdr.getValues();
 
-    for(size_t k = 0; k < values.size(); k++)
+    for (size_t k = 0; k < values.size(); k++)
     {
         switch (values[k].type)
         {
@@ -125,7 +122,6 @@ TEST_F(TestFunctionHeader, TestBasic)
                 break;
             default:
                 ASSERT_TRUE(false) << "This should not be reached!";
-
         }
     }
 

@@ -2,15 +2,13 @@
 #define PROJECT_SETTINGS_H_
 
 #include <fstream>
-#include <stdexcept>
 #include <memory>
-
 #include <nlohmann/json.hpp>
-
+#include <stdexcept>
 
 inline void throwIfMissing(const nlohmann::json& j, const std::string& field_name, const std::string& exception_string)
 {
-    if(j.count(field_name) == 0)
+    if (j.count(field_name) == 0)
     {
         throw std::runtime_error(exception_string);
     }
@@ -27,9 +25,10 @@ public:
     std::string name;
 
     ElementSettings() = default;
-    ElementSettings(const float x_, const float y_, const float width_, const float height_, const std::string& name_) 
+    ElementSettings(const float x_, const float y_, const float width_, const float height_, const std::string& name_)
         : x(x_), y(y_), width(width_), height(height_), name(name_)
-    {}
+    {
+    }
 
     ElementSettings(const nlohmann::json& j)
     {
@@ -43,10 +42,7 @@ public:
 
     bool operator==(const ElementSettings& other) const
     {
-        return (x == other.x) && 
-               (y == other.y) && 
-               (width == other.width) && 
-               (height == other.height) && 
+        return (x == other.x) && (y == other.y) && (width == other.width) && (height == other.height) &&
                (name == other.name);
     }
 
@@ -67,7 +63,7 @@ public:
     SettingsBase(const nlohmann::json& j)
     {
         name_ = j["name"];
-        for(size_t k = 0; k < j["elements"].size(); k++)
+        for (size_t k = 0; k < j["elements"].size(); k++)
         {
             elements_.emplace_back(j["elements"][k]);
         }
@@ -95,9 +91,9 @@ public:
 
     bool hasElementWithName(const std::string& name) const
     {
-        for(const ElementSettings& e : elements_)
+        for (const ElementSettings& e : elements_)
         {
-            if(e.name == name)
+            if (e.name == name)
             {
                 return true;
             }
@@ -108,9 +104,9 @@ public:
     ElementSettings getElementWithName(const std::string& name) const
     {
         ElementSettings res(0.0f, 0.0f, 0.0f, 0.0f, "");
-        for(const ElementSettings& e : elements_)
+        for (const ElementSettings& e : elements_)
         {
-            if(e.name == name)
+            if (e.name == name)
             {
                 res = e;
                 break;
@@ -121,17 +117,17 @@ public:
 
     bool operator==(const SettingsBase& other) const
     {
-        if((name_ != other.name_) || (elements_.size() != other.elements_.size()))
+        if ((name_ != other.name_) || (elements_.size() != other.elements_.size()))
         {
             return false;
         }
 
-        for(size_t k = 0; k < elements_.size(); k++)
+        for (size_t k = 0; k < elements_.size(); k++)
         {
-            if(other.hasElementWithName(elements_[k].name))
+            if (other.hasElementWithName(elements_[k].name))
             {
                 const ElementSettings other_element = other.getElementWithName(elements_[k].name);
-                if(other_element != elements_[k])
+                if (other_element != elements_[k])
                 {
                     return false;
                 }
@@ -154,7 +150,6 @@ public:
 class TabSettings : public SettingsBase
 {
 public:
-
     TabSettings() : SettingsBase() {}
     TabSettings(const nlohmann::json& j) : SettingsBase(j) {}
 };
@@ -190,12 +185,12 @@ public:
         std::ifstream input_file(file_path);
         nlohmann::json j;
         input_file >> j;
-        for(size_t k = 0; k < j["tabs"].size(); k++)
+        for (size_t k = 0; k < j["tabs"].size(); k++)
         {
             tabs_.emplace_back(j["tabs"][k]);
         }
 
-        for(size_t k = 0; k < j["windows"].size(); k++)
+        for (size_t k = 0; k < j["windows"].size(); k++)
         {
             windows_.emplace_back(j["windows"][k]);
         }
@@ -231,12 +226,12 @@ public:
         nlohmann::json j_to_save;
         j_to_save["tabs"] = nlohmann::json::array();
 
-        for(auto te : tabs_)
+        for (auto te : tabs_)
         {
             nlohmann::json elements = nlohmann::json::array();
 
             const std::vector<ElementSettings> elems = te.getElementSettingsList();
-            for(const ElementSettings& elem : elems)
+            for (const ElementSettings& elem : elems)
             {
                 nlohmann::json j;
                 j["x"] = elem.x;
@@ -254,12 +249,12 @@ public:
             j_to_save["tabs"].push_back(tab_obj);
         }
 
-        for(auto we : windows_)
+        for (auto we : windows_)
         {
             nlohmann::json elements = nlohmann::json::array();
 
             const std::vector<ElementSettings> elems = we.getElementSettingsList();
-            for(const ElementSettings& elem : elems)
+            for (const ElementSettings& elem : elems)
             {
                 nlohmann::json j;
                 j["x"] = elem.x;
@@ -288,10 +283,10 @@ public:
     {
         std::vector<ElementSettings> all_elements;
 
-        for(auto t : tabs_)
+        for (auto t : tabs_)
         {
             std::vector<ElementSettings> v = t.getElementSettingsList();
-            for(auto tv : v)
+            for (auto tv : v)
             {
                 all_elements.push_back(tv);
             }
@@ -302,9 +297,9 @@ public:
 
     bool hasTabWithName(const std::string& name) const
     {
-        for(const TabSettings& ts : tabs_)
+        for (const TabSettings& ts : tabs_)
         {
-            if(ts.getName() == name)
+            if (ts.getName() == name)
             {
                 return true;
             }
@@ -315,9 +310,9 @@ public:
     TabSettings getTabWithName(const std::string& name) const
     {
         TabSettings res;
-        for(const TabSettings& ts : tabs_)
+        for (const TabSettings& ts : tabs_)
         {
-            if(ts.getName() == name)
+            if (ts.getName() == name)
             {
                 res = ts;
                 break;
@@ -328,9 +323,9 @@ public:
 
     bool hasWindowWithName(const std::string& name) const
     {
-        for(const WindowSettings& ws : windows_)
+        for (const WindowSettings& ws : windows_)
         {
-            if(ws.getName() == name)
+            if (ws.getName() == name)
             {
                 return true;
             }
@@ -341,9 +336,9 @@ public:
     WindowSettings getWindowWithName(const std::string& name) const
     {
         WindowSettings res;
-        for(const WindowSettings& ws : windows_)
+        for (const WindowSettings& ws : windows_)
         {
-            if(ws.getName() == name)
+            if (ws.getName() == name)
             {
                 res = ws;
                 break;
@@ -354,16 +349,16 @@ public:
 
     bool operator==(const ProjectSettings& other) const
     {
-        if(tabs_.size() != other.tabs_.size())
+        if (tabs_.size() != other.tabs_.size())
         {
             return false;
         }
 
-        for(const TabSettings ts : tabs_)
+        for (const TabSettings ts : tabs_)
         {
-            if(other.hasTabWithName(ts.getName()))
+            if (other.hasTabWithName(ts.getName()))
             {
-                if(other.getTabWithName(ts.getName()) != ts)
+                if (other.getTabWithName(ts.getName()) != ts)
                 {
                     return false;
                 }
@@ -374,11 +369,11 @@ public:
             }
         }
 
-        for(const WindowSettings ws : windows_)
+        for (const WindowSettings ws : windows_)
         {
-            if(other.hasWindowWithName(ws.getName()))
+            if (other.hasWindowWithName(ws.getName()))
             {
-                if(other.getWindowWithName(ws.getName()) != ws)
+                if (other.getWindowWithName(ws.getName()) != ws)
                 {
                     return false;
                 }
@@ -396,8 +391,6 @@ public:
     {
         return !(*this == other);
     }
-
 };
-
 
 #endif

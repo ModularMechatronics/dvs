@@ -1,16 +1,15 @@
 #ifndef DRAW_LINE_3D_H_
 #define DRAW_LINE_3D_H_
 
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
-#include "plot_objects/plot_object_base.h"
+#include "main_application/plot_objects/utils.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
-#include "main_application/plot_objects/utils.h"
+#include "plot_objects/plot_object_base.h"
 
 class DrawLine3D : public PlotObjectBase
 {
@@ -33,7 +32,7 @@ public:
 DrawLine3D::DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
-    if((type_ != Function::DRAW_LINE3D) && (type_ != Function::DRAW_LINE_BETWEEN_POINTS_3D))
+    if ((type_ != Function::DRAW_LINE3D) && (type_ != Function::DRAW_LINE_BETWEEN_POINTS_3D))
     {
         throw std::runtime_error("Invalid function type for DrawLine3D!");
     }
@@ -70,7 +69,7 @@ void DrawLine3D::findMinMax()
 
 void DrawLine3D::visualize()
 {
-    if(!visualize_has_run_)
+    if (!visualize_has_run_)
     {
         visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);

@@ -1,7 +1,7 @@
 #include <algorithm>
-#include <vector>
 #include <functional>
 #include <map>
+#include <vector>
 
 #include "dvs.h"
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     fcns["draw-line-2d"] = testDrawLine2D;
     fcns["draw-line-between-points"] = testDrawLineBetweenPoints3D;
 
-    if(argc == 1)
+    if (argc == 1)
     {
         std::cout << "Running basic..." << std::endl;
         testBasic();
@@ -73,11 +73,11 @@ int main(int argc, char* argv[])
     {
         const std::string arg(argv[1]);
 
-        if((arg == "-h") || (arg == "--help") || (arg == "help"))
+        if ((arg == "-h") || (arg == "--help") || (arg == "help"))
         {
             displayHelp();
         }
-        if(arg == "all")
+        if (arg == "all")
         {
             std::map<std::string, std::function<void()>>::iterator it;
 
@@ -89,13 +89,13 @@ int main(int argc, char* argv[])
                 std::cin.ignore();
             }
         }
-        else if(fcns.count(arg) > 0)
+        else if (fcns.count(arg) > 0)
         {
             std::map<std::string, std::function<void()>>::iterator it;
 
             for (it = fcns.begin(); it != fcns.end(); it++)
             {
-                if(arg == it->first)
+                if (arg == it->first)
                 {
                     it->second();
                     break;

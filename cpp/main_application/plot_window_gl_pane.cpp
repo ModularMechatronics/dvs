@@ -1,30 +1,29 @@
 #include "plot_window_gl_pane.h"
 
-
 #include <wx/event.h>
 #include <wx/glcanvas.h>
 
-#include "math/math.h"
 #include "axes/axes.h"
-#include "io_devices/io_devices.h"
-#include "opengl_low_level/opengl_low_level.h"
-#include "events.h"
 #include "enumerations.h"
+#include "events.h"
+#include "io_devices/io_devices.h"
+#include "math/math.h"
+#include "opengl_low_level/opengl_low_level.h"
 
 using namespace dvs::internal;
 
 CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, const Vec2Df mouse_pos)
 {
-    if((bound.x_min <= mouse_pos.x) && (mouse_pos.x <= bound.x_max) &&
-        (bound.y_min <= mouse_pos.y) && (mouse_pos.y <= bound.y_max))
+    if ((bound.x_min <= mouse_pos.x) && (mouse_pos.x <= bound.x_max) && (bound.y_min <= mouse_pos.y) &&
+        (mouse_pos.y <= bound.y_max))
     {
-        if(mouse_pos.x <= bound_margin.x_min)
+        if (mouse_pos.x <= bound_margin.x_min)
         {
-            if(mouse_pos.y <= bound_margin.y_min)
+            if (mouse_pos.y <= bound_margin.y_min)
             {
                 return CursorSquareState::TOP_LEFT;
             }
-            else if(bound_margin.y_max <= mouse_pos.y)
+            else if (bound_margin.y_max <= mouse_pos.y)
             {
                 return CursorSquareState::BOTTOM_LEFT;
             }
@@ -33,13 +32,13 @@ CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, 
                 return CursorSquareState::LEFT;
             }
         }
-        else if(bound_margin.x_max <= mouse_pos.x)
+        else if (bound_margin.x_max <= mouse_pos.x)
         {
-            if(mouse_pos.y <= bound_margin.y_min)
+            if (mouse_pos.y <= bound_margin.y_min)
             {
                 return CursorSquareState::TOP_RIGHT;
             }
-            else if(bound_margin.y_max <= mouse_pos.y)
+            else if (bound_margin.y_max <= mouse_pos.y)
             {
                 return CursorSquareState::BOTTOM_RIGHT;
             }
@@ -48,11 +47,11 @@ CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, 
                 return CursorSquareState::RIGHT;
             }
         }
-        else if(mouse_pos.y <= bound_margin.y_min)
+        else if (mouse_pos.y <= bound_margin.y_min)
         {
             return CursorSquareState::TOP;
         }
-        else if(bound_margin.y_max <= mouse_pos.y)
+        else if (bound_margin.y_max <= mouse_pos.y)
         {
             return CursorSquareState::BOTTOM;
         }
@@ -68,7 +67,8 @@ CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, 
 }
 
 PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& element_settings, const float grid_size)
-    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE), GuiElement(element_settings)
+    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
+      GuiElement(element_settings)
 {
     wxGLContextAttrs cxtAttrs;
     cxtAttrs.PlatformDefaults().OGLVersion(99, 2).EndList();
@@ -134,7 +134,6 @@ void PlotWindowGLPane::setSize(const wxSize& new_size)
 {
     axes_painter_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
 
-
     this->SetSize(new_size);
 }
 
@@ -185,7 +184,8 @@ PlotWindowGLPane::~PlotWindowGLPane()
     delete m_context;
 }
 
-void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr)
+void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data,
+                               const dvs::internal::FunctionHeader& hdr)
 {
     const internal::Function fcn = hdr.getObjectAtIdx(0).getAs<internal::Function>();
 
@@ -201,7 +201,8 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     {
         axes_set_ = true;
 
-        const AxesBounds axes_bnd = hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
+        const AxesBounds axes_bnd =
+            hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
         axes_interactor_->setAxesLimits(Vec2Dd(axes_bnd.lower.x, axes_bnd.lower.y),
                                         Vec2Dd(axes_bnd.upper.x, axes_bnd.upper.y));
     }
@@ -209,7 +210,8 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     {
         axes_set_ = true;
 
-        const AxesBounds axes_bnd = hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
+        const AxesBounds axes_bnd =
+            hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<AxesBounds>();
         axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.lower.x, axes_bnd.lower.y, axes_bnd.lower.z),
                                         Vec3Dd(axes_bnd.upper.x, axes_bnd.upper.y, axes_bnd.upper.z));
     }
@@ -232,8 +234,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 
         plot_data_handler_.clear();
         axes_interactor_->setViewAngles(0, M_PI);
-        axes_interactor_->setAxesLimits(Vec3Dd(-1.0, -1.0, -1.0),
-                                        Vec3Dd(1.0, 1.0, 1.0));
+        axes_interactor_->setAxesLimits(Vec3Dd(-1.0, -1.0, -1.0), Vec3Dd(1.0, 1.0, 1.0));
     }
     else if (fcn == Function::SOFT_CLEAR)
     {
@@ -259,20 +260,20 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         }
         if (!view_set_)
         {
-            if(is3DFunction(fcn))
+            if (is3DFunction(fcn))
             {
                 const float azimuth = -64.0f * M_PI / 180.0f;
                 const float elevation = 34.0f * M_PI / 180.0f;
 
                 axes_interactor_->setViewAngles(azimuth, elevation);
             }
-            else if(isImageFunction(fcn))
+            else if (isImageFunction(fcn))
             {
                 const float azimuth = 0.0f * M_PI / 180.0f;
                 const float elevation = -90.0f * M_PI / 180.0f;
 
                 axes_interactor_->setViewAngles(azimuth, elevation);
-                view_set_ = true; // Let imshow be dominant once used
+                view_set_ = true;  // Let imshow be dominant once used
             }
             else
             {
@@ -282,7 +283,6 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
                 axes_interactor_->setViewAngles(azimuth, elevation);
             }
         }
-
     }
 
     Refresh();
@@ -295,19 +295,11 @@ bool PlotWindowGLPane::isImageFunction(const Function fcn)
 
 bool PlotWindowGLPane::is3DFunction(const Function fcn)
 {
-    return (fcn == Function::DRAW_LINE3D) ||
-           (fcn == Function::PLANE_XY) ||
-           (fcn == Function::PLANE_XZ) ||
-           (fcn == Function::PLANE_YZ) ||
-           (fcn == Function::DRAW_MESH) ||
-           (fcn == Function::DRAW_TRIANGLES_3D) ||
-           (fcn == Function::DRAW_TRIANGLE_3D) ||
-           (fcn == Function::SURF) ||
-           (fcn == Function::PLOT3) ||
-           (fcn == Function::SCATTER3) ||
-           (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
-           (fcn == Function::POLYGON_FROM_4_POINTS) ||
-           (fcn == Function::DRAW_TRIANGLES_3D);
+    return (fcn == Function::DRAW_LINE3D) || (fcn == Function::PLANE_XY) || (fcn == Function::PLANE_XZ) ||
+           (fcn == Function::PLANE_YZ) || (fcn == Function::DRAW_MESH) || (fcn == Function::DRAW_TRIANGLES_3D) ||
+           (fcn == Function::DRAW_TRIANGLE_3D) || (fcn == Function::SURF) || (fcn == Function::PLOT3) ||
+           (fcn == Function::SCATTER3) || (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
+           (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_TRIANGLES_3D);
 }
 
 void PlotWindowGLPane::setSelection()
@@ -382,13 +374,13 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
 
     if (left_mouse_button_.isPressed())
     {
-        if(is_editing_)
+        if (is_editing_)
         {
             const Vec2Df mouse_pos = Vec2Df(current_point.x, current_point.y);
             Vec2Df delta = mouse_pos - mouse_pos_at_press_;
 
-            delta = Vec2Df(std::round(delta.x / grid_size_) * grid_size_,
-                           std::round(delta.y / grid_size_) * grid_size_);
+            delta =
+                Vec2Df(std::round(delta.x / grid_size_) * grid_size_, std::round(delta.y / grid_size_) * grid_size_);
             const Vec2Df current_pos(this->GetPosition().x, this->GetPosition().y);
             const Vec2Df changed_pos = current_pos + delta;
 
@@ -397,7 +389,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             wxPoint new_position = this->GetPosition();
             wxSize new_size = this->GetSize();
 
-            switch(cursor_state_at_press_)
+            switch (cursor_state_at_press_)
             {
                 case CursorSquareState::LEFT:
                     new_position = wxPoint(changed_pos.x, pos_at_press_.y);
@@ -446,8 +438,9 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             element_settings_.x = static_cast<float>(new_position.x) / px;
             element_settings_.y = static_cast<float>(new_position.y) / py;
 
-            if((this->GetPosition().x != new_position.x) || (this->GetPosition().y != new_position.y) || 
-               (new_size.GetWidth() != this->GetSize().GetWidth()) || (new_size.GetHeight() != this->GetSize().GetHeight()))
+            if ((this->GetPosition().x != new_position.x) || (this->GetPosition().y != new_position.y) ||
+                (new_size.GetWidth() != this->GetSize().GetWidth()) ||
+                (new_size.GetHeight() != this->GetSize().GetHeight()))
             {
                 notifyParentAboutModification();
                 this->setPosition(new_position);
@@ -465,7 +458,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
     }
     else
     {
-        if(is_editing_)
+        if (is_editing_)
         {
             Bound2Df bnd;
             bnd.x_min = 0.0f;
@@ -479,7 +472,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             bnd_margin.y_min = bnd.y_min + edit_size_margin_;
             bnd_margin.y_max = bnd.y_max - edit_size_margin_;
             const CursorSquareState cms = mouseState(bnd, bnd_margin, Vec2Df(current_point.x, current_point.y));
-            switch(cms)
+            switch (cms)
             {
                 case CursorSquareState::LEFT:
                     wxSetCursor(wxCursor(wxCURSOR_SIZEWE));

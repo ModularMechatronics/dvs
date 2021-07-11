@@ -9,5 +9,4 @@ inline void sleepMS(const int ms)
     usleep(ms * 1000);
 }
 
-
 #endif

@@ -1,19 +1,18 @@
 #ifndef PLOT_OBJECT_BASE_H_
 #define PLOT_OBJECT_BASE_H_
 
-#include "math/math.h"
-
+#include <map>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include <map>
 
 #include "communication/received_data.h"
+#include "enumerations.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
-#include "plot_functions/plot_functions.h"
-#include "enumerations.h"
 #include "plot_attributes.h"
+#include "plot_functions/plot_functions.h"
 #include "plot_objects/utils.h"
 
 using namespace dvs;
@@ -31,7 +30,7 @@ protected:
     uint64_t num_bytes_for_one_vec_;
     uint8_t* data_ptr_;
 
-    Function type_; 
+    Function type_;
     DataType data_type_;
 
     Vec3Dd min_vec;
@@ -78,7 +77,7 @@ std::string PlotObjectBase::getName() const
 
 std::pair<Vec3Dd, Vec3Dd> PlotObjectBase::getMinMaxVectors()
 {
-    if(!min_max_calculated_)
+    if (!min_max_calculated_)
     {
         min_max_calculated_ = true;
         findMinMax();
@@ -93,10 +92,11 @@ size_t PlotObjectBase::getNumDimensions() const
 
 PlotObjectBase::PlotObjectBase() {}
 
-PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr) : received_data_(std::move(received_data))
+PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
+    : received_data_(std::move(received_data))
 {
     const uint64_t num_data_bytes = received_data_->getNumDataBytes();
-    if(num_data_bytes == 0)
+    if (num_data_bytes == 0)
     {
         throw std::runtime_error("No data bytes!");
     }
@@ -129,7 +129,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
 {
     is_persistent_ = props.hasProperty(PropertyType::PERSISTENT);
 
-    if(props.hasProperty(PropertyType::NAME))
+    if (props.hasProperty(PropertyType::NAME))
     {
         name_ = props.getProperty<Name>();
     }
@@ -138,7 +138,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         name_ = Name("<undef-name>");
     }
 
-    if(props.hasProperty(PropertyType::COLOR))
+    if (props.hasProperty(PropertyType::COLOR))
     {
         const Color col = props.getProperty<Color>();
         color_.red = static_cast<float>(col.red) / 255.0f;
@@ -150,7 +150,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         color_ = RGBTripletf(0.1, 0.2, 0.1);
     }
 
-    if(props.hasProperty(PropertyType::ALPHA))
+    if (props.hasProperty(PropertyType::ALPHA))
     {
         // TODO: Alpha should be a number between 0-100
         const Alpha alp = props.getProperty<Alpha>();
@@ -161,7 +161,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         alpha_ = 1.0f;
     }
 
-    if(props.hasProperty(PropertyType::EDGE_COLOR))
+    if (props.hasProperty(PropertyType::EDGE_COLOR))
     {
         const EdgeColor ec = props.getProperty<EdgeColor>();
         edge_color_.red = static_cast<float>(ec.red) / 255.0f;
@@ -173,7 +173,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         edge_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
     }
 
-    if(props.hasProperty(PropertyType::FACE_COLOR))
+    if (props.hasProperty(PropertyType::FACE_COLOR))
     {
         const FaceColor fc = props.getProperty<FaceColor>();
         face_color_.red = static_cast<float>(fc.red) / 255.0f;
@@ -185,7 +185,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         face_color_ = RGBTripletf(0.1f, 0.2f, 0.3f);
     }
 
-    if(props.hasProperty(PropertyType::COLOR_MAP))
+    if (props.hasProperty(PropertyType::COLOR_MAP))
     {
         color_map_ = props.getProperty<ColorMap>().data;
     }
@@ -194,7 +194,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         color_map_ = ColorMapType::JET;
     }
 
-    if(props.hasProperty(PropertyType::LINE_WIDTH))
+    if (props.hasProperty(PropertyType::LINE_WIDTH))
     {
         const LineWidth lw = props.getProperty<LineWidth>();
         line_width_ = lw.data;
@@ -204,7 +204,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         line_width_ = 1.0f;
     }
 
-    if(props.hasProperty(PropertyType::POINT_SIZE))
+    if (props.hasProperty(PropertyType::POINT_SIZE))
     {
         const PointSize ps = props.getProperty<PointSize>();
         point_size_ = ps.data;
@@ -214,7 +214,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         point_size_ = 1.0f;
     }
 
-    if(props.hasProperty(PropertyType::LINE_STYLE))
+    if (props.hasProperty(PropertyType::LINE_STYLE))
     {
         line_style_ = props.getProperty<LineStyle>();
     }
