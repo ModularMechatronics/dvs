@@ -1,14 +1,13 @@
 #ifndef FUNCTION_HEADER_H_
 #define FUNCTION_HEADER_H_
 
-#include <vector>
-#include <stdexcept>
-
 #include <cassert>
+#include <stdexcept>
+#include <vector>
 
+#include "base_types.h"
 #include "enumerations.h"
 #include "plot_attributes.h"
-#include "base_types.h"
 #include "utils.h"
 
 namespace dvs
@@ -17,14 +16,12 @@ namespace internal
 {
 constexpr uint8_t max_num_bytes = SCHAR_MAX;
 
-template <typename T>
-uint8_t toUInt8(const T v)
+template <typename T> uint8_t toUInt8(const T v)
 {
     return static_cast<uint8_t>(v);
 }
 
-template <typename T>
-uint32_t toUInt32(const T v)
+template <typename T> uint32_t toUInt32(const T v)
 {
     return static_cast<uint32_t>(v);
 }
@@ -35,12 +32,12 @@ struct FunctionHeaderObject
     uint8_t num_bytes;
     uint8_t data[max_num_bytes];
 
-    template <typename T> T getAs() const
+    template <typename T> T as() const
     {
         T out_var;
         uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
 
-        for(size_t k = 0; k < sizeof(T); k++)
+        for (size_t k = 0; k < sizeof(T); k++)
         {
             ptr[k] = data[k];
         }
@@ -62,8 +59,8 @@ struct FunctionHeaderObject
         T out_var;
         // out_var.setPropertyType(object_type);
         uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
-        
-        for(size_t k = 0; k < sizeof(T); k++)
+
+        for (size_t k = 0; k < sizeof(T); k++)
         {
             ptr[k] = data[k];
         }
@@ -73,24 +70,18 @@ struct FunctionHeaderObject
 
     template <typename T> T getAsPlainOldData()
     {
-        static_assert(std::is_same<T, float>::value ||
-                      std::is_same<T, double>::value ||
-                      std::is_same<T, int>::value ||
-                      std::is_same<T, uint64_t>::value ||
-                      std::is_same<T, uint32_t>::value ||
-                      std::is_same<T, uint16_t>::value ||
-                      std::is_same<T, uint8_t>::value ||
-                      std::is_same<T, int64_t>::value ||
-                      std::is_same<T, int32_t>::value ||
-                      std::is_same<T, int16_t>::value ||
-                      std::is_same<T, int8_t>::value ||
-                      std::is_same<T, char>::value ||
-                      std::is_same<T, unsigned char>::value, "Must be a POD type!");
+        static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value || std::is_same<T, int>::value ||
+                          std::is_same<T, uint64_t>::value || std::is_same<T, uint32_t>::value ||
+                          std::is_same<T, uint16_t>::value || std::is_same<T, uint8_t>::value ||
+                          std::is_same<T, int64_t>::value || std::is_same<T, int32_t>::value ||
+                          std::is_same<T, int16_t>::value || std::is_same<T, int8_t>::value ||
+                          std::is_same<T, char>::value || std::is_same<T, unsigned char>::value,
+                      "Must be a POD type!");
 
         T out_var;
         uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
 
-        for(size_t k = 0; k < sizeof(T); k++)
+        for (size_t k = 0; k < sizeof(T); k++)
         {
             ptr[k] = data[k];
         }
@@ -102,7 +93,7 @@ struct FunctionHeaderObject
 inline uint8_t dataTypeToNumBytes(const DataType data_type)
 {
     uint8_t num_bytes = 0;
-    switch(data_type)
+    switch (data_type)
     {
         case DataType::FLOAT:
             num_bytes = sizeof(float);
@@ -173,7 +164,7 @@ template <typename T> DataType typeToDataTypeEnum()
     }
     else
     {
-        if(std::is_signed<T>::value)
+        if (std::is_signed<T>::value)
         {
             switch (sizeof(T))
             {
@@ -300,39 +291,39 @@ PERSISTENT,
 
 template <typename T> PropertyType templateToPropType()
 {
-    if(std::is_same<T, properties::Alpha>::value)
+    if (std::is_same<T, properties::Alpha>::value)
     {
         return PropertyType::ALPHA;
     }
-    else if(std::is_same<T, properties::Name>::value)
+    else if (std::is_same<T, properties::Name>::value)
     {
         return PropertyType::NAME;
     }
-    else if(std::is_same<T, properties::LineWidth>::value)
+    else if (std::is_same<T, properties::LineWidth>::value)
     {
         return PropertyType::LINE_WIDTH;
     }
-    else if(std::is_same<T, properties::LineStyle>::value)
+    else if (std::is_same<T, properties::LineStyle>::value)
     {
         return PropertyType::LINE_STYLE;
     }
-    else if(std::is_same<T, properties::Color>::value)
+    else if (std::is_same<T, properties::Color>::value)
     {
         return PropertyType::COLOR;
     }
-    else if(std::is_same<T, properties::EdgeColor>::value)
+    else if (std::is_same<T, properties::EdgeColor>::value)
     {
         return PropertyType::EDGE_COLOR;
     }
-    else if(std::is_same<T, properties::FaceColor>::value)
+    else if (std::is_same<T, properties::FaceColor>::value)
     {
         return PropertyType::FACE_COLOR;
     }
-    else if(std::is_same<T, properties::ColorMap>::value)
+    else if (std::is_same<T, properties::ColorMap>::value)
     {
         return PropertyType::COLOR_MAP;
     }
-    else if(std::is_same<T, properties::PointSize>::value)
+    else if (std::is_same<T, properties::PointSize>::value)
     {
         return PropertyType::POINT_SIZE;
     }
@@ -351,41 +342,41 @@ public:
     Properties() = default;
     Properties(const std::vector<FunctionHeaderObject>& values)
     {
-        for(size_t k = 0; k < values.size(); k++)
+        for (size_t k = 0; k < values.size(); k++)
         {
-            if(values[k].type == FunctionHeaderObjectType::PROPERTY)
+            if (values[k].type == FunctionHeaderObjectType::PROPERTY)
             {
-                const PropertyBase pb = values[k].getAs<PropertyBase>();
+                const PropertyBase pb = values[k].as<PropertyBase>();
                 std::shared_ptr<PropertyBase> ptr;
 
-                switch(pb.getPropertyType())
+                switch (pb.getPropertyType())
                 {
                     case PropertyType::ALPHA:
-                        ptr = std::make_shared<properties::Alpha>(values[k].getAs<properties::Alpha>());
+                        ptr = std::make_shared<properties::Alpha>(values[k].as<properties::Alpha>());
                         break;
                     case PropertyType::NAME:
-                        ptr = std::make_shared<properties::Name>(values[k].getAs<properties::Name>());
+                        ptr = std::make_shared<properties::Name>(values[k].as<properties::Name>());
                         break;
                     case PropertyType::LINE_WIDTH:
-                        ptr = std::make_shared<properties::LineWidth>(values[k].getAs<properties::LineWidth>());
+                        ptr = std::make_shared<properties::LineWidth>(values[k].as<properties::LineWidth>());
                         break;
                     case PropertyType::LINE_STYLE:
-                        ptr = std::make_shared<properties::LineStyle>(values[k].getAs<properties::LineStyle>());
+                        ptr = std::make_shared<properties::LineStyle>(values[k].as<properties::LineStyle>());
                         break;
                     case PropertyType::COLOR:
-                        ptr = std::make_shared<properties::Color>(values[k].getAs<properties::Color>());
+                        ptr = std::make_shared<properties::Color>(values[k].as<properties::Color>());
                         break;
                     case PropertyType::EDGE_COLOR:
-                        ptr = std::make_shared<properties::EdgeColor>(values[k].getAs<properties::EdgeColor>());
+                        ptr = std::make_shared<properties::EdgeColor>(values[k].as<properties::EdgeColor>());
                         break;
                     case PropertyType::FACE_COLOR:
-                        ptr = std::make_shared<properties::FaceColor>(values[k].getAs<properties::FaceColor>());
+                        ptr = std::make_shared<properties::FaceColor>(values[k].as<properties::FaceColor>());
                         break;
                     case PropertyType::COLOR_MAP:
-                        ptr = std::make_shared<properties::ColorMap>(values[k].getAs<properties::ColorMap>());
+                        ptr = std::make_shared<properties::ColorMap>(values[k].as<properties::ColorMap>());
                         break;
                     case PropertyType::POINT_SIZE:
-                        ptr = std::make_shared<properties::PointSize>(values[k].getAs<properties::PointSize>());
+                        ptr = std::make_shared<properties::PointSize>(values[k].as<properties::PointSize>());
                         break;
                     case PropertyType::PERSISTENT:
                         ptr = std::make_shared<PropertyBase>();
@@ -397,7 +388,7 @@ public:
                     default:
                         throw std::runtime_error("No valid type found!");
                 }
-                
+
                 props.push_back(ptr);
             }
         }
@@ -405,9 +396,9 @@ public:
 
     bool hasProperty(const PropertyType tp) const
     {
-        for(size_t k = 0; k < props.size(); k++)
+        for (size_t k = 0; k < props.size(); k++)
         {
-            if(props[k]->getPropertyType() == tp)
+            if (props[k]->getPropertyType() == tp)
             {
                 return true;
             }
@@ -419,16 +410,16 @@ public:
     {
         const PropertyType tp = templateToPropType<T>();
 
-        if(!hasProperty(tp))
+        if (!hasProperty(tp))
         {
             throw std::runtime_error("Property not present!");
         }
 
         std::shared_ptr<T> t_ptr = std::shared_ptr<T>(new T());
 
-        for(size_t k = 0; k < props.size(); k++)
+        for (size_t k = 0; k < props.size(); k++)
         {
-            if(props[k]->getPropertyType() == tp)
+            if (props[k]->getPropertyType() == tp)
             {
                 t_ptr = std::dynamic_pointer_cast<T>(props[k]);
             }
@@ -456,7 +447,8 @@ private:
 
     template <typename U> void extendInternal(std::vector<FunctionHeaderObject>& values, const U& obj)
     {
-        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value, "Incorrect type!");
+        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
+                      "Incorrect type!");
 
         values.push_back(FunctionHeaderObject());
         FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
@@ -472,7 +464,8 @@ private:
     template <typename U, typename... Us>
     void extendInternal(std::vector<FunctionHeaderObject>& values, const U& obj, const Us&... other_objs)
     {
-        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value, "Incorrect type!");
+        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
+                      "Incorrect type!");
 
         values.push_back(FunctionHeaderObject());
         FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
@@ -503,7 +496,7 @@ public:
 
         uint8_t num_values = 0;
 
-        while(num_values < num_expected_values)
+        while (num_values < num_expected_values)
         {
             values.push_back(FunctionHeaderObject());
             FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
@@ -542,9 +535,9 @@ public:
 
     bool hasType(const FunctionHeaderObjectType tp) const
     {
-        return std::find_if(values.begin(), values.end(), [&tp] (const FunctionHeaderObject& fo) -> bool {
-            return fo.type == tp;
-        }) != values.end();
+        return std::find_if(values.begin(), values.end(), [&tp](const FunctionHeaderObject& fo) -> bool {
+                   return fo.type == tp;
+               }) != values.end();
     }
 
     std::vector<FunctionHeaderObject> getValues() const
@@ -557,18 +550,18 @@ public:
         return values.at(idx);
     }
 
-    FunctionHeaderObject getObjectFromType(const FunctionHeaderObjectType tp) const
+    FunctionHeaderObject get(const FunctionHeaderObjectType tp) const
     {
-        if(!hasType(tp))
+        if (!hasType(tp))
         {
             throw std::runtime_error("Requested object that is not in value list!");
         }
 
         FunctionHeaderObject obj;
 
-        for(size_t k = 0; k < values.size(); k++)
+        for (size_t k = 0; k < values.size(); k++)
         {
-            if(values[k].type == tp)
+            if (values[k].type == tp)
             {
                 obj = values[k];
             }
@@ -605,9 +598,7 @@ public:
 
         for (size_t k = 0; k < values.size(); k++)
         {
-            s = s + sizeof(FunctionHeaderObjectType) + 
-                    sizeof(FunctionHeaderObject::num_bytes) + 
-                    values[k].num_bytes;
+            s = s + sizeof(FunctionHeaderObjectType) + sizeof(FunctionHeaderObject::num_bytes) + values[k].num_bytes;
         }
 
         return s;
@@ -630,13 +621,10 @@ public:
             idx += values[k].num_bytes;
         }
     }
-    
-
 };
 
-}
+}  // namespace internal
 
-}
-
+}  // namespace dvs
 
 #endif

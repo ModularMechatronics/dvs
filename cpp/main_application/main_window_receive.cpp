@@ -11,8 +11,8 @@ using namespace dvs::internal;
 
 void MainWindow::setCurrentElement(const FunctionHeader& hdr)
 {
-    const FunctionHeaderObject elem_obj = hdr.getObjectFromType(FunctionHeaderObjectType::ELEMENT_NAME);
-    const properties::Name elem_name = elem_obj.getAs<properties::Name>();
+    const FunctionHeaderObject elem_obj = hdr.get(FunctionHeaderObjectType::ELEMENT_NAME);
+    const properties::Name elem_name = elem_obj.as<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
     if (gui_elements_.count(element_name_str) > 0)
@@ -35,8 +35,8 @@ void MainWindow::setCurrentElement(const FunctionHeader& hdr)
 
 void MainWindow::createNewElement(const FunctionHeader& hdr)
 {
-    const FunctionHeaderObject elem_obj = hdr.getObjectFromType(FunctionHeaderObjectType::ELEMENT_NAME);
-    const properties::Name elem_name = elem_obj.getAs<properties::Name>();
+    const FunctionHeaderObject elem_obj = hdr.get(FunctionHeaderObjectType::ELEMENT_NAME);
+    const properties::Name elem_name = elem_obj.as<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
     if (gui_elements_.count(element_name_str) > 0)
@@ -46,11 +46,11 @@ void MainWindow::createNewElement(const FunctionHeader& hdr)
     }
     else
     {
-        const FunctionHeaderObject parent_name_obj = hdr.getObjectFromType(FunctionHeaderObjectType::PARENT_NAME);
-        std::string parent_name = parent_name_obj.getAs<properties::Name>().data;
+        const FunctionHeaderObject parent_name_obj = hdr.get(FunctionHeaderObjectType::PARENT_NAME);
+        std::string parent_name = parent_name_obj.as<properties::Name>().data;
 
-        const FunctionHeaderObject parent_type_obj = hdr.getObjectFromType(FunctionHeaderObjectType::PARENT_TYPE);
-        const dvs::ElementParent parent_type = parent_type_obj.getAs<dvs::ElementParent>();
+        const FunctionHeaderObject parent_type_obj = hdr.get(FunctionHeaderObjectType::PARENT_TYPE);
+        const dvs::ElementParent parent_type = parent_type_obj.as<dvs::ElementParent>();
 
         if (parent_name == "#DEFAULTNAME#")
         {
@@ -109,7 +109,7 @@ void MainWindow::receiveData()
             throw std::runtime_error("Function object was not at element 0 in function header!");
         }
 
-        const Function fcn = fcn_obj.getAs<Function>();
+        const Function fcn = fcn_obj.as<Function>();
 
         if (isGuiElementFunction(fcn))
         {

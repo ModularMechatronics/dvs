@@ -82,45 +82,45 @@ TEST_F(TestTransmission, TestBasic)
         switch (values[k].type)
         {
             case FunctionHeaderObjectType::FUNCTION:
-                ASSERT_EQ(values[k].getAs<Function>(), Function::PLOT2);
+                ASSERT_EQ(values[k].as<Function>(), Function::PLOT2);
                 break;
             case FunctionHeaderObjectType::DATA_STRUCTURE:
-                ASSERT_EQ(values[k].getAs<DataStructure>(), DataStructure::VECTOR);
+                ASSERT_EQ(values[k].as<DataStructure>(), DataStructure::VECTOR);
                 break;
             case FunctionHeaderObjectType::DATA_TYPE:
-                ASSERT_EQ(values[k].getAs<DataType>(), DataType::DOUBLE);
+                ASSERT_EQ(values[k].as<DataType>(), DataType::DOUBLE);
                 break;
             case FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED:
-                ASSERT_EQ(values[k].getAs<uint8_t>(), static_cast<uint8_t>(2));
+                ASSERT_EQ(values[k].as<uint8_t>(), static_cast<uint8_t>(2));
                 break;
             case FunctionHeaderObjectType::NUM_ELEMENTS:
-                ASSERT_EQ(values[k].getAs<uint8_t>(), toUInt8(num_elements));
+                ASSERT_EQ(values[k].as<uint8_t>(), toUInt8(num_elements));
                 break;
             case FunctionHeaderObjectType::PROPERTY:
-                switch (values[k].getAs<PropertyBase>().getPropertyType())
+                switch (values[k].as<PropertyBase>().getPropertyType())
                 {
                     case dvs::internal::PropertyType::COLOR:
-                        ASSERT_EQ(values[k].getAs<prp::Color>().red, col.red);
-                        ASSERT_EQ(values[k].getAs<prp::Color>().green, col.green);
-                        ASSERT_EQ(values[k].getAs<prp::Color>().blue, col.blue);
+                        ASSERT_EQ(values[k].as<prp::Color>().red, col.red);
+                        ASSERT_EQ(values[k].as<prp::Color>().green, col.green);
+                        ASSERT_EQ(values[k].as<prp::Color>().blue, col.blue);
                         break;
                     case dvs::internal::PropertyType::ALPHA:
-                        ASSERT_EQ(values[k].getAs<prp::Alpha>().data, alpha.data);
+                        ASSERT_EQ(values[k].as<prp::Alpha>().data, alpha.data);
                         break;
                     case dvs::internal::PropertyType::LINE_WIDTH:
-                        ASSERT_EQ(values[k].getAs<prp::LineWidth>().data, lw.data);
+                        ASSERT_EQ(values[k].as<prp::LineWidth>().data, lw.data);
                         break;
                     case dvs::internal::PropertyType::PERSISTENT:
-                        ASSERT_EQ(values[k].getAs<PropertyType>(), prp::PERSISTENT);
+                        ASSERT_EQ(values[k].as<PropertyType>(), prp::PERSISTENT);
                         break;
                     case dvs::internal::PropertyType::POINT_SIZE:
-                        ASSERT_EQ(values[k].getAs<prp::PointSize>().data, ps.data);
+                        ASSERT_EQ(values[k].as<prp::PointSize>().data, ps.data);
                         break;
                     case dvs::internal::PropertyType::LINE_STYLE:
-                        ASSERT_EQ(std::strcmp(values[k].getAs<prp::LineStyle>().data, ls.data), 0);
+                        ASSERT_EQ(std::strcmp(values[k].as<prp::LineStyle>().data, ls.data), 0);
                         break;
                     case dvs::internal::PropertyType::NAME:
-                        ASSERT_EQ(std::strcmp(values[k].getAs<prp::Name>().data, name.data), 0);
+                        ASSERT_EQ(std::strcmp(values[k].as<prp::Name>().data, name.data), 0);
                         break;
                     default:
                         ASSERT_TRUE(false) << "This should not be reached!";

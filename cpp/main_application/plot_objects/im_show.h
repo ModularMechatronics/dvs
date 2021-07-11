@@ -82,8 +82,8 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
 
     // https://stackoverflow.com/questions/34963324/c-opengl-mesh-rendering
 
-    dims_ = hdr.getObjectFromType(FunctionHeaderObjectType::DIMENSION_2D).getAs<internal::Dimension2D>();
-    num_channels_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_CHANNELS).getAs<uint8_t>();
+    dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+    num_channels_ = hdr.get(FunctionHeaderObjectType::NUM_CHANNELS).as<uint8_t>();
 
     color_map_ = color_maps::rainbowf;
 

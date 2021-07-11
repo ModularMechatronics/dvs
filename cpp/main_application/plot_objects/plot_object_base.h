@@ -103,11 +103,11 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     min_max_calculated_ = false;
     visualize_has_run_ = false;
 
-    type_ = hdr.getObjectFromType(FunctionHeaderObjectType::FUNCTION).getAs<Function>();
-    data_type_ = hdr.getObjectFromType(FunctionHeaderObjectType::DATA_TYPE).getAs<DataType>();
+    type_ = hdr.get(FunctionHeaderObjectType::FUNCTION).as<Function>();
+    data_type_ = hdr.get(FunctionHeaderObjectType::DATA_TYPE).as<DataType>();
 
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
-    num_elements_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_ELEMENTS).getAs<uint32_t>();
+    num_elements_ = hdr.get(FunctionHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
     num_data_bytes_ = received_data_->getNumDataBytes();
     num_dimensions_ = getNumDimensionsFromFunction(type_);
 
