@@ -19,8 +19,7 @@ template <typename T> struct Circle2D
     HomogeneousLine2D<T> tangentLine(const T angle) const;
     bool doesLineIntersect(const HomogeneousLine2D<T>& line) const;
     Point2D<T> closestPointOnPerimeterFromPoint(const Point2D<T>& p) const;
-    std::pair<Point2D<T>, Point2D<T>> lineIntersectionPoints(
-        const HomogeneousLine2D<T>& line) const;
+    std::pair<Point2D<T>, Point2D<T>> lineIntersectionPoints(const HomogeneousLine2D<T>& line) const;
     bool isPointInCircle(const Point2D<T>& p) const;
     bool doesCircleIntersect(const Circle2D<T>& circle) const;
     std::pair<Point2D<T>, Point2D<T>> circleIntersection(const Circle2D<T>& circle) const;

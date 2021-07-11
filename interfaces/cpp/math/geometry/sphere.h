@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "logging.h"
-#include "math/lin_alg.h"
 #include "math/geometry/class_defs/sphere_class_def.h"
+#include "math/lin_alg.h"
 
 namespace dvs
 {
@@ -29,8 +29,7 @@ template <typename T> bool Sphere<T>::doesLineIntersect(const Line3D<T>& line) c
     return distance_between_points < radius;
 }
 
-template <typename T>
-std::pair<Point3D<T>, Point3D<T>> Sphere<T>::lineIntersectionPoint(const Line3D<T>& line) const
+template <typename T> std::pair<Point3D<T>, Point3D<T>> Sphere<T>::lineIntersectionPoint(const Line3D<T>& line) const
 {
     // There are two intersection points
     std::pair<Point3D<T>, Point3D<T>> intersection_points;

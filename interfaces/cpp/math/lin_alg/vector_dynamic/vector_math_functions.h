@@ -213,8 +213,7 @@ template <typename T> Vector<T> sin(const Vector<T>& vin)
     return v;
 }
 
-template <typename T>
-Vector<T> linspaceFromPointsAndCount(const T x0, const T x1, const size_t num_values)
+template <typename T> Vector<T> linspaceFromPointsAndCount(const T x0, const T x1, const size_t num_values)
 {
     assert(num_values > 0);
     Vector<T> v(num_values);
@@ -230,8 +229,7 @@ Vector<T> linspaceFromPointsAndCount(const T x0, const T x1, const size_t num_va
     return v;
 }
 
-template <typename T>
-Vector<T> linspaceFromPointIncAndCount(const T x0, const T dx, const size_t num_values)
+template <typename T> Vector<T> linspaceFromPointIncAndCount(const T x0, const T dx, const size_t num_values)
 {
     assert(num_values > 0);
     Vector<T> v(num_values);
@@ -409,8 +407,7 @@ template <typename T> Vector<size_t> sortedIndices(const Vector<T>& vin)
     return v_indices;
 }
 
-template <typename T>
-std::pair<Vector<T>, Vector<size_t>> sortValuesAndIndices(const Vector<T>& vin)
+template <typename T> std::pair<Vector<T>, Vector<size_t>> sortValuesAndIndices(const Vector<T>& vin)
 {
     Vector<size_t> v_indices(vin.size());
     Vector<T> v_values(vin);

@@ -102,8 +102,7 @@ template <typename T> Quaternion<T> operator*(const Quaternion<T>& q, const Quat
     Vec3D<T> qv = Vec3D<T>(q.x, q.y, q.z);
     Vec3D<T> pv = Vec3D<T>(p.x, p.y, p.z);
     Vec3D<T> intermediate_vector = qv.crossProduct(pv) + q.w * pv + p.w * qv;
-    return Quaternion<T>(
-        q.w * p.w - pv * qv, intermediate_vector.x, intermediate_vector.y, intermediate_vector.z);
+    return Quaternion<T>(q.w * p.w - pv * qv, intermediate_vector.x, intermediate_vector.y, intermediate_vector.z);
 }
 
 template <typename T> Quaternion<T> rotationMatrixToQuaternion(const Matrix<T>& m)

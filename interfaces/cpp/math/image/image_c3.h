@@ -8,7 +8,6 @@
 
 namespace dvs
 {
-
 template <typename T> class ImageC3
 {
 private:
@@ -49,7 +48,10 @@ template <typename T> ImageC3<T>::~ImageC3()
     }
 }
 
-template <typename T> ImageC3<T>::ImageC3() : num_rows_(0), num_cols_(0), is_allocated_(false), num_element_per_channel_(0) {}
+template <typename T>
+ImageC3<T>::ImageC3() : num_rows_(0), num_cols_(0), is_allocated_(false), num_element_per_channel_(0)
+{
+}
 
 template <typename T> ImageC3<T>::ImageC3(const size_t num_rows, const size_t num_cols)
 {
@@ -60,8 +62,7 @@ template <typename T> ImageC3<T>::ImageC3(const size_t num_rows, const size_t nu
     is_allocated_ = true;
 }
 
-template <typename T>
-void ImageC3<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
+template <typename T> void ImageC3<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
 {
     if (input_ptr == nullptr)
     {
@@ -78,16 +79,14 @@ void ImageC3<T>::setInternalData(T* const input_ptr, const size_t num_rows, cons
     num_element_per_channel_ = num_rows_ * num_cols_;
 }
 
-template <typename T>
-void ImageC3<T>::fillBufferWithData(uint8_t* const buffer) const
+template <typename T> void ImageC3<T>::fillBufferWithData(uint8_t* const buffer) const
 {
     const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
     const size_t num_bytes = num_rows_ * num_cols_ * 3 * sizeof(T);
     std::memcpy(buffer, internal_ptr, num_bytes);
 }
 
-template <typename T> 
-size_t ImageC3<T>::numBytes() const
+template <typename T> size_t ImageC3<T>::numBytes() const
 {
     return 3 * num_rows_ * num_cols_ * sizeof(T);
 }
@@ -162,7 +161,6 @@ template <typename T> bool ImageC3<T>::isAllocated() const
     return is_allocated_;
 }
 
-
-}
+}  // namespace dvs
 
 #endif

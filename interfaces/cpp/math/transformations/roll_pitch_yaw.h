@@ -108,14 +108,12 @@ template <typename T> Matrix<T> rotationMatrixFromPitch(const T pitch)
 
 template <typename T> Matrix<T> RollPitchYaw<T>::toRotationMatrix() const
 {
-    return rotationMatrixFromYaw(yaw) * rotationMatrixFromPitch(pitch) *
-           rotationMatrixFromRoll(roll);
+    return rotationMatrixFromYaw(yaw) * rotationMatrixFromPitch(pitch) * rotationMatrixFromRoll(roll);
 }
 
 template <typename T> RollPitchYaw<T> rotationMatrixToRollPitchYaw(const Matrix<T>& m)
 {
-    return RollPitchYaw<T>(
-        std::atan2(m(2, 1), m(2, 2)), std::asin(-m(2, 0)), std::atan2(m(1, 0), m(0, 0)));
+    return RollPitchYaw<T>(std::atan2(m(2, 1), m(2, 2)), std::asin(-m(2, 0)), std::atan2(m(1, 0), m(0, 0)));
 }
 
 }  // namespace dvs

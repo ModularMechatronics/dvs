@@ -54,8 +54,7 @@ template <typename T> Vec2D<T> Vec2D<T>::vectorBetweenPoints(const Point2D<T>& e
     return end_point - *this;
 }
 
-template <typename T>
-Vec2D<T> Vec2D<T>::normalizedVectorBetweenPoints(const Point2D<T>& end_point) const
+template <typename T> Vec2D<T> Vec2D<T>::normalizedVectorBetweenPoints(const Point2D<T>& end_point) const
 {
     // "This" is start point
     return (end_point - *this).normalized();
@@ -81,8 +80,7 @@ template <typename T> Vec2D<T> Vec2D<T>::elementWiseDivide(const Vec2D<T>& denom
     return Vec2D<T>(x / denominator_vector.x, y / denominator_vector.y);
 }
 
-template <typename T>
-Point2D<T> Vec2D<T>::rotatePointAroundThis(const Point2D<T>& point_to_rotate, const T angle) const
+template <typename T> Point2D<T> Vec2D<T>::rotatePointAroundThis(const Point2D<T>& point_to_rotate, const T angle) const
 {
     // Rotates "point_to_rotate" "angle" radians around "this"
     Point2D<T> no_offset_point = point_to_rotate - *this;
@@ -91,8 +89,7 @@ Point2D<T> Vec2D<T>::rotatePointAroundThis(const Point2D<T>& point_to_rotate, co
     return rotated_point + *this;
 }
 
-template <typename T>
-Point2D<T> Vec2D<T>::mirrorPointInThis(const Point2D<T>& point_to_mirror) const
+template <typename T> Point2D<T> Vec2D<T>::mirrorPointInThis(const Point2D<T>& point_to_mirror) const
 {
     // Mirrors "point_to_mirror" in "this"
     return *this - this->vectorBetweenPoints(point_to_mirror);

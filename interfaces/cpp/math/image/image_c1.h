@@ -8,7 +8,6 @@
 
 namespace dvs
 {
-
 template <typename T> class ImageC1
 {
 private:
@@ -63,8 +62,7 @@ template <typename T> ImageC1<T>::ImageC1(const size_t num_rows, const size_t nu
     is_allocated_ = true;
 }
 
-template <typename T>
-void ImageC1<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
+template <typename T> void ImageC1<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
 {
     if (input_ptr == nullptr)
     {
@@ -80,16 +78,14 @@ void ImageC1<T>::setInternalData(T* const input_ptr, const size_t num_rows, cons
     num_cols_ = num_cols;
 }
 
-template <typename T>
-void ImageC1<T>::fillBufferWithData(uint8_t* const buffer) const
+template <typename T> void ImageC1<T>::fillBufferWithData(uint8_t* const buffer) const
 {
     const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
     const size_t num_bytes = num_rows_ * num_cols_ * sizeof(T);
     std::memcpy(buffer, internal_ptr, num_bytes);
 }
 
-template <typename T> 
-size_t ImageC1<T>::numBytes() const
+template <typename T> size_t ImageC1<T>::numBytes() const
 {
     return num_rows_ * num_cols_ * sizeof(T);
 }
@@ -110,8 +106,7 @@ template <typename T> void ImageC1<T>::reallocate(const size_t num_rows, const s
     is_allocated_ = true;
 }
 
-template <typename T>
-void ImageC1<T>::mapBetween(T image_min, T image_max, T min_value, T max_value)
+template <typename T> void ImageC1<T>::mapBetween(T image_min, T image_max, T min_value, T max_value)
 {
     const T factor = (max_value - min_value) / (image_max - image_min);
     for (int idx = 0; idx < num_rows_ * num_cols_; idx++)
@@ -217,6 +212,6 @@ template <typename T> T ImageC1<T>::max() const
     return max_value;
 }
 
-}
+}  // namespace dvs
 
 #endif

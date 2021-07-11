@@ -23,8 +23,7 @@ template <typename T> struct Line3D
     Vec3D<T> vectorBetweenClosestPointOnLineAndPoint(const Point3D<T>& q) const;
     Line3D<T> translatedLine(const Vec3D<T>& v) const;
     std::vector<Point3D<T>> closestPointsBetweenLines(const Line3D<T>& line) const;
-    std::pair<Point3D<T>, Vec3D<T>> projectPointAndVectorOntoLine(const Point3D<T>& q,
-                                                                  const Vec3D<T>& v) const;
+    std::pair<Point3D<T>, Vec3D<T>> projectPointAndVectorOntoLine(const Point3D<T>& q, const Vec3D<T>& v) const;
     Point3D<T> rotatePointAroundLine(const Point3D<T>& q, const T angle) const;
     Line3D<T> negatedLine() const;
     T pointDistanceFromLine(const Point3D<T>& q) const;

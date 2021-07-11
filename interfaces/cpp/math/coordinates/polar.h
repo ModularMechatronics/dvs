@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "logging.h"
-#include "math/lin_alg.h"
 #include "math/coordinates/class_defs/polar_class_def.h"
+#include "math/lin_alg.h"
 
 namespace dvs
 {

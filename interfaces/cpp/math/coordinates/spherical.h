@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "logging.h"
-#include "math/lin_alg.h"
 #include "math/coordinates/class_defs/spherical_class_def.h"
+#include "math/lin_alg.h"
 
 namespace dvs
 {
@@ -26,9 +26,7 @@ template <typename T> CylindricalCoord<T> SphericalCoord<T>::toCylindricalVec() 
 
 template <typename T> Vec3D<T> SphericalCoord<T>::toVec3D() const
 {
-    return r * Vec3D<T>(std::sin(theta) * std::cos(phi),
-                        std::sin(theta) * std::sin(phi),
-                        std::cos(theta));
+    return r * Vec3D<T>(std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi), std::cos(theta));
 }
 }  // namespace dvs
 

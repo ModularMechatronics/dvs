@@ -11,8 +11,7 @@
 
 namespace dvs
 {
-template <typename T>
-Vector<T> linspaceFromPointsAndCount(const T x0, const T x1, const size_t num_values);
+template <typename T> Vector<T> linspaceFromPointsAndCount(const T x0, const T x1, const size_t num_values);
 
 template <typename T>
 std::tuple<Matrix<T>, Matrix<T>> meshGrid(
@@ -34,8 +33,7 @@ std::tuple<Matrix<T>, Matrix<T>> meshGrid(
     return std::tuple<Matrix<T>, Matrix<T>>(std::move(x_mat), std::move(y_mat));
 }
 
-template <typename T>
-std::tuple<Matrix<T>, Matrix<T>> meshgrid(const Vector<T>& x_vec, const Vector<T>& y_vec)
+template <typename T> std::tuple<Matrix<T>, Matrix<T>> meshgrid(const Vector<T>& x_vec, const Vector<T>& y_vec)
 {
     Matrix<T> x_mat(y_vec.size(), x_vec.size()), y_mat(y_vec.size(), x_vec.size());
 
@@ -51,8 +49,7 @@ std::tuple<Matrix<T>, Matrix<T>> meshgrid(const Vector<T>& x_vec, const Vector<T
     return std::tuple<Matrix<T>, Matrix<T>>(x_mat, y_mat);
 }
 
-template <typename T>
-Matrix<T> concatenateHorizontally(const std::initializer_list<Matrix<T>>& init_list)
+template <typename T> Matrix<T> concatenateHorizontally(const std::initializer_list<Matrix<T>>& init_list)
 {
     size_t num_rows;
     size_t idx = 0;
@@ -95,8 +92,7 @@ Matrix<T> concatenateHorizontally(const std::initializer_list<Matrix<T>>& init_l
     return mres;
 }
 
-template <typename T>
-Matrix<T> concatenateVertically(const std::initializer_list<Matrix<T>>& init_list)
+template <typename T> Matrix<T> concatenateVertically(const std::initializer_list<Matrix<T>>& init_list)
 {
     size_t num_cols;
     size_t idx = 0;
@@ -331,8 +327,7 @@ template <typename T> Matrix<T> abs(const Matrix<T>& m_in)
     return m;
 }
 
-template <typename T>
-Matrix<T> linspaceFromPointsAndCountColMat(const T x0, const T x1, const size_t num_values)
+template <typename T> Matrix<T> linspaceFromPointsAndCountColMat(const T x0, const T x1, const size_t num_values)
 {
     assert(num_values > 0);
     Matrix<T> m(num_values, 1);
@@ -348,8 +343,7 @@ Matrix<T> linspaceFromPointsAndCountColMat(const T x0, const T x1, const size_t 
     return m;
 }
 
-template <typename T>
-Matrix<T> linspaceFromPointIncAndCountColMat(const T x0, const T dx, const size_t num_values)
+template <typename T> Matrix<T> linspaceFromPointIncAndCountColMat(const T x0, const T dx, const size_t num_values)
 {
     assert(num_values > 0);
     Matrix<T> m(num_values, 1);
