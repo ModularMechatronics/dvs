@@ -1,7 +1,7 @@
-#include "test_utils.h"
-#include "dvs.h"
-
 #include <algorithm>
+
+#include "dvs.h"
+#include "test_utils.h"
 
 using namespace dvs;
 
@@ -9,22 +9,20 @@ void plotSomething(int i)
 {
     Vector<double> x(10), y(10), z(10);
 
-    for(size_t k = 0; k < 10; k++)
+    for (size_t k = 0; k < 10; k++)
     {
         x(k) = k;
         y(k) = 2 * x(k);
         z(k) = 2 * std::sin(x(k) + static_cast<double>(i));
     }
-    plot3(x, y, z, properties::Color(12, 14, 55),
-                       properties::LineWidth(1),
-                       properties::PointSize(137));
+    plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1), properties::PointSize(137));
 }
 
 void testBasic()
 {
     Vector<double> x(20), y(20), z(20);
 
-    for(size_t k = 0; k < 20; k++)
+    for (size_t k = 0; k < 20; k++)
     {
         x(k) = k;
         y(k) = 2 * x(k);
@@ -37,43 +35,51 @@ void testBasic()
     sleepMS(20);
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
     sleepMS(20);
-    plot(x, y, properties::Color(12, 14, 55),
-               properties::Alpha(137),
-               properties::Name("SimpleName"),
-               properties::LineStyle("-*"),
-               properties::LineWidth(1),
-               properties::EdgeColor(55, 21, 7),
-               properties::FaceColor(52, 26, 3),
-               properties::ColorMap::MAGMA(),
-               properties::PointSize(137));
+    plot(x,
+         y,
+         properties::Color(12, 14, 55),
+         properties::Alpha(137),
+         properties::Name("SimpleName"),
+         properties::LineStyle("-*"),
+         properties::LineWidth(1),
+         properties::EdgeColor(55, 21, 7),
+         properties::FaceColor(52, 26, 3),
+         properties::ColorMap::MAGMA(),
+         properties::PointSize(137));
     sleepMS(20);
     setCurrentElement("view_01");
     sleepMS(20);
-    plot3(x, y, z, properties::Color(12, 14, 55),
-                   properties::Alpha(137),
-                   properties::Name("SimpleName"),
-                   properties::LineStyle("-*"),
-                   properties::LineWidth(1),
-                   properties::EdgeColor(55, 21, 7),
-                   properties::FaceColor(52, 26, 3),
-                   properties::ColorMap::MAGMA(),
-                   properties::PointSize(137));
+    plot3(x,
+          y,
+          z,
+          properties::Color(12, 14, 55),
+          properties::Alpha(137),
+          properties::Name("SimpleName"),
+          properties::LineStyle("-*"),
+          properties::LineWidth(1),
+          properties::EdgeColor(55, 21, 7),
+          properties::FaceColor(52, 26, 3),
+          properties::ColorMap::MAGMA(),
+          properties::PointSize(137));
     sleepMS(20);
     setCurrentElement("view_02");
     sleepMS(20);
-    plot3(x, y, z, properties::Color(12, 14, 55),
-                   properties::Alpha(137),
-                   properties::Name("SimpleName"),
-                   properties::LineStyle("-*"),
-                   properties::LineWidth(1),
-                   properties::EdgeColor(55, 21, 7),
-                   properties::FaceColor(52, 26, 3),
-                   properties::ColorMap::MAGMA(),
-                   properties::PointSize(137));
+    plot3(x,
+          y,
+          z,
+          properties::Color(12, 14, 55),
+          properties::Alpha(137),
+          properties::Name("SimpleName"),
+          properties::LineStyle("-*"),
+          properties::LineWidth(1),
+          properties::EdgeColor(55, 21, 7),
+          properties::FaceColor(52, 26, 3),
+          properties::ColorMap::MAGMA(),
+          properties::PointSize(137));
     sleepMS(20);
     setCurrentElement("view_00");
 
-    for(int i = 0; i < 100; i++)
+    for (int i = 0; i < 100; i++)
     {
         sleepMS(20);
         plotSomething(i);
@@ -86,9 +92,9 @@ void testSurf()
     Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
 
     double inc = 0.4;
-    for(int r = 0; r < num_rows; r++)
+    for (int r = 0; r < num_rows; r++)
     {
-        for(int c = 0; c < num_cols; c++)
+        for (int c = 0; c < num_cols; c++)
         {
             const double rd = static_cast<double>(r - 5) * inc;
             const double cd = static_cast<double>(c - 5) * inc * 2;
@@ -110,7 +116,7 @@ void testScatter()
 
     double t = 0.0;
 
-    for(size_t k = 0; k < 20; k++)
+    for (size_t k = 0; k < 20; k++)
     {
         xf(k) = k;
         yf(k) = 5.0 * std::sin(3.0 * t);
@@ -136,7 +142,7 @@ void testScatter3()
 
     double t0 = 0.0f, t1 = 0.0f, t2 = 0.0f, y0 = 0.0f, z0 = 0.0f;
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         const float xf = 7.0 * cos(t0) + 20.0f;
         const float yf = 7.0 * sin(t0) - 110.0f;
@@ -171,7 +177,7 @@ void testPlot2()
 
     double t = 0.0;
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         xf(k) = 10.0 * cos(t) + 20.0;
         yf(k) = 10.0 * sin(t) + 20.0 + k;
@@ -197,7 +203,7 @@ void testPlot3()
 
     double t = 0.0;
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         xf(k) = 10.0 * cos(t) + 20.0;
         yf(k) = 10.0 * sin(t) + 20.0;
@@ -225,9 +231,9 @@ void testImShow()
     ImageC3<float> img(num_rows, num_cols);
     const double max_val = num_rows * num_cols;
 
-    for(uint32_t r = 0; r < num_rows; r++)
+    for (uint32_t r = 0; r < num_rows; r++)
     {
-        for(uint32_t c = 0; c < num_cols; c++)
+        for (uint32_t c = 0; c < num_cols; c++)
         {
             const float xr = 3.0f * (static_cast<float>(c) - 300.5f) / 800.0f;
             const float yr = 3.0f * (static_cast<float>(r) - 400.5f) / 800.0f;
@@ -251,7 +257,6 @@ void testImShow()
         }
     }
 
-
     imShow(img, properties::Alpha(137));
 }
 
@@ -259,36 +264,38 @@ void testPolygonFrom4Points()
 {
     setCurrentElement("view_00");
 
-    Point3D<double> p0(0.0, 0.0, 0.0),
-                    p1(1.0, 0.0, 1.0),
-                    p2(1.0, 1.0, 2.0),
-                    p3(0.0, 1.0, 3.0);
+    Point3D<double> p0(0.0, 0.0, 0.0), p1(1.0, 0.0, 1.0), p2(1.0, 1.0, 2.0), p3(0.0, 1.0, 3.0);
     drawPolygonFrom4Points(p0, p1, p2, p3);
 }
 
-
 void testdrawXYPlane()
 {
-    VecXY<double> p0_xy(0.0, 0.0),
-                  p1_xy(1.0, 1.0);
-    VecXZ<float> p0_xz(0.0, 0.0),
-                 p1_xz(1.0, 1.0);
-    VecYZ<int16_t> p0_yz(0.0, 0.0),
-                   p1_yz(1.0, 1.0);
+    VecXY<double> p0_xy(0.0, 0.0), p1_xy(1.0, 1.0);
+    VecXZ<float> p0_xz(0.0, 0.0), p1_xz(1.0, 1.0);
+    VecYZ<int16_t> p0_yz(0.0, 0.0), p1_yz(1.0, 1.0);
     setCurrentElement("view_00");
     hardClearFigure();
-    drawPlaneXY(p0_xy, p1_xy, Plane<float>(0.1, 0.1, 0.1, 0.4), 
-        properties::FaceColor(126, 225, 12), properties::EdgeColor(0, 0, 0));
+    drawPlaneXY(p0_xy,
+                p1_xy,
+                Plane<float>(0.1, 0.1, 0.1, 0.4),
+                properties::FaceColor(126, 225, 12),
+                properties::EdgeColor(0, 0, 0));
 
     setCurrentElement("view_01");
     hardClearFigure();
-    drawPlaneXZ(p0_xz, p1_xz, Plane<double>(0.1, 0.1, 0.1, 0.4), 
-        properties::FaceColor(126, 225, 12), properties::EdgeColor(0, 0, 0));
-    
+    drawPlaneXZ(p0_xz,
+                p1_xz,
+                Plane<double>(0.1, 0.1, 0.1, 0.4),
+                properties::FaceColor(126, 225, 12),
+                properties::EdgeColor(0, 0, 0));
+
     setCurrentElement("view_02");
     hardClearFigure();
-    drawPlaneYZ(p0_yz, p1_yz, Plane<double>(0.1, 0.1, 0.1, 0.4), 
-        properties::FaceColor(126, 225, 12), properties::EdgeColor(0, 0, 0));
+    drawPlaneYZ(p0_yz,
+                p1_yz,
+                Plane<double>(0.1, 0.1, 0.1, 0.4),
+                properties::FaceColor(126, 225, 12),
+                properties::EdgeColor(0, 0, 0));
 }
 
 void testMultipleStuff()
@@ -298,7 +305,7 @@ void testMultipleStuff()
 
     double t = 0.0;
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         x(k) = 10.0 * cos(t);
         y(k) = 10.0 * sin(t);
@@ -322,7 +329,7 @@ void testAxis2D()
 
     double t = 0.0;
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         x(k) = t;
         y(k) = 10.0 * cos(t);
@@ -342,7 +349,7 @@ void testAxis3D()
 
     double t = 0.0;
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         x(k) = 10.0 * cos(t);
         y(k) = 10.0 * sin(t);
@@ -366,7 +373,7 @@ void testDrawTriangles()
     double t = 0.0;
     Point3D<double> p0(-1.0, -1.0, 0.0), p1(1.0, -1.0, 0.0), p2(0.0, 1.0, 0.0);
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         const Matrix<double> r = rotationMatrixZ(t);
 
@@ -382,7 +389,6 @@ void testDrawTriangles()
 
     setCurrentElement("view_00");
     hardClearFigure();
-
 
     drawTriangles(triangles, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
@@ -421,9 +427,9 @@ void testDrawMeshAdvanced()
     Vector<Point3D<tp>> vertices(num_rows * num_cols);
     Vector<IndexTriplet> indices(num_triangles);
 
-    for(int r = 0; r < num_rows; r++)
+    for (int r = 0; r < num_rows; r++)
     {
-        for(int c = 0; c < num_cols; c++)
+        for (int c = 0; c < num_cols; c++)
         {
             const double x = static_cast<double>(c - num_cols / 2) * 0.1 + 0.05;
             const double y = static_cast<double>(r - num_rows / 2) * 0.1 + 0.05;
@@ -435,9 +441,9 @@ void testDrawMeshAdvanced()
     }
 
     int idx = 0;
-    for(int r = 0; r < (num_rows - 1); r++)
+    for (int r = 0; r < (num_rows - 1); r++)
     {
-        for(int c = 0; c < (num_cols - 1); c++)
+        for (int c = 0; c < (num_cols - 1); c++)
         {
             const int idx0 = r * num_cols + c;
             const int idx1 = r * num_cols + c + 1;
@@ -526,7 +532,7 @@ void testDrawLineBetweenPoints3D()
     Vector<double> x = {p0.x, p1.x};
     Vector<double> y = {p0.y, p1.y};
     Vector<double> z = {p0.z, p1.z};
-    
+
     setCurrentElement("view_00");
     hardClearFigure();
 

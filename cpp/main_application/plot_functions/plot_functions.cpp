@@ -3,7 +3,6 @@
 #include "math/math.h"
 #include "opengl_low_level/opengl_low_level.h"
 
-
 void plot(const Vectord& x, const Vectord& y)
 {
     assert(x.isAllocated() && (x.size() > 1));
@@ -35,10 +34,10 @@ void scatter(const Vectord& x, const Vectord& y)
 }
 
 void surfInternal(const Matrixd& x,
-          const Matrixd& y,
-          const Matrixd& z,
-          const Interval1D<double> min_max_interval,
-          RGBColorMap<float> c_map)
+                  const Matrixd& y,
+                  const Matrixd& z,
+                  const Interval1D<double> min_max_interval,
+                  RGBColorMap<float> c_map)
 {
     assert((x.rows() == y.rows()) && (x.rows() == z.rows()));
     assert((x.cols() == y.cols()) && (x.cols() == z.cols()));
@@ -56,8 +55,7 @@ void surfInternal(const Matrixd& x,
 
             const double mean_val = (y(r, c) + y(r, c + 1) + y(r + 1, c + 1) + y(r + 1, c)) * 0.25;
 
-            const double color_val =
-                mapAndClampValueToInterval(mean_val, min_max_interval, target_interval);
+            const double color_val = mapAndClampValueToInterval(mean_val, min_max_interval, target_interval);
             const RGBTripletf color = c_map(color_val);
             setColor(color);
             // setColor(input_color);

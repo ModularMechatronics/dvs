@@ -1,7 +1,7 @@
-#include "test_utils.h"
-#include "dvs.h"
-
 #include <algorithm>
+
+#include "dvs.h"
+#include "test_utils.h"
 
 using namespace dvs;
 

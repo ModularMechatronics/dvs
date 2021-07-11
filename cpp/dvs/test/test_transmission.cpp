@@ -4,8 +4,8 @@
 #include <functional>
 #include <iostream>
 #include <string>
-#include <vector>
 #include <thread>
+#include <vector>
 
 #include "dvs.h"
 
@@ -18,7 +18,6 @@ uint8_t buffer[2048];
 class TestTransmission : public testing::Test
 {
 protected:
-
     void SetUp() override {}
 
     void TearDown() override {}
@@ -26,8 +25,7 @@ protected:
 
 constexpr uint64_t num_elements = 20;
 
-template <typename... Us>
-FunctionHeader variadicTemplateFunction(const Us&... settings)
+template <typename... Us> FunctionHeader variadicTemplateFunction(const Us&... settings)
 {
     FunctionHeader hdr;
 
@@ -57,7 +55,7 @@ TEST_F(TestTransmission, TestBasic)
 {
     Vector<uint16_t> x(num_elements), y(num_elements);
 
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         x(k) = k;
         y(k) = 2 * k;
@@ -70,22 +68,16 @@ TEST_F(TestTransmission, TestBasic)
     const prp::LineWidth lw(27);
     const prp::PointSize ps(11);
 
-    const FunctionHeader hdr = variadicTemplateFunction(col,
-                                                        alpha,
-                                                        name,
-                                                        ls,
-                                                        lw,
-                                                        ps,
-                                                        prp::PERSISTENT);
+    const FunctionHeader hdr = variadicTemplateFunction(col, alpha, name, ls, lw, ps, prp::PERSISTENT);
 
     resetBuffer();
     sendHeaderAndData(simpleSendFunction, hdr, x, y);
 
     const FunctionHeader received_header(&(buffer[fcn_header_idx_start]));
-    
+
     const std::vector<FunctionHeaderObject> values = received_header.getValues();
 
-    for(size_t k = 0; k < values.size(); k++)
+    for (size_t k = 0; k < values.size(); k++)
     {
         switch (values[k].type)
         {

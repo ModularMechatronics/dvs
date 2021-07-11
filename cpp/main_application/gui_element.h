@@ -1,15 +1,15 @@
 #ifndef GUI_ELEMENT_H_
 #define GUI_ELEMENT_H_
 
+#include <wx/notebook.h>
+#include <wx/wx.h>
+
 #include <memory>
 
-#include <wx/wx.h>
-#include <wx/notebook.h>
-
+#include "communication/received_data.h"
 #include "enumerations.h"
 #include "math/math.h"
 #include "project_settings.h"
-#include "communication/received_data.h"
 
 using namespace dvs;
 
@@ -20,10 +20,9 @@ protected:
     bool is_editing_;
     bool is_selected_;
 
-    Vec2Df parent_size_; // Pixels
+    Vec2Df parent_size_;  // Pixels
 
 public:
-
     GuiElement() = delete;
     GuiElement(const ElementSettings& element_settings)
     {
@@ -63,7 +62,8 @@ public:
     }
 
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
-    virtual void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr) = 0;
+    virtual void addData(std::unique_ptr<const ReceivedData> received_data,
+                         const dvs::internal::FunctionHeader& hdr) = 0;
     virtual void setPosAndSize(const wxPoint& pos, const wxSize& size) = 0;
     virtual void resetSelection() = 0;
     virtual void setSelection() = 0;
@@ -71,7 +71,6 @@ public:
     virtual void hide() = 0;
     virtual void destroy() = 0;
     virtual void refresh() = 0;
-
 };
 
 #endif

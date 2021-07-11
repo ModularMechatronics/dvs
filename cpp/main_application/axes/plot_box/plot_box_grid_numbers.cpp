@@ -21,7 +21,8 @@ void drawNumbersForYAxis(const Vectord& y_values,
         const Vec3Dd v(x_offset / s.x, y_values(k) / s.y, z_offset / s.z);
         const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
         const std::string num_string = formatNumber(y_values(k) + axes_center.y, 3);
-        putTextAt(num_string, vv.x - static_cast<double>(num_string.length()) * 13.3 / width, vv.y, width, height, 100.0f);
+        putTextAt(
+            num_string, vv.x - static_cast<double>(num_string.length()) * 13.3 / width, vv.y, width, height, 100.0f);
     }
 }
 
@@ -121,7 +122,7 @@ void drawAxisNumbers(const GridVectors& gv,
         z_value_to_use_vert = box_z / 2.0;
     }
 
-    if((view_angles.getSnappedAzimuth() > 0.0f) && (view_angles.getSnappedAzimuth() <= M_PI))
+    if ((view_angles.getSnappedAzimuth() > 0.0f) && (view_angles.getSnappedAzimuth() <= M_PI))
     {
         x_value_to_use_vert = -box_x / 2.0;
     }
@@ -130,16 +131,16 @@ void drawAxisNumbers(const GridVectors& gv,
         x_value_to_use_vert = box_x / 2.0;
     }
 
-    if(draw_x_numbers)
+    if (draw_x_numbers)
     {
         drawNumbersForXAxis(gv.x, y_value_to_use, z_value_to_use, axes_limits, coord_converter, width, height);
     }
-    if(draw_y_numbers)
+    if (draw_y_numbers)
     {
         drawNumbersForYAxis(
-        gv.y, x_value_to_use_vert, z_value_to_use_vert, axes_limits, coord_converter, width, height);
+            gv.y, x_value_to_use_vert, z_value_to_use_vert, axes_limits, coord_converter, width, height);
     }
-    if(draw_z_numbers)
+    if (draw_z_numbers)
     {
         drawNumbersForZAxis(gv.z, x_value_to_use, y_value_to_use_2, axes_limits, coord_converter, width, height);
     }

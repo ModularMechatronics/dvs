@@ -1,17 +1,17 @@
 #include "main_window.h"
 
-#include <unistd.h>
 #include <mach-o/dyld.h>
-#include <wx/wxprec.h>
+#include <unistd.h>
 #include <wx/wfstream.h>
+#include <wx/wxprec.h>
 
 #include <csignal>
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 #include <stdexcept>
 
-#include "layout_tools_window.h"
 #include "events.h"
+#include "layout_tools_window.h"
 #include "math/math.h"
 
 using namespace dvs::internal;
@@ -25,7 +25,7 @@ std::string getExecutablePath()
     {
         printf("Buffer too small; need size %u\n", size);
     }
-    
+
     return std::string(path);
 }
 
@@ -48,7 +48,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     const wxColor outer_color(outer, outer, outer);
     const wxColor middle_color(middle, middle, middle);
 
-    if(cache_reader_->hasKey("last_opened_file") && std::filesystem::exists(cache_reader_->readCache<std::string>("last_opened_file")))
+    if (cache_reader_->hasKey("last_opened_file") &&
+        std::filesystem::exists(cache_reader_->readCache<std::string>("last_opened_file")))
     {
         save_manager_ = new SaveManager(cache_reader_->readCache<std::string>("last_opened_file"));
     }
@@ -57,7 +58,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         save_manager_ = new SaveManager();
     }
 
-    if(save_manager_->pathIsSet())
+    if (save_manager_->pathIsSet())
     {
         SetLabel(save_manager_->getCurrentFileName());
     }
@@ -113,7 +114,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     setupGui();
 
-    for(auto we : windows_)
+    for (auto we : windows_)
     {
         m_pWindowsMenu->Append(we->getCallbackId(), we->getName());
         Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, we->getCallbackId());
@@ -131,21 +132,21 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 void MainWindow::onActivate(wxActivateEvent& event)
 {
     main_window_last_in_focus_ = true;
-    if(event.GetActive())
+    if (event.GetActive())
     {
-        for(auto we : windows_)
+        for (auto we : windows_)
         {
             we->resetSelectionForAllChildren();
         }
 
-        for(auto te : tab_elements_)
+        for (auto te : tab_elements_)
         {
             te->resetSelectionForAllChildren();
             te->setFirstElementSelected();
         }
 
         const int current_tab_idx = tabs_view->GetSelection();
-        if(current_tab_idx != wxNOT_FOUND)
+        if (current_tab_idx != wxNOT_FOUND)
         {
             current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
             current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
@@ -157,15 +158,15 @@ void MainWindow::onActivate(wxActivateEvent& event)
 
 void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
 {
-    for(auto te : tab_elements_)
+    for (auto te : tab_elements_)
     {
         te->resetSelectionForAllChildren();
     }
 
-    for(auto we : windows_)
+    for (auto we : windows_)
     {
         we->resetSelectionForAllChildren();
-        if(we->getCallbackId() == event.GetId())
+        if (we->getCallbackId() == event.GetId())
         {
             we->setFirstElementSelected();
             current_tab_name_ = we->getName();
@@ -180,7 +181,7 @@ void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
 
 void MainWindow::setupWindows(const ProjectSettings& project_settings)
 {
-    for(const WindowSettings& ws : project_settings.getWindows())
+    for (const WindowSettings& ws : project_settings.getWindows())
     {
         windows_.emplace_back(new WindowView(this, ws, window_callback_id_));
         window_callback_id_++;
@@ -207,8 +208,7 @@ void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::saveProjectAs()
 {
-    wxFileDialog openFileDialog(this, _("Choose file to save to"), "", "",
-                       "dvs files (*.dvs)|*.dvs", wxFD_SAVE);
+    wxFileDialog openFileDialog(this, _("Choose file to save to"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_SAVE);
     if (openFileDialog.ShowModal() == wxID_CANCEL)
     {
         return;
@@ -218,18 +218,18 @@ void MainWindow::saveProjectAs()
 
     cache_reader_->writeToCache("last_opened_file", new_save_path);
 
-    if(new_save_path == save_manager_->getCurrentFilePath())
+    if (new_save_path == save_manager_->getCurrentFilePath())
     {
         saveProject();
         return;
     }
 
     ProjectSettings ps;
-    for(const TabView* te : tab_elements_)
+    for (const TabView* te : tab_elements_)
     {
         ps.pushBackTabSettings(te->getTabSettings());
     }
-    for(const WindowView* we : windows_)
+    for (const WindowView* we : windows_)
     {
         ps.pushBackWindowSettings(we->getWindowSettings());
     }
@@ -240,18 +240,18 @@ void MainWindow::saveProjectAs()
 
 void MainWindow::saveProject()
 {
-    if(!save_manager_->pathIsSet())
+    if (!save_manager_->pathIsSet())
     {
         saveProjectAs();
     }
     else
     {
         ProjectSettings ps;
-        for(const TabView* te : tab_elements_)
+        for (const TabView* te : tab_elements_)
         {
             ps.pushBackTabSettings(te->getTabSettings());
         }
-        for(const WindowView* we : windows_)
+        for (const WindowView* we : windows_)
         {
             ps.pushBackWindowSettings(we->getWindowSettings());
         }
@@ -267,8 +267,10 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
 {
     if (!save_manager_->isSaved())
     {
-        if (wxMessageBox(_("Current content has not been saved! Proceed?"), _("Please confirm"),
-                         wxICON_QUESTION | wxYES_NO, this) == wxNO )
+        if (wxMessageBox(_("Current content has not been saved! Proceed?"),
+                         _("Please confirm"),
+                         wxICON_QUESTION | wxYES_NO,
+                         this) == wxNO)
         {
             return;
         }
@@ -279,7 +281,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
 
     save_manager_->reset();
 
-    if(is_editing_)
+    if (is_editing_)
     {
         disableEditing();
         layout_tools_window_->Hide();
@@ -290,7 +292,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
     tabs_view->DeleteAllPages();
     tabs_view->Destroy();
 
-    for(auto we : windows_)
+    for (auto we : windows_)
     {
         we->Destroy();
     }
@@ -322,7 +324,7 @@ void MainWindow::addNewTab(const std::string& tab_name)
 
     tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
 
-    if(is_editing_)
+    if (is_editing_)
     {
         tab_element->startEdit();
     }
@@ -340,12 +342,11 @@ void MainWindow::addNewTabCallback(wxCommandEvent& WXUNUSED(event))
 void MainWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
 {
     const int current_tab_idx = tabs_view->GetSelection();
-    if(current_tab_idx != wxNOT_FOUND)
+    if (current_tab_idx != wxNOT_FOUND)
     {
-
         const std::map<std::string, GuiElement*> tab_gui_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
 
-        for(const auto& q : tab_gui_elements)
+        for (const auto& q : tab_gui_elements)
         {
             gui_elements_.erase(q.first);
         }
@@ -377,7 +378,7 @@ void MainWindow::addNewWindow(const std::string& window_name)
     window_callback_id_++;
     windows_.push_back(window_element);
 
-    if(is_editing_)
+    if (is_editing_)
     {
         window_element->startEdit();
     }
@@ -386,12 +387,12 @@ void MainWindow::addNewWindow(const std::string& window_name)
     Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, window_element->getCallbackId());
 
     main_window_last_in_focus_ = false;
-    for(auto te : tab_elements_)
+    for (auto te : tab_elements_)
     {
         te->resetSelectionForAllChildren();
     }
 
-    for(auto we : windows_)
+    for (auto we : windows_)
     {
         we->resetSelectionForAllChildren();
     }
@@ -405,11 +406,11 @@ void MainWindow::addNewWindow(const std::string& window_name)
 void MainWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
 {
     int window_idx = 0;
-    if(!main_window_last_in_focus_)
+    if (!main_window_last_in_focus_)
     {
-        for(auto we : windows_)
+        for (auto we : windows_)
         {
-            if(we->getName() == current_tab_name_)
+            if (we->getName() == current_tab_name_)
             {
                 Unbind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, we->getCallbackId());
 
@@ -417,7 +418,7 @@ void MainWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
                 m_pWindowsMenu->Destroy(menu_id);
 
                 const std::map<std::string, GuiElement*> window_gui_elements = we->getGuiElements();
-                for(const auto& q : window_gui_elements)
+                for (const auto& q : window_gui_elements)
                 {
                     gui_elements_.erase(q.first);
                 }
@@ -456,12 +457,12 @@ void MainWindow::disableEditing()
 {
     edit_layout_menu_option_->SetItemLabel("Edit layout");
     is_editing_ = false;
-    for(auto te : tab_elements_)
+    for (auto te : tab_elements_)
     {
         te->stopEdit();
     }
 
-    for(auto we : windows_)
+    for (auto we : windows_)
     {
         we->stopEdit();
     }
@@ -472,23 +473,20 @@ void MainWindow::guiElementModified(wxCommandEvent& WXUNUSED(event))
     fileModified();
 }
 
-void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event))
-{
-
-}
+void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event)) {}
 
 void MainWindow::childWindowInFocus(wxCommandEvent& event)
 {
     main_window_last_in_focus_ = false;
-    for(auto te : tab_elements_)
+    for (auto te : tab_elements_)
     {
         te->resetSelectionForAllChildren();
     }
 
-    for(auto we : windows_)
+    for (auto we : windows_)
     {
         we->resetSelectionForAllChildren();
-        if(we->getCallbackId() == event.GetId())
+        if (we->getCallbackId() == event.GetId())
         {
             we->setFirstElementSelected();
             current_tab_name_ = we->getName();
@@ -501,16 +499,16 @@ void MainWindow::childWindowInFocus(wxCommandEvent& event)
 
 void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))
 {
-    if(is_editing_)
+    if (is_editing_)
     {
         edit_layout_menu_option_->SetItemLabel("Edit layout");
         layout_tools_window_->Hide();
-        for(auto te : tab_elements_)
+        for (auto te : tab_elements_)
         {
             te->stopEdit();
         }
 
-        for(auto we : windows_)
+        for (auto we : windows_)
         {
             we->stopEdit();
         }
@@ -519,12 +517,12 @@ void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))
     {
         edit_layout_menu_option_->SetItemLabel("Stop editing");
         layout_tools_window_->Show();
-        for(auto te : tab_elements_)
+        for (auto te : tab_elements_)
         {
             te->startEdit();
         }
 
-        for(auto we : windows_)
+        for (auto we : windows_)
         {
             we->startEdit();
         }
@@ -536,26 +534,28 @@ void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
 {
     if (!save_manager_->isSaved())
     {
-        if (wxMessageBox(_("Current content has not been saved! Proceed?"), _("Please confirm"),
-                         wxICON_QUESTION | wxYES_NO, this) == wxNO )
+        if (wxMessageBox(_("Current content has not been saved! Proceed?"),
+                         _("Please confirm"),
+                         wxICON_QUESTION | wxYES_NO,
+                         this) == wxNO)
         {
             return;
         }
     }
 
-    wxFileDialog openFileDialog(this, _("Open dvs file"), "", "",
-                       "dvs files (*.dvs)|*.dvs", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog openFileDialog(
+        this, _("Open dvs file"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (openFileDialog.ShowModal() == wxID_CANCEL)
     {
         return;
     }
 
-    if(save_manager_->getCurrentFilePath() == std::string(openFileDialog.GetPath().mb_str()))
+    if (save_manager_->getCurrentFilePath() == std::string(openFileDialog.GetPath().mb_str()))
     {
         return;
     }
 
-    if(is_editing_)
+    if (is_editing_)
     {
         disableEditing();
         layout_tools_window_->Hide();
@@ -569,7 +569,7 @@ void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
     tabs_view->DeleteAllPages();
     tabs_view->Destroy();
 
-    for(auto we : windows_)
+    for (auto we : windows_)
     {
         we->Destroy();
     }
@@ -605,11 +605,11 @@ void MainWindow::OnTimer(wxTimerEvent&)
     {
         receiveData();
     }
-    catch(const std::runtime_error& e)
+    catch (const std::runtime_error& e)
     {
         std::cerr << "Got runtime_error when receiving: " << e.what() << std::endl;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cerr << "Got exception when receiving: " << e.what() << std::endl;
     }
@@ -617,9 +617,7 @@ void MainWindow::OnTimer(wxTimerEvent&)
 
 void MainWindow::OnClose(wxCloseEvent& WXUNUSED(event))
 {
-    if (wxMessageBox("Are you sure you want to exit?",
-                     "Please confirm",
-                     wxICON_QUESTION | wxYES_NO) != wxYES)
+    if (wxMessageBox("Are you sure you want to exit?", "Please confirm", wxICON_QUESTION | wxYES_NO) != wxYES)
     {
         return;
     }

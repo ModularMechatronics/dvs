@@ -1,12 +1,12 @@
 #ifndef OPENGL_FUNCTIONS_H_
 #define OPENGL_FUNCTIONS_H_
 
-#include "math/math.h"
-
 #include <cstddef>
 #include <vector>
 
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
+
 
 using namespace dvs;
 

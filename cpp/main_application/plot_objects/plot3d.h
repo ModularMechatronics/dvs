@@ -1,16 +1,15 @@
 #ifndef PLOT3D_H_
 #define PLOT3D_H_
 
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
-#include "plot_objects/plot_object_base.h"
+#include "main_application/plot_objects/utils.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
-#include "main_application/plot_objects/utils.h"
+#include "plot_objects/plot_object_base.h"
 
 class Plot3D : public PlotObjectBase
 {
@@ -31,23 +30,24 @@ public:
 Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
-    if(type_ != Function::PLOT3)
+    if (type_ != Function::PLOT3)
     {
         throw std::runtime_error("Invalid function type for Plot3D!");
     }
 
-    points_ptr_ = convertData3DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
-
+    points_ptr_ =
+        convertData3DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 }
 
 void Plot3D::findMinMax()
 {
-    std::tie<Vec3Dd, Vec3Dd>(min_vec, max_vec) = findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
+    std::tie<Vec3Dd, Vec3Dd>(min_vec, max_vec) =
+        findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 }
 
 void Plot3D::visualize()
 {
-    if(!visualize_has_run_)
+    if (!visualize_has_run_)
     {
         visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);

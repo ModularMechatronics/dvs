@@ -1,12 +1,11 @@
 #ifndef PLOT_FUNCTIONS_H_
 #define PLOT_FUNCTIONS_H_
 
-#include "math/math.h"
-
 #include <utility>
 
-#include "opengl_low_level/data_structures.h"
+#include "math/math.h"
 #include "misc/color_map.h"
+#include "opengl_low_level/data_structures.h"
 
 using namespace dvs;
 
@@ -17,10 +16,10 @@ void scatter(const Vectord& x, const Vectord& y);
 
 void drawGrid3D(const Matrixd& x, const Matrixd& y, const Matrixd& z);
 void surfInternal(const Matrixd& x,
-          const Matrixd& y,
-          const Matrixd& z,
-          const Interval1D<double> min_max_interval,
-          RGBColorMap<float> c_map);
+                  const Matrixd& y,
+                  const Matrixd& z,
+                  const Interval1D<double> min_max_interval,
+                  RGBColorMap<float> c_map);
 void surf(const Matrixd& x, const Matrixd& y, const Matrixd& z);
 void drawArrow3D(const Point3Dd& p, const Vec3Dd& v);
 void setSettings(const std::vector<std::pair<std::string, std::string>>& settings_vector);

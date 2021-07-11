@@ -112,10 +112,7 @@ void drawFilledCircle2D(const float xc, const float yc, const float r, const siz
     glEnd();
 }
 
-void drawFilledRectangle2D(const float x_top_left,
-                           const float y_top_left,
-                           const float width,
-                           const float height)
+void drawFilledRectangle2D(const float x_top_left, const float y_top_left, const float width, const float height)
 {
     glBegin(GL_QUADS);
     glVertex2f(x_top_left, y_top_left);
@@ -268,10 +265,7 @@ void drawUpTriangle2D(const float xc, const float yc, const float r)
     glEnd();
 }
 
-void drawRectangle2D(const float x_top_left,
-                     const float y_top_left,
-                     const float width,
-                     const float height)
+void drawRectangle2D(const float x_top_left, const float y_top_left, const float width, const float height)
 {
     assert(width > 0 && "Width can't be negative!");
     assert(height > 0 && "Height can't be negative!");

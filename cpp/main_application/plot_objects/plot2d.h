@@ -1,15 +1,14 @@
 #ifndef PLOT2D_H_
 #define PLOT2D_H_
 
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
-#include "plot_objects/plot_object_base.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
+#include "plot_objects/plot_object_base.h"
 
 class Plot2D : public PlotObjectBase
 {
@@ -27,20 +26,23 @@ public:
     void visualize() override;
 };
 
-Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr) : PlotObjectBase(std::move(received_data), hdr)
+Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
+    : PlotObjectBase(std::move(received_data), hdr)
 {
-    if(type_ != Function::PLOT2)
+    if (type_ != Function::PLOT2)
     {
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    points_ptr_ = convertData2DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+    points_ptr_ =
+        convertData2DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 }
 
 void Plot2D::findMinMax()
 {
     Vec2Dd min_vec_2d, max_vec_2d;
-    std::tie<Vec2Dd, Vec2Dd>(min_vec_2d, max_vec_2d) = findMinMaxFromTwoVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
+    std::tie<Vec2Dd, Vec2Dd>(min_vec_2d, max_vec_2d) =
+        findMinMaxFromTwoVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 
     min_vec.x = min_vec_2d.x;
     min_vec.y = min_vec_2d.y;
@@ -53,7 +55,7 @@ void Plot2D::findMinMax()
 
 void Plot2D::visualize()
 {
-    if(!visualize_has_run_)
+    if (!visualize_has_run_)
     {
         visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);

@@ -1,6 +1,5 @@
 #include "main_application/misc/color_map.h"
 
-
 namespace color_maps
 {
 const RGBColorMap<float> rainbowf(
@@ -96,4 +95,3 @@ const RGBColorMap<unsigned char> jet(
     1000);
 
 }  // namespace color_maps
-

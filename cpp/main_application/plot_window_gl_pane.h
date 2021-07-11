@@ -2,19 +2,18 @@
 #define PLOTWINDOW_GL_PLANE_
 
 #include <wx/glcanvas.h>
-#include <wx/wx.h>
 #include <wx/notebook.h>
+#include <wx/wx.h>
 
 #include "axes/axes.h"
-#include "io_devices/io_devices.h"
-#include "plot_data.h"
-#include "opengl_low_level/opengl_header.h"
-#include "dvs.h"
-#include "communication/udp_server.h"
 #include "communication/received_data.h"
+#include "communication/udp_server.h"
+#include "dvs.h"
 #include "gui_element.h"
+#include "io_devices/io_devices.h"
+#include "opengl_low_level/opengl_header.h"
+#include "plot_data.h"
 #include "view_base.h"
-
 
 struct Bound2Df
 {

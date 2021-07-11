@@ -1,8 +1,6 @@
 #ifndef AXES_INTERACTOR_H_
 #define AXES_INTERACTOR_H_
 
-#include "math/math.h"
-
 #include <cmath>
 #include <utility>
 #include <vector>
@@ -14,6 +12,7 @@
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "io_devices/io_devices.h"
+#include "math/math.h"
 
 using namespace dvs;
 
@@ -56,9 +55,7 @@ private:
 public:
     AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width);
 
-    void update(const InteractionType interaction_type,
-                const int window_width,
-                const int window_height);
+    void update(const InteractionType interaction_type, const int window_width, const int window_height);
     void resetView();
     void setViewAngles(const double azimuth, const double elevation);
     void setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec);

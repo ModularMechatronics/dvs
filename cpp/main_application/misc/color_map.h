@@ -5,9 +5,9 @@
 
 #include <cassert>
 #include <cmath>
+#include <iostream>
 #include <type_traits>
 #include <vector>
-#include <iostream>
 
 template <typename T> struct RGBTriplet
 {
@@ -16,9 +16,7 @@ template <typename T> struct RGBTriplet
     T blue;
 
     RGBTriplet() = default;
-    RGBTriplet(const T red_, const T green_, const T blue_) : red(red_), green(green_), blue(blue_)
-    {
-    }
+    RGBTriplet(const T red_, const T green_, const T blue_) : red(red_), green(green_), blue(blue_) {}
 
     RGBTriplet(const uint32_t hex_color_code)
     {
@@ -44,8 +42,7 @@ private:
 
 public:
     RGBColorMap();
-    RGBColorMap(const std::vector<RGBTriplet<T>>& color_brake_points,
-                const size_t num_values = 100);
+    RGBColorMap(const std::vector<RGBTriplet<T>>& color_brake_points, const size_t num_values = 100);
     RGBColorMap(const RGBColorMap<T>& color_map);
 
     RGBColorMap& operator=(const RGBColorMap<T>& color_map);
@@ -64,18 +61,13 @@ public:
     RGBTriplet<T> operator()(const double d) const;
     template <typename Y, typename U> RGBTriplet<T> operator()(const Y d_in, const U max_val) const;
 
-    template <typename Y, typename U>
-    RGBTriplet<T> operator()(const Y d_in, const U min_val, const U max_val) const;
+    template <typename Y, typename U> RGBTriplet<T> operator()(const Y d_in, const U min_val, const U max_val) const;
 };
 
-template <typename T>
-RGBColorMap<T>::RGBColorMap() : red_(nullptr), green_(nullptr), blue_(nullptr), num_values_(0)
-{
-}
+template <typename T> RGBColorMap<T>::RGBColorMap() : red_(nullptr), green_(nullptr), blue_(nullptr), num_values_(0) {}
 
 template <typename T>
-RGBColorMap<T>::RGBColorMap(const std::vector<RGBTriplet<T>>& color_brake_points,
-                            const size_t num_values)
+RGBColorMap<T>::RGBColorMap(const std::vector<RGBTriplet<T>>& color_brake_points, const size_t num_values)
 {
     assert(num_values > 1);
     assert(color_brake_points.size() > 1);
@@ -151,8 +143,7 @@ template <typename T> RGBColorMap<T>::~RGBColorMap()
     delete[] blue_;
 }
 
-template <typename T>
-void RGBColorMap<T>::setupTablesFloat(const std::vector<RGBTriplet<T>>& color_brake_points)
+template <typename T> void RGBColorMap<T>::setupTablesFloat(const std::vector<RGBTriplet<T>>& color_brake_points)
 {
     const double color_table_inc =
         static_cast<double>(num_values_ - 1) / static_cast<double>(num_color_brake_points_ - 1);
@@ -171,13 +162,11 @@ void RGBColorMap<T>::setupTablesFloat(const std::vector<RGBTriplet<T>>& color_br
             const double dd = static_cast<double>(d);
 
             const bool lb_cond = dd >= color_brake_point_vals[k];
-            const bool ub_cond = (k + 1) == (num_color_brake_points_ - 1)
-                                     ? dd <= color_brake_point_vals[k + 1]
-                                     : dd < color_brake_point_vals[k + 1];
+            const bool ub_cond = (k + 1) == (num_color_brake_points_ - 1) ? dd <= color_brake_point_vals[k + 1]
+                                                                          : dd < color_brake_point_vals[k + 1];
             if (lb_cond && ub_cond)
             {
-                const double interval_length =
-                    color_brake_point_vals[k + 1] - color_brake_point_vals[k];
+                const double interval_length = color_brake_point_vals[k + 1] - color_brake_point_vals[k];
                 const double d_mapped = (dd - color_brake_point_vals[k]) / interval_length;
 
                 const RGBTriplet<T> c0 = color_brake_points[k];
@@ -191,8 +180,7 @@ void RGBColorMap<T>::setupTablesFloat(const std::vector<RGBTriplet<T>>& color_br
     }
 }
 
-template <typename T>
-void RGBColorMap<T>::setupTables(const std::vector<RGBTriplet<T>>& color_brake_points)
+template <typename T> void RGBColorMap<T>::setupTables(const std::vector<RGBTriplet<T>>& color_brake_points)
 {
     const double color_table_inc =
         static_cast<double>(num_values_ - 1) / static_cast<double>(num_color_brake_points_ - 1);
@@ -213,13 +201,11 @@ void RGBColorMap<T>::setupTables(const std::vector<RGBTriplet<T>>& color_brake_p
             const double dd = static_cast<double>(d);
 
             const bool lb_cond = dd >= color_brake_point_vals[k];
-            const bool ub_cond = (k + 1) == (num_color_brake_points_ - 1)
-                                     ? dd <= color_brake_point_vals[k + 1]
-                                     : dd < color_brake_point_vals[k + 1];
+            const bool ub_cond = (k + 1) == (num_color_brake_points_ - 1) ? dd <= color_brake_point_vals[k + 1]
+                                                                          : dd < color_brake_point_vals[k + 1];
             if (lb_cond && ub_cond)
             {
-                const double interval_length =
-                    color_brake_point_vals[k + 1] - color_brake_point_vals[k];
+                const double interval_length = color_brake_point_vals[k + 1] - color_brake_point_vals[k];
                 const double d_mapped = (dd - color_brake_point_vals[k]) / interval_length;
 
                 const RGBTriplet<T> c0 = color_brake_points[k];
@@ -255,8 +241,7 @@ RGBTriplet<T> RGBColorMap<T>::operator()(const Y d_in, const U max_val) const
     {
         std::cout << "WARNING: Tried to index outside of map range [0.0, 1.0]!" << std::endl;
     }
-    const double d_clamped =
-        (d_mapped < 0.0) || (d_mapped > 1.0) ? std::max(std::min(1.0, d_mapped), 0.0) : d_mapped;
+    const double d_clamped = (d_mapped < 0.0) || (d_mapped > 1.0) ? std::max(std::min(1.0, d_mapped), 0.0) : d_mapped;
 
     const size_t idx = std::round(static_cast<double>(num_values_ - 1) * d_clamped);
     return RGBTriplet<T>(red_[idx], green_[idx], blue_[idx]);
@@ -272,8 +257,7 @@ RGBTriplet<T> RGBColorMap<T>::operator()(const Y d_in, const U min_val, const U 
     {
         std::cout << "WARNING: Tried to index outside of map range [0.0, 1.0]!" << std::endl;
     }
-    const double d_clamped =
-        (d_mapped < 0.0) || (d_mapped > 1.0) ? std::max(std::min(1.0, d_mapped), 0.0) : d_mapped;
+    const double d_clamped = (d_mapped < 0.0) || (d_mapped > 1.0) ? std::max(std::min(1.0, d_mapped), 0.0) : d_mapped;
 
     const size_t idx = std::round(static_cast<double>(num_values_ - 1) * d_clamped);
     return RGBTriplet<T>(red_[idx], green_[idx], blue_[idx]);
@@ -316,6 +300,5 @@ const extern RGBColorMap<float> magmaf;
 const extern RGBColorMap<float> viridisf;
 const extern RGBColorMap<float> jetf;
 }  // namespace color_maps
-
 
 #endif

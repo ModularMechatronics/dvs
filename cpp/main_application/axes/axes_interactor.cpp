@@ -1,13 +1,12 @@
 #include "axes/axes_interactor.h"
 
-#include "math/math.h"
-
 #include <cassert>
 #include <cmath>
 #include <iostream>
 #include <utility>
 
 #include "io_devices/io_devices.h"
+#include "math/math.h"
 #include "opengl_low_level/opengl_low_level.h"
 
 AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width)
@@ -59,9 +58,7 @@ AxesLimits AxesInteractor::getAxesLimits() const
     return axes_limits_;
 }
 
-void AxesInteractor::update(const InteractionType interaction_type,
-                            const int window_width,
-                            const int window_height)
+void AxesInteractor::update(const InteractionType interaction_type, const int window_width, const int window_height)
 {
     current_window_width = window_width;
     current_window_height = window_height;
@@ -75,8 +72,7 @@ void AxesInteractor::update(const InteractionType interaction_type,
         updateMouseActivity(interaction_type);
     }
 
-    coord_converter_.updateInternalState(
-        Vec2Dd(window_width, window_height), view_angles_, axes_limits_);
+    coord_converter_.updateInternalState(Vec2Dd(window_width, window_height), view_angles_, axes_limits_);
 }
 
 void AxesInteractor::resetView()
@@ -223,8 +219,8 @@ void AxesInteractor::setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec)
 
 void AxesInteractor::setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec)
 {
-    axes_limits_ = AxesLimits({min_vec.x, min_vec.y, axes_limits_.getMin().z},
-                              {max_vec.x, max_vec.y, axes_limits_.getMax().z});
+    axes_limits_ =
+        AxesLimits({min_vec.x, min_vec.y, axes_limits_.getMin().z}, {max_vec.x, max_vec.y, axes_limits_.getMax().z});
     default_axes_limits_ = axes_limits_;
 
     const size_t num_lines = axes_settings_.getNumAxesTicks();
@@ -232,10 +228,7 @@ void AxesInteractor::setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec)
            static_cast<double>(num_lines - 1);
 }
 
-Vectord generateAxisVector(const double min_val,
-                           const double max_val,
-                           const double num_lines,
-                           const double offset)
+Vectord generateAxisVector(const double min_val, const double max_val, const double num_lines, const double offset)
 {
     const double d = max_val - min_val;
 

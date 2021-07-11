@@ -1,15 +1,14 @@
 #ifndef DRAW_PLANE_XY_H_
 #define DRAW_PLANE_XY_H_
 
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
-#include "plot_objects/plot_object_base.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
+#include "plot_objects/plot_object_base.h"
 
 class DrawPlaneXY : public PlotObjectBase
 {
@@ -35,7 +34,7 @@ public:
 DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
-    if(type_ != Function::PLANE_XY)
+    if (type_ != Function::PLANE_XY)
     {
         throw std::runtime_error("Invalid function type for DrawPolygon4Points!");
     }
@@ -74,7 +73,6 @@ DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, cons
     points_ptr_[9] = p10.x;
     points_ptr_[10] = p10.y;
     points_ptr_[11] = p10.z;
-
 }
 
 void DrawPlaneXY::findMinMax()
@@ -94,7 +92,7 @@ void DrawPlaneXY::findMinMax()
 
 void DrawPlaneXY::visualize()
 {
-    if(!visualize_has_run_)
+    if (!visualize_has_run_)
     {
         visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);

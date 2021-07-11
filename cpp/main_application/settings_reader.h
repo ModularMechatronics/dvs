@@ -1,11 +1,9 @@
 #ifndef DVS_CACHE_READER_H_
 #define DVS_CACHE_READER_H_
 
-#include <string>
 #include <filesystem>
-
 #include <nlohmann/json.hpp>
-
+#include <string>
 
 class SettingsReader
 {
@@ -25,7 +23,7 @@ public:
         settings_file_path_ += std::filesystem::path("cache.json");
         j_["empty"] = "empty";
 
-        if(!std::filesystem::exists(settings_file_path_))
+        if (!std::filesystem::exists(settings_file_path_))
         {
             std::cout << "File doesn't exist! Creating..." << std::endl;
             createCacheFile();
@@ -37,14 +35,13 @@ public:
             {
                 readCacheFile();
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 std::cout << "Exception caught during reading cache file, creating new..." << std::endl;
                 createCacheFile();
             }
         }
         std::cout << settings_file_path_ << std::endl;
-
     }
 
     bool hasKey(const std::string& key)
@@ -52,14 +49,12 @@ public:
         return j_.count(key);
     }
 
-    template <typename T>
-    T readCache(const std::string& key)
+    template <typename T> T readCache(const std::string& key)
     {
         return j_[key];
     }
 
-    template <typename T>
-    void writeToCache(const std::string& key, const T& val)
+    template <typename T> void writeToCache(const std::string& key, const T& val)
     {
         j_[key] = val;
         createCacheFile();
@@ -76,8 +71,6 @@ public:
         std::ofstream output_file(settings_file_path_);
         output_file << std::setw(4) << j_ << std::endl;
     }
-
 };
-
 
 #endif

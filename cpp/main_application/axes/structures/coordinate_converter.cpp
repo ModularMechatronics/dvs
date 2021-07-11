@@ -21,8 +21,7 @@ void CoordinateConverter::updateInternalState(const Vec2Dd& window_size,
 Vec2Dd CoordinateConverter::orthogonalViewToModelCoordinate(const Vec2Dd& view_coord) const
 {
     // Only works when azimuth = elevation = 0
-    assert((view_angles_.getSnappedElevation() == 0.0) &&
-           (view_angles_.getSnappedAzimuth() == 0.0));
+    assert((view_angles_.getSnappedElevation() == 0.0) && (view_angles_.getSnappedAzimuth() == 0.0));
 
     const Vec3Dd scale = axes_limits_.getAxesScale();
     const Vec3Dd offset = axes_limits_.getAxesCenter();

@@ -1,16 +1,15 @@
 #ifndef DRAW_TRIANGLES_3D_H_
 #define DRAW_TRIANGLES_3D_H_
 
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
-#include "plot_objects/plot_object_base.h"
+#include "main_application/plot_objects/utils.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
-#include "main_application/plot_objects/utils.h"
+#include "plot_objects/plot_object_base.h"
 
 class DrawTriangles3D : public PlotObjectBase
 {
@@ -32,7 +31,7 @@ public:
 DrawTriangles3D::DrawTriangles3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
-    if(type_ != Function::DRAW_TRIANGLES_3D)
+    if (type_ != Function::DRAW_TRIANGLES_3D)
     {
         throw std::runtime_error("Invalid function type for DrawTriangles3D!");
     }
@@ -45,7 +44,7 @@ void DrawTriangles3D::findMinMax()
     min_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
     max_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
     size_t idx = 0;
-    for(size_t k = 0; k < (num_elements_ * 3); k++)
+    for (size_t k = 0; k < (num_elements_ * 3); k++)
     {
         const Point3Dd current_point(points_ptr_[idx], points_ptr_[idx + 1], points_ptr_[idx + 2]);
         min_vec.x = std::min(current_point.x, min_vec.x);
@@ -62,7 +61,7 @@ void DrawTriangles3D::findMinMax()
 
 void DrawTriangles3D::visualize()
 {
-    if(!visualize_has_run_)
+    if (!visualize_has_run_)
     {
         visualize_has_run_ = true;
         glGenBuffers(1, &buffer_handle_);

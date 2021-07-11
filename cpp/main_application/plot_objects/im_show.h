@@ -2,16 +2,15 @@
 #define IM_SHOW_H_
 
 // #include <arl/utilities/color_map.h>
-#include "math/math.h"
-
 #include <string>
 #include <vector>
 
 #include "main_application/misc/color_map.h"
-#include "plot_objects/plot_object_base.h"
+#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
+#include "plot_objects/plot_object_base.h"
 
 bool has_run_;
 
@@ -55,21 +54,20 @@ void ImShow::findMinMax()
     max_vec.z = 1.0;
 }
 
-template <typename T>
-GLuint loadTexture(const int width, const int height, const T* data)
+template <typename T> GLuint loadTexture(const int width, const int height, const T* data)
 {
     GLuint textureID;
-	glGenTextures(1, &textureID);
-	
-	glBindTexture(GL_TEXTURE_2D, textureID);
+    glGenTextures(1, &textureID);
 
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     return textureID;
 }
@@ -77,7 +75,7 @@ GLuint loadTexture(const int width, const int height, const T* data)
 ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
-    if(type_ != Function::IM_SHOW)
+    if (type_ != Function::IM_SHOW)
     {
         throw std::runtime_error("Invalid function type for Surf!");
     }
@@ -99,9 +97,9 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     colors_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
     size_t idx = 0;
 
-    for(size_t r = 0; r < dims_.rows; r++)
+    for (size_t r = 0; r < dims_.rows; r++)
     {
-        for(size_t c = 0; c < dims_.cols; c++)
+        for (size_t c = 0; c < dims_.cols; c++)
         {
             const size_t idx0_x = idx;
             const size_t idx0_y = idx + 1;
@@ -167,13 +165,12 @@ void ImShow::visualize()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
-    if(!visualize_has_run_)
+    if (!visualize_has_run_)
     {
         visualize_has_run_ = true;
         glVertexPointer(3, GL_FLOAT, 0, points_ptr_);
         glColorPointer(3, GL_FLOAT, 0, colors_ptr_);
     }
-    
 
     glDrawArrays(GL_QUADS, 0, 4 * dims_.rows * dims_.cols);
 

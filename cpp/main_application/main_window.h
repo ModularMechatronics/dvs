@@ -3,37 +3,36 @@
 
 #include <wx/button.h>
 #include <wx/frame.h>
+#include <wx/menu.h>
 #include <wx/notebook.h>
 #include <wx/textctrl.h>
 #include <wx/timer.h>
-#include <wx/menu.h>
 #include <wx/wx.h>
 
+#include <map>
 #include <mutex>
 #include <string>
-#include <map>
 #include <thread>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "communication/udp_server.h"
-#include "communication/received_data.h"
-#include "gui_element.h"
-#include "plot_window_gl_pane.h"
-#include "layout_tools_window.h"
-#include "project_settings.h"
-#include "tab_view.h"
-#include "events.h"
-#include "save_manager.h"
 #include "cache_reader.h"
-#include "window_view.h"
+#include "communication/received_data.h"
+#include "communication/udp_server.h"
 #include "custom_button.h"
+#include "events.h"
+#include "gui_element.h"
+#include "layout_tools_window.h"
+#include "plot_window_gl_pane.h"
+#include "project_settings.h"
+#include "save_manager.h"
+#include "tab_view.h"
+#include "window_view.h"
 
 class MainWindow : public wxFrame
 {
 private:
-
     SaveManager* save_manager_;
     CacheReader* cache_reader_;
 

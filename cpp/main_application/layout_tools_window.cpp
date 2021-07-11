@@ -1,9 +1,10 @@
 #include "layout_tools_window.h"
 
-#include "main_window.h"
 #include "events.h"
+#include "main_window.h"
 
-LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize size) : wxFrame(main_window, wxID_ANY, "Layout tools", pos, size)
+LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize size)
+    : wxFrame(main_window, wxID_ANY, "Layout tools", pos, size)
 {
     this->SetMinSize(size);
     this->SetMaxSize(size);
@@ -26,7 +27,7 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
     // Bind(MY_EVENT, &LayoutToolsWindow::currentElementNameChanged, this);
 }
 
-void LayoutToolsWindow::OnClose(wxCloseEvent &WXUNUSED(event))
+void LayoutToolsWindow::OnClose(wxCloseEvent& WXUNUSED(event))
 {
     this->Hide();
     MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
@@ -41,8 +42,10 @@ void LayoutToolsWindow::setupInspector()
 
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
-        wxStaticText* tab_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Tab name", wxDefaultPosition, wxDefaultSize);
-        tab_name_ctrl_ = new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+        wxStaticText* tab_name_label =
+            new wxStaticText(inspector_box_, wxID_ANY, "Tab name", wxDefaultPosition, wxDefaultSize);
+        tab_name_ctrl_ =
+            new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
         tab_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::changeCurrentTabName, main_window_ptr);
 
         sizer_inside->Add(tab_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
@@ -51,8 +54,10 @@ void LayoutToolsWindow::setupInspector()
     }
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
-        wxStaticText* element_name_label = new wxStaticText(inspector_box_, wxID_ANY, "Element name", wxDefaultPosition, wxDefaultSize);
-        element_name_ctrl_ = new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+        wxStaticText* element_name_label =
+            new wxStaticText(inspector_box_, wxID_ANY, "Element name", wxDefaultPosition, wxDefaultSize);
+        element_name_ctrl_ =
+            new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
         element_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::changeCurrentElementName, main_window_ptr);
 
         sizer_inside->Add(element_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
