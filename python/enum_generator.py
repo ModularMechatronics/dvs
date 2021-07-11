@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 ENUM_FILE_PATH = "./cpp/dvs/enumerations.h"
 PYTHON_OUTPUT_PATH = "./python/generated_enums.py"
@@ -35,6 +36,7 @@ class ParsedEnum:
 
         self._members = enum_lines[first_member_line_number:(last_member_line_number + 1)]
         self._members = [m.lstrip(" ").rstrip(" ").rstrip(",").rstrip(" ") for m in self._members]
+        self._members = [m for m in self._members if m]
 
     def _parse_enum_name(self, first_line):
         first_line.rstrip(" ").lstrip(" ")
@@ -112,8 +114,9 @@ def to_python_file(lines, output_path):
         f.writelines(all_lines)
 
 if __name__ == "__main__":
-    
-    lines = read_file_lines(ENUM_FILE_PATH)
+
+    repo_dir = subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).decode("utf-8").rstrip("\n")
+    lines = read_file_lines(os.path.join(repo_dir, ENUM_FILE_PATH))
 
     lines = [l.rstrip('\n') for l in lines if l != '\n']
 
@@ -124,7 +127,7 @@ if __name__ == "__main__":
         parsed_enum = ParsedEnum(el)
         python_output_lines.append(parse_to_python_enum(parsed_enum))
 
-    to_python_file(python_output_lines, PYTHON_OUTPUT_PATH)
+    to_python_file(python_output_lines, os.path.join(repo_dir, PYTHON_OUTPUT_PATH))
 
 
     a = 1
