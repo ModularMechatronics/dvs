@@ -41,7 +41,7 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
         throw std::runtime_error("Invalid function type for Surf!");
     }
 
-    dims_ = hdr.getObjectFromType(FunctionHeaderObjectType::DIMENSION_2D).getAs<internal::Dimension2D>();
+    dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
 
     points_ptr_ = convertMatrixDataOuter(data_ptr_, data_type_, dims_, num_bytes_for_one_vec_);
 }

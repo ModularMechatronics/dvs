@@ -22,7 +22,7 @@ void PlotDataHandler::clear()
 void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
 {
     const FunctionHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
-    Function fcn = fcn_obj.getAs<Function>();
+    Function fcn = fcn_obj.as<Function>();
 
     switch (fcn)
     {

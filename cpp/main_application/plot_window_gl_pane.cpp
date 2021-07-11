@@ -187,7 +187,7 @@ PlotWindowGLPane::~PlotWindowGLPane()
 void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data,
                                const dvs::internal::FunctionHeader& hdr)
 {
-    const internal::Function fcn = hdr.getObjectAtIdx(0).getAs<internal::Function>();
+    const internal::Function fcn = hdr.getObjectAtIdx(0).as<internal::Function>();
 
     if (fcn == Function::HOLD_ON)
     {
@@ -202,7 +202,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         axes_set_ = true;
 
         const std::pair<Bound3D, Bound3D> axes_bnd =
-            hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<std::pair<Bound3D, Bound3D>>();
+            hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Bound3D, Bound3D>>();
         axes_interactor_->setAxesLimits(Vec2Dd(axes_bnd.first.x, axes_bnd.first.y),
                                         Vec2Dd(axes_bnd.second.x, axes_bnd.second.y));
     }
@@ -211,15 +211,15 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         axes_set_ = true;
 
         const std::pair<Bound3D, Bound3D> axes_bnd =
-            hdr.getObjectFromType(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).getAs<std::pair<Bound3D, Bound3D>>();
+            hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Bound3D, Bound3D>>();
         axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
                                         Vec3Dd(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
     else if (fcn == Function::VIEW)
     {
         view_set_ = true;
-        const float azimuth = hdr.getObjectFromType(internal::FunctionHeaderObjectType::AZIMUTH).getAs<float>();
-        const float elevation = hdr.getObjectFromType(internal::FunctionHeaderObjectType::ELEVATION).getAs<float>();
+        const float azimuth = hdr.get(internal::FunctionHeaderObjectType::AZIMUTH).as<float>();
+        const float elevation = hdr.get(internal::FunctionHeaderObjectType::ELEVATION).as<float>();
 
         const float azimuth_rad = azimuth * M_PI / 180.0f;
         const float elevation_rad = elevation * M_PI / 180.0f;

@@ -38,8 +38,8 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const Func
         throw std::runtime_error("Invalid function type for DrawMesh!");
     }
 
-    num_vertices_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_VERTICES).getAs<uint32_t>();
-    num_indices_ = hdr.getObjectFromType(FunctionHeaderObjectType::NUM_INDICES).getAs<uint32_t>();
+    num_vertices_ = hdr.get(FunctionHeaderObjectType::NUM_VERTICES).as<uint32_t>();
+    num_indices_ = hdr.get(FunctionHeaderObjectType::NUM_INDICES).as<uint32_t>();
 
     points_ptr_ = convertVerticesDataOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
 }
