@@ -9,7 +9,6 @@ namespace dvs
 {
 namespace internal
 {
-
 struct Dimension2D
 {
     size_t rows;
@@ -19,7 +18,7 @@ struct Dimension2D
     Dimension2D(const size_t r, const size_t c) : rows(r), cols(c) {}
 };
 
-}
+}  // namespace internal
 
 struct Bound2D
 {
@@ -40,6 +39,6 @@ struct Bound3D
     Bound3D(const double x_, const double y_, const double z_) : x(x_), y(y_), z(z_) {}
 };
 
-}
+}  // namespace dvs
 
 #endif

@@ -284,11 +284,6 @@ template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object
            std::is_same<U, PointSize>::value || std::is_same<U, Property>::value;
 }*/
 
-/*
-,
-PERSISTENT,
-*/
-
 template <typename T> PropertyType templateToPropType()
 {
     if (std::is_same<T, properties::Alpha>::value)
