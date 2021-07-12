@@ -18,8 +18,7 @@ constexpr size_t totalSizeOfObjects(__attribute__((unused)) const U& obj, const 
     return sizeof(U) + totalSizeOfObjects(objects...);
 }
 
-template <typename U>
-void fillBufferWithObjectsInternal(size_t idx, uint8_t* const buffer, const U& obj)
+template <typename U> void fillBufferWithObjectsInternal(size_t idx, uint8_t* const buffer, const U& obj)
 {
     const uint8_t* const obj_ptr = reinterpret_cast<const uint8_t* const>(&obj);
 
@@ -31,10 +30,7 @@ void fillBufferWithObjectsInternal(size_t idx, uint8_t* const buffer, const U& o
 }
 
 template <typename U, typename... Us>
-void fillBufferWithObjectsInternal(size_t idx,
-                                   uint8_t* const buffer,
-                                   const U& obj,
-                                   const Us&... objects)
+void fillBufferWithObjectsInternal(size_t idx, uint8_t* const buffer, const U& obj, const Us&... objects)
 {
     const uint8_t* const obj_ptr = reinterpret_cast<const uint8_t* const>(&obj);
 
@@ -52,8 +48,7 @@ template <typename... Us> void fillBufferWithObjects(uint8_t* const buffer, cons
     fillBufferWithObjectsInternal(idx, buffer, objects...);
 }
 
-template <typename U>
-void fillObjectsFromBufferInternal(size_t idx, const uint8_t* const buffer, U& obj)
+template <typename U> void fillObjectsFromBufferInternal(size_t idx, const uint8_t* const buffer, U& obj)
 {
     uint8_t* const obj_ptr = reinterpret_cast<uint8_t* const>(&obj);
 
@@ -83,7 +78,28 @@ template <typename... Us> void fillObjectsFromBuffer(const uint8_t* const buffer
     fillObjectsFromBufferInternal(idx, buffer, objects...);
 }
 
+inline uint8_t isBigEndian()
+{
+    const uint32_t x = 1;
+    const uint8_t* const ptr = reinterpret_cast<const uint8_t* const>(&x);
+
+    if (ptr[0] == '\x01')
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
+
+inline bool checkAck(char data[256])
+{
+    const bool ar = data[0] == 'a' && data[1] == 'c' && data[2] == 'k' && data[3] == '#' && data[4] == '\0';
+    return ar;
 }
+
+}  // namespace internal
+}  // namespace dvs
 
 #endif
