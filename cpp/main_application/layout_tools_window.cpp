@@ -16,8 +16,8 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
     inspector_box_ = new wxStaticBox(this, wxID_ANY, "Inspector");
 
     wxBoxSizer* global_sizer = new wxBoxSizer(wxVERTICAL);
-    global_sizer->Add(shapes_box_, 1);
-    global_sizer->Add(inspector_box_, 1);
+    global_sizer->Add(shapes_box_, 1, wxALIGN_CENTER_HORIZONTAL);
+    global_sizer->Add(inspector_box_, 1, wxALIGN_CENTER_HORIZONTAL);
 
     setupInspector();
     setupShapes();
@@ -82,7 +82,7 @@ void LayoutToolsWindow::setupShapes()
 
         sizer_inside->Add(new_tab_button, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(delete_tab_button, 0, wxALIGN_CENTER_HORIZONTAL);
-        global_sizer->Add(sizer_inside);
+        global_sizer->Add(sizer_inside, 1, wxALIGN_CENTER_HORIZONTAL);
     }
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
@@ -93,7 +93,7 @@ void LayoutToolsWindow::setupShapes()
 
         sizer_inside->Add(new_window_button, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(delete_window_button, 0, wxALIGN_CENTER_HORIZONTAL);
-        global_sizer->Add(sizer_inside);
+        global_sizer->Add(sizer_inside, 1, wxALIGN_CENTER_HORIZONTAL);
     }
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
@@ -104,7 +104,7 @@ void LayoutToolsWindow::setupShapes()
 
         sizer_inside->Add(new_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(delete_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
-        global_sizer->Add(sizer_inside);
+        global_sizer->Add(sizer_inside, 1, wxALIGN_CENTER_HORIZONTAL);
     }
     shapes_box_->SetSizer(global_sizer);
 }
