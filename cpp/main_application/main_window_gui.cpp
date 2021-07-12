@@ -117,14 +117,32 @@ void MainWindow::currentElementSelectionChanged(wxCommandEvent& event)
 void MainWindow::changeCurrentTabName(wxCommandEvent& event)
 {
     const wxString value = event.GetString();
+    const std::string new_tab_name = std::string(value.mb_str());
 
-    if (std::string(value.mb_str()) != "")
+    if (new_tab_name != "")
     {
         const int current_tab_idx = tabs_view->GetSelection();
         if (current_tab_idx != wxNOT_FOUND)
         {
-            tabs_view->SetPageText(current_tab_idx, value);
-            tab_elements_.at(current_tab_idx)->setName(std::string(value.mb_str()));
+            std::vector<std::string> existing_tab_names;
+            for (size_t k = 0; k < tabs_view->GetPageCount(); k++)
+            {
+                const std::string tn = std::string(tabs_view->GetPageText(k).mb_str());
+                existing_tab_names.push_back(tn);
+            }
+
+            if (std::find(existing_tab_names.begin(), existing_tab_names.end(), new_tab_name) !=
+                existing_tab_names.end())
+            {
+                layout_tools_window_->currentTabChanged("_" + new_tab_name);
+                tabs_view->SetPageText(current_tab_idx, "_" + new_tab_name);
+                tab_elements_.at(current_tab_idx)->setName("_" + new_tab_name);
+            }
+            else
+            {
+                tabs_view->SetPageText(current_tab_idx, value);
+                tab_elements_.at(current_tab_idx)->setName(new_tab_name);
+            }
         }
     }
     fileModified();
