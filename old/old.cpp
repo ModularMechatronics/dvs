@@ -4,11 +4,56 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+template <typename T> T getAsPlainOldData()
+{
+    static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value || std::is_same<T, int>::value ||
+                      std::is_same<T, uint64_t>::value || std::is_same<T, uint32_t>::value ||
+                      std::is_same<T, uint16_t>::value || std::is_same<T, uint8_t>::value ||
+                      std::is_same<T, int64_t>::value || std::is_same<T, int32_t>::value ||
+                      std::is_same<T, int16_t>::value || std::is_same<T, int8_t>::value ||
+                      std::is_same<T, char>::value || std::is_same<T, unsigned char>::value,
+                  "Must be a POD type!");
+
+    T out_var;
+    uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
+
+    for (size_t k = 0; k < sizeof(T); k++)
+    {
+        ptr[k] = data[k];
+    }
+
+    return out_var;
+}
+
+template <typename T> T getAsProperty() const
+{
+    // static_assert(std::is_base_of<PropertyBase, T>::value, "Must be a child class of AttributeBase!");
+
+    /*
+    if(num_bytes != (sizeof(T) + sizeof(AttributeType)))
+    {
+        throw std::exception("Mismatch in expected size!");
+    }
+    */
+
+    T out_var;
+    // out_var.setPropertyType(object_type);
+    uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
+
+    for (size_t k = 0; k < sizeof(T); k++)
+    {
+        ptr[k] = data[k];
+    }
+
+    return out_var;
+}
+
 /*void MainWindow::onRightClickMenu(wxCommandEvent& event)
 {
     std::cout << "Menu!" << std::endl;
-    wxTextEntryDialog* wx_te_dialog = new wxTextEntryDialog(this, "Change name", "Enter a new tab name", "<old-name>", wxOK | wxCANCEL | wxCENTRE);
-    
+    wxTextEntryDialog* wx_te_dialog = new wxTextEntryDialog(this, "Change name", "Enter a new tab name", "<old-name>",
+wxOK | wxCANCEL | wxCENTRE);
+
     if ( wx_te_dialog->ShowModal() == wxID_OK )
     {
         const wxString value = wx_te_dialog->GetValue();
@@ -24,8 +69,8 @@ void MainWindow::onShowContextMenu(wxContextMenuEvent& event)
     menu.Append(MENU_ID_CONTEXT_1, "Context Menu command 1");
     menu.Append(MENU_ID_CONTEXT_2, "Context Menu command 2");
     menu.Append(MENU_ID_CONTEXT_3, "Context Menu command 3");
-    
-    PopupMenu(&menu);        
+
+    PopupMenu(&menu);
 }*/
 
 // void onRightClickMenu(wxCommandEvent& event);
@@ -39,7 +84,6 @@ tb_edit = wxBitmap(wxT("../icons/edit.png"), wxBITMAP_TYPE_PNG);
 tb_delete = wxBitmap(wxT("../icons/delete.png"), wxBITMAP_TYPE_PNG);
 tb_done = wxBitmap(wxT("../icons/done2.png"), wxBITMAP_TYPE_PNG);
 tb_add = wxBitmap(wxT("../icons/add.png"), wxBITMAP_TYPE_PNG);
-
 
 namespace dvs
 {
@@ -86,7 +130,7 @@ public:
 
     Attribute()
     {
-        
+
         std::memset(data_, 0, internal::num_bytes_in_attr_data);
         num_bytes_used_ = 0;
         type = AttributeType::NO_TYPE;

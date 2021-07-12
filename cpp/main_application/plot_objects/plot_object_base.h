@@ -11,9 +11,10 @@
 #include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
-#include "plot_attributes.h"
 #include "plot_functions/plot_functions.h"
 #include "plot_objects/utils.h"
+#include "plot_properties.h"
+#include "properties.h"
 
 using namespace dvs;
 using namespace dvs::internal;
@@ -118,7 +119,7 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
         throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
     }*/
 
-    const Properties props = hdr.getProperties();
+    const Properties props(hdr.getValues());
 
     assignProperties(props);
 
