@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "dvs.h"
+#include "dvs/dvs.h"
 
 using namespace dvs;
 using namespace dvs::internal;

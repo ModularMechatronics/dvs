@@ -4,8 +4,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "dvs/math/math.h"
 #include "main_window.h"
-#include "math/math.h"
 
 using namespace dvs::internal;
 

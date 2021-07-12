@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 #include "opengl_low_level/opengl_header.h"
 
 void setColor(const float r, const float g, const float b)

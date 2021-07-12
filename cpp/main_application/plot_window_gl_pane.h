@@ -8,7 +8,7 @@
 #include "axes/axes.h"
 #include "communication/received_data.h"
 #include "communication/udp_server.h"
-#include "dvs.h"
+#include "dvs/dvs.h"
 #include "gui_element.h"
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_header.h"

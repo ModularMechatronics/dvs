@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "dvs/math/math.h"
 #include "main_application/plot_objects/utils.h"
-#include "math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"

@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 
-#include "dvs.h"
+#include "dvs/dvs.h"
 
 extern void testBasic();
 extern void testNewElements();

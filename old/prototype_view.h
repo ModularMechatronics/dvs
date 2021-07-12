@@ -2,16 +2,16 @@
 #define PROTOTYPE_VIEW_H_
 
 #include <wx/glcanvas.h>
-#include <wx/wx.h>
 #include <wx/notebook.h>
+#include <wx/wx.h>
 
 #include "axes/axes.h"
-#include "io_devices/io_devices.h"
-#include "plot_data.h"
-#include "opengl_low_level/opengl_header.h"
-#include "dvs.h"
-#include "communication/udp_server.h"
 #include "communication/received_data.h"
+#include "communication/udp_server.h"
+#include "dvs/dvs.h"
+#include "io_devices/io_devices.h"
+#include "opengl_low_level/opengl_header.h"
+#include "plot_data.h"
 #include "project_settings.h"
 
 struct Bound2Df
@@ -34,7 +34,6 @@ inline Bound2Df operator+(const Bound2Df& bnd, const Vec2Df& offset)
 
     return new_bnd;
 }
-
 
 struct Size2Df
 {
@@ -72,7 +71,7 @@ inline void drawCircle(const Vec2Df& pos, const float r)
     float t = 0.0f;
     const float inc = (2.0f * M_PI) / static_cast<float>(num_elements - 1);
     glBegin(GL_POLYGON);
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         const float x = r * std::cos(t) + pos.x;
         const float y = r * std::sin(t) + pos.y;
@@ -87,10 +86,10 @@ inline void drawCircularSegment(const Vec2Df& pos, const float r, const float fr
     const int num_elements = 10;
 
     float t = from_angle;
-    const float inc = (to_angle - from_angle) / static_cast<float>(num_elements-1);
+    const float inc = (to_angle - from_angle) / static_cast<float>(num_elements - 1);
     glBegin(GL_POLYGON);
     glVertex2f(pos.x, pos.y);
-    for(size_t k = 0; k < num_elements; k++)
+    for (size_t k = 0; k < num_elements; k++)
     {
         const float x = r * std::cos(t) + pos.x;
         const float y = r * std::sin(t) + pos.y;
@@ -158,9 +157,13 @@ private:
     wxNotebookPage* parent_;
 
 public:
-
     Square() = delete;
-    Square(wxNotebookPage* parent, const float x_, const float y_, const float width_, const float height_, const RGBTripletf& color)
+    Square(wxNotebookPage* parent,
+           const float x_,
+           const float y_,
+           const float width_,
+           const float height_,
+           const RGBTripletf& color)
         : pos_(x_, y_), size_(width_, height_)
     {
         parent_ = parent;
@@ -203,16 +206,16 @@ public:
 
     CursorSquareState mouseState(const Vec2Df mouse_pos) const
     {
-        if((screen_bound_.x_min <= mouse_pos.x) && (mouse_pos.x <= screen_bound_.x_max) &&
-           (screen_bound_.y_min <= mouse_pos.y) && (mouse_pos.y <= screen_bound_.y_max))
+        if ((screen_bound_.x_min <= mouse_pos.x) && (mouse_pos.x <= screen_bound_.x_max) &&
+            (screen_bound_.y_min <= mouse_pos.y) && (mouse_pos.y <= screen_bound_.y_max))
         {
-            if(mouse_pos.x <= screen_bound_margin_.x_min)
+            if (mouse_pos.x <= screen_bound_margin_.x_min)
             {
-                if(mouse_pos.y <= screen_bound_margin_.y_min)
+                if (mouse_pos.y <= screen_bound_margin_.y_min)
                 {
                     return CursorSquareState::BOTTOM_LEFT;
                 }
-                else if(screen_bound_margin_.y_max <= mouse_pos.y)
+                else if (screen_bound_margin_.y_max <= mouse_pos.y)
                 {
                     return CursorSquareState::TOP_LEFT;
                 }
@@ -221,13 +224,13 @@ public:
                     return CursorSquareState::LEFT;
                 }
             }
-            else if(screen_bound_margin_.x_max <= mouse_pos.x)
+            else if (screen_bound_margin_.x_max <= mouse_pos.x)
             {
-                if(mouse_pos.y <= screen_bound_margin_.y_min)
+                if (mouse_pos.y <= screen_bound_margin_.y_min)
                 {
                     return CursorSquareState::BOTTOM_RIGHT;
                 }
-                else if(screen_bound_margin_.y_max <= mouse_pos.y)
+                else if (screen_bound_margin_.y_max <= mouse_pos.y)
                 {
                     return CursorSquareState::TOP_RIGHT;
                 }
@@ -236,11 +239,11 @@ public:
                     return CursorSquareState::RIGHT;
                 }
             }
-            else if(mouse_pos.y <= screen_bound_margin_.y_min)
+            else if (mouse_pos.y <= screen_bound_margin_.y_min)
             {
                 return CursorSquareState::BOTTOM;
             }
-            else if(screen_bound_margin_.y_max <= mouse_pos.y)
+            else if (screen_bound_margin_.y_max <= mouse_pos.y)
             {
                 return CursorSquareState::TOP;
             }
@@ -303,7 +306,7 @@ public:
         glColor3f(color_.red, color_.green, color_.blue);
         drawRoundedRectangle(gl_bound_, 0.01f);
 
-        if(is_selected_)
+        if (is_selected_)
         {
             glLineWidth(3.0f);
             glColor3f(1.0f, 0.0f, 1.0f);
@@ -416,6 +419,5 @@ public:
     void show();
     void hide();
 };
-
 
 #endif

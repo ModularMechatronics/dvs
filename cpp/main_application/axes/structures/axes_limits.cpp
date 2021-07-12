@@ -1,6 +1,6 @@
 #include "axes/structures/axes_limits.h"
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 
 AxesLimits::AxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec)
 {

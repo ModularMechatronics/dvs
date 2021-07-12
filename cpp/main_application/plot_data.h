@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "communication/received_data.h"
-#include "dvs.h"
-#include "math/math.h"
+#include "dvs/dvs.h"
+#include "dvs/math/math.h"
 #include "opengl_low_level/data_structures.h"
 
 using namespace dvs;

@@ -1,6 +1,6 @@
 #include "plot_functions/plot_functions.h"
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 #include "opengl_low_level/opengl_low_level.h"
 
 void plot(const Vectord& x, const Vectord& y)

@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "dvs.h"
+#include "dvs/dvs.h"
 #include "test_utils.h"
 
 using namespace dvs;
