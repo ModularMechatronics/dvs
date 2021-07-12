@@ -1,5 +1,5 @@
-#ifndef PLOT_TOOL_LOGGING_H_
-#define PLOT_TOOL_LOGGING_H_
+#ifndef DVS_LOGGING_H_
+#define DVS_LOGGING_H_
 
 #include <sys/time.h>
 
@@ -12,7 +12,7 @@
 #include <string>
 #include <thread>
 
-namespace plot_tool
+namespace dvs
 {
 namespace timing
 {
@@ -278,20 +278,17 @@ inline std::string getPreString(const MessageSeverity msg_severity,
     const std::string reset_color = getUseColors() ? getWhiteColorString() : "";
 
     const std::string file_name_string = std::string(file_name);
-    const std::string file_name_no_path =
-        file_name_string.substr(file_name_string.find_last_of("/") + 1);
+    const std::string file_name_no_path = file_name_string.substr(file_name_string.find_last_of("/") + 1);
 
     const std::string func_string = getShowFunc() ? "[ " + std::string(func_name) + " ]" : "";
 
     const std::string file_string = getShowFile() ? "[ " + file_name_no_path + " ]" : "";
-    const std::string line_number_string =
-        getShowLineNumber() ? "[ " + std::to_string(line_number) + " ]" : "";
+    const std::string line_number_string = getShowLineNumber() ? "[ " + std::to_string(line_number) + " ]" : "";
     const std::string severity_string = "[ " + getSeverityString(msg_severity) + " ]";
-    const std::string thread_id_string =
-        getShowThreadId() ? "[ 0x" + decNumberAsHexString(getThreadId()) + " ]" : "";
+    const std::string thread_id_string = getShowThreadId() ? "[ 0x" + decNumberAsHexString(getThreadId()) + " ]" : "";
 
-    return severity_color + severity_string + thread_id_string + file_string + func_string +
-           line_number_string + ": " + reset_color;
+    return severity_color + severity_string + thread_id_string + file_string + func_string + line_number_string + ": " +
+           reset_color;
 }
 
 class Log
@@ -320,9 +317,7 @@ public:
 
     explicit Log() : pre_string_(""), assertion_condition_(true), should_print_(true) {}
 
-    explicit Log(const bool cond) : pre_string_(""), assertion_condition_(true), should_print_(cond)
-    {
-    }
+    explicit Log(const bool cond) : pre_string_(""), assertion_condition_(true), should_print_(cond) {}
 
     std::ostringstream& getStream()
     {
@@ -356,100 +351,83 @@ private:
 
 inline void useColors(const bool use_colors)
 {
-    plot_tool::logging::internal::setUseColors(use_colors);
+    dvs::logging::internal::setUseColors(use_colors);
 }
 
 inline void showFile(const bool show_file)
 {
-    plot_tool::logging::internal::setShowFile(show_file);
+    dvs::logging::internal::setShowFile(show_file);
 }
 
 inline void showLineNumber(const bool show_line_number)
 {
-    plot_tool::logging::internal::setShowLineNumber(show_line_number);
+    dvs::logging::internal::setShowLineNumber(show_line_number);
 }
 
 inline void showFunction(const bool show_function)
 {
-    plot_tool::logging::internal::setShowFunc(show_function);
+    dvs::logging::internal::setShowFunc(show_function);
 }
 
 inline void showThreadId(const bool show_thread_id)
 {
-    plot_tool::logging::internal::setShowThreadId(show_thread_id);
+    dvs::logging::internal::setShowThreadId(show_thread_id);
 }
 
 }  // namespace logging
-}  // namespace plot_tool
+}  // namespace dvs
 
-#define PT_LOG()                                                                          \
-    plot_tool::logging::internal::Log(                                                    \
-        plot_tool::logging::internal::MessageSeverity::LOG, __FILE__, __func__, __LINE__) \
+#define DVS_LOG() \
+    dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::LOG, __FILE__, __func__, __LINE__).getStream()
+#define DVS_LOG_INFO() \
+    dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::INFO, __FILE__, __func__, __LINE__).getStream()
+#define DVS_LOG_DEBUG()                                                                                       \
+    dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::DEBUG, __FILE__, __func__, __LINE__) \
         .getStream()
-#define PT_LOG_INFO()                                                                      \
-    plot_tool::logging::internal::Log(                                                     \
-        plot_tool::logging::internal::MessageSeverity::INFO, __FILE__, __func__, __LINE__) \
+#define DVS_LOG_WARNING()                                                                                       \
+    dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::WARNING, __FILE__, __func__, __LINE__) \
         .getStream()
-#define PT_LOG_DEBUG()                                                                      \
-    plot_tool::logging::internal::Log(                                                      \
-        plot_tool::logging::internal::MessageSeverity::DEBUG, __FILE__, __func__, __LINE__) \
+#define DVS_LOG_TRACE()                                                                                       \
+    dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::TRACE, __FILE__, __func__, __LINE__) \
         .getStream()
-#define PT_LOG_WARNING()                                                                      \
-    plot_tool::logging::internal::Log(                                                        \
-        plot_tool::logging::internal::MessageSeverity::WARNING, __FILE__, __func__, __LINE__) \
+#define DVS_LOG_ERROR()                                                                                       \
+    dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::ERROR, __FILE__, __func__, __LINE__) \
         .getStream()
-#define PT_LOG_TRACE()                                                                      \
-    plot_tool::logging::internal::Log(                                                      \
-        plot_tool::logging::internal::MessageSeverity::TRACE, __FILE__, __func__, __LINE__) \
-        .getStream()
-#define PT_LOG_ERROR()                                                                      \
-    plot_tool::logging::internal::Log(                                                      \
-        plot_tool::logging::internal::MessageSeverity::ERROR, __FILE__, __func__, __LINE__) \
-        .getStream()
-#define PT_LOG_FATAL()                                                                      \
-    plot_tool::logging::internal::Log(                                                      \
-        plot_tool::logging::internal::MessageSeverity::FATAL, __FILE__, __func__, __LINE__) \
+#define DVS_LOG_FATAL()                                                                                       \
+    dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::FATAL, __FILE__, __func__, __LINE__) \
         .getStream()
 
-#define PT_PRINT() plot_tool::logging::internal::Log().getStream()
+#define DVS_PRINT() dvs::logging::internal::Log().getStream()
 
-#define PT_PRINT_COND(cond) plot_tool::logging::internal::Log(cond).getStream()
+#define DVS_PRINT_COND(cond) dvs::logging::internal::Log(cond).getStream()
 
-#define PT_ASSERT(cond)                                                                         \
-    plot_tool::logging::internal::Log(plot_tool::logging::internal::MessageSeverity::ASSERTION, \
-                                      __FILE__,                                                 \
-                                      __func__,                                                 \
-                                      __LINE__,                                                 \
-                                      cond)                                                     \
+#define DVS_ASSERT(cond)                                                                        \
+    dvs::logging::internal::Log(                                                                \
+        dvs::logging::internal::MessageSeverity::ASSERTION, __FILE__, __func__, __LINE__, cond) \
         .getStream()
 
-#define PT_EXIT(cond)                                                                             \
-    plot_tool::logging::internal::Log(                                                            \
-        plot_tool::logging::internal::MessageSeverity::EXIT, __FILE__, __func__, __LINE__, false) \
+#define DVS_EXIT(cond)                                                                                              \
+    dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::EXIT, __FILE__, __func__, __LINE__, false) \
         .getStream()
 
-#define PT_TIC() plot_tool::timing::startTimer()
+#define DVS_TIC() dvs::timing::startTimer()
 
-#define PT_TOC_MS(msg)                                                                        \
-    {                                                                                         \
-        plot_tool::timing::stopTimer();                                                       \
-        int64_t delta_seconds =                                                               \
-            plot_tool::timing::_Var_stop_seconds() - plot_tool::timing::_Var_start_seconds(); \
-        int64_t delta_microseconds = plot_tool::timing::_Var_stop_micro_seconds() -           \
-                                     plot_tool::timing::_Var_start_micro_seconds();           \
-        int64_t delta_time = delta_seconds * 1000000 + delta_microseconds;                    \
-        PT_LOG_DEBUG() << msg << static_cast<float>(delta_time) / 1000.0f << " ms";           \
+#define DVS_TOC_MS(msg)                                                                                                \
+    {                                                                                                                  \
+        dvs::timing::stopTimer();                                                                                      \
+        int64_t delta_seconds = dvs::timing::_Var_stop_seconds() - dvs::timing::_Var_start_seconds();                  \
+        int64_t delta_microseconds = dvs::timing::_Var_stop_micro_seconds() - dvs::timing::_Var_start_micro_seconds(); \
+        int64_t delta_time = delta_seconds * 1000000 + delta_microseconds;                                             \
+        DVS_LOG_DEBUG() << msg << static_cast<float>(delta_time) / 1000.0f << " ms";                                   \
     }
 
-#define PT_TOC_US(msg)                                                                        \
-    {                                                                                         \
-        plot_tool::timing::stopTimer();                                                       \
-        int64_t delta_seconds =                                                               \
-            plot_tool::timing::_Var_stop_seconds() - plot_tool::timing::_Var_start_seconds(); \
-        int64_t delta_microseconds = plot_tool::timing::_Var_stop_micro_seconds() -           \
-                                     plot_tool::timing::_Var_start_micro_seconds();           \
-        int64_t delta_time = delta_seconds * 1000000 + delta_microseconds;                    \
-        PT_LOG_DEBUG() << msg << delta_time << " us";                                         \
+#define DVS_TOC_US(msg)                                                                                                \
+    {                                                                                                                  \
+        dvs::timing::stopTimer();                                                                                      \
+        int64_t delta_seconds = dvs::timing::_Var_stop_seconds() - dvs::timing::_Var_start_seconds();                  \
+        int64_t delta_microseconds = dvs::timing::_Var_stop_micro_seconds() - dvs::timing::_Var_start_micro_seconds(); \
+        int64_t delta_time = delta_seconds * 1000000 + delta_microseconds;                                             \
+        DVS_LOG_DEBUG() << msg << delta_time << " us";                                                                 \
     }
 
 #endif

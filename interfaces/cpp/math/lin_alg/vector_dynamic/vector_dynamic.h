@@ -5,7 +5,6 @@
 #include <type_traits>
 #include <utility>
 
-#include "logging.h"
 #include "math/lin_alg/vector_dynamic/class_defs/vector_dynamic_class_def.h"
 #include "math/misc/math_macros.h"
 
@@ -34,7 +33,7 @@ template <typename T> Vector<T>::Vector(const Vector<T>& v) : is_allocated_(true
 
 template <typename T> Vector<T>::Vector(Vector<T>&& v)
 {
-    PT_ASSERT(v.isAllocated()) << "Input vector not allocated!";
+    DVS_ASSERT(v.isAllocated()) << "Input vector not allocated!";
     data_ = v.getDataPointer();
     vector_length_ = v.size();
     is_allocated_ = true;
@@ -46,7 +45,7 @@ template <typename T> Vector<T>& Vector<T>::operator=(Vector<T>&& v)
 {
     if (this != &v)
     {
-        PT_ASSERT(v.isAllocated()) << "Input vector not allocated before assignment!";
+        DVS_ASSERT(v.isAllocated()) << "Input vector not allocated before assignment!";
 
         if (is_allocated_)
         {
@@ -83,7 +82,7 @@ template <typename T> void Vector<T>::fillBufferWithData(uint8_t* const buffer) 
 
 template <typename T> Vector<T>& Vector<T>::operator=(const Vector<T>& v)
 {
-    PT_ASSERT(v.isAllocated()) << "Input vector not allocated before assignment!";
+    DVS_ASSERT(v.isAllocated()) << "Input vector not allocated before assignment!";
 
     if (this != &v)
     {
@@ -151,7 +150,7 @@ template <typename T> template <typename Y> Vector<T>& Vector<T>::operator=(cons
 
 template <typename T> Vector<T>::Vector(const std::initializer_list<T>& il)
 {
-    PT_ASSERT(il.size() > 0) << "Tried to initialize with empty vector!";
+    DVS_ASSERT(il.size() > 0) << "Tried to initialize with empty vector!";
 
     DATA_ALLOCATION(data_, il.size(), T, "Vector");
     is_allocated_ = true;
@@ -248,8 +247,8 @@ template <typename T> void Vector<T>::pushFront(const T& new_value)
 
 template <typename T> void Vector<T>::insertAtIndex(const T& new_value, const size_t idx)
 {
-    PT_ASSERT(is_allocated_) << "Vector not allocated!";
-    PT_ASSERT(idx < vector_length_);
+    DVS_ASSERT(is_allocated_) << "Vector not allocated!";
+    DVS_ASSERT(idx < vector_length_);
 
     T* tmp_ptr;
     DATA_ALLOCATION(tmp_ptr, vector_length_ + 1, T, "Vector");
@@ -349,9 +348,9 @@ template <typename T> template <typename Y> Vector<T> Vector<T>::operator()(cons
 
 template <typename T> Vector<T> Vector<T>::operator()(const IndexSpan& idx_span) const
 {
-    PT_ASSERT(idx_span.from < vector_length_) << "Lower index exceeds vector size!";
-    PT_ASSERT(idx_span.from < vector_length_) << "Upper index exceeds vector size!";
-    PT_ASSERT(idx_span.from <= idx_span.to) << "Lower index larger than upper index!";
+    DVS_ASSERT(idx_span.from < vector_length_) << "Lower index exceeds vector size!";
+    DVS_ASSERT(idx_span.from < vector_length_) << "Upper index exceeds vector size!";
+    DVS_ASSERT(idx_span.from <= idx_span.to) << "Lower index larger than upper index!";
     const size_t new_vector_length = idx_span.to - idx_span.from + 1;
     Vector<T> vres(new_vector_length);
 
@@ -430,7 +429,7 @@ template <typename T> Vector<size_t> Vector<T>::findIndicesOf(const T& item_to_f
 
 template <typename T> size_t Vector<T>::countNumNonZeroElements() const
 {
-    PT_ASSERT(is_allocated_) << "Vector not allocated!";
+    DVS_ASSERT(is_allocated_) << "Vector not allocated!";
     size_t cnt = 0;
     for (size_t k = 0; k < vector_length_; k++)
     {
@@ -1051,7 +1050,7 @@ template <typename T> void fillVectorWithArray(Vector<T>& v, const T* a)
 
 template <typename T> Vector<T> vectorCat(const Vector<T>& v0, const Vector<T>& v1)
 {
-    PT_ASSERT(v0.isAllocated() && v1.isAllocated()) << "Input vectors not allocated!";
+    DVS_ASSERT(v0.isAllocated() && v1.isAllocated()) << "Input vectors not allocated!";
     Vector<T> vres(v0.size() + v1.size());
 
     for (size_t k = 0; k < v0.size(); k++)
@@ -1069,8 +1068,8 @@ template <typename T> Vector<T> vectorCat(const Vector<T>& v0, const Vector<T>& 
 
 template <typename T> void Vector<T>::removeElementAtIndex(const size_t idx)
 {
-    PT_ASSERT(is_allocated_) << "Vector not allocated!";
-    PT_ASSERT(idx < vector_length_) << "Tried to remove element outside bounds!";
+    DVS_ASSERT(is_allocated_) << "Vector not allocated!";
+    DVS_ASSERT(idx < vector_length_) << "Tried to remove element outside bounds!";
 
     T* temp_data;
 
@@ -1092,19 +1091,19 @@ template <typename T> void Vector<T>::removeElementAtIndex(const size_t idx)
 
 template <typename T> void Vector<T>::removeElementsAtIndices(const IndexSpan& idx_span)
 {
-    PT_ASSERT(is_allocated_) << "Vector not allocated!";
-    PT_ASSERT(idx_span.from <= idx_span.to) << "To index smaller than from index!";
-    PT_ASSERT(idx_span.to < vector_length_) << "Tried to remove elements outside bounds!";
+    DVS_ASSERT(is_allocated_) << "Vector not allocated!";
+    DVS_ASSERT(idx_span.from <= idx_span.to) << "To index smaller than from index!";
+    DVS_ASSERT(idx_span.to < vector_length_) << "Tried to remove elements outside bounds!";
     if (idx_span.from == idx_span.to)
     {
-        PT_LOG_WARNING() << "From and to indices are equal!";
+        DVS_LOG_WARNING() << "From and to indices are equal!";
     }
 
     T* temp_data;
     size_t num_elements_to_remove = idx_span.to - idx_span.from + 1;
     DATA_ALLOCATION(temp_data, vector_length_ - num_elements_to_remove, T, "Vector");
 
-    PT_ASSERT((vector_length_ - num_elements_to_remove) > 0) << "Tried to remove all elements!";
+    DVS_ASSERT((vector_length_ - num_elements_to_remove) > 0) << "Tried to remove all elements!";
 
     size_t current_idx = 0;
     for (size_t k = 0; k < vector_length_; k++)

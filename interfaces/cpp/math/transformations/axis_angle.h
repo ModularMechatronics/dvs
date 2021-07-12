@@ -1,7 +1,6 @@
 #ifndef DVS_AXIS_ANGLE_H_
 #define DVS_AXIS_ANGLE_H_
 
-#include "logging.h"
 #include "math/lin_alg.h"
 #include "math/transformations/class_defs/axis_angle_class_def.h"
 

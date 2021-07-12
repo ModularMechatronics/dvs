@@ -3,7 +3,6 @@
 
 #include <cmath>
 
-#include "logging.h"
 #include "math/lin_alg/matrix_dynamic/matrix_dynamic.h"
 #include "math/lin_alg/vector_dynamic/vector_dynamic.h"
 #include "math/lin_alg/vector_low_dim/vec2d.h"
@@ -15,10 +14,10 @@ namespace dvs
 {
 template <typename T> void Matrix<T>::addToAllCols(const Matrix<T>& m)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(m.isAllocated()) << "Matrix not allocated!";
-    PT_ASSERT(num_rows_ == m.rows()) << "Error in dimension!";
-    PT_ASSERT(m.cols() == 1) << "Error in dimension!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(m.isAllocated()) << "Matrix not allocated!";
+    DVS_ASSERT(num_rows_ == m.rows()) << "Error in dimension!";
+    DVS_ASSERT(m.cols() == 1) << "Error in dimension!";
 
     for (size_t c = 0; c < num_cols_; c++)
     {
@@ -31,10 +30,10 @@ template <typename T> void Matrix<T>::addToAllCols(const Matrix<T>& m)
 
 template <typename T> void Matrix<T>::addToAllRows(const Matrix<T>& m)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(m.isAllocated()) << "Matrix not allocated!";
-    PT_ASSERT(num_cols_ == m.cols()) << "Error in dimension!";
-    PT_ASSERT(m.rows() == 1) << "Error in dimension!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(m.isAllocated()) << "Matrix not allocated!";
+    DVS_ASSERT(num_cols_ == m.cols()) << "Error in dimension!";
+    DVS_ASSERT(m.rows() == 1) << "Error in dimension!";
 
     for (size_t r = 0; r < num_rows_; r++)
     {
@@ -47,9 +46,9 @@ template <typename T> void Matrix<T>::addToAllRows(const Matrix<T>& m)
 
 template <typename T> void Matrix<T>::addToAllCols(const Vector<T>& v)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(v.isAllocated()) << "Vector not allocated!";
-    PT_ASSERT(num_rows_ == v.size()) << "Error in dimension!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(v.isAllocated()) << "Vector not allocated!";
+    DVS_ASSERT(num_rows_ == v.size()) << "Error in dimension!";
 
     for (size_t c = 0; c < num_cols_; c++)
     {
@@ -62,9 +61,9 @@ template <typename T> void Matrix<T>::addToAllCols(const Vector<T>& v)
 
 template <typename T> void Matrix<T>::addToAllRows(const Vector<T>& v)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(v.isAllocated()) << "Vector not allocated!";
-    PT_ASSERT(num_cols_ == v.size()) << "Error in dimension!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(v.isAllocated()) << "Vector not allocated!";
+    DVS_ASSERT(num_cols_ == v.size()) << "Error in dimension!";
 
     for (size_t r = 0; r < num_rows_; r++)
     {
@@ -77,7 +76,7 @@ template <typename T> void Matrix<T>::addToAllRows(const Vector<T>& v)
 
 template <typename T> void Matrix<T>::addToCol(const size_t col_idx, const Vector<T>& v)
 {
-    PT_ASSERT(v.size() == num_rows_);
+    DVS_ASSERT(v.size() == num_rows_);
     for (size_t r = 0; r < num_rows_; r++)
     {
         data_[r * num_cols_ + col_idx] = data_[r * num_cols_ + col_idx] + v(r);
@@ -86,7 +85,7 @@ template <typename T> void Matrix<T>::addToCol(const size_t col_idx, const Vecto
 
 template <typename T> void Matrix<T>::addToRow(const size_t row_idx, const Vector<T>& v)
 {
-    PT_ASSERT(v.size() == num_cols_);
+    DVS_ASSERT(v.size() == num_cols_);
     for (size_t c = 0; c < num_cols_; c++)
     {
         data_[row_idx * num_cols_ + c] = data_[row_idx * num_cols_ + c] + v(c);
@@ -95,11 +94,11 @@ template <typename T> void Matrix<T>::addToRow(const size_t row_idx, const Vecto
 
 template <typename T> void Matrix<T>::addToCol(const size_t col_idx, const Matrix<T>& m)
 {
-    PT_ASSERT((m.rows() == 1) || (m.cols() == 1));
+    DVS_ASSERT((m.rows() == 1) || (m.cols() == 1));
 
     if (m.rows() == 1)
     {
-        PT_ASSERT(m.cols() == num_rows_);
+        DVS_ASSERT(m.cols() == num_rows_);
 
         for (size_t r = 0; r < num_rows_; r++)
         {
@@ -108,7 +107,7 @@ template <typename T> void Matrix<T>::addToCol(const size_t col_idx, const Matri
     }
     else
     {
-        PT_ASSERT(m.rows() == num_rows_);
+        DVS_ASSERT(m.rows() == num_rows_);
 
         for (size_t r = 0; r < num_rows_; r++)
         {
@@ -119,11 +118,11 @@ template <typename T> void Matrix<T>::addToCol(const size_t col_idx, const Matri
 
 template <typename T> void Matrix<T>::addToRow(const size_t row_idx, const Matrix<T>& m)
 {
-    PT_ASSERT((m.rows() == 1) || (m.cols() == 1));
+    DVS_ASSERT((m.rows() == 1) || (m.cols() == 1));
 
     if (m.rows() == 1)
     {
-        PT_ASSERT(m.cols() == num_cols_);
+        DVS_ASSERT(m.cols() == num_cols_);
 
         for (size_t c = 0; c < num_cols_; c++)
         {
@@ -132,7 +131,7 @@ template <typename T> void Matrix<T>::addToRow(const size_t row_idx, const Matri
     }
     else
     {
-        PT_ASSERT(m.rows() == num_cols_);
+        DVS_ASSERT(m.rows() == num_cols_);
 
         for (size_t c = 0; c < num_cols_; c++)
         {
@@ -143,9 +142,9 @@ template <typename T> void Matrix<T>::addToRow(const size_t row_idx, const Matri
 
 template <typename T> void Matrix<T>::hCat(const Vector<T>& v)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(v.isAllocated()) << "Vector not allocated!";
-    PT_ASSERT(num_rows_ == v.size()) << "Mismatch in number of cols!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(v.isAllocated()) << "Vector not allocated!";
+    DVS_ASSERT(num_rows_ == v.size()) << "Mismatch in number of cols!";
 
     T* temp_data;
     DATA_ALLOCATION(temp_data, num_rows_ * (num_cols_ + 1), T, "Matrix");
@@ -171,9 +170,9 @@ template <typename T> void Matrix<T>::hCat(const Vector<T>& v)
 
 template <typename T> void Matrix<T>::vCat(const Vector<T>& v)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(v.isAllocated()) << "Vector not allocated!";
-    PT_ASSERT(num_rows_ == v.size()) << "Mismatch in number of cols!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(v.isAllocated()) << "Vector not allocated!";
+    DVS_ASSERT(num_rows_ == v.size()) << "Mismatch in number of cols!";
 
     T* temp_data;
     DATA_ALLOCATION(temp_data, (num_rows_ + 1) * num_cols_, T, "Matrix");
@@ -229,9 +228,9 @@ template <typename T> void Matrix<T>::vCat(const Vec4D<T>& v)
 
 template <typename T> void Matrix<T>::hCat(const Matrix<T>& m)
 {
-    PT_ASSERT(is_allocated_);
-    PT_ASSERT(m.isAllocated());
-    PT_ASSERT(m.rows() == num_rows_);
+    DVS_ASSERT(is_allocated_);
+    DVS_ASSERT(m.isAllocated());
+    DVS_ASSERT(m.rows() == num_rows_);
     const size_t new_num_cols = num_cols_ + m.cols();
 
     T* temp_data;
@@ -259,9 +258,9 @@ template <typename T> void Matrix<T>::hCat(const Matrix<T>& m)
 
 template <typename T> void Matrix<T>::vCat(const Matrix<T>& m)
 {
-    PT_ASSERT(is_allocated_);
-    PT_ASSERT(m.isAllocated());
-    PT_ASSERT(m.cols() == num_cols_);
+    DVS_ASSERT(is_allocated_);
+    DVS_ASSERT(m.isAllocated());
+    DVS_ASSERT(m.cols() == num_cols_);
     const size_t new_num_rows = num_rows_ + m.rows();
 
     T* temp_data;
@@ -289,10 +288,10 @@ template <typename T> void Matrix<T>::vCat(const Matrix<T>& m)
 
 template <typename T> Matrix<T> hCat(const Matrix<T>& m, const Vector<T>& v)
 {
-    PT_ASSERT(m.isAllocated()) << "Matrix not allocated!";
-    PT_ASSERT(v.isAllocated()) << "Vector not allocated!";
+    DVS_ASSERT(m.isAllocated()) << "Matrix not allocated!";
+    DVS_ASSERT(v.isAllocated()) << "Vector not allocated!";
 
-    PT_ASSERT(m.rows() == v.size()) << "Mismatch in number of cols!";
+    DVS_ASSERT(m.rows() == v.size()) << "Mismatch in number of cols!";
 
     Matrix<T> mres(m.rows(), m.cols() + 1);
 
@@ -314,10 +313,10 @@ template <typename T> Matrix<T> hCat(const Matrix<T>& m, const Vector<T>& v)
 
 template <typename T> Matrix<T> vCat(const Matrix<T>& m, const Vector<T>& v)
 {
-    PT_ASSERT(m.isAllocated()) << "Matrix not allocated!";
-    PT_ASSERT(v.isAllocated()) << "Vector not allocated!";
+    DVS_ASSERT(m.isAllocated()) << "Matrix not allocated!";
+    DVS_ASSERT(v.isAllocated()) << "Vector not allocated!";
 
-    PT_ASSERT(m.cols() == v.size()) << "Mismatch in number of cols!";
+    DVS_ASSERT(m.cols() == v.size()) << "Mismatch in number of cols!";
 
     Matrix<T> mres(m.rows() + 1, m.cols());
 
@@ -481,24 +480,24 @@ template <typename T> Matrix<T> Vec3D<T>::outerProduct(const Vec3D<T>& v) const
 
 template <typename T> Vec4D<T> Vector<T>::toVec4D() const
 {
-    PT_ASSERT(is_allocated_) << "Error, parent vector not allocated!";
-    PT_ASSERT(vector_length_ >= 4) << "Error, parent vector not of size 4 or larger!";
+    DVS_ASSERT(is_allocated_) << "Error, parent vector not allocated!";
+    DVS_ASSERT(vector_length_ >= 4) << "Error, parent vector not of size 4 or larger!";
     Vec4D<T> v(data_[0], data_[1], data_[2], data_[3]);
     return v;
 }
 
 template <typename T> Vec3D<T> Vector<T>::toVec3D() const
 {
-    PT_ASSERT(is_allocated_) << "Error, parent vector not allocated!";
-    PT_ASSERT(vector_length_ >= 3) << "Error, parent vector not of size 3 or larger!";
+    DVS_ASSERT(is_allocated_) << "Error, parent vector not allocated!";
+    DVS_ASSERT(vector_length_ >= 3) << "Error, parent vector not of size 3 or larger!";
     Vec3D<T> v(data_[0], data_[1], data_[2]);
     return v;
 }
 
 template <typename T> Vec2D<T> Vector<T>::toVec2D() const
 {
-    PT_ASSERT(is_allocated_) << "Error, parent vector not allocated!";
-    PT_ASSERT(vector_length_ >= 2) << "Error, parent vector not of size 2 or larger!";
+    DVS_ASSERT(is_allocated_) << "Error, parent vector not allocated!";
+    DVS_ASSERT(vector_length_ >= 2) << "Error, parent vector not of size 2 or larger!";
     Vec2D<T> v(data_[0], data_[1]);
     return v;
 }

@@ -3,7 +3,6 @@
 
 #include <cmath>
 
-#include "logging.h"
 #include "math/lin_alg/vector_low_dim/class_defs/vec3d_class_def.h"
 
 // TODO:
@@ -167,9 +166,9 @@ template <typename T> Vec3D<T> operator-(const Vec3D<T>& v0, const Vec3D<T>& v1)
 
 template <typename T> Vec3D<T> operator*(const Matrix<T>& m, const Vec3D<T>& v)
 {
-    PT_ASSERT(m.isAllocated()) << "Matrix not allocated!";
-    PT_ASSERT(m.rows() == 3) << "Matrix dimension mismatch!";
-    PT_ASSERT(m.cols() == 3) << "Matrix dimension mismatch!";
+    DVS_ASSERT(m.isAllocated()) << "Matrix not allocated!";
+    DVS_ASSERT(m.rows() == 3) << "Matrix dimension mismatch!";
+    DVS_ASSERT(m.cols() == 3) << "Matrix dimension mismatch!";
     Vec3D<T> res;
     res.x = m(0, 0) * v.x + m(0, 1) * v.y + m(0, 2) * v.z;
     res.y = m(1, 0) * v.x + m(1, 1) * v.y + m(1, 2) * v.z;
@@ -179,9 +178,9 @@ template <typename T> Vec3D<T> operator*(const Matrix<T>& m, const Vec3D<T>& v)
 
 template <typename T> Vec3D<T> operator*(const Vec3D<T>& v, const Matrix<T>& m)
 {
-    PT_ASSERT(m.isAllocated()) << "Matrix not allocated!";
-    PT_ASSERT(m.rows() == 3) << "Matrix dimension mismatch!";
-    PT_ASSERT(m.cols() == 3) << "Matrix dimension mismatch!";
+    DVS_ASSERT(m.isAllocated()) << "Matrix not allocated!";
+    DVS_ASSERT(m.rows() == 3) << "Matrix dimension mismatch!";
+    DVS_ASSERT(m.cols() == 3) << "Matrix dimension mismatch!";
     Vec3D<T> res;
     res.x = v.x * m(0, 0) + v.y * m(1, 0) + v.z * m(2, 0);
     res.y = v.x * m(0, 1) + v.y * m(1, 1) + v.z * m(2, 1);
@@ -271,7 +270,7 @@ template <typename T> Vec3D<T> Vec3D<T>::perpendicularVector() const
             xn = NAN;
             yn = NAN;
             zn = NAN;
-            PT_LOG_WARNING() << "Something's weird";
+            DVS_LOG_WARNING() << "Something's weird";
         }
 
         return Vec3D<T>(xn, yn, zn);
