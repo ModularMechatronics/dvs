@@ -1,7 +1,7 @@
 #ifndef DVS_PROPERTIES_H_
 #define DVS_PROPERTIES_H_
 
-#include "dvs.h"
+#include "dvs/dvs.h"
 
 template <typename T> PropertyType templateToPropType()
 {

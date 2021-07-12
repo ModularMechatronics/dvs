@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include "enumerations.h"
+#include "dvs/enumerations.h"
 #include "opengl_low_level/opengl_header.h"
 
 using namespace dvs::internal;

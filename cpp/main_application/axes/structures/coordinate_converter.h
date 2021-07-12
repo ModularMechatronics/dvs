@@ -3,7 +3,7 @@
 
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/view_angles.h"
-#include "math/math.h"
+#include "dvs/math/math.h"
 
 // Model - view - screen
 // Model: 3D coordinates, world, defined with axes_limits_

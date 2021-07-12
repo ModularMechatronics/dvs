@@ -10,9 +10,10 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "dvs/math/math.h"
 #include "events.h"
 #include "layout_tools_window.h"
-#include "math/math.h"
+
 
 using namespace dvs::internal;
 

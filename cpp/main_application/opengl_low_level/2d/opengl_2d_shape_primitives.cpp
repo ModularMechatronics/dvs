@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 #include "opengl_low_level/2d/opengl_2d_functions.h"
 #include "opengl_low_level/opengl_header.h"
 

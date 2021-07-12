@@ -3,8 +3,7 @@
 
 #include <string>
 
-#include "math/math.h"
-
+#include "dvs/math/math.h"
 
 using namespace dvs;
 

@@ -1,7 +1,7 @@
 #ifndef RECEIVED_DATA_H_
 #define RECEIVED_DATA_H_
 
-#include "dvs.h"
+#include "dvs/dvs.h"
 
 class ReceivedData
 {

@@ -7,8 +7,8 @@
 #include <memory>
 
 #include "communication/received_data.h"
-#include "enumerations.h"
-#include "math/math.h"
+#include "dvs/enumerations.h"
+#include "dvs/math/math.h"
 #include "project_settings.h"
 
 using namespace dvs;

@@ -1,7 +1,7 @@
 #ifndef VIEW_ANGLES_H_
 #define VIEW_ANGLES_H_
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 
 using namespace dvs;
 

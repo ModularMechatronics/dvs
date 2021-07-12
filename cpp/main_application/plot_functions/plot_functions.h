@@ -3,7 +3,7 @@
 
 #include <utility>
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 #include "misc/color_map.h"
 #include "opengl_low_level/data_structures.h"
 

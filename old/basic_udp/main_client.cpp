@@ -1,8 +1,6 @@
 #include <algorithm>
 
-
-
-#include "dvs.h"
+#include "dvs/dvs.h"
 
 /*
 Receive from communication interface, put into data buffer
@@ -11,14 +9,13 @@ Plot window keeps track of data
 
 */
 
-
 using namespace dvs;
 
-int main( void )
+int main(void)
 {
     Vector<double> x(20), y(20);
 
-    for(size_t k = 0; k < 20; k++)
+    for (size_t k = 0; k < 20; k++)
     {
         x(k) = k;
         y(k) = 2 * x(k);
@@ -32,11 +29,13 @@ int main( void )
     usleep(20000);
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
     usleep(20000);
-    plot(x, y, properties::Color(12, 14, 55),
-               properties::Alpha(137),
-               properties::Name("SimpleName"),
-               properties::LineStyle("-*"),
-               properties::LineWidth(22));
+    plot(x,
+         y,
+         properties::Color(12, 14, 55),
+         properties::Alpha(137),
+         properties::Name("SimpleName"),
+         properties::LineStyle("-*"),
+         properties::LineWidth(22));
     /*setCurrentElement("view_small00");
     usleep(20000);
     setCurrentElement("view_small01");
@@ -64,8 +63,8 @@ int main( void )
     struct sockaddr_in serveraddr;
     memset( &serveraddr, 0, sizeof(serveraddr) );
     serveraddr.sin_family = AF_INET;
-    serveraddr.sin_port = htons( 9547 );              
-    serveraddr.sin_addr.s_addr = htonl( INADDR_ANY );  
+    serveraddr.sin_port = htons( 9547 );
+    serveraddr.sin_addr.s_addr = htonl( INADDR_ANY );
 
     for ( int i = 0; i < 4; i++ ) {
         if (sendto( fd, "hello", 5, 0, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) < 0 ) {

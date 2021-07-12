@@ -7,13 +7,13 @@
 #include <vector>
 
 #include "communication/received_data.h"
-#include "enumerations.h"
-#include "math/math.h"
+#include "dvs/enumerations.h"
+#include "dvs/math/math.h"
+#include "dvs/plot_properties.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_functions/plot_functions.h"
 #include "plot_objects/utils.h"
-#include "plot_properties.h"
 #include "properties.h"
 
 using namespace dvs;

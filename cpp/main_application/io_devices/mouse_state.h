@@ -1,7 +1,7 @@
 #ifndef MOUSE_STATE_H_
 #define MOUSE_STATE_H_
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 
 using namespace dvs;
 

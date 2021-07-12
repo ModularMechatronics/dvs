@@ -1,7 +1,7 @@
 #ifndef AXES_LIMITS_H_
 #define AXES_LIMITS_H_
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 
 using namespace dvs;
 

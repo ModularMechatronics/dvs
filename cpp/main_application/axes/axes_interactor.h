@@ -11,8 +11,8 @@
 #include "axes/structures/coordinate_converter.h"
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
+#include "dvs/math/math.h"
 #include "io_devices/io_devices.h"
-#include "math/math.h"
 
 using namespace dvs;
 

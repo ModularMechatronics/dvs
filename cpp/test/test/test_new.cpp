@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "math/math.h"
-#include "math/pre_defs.h"
+#include "dvs/math/math.h"
+#include "dvs/math/pre_defs.h"
 
 using namespace dvs;
 

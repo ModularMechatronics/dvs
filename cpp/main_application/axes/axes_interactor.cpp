@@ -5,8 +5,8 @@
 #include <iostream>
 #include <utility>
 
+#include "dvs/math/math.h"
 #include "io_devices/io_devices.h"
-#include "math/math.h"
 #include "opengl_low_level/opengl_low_level.h"
 
 AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width)

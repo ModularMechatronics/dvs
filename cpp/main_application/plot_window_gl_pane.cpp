@@ -4,10 +4,10 @@
 #include <wx/glcanvas.h>
 
 #include "axes/axes.h"
-#include "enumerations.h"
+#include "dvs/enumerations.h"
+#include "dvs/math/math.h"
 #include "events.h"
 #include "io_devices/io_devices.h"
-#include "math/math.h"
 #include "opengl_low_level/opengl_low_level.h"
 
 using namespace dvs::internal;

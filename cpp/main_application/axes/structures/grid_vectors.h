@@ -1,7 +1,7 @@
 #ifndef GRID_VECTORS_H_
 #define GRID_VECTORS_H_
 
-#include "math/math.h"
+#include "dvs/math/math.h"
 
 using namespace dvs;
 
