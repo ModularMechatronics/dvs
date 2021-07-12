@@ -4,7 +4,6 @@
 #include <cmath>
 #include <vector>
 
-#include "logging.h"
 #include "math/lin_alg.h"
 #include "math/transformations/class_defs/pose_class_def.h"
 

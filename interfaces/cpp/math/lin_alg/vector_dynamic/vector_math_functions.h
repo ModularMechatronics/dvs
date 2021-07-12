@@ -6,7 +6,6 @@
 #include <cstdlib>
 #include <utility>
 
-#include "logging.h"
 #include "math/lin_alg/vector_dynamic/vector_dynamic.h"
 
 namespace dvs
@@ -285,7 +284,7 @@ template <typename T> T variance(const Vector<T>& vin)
     {
         s = s + (vin(k) - m) * (vin(k) - m);
     }
-    PT_ASSERT(false) << "Function is broken currently!";
+    DVS_ASSERT(false) << "Function is broken currently!";
 
     return s / static_cast<T>(vin.size());
 }
@@ -460,7 +459,7 @@ template <typename Y, typename T> Vector<Y> roundAndCast(const Vector<T>& vin)
 template <typename T> Vector<T> integerLinspace(const T x0, const T x1)
 {
     const T num_values = static_cast<int>(x1 - x0 + static_cast<T>(1));
-    PT_ASSERT(num_values > 0);
+    DVS_ASSERT(num_values > 0);
     Vector<T> v(num_values);
 
     v(0) = x0;

@@ -6,7 +6,6 @@
 #include <cstdarg>
 #include <tuple>
 
-#include "logging.h"
 #include "math/lin_alg/matrix_dynamic/matrix_dynamic.h"
 
 namespace dvs

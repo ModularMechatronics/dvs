@@ -10,7 +10,6 @@
 #include <utility>
 #include <vector>
 
-#include "logging.h"
 #include "math/misc/math_macros.h"
 
 namespace dvs

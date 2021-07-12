@@ -5,7 +5,6 @@
 #include <cmath>
 #include <utility>
 
-#include "logging.h"
 #include "math/geometry/class_defs/line_2d_class_def.h"
 #include "math/lin_alg.h"
 

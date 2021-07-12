@@ -4,7 +4,6 @@
 #include <cmath>
 #include <vector>
 
-#include "logging.h"
 #include "math/coordinates/class_defs/spherical_class_def.h"
 #include "math/lin_alg.h"
 

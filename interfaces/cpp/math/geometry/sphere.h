@@ -5,7 +5,6 @@
 #include <cmath>
 #include <vector>
 
-#include "logging.h"
 #include "math/geometry/class_defs/sphere_class_def.h"
 #include "math/lin_alg.h"
 

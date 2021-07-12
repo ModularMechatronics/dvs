@@ -3,7 +3,6 @@
 
 #include <cmath>
 
-#include "logging.h"
 #include "math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic_class_def.h"
 #include "math/misc/math_macros.h"
 #include "math/structures/end_index.h"
@@ -13,7 +12,7 @@ namespace dvs
 {
 template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 {
-    PT_ASSERT(m.isAllocated()) << "Input matrix not allocated before assignment!";
+    DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated before assignment!";
     if (this != &m)
     {
         if (is_allocated_)
@@ -47,7 +46,7 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 
 template <typename T> Matrix<T>::Matrix(Matrix<T>&& m)
 {
-    PT_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
+    DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
     data_ = m.getDataPointer();
     num_rows_ = m.rows();
     num_cols_ = m.cols();
@@ -58,7 +57,7 @@ template <typename T> Matrix<T>::Matrix(Matrix<T>&& m)
 
 template <typename T> template <typename Y> Matrix<T>::Matrix(const Matrix<Y>& m) : is_allocated_(true)
 {
-    PT_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
+    DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
     num_rows_ = m.rows();
     num_cols_ = m.cols();
 
@@ -88,7 +87,7 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
 {
     if (this != &m)
     {
-        PT_ASSERT(m.isAllocated()) << "Input matrix not allocated before assignment!";
+        DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated before assignment!";
 
         if (is_allocated_)
         {
@@ -212,12 +211,12 @@ template <typename T> Matrix<T>::Matrix(const Matrix<T>& m) : is_allocated_(true
 
 template <typename T> Matrix<T>::Matrix(const std::initializer_list<std::initializer_list<T>>& il)
 {
-    PT_ASSERT(il.size() > 0) << "Tried to initialize with empty vector matrix!";
-    PT_ASSERT(il.begin()[0].size() > 0) << "Tried to initialize with empty vector matrix!";
+    DVS_ASSERT(il.size() > 0) << "Tried to initialize with empty vector matrix!";
+    DVS_ASSERT(il.begin()[0].size() > 0) << "Tried to initialize with empty vector matrix!";
 
     for (size_t r = 0; r < il.size(); r++)
     {
-        PT_ASSERT(il.begin()[0].size() == il.begin()[r].size())
+        DVS_ASSERT(il.begin()[0].size() == il.begin()[r].size())
             << "All row vectors in input std vectors do not have the same size!";
     }
 
@@ -238,12 +237,12 @@ template <typename T> Matrix<T>::Matrix(const std::initializer_list<std::initial
 
 template <typename T> Matrix<T>::Matrix(const std::vector<std::vector<T>>& vm)
 {
-    PT_ASSERT(vm.size() > 0) << "Tried to initialize with empty vector matrix!";
-    PT_ASSERT(vm[0].size() > 0) << "Tried to initialize with empty vector matrix!";
+    DVS_ASSERT(vm.size() > 0) << "Tried to initialize with empty vector matrix!";
+    DVS_ASSERT(vm[0].size() > 0) << "Tried to initialize with empty vector matrix!";
 
     for (size_t r = 0; r < vm.size(); r++)
     {
-        PT_ASSERT(vm[0].size() == vm[r].size()) << "All row vectors in input std vectors do not have the same size!";
+        DVS_ASSERT(vm[0].size() == vm[r].size()) << "All row vectors in input std vectors do not have the same size!";
     }
 
     num_rows_ = vm.size();
@@ -347,9 +346,9 @@ template <typename T> T* Matrix<T>::getDataPointer() const
 
 template <typename T> Matrix<T> vCat(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    PT_ASSERT(m0.isAllocated()) << "m0 is not allocated!";
-    PT_ASSERT(m1.isAllocated()) << "m1 is not allocated!";
-    PT_ASSERT(m0.cols() == m1.cols()) << "Mismatch in number of cols!";
+    DVS_ASSERT(m0.isAllocated()) << "m0 is not allocated!";
+    DVS_ASSERT(m1.isAllocated()) << "m1 is not allocated!";
+    DVS_ASSERT(m0.cols() == m1.cols()) << "Mismatch in number of cols!";
 
     Matrix<T> mres(m0.rows() + m1.rows(), m0.cols());
 
@@ -374,9 +373,9 @@ template <typename T> Matrix<T> vCat(const Matrix<T>& m0, const Matrix<T>& m1)
 
 template <typename T> Matrix<T> hCat(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    PT_ASSERT(m0.isAllocated()) << "m0 is not allocated!";
-    PT_ASSERT(m1.isAllocated()) << "m1 is not allocated!";
-    PT_ASSERT(m0.rows() == m1.rows()) << "Mismatch in number of cols!";
+    DVS_ASSERT(m0.isAllocated()) << "m0 is not allocated!";
+    DVS_ASSERT(m1.isAllocated()) << "m1 is not allocated!";
+    DVS_ASSERT(m0.rows() == m1.rows()) << "Mismatch in number of cols!";
 
     Matrix<T> mres(m0.rows(), m0.cols() + m1.cols());
 
@@ -790,8 +789,8 @@ template <typename T> Matrix<T> operator*(const T f, const Matrix<T>& m)
 
 template <typename T> Matrix<T> operator^(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    PT_ASSERT(m0.rows() == m1.rows());
-    PT_ASSERT(m0.cols() == m1.cols());
+    DVS_ASSERT(m0.rows() == m1.rows());
+    DVS_ASSERT(m0.cols() == m1.cols());
 
     Matrix<T> res(m0.rows(), m0.cols());
 
@@ -807,8 +806,8 @@ template <typename T> Matrix<T> operator^(const Matrix<T>& m0, const Matrix<T>& 
 
 template <typename T> Matrix<T> operator/(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    PT_ASSERT(m0.rows() == m1.rows());
-    PT_ASSERT(m0.cols() == m1.cols());
+    DVS_ASSERT(m0.rows() == m1.rows());
+    DVS_ASSERT(m0.cols() == m1.cols());
 
     Matrix<T> res(m0.rows(), m0.cols());
 
@@ -984,8 +983,8 @@ template <typename T> Matrix<T> Matrix<T>::getTranspose() const
 
 template <typename T> void Matrix<T>::removeRowAtIndex(const size_t row_idx)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(row_idx < num_rows_) << "Tried to remove element outside bounds!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(row_idx < num_rows_) << "Tried to remove element outside bounds!";
 
     T* temp_data;
 
@@ -1012,19 +1011,19 @@ template <typename T> void Matrix<T>::removeRowAtIndex(const size_t row_idx)
 
 template <typename T> void Matrix<T>::removeRowsAtIndices(const IndexSpan& idx_span)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(idx_span.from <= idx_span.to) << "To index smaller than from index!";
-    PT_ASSERT(idx_span.to < num_rows_) << "Tried to remove element outside bounds!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(idx_span.from <= idx_span.to) << "To index smaller than from index!";
+    DVS_ASSERT(idx_span.to < num_rows_) << "Tried to remove element outside bounds!";
     if (idx_span.from == idx_span.to)
     {
-        PT_LOG_WARNING() << "From and to indices are equal!";
+        DVS_LOG_WARNING() << "From and to indices are equal!";
     }
 
     T* temp_data;
 
     size_t num_rows_to_remove = idx_span.to - idx_span.from + 1;
 
-    PT_ASSERT((num_rows_ - num_rows_to_remove) > 0) << "Tried to remove all elements!";
+    DVS_ASSERT((num_rows_ - num_rows_to_remove) > 0) << "Tried to remove all elements!";
 
     DATA_ALLOCATION(temp_data, (num_rows_ - num_rows_to_remove) * num_cols_, T, "Matrix");
 
@@ -1049,8 +1048,8 @@ template <typename T> void Matrix<T>::removeRowsAtIndices(const IndexSpan& idx_s
 
 template <typename T> void Matrix<T>::removeColAtIndex(const size_t col_idx)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(col_idx < num_cols_) << "Tried to remove element outside bounds!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(col_idx < num_cols_) << "Tried to remove element outside bounds!";
 
     T* temp_data;
 
@@ -1077,19 +1076,19 @@ template <typename T> void Matrix<T>::removeColAtIndex(const size_t col_idx)
 
 template <typename T> void Matrix<T>::removeColsAtIndices(const IndexSpan& idx_span)
 {
-    PT_ASSERT(is_allocated_) << "Matrix not allocated!";
-    PT_ASSERT(idx_span.from <= idx_span.to) << "To index smaller than from index!";
-    PT_ASSERT(idx_span.to < num_cols_) << "Tried to remove element outside bounds!";
+    DVS_ASSERT(is_allocated_) << "Matrix not allocated!";
+    DVS_ASSERT(idx_span.from <= idx_span.to) << "To index smaller than from index!";
+    DVS_ASSERT(idx_span.to < num_cols_) << "Tried to remove element outside bounds!";
     if (idx_span.from == idx_span.to)
     {
-        PT_LOG_WARNING() << "From and to indices are equal!";
+        DVS_LOG_WARNING() << "From and to indices are equal!";
     }
 
     T* temp_data;
 
     size_t num_cols_to_remove = idx_span.to - idx_span.from + 1;
 
-    PT_ASSERT((num_cols_ - num_cols_to_remove) > 0) << "Tried to remove all elements!";
+    DVS_ASSERT((num_cols_ - num_cols_to_remove) > 0) << "Tried to remove all elements!";
 
     DATA_ALLOCATION(temp_data, num_rows_ * (num_cols_ - num_cols_to_remove), T, "Matrix");
 
@@ -1220,7 +1219,7 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const Matrix<T>
 
 template <typename T> Vector<T> Matrix<T>::getColumnAsVector(const size_t column_idx) const
 {
-    PT_ASSERT(column_idx < num_cols_) << "Tried to access column outside of matrix bounds!";
+    DVS_ASSERT(column_idx < num_cols_) << "Tried to access column outside of matrix bounds!";
     Vector<T> column_vec(num_rows_);
 
     for (size_t k = 0; k < num_rows_; k++)
@@ -1232,7 +1231,7 @@ template <typename T> Vector<T> Matrix<T>::getColumnAsVector(const size_t column
 
 template <typename T> Vector<T> Matrix<T>::getRowAsVector(const size_t row_idx) const
 {
-    PT_ASSERT(row_idx < num_rows_) << "Tried to access row outside of matrix bounds!";
+    DVS_ASSERT(row_idx < num_rows_) << "Tried to access row outside of matrix bounds!";
     Vector<T> row_vec(num_cols_);
 
     for (size_t k = 0; k < num_cols_; k++)
@@ -1244,7 +1243,7 @@ template <typename T> Vector<T> Matrix<T>::getRowAsVector(const size_t row_idx) 
 
 template <typename T> Matrix<T> Matrix<T>::getColumn(const size_t column_idx) const
 {
-    PT_ASSERT(column_idx < num_cols_) << "Tried to access column outside of matrix bounds!";
+    DVS_ASSERT(column_idx < num_cols_) << "Tried to access column outside of matrix bounds!";
     Matrix<T> column_mat(num_rows_, 1);
 
     for (size_t k = 0; k < num_rows_; k++)
@@ -1256,7 +1255,7 @@ template <typename T> Matrix<T> Matrix<T>::getColumn(const size_t column_idx) co
 
 template <typename T> Matrix<T> Matrix<T>::getRow(const size_t row_idx) const
 {
-    PT_ASSERT(row_idx < num_rows_) << "Tried to access row outside of matrix bounds!";
+    DVS_ASSERT(row_idx < num_rows_) << "Tried to access row outside of matrix bounds!";
     Matrix<T> row_mat(1, num_cols_);
 
     for (size_t k = 0; k < num_cols_; k++)
@@ -1268,8 +1267,8 @@ template <typename T> Matrix<T> Matrix<T>::getRow(const size_t row_idx) const
 
 template <typename T> Vector<T> Matrix<T>::toVector() const
 {
-    PT_ASSERT(is_allocated_);
-    PT_ASSERT((num_rows_ == 1) || (num_cols_ == 1)) << "One dimension must be equal to 1!";
+    DVS_ASSERT(is_allocated_);
+    DVS_ASSERT((num_rows_ == 1) || (num_cols_ == 1)) << "One dimension must be equal to 1!";
     const size_t num_elements = std::max(num_rows_, num_cols_);
     Vector<T> vres(num_elements);
 
