@@ -1,5 +1,5 @@
-#ifndef DVS_CACHE_READER_H_
-#define DVS_CACHE_READER_H_
+#ifndef DVS_SETTINGS_READER_H_
+#define DVS_SETTINGS_READER_H_
 
 #include <filesystem>
 #include <nlohmann/json.hpp>

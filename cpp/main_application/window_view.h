@@ -18,7 +18,7 @@
 #include <vector>
 
 #include "gui_element.h"
-#include "project_settings.h"
+#include "project_state/project_settings.h"
 #include "view_base.h"
 
 class WindowView : public ViewBase<wxFrame>

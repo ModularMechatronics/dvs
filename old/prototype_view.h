@@ -12,7 +12,7 @@
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data.h"
-#include "project_settings.h"
+#include "project_state/project_settings.h"
 
 struct Bound2Df
 {
