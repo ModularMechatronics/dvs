@@ -335,7 +335,7 @@ void MainWindow::addNewTab(const std::string& tab_name)
 
 void MainWindow::addNewTabCallback(wxCommandEvent& WXUNUSED(event))
 {
-    const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
+    const std::string tab_name = "new-tab-" + std::to_string(current_tab_num_);
     current_tab_num_++;
     addNewTab(tab_name);
 }
@@ -361,7 +361,7 @@ void MainWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::addNewWindowCallback(wxCommandEvent& WXUNUSED(event))
 {
-    const std::string window_name = "New Window " + std::to_string(current_tab_num_);
+    const std::string window_name = "new-window-" + std::to_string(current_tab_num_);
     current_tab_num_++;
     layout_tools_window_->setCurrentElementName("");
 
