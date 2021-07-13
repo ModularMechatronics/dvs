@@ -68,6 +68,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     }
 
     Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
+    Bind(NO_ELEMENT_SELECTED, &MainWindow::noElementSelected, this, wxID_ANY);
     Bind(CHILD_WINDOW_CLOSED_EVENT, &MainWindow::childWindowClosed, this, wxID_ANY);
     Bind(CHILD_WINDOW_IN_FOCUS_EVENT, &MainWindow::childWindowInFocus, this, wxID_ANY);
 
@@ -472,6 +473,11 @@ void MainWindow::disableEditing()
 void MainWindow::guiElementModified(wxCommandEvent& WXUNUSED(event))
 {
     fileModified();
+}
+
+void MainWindow::noElementSelected(wxCommandEvent& WXUNUSED(event))
+{
+    layout_tools_window_->setCurrentElementName("");
 }
 
 void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event)) {}

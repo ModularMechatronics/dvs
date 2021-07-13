@@ -117,6 +117,7 @@ public:
     void addNewWindow(const std::string& window_name);
     void addNewWindowCallback(wxCommandEvent& event);
     void deleteWindow(wxCommandEvent& event);
+    void noElementSelected(wxCommandEvent& event);
 
     void newNamedElement(const std::string& element_name);
     void newElement(wxCommandEvent& event);

@@ -202,6 +202,8 @@ template <class BaseClass> void ViewBase<BaseClass>::mouseLeftPressed(wxMouseEve
     // element, we know we can deselect all elements.
     resetSelectionForAllChildren();
     name_of_selected_element_ = "";
+    wxCommandEvent parent_event(NO_ELEMENT_SELECTED);
+    wxPostEvent(this->GetParent(), parent_event);
 }
 
 template <class BaseClass> void ViewBase<BaseClass>::setFirstElementSelected()
