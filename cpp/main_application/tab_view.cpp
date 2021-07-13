@@ -1,6 +1,7 @@
 #include "tab_view.h"
 
 #include "events.h"
+#include "globals.h"
 #include "plot_window_gl_pane.h"
 
 TabView::TabView(wxNotebookPage* parent, const TabSettings& tab_settings)
@@ -25,7 +26,6 @@ TabView::TabView(wxNotebookPage* parent, const TabSettings& tab_settings)
 
 void TabView::newElement(const std::string& element_name)
 {
-    current_unnamed_idx_++;
     ElementSettings elem;
     elem.x = 0;
     elem.y = 0;
@@ -45,13 +45,12 @@ void TabView::newElement(const std::string& element_name)
 
 void TabView::newElement()
 {
-    current_unnamed_idx_++;
     ElementSettings elem;
     elem.x = 0;
     elem.y = 0;
     elem.width = 0.3;
     elem.height = 0.3;
-    elem.name = "no-name-" + std::to_string(current_unnamed_idx_);
+    elem.name = "no-name-" + std::to_string(current_unused_element_idx++);
 
     GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this), elem, grid_size_);
 

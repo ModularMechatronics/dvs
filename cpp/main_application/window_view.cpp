@@ -1,6 +1,7 @@
 #include "window_view.h"
 
 #include "events.h"
+#include "globals.h"
 #include "plot_window_gl_pane.h"
 
 WindowView::WindowView(wxFrame* parent, const WindowSettings& window_settings, const int callback_id)
@@ -84,7 +85,6 @@ void WindowView::OnClose(wxCloseEvent& WXUNUSED(event))
 
 void WindowView::newElement(const std::string& element_name)
 {
-    current_unnamed_idx_++;
     ElementSettings elem;
     elem.x = 0;
     elem.y = 0;
@@ -104,13 +104,12 @@ void WindowView::newElement(const std::string& element_name)
 
 void WindowView::newElement()
 {
-    current_unnamed_idx_++;
     ElementSettings elem;
     elem.x = 0;
     elem.y = 0;
     elem.width = 0.3;
     elem.height = 0.3;
-    elem.name = "no-name-" + std::to_string(current_unnamed_idx_);
+    elem.name = "no-name-" + std::to_string(current_unused_element_idx++);
 
     GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this), elem, grid_size_);
 
