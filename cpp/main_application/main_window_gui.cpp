@@ -56,8 +56,8 @@ void MainWindow::setupTabs(const ProjectSettings& project_settings)
         current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
         current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
     }
-    layout_tools_window_->currentTabChanged(current_tab_name_);
-    layout_tools_window_->currentElementSelectionChanged(current_element_name_);
+    layout_tools_window_->setCurrentTabName(current_tab_name_);
+    layout_tools_window_->setCurrentElementName(current_element_name_);
 }
 
 void MainWindow::fileModified()
@@ -80,8 +80,8 @@ void MainWindow::tabChanged(wxCommandEvent& WXUNUSED(event))
         current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
         current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
     }
-    layout_tools_window_->currentTabChanged(current_tab_name_);
-    layout_tools_window_->currentElementSelectionChanged(current_element_name_);
+    layout_tools_window_->setCurrentTabName(current_tab_name_);
+    layout_tools_window_->setCurrentElementName(current_element_name_);
 }
 
 void MainWindow::OnSize(wxSizeEvent& event)
@@ -147,7 +147,7 @@ void MainWindow::changeCurrentElementName(wxCommandEvent& event)
             if (name_exists)
             {
                 tab_elements_.at(current_tab_idx)->setSelectedElementName("_" + new_element_name);
-                layout_tools_window_->currentElementSelectionChanged("_" + new_element_name);
+                layout_tools_window_->setCurrentElementName("_" + new_element_name);
             }
             else
             {
@@ -164,7 +164,7 @@ void MainWindow::changeCurrentElementName(wxCommandEvent& event)
                 if (name_exists)
                 {
                     we->setSelectedElementName("_" + new_element_name);
-                    layout_tools_window_->currentElementSelectionChanged("_" + new_element_name);
+                    layout_tools_window_->setCurrentElementName("_" + new_element_name);
                 }
                 else
                 {
@@ -180,7 +180,7 @@ void MainWindow::currentElementSelectionChanged(wxCommandEvent& event)
 {
     const wxString value = event.GetString();
 
-    layout_tools_window_->currentElementSelectionChanged(std::string(value.mb_str()));
+    layout_tools_window_->setCurrentElementName(std::string(value.mb_str()));
 }
 
 void MainWindow::changeCurrentTabName(wxCommandEvent& event)
@@ -205,7 +205,7 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
                 if (std::find(existing_tab_names.begin(), existing_tab_names.end(), new_tab_name) !=
                     existing_tab_names.end())
                 {
-                    layout_tools_window_->currentTabChanged("_" + new_tab_name);
+                    layout_tools_window_->setCurrentTabName("_" + new_tab_name);
                     tabs_view->SetPageText(current_tab_idx, "_" + new_tab_name);
                     tab_elements_.at(current_tab_idx)->setName("_" + new_tab_name);
                 }
@@ -224,7 +224,7 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
                 {
                     we->setName(new_tab_name);
                     current_tab_name_ = new_tab_name;
-                    layout_tools_window_->currentTabChanged(new_tab_name);
+                    layout_tools_window_->setCurrentTabName(new_tab_name);
                     std::cout << "Modifying window: " << current_tab_name_ << " with new name " << new_tab_name
                               << std::endl;
                 }
