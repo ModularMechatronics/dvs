@@ -46,7 +46,7 @@ public:
 
     std::map<std::string, GuiElement*> getGuiElements() const;
     std::string getName() const;
-    void setName(const std::string& new_name);
+    virtual void setName(const std::string& new_name);
     std::vector<ElementSettings> getElementSettingsList() const;
     void deleteSelectedElement();
     void resetSelectionForAllChildren() override;
