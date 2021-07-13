@@ -66,6 +66,8 @@ private:
     std::string current_tab_name_;
     std::string current_element_name_;
 
+    bool elementNameExists(const std::string& element_name) const;
+
     void OnTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
     void setupGui();

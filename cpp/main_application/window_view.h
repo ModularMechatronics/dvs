@@ -38,6 +38,7 @@ public:
     void onActivate(wxActivateEvent& event);
     void hide();
     void show();
+    void setName(const std::string& new_name) override;
 
     virtual void OnClose(wxCloseEvent& event);
 };

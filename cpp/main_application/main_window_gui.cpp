@@ -96,13 +96,82 @@ void MainWindow::OnSize(wxSizeEvent& event)
     }
 }
 
+bool MainWindow::elementNameExists(const std::string& element_name) const
+{
+    bool name_exists = false;
+    for (auto te : tab_elements_)
+    {
+        const std::vector<ElementSettings> element_settings_vec = te->getElementSettingsList();
+        if (std::find_if(
+                element_settings_vec.begin(), element_settings_vec.end(), [&](const ElementSettings& es) -> bool {
+                    return es.name == element_name;
+                }) != element_settings_vec.end())
+        {
+            name_exists = true;
+            break;
+        }
+    }
+
+    if (!name_exists)
+    {
+        for (auto we_inner : windows_)
+        {
+            const std::vector<ElementSettings> element_settings_vec = we_inner->getElementSettingsList();
+            if (std::find_if(
+                    element_settings_vec.begin(), element_settings_vec.end(), [&](const ElementSettings& es) -> bool {
+                        return es.name == element_name;
+                    }) != element_settings_vec.end())
+            {
+                name_exists = true;
+                break;
+            }
+        }
+    }
+
+    return name_exists;
+}
+
 void MainWindow::changeCurrentElementName(wxCommandEvent& event)
 {
     const wxString value = event.GetString();
-    const int current_tab_idx = tabs_view->GetSelection();
-    if (current_tab_idx != wxNOT_FOUND)
+    const std::string new_element_name = std::string(value.mb_str());
+
+    const bool name_exists = elementNameExists(new_element_name);
+
+    if (main_window_last_in_focus_)
     {
-        tab_elements_.at(current_tab_idx)->setSelectedElementName(std::string(value.mb_str()));
+        const int current_tab_idx = tabs_view->GetSelection();
+
+        if (current_tab_idx != wxNOT_FOUND)
+        {
+            if (name_exists)
+            {
+                tab_elements_.at(current_tab_idx)->setSelectedElementName("_" + new_element_name);
+                layout_tools_window_->currentElementSelectionChanged("_" + new_element_name);
+            }
+            else
+            {
+                tab_elements_.at(current_tab_idx)->setSelectedElementName(new_element_name);
+            }
+        }
+    }
+    else
+    {
+        for (auto we : windows_)
+        {
+            if (we->getName() == current_tab_name_)
+            {
+                if (name_exists)
+                {
+                    we->setSelectedElementName("_" + new_element_name);
+                    layout_tools_window_->currentElementSelectionChanged("_" + new_element_name);
+                }
+                else
+                {
+                    we->setSelectedElementName(new_element_name);
+                }
+            }
+        }
     }
     fileModified();
 }
@@ -121,31 +190,48 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
 
     if (new_tab_name != "")
     {
-        const int current_tab_idx = tabs_view->GetSelection();
-        if (current_tab_idx != wxNOT_FOUND)
+        if (main_window_last_in_focus_)
         {
-            std::vector<std::string> existing_tab_names;
-            for (size_t k = 0; k < tabs_view->GetPageCount(); k++)
+            const int current_tab_idx = tabs_view->GetSelection();
+            if (current_tab_idx != wxNOT_FOUND)
             {
-                const std::string tn = std::string(tabs_view->GetPageText(k).mb_str());
-                existing_tab_names.push_back(tn);
-            }
+                std::vector<std::string> existing_tab_names;
+                for (size_t k = 0; k < tabs_view->GetPageCount(); k++)
+                {
+                    const std::string tn = std::string(tabs_view->GetPageText(k).mb_str());
+                    existing_tab_names.push_back(tn);
+                }
 
-            if (std::find(existing_tab_names.begin(), existing_tab_names.end(), new_tab_name) !=
-                existing_tab_names.end())
-            {
-                layout_tools_window_->currentTabChanged("_" + new_tab_name);
-                tabs_view->SetPageText(current_tab_idx, "_" + new_tab_name);
-                tab_elements_.at(current_tab_idx)->setName("_" + new_tab_name);
-            }
-            else
-            {
-                tabs_view->SetPageText(current_tab_idx, value);
-                tab_elements_.at(current_tab_idx)->setName(new_tab_name);
+                if (std::find(existing_tab_names.begin(), existing_tab_names.end(), new_tab_name) !=
+                    existing_tab_names.end())
+                {
+                    layout_tools_window_->currentTabChanged("_" + new_tab_name);
+                    tabs_view->SetPageText(current_tab_idx, "_" + new_tab_name);
+                    tab_elements_.at(current_tab_idx)->setName("_" + new_tab_name);
+                }
+                else
+                {
+                    tabs_view->SetPageText(current_tab_idx, value);
+                    tab_elements_.at(current_tab_idx)->setName(new_tab_name);
+                }
             }
         }
+        else
+        {
+            for (auto we : windows_)
+            {
+                if (we->getName() == current_tab_name_)
+                {
+                    we->setName(new_tab_name);
+                    current_tab_name_ = new_tab_name;
+                    layout_tools_window_->currentTabChanged(new_tab_name);
+                    std::cout << "Modifying window: " << current_tab_name_ << " with new name " << new_tab_name
+                              << std::endl;
+                }
+            }
+        }
+        fileModified();
     }
-    fileModified();
 }
 
 void MainWindow::newNamedElement(const std::string& element_name)

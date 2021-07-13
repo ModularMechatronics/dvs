@@ -47,6 +47,12 @@ int WindowView::getCallbackId() const
     return callback_id_;
 }
 
+void WindowView::setName(const std::string& new_name)
+{
+    this->SetLabel(new_name);
+    name_ = new_name;
+}
+
 void WindowView::onActivate(wxActivateEvent& event)
 {
     if (event.GetActive())

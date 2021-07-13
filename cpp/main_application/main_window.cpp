@@ -397,6 +397,7 @@ void MainWindow::addNewWindow(const std::string& window_name)
         we->resetSelectionForAllChildren();
     }
 
+    layout_tools_window_->currentTabChanged(window_name);
     current_tab_name_ = window_element->getName();
     current_element_name_ = window_element->getSelectedElementName();
 
