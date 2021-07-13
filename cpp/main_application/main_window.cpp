@@ -173,7 +173,7 @@ void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
             current_tab_name_ = we->getName();
             current_element_name_ = we->getSelectedElementName();
             we->Hide();
-            we->Show();
+            we->show();
         }
     }
     layout_tools_window_->setCurrentTabName(current_tab_name_);
@@ -425,9 +425,6 @@ void MainWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
                     gui_elements_.erase(q.first);
                 }
                 we->Destroy();
-
-                this->Hide();
-                this->Show();
 
                 main_window_last_in_focus_ = true;
                 break;
