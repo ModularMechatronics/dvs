@@ -40,7 +40,7 @@ private:
     wxTimer timer_;
     wxTimer refresh_timer_;
 
-    std::vector<TabView*> tab_elements_;
+    std::vector<TabView*> tabs_;
     std::vector<WindowView*> windows_;
     std::map<std::string, GuiElement*> gui_elements_;
 

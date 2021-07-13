@@ -139,7 +139,7 @@ void MainWindow::onActivate(wxActivateEvent& event)
             we->resetSelectionForAllChildren();
         }
 
-        for (auto te : tab_elements_)
+        for (auto te : tabs_)
         {
             te->resetSelectionForAllChildren();
             te->setFirstElementSelected();
@@ -148,8 +148,8 @@ void MainWindow::onActivate(wxActivateEvent& event)
         const int current_tab_idx = tabs_view->GetSelection();
         if (current_tab_idx != wxNOT_FOUND)
         {
-            current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
-            current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
+            current_tab_name_ = tabs_.at(current_tab_idx)->getName();
+            current_element_name_ = tabs_.at(current_tab_idx)->getSelectedElementName();
         }
         layout_tools_window_->setCurrentTabName(current_tab_name_);
         layout_tools_window_->setCurrentElementName(current_element_name_);
@@ -158,7 +158,7 @@ void MainWindow::onActivate(wxActivateEvent& event)
 
 void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
 {
-    for (auto te : tab_elements_)
+    for (auto te : tabs_)
     {
         te->resetSelectionForAllChildren();
     }
@@ -225,7 +225,7 @@ void MainWindow::saveProjectAs()
     }
 
     ProjectSettings ps;
-    for (const TabView* te : tab_elements_)
+    for (const TabView* te : tabs_)
     {
         ps.pushBackTabSettings(te->getTabSettings());
     }
@@ -247,7 +247,7 @@ void MainWindow::saveProject()
     else
     {
         ProjectSettings ps;
-        for (const TabView* te : tab_elements_)
+        for (const TabView* te : tabs_)
         {
             ps.pushBackTabSettings(te->getTabSettings());
         }
@@ -300,7 +300,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
     tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
-    tab_elements_ = std::vector<TabView*>();
+    tabs_ = std::vector<TabView*>();
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
     setupTabs(save_manager_->getCurrentProjectSettings());
@@ -320,7 +320,7 @@ void MainWindow::addNewTab(const std::string& tab_name)
     TabSettings tab;
     tab.setName(tab_name);
     TabView* tab_element = new TabView(tabs_view, tab);
-    tab_elements_.push_back(tab_element);
+    tabs_.push_back(tab_element);
 
     tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
 
@@ -344,7 +344,7 @@ void MainWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
     const int current_tab_idx = tabs_view->GetSelection();
     if (current_tab_idx != wxNOT_FOUND)
     {
-        const std::map<std::string, GuiElement*> tab_gui_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+        const std::map<std::string, GuiElement*> tab_gui_elements = tabs_.at(current_tab_idx)->getGuiElements();
 
         for (const auto& q : tab_gui_elements)
         {
@@ -352,7 +352,7 @@ void MainWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
         }
 
         tabs_view->DeletePage(current_tab_idx);
-        tab_elements_.erase(tab_elements_.begin() + current_tab_idx);
+        tabs_.erase(tabs_.begin() + current_tab_idx);
     }
 
     fileModified();
@@ -387,7 +387,7 @@ void MainWindow::addNewWindow(const std::string& window_name)
     Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, window_element->getCallbackId());
 
     main_window_last_in_focus_ = false;
-    for (auto te : tab_elements_)
+    for (auto te : tabs_)
     {
         te->resetSelectionForAllChildren();
     }
@@ -440,7 +440,7 @@ void MainWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
     if(current_tab_idx != wxNOT_FOUND)
     {
 
-        const std::map<std::string, GuiElement*> tab_gui_elements = tab_elements_.at(current_tab_idx)->getGuiElements();
+        const std::map<std::string, GuiElement*> tab_gui_elements = tabs_.at(current_tab_idx)->getGuiElements();
 
         for(const auto& q : tab_gui_elements)
         {
@@ -448,7 +448,7 @@ void MainWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
         }
 
         tabs_view->DeletePage(current_tab_idx);
-        tab_elements_.erase(tab_elements_.begin() + current_tab_idx);
+        tabs_.erase(tabs_.begin() + current_tab_idx);
     }
 
     fileModified();*/
@@ -458,7 +458,7 @@ void MainWindow::disableEditing()
 {
     edit_layout_menu_option_->SetItemLabel("Edit layout");
     is_editing_ = false;
-    for (auto te : tab_elements_)
+    for (auto te : tabs_)
     {
         te->stopEdit();
     }
@@ -479,7 +479,7 @@ void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event)) {}
 void MainWindow::childWindowInFocus(wxCommandEvent& event)
 {
     main_window_last_in_focus_ = false;
-    for (auto te : tab_elements_)
+    for (auto te : tabs_)
     {
         te->resetSelectionForAllChildren();
     }
@@ -504,7 +504,7 @@ void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))
     {
         edit_layout_menu_option_->SetItemLabel("Edit layout");
         layout_tools_window_->Hide();
-        for (auto te : tab_elements_)
+        for (auto te : tabs_)
         {
             te->stopEdit();
         }
@@ -518,7 +518,7 @@ void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))
     {
         edit_layout_menu_option_->SetItemLabel("Stop editing");
         layout_tools_window_->Show();
-        for (auto te : tab_elements_)
+        for (auto te : tabs_)
         {
             te->startEdit();
         }
@@ -578,7 +578,7 @@ void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
     tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
-    tab_elements_ = std::vector<TabView*>();
+    tabs_ = std::vector<TabView*>();
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
     setupTabs(save_manager_->getCurrentProjectSettings());
