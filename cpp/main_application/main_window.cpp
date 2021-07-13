@@ -151,8 +151,8 @@ void MainWindow::onActivate(wxActivateEvent& event)
             current_tab_name_ = tab_elements_.at(current_tab_idx)->getName();
             current_element_name_ = tab_elements_.at(current_tab_idx)->getSelectedElementName();
         }
-        layout_tools_window_->currentTabChanged(current_tab_name_);
-        layout_tools_window_->currentElementSelectionChanged(current_element_name_);
+        layout_tools_window_->setCurrentTabName(current_tab_name_);
+        layout_tools_window_->setCurrentElementName(current_element_name_);
     }
 }
 
@@ -175,8 +175,8 @@ void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
             we->Show();
         }
     }
-    layout_tools_window_->currentTabChanged(current_tab_name_);
-    layout_tools_window_->currentElementSelectionChanged(current_element_name_);
+    layout_tools_window_->setCurrentTabName(current_tab_name_);
+    layout_tools_window_->setCurrentElementName(current_element_name_);
 }
 
 void MainWindow::setupWindows(const ProjectSettings& project_settings)
@@ -397,7 +397,7 @@ void MainWindow::addNewWindow(const std::string& window_name)
         we->resetSelectionForAllChildren();
     }
 
-    layout_tools_window_->currentTabChanged(window_name);
+    layout_tools_window_->setCurrentTabName(window_name);
     current_tab_name_ = window_element->getName();
     current_element_name_ = window_element->getSelectedElementName();
 
@@ -494,8 +494,8 @@ void MainWindow::childWindowInFocus(wxCommandEvent& event)
             current_element_name_ = we->getSelectedElementName();
         }
     }
-    layout_tools_window_->currentTabChanged(current_tab_name_);
-    layout_tools_window_->currentElementSelectionChanged(current_element_name_);
+    layout_tools_window_->setCurrentTabName(current_tab_name_);
+    layout_tools_window_->setCurrentElementName(current_element_name_);
 }
 
 void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))

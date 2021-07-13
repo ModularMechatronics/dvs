@@ -38,9 +38,8 @@ public:
     void setupInspector();
     void setupShapes();
 
-    void currentTabChanged(const std::string& tab_name);
-    void currentElementNameChanged(wxCommandEvent& event);
-    void currentElementSelectionChanged(const std::string& name_of_selected);
+    void setCurrentTabName(const std::string& tab_name);
+    void setCurrentElementName(const std::string& name_of_selected);
 
     virtual void OnClose(wxCloseEvent& event);
 };
