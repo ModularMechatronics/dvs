@@ -363,6 +363,7 @@ void MainWindow::addNewWindowCallback(wxCommandEvent& WXUNUSED(event))
 {
     const std::string window_name = "New Window " + std::to_string(current_tab_num_);
     current_tab_num_++;
+    layout_tools_window_->setCurrentElementName("");
 
     addNewWindow(window_name);
 }
@@ -492,7 +493,6 @@ void MainWindow::childWindowInFocus(wxCommandEvent& event)
         we->resetSelectionForAllChildren();
         if (we->getCallbackId() == event.GetId())
         {
-            we->setFirstElementSelected();
             current_tab_name_ = we->getName();
             current_element_name_ = we->getSelectedElementName();
         }

@@ -282,6 +282,7 @@ void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
         const int current_tab_idx = tabs_view->GetSelection();
         if (current_tab_idx != wxNOT_FOUND)
         {
+            tabs_.at(current_tab_idx)->resetSelectionForAllChildren();
             tabs_.at(current_tab_idx)->newElement();
             const std::map<std::string, GuiElement*> new_elements = tabs_.at(current_tab_idx)->getGuiElements();
 
@@ -290,6 +291,7 @@ void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
                 if (gui_elements_.count(q.first) == 0)
                 {
                     gui_elements_[q.first] = q.second;
+                    q.second->setSelection();
                 }
             }
         }
@@ -300,6 +302,7 @@ void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
         {
             if (we->getName() == current_tab_name_)
             {
+                we->resetSelectionForAllChildren();
                 we->newElement();
                 const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
 
@@ -308,6 +311,7 @@ void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
                     if (gui_elements_.count(q.first) == 0)
                     {
                         gui_elements_[q.first] = q.second;
+                        q.second->setSelection();
                     }
                 }
             }

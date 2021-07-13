@@ -29,6 +29,8 @@ set(CPP_SOURCE_FILES main.cpp
                      misc/number_formatting.cpp
                      misc/color_map.cpp
 
+                     globals.cpp
+
                      tab_view.cpp
                      window_view.cpp
                      events.cpp

@@ -233,27 +233,6 @@ template <class BaseClass> void ViewBase<BaseClass>::childModified(wxCommandEven
     wxPostEvent(this->GetParent(), parent_event);
 }
 
-/*template <class BaseClass>
-void ViewBase<BaseClass>::newElement()
-{
-    current_unnamed_idx_++;
-    ElementSettings elem;
-    elem.x = 0;
-    elem.y = 0;
-    elem.width = 0.3;
-    elem.height = 0.3;
-    elem.name = "no-name-" + std::to_string(current_unnamed_idx_);
-
-    GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this), elem, grid_size_);
-
-    ge->updateSizeFromParent(this->GetSize());
-    if(is_editing_)
-    {
-        ge->setIsEditing(true);
-    }
-    gui_elements_[elem.name] = ge;
-}*/
-
 template <class BaseClass> void ViewBase<BaseClass>::startEdit()
 {
     is_editing_ = true;
