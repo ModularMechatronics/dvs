@@ -24,7 +24,7 @@ void MainWindow::setCurrentElement(const FunctionHeader& hdr)
     {
         if (tabs_.size() == 0)
         {
-            const std::string tab_name = "New tab " + std::to_string(current_tab_num_);
+            const std::string tab_name = "new-tab-" + std::to_string(current_tab_num_);
             current_tab_num_++;
             addNewTab(tab_name);
         }

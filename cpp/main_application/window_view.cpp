@@ -109,7 +109,7 @@ void WindowView::newElement()
     elem.y = 0;
     elem.width = 0.3;
     elem.height = 0.3;
-    elem.name = "no-name-" + std::to_string(current_unused_element_idx++);
+    elem.name = "new-element-" + std::to_string(current_unused_element_idx++);
 
     GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this), elem, grid_size_);
 

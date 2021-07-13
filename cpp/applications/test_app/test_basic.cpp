@@ -86,9 +86,58 @@ void testBasic()
     }
 }
 
+void testDifferentViews()
+{
+    const std::vector<std::string> views = {"view_100",
+                                            "view_101",
+                                            "view_200",
+                                            "view_201",
+                                            "view_00",
+                                            "view_01",
+                                            "view_02",
+                                            "view_10",
+                                            "view_11",
+                                            "view_20",
+                                            "view_21",
+                                            "view_22",
+                                            "view_23",
+                                            "view_24",
+                                            "view_25",
+                                            "view_26",
+                                            "view_27"};
+
+    const size_t num_elements = 50;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements);
+
+    auto transf = [&](const double offset) {
+        double t = offset;
+        for (size_t k = 0; k < num_elements; k++)
+        {
+            x(k) = 10.0 * cos(t) + 20.0;
+            y(k) = 10.0 * sin(t) + 20.0;
+            z(k) = t;
+            t = t + 0.1;
+        }
+    };
+
+    double offset = 0.0;
+
+    for (size_t k = 0; k < 200; k++)
+    {
+        const std::string current_view = views[k % views.size()];
+        setCurrentElement(current_view);
+        clearFigure();
+
+        axis({10.0, 10.0, 0.3}, {32.0, 32.0, 100.6});
+        plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
+        offset = offset + 0.3;
+        transf(offset);
+    }
+}
+
 void testSurf()
 {
-    const size_t num_rows = 20, num_cols = 25;
+    const int num_rows = 20, num_cols = 25;
     Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
 
     double inc = 0.4;
@@ -229,7 +278,7 @@ void testImShow()
 
     const uint32_t num_rows = 800, num_cols = 800;
     ImageC3<float> img(num_rows, num_cols);
-    const double max_val = num_rows * num_cols;
+    // const double max_val = num_rows * num_cols;
 
     for (uint32_t r = 0; r < num_rows; r++)
     {
