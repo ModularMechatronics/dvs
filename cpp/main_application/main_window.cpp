@@ -276,6 +276,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
             return;
         }
     }
+    Unbind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
 
     current_tab_name_ = "";
     current_element_name_ = "";
@@ -290,6 +291,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
 
     SetLabel(save_manager_->getCurrentFileName() + "*");
 
+    tabs_ = std::vector<TabView*>();
     tabs_view->DeleteAllPages();
     tabs_view->Destroy();
 
@@ -297,12 +299,14 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
     {
         we->Destroy();
     }
+    windows_.clear();
 
     tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
-    tabs_ = std::vector<TabView*>();
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
+
+    Bind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
 
     setupTabs(save_manager_->getCurrentProjectSettings());
     setupWindows(save_manager_->getCurrentProjectSettings());
@@ -546,6 +550,7 @@ void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
             return;
         }
     }
+    Unbind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
 
     wxFileDialog openFileDialog(
         this, _("Open dvs file"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
@@ -570,6 +575,7 @@ void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
     save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
     SetLabel(save_manager_->getCurrentFileName());
 
+    tabs_ = std::vector<TabView*>();
     tabs_view->DeleteAllPages();
     tabs_view->Destroy();
 
@@ -577,12 +583,14 @@ void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
     {
         we->Destroy();
     }
+    windows_.clear();
 
     tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
-    tabs_ = std::vector<TabView*>();
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
+
+    Bind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
 
     setupTabs(save_manager_->getCurrentProjectSettings());
     setupWindows(save_manager_->getCurrentProjectSettings());
