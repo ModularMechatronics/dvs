@@ -10,3 +10,6 @@
 [submodule "cpp/externals/wxwidgets"]
 	path = cpp/externals/wxwidgets
 	url = git@github.com:wxWidgets/wxWidgets.git
+[submodule "cpp/externals/freetype"]
+	path = cpp/externals/freetype
+	url = git@github.com:rougier/freetype-gl.git
