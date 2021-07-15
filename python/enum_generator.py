@@ -1,22 +1,25 @@
 import os
 import subprocess
 
-ENUM_FILE_PATH = "./cpp/dvs/enumerations.h"
+ENUM_FILE_PATH = "./interfaces/cpp/dvs/enumerations.h"
 PYTHON_OUTPUT_PATH = "./python/generated_enums.py"
 TRANSMISSION_DATA_TYPE_STRING = "_TRANSMISSION_DATA_TYPE"
+
 
 def read_file_lines(file_path):
     with open(file_path, "r") as f:
         file_lines = f.readlines()
-    
+
     return file_lines
+
 
 class ParsedEnum:
     def __init__(self, enum_lines):
 
         self._has_enum_type = ":" in enum_lines[0]
         if self._has_enum_type:
-            self._enum_type = enum_lines[0].split(":")[-1].lstrip(" ").rstrip(" ").rstrip("_t")
+            self._enum_type = enum_lines[0].split(
+                ":")[-1].lstrip(" ").rstrip(" ").rstrip("_t")
         else:
             self._enum_type = None
         self._parse_enum_name(enum_lines[0])
@@ -34,14 +37,17 @@ class ParsedEnum:
             idx += 1
         last_member_line_number = idx - 1
 
-        self._members = enum_lines[first_member_line_number:(last_member_line_number + 1)]
-        self._members = [m.lstrip(" ").rstrip(" ").rstrip(",").rstrip(" ") for m in self._members]
+        self._members = enum_lines[first_member_line_number:(
+            last_member_line_number + 1)]
+        self._members = [m.lstrip(" ").rstrip(" ").rstrip(
+            ",").rstrip(" ") for m in self._members]
         self._members = [m for m in self._members if m]
 
     def _parse_enum_name(self, first_line):
         first_line.rstrip(" ").lstrip(" ")
         if self._has_enum_type:
-            elems = [e.rstrip(" ").lstrip(" ") for e in first_line.split(":")[0].split(" ")]
+            elems = [e.rstrip(" ").lstrip(" ")
+                     for e in first_line.split(":")[0].split(" ")]
         else:
             elems = [e.rstrip(" ").lstrip(" ") for e in first_line.split(" ")]
 
@@ -54,7 +60,7 @@ class ParsedEnum:
 
     def enum_name(self):
         return self._enum_name
-    
+
     def members(self):
         return self._members
 
@@ -63,6 +69,7 @@ class ParsedEnum:
 
     def has_enum_type(self):
         return self._has_enum_type
+
 
 def parse_to_python_enum(parsed_enum):
     lines = []
@@ -73,7 +80,8 @@ def parse_to_python_enum(parsed_enum):
         lines.append("   " + m + " = " + str(idx))
         idx += 1
     if parsed_enum.has_enum_type():
-        lines.append("    " + TRANSMISSION_DATA_TYPE_STRING + " = np." + parsed_enum.enum_type())
+        lines.append("    " + TRANSMISSION_DATA_TYPE_STRING +
+                     " = np." + parsed_enum.enum_type())
 
     return lines
 
@@ -97,6 +105,7 @@ def find_enum_lines(lines):
             idx += 1
     return enum_lines
 
+
 def to_python_file(lines, output_path):
 
     all_lines = ["from enum import Enum\n",
@@ -113,9 +122,11 @@ def to_python_file(lines, output_path):
     with open(output_path, "w") as f:
         f.writelines(all_lines)
 
+
 if __name__ == "__main__":
 
-    repo_dir = subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).decode("utf-8").rstrip("\n")
+    repo_dir = subprocess.check_output(
+        ["git", "rev-parse", "--show-toplevel"]).decode("utf-8").rstrip("\n")
     lines = read_file_lines(os.path.join(repo_dir, ENUM_FILE_PATH))
 
     lines = [l.rstrip('\n') for l in lines if l != '\n']
@@ -127,8 +138,7 @@ if __name__ == "__main__":
         parsed_enum = ParsedEnum(el)
         python_output_lines.append(parse_to_python_enum(parsed_enum))
 
-    to_python_file(python_output_lines, os.path.join(repo_dir, PYTHON_OUTPUT_PATH))
-
+    to_python_file(python_output_lines, os.path.join(
+        repo_dir, PYTHON_OUTPUT_PATH))
 
     a = 1
-    
