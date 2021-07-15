@@ -77,7 +77,7 @@ def parse_to_python_enum(parsed_enum):
 
     idx = 0
     for m in parsed_enum.members():
-        lines.append("   " + m + " = " + str(idx))
+        lines.append("    " + m + " = " + str(idx))
         idx += 1
     if parsed_enum.has_enum_type():
         lines.append("    " + TRANSMISSION_DATA_TYPE_STRING +
