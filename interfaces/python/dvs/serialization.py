@@ -4,21 +4,36 @@ import numpy as np
 from enums import *
 from internal_types import *
 
+NUM_BYTES_FOR_NAME = 21
+
+
 def serialize_color(col: Color):
     return PropertyType.COLOR.value.to_bytes(1, sys.byteorder) + col.r.to_bytes(1, sys.byteorder) + \
         col.g.to_bytes(1, sys.byteorder) + col.b.to_bytes(1, sys.byteorder)
 
+
 def serialize_one_byte_num(num):
     return np.uint8(num).tobytes()
+
 
 def serialize_two_byte_num(num):
     return np.uint16(num).tobytes()
 
+
 def serialize_str(name):
     return bytearray(name.encode('utf8'))
 
+
+def serialize_name(name: str):
+    return PropertyType.NAME.value.to_bytes(1, sys.byteorder) + np.uint64(NUM_BYTES_FOR_NAME).tobytes() + bytearray(name.encode('utf8'))
+
+
 def serialize_color_map(cm):
     return np.uint8(ColorMapType.MAGMA.value).tobytes()
+
+
+def serialize_axes(axis_vecs):
+    return np.array([np.float64(a) for a in (axis_vecs[0] + axis_vecs[1])]).tobytes()
 
 
 PROPERTY_SERIALIZATION_FUNCTIONS = {PropertyType.COLOR: serialize_color,
@@ -29,7 +44,7 @@ PROPERTY_SERIALIZATION_FUNCTIONS = {PropertyType.COLOR: serialize_color,
                                     PropertyType.POINT_SIZE: serialize_one_byte_num,
                                     PropertyType.LINE_STYLE: serialize_str,
                                     PropertyType.ALPHA: serialize_one_byte_num,
-                                    PropertyType.NAME: serialize_str}
+                                    PropertyType.NAME: serialize_name}
 
 SIZE_OF_PROPERTY = {
     PropertyType.COLOR: 3,
@@ -56,14 +71,14 @@ FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     FunctionHeaderObjectType.NUM_INDICES: lambda x: np.uint32(x).tobytes(),
     FunctionHeaderObjectType.DIMENSION_2D: None,
     FunctionHeaderObjectType.HAS_PAYLOAD: None,
-    FunctionHeaderObjectType.AZIMUTH: None,
-    FunctionHeaderObjectType.ELEVATION: None,
-    FunctionHeaderObjectType.AXIS_MIN_MAX_VEC: None,
+    FunctionHeaderObjectType.AZIMUTH: lambda x: np.float32(x).tobytes(),
+    FunctionHeaderObjectType.ELEVATION: lambda x: np.float32(x).tobytes(),
+    FunctionHeaderObjectType.AXIS_MIN_MAX_VEC: serialize_axes,
     FunctionHeaderObjectType.POS2D: None,
     FunctionHeaderObjectType.FIGURE_NUM: None,
     FunctionHeaderObjectType.PARENT_NAME: None,
     FunctionHeaderObjectType.PARENT_TYPE: None,
-    FunctionHeaderObjectType.ELEMENT_NAME: None,
+    FunctionHeaderObjectType.ELEMENT_NAME: serialize_name,
     FunctionHeaderObjectType.GUI_ELEMENT_TYPE: None,
     FunctionHeaderObjectType.PROPERTY: None,
     FunctionHeaderObjectType.UNKNOWN: None
@@ -81,14 +96,14 @@ SIZE_OF_FUNCTION_HEADER_OBJECT = {FunctionHeaderObjectType.FUNCTION: 1,
                                   FunctionHeaderObjectType.NUM_INDICES: 4,
                                   FunctionHeaderObjectType.DIMENSION_2D: None,
                                   FunctionHeaderObjectType.HAS_PAYLOAD: None,
-                                  FunctionHeaderObjectType.AZIMUTH: None,
-                                  FunctionHeaderObjectType.ELEVATION: None,
-                                  FunctionHeaderObjectType.AXIS_MIN_MAX_VEC: None,
+                                  FunctionHeaderObjectType.AZIMUTH: 4,
+                                  FunctionHeaderObjectType.ELEVATION: 4,
+                                  FunctionHeaderObjectType.AXIS_MIN_MAX_VEC: 8 * 3 * 2,
                                   FunctionHeaderObjectType.POS2D: None,
                                   FunctionHeaderObjectType.FIGURE_NUM: None,
                                   FunctionHeaderObjectType.PARENT_NAME: None,
                                   FunctionHeaderObjectType.PARENT_TYPE: None,
-                                  FunctionHeaderObjectType.ELEMENT_NAME: None,
+                                  FunctionHeaderObjectType.ELEMENT_NAME: NUM_BYTES_FOR_NAME,
                                   FunctionHeaderObjectType.GUI_ELEMENT_TYPE: None,
                                   FunctionHeaderObjectType.PROPERTY: 1,
                                   FunctionHeaderObjectType.UNKNOWN: None}

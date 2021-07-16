@@ -17,9 +17,12 @@ class PlotObjectBase;
 class PlotDataHandler
 {
 private:
+    bool pending_clear_;
+
 public:
     std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors() const;
     std::vector<PlotObjectBase*> plot_datas_;
+    std::vector<PlotObjectBase*> old_plot_datas_;
     PlotDataHandler();
     void clear();
     void softClear();
