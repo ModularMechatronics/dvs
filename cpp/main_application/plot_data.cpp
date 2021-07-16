@@ -16,7 +16,13 @@ void PlotDataHandler::clear()
     {
         delete plot_datas_[k];
     }
+    for (size_t k = 0; k < old_plot_datas_.size(); k++)
+    {
+        delete old_plot_datas_[k];
+    }
     plot_datas_.clear();
+    old_plot_datas_.clear();
+    pending_clear_ = false;
 }
 
 void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
