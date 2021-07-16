@@ -19,6 +19,7 @@ VALID_PROPERTIES = {"color": PropertyType.COLOR,
                     "alpha": PropertyType.ALPHA,
                     "name": PropertyType.NAME}
 
+
 def np_data_type_to_data_type(dt: type):
     dt_ret = DataType.UNKNOWN
 
@@ -46,6 +47,7 @@ def np_data_type_to_data_type(dt: type):
         raise Exception('Invalid type!')
     return dt_ret
 
+
 class FunctionHeader:
 
     def __init__(self):
@@ -65,7 +67,7 @@ class FunctionHeader:
             total_size += SIZE_OF_PROPERTY[key] + 2 + 1 + 1
 
         for key, val in self.settings.items():
-            # + 2 for FunctionHeaderObjectType,  + 1 for num bytes of setting
+            # + 2 for FunctionHeaderObjectType, + 1 for num bytes of setting
             total_size += SIZE_OF_FUNCTION_HEADER_OBJECT[key] + 2 + 1
 
         # + 1 for number of header elements
@@ -73,11 +75,12 @@ class FunctionHeader:
 
     def to_bytes(self):
         bts = bytearray()
-        bts += (len(self.properties) + len(self.settings)).to_bytes(1, sys.byteorder)
+        bts += (len(self.properties) + len(self.settings)
+                ).to_bytes(1, sys.byteorder)
 
         for key, val in self.settings.items():
             bts += key.value.to_bytes(2, sys.byteorder) + SIZE_OF_FUNCTION_HEADER_OBJECT[key].to_bytes(1, sys.byteorder) \
-                 + FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
+                + FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
 
         for key, val in self.properties.items():
             bts += FunctionHeaderObjectType.PROPERTY.value.to_bytes(2, sys.byteorder) + \
@@ -87,13 +90,13 @@ class FunctionHeader:
         return bts
 
 
-def send_with_udp(bytes: bytearray):
+def send_with_udp(bts: bytearray):
     PORT_NUM = 9752
     UDP_IP = "127.0.0.1"
 
     sock = socket.socket(socket.AF_INET,
                          socket.SOCK_DGRAM)
-    sock.sendto(bytes, (UDP_IP, PORT_NUM))
+    sock.sendto(bts, (UDP_IP, PORT_NUM))
 
 
 class Buffer:
@@ -107,8 +110,29 @@ class Buffer:
         self.data[self.idx:(self.idx + new_num_bytes)] = new_bytes
         self.idx += new_num_bytes
 
+
 def num_bytes_from_array(x: np.array):
     return x.itemsize * x.size
+
+
+def send_header(send_fcn, hdr, *args):
+    total_num_bytes = hdr.num_bytes()
+
+    total_num_bytes += 1 + 2 * 8
+
+    buffer_to_send = Buffer(total_num_bytes)
+
+    is_big_endian = sys.byteorder == 'big'
+
+    buffer_to_send.append(is_big_endian.to_bytes(1, sys.byteorder))
+
+    buffer_to_send.append(MAGIC_NUM.to_bytes(8, sys.byteorder))
+
+    buffer_to_send.append(total_num_bytes.to_bytes(8, sys.byteorder))
+
+    buffer_to_send.append(hdr.to_bytes())
+
+    send_fcn(buffer_to_send.data)
 
 
 def send_header_and_data(send_fcn, hdr, *args):
@@ -133,8 +157,51 @@ def send_header_and_data(send_fcn, hdr, *args):
 
     for arg in args:
         buffer_to_send.append(arg.tobytes())
-    
+
     send_fcn(buffer_to_send.data)
+
+
+"""
+
+hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES_3D);
+hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, std::pair<Bound3D, Bound3D>(min_bound, max_bound));
+"""
+
+
+def axis(min_vec, max_vec):
+
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.AXES_3D)
+    hdr.append(FunctionHeaderObjectType.AXIS_MIN_MAX_VEC, (min_vec, max_vec))
+    send_header(send_with_udp, hdr)
+
+
+def view(azimuth, elevation):
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.VIEW)
+    hdr.append(FunctionHeaderObjectType.AZIMUTH, azimuth)
+    hdr.append(FunctionHeaderObjectType.ELEVATION, elevation)
+    send_header(send_with_udp, hdr)
+
+
+def clear_view():
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SOFT_CLEAR)
+    send_header(send_with_udp, hdr)
+
+
+def hard_clear_view():
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.CLEAR)
+    send_header(send_with_udp, hdr)
+
+
+def set_current_element(name: str):
+
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SET_CURRENT_ELEMENT)
+    hdr.append(FunctionHeaderObjectType.ELEMENT_NAME, name)
+    send_header(send_with_udp, hdr)
 
 
 def plot(x: np.array, y: np.array, **properties):
@@ -143,10 +210,12 @@ def plot(x: np.array, y: np.array, **properties):
     hdr.append(FunctionHeaderObjectType.FUNCTION, Function.PLOT2)
     hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
 
-    if x.shape == 2:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE, np_data_type_to_data_type(x[0][0].__class__))
+    if len(x.shape) == 2:
+        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+                   np_data_type_to_data_type(x[0][0].__class__))
     else:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE, np_data_type_to_data_type(x[0].__class__))
+        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+                   np_data_type_to_data_type(x[0].__class__))
 
     for key, value in properties.items():
         if key in VALID_PROPERTIES.keys():

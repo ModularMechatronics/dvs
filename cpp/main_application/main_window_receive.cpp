@@ -15,6 +15,13 @@ void MainWindow::setCurrentElement(const FunctionHeader& hdr)
     const properties::Name elem_name = elem_obj.as<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
+    if (element_name_str.length() == 0)
+    {
+        // TODO: Throw exception
+        std::cout << "Name string had zero length!" << std::endl;
+        return;
+    }
+
     if (gui_elements_.count(element_name_str) > 0)
     {
         current_gui_element_ = gui_elements_[element_name_str];

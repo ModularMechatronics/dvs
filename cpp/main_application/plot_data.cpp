@@ -8,7 +8,7 @@
 #include "plot_objects/plot_object_base.h"
 #include "plot_objects/plot_objects.h"
 
-PlotDataHandler::PlotDataHandler() {}
+PlotDataHandler::PlotDataHandler() : pending_clear_(false) {}
 
 void PlotDataHandler::clear()
 {
@@ -23,6 +23,12 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 {
     const FunctionHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
     Function fcn = fcn_obj.as<Function>();
+
+    if (pending_clear_)
+    {
+        pending_clear_ = false;
+        old_plot_datas_.clear();
+    }
 
     switch (fcn)
     {
@@ -98,6 +104,11 @@ void PlotDataHandler::visualize() const
     for (size_t k = 0; k < plot_datas_.size(); k++)
     {
         plot_datas_[k]->visualize();
+    }
+
+    for (size_t k = 0; k < old_plot_datas_.size(); k++)
+    {
+        old_plot_datas_[k]->visualize();
     }
 }
 
@@ -177,6 +188,7 @@ std::pair<Vec3Dd, Vec3Dd> PlotDataHandler::getMinMaxVectors() const
 
 void PlotDataHandler::softClear()
 {
+    pending_clear_ = true;
     std::vector<PlotObjectBase*> new_plot_datas;
     for (size_t k = 0; k < plot_datas_.size(); k++)
     {
@@ -186,7 +198,7 @@ void PlotDataHandler::softClear()
         }
         else
         {
-            delete plot_datas_[k];
+            old_plot_datas_.push_back(plot_datas_[k]);
         }
     }
     plot_datas_ = new_plot_datas;
