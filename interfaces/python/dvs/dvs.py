@@ -184,13 +184,13 @@ def view(azimuth, elevation):
     send_header(send_with_udp, hdr)
 
 
-def clear_view():
+def clear():
     hdr = FunctionHeader()
     hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SOFT_CLEAR)
     send_header(send_with_udp, hdr)
 
 
-def hard_clear_view():
+def hard_clear():
     hdr = FunctionHeader()
     hdr.append(FunctionHeaderObjectType.FUNCTION, Function.CLEAR)
     send_header(send_with_udp, hdr)
@@ -203,6 +203,8 @@ def set_current_element(name: str):
     hdr.append(FunctionHeaderObjectType.ELEMENT_NAME, name)
     send_header(send_with_udp, hdr)
 
+
+####### Plot functions #######
 
 def plot(x: np.array, y: np.array, **properties):
 
@@ -224,3 +226,43 @@ def plot(x: np.array, y: np.array, **properties):
             print("Argument {} not a valid property".format(key))
 
     send_header_and_data(send_with_udp, hdr, x, y)
+
+
+def plot3(x: np.array, y: np.array, z: np.array, **properties):
+
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.PLOT3)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
+
+    if len(x.shape) == 2:
+        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+                   np_data_type_to_data_type(x[0][0].__class__))
+    else:
+        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+                   np_data_type_to_data_type(x[0].__class__))
+
+    for key, value in properties.items():
+        if key in VALID_PROPERTIES.keys():
+            hdr.append_property(VALID_PROPERTIES[key], value)
+        else:
+            print("Argument {} not a valid property".format(key))
+
+    send_header_and_data(send_with_udp, hdr, x, y, z)
+
+
+def surf(x: np.array, y: np.array, z: np.array, **properties):
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SURF)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr.append(FunctionHeaderObjectType.DIMENSION_2D, x.shape)
+
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+               np_data_type_to_data_type(x[0][0].__class__))
+
+    for key, value in properties.items():
+        if key in VALID_PROPERTIES.keys():
+            hdr.append_property(VALID_PROPERTIES[key], value)
+        else:
+            print("Argument {} not a valid property".format(key))
+
+    send_header_and_data(send_with_udp, hdr, x, y, z)
