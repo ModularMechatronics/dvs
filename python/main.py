@@ -34,8 +34,8 @@ def test_surf():
     dvs.set_current_element("view_00")
 
     dvs.hard_clear()
-    x = np.linspace(-0.1, 3, 10, dtype=np.float32)
-    y = np.linspace(-0.1, 3, 10, dtype=np.float32)
+    x = np.linspace(-0.1, 3, 100, dtype=np.float32)
+    y = np.linspace(-0.1, 3, 100, dtype=np.float32)
     x, y = np.meshgrid(x, y)
     r = np.sqrt(x * x + y * y)
     z = np.sin(r) / r
