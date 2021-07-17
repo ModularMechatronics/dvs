@@ -8,6 +8,7 @@ from constants import *
 from serialization import *
 from internal_types import *
 
+MAX_BYTES_FOR_ONE_MSG = 1380
 
 VALID_PROPERTIES = {"color": PropertyType.COLOR,
                     "edge_color": PropertyType.EDGE_COLOR,
@@ -90,13 +91,58 @@ class FunctionHeader:
         return bts
 
 
+"""
+size_t num_sent_bytes = 0;
+
+while (num_sent_bytes < num_bytes)
+{
+    const size_t num_bytes_to_send =
+        std::min(max_bytes_for_one_msg, static_cast<size_t>(num_bytes) - num_sent_bytes);
+
+    udp_client.sendData(&(data_blob[num_sent_bytes]), num_bytes_to_send);
+    num_sent_bytes += num_bytes_to_send;
+
+    const int num_received_bytes = udp_client.receiveData(data);
+
+    bool ack_received = checkAck(data);
+
+    if (!ack_received)
+    {
+        throw std::runtime_error("No ack received!");
+    }
+    else if (num_received_bytes != 5)
+    {
+        throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
+    }
+}
+"""
+
+
 def send_with_udp(bts: bytearray):
+
     PORT_NUM = 9752
     UDP_IP = "127.0.0.1"
 
-    sock = socket.socket(socket.AF_INET,
-                         socket.SOCK_DGRAM)
-    sock.sendto(bts, (UDP_IP, PORT_NUM))
+    num_bytes = len(bts)
+    if num_bytes > MAX_BYTES_FOR_ONE_MSG:
+        num_sent_bytes = 0
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        while num_sent_bytes < num_bytes:
+            num_bytes_to_send = min(
+                MAX_BYTES_FOR_ONE_MSG, num_bytes - num_sent_bytes)
+
+            sock.sendto(bts[num_sent_bytes:(num_sent_bytes +
+                                            num_bytes_to_send)], (UDP_IP, PORT_NUM))
+            if sock.recvfrom(4)[0].decode("utf-8") != "ack#":
+                raise Exception("Didn't receive ack!")
+            num_sent_bytes += num_bytes_to_send
+    else:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.sendto(bts, (UDP_IP, PORT_NUM))
+        if sock.recvfrom(4)[0].decode("utf-8") != "ack#":
+            raise Exception("Didn't receive ack!")
 
 
 class Buffer:
@@ -159,13 +205,6 @@ def send_header_and_data(send_fcn, hdr, *args):
         buffer_to_send.append(arg.tobytes())
 
     send_fcn(buffer_to_send.data)
-
-
-"""
-
-hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES_3D);
-hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, std::pair<Bound3D, Bound3D>(min_bound, max_bound));
-"""
 
 
 def axis(min_vec, max_vec):
