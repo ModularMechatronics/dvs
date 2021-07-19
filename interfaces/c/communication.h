@@ -1,5 +1,5 @@
-#ifndef COMMUNICATION_H_
-#define COMMUNICATION_H_
+#ifndef DVS_COMMUNICATION_H_
+#define DVS_COMMUNICATION_H_
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -16,72 +16,41 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <chrono>
-#include <cstdint>
-#include <fstream>
-#include <iostream>
-#include <numeric>
-#include <stdexcept>
-#include <string>
-#include <vector>
-
 #define DVS_PORT_NUM 9547
 
-inline int& Var_socket_file_descr()
+typedef struct S_SocketStructure
 {
-    static int socket_file_descr;
-    return socket_file_descr;
+    int file_descr;
+    struct sockaddr_in tx_addr;
+    socklen_t client_len;
+} SocketStructure;
+
+SocketStructure createSocket(const int port_num)
+{
+    SocketStructure sock_struct;
+    sock_struct.file_descr = socket(AF_INET, SOCK_DGRAM, 0);
+    sock_struct.client_len = sizeof(sock_struct.tx_addr);
+
+    memset(&(sock_struct.tx_addr), 0, sizeof(sock_struct.tx_addr));
+    sock_struct.tx_addr.sin_family = AF_INET;
+    sock_struct.tx_addr.sin_port = htons(port_num);
+    sock_struct.tx_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    return sock_struct;
 }
 
-class UdpClient
+int receiveData(SocketStructure* sock_struct, char data[256])
 {
-private:
-    int sock_file_descr;
-    struct sockaddr_in tx_addr;
-    struct sockaddr* tx_addr_ptr;
-    socklen_t client_len;
+    struct sockaddr* tx_addr_ptr = (struct sockaddr*)&(sock_struct->tx_addr);
+    const int num_received_bytes =
+        recvfrom(sock_struct->file_descr, data, 256, 0, tx_addr_ptr, &(sock_struct->client_len));
+    return num_received_bytes;
+}
 
-public:
-    UdpClient() : sock_file_descr(-1), tx_addr_ptr(nullptr) {}
-
-    UdpClient(const uint64_t port_num)
-    {
-        if ((sock_file_descr = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-        {
-            perror("socket failed");
-            sock_file_descr = -1;
-        }
-
-        memset(&tx_addr, 0, sizeof(tx_addr));
-        tx_addr.sin_family = AF_INET;
-        tx_addr.sin_port = htons(port_num);
-        tx_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        tx_addr_ptr = (struct sockaddr*)&tx_addr;
-    }
-
-    ~UdpClient()
-    {
-        close(sock_file_descr);
-    }
-
-    int receiveData(char data[256])
-    {
-        client_len = sizeof(tx_addr);
-        const int num_received_bytes = recvfrom(sock_file_descr, data, 256, 0, (struct sockaddr*)&tx_addr, &client_len);
-        return num_received_bytes;
-    }
-
-    void sendData(const uint8_t* const data, const uint64_t num_bytes)
-    {
-        if (sock_file_descr == -1)
-        {
-            perror("Invalid socket!");
-        }
-        else if (sendto(sock_file_descr, data, num_bytes, 0, tx_addr_ptr, sizeof(tx_addr)) < 0)
-        {
-            perror("sendto failed");
-        }
-    }
-};
+void sendData(SocketStructure* sock_struct, const uint8_t* const data, const uint64_t num_bytes)
+{
+    struct sockaddr* tx_addr_ptr = (struct sockaddr*)&(sock_struct->tx_addr);
+    sendto(sock_struct->file_descr, data, num_bytes, 0, tx_addr_ptr, sizeof(sock_struct->tx_addr));
+}
 
 #endif

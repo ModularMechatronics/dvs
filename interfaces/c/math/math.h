@@ -1,6 +1,8 @@
 #ifndef DVS_MATH_H_
 #define DVS_MATH_H_
 
+#include <math.h>
+
 #include "enumerations.h"
 #include "math/matrix_types.h"
 #include "math/vector_types.h"
@@ -90,6 +92,17 @@ VectorF linspaceFromPointsAndCountF(const double x0, const double x1, const size
     }
 
     return vec;
+}
+
+VectorF dvsSinF(const VectorF vec)
+{
+    VectorF vec_out = createVectorF(vec.num_elements);
+    for (size_t k = 0; k < vec.num_elements; k++)
+    {
+        vec_out.data[k] = sin(vec.data[k]);
+    }
+
+    return vec_out;
 }
 
 /*

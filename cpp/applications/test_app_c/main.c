@@ -23,7 +23,24 @@ void testMisc()
     freeVector(v);
 }
 
-void testPlot() {}
+void testPlot()
+{
+    const size_t num_elements = 10;
+    VectorF x = linspaceFromPointsAndCountF(0.1, 0.8, num_elements);
+    VectorF y = dvsSinF(x);
+
+    FunctionHeaderObject obj0, obj1, obj2;
+
+    strcpy(((char*)obj0.data), "obj0");
+    strcpy(((char*)obj1.data), "obj1");
+    strcpy(((char*)obj2.data), "obj2");
+    obj0.type = FHOT_FUNCTION;
+    obj1.type = FHOT_FUNCTION;
+    obj2.type = FHOT_FUNCTION;
+
+    plot(x, y, Color(2, 220, 11));
+    // plot(x, y);
+}
 
 typedef void (*TestFunction)();
 
