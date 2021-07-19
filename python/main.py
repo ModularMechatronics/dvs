@@ -3,6 +3,19 @@ import dvs
 import numpy as np
 
 
+def test_scatter():
+    dvs.set_current_element("view_00")
+    dvs.hard_clear()
+
+    for i in range(0, 100):
+        dvs.clear()
+        x = np.linspace(0, 3, 100, dtype=np.float32)
+        y = np.sin(x * 5.0 + 0.1 * i)
+
+        dvs.view(0, 90)
+        dvs.scatter(x, y)
+
+
 def test_plot():
     dvs.set_current_element("view_00")
     dvs.hard_clear()
@@ -30,6 +43,16 @@ def test_plot3():
     dvs.plot3(x, y, z)
 
 
+def test_scatter3():
+    dvs.set_current_element("view_00")
+
+    dvs.hard_clear()
+    x = np.linspace(0, 3, 100, dtype=np.float32)
+    y = np.sin(x * 5.0)
+    z = np.cos(x * 5.0)
+    dvs.scatter3(x, y, z)
+
+
 def test_surf():
     dvs.set_current_element("view_00")
 
@@ -45,5 +68,22 @@ def test_surf():
     dvs.surf(x, y, z)
 
 
+def test_imshow():
+    dvs.set_current_element("view_00")
+
+    dvs.hard_clear()
+    x = np.linspace(-0.1, 3, 100, dtype=np.float32)
+    y = np.linspace(-0.1, 3, 100, dtype=np.float32)
+    x, y = np.meshgrid(x, y)
+    r = np.sqrt(x * x + y * y)
+    z = np.sin(r) / r
+
+    z = (z - np.min(z)) / (np.max(z) - np.min(z))
+
+    dvs.axis([-10, -10, -10], [10, 10, 10])
+    dvs.view(0, 90)
+    dvs.imshow(z)
+
+
 if __name__ == "__main__":
-    test_surf()
+    test_imshow()

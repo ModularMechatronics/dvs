@@ -61,6 +61,13 @@ class FunctionHeader:
     def append_property(self, property_name, property_value):
         self.properties[property_name] = property_value
 
+    def append_properties(self, properties):
+        for key, value in properties.items():
+            if key in VALID_PROPERTIES.keys():
+                hdr.append_property(VALID_PROPERTIES[key], value)
+            else:
+                print("Argument {} not a valid property".format(key))
+
     def num_bytes(self):
         total_size = 0
         for key, val in self.properties.items():
@@ -258,11 +265,7 @@ def plot(x: np.array, y: np.array, **properties):
         hdr.append(FunctionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0].__class__))
 
-    for key, value in properties.items():
-        if key in VALID_PROPERTIES.keys():
-            hdr.append_property(VALID_PROPERTIES[key], value)
-        else:
-            print("Argument {} not a valid property".format(key))
+    hdr.append_properties(properties)
 
     send_header_and_data(send_with_udp, hdr, x, y)
 
@@ -280,11 +283,43 @@ def plot3(x: np.array, y: np.array, z: np.array, **properties):
         hdr.append(FunctionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0].__class__))
 
-    for key, value in properties.items():
-        if key in VALID_PROPERTIES.keys():
-            hdr.append_property(VALID_PROPERTIES[key], value)
-        else:
-            print("Argument {} not a valid property".format(key))
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, x, y, z)
+
+
+def scatter(x: np.array, y: np.array, **properties):
+
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SCATTER2)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
+
+    if len(x.shape) == 2:
+        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+                   np_data_type_to_data_type(x[0][0].__class__))
+    else:
+        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+                   np_data_type_to_data_type(x[0].__class__))
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, x, y)
+
+
+def scatter3(x: np.array, y: np.array, z: np.array, **properties):
+
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SCATTER3)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
+
+    if len(x.shape) == 2:
+        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+                   np_data_type_to_data_type(x[0][0].__class__))
+    else:
+        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+                   np_data_type_to_data_type(x[0].__class__))
+
+    hdr.append_properties(properties)
 
     send_header_and_data(send_with_udp, hdr, x, y, z)
 
@@ -298,10 +333,27 @@ def surf(x: np.array, y: np.array, z: np.array, **properties):
     hdr.append(FunctionHeaderObjectType.DATA_TYPE,
                np_data_type_to_data_type(x[0][0].__class__))
 
-    for key, value in properties.items():
-        if key in VALID_PROPERTIES.keys():
-            hdr.append_property(VALID_PROPERTIES[key], value)
-        else:
-            print("Argument {} not a valid property".format(key))
+    hdr.append_properties(properties)
 
     send_header_and_data(send_with_udp, hdr, x, y, z)
+
+
+def imshow(img: np.array, **properties):
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.IM_SHOW)
+
+    # TODO: Needs some fixing up
+    if len(img.shape) == 2:
+        hdr.append(FunctionHeaderObjectType.NUM_CHANNELS, 1)
+    else:
+        hdr.append(FunctionHeaderObjectType.NUM_CHANNELS, 3)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS,
+               img.size)  # TODO: Needed?
+    hdr.append(FunctionHeaderObjectType.DIMENSION_2D, img.shape)
+
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+               np_data_type_to_data_type(img[0][0].__class__))
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, img)
