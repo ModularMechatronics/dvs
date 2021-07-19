@@ -73,10 +73,6 @@ public:
 
     void sendData(const uint8_t* const data, const uint64_t num_bytes)
     {
-        /*for(size_t k = 0; k < 100; k++)
-        {
-            std::cout << static_cast<int>(data[k]) << std::endl;
-        }*/
         if (sock_file_descr == -1)
         {
             perror("Invalid socket!");
@@ -86,21 +82,6 @@ public:
             perror("sendto failed");
         }
     }
-
-    /*void sendData(const DataMessage& data_message)
-    {
-        if(sock_file_descr == -1)
-        {
-            perror("Invalid socket!");
-            return;
-        }
-        const uint64_t num_bytes_per_element = 4;
-        const uint64_t num_bytes = num_bytes_per_element * data_message.num_rows;
-        if(sendto(sock_file_descr, data_message.data, num_bytes, 0, tx_addr_ptr, sizeof(tx_addr)) < 0 )
-        {
-            perror("sendto failed");
-        }
-    }*/
 };
 
 #endif

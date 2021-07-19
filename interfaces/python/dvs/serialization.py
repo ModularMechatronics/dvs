@@ -81,6 +81,7 @@ FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     FunctionHeaderObjectType.ELEMENT_NAME: serialize_name,
     FunctionHeaderObjectType.GUI_ELEMENT_TYPE: None,
     FunctionHeaderObjectType.PROPERTY: None,
+    FunctionHeaderObjectType.NUM_CHANNELS: lambda x: np.uint8(x).tobytes(),
     FunctionHeaderObjectType.UNKNOWN: None
 }
 
@@ -106,4 +107,5 @@ SIZE_OF_FUNCTION_HEADER_OBJECT = {FunctionHeaderObjectType.FUNCTION: 1,
                                   FunctionHeaderObjectType.ELEMENT_NAME: NUM_BYTES_FOR_NAME,
                                   FunctionHeaderObjectType.GUI_ELEMENT_TYPE: None,
                                   FunctionHeaderObjectType.PROPERTY: 1,
+                                  FunctionHeaderObjectType.NUM_CHANNELS: 1,
                                   FunctionHeaderObjectType.UNKNOWN: None}
