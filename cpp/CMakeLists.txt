@@ -52,5 +52,6 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 
 # Adding subdirectories
 add_subdirectory(applications/test_app)
+add_subdirectory(applications/test_app_c)
 add_subdirectory(test)
 add_subdirectory(main_application)
