@@ -4,7 +4,7 @@ import numpy as np
 from enums import *
 from internal_types import *
 
-NUM_BYTES_FOR_NAME = 21
+NUM_BYTES_FOR_NAME = 23
 
 
 def serialize_color(col: Color):

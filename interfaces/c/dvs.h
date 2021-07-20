@@ -116,6 +116,34 @@ void sendHeaderAndTwoVectors(SendFunction send_function,
     free(data_blob);
 }
 
+void sendHeader(SendFunction send_function, FunctionHeader* hdr)
+{
+    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_hdr + 1 + 2 * sizeof(uint64_t);
+
+    uint8_t* const data_blob = malloc(num_bytes);
+
+    uint64_t idx = 0;
+    data_blob[idx] = isBigEndian();
+    idx += 1;
+
+    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    idx += num_bytes_hdr;
+
+    send_function(data_blob, num_bytes);
+
+    free(data_blob);
+}
+
 void plotInternal(const Vector* const x, const Vector* const y, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
@@ -128,11 +156,115 @@ void plotInternal(const Vector* const x, const Vector* const y, const FunctionHe
     APPEND_PROPERTIES(hdr, first_prop);
 
     sendHeaderAndTwoVectors(getSendFunction(), x, y, &hdr);
-
-    // printf("Num properties: %i\n", hdr.num_objects);
 }
 
-// Use as plot(const Vector x, const Vector y, Property p0, Property p1...)
 #define plot(x, y, ...) plotInternal((Vector*)&x, (Vector*)&y, __VA_ARGS__, getLastFHO())
+
+void setCurrentElement(const char* name)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+    const size_t kNumBytesForName = 23;
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_SET_CURRENT_ELEMENT, uint8_t);
+    hdr.values[hdr.num_objects].type = FHOT_ELEMENT_NAME;
+    hdr.values[hdr.num_objects].num_bytes = 1 + sizeof(size_t) + kNumBytesForName;
+    hdr.values[hdr.num_objects].data[0] = (uint8_t)PT_NAME;
+
+    size_t tmp_var = kNumBytesForName;
+    memcpy(&(hdr.values[hdr.num_objects].data[1]), &tmp_var, sizeof(size_t));
+    memcpy(&(hdr.values[hdr.num_objects].data[1 + sizeof(size_t)]), name, kNumBytesForName);
+
+    hdr.num_objects += 1;
+
+    sendHeader(getSendFunction(), &hdr);
+}
+
+void clear()
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_CLEAR, uint8_t);
+
+    sendHeader(getSendFunction(), &hdr);
+}
+
+void softClear()
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_SOFT_CLEAR, uint8_t);
+
+    sendHeader(getSendFunction(), &hdr);
+}
+
+void holdOn()
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_HOLD_ON, uint8_t);
+
+    sendHeader(getSendFunction(), &hdr);
+}
+
+void holdOff()
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_HOLD_OFF, uint8_t);
+
+    sendHeader(getSendFunction(), &hdr);
+}
+
+void view(const float azimuth, const float elevation)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_VIEW, uint8_t);
+    APPEND_VAL(&hdr, FHOT_AZIMUTH, azimuth, float);
+    APPEND_VAL(&hdr, FHOT_ELEVATION, elevation, float);
+
+    sendHeader(getSendFunction(), &hdr);
+}
+
+void axis(const Vec3DD min_bound, const Vec3DD max_bound)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_AXES_3D, uint8_t);
+
+    typedef struct S_Bnd3D
+    {
+        Vec3DD min_bnd;
+        Vec3DD max_bnd;
+    } Bnd3D;
+
+    Bnd3D bnd = {min_bound, max_bound};
+
+    APPEND_VAL(&hdr, FHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
+
+    sendHeader(getSendFunction(), &hdr);
+}
+
+void axis2D(const Vec2DD min_bound, const Vec2DD max_bound)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_AXES_3D, uint8_t);
+
+    typedef struct S_Bnd3D
+    {
+        Vec3DD min_bnd;
+        Vec3DD max_bnd;
+    } Bnd3D;
+    Vec3DD v0 = {min_bound.x, min_bound.y, 0.0};
+    Vec3DD v1 = {max_bound.x, max_bound.y, 0.0};
+
+    Bnd3D bnd = {v0, v1};
+
+    APPEND_VAL(&hdr, FHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
+
+    sendHeader(getSendFunction(), &hdr);
+}
 
 #endif
