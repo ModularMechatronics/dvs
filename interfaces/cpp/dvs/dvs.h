@@ -371,7 +371,7 @@ inline void holdOn()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void clearFigure()
+inline void softClearView()
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SOFT_CLEAR);
@@ -379,7 +379,7 @@ inline void clearFigure()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void hardClearFigure()
+inline void clearView()
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::CLEAR);

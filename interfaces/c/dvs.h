@@ -251,7 +251,7 @@ void setCurrentElement(const char* name)
     sendHeader(getSendFunction(), &hdr);
 }
 
-void clear()
+void clearView()
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -260,7 +260,7 @@ void clear()
     sendHeader(getSendFunction(), &hdr);
 }
 
-void softClear()
+void softClearView()
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
