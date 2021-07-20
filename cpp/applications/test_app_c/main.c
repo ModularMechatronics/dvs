@@ -35,7 +35,7 @@ void testPlot()
     VectorF y = dvsSinF(x);
 
     setCurrentElement("view_00");
-    clear();
+    clearView();
     plot(x, y, Color(255, 0, 11));
     scatter(x, y, Color(255, 0, 11));
 }
@@ -48,7 +48,7 @@ void testPlot3()
     VectorF z = dvsCosF(x);
 
     setCurrentElement("view_00");
-    clear();
+    clearView();
     plot3(x, y, z, Color(255, 0, 11));
     scatter3(x, y, z, Color(255, 0, 11));
 }

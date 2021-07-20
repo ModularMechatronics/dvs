@@ -5,10 +5,10 @@ import numpy as np
 
 def test_scatter():
     dvs.set_current_element("view_00")
-    dvs.hard_clear()
+    dvs.clear_view()
 
     for i in range(0, 100):
-        dvs.clear()
+        dvs.soft_clear_view()
         x = np.linspace(0, 3, 100, dtype=np.float32)
         y = np.sin(x * 5.0 + 0.1 * i)
 
@@ -18,10 +18,10 @@ def test_scatter():
 
 def test_plot():
     dvs.set_current_element("view_00")
-    dvs.hard_clear()
+    dvs.clear_view()
 
     for i in range(0, 100):
-        dvs.clear()
+        dvs.soft_clear_view()
         x = np.linspace(0, 3, 100, dtype=np.float32)
         y = np.sin(x * 5.0 + 0.1 * i)
 
@@ -33,7 +33,7 @@ def test_plot():
 def test_plot3():
     dvs.set_current_element("view_00")
 
-    dvs.hard_clear()
+    dvs.clear_view()
     x = np.linspace(0, 3, 100, dtype=np.float32)
     y = np.sin(x * 5.0)
     z = np.cos(x * 5.0)
@@ -46,7 +46,7 @@ def test_plot3():
 def test_scatter3():
     dvs.set_current_element("view_00")
 
-    dvs.hard_clear()
+    dvs.clear_view()
     x = np.linspace(0, 3, 100, dtype=np.float32)
     y = np.sin(x * 5.0)
     z = np.cos(x * 5.0)
@@ -56,7 +56,7 @@ def test_scatter3():
 def test_surf():
     dvs.set_current_element("view_00")
 
-    dvs.hard_clear()
+    dvs.clear_view()
     x = np.linspace(-0.1, 3, 100, dtype=np.float32)
     y = np.linspace(-0.1, 3, 100, dtype=np.float32)
     x, y = np.meshgrid(x, y)
@@ -71,7 +71,7 @@ def test_surf():
 def test_imshow():
     dvs.set_current_element("view_00")
 
-    dvs.hard_clear()
+    dvs.clear_view()
     x = np.linspace(-0.1, 3, 100, dtype=np.float32)
     y = np.linspace(-0.1, 3, 100, dtype=np.float32)
     x, y = np.meshgrid(x, y)

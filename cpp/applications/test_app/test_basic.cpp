@@ -126,7 +126,7 @@ void testDifferentViews()
     {
         const std::string current_view = views[k % views.size()];
         setCurrentElement(current_view);
-        clearFigure();
+        softClearView();
 
         axis({10.0, 10.0, 0.3}, {32.0, 32.0, 100.6});
         plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
@@ -154,7 +154,7 @@ void testSurf()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
     surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(150, 244, 244), properties::LineWidth(1));
 }
 
@@ -177,7 +177,7 @@ void testScatter()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
 
     plot(xf, yf, properties::Color(212, 14, 55));
@@ -211,7 +211,7 @@ void testScatter3()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
     scatter3(x, y, z, properties::Color(212, 14, 55), properties::PointSize(3));
@@ -237,7 +237,7 @@ void testPlot2()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
     plot(x, y, properties::Color(212, 14, 55), properties::LineWidth(1));
@@ -265,7 +265,7 @@ void testPlot3()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
@@ -323,7 +323,7 @@ void testdrawXYPlane()
     VecXZ<float> p0_xz(0.0, 0.0), p1_xz(1.0, 1.0);
     VecYZ<int16_t> p0_yz(0.0, 0.0), p1_yz(1.0, 1.0);
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
     drawPlaneXY(p0_xy,
                 p1_xy,
                 Plane<float>(0.1, 0.1, 0.1, 0.4),
@@ -331,7 +331,7 @@ void testdrawXYPlane()
                 properties::EdgeColor(0, 0, 0));
 
     setCurrentElement("view_01");
-    hardClearFigure();
+    clearView();
     drawPlaneXZ(p0_xz,
                 p1_xz,
                 Plane<double>(0.1, 0.1, 0.1, 0.4),
@@ -339,7 +339,7 @@ void testdrawXYPlane()
                 properties::EdgeColor(0, 0, 0));
 
     setCurrentElement("view_02");
-    hardClearFigure();
+    clearView();
     drawPlaneYZ(p0_yz,
                 p1_yz,
                 Plane<double>(0.1, 0.1, 0.1, 0.4),
@@ -363,7 +363,7 @@ void testMultipleStuff()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     view(-106.5f, 16.3f);
     axis({-5.0, -5.0, -5.0}, {5.0, 5.0, 5.0});
@@ -386,7 +386,7 @@ void testAxis2D()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     plot(x, y, properties::Color(12, 14, 55), properties::LineWidth(1));
 }
@@ -407,7 +407,7 @@ void testAxis3D()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1));
     scatter3(x, y, z, properties::Color(255, 0, 0), properties::PointSize(3));
@@ -437,7 +437,7 @@ void testDrawTriangles()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     drawTriangles(triangles, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
@@ -459,7 +459,7 @@ void testDrawMesh()
     indices(3) = IndexTriplet(2, 0, 3);
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
@@ -505,7 +505,7 @@ void testDrawMeshAdvanced()
     }
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
 
@@ -519,7 +519,7 @@ void testDrawSingleTriangle()
     triangle.p2 = Point3D<tp>(1.0, 1.0, 1.0);
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
@@ -539,7 +539,7 @@ void testDrawLine3D()
     Vector<double> z = {0.0, 1.0};
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
@@ -561,7 +561,7 @@ void testDrawLine2D()
     Vector<double> z = {0.0, 0.0};
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
@@ -583,7 +583,7 @@ void testDrawLineBetweenPoints3D()
     Vector<double> z = {p0.z, p1.z};
 
     setCurrentElement("view_00");
-    hardClearFigure();
+    clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 

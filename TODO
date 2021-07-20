@@ -16,4 +16,3 @@
  - Verify that image is not mirrored
  - Function "view" is the one that sets/creates the current element
    view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
- - Rename clearFigure and hardClearFigure to "clearView" etc.

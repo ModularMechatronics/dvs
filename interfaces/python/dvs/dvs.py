@@ -230,13 +230,13 @@ def view(azimuth, elevation):
     send_header(send_with_udp, hdr)
 
 
-def clear():
+def soft_clear_view():
     hdr = FunctionHeader()
     hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SOFT_CLEAR)
     send_header(send_with_udp, hdr)
 
 
-def hard_clear():
+def clear_view():
     hdr = FunctionHeader()
     hdr.append(FunctionHeaderObjectType.FUNCTION, Function.CLEAR)
     send_header(send_with_udp, hdr)
