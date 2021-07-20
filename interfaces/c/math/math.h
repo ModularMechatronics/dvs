@@ -105,92 +105,17 @@ VectorF dvsSinF(const VectorF vec)
     return vec_out;
 }
 
-/*
-
-template <typename T> Vector<T> linspaceFromPointIncAndCount(const T x0, const T dx, const size_t num_values)
+typedef struct S_Vec3DD
 {
-    assert(num_values > 0);
-    Vector<T> v(num_values);
+    double x;
+    double y;
+    double z;
+} Vec3DD;
 
-    v(0) = x0;
-
-    for (size_t k = 1; k < num_values; k++)
-    {
-        v(k) = v(k - 1) + dx;
-    }
-
-    return v;
-}
-
-template <typename T> Vector<T> linspaceFromPointsAndInc(const T x0, const T x1, const T dx)
+typedef struct S_Vec2DD
 {
-    assert(dx > 0);
-    assert(x1 > x0);
+    double x;
+    double y;
+} Vec2DD;
 
-    const size_t num_values = (x1 - x0) / dx;
-
-    return linspaceFromPointsAndCount(x0, x1, num_values);
-}
-
-*/
-
-/*Matrix createMatrix(const size_t num_rows, const size_t num_cols, const DataType data_type)
-{
-    Matrix mat;
-    mat.data_type = data_type;
-    mat.num_rows = num_rows;
-    mat.num_cols = num_cols;
-
-    mat.data = (uint8_t*)malloc(num_rows * num_cols * dataTypeToNumBytes(data_type));
-
-    return mat;
-}
-
-#define createFloatMatrix(num_rows, num_cols) createMatrix(num_rows, num_cols, FLOAT)
-
-
-
-void setFloatMatElementAt(Matrix m, const size_t row, const size_t col, const float val)
-{
-    assert(m.data_type == FLOAT && "Invalid data type for matrix!");
-    float* const data_ptr = (float* const)(m.data);
-    const size_t idx = row * m.num_cols + col;
-    data_ptr[idx] = val;
-}
-
-float getFloatMatElementAt(const Matrix m, const size_t row, const size_t col)
-{
-    assert(m.data_type == FLOAT && "Invalid data type for matrix!");
-    const float* const data_ptr = (const float* const)(m.data);
-    const size_t idx = row * m.num_cols + col;
-    return data_ptr[idx];
-}
-
-void setFloatVecElementAt(Vector v, const size_t idx, const float val)
-{
-    assert(v.data_type == FLOAT && "Invalid data type for vector!");
-    float* const data_ptr = (float* const)(v.data);
-    data_ptr[idx] = val;
-}
-
-float getFloatVecElementAt(const Vector v, const size_t idx)
-{
-    assert(v.data_type == FLOAT && "Invalid data type for vector!");
-    const float* const data_ptr = (const float* const)(v.data);
-    return data_ptr[idx];
-}
-
-#define freeVector(vec)       \
-    {                         \
-        free(vec.data);       \
-        vec.num_elements = 0; \
-    }
-
-#define freeMatrix(mat)   \
-    {                     \
-        free(mat.data);   \
-        mat.num_rows = 0; \
-        mat.num_cols = 0; \
-    }
-*/
 #endif

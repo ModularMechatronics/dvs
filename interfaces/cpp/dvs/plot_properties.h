@@ -71,7 +71,7 @@ public:
 struct Name : internal::PropertyBase
 {
 public:
-    static constexpr size_t max_length = 20;
+    static constexpr size_t max_length = 22;
     char data[max_length + 1];  // +1 for null termination
 
     Name() : internal::PropertyBase(internal::PropertyType::NAME)
