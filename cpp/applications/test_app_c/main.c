@@ -23,15 +23,34 @@ void testMisc()
     freeVector(v);
 }
 
+/*
+Work with the generic type for all functions
+If individual elements needs to be accessed, convert to specific type
+*/
+
 void testPlot()
 {
     const size_t num_elements = 100;
-    VectorF x = linspaceFromPointsAndCountF(0.1, 3.8, num_elements);
+    VectorF x = linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
     VectorF y = dvsSinF(x);
 
     setCurrentElement("view_00");
     clear();
     plot(x, y, Color(255, 0, 11));
+    scatter(x, y, Color(255, 0, 11));
+}
+
+void testPlot3()
+{
+    const size_t num_elements = 100;
+    VectorF x = linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
+    VectorF y = dvsSinF(x);
+    VectorF z = dvsCosF(x);
+
+    setCurrentElement("view_00");
+    clear();
+    plot3(x, y, z, Color(255, 0, 11));
+    scatter3(x, y, z, Color(255, 0, 11));
 }
 
 typedef void (*TestFunction)();
@@ -46,6 +65,7 @@ typedef struct S_TestFunctionPair
     const TestFunctionPair test_functions[100] = {
         {"testMisc", testMisc},
         {"testPlot", testPlot},
+        {"testPlot3", testPlot3},
         {0, 0}}; // '{0, 0}' must be last element in array
 // clang-format on
 
