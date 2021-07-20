@@ -116,6 +116,50 @@ void sendHeaderAndTwoVectors(SendFunction send_function,
     free(data_blob);
 }
 
+void sendHeaderAndThreeVectors(SendFunction send_function,
+                               const Vector* const x,
+                               const Vector* const y,
+                               const Vector* const z,
+                               FunctionHeader* hdr)
+{
+    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+    const uint64_t num_bytes_one_vector = x->num_elements * x->num_bytes_per_element;
+
+    const uint64_t num_bytes_from_object = 3 * num_bytes_one_vector + num_bytes_hdr;
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
+
+    uint8_t* const data_blob = malloc(num_bytes);
+
+    uint64_t idx = 0;
+    data_blob[idx] = isBigEndian();
+    idx += 1;
+
+    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    idx += num_bytes_hdr;
+
+    memcpy(&(data_blob[idx]), x->data, num_bytes_one_vector);
+    idx += num_bytes_one_vector;
+
+    memcpy(&(data_blob[idx]), y->data, num_bytes_one_vector);
+    idx += num_bytes_one_vector;
+
+    memcpy(&(data_blob[idx]), z->data, num_bytes_one_vector);
+    idx += num_bytes_one_vector;
+
+    send_function(data_blob, num_bytes);
+
+    free(data_blob);
+}
+
 void sendHeader(SendFunction send_function, FunctionHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
@@ -144,12 +188,32 @@ void sendHeader(SendFunction send_function, FunctionHeader* hdr)
     free(data_blob);
 }
 
-void plotInternal(const Vector* const x, const Vector* const y, const FunctionHeaderObject first_prop, ...)
+void plotFunction3D(const Vector* const x,
+                    const Vector* const y,
+                    const Vector* const z,
+                    const Function fcn,
+                    const FunctionHeaderObject first_prop,
+                    ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
 
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_PLOT2, uint8_t);
+    APPEND_VAL(&hdr, FHOT_FUNCTION, fcn, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, x->data_type, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    sendHeaderAndThreeVectors(getSendFunction(), x, y, z, &hdr);
+}
+
+void plotFunction2D(
+    const Vector* const x, const Vector* const y, const Function fcn, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, fcn, uint8_t);
     APPEND_VAL(&hdr, FHOT_DATA_TYPE, x->data_type, uint8_t);
     APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
 
@@ -158,7 +222,14 @@ void plotInternal(const Vector* const x, const Vector* const y, const FunctionHe
     sendHeaderAndTwoVectors(getSendFunction(), x, y, &hdr);
 }
 
-#define plot(x, y, ...) plotInternal((Vector*)&x, (Vector*)&y, __VA_ARGS__, getLastFHO())
+#define plot(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_PLOT2, __VA_ARGS__, getLastFHO())
+
+#define scatter(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_SCATTER2, __VA_ARGS__, getLastFHO())
+
+#define plot3(x, y, z, ...) plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, __VA_ARGS__, getLastFHO())
+
+#define scatter3(x, y, z, ...) \
+    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastFHO())
 
 void setCurrentElement(const char* name)
 {

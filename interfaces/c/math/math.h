@@ -105,6 +105,17 @@ VectorF dvsSinF(const VectorF vec)
     return vec_out;
 }
 
+VectorF dvsCosF(const VectorF vec)
+{
+    VectorF vec_out = createVectorF(vec.num_elements);
+    for (size_t k = 0; k < vec.num_elements; k++)
+    {
+        vec_out.data[k] = cos(vec.data[k]);
+    }
+
+    return vec_out;
+}
+
 typedef struct S_Vec3DD
 {
     double x;
