@@ -49,7 +49,8 @@ public:
                const ViewAngles& view_angles,
                const GridVectors& gv,
                const CoordinateConverter& coord_converter,
-               const bool draw_selected_bb);
+               const bool draw_selected_bb,
+               const bool left_mouse_pressed);
 };
 
 #endif

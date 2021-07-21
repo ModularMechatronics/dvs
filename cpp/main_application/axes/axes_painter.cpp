@@ -40,16 +40,80 @@ void drawDebugSilhouette()
     glLineWidth(1.0f);
 }
 
+Vec3Dd findScale(const Matrixd& R)
+{
+    // Currently unknown exactly how 'q' affects the results...
+    const double q = 0.3;
+    // clang-format off
+    const Vector<Point3Dd> points = {{q, q, q},
+                                     {-q, q, q},
+                                     {q, -q, q},
+                                     {-q, -q, q},
+                                     {q, q, -q},
+                                     {-q, q, -q},
+                                     {q, -q, -q},
+                                     {-q, -q, -q}};
+    const Point3Dd pr0 = R * points(0);
+    // clang-format on
+    std::pair<Point3Dd, Point3Dd> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
+                                  pmah = {points(0), pr0};
+    for (const Point3Dd p : points)
+    {
+        const auto pqr = R * p;
+
+        if (pqr.x < pmiw.second.x)
+        {
+            pmiw.first = p;
+            pmiw.second = pqr;
+        }
+
+        if (pqr.x > pmaw.second.x)
+        {
+            pmaw.first = p;
+            pmaw.second = pqr;
+        }
+
+        if (pqr.y < pmih.second.y)
+        {
+            pmih.first = p;
+            pmih.second = pqr;
+        }
+
+        if (pqr.y > pmah.second.y)
+        {
+            pmah.first = p;
+            pmah.second = pqr;
+        }
+    }
+
+    const double r00 = R(0, 0), r01 = R(0, 1), r02 = R(0, 2);
+    const double r10 = R(1, 0), r11 = R(1, 1), r12 = R(1, 2);
+    const double w = 0.5, h = 0.5;
+    const double pmiw_x = pmiw.first.x, pmiw_y = pmiw.first.y, pmiw_z = pmiw.first.z;
+    const double pmih_x = pmih.first.x, pmih_y = pmih.first.y, pmih_z = pmih.first.z;
+
+    const double sx = -w / (pmiw_x * r00 + pmiw_y * r01 + pmiw_z * r02);
+    const double sy = -h / (pmih_x * r10 + pmih_y * r11 + pmih_z * r12);
+    const double sz = 1.0;
+
+    return Vec3Dd(sx, sy, sz);
+}
+
 void AxesPainter::paint(const AxesLimits& axes_limits,
                         const ViewAngles& view_angles,
                         const GridVectors& gv,
                         const CoordinateConverter& coord_converter,
-                        const bool draw_selected_bb)
+                        const bool draw_selected_bb,
+                        const bool left_mouse_pressed)
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
     gv_ = gv;
     coord_converter_ = coord_converter;
+    const Vec3Dd new_scale = findScale(view_angles_.getSnappedRotationMatrix());
+    axes_settings_.setAxesScale(new_scale);
+
+    glEnable(GL_DEPTH_CLAMP);
 
     // Plot box
     setOpenGLStateForPlotBox();
@@ -68,9 +132,12 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
 
     glPopMatrix();
 
-    drawAxisNumbers(gv_, axes_limits_, view_angles_, coord_converter_, width_, height_);
+    drawAxisNumbers(gv_, axes_limits_, view_angles_, axes_settings_, coord_converter_, width_, height_);
 
-    printViewAnglesInPlotWindow();
+    if (left_mouse_pressed)
+    {
+        printViewAnglesInPlotWindow();
+    }
     if (draw_selected_bb)
     {
         drawSelectedSilhouette();
@@ -80,20 +147,10 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
 
 // TODO: Wrap 'glPopMatrix' in functions to improve consistency
 
-void setClipPlane(const GLenum gl_plane,
-                  const Point3Dd& p0,
-                  const Point3Dd& p1,
-                  const Point3Dd& p2,
-                  const Matrixd rot_mat,
-                  const bool invert)
+void setClipPlane(const GLenum gl_plane, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert)
 {
-    // Points are 3 points in non rotated plane
-    const Point3Dd tp0 = rot_mat * p0;
-    const Point3Dd tp1 = rot_mat * p1;
-    const Point3Dd tp2 = rot_mat * p2;
-
     // Fit plane
-    const Planed fp = planeFromThreePoints(tp0, tp1, tp2);
+    const Planed fp = planeFromThreePoints(p0, p1, p2);
 
     // Invert
     const Planed plane = invert ? Planed(-fp.a, -fp.b, -fp.c, fp.d) : fp;
@@ -105,20 +162,31 @@ void setClipPlane(const GLenum gl_plane,
 
 void AxesPainter::enableClipPlanes() const
 {
-    const double f = axes_settings_.getPlotBoxSizeFactor();
+    const double f = 0.5;
+    const Vec3Dd s = axes_settings_.getAxesScale();
 
     const ViewAngles view_ang(-view_angles_.getAzimuth(), -view_angles_.getElevation(), view_angles_.getAngleLimit());
 
     const Matrixd rot_mat = view_ang.getSnappedRotationMatrix();
 
-    setClipPlane(GL_CLIP_PLANE0, {-f, 0.0, 0.0}, {-f, 1.0, 1.0}, {-f, 1.0, 0.0}, rot_mat, false);
-    setClipPlane(GL_CLIP_PLANE1, {-f, 0.0, 0.0}, {-f, 1.0, 1.0}, {-f, 1.0, 0.0}, rot_mat, true);
+    // clang-format off
+    const Vector<Point3Dd> points_x = {(rot_mat * Point3Dd(f, f, f)).elementWiseMultiply(s),
+                                       (rot_mat * Point3Dd(f, -f, f)).elementWiseMultiply(s),
+                                       (rot_mat * Point3Dd(f, f, -f)).elementWiseMultiply(s)};
+    const Vector<Point3Dd> points_y = {(rot_mat * Point3Dd(-f, f, f)).elementWiseMultiply(s),
+                                       (rot_mat * Point3Dd(f, f, f)).elementWiseMultiply(s),
+                                       (rot_mat * Point3Dd(f, f, -f)).elementWiseMultiply(s)};
+    const Vector<Point3Dd> points_z = {(rot_mat * Point3Dd(-f, f, -f)).elementWiseMultiply(s),
+                                       (rot_mat * Point3Dd(f, -f, -f)).elementWiseMultiply(s),
+                                       (rot_mat * Point3Dd(-f, -f, -f)).elementWiseMultiply(s)};
+    // clang-format on
 
-    setClipPlane(GL_CLIP_PLANE2, {0.0, f, 0.0}, {1.0, f, 1.0}, {1.0, f, 0.0}, rot_mat, false);
-    setClipPlane(GL_CLIP_PLANE3, {0.0, f, 0.0}, {1.0, f, 1.0}, {1.0, f, 0.0}, rot_mat, true);
-
-    setClipPlane(GL_CLIP_PLANE4, {0.0, 0.0, -f}, {1.0, 1.0, -f}, {1.0, 0.0, -f}, rot_mat, false);
-    setClipPlane(GL_CLIP_PLANE5, {0.0, 0.0, -f}, {1.0, 1.0, -f}, {1.0, 0.0, -f}, rot_mat, true);
+    setClipPlane(GL_CLIP_PLANE0, points_x(0), points_x(1), points_x(2), true);
+    setClipPlane(GL_CLIP_PLANE1, points_x(0), points_x(1), points_x(2), false);
+    setClipPlane(GL_CLIP_PLANE2, points_y(0), points_y(1), points_y(2), true);
+    setClipPlane(GL_CLIP_PLANE3, points_y(0), points_y(1), points_y(2), false);
+    setClipPlane(GL_CLIP_PLANE4, points_z(0), points_z(1), points_z(2), true);
+    setClipPlane(GL_CLIP_PLANE5, points_z(0), points_z(1), points_z(2), false);
 }
 
 void AxesPainter::disableClipPlanes() const
@@ -133,9 +201,7 @@ void AxesPainter::disableClipPlanes() const
 
 void AxesPainter::plotBegin()
 {
-    // Must be closed with glPopMatrix()
-    // const AxisAngled ax_ang = view_angles_.getSnappedAngleAxis();
-    // TODO: Why do angles need to be negated? Because matrix is not popped from drawing plot box?
+    // TODO: Why do angles need to be negated?
     const ViewAngles view_ang(-view_angles_.getAzimuth(), -view_angles_.getElevation(), view_angles_.getAngleLimit());
     const AxisAngled ax_ang = view_ang.getSnappedAngleAxis();
 
@@ -143,8 +209,10 @@ void AxesPainter::plotBegin()
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
 
     enableClipPlanes();
+    const Vec3Dd sq = axes_settings_.getAxesScale();
 
     glPushMatrix();
+    glScalef(sq.x, sq.y, sq.z);
 
     glRotatef(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
     // Not sure why y axis should be negated... But it works like this.
@@ -162,8 +230,10 @@ void AxesPainter::setOpenGLStateForPlotBox() const
 {
     // Must be closed with glPopMatrix()
     const AxisAngled ax_ang = view_angles_.getSnappedAngleAxis();
+    const Vec3Dd s = axes_settings_.getAxesScale();
 
     glPushMatrix();
+    glScalef(s.x, s.y, s.z);
     glRotatef(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
 }
 
@@ -173,9 +243,10 @@ void AxesPainter::setOpenGLStateForAxesGrid() const
     const AxisAngled ax_ang = view_angles_.getSnappedAngleAxis();
 
     const Vec3Dd scale = axes_limits_.getAxesScale();
+    const Vec3Dd s = axes_settings_.getAxesScale();
 
     glPushMatrix();
-
+    glScalef(s.x, s.y, s.z);
     glRotatef(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
     glScaled(1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z);
 }
@@ -202,8 +273,8 @@ void AxesPainter::printViewAnglesInPlotWindow() const
     setColor(0.0f, 0.0f, 0.0f);
     putTextAt("(" + toStringWithNumDecimalPlaces(view_angles_.getSnappedAzimuth() * 180.0 / M_PI, 1) + ", " +
                   toStringWithNumDecimalPlaces(view_angles_.getSnappedElevation() * 180.0 / M_PI, 1) + ")",
+              -0.97,
               -0.95,
-              -0.9,
               width_,
               height_,
               100.0f);
