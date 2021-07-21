@@ -48,6 +48,16 @@ AxesSettings::AxesSettings(const Vec3Dd& min_vec, const Vec3Dd& max_vec)
     max_vec_ = max_vec;
 }
 
+Vec3Dd AxesSettings::getAxesScale() const
+{
+    return axes_scale_;
+}
+
+void AxesSettings::setAxesScale(const Vec3Dd& new_scale)
+{
+    axes_scale_ = new_scale;
+}
+
 double AxesSettings::getPlotBoxSizeFactor() const
 {
     return plot_box_size_factor_;

@@ -109,6 +109,14 @@ void putTextAt(
     glPopMatrix();
 }
 
+void putTextAtNew(const std::string& text)
+{
+    for (size_t i = 0; i < text.length(); i++)
+    {
+        glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, text[i]);
+    }
+}
+
 void putTextAt_Old(const std::string& s, const double x, const double y)
 {
     glRasterPos2f(x, y);

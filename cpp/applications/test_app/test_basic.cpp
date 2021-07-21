@@ -267,9 +267,24 @@ void testPlot3()
     setCurrentElement("view_00");
     clearView();
 
-    axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
     plot3(xf, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(1));
+}
+
+void testCube()
+{
+    setCurrentElement("view_00");
+    clearView();
+    const double x = 1.0, y = 1.0, z = 1.0, d = 0.00001;
+    axis({-x - d, -y - d, -z - d}, {x + d, y + d, z + d});
+    drawPolygonFrom4Points({x, y, z}, {-x, y, z}, {-x, -y, z}, {x, -y, z});
+    drawPolygonFrom4Points({x, y, -z}, {-x, y, -z}, {-x, -y, -z}, {x, -y, -z});
+
+    drawPolygonFrom4Points({x, y, z}, {x, -y, z}, {x, -y, -z}, {x, y, -z});
+    drawPolygonFrom4Points({-x, y, z}, {-x, -y, z}, {-x, -y, -z}, {-x, y, -z});
+
+    drawPolygonFrom4Points({x, y, z}, {-x, y, z}, {-x, y, -z}, {x, y, -z});
+    drawPolygonFrom4Points({x, -y, z}, {-x, -y, z}, {-x, -y, -z}, {x, -y, -z});
 }
 
 void testImShow()

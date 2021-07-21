@@ -23,6 +23,8 @@ private:
     RGBTripletf plot_box_wall_color_;
     double plot_box_size_factor_;
 
+    Vec3Dd axes_scale_;
+
     bool grid_on_;
     RGBTripletf grid_color_;
 
@@ -57,6 +59,9 @@ public:
     Vec3Dd getMinVec() const;
     Vec3Dd getMaxVec() const;
     double getPlotBoxSizeFactor() const;
+
+    Vec3Dd getAxesScale() const;
+    void setAxesScale(const Vec3Dd& new_scale);
 };
 
 #endif

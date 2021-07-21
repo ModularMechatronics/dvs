@@ -5,6 +5,9 @@
 #include "misc/misc.h"
 #include "opengl_low_level/opengl_low_level.h"
 
+Vec3Dd gs;
+const float kTextScale = 1.0f / 8.0f;
+
 void drawNumbersForYAxis(const Vectord& y_values,
                          const double x_offset,
                          const double z_offset,
@@ -16,14 +19,25 @@ void drawNumbersForYAxis(const Vectord& y_values,
     const Vec3Dd axes_center = axes_limits.getAxesCenter();
     const Vec3Dd s = axes_limits.getAxesScale();
 
+    const float sx = kTextScale / width;
+    const float sy = kTextScale / height;
+
+    glPushMatrix();
+    glScalef(gs.x, gs.y, gs.x);
+
     for (size_t k = 0; k < y_values.size(); k++)
     {
         const Vec3Dd v(x_offset / s.x, y_values(k) / s.y, z_offset / s.z);
         const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
-        const std::string num_string = formatNumber(y_values(k) + axes_center.y, 3);
-        putTextAt(
-            num_string, vv.x - static_cast<double>(num_string.length()) * 13.3 / width, vv.y, width, height, 100.0f);
+        glPushMatrix();
+        glTranslated(vv.x, vv.y, 0);
+        glScalef(sx / gs.x, sy / gs.y, 1.0);
+
+        putTextAtNew(formatNumber(y_values(k) + axes_center.y, 3));
+
+        glPopMatrix();
     }
+    glPopMatrix();
 }
 
 void drawNumbersForZAxis(const Vectord& z_values,
@@ -37,12 +51,24 @@ void drawNumbersForZAxis(const Vectord& z_values,
     const Vec3Dd axes_center = axes_limits.getAxesCenter();
     const Vec3Dd s = axes_limits.getAxesScale();
 
+    const float sx = kTextScale / width;
+    const float sy = kTextScale / height;
+
+    glPushMatrix();
+    glScalef(gs.x, gs.y, gs.x);
+
     for (size_t k = 0; k < z_values.size(); k++)
     {
         const Vec3Dd v(x_offset / s.x, y_offset / s.y, z_values(k) / s.z);
         const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
-        putTextAt(formatNumber(z_values(k) + axes_center.z, 3), vv.x, vv.y, width, height, 100.0f);
+        glPushMatrix();
+        glTranslated(vv.x, vv.y, 0);
+        glScalef(sx / gs.x, sy / gs.y, 1.0);
+
+        putTextAtNew(formatNumber(z_values(k) + axes_center.z, 3));
+        glPopMatrix();
     }
+    glPopMatrix();
 }
 
 void drawNumbersForXAxis(const Vectord& x_values,
@@ -56,22 +82,38 @@ void drawNumbersForXAxis(const Vectord& x_values,
     const Vec3Dd axes_center = axes_limits.getAxesCenter();
     const Vec3Dd s = axes_limits.getAxesScale();
 
+    const float sx = kTextScale / width;
+    const float sy = kTextScale / height;
+
+    glPushMatrix();
+    glScalef(gs.x, gs.y, gs.x);
+
     for (size_t k = 0; k < x_values.size(); k++)
     {
         const Vec3Dd v(x_values(k) / s.x, y_offset / s.y, z_offset / s.z);
         const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
-        putTextAt(formatNumber(x_values(k) + axes_center.x, 3), vv.x, vv.y, width, height, 100.0f);
+        glPushMatrix();
+        glTranslated(vv.x, vv.y, 0);
+        glScalef(sx / gs.x, sy / gs.y, 1.0);
+
+        putTextAtNew(formatNumber(x_values(k) + axes_center.x, 3));
+        glPopMatrix();
     }
+    glPopMatrix();
 }
 
 void drawAxisNumbers(const GridVectors& gv,
                      const AxesLimits& axes_limits,
                      const ViewAngles& view_angles,
+                     const AxesSettings& axes_settings,
                      const CoordinateConverter& coord_converter,
                      const float width,
                      const float height)
 {
     const Vec3Dd s = axes_limits.getAxesScale();
+
+    gs = axes_settings.getAxesScale();
+
     const double box_x = s.x;
     const double box_y = s.y;
     const double box_z = s.z;

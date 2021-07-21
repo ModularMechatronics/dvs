@@ -606,7 +606,8 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
                          axes_interactor_->getViewAngles(),
                          axes_interactor_->generateGridVectors(),
                          axes_interactor_->getCoordConverter(),
-                         draw_selected_bb);
+                         draw_selected_bb,
+                         left_mouse_button_.isPressed());
 
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?
     axes_painter_->plotBegin();

@@ -1,0 +1,18 @@
+
+
+Set percentual margin from edge that is min allowed margin
+E.g., margin = 0.1, then left edge should be no closer than 0.1 * width of window
+
+Scale = [sx, sy, sz]
+
+proj(p) = [p.x, p.y]
+
+
+We have a point p0 = [0.5, 0.5, 0.5]
+pr = R * p0
+To get from point proj(R * p0 * s) = [width * tx, height * ty]
+
+sx = width * tx / pr.x
+
+
+There is an invisible rectangular funnel that sets the limits of the extreme points of the plot box
