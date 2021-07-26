@@ -81,29 +81,45 @@ void AxesInteractor::resetView()
     axes_limits_ = default_axes_limits_;
 }
 
-void AxesInteractor::registerMouseDragInput(const int dx, const int dy)
+void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis,
+                                            const int dx,
+                                            const int dy)
 {
     const float dx_mod = 250.0f * static_cast<float>(dx) / current_window_width;
     const float dy_mod = 250.0f * static_cast<float>(dy) / current_window_height;
     switch (current_mouse_activity)
     {
         case MouseActivity::ROTATE:
-            changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain);
+            changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain, current_mouse_interaction_axis);
             break;
         case MouseActivity::ZOOM:
-            changeZoom(dy_mod * zoom_mouse_gain);
+            changeZoom(dy_mod * zoom_mouse_gain, current_mouse_interaction_axis);
             break;
         case MouseActivity::PAN:
-            changePan(dx_mod * pan_mouse_gain, dy_mod * pan_mouse_gain);
+            changePan(dx_mod * pan_mouse_gain, dy_mod * pan_mouse_gain, current_mouse_interaction_axis);
             break;
         default:
             break;
     }
 }
 
-void AxesInteractor::changeRotation(const double dx, const double dy)
+void AxesInteractor::changeRotation(const double dx, const double dy, const MouseInteractionAxis mia)
 {
-    view_angles_.changeAnglesWithDelta(dx, dy);
+    Vec2Dd sa(1.0, 1.0);
+    if (mia == MouseInteractionAxis::X)
+    {
+        sa.y = 0.0;
+    }
+    else if (mia == MouseInteractionAxis::Y)
+    {
+        sa.x = 0.0;
+    }
+    else
+    {
+        sa.x = 1.0;
+        sa.y = 1.0;
+    }
+    view_angles_.changeAnglesWithDelta(dx * sa.x, dy * sa.y);
 }
 
 double changeIncrement(const double scale, const double inc, const size_t num_lines)
@@ -120,10 +136,26 @@ double changeIncrement(const double scale, const double inc, const size_t num_li
     return new_inc;
 }
 
-void AxesInteractor::changeZoom(const double dy)
+void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
 {
     const Vec3Dd s = axes_limits_.getAxesScale();
-    const Vec3Dd inc_vec = Vec3Dd(dy * s.x, dy * s.y, dy * s.z);
+    Vec3Dd sa(1.0, 1.0, 1.0);
+    if (mia == MouseInteractionAxis::X)
+    {
+        sa.y = 0.0;
+        sa.z = 0.0;
+    }
+    else if (mia == MouseInteractionAxis::Y)
+    {
+        sa.x = 0.0;
+        sa.z = 0.0;
+    }
+    else if (mia == MouseInteractionAxis::Z)
+    {
+        sa.x = 0.0;
+        sa.y = 0.0;
+    }
+    const Vec3Dd inc_vec = Vec3Dd(dy * s.x * sa.x, dy * s.y * sa.y, dy * s.z * sa.z);
 
     axes_limits_.setMin(axes_limits_.getMin() - inc_vec);
     axes_limits_.setMax(axes_limits_.getMax() + inc_vec);
@@ -134,14 +166,30 @@ void AxesInteractor::changeZoom(const double dy)
     inc0.z = changeIncrement(s.z, inc0.z, num_lines);
 }
 
-void AxesInteractor::changePan(const double dx, const double dy)
+void AxesInteractor::changePan(const double dx, const double dy, const MouseInteractionAxis mia)
 {
+    Vec3Dd sa(1.0, 1.0, 1.0);
+    if (mia == MouseInteractionAxis::X)
+    {
+        sa.y = 0.0;
+        sa.z = 0.0;
+    }
+    else if (mia == MouseInteractionAxis::Y)
+    {
+        sa.x = 0.0;
+        sa.z = 0.0;
+    }
+    else if (mia == MouseInteractionAxis::Z)
+    {
+        sa.x = 0.0;
+        sa.y = 0.0;
+    }
     const Matrixd rotation_mat = view_angles_.getSnappedRotationMatrix();
     const Vec3Dd v = rotation_mat.getTranspose() * Vec3Dd(-dx, dy, 0.0);
 
     const Vec3Dd s = axes_limits_.getAxesScale();
 
-    const Vec3Dd v_scaled = v.elementWiseMultiply(s);
+    const Vec3Dd v_scaled = v.elementWiseMultiply(s).elementWiseMultiply(sa);
 
     axes_limits_.incrementMinMax(v_scaled);
 }

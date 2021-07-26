@@ -32,6 +32,7 @@ class AxesPainter
     void setOpenGLStateForAxesGrid() const;
 
     void drawAxesArrows() const;
+    void drawZoomButtons() const;
 
     void enableClipPlanes() const;
     void disableClipPlanes() const;

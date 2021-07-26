@@ -57,6 +57,7 @@ private:
 
     AxesInteractor* axes_interactor_;
     AxesPainter* axes_painter_;
+    AxesSettings axes_settings_;
     MouseButtonState left_mouse_button_;
     KeyboardState keyboard_state_;
     CursorSquareState cursor_state_at_press_;
@@ -85,6 +86,7 @@ private:
     void notifyParentAboutModification();
     bool is3DFunction(const Function fcn);
     bool isImageFunction(const Function fcn);
+    MouseInteractionAxis current_mouse_interaction_axis_;
 
 public:
     PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings& element_settings, const float grid_size);

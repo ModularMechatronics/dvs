@@ -93,12 +93,12 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
 
     is_selected_ = false;
 
-    const AxesSettings axes_settings({min_x, min_y, min_z}, {max_x, max_y, max_z});
+    axes_settings_ = AxesSettings({min_x, min_y, min_z}, {max_x, max_y, max_z});
 
     bindCallbacks();
 
-    axes_interactor_ = new AxesInteractor(axes_settings, getWidth(), getHeight());
-    axes_painter_ = new AxesPainter(axes_settings);
+    axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
+    axes_painter_ = new AxesPainter(axes_settings_);
 
     hold_on_ = true;
     axes_set_ = false;
@@ -450,7 +450,28 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
         else
         {
             left_mouse_button_.updateOnMotion(current_point.x, current_point.y);
-            axes_interactor_->registerMouseDragInput(left_mouse_button_.getDeltaPos().x,
+
+            if (keyboard_state_.isPressed())
+            {
+                if (keyboard_state_.keyIsPressed('1'))
+                {
+                    current_mouse_interaction_axis_ = MouseInteractionAxis::X;
+                }
+                else if (keyboard_state_.keyIsPressed('2'))
+                {
+                    current_mouse_interaction_axis_ = MouseInteractionAxis::Y;
+                }
+                else if (keyboard_state_.keyIsPressed('3'))
+                {
+                    current_mouse_interaction_axis_ = MouseInteractionAxis::Z;
+                }
+            }
+            else
+            {
+                current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
+            }
+            axes_interactor_->registerMouseDragInput(current_mouse_interaction_axis_,
+                                                     left_mouse_button_.getDeltaPos().x,
                                                      left_mouse_button_.getDeltaPos().y);
         }
 
@@ -529,6 +550,7 @@ void PlotWindowGLPane::keyReleased(wxKeyEvent& event)
     {
         keyboard_state_.keyGotReleased(key_code);
     }
+    current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
     Refresh();
 }
 
