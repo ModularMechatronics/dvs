@@ -22,6 +22,14 @@ double findFirstPointInInterval(const double min_point,
                                 const double inc);
 double findFirstPointBeforeMin(const double min_point, const double start_point, const double inc);
 
+enum class MouseInteractionAxis
+{
+    X,
+    Y,
+    Z,
+    ALL
+};
+
 class AxesInteractor
 {
 private:
@@ -48,9 +56,9 @@ private:
     Vec3Dd inc0;
 
     // Functions
-    void changePan(const double dx, const double dy);
-    void changeZoom(const double dy);
-    void changeRotation(const double dx, const double dy);
+    void changePan(const double dx, const double dy, const MouseInteractionAxis mia);
+    void changeZoom(const double dy, const MouseInteractionAxis mia);
+    void changeRotation(const double dx, const double dy, const MouseInteractionAxis mia);
 
 public:
     AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width);
@@ -61,7 +69,7 @@ public:
     void setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
     void setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec);
 
-    void registerMouseDragInput(const int dx, const int dy);
+    void registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis, const int dx, const int dy);
     void updateMouseActivity(const InteractionType interaction_type);
 
     GridVectors generateGridVectors();

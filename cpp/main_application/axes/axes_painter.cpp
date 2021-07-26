@@ -145,8 +145,6 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
     drawDebugSilhouette();
 }
 
-// TODO: Wrap 'glPopMatrix' in functions to improve consistency
-
 void setClipPlane(const GLenum gl_plane, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert)
 {
     // Fit plane
@@ -155,7 +153,7 @@ void setClipPlane(const GLenum gl_plane, const Point3Dd& p0, const Point3Dd& p1,
     // Invert
     const Planed plane = invert ? Planed(-fp.a, -fp.b, -fp.c, fp.d) : fp;
 
-    // Params in "Plane" stored in same way as "double ptr[4]" (which is what "glClipPlane" expects)
+    // Members in "Plane" stored in same way as "double ptr[4]", which is what "glClipPlane" expects
     glClipPlane(gl_plane, reinterpret_cast<const double*>(&plane));
     glEnable(gl_plane);
 }

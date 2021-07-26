@@ -26,5 +26,4 @@
  - Linux support
  - Making sure that view and axes are set properly when not explicitly setting them
  - Zoom/pan/rotate only one axis
- - Begin C interface
  - Imshow 1 and 3 channels + arbitrary data type
