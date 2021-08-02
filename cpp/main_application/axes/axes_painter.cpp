@@ -124,7 +124,7 @@ void AxesPainter::paint(const AxesLimits& axes_limits,
 
     glPopMatrix();
 
-    drawAxesArrows();
+    // drawAxesArrows();
 
     setOpenGLStateForAxesGrid();
 

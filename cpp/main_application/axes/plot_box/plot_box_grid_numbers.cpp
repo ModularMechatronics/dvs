@@ -8,6 +8,36 @@
 Vec3Dd gs;
 const float kTextScale = 1.0f / 8.0f;
 
+void drawAxisLetter(const double x_offset,
+                    const double y_offset,
+                    const double z_offset,
+                    const std::string& axis_label,
+                    const AxesLimits& axes_limits,
+                    const CoordinateConverter& coord_converter,
+                    const float width,
+                    const float height)
+{
+    const Vec3Dd s = axes_limits.getAxesScale();
+
+    const float sx = 2.0 * kTextScale / width;
+    const float sy = 2.0 * kTextScale / height;
+
+    glPushMatrix();
+    glScalef(gs.x, gs.y, gs.x);
+
+    const Vec3Dd v(x_offset / s.x, y_offset / s.y, z_offset / s.z);
+    const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
+    glPushMatrix();
+    glTranslated(vv.x, vv.y, 0);
+    glScalef(sx / gs.x, sy / gs.y, 1.0);
+
+    putTextAtNew(axis_label);
+
+    glPopMatrix();
+
+    glPopMatrix();
+}
+
 void drawNumbersForYAxis(const Vectord& y_values,
                          const double x_offset,
                          const double z_offset,
@@ -176,14 +206,26 @@ void drawAxisNumbers(const GridVectors& gv,
     if (draw_x_numbers)
     {
         drawNumbersForXAxis(gv.x, y_value_to_use, z_value_to_use, axes_limits, coord_converter, width, height);
+        drawAxisLetter(
+            0.0, y_value_to_use * 1.1, z_value_to_use * 1.1, "X", axes_limits, coord_converter, width, height);
     }
     if (draw_y_numbers)
     {
         drawNumbersForYAxis(
             gv.y, x_value_to_use_vert, z_value_to_use_vert, axes_limits, coord_converter, width, height);
+        drawAxisLetter(x_value_to_use_vert * 1.1,
+                       0.0,
+                       z_value_to_use_vert * 1.1,
+                       "Y",
+                       axes_limits,
+                       coord_converter,
+                       width,
+                       height);
     }
     if (draw_z_numbers)
     {
+        drawAxisLetter(
+            x_value_to_use_vert * 1.1, y_value_to_use_2 * 1.1, 0.0, "Z", axes_limits, coord_converter, width, height);
         drawNumbersForZAxis(gv.z, x_value_to_use, y_value_to_use_2, axes_limits, coord_converter, width, height);
     }
 }

@@ -4,6 +4,27 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+void drawCircle3D(const Point3Dd p)
+{
+    const int num_points = 15;
+    const float dt = 2.0f * M_PI / static_cast<float>(num_points);
+    float t = 0.0f;
+    const float r = 0.01f;
+
+    glLineWidth(1);
+    glColor3f(1.0f, 0.0f, 0.0f);
+
+    glBegin(GL_LINE_LOOP);
+    for (size_t k = 0; k < num_points; k++)
+    {
+        const float x = r * std::cos(t) + p.x;
+        const float y = r * std::sin(t) + p.y;
+        t += dt;
+        glVertex3f(x, y, p.z);
+    }
+    glEnd();
+}
+
 void drawCircle(const Point2Dd p)
 {
     const int num_points = 15;
