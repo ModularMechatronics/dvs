@@ -1,8 +1,6 @@
  - setCurrentElement doesn't send any information to dvs, only sets internal variable on client side which is sent with the next command
   - This way, a property type could be added, so that the current element can be specified in the function call
- - Add another byte in the transmission which indicates if the transmission is sent over several segments (segmented transmission)
  - The class Properties should be moved so that it is not included in the C++ client interface.
- - use pushToCore instead of sendData?
  - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
  - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
  - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
@@ -22,8 +20,10 @@
  - Nice characters with AA
  - Characters turning away from plot box when rotating
  - Reducing number of axis numbers depending on rotation
- - Improving zoom
+ - Zoom rectangle if snapped
+ - Don't zoom perpendicular axis if snapped
  - Linux support
  - Making sure that view and axes are set properly when not explicitly setting them
- - Zoom/pan/rotate only one axis
+  - Behaviour when plotting when no configuration is set
  - Imshow 1 and 3 channels + arbitrary data type
+ - Set icons for zoon, pan and rotate
