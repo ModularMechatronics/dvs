@@ -2,6 +2,7 @@
 #define DVS_VECTOR_DYNAMIC_H_
 
 #include <cmath>
+#include <cstring>
 #include <type_traits>
 #include <utility>
 

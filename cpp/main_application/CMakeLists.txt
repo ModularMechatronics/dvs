@@ -47,12 +47,5 @@ add_executable(dvs ${CPP_SOURCE_FILES})
 target_link_libraries(dvs ${wxWidgets_LIBRARIES}
                           ${OPENGL_LIBRARIES}
                           ${GLUT_LIBRARY}
-                          pthread
-                          iconv
-                          png
-                          "-framework System"
-                          "-framework IOKit"
-                          "-framework Carbon"
-                          "-framework Cocoa"
-                          "-framework QuartzCore")
+                          ${PLATFORM_LIBRARIES})
 # Note: X11 used to be linked here, wasn't used on MacOS, was it for linux?

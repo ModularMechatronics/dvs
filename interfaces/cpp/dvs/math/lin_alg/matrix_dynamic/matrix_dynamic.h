@@ -2,6 +2,7 @@
 #define DVS_MATRIX_DYNAMIC_H_
 
 #include <cmath>
+#include <cstring>
 
 #include "dvs/math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic_class_def.h"
 #include "dvs/math/misc/math_macros.h"
