@@ -5,6 +5,8 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+#include "filesystem_include.h"
+
 class SettingsReader
 {
 private:
@@ -17,13 +19,13 @@ public:
     {
         createCacheFile();
     }
-    SettingsReader(const std::filesystem::path& settings_file_path)
+    SettingsReader(const dvs_filesystem::path& settings_file_path)
     {
         settings_file_path_ = settings_file_path;
-        settings_file_path_ += std::filesystem::path("cache.json");
+        settings_file_path_ += dvs_filesystem::path("cache.json");
         j_["empty"] = "empty";
 
-        if (!std::filesystem::exists(settings_file_path_))
+        if (!dvs_filesystem::exists(settings_file_path_))
         {
             std::cout << "File doesn't exist! Creating..." << std::endl;
             createCacheFile();

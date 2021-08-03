@@ -12,6 +12,7 @@
 
 #include "dvs/math/math.h"
 #include "events.h"
+#include "filesystem_include.h"
 #include "layout_tools_window.h"
 
 using namespace dvs::internal;
@@ -39,7 +40,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     current_gui_element_set_ = false;
     is_editing_ = false;
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
-    std::filesystem::path pa = std::filesystem::absolute(getExecutablePath());
+    dvs_filesystem::path pa = dvs_filesystem::absolute(getExecutablePath());
     cache_reader_ = new CacheReader(pa.remove_filename());
     main_window_last_in_focus_ = true;
 
@@ -49,7 +50,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     const wxColor middle_color(middle, middle, middle);
 
     if (cache_reader_->hasKey("last_opened_file") &&
-        std::filesystem::exists(cache_reader_->readCache<std::string>("last_opened_file")))
+        dvs_filesystem::exists(cache_reader_->readCache<std::string>("last_opened_file")))
     {
         save_manager_ = new SaveManager(cache_reader_->readCache<std::string>("last_opened_file"));
     }

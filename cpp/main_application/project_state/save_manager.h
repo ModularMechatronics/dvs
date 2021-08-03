@@ -1,6 +1,7 @@
 #ifndef SAVE_MANAGER_H_
 #define SAVE_MANAGER_H_
 
+#include <iomanip>
 #include <nlohmann/json.hpp>
 #include <string>
 

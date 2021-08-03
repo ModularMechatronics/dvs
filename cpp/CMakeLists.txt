@@ -4,6 +4,25 @@ project(dvs CXX)
 
 set(REPO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
+if(UNIX AND NOT APPLE)
+    set(PLATFORM_LINUX TRUE)
+    add_compile_definitions(PLATFORM_LINUX_M)
+elseif(APPLE)
+    set(PLATFORM_APPLE TRUE)
+    add_compile_definitions(PLATFORM_APPLE_M)
+elseif(WIN32)
+    set(PLATFORM_WINDOWS TRUE)
+    add_compile_definitions(PLATFORM_WINDOWS_M)
+else()
+    message(FATAL_ERROR "Unknown platform!" )
+endif()
+
+if(PLATFORM_LINUX)
+    include(cmake/linux.cmake)
+else()
+    include(cmake/macos.cmake)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -Wno-deprecated \
     -Wall -Wextra -pedantic -fdiagnostics-color")

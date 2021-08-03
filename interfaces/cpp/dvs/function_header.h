@@ -1,7 +1,9 @@
 #ifndef FUNCTION_HEADER_H_
 #define FUNCTION_HEADER_H_
 
+#include <algorithm>
 #include <cassert>
+#include <climits>
 #include <stdexcept>
 #include <vector>
 
