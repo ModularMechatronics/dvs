@@ -1,6 +1,18 @@
 #include "main_window.h"
 
+#ifdef PLATFORM_LINUX_M
+#include <libgen.h>
+#include <linux/limits.h>
+#include <unistd.h>
+
+#endif
+
+#ifdef PLATFORM_APPLE_M
+
 #include <mach-o/dyld.h>
+
+#endif
+
 #include <unistd.h>
 #include <wx/wfstream.h>
 #include <wx/wxprec.h>
@@ -17,6 +29,23 @@
 
 using namespace dvs::internal;
 
+#ifdef PLATFORM_LINUX_M
+std::string getExecutablePath()
+{
+    char result[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    const char* path;
+    if (count != -1)
+    {
+        path = dirname(result);
+    }
+    return std::string(path);
+}
+
+#endif
+
+#ifdef PLATFORM_APPLE_M
+
 std::string getExecutablePath()
 {
     char path[2048];
@@ -29,6 +58,8 @@ std::string getExecutablePath()
 
     return std::string(path);
 }
+
+#endif
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     : wxFrame(NULL, wxID_ANY, "", wxPoint(0, 30), wxSize(1500, 700))
@@ -43,6 +74,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     dvs_filesystem::path pa = dvs_filesystem::absolute(getExecutablePath());
     cache_reader_ = new CacheReader(pa.remove_filename());
     main_window_last_in_focus_ = true;
+
+#ifdef PLATFORM_LINUX_M
+    int argc = 1;
+    char* argv[1] = {"noop"};
+    glutInit(&argc, argv);
+#endif
 
     const int outer = 245;
     const int middle = 200;

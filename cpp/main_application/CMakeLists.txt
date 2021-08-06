@@ -48,4 +48,3 @@ target_link_libraries(dvs ${wxWidgets_LIBRARIES}
                           ${OPENGL_LIBRARIES}
                           ${GLUT_LIBRARY}
                           ${PLATFORM_LIBRARIES})
-# Note: X11 used to be linked here, wasn't used on MacOS, was it for linux?

@@ -70,10 +70,16 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
       GuiElement(element_settings)
 {
+#ifdef PLATFORM_APPLE_M
     wxGLContextAttrs cxtAttrs;
     cxtAttrs.PlatformDefaults().OGLVersion(99, 2).EndList();
     // https://stackoverflow.com/questions/41145024/wxwidgets-and-modern-opengl-3-3
     m_context = new wxGLContext(this, NULL, &cxtAttrs);
+#endif
+
+#ifdef PLATFORM_LINUX_M
+    m_context = new wxGLContext(this);
+#endif
 
     is_editing_ = false;
     parent_size_ = parent->GetSize();
