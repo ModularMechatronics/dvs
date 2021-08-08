@@ -63,8 +63,7 @@ void setCurrentElement(const char* name)
     hdr.values[hdr.num_objects].num_bytes = 1 + sizeof(size_t) + kNumBytesForName;
     hdr.values[hdr.num_objects].data[0] = (uint8_t)PT_NAME;
 
-    size_t tmp_var = kNumBytesForName;
-    memcpy(&(hdr.values[hdr.num_objects].data[1]), &tmp_var, sizeof(size_t));
+    memcpy(&(hdr.values[hdr.num_objects].data[1]), &kNumBytesForName, sizeof(size_t));
     memcpy(&(hdr.values[hdr.num_objects].data[1 + sizeof(size_t)]), name, kNumBytesForName);
 
     hdr.num_objects += 1;

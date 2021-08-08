@@ -10,7 +10,7 @@ void testMisc()
     Vector v = createVector(num_elements, DT_FLOAT);
     VectorF v2 = toVectorF(v);
     VectorF v1 = createVectorF(num_elements);
-    VectorF vq = linspaceFromPointsAndCountF(0.1, 0.8, num_elements);
+    VectorF vq = vector_linspaceFromPointsAndCountF(0.1, 0.8, num_elements);
 
     for (size_t k = 0; k < num_elements; k++)
     {
@@ -23,16 +23,11 @@ void testMisc()
     freeVector(v);
 }
 
-/*
-Work with the generic type for all functions
-If individual elements needs to be accessed, convert to specific type
-*/
-
 void testPlot()
 {
     const size_t num_elements = 100;
-    VectorF x = linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
-    VectorF y = dvsSinF(x);
+    VectorF x = vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
+    VectorF y = vector_sinF(x);
 
     setCurrentElement("view_00");
     clearView();
@@ -43,9 +38,9 @@ void testPlot()
 void testPlot3()
 {
     const size_t num_elements = 100;
-    VectorF x = linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
-    VectorF y = dvsSinF(x);
-    VectorF z = dvsCosF(x);
+    VectorF x = vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
+    VectorF y = vector_sinF(x);
+    VectorF z = vector_cosF(x);
 
     setCurrentElement("view_00");
     clearView();
