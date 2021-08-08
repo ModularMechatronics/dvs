@@ -18,7 +18,6 @@
 #include <wx/wxprec.h>
 
 #include <csignal>
-#include <filesystem>
 #include <iostream>
 #include <stdexcept>
 
