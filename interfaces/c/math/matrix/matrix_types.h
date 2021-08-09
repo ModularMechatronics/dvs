@@ -75,7 +75,6 @@ typedef struct S_MatrixS64
 
 } MatrixS64;
 
-//
 typedef struct S_MatrixU8
 {
     DataType data_type;
@@ -115,5 +114,17 @@ typedef struct S_MatrixU64
     uint64_t* data;
 
 } MatrixU64;
+
+typedef struct S_MatrixPair
+{
+    Matrix m0;
+    Matrix m1;
+} MatrixPair;
+
+typedef struct S_MatrixPairD
+{
+    MatrixD m0;
+    MatrixD m1;
+} MatrixPairD;
 
 #endif

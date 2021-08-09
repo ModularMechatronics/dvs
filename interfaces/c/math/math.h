@@ -4,8 +4,8 @@
 #include <math.h>
 
 #include "enumerations.h"
-#include "math/matrix_types.h"
-#include "math/vector_math.h"
+#include "math/matrix/matrix_math.h"
+#include "math/vector/vector_math.h"
 
 typedef struct S_Vec3DD
 {

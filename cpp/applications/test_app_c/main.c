@@ -35,6 +35,31 @@ void testPlot()
     scatter(x, y, Color(255, 0, 11));
 }
 
+void testSurf()
+{
+    const size_t num_rows = 100, num_cols = 80;
+    const MatrixPairD mp = meshgridD(0.0, 4.0, 1.0, 5.0, num_cols, num_rows);
+
+    const MatrixD x = mp.m0, y = mp.m1;
+
+    const MatrixD rx = matrix_sinD(x);
+    const MatrixD ry = matrix_cosD(y);
+    const MatrixD z = matrix_elementWiseMultiplyD(rx, ry);
+
+    printf("x: \n");
+    PRINT_MAT(x, "%f");
+
+    printf("y: \n");
+    PRINT_MAT(y, "%f");
+
+    printf("z: \n");
+    PRINT_MAT(z, "%f");
+
+    setCurrentElement("view_00");
+    clearView();
+    surf(x, y, z, Color(255, 0, 11));
+}
+
 void testPlot3()
 {
     const size_t num_elements = 100;
@@ -61,6 +86,7 @@ typedef struct S_TestFunctionPair
         {"testMisc", testMisc},
         {"testPlot", testPlot},
         {"testPlot3", testPlot3},
+        {"testSurf", testSurf},
         {0, 0}}; // '{0, 0}' must be last element in array
 // clang-format on
 
