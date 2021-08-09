@@ -2,7 +2,7 @@
 #define DVS_VECTOR_INSTANTIATION_H_
 
 #include "math/utils.h"
-#include "math/vector_types.h"
+#include "math/vector/vector_types.h"
 
 Vector createVector(const size_t num_elements, const DataType data_type)
 {
@@ -21,66 +21,6 @@ Vector createVector(const size_t num_elements, const DataType data_type)
         vec.num_elements = 0;          \
         vec.num_bytes_per_element = 0; \
     }
-
-VectorF toVectorF(const Vector vec)
-{
-    VectorF ret_vec = *(VectorF*)(&vec);
-    return ret_vec;
-}
-
-VectorD toVectorD(const Vector vec)
-{
-    VectorD ret_vec = *(VectorD*)(&vec);
-    return ret_vec;
-}
-
-VectorS8 toVectorS8(const Vector vec)
-{
-    VectorS8 ret_vec = *(VectorS8*)(&vec);
-    return ret_vec;
-}
-
-VectorS16 toVectorS16(const Vector vec)
-{
-    VectorS16 ret_vec = *(VectorS16*)(&vec);
-    return ret_vec;
-}
-
-VectorS32 toVectorS32(const Vector vec)
-{
-    VectorS32 ret_vec = *(VectorS32*)(&vec);
-    return ret_vec;
-}
-
-VectorS64 toVectorS64(const Vector vec)
-{
-    VectorS64 ret_vec = *(VectorS64*)(&vec);
-    return ret_vec;
-}
-
-VectorU8 toVectorU8(const Vector vec)
-{
-    VectorU8 ret_vec = *(VectorU8*)(&vec);
-    return ret_vec;
-}
-
-VectorU16 toVectorU16(const Vector vec)
-{
-    VectorU16 ret_vec = *(VectorU16*)(&vec);
-    return ret_vec;
-}
-
-VectorU32 toVectorU32(const Vector vec)
-{
-    VectorU32 ret_vec = *(VectorU32*)(&vec);
-    return ret_vec;
-}
-
-VectorU64 toVectorU64(const Vector vec)
-{
-    VectorU64 ret_vec = *(VectorU64*)(&vec);
-    return ret_vec;
-}
 
 VectorF createVectorF(const size_t num_elements)
 {
@@ -159,6 +99,66 @@ VectorU64 createVectorU64(const size_t num_elements)
     Vector vec = createVector(num_elements, DT_UINT64);
     VectorU64 ret_vec = *(VectorU64*)(&vec);
 
+    return ret_vec;
+}
+
+VectorF toVectorF(const Vector vec)
+{
+    VectorF ret_vec = *(VectorF*)(&vec);
+    return ret_vec;
+}
+
+VectorD toVectorD(const Vector vec)
+{
+    VectorD ret_vec = *(VectorD*)(&vec);
+    return ret_vec;
+}
+
+VectorS8 toVectorS8(const Vector vec)
+{
+    VectorS8 ret_vec = *(VectorS8*)(&vec);
+    return ret_vec;
+}
+
+VectorS16 toVectorS16(const Vector vec)
+{
+    VectorS16 ret_vec = *(VectorS16*)(&vec);
+    return ret_vec;
+}
+
+VectorS32 toVectorS32(const Vector vec)
+{
+    VectorS32 ret_vec = *(VectorS32*)(&vec);
+    return ret_vec;
+}
+
+VectorS64 toVectorS64(const Vector vec)
+{
+    VectorS64 ret_vec = *(VectorS64*)(&vec);
+    return ret_vec;
+}
+
+VectorU8 toVectorU8(const Vector vec)
+{
+    VectorU8 ret_vec = *(VectorU8*)(&vec);
+    return ret_vec;
+}
+
+VectorU16 toVectorU16(const Vector vec)
+{
+    VectorU16 ret_vec = *(VectorU16*)(&vec);
+    return ret_vec;
+}
+
+VectorU32 toVectorU32(const Vector vec)
+{
+    VectorU32 ret_vec = *(VectorU32*)(&vec);
+    return ret_vec;
+}
+
+VectorU64 toVectorU64(const Vector vec)
+{
+    VectorU64 ret_vec = *(VectorU64*)(&vec);
     return ret_vec;
 }
 
