@@ -62,6 +62,29 @@ void surfFunction(
     sendHeaderAndThreeMatrices(getSendFunction(), x, y, z, &hdr);
 }
 
+void drawPolygonFrom4PointsFunction(const Point3DD p0,
+                                    const Point3DD p1,
+                                    const Point3DD p2,
+                                    const Point3DD p3,
+                                    const FunctionHeaderObject first_prop,
+                                    ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_POLYGON_FROM_4_POINTS, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 4, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+    const Point3DD points[4] = {p0, p1, p2, p3};
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&points), sizeof(Point3DD) * 4, &hdr);
+}
+
+#define drawPolygonFrom4Points(p0, p1, p2, p3, ...) \
+    drawPolygonFrom4PointsFunction(p0, p1, p2, p3, __VA_ARGS__, getLastFHO())
+
 #define surf(x, y, z, ...) surfFunction((Matrix*)&x, (Matrix*)&y, (Matrix*)&z, __VA_ARGS__, getLastFHO())
 
 #define plot(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_PLOT2, __VA_ARGS__, getLastFHO())
@@ -72,6 +95,12 @@ void surfFunction(
 
 #define scatter3(x, y, z, ...) \
     plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastFHO())
+
+/*void drawPolygonFrom4Points(const Point3D<double>& p0,
+                            const Point3D<double>& p1,
+                            const Point3D<double>& p2,
+                            const Point3D<double>& p3,
+                            const Us&... settings)*/
 
 void setCurrentElement(const char* name)
 {

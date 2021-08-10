@@ -164,6 +164,40 @@ void fillBufferWithHeader(const FunctionHeader* const hdr, uint8_t* const buffer
     }
 }
 
+void sendHeaderAndByteArray(SendFunction send_function,
+                            const uint8_t* const array,
+                            const size_t num_bytes_from_array,
+                            FunctionHeader* hdr)
+{
+    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_from_array + num_bytes_hdr + 1 + 2 * sizeof(uint64_t);
+
+    uint8_t* const data_blob = malloc(num_bytes);
+
+    uint64_t idx = 0;
+    data_blob[idx] = isBigEndian();
+    idx += 1;
+
+    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    idx += num_bytes_hdr;
+
+    memcpy(&(data_blob[idx]), array, num_bytes_from_array);
+    idx += num_bytes_from_array;
+
+    send_function(data_blob, num_bytes);
+
+    free(data_blob);
+}
+
 void sendHeaderAndTwoVectors(SendFunction send_function,
                              const Vector* const x,
                              const Vector* const y,
