@@ -6,18 +6,6 @@
 #include "enumerations.h"
 #include "math/matrix/matrix_math.h"
 #include "math/vector/vector_math.h"
-
-typedef struct S_Vec3DD
-{
-    double x;
-    double y;
-    double z;
-} Vec3DD;
-
-typedef struct S_Vec2DD
-{
-    double x;
-    double y;
-} Vec2DD;
+#include "math/vector_low_dim/vector_low_dim.h"
 
 #endif

@@ -46,18 +46,29 @@ void testSurf()
     const MatrixD ry = matrix_cosD(y);
     const MatrixD z = matrix_elementWiseMultiplyD(rx, ry);
 
-    printf("x: \n");
-    PRINT_MAT(x, "%f");
-
-    printf("y: \n");
-    PRINT_MAT(y, "%f");
-
-    printf("z: \n");
-    PRINT_MAT(z, "%f");
-
     setCurrentElement("view_00");
     clearView();
     surf(x, y, z, Color(255, 0, 11));
+
+    free(x.data);
+    free(y.data);
+    free(z.data);
+
+    free(rx.data);
+    free(ry.data);
+}
+
+void testDrawPolygonFrom4Points()
+{
+    Point3DD p0 = {0.0, 0.0, 0.0};
+    Point3DD p1 = {0.0, 1.0, 1.0};
+    Point3DD p2 = {1.0, 1.0, 2.0};
+    Point3DD p3 = {0.0, 2.0, 0.6};
+
+    setCurrentElement("view_02");
+    clearView();
+
+    drawPolygonFrom4Points(p0, p1, p2, p3, Color(255, 0, 11));
 }
 
 void testPlot3()
@@ -87,6 +98,7 @@ typedef struct S_TestFunctionPair
         {"testPlot", testPlot},
         {"testPlot3", testPlot3},
         {"testSurf", testSurf},
+        {"testDrawPolygonFrom4Points", testDrawPolygonFrom4Points},
         {0, 0}}; // '{0, 0}' must be last element in array
 // clang-format on
 
