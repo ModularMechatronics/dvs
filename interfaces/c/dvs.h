@@ -79,8 +79,66 @@ void drawPolygonFrom4PointsFunction(const Point3DD p0,
     APPEND_PROPERTIES(hdr, first_prop);
     const Point3DD points[4] = {p0, p1, p2, p3};
 
-    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&points), sizeof(Point3DD) * 4, &hdr);
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, sizeof(Point3DD) * 4, &hdr);
 }
+
+void drawTriangleFunction(const Triangle3DD triangle, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_TRIANGLES_3D, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 1, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&triangle), sizeof(Triangle3DD), &hdr);
+}
+
+void drawTrianglesFunction(const Triangle3DFArray triangles, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_TRIANGLES_3D, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, triangles.num_elements, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(triangles.elements), triangles.num_elements * sizeof(Triangle3DD), &hdr);
+}
+
+void drawMeshFunction(const Point3DDArray vertices, const IndexTripletArray indices, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_MESH, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, indices.num_elements, uint32_t);
+    APPEND_VAL(&hdr, FHOT_NUM_VERTICES, vertices.num_elements, uint32_t);
+    APPEND_VAL(&hdr, FHOT_NUM_INDICES, indices.num_elements, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    sendHeaderAndTwoByteArrays(getSendFunction(),
+        (uint8_t*)(vertices.elements),
+        vertices.num_elements * sizeof(Triangle3DD),
+        (uint8_t*)(indices.elements),
+        indices.num_elements * sizeof(IndexTriplet),
+        &hdr);
+}
+
+#define drawMesh(vertices, indices, ...) \
+    drawMeshFunction(vertices, indices, __VA_ARGS__, getLastFHO())
+
+#define drawTriangle(triangle, ...) \
+    drawTriangleFunction(triangle, __VA_ARGS__, getLastFHO())
+
+#define drawTriangles(triangles, ...) \
+    drawTriangleFunction(triangles, __VA_ARGS__, getLastFHO())
 
 #define drawPolygonFrom4Points(p0, p1, p2, p3, ...) \
     drawPolygonFrom4PointsFunction(p0, p1, p2, p3, __VA_ARGS__, getLastFHO())
@@ -96,11 +154,7 @@ void drawPolygonFrom4PointsFunction(const Point3DD p0,
 #define scatter3(x, y, z, ...) \
     plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastFHO())
 
-/*void drawPolygonFrom4Points(const Point3D<double>& p0,
-                            const Point3D<double>& p1,
-                            const Point3D<double>& p2,
-                            const Point3D<double>& p3,
-                            const Us&... settings)*/
+
 
 void setCurrentElement(const char* name)
 {
