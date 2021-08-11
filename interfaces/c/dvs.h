@@ -196,11 +196,96 @@ void drawLine2DFunction(const PLine2DD line, const double t0, const double t1, c
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
 }
 
-#define drawLine2DFunction(line, t0, t1, ...) \
-    drawLine2D(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
+void drawPlaneXYFunction(const PlaneD plane, const PointXYD p0, const PointXYD p1, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
 
-#define drawLineFunction(line, t0, t1, ...) \
-    drawLine(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_PLANE_XY, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 2, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    struct PlanePointsStruct
+    {
+        PlaneD plane;
+        PointXYD p0;
+        PointXYD p1;
+    } pps;
+
+    pps.plane = plane;
+    pps.p0 = p0;
+    pps.p1 = p1;
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&pps), sizeof(struct PlanePointsStruct), &hdr);
+}
+
+void drawPlaneXZFunction(const PlaneD plane, const PointXZD p0, const PointXZD p1, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_PLANE_XZ, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 2, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    struct PlanePointsStruct
+    {
+        PlaneD plane;
+        PointXZD p0;
+        PointXZD p1;
+    } pps;
+
+    pps.plane = plane;
+    pps.p0 = p0;
+    pps.p1 = p1;
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&pps), sizeof(struct PlanePointsStruct), &hdr);
+}
+
+void drawPlaneYZFunction(const PlaneD plane, const PointYZD p0, const PointYZD p1, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_PLANE_YZ, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 2, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    struct PlanePointsStruct
+    {
+        PlaneD plane;
+        PointYZD p0;
+        PointYZD p1;
+    } pps;
+
+    pps.plane = plane;
+    pps.p0 = p0;
+    pps.p1 = p1;
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&pps), sizeof(struct PlanePointsStruct), &hdr);
+}
+
+
+#define drawPlaneXY(p0, p1, plane, ...) \
+    drawPlaneXYFunction(p0, p1, plane, __VA_ARGS__, getLastFuncHdrObj())
+
+#define drawPlaneXZ(p0, p1, plane, ...) \
+    drawPlaneXZFunction(p0, p1, plane, __VA_ARGS__, getLastFuncHdrObj())
+
+#define drawPlaneYZ(p0, p1, plane, ...) \
+    drawPlaneYZFunction(p0, p1, plane, __VA_ARGS__, getLastFuncHdrObj())
+
+#define drawLine2D(line, t0, t1, ...) \
+    drawLine2DFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
+
+#define drawLine(line, t0, t1, ...) \
+    drawLineFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawLineBetweenPoints(p0, p1, ...) \
     drawLineBetweenPointsFunction(p0, p1, __VA_ARGS__, getLastFuncHdrObj())

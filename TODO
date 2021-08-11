@@ -16,6 +16,7 @@
    view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
  - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
  - Rename HomogenousLine and ParametricLine to HLine and Pline?
+ - Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
 
 #### Bigger features
  - Fix so that one can set axis square and axis equal
