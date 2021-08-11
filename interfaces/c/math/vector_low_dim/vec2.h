@@ -30,4 +30,8 @@ typedef struct S_VecYZD
 #define Point2DF Vec2DF
 #define Point2DD Vec2DD
 
+#define PointXYD VecXYD
+#define PointXZD VecXZD
+#define PointYZD VecYZD
+
 #endif
