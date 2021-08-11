@@ -131,28 +131,102 @@ void drawMeshFunction(const Point3DDArray vertices, const IndexTripletArray indi
         &hdr);
 }
 
+void drawLineBetweenPointsFunction(const Point3DD p0, const Point3DD p1, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_LINE_BETWEEN_POINTS_3D, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 0, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+    const Point3DD points[2] = {p0, p1};
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
+}
+
+void drawLineFunction(const Line3DD line, const double t0, const double t1, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_LINE3D, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 0, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    Point3DD p0, p1;
+    p0.x = line.p.x + line.v.x * t0;
+    p0.y = line.p.y + line.v.y * t0;
+    p0.z = line.p.z + line.v.z * t0;
+
+    p1.x = line.p.x + line.v.x * t1;
+    p1.y = line.p.y + line.v.y * t1;
+    p1.z = line.p.z + line.v.z * t1;
+
+    const Point3DD points[2] = {p0, p1};
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
+}
+
+void drawLine2DFunction(const PLine2DD line, const double t0, const double t1, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_LINE3D, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 0, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    Point3DD p0, p1;
+    p0.x = line.p.x + line.v.x * t0;
+    p0.y = line.p.y + line.v.y * t0;
+    p0.z = 0.0;
+
+    p1.x = line.p.x + line.v.x * t1;
+    p1.y = line.p.y + line.v.y * t1;
+    p1.z = 0.0;
+
+    const Point3DD points[2] = {p0, p1};
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
+}
+
+#define drawLine2DFunction(line, t0, t1, ...) \
+    drawLine2D(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
+
+#define drawLineFunction(line, t0, t1, ...) \
+    drawLine(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
+
+#define drawLineBetweenPoints(p0, p1, ...) \
+    drawLineBetweenPointsFunction(p0, p1, __VA_ARGS__, getLastFuncHdrObj())
+
 #define drawMesh(vertices, indices, ...) \
-    drawMeshFunction(vertices, indices, __VA_ARGS__, getLastFHO())
+    drawMeshFunction(vertices, indices, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawTriangle(triangle, ...) \
-    drawTriangleFunction(triangle, __VA_ARGS__, getLastFHO())
+    drawTriangleFunction(triangle, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawTriangles(triangles, ...) \
-    drawTriangleFunction(triangles, __VA_ARGS__, getLastFHO())
+    drawTriangleFunction(triangles, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawPolygonFrom4Points(p0, p1, p2, p3, ...) \
-    drawPolygonFrom4PointsFunction(p0, p1, p2, p3, __VA_ARGS__, getLastFHO())
+    drawPolygonFrom4PointsFunction(p0, p1, p2, p3, __VA_ARGS__, getLastFuncHdrObj())
 
-#define surf(x, y, z, ...) surfFunction((Matrix*)&x, (Matrix*)&y, (Matrix*)&z, __VA_ARGS__, getLastFHO())
+#define surf(x, y, z, ...) surfFunction((Matrix*)&x, (Matrix*)&y, (Matrix*)&z, __VA_ARGS__, getLastFuncHdrObj())
 
-#define plot(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_PLOT2, __VA_ARGS__, getLastFHO())
+#define plot(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_PLOT2, __VA_ARGS__, getLastFuncHdrObj())
 
-#define scatter(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_SCATTER2, __VA_ARGS__, getLastFHO())
+#define scatter(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_SCATTER2, __VA_ARGS__, getLastFuncHdrObj())
 
-#define plot3(x, y, z, ...) plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, __VA_ARGS__, getLastFHO())
+#define plot3(x, y, z, ...) plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, __VA_ARGS__, getLastFuncHdrObj())
 
 #define scatter3(x, y, z, ...) \
-    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastFHO())
+    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastFuncHdrObj())
 
 
 

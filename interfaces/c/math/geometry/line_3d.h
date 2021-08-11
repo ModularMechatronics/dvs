@@ -3,11 +3,11 @@
 
 #include "math/vector_low_dim/vec3.h"
 
-typedef struct S_Line3D
+typedef struct S_Line3DD
 {
     Point3DD p;
     Vec3DD v;
-} Line3D;
+} Line3DD;
 
 
 #endif
