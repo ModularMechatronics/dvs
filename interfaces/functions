@@ -39,6 +39,10 @@ void drawLine2DBetweenYValues(const HomogeneousLine2D<double>& line,
                               const Us&... settings)
 void drawLineBetweenPoints(const Point3D<double>& p0, const Point3D<double>& p1, const Us&... settings)
 void drawLineBetweenPoints(const Point2D<double>& p0, const Point2D<double>& p1, const Us&... settings)
+
+
+
+
 inline void setCurrentElement(const std::string& name,
                               const ElementType element_type,
                               const std::string& parent_name = "#DEFAULTNAME#",
