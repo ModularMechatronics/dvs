@@ -3,17 +3,17 @@
 
 #include "math/vector_low_dim/vec2.h"
 
-typedef struct S_PLine2D
+typedef struct S_PLine2DD
 {
     Point2DD p;
     Vec2DD v;
-} PLine2D;
+} PLine2DD;
 
-typedef struct S_HLine2D
+typedef struct S_HLine2DD
 {
     double a;
     double b;
     double c;
-} HLine2D;
+} HLine2DD;
 
 #endif

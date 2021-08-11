@@ -15,7 +15,7 @@ typedef struct S_FunctionHeaderObject
     uint8_t data[kMaxNumFunctionHeaderBytes];
 } FunctionHeaderObject;
 
-FunctionHeaderObject getLastFHO()
+FunctionHeaderObject getLastFuncHdrObj()
 {
     FunctionHeaderObject obj;
     obj.type = FHOT_UNKNOWN;
