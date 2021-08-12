@@ -16,13 +16,7 @@ Matrix createMatrix(const size_t num_rows, const size_t num_cols, const DataType
     return mat;
 }
 
-#define freeMatrix(mat)                \
-    {                                  \
-        free(mat.data);                \
-        mat.num_rows = 0;              \
-        mat.num_cols = 0;              \
-        mat.num_bytes_per_element = 0; \
-    }
+#define freeMatrix(mat) free(mat.data)
 
 MatrixF createMatrixF(const size_t num_rows, const size_t num_cols)
 {

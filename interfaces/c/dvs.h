@@ -271,6 +271,25 @@ void drawPlaneYZFunction(const PlaneD plane, const PointYZD p0, const PointYZD p
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&pps), sizeof(struct PlanePointsStruct), &hdr);
 }
 
+void imShowFunction(const ImageC3* const img, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    Dimension2D dims = {img->num_rows, img->num_cols};
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_IM_SHOW, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, img->data_type, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_CHANNELS, 3, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, img->num_rows * img->num_cols, uint32_t);  // Needed?
+    APPEND_VAL(&hdr, FHOT_DIMENSION_2D, dims, Dimension2D);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(img->data), img->num_rows * img->num_cols * 3 * dataTypeToNumBytes(img->data_type), &hdr);
+}
+
+#define imShow(img, ...) imShowFunction((ImageC3*)&img, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawPlaneXY(p0, p1, plane, ...) \
     drawPlaneXYFunction(p0, p1, plane, __VA_ARGS__, getLastFuncHdrObj())

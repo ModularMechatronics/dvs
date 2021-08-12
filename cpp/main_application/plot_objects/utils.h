@@ -17,6 +17,8 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
     // Name it 'num_components'?
     switch (fcn)
     {
+        case Function::STAIRS:
+            return 2;
         case Function::PLOT2:
             return 2;
         case Function::PLOT3:
