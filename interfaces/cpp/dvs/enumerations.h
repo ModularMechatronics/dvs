@@ -80,6 +80,7 @@ enum class Function : uint8_t
     VIEW,
     CLEAR,
     SOFT_CLEAR,
+    STAIRS,
     UNKNOWN
 };
 

@@ -244,6 +244,27 @@ void testPlot2()
     plot(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(1));
 }
 
+void testStairs()
+{
+    const size_t num_elements = 30;
+    Vector<float> xf(num_elements), yf(num_elements);
+
+    double t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        xf(k) = 10.0 * cos(t) + 20.0;
+        yf(k) = 10.0 * sin(t) + 20.0 + k;
+
+        t = t + 0.3;
+    }
+
+    setCurrentElement("view_00");
+    clearView();
+
+    stairs(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(20));
+}
+
 void testPlot3()
 {
     const size_t num_elements = 30;

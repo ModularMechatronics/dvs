@@ -56,7 +56,7 @@ ImageC3<T>::ImageC3() : num_rows_(0), num_cols_(0), is_allocated_(false), num_el
 
 template <typename T> ImageC3<T>::ImageC3(const size_t num_rows, const size_t num_cols)
 {
-    data_ = new T[num_rows * num_cols];
+    data_ = new T[num_rows * num_cols * 3];
     num_rows_ = num_rows;
     num_cols_ = num_cols;
     num_element_per_channel_ = num_rows_ * num_cols_;

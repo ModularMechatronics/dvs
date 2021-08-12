@@ -6,6 +6,7 @@
 #include "enumerations.h"
 #include "math/matrix/matrix_math.h"
 #include "math/vector/vector_math.h"
+#include "math/image/image_math.h"
 #include "math/vector_low_dim/vec3.h"
 #include "math/vector_low_dim/vec2.h"
 #include "math/geometry/triangle.h"

@@ -100,7 +100,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::CLEAR) || (fcn == Function::HOLD_ON) || (fcn == Function::HOLD_OFF) ||
            (fcn == Function::POSITION) || (fcn == Function::SURF) || (fcn == Function::IM_SHOW) ||
            (fcn == Function::AXES_2D) || (fcn == Function::AXES_3D) || (fcn == Function::VIEW) ||
-           (fcn == Function::SOFT_CLEAR);
+           (fcn == Function::SOFT_CLEAR) || (fcn == Function::STAIRS);
 }
 
 void MainWindow::receiveData()

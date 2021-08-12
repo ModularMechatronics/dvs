@@ -27,6 +27,7 @@ extern void testDrawLineBetweenPoints3D();
 extern void testDrawLine2D();
 extern void testDifferentViews();
 extern void testCube();
+extern void testStairs();
 
 std::map<std::string, std::function<void()>> fcns;
 
@@ -67,6 +68,7 @@ int main(int argc, char* argv[])
     fcns["draw-line-between-points"] = testDrawLineBetweenPoints3D;
     fcns["different-views"] = testDifferentViews;
     fcns["cube"] = testCube;
+    fcns["stairs"] = testStairs;
 
     if (argc == 1)
     {

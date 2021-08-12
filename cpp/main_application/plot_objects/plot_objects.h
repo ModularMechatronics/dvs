@@ -3,6 +3,7 @@
 
 // clang-format off
 
+#include "plot_objects/stairs.h"
 #include "plot_objects/plot2d.h"
 #include "plot_objects/plot3d.h"
 #include "plot_objects/scatter.h"

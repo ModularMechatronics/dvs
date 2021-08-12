@@ -15,12 +15,7 @@ Vector createVector(const size_t num_elements, const DataType data_type)
     return vec;
 }
 
-#define freeVector(vec)                \
-    {                                  \
-        free(vec.data);                \
-        vec.num_elements = 0;          \
-        vec.num_bytes_per_element = 0; \
-    }
+#define freeVector(vec) free(vec.data)
 
 VectorF createVectorF(const size_t num_elements)
 {
