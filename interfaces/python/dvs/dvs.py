@@ -342,17 +342,16 @@ def imshow(img: np.array, **properties):
     hdr = FunctionHeader()
     hdr.append(FunctionHeaderObjectType.FUNCTION, Function.IM_SHOW)
 
-    # TODO: Needs some fixing up
     if len(img.shape) == 2:
         hdr.append(FunctionHeaderObjectType.NUM_CHANNELS, 1)
+        hdr.append(FunctionHeaderObjectType.DIMENSION_2D, img.shape)
     else:
         hdr.append(FunctionHeaderObjectType.NUM_CHANNELS, 3)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS,
-               img.size)  # TODO: Needed?
-    hdr.append(FunctionHeaderObjectType.DIMENSION_2D, img.shape)
+        hdr.append(FunctionHeaderObjectType.DIMENSION_2D, img[0].shape)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, img.size)
 
     hdr.append(FunctionHeaderObjectType.DATA_TYPE,
-               np_data_type_to_data_type(img[0][0].__class__))
+               np_data_type_to_data_type(img[0][0][0].__class__))
 
     hdr.append_properties(properties)
 

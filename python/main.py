@@ -76,13 +76,22 @@ def test_imshow():
     y = np.linspace(-0.1, 3, 100, dtype=np.float32)
     x, y = np.meshgrid(x, y)
     r = np.sqrt(x * x + y * y)
-    z = np.sin(r) / r
+    zr = np.sin(r) / r
+    zg = np.sin(r)
+    zb = np.sin(r) / (r * r)
 
-    z = (z - np.min(z)) / (np.max(z) - np.min(z))
+    zr = (zr - np.min(zr)) / (np.max(zr) - np.min(zr))
+    zg = (zg - np.min(zg)) / (np.max(zg) - np.min(zg))
+    zb = (zb - np.min(zb)) / (np.max(zb) - np.min(zb))
+
+    q = np.zeros((3, 100, 100), dtype=np.float32)
+    q[0, :, :] = zr
+    q[1, :, :] = zg
+    q[2, :, :] = zb
 
     dvs.axis([-10, -10, -10], [10, 10, 10])
     dvs.view(0, 90)
-    dvs.imshow(z)
+    dvs.imshow(q)
 
 
 if __name__ == "__main__":
