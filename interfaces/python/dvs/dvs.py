@@ -2,10 +2,12 @@ from enum import Enum
 import numpy as np
 import sys
 import socket
+from typing import List, Union
 
 from enums import *
 from constants import *
 from serialization import *
+from structures import *
 from internal_types import *
 
 MAX_BYTES_FOR_ONE_MSG = 1380
@@ -214,7 +216,9 @@ def send_header_and_data(send_fcn, hdr, *args):
     send_fcn(buffer_to_send.data)
 
 
-def axis(min_vec, max_vec):
+def axis(min_vec: Union[Vec2D, Vec3D], max_vec: Union[Vec2D, Vec3D]):
+
+    # TODO: Add if statement if Vec2D is input
 
     hdr = FunctionHeader()
     hdr.append(FunctionHeaderObjectType.FUNCTION, Function.AXES_3D)
@@ -250,7 +254,21 @@ def set_current_element(name: str):
     send_header(send_with_udp, hdr)
 
 
+def hold_on(name: str):
+
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.HOLD_ON)
+    send_header(send_with_udp, hdr)
+
+
+def hold_off(name: str):
+
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.HOLD_OFF)
+    send_header(send_with_udp, hdr)
+
 ####### Plot functions #######
+
 
 def plot(x: np.array, y: np.array, **properties):
 
@@ -356,3 +374,60 @@ def imshow(img: np.array, **properties):
     hdr.append_properties(properties)
 
     send_header_and_data(send_with_udp, hdr, img)
+
+
+def draw_polygon_from_4_points(p0: Point3D, p1: Point3D, p2: Point3D, p3: Point3D, **properties):
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION,
+               Function.POLYGON_FROM_4_POINTS)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 4)
+
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, p0, p1, p2, p3)
+
+
+def draw_triangle(triangle: Triangle3D, **properties):
+    pass
+
+
+def draw_triangles(triangles: List[Triangle3D], **properties):
+    pass
+
+
+def draw_mesh(points: List[Point3D], indices: List[IndexTriplet], **properties):
+    pass
+
+
+def draw_plane_xy(plane: Plane, p0: PointXY, p1: PointXY, **properties):
+    pass
+
+
+def draw_plane_xz(plane: Plane, p0: PointXZ, p1: PointXZ, **properties):
+    pass
+
+
+def draw_plane_yz(plane: Plane, p0: PointYZ, p1: PointYZ, **properties):
+    pass
+
+
+def draw_line(line: Line3D, t0: np.float64, t1: np.float64, **properties):
+    pass
+
+
+def draw_line_2d(line: PLine2D, t0: np.float64, t1: np.float64, **properties):
+    pass
+
+
+def draw_line_2d_between_x_values(line: HLine2D, x0: np.float64, x1: np.float64, **properties):
+    pass
+
+
+def draw_line_2d_between_y_values(line: HLine2D, y0: np.float64, y1: np.float64, **properties):
+    pass
+
+
+def draw_line_between_points(p0: Union[Point2D, Point3D], p1: Union[Point2D, Point3D], **properties):
+    pass

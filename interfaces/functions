@@ -58,3 +58,10 @@ inline void axis(const Bound2D& min_bound, const Bound2D& max_bound)
 inline void holdOn()
 inline void softClearView()
 inline void clearView()
+
+##### NOT FINISHED #####
+template <typename... Us>
+void drawPolygonFrom3Points
+void drawPolygonFromNPoints
+stairs
+fill2D
