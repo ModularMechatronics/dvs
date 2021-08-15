@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "math/vector_low_dim/vec3.h"
 #include "enumerations.h"
+#include "math/vector_low_dim/vec3.h"
 
 typedef struct S_Triangle3DF
 {
@@ -20,6 +20,18 @@ typedef struct S_Triangle3DD
     Point3DD p1;
     Point3DD p2;
 } Triangle3DD;
+
+Triangle3DD createTriangle3DD(const Point3DD p0, const Point3DD p1, const Point3DD p2)
+{
+    const Triangle3DD t = {p0, p1, p2};
+    return t;
+}
+
+Triangle3DF createTriangle3DF(const Point3DF p0, const Point3DF p1, const Point3DF p2)
+{
+    const Triangle3DF t = {p0, p1, p2};
+    return t;
+}
 
 typedef struct S_Triangle3DDArray
 {
@@ -72,6 +84,5 @@ IndexTripletArray createIndexTripletArray(const size_t num_elements)
 
     return array;
 }
-
 
 #endif

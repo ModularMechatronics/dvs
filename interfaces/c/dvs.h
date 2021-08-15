@@ -102,15 +102,19 @@ void drawTrianglesFunction(const Triangle3DFArray triangles, const FunctionHeade
     initFunctionHeader(&hdr);
 
     APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_TRIANGLES_3D, uint8_t);
-    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_FLOAT, uint8_t);
     APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, triangles.num_elements, uint32_t);
 
     APPEND_PROPERTIES(hdr, first_prop);
 
-    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(triangles.elements), triangles.num_elements * sizeof(Triangle3DD), &hdr);
+    sendHeaderAndByteArray(
+        getSendFunction(), (uint8_t*)(triangles.elements), triangles.num_elements * sizeof(Triangle3DF), &hdr);
 }
 
-void drawMeshFunction(const Point3DDArray vertices, const IndexTripletArray indices, const FunctionHeaderObject first_prop, ...)
+void drawMeshFunction(const Point3DDArray vertices,
+                      const IndexTripletArray indices,
+                      const FunctionHeaderObject first_prop,
+                      ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -124,11 +128,11 @@ void drawMeshFunction(const Point3DDArray vertices, const IndexTripletArray indi
     APPEND_PROPERTIES(hdr, first_prop);
 
     sendHeaderAndTwoByteArrays(getSendFunction(),
-        (uint8_t*)(vertices.elements),
-        vertices.num_elements * sizeof(Triangle3DD),
-        (uint8_t*)(indices.elements),
-        indices.num_elements * sizeof(IndexTriplet),
-        &hdr);
+                               (uint8_t*)(vertices.elements),
+                               vertices.num_elements * sizeof(Triangle3DD),
+                               (uint8_t*)(indices.elements),
+                               indices.num_elements * sizeof(IndexTriplet),
+                               &hdr);
 }
 
 void drawLineBetweenPointsFunction(const Point3DD p0, const Point3DD p1, const FunctionHeaderObject first_prop, ...)
@@ -171,7 +175,8 @@ void drawLineFunction(const Line3DD line, const double t0, const double t1, cons
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
 }
 
-void drawLine2DFunction(const PLine2DD line, const double t0, const double t1, const FunctionHeaderObject first_prop, ...)
+void drawLine2DFunction(
+    const PLine2DD line, const double t0, const double t1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -196,7 +201,8 @@ void drawLine2DFunction(const PLine2DD line, const double t0, const double t1, c
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
 }
 
-void drawPlaneXYFunction(const PlaneD plane, const PointXYD p0, const PointXYD p1, const FunctionHeaderObject first_prop, ...)
+void drawPlaneXYFunction(
+    const PlaneD plane, const PointXYD p0, const PointXYD p1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -209,19 +215,20 @@ void drawPlaneXYFunction(const PlaneD plane, const PointXYD p0, const PointXYD p
 
     struct PlanePointsStruct
     {
-        PlaneD plane;
         PointXYD p0;
         PointXYD p1;
+        PlaneD plane;
     } pps;
 
-    pps.plane = plane;
     pps.p0 = p0;
     pps.p1 = p1;
+    pps.plane = plane;
 
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&pps), sizeof(struct PlanePointsStruct), &hdr);
 }
 
-void drawPlaneXZFunction(const PlaneD plane, const PointXZD p0, const PointXZD p1, const FunctionHeaderObject first_prop, ...)
+void drawPlaneXZFunction(
+    const PlaneD plane, const PointXZD p0, const PointXZD p1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -234,19 +241,20 @@ void drawPlaneXZFunction(const PlaneD plane, const PointXZD p0, const PointXZD p
 
     struct PlanePointsStruct
     {
-        PlaneD plane;
         PointXZD p0;
         PointXZD p1;
+        PlaneD plane;
     } pps;
 
-    pps.plane = plane;
     pps.p0 = p0;
     pps.p1 = p1;
+    pps.plane = plane;
 
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&pps), sizeof(struct PlanePointsStruct), &hdr);
 }
 
-void drawPlaneYZFunction(const PlaneD plane, const PointYZD p0, const PointYZD p1, const FunctionHeaderObject first_prop, ...)
+void drawPlaneYZFunction(
+    const PlaneD plane, const PointYZD p0, const PointYZD p1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -259,14 +267,14 @@ void drawPlaneYZFunction(const PlaneD plane, const PointYZD p0, const PointYZD p
 
     struct PlanePointsStruct
     {
-        PlaneD plane;
         PointYZD p0;
         PointYZD p1;
+        PlaneD plane;
     } pps;
 
-    pps.plane = plane;
     pps.p0 = p0;
     pps.p1 = p1;
+    pps.plane = plane;
 
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(&pps), sizeof(struct PlanePointsStruct), &hdr);
 }
@@ -286,37 +294,31 @@ void imShowFunction(const ImageC3* const img, const FunctionHeaderObject first_p
 
     APPEND_PROPERTIES(hdr, first_prop);
 
-    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)(img->data), img->num_rows * img->num_cols * 3 * dataTypeToNumBytes(img->data_type), &hdr);
+    sendHeaderAndByteArray(getSendFunction(),
+                           (uint8_t*)(img->data),
+                           img->num_rows * img->num_cols * 3 * dataTypeToNumBytes(img->data_type),
+                           &hdr);
 }
 
 #define imShow(img, ...) imShowFunction((ImageC3*)&img, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawPlaneXY(p0, p1, plane, ...) \
-    drawPlaneXYFunction(p0, p1, plane, __VA_ARGS__, getLastFuncHdrObj())
+#define drawPlaneXY(plane, p0, p1, ...) drawPlaneXYFunction(plane, p0, p1, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawPlaneXZ(p0, p1, plane, ...) \
-    drawPlaneXZFunction(p0, p1, plane, __VA_ARGS__, getLastFuncHdrObj())
+#define drawPlaneXZ(plane, p0, p1, ...) drawPlaneXZFunction(plane, p0, p1, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawPlaneYZ(p0, p1, plane, ...) \
-    drawPlaneYZFunction(p0, p1, plane, __VA_ARGS__, getLastFuncHdrObj())
+#define drawPlaneYZ(plane, p0, p1, ...) drawPlaneYZFunction(plane, p0, p1, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawLine2D(line, t0, t1, ...) \
-    drawLine2DFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
+#define drawLine2D(line, t0, t1, ...) drawLine2DFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawLine(line, t0, t1, ...) \
-    drawLineFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
+#define drawLine(line, t0, t1, ...) drawLineFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawLineBetweenPoints(p0, p1, ...) \
-    drawLineBetweenPointsFunction(p0, p1, __VA_ARGS__, getLastFuncHdrObj())
+#define drawLineBetweenPoints(p0, p1, ...) drawLineBetweenPointsFunction(p0, p1, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawMesh(vertices, indices, ...) \
-    drawMeshFunction(vertices, indices, __VA_ARGS__, getLastFuncHdrObj())
+#define drawMesh(vertices, indices, ...) drawMeshFunction(vertices, indices, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawTriangle(triangle, ...) \
-    drawTriangleFunction(triangle, __VA_ARGS__, getLastFuncHdrObj())
+#define drawTriangle(triangle, ...) drawTriangleFunction(triangle, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawTriangles(triangles, ...) \
-    drawTriangleFunction(triangles, __VA_ARGS__, getLastFuncHdrObj())
+#define drawTriangles(triangles, ...) drawTrianglesFunction(triangles, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawPolygonFrom4Points(p0, p1, p2, p3, ...) \
     drawPolygonFrom4PointsFunction(p0, p1, p2, p3, __VA_ARGS__, getLastFuncHdrObj())
@@ -327,12 +329,11 @@ void imShowFunction(const ImageC3* const img, const FunctionHeaderObject first_p
 
 #define scatter(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_SCATTER2, __VA_ARGS__, getLastFuncHdrObj())
 
-#define plot3(x, y, z, ...) plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, __VA_ARGS__, getLastFuncHdrObj())
+#define plot3(x, y, z, ...) \
+    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, __VA_ARGS__, getLastFuncHdrObj())
 
 #define scatter3(x, y, z, ...) \
     plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastFuncHdrObj())
-
-
 
 void setCurrentElement(const char* name)
 {

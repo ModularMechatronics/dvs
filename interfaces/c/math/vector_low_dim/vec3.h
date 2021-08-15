@@ -84,6 +84,77 @@ typedef struct S_Vec3DU64
 #define Point3DU32 Vec3DU32
 #define Point3DU64 Vec3DU64
 
+Vec3DD createVec3DD(const double x, const double y, const double z)
+{
+    const Vec3DD v = {x, y, z};
+    return v;
+}
+
+Vec3DF createVec3DF(const float x, const float y, const float z)
+{
+    const Vec3DF v = {x, y, z};
+    return v;
+}
+
+Vec3DS8 createVec3DS8(const int8_t x, const int8_t y, const int8_t z)
+{
+    const Vec3DS8 v = {x, y, z};
+    return v;
+}
+
+Vec3DS16 createVec3DS16(const int16_t x, const int16_t y, const int16_t z)
+{
+    const Vec3DS16 v = {x, y, z};
+    return v;
+}
+
+Vec3DS32 createVec3DS32(const int32_t x, const int32_t y, const int32_t z)
+{
+    const Vec3DS32 v = {x, y, z};
+    return v;
+}
+
+Vec3DS64 createVec3DS64(const int64_t x, const int64_t y, const int64_t z)
+{
+    const Vec3DS64 v = {x, y, z};
+    return v;
+}
+
+Vec3DU8 createVec3DU8(const uint8_t x, const uint8_t y, const uint8_t z)
+{
+    const Vec3DU8 v = {x, y, z};
+    return v;
+}
+
+Vec3DU16 createVec3DU16(const uint16_t x, const uint16_t y, const uint16_t z)
+{
+    const Vec3DU16 v = {x, y, z};
+    return v;
+}
+
+Vec3DU32 createVec3DU32(const uint32_t x, const uint32_t y, const uint32_t z)
+{
+    const Vec3DU32 v = {x, y, z};
+    return v;
+}
+
+Vec3DU64 createVec3DU64(const uint64_t x, const uint64_t y, const uint64_t z)
+{
+    const Vec3DU64 v = {x, y, z};
+    return v;
+}
+
+#define createPoint3DD createVec3DD
+#define createPoint3DF createVec3DF
+#define createPoint3DS8 createVec3DS8
+#define createPoint3DS16 createVec3DS16
+#define createPoint3DS32 createVec3DS32
+#define createPoint3DS64 createVec3DS64
+#define createPoint3DU8 createVec3DU8
+#define createPoint3DU16 createVec3DU16
+#define createPoint3DU32 createVec3DU32
+#define createPoint3DU64 createVec3DU64
+
 typedef struct S_Vec3DDArray
 {
     Vec3DD* elements;
