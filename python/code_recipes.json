@@ -1,0 +1,143 @@
+{
+    "functions": {
+        "matrix_multiply": {
+            "types": [
+                "F",
+                "D",
+                "S8",
+                "S16",
+                "S32",
+                "S64",
+                "U8",
+                "U16",
+                "U32",
+                "U64"
+            ],
+            "meta_types": [
+                {
+                    "meta_type": "Matrix",
+                    "is_typed": true
+                }
+            ],
+            "body": [
+                "#TYPE0# matrixMultiply#TYPE_SUFFIX#(const #TYPE0# m0, const #TYPE0# m1)",
+                "{",
+                "    #TYPE0# res = createMatrix#TYPE_SUFFIX#(m0.num_rows, m0.num_cols);",
+                "    for (size_t r = 0; r < res.num_rows; r++)",
+                "    {",
+                "        for (size_t c = 0; c < res.num_cols; c++)",
+                "        {",
+                "            #NATIVE_TYPE# p = #LITERAL_CAST#(0.0);",
+                "            for (size_t i = 0; i < m0.num_cols; i++)",
+                "            {",
+                "                p = p + AT_MAT_ROW_COL(m0, r, i) * AT_MAT_ROW_COL(m1, i, c);",
+                "            }",
+                "            AT_MAT_ROW_COL(res, r, c) = p;",
+                "        }",
+                "    }",
+                "    return res;",
+                "}"
+            ]
+        },
+        "multiply_matrix_vec2d_to_vec2d": {
+            "types": "all",
+            "mix_types": false,
+            "meta_types": [
+                {
+                    "meta_type": "Matrix",
+                    "is_typed": true
+                },
+                {
+                    "meta_type": "Vec2D",
+                    "is_typed": true
+                }
+            ],
+            "body": [
+                "#TYPE1# multiply_#TYPE0##TYPE1#_#TYPE1#(const #TYPE0# m, const #TYPE1# v)",
+                "{",
+                "    #TYPE1# vres;",
+                "    ASSERT(m.num_rows == 2, \"Mismatch in number of rows for matrix, expected 2!\")",
+                "    ASSERT(m.num_cols == 2, \"Mismatch in number of cols for matrix, expected 2!\")",
+                "    vres.x = m.data[0] * v.x + m.data[1] * v.y;",
+                "    vres.y = m.data[2] * v.x + m.data[3] * v.y;",
+                "    return vres;",
+                "}"
+            ]
+        },
+        "multiply_matrix_vec3d_to_vec3d": {
+            "types": "all",
+            "mix_types": false,
+            "meta_types": [
+                {
+                    "meta_type": "Matrix",
+                    "is_typed": true
+                },
+                {
+                    "meta_type": "Vec3D",
+                    "is_typed": true
+                }
+            ],
+            "body": [
+                "#TYPE1# multiply_Matrix#TYPE0##TYPE1#_#TYPE1#(const #TYPE0# m, const #TYPE1# v)",
+                "{",
+                "    #TYPE1# vres;",
+                "    ASSERT(m.num_rows == 3, \"Mismatch in number of rows for matrix, expected 3!\")",
+                "    ASSERT(m.num_cols == 3, \"Mismatch in number of cols for matrix, expected 3!\")",
+                "    vres.x = m.data[0] * v.x + m.data[1] * v.y + m.data[2] * v.z;",
+                "    vres.y = m.data[3] * v.x + m.data[4] * v.y + m.data[5] * v.z;",
+                "    vres.z = m.data[6] * v.x + m.data[7] * v.y + m.data[8] * v.z;",
+                "    return vres;",
+                "}"
+            ]
+        },
+        "matrix_sin": {
+            "types": [
+                "F",
+                "D"
+            ],
+            "meta_types": [
+                "Matrix"
+            ],
+            "body": [
+                "#TYPE0# sin_#TYPE0#(const #TYPE0# m0, const #TYPE0# m1)",
+                "{",
+                "    #TYPE0# res = createMatrix#TYPE_SUFFIX#(m0.num_rows, m0.num_cols);",
+                "    for (size_t r = 0; r < res.num_rows; r++)",
+                "    {",
+                "        for (size_t c = 0; c < res.num_cols; c++)",
+                "        {",
+                "            #NATIVE_TYPE# p = #LITERAL_CAST#(0.0);",
+                "            for (size_t i = 0; i < m0.num_cols; i++)",
+                "            {",
+                "                p = p + AT_MAT_ROW_COL(m0, r, i) * AT_MAT_ROW_COL(m1, i, c);",
+                "            }",
+                "            AT_MAT_ROW_COL(res, r, c) = p;",
+                "        }",
+                "    }",
+                "    return res;",
+                "}"
+            ]
+        },
+        "matrix_cast": {
+            "types": "all",
+            "mix_types": false,
+            "meta_types": [
+                {
+                    "meta_type": "Matrix",
+                    "is_typed": false
+                },
+                {
+                    "meta_type": "Matrix",
+                    "is_typed": true
+                }
+            ],
+            "body": [
+                "#TYPE1# to#TYPE1#(const #TYPE0# mat)",
+                "{",
+                "    #TYPE1# ret_mat = *(#TYPE1#*)(&mat);",
+                "    return ret_mat;",
+                "}"
+            ]
+        }
+    }
+}
