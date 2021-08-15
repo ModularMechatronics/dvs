@@ -84,6 +84,101 @@ void testPlot3()
     scatter3(x, y, z, Color(255, 0, 11));
 }
 
+void testDrawTriangle()
+{
+    Triangle3DD triangle;
+
+    triangle.p0 = createPoint3DD(0.0, 0.0, 0.0);
+    triangle.p1 = createPoint3DD(1.0, 1.0, 0.0);
+    triangle.p2 = createPoint3DD(1.5, 0.0, 0.0);
+
+    setCurrentElement("view_00");
+    clearView();
+    drawTriangle(triangle, Color(255, 0, 11));
+}
+
+void testDrawTriangles()
+{
+    const size_t num_elements = 10;
+
+    const Point3DF p0 = createPoint3DF(0.0, 0.0, 0.0);
+    const Point3DF p1 = createPoint3DF(1.0, 1.0, 0.0);
+    const Point3DF p2 = createPoint3DF(1.5, 0.0, 0.0);
+
+    Triangle3DFArray tri_array = createTriangle3DFArray(num_elements);
+
+    Triangle3DF triangle = createTriangle3DF(p0, p1, p2);
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        triangle.p0.z += 0.1;
+        triangle.p1.z += 0.15;
+        triangle.p2.z += 0.12;
+
+        tri_array.elements[k] = triangle;
+    }
+
+    setCurrentElement("view_00");
+    clearView();
+    drawTriangles(tri_array, Color(255, 0, 11));
+}
+
+void testDrawLine()
+{
+    const Point3DD p0 = createPoint3DD(0.0, 0.0, 0.0);
+    const Point3DD p1 = createPoint3DD(1.0, 1.0, 1.0);
+
+    const Line3DD line = {p0, p1};
+
+    setCurrentElement("view_00");
+    clearView();
+    drawLine(line, -1.3, 3.4, Color(255, 0, 11));
+}
+
+void testDrawLine2D()
+{
+    const Point2DD p0 = {0.0, 0.0};
+    const Point2DD p1 = {1.0, 1.5};
+
+    const PLine2DD line = {p0, p1};
+
+    setCurrentElement("view_00");
+    clearView();
+    drawLine2D(line, -1.3, 3.4, Color(255, 0, 11));
+}
+
+void testDrawPlaneXY()
+{
+    const PlaneD plane = {0.0, 0.2, 1.0, 0.5};
+    const PointXYD p0 = {0.0, 0.0};
+    const PointXYD p1 = {1.0, 1.0};
+
+    setCurrentElement("view_00");
+    clearView();
+    drawPlaneXY(plane, p0, p1, Color(255, 0, 11));
+}
+
+void testDrawPlaneXZ()
+{
+    const PlaneD plane = {0.0, 1.0, 0.2, 0.5};
+    const PointXZD p0 = {0.0, 0.0};
+    const PointXZD p1 = {1.0, 1.0};
+
+    setCurrentElement("view_01");
+    clearView();
+    drawPlaneXZ(plane, p0, p1, Color(255, 0, 11));
+}
+
+void testDrawPlaneYZ()
+{
+    const PlaneD plane = {1.0, 0.0, 0.2, 0.5};
+    const PointYZD p0 = {0.0, 0.0};
+    const PointYZD p1 = {1.0, 1.0};
+
+    setCurrentElement("view_02");
+    clearView();
+    drawPlaneYZ(plane, p0, p1, Color(255, 0, 11));
+}
+
 void testImShow()
 {
     const uint32_t num_rows = 800, num_cols = 800;
@@ -133,6 +228,13 @@ typedef struct S_TestFunctionPair
         {"testPlot", testPlot},
         {"testPlot3", testPlot3},
         {"testSurf", testSurf},
+        {"testDrawTriangle", testDrawTriangle},
+        {"testDrawTriangles", testDrawTriangles},
+        {"testDrawLine", testDrawLine},
+        {"testDrawLine2D", testDrawLine2D},
+        {"testDrawPlaneXY", testDrawPlaneXY},
+        {"testDrawPlaneXZ", testDrawPlaneXZ},
+        {"testDrawPlaneYZ", testDrawPlaneYZ},
         {"testDrawPolygonFrom4Points", testDrawPolygonFrom4Points},
         {0, 0}}; // '{0, 0}' must be last element in array
 // clang-format on
