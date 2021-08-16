@@ -112,48 +112,108 @@ def test_draw_polygon_from_4_points():
 def test_draw_triangle():
     setup_dvs_view()
     triangle = Triangle(Point3D(0.0, 0.0, 0.0), Point3D(
-        1.0, 1.0, 0.0), Point3D(1.0, 0.0, 0.0))
+        1.0, 1.0, 0.0), Point3D(1.0, 0.0, 2.0))
 
 
 def test_draw_triangles():
     setup_dvs_view()
 
+    def rm(phi): return np.array(
+        [[np.cos(phi), -np.sin(phi), 0.0], [np.sin(phi), np.cos(phi), 0.0], [0.0, 0.0, 1.0]])
+
+    coords = np.array([[0.0, 1.0, 1.0],
+                       [0.0, 1.0, 0.0],
+                       [0.0, 0.0, 2.0]])
+
+    triangles = []
+
+    for x in [0, 0.1, 0.2, 0.3, 0.4]:
+        z = 2.0 * x
+        phi = x
+
+        rp = rm(phi) @ coords
+        triangles.append(Triangle3D(Point3D(rp[0][0], rp[1][0], rp[2][0]),
+                                    Point3D(rp[0][1], rp[1][1], rp[2][1]),
+                                    Point3D(rp[0][2], rp[1][2], rp[2][2])))
+
+    dvs.draw_triangles(triangles)
+
 
 def test_draw_mesh():
     setup_dvs_view()
+    points = [Point3D(1.0, 1.0),
+              Point3D(2.0, 4.0),
+              Point3D(3.0, 2.0),
+              Point3D(4.0, 3.0),
+              Point3D(4.0, 1.5)]
+    indices = [IndexTriplet(0, 1, 2),
+               IndexTriplet(1, 2, 3),
+               IndexTriplet(2, 3, 4),
+               IndexTriplet(0, 2, 4)]
+    draw_mesh(points, indices)
 
 
 def test_draw_plane_xy():
     setup_dvs_view()
 
+    plane = Plane(0.0, 0.2, 1.0, 0.5)
+    p0 = PointXY(0.0, 0.0)
+    p1 = PointXY(1.0, 1.0)
+
 
 def test_draw_plane_xz():
     setup_dvs_view()
+    plane = Plane(0.0, 1.0, 0.2, 0.5)
+    p0 = PointXZ(0.0, 0.0)
+    p1 = PointXZ(1.0, 1.0)
 
 
 def test_draw_plane_yz():
     setup_dvs_view()
 
+    plane = Plane(1.0, 0.0, 0.2, 0.5)
+    p0 = PointYZ(0.0, 0.0)
+    p1 = PointYZ(1.0, 1.0)
+
 
 def test_draw_line():
-    setup_dvs_view()
+    setup_dvs_view()  # TODO: <- Move to main.py
+    line = Line3D(Point3D(0.1, 0.2, 0.3), Vec3D(1.1, 1.2, 1.3))
+
+    dvs.draw_line(line, 0.1, 5.7)
 
 
 def test_draw_line_2d():
     setup_dvs_view()
 
+    line = PLine2D(Point2D(0.1, 0.2), Vec2D(1.1, 1.2))
+
+    dvs.draw_line_2d(line, 0.1, 5.7)
+
 
 def test_draw_line_2d_between_x_values():
     setup_dvs_view()
+
+    line = HLine2D(0.1, 0.2, 0.3)
+    dvs.draw_line_2d_between_x_values(line, 0.1, 4.0)
 
 
 def test_draw_line_2d_between_y_values():
     setup_dvs_view()
 
+    line = HLine2D(0.1, 0.2, 0.3)
+    dvs.draw_line_2d_between_y_values(line, 0.5, 3.0)
+
 
 def test_draw_line_between_points():
-    p0 = Point3D(0.0, 0.0, 0.0)
+    setup_dvs_view()
+
+    p0 = Point3D(0.1, 0.1, 0.1)
     p1 = Point3D(1.0, 2.0, 3.0)
 
-    setup_dvs_view()
-    draw_line_between_points(p0, p1)
+    p0_2 = Point3D(p0.x, p0.y)
+    p1_2 = Point3D(p1.x, p1.y)
+
+    dvs.draw_line_between_points(p0, p1)
+
+    dvs.draw_line_between_points(p0_2, p1_2)
