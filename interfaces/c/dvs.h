@@ -150,6 +150,22 @@ void drawLineBetweenPointsFunction(const Point3DD p0, const Point3DD p1, const F
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
 }
 
+void drawLineBetween2DPointsFunction(const Point2DD p0, const Point2DD p1, const FunctionHeaderObject first_prop, ...)
+{
+    FunctionHeader hdr;
+    initFunctionHeader(&hdr);
+
+    APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_LINE_BETWEEN_POINTS_3D, uint8_t);
+    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 0, uint32_t);
+
+    APPEND_PROPERTIES(hdr, first_prop);
+    const Point3DD p0_e = {p0.x, p0.y, 0.0}, p1_e = {p1.x, p1.y, 0.0};
+    const Point3DD points[2] = {p0_e, p1_e};
+
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
+}
+
 void drawLineFunction(const Line3DD line, const double t0, const double t1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
@@ -313,6 +329,8 @@ void imShowFunction(const ImageC3* const img, const FunctionHeaderObject first_p
 #define drawLine(line, t0, t1, ...) drawLineFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawLineBetweenPoints(p0, p1, ...) drawLineBetweenPointsFunction(p0, p1, __VA_ARGS__, getLastFuncHdrObj())
+
+#define drawLineBetween2DPoints(p0, p1, ...) drawLineBetween2DPointsFunction(p0, p1, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawMesh(vertices, indices, ...) drawMeshFunction(vertices, indices, __VA_ARGS__, getLastFuncHdrObj())
 

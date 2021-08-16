@@ -214,6 +214,20 @@ void testImShow()
     imShow(img, Color(255, 0, 11));
 }
 
+void testDrawLineBetweenPoints()
+{
+    const Point3DD p0 = {0.1, 0.1, 0.1};
+    const Point3DD p1 = {1.0, 2.0, 3.0};
+
+    const Point2DD p0_2 = {p0.x, p0.y};
+    const Point2DD p1_2 = {p1.x, p1.y};
+
+    setCurrentElement("view_00");  // TODO: <- Move to setup
+    clearView();
+    drawLineBetweenPoints(p0, p1, Color(255, 0, 11));
+    drawLineBetween2DPoints(p0_2, p1_2, Color(255, 0, 11));
+}
+
 typedef void (*TestFunction)();
 
 typedef struct S_TestFunctionPair
@@ -236,6 +250,7 @@ typedef struct S_TestFunctionPair
         {"testDrawPlaneXZ", testDrawPlaneXZ},
         {"testDrawPlaneYZ", testDrawPlaneYZ},
         {"testDrawPolygonFrom4Points", testDrawPolygonFrom4Points},
+        {"testDrawLineBetweenPoints", testDrawLineBetweenPoints},
         {0, 0}}; // '{0, 0}' must be last element in array
 // clang-format on
 
