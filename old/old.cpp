@@ -46,6 +46,23 @@ void drawCircle(const Point2Dd p)
     glEnd();
 }
 
+#if 0
+    const std::string splash_img_path = "../splash_trans_small.png";
+    wxInitAllImageHandlers();
+    wxImage splash_img(splash_img_path, wxBITMAP_TYPE_PNG);
+    wxSplashScreen *scrn = new wxSplashScreen(splash_img,
+                                              wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
+                                              2500,
+                                              NULL,
+                                              wxID_ANY,
+                                              wxDefaultPosition,
+                                              wxSize(500, 500),
+                                              wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP | wxTRANSPARENT_WINDOW);
+    // SplashScreen?
+    // wxFrame *frame = new wxFrame(NULL, wxID_ANY, "Something", wxPoint(300, 300), wxSize(200, 200), wxFRAME_TOOL_WINDOW | wxNO_BORDER);
+    // frame->Show(true);
+#endif
+
 void modifyStuff(const AxesLimits& axes_limits,
                  const ViewAngles& view_angles,
                  const CoordinateConverter& coord_converter,

@@ -164,7 +164,37 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);
 
+    keyboard_timer_.Bind(wxEVT_TIMER, &MainWindow::OnKeyboardTimer, this);
+    keyboard_timer_.Start(10);
+
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
+
+    app_in_focus_ = true;
+
+    const std::vector<char> keys = {'z', 'r', 'p', 'c', '1', '2', '3'};
+    for (const char key : keys)
+    {
+        pressed_keys_[key] = false;
+    }
+
+    Bind(wxEVT_CHAR_HOOK, &MainWindow::OnKeyDown, this);
+}
+
+void MainWindow::appInactive()
+{
+    app_in_focus_ = false;
+}
+
+void MainWindow::appActive()
+{
+    app_in_focus_ = true;
+}
+
+void MainWindow::OnKeyDown(wxKeyEvent& event)
+{
+    std::cout << "Key pressed!!" << std::endl;
+    // int key_code = event.GetKeyCode();
+    // event.Skip();
 }
 
 void MainWindow::onActivate(wxActivateEvent& event)
@@ -661,6 +691,57 @@ void MainWindow::OnTimer(wxTimerEvent&)
     catch (const std::exception& e)
     {
         std::cerr << "Got exception when receiving: " << e.what() << std::endl;
+    }
+}
+
+void MainWindow::notifyChildrenOnKeyPressed(const char key)
+{
+    std::map<std::string, GuiElement*>::iterator it;
+
+    for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
+    {
+        it->second->keyPressed(key);
+    }
+}
+
+void MainWindow::notifyChildrenOnKeyReleased(const char key)
+{
+    std::map<std::string, GuiElement*>::iterator it;
+
+    for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
+    {
+        it->second->keyReleased(key);
+    }
+}
+
+void MainWindow::OnKeyboardTimer(wxTimerEvent&)
+{
+    if (app_in_focus_)
+    {
+        std::map<char, bool>::iterator it;
+
+        for (it = pressed_keys_.begin(); it != pressed_keys_.end(); it++)
+        {
+            const char key = it->first;
+            if (wxGetKeyState(wxKeyCode(key)))
+            {
+                if (!pressed_keys_[key])
+                {
+                    // key was pressed
+                    pressed_keys_[key] = true;
+                    notifyChildrenOnKeyPressed(key);
+                }
+            }
+            else
+            {
+                if (pressed_keys_[key])
+                {
+                    // key was released
+                    pressed_keys_[key] = false;
+                    notifyChildrenOnKeyReleased(key);
+                }
+            }
+        }
     }
 }
 

@@ -64,7 +64,8 @@ public:
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
     virtual void addData(std::unique_ptr<const ReceivedData> received_data,
                          const dvs::internal::FunctionHeader& hdr) = 0;
-    virtual void setPosAndSize(const wxPoint& pos, const wxSize& size) = 0;
+    virtual void keyPressed(const char key) = 0;
+    virtual void keyReleased(const char key) = 0;
     virtual void resetSelection() = 0;
     virtual void setSelection() = 0;
     virtual void show() = 0;
