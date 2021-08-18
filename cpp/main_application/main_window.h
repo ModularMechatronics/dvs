@@ -38,7 +38,10 @@ private:
 
     UdpServer* udp_server_;
     wxTimer timer_;
+    wxTimer keyboard_timer_;
     wxTimer refresh_timer_;
+
+    std::map<char, bool> pressed_keys_;
 
     std::vector<TabView*> tabs_;
     std::vector<WindowView*> windows_;
@@ -49,6 +52,8 @@ private:
     int current_tab_num_;
 
     bool is_editing_;
+
+    bool app_in_focus_;
 
     wxNotebook* tabs_view;
     wxPanel* tab_container;
@@ -70,6 +75,7 @@ private:
 
     void OnTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
+    void OnKeyboardTimer(wxTimerEvent&);
     void setupGui();
     void setCurrentElement(const internal::FunctionHeader& hdr);
     void createNewElement(const internal::FunctionHeader& hdr);
@@ -86,6 +92,11 @@ private:
     void guiElementModified(wxCommandEvent& event);
     void childWindowClosed(wxCommandEvent& event);
     void childWindowInFocus(wxCommandEvent& event);
+
+    void notifyChildrenOnKeyPressed(const char key);
+    void notifyChildrenOnKeyReleased(const char key);
+
+    void OnKeyDown(wxKeyEvent& event);
 
     void saveProject();
     void saveProjectCallback(wxCommandEvent& event);
@@ -124,6 +135,9 @@ public:
     void deleteElement(wxCommandEvent& event);
 
     void disableEditing();
+
+    void appInactive();
+    void appActive();
 };
 
 #endif

@@ -139,7 +139,10 @@ void PlotWindowGLPane::setPosition(const wxPoint& new_pos)
 void PlotWindowGLPane::setSize(const wxSize& new_size)
 {
     axes_painter_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
-
+#ifdef PLATFORM_LINUX_M
+    // This seems to be needed on linux platforms
+    glViewport(0, 0, new_size.GetWidth(), new_size.GetHeight());
+#endif
     this->SetSize(new_size);
 }
 
@@ -158,16 +161,10 @@ void PlotWindowGLPane::bindCallbacks()
     Bind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
     Bind(wxEVT_LEFT_DOWN, &PlotWindowGLPane::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &PlotWindowGLPane::mouseLeftReleased, this);
-    Bind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
-    Bind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
+    // Bind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
+    // Bind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
     Bind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
     Bind(wxEVT_LEAVE_WINDOW, &PlotWindowGLPane::mouseLeftWindow, this);
-}
-
-void PlotWindowGLPane::setPosAndSize(const wxPoint& pos, const wxSize& size)
-{
-    this->SetPosition(pos);
-    this->SetSize(size);
 }
 
 int* PlotWindowGLPane::getArgsPtr()
@@ -535,26 +532,22 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
     }
 }
 
-void PlotWindowGLPane::keyPressed(wxKeyEvent& event)
+void PlotWindowGLPane::keyPressed(const char key)
 {
-    const int key_code = event.GetKeyCode();
-
     // Only add alpha numeric keys due to errors when clicking outside of window
-    if (std::isalnum(key_code))
+    if (std::isalnum(key))
     {
-        keyboard_state_.keyGotPressed(key_code);
+        keyboard_state_.keyGotPressed(key);
     }
     Refresh();
 }
 
-void PlotWindowGLPane::keyReleased(wxKeyEvent& event)
+void PlotWindowGLPane::keyReleased(const char key)
 {
-    const int key_code = event.GetKeyCode();
-
     // Only add alpha numeric keys due to errors when clicking outside of window
-    if (std::isalnum(key_code))
+    if (std::isalnum(key))
     {
-        keyboard_state_.keyGotReleased(key_code);
+        keyboard_state_.keyGotReleased(key);
     }
     current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
     Refresh();
@@ -574,19 +567,19 @@ int PlotWindowGLPane::getHeight()
 
 InteractionType keyboardStateToInteractionType(const KeyboardState& keyboard_state)
 {
-    if (keyboard_state.keyIsPressed('C'))
+    if (keyboard_state.keyIsPressed('c'))
     {
         return InteractionType::RESET;
     }
-    else if (keyboard_state.keyIsPressed('P'))
+    else if (keyboard_state.keyIsPressed('p'))
     {
         return InteractionType::PAN;
     }
-    else if (keyboard_state.keyIsPressed('R'))
+    else if (keyboard_state.keyIsPressed('r'))
     {
         return InteractionType::ROTATE;
     }
-    else if (keyboard_state.keyIsPressed('Z'))
+    else if (keyboard_state.keyIsPressed('z'))
     {
         return InteractionType::ZOOM;
     }

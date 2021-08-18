@@ -12,38 +12,36 @@ private:
 public:
     virtual bool OnInit();
     virtual int OnExit();
+    void appInFocus(wxActivateEvent& event);
 };
 
 MainWindow* main_window;
 
 IMPLEMENT_APP(MainApp)
 
+void MainApp::appInFocus(wxActivateEvent& event)
+{
+    if (event.GetActive())
+    {
+        main_window->appActive();
+    }
+    else
+    {
+        main_window->appInactive();
+    }
+}
+
 bool MainApp::OnInit()
 {
-#if 0
-    const std::string splash_img_path = "../splash_trans_small.png";
-    wxInitAllImageHandlers();
-    wxImage splash_img(splash_img_path, wxBITMAP_TYPE_PNG);
-    wxSplashScreen *scrn = new wxSplashScreen(splash_img,
-                                              wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
-                                              2500,
-                                              NULL,
-                                              wxID_ANY,
-                                              wxDefaultPosition,
-                                              wxSize(500, 500),
-                                              wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP | wxTRANSPARENT_WINDOW);
-    // SplashScreen?
-    // wxFrame *frame = new wxFrame(NULL, wxID_ANY, "Something", wxPoint(300, 300), wxSize(200, 200), wxFRAME_TOOL_WINDOW | wxNO_BORDER);
-    // frame->Show(true);
-#endif
-
-    std::vector<std::string> cmdl_args;
+    std::vector<std::string> cmd_args;
     for (int k = 0; k < wxAppConsole::argc; k++)
     {
-        cmdl_args.emplace_back(wxAppConsole::argv[k].mb_str());
+        cmd_args.emplace_back(wxAppConsole::argv[k].mb_str());
     }
-    main_window = new MainWindow(cmdl_args);
+    main_window = new MainWindow(cmd_args);
     main_window->Show();
+
+    Bind(wxEVT_ACTIVATE_APP, &MainApp::appInFocus, this);
 
     SetTopWindow(main_window);
 

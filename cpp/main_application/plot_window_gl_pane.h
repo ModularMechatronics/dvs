@@ -99,7 +99,6 @@ public:
 
     void setPosition(const wxPoint& new_pos);
     void setSize(const wxSize& new_size);
-    void setPosAndSize(const wxPoint& pos, const wxSize& size) override;
     void updateSizeFromParent(const wxSize& parent_size) override;
     void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr) override;
     void show() override;
@@ -108,14 +107,14 @@ public:
     void setSelection() override;
     void destroy() override;
     void refresh() override;
+    void keyPressed(const char key) override;
+    void keyReleased(const char key) override;
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);
     void mouseLeftWindow(wxMouseEvent& event);
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
-    void keyPressed(wxKeyEvent& event);
-    void keyReleased(wxKeyEvent& event);
 
     void bindCallbacks();
 };
