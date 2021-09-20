@@ -4,30 +4,7 @@
 #include <vector>
 
 #include "dvs/dvs.h"
-
-extern void testBasic();
-extern void testNewElements();
-extern void testScatter();
-extern void testScatter3();
-extern void testPlot2();
-extern void testPlot3();
-extern void testSurf();
-extern void testImShow();
-extern void testPolygonFrom4Points();
-extern void testdrawXYPlane();
-extern void testMultipleStuff();
-extern void testAxis2D();
-extern void testAxis3D();
-extern void testDrawTriangles();
-extern void testDrawMesh();
-extern void testDrawMeshAdvanced();
-extern void testDrawSingleTriangle();
-extern void testDrawLine3D();
-extern void testDrawLineBetweenPoints3D();
-extern void testDrawLine2D();
-extern void testDifferentViews();
-extern void testCube();
-extern void testStairs();
+#include "test_basic.h"
 
 std::map<std::string, std::function<void()>> fcns;
 
@@ -46,34 +23,25 @@ void displayHelp()
 
 int main(int argc, char* argv[])
 {
-    fcns["new-elements"] = testNewElements;
     fcns["scatter"] = testScatter;
     fcns["scatter3"] = testScatter3;
     fcns["plot3"] = testPlot3;
     fcns["plot2"] = testPlot2;
     fcns["surf"] = testSurf;
     fcns["imshow"] = testImShow;
-    fcns["polygon-4-points"] = testPolygonFrom4Points;
-    fcns["xy-plane"] = testdrawXYPlane;
-    fcns["xy-plane"] = testdrawXYPlane;
-    fcns["multiple"] = testMultipleStuff;
     fcns["axis2d"] = testAxis2D;
     fcns["axis3d"] = testAxis3D;
     fcns["triangles"] = testDrawTriangles;
     fcns["mesh"] = testDrawMesh;
-    fcns["mesh-adv"] = testDrawMeshAdvanced;
-    fcns["single-triangle"] = testDrawSingleTriangle;
     fcns["draw-line-3d"] = testDrawLine3D;
     fcns["draw-line-2d"] = testDrawLine2D;
     fcns["draw-line-between-points"] = testDrawLineBetweenPoints3D;
-    fcns["different-views"] = testDifferentViews;
-    fcns["cube"] = testCube;
     fcns["stairs"] = testStairs;
 
     if (argc == 1)
     {
-        std::cout << "Running basic..." << std::endl;
-        testBasic();
+        std::cout << "No arguments provided!" << std::endl;
+        displayHelp();
     }
     else
     {
@@ -83,7 +51,7 @@ int main(int argc, char* argv[])
         {
             displayHelp();
         }
-        if (arg == "all")
+        else if (arg == "all")
         {
             std::map<std::string, std::function<void()>>::iterator it;
 
