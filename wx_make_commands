@@ -21,3 +21,5 @@ wx-config --cxxflags
 OpenGL:
 https://askubuntu.com/questions/96087/how-to-install-opengl-glut-libraries
 https://askubuntu.com/questions/765526/how-to-install-gtk2-0
+
+libpng is required for mac
