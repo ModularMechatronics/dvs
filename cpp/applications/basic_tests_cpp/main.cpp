@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "dvs/dvs.h"
-#include "test_basic.h"
+#include "tests.h"
 
 std::map<std::string, std::function<void()>> fcns;
 
@@ -25,8 +25,8 @@ int main(int argc, char* argv[])
 {
     fcns["scatter"] = testScatter;
     fcns["scatter3"] = testScatter3;
+    fcns["plot"] = testPlot;
     fcns["plot3"] = testPlot3;
-    fcns["plot2"] = testPlot2;
     fcns["surf"] = testSurf;
     fcns["imShow"] = testImShow;
     fcns["axis"] = testAxis;

@@ -4,6 +4,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+inline void sleepMS(const int ms)
+{
+    #include <stdlib.h>
+    #include <unistd.h>
+    usleep(ms * 1000);
+}
+
 void drawCircle3D(const Point3Dd p)
 {
     const int num_points = 15;
