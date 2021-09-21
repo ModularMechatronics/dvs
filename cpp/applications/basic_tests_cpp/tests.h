@@ -1,10 +1,9 @@
-#ifndef TEST_BASIC_H_
-#define TEST_BASIC_H_
+#ifndef TESTS_H_
+#define TESTS_H_
 
 #include <algorithm>
 
 #include "dvs/dvs.h"
-#include "test_utils.h"
 
 using namespace dvs;
 
@@ -92,7 +91,7 @@ void testScatter3()
     plot3(x, y, z, properties::Color(21, 14, 55), properties::LineWidth(1));
 }
 
-void testPlot2()
+void testPlot()
 {
     const size_t num_elements = 30;
     Vector<int64_t> x(num_elements), y(num_elements);
