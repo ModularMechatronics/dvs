@@ -241,46 +241,17 @@ void testDrawXYPlane()
                 properties::EdgeColor(0, 0, 0));
 }
 
-void testAxis2D()
+void testAxis()
 {
-    const size_t num_elements = 50;
-    Vector<double> x(num_elements), y(num_elements);
-
-    double t = 0.0;
-
-    for (size_t k = 0; k < num_elements; k++)
-    {
-        x(k) = t;
-        y(k) = 10.0 * cos(t);
-        t = t + 0.3;
-    }
-
     setCurrentElement("view_00");
     clearView();
 
-    plot(x, y, properties::Color(12, 14, 55), properties::LineWidth(1));
-}
+    axis({1.0, 2.5}, {7.2, 8.4});
 
-void testAxis3D()
-{
-    const size_t num_elements = 50;
-    Vector<float> x(num_elements), y(num_elements), z(num_elements);
-
-    double t = 0.0;
-
-    for (size_t k = 0; k < num_elements; k++)
-    {
-        x(k) = 10.0 * cos(t);
-        y(k) = 10.0 * sin(t);
-        z(k) = t;
-        t = t + 0.3;
-    }
-
-    setCurrentElement("view_00");
+    setCurrentElement("view_01");
     clearView();
 
-    plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1));
-    scatter3(x, y, z, properties::Color(255, 0, 0), properties::PointSize(3));
+    axis({-1.0, 1.5, 3.4}, {5.4, 9.2, 5.5});
 }
 
 void testDrawTriangles()
@@ -398,7 +369,7 @@ void testDrawLine2D()
     scatter3(x, y, z, properties::Color(0, 0, 0), properties::PointSize(3));
 }
 
-void testDrawLineBetweenPoints3D()
+void testDrawLineBetweenPoints()
 {
     using tp = double;
 

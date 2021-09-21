@@ -17,7 +17,8 @@
  - Rename HomogenousLine and ParametricLine to HLine and Pline?
  - Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
  - Rename Vec2D/3D/4D to Vec2/3/4
- - Unify function names in interfaces
+ - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate
+     2D/3D functions
 
 #### Bigger features
  - Fix so that one can set axis square and axis equal

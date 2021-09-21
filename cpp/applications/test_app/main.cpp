@@ -28,14 +28,13 @@ int main(int argc, char* argv[])
     fcns["plot3"] = testPlot3;
     fcns["plot2"] = testPlot2;
     fcns["surf"] = testSurf;
-    fcns["imshow"] = testImShow;
-    fcns["axis2d"] = testAxis2D;
-    fcns["axis3d"] = testAxis3D;
+    fcns["imShow"] = testImShow;
+    fcns["axis"] = testAxis;
     fcns["triangles"] = testDrawTriangles;
     fcns["mesh"] = testDrawMesh;
     fcns["draw-line-3d"] = testDrawLine3D;
     fcns["draw-line-2d"] = testDrawLine2D;
-    fcns["draw-line-between-points"] = testDrawLineBetweenPoints3D;
+    fcns["draw-line-between-points"] = testDrawLineBetweenPoints;
     fcns["stairs"] = testStairs;
 
     if (argc == 1)
