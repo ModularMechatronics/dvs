@@ -19,6 +19,7 @@
  - Rename Vec2D/3D/4D to Vec2/3/4
  - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate
      2D/3D functions
+ - Rename "linspaceFromPointsAndCount" to "linspaceEdgesAndCount" or "linspaceBoundariesAndCount"
 
 #### Bigger features
  - Fix so that one can set axis square and axis equal
