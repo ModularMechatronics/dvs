@@ -123,7 +123,7 @@ void testDrawTriangles()
     drawTriangles(tri_array, Color(255, 0, 11));
 }
 
-void testDrawLine()
+void testDrawLine3D()
 {
     const Point3DD p0 = createPoint3DD(0.0, 0.0, 0.0);
     const Point3DD p1 = createPoint3DD(1.0, 1.0, 1.0);
@@ -132,7 +132,7 @@ void testDrawLine()
 
     setCurrentElement("view_00");
     clearView();
-    drawLine(line, -1.3, 3.4, Color(255, 0, 11));
+    drawLine3D(line, -1.3, 3.4, Color(255, 0, 11));
 }
 
 void testDrawLine2D()

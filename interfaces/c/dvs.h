@@ -166,7 +166,7 @@ void drawLineBetween2DPointsFunction(const Point2DD p0, const Point2DD p1, const
     sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
 }
 
-void drawLineFunction(const Line3DD line, const double t0, const double t1, const FunctionHeaderObject first_prop, ...)
+void drawLine3DFunction(const Line3DD line, const double t0, const double t1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -326,7 +326,7 @@ void imShowFunction(const ImageC3* const img, const FunctionHeaderObject first_p
 
 #define drawLine2D(line, t0, t1, ...) drawLine2DFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
 
-#define drawLine(line, t0, t1, ...) drawLineFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
+#define drawLine3D(line, t0, t1, ...) drawLine3DFunction(line, t0, t1, __VA_ARGS__, getLastFuncHdrObj())
 
 #define drawLineBetweenPoints(p0, p1, ...) drawLineBetweenPointsFunction(p0, p1, __VA_ARGS__, getLastFuncHdrObj())
 
