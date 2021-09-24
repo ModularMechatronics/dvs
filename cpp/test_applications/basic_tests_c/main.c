@@ -14,20 +14,20 @@ typedef struct
 
 // clang-format off
     const TestFunctionPair test_functions[100] = {
-        {"testPlot", testPlot},
-        {"testPlot3", testPlot3},
-        {"testScatter", testScatter},
-        {"testScatter3", testScatter3},
-        {"testSurf", testSurf},
-        {"testDrawTriangle", testDrawTriangle},
-        {"testDrawTriangles", testDrawTriangles},
-        {"testDrawLine", testDrawLine},
-        {"testDrawLine2D", testDrawLine2D},
-        {"testDrawPlaneXY", testDrawPlaneXY},
-        {"testDrawPlaneXZ", testDrawPlaneXZ},
-        {"testDrawPlaneYZ", testDrawPlaneYZ},
-        {"testDrawPolygonFrom4Points", testDrawPolygonFrom4Points},
-        {"testDrawLineBetweenPoints", testDrawLineBetweenPoints},
+        {"plot", testPlot},
+        {"plot3", testPlot3},
+        {"scatter", testScatter},
+        {"scatter3", testScatter3},
+        {"surf", testSurf},
+        {"drawTriangle", testDrawTriangle},
+        {"drawTriangles", testDrawTriangles},
+        {"drawLine3D", testDrawLine3D},
+        {"drawLine2D", testDrawLine2D},
+        {"drawPlaneXY", testDrawPlaneXY},
+        {"drawPlaneXZ", testDrawPlaneXZ},
+        {"drawPlaneYZ", testDrawPlaneYZ},
+        {"drawPolygonFrom4Points", testDrawPolygonFrom4Points},
+        {"drawLineBetweenPoints", testDrawLineBetweenPoints},
         {0, 0}}; // '{0, 0}' must be last element in array
 // clang-format on
 
@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
 {
     if (argc == 1)
     {
+        printf("No arguments provided!\n");
         displayHelp();
         exit(0);
     }

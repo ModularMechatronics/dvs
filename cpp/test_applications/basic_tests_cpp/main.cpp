@@ -18,7 +18,7 @@ void displayHelp()
         std::cout << it->first << ", ";
     }
 
-    std::cout << ", all]" << std::endl;
+    std::cout << "all]" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -30,11 +30,11 @@ int main(int argc, char* argv[])
     fcns["surf"] = testSurf;
     fcns["imShow"] = testImShow;
     fcns["axis"] = testAxis;
-    fcns["triangles"] = testDrawTriangles;
-    fcns["mesh"] = testDrawMesh;
-    fcns["draw-line-3d"] = testDrawLine3D;
-    fcns["draw-line-2d"] = testDrawLine2D;
-    fcns["draw-line-between-points"] = testDrawLineBetweenPoints;
+    fcns["drawTriangles"] = testDrawTriangles;
+    fcns["drawMesh"] = testDrawMesh;
+    fcns["drawLine3D"] = testDrawLine3D;
+    fcns["drawLine2D"] = testDrawLine2D;
+    fcns["drawLineBetweenPoints"] = testDrawLineBetweenPoints;
     fcns["stairs"] = testStairs;
 
     if (argc == 1)
