@@ -28,6 +28,7 @@ typedef struct
         {"drawPlaneYZ", testDrawPlaneYZ},
         {"drawPolygonFrom4Points", testDrawPolygonFrom4Points},
         {"drawLineBetweenPoints", testDrawLineBetweenPoints},
+        {"imShow", testImShow},
         {0, 0}}; // '{0, 0}' must be last element in array
 // clang-format on
 

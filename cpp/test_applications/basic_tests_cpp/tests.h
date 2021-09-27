@@ -167,10 +167,9 @@ void testPlot3()
 
 void testImShow()
 {
-    setCurrentElement("view_00");
-
     const uint32_t num_rows = 800, num_cols = 800;
-    ImageC3<float> img(num_rows, num_cols);
+    ImageC3<float> img3(num_rows, num_cols);
+    ImageC1<float> img1(num_rows, num_cols);
     // const double max_val = num_rows * num_cols;
 
     for (uint32_t r = 0; r < num_rows; r++)
@@ -189,9 +188,11 @@ void testImShow()
             const float yb = 4.0f * (static_cast<float>(r) - 600.5f) / 800.0f;
             const float rb = std::sqrt(xb * xb + yb * yb);
 
-            img(r, c, 0) = (std::sin(rb) / rr + 1.0f) * 0.5f;
-            img(r, c, 1) = (std::sin(rb) / rg + 1.0f) * 0.5f;
-            img(r, c, 2) = (std::sin(rb) / rb + 1.0f) * 0.5f;
+            img3(r, c, 0) = (std::sin(rb) / rr + 1.0f) * 0.5f;
+            img3(r, c, 1) = (std::sin(rb) / rg + 1.0f) * 0.5f;
+            img3(r, c, 2) = (std::sin(rb) / rb + 1.0f) * 0.5f;
+
+            img1(r, c) = (std::sin(rb) / rr + 1.0f) * 0.5f;
 
             // img(r, c, 0) = (r * c) / max_val;
             // img(r, c, 1) = 1.0f - (r * c) / max_val;
@@ -199,7 +200,11 @@ void testImShow()
         }
     }
 
-    imShow(img, properties::Alpha(137));
+    setCurrentElement("view_00");
+    imShow(img3, properties::Alpha(137));
+
+    setCurrentElement("view_01");
+    imShow(img1, properties::Alpha(137));
 }
 
 void testDrawPolygonFrom4Points()
