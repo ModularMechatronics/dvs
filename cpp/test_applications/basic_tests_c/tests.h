@@ -183,7 +183,8 @@ void testDrawPlaneYZ()
 void testImShow()
 {
     const uint32_t num_rows = 800, num_cols = 800;
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_FLOAT);
+    ImageC3F img3 = createImageC3F(num_rows, num_cols);
+    ImageC1F img1 = createImageC1F(num_rows, num_cols);
 
     const double max_val = num_rows * num_cols;
     const size_t num_elements = num_rows * num_cols;
@@ -204,15 +205,22 @@ void testImShow()
             const float yb = 4.0f * ((float)r - 600.5f) / 800.0f;
             const float rb = sqrt(xb * xb + yb * yb);
 
-            img.data[r * img.num_cols + c] = (sin(rb) / rr + 1.0f) * 0.5f;
-            img.data[num_elements + r * img.num_cols + c] = (sin(rb) / rg + 1.0f) * 0.5f;
-            img.data[2 * num_elements + r * img.num_cols + c] = (sin(rb) / rb + 1.0f) * 0.5f;
+            img3.data[r * img3.num_cols + c] = (sin(rb) / rr + 1.0f) * 0.5f;
+            img3.data[num_elements + r * img3.num_cols + c] = (sin(rb) / rg + 1.0f) * 0.5f;
+            img3.data[2 * num_elements + r * img3.num_cols + c] = (sin(rb) / rb + 1.0f) * 0.5f;
+
+            // img1.data[num_elements + r * img3.num_cols + c] = (sin(rb) / rb + 1.0f) * 0.5f;
         }
     }
 
     setCurrentElement("view_00");
     clearView();
-    imShow(img, Color(255, 0, 11));
+    imShow(img3, Color(255, 0, 11));
+
+    // TODO:
+    // setCurrentElement("view_01");
+    // clearView();
+    // imShow(img1, Color(255, 0, 11));
 }
 
 void testDrawLineBetweenPoints()
