@@ -20,7 +20,8 @@
  - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate
      2D/3D functions
  - Rename "linspaceFromPointsAndCount" to "linspaceEdgesAndCount" or "linspaceBoundariesAndCount"
-
+ - Remove drawLine2DBetweenXValues and drawLine2DBetweenYValues
+ - Set point size before rendering text (it gets affected by setting point size in a plot)
 #### Bigger features
  - Fix so that one can set axis square and axis equal
  - Nice characters with AA

@@ -390,11 +390,27 @@ def draw_polygon_from_4_points(p0: Point3D, p1: Point3D, p2: Point3D, p3: Point3
 
 
 def draw_triangle(triangle: Triangle3D, **properties):
-    pass
+
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION,
+               Function.DRAW_TRIANGLES_3D)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 1)
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, triangle)
 
 
 def draw_triangles(triangles: List[Triangle3D], **properties):
-    pass
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.DRAW_TRIANGLES_3D)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, len(triangles))
+    # hdr.append(FunctionHeaderObjectType.DATA_TYPE, ) TODO
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, triangles)
 
 
 def draw_mesh(points: List[Point3D], indices: List[IndexTriplet], **properties):
@@ -402,32 +418,92 @@ def draw_mesh(points: List[Point3D], indices: List[IndexTriplet], **properties):
 
 
 def draw_plane_xy(plane: Plane, p0: PointXY, p1: PointXY, **properties):
-    pass
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION,
+               Function.PLANE_XY)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 2)
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, p0, p1, plane)
 
 
 def draw_plane_xz(plane: Plane, p0: PointXZ, p1: PointXZ, **properties):
-    pass
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION,
+               Function.PLANE_XZ)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 2)
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, p0, p1, plane)
 
 
 def draw_plane_yz(plane: Plane, p0: PointYZ, p1: PointYZ, **properties):
-    pass
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION,
+               Function.PLANE_YZ)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 2)
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, p0, p1, plane)
 
 
 def draw_line(line: Line3D, t0: np.float64, t1: np.float64, **properties):
-    pass
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION,
+               Function.DRAW_LINE3D)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 0)
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+
+    hdr.append_properties(properties)
+
+    p0 = line.eval(t0)
+    p1 = line.eval(t1)
+
+    send_header_and_data(send_with_udp, hdr, p0, p1)
 
 
 def draw_line_2d(line: PLine2D, t0: np.float64, t1: np.float64, **properties):
-    pass
 
+    hdr = FunctionHeader()
+    hdr.append(FunctionHeaderObjectType.FUNCTION,
+               Function.DRAW_LINE3D)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 0)
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
-def draw_line_2d_between_x_values(line: HLine2D, x0: np.float64, x1: np.float64, **properties):
-    pass
+    hdr.append_properties(properties)
 
+    p0_2d = line.eval(t0)
+    p1_2d = line.eval(t1)
+    p0 = Point3D(p0_2d.x, p0_2d.y, 0.0)
+    p1 = Point3D(p1_2d.x, p1_2d.y, 0.0)
 
-def draw_line_2d_between_y_values(line: HLine2D, y0: np.float64, y1: np.float64, **properties):
-    pass
+    send_header_and_data(send_with_udp, hdr, p0, p1)
 
 
 def draw_line_between_points(p0: Union[Point2D, Point3D], p1: Union[Point2D, Point3D], **properties):
-    pass
+
+    assert(type(p0) == type(p1))
+
+    hdr = FunctionHeader()
+
+    if type(p0) == Point3D:
+        p0_u = p0
+        p1_u = p1
+    else:
+        p0_u = Point3D(p0.x, p0.y, 0.0)
+        p1_u = Point3D(p1.x, p1.y, 0.0)
+        
+    hdr.append(FunctionHeaderObjectType.FUNCTION,
+               Function.DRAW_LINE3D)
+    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 0)
+    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_udp, hdr, p0_u, p1_u)
