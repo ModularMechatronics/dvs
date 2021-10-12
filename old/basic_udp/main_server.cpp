@@ -46,7 +46,7 @@ void receiveBuffer(const char* const data, const uint64_t num_received_bytes)
 
     std::cout << "Num values: " << hdr.getNumValues() << std::endl;
     std::cout << "Is big endian: " << is_big_endian << std::endl;
-    std::cout << "magic num: " << dvs::internal::magic_num << ", rec magic num: " << rec_magic_num << std::endl;
+    std::cout << "magic num: " << dvs::internal::kMagicNumber << ", rec magic num: " << rec_magic_num << std::endl;
     std::cout << "num_received_bytes: " << num_received_bytes << ", rec_num_bytes: " << rec_num_bytes << std::endl;
 }
 

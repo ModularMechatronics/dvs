@@ -172,7 +172,7 @@ public:
             uint64_t rec_magic_num;
             std::memcpy(&rec_magic_num, &(uint8_ptr[1]), sizeof(uint64_t));
 
-            if (rec_magic_num != dvs::internal::magic_num)
+            if (rec_magic_num != dvs::internal::kMagicNumber)
             {
                 throw std::runtime_error("Invalid magic number!");
             }
