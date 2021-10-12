@@ -68,7 +68,7 @@ void Plot2D::visualize()
     glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glDrawArrays(GL_LINE_STRIP, 0, num_elements_);
+    glDrawArrays(line_type_, 0, num_elements_);
     glDisableVertexAttribArray(0);
 }
 
