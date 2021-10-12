@@ -8,7 +8,7 @@
 #include "internal.h"
 #include "math/math.h"
 
-const uint64_t magic_num = 0xdeadbeefcafebabe;
+const uint64_t kMagicNumber = 0xdeadbeefcafebabe;
 const uint64_t max_bytes_for_one_msg = 1380;
 
 int checkAck(char data[256])
@@ -181,7 +181,7 @@ void sendHeaderAndByteArray(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
@@ -217,7 +217,7 @@ void sendHeaderAndTwoByteArrays(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
@@ -257,7 +257,7 @@ void sendHeaderAndTwoVectors(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
@@ -298,7 +298,7 @@ void sendHeaderAndThreeMatrices(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
@@ -342,7 +342,7 @@ void sendHeaderAndThreeVectors(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
@@ -379,7 +379,7 @@ void sendHeader(SendFunction send_function, FunctionHeader* hdr)
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));

@@ -13,7 +13,7 @@ namespace dvs
 {
 namespace internal
 {
-constexpr uint64_t magic_num = 0xdeadbeefcafebabe;
+constexpr uint64_t kMagicNumber = 0xdeadbeefcafebabe;
 using SendFunctionType = std::function<void(const uint8_t* const data_blob, const uint64_t num_bytes)>;
 
 inline void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
@@ -123,7 +123,7 @@ void sendHeaderAndData(const SendFunctionType& send_function, const FunctionHead
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    std::memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
@@ -160,7 +160,7 @@ void sendHeaderAndData(const SendFunctionType& send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    std::memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
@@ -193,7 +193,7 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Function
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    std::memcpy(&(data_blob[idx]), &magic_num, sizeof(uint64_t));
+    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
