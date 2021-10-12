@@ -70,6 +70,7 @@ int main(int argc, char* argv[])
             {
                 if (arg == it->first)
                 {
+                    std::cout << "Running '" << it->first << "'" << std::endl << std::endl;
                     it->second();
                     break;
                 }

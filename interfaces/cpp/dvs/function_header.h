@@ -256,16 +256,36 @@ private:
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
+        assert((sizeof(U) <= kMaxNumFunctionHeaderBytes) && "Too many data bytes!");
 
         values.push_back(FunctionHeaderObject());
-        FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
+        FunctionHeaderObject* const ptr = &(values[values.size() - 1]); // TODO: Change to ref
 
         ptr->type = FunctionHeaderObjectType::PROPERTY;
-        ptr->num_bytes = sizeof(U);
 
-        assert((ptr->num_bytes <= kMaxNumFunctionHeaderBytes) && "Too many data bytes!");
-
-        fillBufferWithObjects(ptr->data, obj);
+        if(std::is_same<U, PropertyType>::value)
+        {
+            const PropertyType* const obj_ptr = reinterpret_cast<const PropertyType* const>(&obj);
+            if(*obj_ptr == PropertyType::LINE_STRIP)
+            {
+                ptr->num_bytes = sizeof(PropertyBase);
+                PropertyBase ps;
+                ps.setPropertyType(PropertyType::LINE_STRIP);
+                fillBufferWithObjects(ptr->data, ps);
+            }
+            else if(*obj_ptr == PropertyType::PERSISTENT)
+            {
+                ptr->num_bytes = sizeof(PropertyBase);
+                PropertyBase ps;
+                ps.setPropertyType(PropertyType::PERSISTENT);
+                fillBufferWithObjects(ptr->data, ps);
+            }
+        }
+        else
+        {
+            ptr->num_bytes = sizeof(U);
+            fillBufferWithObjects(ptr->data, obj);
+        }
     }
 
     template <typename U, typename... Us>
@@ -273,16 +293,36 @@ private:
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
+        assert((sizeof(U) <= kMaxNumFunctionHeaderBytes) && "Too many data bytes!");
 
         values.push_back(FunctionHeaderObject());
-        FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
+        FunctionHeaderObject* const ptr = &(values[values.size() - 1]); // TODO: Change to ref
 
         ptr->type = FunctionHeaderObjectType::PROPERTY;
-        ptr->num_bytes = sizeof(U);
 
-        assert((ptr->num_bytes <= kMaxNumFunctionHeaderBytes) && "Too many data bytes!");
-
-        fillBufferWithObjects(ptr->data, obj);
+        if(std::is_same<U, PropertyType>::value)
+        {
+            const PropertyType* const obj_ptr = reinterpret_cast<const PropertyType* const>(&obj);
+            if(*obj_ptr == PropertyType::LINE_STRIP)
+            {
+                ptr->num_bytes = sizeof(PropertyBase);
+                PropertyBase ps;
+                ps.setPropertyType(PropertyType::LINE_STRIP);
+                fillBufferWithObjects(ptr->data, ps);
+            }
+            else if(*obj_ptr == PropertyType::PERSISTENT)
+            {
+                ptr->num_bytes = sizeof(PropertyBase);
+                PropertyBase ps;
+                ps.setPropertyType(PropertyType::PERSISTENT);
+                fillBufferWithObjects(ptr->data, ps);
+            }
+        }
+        else
+        {
+            ptr->num_bytes = sizeof(U);
+            fillBufferWithObjects(ptr->data, obj);
+        }
 
         extendInternal(values, other_objs...);
     }

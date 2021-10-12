@@ -53,6 +53,21 @@ template <typename T, typename... Us> void scatter(const Vector<T>& x, const Vec
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
+template <typename T, typename... Us> void drawPoint(const Point2D<T>& p, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1));
+    hdr.extend(settings...);
+
+    Vector<T> x(1), y(1);
+    x(0) = p.x;
+    y(0) = p.y;
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
 template <typename T, typename... Us>
 void scatter3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
 {
@@ -61,6 +76,22 @@ void scatter3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const 
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
+}
+
+template <typename T, typename... Us> void drawPoint(const Point3D<T>& p, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER3);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1));
+    hdr.extend(settings...);
+
+    Vector<T> x(1), y(1), z(1);
+    x(0) = p.x;
+    y(0) = p.y;
+    z(0) = p.z;
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }

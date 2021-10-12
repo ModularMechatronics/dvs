@@ -114,6 +114,7 @@ void testPlot()
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
     plot(x, y, properties::Color(212, 14, 55), properties::LineWidth(1));
+    plot(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(4), properties::LINE_STRIP);
     plot(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(1));
 }
 

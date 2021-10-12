@@ -50,6 +50,7 @@ protected:
     bool is_persistent_;
     bool min_max_calculated_;
     bool visualize_has_run_;
+    GLuint line_type_; // TODO: Shall be moved to plot2d.h
 
     void assignProperties(const Properties& props);
     virtual void findMinMax() = 0;
@@ -129,6 +130,8 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
 void PlotObjectBase::assignProperties(const Properties& props)
 {
     is_persistent_ = props.hasProperty(PropertyType::PERSISTENT);
+
+    line_type_ = props.hasProperty(PropertyType::LINE_STRIP) ? GL_LINES : GL_LINE_STRIP;
 
     if (props.hasProperty(PropertyType::NAME))
     {
