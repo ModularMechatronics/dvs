@@ -7,7 +7,6 @@
 
 using namespace dvs;
 
-
 void testSurf()
 {
     const int num_rows = 20, num_cols = 25;
@@ -286,6 +285,32 @@ void testDrawTriangles()
     clearView();
 
     drawTriangles(triangles, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
+}
+
+void testDrawTiles()
+{
+    const int num_rows = 20, num_cols = 25;
+    Matrix<float> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+
+    double inc = 0.4;
+    for (int r = 0; r < num_rows; r++)
+    {
+        for (int c = 0; c < num_cols; c++)
+        {
+            const double rd = static_cast<double>(r - 5) * inc;
+            const double cd = static_cast<double>(c - 5) * inc * 2;
+            x(r, c) = c;
+            y(r, c) = r;
+            z(r, c) = 50.0 * std::sin(std::sqrt(rd * rd + cd * cd));
+        }
+    }
+
+    const Vec2Dd tile_size(0.1, 0.2);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    drawTiles(z, tile_size, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
 
 void testDrawMesh()

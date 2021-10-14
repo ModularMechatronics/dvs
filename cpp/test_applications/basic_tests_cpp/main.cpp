@@ -31,6 +31,8 @@ int main(int argc, char* argv[])
     fcns["imShow"] = testImShow;
     fcns["axis"] = testAxis;
     fcns["drawTriangles"] = testDrawTriangles;
+    fcns["drawTriangle"] = testDrawTriangle;
+    fcns["drawTiles"] = testDrawTiles;
     fcns["drawMesh"] = testDrawMesh;
     fcns["drawLine3D"] = testDrawLine3D;
     fcns["drawLine2D"] = testDrawLine2D;

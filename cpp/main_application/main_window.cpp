@@ -190,7 +190,7 @@ void MainWindow::appActive()
     app_in_focus_ = true;
 }
 
-void MainWindow::OnKeyDown(wxKeyEvent& event)
+void MainWindow::OnKeyDown(wxKeyEvent& WXUNUSED(event))
 {
     std::cout << "Key pressed!!" << std::endl;
     // int key_code = event.GetKeyCode();
