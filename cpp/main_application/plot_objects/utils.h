@@ -49,6 +49,8 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 3;
         case Function::DRAW_LINE_BETWEEN_POINTS_3D:
             return 3;
+        case Function::DRAW_TILES:
+            return 1;
 
         default:
             std::cout << "You haven't defined number of dimensions in utils.h for Function type "
@@ -1208,6 +1210,118 @@ inline float* convertVerticesDataOuter(uint8_t* input_data,
     else if (data_type == DataType::UINT64)
     {
         output_data = convertVerticesData<uint64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+    }
+    else
+    {
+        throw std::runtime_error("Invalid data type!");
+    }
+
+    return output_data;
+}
+
+template <typename T>
+inline float* convertSingleMatrixDataInner(uint8_t* const data_buffer,
+                                           const size_t num_rows,
+                                           const size_t num_cols,
+                                           const Vec2D<double>& tile_size)
+{
+    float* output_data = new float[num_rows * num_cols * 4 * 3];
+    Matrix<float> z;
+
+    z.setInternalData(reinterpret_cast<float*>(data_buffer), num_rows, num_cols);
+
+    size_t idx = 0;
+    for (size_t r = 0; r < num_rows; r++)
+    {
+        for (size_t c = 0; c < num_cols; c++)
+        {
+            const float x = static_cast<float>(c) * tile_size.x;
+            const float y = static_cast<float>(r) * tile_size.y;
+
+            const size_t idx0_x = idx;
+            const size_t idx0_y = idx + 1;
+            const size_t idx0_z = idx + 2;
+
+            const size_t idx1_x = idx + 3;
+            const size_t idx1_y = idx + 4;
+            const size_t idx1_z = idx + 5;
+
+            const size_t idx2_x = idx + 6;
+            const size_t idx2_y = idx + 7;
+            const size_t idx2_z = idx + 8;
+
+            const size_t idx3_x = idx + 9;
+            const size_t idx3_y = idx + 10;
+            const size_t idx3_z = idx + 11;
+            idx = idx + 12;
+
+            output_data[idx0_x] = x;
+            output_data[idx1_x] = x;
+            output_data[idx2_x] = x + tile_size.x;
+            output_data[idx3_x] = x + tile_size.x;
+
+            output_data[idx0_y] = y;
+            output_data[idx1_y] = y + tile_size.y;
+            output_data[idx2_y] = y + tile_size.y;
+            output_data[idx3_y] = y;
+
+            output_data[idx0_z] = z(r, c);
+            output_data[idx1_z] = z(r, c);
+            output_data[idx2_z] = z(r, c);
+            output_data[idx3_z] = z(r, c);
+        }
+    }
+
+    z.setInternalData(nullptr, 0, 0);
+
+    return output_data;
+}
+
+inline float* convertSingleMatrixDataOuter(uint8_t* input_data,
+                                           const DataType data_type,
+                                           const Dimension2D dims,
+                                           const Vec2D<double>& tile_size)
+{
+    float* output_data;
+    if (data_type == DataType::FLOAT)
+    {
+        output_data = convertSingleMatrixDataInner<float>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::DOUBLE)
+    {
+        output_data = convertSingleMatrixDataInner<double>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::INT8)
+    {
+        output_data = convertSingleMatrixDataInner<int8_t>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::INT16)
+    {
+        output_data = convertSingleMatrixDataInner<int16_t>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::INT32)
+    {
+        output_data = convertSingleMatrixDataInner<int32_t>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::INT64)
+    {
+        output_data = convertSingleMatrixDataInner<int64_t>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::UINT8)
+    {
+        output_data = convertSingleMatrixDataInner<uint8_t>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::UINT16)
+    {
+        output_data = convertSingleMatrixDataInner<uint16_t>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::UINT32)
+    {
+        output_data = convertSingleMatrixDataInner<uint32_t>(input_data, dims.rows, dims.cols, tile_size);
+    }
+    else if (data_type == DataType::UINT64)
+    {
+        output_data = convertSingleMatrixDataInner<uint64_t>(input_data, dims.rows, dims.cols, tile_size);
     }
     else
     {

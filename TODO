@@ -1,4 +1,4 @@
- - setCurrentElement doesn't send any information to dvs, only sets internal variable on client side which is sent with the next command
+ - setCurrentElement doesn''t send any information to dvs, only sets internal variable on client side which is sent with the next command
   - This way, a property type could be added, so that the current element can be specified in the function call
  - The class Properties should be moved so that it is not included in the C++ client interface.
  - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
@@ -22,6 +22,7 @@
  - Rename "linspaceFromPointsAndCount" to "linspaceEdgesAndCount" or "linspaceBoundariesAndCount"
  - Remove drawLine2DBetweenXValues and drawLine2DBetweenYValues
  - Set point size before rendering text (it gets affected by setting point size in a plot)
+ - Remove "drawTriangle source file" (It uses drawTriangles)
 #### Bigger features
  - Fix so that one can set axis square and axis equal
  - Nice characters with AA

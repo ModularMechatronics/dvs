@@ -90,6 +90,10 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTriangle3D(std::move(received_data), hdr)));
             break;
 
+        case Function::DRAW_TILES:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTiles(std::move(received_data), hdr)));
+            break;
+
         case Function::DRAW_MESH:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), hdr)));
             break;

@@ -7,7 +7,6 @@ namespace dvs
 {
 namespace internal
 {
-
 enum class FunctionHeaderObjectType : uint16_t
 {
     FUNCTION,
@@ -70,6 +69,7 @@ enum class Function : uint8_t
     POLYGON_FROM_4_POINTS,
     DRAW_TRIANGLES_3D,
     DRAW_TRIANGLE_3D,
+    DRAW_TILES,
     DRAW_MESH,
     HOLD_ON,
     HOLD_OFF,
@@ -118,13 +118,13 @@ enum class ColorMapType : uint8_t
     UNKNOWN
 };
 
-}
+}  // namespace internal
 
 namespace properties
 {
-    constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
-    constexpr internal::PropertyType LINE_STRIP = internal::PropertyType::LINE_STRIP;
-}
+constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
+constexpr internal::PropertyType LINE_STRIP = internal::PropertyType::LINE_STRIP;
+}  // namespace properties
 
 enum class ElementType : uint8_t
 {
@@ -143,7 +143,6 @@ enum class ElementParent : uint8_t
     UNKNOWN
 };
 
-}
-
+}  // namespace dvs
 
 #endif

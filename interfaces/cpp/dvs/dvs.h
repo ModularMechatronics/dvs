@@ -181,6 +181,23 @@ template <typename... Us> void drawTriangle(const Triangle3D<double>& triangle, 
 }
 
 template <typename T, typename... Us>
+void drawTiles(const Matrix<T>& z, const Vec2D<double>& tile_size, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_TILES);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(z.size()));
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(z.rows(), z.cols()));
+    hdr.extend(settings...);
+
+    Vector<double> v(2);
+    v(0) = tile_size.x;
+    v(1) = tile_size.y;
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, z, v);
+}
+
+template <typename T, typename... Us>
 void drawMesh(const Vector<Point3D<T>>& vertices, const Vector<IndexTriplet>& indices, const Us&... settings)
 {
     internal::FunctionHeader hdr;
