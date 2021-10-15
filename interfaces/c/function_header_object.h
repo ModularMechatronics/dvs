@@ -6,7 +6,7 @@
 
 #include "enumerations.h"
 
-const size_t kMaxNumFunctionHeaderBytes = SCHAR_MAX;
+#define kMaxNumFunctionHeaderBytes SCHAR_MAX
 
 typedef struct S_FunctionHeaderObject
 {
@@ -24,4 +24,3 @@ FunctionHeaderObject getLastFuncHdrObj()
 }
 
 #endif
-
