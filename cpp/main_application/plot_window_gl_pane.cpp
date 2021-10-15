@@ -379,13 +379,14 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
     {
         if (is_editing_)
         {
-            const Vec2Df mouse_pos = Vec2Df(current_point.x, current_point.y);
+            wxPoint pos_now = this->GetPosition();
+            const Vec2Df mouse_pos = Vec2Df(current_point.x + pos_now.x, current_point.y + pos_now.y);
             Vec2Df delta = mouse_pos - mouse_pos_at_press_;
 
             delta =
                 Vec2Df(std::round(delta.x / grid_size_) * grid_size_, std::round(delta.y / grid_size_) * grid_size_);
             const Vec2Df current_pos(this->GetPosition().x, this->GetPosition().y);
-            const Vec2Df changed_pos = current_pos + delta;
+            const Vec2Df changed_pos = delta;
 
             const wxSize size_now = this->GetSize();
 

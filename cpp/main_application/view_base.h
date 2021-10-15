@@ -67,7 +67,7 @@ public:
 template <typename T>
 ViewBase<T>::ViewBase(wxFrame* parent, const WindowSettings& window_settings) : wxFrame(parent, wxID_ANY, "Figure 1")
 {
-    grid_size_ = 5.0f;
+    grid_size_ = 1.0f;
     name_ = window_settings.getName();
 
     WindowSettings* st = new WindowSettings(window_settings);
@@ -86,7 +86,7 @@ ViewBase<T>::ViewBase(wxFrame* parent, const WindowSettings& window_settings) : 
 template <typename T>
 ViewBase<T>::ViewBase(wxNotebookPage* parent, const TabSettings& tab_settings) : wxNotebookPage(parent, -1)
 {
-    grid_size_ = 5.0f;
+    grid_size_ = 1.0f;
     name_ = tab_settings.getName();
 
     TabSettings* st = new TabSettings(tab_settings);
