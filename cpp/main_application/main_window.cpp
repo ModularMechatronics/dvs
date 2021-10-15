@@ -145,7 +145,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     wxImage::AddHandler(new wxPNGHandler);
 
-    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(150, 350));
+    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(200, 500));
     layout_tools_window_->Hide();
 
     Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
