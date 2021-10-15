@@ -19,6 +19,7 @@
 #include "plot_objects/draw_tiles.h"
 #include "plot_objects/draw_mesh.h"
 #include "plot_objects/draw_line3d.h"
+#include "plot_objects/draw_arrow.h"
 // #include "plot_objects/draw_line_between_points_3d.h"
 
 // clang-format on

@@ -53,6 +53,7 @@ enum class PropertyType : uint8_t
 enum class Function : uint8_t
 {
     DRAW_LINE3D,
+    DRAW_ARROW,
     PLANE_XY,
     PLANE_XZ,
     PLANE_YZ,

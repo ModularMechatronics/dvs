@@ -102,6 +102,10 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr)));
             break;
 
+        case Function::DRAW_ARROW:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawArrow(std::move(received_data), hdr)));
+            break;
+
         case Function::DRAW_LINE_BETWEEN_POINTS_3D:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr)));
             break;

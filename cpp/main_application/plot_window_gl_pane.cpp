@@ -302,7 +302,7 @@ bool PlotWindowGLPane::is3DFunction(const Function fcn)
            (fcn == Function::PLANE_YZ) || (fcn == Function::DRAW_MESH) || (fcn == Function::DRAW_TRIANGLES_3D) ||
            (fcn == Function::DRAW_TRIANGLE_3D) || (fcn == Function::SURF) || (fcn == Function::PLOT3) ||
            (fcn == Function::SCATTER3) || (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
-           (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_TILES);
+           (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_TILES) || (fcn == Function::DRAW_ARROW);
 }
 
 void PlotWindowGLPane::setSelection()

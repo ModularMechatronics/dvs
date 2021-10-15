@@ -283,6 +283,19 @@ void drawLine(const Line3D<double>& line, const double t0, const double t1, cons
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
 }
 
+template <typename... Us> void drawArrow(const Point3D<double>& p, const Vec3D<double> v, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_ARROW);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
+    Vector<Point3D<double>> points = {p, v};
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
+}
+
 template <typename... Us>
 void drawLine2D(const ParametricLine2D<double>& line, const double t0, const double t1, const Us&... settings)
 {
