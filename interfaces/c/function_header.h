@@ -8,7 +8,7 @@
 #include "function_header_object.h"
 #include "plot_properties.h"
 
-const size_t kMaxNumHeaderObjects = 30;
+#define kMaxNumHeaderObjects 30
 
 typedef struct S_FunctionHeader
 {
@@ -24,7 +24,7 @@ void initFunctionHeader(FunctionHeader* const hdr)
 
 void appendFunctionHeaderObject(FunctionHeader* const hdr, const FunctionHeaderObject* const hdr_obj)
 {
-    if(hdr->num_objects == kMaxNumHeaderObjects)
+    if (hdr->num_objects == kMaxNumHeaderObjects)
     {
         printf("Tried to append header objects to full FunctionHeader!\n");
         exit(0);
@@ -33,7 +33,5 @@ void appendFunctionHeaderObject(FunctionHeader* const hdr, const FunctionHeaderO
     hdr->values[hdr->num_objects] = *hdr_obj;
     hdr->num_objects = hdr->num_objects + 1;
 }
-
-
 
 #endif

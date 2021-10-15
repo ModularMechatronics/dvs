@@ -5,3 +5,4 @@ project(basic-tests-c C)
 include_directories(${REPO_DIR}/interfaces/c)
 
 add_executable(basic-tests-c main.c)
+target_link_libraries(basic-tests-c m)
