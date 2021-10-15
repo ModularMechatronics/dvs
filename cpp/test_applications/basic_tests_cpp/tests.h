@@ -356,6 +356,21 @@ void testDrawTriangle()
     drawTriangle(triangle, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
 
+void testDrawArrow()
+{
+    using tp = double;
+
+    Point3D<tp> p(0.1, 0.2, 0.3);
+    Vec3D<tp> v(0.5, -0.3, 0.7);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    drawArrow(p, v, properties::Color(12, 244, 244));
+}
+
 void testDrawLine3D()
 {
     using tp = double;

@@ -74,7 +74,7 @@ void DrawLine3D::visualize()
         visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);
         glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4, points_ptr_, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 2, points_ptr_, GL_STATIC_DRAW);
     }
 
     setColor(face_color_);

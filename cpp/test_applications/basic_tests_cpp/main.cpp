@@ -37,6 +37,7 @@ int main(int argc, char* argv[])
     fcns["drawLine3D"] = testDrawLine3D;
     fcns["drawLine2D"] = testDrawLine2D;
     fcns["drawLineBetweenPoints"] = testDrawLineBetweenPoints;
+    fcns["drawArrow"] = testDrawArrow;
     fcns["stairs"] = testStairs;
 
     if (argc == 1)
