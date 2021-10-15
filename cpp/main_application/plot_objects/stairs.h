@@ -35,7 +35,7 @@ Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data, const Function
     }
 
     points_ptr_ =
-        convertData2DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+        convertStairsOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 }
 
 void Stairs::findMinMax()
@@ -60,7 +60,7 @@ void Stairs::visualize()
         visualize_has_run_ = true;
         glGenBuffers(1, &buffer_idx_);
         glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 2, points_ptr_, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (num_elements_ * 2 - 1) * 2, points_ptr_, GL_STATIC_DRAW);
     }
     setColor(color_);
     setLinewidth(line_width_);
@@ -68,7 +68,7 @@ void Stairs::visualize()
     glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glDrawArrays(GL_LINE_STRIP, 0, num_elements_);
+    glDrawArrays(GL_LINE_STRIP, 0, num_elements_ * 2 - 1);
     glDisableVertexAttribArray(0);
 }
 
