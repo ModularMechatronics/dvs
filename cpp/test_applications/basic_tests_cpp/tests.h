@@ -126,7 +126,7 @@ void testStairs()
 
     for (size_t k = 0; k < num_elements; k++)
     {
-        xf(k) = 10.0 * cos(t) + 20.0;
+        xf(k) = t;
         yf(k) = 10.0 * sin(t) + 20.0 + k;
 
         t = t + 0.3;
@@ -135,7 +135,9 @@ void testStairs()
     setCurrentElement("view_00");
     clearView();
 
-    stairs(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(20));
+    stairs(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(2));
+    plot(xf, yf, properties::Color(21, 14, 255), properties::LineWidth(2));
+    scatter(xf, yf, properties::Color(255, 0, 0), properties::PointSize(10));
 }
 
 void testPlot3()
