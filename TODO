@@ -24,6 +24,8 @@
 - Set point size before rendering text (it gets affected by setting point size in a plot)
 - Remove "drawTriangle source file" (It uses drawTriangles)
 - functions "drawArrow" and "quiver"
+- Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
+- Rename "FunctionHeader" to "Header" and "FunctionHeaderObject" to "HeaderObject"
 
 #### Bigger features
 - Fix so that one can set axis square and axis equal

@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
     fcns["scatter3"] = testScatter3;
     fcns["plot"] = testPlot;
     fcns["plot3"] = testPlot3;
+    fcns["plotCollection"] = testPlotCollection;
     fcns["surf"] = testSurf;
     fcns["imShow"] = testImShow;
     fcns["axis"] = testAxis;

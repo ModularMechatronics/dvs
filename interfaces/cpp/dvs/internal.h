@@ -8,6 +8,7 @@
 #include "dvs/communication.h"
 #include "dvs/function_header.h"
 #include "dvs/utils.h"
+#include "math/math.h"
 
 namespace dvs
 {
@@ -175,6 +176,74 @@ void sendHeaderAndData(const SendFunctionType& send_function,
     fillBuffer(&(data_blob[idx]), other_elements...);
 
     send_function(data_blob, num_bytes);
+
+    delete[] data_blob;
+}
+
+template <typename U> void fillBufferWithCollection(uint8_t* const data_blob, const U& data_to_be_sent)
+{
+    size_t total_num_bytes = 0;
+    for (size_t k = 0; k < data_to_be_sent.size(); k++)
+    {
+        data_to_be_sent[k].fillBufferWithData(&(data_blob[total_num_bytes]));
+        total_num_bytes += data_to_be_sent[k].numBytes();
+    }
+}
+
+template <typename U, typename... Us>
+void fillBufferWithCollection(uint8_t* const data_blob, const U& data_to_be_sent, const Us&... other_elements)
+{
+    size_t total_num_bytes = 0;
+    for (size_t k = 0; k < data_to_be_sent.size(); k++)
+    {
+        data_to_be_sent[k].fillBufferWithData(&(data_blob[total_num_bytes]));
+        total_num_bytes += data_to_be_sent[k].numBytes();
+    }
+    fillBufferWithCollection(&(data_blob[total_num_bytes]), other_elements...);
+}
+
+template <typename U, typename... Us>
+void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
+                                   const FunctionHeader& hdr,
+                                   const Vector<uint8_t>& vector_lengths,
+                                   const size_t num_bytes_to_send,
+                                   const U& first_element,
+                                   const Us&... other_elements)
+{
+    const uint64_t num_bytes_hdr = hdr.numBytes();
+    const uint64_t num_bytes_from_object = num_bytes_to_send + num_bytes_hdr;
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t) + vector_lengths.numBytes();
+
+    uint8_t* const data_blob = new uint8_t[num_bytes];
+
+    uint64_t idx = 0;
+    data_blob[idx] = isBigEndian();
+    idx += 1;
+
+    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    hdr.fillBufferWithData(&(data_blob[idx]));
+    idx += num_bytes_hdr;
+
+    vector_lengths.fillBufferWithData(&(data_blob[idx]));
+    idx += vector_lengths.numBytes();
+
+    for (size_t k = 0; k < first_element.size(); k++)
+    {
+        first_element[k].fillBufferWithData(&(data_blob[idx]));
+        idx += first_element[k].numBytes();
+    }
+
+    fillBufferWithCollection(&(data_blob[idx]), other_elements...);
+
+    send_function(data_blob, num_bytes + 8);
 
     delete[] data_blob;
 }
