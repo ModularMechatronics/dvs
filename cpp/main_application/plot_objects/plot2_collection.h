@@ -35,7 +35,7 @@ inline float* convertData(uint8_t* input_data,
                           const size_t num_objects,
                           const size_t num_bytes_per_element,
                           const size_t num_points,
-                          const Vector<uint8_t>& vector_lengths)
+                          const Vector<uint16_t>& vector_lengths)
 {
     const size_t total_num_bytes = num_points * 2 * num_bytes_per_element;
     const size_t num_bytes_per_collection = vector_lengths.sum() * num_bytes_per_element;
@@ -77,7 +77,7 @@ Plot2Collection::Plot2Collection(std::unique_ptr<const ReceivedData> received_da
     num_points_ = 0;
     num_objects_ = hdr.get(FunctionHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
 
-    Vector<uint8_t> vector_lengths(num_objects_);  // TODO: vector_lengths has to be larger than uint8_t
+    Vector<uint16_t> vector_lengths(num_objects_);
 
     for (size_t k = 0; k < num_objects_; k++)
     {

@@ -31,7 +31,7 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
 
     assert(x.size() == y.size());
 
-    Vector<T> vector_lengths(x.size());
+    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths has to be larger than uint8_t
 
     for (size_t k = 0; k < x.size(); k++)
     {
@@ -39,6 +39,7 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
         vector_lengths(k) = x[k].size();
         num_elements += x[k].size();
     }
+
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, num_elements);
     hdr.extend(settings...);
 
