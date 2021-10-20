@@ -101,7 +101,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::POSITION) || (fcn == Function::SURF) || (fcn == Function::IM_SHOW) ||
            (fcn == Function::AXES_2D) || (fcn == Function::AXES_3D) || (fcn == Function::VIEW) ||
            (fcn == Function::SOFT_CLEAR) || (fcn == Function::STAIRS) || (fcn == Function::DRAW_TILES) ||
-           (fcn == Function::DRAW_ARROW);
+           (fcn == Function::DRAW_ARROW) || (fcn == Function::PLOT2_COLLECTION);
 }
 
 void MainWindow::receiveData()

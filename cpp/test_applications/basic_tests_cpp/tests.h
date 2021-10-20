@@ -90,6 +90,42 @@ void testScatter3()
     plot3(x, y, z, properties::Color(21, 14, 55), properties::LineWidth(1));
 }
 
+void testPlotCollection()
+{
+    const size_t num_elements = 40;
+    Vector<double> x0(num_elements), y0(num_elements), x1(num_elements), y1(num_elements), x2(num_elements),
+        y2(num_elements);
+
+    double t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const double kd = k;
+        x0(k) = 10.0 * cos(t);
+        y0(k) = kd * 0.05 * 10.0 * sin(t) + 0.2;
+
+        x1(k) = 14.0 * cos(t);
+        y1(k) = kd * 0.07 * 11.0 * sin(t) + 0.3;
+
+        x2(k) = 9.0 * cos(t);
+        y2(k) = kd * 0.08 * 15.0 * sin(t) + 0.4;
+        t = t + 0.1;
+    }
+
+    std::vector<Vector<double>> pc_x = {x0, x1, x2};
+    std::vector<Vector<double>> pc_y = {y0, y1, y2};
+
+    setCurrentElement("view_00");
+    clearView();
+
+    axis({-48.0, -48.0, -1.0}, {48.0, 48.0, 1.0});
+
+    plotCollection(pc_x, pc_y, properties::Color(0, 0, 0));
+    scatter(x0, y0, properties::Color(212, 14, 55), properties::PointSize(3));
+    scatter(x1, y1, properties::Color(0, 14, 55), properties::PointSize(3));
+    scatter(x2, y2, properties::Color(0, 255, 55), properties::PointSize(3));
+}
+
 void testPlot()
 {
     const size_t num_elements = 30;

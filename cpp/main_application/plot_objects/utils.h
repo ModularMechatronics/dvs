@@ -53,6 +53,10 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 3;
         case Function::DRAW_TILES:
             return 1;
+        case Function::PLOT2_COLLECTION:
+            return 2;
+        case Function::PLOT3_COLLECTION:
+            return 3;
 
         default:
             std::cout << "You haven't defined number of dimensions in utils.h for Function type "

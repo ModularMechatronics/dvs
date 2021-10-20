@@ -19,6 +19,34 @@ template <typename T, typename... Us> void plot(const Vector<T>& x, const Vector
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
+template <typename T, typename... Us>
+void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT2_COLLECTION);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
+
+    uint32_t num_elements = 0;
+
+    assert(x.size() == y.size());
+
+    Vector<T> vector_lengths(x.size());
+
+    for (size_t k = 0; k < x.size(); k++)
+    {
+        assert(x[k].size() == y[k].size());
+        vector_lengths(k) = x[k].size();
+        num_elements += x[k].size();
+    }
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, num_elements);
+    hdr.extend(settings...);
+
+    const size_t num_bytes_to_send = sizeof(T) * 2 * num_elements;
+
+    internal::sendHeaderAndVectorCollection(internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y);
+}
+
 template <typename T, typename... Us> void stairs(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
     internal::FunctionHeader hdr;
