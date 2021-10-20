@@ -31,11 +31,11 @@ public:
 };
 
 template <typename T>
-inline float* convertData(uint8_t* input_data,
-                          const size_t num_objects,
-                          const size_t num_bytes_per_element,
-                          const size_t num_points,
-                          const Vector<uint16_t>& vector_lengths)
+inline float* convertCollectionData(uint8_t* input_data,
+                                    const size_t num_objects,
+                                    const size_t num_bytes_per_element,
+                                    const size_t num_points,
+                                    const Vector<uint16_t>& vector_lengths)
 {
     const size_t total_num_bytes = num_points * 2 * num_bytes_per_element;
     const size_t num_bytes_per_collection = vector_lengths.sum() * num_bytes_per_element;
@@ -61,6 +61,72 @@ inline float* convertData(uint8_t* input_data,
             idx += 4;
         }
         idx_offset += vector_lengths(i);
+    }
+
+    return output_data;
+}
+
+inline float* convertCollectionDataOuter(uint8_t* input_data,
+                                         const DataType data_type,
+                                         const size_t num_objects,
+                                         const size_t num_bytes_per_element,
+                                         const size_t num_points,
+                                         const Vector<uint16_t>& vector_lengths)
+{
+    float* output_data;
+    if (data_type == DataType::FLOAT)
+    {
+        output_data =
+            convertCollectionData<float>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::DOUBLE)
+    {
+        output_data =
+            convertCollectionData<double>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::INT8)
+    {
+        output_data =
+            convertCollectionData<int8_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::INT16)
+    {
+        output_data =
+            convertCollectionData<int16_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::INT32)
+    {
+        output_data =
+            convertCollectionData<int32_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::INT64)
+    {
+        output_data =
+            convertCollectionData<int64_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::UINT8)
+    {
+        output_data =
+            convertCollectionData<uint8_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::UINT16)
+    {
+        output_data =
+            convertCollectionData<uint16_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::UINT32)
+    {
+        output_data =
+            convertCollectionData<uint32_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else if (data_type == DataType::UINT64)
+    {
+        output_data =
+            convertCollectionData<uint64_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+    }
+    else
+    {
+        throw std::runtime_error("Invalid data type!");
     }
 
     return output_data;
@@ -92,7 +158,8 @@ Plot2Collection::Plot2Collection(std::unique_ptr<const ReceivedData> received_da
     // Advance pointer to account for first bytes where 'vector_lengths' are stored
     data_ptr_ += num_objects_ * sizeof(uint8_t);
 
-    points_ptr_ = convertData<double>(data_ptr_, num_objects_, num_bytes_per_element_, num_points_, vector_lengths);
+    points_ptr_ = convertCollectionDataOuter(
+        data_ptr_, data_type_, num_objects_, num_bytes_per_element_, num_points_, vector_lengths);
 }
 
 void Plot2Collection::findMinMax()
