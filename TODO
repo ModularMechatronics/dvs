@@ -26,6 +26,7 @@
 - functions "drawArrow" and "quiver"
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Rename "FunctionHeader" to "Header" and "FunctionHeaderObject" to "HeaderObject"
+- Add pan and zoom to scroll click and right click
 
 #### Bigger features
 - Fix so that one can set axis square and axis equal

@@ -115,6 +115,38 @@ void testPlotCollection()
     std::vector<Vector<double>> pc_x = {x0, x1, x2};
     std::vector<Vector<double>> pc_y = {y0, y1, y2};
 
+    std::vector<Vector<double>> pcm_x;
+    std::vector<Vector<double>> pcm_y;
+
+    auto rand_num = [](void) -> double { return static_cast<double>(rand() % 1001) / 1000.0; };
+
+    uint32_t num_points = 0;
+
+    std::vector<size_t> np = {50, 50, 50, 50, 56};
+
+    for (size_t k = 0; k < 30; k++)
+    {
+        const size_t num_elems = (rand() % 20) + 50;
+        Vector<double> x(num_elems), y(num_elems);
+        num_points += num_elems;
+        t = 0.0;
+
+        const double t_inc = rand_num() / 100.0 + 0.05;
+        const double x_a = rand_num() * 3.0;
+        const double y_a = rand_num() * 3.0;
+        const double x_o = rand_num() * 10.0;
+        const double y_o = rand_num() * 10.0;
+
+        for (size_t i = 0; i < num_elems; i++)
+        {
+            x(i) = x_a * cos(t) + x_o;
+            y(i) = y_a * t * sin(t) + y_o;
+            t += t_inc;
+        }
+        pcm_x.push_back(std::move(x));
+        pcm_y.push_back(std::move(y));
+    }
+
     setCurrentElement("view_00");
     clearView();
 
@@ -124,6 +156,18 @@ void testPlotCollection()
     scatter(x0, y0, properties::Color(212, 14, 55), properties::PointSize(3));
     scatter(x1, y1, properties::Color(0, 14, 55), properties::PointSize(3));
     scatter(x2, y2, properties::Color(0, 255, 55), properties::PointSize(3));
+
+    setCurrentElement("view_01");
+    clearView();
+
+    for (size_t k = 0; k < pcm_x.size(); k++)
+    {
+        scatter(pcm_x[k], pcm_y[k], properties::Color(255, 0, 0), properties::PointSize(3));
+    }
+
+    axis({-8.0, -8.0, -1.0}, {8.0, 8.0, 1.0});
+
+    plotCollection(pcm_x, pcm_y, properties::Color(0, 0, 0));
 }
 
 void testPlot()

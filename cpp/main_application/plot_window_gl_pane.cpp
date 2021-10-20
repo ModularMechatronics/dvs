@@ -573,15 +573,15 @@ InteractionType keyboardStateToInteractionType(const KeyboardState& keyboard_sta
     {
         return InteractionType::RESET;
     }
-    else if (keyboard_state.keyIsPressed('p'))
+    else if (keyboard_state.keyIsPressed('p') || keyboard_state.keyIsPressed('q'))
     {
         return InteractionType::PAN;
     }
-    else if (keyboard_state.keyIsPressed('r'))
+    else if (keyboard_state.keyIsPressed('r') || keyboard_state.keyIsPressed('w'))
     {
         return InteractionType::ROTATE;
     }
-    else if (keyboard_state.keyIsPressed('z'))
+    else if (keyboard_state.keyIsPressed('z') || keyboard_state.keyIsPressed('e'))
     {
         return InteractionType::ZOOM;
     }
