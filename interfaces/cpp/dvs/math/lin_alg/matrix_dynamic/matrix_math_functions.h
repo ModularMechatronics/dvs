@@ -4,7 +4,7 @@
 
 #include <cmath>
 #include <cstdarg>
-#include <tuple>
+#include <utility>
 
 #include "dvs/math/lin_alg/matrix_dynamic/matrix_dynamic.h"
 
@@ -13,7 +13,7 @@ namespace dvs
 template <typename T> Vector<T> linspaceFromPointsAndCount(const T x0, const T x1, const size_t num_values);
 
 template <typename T>
-std::tuple<Matrix<T>, Matrix<T>> meshGrid(
+std::pair<Matrix<T>, Matrix<T>> meshGrid(
     const T x0, const T x1, const T y0, const T y1, const size_t xn, const size_t yn)
 {
     const Vector<T> x_vec = linspaceFromPointsAndCount(x0, x1, xn);
@@ -29,10 +29,10 @@ std::tuple<Matrix<T>, Matrix<T>> meshGrid(
         }
     }
 
-    return std::tuple<Matrix<T>, Matrix<T>>(std::move(x_mat), std::move(y_mat));
+    return std::pair<Matrix<T>, Matrix<T>>(std::move(x_mat), std::move(y_mat));
 }
 
-template <typename T> std::tuple<Matrix<T>, Matrix<T>> meshgrid(const Vector<T>& x_vec, const Vector<T>& y_vec)
+template <typename T> std::pair<Matrix<T>, Matrix<T>> meshGrid(const Vector<T>& x_vec, const Vector<T>& y_vec)
 {
     Matrix<T> x_mat(y_vec.size(), x_vec.size()), y_mat(y_vec.size(), x_vec.size());
 
@@ -45,7 +45,7 @@ template <typename T> std::tuple<Matrix<T>, Matrix<T>> meshgrid(const Vector<T>&
         }
     }
 
-    return std::tuple<Matrix<T>, Matrix<T>>(x_mat, y_mat);
+    return std::pair<Matrix<T>, Matrix<T>>(x_mat, y_mat);
 }
 
 template <typename T> Matrix<T> concatenateHorizontally(const std::initializer_list<Matrix<T>>& init_list)

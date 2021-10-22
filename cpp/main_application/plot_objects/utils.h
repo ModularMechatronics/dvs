@@ -49,6 +49,8 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 3;
         case Function::DRAW_ARROW:
             return 1;
+        case Function::QUIVER:
+            return 2;
         case Function::DRAW_LINE_BETWEEN_POINTS_3D:
             return 3;
         case Function::DRAW_TILES:

@@ -6,8 +6,8 @@ set(wxWidgets_LIBRARIES -lwx_osx_cocoau_core-3.1
                         -lwx_baseu-3.1
                         -lwx_osx_cocoau_gl-3.1
                         -lwx_osx_cocoau_adv-3.1
-                        -lwxpng-3.1)
-
+                        )
+                        # -lwxpng-3.1
 set(PLATFORM_LIBRARIES pthread
                        iconv
                        png

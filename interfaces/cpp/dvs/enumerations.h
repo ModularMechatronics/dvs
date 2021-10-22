@@ -69,6 +69,8 @@ enum class Function : uint8_t
     NEW_ELEMENT,
     SCATTER2,
     SCATTER3,
+    QUIVER,
+    QUIVER3,
     DRAW_LINE_BETWEEN_POINTS_3D,
     POLYGON_FROM_4_POINTS,
     DRAW_TRIANGLES_3D,

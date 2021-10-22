@@ -82,6 +82,19 @@ template <typename T, typename... Us> void scatter(const Vector<T>& x, const Vec
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
+template <typename T, typename... Us>
+void quiver(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& u, const Matrix<T>& v, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::QUIVER);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.rows(), x.cols()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, u, v);
+}
+
 template <typename T, typename... Us> void drawPoint(const Point2D<T>& p, const Us&... settings)
 {
     internal::FunctionHeader hdr;
@@ -312,13 +325,13 @@ void drawLine(const Line3D<double>& line, const double t0, const double t1, cons
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
 }
 
-template <typename... Us> void drawArrow(const Point3D<double>& p, const Vec3D<double> v, const Us&... settings)
+template <typename... Us> void drawArrow(const Point2D<double>& p, const Vec2D<double> v, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_ARROW);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    Vector<Point3D<double>> points = {p, v};
+    Vector<Point2D<double>> points = {p, v};
 
     hdr.extend(settings...);
 
