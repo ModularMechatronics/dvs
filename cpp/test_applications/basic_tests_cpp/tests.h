@@ -440,8 +440,8 @@ void testDrawArrow()
 {
     using tp = double;
 
-    Point3D<tp> p(0.1, 0.2, 0.3);
-    Vec3D<tp> v(0.5, -0.3, 0.7);
+    Point2D<tp> p(0.1, 0.2);
+    Vec2D<tp> v(0.5, -0.3);
 
     setCurrentElement("view_00");
     clearView();
@@ -449,6 +449,28 @@ void testDrawArrow()
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawArrow(p, v, properties::Color(12, 244, 244));
+}
+
+void testQuiver()
+{
+    using tp = float;
+    const size_t num_rows = 100, num_cols = 100;
+
+    Matrix<tp> x, y, u, v;
+
+    const std::pair<Matrix<tp>, Matrix<tp>> mesh_grid = meshGrid(0.1, 100.0, 0.1, 100.0, num_cols, num_rows);
+    x = mesh_grid.first;
+    y = mesh_grid.second;
+
+    u = dvs::cos(x);
+    v = dvs::sin(y);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    quiver(x, y, u, v, properties::Color(12, 244, 244));
 }
 
 void testDrawLine3D()

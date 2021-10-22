@@ -7,6 +7,7 @@
 #include "plot_objects/plot2d.h"
 #include "plot_objects/plot3d.h"
 #include "plot_objects/plot2_collection.h"
+#include "plot_objects/quiver.h"
 #include "plot_objects/scatter.h"
 #include "plot_objects/scatter3.h"
 #include "plot_objects/surf.h"
