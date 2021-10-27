@@ -52,6 +52,10 @@ public:
                const CoordinateConverter& coord_converter,
                const bool draw_selected_bb,
                const bool left_mouse_pressed);
+    void updateStates(const AxesLimits& axes_limits,
+                      const ViewAngles& view_angles,
+                      const GridVectors& gv,
+                      const CoordinateConverter& coord_converter);
 };
 
 #endif
