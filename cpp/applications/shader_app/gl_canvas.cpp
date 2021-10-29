@@ -42,8 +42,21 @@ GlCanvas::GlCanvas(wxWindow* parent)
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     glEnable(GL_MULTISAMPLE);
-
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+
+    float vertices[] = {
+         0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+         0.0f,  0.5f, 0.0f   // top 
+    };
+
+    glGenBuffers(1, &VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VAO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 3, vertices, GL_STATIC_DRAW);
+
+    axes_settings_ = AxesSettings({-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f});
+    axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
+    axes_painter_ = new AxesPainter(axes_settings_);
 
     Bind(wxEVT_PAINT, &GlCanvas::render, this);
     Bind(wxEVT_MOTION, &GlCanvas::mouseMoved, this);
@@ -52,9 +65,6 @@ GlCanvas::GlCanvas(wxWindow* parent)
     Bind(wxEVT_KEY_DOWN, &GlCanvas::keyPressed, this);
     Bind(wxEVT_KEY_UP, &GlCanvas::keyReleased, this);
 
-    axes_settings_ = AxesSettings({-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f});
-    axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
-    axes_painter_ = new AxesPainter(axes_settings_);
 }
 
 void GlCanvas::mouseMoved(wxMouseEvent& event)
@@ -189,20 +199,26 @@ void GlCanvas::render(wxPaintEvent& evt)
                          axes_interactor_->getCoordConverter());
     glUseProgram(shader_.programId());
 
-    glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_DEPTH_TEST);
     // axes_painter_->plotBegin();
-
     glColor3f(1.0f, 0.0f, 1.0f);
+    /*glColor3f(1.0f, 0.0f, 1.0f);
     glBegin(GL_TRIANGLES);
     glVertex3f(0.0f, 0.0f, 0.0f);
     glVertex3f(1.0f, 0.0f, 0.0f);
     glVertex3f(0.0f, 1.0f, 0.0f);
-    glEnd();
+    glEnd();*/
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, VAO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisableVertexAttribArray(0);
 
     // axes_painter_->plotEnd();
     glUseProgram(0);
 
-    glDisable(GL_DEPTH_TEST);
+    // glDisable(GL_DEPTH_TEST);
 
     glFlush();
     SwapBuffers();

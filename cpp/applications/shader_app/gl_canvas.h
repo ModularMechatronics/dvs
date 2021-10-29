@@ -30,6 +30,7 @@ private:
 
     int args[9];
     Shader shader_;
+    unsigned int VBO, VAO;
 
     int* getArgsPtr()
     {
