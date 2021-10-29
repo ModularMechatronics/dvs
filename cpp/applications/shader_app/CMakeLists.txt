@@ -30,7 +30,8 @@ set(EXT_CPP_FILES ${REPO_DIR}/cpp/main_application/opengl_low_level/3d/opengl_3d
                   ${REPO_DIR}/cpp/main_application/events.cpp
                   ${REPO_DIR}/cpp/main_application/plot_data.cpp
                   ${REPO_DIR}/cpp/main_application/plot_functions/plot_functions.cpp
-                  ${REPO_DIR}/cpp/main_application/plot_window_gl_pane.cpp)
+                  ${REPO_DIR}/cpp/main_application/plot_window_gl_pane.cpp
+                  ${REPO_DIR}/cpp/main_application/shader.cpp)
 
 set(CPP_SOURCE_FILES main.cpp
                      main_window.cpp

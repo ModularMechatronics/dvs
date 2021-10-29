@@ -21,8 +21,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "dvs/math/math.h"
-#include "gui_element.h"
 #include "gl_canvas.h"
 
 using namespace dvs::internal;
@@ -38,26 +36,11 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     glutInit(&argc, argv);
 #endif
 
-    ElementSettings elem;
-    elem.x = 0;
-    elem.y = 0;
-    elem.width = 0.3;
-    elem.height = 0.3;
-    elem.name = "Base";
-
     wxNotebookPage* tab_view_;
-    
 
-    // GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this), elem, 10);
-
-    // ge->updateSizeFromParent(this->GetSize());
-    // tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tab_container_ = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(700, 700));
     tabs_view_ = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(700, 700));
 
-
-    // TabView* tab_element = new TabView(tabs_view, tab);
-    // tabs_.push_back(tab_element);
     wxNotebookPage* tab_element = new wxNotebookPage(tabs_view_, -1);
 
     tabs_view_->AddPage(tab_element, "Main tab");
