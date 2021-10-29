@@ -1,12 +1,11 @@
 #include "gl_canvas.h"
 
+#include <stdlib.h>
+
 #include <wx/event.h>
 #include <wx/glcanvas.h>
 
 #include "axes/axes.h"
-#include "dvs/enumerations.h"
-#include "dvs/math/math.h"
-#include "events.h"
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_low_level.h"
 
@@ -18,16 +17,27 @@ GlCanvas::~GlCanvas()
 GlCanvas::GlCanvas(wxWindow* parent)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxPoint(0, 0), wxSize(600, 600), wxFULL_REPAINT_ON_RESIZE)
 {
-#ifdef PLATFORM_APPLE_M
+// #ifdef PLATFORM_APPLE_M
     wxGLContextAttrs cxtAttrs;
-    cxtAttrs.PlatformDefaults().OGLVersion(99, 2).EndList();
+    cxtAttrs.PlatformDefaults().CompatibilityProfile().CoreProfile().OGLVersion(3, 3).EndList();
+    // cxtAttrs.PlatformDefaults().EndList();
     // https://stackoverflow.com/questions/41145024/wxwidgets-and-modern-opengl-3-3
     m_context = new wxGLContext(this, NULL, &cxtAttrs);
-#endif
+// #endif
 
 #ifdef PLATFORM_LINUX_M
-    m_context = new wxGLContext(this);
+    // m_context = new wxGLContext(this);
 #endif
+    if ( !m_context->IsOK() )
+    {
+        std::cout << "Not ok!!" << std::endl;
+    }
+
+    wxGLCanvas::SetCurrent(*m_context);
+
+    const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
+    const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
+    shader_ = Shader::createFromFiles(v_path,f_path);
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -177,10 +187,10 @@ void GlCanvas::render(wxPaintEvent& evt)
                          axes_interactor_->getViewAngles(),
                          axes_interactor_->generateGridVectors(),
                          axes_interactor_->getCoordConverter());
-
+    glUseProgram(shader_.programId());
 
     glEnable(GL_DEPTH_TEST);
-    axes_painter_->plotBegin();
+    // axes_painter_->plotBegin();
 
     glColor3f(1.0f, 0.0f, 1.0f);
     glBegin(GL_TRIANGLES);
@@ -189,7 +199,8 @@ void GlCanvas::render(wxPaintEvent& evt)
     glVertex3f(0.0f, 1.0f, 0.0f);
     glEnd();
 
-    axes_painter_->plotEnd();
+    // axes_painter_->plotEnd();
+    glUseProgram(0);
 
     glDisable(GL_DEPTH_TEST);
 

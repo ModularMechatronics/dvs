@@ -14,6 +14,7 @@
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data.h"
 #include "view_base.h"
+#include "shader.h"
 
 class GlCanvas : public wxGLCanvas
 {
@@ -28,9 +29,20 @@ private:
     CursorSquareState cursor_state_at_press_;*/
 
     int args[9];
+    Shader shader_;
 
     int* getArgsPtr()
     {
+        args[0] = WX_GL_RGBA;
+        args[1] = WX_GL_DOUBLEBUFFER;
+        args[2] = WX_GL_DEPTH_SIZE;
+        args[3] = 16;
+        args[4] = WX_GL_SAMPLES;
+        args[5] = 4;
+        args[6] = WX_GL_SAMPLE_BUFFERS;
+        args[7] = 1;
+        args[8] = 0;
+    
         return args;
     }
 
