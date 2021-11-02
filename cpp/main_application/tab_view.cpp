@@ -9,7 +9,7 @@ TabView::TabView(wxNotebookPage* parent, const TabSettings& tab_settings)
 {
     const std::vector<ElementSettings> elements = settings_->getElementSettingsList();
 
-    for (const auto elem : elements)
+    for (const auto& elem : elements)
     {
         GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxWindow*>(this), elem, grid_size_);
 
