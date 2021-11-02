@@ -19,8 +19,8 @@ GlCanvas::GlCanvas(wxWindow* parent)
 {
 // #ifdef PLATFORM_APPLE_M
     wxGLContextAttrs cxtAttrs;
-    cxtAttrs.PlatformDefaults().CompatibilityProfile().CoreProfile().OGLVersion(3, 3).EndList();
-    // cxtAttrs.PlatformDefaults().EndList();
+    // cxtAttrs.PlatformDefaults().OGLVersion(3, 2).EndList();
+    cxtAttrs.PlatformDefaults().CoreProfile().OGLVersion(3, 2).EndList();
     // https://stackoverflow.com/questions/41145024/wxwidgets-and-modern-opengl-3-3
     m_context = new wxGLContext(this, NULL, &cxtAttrs);
 // #endif
@@ -34,6 +34,14 @@ GlCanvas::GlCanvas(wxWindow* parent)
     }
 
     wxGLCanvas::SetCurrent(*m_context);
+
+    char *GL_version=(char *)glGetString(GL_VERSION);
+    char *GL_vendor=(char *)glGetString(GL_VENDOR);
+    char *GL_renderer=(char *)glGetString(GL_RENDERER);
+
+    printf("Version: %s\n", GL_version);
+    printf("Vendor: %s\n", GL_vendor);
+    printf("Renderer: %s\n", GL_renderer);
 
     const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
     const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
@@ -199,7 +207,7 @@ void GlCanvas::render(wxPaintEvent& evt)
                          axes_interactor_->getCoordConverter());
     glUseProgram(shader_.programId());
 
-    // glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     // axes_painter_->plotBegin();
     glColor3f(1.0f, 0.0f, 1.0f);
     /*glColor3f(1.0f, 0.0f, 1.0f);

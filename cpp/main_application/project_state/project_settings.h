@@ -354,7 +354,7 @@ public:
             return false;
         }
 
-        for (const TabSettings ts : tabs_)
+        for (const TabSettings& ts : tabs_)
         {
             if (other.hasTabWithName(ts.getName()))
             {
@@ -369,7 +369,7 @@ public:
             }
         }
 
-        for (const WindowSettings ws : windows_)
+        for (const WindowSettings& ws : windows_)
         {
             if (other.hasWindowWithName(ws.getName()))
             {

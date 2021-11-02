@@ -11,7 +11,7 @@ WindowView::WindowView(wxFrame* parent, const WindowSettings& window_settings, c
 
     const std::vector<ElementSettings> elements = settings_->getElementSettingsList();
 
-    for (const auto elem : elements)
+    for (const auto& elem : elements)
     {
         GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxFrame*>(this), elem, grid_size_);
 
