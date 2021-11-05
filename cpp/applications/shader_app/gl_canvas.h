@@ -31,6 +31,7 @@ private:
     int args[9];
     Shader shader_;
     unsigned int VBO, VAO;
+    unsigned int m_VertexBuffer, m_VertexBufferArray;
 
     int* getArgsPtr()
     {
