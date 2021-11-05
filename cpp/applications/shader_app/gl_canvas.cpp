@@ -9,10 +9,8 @@
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_low_level.h"
 
-GlCanvas::~GlCanvas()
-{
-
-}
+std::string getGLErrorString(const GLenum err);
+InteractionType keyboardStateToInteractionTypeNew(const KeyboardState& keyboard_state);
 
 GlCanvas::GlCanvas(wxWindow* parent)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxPoint(0, 0), wxSize(600, 600), wxFULL_REPAINT_ON_RESIZE)
@@ -49,8 +47,8 @@ GlCanvas::GlCanvas(wxWindow* parent)
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    glEnable(GL_MULTISAMPLE);
-    glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+    // glEnable(GL_MULTISAMPLE);
+    // glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 
     float vertices[] = {
          0.5f, -0.5f, 0.0f,  // bottom right
@@ -72,6 +70,66 @@ GlCanvas::GlCanvas(wxWindow* parent)
     Bind(wxEVT_LEFT_UP, &GlCanvas::mouseLeftReleased, this);
     Bind(wxEVT_KEY_DOWN, &GlCanvas::keyPressed, this);
     Bind(wxEVT_KEY_UP, &GlCanvas::keyReleased, this);
+
+}
+
+void GlCanvas::render(wxPaintEvent& evt)
+{
+    (void)evt;
+    if (!IsShown())
+    {
+        return;
+    }
+
+    std::cout << "render" << std::endl;
+
+    wxGLCanvas::SetCurrent(*m_context);
+    wxPaintDC(this);
+
+    // glEnable(GL_MULTISAMPLE);
+
+    const float bg_color = 240.0f;
+
+    glClearColor(bg_color / 255.0f, bg_color / 255.0f, bg_color / 255.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    axes_interactor_->update(
+        keyboardStateToInteractionTypeNew(keyboard_state_), getWidth(), getHeight());
+
+    axes_painter_->updateStates(axes_interactor_->getAxesLimits(),
+                         axes_interactor_->getViewAngles(),
+                         axes_interactor_->generateGridVectors(),
+                         axes_interactor_->getCoordConverter());
+    glUseProgram(shader_.programId());
+
+    glEnable(GL_DEPTH_TEST);
+
+    // axes_painter_->plotBegin();
+    // glColor3f(1.0f, 0.0f, 1.0f);
+
+    glEnableVertexAttribArray(0);
+    GLenum err = glGetError();
+    if(err != GL_NO_ERROR)
+    {
+        std::cout << "There was an error: " << getGLErrorString(err) << std::endl;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, VAO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisableVertexAttribArray(0);
+
+    // axes_painter_->plotEnd();
+    glUseProgram(0);
+
+    // glDisable(GL_DEPTH_TEST);
+
+    glFlush();
+    SwapBuffers();
+}
+
+GlCanvas::~GlCanvas()
+{
 
 }
 
@@ -180,58 +238,6 @@ InteractionType keyboardStateToInteractionTypeNew(const KeyboardState& keyboard_
     }
 }
 
-void GlCanvas::render(wxPaintEvent& evt)
-{
-    (void)evt;
-    if (!IsShown())
-    {
-        return;
-    }
-
-    wxGLCanvas::SetCurrent(*m_context);
-    wxPaintDC(this);
-
-    glEnable(GL_MULTISAMPLE);
-
-    const float bg_color = 240.0f;
-
-    glClearColor(bg_color / 255.0f, bg_color / 255.0f, bg_color / 255.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    axes_interactor_->update(
-        keyboardStateToInteractionTypeNew(keyboard_state_), getWidth(), getHeight());
-
-    axes_painter_->updateStates(axes_interactor_->getAxesLimits(),
-                         axes_interactor_->getViewAngles(),
-                         axes_interactor_->generateGridVectors(),
-                         axes_interactor_->getCoordConverter());
-    glUseProgram(shader_.programId());
-
-    glEnable(GL_DEPTH_TEST);
-    // axes_painter_->plotBegin();
-    glColor3f(1.0f, 0.0f, 1.0f);
-    /*glColor3f(1.0f, 0.0f, 1.0f);
-    glBegin(GL_TRIANGLES);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 1.0f, 0.0f);
-    glEnd();*/
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, VAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDisableVertexAttribArray(0);
-
-    // axes_painter_->plotEnd();
-    glUseProgram(0);
-
-    // glDisable(GL_DEPTH_TEST);
-
-    glFlush();
-    SwapBuffers();
-}
-
 // Returns window width in pixels
 int GlCanvas::getWidth()
 {
@@ -243,3 +249,34 @@ int GlCanvas::getHeight()
 {
     return GetSize().y;
 }
+
+std::string getGLErrorString(const GLenum err)
+{
+    switch(err)
+    {
+    case GL_INVALID_ENUM:
+        return "GL_INVALID_ENUM";
+        break;
+    case GL_INVALID_VALUE:
+        return "GL_INVALID_VALUE";
+        break;
+    case GL_INVALID_OPERATION:
+        return "GL_INVALID_OPERATION";
+        break;
+    case GL_STACK_OVERFLOW:
+        return "GL_STACK_OVERFLOW";
+        break;
+    case GL_STACK_UNDERFLOW:
+        return "GL_STACK_UNDERFLOW";
+        break;
+    case GL_OUT_OF_MEMORY:
+        return "GL_OUT_OF_MEMORY";
+        break;
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+        return "GL_INVALID_FRAMEBUFFER_OPERATION";
+        break;
+    default:
+        return "default";
+    }
+}
+

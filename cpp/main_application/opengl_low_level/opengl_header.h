@@ -14,8 +14,8 @@
 #ifdef PLATFORM_APPLE_M
 
 #include <GLUT/glut.h>
-#include <OpenGL/gl.h>
-#include <OpenGl/glu.h>
+#include <OpenGL/gl3.h>
+// #include <OpenGl/glu3.h>
 
 #endif
 
