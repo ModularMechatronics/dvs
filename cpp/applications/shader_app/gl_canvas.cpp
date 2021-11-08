@@ -50,7 +50,7 @@ GlCanvas::GlCanvas(wxWindow* parent)
     // glEnable(GL_MULTISAMPLE);
     // glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 
-    float vertices[] = {
+    /*float vertices[] = {
          0.5f, -0.5f, 0.0f,  // bottom right
         -0.5f, -0.5f, 0.0f,  // bottom left
          0.0f,  0.5f, 0.0f   // top 
@@ -58,7 +58,25 @@ GlCanvas::GlCanvas(wxWindow* parent)
 
     glGenBuffers(1, &VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VAO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 3, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 3, vertices, GL_STATIC_DRAW);*/
+    static const float VertexBufferData[] = {
+            0.75f, 0.75f, 0.0f, 1.0f,
+            0.75f, -0.75f, 0.0f, 1.0f,
+            -0.75f, -0.75f, 0.0f, 1.0f,
+        };
+
+    glGenVertexArrays(1, &m_VertexBufferArray);
+    glBindVertexArray(m_VertexBufferArray);
+
+    glGenBuffers(1, &m_VertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferData), VertexBufferData, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray(0);
 
     axes_settings_ = AxesSettings({-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f});
     axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
@@ -100,7 +118,7 @@ void GlCanvas::render(wxPaintEvent& evt)
                          axes_interactor_->getViewAngles(),
                          axes_interactor_->generateGridVectors(),
                          axes_interactor_->getCoordConverter());
-    glUseProgram(shader_.programId());
+    /*glUseProgram(shader_.programId());
 
     glEnable(GL_DEPTH_TEST);
 
@@ -120,7 +138,18 @@ void GlCanvas::render(wxPaintEvent& evt)
     glDisableVertexAttribArray(0);
 
     // axes_painter_->plotEnd();
+    glUseProgram(0);*/
+    axes_painter_->plotBegin();
+    glUseProgram(shader_.programId());
+
+    glBindVertexArray(m_VertexBufferArray);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glBindVertexArray(0);
+
     glUseProgram(0);
+    axes_painter_->plotEnd();
 
     // glDisable(GL_DEPTH_TEST);
 
