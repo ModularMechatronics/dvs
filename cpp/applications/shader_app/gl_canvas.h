@@ -21,13 +21,6 @@ class GlCanvas : public wxGLCanvas
 private:
     wxGLContext* m_context;
 
-    /*AxesInteractor* axes_interactor_;
-    AxesPainter* axes_painter_;
-    AxesSettings axes_settings_;
-    MouseButtonState left_mouse_button_;
-    KeyboardState keyboard_state_;
-    CursorSquareState cursor_state_at_press_;*/
-
     int args[9];
     Shader shader_;
     unsigned int VBO, VAO;
@@ -73,5 +66,8 @@ public:
     void show();
 
 };
+
+std::string getGLErrorString(const GLenum err);
+InteractionType keyboardStateToInteractionTypeNew(const KeyboardState& keyboard_state);
 
 #endif

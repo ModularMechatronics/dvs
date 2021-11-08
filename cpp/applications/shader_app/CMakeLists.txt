@@ -35,7 +35,8 @@ set(EXT_CPP_FILES ${REPO_DIR}/cpp/main_application/opengl_low_level/3d/opengl_3d
 
 set(CPP_SOURCE_FILES main.cpp
                      main_window.cpp
-                     gl_canvas.cpp)
+                     gl_canvas.cpp
+                     gl_canvas_misc.cpp)
 
 add_executable(shader-app ${CPP_SOURCE_FILES} ${EXT_CPP_FILES})
 target_link_libraries(shader-app ${wxWidgets_LIBRARIES}
