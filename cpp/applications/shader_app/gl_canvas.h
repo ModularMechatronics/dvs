@@ -54,6 +54,7 @@ private:
     void mouseLeftWindow(wxMouseEvent& event);
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
+    void reloadShader();
 
     int getWidth();
     int getHeight();
