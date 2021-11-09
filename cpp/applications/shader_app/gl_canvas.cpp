@@ -31,17 +31,9 @@ GlCanvas::GlCanvas(wxWindow* parent)
 
     wxGLCanvas::SetCurrent(*m_context);
 
-    char *GL_version=(char *)glGetString(GL_VERSION);
-    char *GL_vendor=(char *)glGetString(GL_VENDOR);
-    char *GL_renderer=(char *)glGetString(GL_RENDERER);
-
-    printf("Version: %s\n", GL_version);
-    printf("Vendor: %s\n", GL_vendor);
-    printf("Renderer: %s\n", GL_renderer);
-
     const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
     const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
-    shader_ = Shader::createFromFiles(v_path,f_path);
+    shader_ = Shader::createFromFiles(v_path, f_path);
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -75,6 +67,8 @@ GlCanvas::GlCanvas(wxWindow* parent)
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
     glBindVertexArray(0);
+
+    glMatrixMode(GL_PROJECTION);
 
     axes_settings_ = AxesSettings({-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f});
     axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
@@ -119,34 +113,35 @@ void GlCanvas::render(wxPaintEvent& evt)
                          axes_interactor_->getViewAngles(),
                          axes_interactor_->generateGridVectors(),
                          axes_interactor_->getCoordConverter());
-    /*glUseProgram(shader_.programId());
-
-    glEnable(GL_DEPTH_TEST);
-
-    // axes_painter_->plotBegin();
-    // glColor3f(1.0f, 0.0f, 1.0f);
-
-    glEnableVertexAttribArray(0);
-    GLenum err = glGetError();
-    if(err != GL_NO_ERROR)
-    {
-        std::cout << "There was an error: " << getGLErrorString(err) << std::endl;
-    }
-    glBindBuffer(GL_ARRAY_BUFFER, VAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDisableVertexAttribArray(0);
-
-    // axes_painter_->plotEnd();
-    glUseProgram(0);*/
 
     axes_painter_->plotBegin();
     glUseProgram(shader_.programId());
 
     std::array<GLfloat, 16> projection;
+    std::array<GLfloat, 16> model_view;
     glGetFloatv(GL_PROJECTION_MATRIX, projection.data());
+    glGetFloatv(GL_MODELVIEW_MATRIX, model_view.data());
+
+    const Matrix<double> rot_mat = axes_interactor_->getViewAngles().getRotationMatrix();
+
+    GLfloat modelviewmatrix[] = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.5f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+    for(size_t r = 0; r < 3; r++)
+    {
+        for(size_t c = 0; c < 3; c++)
+        {
+            modelviewmatrix[r * 3 + c] = rot_mat(r, c);
+        }
+    }
+
+    // GL_MODELVIEW_PROJECTION_NV
+    // glm::mat4 mvp = Projection * View * Model
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "ProjectionMatrix"), 1, GL_FALSE, projection.data());
+    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "ModelViewMatrix"), 1, GL_FALSE, modelviewmatrix);
 
     glBindVertexArray(m_VertexBufferArray);
 

@@ -68,12 +68,27 @@ void GlCanvas::keyPressed(wxKeyEvent& event)
 {
     int key_code = event.GetKeyCode();
 
+    if(key_code == 82)
+    {
+        reloadShader();
+    }
+
     // Only add alpha numeric keys due to errors when clicking outside of window
     if (std::isalnum(key_code))
     {
         keyboard_state_.keyGotReleased(key_code);
     }
     Refresh();
+}
+
+void GlCanvas::reloadShader()
+{
+    std::cout << "Reloading shader..." << std::endl;
+    glDeleteShader(shader_.programId());
+
+    const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
+    const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
+    shader_ = Shader::createFromFiles(v_path,f_path);
 }
 
 void GlCanvas::keyReleased(wxKeyEvent& event)
@@ -162,3 +177,13 @@ std::string getGLErrorString(const GLenum err)
     }
 }
 
+void printGlStuff()
+{
+    char *GL_version=(char *)glGetString(GL_VERSION);
+    char *GL_vendor=(char *)glGetString(GL_VENDOR);
+    char *GL_renderer=(char *)glGetString(GL_RENDERER);
+
+    printf("Version: %s\n", GL_version);
+    printf("Vendor: %s\n", GL_vendor);
+    printf("Renderer: %s\n", GL_renderer);
+}
