@@ -68,7 +68,7 @@ void GlCanvas::keyPressed(wxKeyEvent& event)
 {
     int key_code = event.GetKeyCode();
 
-    if(key_code == 82)
+    if(key_code == 83)
     {
         reloadShader();
     }
@@ -76,19 +76,10 @@ void GlCanvas::keyPressed(wxKeyEvent& event)
     // Only add alpha numeric keys due to errors when clicking outside of window
     if (std::isalnum(key_code))
     {
-        keyboard_state_.keyGotReleased(key_code);
+        std::cout << "Pressed: " << static_cast<char>(key_code) << std::endl;
+        keyboard_state_.keyGotPressed(key_code);
     }
     Refresh();
-}
-
-void GlCanvas::reloadShader()
-{
-    std::cout << "Reloading shader..." << std::endl;
-    glDeleteShader(shader_.programId());
-
-    const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
-    const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
-    shader_ = Shader::createFromFiles(v_path,f_path);
 }
 
 void GlCanvas::keyReleased(wxKeyEvent& event)
@@ -101,15 +92,23 @@ void GlCanvas::keyReleased(wxKeyEvent& event)
         keyboard_state_.keyGotReleased(key_code);
     }
 
-    Refresh();
+    // Refresh();
 }
 
+void GlCanvas::reloadShader()
+{
+    std::cout << "Reloading shader..." << std::endl;
+    glDeleteShader(shader_.programId());
+
+    const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
+    const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
+    shader_ = Shader::createFromFiles(v_path,f_path);
+}
 
 void GlCanvas::show()
 {
     this->Show();
 }
-
 
 InteractionType keyboardStateToInteractionTypeNew(const KeyboardState& keyboard_state)
 {
@@ -117,15 +116,15 @@ InteractionType keyboardStateToInteractionTypeNew(const KeyboardState& keyboard_
     {
         return InteractionType::RESET;
     }
-    else if (keyboard_state.keyIsPressed('p') || keyboard_state.keyIsPressed('q'))
+    else if (keyboard_state.keyIsPressed('p') || keyboard_state.keyIsPressed('P') || keyboard_state.keyIsPressed('q'))
     {
         return InteractionType::PAN;
     }
-    else if (keyboard_state.keyIsPressed('r') || keyboard_state.keyIsPressed('w'))
+    else if (keyboard_state.keyIsPressed('r') || keyboard_state.keyIsPressed('R') || keyboard_state.keyIsPressed('w'))
     {
         return InteractionType::ROTATE;
     }
-    else if (keyboard_state.keyIsPressed('z') || keyboard_state.keyIsPressed('e'))
+    else if (keyboard_state.keyIsPressed('z') || keyboard_state.keyIsPressed('Z') || keyboard_state.keyIsPressed('e'))
     {
         return InteractionType::ZOOM;
     }

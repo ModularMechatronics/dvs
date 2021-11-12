@@ -2,6 +2,8 @@
 
 uniform mat4 ProjectionMatrix;
 uniform mat4 ModelViewMatrix;
+uniform mat4 scale_matrix;
+// uniform vec3 ModelViewMatrix;
 layout(location = 0) in vec3 in_vertex;
 layout(location = 1) in vec3 vertex_color;
 // out vec4 out_vertex;
@@ -10,10 +12,12 @@ out vec3 fragment_color;
 
 void main()
 {
-    // gl_Position.xyz = vertexPosition_modelspace;
     // gl_Position.w = 1.0;
-    gl_Position = ModelViewMatrix * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
-    gl_Position = vec4(gl_Position.x, gl_Position.y, gl_Position.z, 1.0);
+    gl_Position = scale_matrix * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
+    gl_Position = ModelViewMatrix * gl_Position;
+    // gl_Position = ModelViewMatrix * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
+
+    // gl_Position = vec4(gl_Position.x, gl_Position.y, gl_Position.z, gl_Position.w);
     // out_vertex = gl_Position;
     fragment_color = vertex_color;
 }

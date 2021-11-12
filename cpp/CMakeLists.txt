@@ -43,6 +43,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/googletest/googletest/
 # Nlohmann
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/nlohmann/include)
 
+# GLM
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/glm/)
+
 # ****** wxWidgets ******
 # find_package(wxWidgets COMPONENTS core base gl adv)
 
