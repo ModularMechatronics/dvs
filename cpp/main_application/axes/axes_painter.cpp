@@ -227,7 +227,7 @@ void AxesPainter::plotBegin()
     glScaled(sq.x, sq.y, sq.z);
 
     glRotated(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
-    // Not sure why y axis should be negated... But it works like this.
+    // TODO: Not sure why y axis should be negated... But it works like this.
     glScaled(1.0 / s.x, -1.0 / s.y, 1.0 / s.z);
     glTranslated(-axes_center.x, -axes_center.y, -axes_center.z);
 }

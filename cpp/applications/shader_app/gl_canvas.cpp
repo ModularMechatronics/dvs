@@ -5,6 +5,9 @@
 #include <wx/event.h>
 #include <wx/glcanvas.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "axes/axes.h"
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_low_level.h"
@@ -83,7 +86,7 @@ GlCanvas::GlCanvas(wxWindow* parent)
     };
     for(size_t k = 0; k < (sizeof(VertexBufferData)/sizeof(float)); k++)
     {
-        VertexBufferData[k] = VertexBufferData[k] / 5.0f;
+        // VertexBufferData[k] = VertexBufferData[k] / 5.0f;
     }
 
     static const GLfloat g_color_buffer_data[] = {
@@ -151,10 +154,9 @@ GlCanvas::GlCanvas(wxWindow* parent)
         (void*)0                          // array buffer offset
     );
 
-    glMatrixMode(GL_PROJECTION);
+    glMatrixMode(GL_MODELVIEW);
 
-    axes_settings_ = AxesSettings({-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f});
-    axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
+    axes_interactor_ = new AxesInteractor(AxesSettings({-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}), getWidth(), getHeight());
     axes_painter_ = new AxesPainter(axes_settings_);
 
     Bind(wxEVT_PAINT, &GlCanvas::render, this);
@@ -177,7 +179,7 @@ void GlCanvas::render(wxPaintEvent& evt)
     // SO thread that made it work
     // https://stackoverflow.com/questions/26378289/osx-opengl-4-1-glenablevertexattribarray-gldrawarrays-gl-invalid-operation
 
-    std::cout << "render" << std::endl;
+    // std::cout << "render" << std::endl;
 
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this);
@@ -197,7 +199,7 @@ void GlCanvas::render(wxPaintEvent& evt)
                          axes_interactor_->generateGridVectors(),
                          axes_interactor_->getCoordConverter());
 
-    axes_painter_->plotBegin();
+    // axes_painter_->plotBegin();
     glUseProgram(shader_.programId());
 
     std::array<GLfloat, 16> projection;
@@ -205,26 +207,67 @@ void GlCanvas::render(wxPaintEvent& evt)
     glGetFloatv(GL_PROJECTION_MATRIX, projection.data());
     glGetFloatv(GL_MODELVIEW_MATRIX, model_view.data());
 
-    const Matrix<double> rot_mat = axes_interactor_->getViewAngles().getRotationMatrix();
+    // Angles
+    const ViewAngles va = axes_interactor_->getViewAngles();
+    const Matrix<double> rot_mat = rotationMatrixY(-va.getAzimuth()) * rotationMatrixX(va.getElevation());
 
-    GLfloat modelviewmatrix[] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.5f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-    for(size_t r = 0; r < 3; r++)
+    // AxesLimits
+    const AxesLimits axes_limits = axes_interactor_->getAxesLimits();
+    const Vec3Dd axes_center = axes_limits.getAxesCenter();
+    // axes_settings_ = axes_interactor_->getAxesSettings();
+    // Scales
+    // Vec3Dd sq = axes_settings_.getAxesScale();
+    const Vec3Dd s = axes_limits.getAxesScale();
+
+    /*
+    glScaled(sq.x, sq.y, sq.z);
+
+    glRotated(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
+    // Not sure why y axis should be negated... But it works like this.
+    glScaled(1.0 / s.x, -1.0 / s.y, 1.0 / s.z);
+    glTranslated(-axes_center.x, -axes_center.y, -axes_center.z);
+    */
+
+    Matrix<float> mat;
+    // Projection matrix : 45° Field of View, 1.0 ratio, display range : 0.1 unit <-> 100 units
+    // glm::mat4 Projection = glm::ortho(0.0f, 800.f, 0.0f, 800.f, -10.0f, 10.0f);
+    glm::mat4 Projection = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
+    // Camera matrix
+    glm::mat4 View = glm::lookAt(glm::vec3(0, 0, -5.9),
+                                 glm::vec3(0, 0, 0),
+                                 glm::vec3(0, 1, 0));
+    glm::mat4 Model = glm::mat4(1.0f);
+    glm::mat4 scale_mat = glm::mat4(0.1);
+
+    mat.setInternalData(&Projection[0][0], 4, 4);
+    // std::cout << mat << std::endl;
+    mat.setInternalData(nullptr, 0, 0);
+
+    Model[3][0] = axes_center.x;
+    Model[3][1] = axes_center.y;
+    Model[3][2] = axes_center.z;
+
+    scale_mat[0][0] = s.x;
+    scale_mat[1][1] = s.y;
+    scale_mat[2][2] = s.z;
+    scale_mat[3][3] = 1.0;
+
+    for(int r = 0; r < 3; r++)
     {
-        for(size_t c = 0; c < 3; c++)
+        for(int c = 0; c < 3; c++)
         {
-            modelviewmatrix[r * 3 + c] = rot_mat(r, c);
+            Model[r][c] = rot_mat(r, c);
+            // std::cout << scale_mat[r][c] << std::endl;
         }
     }
 
-    // GL_MODELVIEW_PROJECTION_NV
-    // glm::mat4 mvp = Projection * View * Model
+    // Our ModelViewProjection : multiplication of our 3 matrices
+    glm::mat4 MVP = Projection * View * Model;
+
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "ProjectionMatrix"), 1, GL_FALSE, projection.data());
-    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "ModelViewMatrix"), 1, GL_FALSE, modelviewmatrix);
+    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "ModelViewMatrix"), 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "scale_matrix"), 1, GL_FALSE, &scale_mat[0][0]);
+    // glUniform3f(glGetUniformLocation(shader_.programId(), "translation"), 1, GL_FALSE, &translation[0]);
 
     glBindVertexArray(m_VertexBufferArray);
 
@@ -233,7 +276,7 @@ void GlCanvas::render(wxPaintEvent& evt)
     glBindVertexArray(0);
 
     glUseProgram(0);
-    axes_painter_->plotEnd();
+    // axes_painter_->plotEnd();
 
     // glDisable(GL_DEPTH_TEST);
 

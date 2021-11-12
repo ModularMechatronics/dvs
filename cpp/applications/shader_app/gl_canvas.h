@@ -40,7 +40,7 @@ private:
     
         return args;
     }
-
+    MouseActivity current_mouse_activity_;
     MouseInteractionAxis current_mouse_interaction_axis_;
     AxesInteractor* axes_interactor_;
     AxesPainter* axes_painter_;
