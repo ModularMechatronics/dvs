@@ -23,7 +23,7 @@ private:
 
     int args[9];
     Shader shader_;
-    unsigned int m_VertexBuffer, m_VertexBufferArray;
+    unsigned int vertex_buffer_, vertex_buffer_array_;
     GLuint colorbuffer;
 
     int* getArgsPtr()

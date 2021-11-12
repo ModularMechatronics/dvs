@@ -14,8 +14,8 @@
 
 #include "vertex_data.h"
 
-#define vertex_data half_cube_vertices
-#define vertex_color half_cube_color
+#define vertex_data cube_vertices
+#define vertex_color cube_color
 
 
 GlCanvas::GlCanvas(wxWindow* parent)
@@ -51,18 +51,16 @@ GlCanvas::GlCanvas(wxWindow* parent)
     // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
 
-    glGenVertexArrays(1, &m_VertexBufferArray);
-    glBindVertexArray(m_VertexBufferArray);
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
 
-    glGenBuffers(1, &m_VertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // glBindVertexArray(0); // Needed?
 
     glGenBuffers(1, &colorbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
@@ -126,11 +124,6 @@ void GlCanvas::render(wxPaintEvent& evt)
     // axes_painter_->plotBegin();
     glUseProgram(shader_.programId());
 
-    std::array<GLfloat, 16> projection;
-    std::array<GLfloat, 16> model_view;
-    glGetFloatv(GL_PROJECTION_MATRIX, projection.data());
-    glGetFloatv(GL_MODELVIEW_MATRIX, model_view.data());
-
     // Angles
     const ViewAngles va = axes_interactor_->getViewAngles();
     const Matrix<double> rot_mat = rotationMatrixY(-va.getAzimuth()) * rotationMatrixX(va.getElevation());
@@ -152,24 +145,24 @@ void GlCanvas::render(wxPaintEvent& evt)
     glTranslated(-axes_center.x, -axes_center.y, -axes_center.z);
     */
 
-    Matrix<float> mat;
-    // Projection matrix : 45° Field of View, 1.0 ratio, display range : 0.1 unit <-> 100 units
-    // glm::mat4 Projection = glm::ortho(0.0f, 800.f, 0.0f, 800.f, -10.0f, 10.0f);
-    glm::mat4 Projection = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
+    // projection_mat matrix : 45° Field of view_mat, 1.0 ratio, display range : 0.1 unit <-> 100 units
+    // glm::mat4 projection_mat = glm::ortho(0.0f, 800.f, 0.0f, 800.f, -10.0f, 10.0f);
+    glm::mat4 projection_mat = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
     // Camera matrix
-    glm::mat4 View = glm::lookAt(glm::vec3(0, 0, -5.9),
+    glm::mat4 view_mat = glm::lookAt(glm::vec3(0, 0, -5.9),
                                  glm::vec3(0, 0, 0),
                                  glm::vec3(0, 1, 0));
-    glm::mat4 Model = glm::mat4(1.0f);
+    glm::mat4 model_mat = glm::mat4(1.0f);
     glm::mat4 scale_mat = glm::mat4(0.1);
 
-    mat.setInternalData(&Projection[0][0], 4, 4);
+    Matrix<float> mat;
+    mat.setInternalData(&projection_mat[0][0], 4, 4);
     // std::cout << mat << std::endl;
     mat.setInternalData(nullptr, 0, 0);
 
-    Model[3][0] = axes_center.x;
-    Model[3][1] = axes_center.y;
-    Model[3][2] = axes_center.z;
+    model_mat[3][0] = axes_center.x;
+    model_mat[3][1] = axes_center.y;
+    model_mat[3][2] = axes_center.z;
 
     scale_mat[0][0] = s.x;
     scale_mat[1][1] = s.y;
@@ -180,20 +173,17 @@ void GlCanvas::render(wxPaintEvent& evt)
     {
         for(int c = 0; c < 3; c++)
         {
-            Model[r][c] = rot_mat(r, c);
-            // std::cout << scale_mat[r][c] << std::endl;
+            model_mat[r][c] = rot_mat(r, c);
         }
     }
 
     // Our ModelViewProjection : multiplication of our 3 matrices
-    glm::mat4 MVP = Projection * View * Model;
+    glm::mat4 mvp = projection_mat * view_mat * model_mat;
 
-    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "ProjectionMatrix"), 1, GL_FALSE, projection.data());
-    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "ModelViewMatrix"), 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "scale_matrix"), 1, GL_FALSE, &scale_mat[0][0]);
-    // glUniform3f(glGetUniformLocation(shader_.programId(), "translation"), 1, GL_FALSE, &translation[0]);
 
-    glBindVertexArray(m_VertexBufferArray);
+    glBindVertexArray(vertex_buffer_array_);
 
     glDrawArrays(GL_TRIANGLES, 0, sizeof(vertex_color) / (sizeof(vertex_color[0]) * 3));
 
