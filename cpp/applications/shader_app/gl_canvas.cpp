@@ -178,10 +178,9 @@ void GlCanvas::render(wxPaintEvent& evt)
     }
 
     // Our ModelViewProjection : multiplication of our 3 matrices
-    glm::mat4 mvp = projection_mat * view_mat * model_mat;
+    glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "scale_matrix"), 1, GL_FALSE, &scale_mat[0][0]);
 
     glBindVertexArray(vertex_buffer_array_);
 
