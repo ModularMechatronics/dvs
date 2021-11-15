@@ -25,6 +25,7 @@ private:
     Shader shader_;
     unsigned int vertex_buffer_, vertex_buffer_array_;
     GLuint colorbuffer;
+    bool use_perspective_proj_;
 
     int* getArgsPtr()
     {

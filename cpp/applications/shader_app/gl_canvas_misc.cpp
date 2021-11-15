@@ -72,11 +72,15 @@ void GlCanvas::keyPressed(wxKeyEvent& event)
     {
         reloadShader();
     }
+    else if((key_code == 'O') || (key_code == 'o'))
+    {
+        use_perspective_proj_ = !use_perspective_proj_;
+    }
+    
 
     // Only add alpha numeric keys due to errors when clicking outside of window
     if (std::isalnum(key_code))
     {
-        std::cout << "Pressed: " << static_cast<char>(key_code) << std::endl;
         keyboard_state_.keyGotPressed(key_code);
     }
     Refresh();

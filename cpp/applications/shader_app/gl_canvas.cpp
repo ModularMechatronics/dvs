@@ -37,6 +37,8 @@ GlCanvas::GlCanvas(wxWindow* parent)
         std::cout << "Not ok!!" << std::endl;
     }
 
+    use_perspective_proj_ = true;
+
     wxGLCanvas::SetCurrent(*m_context);
 
     const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
@@ -132,22 +134,25 @@ void GlCanvas::render(wxPaintEvent& evt)
     const AxesLimits axes_limits = axes_interactor_->getAxesLimits();
     const Vec3Dd axes_center = axes_limits.getAxesCenter();
     // axes_settings_ = axes_interactor_->getAxesSettings();
+
     // Scales
     // Vec3Dd sq = axes_settings_.getAxesScale();
     const Vec3Dd s = axes_limits.getAxesScale();
 
     /*
     glScaled(sq.x, sq.y, sq.z);
-
     glRotated(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
     // Not sure why y axis should be negated... But it works like this.
     glScaled(1.0 / s.x, -1.0 / s.y, 1.0 / s.z);
     glTranslated(-axes_center.x, -axes_center.y, -axes_center.z);
     */
 
-    // projection_mat matrix : 45° Field of view_mat, 1.0 ratio, display range : 0.1 unit <-> 100 units
-    // glm::mat4 projection_mat = glm::ortho(0.0f, 800.f, 0.0f, 800.f, -10.0f, 10.0f);
-    glm::mat4 projection_mat = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
+    const float sw = 3.0f;
+    glm::mat4 orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);;
+    glm::mat4 persp_projection_mat = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
+
+    glm::mat4 projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
+
     // Camera matrix
     glm::mat4 view_mat = glm::lookAt(glm::vec3(0, 0, -5.9),
                                  glm::vec3(0, 0, 0),
@@ -177,8 +182,7 @@ void GlCanvas::render(wxPaintEvent& evt)
         }
     }
 
-    // Our ModelViewProjection : multiplication of our 3 matrices
-    glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
