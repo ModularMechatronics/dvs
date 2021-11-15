@@ -114,6 +114,11 @@ void GlCanvas::show()
     this->Show();
 }
 
+void GlCanvas::setSize(const wxSize& new_size)
+{
+    this->SetSize(new_size);
+}
+
 InteractionType keyboardStateToInteractionTypeNew(const KeyboardState& keyboard_state)
 {
     if (keyboard_state.keyIsPressed('c'))
