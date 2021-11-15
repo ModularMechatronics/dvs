@@ -66,6 +66,7 @@ public:
 
     void render(wxPaintEvent& evt);
     void show();
+    void setSize(const wxSize& new_size);
 
 };
 

@@ -21,6 +21,7 @@
 #include "plot_window_gl_pane.h"
 #include "tab_view.h"
 #include "window_view.h"
+#include "gl_canvas.h"
 
 class MainWindow : public wxFrame
 {
@@ -31,12 +32,16 @@ private:
     wxNotebookPage* tab_pages_;
     wxNotebook* tabs_view_;
     wxPanel* tab_container_;
+    GlCanvas* gl_canvas_;
 
+    void OnSize(wxSizeEvent& event);
 
 public:
     MainWindow();
     MainWindow(const std::vector<std::string>& cmdl_args);
     ~MainWindow();
+
+    
 
     // virtual void OnClose(wxCloseEvent& event);
     // virtual void OnSize(wxSizeEvent& event);

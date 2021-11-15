@@ -21,8 +21,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "gl_canvas.h"
-
 using namespace dvs::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
@@ -35,7 +33,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     char* argv[1] = {"noop"};
     glutInit(&argc, argv);
 #endif
-
+    Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
     wxNotebookPage* tab_view_;
 
     tab_container_ = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(700, 700));
@@ -45,11 +43,23 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     tabs_view_->AddPage(tab_element, "Main tab");
 
-    GlCanvas* gl_pane = new GlCanvas(tabs_view_);
-    gl_pane->show();
+    gl_canvas_ = new GlCanvas(tabs_view_);
+    gl_canvas_->show();
 
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::OnSize(wxSizeEvent& event)
+{
+    wxFrame::OnSize(event);
+
+    const wxSize new_size = this->GetSize();
+    tab_container_->SetSize(new_size);
+    tabs_view_->SetSize(new_size);
+    const int offset = 70;
+    const wxSize gl_canvas_size(new_size.GetWidth() - offset, new_size.GetHeight() - offset);
+    gl_canvas_->setSize(gl_canvas_size);
 }
