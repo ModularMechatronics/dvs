@@ -99,15 +99,22 @@ float half_cube_vertices[] = {
 
 GLfloat half_cube_color[] = {
         0.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        0.0f,  1.0f,  0.0f,
+        1.0f,  0.0f,  0.0f, // x
+        0.0f,  1.0f,  0.0f, // y
 
         0.0f,  0.0f,  0.0f,
-        0.0f,  0.0f,  1.0f,
-        0.0f,  1.0f,  0.0f,
+        0.0f,  0.0f,  1.0f, // z
+        0.0f,  1.0f,  0.0f, // y
 
         0.0f,  0.0f,  0.0f,
-        0.0f,  0.0f,  1.0f,
-        1.0f,  0.0f,  0.0f,
+        0.0f,  0.0f,  1.0f, // z
+        1.0f,  0.0f,  0.0f, // x
 };
+
+/*
+X - red
+Y - green
+Z - blue
+*/
+
 #endif

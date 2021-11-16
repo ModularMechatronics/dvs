@@ -14,8 +14,8 @@
 
 #include "vertex_data.h"
 
-#define vertex_data cube_vertices
-#define vertex_color cube_color
+#define vertex_data half_cube_vertices
+#define vertex_color half_cube_color
 
 
 GlCanvas::GlCanvas(wxWindow* parent)
@@ -128,7 +128,9 @@ void GlCanvas::render(wxPaintEvent& evt)
 
     // Angles
     const ViewAngles va = axes_interactor_->getViewAngles();
-    const Matrix<double> rot_mat = rotationMatrixY(-va.getAzimuth()) * rotationMatrixX(va.getElevation());
+    const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * rotationMatrixZ(static_cast<double>(M_PI)) *  
+                                   rotationMatrixX(va.getElevation()) *
+                                   rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
 
     // AxesLimits
     const AxesLimits axes_limits = axes_interactor_->getAxesLimits();
