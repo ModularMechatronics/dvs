@@ -1,0 +1,14 @@
+#version 330
+
+uniform mat4 model_view_proj_mat;
+layout(location = 0) in vec3 in_vertex;
+layout(location = 1) in vec3 vertex_color;
+
+out vec3 fragment_color;
+
+void main()
+{
+    gl_Position = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
+    gl_Position = model_view_proj_mat * gl_Position;
+    fragment_color = vertex_color;
+}
