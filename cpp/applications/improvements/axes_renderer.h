@@ -29,6 +29,12 @@ public:
     AxesRenderer() = default;
     AxesRenderer(const AxesSettings& axes_settings);
 
+    void updateStates(const AxesLimits& axes_limits,
+                      const ViewAngles& view_angles,
+                      const GridVectors& gv,
+                      const CoordinateConverter& coord_converter);
+    void render();
+
 };
 
 

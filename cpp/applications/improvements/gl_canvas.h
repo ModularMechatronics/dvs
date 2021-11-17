@@ -15,6 +15,7 @@
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data.h"
 #include "view_base.h"
+#include "vbo_wrapper.h"
 #include "shader.h"
 
 class GlCanvas : public wxGLCanvas
@@ -27,6 +28,7 @@ private:
     unsigned int vertex_buffer_, vertex_buffer_array_;
     GLuint colorbuffer;
     bool use_perspective_proj_;
+    VboWrapper3D cube_;
 
     int* getArgsPtr()
     {

@@ -54,30 +54,7 @@ GlCanvas::GlCanvas(wxWindow* parent)
     // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
-
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &colorbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_color), vertex_color, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-    glVertexAttribPointer(
-        1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-        3,                                // size
-        GL_FLOAT,                         // type
-        GL_FALSE,                         // normalized?
-        0,                                // stride
-        (void*)0                          // array buffer offset
-    );
+    cube_ = VboWrapper3D(sizeof(vertex_color) / (sizeof(vertex_color[0]) * 3), vertex_data, vertex_color);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -118,6 +95,10 @@ void GlCanvas::render(wxPaintEvent& evt)
 
     axes_interactor_->update(
         keyboardStateToInteractionTypeNew(keyboard_state_), getWidth(), getHeight());
+    axes_renderer_->updateStates(axes_interactor_->getAxesLimits(),
+                                 axes_interactor_->getViewAngles(),
+                                 axes_interactor_->generateGridVectors(),
+                                 axes_interactor_->getCoordConverter());
 
     glUseProgram(shader_.programId());
 
@@ -183,9 +164,7 @@ void GlCanvas::render(wxPaintEvent& evt)
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    glBindVertexArray(vertex_buffer_array_);
-
-    glDrawArrays(GL_TRIANGLES, 0, sizeof(vertex_color) / (sizeof(vertex_color[0]) * 3));
+    cube_.render();
 
     glBindVertexArray(0);
 
