@@ -46,6 +46,8 @@ GlCanvas::GlCanvas(wxWindow* parent)
     const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
     shader_ = Shader::createFromFiles(v_path, f_path);
 
+    plot_box_walls_ = new PlotBoxWalls(1.0f);
+
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     // glEnable(GL_MULTISAMPLE);
@@ -138,11 +140,6 @@ void GlCanvas::render(wxPaintEvent& evt)
     glm::mat4 model_mat = glm::mat4(1.0f);
     glm::mat4 scale_mat = glm::mat4(0.1);
 
-    Matrix<float> mat;
-    mat.setInternalData(&projection_mat[0][0], 4, 4);
-    // std::cout << mat << std::endl;
-    mat.setInternalData(nullptr, 0, 0);
-
     model_mat[3][0] = axes_center.x;
     model_mat[3][1] = axes_center.y;
     model_mat[3][2] = axes_center.z;
@@ -163,13 +160,10 @@ void GlCanvas::render(wxPaintEvent& evt)
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
-
+    plot_box_walls_->render();
     cube_.render();
 
-    glBindVertexArray(0);
-
     glUseProgram(0);
-    // axes_painter_->plotEnd();
 
     // glDisable(GL_DEPTH_TEST);
 

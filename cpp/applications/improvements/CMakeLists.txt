@@ -38,7 +38,8 @@ set(CPP_SOURCE_FILES main.cpp
                      gl_canvas.cpp
                      gl_canvas_misc.cpp
                      axes_renderer.cpp
-                     vbo_wrapper.cpp)
+                     vbo_wrapper.cpp
+                     plot_box_walls.cpp)
 
 add_executable(improvements ${CPP_SOURCE_FILES} ${EXT_CPP_FILES})
 target_link_libraries(improvements ${wxWidgets_LIBRARIES}
