@@ -6,6 +6,7 @@ void VboWrapper3D::render() const
 {
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_vertices_);
+    glBindVertexArray(0);
 }
 
 VboWrapper3D::VboWrapper3D(const size_t num_vertices, const float* const vertex_data, const float* const color_data)
@@ -27,6 +28,7 @@ VboWrapper3D::VboWrapper3D(const size_t num_vertices, const float* const vertex_
     glGenBuffers(1, &color_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
     glBufferData(GL_ARRAY_BUFFER, num_bytes, color_data, GL_STATIC_DRAW);
+
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
     glVertexAttribPointer(

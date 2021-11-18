@@ -17,6 +17,7 @@
 #include "view_base.h"
 #include "vbo_wrapper.h"
 #include "shader.h"
+#include "plot_box_walls.h"
 
 class GlCanvas : public wxGLCanvas
 {
@@ -29,6 +30,8 @@ private:
     GLuint colorbuffer;
     bool use_perspective_proj_;
     VboWrapper3D cube_;
+
+    PlotBoxWalls* plot_box_walls_;
 
     int* getArgsPtr()
     {
