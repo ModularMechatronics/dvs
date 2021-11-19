@@ -14,7 +14,7 @@ private:
 public:
     PlotBoxWalls() = delete;
     PlotBoxWalls(const float size);
-    void render() const;
+    void render(const float azimuth, const float elevation);
 };
 
 
