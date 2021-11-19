@@ -68,55 +68,26 @@ GLfloat walls_color[] = {
         xz_r, xz_g, xz_b
 };
 
+void PlotBoxWalls::setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val)
+{
+    for(size_t k = first_vertex_idx; k < last_vertex_idx; k++)
+    {
+        walls_vertices[k * 3 + dimension_idx] = val;
+    }
+}
 
 void PlotBoxWalls::render(const float azimuth, const float elevation)
 {
-    std::cout << azimuth * 180.0f / M_PI << std::endl;
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    if(elevation < 0.0f)
-    {
-        for(size_t k = 0; k < 6; k++)
-        {
-            walls_vertices[k * 3 + 2] = 1.0f;
-        }
-    }
-    else
-    {
-        for(size_t k = 0; k < 6; k++)
-        {
-            walls_vertices[k * 3 + 2] = -1.0f;
-        }
-    }
 
-    if(azimuth >= 0.0f)
-    {
-        for(size_t k = 6; k < 12; k++)
-        {
-            walls_vertices[k * 3] = 1.0f;
-        }
-    }
-    else
-    {
-        for(size_t k = 6; k < 12; k++)
-        {
-            walls_vertices[k * 3] = -1.0f;
-        }
-    }
+    const float xy_val = (elevation < 0.0f) ? 1.0f : -1.0f;
+    setIndices(kXYFirstIdx, kXYLastIdx, kXYChangeDimension, xy_val);
 
-    if(((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f)))
-    {
-        for(size_t k = 12; k < 18; k++)
-        {
-            walls_vertices[k * 3 + 1] = 1.0f;
-        }
-    }
-    else
-    {
-        for(size_t k = 12; k < 18; k++)
-        {
-            walls_vertices[k * 3 + 1] = -1.0f;
-        }
-    }
+    const float yz_val = (azimuth >= 0.0f) ? 1.0f : -1.0f;
+    setIndices(kYZFirstIdx, kYZLastIdx, kYZChangeDimension, yz_val);
+
+    const float xz_val = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
+    setIndices(kXZFirstIdx, kXZLastIdx, kXZChangeDimension, xz_val);
 
     glBufferSubData(GL_ARRAY_BUFFER, 0, 18 * 12, walls_vertices);
     glBindVertexArray(vertex_buffer_array_);
