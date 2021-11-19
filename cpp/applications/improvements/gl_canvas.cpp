@@ -22,13 +22,12 @@
 GlCanvas::GlCanvas(wxWindow* parent)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxPoint(0, 0), wxSize(600, 600), wxFULL_REPAINT_ON_RESIZE)
 {
-// #ifdef PLATFORM_APPLE_M
+#ifdef PLATFORM_APPLE_M
     wxGLContextAttrs cxtAttrs;
-    // cxtAttrs.PlatformDefaults().OGLVersion(3, 2).EndList();
     cxtAttrs.PlatformDefaults().CoreProfile().OGLVersion(3, 2).EndList();
     // https://stackoverflow.com/questions/41145024/wxwidgets-and-modern-opengl-3-3
     m_context = new wxGLContext(this, NULL, &cxtAttrs);
-// #endif
+#endif
 
 #ifdef PLATFORM_LINUX_M
     // m_context = new wxGLContext(this);
@@ -160,8 +159,8 @@ void GlCanvas::render(wxPaintEvent& evt)
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
-    plot_box_walls_->render();
-    cube_.render();
+    plot_box_walls_->render(va.getAzimuth(), va.getElevation());
+    // cube_.render();
 
     glUseProgram(0);
 
