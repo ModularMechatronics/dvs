@@ -18,6 +18,7 @@
 #include "vbo_wrapper.h"
 #include "shader.h"
 #include "plot_box_walls.h"
+#include "plot_box_silhouette.h"
 
 class GlCanvas : public wxGLCanvas
 {
@@ -32,6 +33,7 @@ private:
     VboWrapper3D cube_;
 
     PlotBoxWalls* plot_box_walls_;
+    PlotBoxSilhouette* plot_box_silhouette_;
 
     int* getArgsPtr()
     {

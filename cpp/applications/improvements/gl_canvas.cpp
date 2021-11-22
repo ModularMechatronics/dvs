@@ -46,6 +46,7 @@ GlCanvas::GlCanvas(wxWindow* parent)
     shader_ = Shader::createFromFiles(v_path, f_path);
 
     plot_box_walls_ = new PlotBoxWalls(1.0f);
+    plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -159,7 +160,8 @@ void GlCanvas::render(wxPaintEvent& evt)
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
-    plot_box_walls_->render(va.getAzimuth(), va.getElevation());
+    // plot_box_walls_->render(va.getAzimuth(), va.getElevation());
+    plot_box_silhouette_->render();
     // cube_.render();
 
     glUseProgram(0);
