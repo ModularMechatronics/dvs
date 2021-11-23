@@ -11,6 +11,8 @@
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "plot_box_walls.h"
+#include "plot_box_silhouette.h"
 
 class AxesRenderer
 {
@@ -20,6 +22,9 @@ private:
 
     AxesSettings axes_settings_;
     CoordinateConverter coord_converter_;
+
+    PlotBoxWalls* plot_box_walls_;
+    PlotBoxSilhouette* plot_box_silhouette_;
 
     float width_, height_;
 

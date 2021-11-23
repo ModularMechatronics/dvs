@@ -45,9 +45,6 @@ GlCanvas::GlCanvas(wxWindow* parent)
     const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
     shader_ = Shader::createFromFiles(v_path, f_path);
 
-    plot_box_walls_ = new PlotBoxWalls(1.0f);
-    plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
-
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     // glEnable(GL_MULTISAMPLE);
@@ -83,7 +80,7 @@ void GlCanvas::render(wxPaintEvent& evt)
     // SO thread that made it work
     // https://stackoverflow.com/questions/26378289/osx-opengl-4-1-glenablevertexattribarray-gldrawarrays-gl-invalid-operation
 
-    // std::cout << "render" << std::endl;
+    std::cout << "render" << std::endl;
 
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this);
@@ -97,10 +94,10 @@ void GlCanvas::render(wxPaintEvent& evt)
 
     axes_interactor_->update(
         keyboardStateToInteractionTypeNew(keyboard_state_), getWidth(), getHeight());
-    axes_renderer_->updateStates(axes_interactor_->getAxesLimits(),
+    /*axes_renderer_->updateStates(axes_interactor_->getAxesLimits(),
                                  axes_interactor_->getViewAngles(),
                                  axes_interactor_->generateGridVectors(),
-                                 axes_interactor_->getCoordConverter());
+                                 axes_interactor_->getCoordConverter());*/
 
     glUseProgram(shader_.programId());
 
@@ -114,6 +111,10 @@ void GlCanvas::render(wxPaintEvent& evt)
     const AxesLimits axes_limits = axes_interactor_->getAxesLimits();
     const Vec3Dd axes_center = axes_limits.getAxesCenter();
     // axes_settings_ = axes_interactor_->getAxesSettings();
+    axes_renderer_->updateStates(axes_interactor_->getAxesLimits(),
+                                 axes_interactor_->getViewAngles(),
+                                 axes_interactor_->generateGridVectors(),
+                                 axes_interactor_->getCoordConverter());
 
     // Scales
     // Vec3Dd sq = axes_settings_.getAxesScale();
@@ -161,8 +162,9 @@ void GlCanvas::render(wxPaintEvent& evt)
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
     // plot_box_walls_->render(va.getAzimuth(), va.getElevation());
-    plot_box_silhouette_->render();
+    // plot_box_silhouette_->render();
     // cube_.render();
+    axes_renderer_->render();
 
     glUseProgram(0);
 
