@@ -102,11 +102,7 @@ void GlCanvas::keyReleased(wxKeyEvent& event)
 void GlCanvas::reloadShader()
 {
     std::cout << "Reloading shader..." << std::endl;
-    glDeleteShader(shader_.programId());
-
-    const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
-    const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
-    shader_ = Shader::createFromFiles(v_path,f_path);
+    axes_renderer_->reloadShader();
 }
 
 void GlCanvas::show()
