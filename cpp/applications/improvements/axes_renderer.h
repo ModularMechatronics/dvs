@@ -11,6 +11,7 @@
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "shader.h"
 #include "plot_box_walls.h"
 #include "plot_box_silhouette.h"
 
@@ -23,12 +24,15 @@ private:
     AxesSettings axes_settings_;
     CoordinateConverter coord_converter_;
 
+    Shader shader_;
+
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
 
     float width_, height_;
 
     GridVectors gv_;
+    bool use_perspective_proj_;
 
 public:
     AxesRenderer() = default;
@@ -37,8 +41,10 @@ public:
     void updateStates(const AxesLimits& axes_limits,
                       const ViewAngles& view_angles,
                       const GridVectors& gv,
-                      const CoordinateConverter& coord_converter);
+                      const CoordinateConverter& coord_converter,
+                      const bool use_perspective_proj);
     void render();
+    void reloadShader();
 
 };
 
