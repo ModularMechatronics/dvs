@@ -14,6 +14,7 @@
 #include "shader.h"
 #include "plot_box_walls.h"
 #include "plot_box_silhouette.h"
+#include "plot_box_grid.h"
 
 class AxesRenderer
 {
@@ -28,6 +29,7 @@ private:
 
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
+    PlotBoxGrid* plot_box_grid_;
 
     float width_, height_;
 
