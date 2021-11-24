@@ -40,7 +40,8 @@ set(CPP_SOURCE_FILES main.cpp
                      axes_renderer.cpp
                      vbo_wrapper.cpp
                      plot_box_walls.cpp
-                     plot_box_silhouette.cpp)
+                     plot_box_silhouette.cpp
+                     plot_box_grid.cpp)
 
 add_executable(improvements ${CPP_SOURCE_FILES} ${EXT_CPP_FILES})
 target_link_libraries(improvements ${wxWidgets_LIBRARIES}

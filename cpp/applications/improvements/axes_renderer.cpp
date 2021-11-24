@@ -7,6 +7,7 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
 {
     plot_box_walls_ = new PlotBoxWalls(1.0f);
     plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
+    plot_box_grid_ = new PlotBoxGrid(1.0f);
 
     const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
     const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
@@ -76,6 +77,10 @@ void AxesRenderer::render()
 
     plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
+    plot_box_grid_->render(gv_,
+                           axes_settings_,
+                           axes_limits_,
+                           view_angles_);
 
     glUseProgram(0);
 }
