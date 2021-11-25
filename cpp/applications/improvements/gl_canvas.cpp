@@ -37,7 +37,7 @@ GlCanvas::GlCanvas(wxWindow* parent)
         std::cout << "Not ok!!" << std::endl;
     }
 
-    use_perspective_proj_ = true;
+    use_perspective_proj_ = false;
 
     wxGLCanvas::SetCurrent(*m_context);
 
