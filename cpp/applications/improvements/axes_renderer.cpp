@@ -3,6 +3,69 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "dvs/math/math.h"
+
+using namespace dvs;
+
+static Vec3Dd findScale(const Matrixd& R)
+{
+    // Currently unknown exactly how 'q' affects the results...
+    const double q = 0.3;
+    // clang-format off
+    const Vector<Point3Dd> points = {{q, q, q},
+                                     {-q, q, q},
+                                     {q, -q, q},
+                                     {-q, -q, q},
+                                     {q, q, -q},
+                                     {-q, q, -q},
+                                     {q, -q, -q},
+                                     {-q, -q, -q}};
+    const Point3Dd pr0 = R * points(0);
+    // clang-format on
+    std::pair<Point3Dd, Point3Dd> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
+                                  pmah = {points(0), pr0};
+    for (const Point3Dd p : points)
+    {
+        const auto pqr = R * p;
+
+        if (pqr.x < pmiw.second.x)
+        {
+            pmiw.first = p;
+            pmiw.second = pqr;
+        }
+
+        if (pqr.x > pmaw.second.x)
+        {
+            pmaw.first = p;
+            pmaw.second = pqr;
+        }
+
+        if (pqr.y < pmih.second.y)
+        {
+            pmih.first = p;
+            pmih.second = pqr;
+        }
+
+        if (pqr.y > pmah.second.y)
+        {
+            pmah.first = p;
+            pmah.second = pqr;
+        }
+    }
+
+    const double r00 = R(0, 0), r01 = R(0, 1), r02 = R(0, 2);
+    const double r10 = R(1, 0), r11 = R(1, 1), r12 = R(1, 2);
+    const double w = 0.5, h = 0.5;
+    const double pmiw_x = pmiw.first.x, pmiw_y = pmiw.first.y, pmiw_z = pmiw.first.z;
+    const double pmih_x = pmih.first.x, pmih_y = pmih.first.y, pmih_z = pmih.first.z;
+
+    const double sx = -w / (pmiw_x * r00 + pmiw_y * r01 + pmiw_z * r02);
+    const double sy = -h / (pmih_x * r10 + pmih_y * r11 + pmih_z * r12);
+    const double sz = 1.0;
+
+    return Vec3Dd(sx, sy, sz);
+}
+
 AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(axes_settings)
 {
     plot_box_walls_ = new PlotBoxWalls(1.0f);
@@ -27,18 +90,20 @@ void AxesRenderer::render()
     // AxesLimits
     // const AxesLimits axes_limits_ = axes_interactor_->getAxesLimits();
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
-    // axes_settings_ = axes_interactor_->getAxesSettings();
 
     // Scales
-    // Vec3Dd sq = axes_settings_.getAxesScale();
-    const Vec3Dd s = axes_limits_.getAxesScale();
+    const Vec3Dd scale = axes_limits_.getAxesScale();
+    Matrix<double> dm = rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
+    dm.transpose();
+    const Vec3Dd s = axes_settings_.getAxesScale();
 
     /*
-    glScaled(sq.x, sq.y, sq.z);
-    glRotated(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
-    // Not sure why y axis should be negated... But it works like this.
-    glScaled(1.0 / s.x, -1.0 / s.y, 1.0 / s.z);
-    glTranslated(-axes_center.x, -axes_center.y, -axes_center.z);
+    const Vec3Dd scale = axes_limits_.getAxesScale();
+    const Vec3Dd s = axes_settings_.getAxesScale();
+
+    glScalef(s.x, s.y, s.z);
+    glRotatef(ax_ang.phi * 180.0f / M_PI, ax_ang.x, ax_ang.y, ax_ang.z);
+    glScaled(1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z);
     */
 
     const float sw = 3.0f;
@@ -54,9 +119,9 @@ void AxesRenderer::render()
     glm::mat4 model_mat = glm::mat4(1.0f);
     glm::mat4 scale_mat = glm::mat4(0.1);
 
-    model_mat[3][0] = axes_center.x;
-    model_mat[3][1] = axes_center.y;
-    model_mat[3][2] = axes_center.z;
+    // model_mat[3][0] = axes_center.x;
+    // model_mat[3][1] = axes_center.y;
+    // model_mat[3][2] = axes_center.z;
 
     scale_mat[0][0] = s.x;
     scale_mat[1][1] = s.y;
@@ -71,16 +136,16 @@ void AxesRenderer::render()
         }
     }
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat; //  * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
     plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
-    plot_box_grid_->render(gv_,
+    /*plot_box_grid_->render(gv_,
                            axes_settings_,
                            axes_limits_,
-                           view_angles_);
+                           view_angles_);*/
 
     glUseProgram(0);
 }
@@ -105,6 +170,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     gv_ = gv;
     coord_converter_ = coord_converter;
     use_perspective_proj_ = use_perspective_proj;
-    // const Vec3Dd new_scale = findScale(view_angles_.getSnappedRotationMatrix());
-    // axes_settings_.setAxesScale(new_scale);
+    
+    const ViewAngles va(-view_angles_.getAzimuth(), view_angles_.getElevation());
+    const Vec3Dd new_scale = findScale(va.getRotationMatrix());
+    axes_settings_.setAxesScale(new_scale);
 }
