@@ -39,6 +39,7 @@ set(CPP_SOURCE_FILES main.cpp
                      gl_canvas_misc.cpp
                      axes_renderer.cpp
                      vbo_wrapper.cpp
+                     vertex_data.cpp
                      plot_box_walls.cpp
                      plot_box_silhouette.cpp
                      plot_box_grid.cpp)

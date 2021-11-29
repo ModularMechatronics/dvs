@@ -4,13 +4,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "dvs/math/math.h"
-
+#include "vertex_data.h"
 using namespace dvs;
 
 static Vec3Dd findScale(const Matrixd& R)
 {
     // Currently unknown exactly how 'q' affects the results...
-    const double q = 0.3;
+    const double q = 0.5;
     // clang-format off
     const Vector<Point3Dd> points = {{q, q, q},
                                      {-q, q, q},
@@ -75,6 +75,8 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
     const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
     shader_ = Shader::createFromFiles(v_path, f_path);
+
+    half_cube_ = VboWrapper3D(half_cube_vertices_num_vertices, half_cube_vertices, half_cube_color);
 }
 
 void AxesRenderer::render()
@@ -86,7 +88,7 @@ void AxesRenderer::render()
     const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * rotationMatrixZ(static_cast<double>(M_PI)) *  
                                    rotationMatrixX(va.getElevation()) *
                                    rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
-
+    const Vec3Dd new_scale = findScale(va.getRotationMatrix());
     // AxesLimits
     // const AxesLimits axes_limits_ = axes_interactor_->getAxesLimits();
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
@@ -123,9 +125,9 @@ void AxesRenderer::render()
     // model_mat[3][1] = axes_center.y;
     // model_mat[3][2] = axes_center.z;
 
-    scale_mat[0][0] = s.x;
-    scale_mat[1][1] = s.y;
-    scale_mat[2][2] = s.z;
+    scale_mat[0][0] = 2.0f * new_scale.x;
+    scale_mat[1][1] = 2.0f * new_scale.y;
+    scale_mat[2][2] = 2.0f * new_scale.z;
     scale_mat[3][3] = 1.0;
 
     for(int r = 0; r < 3; r++)
@@ -136,12 +138,13 @@ void AxesRenderer::render()
         }
     }
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat; //  * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat; //  * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
     plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
+    half_cube_.render();
     /*plot_box_grid_->render(gv_,
                            axes_settings_,
                            axes_limits_,
