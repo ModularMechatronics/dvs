@@ -75,13 +75,28 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     const std::string v_path = "../applications/improvements/shaders/basic.vertex";
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
     shader_ = Shader::createFromFiles(v_path, f_path);
+    plot_shader_ = Shader::createFromFiles(v_path, f_path);
 
     half_cube_ = VboWrapper3D(half_cube_vertices_num_vertices, half_cube_vertices, half_cube_color);
 }
 
 void AxesRenderer::render()
 {
-    glUseProgram(shader_.programId());
+    renderPlotBox();
+
+    plotBegin();
+    half_cube_.render();
+    plotEnd();
+}
+
+void AxesRenderer::renderBoxGrid()
+{
+    
+}
+
+void AxesRenderer::plotBegin()
+{
+    glUseProgram(plot_shader_.programId());
 
     // Angles
     const ViewAngles va = view_angles_;
@@ -98,8 +113,66 @@ void AxesRenderer::render()
 
     // Scales
     const Vec3Dd scale = axes_limits_.getAxesScale();
-    Matrix<double> dm = rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
-    dm.transpose();
+    const Vec3Dd s = axes_settings_.getAxesScale();
+
+    const float sw = 3.0f;
+    glm::mat4 orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);;
+    glm::mat4 persp_projection_mat = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
+
+    glm::mat4 projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
+
+    // Camera matrix
+    glm::mat4 view_mat = glm::lookAt(glm::vec3(0, 0, -5.9),
+                                 glm::vec3(0, 0, 0),
+                                 glm::vec3(0, 1, 0));
+    glm::mat4 model_mat = glm::mat4(1.0f);
+    glm::mat4 scale_mat = glm::mat4(0.1);
+
+    model_mat[3][0] = axes_center.x;
+    model_mat[3][1] = axes_center.y;
+    model_mat[3][2] = axes_center.z;
+
+    scale_mat[0][0] = scale.x;
+    scale_mat[1][1] = scale.y;
+    scale_mat[2][2] = scale.z;
+    scale_mat[3][3] = 1.0;
+
+    for(int r = 0; r < 3; r++)
+    {
+        for(int c = 0; c < 3; c++)
+        {
+            model_mat[r][c] = rot_mat(r, c);
+        }
+    }
+
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
+
+    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+}
+
+void AxesRenderer::plotEnd()
+{
+    glUseProgram(0);
+}
+
+void AxesRenderer::renderPlotBox()
+{
+    glUseProgram(shader_.programId());
+
+    // Angles
+    const ViewAngles va = view_angles_;
+    const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * rotationMatrixZ(static_cast<double>(M_PI)) *  
+                                   rotationMatrixX(va.getElevation()) *
+                                   rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
+
+    const Vec3Dd new_scale = findScale(rot_mat);
+    // AxesLimits
+    // const AxesLimits axes_limits_ = axes_interactor_->getAxesLimits();
+
+    // We should be rotating around z axis
+
+    // Scales
+    const Vec3Dd scale = axes_limits_.getAxesScale();
     const Vec3Dd s = axes_settings_.getAxesScale();
 
     /*
@@ -124,10 +197,6 @@ void AxesRenderer::render()
     glm::mat4 model_mat = glm::mat4(1.0f);
     glm::mat4 scale_mat = glm::mat4(0.1);
 
-    // model_mat[3][0] = axes_center.x;
-    // model_mat[3][1] = axes_center.y;
-    // model_mat[3][2] = axes_center.z;
-
     scale_mat[0][0] = 2.0f * new_scale.x;
     scale_mat[1][1] = 2.0f * new_scale.y;
     scale_mat[2][2] = 2.0f * new_scale.z;
@@ -141,13 +210,12 @@ void AxesRenderer::render()
         }
     }
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat; //  * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
     plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
-    half_cube_.render();
     /*plot_box_grid_->render(gv_,
                            axes_settings_,
                            axes_limits_,
@@ -159,10 +227,12 @@ void AxesRenderer::render()
 void AxesRenderer::reloadShader()
 {
     glDeleteShader(shader_.programId());
+    glDeleteShader(plot_shader_.programId());
 
     const std::string v_path = "../applications/improvements/shaders/basic.vertex";
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
     shader_ = Shader::createFromFiles(v_path,f_path);
+    plot_shader_ = Shader::createFromFiles(v_path, f_path);
 }
 
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,
