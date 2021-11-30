@@ -27,6 +27,7 @@ private:
     CoordinateConverter coord_converter_;
 
     Shader shader_;
+    Shader plot_shader_;
 
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
@@ -38,6 +39,11 @@ private:
 
     GridVectors gv_;
     bool use_perspective_proj_;
+
+    void renderPlotBox();
+    void renderBoxGrid();
+    void plotBegin();
+    void plotEnd();
 
 public:
     AxesRenderer() = default;
