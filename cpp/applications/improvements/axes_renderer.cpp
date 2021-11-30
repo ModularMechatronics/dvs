@@ -96,9 +96,8 @@ void AxesRenderer::renderBoxGrid()
 
     // Angles
     const ViewAngles va = view_angles_;
-    const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * rotationMatrixZ(static_cast<double>(M_PI)) *  
-                                   rotationMatrixX(va.getElevation()) *
-                                   rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
+    const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * 
+                                   rotationMatrixX(-va.getElevation());
 
     const Vec3Dd new_scale = findScale(rot_mat);
     const Vec3Dd scale = axes_limits_.getAxesScale();
@@ -111,9 +110,9 @@ void AxesRenderer::renderBoxGrid()
     glm::mat4 projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
 
     // Camera matrix
-    glm::mat4 view_mat = glm::lookAt(glm::vec3(0, 0, -5.9),
+    glm::mat4 view_mat = glm::lookAt(glm::vec3(0, -6.0, 0),
                                  glm::vec3(0, 0, 0),
-                                 glm::vec3(0, 1, 0));
+                                 glm::vec3(0, 0, 1));
     glm::mat4 model_mat = glm::mat4(1.0f);
     glm::mat4 scale_mat = glm::mat4(0.1);
 
@@ -148,9 +147,8 @@ void AxesRenderer::plotBegin()
 
     // Angles
     const ViewAngles va = view_angles_;
-    const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * rotationMatrixZ(static_cast<double>(M_PI)) *  
-                                   rotationMatrixX(va.getElevation()) *
-                                   rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
+    const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * 
+                                   rotationMatrixX(-va.getElevation());
 
     const Vec3Dd new_scale = findScale(rot_mat);
     // AxesLimits
@@ -170,9 +168,9 @@ void AxesRenderer::plotBegin()
     glm::mat4 projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
 
     // Camera matrix
-    glm::mat4 view_mat = glm::lookAt(glm::vec3(0, 0, -5.9),
+    glm::mat4 view_mat = glm::lookAt(glm::vec3(0, -6.0, 0),
                                  glm::vec3(0, 0, 0),
-                                 glm::vec3(0, 1, 0));
+                                 glm::vec3(0, 0, 1));
     glm::mat4 model_mat = glm::mat4(1.0f);
     glm::mat4 scale_mat = glm::mat4(0.1);
 
@@ -209,9 +207,8 @@ void AxesRenderer::renderPlotBox()
 
     // Angles
     const ViewAngles va = view_angles_;
-    const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * rotationMatrixZ(static_cast<double>(M_PI)) *  
-                                   rotationMatrixX(va.getElevation()) *
-                                   rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
+    const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * 
+                                   rotationMatrixX(-va.getElevation());
 
     const Vec3Dd new_scale = findScale(rot_mat);
     const Vec3Dd scale = axes_limits_.getAxesScale();
@@ -224,9 +221,9 @@ void AxesRenderer::renderPlotBox()
     glm::mat4 projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
 
     // Camera matrix
-    glm::mat4 view_mat = glm::lookAt(glm::vec3(0, 0, -5.9),
+    glm::mat4 view_mat = glm::lookAt(glm::vec3(0, -6.0, 0),
                                  glm::vec3(0, 0, 0),
-                                 glm::vec3(0, 1, 0));
+                                 glm::vec3(0, 0, 1));
     glm::mat4 model_mat = glm::mat4(1.0f);
     glm::mat4 scale_mat = glm::mat4(0.1);
 
@@ -275,8 +272,4 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     gv_ = gv;
     coord_converter_ = coord_converter;
     use_perspective_proj_ = use_perspective_proj;
-    
-    const ViewAngles va(-view_angles_.getAzimuth(), view_angles_.getElevation());
-    const Vec3Dd new_scale = findScale(va.getRotationMatrix());
-    axes_settings_.setAxesScale(new_scale);
 }

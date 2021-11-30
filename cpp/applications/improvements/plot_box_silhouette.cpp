@@ -71,6 +71,10 @@ static GLfloat walls_color[] = {
         kColor, kColor, kColor,
         kColor, kColor, kColor,
         kColor, kColor, kColor,
+
+        kColor, kColor, kColor,
+        kColor, kColor, kColor,
+        kColor, kColor, kColor,
 };
 
 void PlotBoxSilhouette::render() const
