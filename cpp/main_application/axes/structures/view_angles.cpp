@@ -123,6 +123,7 @@ AxisAngled ViewAngles::getAngleAxis() const
 
 Matrixd ViewAngles::getRotationMatrix() const
 {
+    // TODO: Inconsistent with 'getSnappedRotationMatrix'!
     return rotationMatrixX(getElevation()) * rotationMatrixY(getAzimuth());
 }
 

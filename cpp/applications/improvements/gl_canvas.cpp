@@ -76,7 +76,7 @@ void GlCanvas::render(wxPaintEvent& evt)
     // SO thread that made it work
     // https://stackoverflow.com/questions/26378289/osx-opengl-4-1-glenablevertexattribarray-gldrawarrays-gl-invalid-operation
 
-    std::cout << "render" << std::endl;
+    // std::cout << "render" << std::endl;
 
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this);

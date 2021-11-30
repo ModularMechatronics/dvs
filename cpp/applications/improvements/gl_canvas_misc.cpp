@@ -68,7 +68,7 @@ void GlCanvas::keyPressed(wxKeyEvent& event)
 {
     int key_code = event.GetKeyCode();
 
-    if(key_code == 83)
+    if(key_code == 81) // 'q' == 81
     {
         reloadShader();
     }

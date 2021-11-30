@@ -72,8 +72,8 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
     plot_box_grid_ = new PlotBoxGrid(1.0f);
 
-    const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
-    const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
+    const std::string v_path = "../applications/improvements/shaders/basic.vertex";
+    const std::string f_path = "../applications/improvements/shaders/basic.fragment";
     shader_ = Shader::createFromFiles(v_path, f_path);
 
     half_cube_ = VboWrapper3D(half_cube_vertices_num_vertices, half_cube_vertices, half_cube_color);
@@ -88,10 +88,13 @@ void AxesRenderer::render()
     const Matrix<double> rot_mat = rotationMatrixZ(-va.getAzimuth()) * rotationMatrixZ(static_cast<double>(M_PI)) *  
                                    rotationMatrixX(va.getElevation()) *
                                    rotationMatrixX(static_cast<double>(M_PI) / 2.0f);
-    const Vec3Dd new_scale = findScale(va.getRotationMatrix());
+
+    const Vec3Dd new_scale = findScale(rot_mat);
     // AxesLimits
     // const AxesLimits axes_limits_ = axes_interactor_->getAxesLimits();
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
+
+    // We should be rotating around z axis
 
     // Scales
     const Vec3Dd scale = axes_limits_.getAxesScale();
@@ -138,7 +141,7 @@ void AxesRenderer::render()
         }
     }
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat; //  * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
@@ -157,8 +160,8 @@ void AxesRenderer::reloadShader()
 {
     glDeleteShader(shader_.programId());
 
-    const std::string v_path = "../applications/shader_app/shaders/basic.vertex";
-    const std::string f_path = "../applications/shader_app/shaders/basic.fragment";
+    const std::string v_path = "../applications/improvements/shaders/basic.vertex";
+    const std::string f_path = "../applications/improvements/shaders/basic.fragment";
     shader_ = Shader::createFromFiles(v_path,f_path);
 }
 
