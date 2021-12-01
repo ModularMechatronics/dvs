@@ -17,7 +17,16 @@ private:
     GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
     float* grid_points_;
     GLfloat* color_;
-    size_t num_vertices_;
+    size_t idx_;
+    float azimuth_;
+    float elevation_;
+
+    Vec3Dd axes_scale_;
+
+    void renderXYGrid(const GridVectors& gv);
+    void renderXZGrid(const GridVectors& gv);
+    void renderYZGrid(const GridVectors& gv);
+
 public:
     PlotBoxGrid() = delete;
     PlotBoxGrid(const float size);
