@@ -114,12 +114,12 @@ void AxesRenderer::renderBoxGrid()
                                  glm::vec3(0, 0, 0),
                                  glm::vec3(0, 0, 1));
     glm::mat4 model_mat = glm::mat4(1.0f);
-    glm::mat4 scale_mat = glm::mat4(0.1);
+    glm::mat4 scale_mat = glm::mat4(1.0);
 
-    // scale_mat[0][0] = 1.0f / scale.x;
-    // scale_mat[1][1] = 1.0f / scale.y;
-    // scale_mat[2][2] = 1.0f / scale.z;
-    // scale_mat[3][3] = 1.0;
+    scale_mat[0][0] = 1.0 / scale.x;
+    scale_mat[1][1] = 1.0 / scale.y;
+    scale_mat[2][2] = 1.0 / scale.z;
+    scale_mat[3][3] = 1.0;
 
     for(int r = 0; r < 3; r++)
     {
@@ -129,7 +129,7 @@ void AxesRenderer::renderBoxGrid()
         }
     }
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat; //  * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
@@ -178,9 +178,9 @@ void AxesRenderer::plotBegin()
     model_mat[3][1] = axes_center.y;
     model_mat[3][2] = axes_center.z;
 
-    scale_mat[0][0] = scale.x;
-    scale_mat[1][1] = scale.y;
-    scale_mat[2][2] = scale.z;
+    scale_mat[0][0] = 1.0 / scale.x;
+    scale_mat[1][1] = 1.0 / scale.y;
+    scale_mat[2][2] = 1.0 / scale.z;
     scale_mat[3][3] = 1.0;
 
     for(int r = 0; r < 3; r++)
@@ -244,7 +244,7 @@ void AxesRenderer::renderPlotBox()
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
+    // plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
 
     glUseProgram(0);
