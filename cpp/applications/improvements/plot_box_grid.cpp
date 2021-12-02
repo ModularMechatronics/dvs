@@ -133,6 +133,11 @@ void PlotBoxGrid::render(const GridVectors& gv,
     glBindVertexArray(0);
 }
 
+// Changing these two lines in axes_interactor.h fixes the grid size:
+// const Vec3Dd v_min = axes_limits_.getMin() * 2.0;
+// const Vec3Dd v_max = axes_limits_.getMax() * 2.0;
+// Is it correct though?
+
 PlotBoxGrid::PlotBoxGrid(const float size)
 {
     const size_t max_num_grid_lines_per_plane = 10;
