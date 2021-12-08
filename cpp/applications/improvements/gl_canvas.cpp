@@ -83,7 +83,7 @@ void GlCanvas::render(wxPaintEvent& evt)
 
     // glEnable(GL_MULTISAMPLE);
 
-    const float bg_color = 240.0f;
+    const float bg_color = 127.0f;
     glClearColor(bg_color / 255.0f, bg_color / 255.0f, bg_color / 255.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

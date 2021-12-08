@@ -42,7 +42,8 @@ set(CPP_SOURCE_FILES main.cpp
                      vertex_data.cpp
                      plot_box_walls.cpp
                      plot_box_silhouette.cpp
-                     plot_box_grid.cpp)
+                     plot_box_grid.cpp
+                     text_rendering.cpp)
 
 add_executable(improvements ${CPP_SOURCE_FILES} ${EXT_CPP_FILES})
 target_link_libraries(improvements ${wxWidgets_LIBRARIES}
