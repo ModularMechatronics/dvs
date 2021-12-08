@@ -114,4 +114,5 @@ PlotBoxSilhouette::PlotBoxSilhouette(const float size)
         0,                                // stride
         (void*)0                          // array buffer offset
     );
+    glBindVertexArray(0);
 }

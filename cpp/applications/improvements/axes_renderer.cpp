@@ -5,6 +5,8 @@
 
 #include "dvs/math/math.h"
 #include "vertex_data.h"
+#include "text_rendering.h"
+
 using namespace dvs;
 
 static Vec3Dd findScale(const Matrixd& R)
@@ -77,17 +79,21 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     shader_ = Shader::createFromFiles(v_path, f_path);
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
 
+    initText2D("../applications/improvements/Holstein.DDS");
+
     half_cube_ = VboWrapper3D(half_cube_vertices_num_vertices, half_cube_vertices, half_cube_color);
 }
 
 void AxesRenderer::render()
 {
+    const char* const some_text = "hello";
     renderPlotBox();
-    renderBoxGrid();
+    printText2D(some_text, 1, 1, 20);
+    // renderBoxGrid();
 
-    plotBegin();
-    half_cube_.render();
-    plotEnd();
+    // plotBegin();
+    // half_cube_.render();
+    // plotEnd();
 }
 
 void AxesRenderer::renderBoxGrid()
@@ -244,7 +250,7 @@ void AxesRenderer::renderPlotBox()
 
     glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    // plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
+    plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
 
     glUseProgram(0);
