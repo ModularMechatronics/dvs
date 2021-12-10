@@ -94,7 +94,9 @@ void GlCanvas::render(wxPaintEvent& evt)
                                  axes_interactor_->getViewAngles(),
                                  axes_interactor_->generateGridVectors(),
                                  axes_interactor_->getCoordConverter(),
-                                 use_perspective_proj_);    
+                                 use_perspective_proj_,
+                                 getWidth(),
+                                 getHeight());
     axes_renderer_->render();
 
     // glDisable(GL_DEPTH_TEST);

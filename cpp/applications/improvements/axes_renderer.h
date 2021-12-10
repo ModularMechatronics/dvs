@@ -5,6 +5,9 @@
 #include <utility>
 #include <vector>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/coordinate_converter.h"
@@ -16,6 +19,7 @@
 #include "plot_box_silhouette.h"
 #include "plot_box_grid.h"
 #include "vbo_wrapper.h"
+#include "grid_numbers.h"
 
 class AxesRenderer
 {
@@ -32,6 +36,16 @@ private:
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
     PlotBoxGrid* plot_box_grid_;
+    PlotBoxGridNumbers* plot_box_grid_numbers_;
+
+    glm::mat4 orth_projection_mat;
+    glm::mat4 persp_projection_mat;
+    glm::mat4 projection_mat;
+    glm::mat4 view_mat;
+    glm::mat4 model_mat;
+    glm::mat4 scale_mat;
+
+    Matrix<double> rot_mat;
 
     VboWrapper3D half_cube_;
 
@@ -42,6 +56,7 @@ private:
 
     void renderPlotBox();
     void renderBoxGrid();
+    void renderBoxGridNumbers();
     void plotBegin();
     void plotEnd();
 
@@ -53,7 +68,9 @@ public:
                       const ViewAngles& view_angles,
                       const GridVectors& gv,
                       const CoordinateConverter& coord_converter,
-                      const bool use_perspective_proj);
+                      const bool use_perspective_proj,
+                      const float width,
+                      const float height);
     void render();
     void reloadShader();
 
