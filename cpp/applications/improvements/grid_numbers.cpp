@@ -2,14 +2,20 @@
 
 #include <iostream>
 
+#include "dvs/math/math.h"
+#include "misc/misc.h"
+#include "opengl_low_level/opengl_low_level.h"
+
 namespace
 {
 Vec3Dd gs;
 }
 
 const float kTextScale = 1.0f / 8.0f;
+namespace
+{
 
-/*void drawNumbersForXAxis(const Vectord& x_values,
+void drawNumbersForXAxis(const Vectord& x_values,
                          const double y_offset,
                          const double z_offset,
                          const AxesLimits& axes_limits,
@@ -18,27 +24,31 @@ const float kTextScale = 1.0f / 8.0f;
                          const float height)
 {
     const Vec3Dd axes_center = axes_limits.getAxesCenter();
-    const Vec3Dd s = axes_limits.getAxesScale();
+    // const Vec3Dd s = axes_limits.getAxesScale();
 
-    const float sx = kTextScale / width;
-    const float sy = kTextScale / height;
+    // const float sx = kTextScale / width;
+    // const float sy = kTextScale / height;
 
-    glPushMatrix();
-    glScalef(gs.x, gs.y, gs.x);
+    // glPushMatrix();
+    // glScalef(gs.x, gs.y, gs.x);
 
     for (size_t k = 0; k < x_values.size(); k++)
     {
-        const Vec3Dd v(x_values(k) / s.x, y_offset / s.y, z_offset / s.z);
-        const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
-        glPushMatrix();
-        glTranslated(vv.x, vv.y, 0);
-        glScalef(sx / gs.x, sy / gs.y, 1.0);
+        // const Vec3Dd v(x_values(k) / s.x, y_offset / s.y, z_offset / s.z);
+        // const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
+        // glPushMatrix();
+        // glTranslated(vv.x, vv.y, 0);
+        // glScalef(sx / gs.x, sy / gs.y, 1.0);
 
-        putTextAtNew(formatNumber(x_values(k) + axes_center.x, 3));
-        glPopMatrix();
+        const std::string num_val = formatNumber(x_values(k) + axes_center.x, 3);
+
+        // putTextAtNew(formatNumber(x_values(k) + axes_center.x, 3));
+        // glPopMatrix();
     }
-    glPopMatrix();
-}*/
+    // glPopMatrix();
+}
+
+}
 
 void PlotBoxGridNumbers::render(const GridVectors& gv,
                                 const AxesSettings& axes_settings,

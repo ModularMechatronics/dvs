@@ -30,7 +30,7 @@ private:
     AxesSettings axes_settings_;
     CoordinateConverter coord_converter_;
 
-    Shader shader_;
+    Shader text_shader_;
     Shader plot_shader_;
 
     PlotBoxWalls* plot_box_walls_;

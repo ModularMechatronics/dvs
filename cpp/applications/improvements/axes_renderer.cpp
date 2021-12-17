@@ -3,6 +3,12 @@
 #include "dvs/math/math.h"
 #include "vertex_data.h"
 #include "text_rendering.h"
+#include "misc/misc.h"
+
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
 using namespace dvs;
 
@@ -74,8 +80,11 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
 
     const std::string v_path = "../applications/improvements/shaders/basic.vertex";
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
-    shader_ = Shader::createFromFiles(v_path, f_path);
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
+
+    const std::string v_path_text = "../applications/improvements/shaders/text.vertex";
+    const std::string f_path_text = "../applications/improvements/shaders/text.fragment";
+    text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
 
     initText2D("../applications/improvements/Holstein.DDS");
 
@@ -99,30 +108,88 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
 
 void AxesRenderer::render()
 {
-    const char* const some_text = "hello";
     renderPlotBox();
-    printText2D(some_text, 1, 1, 20);
     renderBoxGrid();
+    renderBoxGridNumbers();
 
     plotBegin();
     half_cube_.render();
     plotEnd();
 }
 
+void drawXAxisNumbers(const glm::mat4& view_model,
+                      const glm::vec4& v_viewport,
+                      const glm::mat4& projection,
+                      const Vec3Dd& axes_center,
+                      const GridVectors& gv)
+{
+    const double y = -1.0;
+    const double z = -1.0;
+    for(size_t k = 0; k < gv.x.size(); k++)
+    {
+        const double x = gv.x(k);
+        glm::vec3 v3(x, y, z);
+
+        glm::vec3 v_projected = glm::project(v3,
+                         view_model,
+                         projection,
+                         v_viewport);
+        const std::string val = formatNumber(gv.x(k) + axes_center.x, 3);
+        printText2D(val.c_str(), v_projected[0], v_projected[1], 10);
+    }
+}
+
 void AxesRenderer::renderBoxGridNumbers()
 {
-    plot_box_grid_numbers_->render(gv_,
+    glUseProgram(text_shader_.programId());
+
+    // AxesLimits
+    const Vec3Dd axes_center = axes_limits_.getAxesCenter();
+
+    // Scales
+    const Vec3Dd scale = axes_limits_.getAxesScale();
+    const Vec3Dd s = axes_settings_.getAxesScale();
+
+    model_mat[3][0] = 0.0;
+    model_mat[3][1] = 0.0;
+    model_mat[3][2] = 0.0;
+
+    scale_mat[0][0] = 1.0 / scale.x;
+    scale_mat[1][1] = 1.0; // / scale.y;
+    scale_mat[2][2] = 1.0; // / scale.z;
+    scale_mat[3][3] = 1.0;
+
+    // glm::vec3 v3(1.0, 1.0, 1.0);
+
+    const glm::vec4 v_viewport = glm::vec4(0, 0, width_, height_);
+    const glm::mat4 view_model = view_mat * model_mat * scale_mat;
+
+    drawXAxisNumbers(view_model, v_viewport, projection_mat, axes_center, gv_);
+
+    /*glm::vec3 v_projected = glm::project(v3,
+                         view_model,
+                         projection_mat,
+                         v_viewport);
+
+    const char* const some_text = "hello";
+    printText2D(some_text, v_projected[0], v_projected[1], 20);*/
+
+    glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_width"), width_ / 2.0f);
+    glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_height"), height_ / 2.0f);
+
+    /*plot_box_grid_numbers_->render(gv_,
                                    axes_settings_,
                                    axes_limits_,
                                    view_angles_,
                                    coord_converter_,
                                    width_,
-                                   height_);
+                                   height_);*/
+    glUseProgram(0);
 }
 
 void AxesRenderer::renderBoxGrid()
 {
-    glUseProgram(shader_.programId());
+    glUseProgram(plot_shader_.programId());
 
     const Vec3Dd scale = axes_limits_.getAxesScale();
     const Vec3Dd s = axes_settings_.getAxesScale();
@@ -138,7 +205,7 @@ void AxesRenderer::renderBoxGrid()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
-    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
     plot_box_grid_->render(gv_,
                            axes_settings_,
@@ -170,7 +237,7 @@ void AxesRenderer::plotBegin()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
 
-    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 }
 
 void AxesRenderer::plotEnd()
@@ -180,7 +247,7 @@ void AxesRenderer::plotEnd()
 
 void AxesRenderer::renderPlotBox()
 {
-    glUseProgram(shader_.programId());
+    glUseProgram(plot_shader_.programId());
 
     model_mat[3][0] = 0.0;
     model_mat[3][1] = 0.0;
@@ -193,9 +260,9 @@ void AxesRenderer::renderPlotBox()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat;
 
-    glUniformMatrix4fv(glGetUniformLocation(shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
+    // plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
 
     glUseProgram(0);
@@ -203,13 +270,16 @@ void AxesRenderer::renderPlotBox()
 
 void AxesRenderer::reloadShader()
 {
-    glDeleteShader(shader_.programId());
     glDeleteShader(plot_shader_.programId());
+    glDeleteShader(text_shader_.programId());
 
     const std::string v_path = "../applications/improvements/shaders/basic.vertex";
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
-    shader_ = Shader::createFromFiles(v_path,f_path);
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
+
+    const std::string v_path_text = "../applications/improvements/shaders/text.vertex";
+    const std::string f_path_text = "../applications/improvements/shaders/text.fragment";
+    text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
 }
 
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,
