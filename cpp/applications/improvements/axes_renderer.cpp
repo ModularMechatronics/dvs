@@ -3,6 +3,7 @@
 #include "dvs/math/math.h"
 #include "vertex_data.h"
 #include "text_rendering.h"
+#include "text_rendering_new.h"
 #include "misc/misc.h"
 
 #include <glm/gtx/transform.hpp>
@@ -73,22 +74,24 @@ static Vec3Dd findScale(const Matrixd& R)
 
 AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(axes_settings)
 {
-    plot_box_walls_ = new PlotBoxWalls(1.0f);
-    plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
-    plot_box_grid_ = new PlotBoxGrid(1.0f);
-    plot_box_grid_numbers_ = new PlotBoxGridNumbers(0.1f);
+    // plot_box_walls_ = new PlotBoxWalls(1.0f);
+    // plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
+    // plot_box_grid_ = new PlotBoxGrid(1.0f);
+    // plot_box_grid_numbers_ = new PlotBoxGridNumbers(0.1f);
+    // half_cube_ = VboWrapper3D(half_cube_vertices_num_vertices, half_cube_vertices, half_cube_color);
 
     const std::string v_path = "../applications/improvements/shaders/basic.vertex";
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
 
-    const std::string v_path_text = "../applications/improvements/shaders/text.vertex";
-    const std::string f_path_text = "../applications/improvements/shaders/text.fragment";
+    const std::string v_path_text = "../applications/improvements/shaders/new_text.vertex";
+    const std::string f_path_text = "../applications/improvements/shaders/new_text.fragment";
     text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
+    glUseProgram(text_shader_.programId());
 
-    initText2D("../applications/improvements/Holstein.DDS");
+    // initText2D("../applications/improvements/Holstein.DDS");
 
-    half_cube_ = VboWrapper3D(half_cube_vertices_num_vertices, half_cube_vertices, half_cube_color);
+    initFreetype();
 
     const float sw = 3.0f;
     orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);;
@@ -108,23 +111,30 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
 
 void AxesRenderer::render()
 {
-    renderPlotBox();
-    renderBoxGrid();
+    // renderPlotBox();
+    // renderBoxGrid();
     renderBoxGridNumbers();
 
-    plotBegin();
-    half_cube_.render();
-    plotEnd();
+    // plotBegin();
+    // half_cube_.render();
+    // plotEnd();
 }
 
 void drawXAxisNumbers(const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
                       const Vec3Dd& axes_center,
-                      const GridVectors& gv)
+                      const GridVectors& gv,
+                      GLuint shader_id)
 {
     const double y = -1.0;
     const double z = -1.0;
+
+    glm::vec3 color;
+    color.x = 0.5;
+    color.y = 0.5;
+    color.z = 0.5;
+
     for(size_t k = 0; k < gv.x.size(); k++)
     {
         const double x = gv.x(k);
@@ -135,7 +145,8 @@ void drawXAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.x(k) + axes_center.x, 3);
-        printText2D(val.c_str(), v_projected[0], v_projected[1], 10);
+        // renderText(shader_id, val, v_projected[0], v_projected[1], 1.0f, color);
+        // printText2D(val.c_str(), v_projected[0], v_projected[1], 10);
     }
 }
 
@@ -154,28 +165,31 @@ void AxesRenderer::renderBoxGridNumbers()
     model_mat[3][1] = 0.0;
     model_mat[3][2] = 0.0;
 
-    scale_mat[0][0] = 1.0 / scale.x;
+    scale_mat[0][0] = 1.0; // / scale.x;
     scale_mat[1][1] = 1.0; // / scale.y;
     scale_mat[2][2] = 1.0; // / scale.z;
     scale_mat[3][3] = 1.0;
+
+    glm::vec3 color;
+    color.x = 1.0;
+    color.y = 0.5;
+    color.z = 0.0;
+
+    glm::mat4 prj = glm::mat4(1.0f);
+
+    glUniformMatrix4fv(glGetUniformLocation(text_shader_.programId(), "projection"), 1, GL_FALSE, &projection_mat[0][0]);
+
+    renderText(text_shader_.programId(), "A This is text", -1.0f, -1.0f, 0.01f, glm::vec3(0.5, 0.8f, 0.2f));
 
     // glm::vec3 v3(1.0, 1.0, 1.0);
 
     const glm::vec4 v_viewport = glm::vec4(0, 0, width_, height_);
     const glm::mat4 view_model = view_mat * model_mat * scale_mat;
 
-    drawXAxisNumbers(view_model, v_viewport, projection_mat, axes_center, gv_);
+    drawXAxisNumbers(view_model, v_viewport, projection_mat, axes_center, gv_, text_shader_.programId());
 
-    /*glm::vec3 v_projected = glm::project(v3,
-                         view_model,
-                         projection_mat,
-                         v_viewport);
-
-    const char* const some_text = "hello";
-    printText2D(some_text, v_projected[0], v_projected[1], 20);*/
-
-    glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_width"), width_ / 2.0f);
-    glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_height"), height_ / 2.0f);
+    // glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_width"), width_ / 2.0f);
+    // glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_height"), height_ / 2.0f);
 
     /*plot_box_grid_numbers_->render(gv_,
                                    axes_settings_,
@@ -277,8 +291,8 @@ void AxesRenderer::reloadShader()
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
 
-    const std::string v_path_text = "../applications/improvements/shaders/text.vertex";
-    const std::string f_path_text = "../applications/improvements/shaders/text.fragment";
+    const std::string v_path_text = "../applications/improvements/shaders/new_text.vertex";
+    const std::string f_path_text = "../applications/improvements/shaders/new_text.fragment";
     text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
 }
 

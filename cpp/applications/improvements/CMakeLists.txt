@@ -44,10 +44,12 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_box_silhouette.cpp
                      grid_numbers.cpp
                      plot_box_grid.cpp
-                     text_rendering.cpp)
+                     text_rendering.cpp
+                     text_rendering_new.cpp)
 
 add_executable(improvements ${CPP_SOURCE_FILES} ${EXT_CPP_FILES})
 target_link_libraries(improvements ${wxWidgets_LIBRARIES}
                           ${OPENGL_LIBRARIES}
                           ${GLUT_LIBRARY}
-                          ${PLATFORM_LIBRARIES})
+                          ${PLATFORM_LIBRARIES}
+                          /Users/danielpi/work/dvs/cpp/externals/freetype-2.10.0/objs/.libs/libfreetype.a)
