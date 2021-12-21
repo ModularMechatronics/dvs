@@ -21,6 +21,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "text_rendering_new.h"
+
 using namespace dvs::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)

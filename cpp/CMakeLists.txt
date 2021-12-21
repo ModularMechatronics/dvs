@@ -56,6 +56,10 @@ include_directories(${WX_CUSTOM_INC_PATH})
 link_directories(${WX_CUSTOM_LIB_PATH})
 
 
+# ****** freetype ******
+include_directories(${REPO_DIR}/cpp/externals/freetype-2.10.0/include)
+link_directories(${REPO_DIR}/cpp/externals/freetype-2.10.0/objs/.libs)
+
 set(GTEST_LIB_FILES libgtest.a
                     libgtest_main.a
                     pthread)
