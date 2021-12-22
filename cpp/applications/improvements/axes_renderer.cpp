@@ -84,14 +84,17 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
 
-    const std::string v_path_text = "../applications/improvements/shaders/new_text.vertex";
-    const std::string f_path_text = "../applications/improvements/shaders/new_text.fragment";
+    const std::string v_path_text = "../applications/improvements/shaders/text.vs";
+    const std::string f_path_text = "../applications/improvements/shaders/text.fs";
     text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
+
     glUseProgram(text_shader_.programId());
 
     // initText2D("../applications/improvements/Holstein.DDS");
 
     initFreetype();
+
+    glUniform1i(glGetUniformLocation(text_shader_.programId(), "text_sampler"), 0);
 
     const float sw = 3.0f;
     orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);;
@@ -177,16 +180,16 @@ void AxesRenderer::renderBoxGridNumbers()
 
     glm::mat4 prj = glm::mat4(1.0f);
 
-    glUniformMatrix4fv(glGetUniformLocation(text_shader_.programId(), "projection"), 1, GL_FALSE, &projection_mat[0][0]);
+    // glUniformMatrix4fv(glGetUniformLocation(text_shader_.programId(), "projection"), 1, GL_FALSE, &projection_mat[0][0]);
 
-    renderText(text_shader_.programId(), "A This is text", -1.0f, -1.0f, 0.01f, glm::vec3(0.5, 0.8f, 0.2f));
+    renderText(text_shader_.programId(), "A This is text", -1.0f, -1.0f, 0.005f, glm::vec3(0.5, 0.8f, 0.2f));
 
     // glm::vec3 v3(1.0, 1.0, 1.0);
 
     const glm::vec4 v_viewport = glm::vec4(0, 0, width_, height_);
     const glm::mat4 view_model = view_mat * model_mat * scale_mat;
 
-    drawXAxisNumbers(view_model, v_viewport, projection_mat, axes_center, gv_, text_shader_.programId());
+    // drawXAxisNumbers(view_model, v_viewport, projection_mat, axes_center, gv_, text_shader_.programId());
 
     // glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_width"), width_ / 2.0f);
     // glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_height"), height_ / 2.0f);
@@ -291,8 +294,8 @@ void AxesRenderer::reloadShader()
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
 
-    const std::string v_path_text = "../applications/improvements/shaders/new_text.vertex";
-    const std::string f_path_text = "../applications/improvements/shaders/new_text.fragment";
+    const std::string v_path_text = "../applications/improvements/shaders/text.vs";
+    const std::string f_path_text = "../applications/improvements/shaders/text.fs";
     text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
 }
 
