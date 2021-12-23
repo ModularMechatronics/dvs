@@ -1,0 +1,10 @@
+Pipeline:
+States set by user command/mouse/keyboard in one render cycle:
+ - Axes limits (zoom, pan)
+ - Rotation (view angles)
+ - Width/height
+
+Calculated entities:
+ - Snap axis
+ - Number of ticks shown per axis (show fewer if sharp angle)
+ - Axis ticks
