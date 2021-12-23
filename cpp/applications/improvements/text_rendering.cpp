@@ -115,7 +115,7 @@ bool initFreetype()
     return true;
 }
 
-void renderText(GLuint shader_id, std::string text, float x, float y, float scale, glm::vec3 color)
+void renderText(GLuint shader_id, std::string text, float x, float y, float scale, const float width, const float height, glm::vec3 color)
 {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -126,17 +126,21 @@ void renderText(GLuint shader_id, std::string text, float x, float y, float scal
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vtx_array_obj);
 
+    const float text_scale = 1000.0f;
+    const float sx = text_scale / width;
+    const float sy = text_scale / height;
+
     for (size_t k = 0; k < text.length(); k++) 
     {
         Character ch = characters[text[k]];
 
-        float xpos = x + ch.bearing.x * scale;
-        float ypos = y - (ch.size.y - ch.bearing.y) * scale;
+        const float xpos = x + ch.bearing.x * scale;
+        const float ypos = y - (ch.size.y - ch.bearing.y) * scale;
 
-        float w = ch.size.x * scale;
-        float h = ch.size.y * scale;
+        const float w = ch.size.x * scale * sx;
+        const float h = ch.size.y * scale * sy;
 
-        float vertices[6][4] = {
+        const float vertices[6][4] = {
             { xpos,     ypos + h,   0.0f, 0.0f },            
             { xpos,     ypos,       0.0f, 1.0f },
             { xpos + w, ypos,       1.0f, 1.0f },
@@ -155,7 +159,7 @@ void renderText(GLuint shader_id, std::string text, float x, float y, float scal
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        x += (ch.increment >> 6) * scale;
+        x += (ch.increment >> 6) * scale * sx;
     }
 
     glBindVertexArray(0);

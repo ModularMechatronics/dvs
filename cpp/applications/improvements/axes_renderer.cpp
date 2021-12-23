@@ -125,6 +125,8 @@ void AxesRenderer::render()
 void drawXAxisNumbers(const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
+                      const float width,
+                      const float height,
                       const Vec3Dd& axes_center,
                       const GridVectors& gv,
                       GLuint shader_id)
@@ -147,7 +149,7 @@ void drawXAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.x(k) + axes_center.x, 3);
-        renderText(shader_id, val, v_projected[0], v_projected[1], 0.0005f, glm::vec3(0.5, 0.8f, 0.2f));
+        renderText(shader_id, val, v_projected[0], v_projected[1], 0.0005f, width, height, glm::vec3(0.5, 0.8f, 0.2f));
     }
 }
 
@@ -180,7 +182,7 @@ void AxesRenderer::renderBoxGridNumbers()
 
     // glUniformMatrix4fv(glGetUniformLocation(text_shader_.programId(), "projection"), 1, GL_FALSE, &projection_mat[0][0]);
 
-    renderText(text_shader_.programId(), "A This is text", -1.0f, -1.0f, 0.001f, glm::vec3(0.5, 0.8f, 0.2f));
+    renderText(text_shader_.programId(), "A This is text", -1.0f, -1.0f, 0.001f, width_, height_, glm::vec3(0.5, 0.8f, 0.2f));
 
     // glm::vec3 v3(1.0, 1.0, 1.0);
 
@@ -188,7 +190,7 @@ void AxesRenderer::renderBoxGridNumbers()
     const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
     const glm::mat4 view_model = view_mat * model_mat * scale_mat;
 
-    drawXAxisNumbers(view_model, v_viewport, projection_mat, axes_center, gv_, text_shader_.programId());
+    drawXAxisNumbers(view_model, v_viewport, projection_mat, width_, height_, axes_center, gv_, text_shader_.programId());
 
     // glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_width"), width_ / 2.0f);
     // glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_height"), height_ / 2.0f);
