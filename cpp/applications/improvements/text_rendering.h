@@ -1,7 +1,13 @@
-#ifndef DVS_TEXT_RENDERING_H_
-#define DVS_TEXT_RENDERING_H_
+#ifndef TEXT_RENDERING_NEW_H_
+#define TEXT_RENDERING_NEW_H_
 
-void initText2D(const char * texturePath);
-void printText2D(const char* text, const float x, const float y, const float size);
+#include <glm/glm.hpp>
+
+#include <string>
+
+#include "opengl_low_level/opengl_low_level.h"
+
+bool initFreetype();
+void renderText(GLuint shader_id, std::string text, float x, float y, float scale, glm::vec3 color);
 
 #endif

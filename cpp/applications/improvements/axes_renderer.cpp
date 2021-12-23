@@ -3,7 +3,6 @@
 #include "dvs/math/math.h"
 #include "vertex_data.h"
 #include "text_rendering.h"
-#include "text_rendering_new.h"
 #include "misc/misc.h"
 
 #include <glm/gtx/transform.hpp>
