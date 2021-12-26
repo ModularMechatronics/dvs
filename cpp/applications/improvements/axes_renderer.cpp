@@ -182,7 +182,13 @@ void AxesRenderer::renderBoxGridNumbers()
 
     // glUniformMatrix4fv(glGetUniformLocation(text_shader_.programId(), "projection"), 1, GL_FALSE, &projection_mat[0][0]);
 
-    renderText(text_shader_.programId(), "A This is text", -1.0f, -1.0f, 0.001f, width_, height_, glm::vec3(0.5, 0.8f, 0.2f));
+    const float sc = 0.002f;
+    renderText(text_shader_.programId(), "A This is text", -1.0f, -1.0f, sc, width_, height_, glm::vec3(0.5, 0.8f, 0.2f));
+
+    const Vec2Df text_size = calculateStringSize("A This is text", -1.0f, -1.0f, sc, width_, height_);
+
+    std::cout << text_size << std::endl;
+    std::cout << "Axes: " << Vec2Df(width_, height_) << std::endl;
 
     // glm::vec3 v3(1.0, 1.0, 1.0);
 
