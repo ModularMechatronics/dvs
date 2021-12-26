@@ -115,7 +115,56 @@ bool initFreetype()
     return true;
 }
 
-void renderText(GLuint shader_id, std::string text, float x, float y, float scale, const float width, const float height, glm::vec3 color)
+constexpr float kTextScaleParameter = 1000.0f;
+
+Vec2Df calculateStringSize(std::string text, float x, float y, float scale, const float axes_width, const float axes_height)
+{
+    if(text.length() == 0)
+    {
+        return Vec2Df(0.0f, 0.0f);
+    }
+
+    const float sx = kTextScaleParameter / axes_width;
+    const float sy = kTextScaleParameter / axes_height;
+
+    float x_min, x_max, y_min, y_max;
+
+    Character ch = characters[text[0]];
+
+    x_min = x + ch.bearing.x * scale;
+    x_max = x_min;
+    y_min = y - (ch.size.y - ch.bearing.y) * scale;
+    y_max = y_min;
+
+    for (size_t k = 0; k < text.length(); k++) 
+    {
+        const Character& ch = characters[text[k]];
+
+        const float xpos = x + ch.bearing.x * scale;
+        const float ypos = y - (ch.size.y - ch.bearing.y) * scale;
+
+        const float w = ch.size.x * scale * sx;
+        const float h = ch.size.y * scale * sy;
+
+        x_min = std::min(x_min, xpos);
+        x_min = std::min(x_min, xpos + w);
+
+        x_max = std::max(x_min, xpos);
+        x_max = std::max(x_min, xpos + w);
+
+        y_min = std::min(y_min, ypos);
+        y_min = std::min(y_min, ypos + h);
+
+        y_max = std::max(y_min, ypos);
+        y_max = std::max(y_min, ypos + h);
+
+        x += (ch.increment >> 6) * scale * sx;
+    }
+    
+    return Vec2Df(0.5f * (x_max - x_min) * axes_width, 0.5f * (y_max - y_min) * axes_height);
+}
+
+void renderText(GLuint shader_id, std::string text, float x, float y, float scale, const float axes_width, const float axes_height, glm::vec3 color)
 {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -126,13 +175,12 @@ void renderText(GLuint shader_id, std::string text, float x, float y, float scal
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vtx_array_obj);
 
-    const float text_scale = 1000.0f;
-    const float sx = text_scale / width;
-    const float sy = text_scale / height;
+    const float sx = kTextScaleParameter / axes_width;
+    const float sy = kTextScaleParameter / axes_height;
 
     for (size_t k = 0; k < text.length(); k++) 
     {
-        Character ch = characters[text[k]];
+        const Character& ch = characters[text[k]];
 
         const float xpos = x + ch.bearing.x * scale;
         const float ypos = y - (ch.size.y - ch.bearing.y) * scale;
