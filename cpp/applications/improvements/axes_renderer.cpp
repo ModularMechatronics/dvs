@@ -125,19 +125,19 @@ void AxesRenderer::render()
 void drawXAxisNumbers(const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
+                      const double azimuth,
+                      const double elevation,
                       const float width,
                       const float height,
                       const Vec3Dd& axes_center,
                       const GridVectors& gv,
                       GLuint shader_id)
 {
-    const double y = -1.0;
-    const double z = -1.0;
+    const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
+    const double y = cond ? 1.0 : -1.0;
+    const double z = elevation > 0.0 ? -1.0 : 1.0;
 
-    glm::vec3 color;
-    color.x = 0.5;
-    color.y = 0.5;
-    color.z = 0.5;
+    glm::vec3 color(0.0, 0.0, 0.0);
 
     for(size_t k = 0; k < gv.x.size(); k++)
     {
@@ -149,7 +149,69 @@ void drawXAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.x(k) + axes_center.x, 3);
-        renderText(shader_id, val, v_projected[0], v_projected[1], 0.0005f, width, height, glm::vec3(0.5, 0.8f, 0.2f));
+        renderText(shader_id, val, v_projected[0], v_projected[1], 0.0005f, width, height, color);
+    }
+}
+
+void drawYAxisNumbers(const glm::mat4& view_model,
+                      const glm::vec4& v_viewport,
+                      const glm::mat4& projection,
+                      const double azimuth,
+                      const double elevation,
+                      const float width,
+                      const float height,
+                      const Vec3Dd& axes_center,
+                      const GridVectors& gv,
+                      GLuint shader_id)
+{
+    const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
+    const double x = cond ? 1.0 : -1.0;
+    const double z = elevation > 0.0 ? -1.0 : 1.0;
+
+    glm::vec3 color(0.0, 0.0, 0.0);
+
+    for(size_t k = 0; k < gv.y.size(); k++)
+    {
+        const double y = gv.y(k);
+        glm::vec3 v3(x, y, z);
+
+        glm::vec3 v_projected = glm::project(v3,
+                         view_model,
+                         projection,
+                         v_viewport);
+        const std::string val = formatNumber(gv.y(k) + axes_center.y, 3);
+        renderText(shader_id, val, v_projected[0], v_projected[1], 0.0005f, width, height, color);
+    }
+}
+
+void drawZAxisNumbers(const glm::mat4& view_model,
+                      const glm::vec4& v_viewport,
+                      const glm::mat4& projection,
+                      const double azimuth,
+                      const double elevation,
+                      const float width,
+                      const float height,
+                      const Vec3Dd& axes_center,
+                      const GridVectors& gv,
+                      GLuint shader_id)
+{
+    const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
+    const double x = azimuth > 0.0f ? 1.0 : -1.0;
+    const double y = cond ? 1.0 : -1.0;
+
+    glm::vec3 color(0.0, 0.0, 0.0);
+
+    for(size_t k = 0; k < gv.z.size(); k++)
+    {
+        const double z = gv.z(k);
+        glm::vec3 v3(x, y, z);
+
+        glm::vec3 v_projected = glm::project(v3,
+                         view_model,
+                         projection,
+                         v_viewport);
+        const std::string val = formatNumber(gv.z(k) + axes_center.z, 3);
+        renderText(shader_id, val, v_projected[0], v_projected[1], 0.0005f, width, height, color);
     }
 }
 
@@ -168,13 +230,8 @@ void AxesRenderer::renderBoxGridNumbers()
     model_mat[3][1] = 0.0;
     model_mat[3][2] = 0.0;
 
-    scale_mat[0][0] = 1.0 / scale.x;
-    scale_mat[1][1] = 1.0; // / scale.y;
-    scale_mat[2][2] = 1.0; // / scale.z;
-    scale_mat[3][3] = 1.0;
-
     glm::mat2 rot2;
-    const float phi = 35.0f * M_PI / 180.0f;
+    const float phi = 0.0f * 35.0f * M_PI / 180.0f;
     rot2[0][0] = std::cos(phi);
     rot2[0][1] = -std::sin(phi);
     rot2[1][0] = std::sin(phi);
@@ -191,9 +248,28 @@ void AxesRenderer::renderBoxGridNumbers()
     renderText(text_shader_.programId(), "A This is text", offset.x, offset.y, sc, width_, height_, glm::vec3(0.5, 0.8f, 0.2f));
 
     const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
-    const glm::mat4 view_model = view_mat * model_mat * scale_mat;
 
-    drawXAxisNumbers(view_model, v_viewport, projection_mat, width_, height_, axes_center, gv_, text_shader_.programId());
+    const double az = view_angles_.getAzimuth();
+    const double el = view_angles_.getElevation();
+
+    scale_mat[0][0] = 1.0 / scale.x;
+    scale_mat[1][1] = 1.0;
+    scale_mat[2][2] = 1.0;
+    scale_mat[3][3] = 1.0;
+
+    const glm::mat4 view_model_x = view_mat * model_mat * scale_mat;
+
+    scale_mat[0][0] = 1.0;
+    scale_mat[1][1] = 1.0 / scale.y;
+    const glm::mat4 view_model_y = view_mat * model_mat * scale_mat;
+
+    scale_mat[1][1] = 1.0;
+    scale_mat[2][2] = 1.0 / scale.z;
+    const glm::mat4 view_model_z = view_mat * model_mat * scale_mat;
+
+    drawXAxisNumbers(view_model_x, v_viewport, projection_mat, az, el, width_, height_, axes_center, gv_, text_shader_.programId());
+    drawYAxisNumbers(view_model_y, v_viewport, projection_mat, az, el, width_, height_, axes_center, gv_, text_shader_.programId());
+    drawZAxisNumbers(view_model_z, v_viewport, projection_mat, az, el, width_, height_, axes_center, gv_, text_shader_.programId());
 
     /*plot_box_grid_numbers_->render(gv_,
                                    axes_settings_,
