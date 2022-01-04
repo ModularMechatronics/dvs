@@ -29,7 +29,7 @@ unsigned int vtx_array_obj, vtx_buffer_obj;
 
 bool is_initialized = false;
 
-const char* const kFontPath = "../resources/fonts/Antonio-Bold.ttf";
+const char* const kFontPath = "../resources/fonts/Roboto-Regular.ttf";
 
 }
 
@@ -161,7 +161,7 @@ Vec2Df calculateStringSize(std::string text, float x, float y, float scale, cons
         x += (ch.increment >> 6) * scale * sx;
     }
     
-    return Vec2Df(0.5f * (x_max - x_min) * axes_width, 0.5f * (y_max - y_min) * axes_height);
+    return Vec2Df(x_max - x_min, y_max - y_min);
 }
 
 void renderText(GLuint shader_id, std::string text, float x, float y, float scale, const float axes_width, const float axes_height, glm::vec3 color)
@@ -169,6 +169,10 @@ void renderText(GLuint shader_id, std::string text, float x, float y, float scal
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
+    x -= text_size.x / 2.0f;
+    y -= text_size.y / 2.0f;
 
     glUniform3f(glGetUniformLocation(shader_id, "textColor"), color.x, color.y, color.z);
 

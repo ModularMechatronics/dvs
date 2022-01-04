@@ -29,7 +29,7 @@ static Vec3Dd findScale(const Matrixd& R)
     // clang-format on
     std::pair<Point3Dd, Point3Dd> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
                                   pmah = {points(0), pr0};
-    for (const Point3Dd p : points)
+    for (const Point3Dd& p : points)
     {
         const auto pqr = R * p;
 
@@ -173,33 +173,27 @@ void AxesRenderer::renderBoxGridNumbers()
     scale_mat[2][2] = 1.0; // / scale.z;
     scale_mat[3][3] = 1.0;
 
-    glm::vec3 color;
-    color.x = 1.0;
-    color.y = 0.5;
-    color.z = 0.0;
+    glm::mat2 rot2;
+    const float phi = 35.0f * M_PI / 180.0f;
+    rot2[0][0] = std::cos(phi);
+    rot2[0][1] = -std::sin(phi);
+    rot2[1][0] = std::sin(phi);
+    rot2[1][1] = std::cos(phi);
 
-    glm::mat4 prj = glm::mat4(1.0f);
-
-    // glUniformMatrix4fv(glGetUniformLocation(text_shader_.programId(), "projection"), 1, GL_FALSE, &projection_mat[0][0]);
+    glUniformMatrix2fv(glGetUniformLocation(text_shader_.programId(), "rotation"), 1, GL_FALSE, &rot2[0][0]);
 
     const float sc = 0.002f;
-    renderText(text_shader_.programId(), "A This is text", -1.0f, -1.0f, sc, width_, height_, glm::vec3(0.5, 0.8f, 0.2f));
+    const Vec2Df offset(0.5f, 0.5f);
+    const Vec2Df text_size = calculateStringSize("A This is text", offset.x, offset.y, sc, width_, height_);
 
-    const Vec2Df text_size = calculateStringSize("A This is text", -1.0f, -1.0f, sc, width_, height_);
+    glUniform2f(glGetUniformLocation(text_shader_.programId(), "offset"), offset.x, offset.y);
 
-    std::cout << text_size << std::endl;
-    std::cout << "Axes: " << Vec2Df(width_, height_) << std::endl;
+    renderText(text_shader_.programId(), "A This is text", offset.x, offset.y, sc, width_, height_, glm::vec3(0.5, 0.8f, 0.2f));
 
-    // glm::vec3 v3(1.0, 1.0, 1.0);
-
-    // const glm::vec4 v_viewport = glm::vec4(0, 0, width_, height_);
     const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
     const glm::mat4 view_model = view_mat * model_mat * scale_mat;
 
     drawXAxisNumbers(view_model, v_viewport, projection_mat, width_, height_, axes_center, gv_, text_shader_.programId());
-
-    // glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_width"), width_ / 2.0f);
-    // glUniform1f(glGetUniformLocation(text_shader_.programId(), "half_height"), height_ / 2.0f);
 
     /*plot_box_grid_numbers_->render(gv_,
                                    axes_settings_,
