@@ -230,20 +230,9 @@ void AxesRenderer::renderBoxGridNumbers()
     model_mat[3][1] = 0.0;
     model_mat[3][2] = 0.0;
 
-    glm::mat2 rot2;
-    const float phi = 0.0f * 35.0f * M_PI / 180.0f;
-    rot2[0][0] = std::cos(phi);
-    rot2[0][1] = -std::sin(phi);
-    rot2[1][0] = std::sin(phi);
-    rot2[1][1] = std::cos(phi);
-
-    glUniformMatrix2fv(glGetUniformLocation(text_shader_.programId(), "rotation"), 1, GL_FALSE, &rot2[0][0]);
-
     const float sc = 0.002f;
     const Vec2Df offset(0.5f, 0.5f);
     const Vec2Df text_size = calculateStringSize("A This is text", offset.x, offset.y, sc, width_, height_);
-
-    glUniform2f(glGetUniformLocation(text_shader_.programId(), "offset"), offset.x, offset.y);
 
     renderText(text_shader_.programId(), "A This is text", offset.x, offset.y, sc, width_, height_, glm::vec3(0.5, 0.8f, 0.2f));
 
