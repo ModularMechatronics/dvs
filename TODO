@@ -28,6 +28,7 @@
 - Rename "FunctionHeader" to "Header" and "FunctionHeaderObject" to "HeaderObject"
 - Add pan and zoom to scroll click and right click
 - Delete gl buffers with "glDeleteBuffers"
+- Change plot-LINE_STRIP to separate function, lineCollection or something like that
 
 #### Bigger features
 - Fix so that one can set axis square and axis equal

@@ -164,8 +164,7 @@ void drawYAxisNumbers(const glm::mat4& view_model,
                       const GridVectors& gv,
                       GLuint shader_id)
 {
-    const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
-    const double x = cond ? 1.0 : -1.0;
+    const double x = azimuth < 0.0 ? 1.0 : -1.0;
     const double z = elevation > 0.0 ? -1.0 : 1.0;
 
     glm::vec3 color(0.0, 0.0, 0.0);
@@ -256,9 +255,9 @@ void AxesRenderer::renderBoxGridNumbers()
     scale_mat[2][2] = 1.0 / scale.z;
     const glm::mat4 view_model_z = view_mat * model_mat * scale_mat;
 
-    drawXAxisNumbers(view_model_x, v_viewport, projection_mat, az, el, width_, height_, axes_center, gv_, text_shader_.programId());
+    // drawXAxisNumbers(view_model_x, v_viewport, projection_mat, az, el, width_, height_, axes_center, gv_, text_shader_.programId());
     drawYAxisNumbers(view_model_y, v_viewport, projection_mat, az, el, width_, height_, axes_center, gv_, text_shader_.programId());
-    drawZAxisNumbers(view_model_z, v_viewport, projection_mat, az, el, width_, height_, axes_center, gv_, text_shader_.programId());
+    // drawZAxisNumbers(view_model_z, v_viewport, projection_mat, az, el, width_, height_, axes_center, gv_, text_shader_.programId());
 
     /*plot_box_grid_numbers_->render(gv_,
                                    axes_settings_,
