@@ -106,11 +106,11 @@ template <typename T> DataType typeToDataTypeEnum()
     }
     else if (std::is_same<T, int>::value)
     {
-        return DataType::INT32;
+        return DataType::INT32; // TODO: Correct?? Move into switch statement below?
     }
     else if (std::is_same<T, unsigned int>::value)
     {
-        return DataType::UINT32;
+        return DataType::UINT32; // TODO: Correct?? Move into switch statement below?
     }
     else if (std::is_same<T, char>::value)
     {
