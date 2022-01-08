@@ -26,6 +26,8 @@ class GlCanvas : public wxGLCanvas
 private:
     wxGLContext* m_context;
 
+    VboWrapper3D half_cube_;
+
     int args[9];
     Shader shader_;
     unsigned int vertex_buffer_, vertex_buffer_array_;

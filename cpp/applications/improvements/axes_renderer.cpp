@@ -76,7 +76,6 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     plot_box_walls_ = new PlotBoxWalls(1.0f);
     plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
     plot_box_grid_ = new PlotBoxGrid(1.0f);
-    half_cube_ = VboWrapper3D(half_cube_vertices_num_vertices, half_cube_vertices, half_cube_color);
 
     const std::string v_path = "../applications/improvements/shaders/basic.vertex";
     const std::string f_path = "../applications/improvements/shaders/basic.fragment";
@@ -87,8 +86,6 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
 
     glUseProgram(text_shader_.programId());
-
-    // initText2D("../applications/improvements/Holstein.DDS");
 
     initFreetype();
 
@@ -115,10 +112,6 @@ void AxesRenderer::render()
     renderPlotBox();
     renderBoxGrid();
     drawGridNumbers(text_shader_, axes_limits_, view_angles_, view_mat, model_mat, projection_mat, width_, height_, gv_);
-
-    plotBegin();
-    half_cube_.render();
-    plotEnd();
 }
 
 void AxesRenderer::renderBoxGrid()
@@ -153,12 +146,9 @@ void AxesRenderer::plotBegin()
 {
     glUseProgram(plot_shader_.programId());
 
-    // AxesLimits
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
 
-    // Scales
     const Vec3Dd scale = axes_limits_.getAxesScale();
-    const Vec3Dd s = axes_settings_.getAxesScale();
 
     model_mat[3][0] = axes_center.x;
     model_mat[3][1] = axes_center.y;
