@@ -12,32 +12,6 @@
 #include "dvs/math/math.h"
 
 
-class PlotBoxGridNumbers
-{
-private:
-    GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
-    float* grid_points_;
-    GLfloat* color_;
-    size_t idx_;
-    float azimuth_;
-    float elevation_;
-
-    Vec3Dd axes_scale_;
-
-
-public:
-    PlotBoxGridNumbers() = delete;
-    PlotBoxGridNumbers(const float size);
-    ~PlotBoxGridNumbers();
-
-    void render(const GridVectors& gv,
-                const AxesSettings& axes_settings,
-                const AxesLimits& axes_limits,
-                const ViewAngles& view_angles,
-                const CoordinateConverter& coord_converter,
-                const float width,
-                const float height);
-};
-
+void drawGridNumbers();
 
 #endif

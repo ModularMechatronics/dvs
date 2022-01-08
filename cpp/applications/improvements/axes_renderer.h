@@ -36,7 +36,6 @@ private:
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
     PlotBoxGrid* plot_box_grid_;
-    PlotBoxGridNumbers* plot_box_grid_numbers_;
 
     glm::mat4 orth_projection_mat;
     glm::mat4 persp_projection_mat;
