@@ -46,8 +46,6 @@ private:
 
     Matrix<double> rot_mat;
 
-    VboWrapper3D half_cube_;
-
     float width_, height_;
 
     GridVectors gv_;
@@ -55,8 +53,6 @@ private:
 
     void renderPlotBox();
     void renderBoxGrid();
-    void plotBegin();
-    void plotEnd();
 
 public:
     AxesRenderer() = default;
@@ -71,6 +67,8 @@ public:
                       const float height);
     void render();
     void reloadShader();
+    void plotBegin();
+    void plotEnd();
 
 };
 

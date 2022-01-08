@@ -49,7 +49,7 @@ GlCanvas::GlCanvas(wxWindow* parent)
     // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
 
-    // cube_ = VboWrapper3D(sizeof(vertex_color) / (sizeof(vertex_color[0]) * 3), vertex_data, vertex_color);
+    half_cube_ = VboWrapper3D(half_cube_vertices_num_vertices, half_cube_vertices, half_cube_color);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -76,8 +76,6 @@ void GlCanvas::render(wxPaintEvent& evt)
     // SO thread that made it work
     // https://stackoverflow.com/questions/26378289/osx-opengl-4-1-glenablevertexattribarray-gldrawarrays-gl-invalid-operation
 
-    // std::cout << "render" << std::endl;
-
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this);
 
@@ -98,6 +96,11 @@ void GlCanvas::render(wxPaintEvent& evt)
                                  getWidth(),
                                  getHeight());
     axes_renderer_->render();
+
+    
+    axes_renderer_->plotBegin();
+    half_cube_.render();
+    axes_renderer_->plotEnd();
 
     // glDisable(GL_DEPTH_TEST);
 
