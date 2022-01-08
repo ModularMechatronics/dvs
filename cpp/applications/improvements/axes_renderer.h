@@ -55,7 +55,6 @@ private:
 
     void renderPlotBox();
     void renderBoxGrid();
-    void renderBoxGridNumbers();
     void plotBegin();
     void plotEnd();
 
