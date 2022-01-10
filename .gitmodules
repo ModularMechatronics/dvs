@@ -13,3 +13,6 @@
 [submodule "cpp/externals/glm"]
 	path = cpp/externals/glm
 	url = git@github.com:g-truc/glm.git
+[submodule "cpp/externals/freetype"]
+	path = cpp/externals/freetype
+	url = git@github.com:freetype/freetype.git

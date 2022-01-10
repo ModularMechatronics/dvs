@@ -51,4 +51,4 @@ target_link_libraries(improvements ${wxWidgets_LIBRARIES}
                           ${OPENGL_LIBRARIES}
                           ${GLUT_LIBRARY}
                           ${PLATFORM_LIBRARIES}
-                          /Users/danielpi/work/dvs/cpp/externals/freetype-2.10.0/objs/.libs/libfreetype.a)
+                          /Users/danielpi/work/dvs/cpp/externals/freetype/build/libfreetype.a)

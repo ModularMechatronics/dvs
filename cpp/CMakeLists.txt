@@ -57,8 +57,8 @@ link_directories(${WX_CUSTOM_LIB_PATH})
 
 
 # ****** freetype ******
-include_directories(${REPO_DIR}/cpp/externals/freetype-2.10.0/include)
-link_directories(${REPO_DIR}/cpp/externals/freetype-2.10.0/objs/.libs)
+include_directories(${REPO_DIR}/cpp/externals/freetype/build/include)
+include_directories(${REPO_DIR}/cpp/externals/freetype/include)
 
 set(GTEST_LIB_FILES libgtest.a
                     libgtest_main.a
