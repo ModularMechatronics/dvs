@@ -56,7 +56,8 @@ private:
     wxGLContext* m_context;
 
     AxesInteractor* axes_interactor_;
-    AxesPainter* axes_painter_;
+    // AxesPainter* axes_painter_;
+    AxesRenderer* axes_renderer_;
     AxesSettings axes_settings_;
     MouseButtonState left_mouse_button_;
     KeyboardState keyboard_state_;

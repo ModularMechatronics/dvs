@@ -29,6 +29,7 @@
 - Add pan and zoom to scroll click and right click
 - Delete gl buffers with "glDeleteBuffers"
 - Change plot-LINE_STRIP to separate function, lineCollection or something like that
+- Replace old c type arrays with std::array
 
 #### Bigger features
 - Fix so that one can set axis square and axis equal

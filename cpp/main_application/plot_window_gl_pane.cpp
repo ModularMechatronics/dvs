@@ -72,7 +72,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
 {
 #ifdef PLATFORM_APPLE_M
     wxGLContextAttrs cxtAttrs;
-    cxtAttrs.PlatformDefaults().OGLVersion(99, 2).EndList();
+    cxtAttrs.PlatformDefaults().CoreProfile().OGLVersion(3, 2).EndList();
     // https://stackoverflow.com/questions/41145024/wxwidgets-and-modern-opengl-3-3
     m_context = new wxGLContext(this, NULL, &cxtAttrs);
 #endif
@@ -103,8 +103,11 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
 
     bindCallbacks();
 
+    wxGLCanvas::SetCurrent(*m_context);
+
     axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
-    axes_painter_ = new AxesPainter(axes_settings_);
+    // axes_painter_ = new AxesPainter(axes_settings_);
+    axes_renderer_ = new AxesRenderer(axes_settings_);
 
     hold_on_ = true;
     axes_set_ = false;
@@ -138,7 +141,8 @@ void PlotWindowGLPane::setPosition(const wxPoint& new_pos)
 
 void PlotWindowGLPane::setSize(const wxSize& new_size)
 {
-    axes_painter_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
+    // axes_painter_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
+    // axes_renderer_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
 #ifdef PLATFORM_LINUX_M
     // This seems to be needed on linux platforms
     glViewport(0, 0, new_size.GetWidth(), new_size.GetHeight());
@@ -625,19 +629,27 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
 
     const bool draw_selected_bb = is_selected_ && is_editing_;
 
-    axes_painter_->paint(axes_interactor_->getAxesLimits(),
+    axes_renderer_->updateStates(axes_interactor_->getAxesLimits(),
+                         axes_interactor_->getViewAngles(),
+                         axes_interactor_->generateGridVectors(),
+                         axes_interactor_->getCoordConverter(),
+                         false,
+                         getWidth(),
+                         getHeight());
+
+    /*axes_painter_->paint(axes_interactor_->getAxesLimits(),
                          axes_interactor_->getViewAngles(),
                          axes_interactor_->generateGridVectors(),
                          axes_interactor_->getCoordConverter(),
                          draw_selected_bb,
-                         left_mouse_button_.isPressed());
-
+                         left_mouse_button_.isPressed());*/
+    axes_renderer_->render();
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?
-    axes_painter_->plotBegin();
+    axes_renderer_->plotBegin();
 
     plot_data_handler_.visualize();
 
-    axes_painter_->plotEnd();
+    axes_renderer_->plotEnd();
     glDisable(GL_DEPTH_TEST);
 
     // glFlush();
