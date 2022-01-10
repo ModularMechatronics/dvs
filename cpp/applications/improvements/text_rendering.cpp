@@ -164,14 +164,25 @@ Vec2Df calculateStringSize(std::string text, float x, float y, float scale, cons
     return Vec2Df(x_max - x_min, y_max - y_min);
 }
 
-void renderText(std::string text, float x, float y, float scale, const float axes_width, const float axes_height)
+void renderTextFromCenter(std::string text, float x, float y, float scale, const float axes_width, const float axes_height)
+{
+    const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
+    renderTextFromLeftCenter(text, x - text_size.x / 2.0f, y, scale, axes_width, axes_height);
+}
+
+void renderTextFromRightCenter(std::string text, float x, float y, float scale, const float axes_width, const float axes_height)
+{
+    const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
+    renderTextFromLeftCenter(text, x - text_size.x, y, scale, axes_width, axes_height);
+}
+
+void renderTextFromLeftCenter(std::string text, float x, float y, float scale, const float axes_width, const float axes_height)
 {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
-    x -= text_size.x / 2.0f;
     y -= text_size.y / 2.0f;
 
     glActiveTexture(GL_TEXTURE0);

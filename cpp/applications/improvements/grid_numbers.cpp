@@ -29,6 +29,10 @@ void drawXAxisNumbers(const glm::mat4& view_model,
     const double y = cond ? 1.0 : -1.0;
     const double z = elevation > 0.0 ? -1.0 : 1.0;
 
+    const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
+                       ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
+    const auto& render_text_function = cond2 ? renderTextFromRightCenter : renderTextFromLeftCenter;
+
     for(size_t k = 0; k < gv.x.size(); k++)
     {
         const double x = gv.x(k);
@@ -39,7 +43,7 @@ void drawXAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.x(k) + axes_center.x, 3);
-        renderText(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        render_text_function(val, v_projected[0], v_projected[1], 0.0005f, width, height);
     }
 }
 
@@ -56,6 +60,10 @@ void drawYAxisNumbers(const glm::mat4& view_model,
     const double x = azimuth < 0.0 ? 1.0 : -1.0;
     const double z = elevation > 0.0 ? -1.0 : 1.0;
 
+    const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
+                       ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
+    const auto& render_text_function = (!cond2) ? renderTextFromRightCenter : renderTextFromLeftCenter;
+
     for(size_t k = 0; k < gv.y.size(); k++)
     {
         const double y = gv.y(k);
@@ -66,7 +74,7 @@ void drawYAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.y(k) + axes_center.y, 3);
-        renderText(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        render_text_function(val, v_projected[0], v_projected[1], 0.0005f, width, height);
     }
 }
 
@@ -84,6 +92,10 @@ void drawZAxisNumbers(const glm::mat4& view_model,
     const double x = azimuth > 0.0f ? 1.0 : -1.0;
     const double y = cond ? 1.0 : -1.0;
 
+    const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
+                       ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
+    const auto& render_text_function = cond2 ? renderTextFromRightCenter : renderTextFromLeftCenter;
+
     for(size_t k = 0; k < gv.z.size(); k++)
     {
         const double z = gv.z(k);
@@ -94,7 +106,7 @@ void drawZAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.z(k) + axes_center.z, 3);
-        renderText(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        render_text_function(val, v_projected[0], v_projected[1], 0.0005f, width, height);
     }
 }
 
