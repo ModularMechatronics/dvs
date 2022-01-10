@@ -186,7 +186,7 @@ void AxesRenderer::renderPlotBox()
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    // plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
+    plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
 
     glUseProgram(0);
