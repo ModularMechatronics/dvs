@@ -110,7 +110,7 @@ void AxesRenderer::render()
 {
     renderPlotBox();
     renderBoxGrid();
-    drawGridNumbers(text_shader_, axes_limits_, view_angles_, view_mat, model_mat, projection_mat, width_, height_, gv_);
+    // drawGridNumbers(text_shader_, axes_limits_, view_angles_, view_mat, model_mat, projection_mat, width_, height_, gv_);
 }
 
 void AxesRenderer::renderBoxGrid()
@@ -149,16 +149,14 @@ void AxesRenderer::plotBegin()
 
     const Vec3Dd scale = axes_limits_.getAxesScale();
 
-    model_mat[3][0] = axes_center.x;
-    model_mat[3][1] = axes_center.y;
-    model_mat[3][2] = axes_center.z;
+    glm::mat4 t_mat = glm::translate(glm::mat4(1.0f), glm::vec3(-axes_center.x, -axes_center.y, -axes_center.z));
 
     scale_mat[0][0] = 1.0 / scale.x;
     scale_mat[1][1] = 1.0 / scale.y;
     scale_mat[2][2] = 1.0 / scale.z;
     scale_mat[3][3] = 1.0;
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * t_mat * scale_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 }
@@ -185,7 +183,7 @@ void AxesRenderer::renderPlotBox()
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
+    // plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
 
     glUseProgram(0);

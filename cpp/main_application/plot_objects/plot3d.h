@@ -17,6 +17,9 @@ private:
     uint8_t* points_ptr_;
     GLuint buffer_idx_;
 
+    GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
+    size_t num_vertices_;
+
     void findMinMax() override;
 
 public:
@@ -37,6 +40,44 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data, const Function
 
     points_ptr_ =
         convertData3DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+
+    /*glGenBuffers(1, &buffer_idx_);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);*/
+
+    //
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    /*float* color_data = new float[num_elements_ * 3];
+
+    for(size_t k = 0; k < (num_elements_ * 3); k++)
+    {
+        color_data[k] = static_cast<float>(k) / static_cast<float>(num_elements_ * 3);
+    }
+
+    glGenBuffers(1, &color_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, color_data, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
+    glVertexAttribPointer(
+        1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+        3,                                // size
+        GL_FLOAT,                         // type
+        GL_FALSE,                         // normalized?
+        0,                                // stride
+        (void*)0                          // array buffer offset
+    );*/
 }
 
 void Plot3D::findMinMax()
@@ -50,18 +91,23 @@ void Plot3D::visualize()
     if (!visualize_has_run_)
     {
         visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_idx_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);
+        // glGenBuffers(1, &buffer_idx_);
+        // glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
+        // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);
     }
-    setColor(color_);
+    /*setColor(color_);
     setLinewidth(line_width_);
+
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     glDrawArrays(GL_LINE_STRIP, 0, num_elements_);
-    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(0);*/
+
+    glBindVertexArray(vertex_buffer_array_);
+    glDrawArrays(GL_LINE_STRIP, 0, num_elements_);
+    glBindVertexArray(0);
 }
 
 Plot3D::~Plot3D()

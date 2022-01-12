@@ -106,7 +106,6 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
     wxGLCanvas::SetCurrent(*m_context);
 
     axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
-    // axes_painter_ = new AxesPainter(axes_settings_);
     axes_renderer_ = new AxesRenderer(axes_settings_);
 
     hold_on_ = true;
@@ -141,7 +140,6 @@ void PlotWindowGLPane::setPosition(const wxPoint& new_pos)
 
 void PlotWindowGLPane::setSize(const wxSize& new_size)
 {
-    // axes_painter_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
     // axes_renderer_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
 #ifdef PLATFORM_LINUX_M
     // This seems to be needed on linux platforms
@@ -195,6 +193,8 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
                                const dvs::internal::FunctionHeader& hdr)
 {
     const internal::Function fcn = hdr.getObjectAtIdx(0).as<internal::Function>();
+
+    wxGLCanvas::SetCurrent(*m_context);
 
     if (fcn == Function::HOLD_ON)
     {
@@ -605,14 +605,6 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     (void)evt;
     if (!IsShown())
         return;
-
-    // clang-format off
-    // const double m[] = {1, 0, 0, 0, 
-    //                     0, 0, 1, 0, 
-    //                     0, 1, 0, 0, 
-    //                     0, 0, 0, 1};
-    // // clang-format on
-    // glLoadMatrixd(m);
 
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this);
