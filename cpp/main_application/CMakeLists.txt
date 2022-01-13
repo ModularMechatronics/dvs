@@ -25,7 +25,6 @@ set(CPP_SOURCE_FILES main.cpp
 
                      axes/structures/axes_limits.cpp
                      axes/structures/axes_settings.cpp
-                     axes/structures/coordinate_converter.cpp
                      axes/structures/view_angles.cpp
 
                      misc/number_formatting.cpp

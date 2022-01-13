@@ -8,7 +8,6 @@
 #include "axes/axes_interactor.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
-#include "axes/structures/coordinate_converter.h"
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "dvs/math/math.h"
@@ -51,8 +50,6 @@ private:
 
     AxesSettings axes_settings_;
 
-    CoordinateConverter coord_converter_;
-
     Vec3Dd inc0;
 
     // Functions
@@ -75,7 +72,6 @@ public:
     GridVectors generateGridVectors();
     ViewAngles getViewAngles() const;
     AxesLimits getAxesLimits() const;
-    CoordinateConverter getCoordConverter() const;
 };
 
 #endif

@@ -624,17 +624,10 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     axes_renderer_->updateStates(axes_interactor_->getAxesLimits(),
                          axes_interactor_->getViewAngles(),
                          axes_interactor_->generateGridVectors(),
-                         axes_interactor_->getCoordConverter(),
                          false,
                          getWidth(),
                          getHeight());
 
-    /*axes_painter_->paint(axes_interactor_->getAxesLimits(),
-                         axes_interactor_->getViewAngles(),
-                         axes_interactor_->generateGridVectors(),
-                         axes_interactor_->getCoordConverter(),
-                         draw_selected_bb,
-                         left_mouse_button_.isPressed());*/
     axes_renderer_->render();
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?
     axes_renderer_->plotBegin();

@@ -209,7 +209,6 @@ void AxesRenderer::reloadShader()
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const ViewAngles& view_angles,
                                 const GridVectors& gv,
-                                const CoordinateConverter& coord_converter,
                                 const bool use_perspective_proj,
                                 const float width,
                                 const float height)
@@ -217,7 +216,6 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
     gv_ = gv;
-    coord_converter_ = coord_converter;
     use_perspective_proj_ = use_perspective_proj;
     width_ = width;
     height_ = height;

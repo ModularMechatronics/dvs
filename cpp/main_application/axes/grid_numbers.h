@@ -8,7 +8,6 @@
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
-#include "axes/structures/coordinate_converter.h"
 #include "shader.h"
 #include "dvs/math/math.h"
 

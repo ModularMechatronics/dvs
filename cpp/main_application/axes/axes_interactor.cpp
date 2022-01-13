@@ -71,8 +71,6 @@ void AxesInteractor::update(const InteractionType interaction_type, const int wi
     {
         updateMouseActivity(interaction_type);
     }
-
-    coord_converter_.updateInternalState(Vec2Dd(window_width, window_height), view_angles_, axes_limits_);
 }
 
 void AxesInteractor::resetView()
@@ -327,7 +325,3 @@ GridVectors AxesInteractor::generateGridVectors()
     return gv;
 }
 
-CoordinateConverter AxesInteractor::getCoordConverter() const
-{
-    return coord_converter_;
-}

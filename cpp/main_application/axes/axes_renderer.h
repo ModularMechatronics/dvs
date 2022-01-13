@@ -10,7 +10,6 @@
 
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
-#include "axes/structures/coordinate_converter.h"
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "opengl_low_level/opengl_low_level.h"
@@ -27,7 +26,6 @@ private:
     AxesLimits axes_limits_;
 
     AxesSettings axes_settings_;
-    CoordinateConverter coord_converter_;
 
     Shader text_shader_;
     Shader plot_shader_;
@@ -60,7 +58,6 @@ public:
     void updateStates(const AxesLimits& axes_limits,
                       const ViewAngles& view_angles,
                       const GridVectors& gv,
-                      const CoordinateConverter& coord_converter,
                       const bool use_perspective_proj,
                       const float width,
                       const float height);

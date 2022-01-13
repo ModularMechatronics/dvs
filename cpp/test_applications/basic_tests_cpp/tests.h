@@ -230,8 +230,8 @@ void testPlot3()
 
     for (size_t k = 0; k < num_elements; k++)
     {
-        xf(k) = 10.0 * cos(t) + 20.0;
-        yf(k) = 10.0 * sin(t) + 20.0;
+        xf(k) = 1.0 * cos(t) + 0.0;
+        yf(k) = 1.0 * sin(t) + 0.0;
         zf(k) = k;
 
         x(k) = xf(k);
