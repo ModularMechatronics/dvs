@@ -156,7 +156,7 @@ void AxesRenderer::plotBegin()
     scale_mat[2][2] = 1.0 / scale.z;
     scale_mat[3][3] = 1.0;
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat * t_mat * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * t_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 }

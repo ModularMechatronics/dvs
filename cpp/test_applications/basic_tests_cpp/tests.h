@@ -232,11 +232,11 @@ void testPlot3()
     {
         xf(k) = 1.0 * cos(t) + 0.0;
         yf(k) = 1.0 * sin(t) + 0.0;
-        zf(k) = k;
+        zf(k) = t;
 
         x(k) = xf(k);
         y(k) = yf(k);
-        z(k) = k;
+        z(k) = t;
         t = t + 0.3;
     }
 
