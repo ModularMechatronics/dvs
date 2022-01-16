@@ -15,7 +15,8 @@
 const float kTextScale = 1.0f / 8.0f;
 
 
-void drawXAxisNumbers(const glm::mat4& view_model,
+void drawXAxisNumbers(const TextRenderer& text_renderer,
+                      const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
                       const double azimuth,
@@ -31,7 +32,6 @@ void drawXAxisNumbers(const glm::mat4& view_model,
 
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
-    const auto& render_text_function = cond2 ? renderTextFromRightCenter : renderTextFromLeftCenter;
 
     for(size_t k = 0; k < gv.x.size(); k++)
     {
@@ -43,11 +43,19 @@ void drawXAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.x(k) + axes_center.x, 3);
-        render_text_function(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        if(cond2)
+        {
+            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        }
+        else
+        {
+            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        }
     }
 }
 
-void drawYAxisNumbers(const glm::mat4& view_model,
+void drawYAxisNumbers(const TextRenderer& text_renderer,
+                      const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
                       const double azimuth,
@@ -62,7 +70,6 @@ void drawYAxisNumbers(const glm::mat4& view_model,
 
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
-    const auto& render_text_function = (!cond2) ? renderTextFromRightCenter : renderTextFromLeftCenter;
 
     for(size_t k = 0; k < gv.y.size(); k++)
     {
@@ -74,11 +81,19 @@ void drawYAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.y(k) + axes_center.y, 3);
-        render_text_function(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        if(cond2)
+        {
+            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        }
+        else
+        {
+            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        }
     }
 }
 
-void drawZAxisNumbers(const glm::mat4& view_model,
+void drawZAxisNumbers(const TextRenderer& text_renderer,
+                      const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
                       const double azimuth,
@@ -94,7 +109,6 @@ void drawZAxisNumbers(const glm::mat4& view_model,
 
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
-    const auto& render_text_function = cond2 ? renderTextFromRightCenter : renderTextFromLeftCenter;
 
     for(size_t k = 0; k < gv.z.size(); k++)
     {
@@ -106,11 +120,18 @@ void drawZAxisNumbers(const glm::mat4& view_model,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.z(k) + axes_center.z, 3);
-        render_text_function(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        if(cond2)
+        {
+            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        }
+        else
+        {
+            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        }
     }
 }
 
-void drawGridNumbers(const Shader text_shader, const AxesLimits& axes_limits, const ViewAngles& view_angles, const glm::mat4& view_mat, const glm::mat4& model_mat, const glm::mat4& projection_mat, const float width, const float height, const GridVectors& gv)
+void drawGridNumbers(const TextRenderer& text_renderer, const Shader text_shader, const AxesLimits& axes_limits, const ViewAngles& view_angles, const glm::mat4& view_mat, const glm::mat4& model_mat, const glm::mat4& projection_mat, const float width, const float height, const GridVectors& gv)
 {
     glm::mat4 model_mat_local = model_mat;
     
@@ -150,9 +171,9 @@ void drawGridNumbers(const Shader text_shader, const AxesLimits& axes_limits, co
     scale_mat[2][2] = 1.0 / scale.z;
     const glm::mat4 view_model_z = view_mat * model_mat_local * scale_mat;
 
-    drawXAxisNumbers(view_model_x, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
-    drawYAxisNumbers(view_model_y, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
-    drawZAxisNumbers(view_model_z, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
+    drawXAxisNumbers(text_renderer, view_model_x, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
+    drawYAxisNumbers(text_renderer, view_model_y, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
+    drawZAxisNumbers(text_renderer, view_model_z, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
 
     glUseProgram(0);
 }

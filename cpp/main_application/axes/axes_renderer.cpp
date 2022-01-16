@@ -1,7 +1,6 @@
 #include "axes_renderer.h"
 
 #include "dvs/math/math.h"
-#include "axes/text_rendering.h"
 #include "misc/misc.h"
 
 #include <glm/gtx/transform.hpp>
@@ -110,7 +109,7 @@ void AxesRenderer::render()
 {
     renderPlotBox();
     renderBoxGrid();
-    // drawGridNumbers(text_shader_, axes_limits_, view_angles_, view_mat, model_mat, projection_mat, width_, height_, gv_);
+    drawGridNumbers(text_renderer_, text_shader_, axes_limits_, view_angles_, view_mat, model_mat, projection_mat, width_, height_, gv_);
 }
 
 void AxesRenderer::renderBoxGrid()

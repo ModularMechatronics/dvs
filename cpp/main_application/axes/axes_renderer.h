@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "axes/text_rendering.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
@@ -26,6 +27,8 @@ private:
     AxesLimits axes_limits_;
 
     AxesSettings axes_settings_;
+
+    TextRenderer text_renderer_;
 
     Shader text_shader_;
     Shader plot_shader_;
