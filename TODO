@@ -30,6 +30,8 @@ Pre release:
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Imshow 1 and 3 channels + arbitrary data type
+- Fix layout designer
+- Fix number formatting and grid vectors system
 
 Post release:
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
@@ -40,3 +42,5 @@ Post release:
 - More general plot interface with "templated templates": plot(const VectorType<T>& x, ...), where VectorType itself is a template
 - Edge and Facecolor transparent
 - Fix so that one can set axis square and axis equal
+- Nice looking buttons in interface
+- Ability to add button to gui

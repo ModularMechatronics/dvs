@@ -313,10 +313,10 @@ GridVectors AxesInteractor::generateGridVectors()
 {
     GridVectors gv;
 
-    const Vec3Dd v_min = axes_limits_.getMin();
-    const Vec3Dd v_max = axes_limits_.getMax();
+    const Vec3Dd v_min = axes_limits_.getMin() * 2.0;
+    const Vec3Dd v_max = axes_limits_.getMax() * 2.0;
 
-    const Vec3Dd axes_center = axes_limits_.getAxesCenter();
+    const Vec3Dd axes_center = axes_limits_.getAxesCenter() * 2.0;
 
     gv.x = generateAxisVector(v_min.x, v_max.x, axes_settings_.getNumAxesTicks(), axes_center.x);
     gv.y = generateAxisVector(v_min.y, v_max.y, axes_settings_.getNumAxesTicks(), axes_center.y);

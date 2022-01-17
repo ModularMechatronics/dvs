@@ -30,15 +30,15 @@ float walls_vertices[] = {
 
 
 constexpr GLfloat xy_r = 1.0f;
-constexpr GLfloat xy_g = 0.0f;
-constexpr GLfloat xy_b = 0.0f;
+constexpr GLfloat xy_g = 1.0f;
+constexpr GLfloat xy_b = 1.0f;
 
-constexpr GLfloat yz_r = 0.0f;
+constexpr GLfloat yz_r = 1.0f;
 constexpr GLfloat yz_g = 1.0f;
-constexpr GLfloat yz_b = 0.0f;
+constexpr GLfloat yz_b = 1.0f;
 
-constexpr GLfloat xz_r = 0.0f;
-constexpr GLfloat xz_g = 0.0f;
+constexpr GLfloat xz_r = 1.0f;
+constexpr GLfloat xz_g = 1.0f;
 constexpr GLfloat xz_b = 1.0f;
 
 
