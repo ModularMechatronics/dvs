@@ -8,7 +8,6 @@
 #include "main_application/plot_objects/utils.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
-#include "plot_functions/plot_functions.h"
 #include "plot_objects/plot_object_base.h"
 
 class DrawTriangle3D : public PlotObjectBase
@@ -72,12 +71,13 @@ void DrawTriangle3D::findMinMax()
 
 void DrawTriangle3D::visualize()
 {
+    // TODO
     setColor(face_color_);
-    drawTriangle3D(triangle_);
+    // drawTriangle3D(triangle_);
 
     setLinewidth(line_width_);
     setColor(edge_color_);
-    drawTriangleEdge3D(triangle_);
+    // drawTriangleEdge3D(triangle_);
 }
 
 DrawTriangle3D::~DrawTriangle3D() {}

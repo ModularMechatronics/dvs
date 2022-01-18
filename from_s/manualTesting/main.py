@@ -9,11 +9,11 @@ from test_runner import ManualTestCase
 
 sys.path.append('./')
 
-executable_location = "C:\\mcdhub_git\\software\\components\\build\\Debug\\MCDTool.exe"
+executable_location = "C:\\folder\\software\\components\\build\\Debug\\executable.exe"
 
-assignment_loc = "C:\\mcdhub_git\\software\\systemtest\\Lintest.shaf"
+assignment_loc = "C:\\folder\\software\\systemtest\\Lintest.shaf"
 
-user_settings_path = "C:\\Users\\sx28744\\AppData\\Local\\Temp\\MCD\\UserSettings\\user.config"
+user_settings_path = "C:\\Users\\sx28744\\AppData\\Local\\Temp\\folder\\UserSettings\\user.config"
 
 def find_node_in_tree(node, tag_name):
     
@@ -27,7 +27,7 @@ def find_node_in_tree(node, tag_name):
 
 def find_settings_tag_in_list():
     name = ''
-    settings_node = find_node_in_tree(root, 'MCDTool.GUI.Properties.Settings')
+    settings_node = find_node_in_tree(root, 'exe.GUI.Properties.Settings')
     
     for child in settings_node:
         if child.attrib and ('name' in child.attrib.keys()) and child.attrib['name'] == 'Username':

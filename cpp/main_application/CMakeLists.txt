@@ -6,10 +6,6 @@ include_directories(${REPO_DIR}/cpp/main_application)
 include_directories(${REPO_DIR}/interfaces/cpp)
 
 set(CPP_SOURCE_FILES main.cpp
-                     opengl_low_level/3d/opengl_3d_functions.cpp
-                     opengl_low_level/opengl_text.cpp
-                     opengl_low_level/2d/opengl_2d_functions.cpp
-                     opengl_low_level/2d/opengl_2d_shape_primitives.cpp
                      io_devices/keyboard_state.cpp
                      io_devices/mouse_state.cpp
                      axes/axes_interactor.cpp
@@ -37,7 +33,6 @@ set(CPP_SOURCE_FILES main.cpp
                      events.cpp
                      layout_tools_window.cpp
                      plot_data.cpp
-                     plot_functions/plot_functions.cpp
                      plot_window_gl_pane.cpp
                      main_window.cpp
                      main_window_receive.cpp

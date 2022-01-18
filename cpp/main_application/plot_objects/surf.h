@@ -1,7 +1,6 @@
 #ifndef SURF_H_
 #define SURF_H_
 
-// #include <arl/utilities/color_map.h>
 #include <string>
 #include <vector>
 
@@ -9,7 +8,6 @@
 #include "main_application/misc/color_map.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
-#include "plot_functions/plot_functions.h"
 #include "plot_objects/plot_object_base.h"
 
 class Surf : public PlotObjectBase

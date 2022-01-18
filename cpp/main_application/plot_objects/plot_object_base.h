@@ -12,7 +12,6 @@
 #include "dvs/plot_properties.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
-#include "plot_functions/plot_functions.h"
 #include "plot_objects/utils.h"
 #include "properties.h"
 

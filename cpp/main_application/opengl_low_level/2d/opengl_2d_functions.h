@@ -15,8 +15,5 @@ void setColor(const float r, const float g, const float b);
 void setLinewidth(const float line_width);
 void setPointSize(const float point_size);
 
-void drawLine2D(const float x0, const float y0, const float x1, const float y1);
-void drawLines2D(const Vectord& x_values, const Vectord& y_values);
-void drawPoints2D(const Vectord& x_values, const Vectord& y_values);
 
 #endif

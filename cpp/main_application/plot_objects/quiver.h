@@ -8,7 +8,6 @@
 #include "main_application/plot_objects/utils.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
-#include "plot_functions/plot_functions.h"
 #include "plot_objects/plot_object_base.h"
 
 class Quiver : public PlotObjectBase

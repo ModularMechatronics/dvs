@@ -7,7 +7,6 @@
 #include "dvs/math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
-#include "plot_functions/plot_functions.h"
 #include "plot_objects/plot_object_base.h"
 
 class DrawPolygon4Points : public PlotObjectBase
@@ -66,15 +65,16 @@ void DrawPolygon4Points::findMinMax()
 
 void DrawPolygon4Points::visualize()
 {
+    // TODO
     setColor(face_color_);
-    drawPolygon3D(p0, p1, p2, p3);
+    // drawPolygon3D(p0, p1, p2, p3);
 
     setLinewidth(line_width_);
     setColor(edge_color_);
-    drawLine3D(p0, p1);
-    drawLine3D(p1, p2);
-    drawLine3D(p2, p3);
-    drawLine3D(p3, p0);
+    // drawLine3D(p0, p1);
+    // drawLine3D(p1, p2);
+    // drawLine3D(p2, p3);
+    // drawLine3D(p3, p0);
 }
 
 #endif

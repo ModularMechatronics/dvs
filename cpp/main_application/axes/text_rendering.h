@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include "dvs/math/math.h"
 #include "opengl_low_level/opengl_low_level.h"
 
 class TextRenderer
@@ -20,8 +21,6 @@ public:
 };
 
 bool initFreetype();
-void renderTextFromLeftCenter(std::string text, float x, float y, float scale, const float axes_width, const float axes_height);
-void renderTextFromRightCenter(std::string text, float x, float y, float scale, const float axes_width, const float axes_height);
-Vec2Df calculateStringSize(std::string text, float x, float y, float scale, const float axes_width, const float axes_height);
+dvs::Vec2Df calculateStringSize(std::string text, float x, float y, float scale, const float axes_width, const float axes_height);
 
 #endif

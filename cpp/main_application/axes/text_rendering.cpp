@@ -14,6 +14,8 @@
 #include "shader.h"
 #include "opengl_low_level/opengl_header.h"
 
+using namespace dvs;
+
 namespace
 {
 struct Character
