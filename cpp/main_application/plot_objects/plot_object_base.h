@@ -31,6 +31,8 @@ protected:
     uint64_t num_bytes_for_one_vec_;
     uint8_t* data_ptr_;
 
+    GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
+
     Function type_;
     DataType data_type_;
 

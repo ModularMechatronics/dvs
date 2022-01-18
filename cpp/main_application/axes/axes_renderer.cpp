@@ -157,6 +157,7 @@ void AxesRenderer::plotBegin()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * t_mat;
 
+    // glUniform1f(glGetUniformLocation(plot_shader_.programId(), "gl_PointSize"), 100.0f);
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 }
 

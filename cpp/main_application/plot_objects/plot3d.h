@@ -15,10 +15,6 @@ class Plot3D : public PlotObjectBase
 {
 private:
     uint8_t* points_ptr_;
-    GLuint buffer_idx_;
-
-    GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
-    size_t num_vertices_;
 
     void findMinMax() override;
 
@@ -41,11 +37,6 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data, const Function
     points_ptr_ =
         convertData3DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 
-    /*glGenBuffers(1, &buffer_idx_);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);*/
-
-    //
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 
@@ -88,23 +79,6 @@ void Plot3D::findMinMax()
 
 void Plot3D::visualize()
 {
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        // glGenBuffers(1, &buffer_idx_);
-        // glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, points_ptr_, GL_STATIC_DRAW);
-    }
-    /*setColor(color_);
-    setLinewidth(line_width_);
-
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glDrawArrays(GL_LINE_STRIP, 0, num_elements_);
-    glDisableVertexAttribArray(0);*/
-
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_LINE_STRIP, 0, num_elements_);
     glBindVertexArray(0);

@@ -113,6 +113,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
     view_set_ = false;
 
     glEnable(GL_MULTISAMPLE);
+    // glEnable(GL_PROGRAM_POINT_SIZE);
 
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 }
