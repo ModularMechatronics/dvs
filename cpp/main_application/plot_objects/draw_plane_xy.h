@@ -27,7 +27,7 @@ public:
     DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~DrawPlaneXY();
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -89,7 +89,7 @@ void DrawPlaneXY::findMinMax()
     max_vec.z = max(vz);
 }
 
-void DrawPlaneXY::visualize()
+void DrawPlaneXY::render()
 {
     if (!visualize_has_run_)
     {

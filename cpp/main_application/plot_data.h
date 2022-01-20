@@ -27,7 +27,7 @@ public:
     void clear();
     void softClear();
     void addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
-    void visualize() const;
+    void render() const;
 };
 
 #endif

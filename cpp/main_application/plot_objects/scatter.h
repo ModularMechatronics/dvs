@@ -22,7 +22,7 @@ public:
     Scatter2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~Scatter2D();
 
-    void visualize() override;
+    void render() override;
 };
 
 Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -52,7 +52,7 @@ void Scatter2D::findMinMax()
     max_vec.z = 1.0;
 }
 
-void Scatter2D::visualize()
+void Scatter2D::render()
 {
     if (!visualize_has_run_)
     {

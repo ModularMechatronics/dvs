@@ -22,7 +22,7 @@ public:
     Scatter3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~Scatter3D();
 
-    void visualize() override;
+    void render() override;
 };
 
 Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -79,7 +79,7 @@ void Scatter3D::findMinMax()
         findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 }
 
-void Scatter3D::visualize()
+void Scatter3D::render()
 {
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_POINTS, 0, num_elements_);

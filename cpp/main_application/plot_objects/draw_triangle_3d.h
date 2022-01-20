@@ -25,7 +25,7 @@ public:
     DrawTriangle3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~DrawTriangle3D();
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawTriangle3D::DrawTriangle3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -69,7 +69,7 @@ void DrawTriangle3D::findMinMax()
     max_vec.z = std::max(triangle_.p2.z, min_vec.z);
 }
 
-void DrawTriangle3D::visualize()
+void DrawTriangle3D::render()
 {
     // TODO
     setColor(face_color_);

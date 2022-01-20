@@ -26,7 +26,7 @@ public:
     DrawTiles(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~DrawTiles();
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawTiles::DrawTiles(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -66,7 +66,7 @@ void DrawTiles::findMinMax()
     }
 }
 
-void DrawTiles::visualize()
+void DrawTiles::render()
 {
     if (!visualize_has_run_)
     {

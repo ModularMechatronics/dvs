@@ -61,7 +61,7 @@ public:
     virtual ~PlotObjectBase();
     PlotObjectBase();
     PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
-    virtual void visualize() = 0;
+    virtual void render() = 0;
     std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors();
 
     bool isPersistent() const;

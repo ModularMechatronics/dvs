@@ -124,16 +124,16 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
     }
 }
 
-void PlotDataHandler::visualize() const
+void PlotDataHandler::render() const
 {
     for (size_t k = 0; k < plot_datas_.size(); k++)
     {
-        plot_datas_[k]->visualize();
+        plot_datas_[k]->render();
     }
 
     for (size_t k = 0; k < old_plot_datas_.size(); k++)
     {
-        old_plot_datas_[k]->visualize();
+        old_plot_datas_[k]->render();
     }
 }
 

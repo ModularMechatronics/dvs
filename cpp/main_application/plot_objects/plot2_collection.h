@@ -26,7 +26,7 @@ public:
     Plot2Collection(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~Plot2Collection();
 
-    void visualize() override;
+    void render() override;
 };
 
 template <typename T>
@@ -183,7 +183,7 @@ void Plot2Collection::findMinMax()
     }*/
 }
 
-void Plot2Collection::visualize()
+void Plot2Collection::render()
 {
     if (!visualize_has_run_)
     {

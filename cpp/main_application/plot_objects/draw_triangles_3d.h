@@ -24,7 +24,7 @@ public:
     DrawTriangles3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~DrawTriangles3D();
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawTriangles3D::DrawTriangles3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -58,7 +58,7 @@ void DrawTriangles3D::findMinMax()
     }
 }
 
-void DrawTriangles3D::visualize()
+void DrawTriangles3D::render()
 {
     if (!visualize_has_run_)
     {

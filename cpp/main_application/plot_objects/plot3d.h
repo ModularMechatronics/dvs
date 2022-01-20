@@ -22,7 +22,7 @@ public:
     Plot3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~Plot3D();
 
-    void visualize() override;
+    void render() override;
 };
 
 Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -76,7 +76,7 @@ void Plot3D::findMinMax()
         findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 }
 
-void Plot3D::visualize()
+void Plot3D::render()
 {
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_LINE_STRIP, 0, num_elements_);

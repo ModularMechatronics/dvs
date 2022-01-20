@@ -28,7 +28,7 @@ public:
     Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~Surf();
 
-    void visualize() override;
+    void render() override;
 };
 
 Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -50,7 +50,7 @@ void Surf::findMinMax()
         findMinMaxFromThreeMatrices(data_ptr_, dims_.rows, dims_.cols, num_bytes_for_one_vec_, data_type_);
 }
 
-void Surf::visualize()
+void Surf::render()
 {
     if (!visualize_has_run_)
     {

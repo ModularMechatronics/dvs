@@ -27,7 +27,7 @@ public:
     DrawArrow();
     DrawArrow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -96,7 +96,7 @@ void DrawArrow::findMinMax()
     max_vec.z = 1.0;
 }
 
-void DrawArrow::visualize()
+void DrawArrow::render()
 {
     if (!visualize_has_run_)
     {

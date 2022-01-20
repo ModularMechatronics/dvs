@@ -75,8 +75,8 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
     plot_box_grid_ = new PlotBoxGrid(1.0f);
 
-    const std::string v_path = "../main_application/axes/shaders/basic.vertex";
-    const std::string f_path = "../main_application/axes/shaders/basic.fragment";
+    const std::string v_path = "../main_application/axes/shaders/basic.vs";
+    const std::string f_path = "../main_application/axes/shaders/basic.fs";
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
 
     const std::string v_path_text = "../main_application/axes/shaders/text.vs";

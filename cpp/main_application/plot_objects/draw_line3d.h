@@ -25,7 +25,7 @@ public:
     DrawLine3D();
     DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawLine3D::DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -66,7 +66,7 @@ void DrawLine3D::findMinMax()
     max_vec.z = std::max(p0_.z, p1_.z);
 }
 
-void DrawLine3D::visualize()
+void DrawLine3D::render()
 {
     if (!visualize_has_run_)
     {

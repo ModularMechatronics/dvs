@@ -27,7 +27,7 @@ public:
     DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~DrawPlaneYZ();
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawPlaneYZ::DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -89,7 +89,7 @@ void DrawPlaneYZ::findMinMax()
     max_vec.z = max(vz);
 }
 
-void DrawPlaneYZ::visualize()
+void DrawPlaneYZ::render()
 {
     if (!visualize_has_run_)
     {

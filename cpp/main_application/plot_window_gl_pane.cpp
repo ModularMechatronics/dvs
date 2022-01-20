@@ -633,7 +633,7 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?
     axes_renderer_->plotBegin();
 
-    plot_data_handler_.visualize();
+    plot_data_handler_.render();
 
     axes_renderer_->plotEnd();
     glDisable(GL_DEPTH_TEST);

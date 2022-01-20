@@ -24,7 +24,7 @@ public:
     Quiver();
     Quiver(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
 
-    void visualize() override;
+    void render() override;
 };
 
 template <typename T>
@@ -174,7 +174,7 @@ void Quiver::findMinMax()
     max_vec.z = 1.0;
 }
 
-void Quiver::visualize()
+void Quiver::render()
 {
     if (!visualize_has_run_)
     {

@@ -27,7 +27,7 @@ public:
     DrawPolygon4Points();
     DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawPolygon4Points::DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -63,7 +63,7 @@ void DrawPolygon4Points::findMinMax()
     max_vec.z = max(vz);
 }
 
-void DrawPolygon4Points::visualize()
+void DrawPolygon4Points::render()
 {
     // TODO
     setColor(face_color_);

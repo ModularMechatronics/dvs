@@ -26,7 +26,7 @@ public:
     DrawMesh(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~DrawMesh();
 
-    void visualize() override;
+    void render() override;
 };
 
 DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -63,7 +63,7 @@ void DrawMesh::findMinMax()
     }
 }
 
-void DrawMesh::visualize()
+void DrawMesh::render()
 {
     if (!visualize_has_run_)
     {

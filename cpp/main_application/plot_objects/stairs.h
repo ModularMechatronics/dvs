@@ -22,7 +22,7 @@ public:
     Stairs(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~Stairs();
 
-    void visualize() override;
+    void render() override;
 };
 
 Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -52,7 +52,7 @@ void Stairs::findMinMax()
     max_vec.z = 1.0;
 }
 
-void Stairs::visualize()
+void Stairs::render()
 {
     if (!visualize_has_run_)
     {

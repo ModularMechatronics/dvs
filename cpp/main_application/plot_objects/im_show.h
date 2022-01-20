@@ -40,7 +40,7 @@ public:
     ImShow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     ~ImShow();
 
-    void visualize() override;
+    void render() override;
 };
 
 void ImShow::findMinMax()
@@ -235,7 +235,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     findMinMax();
 }
 
-void ImShow::visualize()
+void ImShow::render()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
