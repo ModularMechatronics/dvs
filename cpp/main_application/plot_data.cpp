@@ -124,15 +124,17 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
     }
 }
 
-void PlotDataHandler::render() const
+void PlotDataHandler::render(const GLuint shader_id) const
 {
     for (size_t k = 0; k < plot_datas_.size(); k++)
     {
+        plot_datas_[k]->modifyShader(shader_id);
         plot_datas_[k]->render();
     }
 
     for (size_t k = 0; k < old_plot_datas_.size(); k++)
     {
+        old_plot_datas_[k]->modifyShader(shader_id);
         old_plot_datas_[k]->render();
     }
 }

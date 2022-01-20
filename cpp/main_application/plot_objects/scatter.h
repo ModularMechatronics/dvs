@@ -13,7 +13,6 @@ class Scatter2D : public PlotObjectBase
 {
 private:
     uint8_t* points_ptr_;
-    GLuint buffer_idx_;
 
     void findMinMax() override;
 
@@ -23,6 +22,7 @@ public:
     ~Scatter2D();
 
     void render() override;
+    void modifyShader(const GLuint program_id_) override;
 };
 
 Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -35,6 +35,23 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const Fu
 
     points_ptr_ =
         convertData2DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 2, points_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+}
+
+void Scatter2D::modifyShader(const GLuint program_id_)
+{
+    PlotObjectBase::modifyShader(program_id_);
+    glUniform1f(glGetUniformLocation(program_id_, "point_size"), point_size_);
 }
 
 void Scatter2D::findMinMax()
@@ -54,22 +71,9 @@ void Scatter2D::findMinMax()
 
 void Scatter2D::render()
 {
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_idx_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 2, points_ptr_, GL_STATIC_DRAW);
-    }
-    setColor(color_);
-    setPointSize(point_size_);
-
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
+    glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_POINTS, 0, num_elements_);
-    glDisableVertexAttribArray(0);
+    glBindVertexArray(0);
 }
 
 Scatter2D::~Scatter2D()

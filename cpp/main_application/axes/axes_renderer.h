@@ -68,6 +68,7 @@ public:
     void render();
     void plotBegin();
     void plotEnd();
+    GLuint getPlotShaderId() const;
 
 };
 

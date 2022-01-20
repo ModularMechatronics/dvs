@@ -87,7 +87,7 @@ void testScatter3()
 
     axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
     scatter3(x, y, z, properties::Color(212, 14, 55), properties::PointSize(3));
-    plot3(x, y, z, properties::Color(21, 14, 55), properties::LineWidth(1));
+    plot3(x, y, z, properties::Color(255, 14, 255), properties::LineWidth(1));
 }
 
 void testPlotCollection()

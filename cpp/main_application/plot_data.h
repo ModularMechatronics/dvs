@@ -8,6 +8,7 @@
 #include "dvs/dvs.h"
 #include "dvs/math/math.h"
 #include "opengl_low_level/data_structures.h"
+#include "opengl_low_level/opengl_low_level.h"
 
 using namespace dvs;
 using namespace dvs::internal;
@@ -27,7 +28,7 @@ public:
     void clear();
     void softClear();
     void addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
-    void render() const;
+    void render(const GLuint shader_id) const;
 };
 
 #endif

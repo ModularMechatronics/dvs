@@ -66,7 +66,14 @@ public:
 
     bool isPersistent() const;
     std::string getName() const;
+
+    virtual void modifyShader(const GLuint program_id_);
 };
+
+void PlotObjectBase::modifyShader(const GLuint program_id_)
+{
+    glUniform3f(glGetUniformLocation(program_id_, "vertex_color"), color_.red, color_.green, color_.blue);
+}
 
 bool PlotObjectBase::isPersistent() const
 {

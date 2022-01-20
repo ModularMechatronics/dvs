@@ -23,6 +23,7 @@ public:
     ~Scatter3D();
 
     void render() override;
+    void modifyShader(const GLuint program_id_) override;
 };
 
 Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
@@ -71,6 +72,12 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const Fu
         (void*)0
     );*/
 
+}
+
+void Scatter3D::modifyShader(const GLuint program_id_)
+{
+    PlotObjectBase::modifyShader(program_id_);
+    glUniform1f(glGetUniformLocation(program_id_, "point_size"), point_size_);
 }
 
 void Scatter3D::findMinMax()

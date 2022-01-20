@@ -162,8 +162,6 @@ void AxesRenderer::plotBegin()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * t_mat;
 
-    glUniform3f(glGetUniformLocation(plot_shader_2.programId(), "vertex_color"), 1.0f, 0.0f, 0.0f);
-    glUniform1f(glGetUniformLocation(plot_shader_2.programId(), "point_size"), 3.0f);
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_2.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 }
 
@@ -193,6 +191,11 @@ void AxesRenderer::renderPlotBox()
     plot_box_silhouette_->render();
 
     glUseProgram(0);
+}
+
+GLuint AxesRenderer::getPlotShaderId() const
+{
+    return plot_shader_2.programId();
 }
 
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,
