@@ -75,13 +75,18 @@ AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(a
     plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
     plot_box_grid_ = new PlotBoxGrid(1.0f);
 
-    const std::string v_path = "../applications/improvements/shaders/basic.vertex";
-    const std::string f_path = "../applications/improvements/shaders/basic.fragment";
+    const std::string v_path = "../main_application/axes/shaders/basic.vertex";
+    const std::string f_path = "../main_application/axes/shaders/basic.fragment";
     plot_shader_ = Shader::createFromFiles(v_path, f_path);
 
-    const std::string v_path_text = "../applications/improvements/shaders/text.vs";
-    const std::string f_path_text = "../applications/improvements/shaders/text.fs";
+    const std::string v_path_text = "../main_application/axes/shaders/text.vs";
+    const std::string f_path_text = "../main_application/axes/shaders/text.fs";
     text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
+
+    const std::string v_path_plot_shader = "../main_application/axes/shaders/plot_shader.vs";
+    const std::string f_path_plot_shader = "../main_application/axes/shaders/plot_shader.fs";
+
+    plot_shader_2 = Shader::createFromFiles(v_path_plot_shader, f_path_plot_shader);
 
     glUseProgram(text_shader_.programId());
 
@@ -142,7 +147,7 @@ void AxesRenderer::renderBoxGrid()
 
 void AxesRenderer::plotBegin()
 {
-    glUseProgram(plot_shader_.programId());
+    glUseProgram(plot_shader_2.programId());
 
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
 
@@ -157,8 +162,9 @@ void AxesRenderer::plotBegin()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * t_mat;
 
-    // glUniform1f(glGetUniformLocation(plot_shader_.programId(), "gl_PointSize"), 100.0f);
-    glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniform3f(glGetUniformLocation(plot_shader_2.programId(), "vertex_color"), 1.0f, 0.0f, 0.0f);
+    glUniform1f(glGetUniformLocation(plot_shader_2.programId(), "point_size"), 3.0f);
+    glUniformMatrix4fv(glGetUniformLocation(plot_shader_2.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 }
 
 void AxesRenderer::plotEnd()
@@ -187,20 +193,6 @@ void AxesRenderer::renderPlotBox()
     plot_box_silhouette_->render();
 
     glUseProgram(0);
-}
-
-void AxesRenderer::reloadShader()
-{
-    glDeleteShader(plot_shader_.programId());
-    glDeleteShader(text_shader_.programId());
-
-    const std::string v_path = "../applications/improvements/shaders/basic.vertex";
-    const std::string f_path = "../applications/improvements/shaders/basic.fragment";
-    plot_shader_ = Shader::createFromFiles(v_path, f_path);
-
-    const std::string v_path_text = "../applications/improvements/shaders/text.vs";
-    const std::string f_path_text = "../applications/improvements/shaders/text.fs";
-    text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
 }
 
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,

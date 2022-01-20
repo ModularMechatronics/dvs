@@ -32,6 +32,7 @@ private:
 
     Shader text_shader_;
     Shader plot_shader_;
+    Shader plot_shader_2;
 
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
@@ -65,7 +66,6 @@ public:
                       const float width,
                       const float height);
     void render();
-    void reloadShader();
     void plotBegin();
     void plotEnd();
 

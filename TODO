@@ -32,6 +32,8 @@ Pre release:
 - Imshow 1 and 3 channels + arbitrary data type
 - Fix layout designer
 - Fix number formatting and grid vectors system
+- Change 'P' to 'T' for translating, and change name of code correspondingly
+- Switch between orthographic and perspective projection with 'P'
 
 Post release:
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
@@ -44,3 +46,4 @@ Post release:
 - Fix so that one can set axis square and axis equal
 - Nice looking buttons in interface
 - Ability to add button to gui
+- Ability to set FOV

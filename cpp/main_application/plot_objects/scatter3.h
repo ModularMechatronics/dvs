@@ -47,7 +47,7 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const Fu
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    float* color_data = new float[num_elements_ * 3];
+    /*float* color_data = new float[num_elements_ * 3];
 
     for(size_t k = 0; k < (num_elements_ * 3); k += 3)
     {
@@ -69,7 +69,7 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const Fu
         GL_FALSE,
         0,
         (void*)0
-    );
+    );*/
 
 }
 
