@@ -16,7 +16,6 @@ private:
     void findMinMax() override;
 
     float* points_ptr_;
-    GLuint buffer_idx_;
 
     Point2Dd p0_;
     Point2Dd p1_;
@@ -83,6 +82,17 @@ DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const Fu
 
     points_ptr_[10] = p1_right_.x;
     points_ptr_[11] = p1_right_.y;
+
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 6, points_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void DrawArrow::findMinMax()
@@ -98,23 +108,9 @@ void DrawArrow::findMinMax()
 
 void DrawArrow::render()
 {
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_idx_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 6, points_ptr_, GL_STATIC_DRAW);
-    }
-
-    setColor(face_color_);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    setColor(color_);
+    glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_LINES, 0, 2 * 6);
-
-    glDisableVertexAttribArray(0);
+    glBindVertexArray(0);
 }
 
 #endif

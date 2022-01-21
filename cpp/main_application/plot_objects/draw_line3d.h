@@ -53,6 +53,17 @@ DrawLine3D::DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const 
     points_ptr_[3] = p1_.x;
     points_ptr_[4] = p1_.y;
     points_ptr_[5] = p1_.z;
+
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 2, points_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void DrawLine3D::findMinMax()
@@ -68,23 +79,9 @@ void DrawLine3D::findMinMax()
 
 void DrawLine3D::render()
 {
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_idx_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 2, points_ptr_, GL_STATIC_DRAW);
-    }
-
-    setColor(face_color_);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    setColor(color_);
+    glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_LINES, 0, 2);
-
-    glDisableVertexAttribArray(0);
+    glBindVertexArray(0);
 }
 
 #endif

@@ -15,7 +15,6 @@ class Plot2Collection : public PlotObjectBase
 private:
     float* points_ptr_;
 
-    GLuint buffer_handle_;
     uint32_t num_points_;
     uint32_t num_objects_;
 
@@ -159,10 +158,22 @@ Plot2Collection::Plot2Collection(std::unique_ptr<const ReceivedData> received_da
 
     points_ptr_ = convertCollectionDataOuter(
         data_ptr_, data_type_, num_objects_, num_bytes_per_element_, num_points_, vector_lengths);
+    
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, points_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void Plot2Collection::findMinMax()
 {
+    // TODO
     min_vec = {-1.0, -1.0, -1.0};
     max_vec = {1.0, 1.0, 1.0};
     /*min_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
@@ -185,21 +196,9 @@ void Plot2Collection::findMinMax()
 
 void Plot2Collection::render()
 {
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_handle_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_handle_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, points_ptr_, GL_STATIC_DRAW);
-    }
-    setColor(color_);
-    setLinewidth(line_width_);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_handle_);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
+    glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_LINES, 0, num_points_);
-    glDisableVertexAttribArray(0);
+    glBindVertexArray(0);
 }
 
 Plot2Collection::~Plot2Collection() {}

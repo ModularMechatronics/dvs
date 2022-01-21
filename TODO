@@ -34,6 +34,8 @@ Pre release:
 - Fix number formatting and grid vectors system
 - Change 'P' to 'T' for translating, and change name of code correspondingly
 - Switch between orthographic and perspective projection with 'P'
+- Fix panning "speed"
+- "Lean" line numbers, make font smaller, fewer line points per axis
 
 Post release:
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"

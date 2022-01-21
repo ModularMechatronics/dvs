@@ -18,7 +18,6 @@ private:
     Dimension2D dims_;
 
     float* points_ptr_;
-    GLuint buffer_idx_;
 
 public:
     Quiver();
@@ -161,6 +160,17 @@ Quiver::Quiver(std::unique_ptr<const ReceivedData> received_data, const Function
 
     dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
     points_ptr_ = convertQuiverDataOuter(data_ptr_, data_type_, dims_, num_bytes_per_element_);
+
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 6 * dims_.rows * dims_.cols, points_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void Quiver::findMinMax()
@@ -176,23 +186,9 @@ void Quiver::findMinMax()
 
 void Quiver::render()
 {
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_idx_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 6 * dims_.rows * dims_.cols, points_ptr_, GL_STATIC_DRAW);
-    }
-
-    setColor(face_color_);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_idx_);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    setColor(color_);
-    glDrawArrays(GL_LINES, 0, 2 * 6 * dims_.rows * dims_.cols);
-
-    glDisableVertexAttribArray(0);
+    glBindVertexArray(vertex_buffer_array_);
+    glDrawArrays(GL_LINE_STRIP, 0, 2 * 6 * dims_.rows * dims_.cols);
+    glBindVertexArray(0);
 }
 
 #endif

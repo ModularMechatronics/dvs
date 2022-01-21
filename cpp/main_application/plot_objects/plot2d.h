@@ -65,7 +65,7 @@ void Plot2D::findMinMax()
 void Plot2D::render()
 {
     glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_LINE_STRIP, 0, num_elements_);
+    glDrawArrays(line_type_, 0, num_elements_);
     glBindVertexArray(0);
 }
 
