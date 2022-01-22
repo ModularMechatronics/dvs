@@ -27,7 +27,7 @@ void testSurf()
 
     setCurrentElement("view_00");
     clearView();
-    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(150, 244, 244), properties::LineWidth(1));
+    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 0), properties::LineWidth(1));
 }
 
 void testScatter()
@@ -470,7 +470,7 @@ void testQuiver()
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
-    quiver(x, y, u, v, properties::Color(12, 244, 244));
+    quiver(x, y, u, v, properties::Color(255, 0, 0));
 }
 
 void testDrawLine3D()
