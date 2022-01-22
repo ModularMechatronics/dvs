@@ -6,9 +6,15 @@
 #include <iostream>
 
 #include "dvs/enumerations.h"
+#include "dvs/base_types.h"
 #include "opengl_low_level/opengl_header.h"
+#include "dvs/math/math.h"
+#include "main_application/plot_objects/utils.h"
+#include "opengl_low_level/data_structures.h"
+#include "opengl_low_level/opengl_low_level.h"
 
 using namespace dvs::internal;
+using namespace dvs;
 
 inline size_t getNumDimensionsFromFunction(const Function fcn)
 {
@@ -209,11 +215,11 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
     return gl_type;
 }
 
-void fillBufferWithData(uint8_t* const points_ptr,
-                        const uint8_t* const data_ptr,
-                        const size_t num_elements,
-                        const size_t num_bytes_per_element,
-                        const size_t num_bytes_for_one_vec)
+inline void fillBufferWithData(uint8_t* const points_ptr,
+                               const uint8_t* const data_ptr,
+                               const size_t num_elements,
+                               const size_t num_bytes_per_element,
+                               const size_t num_bytes_for_one_vec)
 {
     size_t idx_x = 0;
     size_t idx_y = num_bytes_per_element;
@@ -1249,6 +1255,7 @@ inline float* convertVerticesDataOuter(uint8_t* input_data,
     return output_data;
 }
 
+// TODO: Why is template parameter not used?
 template <typename T>
 inline float* convertSingleMatrixDataInner(uint8_t* const data_buffer,
                                            const size_t num_rows,
@@ -1361,7 +1368,7 @@ inline float* convertSingleMatrixDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-template <typename T> inline float* convertTrianglesDataInner(uint8_t* input_data, const uint32_t num_elements)
+template <typename T> float* convertTrianglesDataInner(uint8_t* input_data, const uint32_t num_elements)
 {
     float* output_data = new float[num_elements * 3 * 3];
     Vector<Triangle3D<T>> vertices;

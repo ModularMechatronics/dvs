@@ -1,0 +1,73 @@
+#ifndef PLOT_OBJECT_BASE_H_
+#define PLOT_OBJECT_BASE_H_
+
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "communication/received_data.h"
+#include "dvs/enumerations.h"
+#include "dvs/math/math.h"
+#include "dvs/plot_properties.h"
+#include "opengl_low_level/data_structures.h"
+#include "opengl_low_level/opengl_low_level.h"
+#include "plot_objects/utils.h"
+#include "properties.h"
+
+using namespace dvs;
+using namespace dvs::internal;
+using namespace dvs::properties;
+
+class PlotObjectBase
+{
+protected:
+    std::unique_ptr<const ReceivedData> received_data_;
+    size_t num_dimensions_;
+    size_t num_bytes_per_element_;
+    uint32_t num_elements_;
+    size_t num_data_bytes_;
+    uint64_t num_bytes_for_one_vec_;
+    uint8_t* data_ptr_;
+
+    GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
+
+    Function type_;
+    DataType data_type_;
+
+    Vec3Dd min_vec;
+    Vec3Dd max_vec;
+
+    // Properties
+    Name name_;
+    RGBTripletf color_;
+    RGBTripletf edge_color_;
+    RGBTripletf face_color_;
+    ColorMapType color_map_;
+    LineStyle line_style_;
+    float alpha_;
+    float line_width_;
+    float point_size_;
+    bool is_persistent_;
+    bool min_max_calculated_;
+    bool visualize_has_run_;
+    GLuint line_type_; // TODO: Shall be moved to plot2d.h
+
+    void assignProperties(const Properties& props);
+    virtual void findMinMax() = 0;
+
+public:
+    size_t getNumDimensions() const;
+    virtual ~PlotObjectBase();
+    PlotObjectBase();
+    PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    virtual void render() = 0;
+    std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors();
+
+    bool isPersistent() const;
+    std::string getName() const;
+
+    virtual void modifyShader(const GLuint program_id_);
+};
+
+#endif

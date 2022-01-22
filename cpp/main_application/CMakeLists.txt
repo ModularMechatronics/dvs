@@ -26,6 +26,27 @@ set(CPP_SOURCE_FILES main.cpp
                      misc/number_formatting.cpp
                      misc/color_map.cpp
 
+                     plot_objects/plot_object_base/plot_object_base.cpp
+                     plot_objects/draw_arrow/draw_arrow.cpp
+                     plot_objects/draw_line3d/draw_line3d.cpp
+                     plot_objects/draw_mesh/draw_mesh.cpp
+                     plot_objects/draw_plane_xy/draw_plane_xy.cpp
+                     plot_objects/draw_plane_xz/draw_plane_xz.cpp
+                     plot_objects/draw_plane_yz/draw_plane_yz.cpp
+                     plot_objects/draw_polygon_4_points/draw_polygon_4_points.cpp
+                     plot_objects/draw_tiles/draw_tiles.cpp
+                     plot_objects/draw_triangle_3d/draw_triangle_3d.cpp
+                     plot_objects/draw_triangles_3d/draw_triangles_3d.cpp
+                     plot_objects/im_show/im_show.cpp
+                     plot_objects/plot2_collection/plot2_collection.cpp
+                     plot_objects/plot2d/plot2d.cpp
+                     plot_objects/plot3d/plot3d.cpp
+                     plot_objects/quiver/quiver.cpp
+                     plot_objects/scatter/scatter.cpp
+                     plot_objects/scatter3/scatter3.cpp
+                     plot_objects/stairs/stairs.cpp
+                     plot_objects/surf/surf.cpp
+
                      globals.cpp
 
                      tab_view.cpp

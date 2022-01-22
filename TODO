@@ -36,6 +36,9 @@ Pre release:
 - Switch between orthographic and perspective projection with 'P'
 - Fix panning "speed"
 - "Lean" line numbers, make font smaller, fewer line points per axis
+- Make sure all dynamic data is released in plot objects
+- Release all textures, VBOs/VAOs in plot objects
+- Refactor pipeline of how new plot objects are added
 
 Post release:
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
