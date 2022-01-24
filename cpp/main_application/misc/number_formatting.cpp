@@ -36,7 +36,7 @@ std::string toStringWithNumDecimalPlaces(const double input_val, const size_t n)
     return out.str();
 }
 
-std::string formatNumber(const double num, const size_t n)
+std::string formatNumberInternal(const double num, const size_t n)
 {
     const double abs_num = std::fabs(num);
     if (abs_num == 0.0)
@@ -64,5 +64,35 @@ std::string formatNumber(const double num, const size_t n)
         {
             return toStringWithNumDecimalPlaces(num, 5 - exp_num);
         }
+    }
+}
+
+std::string formatNumber(const double num, const size_t n)
+{
+    const std::string s = formatNumberInternal(num, n);
+
+    if((s.length() > 1) && (s.find('.') != std::string::npos))
+    {
+        int idx = s.length() - 1;
+        while(idx > 1)
+        {
+            if((s[idx] == '0') && s[idx - 1] == '0')
+            {
+                idx--;
+            }
+            else
+            {
+                if((s[idx] == '0') && (s[idx - 1] == '.'))
+                {
+                    idx--;
+                }
+                break;
+            }
+        }
+        return s.substr(0, idx);
+    }
+    else
+    {
+        return s;
     }
 }

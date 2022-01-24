@@ -1,5 +1,11 @@
 #include "main_application/plot_objects/scatter3/scatter3.h"
 
+uint8_t* convertData3DOuter(const uint8_t* const input_data,
+                            const DataType data_type,
+                            const size_t num_elements,
+                            const size_t num_bytes_per_element,
+                            const size_t num_bytes_for_one_vec);
+
 Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {

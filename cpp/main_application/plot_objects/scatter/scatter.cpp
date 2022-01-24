@@ -1,5 +1,11 @@
 #include "main_application/plot_objects/scatter/scatter.h"
 
+uint8_t* convertData2DOuter(const uint8_t* const input_data,
+                                   const DataType data_type,
+                                   const size_t num_elements,
+                                   const size_t num_bytes_per_element,
+                                   const size_t num_bytes_for_one_vec);
+
 Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
     : PlotObjectBase(std::move(received_data), hdr)
 {
