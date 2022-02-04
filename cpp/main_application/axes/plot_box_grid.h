@@ -33,7 +33,6 @@ public:
     ~PlotBoxGrid();
 
     void render(const GridVectors& gv,
-                const AxesSettings& axes_settings,
                 const AxesLimits& axes_limits,
                 const ViewAngles& view_angles);
 };

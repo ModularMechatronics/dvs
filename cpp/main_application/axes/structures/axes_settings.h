@@ -44,7 +44,6 @@ private:
 
 public:
     AxesSettings();
-    AxesSettings(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
 
     AxesState getAxesState() const;
     std::string getXLabel() const;

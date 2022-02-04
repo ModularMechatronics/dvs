@@ -66,21 +66,24 @@ CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, 
     }
 }
 
-PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& element_settings, const float grid_size)
-    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
-      GuiElement(element_settings)
+wxGLContext* PlotWindowGLPane::getContext()
 {
 #ifdef PLATFORM_APPLE_M
     wxGLContextAttrs cxtAttrs;
     cxtAttrs.PlatformDefaults().CoreProfile().OGLVersion(3, 2).EndList();
     // https://stackoverflow.com/questions/41145024/wxwidgets-and-modern-opengl-3-3
-    m_context = new wxGLContext(this, NULL, &cxtAttrs);
+    return new wxGLContext(this, NULL, &cxtAttrs);
 #endif
 
 #ifdef PLATFORM_LINUX_M
-    m_context = new wxGLContext(this);
+    return new wxGLContext(this);
 #endif
+}
 
+PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& element_settings, const float grid_size)
+    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
+      GuiElement(element_settings), m_context(getContext()), axes_interactor_(axes_settings_, getWidth(), getHeight())
+{
     is_editing_ = false;
     parent_size_ = parent->GetSize();
     grid_size_ = grid_size;
@@ -88,25 +91,15 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& elem
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    const float min_x = -1.0;
-    const float max_x = 1.0;
-    const float min_y = -1.0;
-    const float max_y = 1.0;
-    const float min_z = -1.0;
-    const float max_z = 1.0;
-
     view_parent_ = dynamic_cast<SuperBase*>(parent);
 
     is_selected_ = false;
-
-    axes_settings_ = AxesSettings({min_x, min_y, min_z}, {max_x, max_y, max_z});
 
     bindCallbacks();
 
     wxGLCanvas::SetCurrent(*m_context);
 
-    axes_interactor_ = new AxesInteractor(axes_settings_, getWidth(), getHeight());
-    axes_renderer_ = new AxesRenderer(axes_settings_);
+    axes_renderer_ = new AxesRenderer();
 
     hold_on_ = true;
     axes_set_ = false;
@@ -211,7 +204,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 
         const std::pair<Bound3D, Bound3D> axes_bnd =
             hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Bound3D, Bound3D>>();
-        axes_interactor_->setAxesLimits(Vec2Dd(axes_bnd.first.x, axes_bnd.first.y),
+        axes_interactor_.setAxesLimits(Vec2Dd(axes_bnd.first.x, axes_bnd.first.y),
                                         Vec2Dd(axes_bnd.second.x, axes_bnd.second.y));
     }
     else if (fcn == Function::AXES_3D)
@@ -220,7 +213,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 
         const std::pair<Bound3D, Bound3D> axes_bnd =
             hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Bound3D, Bound3D>>();
-        axes_interactor_->setAxesLimits(Vec3Dd(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
+        axes_interactor_.setAxesLimits(Vec3Dd(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
                                         Vec3Dd(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
     else if (fcn == Function::VIEW)
@@ -232,7 +225,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         const float azimuth_rad = azimuth * M_PI / 180.0f;
         const float elevation_rad = elevation * M_PI / 180.0f;
 
-        axes_interactor_->setViewAngles(azimuth_rad, elevation_rad);
+        axes_interactor_.setViewAngles(azimuth_rad, elevation_rad);
     }
     else if (fcn == Function::CLEAR)
     {
@@ -241,8 +234,8 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         view_set_ = false;
 
         plot_data_handler_.clear();
-        axes_interactor_->setViewAngles(0, M_PI);
-        axes_interactor_->setAxesLimits(Vec3Dd(-1.0, -1.0, -1.0), Vec3Dd(1.0, 1.0, 1.0));
+        axes_interactor_.setViewAngles(0, M_PI);
+        axes_interactor_.setAxesLimits(Vec3Dd(-1.0, -1.0, -1.0), Vec3Dd(1.0, 1.0, 1.0));
     }
     else if (fcn == Function::SOFT_CLEAR)
     {
@@ -264,7 +257,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
             const Vec3Dd min_vec = (min_max.first - mean_vec) * 1.001 + mean_vec;
             const Vec3Dd max_vec = (min_max.second - mean_vec) * 1.001 + mean_vec;
 
-            axes_interactor_->setAxesLimits(min_vec, max_vec);
+            axes_interactor_.setAxesLimits(min_vec, max_vec);
         }
         if (!view_set_)
         {
@@ -273,14 +266,14 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
                 const float azimuth = -64.0f * M_PI / 180.0f;
                 const float elevation = 34.0f * M_PI / 180.0f;
 
-                axes_interactor_->setViewAngles(azimuth, elevation);
+                axes_interactor_.setViewAngles(azimuth, elevation);
             }
             else if (isImageFunction(fcn))
             {
                 const float azimuth = 0.0f * M_PI / 180.0f;
                 const float elevation = -90.0f * M_PI / 180.0f;
 
-                axes_interactor_->setViewAngles(azimuth, elevation);
+                axes_interactor_.setViewAngles(azimuth, elevation);
                 view_set_ = true;  // Let imshow be dominant once used
             }
             else
@@ -288,7 +281,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
                 const float azimuth = 0.0f * M_PI / 180.0f;
                 const float elevation = 90.0f * M_PI / 180.0f;
 
-                axes_interactor_->setViewAngles(azimuth, elevation);
+                axes_interactor_.setViewAngles(azimuth, elevation);
             }
         }
     }
@@ -480,7 +473,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             {
                 current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
             }
-            axes_interactor_->registerMouseDragInput(current_mouse_interaction_axis_,
+            axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
                                                      left_mouse_button_.getDeltaPos().x,
                                                      left_mouse_button_.getDeltaPos().y);
         }
@@ -617,14 +610,14 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     glClearColor(bg_color / 255.0f, bg_color / 255.0f, bg_color / 255.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    axes_interactor_->update(
+    axes_interactor_.update(
         keyboardStateToInteractionType(keyboard_state_), getWidth(), getHeight());
 
     const bool draw_selected_bb = is_selected_ && is_editing_;
 
-    axes_renderer_->updateStates(axes_interactor_->getAxesLimits(),
-                         axes_interactor_->getViewAngles(),
-                         axes_interactor_->generateGridVectors(),
+    axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
+                         axes_interactor_.getViewAngles(),
+                         axes_interactor_.generateGridVectors(),
                          false,
                          getWidth(),
                          getHeight());

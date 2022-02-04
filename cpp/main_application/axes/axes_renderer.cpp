@@ -74,7 +74,7 @@ static Vec3Dd findScale(const Matrixd& R, const glm::mat4& pm)
     return Vec3Dd(sx, sy, sz);
 }
 
-AxesRenderer::AxesRenderer(const AxesSettings& axes_settings) : axes_settings_(axes_settings)
+AxesRenderer::AxesRenderer()
 {
     plot_box_walls_ = new PlotBoxWalls(1.0f);
     plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
@@ -127,7 +127,6 @@ void AxesRenderer::renderBoxGrid()
     glUseProgram(plot_shader_.programId());
 
     const Vec3Dd scale = axes_limits_.getAxesScale();
-    const Vec3Dd s = axes_settings_.getAxesScale();
 
     scale_mat[0][0] = 1.0 / scale.x;
     scale_mat[1][1] = 1.0 / scale.y;
@@ -143,7 +142,6 @@ void AxesRenderer::renderBoxGrid()
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
     plot_box_grid_->render(gv_,
-                           axes_settings_,
                            axes_limits_,
                            view_angles_);
 
@@ -188,7 +186,12 @@ void AxesRenderer::renderPlotBox()
     scale_mat[2][2] = 1.0;
     scale_mat[3][3] = 1.0;
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat * new_scale;
+    glm::mat4 new_scale = glm::mat4(1.0f);
+    new_scale[0][0] = scale_for_window_.x;
+    new_scale[1][1] = scale_for_window_.x;
+    new_scale[2][2] = scale_for_window_.z;
+
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
@@ -231,6 +234,4 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 
     projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
     scale_for_window_ = findScale(rot_mat, projection_mat);
-
-    std::cout << scale_for_window_ << std::endl << std::endl;
 }

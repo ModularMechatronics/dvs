@@ -53,12 +53,12 @@ enum class CursorSquareState
 class PlotWindowGLPane : public wxGLCanvas, public GuiElement
 {
 private:
+    wxGLContext* getContext();
     wxGLContext* m_context;
 
-    AxesInteractor* axes_interactor_;
-    // AxesPainter* axes_painter_;
-    AxesRenderer* axes_renderer_;
     AxesSettings axes_settings_;
+    AxesInteractor axes_interactor_;
+    AxesRenderer* axes_renderer_;
     MouseButtonState left_mouse_button_;
     KeyboardState keyboard_state_;
     CursorSquareState cursor_state_at_press_;

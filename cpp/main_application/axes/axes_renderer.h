@@ -57,8 +57,7 @@ private:
     void renderBoxGrid();
 
 public:
-    AxesRenderer() = default;
-    AxesRenderer(const AxesSettings& axes_settings);
+    AxesRenderer();
 
     void updateStates(const AxesLimits& axes_limits,
                       const ViewAngles& view_angles,
