@@ -113,13 +113,18 @@ AxesRenderer::AxesRenderer()
                            glm::vec3(0, 0, 1));
     model_mat = glm::mat4(1.0f);
     scale_mat = glm::mat4(1.0f);
+    
+    window_scale_mat_ = glm::mat4(1.0f);
+    window_scale_mat_[0][0] = 1.7;
+    window_scale_mat_[1][1] = 1.7;
+    window_scale_mat_[2][2] = 1.7;
 }
 
 void AxesRenderer::render()
 {
     renderPlotBox();
     renderBoxGrid();
-    drawGridNumbers(text_renderer_, text_shader_, axes_limits_, view_angles_, view_mat, model_mat, projection_mat, width_, height_, gv_);
+    drawGridNumbers(text_renderer_, text_shader_, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
 }
 
 void AxesRenderer::renderBoxGrid()
@@ -137,7 +142,7 @@ void AxesRenderer::renderBoxGrid()
     model_mat[3][1] = 0.0;
     model_mat[3][2] = 0.0;
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
@@ -163,7 +168,7 @@ void AxesRenderer::plotBegin()
     scale_mat[2][2] = 1.0 / scale.z;
     scale_mat[3][3] = 1.0;
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * t_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_ * t_mat;
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_2.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 }
@@ -186,12 +191,7 @@ void AxesRenderer::renderPlotBox()
     scale_mat[2][2] = 1.0;
     scale_mat[3][3] = 1.0;
 
-    glm::mat4 new_scale = glm::mat4(1.0f);
-    new_scale[0][0] = scale_for_window_.x;
-    new_scale[1][1] = scale_for_window_.x;
-    new_scale[2][2] = scale_for_window_.z;
-
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * window_scale_mat_;
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
@@ -222,7 +222,6 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 
     rot_mat = rotationMatrixZ(-view_angles_.getAzimuth()) * 
               rotationMatrixX(-view_angles_.getElevation());
-    // const Vec3Dd new_scale = findScale(rot_mat);
 
     for(int r = 0; r < 3; r++)
     {

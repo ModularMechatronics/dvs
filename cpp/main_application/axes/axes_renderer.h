@@ -44,6 +44,7 @@ private:
     glm::mat4 view_mat;
     glm::mat4 model_mat;
     glm::mat4 scale_mat;
+    glm::mat4 window_scale_mat_;
 
     Matrix<double> rot_mat;
 
