@@ -220,8 +220,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     width_ = width;
     height_ = height;
 
-    rot_mat = rotationMatrixZ(-view_angles_.getAzimuth()) * 
-              rotationMatrixX(-view_angles_.getElevation());
+    rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * 
+              rotationMatrixX(-view_angles_.getSnappedElevation());
 
     for(int r = 0; r < 3; r++)
     {

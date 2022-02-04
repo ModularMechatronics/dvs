@@ -112,8 +112,8 @@ void PlotBoxGrid::render(const GridVectors& gv,
                          const AxesLimits& axes_limits,
                          const ViewAngles& view_angles)
 {
-    azimuth_ = view_angles.getAzimuth();
-    elevation_ = view_angles.getElevation();
+    azimuth_ = view_angles.getSnappedAzimuth();
+    elevation_ = view_angles.getSnappedElevation();
 
     idx_ = 0;
 

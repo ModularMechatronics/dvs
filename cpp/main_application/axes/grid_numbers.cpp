@@ -151,8 +151,8 @@ void drawGridNumbers(const TextRenderer& text_renderer, const Shader text_shader
 
     const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
 
-    const double az = view_angles.getAzimuth();
-    const double el = view_angles.getElevation();
+    const double az = view_angles.getSnappedAzimuth();
+    const double el = view_angles.getSnappedElevation();
 
     glm::mat4 scale_mat = glm::mat4(1.0f);
 
