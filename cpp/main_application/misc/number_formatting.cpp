@@ -73,23 +73,24 @@ std::string formatNumber(const double num, const size_t n)
 
     if((s.length() > 1) && (s.find('.') != std::string::npos))
     {
+        const int point_idx = s.find('.');
         int idx = s.length() - 1;
-        while(idx > 1)
+        while(idx > 0)
         {
-            if((s[idx] == '0') && s[idx - 1] == '0')
+            if((s[idx] == '0') && (idx > point_idx))
             {
                 idx--;
             }
             else
             {
-                if((s[idx] == '0') && (s[idx - 1] == '.'))
+                if(s[idx] == '.')
                 {
                     idx--;
                 }
                 break;
             }
         }
-        return s.substr(0, idx);
+        return s.substr(0, idx + 1);
     }
     else
     {

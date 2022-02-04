@@ -10,7 +10,7 @@
 
 using namespace dvs;
 
-static Vec3Dd findScale(const Matrixd& R)
+static Vec3Dd findScale(const Matrixd& R, const glm::mat4& pm)
 {
     // Currently unknown exactly how 'q' affects the results...
     const double q = 0.5;
@@ -58,12 +58,17 @@ static Vec3Dd findScale(const Matrixd& R)
 
     const double r00 = R(0, 0), r01 = R(0, 1), r02 = R(0, 2);
     const double r10 = R(1, 0), r11 = R(1, 1), r12 = R(1, 2);
+    const double r20 = R(2, 0), r21 = R(2, 1), r22 = R(2, 2);
+    const double p00 = pm[0][0], p01 = pm[0][1], p02 = pm[0][2], p03 = pm[0][3];
+    const double p10 = pm[1][0], p11 = pm[1][1], p12 = pm[1][2], p13 = pm[1][3];
+    const double p20 = pm[2][0], p21 = pm[2][1], p22 = pm[2][2], p23 = pm[2][3];
+    const double p30 = pm[3][0], p31 = pm[3][1], p32 = pm[3][2], p33 = pm[3][3];
     const double w = 0.5, h = 0.5;
     const double pmiw_x = pmiw.first.x, pmiw_y = pmiw.first.y, pmiw_z = pmiw.first.z;
     const double pmih_x = pmih.first.x, pmih_y = pmih.first.y, pmih_z = pmih.first.z;
 
-    const double sx = -w / (pmiw_x * r00 + pmiw_y * r01 + pmiw_z * r02);
-    const double sy = -h / (pmih_x * r10 + pmih_y * r11 + pmih_z * r12);
+    const double sx = -(w*(p33 + p30*pmiw_x*r00 + p30*pmiw_y*r01 + p30*pmiw_z*r02 + p31*pmiw_x*r10 + p31*pmiw_y*r11 + p31*pmiw_z*r12 + p32*pmiw_x*r20 + p32*pmiw_y*r21 + p32*pmiw_z*r22))/(p03 + p00*pmiw_x*r00 + p00*pmiw_y*r01 + p00*pmiw_z*r02 + p01*pmiw_x*r10 + p01*pmiw_y*r11 + p01*pmiw_z*r12 + p02*pmiw_x*r20 + p02*pmiw_y*r21 + p02*pmiw_z*r22);
+    const double sy = -(h*(p33 + p30*pmih_x*r00 + p30*pmih_y*r01 + p30*pmih_z*r02 + p31*pmih_x*r10 + p31*pmih_y*r11 + p31*pmih_z*r12 + p32*pmih_x*r20 + p32*pmih_y*r21 + p32*pmih_z*r22))/(p13 + p10*pmih_x*r00 + p10*pmih_y*r01 + p10*pmih_z*r02 + p11*pmih_x*r10 + p11*pmih_y*r11 + p11*pmih_z*r12 + p12*pmih_x*r20 + p12*pmih_y*r21 + p12*pmih_z*r22);
     const double sz = 1.0;
 
     return Vec3Dd(sx, sy, sz);
@@ -183,7 +188,7 @@ void AxesRenderer::renderPlotBox()
     scale_mat[2][2] = 1.0;
     scale_mat[3][3] = 1.0;
 
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat;
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat * new_scale;
 
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
@@ -224,6 +229,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
         }
     }
 
-
     projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
+    scale_for_window_ = findScale(rot_mat, projection_mat);
+
+    std::cout << scale_for_window_ << std::endl << std::endl;
 }

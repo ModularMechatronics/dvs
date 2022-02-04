@@ -48,6 +48,7 @@ private:
     Matrix<double> rot_mat;
 
     float width_, height_;
+    Vec3Dd scale_for_window_;
 
     GridVectors gv_;
     bool use_perspective_proj_;
