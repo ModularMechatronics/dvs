@@ -10,26 +10,29 @@
 
 using namespace dvs;
 
-static Vec3Dd findScale(const Matrixd& R, const glm::mat4& pm)
+static Vec3Dd findScale(const glm::mat4& pm)
 {
     // Currently unknown exactly how 'q' affects the results...
-    const double q = 0.5;
+    const double q = 1.0;
     // clang-format off
-    const Vector<Point3Dd> points = {{q, q, q},
-                                     {-q, q, q},
-                                     {q, -q, q},
-                                     {-q, -q, q},
-                                     {q, q, -q},
-                                     {-q, q, -q},
-                                     {q, -q, -q},
-                                     {-q, -q, -q}};
-    const Point3Dd pr0 = R * points(0);
+    const Vector<glm::vec4> points = {{q, q, q, 1.0},
+                                     {-q, q, q, 1.0},
+                                     {q, -q, q, 1.0},
+                                     {-q, -q, q, 1.0},
+                                     {q, q, -q, 1.0},
+                                     {-q, q, -q, 1.0},
+                                     {q, -q, -q, 1.0},
+                                     {-q, -q, -q, 1.0}};
+    const glm::vec4 pr0 = pm * points(0);
     // clang-format on
-    std::pair<Point3Dd, Point3Dd> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
+    std::pair<glm::vec4, glm::vec4> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
                                   pmah = {points(0), pr0};
-    for (const Point3Dd& p : points)
+    for (const glm::vec4& p : points)
     {
-        const auto pqr = R * p;
+        auto pqr = pm * p;
+        pqr /= pqr.w;
+        pqr = pqr * 0.5f + 0.5f;
+        pqr = pqr * 2.0f + 1.0f;
 
         if (pqr.x < pmiw.second.x)
         {
@@ -56,20 +59,22 @@ static Vec3Dd findScale(const Matrixd& R, const glm::mat4& pm)
         }
     }
 
-    const double r00 = R(0, 0), r01 = R(0, 1), r02 = R(0, 2);
-    const double r10 = R(1, 0), r11 = R(1, 1), r12 = R(1, 2);
-    const double r20 = R(2, 0), r21 = R(2, 1), r22 = R(2, 2);
-    const double p00 = pm[0][0], p01 = pm[0][1], p02 = pm[0][2], p03 = pm[0][3];
-    const double p10 = pm[1][0], p11 = pm[1][1], p12 = pm[1][2], p13 = pm[1][3];
-    const double p20 = pm[2][0], p21 = pm[2][1], p22 = pm[2][2], p23 = pm[2][3];
-    const double p30 = pm[3][0], p31 = pm[3][1], p32 = pm[3][2], p33 = pm[3][3];
-    const double w = 0.5, h = 0.5;
+    // const double r00 = R(0, 0), r01 = R(0, 1), r02 = R(0, 2);
+    // const double r10 = R(1, 0), r11 = R(1, 1), r12 = R(1, 2);
+    // const double r20 = R(2, 0), r21 = R(2, 1), r22 = R(2, 2);
+    const double q00 = pm[0][0], q01 = pm[0][1], q02 = pm[0][2], q03 = pm[0][3];
+    const double q10 = pm[1][0], q11 = pm[1][1], q12 = pm[1][2], q13 = pm[1][3];
+    const double q20 = pm[2][0], q21 = pm[2][1], q22 = pm[2][2], q23 = pm[2][3];
+    const double q30 = pm[3][0], q31 = pm[3][1], q32 = pm[3][2], q33 = pm[3][3];
+    const double w = 0.1, h = 0.1;
     const double pmiw_x = pmiw.first.x, pmiw_y = pmiw.first.y, pmiw_z = pmiw.first.z;
     const double pmih_x = pmih.first.x, pmih_y = pmih.first.y, pmih_z = pmih.first.z;
 
-    const double sx = -(w*(p33 + p30*pmiw_x*r00 + p30*pmiw_y*r01 + p30*pmiw_z*r02 + p31*pmiw_x*r10 + p31*pmiw_y*r11 + p31*pmiw_z*r12 + p32*pmiw_x*r20 + p32*pmiw_y*r21 + p32*pmiw_z*r22))/(p03 + p00*pmiw_x*r00 + p00*pmiw_y*r01 + p00*pmiw_z*r02 + p01*pmiw_x*r10 + p01*pmiw_y*r11 + p01*pmiw_z*r12 + p02*pmiw_x*r20 + p02*pmiw_y*r21 + p02*pmiw_z*r22);
-    const double sy = -(h*(p33 + p30*pmih_x*r00 + p30*pmih_y*r01 + p30*pmih_z*r02 + p31*pmih_x*r10 + p31*pmih_y*r11 + p31*pmih_z*r12 + p32*pmih_x*r20 + p32*pmih_y*r21 + p32*pmih_z*r22))/(p13 + p10*pmih_x*r00 + p10*pmih_y*r01 + p10*pmih_z*r02 + p11*pmih_x*r10 + p11*pmih_y*r11 + p11*pmih_z*r12 + p12*pmih_x*r20 + p12*pmih_y*r21 + p12*pmih_z*r22);
+    const double sx = (pmih_y*q03*q11 - pmiw_y*q01*q13 + h*pmih_y*q03*q31 - h*pmiw_y*q01*q33 + pmih_y*pmiw_z*q02*q11 - pmih_z*pmiw_y*q01*q12 + pmih_y*q11*q33*w - pmiw_y*q13*q31*w + h*pmih_y*pmiw_z*q02*q31 - h*pmih_z*pmiw_y*q01*q32 + h*pmih_y*q31*q33*w - h*pmiw_y*q31*q33*w + pmih_y*pmiw_z*q11*q32*w - pmih_z*pmiw_y*q12*q31*w + h*pmih_y*pmiw_z*q31*q32*w - h*pmih_z*pmiw_y*q31*q32*w)/(pmih_x*pmiw_y*q01*q10 - pmih_y*pmiw_x*q00*q11 + h*pmih_x*pmiw_y*q01*q30 - h*pmih_y*pmiw_x*q00*q31 + pmih_x*pmiw_y*q10*q31*w - pmih_y*pmiw_x*q11*q30*w + h*pmih_x*pmiw_y*q30*q31*w - h*pmih_y*pmiw_x*q30*q31*w);
+    const double sy = -(pmih_x*q03*q10 - pmiw_x*q00*q13 + h*pmih_x*q03*q30 - h*pmiw_x*q00*q33 + pmih_x*pmiw_z*q02*q10 - pmih_z*pmiw_x*q00*q12 + pmih_x*q10*q33*w - pmiw_x*q13*q30*w + h*pmih_x*pmiw_z*q02*q30 - h*pmih_z*pmiw_x*q00*q32 + h*pmih_x*q30*q33*w - h*pmiw_x*q30*q33*w + pmih_x*pmiw_z*q10*q32*w - pmih_z*pmiw_x*q12*q30*w + h*pmih_x*pmiw_z*q30*q32*w - h*pmih_z*pmiw_x*q30*q32*w)/(pmih_x*pmiw_y*q01*q10 - pmih_y*pmiw_x*q00*q11 + h*pmih_x*pmiw_y*q01*q30 - h*pmih_y*pmiw_x*q00*q31 + pmih_x*pmiw_y*q10*q31*w - pmih_y*pmiw_x*q11*q30*w + h*pmih_x*pmiw_y*q30*q31*w - h*pmih_y*pmiw_x*q30*q31*w);
     const double sz = 1.0;
+
+    // std::cout << Vec3Dd(sx, sy, sz) << std::endl;
 
     return Vec3Dd(sx, sy, sz);
 }
@@ -232,5 +237,5 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     }
 
     projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
-    scale_for_window_ = findScale(rot_mat, projection_mat);
+
 }
