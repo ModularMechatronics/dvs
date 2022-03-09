@@ -6,7 +6,7 @@ uniform vec3 vertex_color;
 uniform float point_size;
 
 out vec3 fragment_color;
-
+out vec4 coord_out;
 mat4 unitMat()
 {
     mat4 rot_mat;
@@ -53,6 +53,9 @@ void main()
     gl_Position = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
 
     gl_Position = r * gl_Position;
+    // coord_out = gl_Position;
+    coord_out = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
+    
     fragment_color = vertex_color;
     gl_PointSize = point_size;
 }

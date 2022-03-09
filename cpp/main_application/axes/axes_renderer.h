@@ -56,6 +56,8 @@ private:
 
     void renderPlotBox();
     void renderBoxGrid();
+    void enableClipPlanes();
+    void setClipPlane(const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const;
 
 public:
     AxesRenderer();

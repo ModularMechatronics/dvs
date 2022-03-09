@@ -125,6 +125,54 @@ AxesRenderer::AxesRenderer()
     window_scale_mat_[2][2] = 1.7;
 }
 
+void AxesRenderer::enableClipPlanes()
+{
+    const double f = 0.1;
+
+    const Vec3Dd axes_center = axes_limits_.getAxesCenter();
+
+    const Vec3Dd scale = axes_limits_.getAxesScale();
+
+    // clang-format off
+    const Vector<Point3Dd> points_x0 = {(Point3Dd(scale.x - axes_center.x, f, f)),
+                                       (Point3Dd(scale.x - axes_center.x, -f, f)),
+                                       (Point3Dd(scale.x - axes_center.x, f, -f))};
+    const Vector<Point3Dd> points_x1 = {(Point3Dd(scale.x + axes_center.x, f, f)),
+                                       (Point3Dd(scale.x + axes_center.x, -f, f)),
+                                       (Point3Dd(scale.x + axes_center.x, f, -f))};
+    const Vector<Point3Dd> points_y0 = {(Point3Dd(-f, scale.y - axes_center.y, f)),
+                                       (Point3Dd(f, scale.y - axes_center.y, f)),
+                                       (Point3Dd(f, scale.y - axes_center.y, -f))};
+    const Vector<Point3Dd> points_y1 = {(Point3Dd(-f, scale.y + axes_center.y, f)),
+                                       (Point3Dd(f, scale.y + axes_center.y, f)),
+                                       (Point3Dd(f, scale.y + axes_center.y, -f))};
+    const Vector<Point3Dd> points_z0 = {(Point3Dd(-f, f, -(axes_center.z + scale.z))),
+                                       (Point3Dd(f, -f, -(axes_center.z + scale.z))),
+                                       (Point3Dd(-f, -f, -(axes_center.z + scale.z)))};
+    const Vector<Point3Dd> points_z1 = {(Point3Dd(-f, f, -(scale.z - axes_center.z))),
+                                       (Point3Dd(f, -f, -(scale.z - axes_center.z))),
+                                       (Point3Dd(-f, -f, -(scale.z - axes_center.z)))};
+    // clang-format on*/
+
+    setClipPlane("clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
+    setClipPlane("clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
+    setClipPlane("clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
+    setClipPlane("clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
+    setClipPlane("clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
+    setClipPlane("clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
+}
+
+void AxesRenderer::setClipPlane(const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const
+{
+    // Fit plane
+    const Planed fp = planeFromThreePoints(p0, p1, p2);
+
+    // Invert
+    const Planed plane = invert ? Planed(-fp.a, -fp.b, -fp.c, fp.d) : fp;
+
+    glUniform4f(glGetUniformLocation(plot_shader_2.programId(), pln.c_str()), plane.a, plane.b, plane.c, plane.d);
+}
+
 void AxesRenderer::render()
 {
     renderPlotBox();
@@ -174,8 +222,8 @@ void AxesRenderer::plotBegin()
     scale_mat[3][3] = 1.0;
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_ * t_mat;
-
     glUniformMatrix4fv(glGetUniformLocation(plot_shader_2.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    enableClipPlanes();
 }
 
 void AxesRenderer::plotEnd()
