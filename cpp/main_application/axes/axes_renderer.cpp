@@ -120,9 +120,9 @@ AxesRenderer::AxesRenderer()
     scale_mat = glm::mat4(1.0f);
     
     window_scale_mat_ = glm::mat4(1.0f);
-    window_scale_mat_[0][0] = 1.7;
-    window_scale_mat_[1][1] = 1.7;
-    window_scale_mat_[2][2] = 1.7;
+    window_scale_mat_[0][0] = 2.7;
+    window_scale_mat_[1][1] = 2.7;
+    window_scale_mat_[2][2] = 2.7;
 }
 
 void AxesRenderer::enableClipPlanes()
@@ -285,5 +285,13 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     }
 
     projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
+
+    const float az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
+    const float el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
+    const float f = 2.7;
+
+    window_scale_mat_[0][0] = f - az - el;
+    window_scale_mat_[1][1] = f - az - el;
+    window_scale_mat_[2][2] = f - az - el;
 
 }
