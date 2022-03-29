@@ -5,31 +5,31 @@
 void PlotBoxGrid::renderXYGrid(const GridVectors& gv)
 {
     const float z_val = elevation_ > 0.0f ? (-axes_scale_.z) : axes_scale_.z;
-    for(size_t k = 0; k < gv.x.size(); k++)
+    for(size_t k = 0; k < gv.x.num_valid_values; k++)
     {
-        grid_points_[idx_] = gv.x(k);
+        grid_points_[idx_] = gv.x.data[k];
         grid_points_[idx_ + 1] = -axes_scale_.y;
         grid_points_[idx_ + 2] = z_val;
 
         idx_ += 3;
 
-        grid_points_[idx_] = gv.x(k);
+        grid_points_[idx_] = gv.x.data[k];
         grid_points_[idx_ + 1] = axes_scale_.y;
         grid_points_[idx_ + 2] = z_val;
 
         idx_ += 3;
     }
 
-    for(size_t k = 0; k < gv.y.size(); k++)
+    for(size_t k = 0; k < gv.y.num_valid_values; k++)
     {
         grid_points_[idx_] = axes_scale_.x;
-        grid_points_[idx_ + 1] = gv.y(k);
+        grid_points_[idx_ + 1] = gv.y.data[k];
         grid_points_[idx_ + 2] = z_val;
 
         idx_ += 3;
 
         grid_points_[idx_] = -axes_scale_.x;
-        grid_points_[idx_ + 1] = gv.y(k);
+        grid_points_[idx_ + 1] = gv.y.data[k];
         grid_points_[idx_ + 2] = z_val;
 
         idx_ += 3;
@@ -42,32 +42,32 @@ void PlotBoxGrid::renderXZGrid(const GridVectors& gv)
     const bool cond = ((-M_PI / 2.0f) <= azimuth_) && (azimuth_ <= (M_PI / 2.0f));
     const float y_val = cond ? axes_scale_.y : (-axes_scale_.y);
 
-    for(size_t k = 0; k < gv.x.size(); k++)
+    for(size_t k = 0; k < gv.x.num_valid_values; k++)
     {
-        grid_points_[idx_] = gv.x(k);
+        grid_points_[idx_] = gv.x.data[k];
         grid_points_[idx_ + 1] = y_val;
         grid_points_[idx_ + 2] = -axes_scale_.z;
 
         idx_ += 3;
 
-        grid_points_[idx_] = gv.x(k);
+        grid_points_[idx_] = gv.x.data[k];
         grid_points_[idx_ + 1] = y_val;
         grid_points_[idx_ + 2] = axes_scale_.z;
 
         idx_ += 3;
     }
 
-    for(size_t k = 0; k < gv.z.size(); k++)
+    for(size_t k = 0; k < gv.z.num_valid_values; k++)
     {
         grid_points_[idx_] = axes_scale_.x;
         grid_points_[idx_ + 1] = y_val;
-        grid_points_[idx_ + 2] = gv.z(k);
+        grid_points_[idx_ + 2] = gv.z.data[k];
 
         idx_ += 3;
 
         grid_points_[idx_] = -axes_scale_.x;
         grid_points_[idx_ + 1] = y_val;
-        grid_points_[idx_ + 2] = gv.z(k);
+        grid_points_[idx_ + 2] = gv.z.data[k];
 
         idx_ += 3;
     }
@@ -77,32 +77,32 @@ void PlotBoxGrid::renderYZGrid(const GridVectors& gv)
 {
     const float x_val = (azimuth_ >= 0.0f) ? axes_scale_.x : (-axes_scale_.x);
 
-    for(size_t k = 0; k < gv.y.size(); k++)
+    for(size_t k = 0; k < gv.y.num_valid_values; k++)
     {
         grid_points_[idx_] = x_val;
-        grid_points_[idx_ + 1] = gv.y(k);
+        grid_points_[idx_ + 1] = gv.y.data[k];
         grid_points_[idx_ + 2] = -axes_scale_.z;
 
         idx_ += 3;
 
         grid_points_[idx_] = x_val;
-        grid_points_[idx_ + 1] = gv.y(k);
+        grid_points_[idx_ + 1] = gv.y.data[k];
         grid_points_[idx_ + 2] = axes_scale_.z;
 
         idx_ += 3;
     }
 
-    for(size_t k = 0; k < gv.z.size(); k++)
+    for(size_t k = 0; k < gv.z.num_valid_values; k++)
     {
         grid_points_[idx_] = x_val;
         grid_points_[idx_ + 1] = axes_scale_.y;
-        grid_points_[idx_ + 2] = gv.z(k);
+        grid_points_[idx_ + 2] = gv.z.data[k];
 
         idx_ += 3;
 
         grid_points_[idx_] = x_val;
         grid_points_[idx_ + 1] = -axes_scale_.y;
-        grid_points_[idx_ + 2] = gv.z(k);
+        grid_points_[idx_ + 2] = gv.z.data[k];
 
         idx_ += 3;
     }

@@ -1,6 +1,9 @@
 #ifndef GRID_VECTORS_H_
 #define GRID_VECTORS_H_
 
+#include <cstdint>
+#include <array>
+
 #include "dvs/math/math.h"
 
 using namespace dvs;
@@ -14,30 +17,18 @@ enum class InteractionType
     ZOOM,
 };
 
+struct GridVector
+{
+    static constexpr std::uint8_t kMaxNumGridNumbers = 30;
+    std::array<double, kMaxNumGridNumbers> data;
+    size_t num_valid_values;
+};
+
 struct GridVectors
 {
-    Vectord x;
-    Vectord y;
-    Vectord z;
-    GridVectors(const size_t num_lines)
-    {
-        x.resize(num_lines);
-        y.resize(num_lines);
-        z.resize(num_lines);
-    }
-    GridVectors() = default;
-    void resizeX(const size_t num_lines)
-    {
-        x.resize(num_lines);
-    }
-    void resizeY(const size_t num_lines)
-    {
-        y.resize(num_lines);
-    }
-    void resizeZ(const size_t num_lines)
-    {
-        z.resize(num_lines);
-    }
+    GridVector x;
+    GridVector y;
+    GridVector z;
 };
 
 #endif

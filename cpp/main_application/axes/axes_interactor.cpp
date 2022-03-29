@@ -274,7 +274,7 @@ void AxesInteractor::setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec)
            static_cast<double>(num_lines - 1);
 }
 
-Vectord generateAxisVector(const double min_val, const double max_val, const double num_lines, const double offset)
+GridVector generateAxisVector(const double min_val, const double max_val, const double num_lines, const double offset, GridVector& ret_vec)
 {
     const double d = max_val - min_val;
 
@@ -300,10 +300,11 @@ Vectord generateAxisVector(const double min_val, const double max_val, const dou
         }
     }
 
-    Vectord ret_vec(vec.size());
+    assert(vec.size() <= GridVector::kMaxNumGridNumbers);
+    ret_vec.num_valid_values = vec.size();
     for (size_t k = 0; k < vec.size(); k++)
     {
-        ret_vec(k) = vec[k];
+        ret_vec.data[k] = vec[k];
     }
 
     return ret_vec;
@@ -318,9 +319,9 @@ GridVectors AxesInteractor::generateGridVectors()
     const Vec3Dd v_min = (axes_limits_.getMin() - axes_center) * 2.0 + axes_center;
     const Vec3Dd v_max = (axes_limits_.getMax() - axes_center) * 2.0 + axes_center;
 
-    gv.x = generateAxisVector(v_min.x, v_max.x, axes_settings_.getNumAxesTicks(), axes_center.x);
-    gv.y = generateAxisVector(v_min.y, v_max.y, axes_settings_.getNumAxesTicks(), axes_center.y);
-    gv.z = generateAxisVector(v_min.z, v_max.z, axes_settings_.getNumAxesTicks(), axes_center.z);
+    generateAxisVector(v_min.x, v_max.x, axes_settings_.getNumAxesTicks(), axes_center.x, gv.x);
+    generateAxisVector(v_min.y, v_max.y, axes_settings_.getNumAxesTicks(), axes_center.y, gv.y);
+    generateAxisVector(v_min.z, v_max.z, axes_settings_.getNumAxesTicks(), axes_center.z, gv.z);
 
     return gv;
 }

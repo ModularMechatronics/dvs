@@ -98,16 +98,16 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
 
-    for(size_t k = 0; k < gv.x.size(); k++)
+    for(size_t k = 0; k < gv.x.num_valid_values; k++)
     {
-        const double x = gv.x(k);
+        const double x = gv.x.data[k];
         const glm::vec3 v3(x, y, z);
 
         const glm::vec3 v_projected = glm::project(v3,
                          view_model,
                          projection,
                          v_viewport);
-        const std::string val = formatNumber(gv.x(k) + axes_center.x, 3);
+        const std::string val = formatNumber(gv.x.data[k] + axes_center.x, 3);
         if(cond2)
         {
             text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
@@ -143,16 +143,16 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
     drawYLetter(text_renderer, view_model, v_viewport, projection, width, height, x, z);
     glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
 
-    for(size_t k = 0; k < gv.y.size(); k++)
+    for(size_t k = 0; k < gv.y.num_valid_values; k++)
     {
-        const double y = gv.y(k);
+        const double y = gv.y.data[k];
         const glm::vec3 v3(x, y, z);
 
         const glm::vec3 v_projected = glm::project(v3,
                          view_model,
                          projection,
                          v_viewport);
-        const std::string val = formatNumber(gv.y(k) + axes_center.y, 3);
+        const std::string val = formatNumber(gv.y.data[k] + axes_center.y, 3);
         if(elevation == M_PI/2.0)
         {
             text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
@@ -188,16 +188,16 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
     drawZLetter(text_renderer, view_model, v_viewport, projection, width, height, x, y);
     glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
 
-    for(size_t k = 0; k < gv.z.size(); k++)
+    for(size_t k = 0; k < gv.z.num_valid_values; k++)
     {
-        const double z = gv.z(k);
+        const double z = gv.z.data[k];
         const glm::vec3 v3(x, y, z);
 
         const glm::vec3 v_projected = glm::project(v3,
                          view_model,
                          projection,
                          v_viewport);
-        const std::string val = formatNumber(gv.z(k) + axes_center.z, 3);
+        const std::string val = formatNumber(gv.z.data[k] + axes_center.z, 3);
 
         text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
     }
