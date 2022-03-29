@@ -5,6 +5,14 @@
 
 using namespace dvs;
 
+enum class SnappingAxis
+{
+    None,
+    X,
+    Y,
+    Z
+};
+
 class ViewAngles
 {
 private:
@@ -39,6 +47,8 @@ public:
     bool isSnappedAlongX() const;
     bool isSnappedAlongY() const;
     bool isSnappedAlongZ() const;
+
+    SnappingAxis getSnappingAxis() const;
 };
 
 #endif

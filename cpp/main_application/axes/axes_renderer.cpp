@@ -288,7 +288,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 
     const float az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
     const float el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
-    const float f = 2.7;
+    const float f = 2.5;
 
     window_scale_mat_[0][0] = f - az - el;
     window_scale_mat_[1][1] = f - az - el;

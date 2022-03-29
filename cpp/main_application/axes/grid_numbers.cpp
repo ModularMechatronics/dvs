@@ -14,6 +14,62 @@
 
 const float kTextScale = 1.0f / 8.0f;
 
+void drawXLetter(const TextRenderer& text_renderer,
+                 const glm::mat4& view_model,
+                 const glm::vec4& v_viewport,
+                 const glm::mat4& projection,
+                 const float width,
+                 const float height,
+                 const float y,
+                 const float z)
+{
+    const glm::vec3 v(0.0f, y * 1.1, z * 1.1);
+
+    const glm::vec3 v_projected = glm::project(v,
+                        view_model,
+                        projection,
+                        v_viewport);
+
+    text_renderer.renderTextFromRightCenter("X", v_projected[0], v_projected[1], 0.0005f, width, height);
+}
+
+void drawYLetter(const TextRenderer& text_renderer,
+                 const glm::mat4& view_model,
+                 const glm::vec4& v_viewport,
+                 const glm::mat4& projection,
+                 const float width,
+                 const float height,
+                 const float x,
+                 const float z)
+{
+    const glm::vec3 v(x * 1.1, 0.0f, z * 1.1);
+
+    const glm::vec3 v_projected = glm::project(v,
+                        view_model,
+                        projection,
+                        v_viewport);
+
+    text_renderer.renderTextFromRightCenter("Y", v_projected[0], v_projected[1], 0.0005f, width, height);
+}
+
+void drawZLetter(const TextRenderer& text_renderer,
+                 const glm::mat4& view_model,
+                 const glm::vec4& v_viewport,
+                 const glm::mat4& projection,
+                 const float width,
+                 const float height,
+                 const float x,
+                 const float y)
+{
+    const glm::vec3 v(x * 1.1, y * 1.1, 0.0f);
+
+    const glm::vec3 v_projected = glm::project(v,
+                        view_model,
+                        projection,
+                        v_viewport);
+
+    text_renderer.renderTextFromRightCenter("Z", v_projected[0], v_projected[1], 0.0005f, width, height);
+}
 
 void drawXAxisNumbers(const TextRenderer& text_renderer,
                       const glm::mat4& view_model,
@@ -23,12 +79,21 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
                       const double elevation,
                       const float width,
                       const float height,
+                      const SnappingAxis snapping_axis,
                       const Vec3Dd& axes_center,
-                      const GridVectors& gv)
+                      const GridVectors& gv,
+                      const GLint text_color_uniform)
 {
     const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
-    const double y = cond ? 1.0 : -1.0;
-    const double z = elevation > 0.0 ? -1.0 : 1.0;
+    const double y = (elevation == M_PI/2.0) ? -1.05 : (cond ? 1.05 : -1.05);
+    const double z0 = elevation > 0.0 ? -1.05 : 1.05;
+    const double z = ((snapping_axis == SnappingAxis::X) || (snapping_axis == SnappingAxis::Y)) ? -1.05 : z0;
+
+    glUniform3f(text_color_uniform, 1.0f, 0.0f, 0.0f);
+    drawXLetter(text_renderer, view_model, v_viewport, projection, width, height, y, z);
+    glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
+
+    // std::cout << azimuth * 180.0 / M_PI << std::endl;
 
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
@@ -62,14 +127,21 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
                       const double elevation,
                       const float width,
                       const float height,
+                      const SnappingAxis snapping_axis,
                       const Vec3Dd& axes_center,
-                      const GridVectors& gv)
+                      const GridVectors& gv,
+                      const GLint text_color_uniform)
 {
-    const double x = azimuth < 0.0 ? 1.0 : -1.0;
-    const double z = elevation > 0.0 ? -1.0 : 1.0;
+    const double x = (elevation == M_PI/2.0) ? -1.05 : (azimuth < 0.0 ? 1.05 : -1.05);
+    const double z0 = elevation > 0.0 ? -1.05 : 1.05;
+    const double z = ((snapping_axis == SnappingAxis::X) || (snapping_axis == SnappingAxis::Y)) ? -1.05 : z0;
 
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
+
+    glUniform3f(text_color_uniform, 1.0f, 0.0f, 0.0f);
+    drawYLetter(text_renderer, view_model, v_viewport, projection, width, height, x, z);
+    glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
 
     for(size_t k = 0; k < gv.y.size(); k++)
     {
@@ -81,7 +153,11 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.y(k) + axes_center.y, 3);
-        if(cond2)
+        if(elevation == M_PI/2.0)
+        {
+            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        }
+        else if(cond2)
         {
             text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
         }
@@ -101,14 +177,19 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                       const float width,
                       const float height,
                       const Vec3Dd& axes_center,
-                      const GridVectors& gv)
+                      const GridVectors& gv,
+                      const GLint text_color_uniform)
 {
     const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
-    const double x = azimuth > 0.0f ? 1.0 : -1.0;
-    const double y = cond ? 1.0 : -1.0;
+    const double x = azimuth > 0.0f ? 1.05 : -1.05;
+    const double y = cond ? 1.05 : -1.05;
 
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
+
+    glUniform3f(text_color_uniform, 1.0f, 0.0f, 0.0f);
+    drawZLetter(text_renderer, view_model, v_viewport, projection, width, height, x, y);
+    glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
 
     for(size_t k = 0; k < gv.z.size(); k++)
     {
@@ -137,7 +218,7 @@ void drawGridNumbers(const TextRenderer& text_renderer, const Shader text_shader
     
     glUseProgram(text_shader.programId());
 
-    glUniform3f(glGetUniformLocation(text_shader.programId(), "textColor"), 0.0f, 0.0f, 0.0f);
+    const GLint text_color_uniform = glGetUniformLocation(text_shader.programId(), "textColor");
 
     // AxesLimits
     const Vec3Dd axes_center = axes_limits.getAxesCenter();
@@ -171,9 +252,18 @@ void drawGridNumbers(const TextRenderer& text_renderer, const Shader text_shader
     scale_mat[2][2] = 1.0 / scale.z;
     const glm::mat4 view_model_z = view_mat * model_mat_local * scale_mat;
 
-    drawXAxisNumbers(text_renderer, view_model_x, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
-    drawYAxisNumbers(text_renderer, view_model_y, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
-    drawZAxisNumbers(text_renderer, view_model_z, v_viewport, projection_mat, az, el, width, height, axes_center, gv);
+    if(!view_angles.isSnappedAlongX())
+    {
+        drawXAxisNumbers(text_renderer, view_model_x, v_viewport, projection_mat, az, el, width, height, view_angles.getSnappingAxis(), axes_center, gv, text_color_uniform);
+    }
+    if(!view_angles.isSnappedAlongY())
+    {
+        drawYAxisNumbers(text_renderer, view_model_y, v_viewport, projection_mat, az, el, width, height, view_angles.getSnappingAxis(), axes_center, gv, text_color_uniform);
+    }
+    if(!view_angles.isSnappedAlongZ())
+    {
+        drawZAxisNumbers(text_renderer, view_model_z, v_viewport, projection_mat, az, el, width, height, axes_center, gv, text_color_uniform);
+    }
 
     glUseProgram(0);
 }
