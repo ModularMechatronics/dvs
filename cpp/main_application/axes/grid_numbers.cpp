@@ -93,7 +93,7 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
     drawXLetter(text_renderer, view_model, v_viewport, projection, width, height, y, z);
     glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
 
-    // std::cout << azimuth * 180.0 / M_PI << std::endl;
+    std::cout << azimuth * 180.0 / M_PI << std::endl;
 
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
@@ -181,11 +181,8 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                       const GLint text_color_uniform)
 {
     const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
-    const double x = azimuth > 0.0f ? 1.05 : -1.05;
-    const double y = cond ? 1.05 : -1.05;
-
-    const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
-                       ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
+    const double x = cond ? 1.05 : -1.05;
+    const double y = (azimuth > 0.0f) ? 1.05 : -1.05;
 
     glUniform3f(text_color_uniform, 1.0f, 0.0f, 0.0f);
     drawZLetter(text_renderer, view_model, v_viewport, projection, width, height, x, y);
@@ -201,14 +198,8 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                          projection,
                          v_viewport);
         const std::string val = formatNumber(gv.z(k) + axes_center.z, 3);
-        if(cond2)
-        {
-            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
-        }
-        else
-        {
-            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
-        }
+
+        text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
     }
 }
 
