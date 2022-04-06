@@ -29,6 +29,7 @@
 #include "project_state/save_manager.h"
 #include "tab_view.h"
 #include "window_view.h"
+#include "tray_icon.h"
 
 class MainWindow : public wxFrame
 {
@@ -54,6 +55,8 @@ private:
     bool is_editing_;
 
     bool app_in_focus_;
+
+    CustomTaskBarIcon* task_bar_;
 
     wxNotebook* tabs_view;
     wxPanel* tab_container;
@@ -92,6 +95,7 @@ private:
     void guiElementModified(wxCommandEvent& event);
     void childWindowClosed(wxCommandEvent& event);
     void childWindowInFocus(wxCommandEvent& event);
+    void onCloseButton(wxCloseEvent& event);
 
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);

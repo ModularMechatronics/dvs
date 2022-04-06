@@ -74,6 +74,20 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     cache_reader_ = new CacheReader(pa.remove_filename());
     main_window_last_in_focus_ = true;
 
+    task_bar_ = new CustomTaskBarIcon();
+    wxIcon* icon = new wxIcon();
+    icon->LoadFile("../resources/images/apple.ico", wxBITMAP_TYPE_ICO, 32, 32);
+
+    if (!task_bar_->SetIcon(*icon, "wxTaskBarIcon Sample\n"))
+    {
+        wxLogError("Could not set icon.");
+    }
+
+    task_bar_->setOnExitCallback([this] () -> void {
+            this->Destroy();
+        }
+    );
+
 #ifdef PLATFORM_LINUX_M
     int argc = 1;
     char* argv[1] = {"noop"};
@@ -107,6 +121,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
     Bind(NO_ELEMENT_SELECTED, &MainWindow::noElementSelected, this, wxID_ANY);
     Bind(CHILD_WINDOW_CLOSED_EVENT, &MainWindow::childWindowClosed, this, wxID_ANY);
+    Bind(wxEVT_CLOSE_WINDOW, &MainWindow::onCloseButton, this, wxID_ANY);
     Bind(CHILD_WINDOW_IN_FOCUS_EVENT, &MainWindow::childWindowInFocus, this, wxID_ANY);
 
     wxMenuBar* m_pMenuBar = new wxMenuBar();
@@ -142,8 +157,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     // wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
 
     current_tab_num_ = 0;
-
-    wxImage::AddHandler(new wxPNGHandler);
 
     layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(200, 500));
     layout_tools_window_->Hide();
@@ -745,6 +758,12 @@ void MainWindow::OnKeyboardTimer(wxTimerEvent&)
     }
 }
 
+void MainWindow::onCloseButton(wxCloseEvent& event)
+{
+    std::cout << "Close!" << std::endl;
+    this->Hide();
+}
+
 void MainWindow::OnClose(wxCloseEvent& WXUNUSED(event))
 {
     if (wxMessageBox("Are you sure you want to exit?", "Please confirm", wxICON_QUESTION | wxYES_NO) != wxYES)
@@ -753,5 +772,5 @@ void MainWindow::OnClose(wxCloseEvent& WXUNUSED(event))
     }
 
     std::cout << "Window close" << std::endl;
-    Destroy();
+    // Destroy();
 }

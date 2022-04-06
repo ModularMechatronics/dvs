@@ -49,6 +49,7 @@ set(CPP_SOURCE_FILES main.cpp
 
                      globals.cpp
 
+                     tray_icon.cpp
                      tab_view.cpp
                      window_view.cpp
                      events.cpp
