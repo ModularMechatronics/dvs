@@ -53,3 +53,8 @@ Post release:
 - Nice looking buttons in interface
 - Ability to add button to gui
 - Ability to set FOV
+
+
+Unsure:
+ - 3D world
+ - Programatically specicy plots in different windows
