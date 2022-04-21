@@ -48,11 +48,25 @@ public:
         free_ids_.push_back(id_to_free);
     }
 
-    void setOnExitCallback(std::function<void()> exit_function);
+    void setOnMenuExitCallback(std::function<void()>&& exit_function);
+    void setOnMenuFileNew(std::function<void()>&& file_new_function);
+    void setOnMenuFileOpen(std::function<void()>&& file_open_function);
+    void setOnMenuFileSave(std::function<void()>&& file_save_function);
+    void setOnMenuFileSaveAs(std::function<void()>&& file_save_as_function);
+    void setOnMenuEdit(std::function<void()>&& edit_function);
 
-    void OnMenuExit(wxCommandEvent&);
-    void OnMainWindow(wxCommandEvent& evt);
-    void OnSubWindow(wxCommandEvent& evt);
+    void onMenuExit(wxCommandEvent&);
+    void onMenuMainWindow(wxCommandEvent& evt);
+    
+    void onMenuFileNew(wxCommandEvent&);
+    void onMenuFileOpen(wxCommandEvent&);
+    void onMenuFileSave(wxCommandEvent&);
+    void onMenuFileSaveAs(wxCommandEvent&);
+    void onMenuEdit(wxCommandEvent&);
+
+    void setEditLabel(const std::string edit_label);
+
+    void onMenuSubWindow(wxCommandEvent& evt);
     void addNewWindow(const std::string& window_name);
     void removeWindow(const std::string& window_name);
     virtual wxMenu *CreatePopupMenu();
@@ -61,8 +75,15 @@ public:
 
 private:
     std::function<void()> exit_function_;
+    std::function<void()> edit_function_;
+    std::function<void()> file_new_function_;
+    std::function<void()> file_open_function_;
+    std::function<void()> file_save_function_;
+    std::function<void()> file_save_as_function_;
+
     std::vector<int> free_ids_;
     std::vector<int> taken_ids_;
+    std::string edit_label_;
     wxMenu *windows_submenu_;
     wxMenu *menu_;
     wxMenu *file_submenu_;

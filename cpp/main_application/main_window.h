@@ -91,6 +91,8 @@ private:
     void onActivate(wxActivateEvent& event);
     void tabChanged(wxCommandEvent& event);
     void toggleEditLayout(wxCommandEvent& event);
+    void toggleEditLayoutCallback(wxCommandEvent& event);
+    void toggleEditLayout();
     void editingFinished(wxCommandEvent& event);
     void guiElementModified(wxCommandEvent& event);
     void childWindowClosed(wxCommandEvent& event);
@@ -105,6 +107,7 @@ private:
     void saveProject();
     void saveProjectCallback(wxCommandEvent& event);
     void newProjectCallback(wxCommandEvent& event);
+    void newProject();
     void saveProjectAs();
     void saveProjectAsCallback(wxCommandEvent& event);
 
@@ -123,6 +126,8 @@ public:
 
     void toggleWindowVisibility(wxCommandEvent& event);
     void openExistingFile(wxCommandEvent& event);
+    void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
+    void openExistingFile();
     void changeCurrentTabName(wxCommandEvent& event);
     void changeCurrentElementName(wxCommandEvent& event);
     void currentElementSelectionChanged(wxCommandEvent& event);

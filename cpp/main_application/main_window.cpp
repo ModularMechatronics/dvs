@@ -83,21 +83,31 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         wxLogError("Could not set icon.");
     }
 
-    task_bar_->setOnExitCallback([this] () -> void {
-            this->Destroy();
-        }
-    );
+    task_bar_->setOnMenuExitCallback([this] () -> void {
+        this->Destroy();
+    });
+    task_bar_->setOnMenuFileNew([this] () -> void {
+        newProject();
+    });
+    task_bar_->setOnMenuFileOpen([this] () -> void {
+        openExistingFile();
+    });
+    task_bar_->setOnMenuFileSave([this] () -> void {
+        saveProject();
+    });
+    task_bar_->setOnMenuFileSaveAs([this] () -> void {
+        saveProjectAs();
+    });
+    task_bar_->setOnMenuEdit([this] () -> void {
+        toggleEditLayout();
+    });
+    
 
 #ifdef PLATFORM_LINUX_M
     int argc = 1;
     char* argv[1] = {"noop"};
     glutInit(&argc, argv);
 #endif
-
-    const int outer = 245;
-    const int middle = 200;
-    const wxColor outer_color(outer, outer, outer);
-    const wxColor middle_color(middle, middle, middle);
 
     if (cache_reader_->hasKey("last_opened_file") &&
         dvs_filesystem::exists(cache_reader_->readCache<std::string>("last_opened_file")))
@@ -149,8 +159,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
     Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
-    Bind(wxEVT_MENU, &MainWindow::toggleEditLayout, this, dvs_ids::EDIT_LAYOUT);
-    Bind(wxEVT_MENU, &MainWindow::openExistingFile, this, wxID_OPEN);
+    Bind(wxEVT_MENU, &MainWindow::toggleEditLayoutCallback, this, dvs_ids::EDIT_LAYOUT);
+    Bind(wxEVT_MENU, &MainWindow::openExistingFileCallback, this, wxID_OPEN);
     Bind(wxEVT_MENU, &MainWindow::saveProjectAsCallback, this, wxID_SAVEAS);
 
     SetMenuBar(m_pMenuBar);
@@ -346,6 +356,11 @@ void MainWindow::saveProject()
 
 void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
 {
+    newProject();
+}
+
+void MainWindow::newProject()
+{
     if (!save_manager_->isSaved())
     {
         if (wxMessageBox(_("Current content has not been saved! Proceed?"),
@@ -450,6 +465,7 @@ void MainWindow::addNewWindowCallback(wxCommandEvent& WXUNUSED(event))
     layout_tools_window_->setCurrentElementName("");
 
     addNewWindow(window_name);
+    task_bar_->addNewWindow(window_name);
 }
 
 void MainWindow::addNewWindow(const std::string& window_name)
@@ -585,11 +601,17 @@ void MainWindow::childWindowInFocus(wxCommandEvent& event)
     layout_tools_window_->setCurrentElementName(current_element_name_);
 }
 
-void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))
+void MainWindow::toggleEditLayoutCallback(wxCommandEvent& WXUNUSED(event))
+{
+    toggleEditLayout();
+}
+
+void MainWindow::toggleEditLayout()
 {
     if (is_editing_)
     {
         edit_layout_menu_option_->SetItemLabel("Edit layout");
+        task_bar_->setEditLabel("Edit layout");
         layout_tools_window_->Hide();
         for (auto te : tabs_)
         {
@@ -604,6 +626,7 @@ void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))
     else
     {
         edit_layout_menu_option_->SetItemLabel("Stop editing");
+        task_bar_->setEditLabel("Stop editing");
         layout_tools_window_->Show();
         for (auto te : tabs_)
         {
@@ -618,7 +641,12 @@ void MainWindow::toggleEditLayout(wxCommandEvent& WXUNUSED(event))
     is_editing_ = !is_editing_;
 }
 
-void MainWindow::openExistingFile(wxCommandEvent& WXUNUSED(event))
+void MainWindow::openExistingFileCallback(wxCommandEvent& WXUNUSED(event))
+{
+    openExistingFile();
+}
+
+void MainWindow::openExistingFile()
 {
     if (!save_manager_->isSaved())
     {
