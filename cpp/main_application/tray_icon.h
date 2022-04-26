@@ -26,6 +26,26 @@ enum
     PU_SUBMAIN
 };
 
+class MyMenu : public wxMenu
+{
+private:
+    std::function<void()> menu_teardown_function_;
+public:
+    MyMenu() = delete;
+    MyMenu(std::function<void()>&& menu_teardown_function) : 
+        wxMenu{}, 
+        menu_teardown_function_{std::move(menu_teardown_function)}
+    {
+
+    }
+
+    ~MyMenu()
+    {
+        menu_teardown_function_();
+    }
+};
+
+
 class CustomTaskBarIcon : public wxTaskBarIcon
 {
 public:
@@ -37,13 +57,16 @@ public:
 
     int getNextFreeId()
     {
+        assert(free_ids_.size() != 0);
         const int val = free_ids_.back();
         free_ids_.pop_back();
+        taken_ids_.push_back(val);
         return val;
     }
 
     void freeId(int id_to_free)
     {
+        assert(std::find(taken_ids_.begin(), taken_ids_.end(), id_to_free) != taken_ids_.end());
         taken_ids_.erase(std::find(taken_ids_.begin(), taken_ids_.end(), id_to_free));
         free_ids_.push_back(id_to_free);
     }
@@ -54,6 +77,8 @@ public:
     void setOnMenuFileSave(std::function<void()>&& file_save_function);
     void setOnMenuFileSaveAs(std::function<void()>&& file_save_as_function);
     void setOnMenuEdit(std::function<void()>&& edit_function);
+    void setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function);
+    void setOnMenuShowMainWindow(std::function<void()>&& main_menu_function);
 
     void onMenuExit(wxCommandEvent&);
     void onMenuMainWindow(wxCommandEvent& evt);
@@ -80,12 +105,14 @@ private:
     std::function<void()> file_open_function_;
     std::function<void()> file_save_function_;
     std::function<void()> file_save_as_function_;
+    std::function<void()> main_menu_function_;
+    std::function<void(const std::string&)> submenu_function_;
 
     std::vector<int> free_ids_;
     std::vector<int> taken_ids_;
     std::string edit_label_;
     wxMenu *windows_submenu_;
-    wxMenu *menu_;
+    // wxMenu *menu_;
     wxMenu *file_submenu_;
 
     std::map<std::string, wxEventTypeTag<wxCommandEvent>> window_events_;

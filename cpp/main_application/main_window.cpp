@@ -101,6 +101,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     task_bar_->setOnMenuEdit([this] () -> void {
         toggleEditLayout();
     });
+    task_bar_->setOnMenuSubWindow([this] (const std::string& window_name) -> void {
+        toggleWindowVisibility(window_name);
+    });
+    task_bar_->setOnMenuShowMainWindow([this] () -> void {
+        this->Show();
+    });
     
 
 #ifdef PLATFORM_LINUX_M
@@ -134,7 +140,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(wxEVT_CLOSE_WINDOW, &MainWindow::onCloseButton, this, wxID_ANY);
     Bind(CHILD_WINDOW_IN_FOCUS_EVENT, &MainWindow::childWindowInFocus, this, wxID_ANY);
 
-    wxMenuBar* m_pMenuBar = new wxMenuBar();
+    m_pMenuBar = new wxMenuBar();
+
     // File Menu
     wxMenu* m_pFileMenu = new wxMenu();
     m_pFileMenu->Append(wxID_NEW, _T("&New"));
@@ -178,7 +185,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     for (auto we : windows_)
     {
         m_pWindowsMenu->Append(we->getCallbackId(), we->getName());
-        Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, we->getCallbackId());
+        Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
     }
 
     Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
@@ -247,7 +254,25 @@ void MainWindow::onActivate(wxActivateEvent& event)
     }
 }
 
-void MainWindow::toggleWindowVisibility(wxCommandEvent& event)
+void MainWindow::toggleWindowVisibility(const std::string& window_name)
+{
+    for (auto we : windows_)
+    {
+        we->resetSelectionForAllChildren();
+        if (we->getName() == window_name)
+        {
+            we->setFirstElementSelected();
+            current_tab_name_ = we->getName();
+            current_element_name_ = we->getSelectedElementName();
+            we->Hide();
+            we->show();
+        }
+    }
+    layout_tools_window_->setCurrentTabName(current_tab_name_);
+    layout_tools_window_->setCurrentElementName(current_element_name_);
+}
+
+void MainWindow::toggleWindowVisibilityCallback(wxCommandEvent& event)
 {
     for (auto te : tabs_)
     {
@@ -278,6 +303,7 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         window_callback_id_++;
         const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
         gui_elements_.insert(ges.begin(), ges.end());
+        task_bar_->addNewWindow(ws.getName());
     }
 }
 
@@ -486,7 +512,7 @@ void MainWindow::addNewWindow(const std::string& window_name)
     }
 
     m_pWindowsMenu->Append(window_element->getCallbackId(), window_element->getName());
-    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, window_element->getCallbackId());
+    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, window_element->getCallbackId());
 
     main_window_last_in_focus_ = false;
     for (auto te : tabs_)
@@ -515,7 +541,8 @@ void MainWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
         {
             if (we->getName() == current_tab_name_)
             {
-                Unbind(wxEVT_MENU, &MainWindow::toggleWindowVisibility, this, we->getCallbackId());
+                Unbind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
+                task_bar_->removeWindow(current_tab_name_);
 
                 const int menu_id = m_pWindowsMenu->FindItem(we->getName());
                 m_pWindowsMenu->Destroy(menu_id);

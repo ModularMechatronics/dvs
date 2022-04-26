@@ -63,6 +63,7 @@ private:
     LayoutToolsWindow* layout_tools_window_;
     wxBoxSizer* tabs_sizer_v;
 
+    wxMenuBar* m_pMenuBar;
     wxMenuItem* edit_layout_menu_option_;
     wxMenu* m_pWindowsMenu;
     int window_callback_id_;
@@ -124,7 +125,8 @@ public:
     virtual void OnSize(wxSizeEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
-    void toggleWindowVisibility(wxCommandEvent& event);
+    void toggleWindowVisibilityCallback(wxCommandEvent& event);
+    void toggleWindowVisibility(const std::string& window_name);
     void openExistingFile(wxCommandEvent& event);
     void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
     void openExistingFile();

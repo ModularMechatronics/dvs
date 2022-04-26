@@ -17,7 +17,7 @@ CustomTaskBarIcon::CustomTaskBarIcon(wxTaskBarIconType iconType) :
 #else
     CustomTaskBarIcon::CustomTaskBarIcon() : 
 #endif
-    menu_{nullptr},
+    // menu_{nullptr},
       file_submenu_{nullptr},
       windows_submenu_{nullptr},
       edit_label_{"Edit layout"}
@@ -60,21 +60,42 @@ void CustomTaskBarIcon::setOnMenuEdit(std::function<void()>&& edit_function)
     edit_function_ = std::move(edit_function);
 }
 
+void CustomTaskBarIcon::setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function)
+{
+    submenu_function_ = std::move(submenu_function);
+}
+
+void CustomTaskBarIcon::setOnMenuShowMainWindow(std::function<void()>&& main_menu_function)
+{
+    main_menu_function_ = std::move(main_menu_function);
+}
+
 void CustomTaskBarIcon::onMenuExit(wxCommandEvent& )
 {
-    std::cout << "Exit!" << std::endl;
     exit_function_();
 }
 
 
 void CustomTaskBarIcon::onMenuMainWindow(wxCommandEvent& evt)
 {
-
+    main_menu_function_();
 }
 
 void CustomTaskBarIcon::onMenuSubWindow(wxCommandEvent& evt)
 {
-    std::cout << "Subwindow: " << evt.GetId() << std::endl;
+    bool window_found = false;
+    std::string window_name;
+    for ( const auto &p : window_event_ids_)
+    {
+        if(p.second == evt.GetId())
+        {
+            window_found = true;
+            window_name = p.first;
+            break;
+        }
+    }
+    assert(window_found);
+    submenu_function_(window_name);
 }
 
 void CustomTaskBarIcon::onMenuFileNew(wxCommandEvent&)
@@ -107,12 +128,14 @@ void CustomTaskBarIcon::addNewWindow(const std::string& window_name)
     const auto id = getNextFreeId();
     window_events_.emplace(window_name, wxEventTypeTag<wxCommandEvent>(id));
     window_event_ids_[window_name] = id;
-    std::cout << "id: " << id << std::endl;
 }
 
 void CustomTaskBarIcon::removeWindow(const std::string& window_name)
 {
-    // wxEventTypeTag<wxCommandEvent> name;
+    const int id_to_free = window_event_ids_[window_name];
+    freeId(id_to_free);
+    window_events_.erase(window_events_.find(window_name));
+    window_event_ids_.erase(window_event_ids_.find(window_name));
 }
 
 void CustomTaskBarIcon::setEditLabel(const std::string edit_label)
@@ -122,7 +145,12 @@ void CustomTaskBarIcon::setEditLabel(const std::string edit_label)
 
 wxMenu *CustomTaskBarIcon::CreatePopupMenu()
 {
-    menu_ = new wxMenu;
+    MyMenu* menu_ = new MyMenu{[this] () -> void {
+        for ( const auto &p : window_events_ )
+        {
+            Unbind(wxEVT_MENU, &CustomTaskBarIcon::onMenuSubWindow, this, window_event_ids_[p.first]);
+        }
+    }};
     file_submenu_ = new wxMenu;
     windows_submenu_ = new wxMenu;
 
