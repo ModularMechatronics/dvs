@@ -93,8 +93,6 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
     drawXLetter(text_renderer, view_model, v_viewport, projection, width, height, y, z);
     glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
 
-    std::cout << azimuth * 180.0 / M_PI << std::endl;
-
     const bool cond2 = ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || 
                        ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
 

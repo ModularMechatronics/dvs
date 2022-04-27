@@ -130,20 +130,20 @@ public:
     void openExistingFile(wxCommandEvent& event);
     void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
     void openExistingFile();
-    void changeCurrentTabName(wxCommandEvent& event);
-    void changeCurrentElementName(wxCommandEvent& event);
+    void changeCurrentTabName(const std::string& new_tab_name);
+    void changeCurrentElementName(const std::string new_element_name);
     void currentElementSelectionChanged(wxCommandEvent& event);
     void addNewTabCallback(wxCommandEvent& event);
     void addNewTab(const std::string& tab_name);
-    void deleteTab(wxCommandEvent& event);
+    void deleteTab();
     void addNewWindow(const std::string& window_name);
     void addNewWindowCallback(wxCommandEvent& event);
-    void deleteWindow(wxCommandEvent& event);
+    void deleteWindow();
     void noElementSelected(wxCommandEvent& event);
 
     void newNamedElement(const std::string& element_name);
-    void newElement(wxCommandEvent& event);
-    void deleteElement(wxCommandEvent& event);
+    void newElement();
+    void deleteSelectedElement();
 
     void disableEditing();
 

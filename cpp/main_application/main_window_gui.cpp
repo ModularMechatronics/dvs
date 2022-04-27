@@ -38,7 +38,7 @@ void MainWindow::setupGui()
 void MainWindow::setupTabs(const ProjectSettings& project_settings)
 {
     gui_elements_ = std::map<std::string, GuiElement*>();
-    for (const TabSettings tab : project_settings.getTabs())
+    for (const TabSettings& tab : project_settings.getTabs())
     {
         const std::string tab_name = tab.getName();
 
@@ -131,11 +131,8 @@ bool MainWindow::elementNameExists(const std::string& element_name) const
     return name_exists;
 }
 
-void MainWindow::changeCurrentElementName(wxCommandEvent& event)
+void MainWindow::changeCurrentElementName(const std::string new_element_name)
 {
-    const wxString value = event.GetString();
-    const std::string new_element_name = std::string(value.mb_str());
-
     const bool name_exists = elementNameExists(new_element_name);
 
     if (main_window_last_in_focus_)
@@ -183,11 +180,8 @@ void MainWindow::currentElementSelectionChanged(wxCommandEvent& event)
     layout_tools_window_->setCurrentElementName(std::string(value.mb_str()));
 }
 
-void MainWindow::changeCurrentTabName(wxCommandEvent& event)
+void MainWindow::changeCurrentTabName(const std::string& new_tab_name)
 {
-    const wxString value = event.GetString();
-    const std::string new_tab_name = std::string(value.mb_str());
-
     if (new_tab_name != "")
     {
         if (main_window_last_in_focus_)
@@ -211,6 +205,7 @@ void MainWindow::changeCurrentTabName(wxCommandEvent& event)
                 }
                 else
                 {
+                    wxString value = new_tab_name;
                     tabs_view->SetPageText(current_tab_idx, value);
                     tabs_.at(current_tab_idx)->setName(new_tab_name);
                 }
@@ -275,7 +270,7 @@ void MainWindow::newNamedElement(const std::string& element_name)
     fileModified();
 }
 
-void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
+void MainWindow::newElement()
 {
     if (main_window_last_in_focus_)
     {
@@ -320,7 +315,7 @@ void MainWindow::newElement(wxCommandEvent& WXUNUSED(event))
     fileModified();
 }
 
-void MainWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
+void MainWindow::deleteSelectedElement()
 {
     if (main_window_last_in_focus_)
     {

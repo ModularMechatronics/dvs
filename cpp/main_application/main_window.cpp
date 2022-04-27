@@ -175,7 +175,43 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     current_tab_num_ = 0;
 
-    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(200, 500));
+
+
+    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(200, 500),
+        [this] (const std::string& new_tab_name) {
+            changeCurrentTabName(new_tab_name);
+        },
+        [this] (const std::string& new_element_name) {
+            changeCurrentElementName(new_element_name);
+        },
+        [this] () {
+            const std::string window_name = "new-window-" + std::to_string(current_tab_num_);
+            current_tab_num_++;
+            layout_tools_window_->setCurrentElementName("");
+
+            addNewWindow(window_name);
+            task_bar_->addNewWindow(window_name);
+        },
+        [this] () {
+            deleteWindow();
+        },
+        [this] () {
+            const std::string tab_name = "new-tab-" + std::to_string(current_tab_num_);
+            current_tab_num_++;
+            addNewTab(tab_name);
+        },
+        [this] () {
+            deleteTab();
+        },
+        [this] () {
+            newElement();
+        },
+        [this] () {
+            deleteSelectedElement();
+        },
+        [this] () {
+            disableEditing();
+        });
     layout_tools_window_->Hide();
 
     Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
@@ -207,7 +243,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         pressed_keys_[key] = false;
     }
 
-    Bind(wxEVT_CHAR_HOOK, &MainWindow::OnKeyDown, this);
+    // Bind(wxEVT_CHAR_HOOK, &MainWindow::OnKeyDown, this);
 }
 
 void MainWindow::appInactive()
@@ -220,11 +256,11 @@ void MainWindow::appActive()
     app_in_focus_ = true;
 }
 
-void MainWindow::OnKeyDown(wxKeyEvent& WXUNUSED(event))
+void MainWindow::OnKeyDown(wxKeyEvent& event)
 {
     std::cout << "Key pressed!!" << std::endl;
     // int key_code = event.GetKeyCode();
-    // event.Skip();
+    event.Skip();
 }
 
 void MainWindow::onActivate(wxActivateEvent& event)
@@ -465,7 +501,7 @@ void MainWindow::addNewTabCallback(wxCommandEvent& WXUNUSED(event))
     addNewTab(tab_name);
 }
 
-void MainWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
+void MainWindow::deleteTab()
 {
     const int current_tab_idx = tabs_view->GetSelection();
     if (current_tab_idx != wxNOT_FOUND)
@@ -532,7 +568,7 @@ void MainWindow::addNewWindow(const std::string& window_name)
     fileModified();
 }
 
-void MainWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
+void MainWindow::deleteWindow()
 {
     int window_idx = 0;
     if (!main_window_last_in_focus_)

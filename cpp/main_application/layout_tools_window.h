@@ -16,6 +16,7 @@
 #include <map>
 #include <mutex>
 #include <stdexcept>
+#include <functional>
 #include <string>
 #include <thread>
 #include <tuple>
@@ -29,11 +30,41 @@ private:
     wxStaticBox* inspector_box_;
     wxTextCtrl* tab_name_ctrl_;
     wxTextCtrl* element_name_ctrl_;
-    wxFrame* main_window_;
+
+    std::function<void(const std::string&)> change_current_tab_name_;
+    std::function<void(const std::string&)> change_current_element_name_;
+    std::function<void()> add_new_window_;
+    std::function<void()> delete_window_;
+    std::function<void()> add_new_tab_;
+    std::function<void()> delete_tab_;
+    std::function<void()> add_new_element_;
+    std::function<void()> delete_element_;
+    std::function<void()> disable_editing_;
 
 public:
     LayoutToolsWindow() = default;
-    LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize size);
+    LayoutToolsWindow(wxFrame* main_window,
+                      wxPoint pos,
+                      wxSize size,
+                      std::function<void(const std::string&)>&& change_current_tab_name,
+                      std::function<void(const std::string&)>&& change_current_element_name,
+                      std::function<void()>&& add_new_window,
+                      std::function<void()>&& delete_window,
+                      std::function<void()>&& add_new_tab,
+                      std::function<void()>&& delete_tab,
+                      std::function<void()>&& add_new_element,
+                      std::function<void()>&& delete_element,
+                      std::function<void()>&& disable_editing);
+    
+    void addNewTabCallback(wxCommandEvent& event);
+    void deleteTab(wxCommandEvent& event);
+    void addNewWindowCallback(wxCommandEvent& event);
+    void deleteWindow(wxCommandEvent& event);
+    void newElement(wxCommandEvent& event);
+    void deleteElement(wxCommandEvent& event);
+    void changeCurrentTabName(wxCommandEvent& event);
+    void changeCurrentElementName(wxCommandEvent& event);
+
     void setPosAndSize(wxPoint pos, wxSize size);
     void setupInspector();
     void setupShapes();
