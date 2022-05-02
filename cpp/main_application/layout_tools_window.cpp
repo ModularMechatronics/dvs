@@ -3,8 +3,7 @@
 #include "events.h"
 #include "main_window.h"
 
-LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window,
-        wxPoint pos,
+LayoutToolsWindow::LayoutToolsWindow(wxPoint pos,
         wxSize size,
         std::function<void(const std::string&)>&& change_current_tab_name,
         std::function<void(const std::string&)>&& change_current_element_name,
@@ -15,7 +14,7 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window,
         std::function<void()>&& add_new_element,
         std::function<void()>&& delete_element,
         std::function<void()>&& disable_editing)
-    : wxFrame(main_window, wxID_ANY, "Layout tools", pos, size)
+    : wxFrame(nullptr, wxID_ANY, "Layout tools", pos, size)
 {
     this->SetMinSize(size);
     this->SetMaxSize(size);
@@ -122,32 +121,32 @@ void LayoutToolsWindow::setupShapes()
     shapes_box_->SetSizer(global_sizer);
 }
 
-void LayoutToolsWindow::addNewTabCallback(wxCommandEvent& event)
+void LayoutToolsWindow::addNewTabCallback(wxCommandEvent& WXUNUSED(event))
 {
     add_new_tab_();
 }
 
-void LayoutToolsWindow::deleteTab(wxCommandEvent& event)
+void LayoutToolsWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
 {
     delete_tab_();
 }
 
-void LayoutToolsWindow::addNewWindowCallback(wxCommandEvent& event)
+void LayoutToolsWindow::addNewWindowCallback(wxCommandEvent& WXUNUSED(event))
 {
     add_new_window_();
 }
 
-void LayoutToolsWindow::deleteWindow(wxCommandEvent& event)
+void LayoutToolsWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
 {
     delete_window_();
 }
 
-void LayoutToolsWindow::newElement(wxCommandEvent& event)
+void LayoutToolsWindow::newElement(wxCommandEvent& WXUNUSED(event))
 {
     add_new_element_();
 }
 
-void LayoutToolsWindow::deleteElement(wxCommandEvent& event)
+void LayoutToolsWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
 {
     delete_element_();
 }

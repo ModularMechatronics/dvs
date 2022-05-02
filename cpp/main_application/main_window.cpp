@@ -107,6 +107,13 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     task_bar_->setOnMenuShowMainWindow([this] () -> void {
         this->Show();
     });
+
+    notification_from_gui_element_key_pressed_ = [this] (const char key) {
+        notifyChildrenOnKeyPressed(key);
+    };
+    notification_from_gui_element_key_released_ = [this] (const char key) {
+        notifyChildrenOnKeyReleased(key);
+    };
     
 
 #ifdef PLATFORM_LINUX_M
@@ -175,9 +182,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     current_tab_num_ = 0;
 
-
-
-    layout_tools_window_ = new LayoutToolsWindow(this, wxPoint(1500, 30), wxSize(200, 500),
+    layout_tools_window_ = new LayoutToolsWindow(wxPoint(1500, 30), wxSize(200, 500),
         [this] (const std::string& new_tab_name) {
             changeCurrentTabName(new_tab_name);
         },
@@ -230,20 +235,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);
 
-    keyboard_timer_.Bind(wxEVT_TIMER, &MainWindow::OnKeyboardTimer, this);
-    keyboard_timer_.Start(10);
-
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
 
     app_in_focus_ = true;
 
-    const std::vector<char> keys = {'z', 'r', 'p', 'c', '1', '2', '3'};
-    for (const char key : keys)
-    {
-        pressed_keys_[key] = false;
-    }
-
     // Bind(wxEVT_CHAR_HOOK, &MainWindow::OnKeyDown, this);
+    Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, this);
 }
 
 void MainWindow::appInactive()
@@ -258,9 +255,19 @@ void MainWindow::appActive()
 
 void MainWindow::OnKeyDown(wxKeyEvent& event)
 {
-    std::cout << "Key pressed!!" << std::endl;
-    // int key_code = event.GetKeyCode();
-    event.Skip();
+    std::cout << "Keydown from mw!" << std::endl;
+    /*int key = event.GetKeyCode();
+    if(wxGetKeyState(wxKeyCode('q')))
+    {
+        notifyChildrenOnKeyPressed(key);
+        std::cout << "Key pressed from OnKeyDown" << std::endl;
+    }
+    else
+    {
+        notifyChildrenOnKeyReleased(key);
+        std::cout << "Key released from OnKeyDown" << std::endl;
+    }
+    // event.Skip();*/
 }
 
 void MainWindow::onActivate(wxActivateEvent& event)
@@ -335,7 +342,11 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
 {
     for (const WindowSettings& ws : project_settings.getWindows())
     {
-        windows_.emplace_back(new WindowView(this, ws, window_callback_id_));
+        windows_.emplace_back(new WindowView(this,
+            ws,
+            window_callback_id_,
+            notification_from_gui_element_key_pressed_,
+            notification_from_gui_element_key_released_));
         window_callback_id_++;
         const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
         gui_elements_.insert(ges.begin(), ges.end());
@@ -458,7 +469,7 @@ void MainWindow::newProject()
     }
     windows_.clear();
 
-    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
+    tabs_view = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
@@ -481,7 +492,10 @@ void MainWindow::addNewTab(const std::string& tab_name)
 {
     TabSettings tab;
     tab.setName(tab_name);
-    TabView* tab_element = new TabView(tabs_view, tab);
+    TabView* tab_element = new TabView(tabs_view,
+        tab,
+        notification_from_gui_element_key_pressed_,
+        notification_from_gui_element_key_released_);
     tabs_.push_back(tab_element);
 
     tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
@@ -538,7 +552,10 @@ void MainWindow::addNewWindow(const std::string& window_name)
     window_settings.y = 30;
     window_settings.width = 600;
     window_settings.height = 628;
-    WindowView* window_element = new WindowView(this, window_settings, window_callback_id_);
+    WindowView* window_element = new WindowView(this,
+        window_settings, window_callback_id_,
+        notification_from_gui_element_key_pressed_,
+        notification_from_gui_element_key_released_);
     window_callback_id_++;
     windows_.push_back(window_element);
 
@@ -756,7 +773,7 @@ void MainWindow::openExistingFile()
     }
     windows_.clear();
 
-    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
+    tabs_view = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     tabs_view->Layout();
 
     tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
@@ -775,7 +792,6 @@ void MainWindow::openExistingFile()
 void MainWindow::OnRefreshTimer(wxTimerEvent&)
 {
     refresh_timer_.Stop();
-    tab_container->Refresh();
     tabs_view->Refresh();
 
     SendSizeEvent();
@@ -805,6 +821,7 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
     for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
     {
         it->second->keyPressed(key);
+        std::cout << "Name: " << it->second->getName() << std::endl;
     }
 }
 
@@ -815,37 +832,6 @@ void MainWindow::notifyChildrenOnKeyReleased(const char key)
     for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
     {
         it->second->keyReleased(key);
-    }
-}
-
-void MainWindow::OnKeyboardTimer(wxTimerEvent&)
-{
-    if (app_in_focus_)
-    {
-        std::map<char, bool>::iterator it;
-
-        for (it = pressed_keys_.begin(); it != pressed_keys_.end(); it++)
-        {
-            const char key = it->first;
-            if (wxGetKeyState(wxKeyCode(key)))
-            {
-                if (!pressed_keys_[key])
-                {
-                    // key was pressed
-                    pressed_keys_[key] = true;
-                    notifyChildrenOnKeyPressed(key);
-                }
-            }
-            else
-            {
-                if (pressed_keys_[key])
-                {
-                    // key was released
-                    pressed_keys_[key] = false;
-                    notifyChildrenOnKeyReleased(key);
-                }
-            }
-        }
     }
 }
 

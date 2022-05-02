@@ -43,8 +43,7 @@ private:
 
 public:
     LayoutToolsWindow() = default;
-    LayoutToolsWindow(wxFrame* main_window,
-                      wxPoint pos,
+    LayoutToolsWindow(wxPoint pos,
                       wxSize size,
                       std::function<void(const std::string&)>&& change_current_tab_name,
                       std::function<void(const std::string&)>&& change_current_element_name,

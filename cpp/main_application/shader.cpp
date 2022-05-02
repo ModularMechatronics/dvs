@@ -19,7 +19,7 @@ Shader::Shader(const std::string& vertex_shader, const std::string& fragment_sha
     {
         throw std::runtime_error("Invalid option for shader source!");
     }
-    std::cout << "Program id: " << program_id_ << std::endl;
+    // std::cout << "Program id: " << program_id_ << std::endl;
 }
 
 Shader Shader::createFromFiles(const std::string& vertex_shader_path, const std::string& fragment_shader_path)

@@ -11,25 +11,18 @@ using namespace dvs::internal;
 
 void MainWindow::setupGui()
 {
-    tab_container = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(600, 600));
+    tabs_view = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
+    tabs_view->Layout();
 
-    wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);
+    tabs_sizer_v = new wxBoxSizer(wxHORIZONTAL);
+    tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
 
     wxBoxSizer* big_sizer = new wxBoxSizer(wxVERTICAL);
-    big_sizer->Add(button_sizer, 0, wxEXPAND);
-    big_sizer->Add(tab_container, 1, wxEXPAND);
+    big_sizer->Add(tabs_sizer_v, 1, wxEXPAND);
 
     this->SetSizer(big_sizer);
 
-    tabs_view = new wxNotebook(tab_container, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
-    tabs_view->Layout();
-
     Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MainWindow::tabChanged, this);
-
-    tabs_sizer_v = new wxBoxSizer(wxVERTICAL);
-    tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
-
-    tab_container->SetSizer(tabs_sizer_v);
 
     setupTabs(save_manager_->getCurrentProjectSettings());
     setupWindows(save_manager_->getCurrentProjectSettings());
@@ -42,7 +35,10 @@ void MainWindow::setupTabs(const ProjectSettings& project_settings)
     {
         const std::string tab_name = tab.getName();
 
-        TabView* tab_element = new TabView(tabs_view, tab);
+        TabView* tab_element = new TabView(tabs_view,
+            tab,
+            notification_from_gui_element_key_pressed_,
+            notification_from_gui_element_key_released_);
         tabs_.push_back(tab_element);
 
         tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
@@ -88,7 +84,7 @@ void MainWindow::OnSize(wxSizeEvent& event)
 {
     wxFrame::OnSize(event);
 
-    const wxSize new_size = tab_container->GetSize();
+    const wxSize new_size = tabs_view->GetSize();
 
     for (size_t k = 0; k < tabs_.size(); k++)
     {

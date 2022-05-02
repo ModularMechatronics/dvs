@@ -80,9 +80,14 @@ wxGLContext* PlotWindowGLPane::getContext()
 #endif
 }
 
-PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent, const ElementSettings& element_settings, const float grid_size)
+PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent,
+    const ElementSettings& element_settings,
+    const float grid_size,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
-      GuiElement(element_settings), m_context(getContext()), axes_interactor_(axes_settings_, getWidth(), getHeight())
+      GuiElement(element_settings, notify_main_window_key_pressed,
+        notify_main_window_key_released), m_context(getContext()), axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
     is_editing_ = false;
     parent_size_ = parent->GetSize();
@@ -157,8 +162,8 @@ void PlotWindowGLPane::bindCallbacks()
     Bind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
     Bind(wxEVT_LEFT_DOWN, &PlotWindowGLPane::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &PlotWindowGLPane::mouseLeftReleased, this);
-    // Bind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressed, this);
-    // Bind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleased, this);
+    Bind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressedCallback, this);
+    Bind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleasedCallback, this);
     Bind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
     Bind(wxEVT_LEAVE_WINDOW, &PlotWindowGLPane::mouseLeftWindow, this);
 }
@@ -539,6 +544,7 @@ void PlotWindowGLPane::keyPressed(const char key)
     {
         keyboard_state_.keyGotPressed(key);
     }
+    
     Refresh();
 }
 
@@ -551,6 +557,18 @@ void PlotWindowGLPane::keyReleased(const char key)
     }
     current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
     Refresh();
+}
+
+void PlotWindowGLPane::keyPressedCallback(wxKeyEvent& evt)
+{
+    const int key = evt.GetKeyCode();
+    notify_main_window_key_pressed_(key);
+}
+
+void PlotWindowGLPane::keyReleasedCallback(wxKeyEvent& evt)
+{
+    const int key = evt.GetKeyCode();
+    notify_main_window_key_released_(key);
 }
 
 // Returns window width in pixels

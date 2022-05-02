@@ -9,7 +9,10 @@ bool KeyboardState::isPressed() const
 
 bool KeyboardState::keyIsPressed(const char key) const
 {
-    return std::count(pressed_keys_.begin(), pressed_keys_.end(), key) > 0;
+    const char key_upper = toupper(key);
+    const char key_lower = tolower(key_upper);
+    return (std::count(pressed_keys_.begin(), pressed_keys_.end(), key_upper) > 0) || 
+        (std::count(pressed_keys_.begin(), pressed_keys_.end(), key_lower) > 0);
 }
 
 void KeyboardState::keyGotPressed(const char key)

@@ -5,6 +5,7 @@
 #include <wx/wx.h>
 
 #include <memory>
+#include <functional>
 
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
@@ -19,15 +20,27 @@ protected:
     ElementSettings element_settings_;
     bool is_editing_;
     bool is_selected_;
+    std::function<void(const char key)> notify_main_window_key_pressed_;
+    std::function<void(const char key)> notify_main_window_key_released_;
 
     Vec2Df parent_size_;  // Pixels
 
+
 public:
     GuiElement() = delete;
-    GuiElement(const ElementSettings& element_settings)
+    GuiElement(const ElementSettings& element_settings) :
+        element_settings_{element_settings}
     {
         is_editing_ = false;
-        element_settings_ = element_settings;
+    }
+    GuiElement(const ElementSettings& element_settings,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released) :
+        element_settings_{element_settings},
+        notify_main_window_key_pressed_{notify_main_window_key_pressed},
+        notify_main_window_key_released_{notify_main_window_key_released}
+    {
+        is_editing_ = false;
     }
 
     std::string getName() const

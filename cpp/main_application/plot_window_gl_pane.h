@@ -90,7 +90,11 @@ private:
     MouseInteractionAxis current_mouse_interaction_axis_;
 
 public:
-    PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings& element_settings, const float grid_size);
+    PlotWindowGLPane(wxNotebookPage* parent,
+        const ElementSettings& element_settings,
+        const float grid_size,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released);
     ~PlotWindowGLPane();
 
     int getWidth();
@@ -110,6 +114,8 @@ public:
     void refresh() override;
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
+    void keyPressedCallback(wxKeyEvent& evt);
+    void keyReleasedCallback(wxKeyEvent& evt);
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);

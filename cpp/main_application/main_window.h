@@ -39,10 +39,7 @@ private:
 
     UdpServer* udp_server_;
     wxTimer timer_;
-    wxTimer keyboard_timer_;
     wxTimer refresh_timer_;
-
-    std::map<char, bool> pressed_keys_;
 
     std::vector<TabView*> tabs_;
     std::vector<WindowView*> windows_;
@@ -56,10 +53,12 @@ private:
 
     bool app_in_focus_;
 
+    std::function<void(const char key)> notification_from_gui_element_key_pressed_;
+    std::function<void(const char key)> notification_from_gui_element_key_released_;
+
     CustomTaskBarIcon* task_bar_;
 
     wxNotebook* tabs_view;
-    wxPanel* tab_container;
     LayoutToolsWindow* layout_tools_window_;
     wxBoxSizer* tabs_sizer_v;
 
