@@ -94,7 +94,9 @@ private:
     void toggleEditLayoutCallback(wxCommandEvent& event);
     void preferencesCallback(wxCommandEvent& event);
     void preferences();
-    void showMainWindow(wxCommandEvent& event);
+    void showMainWindow();
+    void showMainWindowCallback(wxCommandEvent& event);
+    wxMenuBar* createMainMenuBar();
     void toggleEditLayout();
     void editingFinished(wxCommandEvent& event);
     void guiElementModified(wxCommandEvent& event);
@@ -104,8 +106,6 @@ private:
 
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
-
-    void OnKeyDown(wxKeyEvent& event);
 
     void saveProject();
     void saveProjectCallback(wxCommandEvent& event);

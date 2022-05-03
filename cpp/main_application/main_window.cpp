@@ -105,7 +105,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         toggleWindowVisibility(window_name);
     });
     task_bar_->setOnMenuShowMainWindow([this] () -> void {
-        this->Show();
+        showMainWindow();
     });
     task_bar_->setOnMenuPreferences([this] () -> void {
         preferences();
@@ -150,43 +150,18 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(wxEVT_CLOSE_WINDOW, &MainWindow::onCloseButton, this, wxID_ANY);
     Bind(CHILD_WINDOW_IN_FOCUS_EVENT, &MainWindow::childWindowInFocus, this, wxID_ANY);
 
-    m_pMenuBar = new wxMenuBar();
-
-    // File Menu
-    wxMenu* m_pFileMenu = new wxMenu();
-    m_pFileMenu->Append(wxID_NEW, _T("&New"));
-    m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
-    m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
-    m_pFileMenu->Append(wxID_SAVEAS, _T("&Save As..."));
-    m_pFileMenu->AppendSeparator();
-    m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
-    m_pMenuBar->Append(m_pFileMenu, _T("&File"));
-
-    wxMenu* m_edit_menu = new wxMenu();
-
-    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
-    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::PREFERENCES, _T("Preferences"));
-    m_pMenuBar->Append(m_edit_menu, _T("Edit"));
-
-    m_pWindowsMenu = new wxMenu();
-    m_pWindowsMenu->Append(dvs_ids::SHOW_MAIN_WINDOW, "Main window");
-    m_pWindowsMenu->AppendSeparator();
-    m_pMenuBar->Append(m_pWindowsMenu, _T("&Windows"));
-
-    wxMenu* m_pHelpMenu = new wxMenu();
-    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
-    m_pMenuBar->Append(m_pHelpMenu, _T("&Help"));
+    m_pMenuBar = createMainMenuBar();
 
     Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
     Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::toggleEditLayoutCallback, this, dvs_ids::EDIT_LAYOUT);
     Bind(wxEVT_MENU, &MainWindow::preferencesCallback, this, dvs_ids::PREFERENCES);
-    Bind(wxEVT_MENU, &MainWindow::showMainWindow, this, dvs_ids::SHOW_MAIN_WINDOW);
+    Bind(wxEVT_MENU, &MainWindow::showMainWindowCallback, this, dvs_ids::SHOW_MAIN_WINDOW);
     Bind(wxEVT_MENU, &MainWindow::openExistingFileCallback, this, wxID_OPEN);
     Bind(wxEVT_MENU, &MainWindow::saveProjectAsCallback, this, wxID_SAVEAS);
 
     SetMenuBar(m_pMenuBar);
-    // wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
+    wxMenuBar::MacSetCommonMenuBar(m_pMenuBar);
 
     current_tab_num_ = 0;
 
@@ -246,9 +221,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
 
     app_in_focus_ = true;
-
-    // Bind(wxEVT_CHAR_HOOK, &MainWindow::OnKeyDown, this);
-    Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, this);
 }
 
 void MainWindow::appInactive()
@@ -259,23 +231,6 @@ void MainWindow::appInactive()
 void MainWindow::appActive()
 {
     app_in_focus_ = true;
-}
-
-void MainWindow::OnKeyDown(wxKeyEvent& event)
-{
-    std::cout << "Keydown from mw!" << std::endl;
-    /*int key = event.GetKeyCode();
-    if(wxGetKeyState(wxKeyCode('q')))
-    {
-        notifyChildrenOnKeyPressed(key);
-        std::cout << "Key pressed from OnKeyDown" << std::endl;
-    }
-    else
-    {
-        notifyChildrenOnKeyReleased(key);
-        std::cout << "Key released from OnKeyDown" << std::endl;
-    }
-    // event.Skip();*/
 }
 
 void MainWindow::onActivate(wxActivateEvent& event)
@@ -704,10 +659,56 @@ void MainWindow::preferences()
     std::cout << "Preferences!" << std::endl;
 }
 
-void MainWindow::showMainWindow(wxCommandEvent& event)
+void MainWindow::showMainWindowCallback(wxCommandEvent& event)
 {
-    this->Hide();
-    this->Show();
+    showMainWindow();
+}
+
+wxMenuBar* MainWindow::createMainMenuBar()
+{
+    wxMenuBar* menu_bar_tmp = new wxMenuBar();
+
+    // File Menu
+    wxMenu* m_pFileMenu = new wxMenu();
+    m_pFileMenu->Append(wxID_NEW, _T("&New"));
+    m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
+    m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
+    m_pFileMenu->Append(wxID_SAVEAS, _T("&Save As..."));
+    m_pFileMenu->AppendSeparator();
+    m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
+    menu_bar_tmp->Append(m_pFileMenu, _T("&File"));
+
+    wxMenu* m_edit_menu = new wxMenu();
+
+    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
+    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::PREFERENCES, _T("Preferences"));
+    menu_bar_tmp->Append(m_edit_menu, _T("Edit"));
+
+    m_pWindowsMenu = new wxMenu();
+    m_pWindowsMenu->Append(dvs_ids::SHOW_MAIN_WINDOW, "Main window");
+    m_pWindowsMenu->AppendSeparator();
+    menu_bar_tmp->Append(m_pWindowsMenu, _T("&Windows"));
+
+    wxMenu* m_pHelpMenu = new wxMenu();
+    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
+    menu_bar_tmp->Append(m_pHelpMenu, _T("&Help"));
+
+    return menu_bar_tmp;
+}
+
+void MainWindow::showMainWindow()
+{
+    if(IsShown())
+    {
+        Raise();
+    }
+    else
+    {
+        this->Show();
+        m_pMenuBar = createMainMenuBar();
+
+        SetMenuBar(m_pMenuBar);
+    }
 }
 
 void MainWindow::toggleEditLayout()
