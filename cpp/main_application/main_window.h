@@ -92,6 +92,9 @@ private:
     void tabChanged(wxCommandEvent& event);
     void toggleEditLayout(wxCommandEvent& event);
     void toggleEditLayoutCallback(wxCommandEvent& event);
+    void preferencesCallback(wxCommandEvent& event);
+    void preferences();
+    void showMainWindow(wxCommandEvent& event);
     void toggleEditLayout();
     void editingFinished(wxCommandEvent& event);
     void guiElementModified(wxCommandEvent& event);

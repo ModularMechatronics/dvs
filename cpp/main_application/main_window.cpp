@@ -107,6 +107,9 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     task_bar_->setOnMenuShowMainWindow([this] () -> void {
         this->Show();
     });
+    task_bar_->setOnMenuPreferences([this] () -> void {
+        preferences();
+    });
 
     notification_from_gui_element_key_pressed_ = [this] (const char key) {
         notifyChildrenOnKeyPressed(key);
@@ -162,9 +165,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     wxMenu* m_edit_menu = new wxMenu();
 
     edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
+    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::PREFERENCES, _T("Preferences"));
     m_pMenuBar->Append(m_edit_menu, _T("Edit"));
 
     m_pWindowsMenu = new wxMenu();
+    m_pWindowsMenu->Append(dvs_ids::SHOW_MAIN_WINDOW, "Main window");
+    m_pWindowsMenu->AppendSeparator();
     m_pMenuBar->Append(m_pWindowsMenu, _T("&Windows"));
 
     wxMenu* m_pHelpMenu = new wxMenu();
@@ -174,6 +180,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
     Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::toggleEditLayoutCallback, this, dvs_ids::EDIT_LAYOUT);
+    Bind(wxEVT_MENU, &MainWindow::preferencesCallback, this, dvs_ids::PREFERENCES);
+    Bind(wxEVT_MENU, &MainWindow::showMainWindow, this, dvs_ids::SHOW_MAIN_WINDOW);
     Bind(wxEVT_MENU, &MainWindow::openExistingFileCallback, this, wxID_OPEN);
     Bind(wxEVT_MENU, &MainWindow::saveProjectAsCallback, this, wxID_SAVEAS);
 
@@ -686,6 +694,22 @@ void MainWindow::toggleEditLayoutCallback(wxCommandEvent& WXUNUSED(event))
     toggleEditLayout();
 }
 
+void MainWindow::preferencesCallback(wxCommandEvent& event)
+{
+    preferences();
+}
+
+void MainWindow::preferences()
+{
+    std::cout << "Preferences!" << std::endl;
+}
+
+void MainWindow::showMainWindow(wxCommandEvent& event)
+{
+    this->Hide();
+    this->Show();
+}
+
 void MainWindow::toggleEditLayout()
 {
     if (is_editing_)
@@ -821,7 +845,6 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
     for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
     {
         it->second->keyPressed(key);
-        std::cout << "Name: " << it->second->getName() << std::endl;
     }
 }
 

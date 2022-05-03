@@ -137,21 +137,41 @@ double changeIncrement(const double scale, const double inc, const size_t num_li
 void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
 {
     const Vec3Dd s = axes_limits_.getAxesScale();
+    const SnappingAxis snapping_axis = view_angles_.getSnappingAxis();
     Vec3Dd sa(1.0, 1.0, 1.0);
-    if (mia == MouseInteractionAxis::X)
+
+    if(SnappingAxis::None == snapping_axis)
     {
-        sa.y = 0.0;
-        sa.z = 0.0;
+        if (mia == MouseInteractionAxis::X)
+        {
+            sa.y = 0.0;
+            sa.z = 0.0;
+        }
+        else if (mia == MouseInteractionAxis::Y)
+        {
+            sa.x = 0.0;
+            sa.z = 0.0;
+        }
+        else if (mia == MouseInteractionAxis::Z)
+        {
+            sa.x = 0.0;
+            sa.y = 0.0;
+        }
     }
-    else if (mia == MouseInteractionAxis::Y)
+    else
     {
-        sa.x = 0.0;
-        sa.z = 0.0;
-    }
-    else if (mia == MouseInteractionAxis::Z)
-    {
-        sa.x = 0.0;
-        sa.y = 0.0;
+        if (snapping_axis == SnappingAxis::X)
+        {
+            sa.x = 0.0;
+        }
+        else if (snapping_axis == SnappingAxis::Y)
+        {
+            sa.y = 0.0;
+        }
+        else if (snapping_axis == SnappingAxis::Z)
+        {
+            sa.z = 0.0;
+        }
     }
     const Vec3Dd inc_vec = Vec3Dd(dy * s.x * sa.x, dy * s.y * sa.y, dy * s.z * sa.z);
 

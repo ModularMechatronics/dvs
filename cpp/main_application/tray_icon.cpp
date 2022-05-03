@@ -9,6 +9,7 @@ wxBEGIN_EVENT_TABLE(CustomTaskBarIcon, wxTaskBarIcon)
     EVT_MENU(PU_FILE_SAVE, CustomTaskBarIcon::onMenuFileSave)
     EVT_MENU(PU_FILE_SAVE_AS, CustomTaskBarIcon::onMenuFileSaveAs)
     EVT_MENU(PU_EDIT_LAYOUT, CustomTaskBarIcon::onMenuEdit)
+    EVT_MENU(PU_PREFERENCES, CustomTaskBarIcon::onMenuPreferences)
 wxEND_EVENT_TABLE()
 
 #if defined(__WXOSX__) && wxOSX_USE_COCOA
@@ -26,7 +27,6 @@ CustomTaskBarIcon::CustomTaskBarIcon(wxTaskBarIconType iconType) :
     {
         free_ids_.push_back(k);
     }
-    std::cout << "Size: " << free_ids_.size() << std::endl;
     taken_ids_.clear();
 }
 
@@ -123,6 +123,11 @@ void CustomTaskBarIcon::onMenuEdit(wxCommandEvent&)
     edit_function_();
 }
 
+void CustomTaskBarIcon::onMenuPreferences(wxCommandEvent&)
+{
+    preferences_function_();
+}
+
 void CustomTaskBarIcon::addNewWindow(const std::string& window_name)
 {
     const auto id = getNextFreeId();
@@ -143,6 +148,12 @@ void CustomTaskBarIcon::setEditLabel(const std::string edit_label)
     edit_label_ = edit_label;
 }
 
+void CustomTaskBarIcon::setOnMenuPreferences(std::function<void()>&& preferences_function)
+{
+    preferences_function_ = preferences_function;
+}
+    
+
 wxMenu *CustomTaskBarIcon::CreatePopupMenu()
 {
     MyMenu* menu_ = new MyMenu{[this] () -> void {
@@ -161,10 +172,9 @@ wxMenu *CustomTaskBarIcon::CreatePopupMenu()
     
     menu_->Append(PU_FILE, wxT("&File"), file_submenu_);
     menu_->AppendSeparator();
-    menu_->Append(PU_SHOW_MAIN_WINDOW, wxT("&Show main window"));
-    menu_->AppendSeparator();
 
     menu_->Append(PU_EDIT_LAYOUT, edit_label_);
+    menu_->Append(PU_PREFERENCES, "Preferences");
     menu_->AppendSeparator();
 
     windows_submenu_->Append(PU_SHOW_MAIN_WINDOW, wxT("Main window"));

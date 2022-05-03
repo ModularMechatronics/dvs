@@ -1,5 +1,6 @@
 Pre release:
 - Add "owns_memory_" field to Matrix, Vector, to signify if data should be freed
+ * Or plotting of new "view" structures, where one can set data pointers without ownership
 - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
 - Verify that image is not mirrored
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
@@ -24,7 +25,6 @@ Pre release:
 - Change plot-LINE_STRIP to separate function, lineCollection or something like that
 - Replace old c type arrays with std::array
 - Characters turning away from plot box when rotating (possibly post release)
-- Don''t zoom perpendicular axis if snapped
 - Reducing number of axis numbers depending on rotation
 - Zoom rectangle if snapped
 - Making sure that view and axes are set properly when not explicitly setting them
@@ -35,7 +35,7 @@ Pre release:
 - Change 'P' to 'T' for translating, and change name of code correspondingly
 - Switch between orthographic and perspective projection with 'P'
 - Fix panning "speed"
-- "Lean" line numbers, make font smaller, fewer line points per axis
+- Make font smaller, fewer line points per axis
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added

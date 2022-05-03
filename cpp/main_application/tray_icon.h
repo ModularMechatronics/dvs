@@ -16,6 +16,7 @@ enum
     PU_SHOW_MAIN_WINDOW,
     PU_SHOW_SUB_WINDOW,
     PU_EDIT_LAYOUT,
+    PU_PREFERENCES,
     PU_FILE,
     PU_FILE_NEW,
     PU_FILE_OPEN,
@@ -79,6 +80,7 @@ public:
     void setOnMenuEdit(std::function<void()>&& edit_function);
     void setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function);
     void setOnMenuShowMainWindow(std::function<void()>&& main_menu_function);
+    void setOnMenuPreferences(std::function<void()>&& preferences_function);    
 
     void onMenuExit(wxCommandEvent&);
     void onMenuMainWindow(wxCommandEvent& evt);
@@ -88,6 +90,7 @@ public:
     void onMenuFileSave(wxCommandEvent&);
     void onMenuFileSaveAs(wxCommandEvent&);
     void onMenuEdit(wxCommandEvent&);
+    void onMenuPreferences(wxCommandEvent&);
 
     void setEditLabel(const std::string edit_label);
 
@@ -101,6 +104,7 @@ public:
 private:
     std::function<void()> exit_function_;
     std::function<void()> edit_function_;
+    std::function<void()> preferences_function_;
     std::function<void()> file_new_function_;
     std::function<void()> file_open_function_;
     std::function<void()> file_save_function_;
