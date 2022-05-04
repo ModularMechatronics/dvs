@@ -17,7 +17,6 @@
 #include "plot_objects/draw_plane_xz/draw_plane_xz.h"
 #include "plot_objects/draw_plane_yz/draw_plane_yz.h"
 #include "plot_objects/draw_triangles_3d/draw_triangles_3d.h"
-#include "plot_objects/draw_triangle_3d/draw_triangle_3d.h"
 #include "plot_objects/draw_tiles/draw_tiles.h"
 #include "plot_objects/draw_mesh/draw_mesh.h"
 #include "plot_objects/draw_line3d/draw_line3d.h"

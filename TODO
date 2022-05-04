@@ -32,7 +32,6 @@ Pre release:
 - Imshow 1 and 3 channels + arbitrary data type
 - Fix layout designer
 - Fix number formatting and grid vectors system
-- Change 'P' to 'T' for translating, and change name of code correspondingly
 - Switch between orthographic and perspective projection with 'P'
 - Fix panning "speed"
 - Make font smaller, fewer line points per axis
@@ -40,6 +39,14 @@ Pre release:
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
 - Implement findMinMax for matrices and vectors
+- Contour plotting function
+- Only one instances of shader programs, and not one per plot element
+- Static assert in plot interface for template type T, that it's only float, double, int8_t, uint8_t, etc...
+
+Needs fixing:
+ - imshow
+ - surf
+ (3D surface functions still don't have correct color)
 
 Post release:
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
@@ -53,8 +60,8 @@ Post release:
 - Nice looking buttons in interface
 - Ability to add button to gui
 - Ability to set FOV
-
+- Show plot walls differently if perspective projection
+- Programatically specicy plots in different windows
 
 Unsure:
  - 3D world
- - Programatically specicy plots in different windows

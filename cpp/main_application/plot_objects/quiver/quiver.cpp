@@ -13,8 +13,9 @@ float* convertQuiverData(uint8_t* input_data, const Dimension2D& dims, const siz
     u.setInternalData(reinterpret_cast<T*>(input_data + 2 * num_bytes_per_matrix), dims.rows, dims.cols);
     v.setInternalData(reinterpret_cast<T*>(input_data + 3 * num_bytes_per_matrix), dims.rows, dims.cols);
 
-    const float ang = 10.0 * M_PI / 180.0;
-    const float arrow_edge_length_ratio = 0.9;
+    const float ang = 30.0 * M_PI / 180.0;
+    const float arrow_edge_length_ratio = 0.85;
+    const float arrow_edge_multiplier = arrow_edge_length_ratio - 1.0f;
 
     const float ca = std::cos(ang), sa = std::sin(ang);
     const float nca = std::cos(-ang), nsa = std::sin(-ang);
@@ -34,12 +35,12 @@ float* convertQuiverData(uint8_t* input_data, const Dimension2D& dims, const siz
             const Point2D<float> p1(x(r, c) + u(r, c), y(r, c) + v(r, c));
             const Vec2D<float> v = p1 - p0;
 
-            const Vec2D<float> vec_short = v * arrow_edge_length_ratio;
+            const Vec2D<float> vec_short = v * arrow_edge_multiplier;
             const Vec2D<float> vec_rotated0 = r_0 * vec_short;
             const Vec2D<float> vec_rotated1 = r_1 * vec_short;
 
-            const Point2D<float> p1_left = p0 + vec_rotated0;
-            const Point2D<float> p1_right = p0 + vec_rotated1;
+            const Point2D<float> p1_left = p1 + vec_rotated0;
+            const Point2D<float> p1_right = p1 + vec_rotated1;
 
             points_ptr[idx + 0] = p0.x;
             points_ptr[idx + 1] = p0.y;
@@ -162,6 +163,6 @@ void Quiver::findMinMax()
 void Quiver::render()
 {
     glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_LINE_STRIP, 0, 2 * 6 * dims_.rows * dims_.cols);
+    glDrawArrays(GL_LINES, 0, 2 * 6 * dims_.rows * dims_.cols);
     glBindVertexArray(0);
 }

@@ -93,6 +93,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent,
     parent_size_ = parent->GetSize();
     grid_size_ = grid_size;
     edit_size_margin_ = 20.0f;
+    perspective_projection_ = false;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -589,15 +590,15 @@ InteractionType keyboardStateToInteractionType(const KeyboardState& keyboard_sta
     {
         return InteractionType::RESET;
     }
-    else if (keyboard_state.keyIsPressed('p') || keyboard_state.keyIsPressed('q'))
+    else if (keyboard_state.keyIsPressed('t') || keyboard_state.keyIsPressed('T') || keyboard_state.keyIsPressed('q'))
     {
         return InteractionType::PAN;
     }
-    else if (keyboard_state.keyIsPressed('r') || keyboard_state.keyIsPressed('w'))
+    else if (keyboard_state.keyIsPressed('r') || keyboard_state.keyIsPressed('R') || keyboard_state.keyIsPressed('w'))
     {
         return InteractionType::ROTATE;
     }
-    else if (keyboard_state.keyIsPressed('z') || keyboard_state.keyIsPressed('e'))
+    else if (keyboard_state.keyIsPressed('z') || keyboard_state.keyIsPressed('Z') || keyboard_state.keyIsPressed('e'))
     {
         return InteractionType::ZOOM;
     }
@@ -628,6 +629,11 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     glClearColor(bg_color / 255.0f, bg_color / 255.0f, bg_color / 255.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    if(keyboard_state_.keyIsPressed('p') || keyboard_state_.keyIsPressed('P'))
+    {
+        perspective_projection_ = !perspective_projection_;
+    }
+
     axes_interactor_.update(
         keyboardStateToInteractionType(keyboard_state_), getWidth(), getHeight());
 
@@ -636,7 +642,7 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
                          axes_interactor_.getViewAngles(),
                          axes_interactor_.generateGridVectors(),
-                         false,
+                         perspective_projection_,
                          getWidth(),
                          getHeight());
 

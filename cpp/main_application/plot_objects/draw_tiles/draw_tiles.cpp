@@ -19,6 +19,17 @@ DrawTiles::DrawTiles(std::unique_ptr<const ReceivedData> received_data, const Fu
     fillObjectsFromBuffer(&(data_ptr_[num_bytes_for_matrix]), tile_size_);
 
     points_ptr_ = convertSingleMatrixDataOuter(data_ptr_, data_type_, dims_, tile_size_);
+
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * dims_.rows * dims_.cols, points_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void DrawTiles::findMinMax()
@@ -44,34 +55,9 @@ void DrawTiles::findMinMax()
 
 void DrawTiles::render()
 {
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_handle_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_handle_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * dims_.rows * dims_.cols, points_ptr_, GL_STATIC_DRAW);
-    }
-
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_handle_);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    setLinewidth(line_width_);
-
-    glPolygonOffset(1, -1);
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    setColor(face_color_);
-    glDrawArrays(GL_QUADS, 0, 4 * dims_.rows * dims_.cols);
-    setColor(edge_color_);
-
-    glPolygonMode(GL_FRONT, GL_LINE);
-    glPolygonMode(GL_BACK, GL_LINE);
-    glDrawArrays(GL_QUADS, 0, 4 * dims_.rows * dims_.cols);
-    glPolygonMode(GL_FRONT, GL_FILL);
-    glPolygonMode(GL_BACK, GL_FILL);
-    glDisable(GL_POLYGON_OFFSET_FILL);
-
-    glDisableVertexAttribArray(0);
+    glBindVertexArray(vertex_buffer_array_);
+    glDrawArrays(GL_TRIANGLES, 0, 6 * dims_.rows * dims_.cols);
+    glBindVertexArray(0);
 }
 
 DrawTiles::~DrawTiles()
@@ -79,17 +65,16 @@ DrawTiles::~DrawTiles()
     delete[] points_ptr_;
 }
 
-// TODO: Why is template parameter not used?
 template <typename T>
 inline float* convertSingleMatrixDataInner(uint8_t* const data_buffer,
                                            const size_t num_rows,
                                            const size_t num_cols,
                                            const Vec2D<double>& tile_size)
 {
-    float* output_data = new float[num_rows * num_cols * 4 * 3];
-    Matrix<float> z;
+    float* output_data = new float[num_rows * num_cols * 6 * 3];
+    Matrix<T> z;
 
-    z.setInternalData(reinterpret_cast<float*>(data_buffer), num_rows, num_cols);
+    z.setInternalData(reinterpret_cast<T*>(data_buffer), num_rows, num_cols);
 
     size_t idx = 0;
     for (size_t r = 0; r < num_rows; r++)
@@ -114,22 +99,38 @@ inline float* convertSingleMatrixDataInner(uint8_t* const data_buffer,
             const size_t idx3_x = idx + 9;
             const size_t idx3_y = idx + 10;
             const size_t idx3_z = idx + 11;
-            idx = idx + 12;
+
+            const size_t idx4_x = idx + 12;
+            const size_t idx4_y = idx + 13;
+            const size_t idx4_z = idx + 14;
+
+            const size_t idx5_x = idx + 15;
+            const size_t idx5_y = idx + 16;
+            const size_t idx5_z = idx + 17;
+            idx = idx + 18;
 
             output_data[idx0_x] = x;
             output_data[idx1_x] = x;
             output_data[idx2_x] = x + tile_size.x;
-            output_data[idx3_x] = x + tile_size.x;
+        
+            output_data[idx3_x] = x;
+            output_data[idx4_x] = x + tile_size.x;
+            output_data[idx5_x] = x + tile_size.x;
 
             output_data[idx0_y] = y;
             output_data[idx1_y] = y + tile_size.y;
             output_data[idx2_y] = y + tile_size.y;
+
             output_data[idx3_y] = y;
+            output_data[idx4_y] = y;
+            output_data[idx5_y] = y + tile_size.y;
 
             output_data[idx0_z] = z(r, c);
             output_data[idx1_z] = z(r, c);
             output_data[idx2_z] = z(r, c);
             output_data[idx3_z] = z(r, c);
+            output_data[idx4_z] = z(r, c);
+            output_data[idx5_z] = z(r, c);
         }
     }
 

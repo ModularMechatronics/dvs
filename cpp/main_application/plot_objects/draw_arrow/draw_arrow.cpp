@@ -17,7 +17,7 @@ DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const Fu
 
     points.setInternalData(nullptr, 0);
 
-    const double ang = 10.0 * M_PI / 180.0;
+    const double ang = 30.0 * M_PI / 180.0;
 
     const double ca = std::cos(ang), sa = std::sin(ang);
     const double nca = std::cos(-ang), nsa = std::sin(-ang);
@@ -25,15 +25,15 @@ DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const Fu
     const Matrix<double> r_0 = {{ca, -sa}, {sa, ca}};
     const Matrix<double> r_1 = {{nca, -nsa}, {nsa, nca}};
 
-    const double arrow_edge_length_ratio = 0.9;
+    const double arrow_edge_length_ratio = 0.85;
 
-    const Vec2Dd vec_short = v * arrow_edge_length_ratio;
+    const Vec2Dd vec_short = v * arrow_edge_length_ratio - v;
     const Vec2Dd vec_rotated0 = r_0 * vec_short;
     const Vec2Dd vec_rotated1 = r_1 * vec_short;
 
     p1_ = p0_ + v;
-    p1_left_ = p0_ + vec_rotated0;
-    p1_right_ = p0_ + vec_rotated1;
+    p1_left_ = p1_ + vec_rotated0;
+    p1_right_ = p1_ + vec_rotated1;
 
     points_ptr_ = new float[6 * 2];
     points_ptr_[0] = p0_.x;

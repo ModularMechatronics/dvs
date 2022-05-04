@@ -35,7 +35,6 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_objects/draw_plane_yz/draw_plane_yz.cpp
                      plot_objects/draw_polygon_4_points/draw_polygon_4_points.cpp
                      plot_objects/draw_tiles/draw_tiles.cpp
-                     plot_objects/draw_triangle_3d/draw_triangle_3d.cpp
                      plot_objects/draw_triangles_3d/draw_triangles_3d.cpp
                      plot_objects/im_show/im_show.cpp
                      plot_objects/plot2_collection/plot2_collection.cpp

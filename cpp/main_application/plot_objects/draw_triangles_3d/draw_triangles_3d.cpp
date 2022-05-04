@@ -11,6 +11,17 @@ DrawTriangles3D::DrawTriangles3D(std::unique_ptr<const ReceivedData> received_da
     }
 
     points_ptr_ = convertTrianglesData(data_ptr_, data_type_, num_elements_);
+
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3 * 3, points_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void DrawTriangles3D::findMinMax()
@@ -35,34 +46,9 @@ void DrawTriangles3D::findMinMax()
 
 void DrawTriangles3D::render()
 {
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        glGenBuffers(1, &buffer_handle_);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer_handle_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3 * 3, points_ptr_, GL_STATIC_DRAW);
-    }
-
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_handle_);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    setLinewidth(line_width_);
-
-    glPolygonOffset(1, -1);
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    setColor(face_color_);
+    glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);
-    setColor(edge_color_);
-
-    glPolygonMode(GL_FRONT, GL_LINE);
-    glPolygonMode(GL_BACK, GL_LINE);
-    glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);
-    glPolygonMode(GL_FRONT, GL_FILL);
-    glPolygonMode(GL_BACK, GL_FILL);
-    glDisable(GL_POLYGON_OFFSET_FILL);
-
-    glDisableVertexAttribArray(0);
+    glBindVertexArray(0);
 }
 
 DrawTriangles3D::~DrawTriangles3D()

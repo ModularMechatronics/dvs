@@ -297,7 +297,7 @@ void testDrawPolygonFrom4Points()
     drawPolygonFrom4Points(p0, p1, p2, p3);
 }
 
-void testDrawXYPlane()
+void testDrawXYZPlane()
 {
     VecXY<double> p0_xy(0.0, 0.0), p1_xy(1.0, 1.0);
     VecXZ<float> p0_xz(0.0, 0.0), p1_xz(1.0, 1.0);
@@ -399,17 +399,28 @@ void testDrawMesh()
 {
     using tp = double;
 
-    Vector<Point3D<tp>> vertices(4);
-    vertices(0) = Point3D<tp>(-1.0, -1.0, -1.0);
-    vertices(1) = Point3D<tp>(1.0, -1.0, -1.0);
-    vertices(2) = Point3D<tp>(1.0, 1.0, -1.0);
-    vertices(3) = Point3D<tp>(0.0, 0.0, 1.0);
+    Vector<Point3D<tp>> vertices(12);
+    vertices(0) = Point3D<tp>(0.0, 0.0, 0.0);
+    vertices(1) = Point3D<tp>(1.0, 0.0, 0.0);
+    vertices(2) = Point3D<tp>(0.5, -1.0, 1.0);
+
+    vertices(3) = Point3D<tp>(0.0, 0.0, 0.0);
+    vertices(4) = Point3D<tp>(-1.0, 0.0, 0.0);
+    vertices(5) = Point3D<tp>(0.0, 1.0, 1.0);
+
+    vertices(6) = Point3D<tp>(0.0, 0.0, 0.0);
+    vertices(7) = Point3D<tp>(-1.0, 0.0, 0.0);
+    vertices(8) = Point3D<tp>(0.0, 1.0, -1.0);
+
+    vertices(9) = Point3D<tp>(0.0, 0.0, 0.0);
+    vertices(10) = Point3D<tp>(1.0, 0.0, 0.0);
+    vertices(11) = Point3D<tp>(0.5, -1.0, -1.0);
 
     Vector<IndexTriplet> indices(4);
     indices(0) = IndexTriplet(0, 1, 2);
-    indices(1) = IndexTriplet(0, 1, 3);
-    indices(2) = IndexTriplet(1, 2, 3);
-    indices(3) = IndexTriplet(2, 0, 3);
+    indices(1) = IndexTriplet(3, 4, 5);
+    indices(2) = IndexTriplet(6, 7, 8);
+    indices(3) = IndexTriplet(9, 10, 11);
 
     setCurrentElement("view_00");
     clearView();
@@ -448,7 +459,7 @@ void testDrawArrow()
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
-    drawArrow(p, v, properties::Color(12, 244, 244));
+    drawArrow(p, v, properties::Color(12, 14, 244));
 }
 
 void testQuiver()

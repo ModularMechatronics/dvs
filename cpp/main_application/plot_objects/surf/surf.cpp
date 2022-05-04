@@ -22,7 +22,7 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
 
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 4 * (dims_.rows - 1) * (dims_.cols - 1) * 2, points_ptr_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), points_ptr_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
@@ -38,7 +38,7 @@ void Surf::findMinMax()
 void Surf::render()
 {
     glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_TRIANGLES, 0, 4 * (dims_.rows - 1) * (dims_.cols - 1) * 2);
+    glDrawArrays(GL_TRIANGLES, 0, (dims_.rows - 1) * (dims_.cols - 1) * 6);
     glBindVertexArray(0);
 }
 
@@ -55,7 +55,7 @@ float* convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size
     y.setInternalData(reinterpret_cast<T*>(&(input_data[num_bytes_for_one_vec])), dims.rows, dims.cols);
     z.setInternalData(reinterpret_cast<T*>(&(input_data[2 * num_bytes_for_one_vec])), dims.rows, dims.cols);
 
-    const size_t new_data_size = (dims.rows - 1) * (dims.cols - 1) * 4 * 3 * 2;
+    const size_t new_data_size = (dims.rows - 1) * (dims.cols - 1) * 6 * 3;
 
     float* output_data = new float[new_data_size];
     size_t idx = 0;
@@ -75,45 +75,42 @@ float* convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size
             const size_t idx2_y = idx + 7;
             const size_t idx2_z = idx + 8;
 
-            idx = idx + 12;
+            const size_t idx3_x = idx + 9;
+            const size_t idx3_y = idx + 10;
+            const size_t idx3_z = idx + 11;
+
+            const size_t idx4_x = idx + 12;
+            const size_t idx4_y = idx + 13;
+            const size_t idx4_z = idx + 14;
+
+            const size_t idx5_x = idx + 15;
+            const size_t idx5_y = idx + 16;
+            const size_t idx5_z = idx + 17;
+            idx = idx + 18;
 
             output_data[idx0_x] = x(r, c);
             output_data[idx1_x] = x(r + 1, c);
-            output_data[idx2_x] = x(r, c + 1);
+            output_data[idx2_x] = x(r + 1, c + 1);
+        
+            output_data[idx3_x] = x(r, c);
+            output_data[idx4_x] = x(r, c + 1);
+            output_data[idx5_x] = x(r + 1, c + 1);
 
             output_data[idx0_y] = y(r, c);
             output_data[idx1_y] = y(r + 1, c);
-            output_data[idx2_y] = y(r, c + 1);
+            output_data[idx2_y] = y(r + 1, c + 1);
+
+            output_data[idx3_y] = y(r, c);
+            output_data[idx4_y] = y(r, c + 1);
+            output_data[idx5_y] = y(r + 1, c + 1);
 
             output_data[idx0_z] = z(r, c);
             output_data[idx1_z] = z(r + 1, c);
-            output_data[idx2_z] = z(r, c + 1);
+            output_data[idx2_z] = z(r + 1, c + 1);
 
-            const size_t idx0_x_2 = idx;
-            const size_t idx0_y_2 = idx + 1;
-            const size_t idx0_z_2 = idx + 2;
-
-            const size_t idx1_x_2 = idx + 3;
-            const size_t idx1_y_2 = idx + 4;
-            const size_t idx1_z_2 = idx + 5;
-
-            const size_t idx2_x_2 = idx + 6;
-            const size_t idx2_y_2 = idx + 7;
-            const size_t idx2_z_2 = idx + 8;
-
-            idx = idx + 12;
-
-            output_data[idx0_x_2] = x(r + 1, c);
-            output_data[idx1_x_2] = x(r + 1, c + 1);
-            output_data[idx2_x_2] = x(r, c + 1);
-
-            output_data[idx0_y_2] = y(r + 1, c);
-            output_data[idx1_y_2] = y(r + 1, c + 1);
-            output_data[idx2_y_2] = y(r, c + 1);
-
-            output_data[idx0_z_2] = z(r + 1, c);
-            output_data[idx1_z_2] = z(r + 1, c + 1);
-            output_data[idx2_z_2] = z(r, c + 1);
+            output_data[idx3_z] = z(r, c);
+            output_data[idx4_z] = z(r, c + 1);
+            output_data[idx5_z] = z(r + 1, c + 1);
         }
     }
 

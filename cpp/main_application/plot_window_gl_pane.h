@@ -69,6 +69,8 @@ private:
 
     int args[9];
 
+    bool perspective_projection_;
+
     int* getArgsPtr();
     wxSize parent_size_;
     Vec2Df mouse_pos_at_press_;
