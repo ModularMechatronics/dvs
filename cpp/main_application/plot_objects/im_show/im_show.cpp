@@ -42,8 +42,6 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
     num_channels_ = hdr.get(FunctionHeaderObjectType::NUM_CHANNELS).as<uint8_t>();
 
-    color_map_ = color_maps::rainbowf;
-
     width = dims_.cols;
     height = dims_.rows;
 
@@ -51,9 +49,8 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     {
         img_c3_.setInternalData(reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols);
 
-        // 4 vertices, 3 "elements" (xyz/rgb) per vertex
-        points_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
-        colors_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
+        points_ptr_ = new float[dims_.rows * dims_.cols * 6 * 6];
+        colors_ptr_ = new float[dims_.rows * dims_.cols * 6 * 6];
         size_t idx = 0;
 
         for (size_t r = 0; r < dims_.rows; r++)
@@ -64,63 +61,105 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
                 const size_t idx0_y = idx + 1;
                 const size_t idx0_z = idx + 2;
 
-                const size_t idx1_x = idx + 3;
-                const size_t idx1_y = idx + 4;
-                const size_t idx1_z = idx + 5;
+                const size_t idx0_r = idx + 3;
+                const size_t idx0_g = idx + 4;
+                const size_t idx0_b = idx + 5;
 
-                const size_t idx2_x = idx + 6;
-                const size_t idx2_y = idx + 7;
-                const size_t idx2_z = idx + 8;
+                const size_t idx1_x = idx + 6;
+                const size_t idx1_y = idx + 7;
+                const size_t idx1_z = idx + 8;
 
-                const size_t idx3_x = idx + 9;
-                const size_t idx3_y = idx + 10;
-                const size_t idx3_z = idx + 11;
+                const size_t idx1_r = idx + 9;
+                const size_t idx1_g = idx + 10;
+                const size_t idx1_b = idx + 11;
+
+                const size_t idx2_x = idx + 12;
+                const size_t idx2_y = idx + 13;
+                const size_t idx2_z = idx + 14;
+
+                const size_t idx2_r = idx + 15;
+                const size_t idx2_g = idx + 16;
+                const size_t idx2_b = idx + 17;
+
+                const size_t idx3_x = idx + 18;
+                const size_t idx3_y = idx + 19;
+                const size_t idx3_z = idx + 20;
+
+                const size_t idx3_r = idx + 21;
+                const size_t idx3_g = idx + 22;
+                const size_t idx3_b = idx + 23;
+
+                const size_t idx4_x = idx + 24;
+                const size_t idx4_y = idx + 25;
+                const size_t idx4_z = idx + 26;
+
+                const size_t idx4_r = idx + 27;
+                const size_t idx4_g = idx + 28;
+                const size_t idx4_b = idx + 29;
+
+                const size_t idx5_x = idx + 30;
+                const size_t idx5_y = idx + 31;
+                const size_t idx5_z = idx + 32;
+
+                const size_t idx5_r = idx + 33;
+                const size_t idx5_g = idx + 34;
+                const size_t idx5_b = idx + 35;
+                idx = idx + 36;
 
                 points_ptr_[idx0_x] = c;
                 points_ptr_[idx1_x] = c + 1;
-                points_ptr_[idx2_x] = c + 1;
-                points_ptr_[idx3_x] = c;
+                points_ptr_[idx2_x] = c;
+                points_ptr_[idx3_x] = c + 1;
+                points_ptr_[idx4_x] = c + 1;
+                points_ptr_[idx5_x] = c;
 
                 points_ptr_[idx0_y] = r;
                 points_ptr_[idx1_y] = r;
                 points_ptr_[idx2_y] = r + 1;
-                points_ptr_[idx3_y] = r + 1;
+                points_ptr_[idx3_y] = r;
+                points_ptr_[idx4_y] = r + 1;
+                points_ptr_[idx5_y] = r + 1;
 
                 points_ptr_[idx0_z] = 0.0f;
                 points_ptr_[idx1_z] = 0.0f;
                 points_ptr_[idx2_z] = 0.0f;
                 points_ptr_[idx3_z] = 0.0f;
+                points_ptr_[idx4_z] = 0.0f;
+                points_ptr_[idx5_z] = 0.0f;
 
                 const float color_val_r = img_c3_(r, c, 0);
                 const float color_val_g = img_c3_(r, c, 1);
                 const float color_val_b = img_c3_(r, c, 2);
 
-                colors_ptr_[idx0_x] = color_val_r;
-                colors_ptr_[idx1_x] = color_val_r;
-                colors_ptr_[idx2_x] = color_val_r;
-                colors_ptr_[idx3_x] = color_val_r;
+                points_ptr_[idx0_r] = color_val_r;
+                points_ptr_[idx1_r] = color_val_r;
+                points_ptr_[idx2_r] = color_val_r;
+                points_ptr_[idx3_r] = color_val_r;
+                points_ptr_[idx4_r] = color_val_r;
+                points_ptr_[idx5_r] = color_val_r;
 
-                colors_ptr_[idx0_y] = color_val_g;
-                colors_ptr_[idx1_y] = color_val_g;
-                colors_ptr_[idx2_y] = color_val_g;
-                colors_ptr_[idx3_y] = color_val_g;
+                points_ptr_[idx0_g] = color_val_g;
+                points_ptr_[idx1_g] = color_val_g;
+                points_ptr_[idx2_g] = color_val_g;
+                points_ptr_[idx3_g] = color_val_g;
+                points_ptr_[idx4_g] = color_val_g;
+                points_ptr_[idx5_g] = color_val_g;
 
-                colors_ptr_[idx0_z] = color_val_b;
-                colors_ptr_[idx1_z] = color_val_b;
-                colors_ptr_[idx2_z] = color_val_b;
-                colors_ptr_[idx3_z] = color_val_b;
-
-                idx = idx + 12;
+                points_ptr_[idx0_b] = color_val_b;
+                points_ptr_[idx1_b] = color_val_b;
+                points_ptr_[idx2_b] = color_val_b;
+                points_ptr_[idx3_b] = color_val_b;
+                points_ptr_[idx4_b] = color_val_b;
+                points_ptr_[idx5_b] = color_val_b;
             }
         }
 
         img_c3_.setInternalData(nullptr, 0, 0);  // Hack
     }
-    else if(num_channels_)
+    else if(num_channels_ == 1)
     {
         img_c1_.setInternalData(reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols);
 
-        // 4 vertices, 3 "element" (xyz/rgb) per vertex
         points_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
         colors_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
         size_t idx = 0;
@@ -133,53 +172,96 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
                 const size_t idx0_y = idx + 1;
                 const size_t idx0_z = idx + 2;
 
-                const size_t idx1_x = idx + 3;
-                const size_t idx1_y = idx + 4;
-                const size_t idx1_z = idx + 5;
+                const size_t idx0_r = idx + 3;
+                const size_t idx0_g = idx + 4;
+                const size_t idx0_b = idx + 5;
 
-                const size_t idx2_x = idx + 6;
-                const size_t idx2_y = idx + 7;
-                const size_t idx2_z = idx + 8;
+                const size_t idx1_x = idx + 6;
+                const size_t idx1_y = idx + 7;
+                const size_t idx1_z = idx + 8;
 
-                const size_t idx3_x = idx + 9;
-                const size_t idx3_y = idx + 10;
-                const size_t idx3_z = idx + 11;
+                const size_t idx1_r = idx + 9;
+                const size_t idx1_g = idx + 10;
+                const size_t idx1_b = idx + 11;
+
+                const size_t idx2_x = idx + 12;
+                const size_t idx2_y = idx + 13;
+                const size_t idx2_z = idx + 14;
+
+                const size_t idx2_r = idx + 15;
+                const size_t idx2_g = idx + 16;
+                const size_t idx2_b = idx + 17;
+
+                const size_t idx3_x = idx + 18;
+                const size_t idx3_y = idx + 19;
+                const size_t idx3_z = idx + 20;
+
+                const size_t idx3_r = idx + 21;
+                const size_t idx3_g = idx + 22;
+                const size_t idx3_b = idx + 23;
+
+                const size_t idx4_x = idx + 24;
+                const size_t idx4_y = idx + 25;
+                const size_t idx4_z = idx + 26;
+
+                const size_t idx4_r = idx + 27;
+                const size_t idx4_g = idx + 28;
+                const size_t idx4_b = idx + 29;
+
+                const size_t idx5_x = idx + 30;
+                const size_t idx5_y = idx + 31;
+                const size_t idx5_z = idx + 32;
+
+                const size_t idx5_r = idx + 33;
+                const size_t idx5_g = idx + 34;
+                const size_t idx5_b = idx + 35;
+                idx = idx + 36;
 
                 points_ptr_[idx0_x] = c;
                 points_ptr_[idx1_x] = c + 1;
-                points_ptr_[idx2_x] = c + 1;
-                points_ptr_[idx3_x] = c;
+                points_ptr_[idx2_x] = c;
+                points_ptr_[idx3_x] = c + 1;
+                points_ptr_[idx4_x] = c + 1;
+                points_ptr_[idx5_x] = c;
 
                 points_ptr_[idx0_y] = r;
                 points_ptr_[idx1_y] = r;
                 points_ptr_[idx2_y] = r + 1;
-                points_ptr_[idx3_y] = r + 1;
+                points_ptr_[idx3_y] = r;
+                points_ptr_[idx4_y] = r + 1;
+                points_ptr_[idx5_y] = r + 1;
 
                 points_ptr_[idx0_z] = 0.0f;
                 points_ptr_[idx1_z] = 0.0f;
                 points_ptr_[idx2_z] = 0.0f;
                 points_ptr_[idx3_z] = 0.0f;
+                points_ptr_[idx4_z] = 0.0f;
+                points_ptr_[idx5_z] = 0.0f;
 
                 const float color_val_r = img_c1_(r, c);
                 const float color_val_g = img_c1_(r, c);
                 const float color_val_b = img_c1_(r, c);
 
-                colors_ptr_[idx0_x] = color_val_r;
-                colors_ptr_[idx1_x] = color_val_r;
-                colors_ptr_[idx2_x] = color_val_r;
-                colors_ptr_[idx3_x] = color_val_r;
+                points_ptr_[idx0_r] = color_val_r;
+                points_ptr_[idx1_r] = color_val_r;
+                points_ptr_[idx2_r] = color_val_r;
+                points_ptr_[idx3_r] = color_val_r;
+                points_ptr_[idx4_r] = color_val_r;
+                points_ptr_[idx5_r] = color_val_r;
 
-                colors_ptr_[idx0_y] = color_val_g;
-                colors_ptr_[idx1_y] = color_val_g;
-                colors_ptr_[idx2_y] = color_val_g;
-                colors_ptr_[idx3_y] = color_val_g;
+                points_ptr_[idx0_g] = color_val_g;
+                points_ptr_[idx1_g] = color_val_g;
+                points_ptr_[idx2_g] = color_val_g;
+                points_ptr_[idx3_g] = color_val_g;
+                points_ptr_[idx4_g] = color_val_g;
+                points_ptr_[idx5_g] = color_val_g;
 
-                colors_ptr_[idx0_z] = color_val_b;
-                colors_ptr_[idx1_z] = color_val_b;
-                colors_ptr_[idx2_z] = color_val_b;
-                colors_ptr_[idx3_z] = color_val_b;
-
-                idx = idx + 12;
+                points_ptr_[idx0_b] = color_val_b;
+                points_ptr_[idx1_b] = color_val_b;
+                points_ptr_[idx2_b] = color_val_b;
+                points_ptr_[idx3_b] = color_val_b;
+                points_ptr_[idx4_b] = color_val_b;
+                points_ptr_[idx5_b] = color_val_b;
             }
         }
 
@@ -190,11 +272,30 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
         std::cout << "Invalid number of channels: " << num_channels_ << std::endl;
     }
     findMinMax();
+
+    glGenVertexArrays(1, &vertex_buffer_array_);
+    glBindVertexArray(vertex_buffer_array_);
+
+    glGenBuffers(1, &vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 6 * dims_.rows * dims_.cols, points_ptr_, GL_STATIC_DRAW);
+
+    // glEnableVertexAttribArray(0);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 }
 
 void ImShow::render()
 {
-    glEnableClientState(GL_VERTEX_ARRAY);
+    glBindVertexArray(vertex_buffer_array_);
+    glDrawArrays(GL_TRIANGLES, 0, dims_.rows * dims_.cols * 6);
+    glBindVertexArray(0);
+    /*glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
     if (!visualize_has_run_)
@@ -207,7 +308,7 @@ void ImShow::render()
     glDrawArrays(GL_QUADS, 0, 4 * dims_.rows * dims_.cols);
 
     glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);*/
 }
 
 ImShow::~ImShow()

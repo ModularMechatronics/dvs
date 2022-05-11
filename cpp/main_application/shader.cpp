@@ -5,6 +5,14 @@
 #include <sstream>
 #include <vector>
 
+Shader global_plot_shader;
+Shader global_plot_box_shader;
+
+void initGlobalShaders()
+{
+
+}
+
 Shader::Shader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
 {
     if (ShaderSource::FILE == src)

@@ -52,4 +52,10 @@ public:
     GLuint programId() const;
 };
 
+extern Shader global_plot_shader;
+extern Shader global_plot_box_shader;
+void initGlobalShaders();
+
+
+
 #endif
