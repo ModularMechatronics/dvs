@@ -95,8 +95,11 @@ AxesRenderer::AxesRenderer()
 
     const std::string v_path_plot_shader = "../main_application/axes/shaders/plot_shader.vs";
     const std::string f_path_plot_shader = "../main_application/axes/shaders/plot_shader.fs";
-
     basic_plot_shader_ = Shader::createFromFiles(v_path_plot_shader, f_path_plot_shader);
+
+    const std::string v_path_img_plot_shader = "../main_application/axes/shaders/img.vs";
+    const std::string f_path_img_plot_shader = "../main_application/axes/shaders/img.fs";
+    img_plot_shader_ = Shader::createFromFiles(v_path_img_plot_shader, f_path_img_plot_shader);
 
     glUseProgram(text_shader_.programId());
 
@@ -127,7 +130,7 @@ AxesRenderer::AxesRenderer()
 
 ShaderCollection AxesRenderer::getShaderCollection()
 {
-    return {text_shader_, plot_box_shader_, basic_plot_shader_};
+    return {text_shader_, plot_box_shader_, basic_plot_shader_, img_plot_shader_};
 }
 
 void AxesRenderer::enableClipPlanes()
@@ -159,15 +162,26 @@ void AxesRenderer::enableClipPlanes()
                                        (Point3Dd(-f, -f, -(scale.z - axes_center.z)))};
     // clang-format on*/
 
-    setClipPlane("clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
-    setClipPlane("clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
-    setClipPlane("clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
-    setClipPlane("clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
-    setClipPlane("clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
-    setClipPlane("clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
+    // TODO: Simplify
+    setClipPlane(basic_plot_shader_.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
+    setClipPlane(basic_plot_shader_.programId(), "clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
+    setClipPlane(basic_plot_shader_.programId(), "clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
+    setClipPlane(basic_plot_shader_.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
+    setClipPlane(basic_plot_shader_.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
+    setClipPlane(basic_plot_shader_.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
+
+    glUseProgram(img_plot_shader_.programId());
+    setClipPlane(img_plot_shader_.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
+    setClipPlane(img_plot_shader_.programId(), "clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
+    setClipPlane(img_plot_shader_.programId(), "clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
+    setClipPlane(img_plot_shader_.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
+    setClipPlane(img_plot_shader_.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
+    setClipPlane(img_plot_shader_.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
+
+    glUseProgram(basic_plot_shader_.programId());
 }
 
-void AxesRenderer::setClipPlane(const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const
+void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const
 {
     // Fit plane
     const Planed fp = planeFromThreePoints(p0, p1, p2);
@@ -175,7 +189,7 @@ void AxesRenderer::setClipPlane(const std::string pln, const Point3Dd& p0, const
     // Invert
     const Planed plane = invert ? Planed(-fp.a, -fp.b, -fp.c, fp.d) : fp;
 
-    glUniform4f(glGetUniformLocation(basic_plot_shader_.programId(), pln.c_str()), plane.a, plane.b, plane.c, plane.d);
+    glUniform4f(glGetUniformLocation(program_id, pln.c_str()), plane.a, plane.b, plane.c, plane.d);
 }
 
 void AxesRenderer::render()
@@ -229,6 +243,11 @@ void AxesRenderer::plotBegin()
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_ * t_mat;
     glUniformMatrix4fv(glGetUniformLocation(basic_plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
     enableClipPlanes();
+
+    glUseProgram(img_plot_shader_.programId());
+    glUniformMatrix4fv(glGetUniformLocation(img_plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+
+    glUseProgram(basic_plot_shader_.programId());
 }
 
 void AxesRenderer::plotEnd()

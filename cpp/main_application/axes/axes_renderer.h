@@ -33,6 +33,7 @@ private:
     Shader text_shader_;
     Shader plot_box_shader_;
     Shader basic_plot_shader_;
+    Shader img_plot_shader_;
 
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
@@ -57,7 +58,7 @@ private:
     void renderPlotBox();
     void renderBoxGrid();
     void enableClipPlanes();
-    void setClipPlane(const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const;
+    void setClipPlane(const GLuint program_id, const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const;
 
 public:
     AxesRenderer();

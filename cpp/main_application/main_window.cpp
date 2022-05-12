@@ -649,7 +649,7 @@ void MainWindow::toggleEditLayoutCallback(wxCommandEvent& WXUNUSED(event))
     toggleEditLayout();
 }
 
-void MainWindow::preferencesCallback(wxCommandEvent& event)
+void MainWindow::preferencesCallback(wxCommandEvent& WXUNUSED(event))
 {
     preferences();
 }
@@ -659,7 +659,7 @@ void MainWindow::preferences()
     std::cout << "Preferences!" << std::endl;
 }
 
-void MainWindow::showMainWindowCallback(wxCommandEvent& event)
+void MainWindow::showMainWindowCallback(wxCommandEvent& WXUNUSED(event))
 {
     showMainWindow();
 }
@@ -859,9 +859,8 @@ void MainWindow::notifyChildrenOnKeyReleased(const char key)
     }
 }
 
-void MainWindow::onCloseButton(wxCloseEvent& event)
+void MainWindow::onCloseButton(wxCloseEvent& WXUNUSED(event))
 {
-    std::cout << "Close!" << std::endl;
     this->Hide();
 }
 

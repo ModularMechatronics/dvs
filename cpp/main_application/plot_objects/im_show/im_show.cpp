@@ -160,8 +160,8 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
     {
         img_c1_.setInternalData(reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols);
 
-        points_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
-        colors_ptr_ = new float[dims_.rows * dims_.cols * 4 * 3];
+        points_ptr_ = new float[dims_.rows * dims_.cols * 6 * 6];
+        colors_ptr_ = new float[dims_.rows * dims_.cols * 6 * 6];
         size_t idx = 0;
 
         for (size_t r = 0; r < dims_.rows; r++)
@@ -292,23 +292,11 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
 
 void ImShow::render()
 {
+    glUseProgram(shader_collection_.img_plot_shader.programId());
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, dims_.rows * dims_.cols * 6);
     glBindVertexArray(0);
-    /*glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-
-    if (!visualize_has_run_)
-    {
-        visualize_has_run_ = true;
-        glVertexPointer(3, GL_FLOAT, 0, points_ptr_);
-        glColorPointer(3, GL_FLOAT, 0, colors_ptr_);
-    }
-
-    glDrawArrays(GL_QUADS, 0, 4 * dims_.rows * dims_.cols);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);*/
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
 ImShow::~ImShow()
