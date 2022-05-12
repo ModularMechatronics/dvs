@@ -24,7 +24,7 @@ private:
 
 public:
     DrawArrow();
-    DrawArrow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    DrawArrow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
 
     void render() override;
 };

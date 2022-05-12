@@ -5,8 +5,8 @@ inline float* convertMatrixDataOuter(uint8_t* input_data,
                                      const Dimension2D dims,
                                      const size_t num_bytes_for_one_vec);
 
-Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::SURF)
     {
@@ -37,7 +37,14 @@ void Surf::findMinMax()
 
 void Surf::render()
 {
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE);
+
+    glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"), edge_color_.red, edge_color_.green, edge_color_.blue);
     glBindVertexArray(vertex_buffer_array_);
+    glDrawArrays(GL_TRIANGLES, 0, (dims_.rows - 1) * (dims_.cols - 1) * 6);    
+
+    glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"), face_color_.red, face_color_.green, face_color_.blue);
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, (dims_.rows - 1) * (dims_.cols - 1) * 6);
     glBindVertexArray(0);
 }

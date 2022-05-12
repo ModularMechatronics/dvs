@@ -2,8 +2,8 @@
 
 float* convertTrianglesData(uint8_t* input_data, const DataType data_type, const uint32_t num_elements);
 
-DrawTriangles3D::DrawTriangles3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+DrawTriangles3D::DrawTriangles3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::DRAW_TRIANGLES_3D)
     {

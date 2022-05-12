@@ -52,10 +52,11 @@ public:
     GLuint programId() const;
 };
 
-extern Shader global_plot_shader;
-extern Shader global_plot_box_shader;
-void initGlobalShaders();
-
-
+struct ShaderCollection
+{
+    Shader text_shader;
+    Shader plot_box_shader;
+    Shader basic_plot_shader;
+};
 
 #endif

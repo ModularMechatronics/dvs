@@ -106,6 +106,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent,
     wxGLCanvas::SetCurrent(*m_context);
 
     axes_renderer_ = new AxesRenderer();
+    plot_data_handler_ = new PlotDataHandler(axes_renderer_->getShaderCollection());
 
     hold_on_ = true;
     axes_set_ = false;
@@ -239,25 +240,25 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
         hold_on_ = true;
         view_set_ = false;
 
-        plot_data_handler_.clear();
+        plot_data_handler_->clear();
         axes_interactor_.setViewAngles(0, M_PI);
         axes_interactor_.setAxesLimits(Vec3Dd(-1.0, -1.0, -1.0), Vec3Dd(1.0, 1.0, 1.0));
     }
     else if (fcn == Function::SOFT_CLEAR)
     {
-        plot_data_handler_.softClear();
+        plot_data_handler_->softClear();
     }
     else
     {
         if (!hold_on_)
         {
-            plot_data_handler_.clear();
+            plot_data_handler_->clear();
         }
-        plot_data_handler_.addData(std::move(received_data), hdr);
+        plot_data_handler_->addData(std::move(received_data), hdr);
 
         if (!axes_set_)
         {
-            const std::pair<Vec3Dd, Vec3Dd> min_max = plot_data_handler_.getMinMaxVectors();
+            const std::pair<Vec3Dd, Vec3Dd> min_max = plot_data_handler_->getMinMaxVectors();
             const Vec3Dd mean_vec = (min_max.second + min_max.first) / 2.0;
 
             const Vec3Dd min_vec = (min_max.first - mean_vec) * 1.001 + mean_vec;
@@ -652,7 +653,7 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
 
     GLuint plot_shader_id = axes_renderer_->getPlotShaderId();
 
-    plot_data_handler_.render(plot_shader_id);
+    plot_data_handler_->render(plot_shader_id);
 
     axes_renderer_->plotEnd();
     glDisable(GL_DEPTH_TEST);

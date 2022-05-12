@@ -25,7 +25,7 @@ private:
 
 public:
     Surf();
-    Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~Surf();
 
     void render() override;

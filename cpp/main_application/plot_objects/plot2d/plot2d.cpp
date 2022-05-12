@@ -6,8 +6,8 @@ uint8_t* convertData2DOuter(const uint8_t* const input_data,
                                    const size_t num_bytes_per_element,
                                    const size_t num_bytes_for_one_vec);
 
-Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLOT2)
     {

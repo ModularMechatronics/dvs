@@ -32,8 +32,8 @@ size_t PlotObjectBase::getNumDimensions() const
 
 PlotObjectBase::PlotObjectBase() {}
 
-PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : received_data_(std::move(received_data))
+PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
     const uint64_t num_data_bytes = received_data_->getNumDataBytes();
     if (num_data_bytes == 0)

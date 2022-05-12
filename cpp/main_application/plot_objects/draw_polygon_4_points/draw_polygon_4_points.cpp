@@ -1,7 +1,7 @@
 #include "main_application/plot_objects/draw_polygon_4_points/draw_polygon_4_points.h"
 
-DrawPolygon4Points::DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+DrawPolygon4Points::DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::POLYGON_FROM_4_POINTS)
     {

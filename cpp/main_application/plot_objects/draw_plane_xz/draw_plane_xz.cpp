@@ -1,8 +1,8 @@
 #include "main_application/plot_objects/draw_plane_xz/draw_plane_xz.h"
 
 
-DrawPlaneXZ::DrawPlaneXZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+DrawPlaneXZ::DrawPlaneXZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLANE_XZ)
     {

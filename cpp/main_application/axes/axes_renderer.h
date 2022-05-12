@@ -31,8 +31,8 @@ private:
     TextRenderer text_renderer_;
 
     Shader text_shader_;
-    Shader plot_shader_;
-    Shader plot_shader_2;
+    Shader plot_box_shader_;
+    Shader basic_plot_shader_;
 
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
@@ -72,6 +72,8 @@ public:
     void plotBegin();
     void plotEnd();
     GLuint getPlotShaderId() const;
+
+    ShaderCollection getShaderCollection();
 
 };
 

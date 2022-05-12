@@ -126,8 +126,8 @@ inline float* convertQuiverDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-Quiver::Quiver(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+Quiver::Quiver(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::QUIVER)
     {

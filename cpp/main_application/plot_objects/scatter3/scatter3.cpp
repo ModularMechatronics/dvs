@@ -6,8 +6,8 @@ uint8_t* convertData3DOuter(const uint8_t* const input_data,
                             const size_t num_bytes_per_element,
                             const size_t num_bytes_for_one_vec);
 
-Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::SCATTER3)
     {

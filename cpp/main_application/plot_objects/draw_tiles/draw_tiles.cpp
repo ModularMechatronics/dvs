@@ -5,8 +5,8 @@ inline float* convertSingleMatrixDataOuter(uint8_t* input_data,
                                            const Dimension2D dims,
                                            const Vec2D<double>& tile_size);
 
-DrawTiles::DrawTiles(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+DrawTiles::DrawTiles(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::DRAW_TILES)
     {

@@ -7,7 +7,8 @@
 #include "plot_objects/plot_object_base/plot_object_base.h"
 #include "plot_objects/plot_objects.h"
 
-PlotDataHandler::PlotDataHandler() : pending_clear_(false) {}
+PlotDataHandler::PlotDataHandler(const ShaderCollection shader_collection) : pending_clear_(false),
+    shader_collection_{shader_collection} {}
 
 void PlotDataHandler::clear()
 {
@@ -38,79 +39,79 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
     switch (fcn)
     {
         case Function::STAIRS:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Stairs(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Stairs(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::PLOT2:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot2D(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot2D(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::PLOT3:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot3D(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot3D(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::SCATTER2:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::SCATTER3:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter3D(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter3D(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::SURF:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Surf(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Surf(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::IM_SHOW:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new ImShow(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new ImShow(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::POLYGON_FROM_4_POINTS:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPolygon4Points(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPolygon4Points(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::PLANE_XY:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneXY(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneXY(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::PLANE_XZ:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneXZ(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneXZ(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::PLANE_YZ:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneYZ(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneYZ(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::DRAW_TRIANGLES_3D:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTriangles3D(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTriangles3D(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::DRAW_TILES:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTiles(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTiles(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::PLOT2_COLLECTION:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot2Collection(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot2Collection(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::DRAW_MESH:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::DRAW_LINE3D:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::DRAW_ARROW:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawArrow(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawArrow(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::QUIVER:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Quiver(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Quiver(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::DRAW_LINE_BETWEEN_POINTS_3D:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr, shader_collection_)));
             break;
 
             break;

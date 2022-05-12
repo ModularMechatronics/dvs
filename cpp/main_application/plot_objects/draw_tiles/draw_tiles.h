@@ -23,7 +23,7 @@ private:
 
 public:
     DrawTiles();
-    DrawTiles(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    DrawTiles(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~DrawTiles();
 
     void render() override;

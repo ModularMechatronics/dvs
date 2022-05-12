@@ -79,7 +79,7 @@ private:
     float grid_size_;
     float edit_size_margin_;
 
-    PlotDataHandler plot_data_handler_;
+    PlotDataHandler* plot_data_handler_;
 
     SuperBase* view_parent_;
 

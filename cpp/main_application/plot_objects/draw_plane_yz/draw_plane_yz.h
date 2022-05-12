@@ -24,7 +24,7 @@ private:
 
 public:
     DrawPlaneYZ();
-    DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~DrawPlaneYZ();
 
     void render() override;

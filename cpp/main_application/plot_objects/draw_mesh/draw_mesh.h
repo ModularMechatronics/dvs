@@ -23,7 +23,7 @@ private:
 
 public:
     DrawMesh();
-    DrawMesh(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    DrawMesh(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~DrawMesh();
 
     void render() override;

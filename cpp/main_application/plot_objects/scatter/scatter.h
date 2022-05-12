@@ -18,7 +18,7 @@ private:
 
 public:
     Scatter2D();
-    Scatter2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    Scatter2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~Scatter2D();
 
     void render() override;

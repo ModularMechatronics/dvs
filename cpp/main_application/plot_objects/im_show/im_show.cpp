@@ -29,8 +29,8 @@ template <typename T> GLuint loadTexture(const int width, const int height, cons
     return textureID;
 }
 
-ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::IM_SHOW)
     {

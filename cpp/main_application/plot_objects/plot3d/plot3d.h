@@ -19,7 +19,7 @@ private:
 
 public:
     Plot3D();
-    Plot3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    Plot3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~Plot3D();
 
     void render() override;

@@ -18,7 +18,7 @@ private:
 
 public:
     Stairs();
-    Stairs(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    Stairs(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~Stairs();
 
     void render() override;

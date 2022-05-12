@@ -1,7 +1,7 @@
 #include "main_application/plot_objects/draw_plane_yz/draw_plane_yz.h"
 
-DrawPlaneYZ::DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+DrawPlaneYZ::DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLANE_YZ)
     {

@@ -102,8 +102,8 @@ inline float* convertCollectionDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-Plot2Collection::Plot2Collection(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr)
-    : PlotObjectBase(std::move(received_data), hdr)
+Plot2Collection::Plot2Collection(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLOT2_COLLECTION)
     {

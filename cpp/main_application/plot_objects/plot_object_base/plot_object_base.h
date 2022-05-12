@@ -14,6 +14,7 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_objects/utils.h"
 #include "properties.h"
+#include "shader.h"
 
 using namespace dvs;
 using namespace dvs::internal;
@@ -52,6 +53,7 @@ protected:
     bool min_max_calculated_;
     bool visualize_has_run_;
     GLuint line_type_; // TODO: Shall be moved to plot2d.h
+    ShaderCollection shader_collection_;
 
     void assignProperties(const Properties& props);
     virtual void findMinMax() = 0;
@@ -60,7 +62,7 @@ public:
     size_t getNumDimensions() const;
     virtual ~PlotObjectBase();
     PlotObjectBase();
-    PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
+    PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     virtual void render() = 0;
     std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors();
 
