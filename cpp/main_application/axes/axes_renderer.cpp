@@ -79,33 +79,17 @@ static Vec3Dd findScale(const glm::mat4& pm)
     return Vec3Dd(sx, sy, sz);
 }
 
-AxesRenderer::AxesRenderer()
+AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) : shader_collection_{shader_collection}
 {
     plot_box_walls_ = new PlotBoxWalls(1.0f);
     plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
     plot_box_grid_ = new PlotBoxGrid(1.0f);
 
-    const std::string v_path = "../main_application/axes/shaders/basic.vs";
-    const std::string f_path = "../main_application/axes/shaders/basic.fs";
-    plot_box_shader_ = Shader::createFromFiles(v_path, f_path);
-
-    const std::string v_path_text = "../main_application/axes/shaders/text.vs";
-    const std::string f_path_text = "../main_application/axes/shaders/text.fs";
-    text_shader_ = Shader::createFromFiles(v_path_text, f_path_text);
-
-    const std::string v_path_plot_shader = "../main_application/axes/shaders/plot_shader.vs";
-    const std::string f_path_plot_shader = "../main_application/axes/shaders/plot_shader.fs";
-    basic_plot_shader_ = Shader::createFromFiles(v_path_plot_shader, f_path_plot_shader);
-
-    const std::string v_path_img_plot_shader = "../main_application/axes/shaders/img.vs";
-    const std::string f_path_img_plot_shader = "../main_application/axes/shaders/img.fs";
-    img_plot_shader_ = Shader::createFromFiles(v_path_img_plot_shader, f_path_img_plot_shader);
-
-    glUseProgram(text_shader_.programId());
+    glUseProgram(shader_collection_.text_shader.programId());
 
     initFreetype();
 
-    glUniform1i(glGetUniformLocation(text_shader_.programId(), "text_sampler"), 0);
+    glUniform1i(glGetUniformLocation(shader_collection_.text_shader.programId(), "text_sampler"), 0);
 
     const float sw = 3.0f;
     orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);;
@@ -126,11 +110,6 @@ AxesRenderer::AxesRenderer()
     window_scale_mat_[0][0] = 2.7;
     window_scale_mat_[1][1] = 2.7;
     window_scale_mat_[2][2] = 2.7;
-}
-
-ShaderCollection AxesRenderer::getShaderCollection()
-{
-    return {text_shader_, plot_box_shader_, basic_plot_shader_, img_plot_shader_};
 }
 
 void AxesRenderer::enableClipPlanes()
@@ -163,22 +142,22 @@ void AxesRenderer::enableClipPlanes()
     // clang-format on*/
 
     // TODO: Simplify
-    setClipPlane(basic_plot_shader_.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
-    setClipPlane(basic_plot_shader_.programId(), "clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
-    setClipPlane(basic_plot_shader_.programId(), "clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
-    setClipPlane(basic_plot_shader_.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
-    setClipPlane(basic_plot_shader_.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
-    setClipPlane(basic_plot_shader_.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
+    setClipPlane(shader_collection_.basic_plot_shader.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
+    setClipPlane(shader_collection_.basic_plot_shader.programId(), "clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
+    setClipPlane(shader_collection_.basic_plot_shader.programId(), "clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
+    setClipPlane(shader_collection_.basic_plot_shader.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
+    setClipPlane(shader_collection_.basic_plot_shader.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
+    setClipPlane(shader_collection_.basic_plot_shader.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
 
-    glUseProgram(img_plot_shader_.programId());
-    setClipPlane(img_plot_shader_.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
-    setClipPlane(img_plot_shader_.programId(), "clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
-    setClipPlane(img_plot_shader_.programId(), "clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
-    setClipPlane(img_plot_shader_.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
-    setClipPlane(img_plot_shader_.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
-    setClipPlane(img_plot_shader_.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
+    glUseProgram(shader_collection_.img_plot_shader.programId());
+    setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
+    setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
+    setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
+    setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
+    setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
+    setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
 
-    glUseProgram(basic_plot_shader_.programId());
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
 void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const
@@ -196,12 +175,12 @@ void AxesRenderer::render()
 {
     renderPlotBox();
     renderBoxGrid();
-    drawGridNumbers(text_renderer_, text_shader_, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
+    drawGridNumbers(text_renderer_, shader_collection_.text_shader, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
 }
 
 void AxesRenderer::renderBoxGrid()
 {
-    glUseProgram(plot_box_shader_.programId());
+    glUseProgram(shader_collection_.plot_box_shader.programId());
 
     const Vec3Dd scale = axes_limits_.getAxesScale();
 
@@ -216,7 +195,7 @@ void AxesRenderer::renderBoxGrid()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
 
-    glUniformMatrix4fv(glGetUniformLocation(plot_box_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
     plot_box_grid_->render(gv_,
                            axes_limits_,
@@ -227,7 +206,7 @@ void AxesRenderer::renderBoxGrid()
 
 void AxesRenderer::plotBegin()
 {
-    glUseProgram(basic_plot_shader_.programId());
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
 
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
 
@@ -241,13 +220,13 @@ void AxesRenderer::plotBegin()
     scale_mat[3][3] = 1.0;
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_ * t_mat;
-    glUniformMatrix4fv(glGetUniformLocation(basic_plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
     enableClipPlanes();
 
-    glUseProgram(img_plot_shader_.programId());
-    glUniformMatrix4fv(glGetUniformLocation(img_plot_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUseProgram(shader_collection_.img_plot_shader.programId());
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    glUseProgram(basic_plot_shader_.programId());
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
 void AxesRenderer::plotEnd()
@@ -257,7 +236,7 @@ void AxesRenderer::plotEnd()
 
 void AxesRenderer::renderPlotBox()
 {
-    glUseProgram(plot_box_shader_.programId());
+    glUseProgram(shader_collection_.plot_box_shader.programId());
 
     model_mat[3][0] = 0.0;
     model_mat[3][1] = 0.0;
@@ -270,17 +249,12 @@ void AxesRenderer::renderPlotBox()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * window_scale_mat_;
 
-    glUniformMatrix4fv(glGetUniformLocation(plot_box_shader_.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
     plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
     plot_box_silhouette_->render();
 
     glUseProgram(0);
-}
-
-GLuint AxesRenderer::getPlotShaderId() const
-{
-    return basic_plot_shader_.programId();
 }
 
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,

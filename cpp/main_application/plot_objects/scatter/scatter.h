@@ -22,7 +22,7 @@ public:
     ~Scatter2D();
 
     void render() override;
-    void modifyShader(const GLuint program_id_) override;
+    void modifyShader() override;
 };
 
 #endif

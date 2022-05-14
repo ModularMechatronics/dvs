@@ -281,7 +281,7 @@ void testImShow()
             // img(r, c, 2) = (r * (num_cols - 1 - c)) / max_val;
         }
     }
-
+    clearView();
     setCurrentElement("view_00");
     imShow(img3, properties::Alpha(137));
 

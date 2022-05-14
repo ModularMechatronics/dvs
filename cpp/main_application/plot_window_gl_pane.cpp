@@ -80,6 +80,25 @@ wxGLContext* PlotWindowGLPane::getContext()
 #endif
 }
 
+void PlotWindowGLPane::initShaders()
+{
+    const std::string v_path = "../main_application/axes/shaders/basic.vs";
+    const std::string f_path = "../main_application/axes/shaders/basic.fs";
+    shader_collection_.plot_box_shader = Shader::createFromFiles(v_path, f_path);
+
+    const std::string v_path_text = "../main_application/axes/shaders/text.vs";
+    const std::string f_path_text = "../main_application/axes/shaders/text.fs";
+    shader_collection_.text_shader = Shader::createFromFiles(v_path_text, f_path_text);
+
+    const std::string v_path_plot_shader = "../main_application/axes/shaders/plot_shader.vs";
+    const std::string f_path_plot_shader = "../main_application/axes/shaders/plot_shader.fs";
+    shader_collection_.basic_plot_shader = Shader::createFromFiles(v_path_plot_shader, f_path_plot_shader);
+
+    const std::string v_path_img_plot_shader = "../main_application/axes/shaders/img.vs";
+    const std::string f_path_img_plot_shader = "../main_application/axes/shaders/img.fs";
+    shader_collection_.img_plot_shader = Shader::createFromFiles(v_path_img_plot_shader, f_path_img_plot_shader);
+}
+
 PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent,
     const ElementSettings& element_settings,
     const float grid_size,
@@ -104,9 +123,10 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent,
     bindCallbacks();
 
     wxGLCanvas::SetCurrent(*m_context);
+    initShaders();
 
-    axes_renderer_ = new AxesRenderer();
-    plot_data_handler_ = new PlotDataHandler(axes_renderer_->getShaderCollection());
+    axes_renderer_ = new AxesRenderer(shader_collection_);
+    plot_data_handler_ = new PlotDataHandler(shader_collection_);
 
     hold_on_ = true;
     axes_set_ = false;
@@ -651,9 +671,7 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?
     axes_renderer_->plotBegin();
 
-    GLuint plot_shader_id = axes_renderer_->getPlotShaderId();
-
-    plot_data_handler_->render(plot_shader_id);
+    plot_data_handler_->render();
 
     axes_renderer_->plotEnd();
     glDisable(GL_DEPTH_TEST);

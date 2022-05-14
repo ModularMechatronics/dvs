@@ -69,7 +69,7 @@ public:
     bool isPersistent() const;
     std::string getName() const;
 
-    virtual void modifyShader(const GLuint program_id_);
+    virtual void modifyShader();
 };
 
 #endif

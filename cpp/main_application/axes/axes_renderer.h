@@ -30,10 +30,7 @@ private:
 
     TextRenderer text_renderer_;
 
-    Shader text_shader_;
-    Shader plot_box_shader_;
-    Shader basic_plot_shader_;
-    Shader img_plot_shader_;
+    ShaderCollection shader_collection_;
 
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
@@ -61,7 +58,7 @@ private:
     void setClipPlane(const GLuint program_id, const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const;
 
 public:
-    AxesRenderer();
+    AxesRenderer(const ShaderCollection shader_collection);
 
     void updateStates(const AxesLimits& axes_limits,
                       const ViewAngles& view_angles,
@@ -72,10 +69,6 @@ public:
     void render();
     void plotBegin();
     void plotEnd();
-    GLuint getPlotShaderId() const;
-
-    ShaderCollection getShaderCollection();
-
 };
 
 

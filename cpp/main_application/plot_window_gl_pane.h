@@ -80,6 +80,7 @@ private:
     float edit_size_margin_;
 
     PlotDataHandler* plot_data_handler_;
+    ShaderCollection shader_collection_;
 
     SuperBase* view_parent_;
 
@@ -89,6 +90,7 @@ private:
     void notifyParentAboutModification();
     bool is3DFunction(const Function fcn);
     bool isImageFunction(const Function fcn);
+    void initShaders();
     MouseInteractionAxis current_mouse_interaction_axis_;
 
 public:

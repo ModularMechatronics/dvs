@@ -30,7 +30,7 @@ public:
     void clear();
     void softClear();
     void addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
-    void render(const GLuint shader_id) const;
+    void render() const;
 };
 
 #endif

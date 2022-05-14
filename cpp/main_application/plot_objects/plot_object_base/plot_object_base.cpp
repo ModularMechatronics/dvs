@@ -1,8 +1,8 @@
 #include "main_application/plot_objects/plot_object_base/plot_object_base.h"
 
-void PlotObjectBase::modifyShader(const GLuint program_id_)
+void PlotObjectBase::modifyShader()
 {
-    glUniform3f(glGetUniformLocation(program_id_, "vertex_color"), color_.red, color_.green, color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
 }
 
 bool PlotObjectBase::isPersistent() const

@@ -29,10 +29,10 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const Fu
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
-void Scatter2D::modifyShader(const GLuint program_id_)
+void Scatter2D::modifyShader()
 {
-    PlotObjectBase::modifyShader(program_id_);
-    glUniform1f(glGetUniformLocation(program_id_, "point_size"), point_size_);
+    PlotObjectBase::modifyShader();
+    glUniform1f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "point_size"), point_size_);
 }
 
 void Scatter2D::findMinMax()
