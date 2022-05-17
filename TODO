@@ -19,7 +19,7 @@ Pre release:
 - Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
 - Remove "drawTriangle source file" (It uses drawTriangles)
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
-- Rename "FunctionHeader" to "Header" and "FunctionHeaderObject" to "HeaderObject"
+- Rename "FunctionHeader" to "TransmissionHeader" and "FunctionHeaderObject" to "TransmissionHeaderObject"
 - Add pan and zoom to scroll click and right click
 - Delete gl buffers with "glDeleteBuffers"
 - Change plot-LINE_STRIP to separate function, lineCollection or something like that
@@ -29,7 +29,6 @@ Pre release:
 - Zoom rectangle if snapped
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
-- Imshow 1 and 3 channels + arbitrary data type
 - Fix layout designer
 - Fix number formatting and grid vectors system
 - Switch between orthographic and perspective projection with 'P'

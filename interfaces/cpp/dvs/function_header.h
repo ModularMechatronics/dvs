@@ -100,25 +100,17 @@ template <typename T> DataType typeToDataTypeEnum()
     {
         return DataType::FLOAT;
     }
+    else if (std::is_same<T, float_t>::value)
+    {
+        return DataType::FLOAT;
+    }
     else if (std::is_same<T, double>::value)
     {
         return DataType::DOUBLE;
     }
-    else if (std::is_same<T, int>::value)
+    else if (std::is_same<T, double_t>::value)
     {
-        return DataType::INT32; // TODO: Correct?? Move into switch statement below?
-    }
-    else if (std::is_same<T, unsigned int>::value)
-    {
-        return DataType::UINT32; // TODO: Correct?? Move into switch statement below?
-    }
-    else if (std::is_same<T, char>::value)
-    {
-        return DataType::INT8;
-    }
-    else if (std::is_same<T, unsigned char>::value)
-    {
-        return DataType::UINT8;
+        return DataType::DOUBLE;
     }
     else
     {
