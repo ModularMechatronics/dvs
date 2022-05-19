@@ -192,7 +192,7 @@ void AxesRenderer::render()
 
         glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
         
-        zoom_rect_.render(mouse_pos_at_press_, current_mouse_pos_, view_angles_.getSnappingAxis(), axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_);
+        zoom_rect_.render(mouse_pos_at_press_, current_mouse_pos_, view_angles_.getSnappingAxis(), view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_);
         std::cout << "Rendering!" << std::endl;
         glUseProgram(0);
     }

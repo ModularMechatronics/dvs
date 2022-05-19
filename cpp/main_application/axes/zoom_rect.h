@@ -21,7 +21,14 @@ private:
 
 public:
     ZoomRect();
-    void render(const dvs::Vec2Df mouse_pos_at_press, const dvs::Vec2Df current_mouse_pos, const SnappingAxis snapping_axis, const AxesLimits& axes_limits, const ViewAngles& view_angles, const glm::mat4& view_mat, const glm::mat4& model_mat, const glm::mat4& projection_mat, const float width, const float height);
+    void render(const dvs::Vec2Df mouse_pos_at_press,
+    const dvs::Vec2Df current_mouse_pos,
+    const SnappingAxis snapping_axis,
+    const glm::mat4& view_mat,
+    const glm::mat4& model_mat,
+    const glm::mat4& projection_mat,
+    const float width,
+    const float height);
 };
 
 

@@ -70,41 +70,34 @@ GLfloat rect_color[] = {
         xz_r, xz_g, xz_b
 };
 
-void ZoomRect::render(const Vec2Df mouse_pos_at_press, const Vec2Df current_mouse_pos, const SnappingAxis snapping_axis, const AxesLimits& axes_limits, const ViewAngles& view_angles, const glm::mat4& view_mat, const glm::mat4& model_mat, const glm::mat4& projection_mat, const float width, const float height)
+void ZoomRect::render(const Vec2Df mouse_pos_at_press,
+                      const Vec2Df current_mouse_pos,
+                      const SnappingAxis snapping_axis,
+                      const glm::mat4& view_mat,
+                      const glm::mat4& model_mat,
+                      const glm::mat4& projection_mat,
+                      const float width,
+                      const float height)
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
 
-    Vec2Df mouse_pos_at_press_mod2 = mouse_pos_at_press;
-    Vec2Df current_mouse_pos_mod2 = current_mouse_pos;
-
-    mouse_pos_at_press_mod2.y = 1.0f - mouse_pos_at_press_mod2.y;
-    current_mouse_pos_mod2.y = 1.0f - current_mouse_pos_mod2.y;
-
-    const Vec2Df mouse_pos_at_press_mod = mouse_pos_at_press_mod2 * 2.0f - 1.0f;
-    const Vec2Df current_mouse_pos_mod = current_mouse_pos_mod2 * 2.0f - 1.0f;
+    const Vec2Df mouse_pos_at_press_mod = 2.0f * (mouse_pos_at_press.elementWiseMultiply(Vec2Df(1.0f, -1.0f)) + Vec2Df(0.0f, 1.0f)) - 1.0f;
+    const Vec2Df current_mouse_pos_mod = 2.0f * (current_mouse_pos.elementWiseMultiply(Vec2Df(1.0f, -1.0f)) + Vec2Df(0.0f, 1.0f)) - 1.0f;
 
     const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
-    const Vec3Dd scale = axes_limits.getAxesScale();
 
     glm::mat4 model_mat_local = model_mat;
     const glm::vec3 mouse_pos_at_press_projected(mouse_pos_at_press_mod.x, mouse_pos_at_press_mod.y, 0);
     const glm::vec3 current_mouse_pos_projected(current_mouse_pos_mod.x, current_mouse_pos_mod.y, 0);
 
-    glm::mat4 scale_mat = glm::mat4(1.0f);
-
-    scale_mat[0][0] = 1.0;
-    scale_mat[1][1] = 1.0;
-    scale_mat[2][2] = 1.0;
-    scale_mat[3][3] = 1.0;
-
-    const glm::mat4 view_model = view_mat * model_mat_local * scale_mat;
     model_mat_local[3][0] = 0.0;
     model_mat_local[3][1] = 0.0;
     model_mat_local[3][2] = 0.0;
+
+    const glm::mat4 view_model = view_mat * model_mat_local;
+
     const glm::vec3 current_mouse_pos_unprojected = glm::unProject(current_mouse_pos_projected, view_model, projection_mat, v_viewport);
     const glm::vec3 mouse_pos_at_press_unprojected = glm::unProject(mouse_pos_at_press_projected, view_model, projection_mat, v_viewport);
-
-    std::cout << current_mouse_pos << std::endl;
 
     const float x_start = mouse_pos_at_press_unprojected.x;
     const float y_start = mouse_pos_at_press_unprojected.z;
