@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include "axes/axes_interactor.h"
+// #include "axes/axes_interactor.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
@@ -41,6 +41,7 @@ private:
     double current_window_height;
 
     MouseActivity current_mouse_activity;
+    bool mouse_pressed_;
 
     ViewAngles view_angles_;
     ViewAngles default_view_angles_;
@@ -67,7 +68,14 @@ public:
     void setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec);
 
     void registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis, const int dx, const int dy);
+    void registerMousePressed();
+    void registerMouseReleased();
     void updateMouseActivity(const InteractionType interaction_type);
+
+    MouseActivity getCurrentMouseActivity() const
+    {
+        return current_mouse_activity;
+    }
 
     GridVectors generateGridVectors();
     ViewAngles getViewAngles() const;

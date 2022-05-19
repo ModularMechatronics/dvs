@@ -74,6 +74,7 @@ private:
     int* getArgsPtr();
     wxSize parent_size_;
     Vec2Df mouse_pos_at_press_;
+    Vec2Df current_mouse_pos_;
     wxPoint pos_at_press_;
     wxSize size_at_press_;
     float grid_size_;

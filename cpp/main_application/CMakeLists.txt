@@ -13,6 +13,7 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/axes_renderer.cpp
                      axes/plot_box_walls.cpp
                      axes/plot_box_silhouette.cpp
+                     axes/zoom_rect.cpp
                      axes/grid_numbers.cpp
                      axes/plot_box_grid.cpp
                      axes/text_rendering.cpp

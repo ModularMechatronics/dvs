@@ -19,6 +19,8 @@
 #include "axes/plot_box_silhouette.h"
 #include "axes/plot_box_grid.h"
 #include "axes/grid_numbers.h"
+#include "axes/zoom_rect.h"
+#include "io_devices/mouse_state.h"
 
 class AxesRenderer
 {
@@ -51,6 +53,11 @@ private:
 
     GridVectors gv_;
     bool use_perspective_proj_;
+    Vec2Df mouse_pos_at_press_;
+    Vec2Df current_mouse_pos_;
+    ZoomRect zoom_rect_;
+    MouseActivity mouse_activity_;
+    bool mouse_pressed_;
 
     void renderPlotBox();
     void renderBoxGrid();
@@ -65,7 +72,11 @@ public:
                       const GridVectors& gv,
                       const bool use_perspective_proj,
                       const float width,
-                      const float height);
+                      const float height,
+                      const Vec2Df mouse_pos_at_press,
+                      const Vec2Df current_mouse_pos,
+                      const MouseActivity mouse_activity,
+                      const bool mouse_pressed);
     void render();
     void plotBegin();
     void plotEnd();

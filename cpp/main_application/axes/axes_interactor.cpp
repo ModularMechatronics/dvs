@@ -30,6 +30,17 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     const size_t num_lines = axes_settings_.getNumAxesTicks();
     inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
            static_cast<double>(num_lines - 1);
+    mouse_pressed_ = false;
+}
+
+void AxesInteractor::registerMousePressed()
+{
+    mouse_pressed_ = true;
+}
+
+void AxesInteractor::registerMouseReleased()
+{
+    mouse_pressed_ = false;
 }
 
 void AxesInteractor::updateMouseActivity(const InteractionType interaction_type)
@@ -91,7 +102,10 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
             changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain, current_mouse_interaction_axis);
             break;
         case MouseActivity::ZOOM:
-            changeZoom(dy_mod * zoom_mouse_gain, current_mouse_interaction_axis);
+            if(SnappingAxis::None == view_angles_.getSnappingAxis())
+            {
+                changeZoom(dy_mod * zoom_mouse_gain, current_mouse_interaction_axis);
+            }
             break;
         case MouseActivity::PAN:
             changePan(dx_mod * pan_mouse_gain, dy_mod * pan_mouse_gain, current_mouse_interaction_axis);

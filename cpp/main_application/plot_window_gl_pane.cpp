@@ -377,11 +377,13 @@ void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
     size_at_press_ = this->GetSize();
 
     left_mouse_button_.setIsPressed(current_point.x, current_point.y);
+    axes_interactor_.registerMousePressed();
     Refresh();
 }
 
 void PlotWindowGLPane::mouseLeftReleased(wxMouseEvent& WXUNUSED(event))
 {
+    axes_interactor_.registerMousePressed();
     left_mouse_button_.setIsReleased();
     Refresh();
 }
@@ -400,6 +402,7 @@ void PlotWindowGLPane::notifyParentAboutModification()
 void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
+    current_mouse_pos_ = Vec2Df(current_point.x, current_point.y);
 
     if (left_mouse_button_.isPressed())
     {
@@ -660,12 +663,18 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
 
     const bool draw_selected_bb = is_selected_ && is_editing_;
 
+    const Vec2Df pane_size(GetSize().x, GetSize().y);
+
     axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
                          axes_interactor_.getViewAngles(),
                          axes_interactor_.generateGridVectors(),
                          perspective_projection_,
                          getWidth(),
-                         getHeight());
+                         getHeight(),
+                         mouse_pos_at_press_.elementWiseDivide(pane_size),
+                         current_mouse_pos_.elementWiseDivide(pane_size),
+                         axes_interactor_.getCurrentMouseActivity(),
+                         left_mouse_button_.isPressed());
 
     axes_renderer_->render();
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?

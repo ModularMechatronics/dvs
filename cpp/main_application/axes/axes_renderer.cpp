@@ -174,6 +174,32 @@ void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, 
 void AxesRenderer::render()
 {
     renderPlotBox();
+    if((mouse_activity_ == MouseActivity::ZOOM) && (SnappingAxis::None != view_angles_.getSnappingAxis()) && 
+        mouse_pressed_ && (!use_perspective_proj_))
+    {
+        glUseProgram(shader_collection_.plot_box_shader.programId());
+
+        scale_mat[0][0] = 1.0;
+        scale_mat[1][1] = 1.0;
+        scale_mat[2][2] = 1.0;
+        scale_mat[3][3] = 1.0;
+
+        model_mat[3][0] = 0.0;
+        model_mat[3][1] = 0.0;
+        model_mat[3][2] = 0.0;
+
+        const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
+
+        glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+        
+        zoom_rect_.render(mouse_pos_at_press_, current_mouse_pos_, view_angles_.getSnappingAxis(), axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_);
+        std::cout << "Rendering!" << std::endl;
+        glUseProgram(0);
+    }
+    else
+    {
+        std::cout << "Not rendering..." << std::endl;
+    }
     renderBoxGrid();
     drawGridNumbers(text_renderer_, shader_collection_.text_shader, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
 }
@@ -262,7 +288,11 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const GridVectors& gv,
                                 const bool use_perspective_proj,
                                 const float width,
-                                const float height)
+                                const float height,
+                                const Vec2Df mouse_pos_at_press,
+                                const Vec2Df current_mouse_pos,
+                                const MouseActivity mouse_activity,
+                                const bool mouse_pressed)
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
@@ -270,6 +300,10 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     use_perspective_proj_ = use_perspective_proj;
     width_ = width;
     height_ = height;
+    mouse_pos_at_press_ = mouse_pos_at_press;
+    current_mouse_pos_ = current_mouse_pos;
+    mouse_activity_ = mouse_activity;
+    mouse_pressed_ = mouse_pressed;
 
     rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * 
               rotationMatrixX(-view_angles_.getSnappedElevation());
