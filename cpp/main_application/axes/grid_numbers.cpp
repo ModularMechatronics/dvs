@@ -213,7 +213,7 @@ void drawGridNumbers(const TextRenderer& text_renderer, const Shader text_shader
     const Vec3Dd axes_center = axes_limits.getAxesCenter();
 
     // Scales
-    const Vec3Dd scale = axes_limits.getAxesScale();
+    const Vec3Dd scale = axes_limits.getAxesScale() / 2.0;
 
     model_mat_local[3][0] = 0.0;
     model_mat_local[3][1] = 0.0;

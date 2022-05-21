@@ -841,6 +841,7 @@ void MainWindow::OnTimer(wxTimerEvent&)
 
 void MainWindow::notifyChildrenOnKeyPressed(const char key)
 {
+    std::cout << "Key pressed: " << key << std::endl;
     std::map<std::string, GuiElement*>::iterator it;
 
     for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
@@ -851,6 +852,7 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
 
 void MainWindow::notifyChildrenOnKeyReleased(const char key)
 {
+    std::cout << "Key released: " << key << std::endl;
     std::map<std::string, GuiElement*>::iterator it;
 
     for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)

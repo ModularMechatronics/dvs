@@ -118,7 +118,7 @@ void AxesRenderer::enableClipPlanes()
 
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
 
-    const Vec3Dd scale = axes_limits_.getAxesScale();
+    const Vec3Dd scale = axes_limits_.getAxesScale() / 2.0;
 
     // clang-format off
     const Vector<Point3Dd> points_x0 = {(Point3Dd(scale.x - axes_center.x, f, f)),
@@ -174,32 +174,22 @@ void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, 
 void AxesRenderer::render()
 {
     renderPlotBox();
-    if((mouse_activity_ == MouseActivity::ZOOM) && (SnappingAxis::None != view_angles_.getSnappingAxis()) && 
-        mouse_pressed_ && (!use_perspective_proj_))
+    if(should_draw_zoom_rect_)
     {
         glUseProgram(shader_collection_.plot_box_shader.programId());
-
-        scale_mat[0][0] = 1.0;
-        scale_mat[1][1] = 1.0;
-        scale_mat[2][2] = 1.0;
-        scale_mat[3][3] = 1.0;
 
         model_mat[3][0] = 0.0;
         model_mat[3][1] = 0.0;
         model_mat[3][2] = 0.0;
 
-        const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
+        const glm::mat4 mvp = projection_mat * view_mat * model_mat * window_scale_mat_;
 
         glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
         
-        zoom_rect_.render(mouse_pos_at_press_, current_mouse_pos_, view_angles_.getSnappingAxis(), view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_);
-        std::cout << "Rendering!" << std::endl;
+        zoom_rect_.render(mouse_pos_at_press_, current_mouse_pos_, view_angles_.getSnappingAxis(), view_mat, model_mat * window_scale_mat_, projection_mat);
         glUseProgram(0);
     }
-    else
-    {
-        std::cout << "Not rendering..." << std::endl;
-    }
+
     renderBoxGrid();
     drawGridNumbers(text_renderer_, shader_collection_.text_shader, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
 }
@@ -208,7 +198,7 @@ void AxesRenderer::renderBoxGrid()
 {
     glUseProgram(shader_collection_.plot_box_shader.programId());
 
-    const Vec3Dd scale = axes_limits_.getAxesScale();
+    const Vec3Dd scale = axes_limits_.getAxesScale() / 2.0;
 
     scale_mat[0][0] = 1.0 / scale.x;
     scale_mat[1][1] = 1.0 / scale.y;
@@ -236,7 +226,7 @@ void AxesRenderer::plotBegin()
 
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
 
-    const Vec3Dd scale = axes_limits_.getAxesScale();
+    const Vec3Dd scale = axes_limits_.getAxesScale() / 2.0;
 
     glm::mat4 t_mat = glm::translate(glm::mat4(1.0f), glm::vec3(-axes_center.x, -axes_center.y, -axes_center.z));
 
@@ -292,7 +282,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const Vec2Df mouse_pos_at_press,
                                 const Vec2Df current_mouse_pos,
                                 const MouseActivity mouse_activity,
-                                const bool mouse_pressed)
+                                const bool mouse_pressed,
+                                const bool should_draw_zoom_rect)
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
@@ -304,6 +295,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     current_mouse_pos_ = current_mouse_pos;
     mouse_activity_ = mouse_activity;
     mouse_pressed_ = mouse_pressed;
+    should_draw_zoom_rect_ = should_draw_zoom_rect;
 
     rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * 
               rotationMatrixX(-view_angles_.getSnappedElevation());

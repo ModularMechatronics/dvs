@@ -75,9 +75,7 @@ void ZoomRect::render(const Vec2Df mouse_pos_at_press,
                       const SnappingAxis snapping_axis,
                       const glm::mat4& view_mat,
                       const glm::mat4& model_mat,
-                      const glm::mat4& projection_mat,
-                      const float width,
-                      const float height)
+                      const glm::mat4& projection_mat)
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
 
@@ -99,36 +97,42 @@ void ZoomRect::render(const Vec2Df mouse_pos_at_press,
     const glm::vec3 current_mouse_pos_unprojected = glm::unProject(current_mouse_pos_projected, view_model, projection_mat, v_viewport);
     const glm::vec3 mouse_pos_at_press_unprojected = glm::unProject(mouse_pos_at_press_projected, view_model, projection_mat, v_viewport);
 
-    const float x_start = mouse_pos_at_press_unprojected.x;
-    const float y_start = mouse_pos_at_press_unprojected.z;
-
-    const float x_end = current_mouse_pos_unprojected.x;
-    const float y_end = current_mouse_pos_unprojected.z;
-
     if(SnappingAxis::X == snapping_axis)
     {
+        const float x_start = mouse_pos_at_press_unprojected.y;
+        const float y_start = mouse_pos_at_press_unprojected.z;
+
+        const float x_end = current_mouse_pos_unprojected.y;
+        const float y_end = current_mouse_pos_unprojected.z;
+
         rect_vertices[0] = 0.0;
-        rect_vertices[1] = -0.5;
-        rect_vertices[2] = -0.5;
+        rect_vertices[1] = x_start;
+        rect_vertices[2] = y_start;
 
         rect_vertices[3] = 0.0;
-        rect_vertices[4] = 0.5;
-        rect_vertices[5] = -0.5;
+        rect_vertices[4] = x_end;
+        rect_vertices[5] = y_start;
 
         rect_vertices[6] = 0.0;
-        rect_vertices[7] = 0.5;
-        rect_vertices[8] = 0.5;
+        rect_vertices[7] = x_end;
+        rect_vertices[8] = y_end;
 
         rect_vertices[9] = 0.0;
-        rect_vertices[10] = -0.5;
-        rect_vertices[11] = 0.5;
+        rect_vertices[10] = x_start;
+        rect_vertices[11] = y_end;
 
         rect_vertices[12] = 0.0;
-        rect_vertices[13] = -0.5;
-        rect_vertices[14] = -0.5;
+        rect_vertices[13] = x_start;
+        rect_vertices[14] = y_start;
     }
     else if(SnappingAxis::Y == snapping_axis)
     {
+        const float x_start = mouse_pos_at_press_unprojected.x;
+        const float y_start = mouse_pos_at_press_unprojected.z;
+
+        const float x_end = current_mouse_pos_unprojected.x;
+        const float y_end = current_mouse_pos_unprojected.z;
+
         rect_vertices[0] = x_start;
         rect_vertices[1] = 0.0;
         rect_vertices[2] = y_start;
@@ -151,14 +155,38 @@ void ZoomRect::render(const Vec2Df mouse_pos_at_press,
     }
     else if(SnappingAxis::Z == snapping_axis)
     {
-        
+        const float x_start = mouse_pos_at_press_unprojected.x;
+        const float y_start = mouse_pos_at_press_unprojected.y;
+
+        const float x_end = current_mouse_pos_unprojected.x;
+        const float y_end = current_mouse_pos_unprojected.y;
+
+        rect_vertices[0] = x_start;
+        rect_vertices[1] = y_start;
+        rect_vertices[2] = 0.0;
+
+        rect_vertices[3] = x_end;
+        rect_vertices[4] = y_start;
+        rect_vertices[5] = 0.0;
+
+        rect_vertices[6] = x_end;
+        rect_vertices[7] = y_end;
+        rect_vertices[8] = 0.0;
+
+        rect_vertices[9] = x_start;
+        rect_vertices[10] = y_end;
+        rect_vertices[11] = 0.0;
+
+        rect_vertices[12] = x_start;
+        rect_vertices[13] = y_start;
+        rect_vertices[14] = 0.0;
     }
     else
     {
         std::cout << "Shouldn't end up here!" << std::endl;
     }
 
-    glBufferSubData(GL_ARRAY_BUFFER, 0, 15 * sizeof(float), rect_vertices);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 3 * num_vertices_ * sizeof(float), rect_vertices);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_LINE_STRIP, 0, num_vertices_);
     glBindVertexArray(0);

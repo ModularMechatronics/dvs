@@ -43,6 +43,10 @@ Pre release:
 - Matrix/vector/image view for setting data in plot object: img_c1_.setInternalData(nullptr, 0, 0);  // Hack
 - Receive and push new data until there is new data available, and refresh only after last update
 - "dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();", Possible remove need for specifying type and enum?
+- Don't always update on keypress?
+- Figure legend
+- Rename getAxesScale to getScale
+- Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
 
 Needs fixing:
  - imshow

@@ -5,6 +5,11 @@
 #include <iostream>
 #include <utility>
 
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+
 #include "dvs/math/math.h"
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_low_level.h"
@@ -17,6 +22,7 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
 
     axes_limits_ = AxesLimits(axes_settings.getMinVec(), axes_settings.getMaxVec());
     default_axes_limits_ = axes_limits_;
+    should_draw_zoom_rect_ = false;
 
     current_window_width = window_width;
     current_window_height = window_height;
@@ -33,13 +39,155 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     mouse_pressed_ = false;
 }
 
-void AxesInteractor::registerMousePressed()
+void AxesInteractor::registerMousePressed(const Vec2Df& mouse_pos)
 {
     mouse_pressed_ = true;
+    mouse_pos_at_press_ = mouse_pos;
 }
 
-void AxesInteractor::registerMouseReleased()
+void AxesInteractor::registerMouseReleased(const Vec2Df& mouse_pos)
 {
+    if(should_draw_zoom_rect_)
+    {
+        const float sw = 3.0f;
+        const glm::mat4 orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);;
+        const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
+        const float az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
+        const float el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
+        const float f = 2.5;
+        glm::mat4 window_scale_mat = glm::mat4(1.0f);
+
+        window_scale_mat[0][0] = 2.7;
+        window_scale_mat[1][1] = 2.7;
+        window_scale_mat[2][2] = 2.7;
+
+        window_scale_mat[0][0] = f - az - el;
+        window_scale_mat[1][1] = f - az - el;
+        window_scale_mat[2][2] = f - az - el;
+        const Matrix<double> rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * 
+              rotationMatrixX(-view_angles_.getSnappedElevation());
+
+        glm::mat4 model_mat = glm::mat4(1.0f);
+
+        for(int r = 0; r < 3; r++)
+        {
+            for(int c = 0; c < 3; c++)
+            {
+                model_mat[r][c] = rot_mat(r, c);
+            }
+        }
+
+        const glm::mat4 view_mat = glm::lookAt(glm::vec3(0, -6.0, 0),
+                                               glm::vec3(0, 0, 0),
+                                               glm::vec3(0, 0, 1));
+
+        glm::mat4 model_mat_mod = view_mat * model_mat * window_scale_mat;
+
+        model_mat_mod[3][0] = 0.0;
+        model_mat_mod[3][1] = 0.0;
+        model_mat_mod[3][2] = 0.0;
+        const Vec2Df mouse_pos_at_release = mouse_pos;
+        const Vec2Df window_xy(current_window_width, current_window_height);
+
+        const Vec2Df mouse_pos_at_press_norm = mouse_pos_at_press_; // .elementWiseDivide(window_xy);
+        const Vec2Df mouse_pos_at_release_norm = mouse_pos_at_release; // .elementWiseDivide(window_xy);
+
+        const Vec2Df mouse_pos_at_press_mod = 2.0f * (mouse_pos_at_press_norm.elementWiseMultiply(Vec2Df(1.0f, -1.0f)) + Vec2Df(0.0f, 1.0f)) - 1.0f;
+        const Vec2Df current_mouse_pos_mod = 2.0f * (mouse_pos_at_release_norm.elementWiseMultiply(Vec2Df(1.0f, -1.0f)) + Vec2Df(0.0f, 1.0f)) - 1.0f;
+
+        const SnappingAxis snapping_axis = view_angles_.getSnappingAxis();
+
+        const glm::vec3 mouse_pos_at_press_projected(mouse_pos_at_press_mod.x, mouse_pos_at_press_mod.y, 0);
+        const glm::vec3 current_mouse_pos_projected(current_mouse_pos_mod.x, current_mouse_pos_mod.y, 0);
+
+        const glm::mat4 view_model = view_mat * model_mat * window_scale_mat;
+
+        const glm::vec3 current_mouse_pos_unprojected = glm::unProject(current_mouse_pos_projected, view_model, orth_projection_mat, v_viewport);
+        const glm::vec3 mouse_pos_at_press_unprojected = glm::unProject(mouse_pos_at_press_projected, view_model, orth_projection_mat, v_viewport);
+
+        const Vec3Df scale_vec_div_2 = axes_limits_.getAxesScale() / 2.0;
+        const Vec3Df scale_vec = axes_limits_.getAxesScale();
+        const Vec3Df axes_center = axes_limits_.getAxesCenter();
+        const Vec3Df min_vec = axes_center - scale_vec_div_2;
+        const Vec3Df max_vec = axes_center + scale_vec_div_2;
+
+        if(SnappingAxis::X == snapping_axis)
+        {
+            const float x_start = mouse_pos_at_press_unprojected.y / 2.0f + 0.5f;
+            const float y_start = mouse_pos_at_press_unprojected.z / 2.0f + 0.5f;
+
+            const float x_end = current_mouse_pos_unprojected.y / 2.0f + 0.5f;
+            const float y_end = current_mouse_pos_unprojected.z / 2.0f + 0.5f;
+    
+            // Min/max
+            const float x_min = std::min(x_start, x_end);
+            const float x_max = std::max(x_start, x_end);
+            const float y_min = std::min(y_start, y_end);
+            const float y_max = std::max(y_start, y_end);
+
+            // Find new points from scale
+            const float new_y_min = min_vec.y + x_min * scale_vec.y;
+            const float new_y_max = min_vec.y + x_max * scale_vec.y;
+
+            const float new_z_min = min_vec.z + y_min * scale_vec.z;
+            const float new_z_max = min_vec.z + y_max * scale_vec.z;
+
+            axes_limits_.setMin(Vec3Df(min_vec.x, new_y_min, new_z_min));
+            axes_limits_.setMax(Vec3Df(max_vec.x, new_y_max, new_z_max));
+        }
+        else if(SnappingAxis::Y == snapping_axis)
+        {
+            // Normalize to be in the interval [0.0, 1.0]
+            const float x_start = mouse_pos_at_press_unprojected.x / 2.0f + 0.5f;
+            const float y_start = mouse_pos_at_press_unprojected.z / 2.0f + 0.5f;
+
+            const float x_end = current_mouse_pos_unprojected.x / 2.0f + 0.5f;
+            const float y_end = current_mouse_pos_unprojected.z / 2.0f + 0.5f;
+
+            // Min/max
+            const float x_min = std::min(x_start, x_end);
+            const float x_max = std::max(x_start, x_end);
+            const float y_min = std::min(y_start, y_end);
+            const float y_max = std::max(y_start, y_end);
+
+            // Find new points from scale
+            const float new_x_min = min_vec.x + x_min * scale_vec.x;
+            const float new_x_max = min_vec.x + x_max * scale_vec.x;
+
+            const float new_z_min = min_vec.z + y_min * scale_vec.z;
+            const float new_z_max = min_vec.z + y_max * scale_vec.z;
+
+            axes_limits_.setMin(Vec3Df(new_x_min, min_vec.y, new_z_min));
+            axes_limits_.setMax(Vec3Df(new_x_max, max_vec.y, new_z_max));
+            
+        }
+        else if(SnappingAxis::Z == snapping_axis)
+        {
+            const float x_start = mouse_pos_at_press_unprojected.x / 2.0f + 0.5f;
+            const float y_start = mouse_pos_at_press_unprojected.y / 2.0f + 0.5f;
+
+            const float x_end = current_mouse_pos_unprojected.x / 2.0f + 0.5f;
+            const float y_end = current_mouse_pos_unprojected.y / 2.0f + 0.5f;
+
+            // Min/max
+            const float x_min = std::min(x_start, x_end);
+            const float x_max = std::max(x_start, x_end);
+            const float y_min = std::min(y_start, y_end);
+            const float y_max = std::max(y_start, y_end);
+
+            // Find new points from scale
+            const float new_x_min = min_vec.x + x_min * scale_vec.x;
+            const float new_x_max = min_vec.x + x_max * scale_vec.x;
+
+            const float new_y_min = min_vec.y + y_min * scale_vec.y;
+            const float new_y_max = min_vec.y + y_max * scale_vec.y;
+
+            axes_limits_.setMin(Vec3Df(new_x_min, new_y_min, min_vec.z));
+            axes_limits_.setMax(Vec3Df(new_x_max, new_y_max, max_vec.z));
+        }
+
+        should_draw_zoom_rect_ = false;
+    }
     mouse_pressed_ = false;
 }
 
@@ -96,6 +244,7 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
 {
     const float dx_mod = 250.0f * static_cast<float>(dx) / current_window_width;
     const float dy_mod = 250.0f * static_cast<float>(dy) / current_window_height;
+    should_draw_zoom_rect_ = false;
     switch (current_mouse_activity)
     {
         case MouseActivity::ROTATE:
@@ -105,6 +254,10 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
             if(SnappingAxis::None == view_angles_.getSnappingAxis())
             {
                 changeZoom(dy_mod * zoom_mouse_gain, current_mouse_interaction_axis);
+            }
+            else
+            {
+                should_draw_zoom_rect_ = true;
             }
             break;
         case MouseActivity::PAN:
@@ -350,8 +503,8 @@ GridVectors AxesInteractor::generateGridVectors()
 
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
 
-    const Vec3Dd v_min = (axes_limits_.getMin() - axes_center) * 2.0 + axes_center;
-    const Vec3Dd v_max = (axes_limits_.getMax() - axes_center) * 2.0 + axes_center;
+    const Vec3Dd v_min = (axes_limits_.getMin() - axes_center) + axes_center;
+    const Vec3Dd v_max = (axes_limits_.getMax() - axes_center) + axes_center;
 
     generateAxisVector(v_min.x, v_max.x, axes_settings_.getNumAxesTicks(), axes_center.x, gv.x);
     generateAxisVector(v_min.y, v_max.y, axes_settings_.getNumAxesTicks(), axes_center.y, gv.y);

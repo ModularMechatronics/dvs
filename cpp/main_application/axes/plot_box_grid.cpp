@@ -117,7 +117,7 @@ void PlotBoxGrid::render(const GridVectors& gv,
 
     idx_ = 0;
 
-    axes_scale_ = axes_limits.getAxesScale();
+    axes_scale_ = axes_limits.getAxesScale() / 2.0;
 
     renderXYGrid(gv);
     renderXZGrid(gv);

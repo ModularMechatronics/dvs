@@ -42,12 +42,14 @@ private:
 
     MouseActivity current_mouse_activity;
     bool mouse_pressed_;
+    bool should_draw_zoom_rect_;
 
     ViewAngles view_angles_;
     ViewAngles default_view_angles_;
 
     AxesLimits axes_limits_;
     AxesLimits default_axes_limits_;
+    Vec2Df mouse_pos_at_press_;
 
     AxesSettings axes_settings_;
 
@@ -66,10 +68,14 @@ public:
     void setViewAngles(const double azimuth, const double elevation);
     void setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
     void setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec);
+    bool shouldDrawZoomRect() const
+    {
+        return should_draw_zoom_rect_;
+    }
 
     void registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis, const int dx, const int dy);
-    void registerMousePressed();
-    void registerMouseReleased();
+    void registerMousePressed(const Vec2Df& mouse_pos);
+    void registerMouseReleased(const Vec2Df& mouse_pos);
     void updateMouseActivity(const InteractionType interaction_type);
 
     MouseActivity getCurrentMouseActivity() const

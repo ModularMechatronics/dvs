@@ -26,9 +26,7 @@ public:
     const SnappingAxis snapping_axis,
     const glm::mat4& view_mat,
     const glm::mat4& model_mat,
-    const glm::mat4& projection_mat,
-    const float width,
-    const float height);
+    const glm::mat4& projection_mat);
 };
 
 
