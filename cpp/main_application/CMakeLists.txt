@@ -17,6 +17,7 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/grid_numbers.cpp
                      axes/plot_box_grid.cpp
                      axes/text_rendering.cpp
+                     axes/legend_renderer.cpp
 
                      shader.cpp
 

@@ -14,7 +14,7 @@ LayoutToolsWindow::LayoutToolsWindow(wxPoint pos,
         std::function<void()>&& add_new_element,
         std::function<void()>&& delete_element,
         std::function<void()>&& disable_editing)
-    : wxFrame(nullptr, wxID_ANY, "Layout tools", pos, size)
+    : wxFrame(nullptr, wxID_ANY, "Layout tools", pos, size, wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP)
 {
     this->SetMinSize(size);
     this->SetMaxSize(size);

@@ -53,6 +53,7 @@ protected:
     bool min_max_calculated_;
     bool visualize_has_run_;
     GLuint line_type_; // TODO: Shall be moved to plot2d.h
+    bool has_name_;
     ShaderCollection shader_collection_;
 
     void assignProperties(const Properties& props);

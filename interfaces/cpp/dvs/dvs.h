@@ -477,6 +477,14 @@ inline void axis(const Bound2D& min_bound, const Bound2D& max_bound)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void showLegend()
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SHOW_LEGEND);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void holdOn()
 {
     internal::FunctionHeader hdr;

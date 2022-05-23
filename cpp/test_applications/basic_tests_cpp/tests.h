@@ -340,6 +340,40 @@ void testAxis()
     axis({-1.0, 1.5, 3.4}, {5.4, 9.2, 5.5});
 }
 
+void testLegend()
+{
+    const size_t num_elements = 30;
+    Vector<float> x0(num_elements), y0(num_elements);
+    Vector<float> x1(num_elements), y1(num_elements);
+    Vector<float> x2(num_elements), y2(num_elements);
+
+    double t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x0(k) = 10.0 * cos(t) + 20.0;
+        y0(k) = 10.0 * sin(t) + 20.0 + k;
+
+        t = t + 0.3;
+    }
+
+    x1 = x0 * 2.0f;
+    y1 = y0 * 2.0f;
+
+    x2 = x0 * 3.0f;
+    y2 = y0 * 3.0f;
+
+    setCurrentElement("view_00");
+    clearView();
+
+    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
+    plot(x0, y0, properties::Color(212, 14, 55), properties::Name("sig0"));
+    plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig1"));
+    plot(x2, y2, properties::Color(127, 14, 255), properties::Name("sig2"));
+
+    showLegend();
+}
+
 void testDrawTriangles()
 {
     const size_t num_elements = 10;

@@ -71,20 +71,22 @@ public:
 struct Name : internal::PropertyBase
 {
 public:
-    static constexpr size_t max_length = 22;
+    static constexpr size_t max_length = 100;
     char data[max_length + 1];  // +1 for null termination
+    size_t length;
 
     Name() : internal::PropertyBase(internal::PropertyType::NAME)
     {
-        std::memset(data, 0, max_length + 1);
+        data[0] = '\0';
+        length = 0;
     }
     Name(const char* const name) : internal::PropertyBase(internal::PropertyType::NAME)
     {
-        assert(name && "input name string is null!");
+        assert(name && "Input name string is null!");
         const size_t idx = internal::safeStringLenCheck(name, max_length + 1);
 
-        // TODO: The assertion says it can't be more than, but the condition is more than or equal to
-        assert(idx <= max_length && "Name can't be more than 20 characters!");
+        assert(idx <= max_length && "Name can't be more than 100 characters!");
+        length = idx;
 
         std::memcpy(data, name, idx);
         data[idx] = '\0';

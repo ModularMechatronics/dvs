@@ -119,6 +119,7 @@ public:
     void refresh() override;
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
+    void showLegend(const bool show_legend) override;
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
 

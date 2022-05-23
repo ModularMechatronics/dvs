@@ -74,10 +74,11 @@ void PlotObjectBase::assignProperties(const Properties& props)
     if (props.hasProperty(PropertyType::NAME))
     {
         name_ = props.getProperty<Name>();
+        has_name_ = true;
     }
     else
     {
-        name_ = Name("<undef-name>");
+        has_name_ = false;
     }
 
     if (props.hasProperty(PropertyType::COLOR))

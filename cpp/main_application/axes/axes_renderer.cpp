@@ -174,7 +174,7 @@ void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, 
 void AxesRenderer::render()
 {
     renderPlotBox();
-    if(should_draw_zoom_rect_)
+    if(render_zoom_rect_)
     {
         glUseProgram(shader_collection_.plot_box_shader.programId());
 
@@ -192,6 +192,19 @@ void AxesRenderer::render()
 
     renderBoxGrid();
     drawGridNumbers(text_renderer_, shader_collection_.text_shader, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
+    renderLegend();
+}
+
+void AxesRenderer::renderLegend()
+{
+    glUseProgram(shader_collection_.plot_box_shader.programId());
+    glm::mat4 model_mat_tmp = glm::mat4(1.0f);
+    
+    const glm::mat4 mvp = projection_mat * view_mat * model_mat_tmp;
+
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    legend_renderer_.render();
+    glUseProgram(0);
 }
 
 void AxesRenderer::renderBoxGrid()
@@ -283,7 +296,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const Vec2Df current_mouse_pos,
                                 const MouseActivity mouse_activity,
                                 const bool mouse_pressed,
-                                const bool should_draw_zoom_rect)
+                                const bool render_zoom_rect,
+                                const bool render_legend)
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
@@ -295,7 +309,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     current_mouse_pos_ = current_mouse_pos;
     mouse_activity_ = mouse_activity;
     mouse_pressed_ = mouse_pressed;
-    should_draw_zoom_rect_ = should_draw_zoom_rect;
+    render_zoom_rect_ = render_zoom_rect;
+    render_legend_ = render_legend;
 
     rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * 
               rotationMatrixX(-view_angles_.getSnappedElevation());

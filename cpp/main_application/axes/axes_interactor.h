@@ -52,6 +52,7 @@ private:
     Vec2Df mouse_pos_at_press_;
 
     AxesSettings axes_settings_;
+    bool show_legend_;
 
     Vec3Dd inc0;
 
@@ -83,9 +84,15 @@ public:
         return current_mouse_activity;
     }
 
+    bool getShowLegend() const
+    {
+        return show_legend_;
+    }
+
     GridVectors generateGridVectors();
     ViewAngles getViewAngles() const;
     AxesLimits getAxesLimits() const;
+    void showLegend(const bool show_legend);
 };
 
 #endif

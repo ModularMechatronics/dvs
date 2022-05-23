@@ -140,6 +140,15 @@ void MainWindow::receiveData()
                     break;
                 case Function::CREATE_NEW_ELEMENT:
                     createNewElement(hdr);
+                case Function::SHOW_LEGEND:
+                    if (current_gui_element_set_)
+                    {
+                        current_gui_element_->showLegend(true);
+                    }
+                    else
+                    {
+                        std::cout << "No element set!" << std::endl;
+                    }
 
                     break;
                 default:

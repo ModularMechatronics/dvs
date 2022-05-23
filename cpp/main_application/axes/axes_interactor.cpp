@@ -37,6 +37,7 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
            static_cast<double>(num_lines - 1);
     mouse_pressed_ = false;
+    show_legend_ = false;
 }
 
 void AxesInteractor::registerMousePressed(const Vec2Df& mouse_pos)
@@ -215,6 +216,11 @@ ViewAngles AxesInteractor::getViewAngles() const
 AxesLimits AxesInteractor::getAxesLimits() const
 {
     return axes_limits_;
+}
+
+void AxesInteractor::showLegend(const bool show_legend)
+{
+    show_legend_ = show_legend;
 }
 
 void AxesInteractor::update(const InteractionType interaction_type, const int window_width, const int window_height)

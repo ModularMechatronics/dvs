@@ -21,6 +21,7 @@
 #include "axes/grid_numbers.h"
 #include "axes/zoom_rect.h"
 #include "io_devices/mouse_state.h"
+#include "axes/legend_renderer.h"
 
 class AxesRenderer
 {
@@ -31,6 +32,7 @@ private:
     AxesSettings axes_settings_;
 
     TextRenderer text_renderer_;
+    LegendRenderer legend_renderer_;
 
     ShaderCollection shader_collection_;
 
@@ -58,11 +60,13 @@ private:
     ZoomRect zoom_rect_;
     MouseActivity mouse_activity_;
     bool mouse_pressed_;
-    bool should_draw_zoom_rect_;
+    bool render_zoom_rect_;
+    bool render_legend_;
 
     void renderPlotBox();
     void renderBoxGrid();
     void enableClipPlanes();
+    void renderLegend();
     void setClipPlane(const GLuint program_id, const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const;
 
 public:
@@ -78,7 +82,8 @@ public:
                       const Vec2Df current_mouse_pos,
                       const MouseActivity mouse_activity,
                       const bool mouse_pressed,
-                      const bool should_draw_zoom_rect);
+                      const bool render_zoom_rect,
+                      const bool render_legend);
     void render();
     void plotBegin();
     void plotEnd();

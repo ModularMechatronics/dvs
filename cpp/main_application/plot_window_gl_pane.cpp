@@ -331,6 +331,11 @@ bool PlotWindowGLPane::is3DFunction(const Function fcn)
            (fcn == Function::PLOT3_COLLECTION);
 }
 
+void PlotWindowGLPane::showLegend(const bool show_legend)
+{
+    axes_interactor_.showLegend(show_legend);
+}
+
 void PlotWindowGLPane::setSelection()
 {
     is_selected_ = true;
@@ -682,7 +687,8 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
                          current_mouse_pos_.elementWiseDivide(pane_size),
                          axes_interactor_.getCurrentMouseActivity(),
                          left_mouse_button_.isPressed(),
-                         axes_interactor_.shouldDrawZoomRect());
+                         axes_interactor_.shouldDrawZoomRect(),
+                         axes_interactor_.getShowLegend());
 
     axes_renderer_->render();
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?

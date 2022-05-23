@@ -88,6 +88,7 @@ enum class Function : uint8_t
     CLEAR,
     SOFT_CLEAR,
     STAIRS,
+    SHOW_LEGEND,
     UNKNOWN
 };
 
