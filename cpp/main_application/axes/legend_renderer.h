@@ -4,22 +4,23 @@
 #include "opengl_low_level/opengl_header.h"
 
 #include <stddef.h>
+#include <vector>
+#include <string>
 
 #include "axes/vao_object.h"
 
 class LegendRenderer
 {
 private:
-    GLuint vertex_buffer_edge_, vertex_buffer_array_edge_, color_buffer_edge_;
-    GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
     VAOObject edge_vao_;
     VAOObject inner_vao_;
-    size_t num_vertices_;
+    size_t num_vertices_edge_;
+    size_t num_vertices_inner_;
 
 public:
     LegendRenderer();
 
-    void render();
+    void render(const std::vector<std::string>& legend_names);
 
 };
 

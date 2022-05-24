@@ -45,6 +45,8 @@ public:
     
     void renderAndUpdateData(const float* const new_vertices, const size_t num_bytes_to_update)
     {
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+
         glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_to_update, new_vertices);
 
         glBindVertexArray(vertex_buffer_array_);

@@ -31,6 +31,7 @@ public:
     void softClear();
     void addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     void render() const;
+    std::vector<std::string> getLegendStrings() const;
 };
 
 #endif

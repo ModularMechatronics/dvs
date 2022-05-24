@@ -192,7 +192,10 @@ void AxesRenderer::render()
 
     renderBoxGrid();
     drawGridNumbers(text_renderer_, shader_collection_.text_shader, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
-    renderLegend();
+    if(render_legend_)
+    {
+        renderLegend();
+    }
 }
 
 void AxesRenderer::renderLegend()
@@ -203,7 +206,7 @@ void AxesRenderer::renderLegend()
     const glm::mat4 mvp = projection_mat * view_mat * model_mat_tmp;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
-    legend_renderer_.render();
+    legend_renderer_.render(legend_names_);
     glUseProgram(0);
 }
 
@@ -297,7 +300,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const MouseActivity mouse_activity,
                                 const bool mouse_pressed,
                                 const bool render_zoom_rect,
-                                const bool render_legend)
+                                const bool render_legend,
+                                const std::vector<std::string>& legend_names)
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
@@ -311,6 +315,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     mouse_pressed_ = mouse_pressed;
     render_zoom_rect_ = render_zoom_rect;
     render_legend_ = render_legend;
+    legend_names_ = legend_names;
 
     rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * 
               rotationMatrixX(-view_angles_.getSnappedElevation());

@@ -136,6 +136,28 @@ void PlotDataHandler::render() const
     }
 }
 
+std::vector<std::string> PlotDataHandler::getLegendStrings() const
+{
+    std::vector<std::string> names;
+    for (size_t k = 0; k < plot_datas_.size(); k++)
+    {
+        if(plot_datas_[k]->hasName())
+        {
+            names.push_back(plot_datas_[k]->getName());
+        }
+    }
+
+    for (size_t k = 0; k < old_plot_datas_.size(); k++)
+    {
+        if(old_plot_datas_[k]->hasName())
+        {
+            names.push_back(old_plot_datas_[k]->getName());
+        }
+    }
+
+    return names;
+}
+
 std::pair<Vec3Dd, Vec3Dd> PlotDataHandler::getMinMaxVectors() const
 {
     if (plot_datas_.size() == 0)

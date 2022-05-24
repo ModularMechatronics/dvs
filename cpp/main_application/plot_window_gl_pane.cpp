@@ -688,7 +688,8 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
                          axes_interactor_.getCurrentMouseActivity(),
                          left_mouse_button_.isPressed(),
                          axes_interactor_.shouldDrawZoomRect(),
-                         axes_interactor_.getShowLegend());
+                         axes_interactor_.getShowLegend(),
+                         plot_data_handler_->getLegendStrings());
 
     axes_renderer_->render();
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?

@@ -62,6 +62,7 @@ private:
     bool mouse_pressed_;
     bool render_zoom_rect_;
     bool render_legend_;
+    std::vector<std::string> legend_names_;
 
     void renderPlotBox();
     void renderBoxGrid();
@@ -83,7 +84,8 @@ public:
                       const MouseActivity mouse_activity,
                       const bool mouse_pressed,
                       const bool render_zoom_rect,
-                      const bool render_legend);
+                      const bool render_legend,
+                      const std::vector<std::string>& legend_names);
     void render();
     void plotBegin();
     void plotEnd();

@@ -69,6 +69,10 @@ public:
 
     bool isPersistent() const;
     std::string getName() const;
+    bool hasName()
+    {
+        return has_name_;
+    }
 
     virtual void modifyShader();
 };
