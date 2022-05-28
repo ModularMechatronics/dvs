@@ -136,14 +136,14 @@ void PlotDataHandler::render() const
     }
 }
 
-std::vector<std::string> PlotDataHandler::getLegendStrings() const
+std::vector<LegendProperties> PlotDataHandler::getLegendStrings() const
 {
-    std::vector<std::string> names;
+    std::vector<LegendProperties> names;
     for (size_t k = 0; k < plot_datas_.size(); k++)
     {
         if(plot_datas_[k]->hasName())
         {
-            names.push_back(plot_datas_[k]->getName());
+            names.push_back(plot_datas_[k]->getLegendProperties());
         }
     }
 
@@ -151,7 +151,7 @@ std::vector<std::string> PlotDataHandler::getLegendStrings() const
     {
         if(old_plot_datas_[k]->hasName())
         {
-            names.push_back(old_plot_datas_[k]->getName());
+            names.push_back(old_plot_datas_[k]->getLegendProperties());
         }
     }
 

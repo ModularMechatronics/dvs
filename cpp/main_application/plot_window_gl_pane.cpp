@@ -333,6 +333,7 @@ bool PlotWindowGLPane::is3DFunction(const Function fcn)
 
 void PlotWindowGLPane::showLegend(const bool show_legend)
 {
+    Refresh();
     axes_interactor_.showLegend(show_legend);
 }
 

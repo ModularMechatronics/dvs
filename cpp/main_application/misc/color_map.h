@@ -9,6 +9,8 @@
 #include <type_traits>
 #include <vector>
 
+#include "dvs/enumerations.h"
+
 template <typename T> struct RGBTriplet
 {
     T red;
@@ -295,10 +297,34 @@ const extern RGBColorMap<unsigned char> magma;
 const extern RGBColorMap<unsigned char> viridis;
 const extern RGBColorMap<unsigned char> jet;
 
-const extern RGBColorMap<float> rainbowf;
-const extern RGBColorMap<float> magmaf;
-const extern RGBColorMap<float> viridisf;
-const extern RGBColorMap<float> jetf;
+extern RGBColorMap<float> rainbowf;
+extern RGBColorMap<float> magmaf;
+extern RGBColorMap<float> viridisf;
+extern RGBColorMap<float> jetf;
 }  // namespace color_maps
+
+inline RGBColorMap<float>* getColorMapFromColorMapType(const dvs::internal::ColorMapType cmt)
+{
+    switch(cmt)
+    {
+        case dvs::internal::ColorMapType::JET:
+            return &color_maps::jetf;
+            break;
+        case dvs::internal::ColorMapType::RAINBOW:
+            return &color_maps::rainbowf;
+            break;
+        case dvs::internal::ColorMapType::MAGMA:
+            return &color_maps::magmaf;
+            break;
+        case dvs::internal::ColorMapType::VIRIDIS:
+            return &color_maps::viridisf;
+            break;
+        default:
+            std::cout << "Invalid ColorMapType!" << std::endl;
+            exit(0);
+            return nullptr;
+    }
+    
+}
 
 #endif

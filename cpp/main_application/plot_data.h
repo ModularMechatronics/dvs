@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "axes/legend_properties.h"
 #include "communication/received_data.h"
 #include "dvs/dvs.h"
 #include "dvs/math/math.h"
@@ -31,7 +32,7 @@ public:
     void softClear();
     void addData(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr);
     void render() const;
-    std::vector<std::string> getLegendStrings() const;
+    std::vector<LegendProperties> getLegendStrings() const;
 };
 
 #endif

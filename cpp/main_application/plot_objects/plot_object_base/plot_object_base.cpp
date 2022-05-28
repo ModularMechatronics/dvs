@@ -15,6 +15,11 @@ std::string PlotObjectBase::getName() const
     return name_.data;
 }
 
+std::string_view PlotObjectBase::getNameStringView() const
+{
+    return std::string_view(name_.data);
+}
+
 std::pair<Vec3Dd, Vec3Dd> PlotObjectBase::getMinMaxVectors()
 {
     if (!min_max_calculated_)
@@ -131,10 +136,12 @@ void PlotObjectBase::assignProperties(const Properties& props)
     if (props.hasProperty(PropertyType::COLOR_MAP))
     {
         color_map_ = props.getProperty<ColorMap>().data;
+        color_map_set_ = true;
     }
     else
     {
         color_map_ = ColorMapType::JET;
+        color_map_set_ = false;
     }
 
     if (props.hasProperty(PropertyType::LINE_WIDTH))

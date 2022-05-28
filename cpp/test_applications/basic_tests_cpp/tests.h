@@ -342,6 +342,22 @@ void testAxis()
 
 void testLegend()
 {
+    const int num_rows = 20, num_cols = 25;
+    Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+
+    double inc = 0.4;
+    for (int r = 0; r < num_rows; r++)
+    {
+        for (int c = 0; c < num_cols; c++)
+        {
+            const double rd = static_cast<double>(r - 5) * inc;
+            const double cd = static_cast<double>(c - 5) * inc * 2;
+            x(r, c) = c;
+            y(r, c) = r;
+            z(r, c) = std::sin(std::sqrt(rd * rd + cd * cd));
+        }
+    }
+
     const size_t num_elements = 30;
     Vector<float> x0(num_elements), y0(num_elements);
     Vector<float> x1(num_elements), y1(num_elements);
@@ -351,8 +367,8 @@ void testLegend()
 
     for (size_t k = 0; k < num_elements; k++)
     {
-        x0(k) = 10.0 * cos(t) + 20.0;
-        y0(k) = 10.0 * sin(t) + 20.0 + k;
+        x0(k) = 10.0 * cos(t);
+        y0(k) = 10.0 * sin(t) + k;
 
         t = t + 0.3;
     }
@@ -366,11 +382,12 @@ void testLegend()
     setCurrentElement("view_00");
     clearView();
 
-    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    plot(x0, y0, properties::Color(212, 14, 55), properties::Name("sig0"));
-    plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig1"));
-    plot(x2, y2, properties::Color(127, 14, 255), properties::Name("sig2"));
-
+    axis({-32.0, 0.0, -2.0}, {32.0, 110.0, 2.0});
+    plot(x0, y0, properties::Color(212, 14, 55), properties::Name("AAAaaaBBBbbb"));
+    plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
+    plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
+    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET(), properties::Name("SURF_COLOR_MAP"));
     showLegend();
 }
 

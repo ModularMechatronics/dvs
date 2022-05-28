@@ -14,6 +14,7 @@
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "axes/legend_properties.h"
 #include "shader.h"
 #include "axes/plot_box_walls.h"
 #include "axes/plot_box_silhouette.h"
@@ -26,15 +27,14 @@
 class AxesRenderer
 {
 private:
+    TextRenderer text_renderer_;
+    ShaderCollection shader_collection_;
+    LegendRenderer legend_renderer_;
+
     ViewAngles view_angles_;
     AxesLimits axes_limits_;
 
     AxesSettings axes_settings_;
-
-    TextRenderer text_renderer_;
-    LegendRenderer legend_renderer_;
-
-    ShaderCollection shader_collection_;
 
     PlotBoxWalls* plot_box_walls_;
     PlotBoxSilhouette* plot_box_silhouette_;
@@ -62,7 +62,7 @@ private:
     bool mouse_pressed_;
     bool render_zoom_rect_;
     bool render_legend_;
-    std::vector<std::string> legend_names_;
+    std::vector<LegendProperties> legend_names_;
 
     void renderPlotBox();
     void renderBoxGrid();
@@ -85,7 +85,7 @@ public:
                       const bool mouse_pressed,
                       const bool render_zoom_rect,
                       const bool render_legend,
-                      const std::vector<std::string>& legend_names);
+                      const std::vector<LegendProperties>& legend_names);
     void render();
     void plotBegin();
     void plotEnd();

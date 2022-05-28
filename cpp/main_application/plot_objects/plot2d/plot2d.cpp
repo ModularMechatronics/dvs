@@ -56,6 +56,15 @@ Plot2D::~Plot2D()
     delete[] points_ptr_;
 }
 
+LegendProperties Plot2D::getLegendProperties() const
+{
+    LegendProperties lp{PlotObjectBase::getLegendProperties()};
+    lp.type = LegendType::LINE;
+    lp.color = color_;
+
+    return lp;
+}
+
 template <typename T>
 uint8_t* convertData2D(const uint8_t* const input_data,
                        const size_t num_elements,

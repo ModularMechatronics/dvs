@@ -49,19 +49,19 @@ TextRenderer::TextRenderer()
     glBindVertexArray(0);
 }
 
-void TextRenderer::renderTextFromCenter(std::string text, float x, float y, float scale, const float axes_width, const float axes_height) const
+void TextRenderer::renderTextFromCenter(const std::string_view& text, float x, float y, float scale, const float axes_width, const float axes_height) const
 {
     const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
     this->renderTextFromLeftCenter(text, x - text_size.x / 2.0f, y, scale, axes_width, axes_height);
 }
 
-void TextRenderer::renderTextFromRightCenter(std::string text, float x, float y, float scale, const float axes_width, const float axes_height) const
+void TextRenderer::renderTextFromRightCenter(const std::string_view& text, float x, float y, float scale, const float axes_width, const float axes_height) const
 {
     const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
     this->renderTextFromLeftCenter(text, x - text_size.x, y, scale, axes_width, axes_height);
 }
 
-void TextRenderer::renderTextFromLeftCenter(std::string text, float x, float y, float scale, const float axes_width, const float axes_height) const
+void TextRenderer::renderTextFromLeftCenter(const std::string_view& text, float x, float y, float scale, const float axes_width, const float axes_height) const
 {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -188,7 +188,9 @@ bool initFreetype()
     return true;
 }
 
-Vec2Df calculateStringSize(std::string text, float x, float y, float scale, const float axes_width, const float axes_height)
+// TODO: This is incorrect, it shouldn't depend on width/height. Maybe it
+// calculates the height/width in the local "compressed" axes window?
+Vec2Df calculateStringSize(const std::string_view& text, float x, float y, float scale, const float axes_width, const float axes_height)
 {
     if(text.length() == 0)
     {

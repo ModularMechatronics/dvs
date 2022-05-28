@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <string_view>
 
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
@@ -14,6 +15,7 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_objects/utils.h"
 #include "properties.h"
+#include "axes/legend_properties.h"
 #include "shader.h"
 
 using namespace dvs;
@@ -54,6 +56,7 @@ protected:
     bool visualize_has_run_;
     GLuint line_type_; // TODO: Shall be moved to plot2d.h
     bool has_name_;
+    bool color_map_set_;
     ShaderCollection shader_collection_;
 
     void assignProperties(const Properties& props);
@@ -69,6 +72,26 @@ public:
 
     bool isPersistent() const;
     std::string getName() const;
+    std::string_view getNameStringView() const;
+
+    virtual LegendProperties getLegendProperties() const
+    {
+        LegendProperties lp;
+        lp.name = name_.data;
+
+        return lp;
+    }
+
+    Function getType() const
+    {
+        return type_;
+    }
+
+    RGBTripletf getColor() const
+    {
+        return color_;
+    }
+    
     bool hasName()
     {
         return has_name_;

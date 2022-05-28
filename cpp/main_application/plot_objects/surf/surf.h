@@ -14,7 +14,7 @@ class Surf : public PlotObjectBase
 {
 private:
     Dimension2D dims_;
-    RGBColorMap<float> color_map_;
+    // RGBColorMap<float> color_map_;
     GLuint buffer_idx_;
 
     float* points_ptr_;
@@ -27,6 +27,8 @@ public:
     Surf();
     Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~Surf();
+
+    LegendProperties getLegendProperties() const override;
 
     void render() override;
 };

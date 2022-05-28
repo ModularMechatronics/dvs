@@ -21,6 +21,8 @@ public:
     Plot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     ~Plot2D();
 
+    LegendProperties getLegendProperties() const override;
+
     void render() override;
 };
 

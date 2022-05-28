@@ -54,6 +54,26 @@ Surf::~Surf()
     delete[] points_ptr_;
 }
 
+LegendProperties Surf::getLegendProperties() const
+{
+    LegendProperties lp{PlotObjectBase::getLegendProperties()};
+    lp.type = LegendType::POLYGON;
+    lp.edge_color = edge_color_;
+
+    if(color_map_set_)
+    {
+        lp.color_map_set = true;
+        lp.color_map = getColorMapFromColorMapType(color_map_);
+    }
+    else
+    {
+        lp.color_map_set = false;
+        lp.face_color = face_color_;
+    }
+
+    return lp;
+}
+
 template <typename T>
 float* convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size_t num_bytes_for_one_vec)
 {

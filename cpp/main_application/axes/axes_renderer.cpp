@@ -79,7 +79,8 @@ static Vec3Dd findScale(const glm::mat4& pm)
     return Vec3Dd(sx, sy, sz);
 }
 
-AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) : shader_collection_{shader_collection}
+AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) :
+shader_collection_{shader_collection}, legend_renderer_{text_renderer_, shader_collection_}
 {
     plot_box_walls_ = new PlotBoxWalls(1.0f);
     plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
@@ -206,7 +207,7 @@ void AxesRenderer::renderLegend()
     const glm::mat4 mvp = projection_mat * view_mat * model_mat_tmp;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
-    legend_renderer_.render(legend_names_);
+    legend_renderer_.render(legend_names_, width_, height_);
     glUseProgram(0);
 }
 
@@ -301,7 +302,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const bool mouse_pressed,
                                 const bool render_zoom_rect,
                                 const bool render_legend,
-                                const std::vector<std::string>& legend_names)
+                                const std::vector<LegendProperties>& legend_names)
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
