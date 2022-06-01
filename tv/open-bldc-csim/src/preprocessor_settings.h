@@ -1,0 +1,7 @@
+#ifndef PREPROCESSOR_SETTINGS_
+#define PREPROCESSOR_SETTINGS_
+
+// #define LOG_SHOW_FILE_FULL_PATH
+// #define DEBUG
+
+#endif

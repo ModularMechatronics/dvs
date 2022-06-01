@@ -1,0 +1,4 @@
+ * Instrumentation of functions through a python script, as pre build step
+ * Argparse
+ * Change name of 'modules' to 'libraries'
+ * Under 'libraries', create directories 'cpp', 'c', 'python'

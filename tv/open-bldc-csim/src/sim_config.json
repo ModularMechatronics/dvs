@@ -1,0 +1,8 @@
+{
+    "sim_freq": 1000000,
+    "t_start": 0.0,
+    "t_end": 0.01,
+    "controller_freq": 1000,
+    "plot": false,
+    "save_stride": 1000
+}
