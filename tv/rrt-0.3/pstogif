@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+#This is a PERL script that calls pstoimg for each image
+
+$PSTOIMG='pstoimg';
+
+foreach $i (0..$#ARGV) {
+    print "Processing ",$ARGV[$i],"\n";
+    system $PSTOIMG,$ARGV[$i];
+    system 'echo',$PSTOIMG,$ARGV[$i];
+}
+

@@ -1,0 +1,27 @@
+.SUFFIXES: .C .o
+
+C++ = g++
+
+C++FLAGS = -O2 -DUSE_ANN
+
+# Be sure to include header files from LEDA (and ANN if used)
+INC = -I/usr/local/lib/g++-include/ -L/usr/X11/lib/ -I../include -L../lib  
+
+LIBS = -lW -lP -lG -lL -lX11 -lm -lANN
+
+OBJ = model.o rrt.o nn.o
+
+.C.o:
+	$(C++) $(C++FLAGS) -c $< $(INC) 
+
+rrt: gui.C $(OBJ)
+	$(C++) $(C++FLAGS) gui.C $(OBJ) -o rrt $(INC) $(LIBS)
+
+convert: convert.C 
+	$(C++) $(C++FLAGS) convert.C -o convert $(INC) $(LIBS)
+
+gifmerge:
+	gcc -o gifmerge gifmerge.c
+
+clean:
+	-rm *.o rrt

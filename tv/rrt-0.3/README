@@ -1,0 +1,303 @@
+Rapidly-Exploring Random Tree Software 
+Release 0.3  9/28/00
+
+Steven M. LaValle
+Iowa State University
+
+
+
+1.  BRIEF OVERVIEW
+
+This program aids in the demonstration, testing, and development of
+planning algorithms based on Rapidly-Exploring Random Trees (RRTs).
+The software is intended primarily for experimental research purposes.
+It was developed over a short period of time, and does not contain too
+many features yet.  Many improvements should probably be made to help
+the efficiency, flexibility, installation ease, etc.  One day this
+might actually happen.  Until that time, please forgive me for any
+frustrations that might be experienced with this package.
+
+The software relies on two excellent libraries:
+
+   a) LEDA (http://www.mpi-sb.mpg.de/LEDA/leda.html)
+   b) ANN (http://www.cs.umd.edu/~mount/ANN/)
+
+I am very grateful for the efforts of those who contributed to
+these libraries.
+
+
+
+2.  INSTALLATION
+
+The Makefile is very simple, and will probably need to be adjusted for
+your particular system.  There is an option for using ANN to improve
+nearest-neighbor computations, but you would probably want to avoid
+using this because it requires installation of ANN, and only uses
+Euclidean metrics on R^n (my code is limited, ANN can handle more than
+that).
+
+There are three main components:
+
+model.h, model.C: This specifies the models, which includes things 
+like obstacles, robot geometry, collision detection, nonholonomic
+constraints, Runge-Kutta integration, equations of motion.  The
+code is object oriented, with a hierarchy of various derived
+models.
+
+rrt.h, rrt.C: A number of different planners appear here, along with
+associated methods.  This code is object oriented, and all planners
+are derived from a base class (or from other planners).
+
+gui.h, gui.C: This is the front end, which performs initialization,
+calls all of the planners, runs the menus, X display, etc.  This
+file compiles into the rrt executable.
+
+nn.h, nn.C: A small interface class, which enables the ANN library
+to be used for fast nearest neighbors in the RRT code.  You probably
+will not need this.  By default, it is currently not compiled into
+the RRT software.
+
+An extra, stand-alone program called convert has been included.  You
+can use this to draw polygons in idraw, and they will be converted to
+a format that can be easily read by LEDA.  There are, of course,
+better ways to do this (I would only recommend playing with it if you
+are currently planning on using a pencil and graph paper to encode
+obstacles).
+
+Just run "make" to compile.  You will need to have the LEDA header
+files placed somewhere checked by the compiler (or use the -I option
+to specify their directory).  You will need to have the LEDA libraries
+placed somewhere checked by the compiler/linker (or use the -L option
+to specify their directory).  For most architectures, you can obtain
+binaries directly from the LEDA web page.  If you are a little
+unlucky, you might have to get the source and compile it yourself.
+Be sure that the X11 libraries are also getting linked.  If all
+goes well, you should have an "rrt" executable.
+
+You will have to make gifmerge if you want to be able to construct
+animated GIF files automatically.  The source is included in this
+distribution.  Two PERL files, pstogif and pstoimg, are called by the
+function that builds the animated GIF.  Inside each of these, you should
+verify that paths are correct for other executables such as the 
+Ghostscript library, and pnmtools.  It will probably take some work
+to get this to port to another system.  It works fine with RedHat
+Linux 6.0 and 6.1.
+
+
+3.  USING THE RRT SOFTWARE
+
+The RRT software is started by entering "rrt <directory>", in which
+<directory> contains a particular problem instance.  By default, a 2D
+point robot is selected.  If there are no files in the directory,
+defaults will be chosen automatically for many variables such as the
+initial state, goal state, obstacles, etc.  Files may be placed in the
+directory, to override the defaults.  The example directories include
+files names Obst, Robot, InitialState, and GoalState.  If any
+file is missing, a default is assigned (the default usually depends
+on the model).  
+
+Unfortunately, the model type (e.g., 2D car-like robot) cannot be
+specified from a file.  The model can be changed using the "Select
+Model Type" menu option.  If you would like to change the default,
+replace this line in gui.C:
+
+Model2DPoint M("empty");
+
+Some model variables can be re-read using functions under
+the "Model" menu.  The "Run" menu enables several planners to be
+executed.  "Select Planner Type" will select a particular planner.
+"Explore" will generate an RRT from the initial state, but will pay no
+attention of the goal state.  "Plan" will attempt to find a path from
+the initial state to the goal state.  Some planners available under
+"Select Planner Type" only change the "Plan" or "Explore" method (not
+both).  In such a case, if "Plan" is the only one changed, then
+"Explore" defaults to an inherited method (a similar thing occurs if
+"Explore" is the only one changed).
+
+The menu options under "Display" and "File" are self-explanatory.
+Several variables can be adjusted during execution by using the
+"Settings" menu.  DeltaT and Speed both affect the distance traveled
+in a single increment of the RRT.  NumNodes is the number of RRT nodes
+that will be generated by a call to "Explore" or "Plan".  Each of
+these functions can be called multiple times, and the RRT(s) will
+continue to grow, without being cleared.  Gdist is a distance-to-goal
+threshold that considered "close enough" to the goal for the planner
+to halt and report success.
+
+There are several different kinds of RRT algorithms.  There are two
+categories at present: single tree and dual tree.  The single tree
+methods grow a single RRT from the initial state.  The dual tree
+methods grow one tree from the initial state and another from the goal
+state, in hopes that the two will meet (similar to bidirectional AI
+search).  The single tree classes are RRT, RRTGoalBias, RRTGoalPull,
+RRTCon, RRTPolar, RRTHull, RRTStar, and RRTGoalZoom.  The others are
+dual tree classes.
+
+The classes are:
+
+RRT: The base class, which provides a simple RRT Explore and Plan
+method, which can be applied to any problem.
+
+RRTGoalBias: Instead of random sampling of the state space, pick the
+goal state once in a while (with some small probability).  This
+helps for some problems, but does not work well for many others.
+
+RRTGoalPull: In each step, extend the tree both toward the goal and
+toward the randomly-chosen state.  This does not seem to do much.
+Only Explore is replaced (Plan is inherited from the base class).
+
+RRTCon: In each step, try to make the new RRT vertex as close as
+possible to the randomly-chosen vertex (i.e., the step size has no
+limit).  Only Explore is replaced (Plan is inherited from the base
+class).  There could be a great distance between two RRT nodes, but a
+straight line segment is drawn in the graphical display, even for
+nonholonomic systems (although the solution should still be valid).
+
+
+RRTPolar: This is a statistical biasing scheme that concentrates
+samples around the goal.  This works well for some problems.  It
+probably will not work at all for many.
+
+RRTHull: This illustrates the behavior of RRTs in large spaces.  It is
+assumed that the world is a disc with am extremely large radius.  The
+RRT grows in a few small directions.  The works best for Model2DPoint
+with no obstacles.
+
+RRTStar: An attempt to convert RRTs into a kind of A^* search.  Very
+strange results have been obtained.
+
+RRTGoalZoom: This increases the concentration of samples around the
+goal state.  The concentration is controlled by closest RRT vertex to
+the goal state.  Initially, the sampling is mostly uniform; as RRT
+grows closer, the concentration around the goal state increases.
+
+RRTDual: A dual tree planning approach in which both trees are grown
+toward the same random samples.  For this and the other dual tree
+approaches, there are no Explore methods--only Plan.
+
+RRTExtExt: A dual tree approach that balances between growing the
+trees toward each other and towards randomly-chosen states.  This is
+one of the most efficient and general planning algorithms in this
+software.  This is probably the best initial selection for
+experimentation.
+
+RRTExtCon: Similar to ExtExt, except that an attempt is made to extend
+one RRT as far as possible to reach the other RRT in each iteration.
+For nonholonomic problems, the solution output currently does not show
+intermediate states.  There could be a great distance between two RRT
+nodes, but a straight line segment is drawn in the graphical display
+(although the solution should still be valid).
+
+RRTConCon: Similar to ExtExt, except that an attempt is made in every
+iteration to grow each tree as far as possible toward the
+randomly-selected sample or the other tree, as opposed to taking
+small, incremental steps.  There could be a great distance between two
+RRT nodes, but a straight line segment is drawn in the graphical
+display (although the solution should still be valid).
+
+
+
+4.  EXTENDING THE EXAMPLES AND MODELS
+
+New examples can be made by simply adding some files to a new
+directory.  Possibilities are Obst, Robot, InitialState, GoalState,
+UpperState, LowerState, and Inputs.  All files are stored in an ASCII
+format that is parsed automatically using LEDA's overload of << and
+>>.  Obst and Robot are lists of polygons.  InitialState, GoalState,
+UpperState, and LowerState are all vectors that have dimension that
+same as the state space.  Inputs is a list of vectors that serves as
+an input to the state transition equation (equation of motion).  This
+list corresponds to the discrete actions or inputs that can be
+applied.  Often this corresponds to quantization of continuous control
+inputs.  The quantization level can be effected by adding the
+appropriate vectors to Inputs.  Also, one try many interesting
+variations for nonholonomic systems by simply changing Inputs.  For
+example, for a car-like robot, one could limit the inputs to those
+that make the car go forward only, forward and reverse, or even
+forward and left only.
+
+You can specify default planners and models easily by making a
+file that has the name of the option.  For example, if files
+named RRTExtExt and Model2DRigid are placed in the directory
+along with the problem data, then it is assumed that the RRTExtExt
+planner is used for the Model2DRigid model (2D rigid body 
+with rotation).
+
+
+If you have a problem with new nonholonomic constraints or new
+kinematics, and would like to try applying the RRT software, you will
+have to derive a new model class.  The hierarchy of classes can be
+observed in model.h.  The first step is to find the existing model
+that is most similar to the model you want to add.  The new model
+should be derived from this to save as much previous effort as
+possible.  For example, Model2DRigidCar is derived from Model2DRigid
+because both use the same collision detection, integration method,
+metric, etc.  The key things added to the derived model are the
+constructor and the state transition equation.  For example, the
+constructor for the Model2DRigidCar is:
+
+
+Model2DRigidCar::Model2DRigidCar(string path = ""):Model2DRigid(path) {
+  double alpha;
+
+  InitialState = vector(45.0,60.0,PI/2.0);
+  GoalState = vector(85.0,5.0,PI);
+  LowerState = vector(0.0,0.0,0.0);
+  UpperState = vector(100.0,100.0,2.0*PI);
+  MaxSteeringAngle = PI/12.0;
+  CarLength = 2.0;
+
+  // Make the list of Inputs
+  Inputs.clear();  // Otherwise its parent constructor will make some inputs
+  for (alpha = -MaxSteeringAngle; alpha <= MaxSteeringAngle; 
+       alpha += 2.0*MaxSteeringAngle/6.0) {
+    Inputs.push_back(vector(1.0,alpha)); 
+    Inputs.push_back(vector(-1.0,alpha)); 
+  }
+}
+
+
+This specifies defaults for several variables, and makes the default
+list of input vectors.  If you want a left-turn-only car, then you
+could simply make an Inputs file with these restricted inputs.  This will
+override the default above.
+
+The state transition equation is simply a C++ version of the 
+familiar equation from control theory:  xdot = f(x,u)  
+There are two input vectors: the state and the input .  The
+output is dx/dt.  For the car, this is simply:
+
+vector Model2DRigidCar::StateTransitionEquation(const vector &x, 
+	                                        const vector &u) {
+
+  vector dx(3);
+
+  dx[0] = Speed*u[0]*cos(x[2]);
+  dx[1] = Speed*u[0]*sin(x[2]);
+  dx[2] = Speed*u[0]*tan(u[1])/CarLength;
+  return dx;
+}
+
+For many new problems, it will be important to make a new Metric
+method, rather than accept the one that is inherited.  Also, the
+method of integration can be selected by defining an Integrate
+function.
+
+Once a new model has been added to model.h and model.C, the next step 
+is to add the model to the menu.  This is done by adding the 
+following line to gui.C (search for the location of other lines
+of this form in the constructor method, RRTGui::RRTGui(RRT *r)): 
+
+  mm1->button("2DRigidMyNewModel",990,ButtonHandle);
+
+Choose an unique integer as the second argument.  The next step is to
+add four lines of code, also to gui.C, to the ButtonHandle function.
+An example is
+
+  case 990: cout << "Switch to 2DRigidMyNewModel Model\n";
+    U.rrt->m = new Model2DRigidMyNewModel(U.rrt->m->FilePath);
+    U.ResetRRT();
+    break;
+
+This should make your new model appear on the menu.
+
