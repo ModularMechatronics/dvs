@@ -60,6 +60,7 @@ public:
     T* getGreenPtr() const;
     T* getBluePtr() const;
 
+    RGBTriplet<T> getColor(const double d) const;
     RGBTriplet<T> operator()(const double d) const;
     template <typename Y, typename U> RGBTriplet<T> operator()(const Y d_in, const U max_val) const;
 
@@ -219,6 +220,18 @@ template <typename T> void RGBColorMap<T>::setupTables(const std::vector<RGBTrip
             }
         }
     }
+}
+
+template <typename T> RGBTriplet<T> RGBColorMap<T>::getColor(const double d) const
+{
+    if ((d < 0.0) || (d > 1.0))
+    {
+        std::cout << "WARNING: Tried to index outside of map range [0.0, 1.0]!" << std::endl;
+    }
+    const double d_clamped = (d < 0.0) || (d > 1.0) ? std::max(std::min(1.0, d), 0.0) : d;
+
+    const size_t idx = std::round(static_cast<double>(num_values_ - 1) * d_clamped);
+    return RGBTriplet<T>(red_[idx], green_[idx], blue_[idx]);
 }
 
 template <typename T> RGBTriplet<T> RGBColorMap<T>::operator()(const double d) const

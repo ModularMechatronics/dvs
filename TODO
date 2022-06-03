@@ -33,7 +33,9 @@ Pre release:
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix layout designer
+- Change "getDataPointer" to "data" for Matrix, Vector, etc.
 - Fix number formatting and grid vectors system
+- Make sure linewidth and pointsize works
 - Fix showing correct plot walls when in perspective mode
 - Unify MouseActivity and InteractionType
 - Fix panning "speed"
@@ -53,7 +55,7 @@ Pre release:
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
 - Layout window always on top of windows
 - "UInt8View" or something for "void fillBufferWithData(uint8_t* const buffer) const;" functions, that contains pointer and size
-
+- Vector<T>{2} initializes as the initializer list??? Inconsistent...
 Needs fixing:
  - imshow
  (3D surface functions still don't have correct color)
@@ -74,6 +76,6 @@ Post release:
 - Programatically specicy plots in different windows
 - Characters turning away from plot box when rotating
 - 3D world
-
+- http://www.opengl.org/wiki/Buffer_Object_Streaming
 Unsure:
 Shader for surf, meshgrid and other funchtion, that enables gradient

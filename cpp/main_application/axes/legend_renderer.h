@@ -11,6 +11,7 @@
 #include "axes/text_rendering.h"
 #include "axes/vao_object.h"
 #include "shader.h"
+#include "dvs/math/math.h"
 
 class VAOObject2
 {
@@ -22,7 +23,7 @@ private:
 public:
     VAOObject2() = default;
     VAOObject2(const size_t num_vertices, const float* const vertices, const float* const colors) :
-        num_vertices_{num_vertices},
+        num_vertices_{num_vertices * 3},
         num_bytes_{sizeof(float) * 3 * num_vertices_}
     {
         glGenVertexArrays(1, &vertex_buffer_array_);
@@ -57,10 +58,12 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
 
         glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_to_update, new_vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
 
         glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_to_update, new_colors);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindVertexArray(vertex_buffer_array_);
         glDrawArrays(render_type, 0, num_vertices_to_render);
@@ -79,6 +82,13 @@ private:
 
     TextRenderer text_renderer_;
     ShaderCollection shader_collection_;
+
+    dvs::Vector<float> points_;
+    dvs::Vector<float> colors_;
+    void renderColorMapLegend(const size_t num_segments, const RGBColorMap<float>* const color_map, const float xc, const float yc, const float r);
+    void setVertexAtIdx(const float x, const float y, const float z, const size_t idx);
+    void setColorAtIdx(const float r, const float g, const float b, const size_t idx);
+
 public:
     LegendRenderer(const TextRenderer& text_renderer_, const ShaderCollection& shader_collection_);
 
