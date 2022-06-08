@@ -12,10 +12,10 @@ const float top_margin = 0.1;
 const float dx = 2.0;
 const float dz = 0.2;
 
-const float x_max = 3.0f - right_margin;
-const float x_min = x_max - dx;
-const float z_max = 3.0f - top_margin;
-const float z_min = z_max - dz;
+float x_max = 3.0f - right_margin;
+float x_min = x_max - dx;
+float z_max = 3.0f - top_margin;
+float z_min = z_max - dz;
 
 const float dz_text = 0.2;
 
@@ -55,7 +55,7 @@ GLfloat legend_color_inner[] = {
         0.866666666f, 0.827450f, 0.7843137f
 };
 
-void setValues(const float new_x_min, const float new_x_max, const float new_z_min, const float new_z_max)
+void setBoxValues(const float new_x_min, const float new_x_max, const float new_z_min, const float new_z_max)
 {
     legend_inner_vertices[0] = new_x_min; legend_inner_vertices[2] = new_z_min;
     legend_inner_vertices[3] = new_x_max; legend_inner_vertices[5] = new_z_min;
@@ -86,10 +86,11 @@ void LegendRenderer::setColorAtIdx(const float r, const float g, const float b, 
     colors_.getDataPointer()[idx + 2] = b;
 }
 
-void LegendRenderer::renderColorMapLegend(const size_t num_segments, const RGBColorMap<float>* const color_map, const float xc, const float yc, const float r)
+void LegendRenderer::renderColorMapLegend(const size_t num_segments, const RGBColorMap<float>* const color_map, const float xc, const float yc, const float r, const float axes_width, const float axes_height)
 {
     const float delta_phi = static_cast<float>(M_PI) * 2.0f / static_cast<float>(num_segments);
     float angle = 0.0f;
+    const float mul = 400.0f;
     int idx = 0;
 
     for(size_t k = 0; k < num_segments; k++)
@@ -99,20 +100,35 @@ void LegendRenderer::renderColorMapLegend(const size_t num_segments, const RGBCo
         setColorAtIdx(color.red, color.green, color.blue, idx);
         idx += 3;
 
-        setVertexAtIdx(r * cos(angle) + xc, 0.0f, r * sin(angle) + yc, idx);
+        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
         setColorAtIdx(color.red, color.green, color.blue, idx);
         idx += 3;
         angle += delta_phi;
 
-        setVertexAtIdx(r * cos(angle) + xc, 0.0f, r * sin(angle) + yc, idx);
+        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
         setColorAtIdx(color.red, color.green, color.blue, idx);
         idx += 3;
     }
 }
 
-void LegendRenderer::render(const std::vector<LegendProperties>& legend_names, const float axes_width, const float axes_height)
+void LegendRenderer::render(const std::vector<LegendProperties>& legend_properties, const float axes_width, const float axes_height)
 {
-    setValues(x_min, x_max, z_max - (dz + legend_names.size() * dz_text), z_max);
+    float max_width = 0.0f;
+    for(size_t k = 0; k < legend_properties.size(); k++)
+    {
+        const dvs::Vec2Df sz = calculateStringSize(legend_properties[k].name, 0.0005f, axes_width, axes_height);
+        const float current_width = sz.x;
+        max_width = std::max(max_width, current_width);
+    }
+
+    const float kTextXOffset = 150.0f / axes_width;
+    const float kTextXMargin = 150.0f / axes_width;
+    // Multiply by 3.0f because the text coordinates has a scale of 1/3 relative to the box coords.
+    const float box_width = max_width * 3.0f + kTextXOffset + kTextXMargin;
+    
+    x_min = x_max - box_width;
+
+    setBoxValues(x_min, x_max, z_max - (dz + legend_properties.size() * dz_text), z_max);
 
     edge_vao_.renderAndUpdateData(legend_edge_vertices, sizeof(float) * 3 * num_vertices_edge_);
     inner_vao_.renderAndUpdateData(legend_inner_vertices, sizeof(float) * 3 * num_vertices_inner_);
@@ -120,17 +136,21 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_names, c
     float* const legend_shape_vertices = points_.getDataPointer();
     float* const legend_shape_colors = colors_.getDataPointer();
 
-    for(size_t k = 0; k < legend_names.size(); k++)
+    const float x_center = x_min + kTextXOffset / 2.0f;
+    const float kLegendWidth = 0.07f * 1000.0f / axes_width;
+    const float kLegendHeight = 0.07f * 1000.0f / axes_height;
+
+    for(size_t k = 0; k < legend_properties.size(); k++)
     {
         const float kf = k;
-        if(legend_names[k].type == LegendType::LINE)
+        if(legend_properties[k].type == LegendType::LINE)
         {
-            const RGBTripletf col = legend_names[k].color;
-            legend_shape_vertices[0] = x_min + 0.01;
+            const RGBTripletf col = legend_properties[k].color;
+            legend_shape_vertices[0] = x_center - kLegendWidth / 2.0f;
             legend_shape_vertices[1] = 0.0f;
             legend_shape_vertices[2] = z_max - kf * dz_text - dz;
 
-            legend_shape_vertices[3] = x_min + 0.1;
+            legend_shape_vertices[3] = x_center + kLegendWidth / 2.0;
             legend_shape_vertices[4] = 0.0f;
             legend_shape_vertices[5] = z_max - kf * dz_text - dz;
 
@@ -144,22 +164,22 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_names, c
             
             legend_shape_.renderAndUpdateData(legend_shape_vertices, legend_shape_colors, 2, 2 * 3 * sizeof(float), GL_LINE_STRIP);
         }
-        else if(legend_names[k].type == LegendType::POLYGON)
+        else if(legend_properties[k].type == LegendType::POLYGON)
         {
-            if(legend_names[k].color_map_set)
+            if(legend_properties[k].color_map_set)
             {
                 const size_t num_segments = 6;
-                renderColorMapLegend(num_segments, legend_names[k].color_map, x_min + 0.05, z_max - kf * dz_text - dz, 0.05);
+                renderColorMapLegend(num_segments, legend_properties[k].color_map, x_center, z_max - kf * dz_text - dz, 0.1, axes_width, axes_height);
                 legend_shape_.renderAndUpdateData(legend_shape_vertices, legend_shape_colors, num_segments * 3, num_segments * 3 * 3 * sizeof(float), GL_TRIANGLES);
             }
             else
             {
-                const RGBTripletf edge_color = legend_names[k].edge_color;
-                const RGBTripletf face_color = legend_names[k].face_color;
-                const float x_c = x_min + 0.05;
+                const RGBTripletf edge_color = legend_properties[k].edge_color;
+                const RGBTripletf face_color = legend_properties[k].face_color;
+                const float x_c = x_center;
                 const float z_c = z_max - kf * dz_text - dz;
-                const float dxc = 0.04;
-                const float dzc = 0.04;
+                const float dxc = kLegendWidth / 2.0;
+                const float dzc = kLegendHeight / 2.0;
 
                 // Face 0
                 legend_shape_vertices[0] = x_c - dxc;
@@ -236,14 +256,14 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_names, c
     const GLint text_color_uniform = glGetUniformLocation(shader_collection_.text_shader.programId(), "textColor");
     glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
 
-    for(size_t k = 0; k < legend_names.size(); k++)
+    for(size_t k = 0; k < legend_properties.size(); k++)
     {
         const float kf = k;
 
         // Divided by three because the legend pane is in the coordinate system that spans [-3.0, 3.0]
-        const float xp = (x_min + 0.2) / 3.0f;
+        const float xp = (x_min + kTextXOffset) / 3.0f;
         const float zp = (z_max - kf * dz_text - dz) / 3.0f;
-        text_renderer_.renderTextFromLeftCenter(legend_names[k].name, xp, zp, 0.0005f, axes_width, axes_height);
+        text_renderer_.renderTextFromLeftCenter(legend_properties[k].name, xp, zp, 0.0005f, axes_width, axes_height);
     }
 
     glUseProgram(0);

@@ -85,14 +85,14 @@ private:
 
     dvs::Vector<float> points_;
     dvs::Vector<float> colors_;
-    void renderColorMapLegend(const size_t num_segments, const RGBColorMap<float>* const color_map, const float xc, const float yc, const float r);
+    void renderColorMapLegend(const size_t num_segments, const RGBColorMap<float>* const color_map, const float xc, const float yc, const float r, const float axes_width, const float axes_height);
     void setVertexAtIdx(const float x, const float y, const float z, const size_t idx);
     void setColorAtIdx(const float r, const float g, const float b, const size_t idx);
 
 public:
     LegendRenderer(const TextRenderer& text_renderer_, const ShaderCollection& shader_collection_);
 
-    void render(const std::vector<LegendProperties>& legend_names, const float axes_width, const float axes_height);
+    void render(const std::vector<LegendProperties>& legend_properties, const float axes_width, const float axes_height);
 
 };
 

@@ -51,13 +51,13 @@ TextRenderer::TextRenderer()
 
 void TextRenderer::renderTextFromCenter(const std::string_view& text, float x, float y, float scale, const float axes_width, const float axes_height) const
 {
-    const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
+    const Vec2Df text_size = calculateStringSize(text, scale, axes_width, axes_height);
     this->renderTextFromLeftCenter(text, x - text_size.x / 2.0f, y, scale, axes_width, axes_height);
 }
 
 void TextRenderer::renderTextFromRightCenter(const std::string_view& text, float x, float y, float scale, const float axes_width, const float axes_height) const
 {
-    const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
+    const Vec2Df text_size = calculateStringSize(text, scale, axes_width, axes_height);
     this->renderTextFromLeftCenter(text, x - text_size.x, y, scale, axes_width, axes_height);
 }
 
@@ -67,7 +67,7 @@ void TextRenderer::renderTextFromLeftCenter(const std::string_view& text, float 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    const Vec2Df text_size = calculateStringSize(text, x, y, scale, axes_width, axes_height);
+    const Vec2Df text_size = calculateStringSize(text, scale, axes_width, axes_height);
     y -= text_size.y / 2.0f;
 
     glActiveTexture(GL_TEXTURE0);
@@ -190,12 +190,14 @@ bool initFreetype()
 
 // TODO: This is incorrect, it shouldn't depend on width/height. Maybe it
 // calculates the height/width in the local "compressed" axes window?
-Vec2Df calculateStringSize(const std::string_view& text, float x, float y, float scale, const float axes_width, const float axes_height)
+Vec2Df calculateStringSize(const std::string_view& text, const float scale, const float axes_width, const float axes_height)
 {
     if(text.length() == 0)
     {
         return Vec2Df(0.0f, 0.0f);
     }
+
+    float x = 0.0f;
 
     const float sx = kTextScaleParameter / axes_width;
     const float sy = kTextScaleParameter / axes_height;
@@ -204,9 +206,9 @@ Vec2Df calculateStringSize(const std::string_view& text, float x, float y, float
 
     Character ch = characters[text[0]];
 
-    x_min = x + ch.bearing.x * scale;
+    x_min = ch.bearing.x * scale;
     x_max = x_min;
-    y_min = y - (ch.size.y - ch.bearing.y) * scale;
+    y_min = -(ch.size.y - ch.bearing.y) * scale;
     y_max = y_min;
 
     for (size_t k = 0; k < text.length(); k++) 
@@ -214,7 +216,7 @@ Vec2Df calculateStringSize(const std::string_view& text, float x, float y, float
         const Character& ch = characters[text[k]];
 
         const float xpos = x + ch.bearing.x * scale;
-        const float ypos = y - (ch.size.y - ch.bearing.y) * scale;
+        const float ypos = -(ch.size.y - ch.bearing.y) * scale;
 
         const float w = ch.size.x * scale * sx;
         const float h = ch.size.y * scale * sy;
