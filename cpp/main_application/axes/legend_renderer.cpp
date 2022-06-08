@@ -90,7 +90,7 @@ void LegendRenderer::renderColorMapLegend(const size_t num_segments, const RGBCo
 {
     const float delta_phi = static_cast<float>(M_PI) * 2.0f / static_cast<float>(num_segments);
     float angle = 0.0f;
-    const float mul = 400.0f;
+    const float mul = 400.0f;     // Empirically found
     int idx = 0;
 
     for(size_t k = 0; k < num_segments; k++)
@@ -121,14 +121,18 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
         max_width = std::max(max_width, current_width);
     }
 
-    const float kTextXOffset = 150.0f / axes_width;
+    const float kTextXOffset = 150.0f / axes_width;  // 150.0f is "empirically" found
     const float kTextXMargin = 150.0f / axes_width;
     // Multiply by 3.0f because the text coordinates has a scale of 1/3 relative to the box coords.
     const float box_width = max_width * 3.0f + kTextXOffset + kTextXMargin;
     
     x_min = x_max - box_width;
 
-    setBoxValues(x_min, x_max, z_max - (dz + legend_properties.size() * dz_text), z_max);
+    z_max = 3.0f - 100.0f / axes_height;
+    // std::max in case legend_properties.size() == 0
+    z_min = z_max - (2.0f * 100.0f / axes_height + 100.0f * (std::max(legend_properties.size(), 1UL) - 1) * 1.4f / axes_height);
+
+    setBoxValues(x_min, x_max, z_min, z_max);
 
     edge_vao_.renderAndUpdateData(legend_edge_vertices, sizeof(float) * 3 * num_vertices_edge_);
     inner_vao_.renderAndUpdateData(legend_inner_vertices, sizeof(float) * 3 * num_vertices_inner_);
@@ -137,8 +141,8 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
     float* const legend_shape_colors = colors_.getDataPointer();
 
     const float x_center = x_min + kTextXOffset / 2.0f;
-    const float kLegendWidth = 0.07f * 1000.0f / axes_width;
-    const float kLegendHeight = 0.07f * 1000.0f / axes_height;
+    const float kLegendWidth = 70.0f / axes_width;
+    const float kLegendHeight = 70.0f / axes_height;
 
     for(size_t k = 0; k < legend_properties.size(); k++)
     {
@@ -148,11 +152,12 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
             const RGBTripletf col = legend_properties[k].color;
             legend_shape_vertices[0] = x_center - kLegendWidth / 2.0f;
             legend_shape_vertices[1] = 0.0f;
-            legend_shape_vertices[2] = z_max - kf * dz_text - dz;
+            legend_shape_vertices[2] = z_max - (120.0f / axes_height + 100.0f * kf * 1.4f / axes_height);
+            
 
             legend_shape_vertices[3] = x_center + kLegendWidth / 2.0;
             legend_shape_vertices[4] = 0.0f;
-            legend_shape_vertices[5] = z_max - kf * dz_text - dz;
+            legend_shape_vertices[5] = z_max - (120.0f / axes_height + 100.0f * kf * 1.4f / axes_height);
 
             legend_shape_colors[0] = col.red;
             legend_shape_colors[1] = col.green;
@@ -169,7 +174,8 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
             if(legend_properties[k].color_map_set)
             {
                 const size_t num_segments = 6;
-                renderColorMapLegend(num_segments, legend_properties[k].color_map, x_center, z_max - kf * dz_text - dz, 0.1, axes_width, axes_height);
+                z_min = z_max - (100.0f / axes_height + 100.0f * kf * 1.4f / axes_height);
+                renderColorMapLegend(num_segments, legend_properties[k].color_map, x_center, z_min, 0.1, axes_width, axes_height);
                 legend_shape_.renderAndUpdateData(legend_shape_vertices, legend_shape_colors, num_segments * 3, num_segments * 3 * 3 * sizeof(float), GL_TRIANGLES);
             }
             else
@@ -177,7 +183,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
                 const RGBTripletf edge_color = legend_properties[k].edge_color;
                 const RGBTripletf face_color = legend_properties[k].face_color;
                 const float x_c = x_center;
-                const float z_c = z_max - kf * dz_text - dz;
+                const float z_c = z_max - (100.0f / axes_height + 100.0f * kf * 1.4f / axes_height);
                 const float dxc = kLegendWidth / 2.0;
                 const float dzc = kLegendHeight / 2.0;
 
@@ -262,7 +268,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
         // Divided by three because the legend pane is in the coordinate system that spans [-3.0, 3.0]
         const float xp = (x_min + kTextXOffset) / 3.0f;
-        const float zp = (z_max - kf * dz_text - dz) / 3.0f;
+        const float zp = (z_max - (100.0f / axes_height + 100.0f * kf * 1.4f / axes_height)) / 3.0f;
         text_renderer_.renderTextFromLeftCenter(legend_properties[k].name, xp, zp, 0.0005f, axes_width, axes_height);
     }
 
