@@ -626,15 +626,15 @@ InteractionType keyboardStateToInteractionType(const KeyboardState& keyboard_sta
     {
         return InteractionType::RESET;
     }
-    else if (wxGetKeyState(static_cast<wxKeyCode>('t')) || wxGetKeyState(static_cast<wxKeyCode>('T')) || wxGetKeyState(static_cast<wxKeyCode>('q')))
+    else if (wxGetKeyState(static_cast<wxKeyCode>('t')) || wxGetKeyState(static_cast<wxKeyCode>('T')))
     {
         return InteractionType::PAN;
     }
-    else if (wxGetKeyState(static_cast<wxKeyCode>('r')) || wxGetKeyState(static_cast<wxKeyCode>('R')) || wxGetKeyState(static_cast<wxKeyCode>('w')))
+    else if (wxGetKeyState(static_cast<wxKeyCode>('r')) || wxGetKeyState(static_cast<wxKeyCode>('R')))
     {
         return InteractionType::ROTATE;
     }
-    else if(wxGetKeyState(static_cast<wxKeyCode>('z')) || wxGetKeyState(static_cast<wxKeyCode>('Z')) || wxGetKeyState(static_cast<wxKeyCode>('e')) || wxGetKeyState(static_cast<wxKeyCode>('E')))
+    else if(wxGetKeyState(static_cast<wxKeyCode>('z')) || wxGetKeyState(static_cast<wxKeyCode>('Z')))
     {
         return InteractionType::ZOOM;
     }
