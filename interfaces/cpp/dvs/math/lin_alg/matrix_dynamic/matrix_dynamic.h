@@ -437,7 +437,7 @@ template <typename T> bool Matrix<T>::isAllocated() const
 
 template <typename T> void Matrix<T>::fill(T val)
 {
-    assert(is_allocated_ && "Tried to fill un allocated vector!");
+    assert(is_allocated_ && "Tried to fill unallocated vector!");
     for (size_t k = 0; k < num_rows_ * num_cols_; k++)
     {
         data_[k] = val;

@@ -6,23 +6,7 @@
 
 constexpr int kMaxNumPoints{100};
 
-// const float right_margin = 0.1;
-// const float top_margin = 0.1;
-
-// const float dx = 2.0;
-// const float dz = 0.2;
-
-// float x_max = 3.0f - right_margin;
-// float x_min = x_max - dx;
-// float z_max = 3.0f - top_margin;
-// float z_min = z_max - dz;
-
-const float dz_text = 0.2;
-
-float legend_inner_vertices[18];
-float legend_edge_vertices[15];
-
-GLfloat legend_edge_color[] = {
+GLfloat legend_color_edge[] = {
         0.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f,
@@ -40,21 +24,21 @@ GLfloat legend_color_inner[] = {
         0.866666666f, 0.827450f, 0.7843137f
 };
 
-void setBoxValues(const float new_x_min, const float new_x_max, const float new_z_min, const float new_z_max)
+void LegendRenderer::setBoxValues(const float new_x_min, const float new_x_max, const float new_z_min, const float new_z_max)
 {
-    legend_inner_vertices[0] = new_x_min; legend_inner_vertices[2] = new_z_min;
-    legend_inner_vertices[3] = new_x_max; legend_inner_vertices[5] = new_z_min;
-    legend_inner_vertices[6] = new_x_max; legend_inner_vertices[8] = new_z_max;
+    legend_inner_vertices_(0) = new_x_min; legend_inner_vertices_(2) = new_z_min;
+    legend_inner_vertices_(3) = new_x_max; legend_inner_vertices_(5) = new_z_min;
+    legend_inner_vertices_(6) = new_x_max; legend_inner_vertices_(8) = new_z_max;
 
-    legend_inner_vertices[9] = new_x_min; legend_inner_vertices[11] = new_z_min;
-    legend_inner_vertices[12] = new_x_min; legend_inner_vertices[14] = new_z_max;
-    legend_inner_vertices[15] = new_x_max; legend_inner_vertices[17] = new_z_max;
+    legend_inner_vertices_(9) = new_x_min; legend_inner_vertices_(11) = new_z_min;
+    legend_inner_vertices_(12) = new_x_min; legend_inner_vertices_(14) = new_z_max;
+    legend_inner_vertices_(15) = new_x_max; legend_inner_vertices_(17) = new_z_max;
 
-    legend_edge_vertices[0] = new_x_min; legend_edge_vertices[2] = new_z_min;
-    legend_edge_vertices[3] = new_x_max; legend_edge_vertices[5] = new_z_min;
-    legend_edge_vertices[6] = new_x_max; legend_edge_vertices[8] = new_z_max;
-    legend_edge_vertices[9] = new_x_min; legend_edge_vertices[11] = new_z_max;
-    legend_edge_vertices[12] = new_x_min; legend_edge_vertices[14] = new_z_min;
+    legend_edge_vertices_(0) = new_x_min; legend_edge_vertices_(2) = new_z_min;
+    legend_edge_vertices_(3) = new_x_max; legend_edge_vertices_(5) = new_z_min;
+    legend_edge_vertices_(6) = new_x_max; legend_edge_vertices_(8) = new_z_max;
+    legend_edge_vertices_(9) = new_x_min; legend_edge_vertices_(11) = new_z_max;
+    legend_edge_vertices_(12) = new_x_min; legend_edge_vertices_(14) = new_z_min;
 }
 
 void LegendRenderer::setVertexAtIdx(const float x, const float y, const float z, const size_t idx)
@@ -96,6 +80,11 @@ void LegendRenderer::renderColorMapLegend(const size_t num_segments, const RGBCo
     }
 }
 
+void LegendRenderer::setLegendScaleFactor(const float new_scale_factor)
+{
+    scale_factor_ = new_scale_factor > 0.1f ? new_scale_factor : 1.0f;
+}
+
 void LegendRenderer::render(const std::vector<LegendProperties>& legend_properties, const float axes_width, const float axes_height)
 {
     float max_width = 0.0f;
@@ -114,38 +103,38 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
     // Multiply by 3.0f because the text coordinates has a scale of 1/3 relative to the box coords.
     const float box_width = max_width * 3.0f + text_x_offset + text_x_margin;
 
-    const float x_max = 3.0f - x_offset;
-    float x_min = x_max - box_width;
+    const float x_max = 3.0f - x_offset;// * scale_factor_;
+    const float x_min = x_max - box_width * scale_factor_;
 
-    const float z_max = 3.0f - z_offset;
+    const float z_max = 3.0f - z_offset; //  * scale_factor_;
     // std::max in case legend_properties.size() == 0
-    float z_min = z_max - (2.0f * z_offset + legend_element_z_delta * (std::max(legend_properties.size(), 1UL) - 1));
+    const float z_min = z_max - (2.0f * z_offset + legend_element_z_delta * (std::max(legend_properties.size(), 1UL) - 1)) * scale_factor_;
 
     setBoxValues(x_min, x_max, z_min, z_max);
 
-    edge_vao_.renderAndUpdateData(legend_edge_vertices, sizeof(float) * 3 * num_vertices_edge_);
-    inner_vao_.renderAndUpdateData(legend_inner_vertices, sizeof(float) * 3 * num_vertices_inner_);
+    edge_vao_.renderAndUpdateData(legend_edge_vertices_.getDataPointer(), sizeof(float) * 3 * num_vertices_edge_);
+    inner_vao_.renderAndUpdateData(legend_inner_vertices_.getDataPointer(), sizeof(float) * 3 * num_vertices_inner_);
 
     float* const legend_shape_vertices = points_.getDataPointer();
     float* const legend_shape_colors = colors_.getDataPointer();
 
-    const float x_center = x_min + text_x_offset / 2.0f;
+    const float x_center = x_min + scale_factor_ * text_x_offset / 2.0f;
     const float legend_symbol_width = 70.0f / axes_width;
     const float legend_symbol_height = 70.0f / axes_height;
 
     for(size_t k = 0; k < legend_properties.size(); k++)
     {
         const float kf = k;
-        const float z_center = z_min = z_max - (z_offset + legend_element_z_delta * kf);
+        const float z_center = z_max - scale_factor_ * (z_offset + legend_element_z_delta * kf);
         if(legend_properties[k].type == LegendType::LINE)
         {
             const RGBTripletf col = legend_properties[k].color;
-            legend_shape_vertices[0] = x_center - legend_symbol_width / 2.0f;
+            legend_shape_vertices[0] = x_center - scale_factor_ * legend_symbol_width / 2.0f;
             legend_shape_vertices[1] = 0.0f;
             legend_shape_vertices[2] = z_center;
             
 
-            legend_shape_vertices[3] = x_center + legend_symbol_width / 2.0;
+            legend_shape_vertices[3] = x_center + scale_factor_ * legend_symbol_width / 2.0;
             legend_shape_vertices[4] = 0.0f;
             legend_shape_vertices[5] = z_center;
 
@@ -164,15 +153,16 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
             if(legend_properties[k].color_map_set)
             {
                 const size_t num_segments = 6;
-                renderColorMapLegend(num_segments, legend_properties[k].color_map, x_center, z_center, 0.1, axes_width, axes_height);
+                const float radius = scale_factor_ * 0.1;
+                renderColorMapLegend(num_segments, legend_properties[k].color_map, x_center, z_center, radius, axes_width, axes_height);
                 legend_shape_.renderAndUpdateData(legend_shape_vertices, legend_shape_colors, num_segments * 3, num_segments * 3 * 3 * sizeof(float), GL_TRIANGLES);
             }
             else
             {
                 const RGBTripletf edge_color = legend_properties[k].edge_color;
                 const RGBTripletf face_color = legend_properties[k].face_color;
-                const float dxc = legend_symbol_width / 2.0;
-                const float dzc = legend_symbol_height / 2.0;
+                const float dxc = scale_factor_ * legend_symbol_width / 2.0;
+                const float dzc = scale_factor_ * legend_symbol_height / 2.0;
 
                 // Face 0
                 legend_shape_vertices[0] = x_center - dxc;
@@ -254,21 +244,30 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
         const float kf = k;
 
         // Divided by three because the legend pane is in the coordinate system that spans [-3.0, 3.0]
-        const float xp = (x_min + text_x_offset) / 3.0f;
-        const float zp = (z_max - (z_offset + legend_element_z_delta * kf)) / 3.0f;
-        text_renderer_.renderTextFromLeftCenter(legend_properties[k].name, xp, zp, 0.0005f, axes_width, axes_height);
+        const float xp = (x_min + scale_factor_ * text_x_offset) / 3.0f;
+        const float zp = (z_max - scale_factor_ * (z_offset + legend_element_z_delta * kf)) / 3.0f;
+        text_renderer_.renderTextFromLeftCenter(legend_properties[k].name, xp, zp, scale_factor_ * 0.0005f, axes_width, axes_height);
     }
 
     glUseProgram(0);
 }
 
 LegendRenderer::LegendRenderer(const TextRenderer& text_renderer, const ShaderCollection& shader_collection) :
-    text_renderer_{text_renderer}, shader_collection_{shader_collection}, points_(kMaxNumPoints * 3), colors_(kMaxNumPoints * 3)
+    text_renderer_{text_renderer},
+    shader_collection_{shader_collection},
+    points_(kMaxNumPoints * 3),
+    colors_(kMaxNumPoints * 3),
+    legend_inner_vertices_(18),
+    legend_edge_vertices_(15)
 {
+    scale_factor_ = 1.0f;
     num_vertices_edge_ = 5;
     num_vertices_inner_ = 6;
 
-    edge_vao_ = VAOObject(num_vertices_edge_, legend_edge_vertices, legend_edge_color, GL_LINE_STRIP);
-    inner_vao_ = VAOObject(num_vertices_inner_, legend_inner_vertices, legend_color_inner, GL_TRIANGLES);
+    legend_inner_vertices_.fill(0.0f);
+    legend_edge_vertices_.fill(0.0f);
+
+    edge_vao_ = VAOObject(num_vertices_edge_, legend_edge_vertices_.getDataPointer(), legend_color_edge, GL_LINE_STRIP);
+    inner_vao_ = VAOObject(num_vertices_inner_, legend_inner_vertices_.getDataPointer(), legend_color_inner, GL_TRIANGLES);
     legend_shape_ = VAOObject2(kMaxNumPoints, points_.getDataPointer(), colors_.getDataPointer());
 }

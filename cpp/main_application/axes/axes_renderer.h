@@ -85,6 +85,7 @@ public:
                       const bool mouse_pressed,
                       const bool render_zoom_rect,
                       const bool render_legend,
+                      const float legend_scale_factor,
                       const std::vector<LegendProperties>& legend_properties);
     void render();
     void plotBegin();

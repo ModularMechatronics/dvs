@@ -333,8 +333,8 @@ bool PlotWindowGLPane::is3DFunction(const Function fcn)
 
 void PlotWindowGLPane::showLegend(const bool show_legend)
 {
-    Refresh();
     axes_interactor_.showLegend(show_legend);
+    Refresh();
 }
 
 void PlotWindowGLPane::setSelection()
@@ -674,6 +674,15 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
     axes_interactor_.update(
         keyboardStateToInteractionType(keyboard_state_), getWidth(), getHeight());
 
+    if(wxGetKeyState(static_cast<wxKeyCode>('y')) || wxGetKeyState(static_cast<wxKeyCode>('Y')))
+    {
+        legend_scale_factor_ -= 0.05;
+    }
+    else if(wxGetKeyState(static_cast<wxKeyCode>('u')) || wxGetKeyState(static_cast<wxKeyCode>('U')))
+    {
+        legend_scale_factor_ += 0.05;
+    }
+
     const bool draw_selected_bb = is_selected_ && is_editing_;
 
     const Vec2Df pane_size(GetSize().x, GetSize().y);
@@ -690,6 +699,7 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
                          left_mouse_button_.isPressed(),
                          axes_interactor_.shouldDrawZoomRect(),
                          axes_interactor_.getShowLegend(),
+                         legend_scale_factor_,
                          plot_data_handler_->getLegendStrings());
 
     axes_renderer_->render();

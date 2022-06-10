@@ -93,6 +93,7 @@ private:
     bool isImageFunction(const Function fcn);
     void initShaders();
     MouseInteractionAxis current_mouse_interaction_axis_;
+    float legend_scale_factor_ = 1.0f;
 
 public:
     PlotWindowGLPane(wxNotebookPage* parent,

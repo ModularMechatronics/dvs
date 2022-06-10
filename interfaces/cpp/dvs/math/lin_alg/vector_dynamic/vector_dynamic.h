@@ -384,7 +384,7 @@ template <typename T> bool Vector<T>::isAllocated() const
 
 template <typename T> void Vector<T>::fill(const T& val)
 {
-    assert(is_allocated_ && "Tried to fill un allocated vector!");
+    assert(is_allocated_ && "Tried to fill unallocated vector!");
     for (size_t k = 0; k < vector_length_; k++)
     {
         data_[k] = val;

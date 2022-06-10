@@ -389,6 +389,17 @@ void testLegend()
     surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
     surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET(), properties::Name("SURF_COLOR_MAP"));
     showLegend();
+
+    setCurrentElement("view_01");
+    clearView();
+
+    axis({-32.0, 0.0, -2.0}, {32.0, 110.0, 2.0});
+    plot(x0, y0, properties::Color(212, 14, 55), properties::Name("AAAaaaBBBbbb"));
+    plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
+    plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
+    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET(), properties::Name("SURF_COLOR_MAP"));
+    showLegend();
 }
 
 void testDrawTriangles()

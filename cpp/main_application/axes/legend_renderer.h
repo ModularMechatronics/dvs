@@ -78,6 +78,7 @@ private:
     VAOObject inner_vao_;
     size_t num_vertices_edge_;
     size_t num_vertices_inner_;
+    float scale_factor_;
     VAOObject2 legend_shape_;
 
     TextRenderer text_renderer_;
@@ -85,14 +86,19 @@ private:
 
     dvs::Vector<float> points_;
     dvs::Vector<float> colors_;
+
+    dvs::Vector<float> legend_inner_vertices_;
+    dvs::Vector<float> legend_edge_vertices_;
     void renderColorMapLegend(const size_t num_segments, const RGBColorMap<float>* const color_map, const float xc, const float yc, const float r, const float axes_width, const float axes_height);
     void setVertexAtIdx(const float x, const float y, const float z, const size_t idx);
     void setColorAtIdx(const float r, const float g, const float b, const size_t idx);
+    void setBoxValues(const float new_x_min, const float new_x_max, const float new_z_min, const float new_z_max);
 
 public:
     LegendRenderer(const TextRenderer& text_renderer_, const ShaderCollection& shader_collection_);
 
     void render(const std::vector<LegendProperties>& legend_properties, const float axes_width, const float axes_height);
+    void setLegendScaleFactor(const float new_scale_factor);
 
 };
 

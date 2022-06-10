@@ -302,6 +302,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const bool mouse_pressed,
                                 const bool render_zoom_rect,
                                 const bool render_legend,
+                                const float legend_scale_factor,
                                 const std::vector<LegendProperties>& legend_properties)
 {
     axes_limits_ = axes_limits;
@@ -317,6 +318,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     render_zoom_rect_ = render_zoom_rect;
     render_legend_ = render_legend;
     legend_properties_ = legend_properties;
+    legend_renderer_.setLegendScaleFactor(legend_scale_factor);
 
     rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * 
               rotationMatrixX(-view_angles_.getSnappedElevation());
