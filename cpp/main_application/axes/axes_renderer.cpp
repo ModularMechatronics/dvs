@@ -158,6 +158,14 @@ void AxesRenderer::enableClipPlanes()
     setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
     setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
 
+    glUseProgram(shader_collection_.surf_shader.programId());
+    setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
+    setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
+    setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
+    setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
+    setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
+    setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
+
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
@@ -239,8 +247,6 @@ void AxesRenderer::renderBoxGrid()
 
 void AxesRenderer::plotBegin()
 {
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
-
     const Vec3Dd axes_center = axes_limits_.getAxesCenter();
 
     const Vec3Dd scale = axes_limits_.getAxesScale() / 2.0;
@@ -253,7 +259,12 @@ void AxesRenderer::plotBegin()
     scale_mat[3][3] = 1.0;
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_ * t_mat;
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+
+    glUseProgram(shader_collection_.surf_shader.programId());
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.surf_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
     enableClipPlanes();
 
     glUseProgram(shader_collection_.img_plot_shader.programId());

@@ -18,6 +18,7 @@ private:
     GLuint buffer_idx_;
 
     float* points_ptr_;
+    float* colors_ptr_;
 
     bool face_color_set_;
 

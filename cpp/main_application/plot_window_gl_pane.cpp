@@ -97,6 +97,10 @@ void PlotWindowGLPane::initShaders()
     const std::string v_path_img_plot_shader = "../main_application/axes/shaders/img.vs";
     const std::string f_path_img_plot_shader = "../main_application/axes/shaders/img.fs";
     shader_collection_.img_plot_shader = Shader::createFromFiles(v_path_img_plot_shader, f_path_img_plot_shader);
+
+    const std::string v_path_surf_shader = "../main_application/axes/shaders/surf.vs";
+    const std::string f_path_surf_shader = "../main_application/axes/shaders/surf.fs";
+    shader_collection_.surf_shader = Shader::createFromFiles(v_path_surf_shader, f_path_surf_shader);
 }
 
 PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent,

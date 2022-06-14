@@ -56,6 +56,10 @@ Pre release:
 - Layout window always on top of windows
 - "UInt8View" or something for "void fillBufferWithData(uint8_t* const buffer) const;" functions, that contains pointer and size
 - Vector<T>{2} initializes as the initializer list??? Inconsistent...
+- scatter circle, star, plus etc.
+- LegendProperties to use reference_wrapper instead of pointer to colormap
+- Flag for if findMinMax has been executed
+
 Needs fixing:
  - imshow
  (3D surface functions still don't have correct color)
@@ -71,6 +75,7 @@ Post release:
 - Fix so that one can set axis square and axis equal
 - Nice looking buttons in interface
 - Ability to add button to gui
+- quiver3
 - Ability to set FOV
 - Show plot walls differently if perspective projection
 - Programatically specicy plots in different windows

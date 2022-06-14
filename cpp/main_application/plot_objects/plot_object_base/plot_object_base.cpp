@@ -109,6 +109,18 @@ void PlotObjectBase::assignProperties(const Properties& props)
         alpha_ = 1.0f;
     }
 
+    if (props.hasProperty(PropertyType::COLOR_MAP))
+    {
+        color_map_ = props.getProperty<ColorMap>().data;
+        color_map_set_ = true;
+        edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
+    }
+    else
+    {
+        color_map_ = ColorMapType::JET;
+        color_map_set_ = false;
+    }
+
     if (props.hasProperty(PropertyType::EDGE_COLOR))
     {
         const EdgeColor ec = props.getProperty<EdgeColor>();
@@ -118,7 +130,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     }
     else
     {
-        edge_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
+        edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
     }
 
     if (props.hasProperty(PropertyType::FACE_COLOR))
@@ -131,17 +143,6 @@ void PlotObjectBase::assignProperties(const Properties& props)
     else
     {
         face_color_ = RGBTripletf(0.1f, 0.2f, 0.3f);
-    }
-
-    if (props.hasProperty(PropertyType::COLOR_MAP))
-    {
-        color_map_ = props.getProperty<ColorMap>().data;
-        color_map_set_ = true;
-    }
-    else
-    {
-        color_map_ = ColorMapType::JET;
-        color_map_set_ = false;
     }
 
     if (props.hasProperty(PropertyType::LINE_WIDTH))
