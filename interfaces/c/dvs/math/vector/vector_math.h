@@ -1,9 +1,9 @@
 #ifndef DVS_VECTOR_MATH_H_
 #define DVS_VECTOR_MATH_H_
 
-#include "math/utils.h"
-#include "math/vector/vector_cast.h"
-#include "math/vector/vector_instantiation.h"
+#include "dvs/math/utils.h"
+#include "dvs/math/vector/vector_cast.h"
+#include "dvs/math/vector/vector_instantiation.h"
 
 VectorF vector_linspaceFromPointsAndCountF(const double x0, const double x1, const size_t num_elements)
 {

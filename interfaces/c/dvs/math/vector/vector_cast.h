@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "math/vector/vector_instantiation.h"
-#include "math/vector/vector_types.h"
+#include "dvs/math/vector/vector_instantiation.h"
+#include "dvs/math/vector/vector_types.h"
 
 VectorD castVectorFToVectorD(const VectorF input)
 {

@@ -1,7 +1,7 @@
 #ifndef DVS_LINE_2D_H_
 #define DVS_LINE_2D_H_
 
-#include "math/vector_low_dim/vec2.h"
+#include "dvs/math/vector_low_dim/vec2.h"
 
 typedef struct S_PLine2DD
 {

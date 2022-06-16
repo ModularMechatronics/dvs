@@ -1,7 +1,7 @@
 #ifndef DVS_IMAGE_MATH_H_
 #define DVS_IMAGE_MATH_H_
 
-#include "math/image/image_instantiation.h"
+#include "dvs/math/image/image_instantiation.h"
 
 #define AT_IMAGEC1_ROW_COL(img, row, col) img.data[row * img.num_cols + col]
 #define AT_IMAGEC3_COL_ROW_COL(img, color, row, col) img.data[color * img.num_rows * img.num_cols + row * img.num_cols + col]

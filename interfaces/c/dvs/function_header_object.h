@@ -4,7 +4,7 @@
 #include <limits.h>
 #include <stdint.h>
 
-#include "enumerations.h"
+#include "dvs/enumerations.h"
 
 #define kMaxNumFunctionHeaderBytes SCHAR_MAX
 

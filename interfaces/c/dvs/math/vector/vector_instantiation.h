@@ -1,8 +1,8 @@
 #ifndef DVS_VECTOR_INSTANTIATION_H_
 #define DVS_VECTOR_INSTANTIATION_H_
 
-#include "math/utils.h"
-#include "math/vector/vector_types.h"
+#include "dvs/math/utils.h"
+#include "dvs/math/vector/vector_types.h"
 
 Vector createVector(const size_t num_elements, const DataType data_type)
 {

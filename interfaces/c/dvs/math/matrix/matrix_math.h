@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-#include "math/matrix/matrix_instantiation.h"
+#include "dvs/math/matrix/matrix_instantiation.h"
 
 #define AT_MAT_ROW_COL(mat, row, col) mat.data[row * mat.num_cols + col]
 

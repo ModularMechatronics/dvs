@@ -1,8 +1,8 @@
 #ifndef DVS_IMAGE_INSTANTIATION_H_
 #define DVS_IMAGE_INSTANTIATION_H_
 
-#include "math/image/image_types.h"
-#include "math/utils.h"
+#include "dvs/math/image/image_types.h"
+#include "dvs/math/utils.h"
 
 ImageC1 createImageC1(const size_t num_rows, const size_t num_cols, const DataType data_type)
 {

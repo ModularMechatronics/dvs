@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "enumerations.h"
-#include "math/vector_low_dim/vec3.h"
+#include "dvs/enumerations.h"
+#include "dvs/math/vector_low_dim/vec3.h"
 
 typedef struct S_Triangle3DF
 {

@@ -4,9 +4,9 @@
 #include <limits.h>
 #include <stdint.h>
 
-#include "enumerations.h"
-#include "function_header_object.h"
-#include "plot_properties.h"
+#include "dvs/enumerations.h"
+#include "dvs/function_header_object.h"
+#include "dvs/plot_properties.h"
 
 #define kMaxNumHeaderObjects 30
 

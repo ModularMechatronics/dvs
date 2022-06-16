@@ -5,10 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "function_header.h"
-#include "internal.h"
-#include "math/math.h"
-#include "structures.h"
+#include "dvs/function_header.h"
+#include "dvs/internal.h"
+#include "dvs/math/math.h"
+#include "dvs/structures.h"
 
 void plotFunction3D(const Vector* const x,
                     const Vector* const y,

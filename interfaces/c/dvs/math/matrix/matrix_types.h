@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "enumerations.h"
+#include "dvs/enumerations.h"
 
 typedef struct S_Matrix
 {

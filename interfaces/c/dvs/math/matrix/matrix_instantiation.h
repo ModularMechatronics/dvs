@@ -1,8 +1,8 @@
 #ifndef DVS_MATRIX_INSTANTIATION_H_
 #define DVS_MATRIX_INSTANTIATION_H_
 
-#include "math/matrix/matrix_types.h"
-#include "math/utils.h"
+#include "dvs/math/matrix/matrix_types.h"
+#include "dvs/math/utils.h"
 
 Matrix createMatrix(const size_t num_rows, const size_t num_cols, const DataType data_type)
 {

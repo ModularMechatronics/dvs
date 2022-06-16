@@ -1,7 +1,7 @@
 #ifndef TEST_APPLICATIONS_BASIC_TESTS_C_TESTS_H_
 #define TEST_APPLICATIONS_BASIC_TESTS_C_TESTS_H_
 
-#include "dvs.h"
+#include "dvs/dvs.h"
 
 void testPlot()
 {

@@ -1,7 +1,7 @@
 #ifndef DVS_LINE_3D_H_
 #define DVS_LINE_3D_H_
 
-#include "math/vector_low_dim/vec3.h"
+#include "dvs/math/vector_low_dim/vec3.h"
 
 typedef struct S_Line3DD
 {

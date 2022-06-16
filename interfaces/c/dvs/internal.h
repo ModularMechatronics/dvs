@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-#include "communication.h"
-#include "function_header.h"
-#include "internal.h"
-#include "math/math.h"
+#include "dvs/communication.h"
+#include "dvs/function_header.h"
+#include "dvs/internal.h"
+#include "dvs/math/math.h"
 
 const uint64_t kMagicNumber = 0xdeadbeefcafebabe;
 const uint64_t max_bytes_for_one_msg = 1380;
