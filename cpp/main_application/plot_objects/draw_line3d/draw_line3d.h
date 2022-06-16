@@ -1,5 +1,5 @@
-#ifndef DRAW_LINE_3D_H_
-#define DRAW_LINE_3D_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_DRAW_LINE3D_DRAW_LINE3D_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_DRAW_LINE3D_DRAW_LINE3D_H_
 
 #include <string>
 #include <vector>
@@ -28,4 +28,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_LINE3D_DRAW_LINE3D_H_

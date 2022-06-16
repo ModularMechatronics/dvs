@@ -1,5 +1,5 @@
-#ifndef DVS_DRAW_PLOT_BOX_H_
-#define DVS_DRAW_PLOT_BOX_H_
+#ifndef MAIN_APPLICATION_AXES_PLOT_BOX_WALLS_H_
+#define MAIN_APPLICATION_AXES_PLOT_BOX_WALLS_H_
 
 #include "opengl_low_level/opengl_header.h"
 #include <stddef.h>
@@ -32,4 +32,4 @@ public:
 };
 
 
-#endif
+#endif // MAIN_APPLICATION_AXES_PLOT_BOX_WALLS_H_

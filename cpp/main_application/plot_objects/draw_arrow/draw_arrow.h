@@ -1,5 +1,5 @@
-#ifndef DRAW_ARROW_H_
-#define DRAW_ARROW_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_DRAW_ARROW_DRAW_ARROW_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_DRAW_ARROW_DRAW_ARROW_H_
 
 #include <string>
 #include <vector>
@@ -29,4 +29,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_ARROW_DRAW_ARROW_H_

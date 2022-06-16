@@ -1,5 +1,5 @@
-#ifndef COLOR_MAP_H_
-#define COLOR_MAP_H_
+#ifndef MAIN_APPLICATION_MISC_COLOR_MAP_H_
+#define MAIN_APPLICATION_MISC_COLOR_MAP_H_
 
 #include <stdlib.h>
 
@@ -340,4 +340,4 @@ inline RGBColorMap<float>* getColorMapFromColorMapType(const dvs::internal::Colo
     
 }
 
-#endif
+#endif // MAIN_APPLICATION_MISC_COLOR_MAP_H_

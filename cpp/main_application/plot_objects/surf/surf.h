@@ -1,5 +1,5 @@
-#ifndef SURF_H_
-#define SURF_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_SURF_SURF_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_SURF_SURF_H_
 
 #include <string>
 #include <vector>
@@ -34,4 +34,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_SURF_SURF_H_

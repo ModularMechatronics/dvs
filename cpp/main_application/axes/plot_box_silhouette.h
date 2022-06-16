@@ -1,5 +1,5 @@
-#ifndef PLOT_BOX_SILHOUETTE_H_
-#define PLOT_BOX_SILHOUETTE_H_
+#ifndef MAIN_APPLICATION_AXES_PLOT_BOX_SILHOUETTE_H_
+#define MAIN_APPLICATION_AXES_PLOT_BOX_SILHOUETTE_H_
 
 #include "opengl_low_level/opengl_header.h"
 #include <stddef.h>
@@ -16,4 +16,4 @@ public:
     void render() const;
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_PLOT_BOX_SILHOUETTE_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_EVENTS_H_
-#define DVS_EVENTS_H_
+#ifndef MAIN_APPLICATION_EVENTS_H_
+#define MAIN_APPLICATION_EVENTS_H_
 
 #include <wx/wx.h>
 
@@ -28,4 +28,4 @@ enum DvsIds : uint16_t
 
 }
 
-#endif
+#endif // MAIN_APPLICATION_EVENTS_H_

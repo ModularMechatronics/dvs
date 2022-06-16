@@ -1,5 +1,5 @@
-#ifndef DVS_LEGEND_RENDERER_H_
-#define DVS_LEGEND_RENDERER_H_
+#ifndef MAIN_APPLICATION_AXES_LEGEND_RENDERER_H_
+#define MAIN_APPLICATION_AXES_LEGEND_RENDERER_H_
 
 
 #include <stddef.h>
@@ -102,4 +102,4 @@ public:
 
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_LEGEND_RENDERER_H_

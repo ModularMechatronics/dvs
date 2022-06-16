@@ -1,5 +1,5 @@
-#ifndef TESTS_H_
-#define TESTS_H_
+#ifndef TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_
+#define TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_
 
 #include <algorithm>
 
@@ -28,6 +28,10 @@ void testSurf()
     setCurrentElement("view_00");
     clearView();
     surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 0), properties::LineWidth(1));
+
+    setCurrentElement("view_01");
+    clearView();
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET());
 }
 
 void testScatter()
@@ -611,4 +615,4 @@ void testDrawLineBetweenPoints()
     scatter3(x, y, z, properties::Color(0, 0, 0), properties::PointSize(3));
 }
 
-#endif
+#endif // TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_

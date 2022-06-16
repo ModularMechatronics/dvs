@@ -1,5 +1,5 @@
-#ifndef PLOT_OBJECTS_UTILS_H_
-#define PLOT_OBJECTS_UTILS_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_UTILS_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_UTILS_H_
 
 #include <stdint.h>
 
@@ -371,4 +371,4 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
 }
 
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_UTILS_H_

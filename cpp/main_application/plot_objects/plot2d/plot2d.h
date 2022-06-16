@@ -1,5 +1,5 @@
-#ifndef PLOT2D_H_
-#define PLOT2D_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_PLOT2D_PLOT2D_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_PLOT2D_PLOT2D_H_
 
 #include <string>
 #include <vector>
@@ -26,4 +26,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_PLOT2D_PLOT2D_H_

@@ -1,5 +1,5 @@
-#ifndef OPENGL_LOW_LEVEL_H_
-#define OPENGL_LOW_LEVEL_H_
+#ifndef MAIN_APPLICATION_OPENGL_LOW_LEVEL_OPENGL_LOW_LEVEL_H_
+#define MAIN_APPLICATION_OPENGL_LOW_LEVEL_OPENGL_LOW_LEVEL_H_
 
 #include <assert.h>
 
@@ -33,4 +33,4 @@ inline void setPointSize(const float point_size)
     glPointSize(point_size);
 }
 
-#endif
+#endif // MAIN_APPLICATION_OPENGL_LOW_LEVEL_OPENGL_LOW_LEVEL_H_

@@ -1,5 +1,5 @@
-#ifndef TESTS_H_
-#define TESTS_H_
+#ifndef TEST_APPLICATIONS_BASIC_TESTS_C_TESTS_H_
+#define TEST_APPLICATIONS_BASIC_TESTS_C_TESTS_H_
 
 #include "dvs.h"
 
@@ -237,4 +237,4 @@ void testDrawLineBetweenPoints()
     drawLineBetween2DPoints(p0_2, p1_2, Color(255, 0, 11));
 }
 
-#endif
+#endif // TEST_APPLICATIONS_BASIC_TESTS_C_TESTS_H_

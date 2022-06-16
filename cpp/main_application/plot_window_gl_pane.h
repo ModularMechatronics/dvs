@@ -1,5 +1,5 @@
-#ifndef PLOTWINDOW_GL_PLANE_
-#define PLOTWINDOW_GL_PLANE_
+#ifndef MAIN_APPLICATION_PLOT_WINDOW_GL_PANE_H_
+#define MAIN_APPLICATION_PLOT_WINDOW_GL_PANE_H_
 
 #include <wx/glcanvas.h>
 #include <wx/notebook.h>
@@ -133,4 +133,4 @@ public:
     void bindCallbacks();
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_WINDOW_GL_PANE_H_

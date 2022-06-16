@@ -1,5 +1,5 @@
-#ifndef TAB_H_
-#define TAB_H_
+#ifndef MAIN_APPLICATION_TAB_VIEW_H_
+#define MAIN_APPLICATION_TAB_VIEW_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -45,4 +45,4 @@ public:
     void newElement() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_TAB_VIEW_H_

@@ -1,5 +1,5 @@
-#ifndef SCATTER_2D_H_
-#define SCATTER_2D_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_SCATTER_SCATTER_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_SCATTER_SCATTER_H_
 
 #include <string>
 #include <vector>
@@ -25,4 +25,4 @@ public:
     void modifyShader() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER_SCATTER_H_

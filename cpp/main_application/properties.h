@@ -1,5 +1,5 @@
-#ifndef DVS_PROPERTIES_H_
-#define DVS_PROPERTIES_H_
+#ifndef MAIN_APPLICATION_PROPERTIES_H_
+#define MAIN_APPLICATION_PROPERTIES_H_
 
 #include "dvs/dvs.h"
 
@@ -152,4 +152,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_PROPERTIES_H_

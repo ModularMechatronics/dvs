@@ -1,5 +1,5 @@
-#ifndef OPENGL_3D_FUNCTIONS_
-#define OPENGL_3D_FUNCTIONS_
+#ifndef MAIN_APPLICATION_OLD_3D_OPENGL_3D_FUNCTIONS_H_
+#define MAIN_APPLICATION_OLD_3D_OPENGL_3D_FUNCTIONS_H_
 
 #include <cstddef>
 #include <vector>
@@ -18,4 +18,4 @@ void drawPoints3D(const Vectord& x_values, const Vectord& y_values, const Vector
 void drawTriangle3D(const Triangle3D<double>& triangle);
 void drawTriangleEdge3D(const Triangle3D<double>& triangle);
 
-#endif
+#endif // MAIN_APPLICATION_OLD_3D_OPENGL_3D_FUNCTIONS_H_

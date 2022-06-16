@@ -1,5 +1,5 @@
-#ifndef OPENGL_2D_SHAPE_PRIMITIVES_H_
-#define OPENGL_2D_SHAPE_PRIMITIVES_H_
+#ifndef MAIN_APPLICATION_OLD_OPENGL_2D_SHAPE_PRIMITIVES_H_
+#define MAIN_APPLICATION_OLD_OPENGL_2D_SHAPE_PRIMITIVES_H_
 
 #include <cstddef>
 
@@ -24,4 +24,4 @@ void drawFilledTriangle2D(const float xc, const float yc, const float r);
 void drawEllipse2D();
 */
 
-#endif
+#endif // MAIN_APPLICATION_OLD_OPENGL_2D_SHAPE_PRIMITIVES_H_

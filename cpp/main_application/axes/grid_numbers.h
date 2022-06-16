@@ -1,5 +1,5 @@
-#ifndef GRID_NUMBERS_H_
-#define GRID_NUMBERS_H_
+#ifndef MAIN_APPLICATION_AXES_GRID_NUMBERS_H_
+#define MAIN_APPLICATION_AXES_GRID_NUMBERS_H_
 
 #include <stddef.h>
 
@@ -16,4 +16,4 @@
 
 void drawGridNumbers(const TextRenderer& text_renderer, const Shader text_shader, const AxesLimits& axes_limits, const ViewAngles& view_angles, const glm::mat4& view_mat, const glm::mat4& model_mat, const glm::mat4& projection_mat, const float width, const float height, const GridVectors& gv);
 
-#endif
+#endif // MAIN_APPLICATION_AXES_GRID_NUMBERS_H_

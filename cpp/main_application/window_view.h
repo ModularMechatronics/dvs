@@ -1,5 +1,5 @@
-#ifndef DVS_WINDOW_VIEW_H_
-#define DVS_WINDOW_VIEW_H_
+#ifndef MAIN_APPLICATION_WINDOW_VIEW_H_
+#define MAIN_APPLICATION_WINDOW_VIEW_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -47,4 +47,4 @@ public:
     virtual void OnClose(wxCloseEvent& event);
 };
 
-#endif
+#endif // MAIN_APPLICATION_WINDOW_VIEW_H_

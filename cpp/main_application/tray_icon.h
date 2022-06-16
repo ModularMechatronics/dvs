@@ -125,4 +125,4 @@ private:
 };
 
 
-#endif
+#endif // MAIN_APPLICATION_TRAY_ICON_H_

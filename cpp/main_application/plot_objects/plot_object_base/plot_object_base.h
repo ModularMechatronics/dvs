@@ -1,5 +1,5 @@
-#ifndef PLOT_OBJECT_BASE_H_
-#define PLOT_OBJECT_BASE_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_
 
 #include <map>
 #include <memory>
@@ -100,4 +100,4 @@ public:
     virtual void modifyShader();
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_

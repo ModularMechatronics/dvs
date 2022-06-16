@@ -1,5 +1,5 @@
-#ifndef LAYOUT_TOOLS_WINDOW_H_
-#define LAYOUT_TOOLS_WINDOW_H_
+#ifndef MAIN_APPLICATION_LAYOUT_TOOLS_WINDOW_H_
+#define MAIN_APPLICATION_LAYOUT_TOOLS_WINDOW_H_
 
 #include <unistd.h>
 #include <wx/button.h>
@@ -74,4 +74,4 @@ public:
     virtual void OnClose(wxCloseEvent& event);
 };
 
-#endif
+#endif // MAIN_APPLICATION_LAYOUT_TOOLS_WINDOW_H_

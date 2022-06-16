@@ -1,5 +1,5 @@
-#ifndef QUIVER_H_
-#define QUIVER_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_QUIVER_QUIVER_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_QUIVER_QUIVER_H_
 
 #include <string>
 #include <vector>
@@ -26,4 +26,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_QUIVER_QUIVER_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_VIEW_BASE_H_
-#define DVS_VIEW_BASE_H_
+#ifndef MAIN_APPLICATION_VIEW_BASE_H_
+#define MAIN_APPLICATION_VIEW_BASE_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -280,4 +280,4 @@ template <class BaseClass> void ViewBase<BaseClass>::setSize(const wxSize& new_s
     }
 }
 
-#endif
+#endif // MAIN_APPLICATION_VIEW_BASE_H_

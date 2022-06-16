@@ -1,5 +1,5 @@
-#ifndef DVS_VAO_OBJECT_H_
-#define DVS_VAO_OBJECT_H_
+#ifndef MAIN_APPLICATION_AXES_VAO_OBJECT_H_
+#define MAIN_APPLICATION_AXES_VAO_OBJECT_H_
 
 class VAOObject
 {
@@ -62,4 +62,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_VAO_OBJECT_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_SHADER_H_
-#define DVS_SHADER_H_
+#ifndef MAIN_APPLICATION_SHADER_H_
+#define MAIN_APPLICATION_SHADER_H_
 
 #include <string>
 
@@ -61,4 +61,4 @@ struct ShaderCollection
     Shader img_plot_shader;
 };
 
-#endif
+#endif // MAIN_APPLICATION_SHADER_H_

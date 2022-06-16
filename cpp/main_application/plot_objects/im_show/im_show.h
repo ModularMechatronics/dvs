@@ -1,5 +1,5 @@
-#ifndef IM_SHOW_H_
-#define IM_SHOW_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_IM_SHOW_IM_SHOW_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_IM_SHOW_IM_SHOW_H_
 
 #include <string>
 #include <vector>
@@ -41,4 +41,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_IM_SHOW_IM_SHOW_H_

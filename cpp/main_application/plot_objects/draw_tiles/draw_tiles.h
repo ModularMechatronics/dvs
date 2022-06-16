@@ -1,5 +1,5 @@
-#ifndef DRAW_TILES_H_
-#define DRAW_TILES_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_DRAW_TILES_DRAW_TILES_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_DRAW_TILES_DRAW_TILES_H_
 
 #include <string>
 #include <vector>
@@ -29,4 +29,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_TILES_DRAW_TILES_H_

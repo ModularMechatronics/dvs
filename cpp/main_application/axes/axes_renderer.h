@@ -1,5 +1,5 @@
-#ifndef DVS_AXES_RENDERER_H_
-#define DVS_AXES_RENDERER_H_
+#ifndef MAIN_APPLICATION_AXES_AXES_RENDERER_H_
+#define MAIN_APPLICATION_AXES_AXES_RENDERER_H_
 
 #include <cmath>
 #include <utility>
@@ -93,4 +93,4 @@ public:
 };
 
 
-#endif
+#endif // MAIN_APPLICATION_AXES_AXES_RENDERER_H_

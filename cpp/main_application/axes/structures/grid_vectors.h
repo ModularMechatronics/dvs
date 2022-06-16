@@ -1,5 +1,5 @@
-#ifndef GRID_VECTORS_H_
-#define GRID_VECTORS_H_
+#ifndef MAIN_APPLICATION_AXES_STRUCTURES_GRID_VECTORS_H_
+#define MAIN_APPLICATION_AXES_STRUCTURES_GRID_VECTORS_H_
 
 #include <cstdint>
 #include <array>
@@ -31,4 +31,4 @@ struct GridVectors
     GridVector z;
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_STRUCTURES_GRID_VECTORS_H_

@@ -1,5 +1,5 @@
-#ifndef AXES_INTERACTOR_H_
-#define AXES_INTERACTOR_H_
+#ifndef MAIN_APPLICATION_AXES_AXES_INTERACTOR_H_
+#define MAIN_APPLICATION_AXES_AXES_INTERACTOR_H_
 
 #include <cmath>
 #include <utility>
@@ -95,4 +95,4 @@ public:
     void showLegend(const bool show_legend);
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_AXES_INTERACTOR_H_

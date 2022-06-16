@@ -1,5 +1,5 @@
-#ifndef PLOT3D_H_
-#define PLOT3D_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_PLOT3D_PLOT3D_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_PLOT3D_PLOT3D_H_
 
 #include <string>
 #include <vector>
@@ -25,4 +25,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_PLOT3D_PLOT3D_H_

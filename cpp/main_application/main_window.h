@@ -1,5 +1,5 @@
-#ifndef MAIN_WINDOW_H_
-#define MAIN_WINDOW_H_
+#ifndef MAIN_APPLICATION_MAIN_WINDOW_H_
+#define MAIN_APPLICATION_MAIN_WINDOW_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -153,4 +153,4 @@ public:
     void appActive();
 };
 
-#endif
+#endif // MAIN_APPLICATION_MAIN_WINDOW_H_

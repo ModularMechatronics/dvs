@@ -1,5 +1,5 @@
-#ifndef DVS_DRAW_ZOOM_RECT_H_
-#define DVS_DRAW_ZOOM_RECT_H_
+#ifndef MAIN_APPLICATION_AXES_ZOOM_RECT_H_
+#define MAIN_APPLICATION_AXES_ZOOM_RECT_H_
 
 #include <stddef.h>
 
@@ -30,4 +30,4 @@ public:
 };
 
 
-#endif
+#endif // MAIN_APPLICATION_AXES_ZOOM_RECT_H_

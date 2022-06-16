@@ -1,5 +1,5 @@
-#ifndef GUI_ELEMENT_H_
-#define GUI_ELEMENT_H_
+#ifndef MAIN_APPLICATION_GUI_ELEMENT_H_
+#define MAIN_APPLICATION_GUI_ELEMENT_H_
 
 #include <wx/notebook.h>
 #include <wx/wx.h>
@@ -92,4 +92,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_GUI_ELEMENT_H_

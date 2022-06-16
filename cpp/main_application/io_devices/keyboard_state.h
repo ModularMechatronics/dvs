@@ -1,5 +1,5 @@
-#ifndef KEYBOARD_STATE_H_
-#define KEYBOARD_STATE_H_
+#ifndef MAIN_APPLICATION_IO_DEVICES_KEYBOARD_STATE_H_
+#define MAIN_APPLICATION_IO_DEVICES_KEYBOARD_STATE_H_
 
 #include <vector>
 
@@ -18,4 +18,4 @@ public:
     void keyGotReleased(const char key);
 };
 
-#endif
+#endif // MAIN_APPLICATION_IO_DEVICES_KEYBOARD_STATE_H_

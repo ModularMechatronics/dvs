@@ -1,5 +1,5 @@
-#ifndef SCATTER_3D_H_
-#define SCATTER_3D_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_SCATTER3_SCATTER3_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_SCATTER3_SCATTER3_H_
 
 #include <string>
 #include <vector>
@@ -26,4 +26,4 @@ public:
     void modifyShader() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER3_SCATTER3_H_

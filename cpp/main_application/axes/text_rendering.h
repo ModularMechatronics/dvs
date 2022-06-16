@@ -1,5 +1,5 @@
-#ifndef TEXT_RENDERING_NEW_H_
-#define TEXT_RENDERING_NEW_H_
+#ifndef MAIN_APPLICATION_AXES_TEXT_RENDERING_H_
+#define MAIN_APPLICATION_AXES_TEXT_RENDERING_H_
 
 #include <glm/glm.hpp>
 
@@ -24,4 +24,4 @@ public:
 bool initFreetype();
 dvs::Vec2Df calculateStringSize(const std::string_view& text, const float scale, const float axes_width, const float axes_height);
 
-#endif
+#endif // MAIN_APPLICATION_AXES_TEXT_RENDERING_H_

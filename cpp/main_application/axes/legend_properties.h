@@ -1,5 +1,5 @@
-#ifndef LEGEND_PROPERTIES_DVS_
-#define LEGEND_PROPERTIES_DVS_
+#ifndef MAIN_APPLICATION_AXES_LEGEND_PROPERTIES_H_
+#define MAIN_APPLICATION_AXES_LEGEND_PROPERTIES_H_
 
 #include <string>
 #include <string_view>
@@ -30,4 +30,4 @@ struct LegendProperties
     dvs::properties::LineStyle line_style;
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_LEGEND_PROPERTIES_H_

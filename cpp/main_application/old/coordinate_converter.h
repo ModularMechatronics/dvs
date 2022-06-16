@@ -1,5 +1,5 @@
-#ifndef COORDINATE_CONVERTER_H_
-#define COORDINATE_CONVERTER_H_
+#ifndef MAIN_APPLICATION_OLD_COORDINATE_CONVERTER_H_
+#define MAIN_APPLICATION_OLD_COORDINATE_CONVERTER_H_
 
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/view_angles.h"
@@ -31,4 +31,4 @@ public:
     Vec2Dd modelToViewCoordinate(const Vec3Dd& model_coord) const;
 };
 
-#endif
+#endif // MAIN_APPLICATION_OLD_COORDINATE_CONVERTER_H_

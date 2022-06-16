@@ -1,5 +1,5 @@
-#ifndef AXES_SETTINGS_H_
-#define AXES_SETTINGS_H_
+#ifndef MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_
+#define MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_
 
 #include <unistd.h>
 
@@ -63,4 +63,4 @@ public:
     void setAxesScale(const Vec3Dd& new_scale);
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_

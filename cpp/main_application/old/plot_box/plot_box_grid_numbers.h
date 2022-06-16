@@ -1,5 +1,5 @@
-#ifndef PLOT_BOX_GRID_NUMBERS_H_
-#define PLOT_BOX_GRID_NUMBERS_H_
+#ifndef MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_NUMBERS_H_
+#define MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_NUMBERS_H_
 
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
@@ -16,4 +16,4 @@ void drawAxisNumbers(const GridVectors& gv,
                      const float width,
                      const float height);
 
-#endif
+#endif // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_NUMBERS_H_

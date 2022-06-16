@@ -1,5 +1,5 @@
-#ifndef AXES_PAINTER_H_
-#define AXES_PAINTER_H_
+#ifndef MAIN_APPLICATION_OLD_AXES_PAINTER_H_
+#define MAIN_APPLICATION_OLD_AXES_PAINTER_H_
 
 #include <cmath>
 #include <utility>
@@ -58,4 +58,4 @@ public:
                       const CoordinateConverter& coord_converter);
 };
 
-#endif
+#endif // MAIN_APPLICATION_OLD_AXES_PAINTER_H_

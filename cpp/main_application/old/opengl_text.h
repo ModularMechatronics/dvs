@@ -1,5 +1,5 @@
-#ifndef OPENGL_TEXT_H_
-#define OPENGL_TEXT_H_
+#ifndef MAIN_APPLICATION_OLD_OPENGL_TEXT_H_
+#define MAIN_APPLICATION_OLD_OPENGL_TEXT_H_
 
 #include <string>
 
@@ -23,4 +23,4 @@ void putTextAt3D(const std::string& s, const Vec3Dd& v);
 void putTextAt_Old(const std::string& s, const double x, const double y);
 void putTextAt3D(const std::string& s, const double x, const double y, const double z);
 
-#endif
+#endif // MAIN_APPLICATION_OLD_OPENGL_TEXT_H_

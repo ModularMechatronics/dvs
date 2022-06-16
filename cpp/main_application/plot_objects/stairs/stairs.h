@@ -1,5 +1,5 @@
-#ifndef DVS_STAIRS_H_
-#define DVS_STAIRS_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_STAIRS_STAIRS_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_STAIRS_STAIRS_H_
 
 #include <string>
 #include <vector>
@@ -24,4 +24,4 @@ public:
     void render() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_STAIRS_STAIRS_H_

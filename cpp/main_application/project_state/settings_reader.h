@@ -1,5 +1,5 @@
-#ifndef DVS_SETTINGS_READER_H_
-#define DVS_SETTINGS_READER_H_
+#ifndef MAIN_APPLICATION_PROJECT_STATE_SETTINGS_READER_H_
+#define MAIN_APPLICATION_PROJECT_STATE_SETTINGS_READER_H_
 
 #include <filesystem>
 #include <nlohmann/json.hpp>
@@ -75,4 +75,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_PROJECT_STATE_SETTINGS_READER_H_

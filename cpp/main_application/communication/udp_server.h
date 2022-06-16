@@ -1,5 +1,5 @@
-#ifndef UDP_SERVER_H_
-#define UDP_SERVER_H_
+#ifndef MAIN_APPLICATION_COMMUNICATION_UDP_SERVER_H_
+#define MAIN_APPLICATION_COMMUNICATION_UDP_SERVER_H_
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -188,4 +188,4 @@ public:
     ~UdpServer() {}
 };
 
-#endif
+#endif // MAIN_APPLICATION_COMMUNICATION_UDP_SERVER_H_

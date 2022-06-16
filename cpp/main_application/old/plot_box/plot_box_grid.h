@@ -1,5 +1,5 @@
-#ifndef PLOT_BOX_GRID_H_
-#define PLOT_BOX_GRID_H_
+#ifndef MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_H_
+#define MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_H_
 
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
@@ -12,4 +12,4 @@ void drawGrid(const GridVectors& gv,
               const AxesLimits& axes_limits,
               const ViewAngles& view_angles);
 
-#endif
+#endif // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_H_

@@ -1,5 +1,5 @@
-#ifndef PLOT_OBJECTS_H_
-#define PLOT_OBJECTS_H_
+#ifndef MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECTS_H_
+#define MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECTS_H_
 
 // clang-format off
 
@@ -24,4 +24,4 @@
 
 // clang-format on
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECTS_H_
