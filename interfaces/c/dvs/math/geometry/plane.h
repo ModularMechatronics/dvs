@@ -1,5 +1,5 @@
-#ifndef DVS_PLANE_H_
-#define DVS_PLANE_H_
+#ifndef DVS_MATH_GEOMETRY_PLANE_H_
+#define DVS_MATH_GEOMETRY_PLANE_H_
 
 typedef struct S_PlaneD
 {
@@ -10,4 +10,4 @@ typedef struct S_PlaneD
 } PlaneD;
 
 
-#endif
+#endif // DVS_MATH_GEOMETRY_PLANE_H_

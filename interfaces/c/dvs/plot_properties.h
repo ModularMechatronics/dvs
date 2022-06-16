@@ -38,4 +38,4 @@ FunctionHeaderObject Alpha(const uint8_t alpha)
     return hdr_obj;
 }
 
-#endif
+#endif // DVS_PLOT_PROPERTIES_H_

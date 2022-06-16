@@ -9,4 +9,4 @@ typedef struct S_Dimension2D
     size_t cols;
 } Dimension2D;
 
-#endif
+#endif // DVS_STRUCTURES_H_

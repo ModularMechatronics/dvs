@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_H_
-#define DVS_MATH_H_
+#ifndef DVS_MATH_MATH_H_
+#define DVS_MATH_MATH_H_
 
 #include <math.h>
 
@@ -14,4 +14,4 @@
 #include "dvs/math/geometry/line_3d.h"
 #include "dvs/math/geometry/plane.h"
 
-#endif
+#endif // DVS_MATH_MATH_H_

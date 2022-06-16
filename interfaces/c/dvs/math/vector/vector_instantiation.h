@@ -1,5 +1,5 @@
-#ifndef DVS_VECTOR_INSTANTIATION_H_
-#define DVS_VECTOR_INSTANTIATION_H_
+#ifndef DVS_MATH_VECTOR_VECTOR_INSTANTIATION_H_
+#define DVS_MATH_VECTOR_VECTOR_INSTANTIATION_H_
 
 #include "dvs/math/utils.h"
 #include "dvs/math/vector/vector_types.h"
@@ -157,4 +157,4 @@ VectorU64 toVectorU64(const Vector vec)
     return ret_vec;
 }
 
-#endif
+#endif // DVS_MATH_VECTOR_VECTOR_INSTANTIATION_H_

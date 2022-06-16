@@ -1,5 +1,5 @@
-#ifndef DVS_MATRIX_INSTANTIATION_H_
-#define DVS_MATRIX_INSTANTIATION_H_
+#ifndef DVS_MATH_MATRIX_MATRIX_INSTANTIATION_H_
+#define DVS_MATH_MATRIX_MATRIX_INSTANTIATION_H_
 
 #include "dvs/math/matrix/matrix_types.h"
 #include "dvs/math/utils.h"
@@ -148,4 +148,4 @@ MatrixU64 toMatrixU64(const Matrix mat)
     return ret_mat;
 }
 
-#endif
+#endif // DVS_MATH_MATRIX_MATRIX_INSTANTIATION_H_

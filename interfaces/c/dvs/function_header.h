@@ -34,4 +34,4 @@ void appendFunctionHeaderObject(FunctionHeader* const hdr, const FunctionHeaderO
     hdr->num_objects = hdr->num_objects + 1;
 }
 
-#endif
+#endif // DVS_FUNCTION_HEADER_H_

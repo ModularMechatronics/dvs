@@ -1,5 +1,5 @@
-#ifndef DVS_IMAGE_MATH_H_
-#define DVS_IMAGE_MATH_H_
+#ifndef DVS_MATH_IMAGE_IMAGE_MATH_H_
+#define DVS_MATH_IMAGE_IMAGE_MATH_H_
 
 #include "dvs/math/image/image_instantiation.h"
 
@@ -25,4 +25,4 @@
     }
 
 
-#endif
+#endif // DVS_MATH_IMAGE_IMAGE_MATH_H_

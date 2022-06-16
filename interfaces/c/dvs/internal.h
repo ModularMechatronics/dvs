@@ -393,4 +393,4 @@ void sendHeader(SendFunction send_function, FunctionHeader* hdr)
     free(data_blob);
 }
 
-#endif
+#endif // DVS_INTERNAL_H_

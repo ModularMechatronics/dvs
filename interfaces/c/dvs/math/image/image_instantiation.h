@@ -1,5 +1,5 @@
-#ifndef DVS_IMAGE_INSTANTIATION_H_
-#define DVS_IMAGE_INSTANTIATION_H_
+#ifndef DVS_MATH_IMAGE_IMAGE_INSTANTIATION_H_
+#define DVS_MATH_IMAGE_IMAGE_INSTANTIATION_H_
 
 #include "dvs/math/image/image_types.h"
 #include "dvs/math/utils.h"
@@ -291,4 +291,4 @@ ImageC3U64 toImageC3U64(const ImageC3 img)
 }
 
 
-#endif
+#endif // DVS_MATH_IMAGE_IMAGE_INSTANTIATION_H_

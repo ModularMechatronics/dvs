@@ -1,5 +1,5 @@
-#ifndef DVS_MATRIX_TYPES_H_
-#define DVS_MATRIX_TYPES_H_
+#ifndef DVS_MATH_MATRIX_MATRIX_TYPES_H_
+#define DVS_MATH_MATRIX_MATRIX_TYPES_H_
 
 #include <stdint.h>
 
@@ -127,4 +127,4 @@ typedef struct S_MatrixPairD
     MatrixD m1;
 } MatrixPairD;
 
-#endif
+#endif // DVS_MATH_MATRIX_MATRIX_TYPES_H_

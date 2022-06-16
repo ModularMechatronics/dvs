@@ -1,5 +1,5 @@
-#ifndef DVS_ENUMS_H_
-#define DVS_ENUMS_H_
+#ifndef DVS_ENUMERATIONS_H_
+#define DVS_ENUMERATIONS_H_
 
 #include <stdint.h>
 
@@ -133,4 +133,4 @@ typedef enum S_ElementParent
 constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
 }*/
 
-#endif
+#endif // DVS_ENUMERATIONS_H_

@@ -45,4 +45,4 @@ size_t dataTypeToNumBytes(const DataType dt)
     }
 }
 
-#endif
+#endif // DVS_MATH_UTILS_H_

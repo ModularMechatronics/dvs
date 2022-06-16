@@ -1,5 +1,5 @@
-#ifndef DVS_VEC2_H_
-#define DVS_VEC2_H_
+#ifndef DVS_MATH_VECTOR_LOW_DIM_VEC2_H_
+#define DVS_MATH_VECTOR_LOW_DIM_VEC2_H_
 
 #include <stdint.h>
 
@@ -34,4 +34,4 @@ typedef struct S_VecYZD
 #define PointXZD VecXZD
 #define PointYZD VecYZD
 
-#endif
+#endif // DVS_MATH_VECTOR_LOW_DIM_VEC2_H_

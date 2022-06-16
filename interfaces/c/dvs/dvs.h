@@ -1,5 +1,5 @@
-#ifndef DVS_H_
-#define DVS_H_
+#ifndef DVS_DVS_H_
+#define DVS_DVS_H_
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -459,4 +459,4 @@ void axis2D(const Vec2DD min_bound, const Vec2DD max_bound)
     sendHeader(getSendFunction(), &hdr);
 }
 
-#endif
+#endif // DVS_DVS_H_

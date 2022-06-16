@@ -1,5 +1,5 @@
-#ifndef DVS_VECTOR_MATH_H_
-#define DVS_VECTOR_MATH_H_
+#ifndef DVS_MATH_VECTOR_VECTOR_MATH_H_
+#define DVS_MATH_VECTOR_VECTOR_MATH_H_
 
 #include "dvs/math/utils.h"
 #include "dvs/math/vector/vector_cast.h"
@@ -42,4 +42,4 @@ VectorF vector_cosF(const VectorF vec)
     return vec_out;
 }
 
-#endif
+#endif // DVS_MATH_VECTOR_VECTOR_MATH_H_

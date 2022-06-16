@@ -1,5 +1,5 @@
-#ifndef DVS_VECTOR_LOW_DIM_H_
-#define DVS_VECTOR_LOW_DIM_H_
+#ifndef DVS_MATH_VECTOR_LOW_DIM_VEC3_H_
+#define DVS_MATH_VECTOR_LOW_DIM_VEC3_H_
 
 #include <stdint.h>
 
@@ -188,4 +188,4 @@ Vec3DFArray createVec3DFArray(const size_t num_elements)
 #define Point3DDArray Vec3DDArray
 #define Point3DFArray Vec3DFArray
 
-#endif
+#endif // DVS_MATH_VECTOR_LOW_DIM_VEC3_H_

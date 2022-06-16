@@ -1,5 +1,5 @@
-#ifndef DVS_IMAGE_TYPES_H_
-#define DVS_IMAGE_TYPES_H_
+#ifndef DVS_MATH_IMAGE_IMAGE_TYPES_H_
+#define DVS_MATH_IMAGE_IMAGE_TYPES_H_
 
 #include <stdint.h>
 
@@ -225,4 +225,4 @@ typedef struct S_ImageC3U64
 
 } ImageC3U64;
 
-#endif
+#endif // DVS_MATH_IMAGE_IMAGE_TYPES_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_LINE_2D_H_
-#define DVS_LINE_2D_H_
+#ifndef DVS_MATH_GEOMETRY_LINE_2D_H_
+#define DVS_MATH_GEOMETRY_LINE_2D_H_
 
 #include "dvs/math/vector_low_dim/vec2.h"
 
@@ -16,4 +16,4 @@ typedef struct S_HLine2DD
     double c;
 } HLine2DD;
 
-#endif
+#endif // DVS_MATH_GEOMETRY_LINE_2D_H_

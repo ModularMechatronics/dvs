@@ -1,5 +1,5 @@
-#ifndef DVS_TRIANGLE_H_
-#define DVS_TRIANGLE_H_
+#ifndef DVS_MATH_GEOMETRY_TRIANGLE_H_
+#define DVS_MATH_GEOMETRY_TRIANGLE_H_
 
 #include <stdint.h>
 #include <string.h>
@@ -85,4 +85,4 @@ IndexTripletArray createIndexTripletArray(const size_t num_elements)
     return array;
 }
 
-#endif
+#endif // DVS_MATH_GEOMETRY_TRIANGLE_H_

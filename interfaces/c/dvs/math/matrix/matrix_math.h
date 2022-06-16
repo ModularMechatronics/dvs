@@ -1,5 +1,5 @@
-#ifndef DVS_MATRIX_MATH_H_
-#define DVS_MATRIX_MATH_H_
+#ifndef DVS_MATH_MATRIX_MATRIX_MATH_H_
+#define DVS_MATH_MATRIX_MATRIX_MATH_H_
 
 #include <math.h>
 
@@ -101,4 +101,4 @@ MatrixD matrix_elementWiseMultiplyD(const MatrixD m0, const MatrixD m1)
     return mat_out;
 }
 
-#endif
+#endif // DVS_MATH_MATRIX_MATRIX_MATH_H_
