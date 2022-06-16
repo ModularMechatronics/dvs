@@ -1,5 +1,5 @@
-#ifndef DVS_ENUMS_H_
-#define DVS_ENUMS_H_
+#ifndef DVS_ENUMERATIONS_H_
+#define DVS_ENUMERATIONS_H_
 
 #include <stdint.h>
 
@@ -152,4 +152,4 @@ enum class ElementParent : uint8_t
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_ENUMERATIONS_H_

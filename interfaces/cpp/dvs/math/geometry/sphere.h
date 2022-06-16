@@ -1,6 +1,6 @@
 
-#ifndef DVS_SPHERE_H_
-#define DVS_SPHERE_H_
+#ifndef DVS_MATH_GEOMETRY_SPHERE_H_
+#define DVS_MATH_GEOMETRY_SPHERE_H_
 
 #include <cmath>
 #include <vector>
@@ -61,4 +61,4 @@ template <typename T> std::pair<Point3D<T>, Point3D<T>> Sphere<T>::lineIntersect
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_GEOMETRY_SPHERE_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_VECTOR_DYNAMIC_H_
-#define DVS_VECTOR_DYNAMIC_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_
+#define DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_
 
 #include <cmath>
 #include <cstring>
@@ -1209,4 +1209,4 @@ template <typename Y> void fillWithPtr(Vector<Y>& v, const void* const ptr, cons
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_

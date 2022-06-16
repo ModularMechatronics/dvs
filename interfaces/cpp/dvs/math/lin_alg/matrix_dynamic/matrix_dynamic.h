@@ -1,5 +1,5 @@
-#ifndef DVS_MATRIX_DYNAMIC_H_
-#define DVS_MATRIX_DYNAMIC_H_
+#ifndef DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_
+#define DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_
 
 #include <cmath>
 #include <cstring>
@@ -1477,4 +1477,4 @@ template <typename T> Matrix<T> uniqueMatrix(const size_t rows, const size_t col
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_

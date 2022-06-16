@@ -1,5 +1,5 @@
-#ifndef DVS_POLAR_H_
-#define DVS_POLAR_H_
+#ifndef DVS_MATH_COORDINATES_POLAR_H_
+#define DVS_MATH_COORDINATES_POLAR_H_
 
 #include <cmath>
 #include <vector>
@@ -30,4 +30,4 @@ template <typename T> Vec2D<T> PolarCoord<T>::toVec2D() const
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_COORDINATES_POLAR_H_

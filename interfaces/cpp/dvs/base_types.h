@@ -41,4 +41,4 @@ struct Bound3D
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_BASE_TYPES_H_

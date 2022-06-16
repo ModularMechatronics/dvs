@@ -1,5 +1,5 @@
-#ifndef DVS_IMAGE_C1_H_
-#define DVS_IMAGE_C1_H_
+#ifndef DVS_MATH_IMAGE_IMAGE_C1_H_
+#define DVS_MATH_IMAGE_IMAGE_C1_H_
 
 #include <assert.h>
 #include <stdint.h>
@@ -215,4 +215,4 @@ template <typename T> T ImageC1<T>::max() const
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_IMAGE_IMAGE_C1_H_

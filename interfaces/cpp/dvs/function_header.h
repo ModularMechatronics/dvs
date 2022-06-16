@@ -1,5 +1,5 @@
-#ifndef FUNCTION_HEADER_H_
-#define FUNCTION_HEADER_H_
+#ifndef DVS_FUNCTION_HEADER_H_
+#define DVS_FUNCTION_HEADER_H_
 
 #include <algorithm>
 #include <cassert>
@@ -459,4 +459,4 @@ public:
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_FUNCTION_HEADER_H_

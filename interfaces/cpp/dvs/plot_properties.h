@@ -1,5 +1,5 @@
-#ifndef PLOT_ATTRIBUTES_H_
-#define PLOT_ATTRIBUTES_H_
+#ifndef DVS_PLOT_PROPERTIES_H_
+#define DVS_PLOT_PROPERTIES_H_
 
 #include <cassert>
 #include <cstring>
@@ -337,4 +337,4 @@ public:
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_PLOT_PROPERTIES_H_

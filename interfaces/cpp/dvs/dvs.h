@@ -1,5 +1,5 @@
-#ifndef DVS_H_
-#define DVS_H_
+#ifndef DVS_DVS_H_
+#define DVS_DVS_H_
 
 #include "dvs/communication.h"
 #include "dvs/function_header.h"
@@ -511,4 +511,4 @@ inline void clearView()
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_DVS_H_

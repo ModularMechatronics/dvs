@@ -1,5 +1,5 @@
-#ifndef DVS_VEC2D_H_
-#define DVS_VEC2D_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC2D_H_
+#define DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC2D_H_
 
 #include <cmath>
 
@@ -213,4 +213,4 @@ template <typename T> bool Vec2D<T>::isAnyNan() const
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC2D_H_

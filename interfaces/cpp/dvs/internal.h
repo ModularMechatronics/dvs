@@ -279,4 +279,4 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Function
 }  // namespace internal
 }  // namespace dvs
 
-#endif
+#endif // DVS_INTERNAL_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_END_INDEX_H_
-#define DVS_END_INDEX_H_
+#ifndef DVS_MATH_STRUCTURES_END_INDEX_H_
+#define DVS_MATH_STRUCTURES_END_INDEX_H_
 
 #include <cassert>
 
@@ -31,4 +31,4 @@ struct AllIndices
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_STRUCTURES_END_INDEX_H_

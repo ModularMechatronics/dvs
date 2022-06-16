@@ -1,5 +1,5 @@
-#ifndef DVS_VECTOR_MATRIX_DYNAMIC_H_
-#define DVS_VECTOR_MATRIX_DYNAMIC_H_
+#ifndef DVS_MATH_LIN_ALG_MATRIX_VECTOR_DYNAMIC_H_
+#define DVS_MATH_LIN_ALG_MATRIX_VECTOR_DYNAMIC_H_
 
 #include <cmath>
 
@@ -561,4 +561,4 @@ AxisAngle<T> estimateRotationFromTwoVectors(const Vec3D<T>& v_unrotated, const V
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_MATRIX_VECTOR_DYNAMIC_H_

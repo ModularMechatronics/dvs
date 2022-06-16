@@ -1,6 +1,6 @@
 
-#ifndef DVS_PLANE_H_
-#define DVS_PLANE_H_
+#ifndef DVS_MATH_GEOMETRY_PLANE_H_
+#define DVS_MATH_GEOMETRY_PLANE_H_
 
 #include <cmath>
 #include <utility>
@@ -160,4 +160,4 @@ template <typename T> Plane<T> planeFromThreePoints(const Point3D<T>& p0, const 
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_GEOMETRY_PLANE_H_

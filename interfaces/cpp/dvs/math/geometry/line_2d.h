@@ -1,6 +1,6 @@
 
-#ifndef DVS_LINE_2D_H_
-#define DVS_LINE_2D_H_
+#ifndef DVS_MATH_GEOMETRY_LINE_2D_H_
+#define DVS_MATH_GEOMETRY_LINE_2D_H_
 
 #include <cmath>
 #include <utility>
@@ -297,4 +297,4 @@ template <typename T> ParametricLine2D<T> parametricLineFromPoints(const Point2D
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_GEOMETRY_LINE_2D_H_

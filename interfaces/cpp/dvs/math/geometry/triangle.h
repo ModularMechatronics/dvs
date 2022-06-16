@@ -1,5 +1,5 @@
-#ifndef DVS_TRIANGLE_H_
-#define DVS_TRIANGLE_H_
+#ifndef DVS_MATH_GEOMETRY_TRIANGLE_H_
+#define DVS_MATH_GEOMETRY_TRIANGLE_H_
 
 #include <cmath>
 #include <vector>
@@ -41,4 +41,4 @@ template <typename T> template <typename Y> Triangle3D<T>::Triangle3D(const Tria
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_GEOMETRY_TRIANGLE_H_
