@@ -19,7 +19,7 @@ public:
     {
         (void)other;
 
-        data_ = other.getDataPointer();
+        data_ = other.data();
         other.setDataPointer(nullptr);
 
         num_data_bytes_ = other.getNumDataBytes();
@@ -60,7 +60,7 @@ public:
         delete[] payload_data_;
     }
 
-    uint8_t* getDataPointer() const
+    uint8_t* data() const
     {
         return payload_data_;
     }

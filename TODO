@@ -5,12 +5,9 @@ Pre release:
 - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
 - Verify that image is not mirrored
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
-- Rename HomogenousLine and ParametricLine to HLine and Pline?
 - Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
 - Rename Vec2D/3D/4D to Vec2/3/4
-- Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate
-  2D/3D functions
-  - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
+- Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 - Refactor/clean up window/tabs/plot elements system
 - Add "holdClear" that only clears when new data comes in, to avoid flashing
 - Remove need to always specify num_elements
@@ -33,7 +30,7 @@ Pre release:
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix layout designer
-- Change "getDataPointer" to "data" for Matrix, Vector, etc.
+- Change "data" to "data" for Matrix, Vector, etc.
 - Fix number formatting and grid vectors system
 - Make sure linewidth and pointsize works
 - Fix showing correct plot walls when in perspective mode
@@ -50,21 +47,15 @@ Pre release:
 - Receive and push new data until there is new data available, and refresh only after last update
 - "dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();", Possible remove need for specifying type and enum?
 - Don't always update on keypress?
-- Figure legend
 - Rename getAxesScale to getScale
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
 - Layout window always on top of windows
 - "UInt8View" or something for "void fillBufferWithData(uint8_t* const buffer) const;" functions, that contains pointer and size
-- Vector<T>{2} initializes as the initializer list??? Inconsistent...
 - scatter circle, star, plus etc.
 - LegendProperties to use reference_wrapper instead of pointer to colormap
-- Flag for if findMinMax has been executed
-
-Needs fixing:
- - imshow
- (3D surface functions still don't have correct color)
 
 Post release:
+- Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
 - setCurrentElement doesn''t send any information to dvs, only sets internal variable on client side which is sent with the next command
   - This way, a property type could be added, so that the current element can be specified in the function call

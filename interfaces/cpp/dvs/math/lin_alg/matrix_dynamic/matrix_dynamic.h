@@ -48,7 +48,7 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 template <typename T> Matrix<T>::Matrix(Matrix<T>&& m)
 {
     DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
-    data_ = m.getDataPointer();
+    data_ = m.data();
     num_rows_ = m.rows();
     num_cols_ = m.cols();
 
@@ -99,7 +99,7 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
         num_cols_ = m.cols();
         is_allocated_ = true;
 
-        data_ = m.getDataPointer();
+        data_ = m.data();
 
         m.setInternalData(nullptr, 0, 0);
     }
@@ -340,7 +340,7 @@ template <typename T> void Matrix<T>::setInternalData(T* const input_ptr, const 
     num_cols_ = num_cols;
 }
 
-template <typename T> T* Matrix<T>::getDataPointer() const
+template <typename T> T* Matrix<T>::data() const
 {
     return data_;
 }

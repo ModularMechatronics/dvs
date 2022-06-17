@@ -42,7 +42,7 @@ public:
     void mapBetween(T image_min, T image_max, T min_value, T max_value);
     size_t numElements() const;
     size_t size() const;
-    T* getDataPointer() const;
+    T* data() const;
 };
 
 template <typename T> ImageC1<T>::~ImageC1()
@@ -136,7 +136,7 @@ template <typename T> size_t ImageC1<T>::numElements() const
     return num_rows_ * num_cols_;
 }
 
-template <typename T> T* ImageC1<T>::getDataPointer() const
+template <typename T> T* ImageC1<T>::data() const
 {
     return data_;
 }

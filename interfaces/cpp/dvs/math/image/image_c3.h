@@ -38,7 +38,7 @@ public:
     void fill(T fill_val);
     size_t numElements() const;
     size_t size() const;
-    T* getDataPointer() const;
+    T* data() const;
 };
 
 template <typename T> ImageC3<T>::~ImageC3()
@@ -112,7 +112,7 @@ template <typename T> size_t ImageC3<T>::numElements() const
     return num_rows_ * num_cols_ * 3;
 }
 
-template <typename T> T* ImageC3<T>::getDataPointer() const
+template <typename T> T* ImageC3<T>::data() const
 {
     return data_;
 }

@@ -26,8 +26,8 @@ TEST_F(VectorInitTest, VectorMove)
 
     Vec vec0 = vec_gt, vec1 = vec_gt;
 
-    const int* const ptr0 = vec0.getDataPointer();
-    const int* const ptr1 = vec1.getDataPointer();
+    const int* const ptr0 = vec0.data();
+    const int* const ptr1 = vec1.data();
 
     const Vec vec_moved0 = std::move(vec0);
     Vec vec_moved1;
@@ -40,15 +40,15 @@ TEST_F(VectorInitTest, VectorMove)
     ASSERT_TRUE(vec_moved1.isAllocated());
 
     ASSERT_EQ(vec0.size(), 0UL);
-    ASSERT_EQ(vec0.getDataPointer(), nullptr);
+    ASSERT_EQ(vec0.data(), nullptr);
 
     ASSERT_EQ(vec1.size(), 0UL);
-    ASSERT_EQ(vec1.getDataPointer(), nullptr);
+    ASSERT_EQ(vec1.data(), nullptr);
 
     ASSERT_EQ(vec_moved0.size(), vec_gt.size());
-    ASSERT_EQ(vec_moved0.getDataPointer(), ptr0);
+    ASSERT_EQ(vec_moved0.data(), ptr0);
     ASSERT_EQ(vec_moved1.size(), vec_gt.size());
-    ASSERT_EQ(vec_moved1.getDataPointer(), ptr1);
+    ASSERT_EQ(vec_moved1.data(), ptr1);
 
     ASSERT_VECTOR_EQ_VECTOR(vec_moved0, vec_gt);
     ASSERT_VECTOR_EQ_VECTOR(vec_moved1, vec_gt);
@@ -123,13 +123,13 @@ TEST_F(VectorInitTest, VectorMoveInternal)
     v_res1 = v1.move();
 
     ASSERT_EQ(v0.size(), 0UL);
-    ASSERT_EQ(v0.getDataPointer(), nullptr);
+    ASSERT_EQ(v0.data(), nullptr);
 
     ASSERT_EQ(v1.size(), 0UL);
-    ASSERT_EQ(v1.getDataPointer(), nullptr);
+    ASSERT_EQ(v1.data(), nullptr);
 
     ASSERT_EQ(v2.size(), 0UL);
-    ASSERT_EQ(v2.getDataPointer(), nullptr);
+    ASSERT_EQ(v2.data(), nullptr);
 
     ASSERT_VECTOR_EQ_VECTOR(v_res0, vec_gt);
     ASSERT_VECTOR_EQ_VECTOR(v_res1, vec_gt);

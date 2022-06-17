@@ -135,7 +135,7 @@ TEST_F(MatrixTest, GetDataPointer)
     m(2, 2) = 0.3;
     ASSERT_NEAR(m(2, 2), 0.3, eps);
 
-    double* p = m.getDataPointer();
+    double* p = m.data();
 
     ASSERT_NEAR(p[8], 0.3, eps);
     p[8] = 1.2;

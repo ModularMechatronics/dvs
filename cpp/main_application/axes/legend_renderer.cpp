@@ -43,16 +43,16 @@ void LegendRenderer::setBoxValues(const float new_x_min, const float new_x_max, 
 
 void LegendRenderer::setVertexAtIdx(const float x, const float y, const float z, const size_t idx)
 {
-    points_.getDataPointer()[idx] = x;
-    points_.getDataPointer()[idx + 1] = y;
-    points_.getDataPointer()[idx + 2] = z;
+    points_.data()[idx] = x;
+    points_.data()[idx + 1] = y;
+    points_.data()[idx + 2] = z;
 }
 
 void LegendRenderer::setColorAtIdx(const float r, const float g, const float b, const size_t idx)
 {
-    colors_.getDataPointer()[idx] = r;
-    colors_.getDataPointer()[idx + 1] = g;
-    colors_.getDataPointer()[idx + 2] = b;
+    colors_.data()[idx] = r;
+    colors_.data()[idx + 1] = g;
+    colors_.data()[idx + 2] = b;
 }
 
 void LegendRenderer::renderColorMapLegend(const size_t num_segments, const RGBColorMap<float>* const color_map, const float xc, const float yc, const float r, const float axes_width, const float axes_height)
@@ -112,11 +112,11 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
     setBoxValues(x_min, x_max, z_min, z_max);
 
-    edge_vao_.renderAndUpdateData(legend_edge_vertices_.getDataPointer(), sizeof(float) * 3 * num_vertices_edge_);
-    inner_vao_.renderAndUpdateData(legend_inner_vertices_.getDataPointer(), sizeof(float) * 3 * num_vertices_inner_);
+    edge_vao_.renderAndUpdateData(legend_edge_vertices_.data(), sizeof(float) * 3 * num_vertices_edge_);
+    inner_vao_.renderAndUpdateData(legend_inner_vertices_.data(), sizeof(float) * 3 * num_vertices_inner_);
 
-    float* const legend_shape_vertices = points_.getDataPointer();
-    float* const legend_shape_colors = colors_.getDataPointer();
+    float* const legend_shape_vertices = points_.data();
+    float* const legend_shape_colors = colors_.data();
 
     const float x_center = x_min + scale_factor_ * text_x_offset / 2.0f;
     const float legend_symbol_width = 70.0f / axes_width;
@@ -267,7 +267,7 @@ LegendRenderer::LegendRenderer(const TextRenderer& text_renderer, const ShaderCo
     legend_inner_vertices_.fill(0.0f);
     legend_edge_vertices_.fill(0.0f);
 
-    edge_vao_ = VAOObject(num_vertices_edge_, legend_edge_vertices_.getDataPointer(), legend_color_edge, GL_LINE_STRIP);
-    inner_vao_ = VAOObject(num_vertices_inner_, legend_inner_vertices_.getDataPointer(), legend_color_inner, GL_TRIANGLES);
-    legend_shape_ = VAOObject2(kMaxNumPoints, points_.getDataPointer(), colors_.getDataPointer());
+    edge_vao_ = VAOObject(num_vertices_edge_, legend_edge_vertices_.data(), legend_color_edge, GL_LINE_STRIP);
+    inner_vao_ = VAOObject(num_vertices_inner_, legend_inner_vertices_.data(), legend_color_inner, GL_TRIANGLES);
+    legend_shape_ = VAOObject2(kMaxNumPoints, points_.data(), colors_.data());
 }

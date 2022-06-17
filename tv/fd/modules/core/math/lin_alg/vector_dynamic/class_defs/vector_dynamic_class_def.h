@@ -56,7 +56,7 @@ public:
     void fill(const T& val);
     void resize(const size_t vector_length);
     size_t endIndex() const;
-    T* getDataPointer() const;
+    T* data() const;
 
     void pushBack(const T& new_value);
     void pushFront(const T& new_value);

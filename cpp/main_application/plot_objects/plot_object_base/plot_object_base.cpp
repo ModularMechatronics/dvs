@@ -67,7 +67,7 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
 
     assignProperties(props);
 
-    data_ptr_ = received_data_->getDataPointer();
+    data_ptr_ = received_data_->data();
 }
 
 void PlotObjectBase::assignProperties(const Properties& props)

@@ -35,7 +35,7 @@ template <typename T> Vector<T>::Vector(const Vector<T>& v) : is_allocated_(true
 template <typename T> Vector<T>::Vector(Vector<T>&& v)
 {
     DVS_ASSERT(v.isAllocated()) << "Input vector not allocated!";
-    data_ = v.getDataPointer();
+    data_ = v.data();
     vector_length_ = v.size();
     is_allocated_ = true;
 
@@ -56,7 +56,7 @@ template <typename T> Vector<T>& Vector<T>::operator=(Vector<T>&& v)
         vector_length_ = v.size();
         is_allocated_ = true;
 
-        data_ = v.getDataPointer();
+        data_ = v.data();
 
         v.setInternalData(nullptr, 0);
     }
@@ -447,7 +447,7 @@ template <typename T> size_t Vector<T>::endIndex() const
     return vector_length_ - 1;
 }
 
-template <typename T> T* Vector<T>::getDataPointer() const
+template <typename T> T* Vector<T>::data() const
 {
     return data_;
 }

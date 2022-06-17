@@ -100,7 +100,7 @@ TEST_F(VectorIndexingTest, VectorBeginEnd)
 {
     const Vectord v0 = {1.2, 4.3, 1.5, 5.2, 3.6, 3.4, 6.7};
     const size_t vector_size = v0.size();
-    const double* const vector_data = v0.getDataPointer();
+    const double* const vector_data = v0.data();
 
     for (size_t k = 0; k < vector_size; k++)
     {
@@ -114,7 +114,7 @@ TEST_F(VectorIndexingTest, VectorBeginEnd)
 
     Vectord nc_v0 = {1.2, 4.3, 1.5, 5.2, 3.6, 3.4, 6.7};
     const size_t nc_vector_size = nc_v0.size();
-    const double* const nc_vector_data = nc_v0.getDataPointer();
+    const double* const nc_vector_data = nc_v0.data();
 
     for (size_t k = 0; k < nc_vector_size; k++)
     {
@@ -130,7 +130,7 @@ TEST_F(VectorIndexingTest, VectorBeginEnd)
 TEST_F(VectorIndexingTest, VectorBeginEndIterate)
 {
     const Vectord v0 = {1.2, 4.3, 1.5, 5.2, 3.6, 3.4, 6.7};
-    const double* const vector_data = v0.getDataPointer();
+    const double* const vector_data = v0.data();
 
     size_t idx = 0;
     for (double d : v0)

@@ -81,7 +81,7 @@ public:
     void fill(const T val);
     void switchRows(size_t r0, size_t r1);
     void switchColumns(size_t c0, size_t c1);
-    T* getDataPointer() const;
+    T* data() const;
     void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
     Matrix<T> getTranspose() const;
     void transpose();

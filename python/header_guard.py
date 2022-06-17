@@ -2,12 +2,9 @@ from asyncore import write
 import os
 import subprocess
 
-# FOLDERS = [{"name": "cpp", "strip_prefix": "cpp"}]
-# FOLDERS = [{"name": "interfaces/cpp", "strip_prefix": "cpp"}]
-FOLDERS = [{"name": "interfaces/c", "strip_prefix": "interfaces/c"}]
-
-# FOLDERS = [{"name": "cpp", "strip_prefix": "cpp"},
-#            {"name": "interfaces", "strip_prefix": "cpp"}]
+FOLDERS = [{"name": "cpp", "strip_prefix": "cpp"},
+           {"name": "interfaces/cpp", "strip_prefix": "cpp"},
+           {"name": "interfaces/c", "strip_prefix": "interfaces/c"}]
 
 EXCLUDE_FOLDERS = ["cpp/externals"]
 
@@ -27,7 +24,7 @@ def write_to_file(file_path, file_lines):
     with open(file_path, "w") as f:
         f.writelines(file_lines)
 
-def modify_file(file_path, folder_name, strip_prefix):
+def modify_file(file_path, strip_prefix):
     file_lines = get_file_lines(file_path)
 
     header_guard_string = file_path[file_path.find(strip_prefix) + len(strip_prefix) + 1:].replace("/", "_").replace(".", "_").upper() + "_"
@@ -65,7 +62,9 @@ if __name__ == "__main__":
     if get_repo_root() != os.getcwd():
         raise Exception("You should be in repo root to run this script!")
 
+    repo_root = get_repo_root()
     for folder in FOLDERS:
+        os.chdir(repo_root)
         os.chdir(folder["name"])
         current_path = os.getcwd()
 
@@ -75,6 +74,6 @@ if __name__ == "__main__":
             is_valid_file = not any([p in f for p in EXCLUDE_FOLDERS])
 
             if is_valid_file:
-                modify_file(f, folder["name"], folder["strip_prefix"])
+                modify_file(f, folder["strip_prefix"])
 
         a = 1

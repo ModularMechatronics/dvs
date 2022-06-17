@@ -16,7 +16,7 @@ protected:
 
 public:
     Vector();
-    Vector(const size_t vector_length);
+    explicit Vector(const size_t vector_length);
     Vector(const Vector<T>& v);
     Vector(Vector<T>&& v);
     template <typename Y> Vector(const Vector<Y>& v);
@@ -56,7 +56,7 @@ public:
     void fill(const T& val);
     void resize(const size_t vector_length);
     size_t endIndex() const;
-    T* getDataPointer() const;
+    T* data() const;
 
     void pushBack(const T& new_value);
     void pushFront(const T& new_value);

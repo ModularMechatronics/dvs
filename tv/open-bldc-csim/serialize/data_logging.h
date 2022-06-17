@@ -104,7 +104,7 @@ public:
         idx_ += num_bytes;
     }
 
-    uint8_t* getDataPointer() const
+    uint8_t* data() const
     {
         return data_;
     }

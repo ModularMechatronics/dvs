@@ -72,7 +72,7 @@ TEST_F(VectorTest, DataPointer)
     Vector<double> v(4);
     v(0) = 0.4;
 
-    double* p = v.getDataPointer();
+    double* p = v.data();
 
     ASSERT_NEAR(p[0], 0.4, eps);
 
@@ -90,7 +90,7 @@ TEST_F(VectorTest, EqualityOperator)
 
     v1 = v0;
 
-    ASSERT_NE(v0.getDataPointer(), v1.getDataPointer());
+    ASSERT_NE(v0.data(), v1.data());
 
     ASSERT_EQ(v0.size(), 4UL);
     ASSERT_EQ(v1.size(), 4UL);

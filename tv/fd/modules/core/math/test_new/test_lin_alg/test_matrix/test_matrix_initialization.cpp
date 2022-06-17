@@ -27,8 +27,8 @@ TEST_F(MatrixInitTest, MatrixMove)
     const Mat mat_gt = {{1, 3, 6}, {3, 4, 1}, {0, 3, 1}, {1, 1, -3}};
     Mat mat0 = mat_gt, mat1 = mat_gt;
 
-    const int* const ptr0 = mat0.getDataPointer();
-    const int* const ptr1 = mat1.getDataPointer();
+    const int* const ptr0 = mat0.data();
+    const int* const ptr1 = mat1.data();
 
     const Mat mat_moved0 = std::move(mat0);
     Mat mat_moved1 = std::move(mat1);
@@ -44,8 +44,8 @@ TEST_F(MatrixInitTest, MatrixMove)
     ASSERT_EQ(mat0.cols(), 0UL);
     ASSERT_EQ(mat1.cols(), 0UL);
 
-    ASSERT_EQ(mat0.getDataPointer(), nullptr);
-    ASSERT_EQ(mat1.getDataPointer(), nullptr);
+    ASSERT_EQ(mat0.data(), nullptr);
+    ASSERT_EQ(mat1.data(), nullptr);
 
     ASSERT_EQ(mat_moved0.rows(), mat_gt.rows());
     ASSERT_EQ(mat_moved1.rows(), mat_gt.rows());
@@ -53,8 +53,8 @@ TEST_F(MatrixInitTest, MatrixMove)
     ASSERT_EQ(mat_moved0.cols(), mat_gt.cols());
     ASSERT_EQ(mat_moved1.cols(), mat_gt.cols());
 
-    ASSERT_EQ(mat_moved0.getDataPointer(), ptr0);
-    ASSERT_EQ(mat_moved1.getDataPointer(), ptr1);
+    ASSERT_EQ(mat_moved0.data(), ptr0);
+    ASSERT_EQ(mat_moved1.data(), ptr1);
 
     ASSERT_MATRIX_EQ_MATRIX(mat_moved0, mat_gt);
     ASSERT_MATRIX_EQ_MATRIX(mat_moved1, mat_gt);
@@ -75,15 +75,15 @@ TEST_F(MatrixInitTest, MatrixMoveInternal)
 
     ASSERT_EQ(m0.rows(), 0UL);
     ASSERT_EQ(m0.cols(), 0UL);
-    ASSERT_EQ(m0.getDataPointer(), nullptr);
+    ASSERT_EQ(m0.data(), nullptr);
 
     ASSERT_EQ(m1.rows(), 0UL);
     ASSERT_EQ(m1.cols(), 0UL);
-    ASSERT_EQ(m1.getDataPointer(), nullptr);
+    ASSERT_EQ(m1.data(), nullptr);
 
     ASSERT_EQ(m2.rows(), 0UL);
     ASSERT_EQ(m2.cols(), 0UL);
-    ASSERT_EQ(m2.getDataPointer(), nullptr);
+    ASSERT_EQ(m2.data(), nullptr);
 
     ASSERT_MATRIX_EQ_MATRIX(m_res0, mat_gt);
     ASSERT_MATRIX_EQ_MATRIX(m_res1, mat_gt);
