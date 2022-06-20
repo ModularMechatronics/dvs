@@ -14,6 +14,8 @@ Pre release:
 - Function "view" is the one that sets/creates the current element
   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
 - Rename "linspaceFromPointsAndCount" to "linspaceEdgesAndCount" or "linspaceBoundariesAndCount"
+- Rename "cpp" folder to "src" and move "interfaces" into it (and update header_guard.py)
+- Dashed line for plot and plot3
 - Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Rename "FunctionHeader" to "TransmissionHeader" and "FunctionHeaderObject" to "TransmissionHeaderObject"
@@ -53,6 +55,7 @@ Pre release:
 - "UInt8View" or something for "void fillBufferWithData(uint8_t* const buffer) const;" functions, that contains pointer and size
 - scatter circle, star, plus etc.
 - LegendProperties to use reference_wrapper instead of pointer to colormap
+- Gradient min/max (like for surf) for draw mesh and other 3d functions 
 
 Post release:
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
@@ -73,5 +76,6 @@ Post release:
 - Characters turning away from plot box when rotating
 - 3D world
 - http://www.opengl.org/wiki/Buffer_Object_Streaming
+
 Unsure:
-Shader for surf, meshgrid and other funchtion, that enables gradient
+Command line window that prints errors etc.

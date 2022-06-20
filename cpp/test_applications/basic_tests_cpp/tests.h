@@ -54,10 +54,15 @@ void testScatter()
 
     setCurrentElement("view_00");
     clearView();
-    axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
+    axis({0.0, -8.0, -3.3}, {32.0, 32.0, 6.6});
 
     plot(xf, yf, properties::Color(212, 14, 55));
-    scatter(x, y, properties::Color(12, 14, 55), properties::PointSize(3));
+    scatter(x, y, properties::Color(12, 14, 55));
+    scatter(x, y + 1.0, properties::Color::BLACK(), properties::PointSize(11));
+    scatter(x, y + 2.0, properties::Color::CYAN(), properties::PointSize(12), properties::ScatterStyle::Square());
+    scatter(x, y + 3.0, properties::Color::MAGENTA(), properties::PointSize(13), properties::ScatterStyle::Disc());
+    scatter(x, y + 4.0, properties::Color::BLUE(), properties::PointSize(14), properties::ScatterStyle::Plus());
+    scatter(x, y + 5.0, properties::Color::RED(), properties::PointSize(14), properties::ScatterStyle::Cross());
 }
 
 void testScatter3()
@@ -90,8 +95,13 @@ void testScatter3()
     clearView();
 
     axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
-    scatter3(x, y, z, properties::Color(212, 14, 55), properties::PointSize(3));
     plot3(x, y, z, properties::Color(255, 14, 255), properties::LineWidth(1));
+    scatter3(x, y, z, properties::Color(12, 14, 55));
+    scatter3(x, y, z + 1.0, properties::Color::BLACK(), properties::PointSize(11));
+    scatter3(x, y, z + 2.0, properties::Color::CYAN(), properties::PointSize(12), properties::ScatterStyle::Square());
+    scatter3(x, y, z + 3.0, properties::Color::MAGENTA(), properties::PointSize(13), properties::ScatterStyle::Disc());
+    scatter3(x, y, z + 4.0, properties::Color::BLUE(), properties::PointSize(14), properties::ScatterStyle::Plus());
+    scatter3(x, y, z + 5.0, properties::Color::RED(), properties::PointSize(14), properties::ScatterStyle::Cross());
 }
 
 void testPlotCollection()

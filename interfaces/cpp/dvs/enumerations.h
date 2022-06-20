@@ -48,6 +48,7 @@ enum class PropertyType : uint8_t
     POINT_SIZE,
     LINE_STRIP,
     PERSISTENT,
+    SCATTER_STYLE,
     UNKNOWN
 };
 
@@ -123,6 +124,15 @@ enum class ColorMapType : uint8_t
     MAGMA,
     VIRIDIS,
     UNKNOWN
+};
+
+enum class ScatterStyleType : uint8_t
+{
+    SQUARE,
+    CIRCLE,
+    DISC,
+    PLUS,
+    CROSS
 };
 
 }  // namespace internal

@@ -120,6 +120,41 @@ public:
     }
 };
 
+struct ScatterStyle : internal::PropertyBase
+{
+    internal::ScatterStyleType data;
+
+    ScatterStyle() : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE) {}
+    ScatterStyle(const internal::ScatterStyleType scatter_style_type) : 
+        internal::PropertyBase(internal::PropertyType::SCATTER_STYLE), data{scatter_style_type} {}
+
+    static ScatterStyle Cross()
+    {
+        return {internal::ScatterStyleType::CROSS};
+    }
+    
+    static ScatterStyle Circle()
+    {
+        return {internal::ScatterStyleType::CIRCLE};
+    }
+    
+    static ScatterStyle Disc()
+    {
+        return {internal::ScatterStyleType::DISC};
+    }
+    
+    static ScatterStyle Square()
+    {
+        return {internal::ScatterStyleType::SQUARE};
+    }
+    
+    static ScatterStyle Plus()
+    {
+        return {internal::ScatterStyleType::PLUS};
+    }
+    
+};
+
 struct Color : internal::PropertyBase
 {
 public:

@@ -3,6 +3,9 @@
 void PlotObjectBase::modifyShader()
 {
     glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
+    glUseProgram(shader_collection_.scatter_shader.programId());
+    glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
 bool PlotObjectBase::isPersistent() const
@@ -145,6 +148,15 @@ void PlotObjectBase::assignProperties(const Properties& props)
         face_color_ = RGBTripletf(0.1f, 0.2f, 0.3f);
     }
 
+    if (props.hasProperty(PropertyType::SCATTER_STYLE))
+    {
+        scatter_style_type_ = props.getProperty<ScatterStyle>().data;
+    }
+    else
+    {
+        scatter_style_type_ = ScatterStyleType::CIRCLE;
+    }
+
     if (props.hasProperty(PropertyType::LINE_WIDTH))
     {
         const LineWidth lw = props.getProperty<LineWidth>();
@@ -162,7 +174,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     }
     else
     {
-        point_size_ = 1.0f;
+        point_size_ = 10.0f;
     }
 
     if (props.hasProperty(PropertyType::LINE_STYLE))

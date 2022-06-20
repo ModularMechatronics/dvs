@@ -32,7 +32,10 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const Fu
 void Scatter2D::modifyShader()
 {
     PlotObjectBase::modifyShader();
-    glUniform1f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "point_size"), point_size_);
+    glUseProgram(shader_collection_.scatter_shader.programId());
+    glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "point_size"), point_size_);
+    glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"), static_cast<int>(scatter_style_type_));
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
 void Scatter2D::findMinMax()
@@ -52,9 +55,11 @@ void Scatter2D::findMinMax()
 
 void Scatter2D::render()
 {
+    glUseProgram(shader_collection_.scatter_shader.programId());
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_POINTS, 0, num_elements_);
     glBindVertexArray(0);
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
 Scatter2D::~Scatter2D()

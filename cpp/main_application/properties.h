@@ -37,6 +37,10 @@ template <typename T> PropertyType templateToPropType()
     {
         return PropertyType::COLOR_MAP;
     }
+    else if (std::is_same<T, properties::ScatterStyle>::value)
+    {
+        return PropertyType::SCATTER_STYLE;
+    }
     else if (std::is_same<T, properties::PointSize>::value)
     {
         return PropertyType::POINT_SIZE;
@@ -85,6 +89,9 @@ public:
                         break;
                     case PropertyType::FACE_COLOR:
                         ptr = std::make_shared<properties::FaceColor>(values[k].as<properties::FaceColor>());
+                        break;
+                    case PropertyType::SCATTER_STYLE:
+                        ptr = std::make_shared<properties::ScatterStyle>(values[k].as<properties::ScatterStyle>());
                         break;
                     case PropertyType::COLOR_MAP:
                         ptr = std::make_shared<properties::ColorMap>(values[k].as<properties::ColorMap>());
