@@ -50,6 +50,9 @@ public:
     static Shader createFromCode(const char* const vertex_code, const char* const fragment_code);
 
     GLuint programId() const;
+
+    void use() const;
+    void unUse() const;
 };
 
 struct ShaderCollection
@@ -59,6 +62,7 @@ struct ShaderCollection
     Shader surf_shader;
     Shader scatter_shader;
     Shader basic_plot_shader;
+    Shader plot_shader;
     Shader img_plot_shader;
 };
 

@@ -5,6 +5,8 @@ void PlotObjectBase::modifyShader()
     glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
     glUseProgram(shader_collection_.scatter_shader.programId());
     glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
+    glUseProgram(shader_collection_.plot_shader.programId());
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 

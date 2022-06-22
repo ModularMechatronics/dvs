@@ -12,7 +12,7 @@
 class Scatter2D : public PlotObjectBase
 {
 private:
-    uint8_t* points_ptr_;
+    float* points_ptr_;
 
     void findMinMax() override;
 

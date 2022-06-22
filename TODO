@@ -26,7 +26,7 @@ Pre release:
 - FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side
 - Add pan and zoom to scroll click and right click
 - Delete gl buffers with "glDeleteBuffers"
-- Change plot-LINE_STRIP to separate function, lineCollection or something like that
+- Change plot-LINE_STRIP to separate function, lineCollection, lineSet or something like that
 - Replace old c type arrays with std::array
 - Reducing number of axis numbers depending on rotation
 - Making sure that view and axes are set properly when not explicitly setting them
@@ -43,7 +43,7 @@ Pre release:
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
 - Implement findMinMax for matrices and vectors
-- Contour plotting function
+
 - Change Bound2/3D to actually be a bound, now it's a vector, and to get a bound you use std::pair<Bound2D, Bound2D>, which isn't ideal
 - Matrix/vector/image view for setting data in plot object: img_c1_.setInternalData(nullptr, 0, 0);  // Hack
 - Receive and push new data until there is new data available, and refresh only after last update
@@ -60,6 +60,7 @@ Pre release:
 Post release:
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
+- Contour plotting function
 - setCurrentElement doesn''t send any information to dvs, only sets internal variable on client side which is sent with the next command
   - This way, a property type could be added, so that the current element can be specified in the function call
 - The class Properties should be moved so that it is not included in the C++ client interface.
@@ -78,4 +79,5 @@ Post release:
 - http://www.opengl.org/wiki/Buffer_Object_Streaming
 
 Unsure:
-Command line window that prints errors etc.
+- Command line window that prints errors etc.
+- Set order in which different types are plotted

@@ -130,6 +130,16 @@ void Shader::loadShadersFromSourceCode(const std::string& vertex_code, const std
     glDeleteShader(FragmentShaderID);
 }
 
+void Shader::use() const
+{
+    glUseProgram(program_id_);
+}
+
+void Shader::unUse() const
+{
+    glUseProgram(0);
+}
+
 GLuint Shader::programId() const
 {
     return program_id_;

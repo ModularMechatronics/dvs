@@ -188,7 +188,7 @@ void testPlot()
 {
     const size_t num_elements = 30;
     Vector<int64_t> x(num_elements), y(num_elements);
-    Vector<float> xf(num_elements), yf(num_elements);
+    Vector<float> xf(num_elements), yf(num_elements), zf(num_elements);
 
     double t = 0.0;
 
@@ -196,6 +196,7 @@ void testPlot()
     {
         xf(k) = 10.0 * cos(t) + 20.0;
         yf(k) = 10.0 * sin(t) + 20.0 + k;
+        zf(k) = 0.1f;
 
         x(k) = xf(k);
         y(k) = yf(k);
@@ -206,11 +207,10 @@ void testPlot()
     clearView();
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    plot(x, y, properties::Color(212, 14, 55), properties::LineWidth(1));
-    plot(-xf, yf, properties::Color(0, 127, 255), properties::LineWidth(4), properties::LINE_STRIP);
-    plot(xf + 1.0f, yf, properties::Color(21, 14, 55), properties::LineWidth(1));
-    plot(xf + 2.0f, yf, properties::Color(21, 14, 55), properties::LineWidth(5));
-    plot(xf + 3.0f, yf, properties::Color(21, 14, 55), properties::LineWidth(10));
+    plot(xf, yf, properties::Color(212, 14, 55), properties::LineWidth(1));
+    plot(xf + 5.0f, yf, properties::Color(212, 14, 55), properties::LineWidth(4));
+    scatter3(xf, yf, zf, properties::Color::BLACK(), properties::PointSize(10));
+    scatter3(xf + 5.0f, yf, zf, properties::Color::BLACK(), properties::PointSize(14));
 }
 
 void testStairs()
