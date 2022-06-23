@@ -207,9 +207,9 @@ void testPlot()
     clearView();
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    plot(xf, yf, properties::Color(212, 14, 55), properties::LineWidth(1));
+    // plot(xf, yf, properties::Color(212, 14, 55), properties::LineWidth(1));
     plot(xf + 5.0f, yf, properties::Color(212, 14, 55), properties::LineWidth(4));
-    scatter3(xf, yf, zf, properties::Color::BLACK(), properties::PointSize(10));
+    // scatter3(xf, yf, zf, properties::Color::BLACK(), properties::PointSize(10));
     scatter3(xf + 5.0f, yf, zf, properties::Color::BLACK(), properties::PointSize(14));
 }
 

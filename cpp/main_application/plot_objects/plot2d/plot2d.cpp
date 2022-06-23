@@ -1,6 +1,6 @@
 #include "main_application/plot_objects/plot2d/plot2d.h"
 
-float* convertData2DOuter(const uint8_t* const input_data,
+Plot2D::InputData convertData2DOuter(const uint8_t* const input_data,
                           const DataType data_type,
                           const float line_width,
                           const size_t num_elements,
@@ -15,7 +15,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    points_ptr_ =
+    input_data_ =
         convertData2DOuter(data_ptr_, data_type_, line_width_ / 3.0f, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 
     glGenVertexArrays(1, &vertex_buffer_array_);
@@ -26,11 +26,38 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
 
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, points_ptr_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, input_data_.points_data_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Prev
+    glGenBuffers(1, &prev_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, prev_vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, input_data_.prev_vertex_data_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, prev_vertex_buffer_);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Next
+    glGenBuffers(1, &next_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, next_vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, input_data_.next_vertex_data_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, next_vertex_buffer_);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Idx
+    glGenBuffers(1, &idx_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, input_data_.idx_data_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
+    glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, 0, 0);
 }
 
 void Plot2D::findMinMax()
@@ -54,6 +81,7 @@ void Plot2D::render()
     const size_t num_points = num_segments * 6;
 
     shader_collection_.plot_shader.use();
+    glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "line_width"), line_width_ / 3.0f);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_points);
     glBindVertexArray(0);
@@ -62,7 +90,7 @@ void Plot2D::render()
 
 Plot2D::~Plot2D()
 {
-    delete[] points_ptr_;
+    delete[] input_data_.points_data_;
 }
 
 LegendProperties Plot2D::getLegendProperties() const
@@ -75,7 +103,7 @@ LegendProperties Plot2D::getLegendProperties() const
 }
 
 template <typename T>
-float* convertData2D(const uint8_t* const input_data,
+Plot2D::InputData convertData2D(const uint8_t* const input_data,
                        const size_t num_elements,
                        const size_t num_bytes_per_element,
                        const size_t num_bytes_for_one_vec,
@@ -83,9 +111,14 @@ float* convertData2D(const uint8_t* const input_data,
 {
     const size_t num_segments = num_elements - 1;
     const size_t num_points = num_segments * 6;
-    float* output_data = new float[2 * num_points];
+    Plot2D::InputData output_data;
+    output_data.points_data_ = new float[2 * num_points];
+    output_data.prev_vertex_data_ = new float[2 * num_points];
+    output_data.next_vertex_data_ = new float[2 * num_points];
+    output_data.idx_data_ = new int32_t[num_points];
 
     size_t idx = 0;
+    size_t idx_idx = 0;
 
     for (size_t k = 0; k < (num_elements - 2); k++)
     {
@@ -98,20 +131,41 @@ float* convertData2D(const uint8_t* const input_data,
         const size_t idx_20 = (k + 2) * num_bytes_per_element;
         const size_t idx_21 = num_bytes_for_one_vec + (k + 2) * num_bytes_per_element;
 
-        const T* const p0x = reinterpret_cast<const T* const>(&(input_data[idx_00]));
-        const T* const p0y = reinterpret_cast<const T* const>(&(input_data[idx_01]));
+        const T p0x = *reinterpret_cast<const T* const>(&(input_data[idx_00]));
+        const T p0y = *reinterpret_cast<const T* const>(&(input_data[idx_01]));
 
-        const T* const p1x = reinterpret_cast<const T* const>(&(input_data[idx_10]));
-        const T* const p1y = reinterpret_cast<const T* const>(&(input_data[idx_11]));
+        const T p1x = *reinterpret_cast<const T* const>(&(input_data[idx_10]));
+        const T p1y = *reinterpret_cast<const T* const>(&(input_data[idx_11]));
 
-        const T* const p2x = reinterpret_cast<const T* const>(&(input_data[idx_20]));
-        const T* const p2y = reinterpret_cast<const T* const>(&(input_data[idx_21]));
+        const T p2x = *reinterpret_cast<const T* const>(&(input_data[idx_20]));
+        const T p2y = *reinterpret_cast<const T* const>(&(input_data[idx_21]));
 
-        const float v0x = static_cast<float>(*p1x) - static_cast<float>(*p0x);
-        const float v0y = static_cast<float>(*p1y) - static_cast<float>(*p0y);
+#if 0
+        // 1st triangle
+        output_data.points_data_[idx] = p0x;
+        output_data.points_data_[idx + 1] = p0y;
 
-        const float v1x = static_cast<float>(*p2x) - static_cast<float>(*p1x);
-        const float v1y = static_cast<float>(*p2y) - static_cast<float>(*p1y);
+        output_data.points_data_[idx + 2] = p0x;
+        output_data.points_data_[idx + 3] = p0y;
+
+        output_data.points_data_[idx + 4] = p0x;
+        output_data.points_data_[idx + 5] = p0y;
+
+        // 2nd triangle
+        output_data.points_data_[idx + 6] = p0x;
+        output_data.points_data_[idx + 7] = p0y;
+
+        output_data.points_data_[idx + 8] = p0x;
+        output_data.points_data_[idx + 9] = p0y;
+
+        output_data.points_data_[idx + 10] = p0x;
+        output_data.points_data_[idx + 11] = p0y;
+#else
+        const float v0x = static_cast<float>(p1x) - static_cast<float>(p0x);
+        const float v0y = static_cast<float>(p1y) - static_cast<float>(p0y);
+
+        const float v1x = static_cast<float>(p2x) - static_cast<float>(p1x);
+        const float v1y = static_cast<float>(p2y) - static_cast<float>(p1y);
 
         float v0px = -v0y;
         float v0py = v0x;
@@ -127,24 +181,107 @@ float* convertData2D(const uint8_t* const input_data,
         v1py *= line_width / v1_len;
 
         // 1st triangle
-        output_data[idx] = static_cast<float>(*p0x) + v0px;
-        output_data[idx + 1] = static_cast<float>(*p0y) + v0py;
+        output_data.points_data_[idx] = static_cast<float>(p0x) + v0px;
+        output_data.points_data_[idx + 1] = static_cast<float>(p0y) + v0py;
 
-        output_data[idx + 2] = static_cast<float>(*p0x) - v0px;
-        output_data[idx + 3] = static_cast<float>(*p0y) - v0py;
+        output_data.points_data_[idx + 2] = static_cast<float>(p0x) - v0px;
+        output_data.points_data_[idx + 3] = static_cast<float>(p0y) - v0py;
 
-        output_data[idx + 4] = static_cast<float>(*p1x) + v1px;
-        output_data[idx + 5] = static_cast<float>(*p1y) + v1py;
+        output_data.points_data_[idx + 4] = static_cast<float>(p1x) + v1px;
+        output_data.points_data_[idx + 5] = static_cast<float>(p1y) + v1py;
 
         // 2nd triangle
-        output_data[idx + 6] = static_cast<float>(*p0x) - v0px;
-        output_data[idx + 7] = static_cast<float>(*p0y) - v0py;
+        output_data.points_data_[idx + 6] = static_cast<float>(p0x) - v0px;
+        output_data.points_data_[idx + 7] = static_cast<float>(p0y) - v0py;
 
-        output_data[idx + 8] = static_cast<float>(*p1x) + v1px;
-        output_data[idx + 9] = static_cast<float>(*p1y) + v1py;
+        output_data.points_data_[idx + 8] = static_cast<float>(p1x) + v1px;
+        output_data.points_data_[idx + 9] = static_cast<float>(p1y) + v1py;
 
-        output_data[idx + 10] = static_cast<float>(*p1x) - v1px;
-        output_data[idx + 11] = static_cast<float>(*p1y) - v1py;
+        output_data.points_data_[idx + 10] = static_cast<float>(p1x) - v1px;
+        output_data.points_data_[idx + 11] = static_cast<float>(p1y) - v1py;
+#endif
+
+        // 1st triangle
+        output_data.prev_vertex_data_[idx] = p1x;
+        output_data.prev_vertex_data_[idx + 1] = p1y;
+
+        output_data.prev_vertex_data_[idx + 2] = p1x;
+        output_data.prev_vertex_data_[idx + 3] = p1y;
+
+        output_data.prev_vertex_data_[idx + 4] = p1x;
+        output_data.prev_vertex_data_[idx + 5] = p1y;
+
+        // 2nd triangle
+        output_data.prev_vertex_data_[idx + 6] = p1x;
+        output_data.prev_vertex_data_[idx + 7] = p1y;
+
+        output_data.prev_vertex_data_[idx + 8] = p1x;
+        output_data.prev_vertex_data_[idx + 9] = p1y;
+
+        output_data.prev_vertex_data_[idx + 10] = p1x;
+        output_data.prev_vertex_data_[idx + 11] = p1y;
+
+        // 1st triangle
+        output_data.next_vertex_data_[idx] = p2x;
+        output_data.next_vertex_data_[idx + 1] = p2y;
+
+        output_data.next_vertex_data_[idx + 2] = p2x;
+        output_data.next_vertex_data_[idx + 3] = p2y;
+
+        output_data.next_vertex_data_[idx + 4] = p2x;
+        output_data.next_vertex_data_[idx + 5] = p2y;
+
+        // 2nd triangle
+        output_data.next_vertex_data_[idx + 6] = p2x;
+        output_data.next_vertex_data_[idx + 7] = p2y;
+
+        output_data.next_vertex_data_[idx + 8] = p2x;
+        output_data.next_vertex_data_[idx + 9] = p2y;
+
+        output_data.next_vertex_data_[idx + 10] = p2x;
+        output_data.next_vertex_data_[idx + 11] = p2y;
+
+        // Idx
+        output_data.idx_data_[idx_idx] = 0;
+        output_data.idx_data_[idx_idx] = 1;
+        output_data.idx_data_[idx_idx] = 2;
+        output_data.idx_data_[idx_idx] = 3;
+        output_data.idx_data_[idx_idx] = 4;
+        output_data.idx_data_[idx_idx] = 5;
+
+        idx_idx += 6;
+        // idx += 12;
+
+        float* ptr = output_data.points_data_;
+
+        const float ax0 = (ptr[idx + 2] + ptr[idx + 0] + ptr[idx + 4])/3.0f;
+        const float ay0 = (ptr[idx + 1] + ptr[idx + 3] + ptr[idx + 5])/3.0f;
+
+        // 2nd triangle
+        const float ax1 = (ptr[idx + 6] + ptr[idx + 8] + ptr[idx + 10])/3.0f;
+        const float ay1 = (ptr[idx + 7] + ptr[idx + 9] + ptr[idx + 11])/3.0f;
+
+        ptr[idx + 0] = (ptr[idx + 0] - ax0) * 0.98 + ax0;
+        ptr[idx + 1] = (ptr[idx + 1] - ay0) * 0.98 + ay0;
+
+        ptr[idx + 2] = (ptr[idx + 2] - ax0) * 0.98 + ax0;
+        ptr[idx + 3] = (ptr[idx + 3] - ay0) * 0.98 + ay0;
+
+        ptr[idx + 4] = (ptr[idx + 4] - ax0) * 0.98 + ax0;
+        ptr[idx + 5] = (ptr[idx + 5] - ay0) * 0.98 + ay0;
+
+        // 2nd triangle
+
+        ptr[idx + 6] = (ptr[idx + 6] - ax1) * 0.98 + ax1;
+        ptr[idx + 7] = (ptr[idx + 7] - ay1) * 0.98 + ay1;
+
+        ptr[idx + 8] = (ptr[idx + 8] - ax1) * 0.98 + ax1;
+        ptr[idx + 9] = (ptr[idx + 9] - ay1) * 0.98 + ay1;
+
+        ptr[idx + 10] = (ptr[idx + 10] - ax1) * 0.98 + ax1;
+        ptr[idx + 11] = (ptr[idx + 11] - ay1) * 0.98 + ay1;
+
+        /////
 
         idx += 12;
     }
@@ -152,14 +289,14 @@ float* convertData2D(const uint8_t* const input_data,
     return output_data;
 }
 
-float* convertData2DOuter(const uint8_t* const input_data,
+Plot2D::InputData convertData2DOuter(const uint8_t* const input_data,
                                    const DataType data_type,
                                    const float line_width,
                                    const size_t num_elements,
                                    const size_t num_bytes_per_element,
                                    const size_t num_bytes_for_one_vec)
 {
-    float* output_data;
+    Plot2D::InputData output_data;
     if (data_type == DataType::FLOAT)
     {
         output_data = convertData2D<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec, line_width);

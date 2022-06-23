@@ -14,7 +14,7 @@ uniform vec4 clip_plane5;
 
 void main()
 {
-   if(dot(clip_plane0, coord_out) < 0.0)
+   /*if(dot(clip_plane0, coord_out) < 0.0)
    {
       discard;
    }
@@ -37,7 +37,7 @@ void main()
    else if(dot(clip_plane5, coord_out) < 0.0)
    {
       discard;
-   }
+   }*/
    color = fragment_color;
 
 		
