@@ -196,7 +196,7 @@ void testPlot()
     {
         xf(k) = 10.0 * cos(t) + 20.0;
         yf(k) = 10.0 * sin(t) + 20.0 + k;
-        zf(k) = 0.1f;
+        zf(k) = 0.01f;
 
         x(k) = xf(k);
         y(k) = yf(k);
@@ -208,7 +208,7 @@ void testPlot()
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
     // plot(xf, yf, properties::Color(212, 14, 55), properties::LineWidth(1));
-    plot(xf + 5.0f, yf, properties::Color(212, 14, 55), properties::LineWidth(4));
+    plot(xf + 5.0f, yf, properties::Color(212, 14, 55), properties::LineWidth(14));
     // scatter3(xf, yf, zf, properties::Color::BLACK(), properties::PointSize(10));
     scatter3(xf + 5.0f, yf, zf, properties::Color::BLACK(), properties::PointSize(14));
 }

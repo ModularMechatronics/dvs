@@ -1,7 +1,6 @@
 #version 330
 
 out vec3 color;
-// uniform vec4 ourColor;
 in vec3 fragment_color;
 in vec4 coord_out;
 
@@ -14,7 +13,7 @@ uniform vec4 clip_plane5;
 
 void main()
 {
-   /*if(dot(clip_plane0, coord_out) < 0.0)
+   if(dot(clip_plane0, coord_out) < 0.0)
    {
       discard;
    }
@@ -37,8 +36,7 @@ void main()
    else if(dot(clip_plane5, coord_out) < 0.0)
    {
       discard;
-   }*/
+   }
    color = fragment_color;
 
-		
 }

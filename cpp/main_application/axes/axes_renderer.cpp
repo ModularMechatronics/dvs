@@ -283,20 +283,6 @@ void AxesRenderer::plotBegin()
     glUseProgram(shader_collection_.scatter_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    glm::mat4 mvp2 = glm::mat4(1.0f);
-    const float xx = mvp[0][0];
-    const float yx = mvp[1][0];
-    const float zx = mvp[2][0];
-    const float d = std::sqrt(xx * xx + yx * yx + zx * zx);
-
-    mvp2[0][3] = mvp[0][3];
-    mvp2[1][3] = mvp[1][3];
-    mvp2[2][3] = mvp[2][3];
-
-    mvp2[0][0] = d;
-    mvp2[1][1] = d;
-    mvp2[2][2] = d;
-
     glUseProgram(shader_collection_.plot_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 

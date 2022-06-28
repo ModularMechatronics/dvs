@@ -14,17 +14,18 @@ class Plot2D : public PlotObjectBase
 public:
     struct InputData
     {
-        float* points_data_;
-        float* prev_vertex_data_;
-        float* next_vertex_data_;
-        int32_t* idx_data_;
+        float* p0;
+        float* p1;
+        float* p2;
+        float* idx_data_;
     };
 
 private:
 
     InputData input_data_;
 
-    GLuint next_vertex_buffer_, prev_vertex_buffer_, idx_buffer_;
+    GLuint idx_buffer_;
+    GLuint p0_vertex_buffer_, p1_vertex_buffer_, p2_vertex_buffer_;
 
     void findMinMax() override;
 
