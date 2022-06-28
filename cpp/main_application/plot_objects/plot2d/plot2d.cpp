@@ -52,11 +52,11 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, input_data_.idx_data_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points, input_data_.idx_data_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
 }
 
@@ -117,7 +117,7 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
     output_data.p0 = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
     output_data.p2 = new float[2 * num_points];
-    output_data.idx_data_ = new float[2 * num_points];
+    output_data.idx_data_ = new float[num_points];
 
     size_t idx = 0;
     size_t idx_idx = 0;
@@ -206,20 +206,14 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         output_data.p2[idx + 11] = p2y;
 
         // Idx
-        output_data.idx_data_[idx_idx] = 0.0f;
-        output_data.idx_data_[idx_idx + 1] = 0.0f;
-        output_data.idx_data_[idx_idx + 2] = 1.0f;
-        output_data.idx_data_[idx_idx + 3] = 1.0f;
-        output_data.idx_data_[idx_idx + 4] = 2.0f;
-        output_data.idx_data_[idx_idx + 5] = 2.0f;
-        output_data.idx_data_[idx_idx + 6] = 3.0f;
-        output_data.idx_data_[idx_idx + 7] = 3.0f;
-        output_data.idx_data_[idx_idx + 8] = 4.0f;
-        output_data.idx_data_[idx_idx + 9] = 4.0f;
-        output_data.idx_data_[idx_idx + 10] = 5.0f;
-        output_data.idx_data_[idx_idx + 11] = 5.0f;
+        output_data.idx_data_[idx_idx] = 0;
+        output_data.idx_data_[idx_idx + 1] = 1;
+        output_data.idx_data_[idx_idx + 2] = 2;
+        output_data.idx_data_[idx_idx + 3] = 3;
+        output_data.idx_data_[idx_idx + 4] = 4;
+        output_data.idx_data_[idx_idx + 5] = 5;
 
-        idx_idx += 12;
+        idx_idx += 6;
 
         idx += 12;
     }
@@ -308,18 +302,12 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
     output_data.p2[idx + 11] = p2y;
 
     // Idx
-    output_data.idx_data_[idx_idx] = 0.0f;
-    output_data.idx_data_[idx_idx + 1] = 0.0f;
-    output_data.idx_data_[idx_idx + 2] = 1.0f;
-    output_data.idx_data_[idx_idx + 3] = 1.0f;
-    output_data.idx_data_[idx_idx + 4] = 2.0f;
-    output_data.idx_data_[idx_idx + 5] = 2.0f;
-    output_data.idx_data_[idx_idx + 6] = 3.0f;
-    output_data.idx_data_[idx_idx + 7] = 3.0f;
-    output_data.idx_data_[idx_idx + 8] = 4.0f;
-    output_data.idx_data_[idx_idx + 9] = 4.0f;
-    output_data.idx_data_[idx_idx + 10] = 5.0f;
-    output_data.idx_data_[idx_idx + 11] = 5.0f;
+    output_data.idx_data_[idx_idx] = 0;
+    output_data.idx_data_[idx_idx + 1] = 1;
+    output_data.idx_data_[idx_idx + 2] = 2;
+    output_data.idx_data_[idx_idx + 3] = 3;
+    output_data.idx_data_[idx_idx + 4] = 4;
+    output_data.idx_data_[idx_idx + 5] = 5;
 
     return output_data;
 }
