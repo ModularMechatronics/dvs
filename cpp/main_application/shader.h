@@ -62,7 +62,7 @@ struct ShaderCollection
     Shader surf_shader;
     Shader scatter_shader;
     Shader basic_plot_shader;
-    Shader plot_shader;
+    Shader plot_2d_shader;
     Shader img_plot_shader;
 };
 

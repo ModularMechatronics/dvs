@@ -80,8 +80,8 @@ void Plot2D::render()
     const size_t num_segments = num_elements_ - 1;
     const size_t num_points = num_segments * 6;
 
-    shader_collection_.plot_shader.use();
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_shader.programId(), "line_width"), line_width_ / 1200.0f);
+    shader_collection_.plot_2d_shader.use();
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "line_width"), line_width_ / 1200.0f);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_points);
     glBindVertexArray(0);
