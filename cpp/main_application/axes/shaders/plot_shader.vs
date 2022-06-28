@@ -1,6 +1,7 @@
 #version 330
 
 uniform mat4 model_view_proj_mat;
+uniform mat4 inverse_model_view_proj_mat;
 layout(location = 0) in vec2 p0;
 layout(location = 1) in vec2 p1;
 layout(location = 2) in vec2 p2;
@@ -13,20 +14,10 @@ out vec3 fragment_color;
 out vec4 coord_out;
 
 void main()
-{
-    // gl_Position = model_view_proj_mat * vec4(p0.x, p0.y, p0.z, 1.0);
-    
+{    
     vec4 p0_p = model_view_proj_mat * vec4(p0, 0.0, 1.0);
     vec4 p1_p = model_view_proj_mat * vec4(p1, 0.0, 1.0);
     vec4 p2_p = model_view_proj_mat * vec4(p2, 0.0, 1.0);
-
-    // vec4 p0_p = vec4(p0, 0.0, 1.0);
-    // vec4 p1_p = vec4(p1, 0.0, 1.0);
-    // vec4 p2_p = vec4(p2, 0.0, 1.0);
-
-    // p0_p /= p0_p.w;
-    // p1_p /= p1_p.w;
-    // p2_p /= p2_p.w;
 
     vec2 v0 = p1_p.xy - p0_p.xy;
     vec2 v1 = p2_p.xy - p1_p.xy;
@@ -64,8 +55,7 @@ void main()
         gl_Position = vec4(p1_p.xy - v1p, p1_p.z, 1.0);
     }
 
-    // gl_Position.xyz *= gl_Position.w;
-    vec4 op = inverse(model_view_proj_mat) * gl_Position; // TODO: Move inverse outside shader
+    vec4 op = inverse_model_view_proj_mat * gl_Position;
 
     coord_out = vec4(op.x, op.y, 0.0, 1.0);
     fragment_color = vertex_color;

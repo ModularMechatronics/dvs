@@ -275,6 +275,7 @@ void AxesRenderer::plotBegin()
     scale_mat[3][3] = 1.0;
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_ * t_mat;
+    const glm::mat4 i_mvp = glm::inverse(mvp);
     glUseProgram(shader_collection_.basic_plot_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
@@ -285,6 +286,7 @@ void AxesRenderer::plotBegin()
 
     glUseProgram(shader_collection_.plot_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_shader.programId(), "inverse_model_view_proj_mat"), 1, GL_FALSE, &i_mvp[0][0]);
 
     glUseProgram(shader_collection_.basic_plot_shader.programId());
     enableClipPlanes();
