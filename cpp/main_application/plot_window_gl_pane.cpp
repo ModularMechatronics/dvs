@@ -98,6 +98,10 @@ void PlotWindowGLPane::initShaders()
     const std::string f_path_plot_2d_shader = "../main_application/axes/shaders/plot_2d_shader.fs";
     shader_collection_.plot_2d_shader = Shader::createFromFiles(v_path_plot_2d_shader, f_path_plot_2d_shader);
 
+    const std::string v_path_plot_3d_shader = "../main_application/axes/shaders/plot_3d_shader.vs";
+    const std::string f_path_plot_3d_shader = "../main_application/axes/shaders/plot_3d_shader.fs";
+    shader_collection_.plot_3d_shader = Shader::createFromFiles(v_path_plot_3d_shader, f_path_plot_3d_shader);
+
     const std::string v_path_img_plot_shader = "../main_application/axes/shaders/img.vs";
     const std::string f_path_img_plot_shader = "../main_application/axes/shaders/img.fs";
     shader_collection_.img_plot_shader = Shader::createFromFiles(v_path_img_plot_shader, f_path_img_plot_shader);

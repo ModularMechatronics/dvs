@@ -12,8 +12,19 @@
 
 class Plot3D : public PlotObjectBase
 {
+public:
+    struct InputData
+    {
+        float* p0;
+        float* p1;
+        float* p2;
+        float* idx_data_;
+    };
 private:
-    uint8_t* points_ptr_;
+    InputData input_data_;
+
+    GLuint idx_buffer_;
+    GLuint p0_vertex_buffer_, p1_vertex_buffer_, p2_vertex_buffer_;
 
     void findMinMax() override;
 

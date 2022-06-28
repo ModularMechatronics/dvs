@@ -63,6 +63,7 @@ struct ShaderCollection
     Shader scatter_shader;
     Shader basic_plot_shader;
     Shader plot_2d_shader;
+    Shader plot_3d_shader;
     Shader img_plot_shader;
 };
 

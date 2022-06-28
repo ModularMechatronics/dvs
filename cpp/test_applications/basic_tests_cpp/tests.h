@@ -260,7 +260,7 @@ void testPlot3()
     clearView();
 
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
-    plot3(xf, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(1));
+    plot3(xf + 0.1f, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(7));
 }
 
 void testImShow()
