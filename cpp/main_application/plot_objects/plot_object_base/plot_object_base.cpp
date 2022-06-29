@@ -184,10 +184,11 @@ void PlotObjectBase::assignProperties(const Properties& props)
     if (props.hasProperty(PropertyType::LINE_STYLE))
     {
         line_style_ = props.getProperty<LineStyle>();
+        is_dashed_ = 1;
     }
     else
     {
-        line_style_ = LineStyle("");
+        is_dashed_ = 0;
     }
 }
 

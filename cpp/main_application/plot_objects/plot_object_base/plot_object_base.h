@@ -48,6 +48,7 @@ protected:
     RGBTripletf face_color_;
     ColorMapType color_map_;
     LineStyle line_style_;
+    int is_dashed_;
     ScatterStyleType scatter_style_type_;
     float alpha_;
     float line_width_;

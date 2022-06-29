@@ -187,30 +187,50 @@ void testPlotCollection()
 void testPlot()
 {
     const size_t num_elements = 30;
-    Vector<int64_t> x(num_elements), y(num_elements);
-    Vector<float> xf(num_elements), yf(num_elements), zf(num_elements);
+    Vector<float> x(num_elements), y(num_elements), z(num_elements);
 
-    double t = 0.0;
-
-    for (size_t k = 0; k < num_elements; k++)
-    {
-        xf(k) = 10.0 * cos(t) + 20.0;
-        yf(k) = 10.0 * sin(t) + 20.0 + k;
-        zf(k) = 0.01f;
-
-        x(k) = xf(k);
-        y(k) = yf(k);
-        t = t + 0.3;
-    }
+    float t = 0.0;
 
     setCurrentElement("view_00");
     clearView();
 
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = 10.0 * cos(t) + 20.0;
+        y(k) = 10.0 * sin(t) + 20.0 + k;
+        z(k) = 0.01f;
+
+        t = t + 0.3;
+    }
+
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    // plot(xf, yf, properties::Color(212, 14, 55), properties::LineWidth(1));
-    plot(xf + 5.0f, yf, properties::Color(212, 14, 55), properties::LineWidth(10));
-    // scatter3(xf, yf, zf, properties::Color::BLACK(), properties::PointSize(10));
-    scatter3(xf + 5.0f, yf, zf, properties::Color::BLACK(), properties::PointSize(14));
+    plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::LineWidth(1));
+    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
+    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
+    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
+    scatter3(x + 3.0f, y, z, properties::Color::BLACK(), properties::PointSize(14));
+
+    setCurrentElement("view_01");
+    clearView();
+    t = 0.0;
+    x.resize(num_elements * 10);
+    y.resize(num_elements * 10);
+    z.resize(num_elements * 10);
+
+    for (size_t k = 0; k < (num_elements * 10); k++)
+    {
+        x(k) = 10.0f * cos(t) + 20.0f;
+        y(k) = 10.0f * sin(t) + 20.0f + static_cast<float>(k) / 10.0f;
+        z(k) = 0.01f;
+
+        t = t + 0.03;
+    }
+
+    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
+    plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::LineWidth(1));
+    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
+    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
+    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
 }
 
 void testStairs()

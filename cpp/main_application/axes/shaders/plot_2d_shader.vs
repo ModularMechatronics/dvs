@@ -13,6 +13,9 @@ uniform float line_width;
 out vec3 fragment_color;
 out vec4 coord_out;
 
+flat out vec3 start_pos;
+out vec3 vert_pos;
+
 void main()
 {    
     vec4 p0_p = model_view_proj_mat * vec4(p0, 0.0, 1.0);
@@ -60,4 +63,7 @@ void main()
     coord_out = vec4(op.x, op.y, 0.0, 1.0);
     fragment_color = vertex_color;
     gl_PointSize = point_size;
+    vert_pos     = gl_Position.xyz / gl_Position.w;
+    start_pos    = vert_pos;
+
 }

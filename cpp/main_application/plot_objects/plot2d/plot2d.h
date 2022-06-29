@@ -23,6 +23,7 @@ public:
 private:
 
     InputData input_data_;
+    float gap_size_, dash_size_;
 
     GLuint idx_buffer_;
     GLuint p0_vertex_buffer_, p1_vertex_buffer_, p2_vertex_buffer_;

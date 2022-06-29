@@ -137,6 +137,13 @@ enum class ScatterStyleType : uint8_t
     CROSS
 };
 
+enum class LineStyleType : uint8_t
+{
+    DASHED,
+    DOTTED,
+    LONG_DASHED
+};
+
 }  // namespace internal
 
 namespace properties

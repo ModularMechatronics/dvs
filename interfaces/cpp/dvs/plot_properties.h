@@ -100,24 +100,35 @@ inline bool operator==(const Name& n0, const Name& n1)
 
 struct LineStyle : internal::PropertyBase
 {
+private:
+    LineStyle(const internal::LineStyleType line_style_type) : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
+    {
+        data = line_style_type;
+    }
+
 public:
-    static constexpr size_t max_length = 2;
-    char data[max_length + 1];
+    internal::LineStyleType data;
 
     LineStyle() : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
     {
-        std::memset(data, 0, max_length + 1);
+        data = internal::LineStyleType::DASHED;
     }
-    LineStyle(const char* const line_style) : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
+
+    static LineStyle Dashed()
     {
-        assert(line_style && "input line style string is null!");
-        const size_t input_name_length = internal::safeStringLenCheck(line_style, max_length + 1);
-
-        assert((input_name_length <= max_length) && "Line style can't be more than 2 characters!");
-
-        std::memcpy(data, line_style, input_name_length);
-        data[input_name_length] = '\0';
+        return LineStyle(internal::LineStyleType::DASHED);
     }
+
+    static LineStyle Dotted()
+    {
+        return LineStyle(internal::LineStyleType::DOTTED);
+    }
+
+    static LineStyle LongDashed()
+    {
+        return LineStyle(internal::LineStyleType::LONG_DASHED);
+    }
+
 };
 
 struct ScatterStyle : internal::PropertyBase

@@ -17,6 +17,25 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
     input_data_ =
         convertData2DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 
+    if(is_dashed_)
+    {
+        if(line_style_.data == internal::LineStyleType::DASHED)
+        {
+            gap_size_ = 3.0f;
+            dash_size_ = 3.0f;
+        }
+        else if(line_style_.data == internal::LineStyleType::DOTTED)
+        {
+            gap_size_ = 6.0f;
+            dash_size_ = 3.0f;
+        }
+        else if(line_style_.data == internal::LineStyleType::LONG_DASHED)
+        {
+            gap_size_ = 2.0f;
+            dash_size_ = 6.0f;
+        }
+    }
+
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 
@@ -57,7 +76,6 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
-
 }
 
 void Plot2D::findMinMax()
@@ -82,6 +100,9 @@ void Plot2D::render()
 
     shader_collection_.plot_2d_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "line_width"), line_width_ / 1200.0f);
+    glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "use_dash"), is_dashed_);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "dash_size"), dash_size_);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "gap_size"), gap_size_);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_points);
     glBindVertexArray(0);

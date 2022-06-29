@@ -34,7 +34,6 @@ Pre release:
 - Fix layout designer
 - Change "data" to "data" for Matrix, Vector, etc.
 - Fix number formatting and grid vectors system
-- Make sure linewidth and pointsize works
 - Fix showing correct plot walls when in perspective mode
 - Unify MouseActivity and InteractionType
 - Fix panning "speed"
@@ -52,11 +51,14 @@ Pre release:
 - Don't always update on keypress?
 - Rename getAxesScale to getScale
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
-- Layout window always on top of windows
 - "UInt8View" or something for "void fillBufferWithData(uint8_t* const buffer) const;" functions, that contains pointer and size
-- scatter circle, star, plus etc.
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Gradient min/max (like for surf) for draw mesh and other 3d functions 
+- Change all functions to accept "View" types, and then have constructor of VectorView from Vector, MatrixView from Matrix etc
+- Log axes xyz
+- Time date axis
+- Unify (plot) shaders to one big shader with switch case?
+- Separate plot types so that shader switching is minimized
 
 Post release:
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
