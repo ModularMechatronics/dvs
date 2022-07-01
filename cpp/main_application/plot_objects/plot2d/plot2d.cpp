@@ -76,6 +76,15 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Length along
+    glGenBuffers(1, &lenth_along_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, lenth_along_vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points, input_data_.length_along, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(4);
+    glBindBuffer(GL_ARRAY_BUFFER, lenth_along_vertex_buffer_);
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void Plot2D::findMinMax()
@@ -115,6 +124,7 @@ Plot2D::~Plot2D()
     delete[] input_data_.p1;
     delete[] input_data_.p2;
     delete[] input_data_.idx_data_;
+    delete[] input_data_.length_along;
 }
 
 LegendProperties Plot2D::getLegendProperties() const
@@ -139,6 +149,30 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
     output_data.p1 = new float[2 * num_points];
     output_data.p2 = new float[2 * num_points];
     output_data.idx_data_ = new float[num_points];
+    output_data.length_along = new float[num_points];
+
+    output_data.length_along[0] = 0.0f;
+
+    for (size_t k = 1; k < num_elements; k++)
+    {
+        const size_t idx_00 = (k - 1) * num_bytes_per_element;
+        const size_t idx_01 = num_bytes_for_one_vec + (k - 1) * num_bytes_per_element;
+
+        const size_t idx_10 = k * num_bytes_per_element;
+        const size_t idx_11 = num_bytes_for_one_vec + k * num_bytes_per_element;
+
+        const T p0x = *reinterpret_cast<const T* const>(&(input_data[idx_00]));
+        const T p0y = *reinterpret_cast<const T* const>(&(input_data[idx_01]));
+
+        const T p1x = *reinterpret_cast<const T* const>(&(input_data[idx_10]));
+        const T p1y = *reinterpret_cast<const T* const>(&(input_data[idx_11]));
+
+        const float vx = p1x - p0x;
+        const float vy = p1y - p0y;
+
+        const float d = std::sqrt(vx * vx + vy * vy);
+        output_data.length_along[k] = output_data.length_along[k - 1] + d;
+    }
 
     size_t idx = 0;
     size_t idx_idx = 0;

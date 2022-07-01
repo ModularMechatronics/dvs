@@ -193,6 +193,27 @@ void testPlot()
 
     setCurrentElement("view_00");
     clearView();
+    #if 1
+    Vector<float> xp(5), yp(5), zp(5);
+    xp(0) = 0.0;
+    xp(1) = 1.0;
+    xp(2) = 2.0;
+    xp(3) = 3.0;
+    xp(4) = 3.5;
+
+    yp(0) = 0.0;
+    yp(1) = 0.5;
+    yp(2) = 0.5;
+    yp(3) = 2.5;
+    yp(4) = 2.5;
+
+    zp.fill(0.01f);
+
+    axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
+    plot(xp, yp, properties::LineWidth(60), properties::LineStyle::Dashed());
+    scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
+
+    #else
 
     for (size_t k = 0; k < num_elements; k++)
     {
@@ -231,6 +252,7 @@ void testPlot()
     plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
     plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
     plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
+    #endif
 }
 
 void testStairs()

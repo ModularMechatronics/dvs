@@ -298,6 +298,9 @@ void AxesRenderer::plotBegin()
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "axes_width"), width_);
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "axes_height"), height_);
 
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "axes_width_vs"), width_);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "axes_height_vs"), height_);
+
     glUseProgram(shader_collection_.plot_3d_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "inverse_model_view_proj_mat"), 1, GL_FALSE, &i_mvp[0][0]);

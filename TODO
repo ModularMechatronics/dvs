@@ -43,7 +43,10 @@ Pre release:
 - Refactor pipeline of how new plot objects are added
 - Implement findMinMax for matrices and vectors
 - Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
-
+- Make sure plot/plot3 works for integer data types
+- Stem plot
+- Bar plot
+- Change types from float to double, to increase precision
 - Change Bound2/3D to actually be a bound, now it's a vector, and to get a bound you use std::pair<Bound2D, Bound2D>, which isn't ideal
 - Matrix/vector/image view for setting data in plot object: img_c1_.setInternalData(nullptr, 0, 0);  // Hack
 - Receive and push new data until there is new data available, and refresh only after last update
