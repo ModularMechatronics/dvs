@@ -184,12 +184,172 @@ void testPlotCollection()
     plotCollection(pcm_x, pcm_y, properties::Color(0, 0, 0));
 }
 
+void debugFunc(const Vector<float>& xp, const Vector<float>& yp)
+{
+    struct PointStruct
+    {
+        Point2Df p0;
+        Point2Df p1;
+        Point2Df p2;
+        Vec2Df v0;
+        Vec2Df v1;
+    };
+    std::vector<PointStruct> points;
+    points.resize(xp.size());
+
+    int idx = 0;
+
+    for(size_t k = 0; k < xp.size(); k++)
+    {
+        if(k == 0)
+        {
+            const Vec2Df vq = Point2Df(xp(1), yp(1)) - Point2Df(xp(0), yp(0));
+            points[k].p0 = Point2Df(xp(0), yp(0)) - vq;
+            points[k].p1 = Point2Df(xp(0), yp(0));
+            points[k].p2 = Point2Df(xp(1), yp(1));
+        }
+        else if(k == (xp.size() - 1))
+        {
+            const int last_idx = xp.size() - 1;
+            const Vec2Df vq = Point2Df(xp(last_idx), yp(last_idx)) - Point2Df(xp(last_idx - 1), yp(last_idx - 1));
+            points[k].p0 = Point2Df(xp(last_idx - 1), yp(last_idx - 1));
+            points[k].p1 = Point2Df(xp(last_idx), yp(last_idx));
+            points[k].p2 = Point2Df(xp(last_idx), yp(last_idx)) + vq;
+        }
+        else
+        {
+            points[k].p0 = Point2Df(xp(k - 1), yp(k - 1));
+            points[k].p1 = Point2Df(xp(k), yp(k));
+            points[k].p2 = Point2Df(xp(k + 1), yp(k + 1));
+        }
+
+        points[k].v0 = points[k].p1 - points[k].p0;
+        points[k].v1 = points[k].p2 - points[k].p1;
+    }
+
+    const Matrixf r_mat = {{0.0f, -1.0f}, {1.0f, 0.0f}};
+
+    auto fq = [] (const Vec2Df v0, const Vec2Df v1, const float f) -> Vec2Df {
+        const float a0 = std::atan2(v0.y, v0.x);
+        const float a1 = std::atan2(v1.y, v1.x);
+        const float a = (a0 + a1) / 2.0f;
+
+        return Vec2Df(std::cos(a) * f, std::sin(a) * f);
+    };
+
+    const float lw = 0.17f;
+    const float lw_sqrt = std::sqrt(lw) / std::sqrt(2.0f);
+    /*
+    float sqrt_lw = 1.0; // sqrt(line_width);
+
+    vec2 v0p = vec2(-sqrt_lw * v0.y, sqrt_lw * v0.x);
+    vec2 v1p = vec2(-sqrt_lw * v1.y, sqrt_lw * v1.x);
+    */
+
+   std::vector<Point2Df> points_inner, points_outer;
+
+    for(size_t k = 0; k < points.size(); k++)
+    {
+        const Point2Df p0 = points[k].p0;
+        const Point2Df p1 = points[k].p1;
+        const Point2Df p2 = points[k].p2;
+        const Vec2Df v0 = points[k].v0;
+        const Vec2Df v1 = points[k].v1;
+
+        const float angle_between = std::atan2(v1.y, v1.x) - std::atan2(v0.y, v0.x);
+
+        const auto red = properties::Color(255, 0, 0);
+        const auto green = properties::Color(0, 127, 0);
+        const auto blue = properties::Color(0, 0, 255);
+
+        const auto magenta = properties::Color(127, 127, 0);
+        const auto black = properties::Color(0, 0, 0);
+
+        // Line intersection method
+        const Vec2Df q0 = r_mat * (v0.normalized()) * lw;
+        const Vec2Df q1 = r_mat * (v1.normalized()) * lw;
+
+        const Point2Df p0_0 = p0 - q0;
+        const Point2Df p0_1 = p0 - v0.normalized() - q0;
+
+        const Point2Df p1_0 = p0 - q1;
+        const Point2Df p1_1 = p0 + v1.normalized() - q1;
+
+        const float dp = ((p0_1 - p0_0)).normalized() * ((p1_1 - p1_0)).normalized() + 1.0f;
+
+        Vec2Df res_vec;
+        if(std::fabs(dp) < 0.000001f)
+        {
+            res_vec = -q0.normalized() * lw;
+        }
+        else
+        {
+            const HomogeneousLine2D<float> line0 = homogeneousLineFromPoints(p0_0, p0_1);
+            const HomogeneousLine2D<float> line1 = homogeneousLineFromPoints(p1_0, p1_1);
+
+            const Point2Df intersection_points = line0.lineIntersection(line1);
+            res_vec = intersection_points - p0;
+        }
+
+        
+        
+        // res_vec
+        
+        // Solving point methid
+        /*const Vec2Df q0 = -r_mat * (v0.normalized()) * lw;
+        const Vec2Df q1 = -r_mat * (v1.normalized()) * lw;
+
+        const Vec2Df vec_lhs = v0.normalized() + v1.normalized();
+        const Vec2Df vec_rhs = q0 - q1;
+
+        const Vec2Df lambda = vec_rhs.elementWiseDivide(vec_lhs);
+        const Vec2Df res_vec = lambda.elementWiseMultiply(v1) + q1;
+        // const Vec2Df res_vec = -lambda.elementWiseMultiply(v0) + q0;
+        std::cout << lambda << ", " << res_vec << ", " << res_vec.norm() << std::endl;*/
+
+        // Old method
+        // const Vec2Df va = fq(v0, v1, lw_sqrt).normalized() * std::sin(angle_between) * lw;
+        // const Vec2Df va = fq(v0, v1, lw_sqrt);
+        // const Vec2Df va = Vec2Df(v0.normalized().x * lw_sqrt, v0.normalized().y * lw_sqrt) +
+        //     Vec2Df(v1.normalized().x * lw_sqrt, v1.normalized().y * lw_sqrt);
+        // const Vec2Df vap = (r_mat * va);
+        // const Vec2Df vap_neg = (-vap);
+
+        // drawArrow(p1, -v0.normalized() * lw_sqrt, red);
+        // drawArrow(p1, v1.normalized() * lw_sqrt, green);
+
+        drawArrow(p1, res_vec, black);
+        drawArrow(p1, -res_vec, magenta);
+
+        points_inner.push_back(p1 + res_vec);
+        points_outer.push_back(p1 - res_vec);
+    }
+
+    Vector<float> xp_inner(points_inner.size()), yp_inner(points_inner.size()), xp_outer(points_inner.size()), yp_outer(points_inner.size());
+
+    for(int k = 0; k < (static_cast<int>(points_inner.size()) - 1); k++)
+    {
+        {
+            const auto p = Point2Df(points_inner[k].x, points_inner[k].y);
+            const auto pp = Point2Df(points_inner[k + 1].x, points_inner[k + 1].y);
+            const Vec2Df v = pp - p;
+
+            drawArrow(p, v);
+        }
+        {
+            const auto p = Point2Df(points_outer[k].x, points_outer[k].y);
+            const auto pp = Point2Df(points_outer[k + 1].x, points_outer[k + 1].y);
+            const Vec2Df v = pp - p;
+
+            drawArrow(p, v);
+        }
+    }
+}
+
 void testPlot()
 {
     const size_t num_elements = 30;
     Vector<float> x(num_elements), y(num_elements), z(num_elements);
-
-    float t = 0.0;
 
     setCurrentElement("view_00");
     clearView();
@@ -197,23 +357,69 @@ void testPlot()
     Vector<float> xp(5), yp(5), zp(5);
     xp(0) = 0.0;
     xp(1) = 1.0;
-    xp(2) = 2.0;
+    xp(2) = 2.2;
     xp(3) = 3.0;
     xp(4) = 3.5;
 
     yp(0) = 0.0;
-    yp(1) = 0.5;
-    yp(2) = 0.5;
+    yp(1) = 3.5;
+    yp(2) = 3.5;
     yp(3) = 2.5;
-    yp(4) = 2.5;
+    yp(4) = 4.0;
+
+    const Point2Df p0{xp(0), yp(0)};
+    const Point2Df p1{xp(1), yp(1)};
+    const Point2Df p2{xp(2), yp(2)};
+    const Point2Df p3{xp(3), yp(3)};
+    const Point2Df p4{xp(4), yp(4)};
+
+    auto fq = [] (const Vec2Df v0, const Vec2Df v1) -> Vec2Df {
+        const float a0 = std::atan2(v0.y, v0.x);
+        const float a1 = std::atan2(v1.y, v1.x);
+        const float a = (a0 + a1) / 2.0f;
+
+        return Vec2Df(std::cos(a), std::sin(a));
+    };
+
+    const Vec2Df v0{p1 - p0};
+    const Vec2Df v1{p2 - p1};
+
+    // const Vec2Df va0{(v0 + v1) / 2.0f};
+    const Vec2Df va0 = fq(v0, v1);
+    // 
+    // const Vec2Df va1{(v1 + v2) / 2.0f};
+    // const Vec2Df va2{(v2 + v3) / 2.0f};
+    // const Vec2Df va3{v3 + v1};
+
+    const Matrixf r_mat = {{0.0f, -1.0f}, {1.0f, 0.0f}};
+    // const Matrixf r_mat = {{1.0f, 0.0f}, {0.0f, 1.0f}};
+
+    // drawArrow(p0, v0, properties::Color(255, 0, 0));
+    // drawArrow(p0, v1, properties::Color(255, 0, 0));
+    // drawArrow(p2, v2, properties::Color(255, 0, 0));
+    // drawArrow(p3, v3, properties::Color(255, 0, 0));
+
+    // drawArrow(p0, va0, properties::Color(0, 255, 0));
+    // drawArrow(p0, v0 + v1, properties::Color(0, 255, 255));
+
+    // drawArrow(p1, (r_mat * va0).normalized(), properties::Color(0, 0, 255));
+    // drawArrow(p2, (r_mat * va1).normalized(), properties::Color(0, 0, 255));
+    // drawArrow(p3, (r_mat * va2).normalized(), properties::Color(0, 0, 255));
+
+    // drawArrow(p1, -(r_mat * va0).normalized(), properties::Color(0, 0, 255));
+    // drawArrow(p2, -(r_mat * va1).normalized(), properties::Color(0, 0, 255));
+    // drawArrow(p3, -(r_mat * va2).normalized(), properties::Color(0, 0, 255));
 
     zp.fill(0.01f);
 
     axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    plot(xp, yp, properties::LineWidth(60), properties::LineStyle::Dashed());
+    // plot(xp, yp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
+    debugFunc(xp, yp);
 
     #else
+
+    float t = 0.0;
 
     for (size_t k = 0; k < num_elements; k++)
     {
