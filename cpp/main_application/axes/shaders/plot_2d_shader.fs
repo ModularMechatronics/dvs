@@ -83,10 +83,10 @@ void main()
    // float dash_size_ = 5.0;
 
    // if ((use_dash == 1) && (fract(dist) * 10.0 > 0.9) )
-   if ((use_dash == 1) && (fract(dist / (dash_size_ + gap_size_)) > dash_size_ / (dash_size_ + gap_size_)) )
+   /*if ((use_dash == 1) && (fract(dist / (dash_size_ + gap_size_)) > dash_size_ / (dash_size_ + gap_size_)) )
    {
       discard;
-   }
+   }*/
    color = fragment_color;
 
 }
