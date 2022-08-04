@@ -1,6 +1,6 @@
 
-#ifndef DVS_MATRIX_MATH_FUNCTIONS_H_
-#define DVS_MATRIX_MATH_FUNCTIONS_H_
+#ifndef DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_MATH_FUNCTIONS_H_
+#define DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_MATH_FUNCTIONS_H_
 
 #include <cmath>
 #include <cstdarg>
@@ -369,4 +369,4 @@ template <typename T> Matrix<T> linspaceFromPointsAndIncColMat(const T x0, const
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_MATH_FUNCTIONS_H_

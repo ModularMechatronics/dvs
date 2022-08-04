@@ -1,5 +1,5 @@
-#ifndef DVS_POSE_H
-#define DVS_POSE_H
+#ifndef DVS_MATH_TRANSFORMATIONS_POSE_H_
+#define DVS_MATH_TRANSFORMATIONS_POSE_H_
 
 #include <cmath>
 #include <vector>
@@ -90,4 +90,4 @@ Matrix<T> poseMatrixFromMatrixAndVector(const Matrix<T>& rotation_matrix, const 
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_TRANSFORMATIONS_POSE_H_

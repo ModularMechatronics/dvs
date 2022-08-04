@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 
+
 Shader::Shader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
 {
     if (ShaderSource::FILE == src)
@@ -19,7 +20,7 @@ Shader::Shader(const std::string& vertex_shader, const std::string& fragment_sha
     {
         throw std::runtime_error("Invalid option for shader source!");
     }
-    std::cout << "Program id: " << program_id_ << std::endl;
+    // std::cout << "Program id: " << program_id_ << std::endl;
 }
 
 Shader Shader::createFromFiles(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
@@ -127,6 +128,16 @@ void Shader::loadShadersFromSourceCode(const std::string& vertex_code, const std
 
     glDeleteShader(VertexShaderID);
     glDeleteShader(FragmentShaderID);
+}
+
+void Shader::use() const
+{
+    glUseProgram(program_id_);
+}
+
+void Shader::unUse() const
+{
+    glUseProgram(0);
 }
 
 GLuint Shader::programId() const

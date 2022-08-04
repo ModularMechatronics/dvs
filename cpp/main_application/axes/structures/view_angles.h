@@ -1,9 +1,17 @@
-#ifndef VIEW_ANGLES_H_
-#define VIEW_ANGLES_H_
+#ifndef MAIN_APPLICATION_AXES_STRUCTURES_VIEW_ANGLES_H_
+#define MAIN_APPLICATION_AXES_STRUCTURES_VIEW_ANGLES_H_
 
 #include "dvs/math/math.h"
 
 using namespace dvs;
+
+enum class SnappingAxis
+{
+    None,
+    X,
+    Y,
+    Z
+};
 
 class ViewAngles
 {
@@ -39,6 +47,8 @@ public:
     bool isSnappedAlongX() const;
     bool isSnappedAlongY() const;
     bool isSnappedAlongZ() const;
+
+    SnappingAxis getSnappingAxis() const;
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_STRUCTURES_VIEW_ANGLES_H_

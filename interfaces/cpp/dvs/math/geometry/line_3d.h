@@ -1,6 +1,6 @@
 
-#ifndef DVS_LINE_3D_H_
-#define DVS_LINE_3D_H_
+#ifndef DVS_MATH_GEOMETRY_LINE_3D_H_
+#define DVS_MATH_GEOMETRY_LINE_3D_H_
 
 #include <cmath>
 #include <vector>
@@ -191,4 +191,4 @@ Line3D<T> Line3D<T>::rotateLineAroundLine(const Line3D<T>& line_to_be_rotated, c
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_GEOMETRY_LINE_3D_H_

@@ -1,5 +1,5 @@
-#ifndef CUSTOM_BUTTON_DVS_H_
-#define CUSTOM_BUTTON_DVS_H_
+#ifndef MAIN_APPLICATION_CUSTOM_BUTTON_H_
+#define MAIN_APPLICATION_CUSTOM_BUTTON_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -247,4 +247,4 @@ inline void CustomButton::OnSize(wxSizeEvent& WXUNUSED(event))
     // this->Set
 }
 
-#endif
+#endif // MAIN_APPLICATION_CUSTOM_BUTTON_H_

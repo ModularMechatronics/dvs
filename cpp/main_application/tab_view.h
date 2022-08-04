@@ -1,5 +1,5 @@
-#ifndef TAB_H_
-#define TAB_H_
+#ifndef MAIN_APPLICATION_TAB_VIEW_H_
+#define MAIN_APPLICATION_TAB_VIEW_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -24,12 +24,25 @@
 class TabView : public ViewBase<wxNotebookPage>
 {
 private:
+    void OnKeyDown(wxKeyEvent& event)
+    {
+        const int key = event.GetKeyCode();
+        notify_main_window_key_pressed_(key);
+    }
+    void OnKeyUp(wxKeyEvent& event)
+    {
+        const int key = event.GetKeyCode();
+        notify_main_window_key_released_(key);
+    }
 public:
     TabView() = delete;
-    TabView(wxNotebookPage* parent, const TabSettings& tab_settings);
+    TabView(wxNotebookPage* parent,
+        const TabSettings& tab_settings,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released);
 
     void newElement(const std::string& element_name);
     void newElement() override;
 };
 
-#endif
+#endif // MAIN_APPLICATION_TAB_VIEW_H_

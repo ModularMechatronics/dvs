@@ -1,5 +1,5 @@
-#ifndef PLOT_ATTRIBUTES_H_
-#define PLOT_ATTRIBUTES_H_
+#ifndef DVS_PLOT_PROPERTIES_H_
+#define DVS_PLOT_PROPERTIES_H_
 
 #include <cassert>
 #include <cstring>
@@ -71,20 +71,22 @@ public:
 struct Name : internal::PropertyBase
 {
 public:
-    static constexpr size_t max_length = 22;
+    static constexpr size_t max_length = 100;
     char data[max_length + 1];  // +1 for null termination
+    size_t length;
 
     Name() : internal::PropertyBase(internal::PropertyType::NAME)
     {
-        std::memset(data, 0, max_length + 1);
+        data[0] = '\0';
+        length = 0;
     }
     Name(const char* const name) : internal::PropertyBase(internal::PropertyType::NAME)
     {
-        assert(name && "input name string is null!");
+        assert(name && "Input name string is null!");
         const size_t idx = internal::safeStringLenCheck(name, max_length + 1);
 
-        // TODO: The assertion says it can't be more than, but the condition is more than or equal to
-        assert(idx <= max_length && "Name can't be more than 20 characters!");
+        assert(idx <= max_length && "Name can't be more than 100 characters!");
+        length = idx;
 
         std::memcpy(data, name, idx);
         data[idx] = '\0';
@@ -98,24 +100,70 @@ inline bool operator==(const Name& n0, const Name& n1)
 
 struct LineStyle : internal::PropertyBase
 {
+private:
+    LineStyle(const internal::LineStyleType line_style_type) : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
+    {
+        data = line_style_type;
+    }
+
 public:
-    static constexpr size_t max_length = 2;
-    char data[max_length + 1];
+    internal::LineStyleType data;
 
     LineStyle() : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
     {
-        std::memset(data, 0, max_length + 1);
+        data = internal::LineStyleType::DASHED;
     }
-    LineStyle(const char* const line_style) : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
+
+    static LineStyle Dashed()
     {
-        assert(line_style && "input line style string is null!");
-        const size_t input_name_length = internal::safeStringLenCheck(line_style, max_length + 1);
-
-        assert((input_name_length <= max_length) && "Line style can't be more than 2 characters!");
-
-        std::memcpy(data, line_style, input_name_length);
-        data[input_name_length] = '\0';
+        return LineStyle(internal::LineStyleType::DASHED);
     }
+
+    static LineStyle Dotted()
+    {
+        return LineStyle(internal::LineStyleType::DOTTED);
+    }
+
+    static LineStyle LongDashed()
+    {
+        return LineStyle(internal::LineStyleType::LONG_DASHED);
+    }
+
+};
+
+struct ScatterStyle : internal::PropertyBase
+{
+    internal::ScatterStyleType data;
+
+    ScatterStyle() : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE) {}
+    ScatterStyle(const internal::ScatterStyleType scatter_style_type) : 
+        internal::PropertyBase(internal::PropertyType::SCATTER_STYLE), data{scatter_style_type} {}
+
+    static ScatterStyle Cross()
+    {
+        return {internal::ScatterStyleType::CROSS};
+    }
+    
+    static ScatterStyle Circle()
+    {
+        return {internal::ScatterStyleType::CIRCLE};
+    }
+    
+    static ScatterStyle Disc()
+    {
+        return {internal::ScatterStyleType::DISC};
+    }
+    
+    static ScatterStyle Square()
+    {
+        return {internal::ScatterStyleType::SQUARE};
+    }
+    
+    static ScatterStyle Plus()
+    {
+        return {internal::ScatterStyleType::PLUS};
+    }
+    
 };
 
 struct Color : internal::PropertyBase
@@ -335,4 +383,4 @@ public:
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_PLOT_PROPERTIES_H_

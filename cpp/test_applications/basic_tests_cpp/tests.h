@@ -1,5 +1,5 @@
-#ifndef TESTS_H_
-#define TESTS_H_
+#ifndef TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_
+#define TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_
 
 #include <algorithm>
 
@@ -27,7 +27,11 @@ void testSurf()
 
     setCurrentElement("view_00");
     clearView();
-    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(150, 244, 244), properties::LineWidth(1));
+    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 0), properties::LineWidth(1));
+
+    setCurrentElement("view_01");
+    clearView();
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET());
 }
 
 void testScatter()
@@ -50,10 +54,15 @@ void testScatter()
 
     setCurrentElement("view_00");
     clearView();
-    axis({-1.1, -2.2, -3.3}, {4.4, 5.5, 6.6});
+    axis({0.0, -8.0, -3.3}, {32.0, 32.0, 6.6});
 
     plot(xf, yf, properties::Color(212, 14, 55));
-    scatter(x, y, properties::Color(12, 14, 55), properties::PointSize(3));
+    scatter(x, y, properties::Color(12, 14, 55));
+    scatter(x, y + 1.0, properties::Color::BLACK(), properties::PointSize(11));
+    scatter(x, y + 2.0, properties::Color::CYAN(), properties::PointSize(12), properties::ScatterStyle::Square());
+    scatter(x, y + 3.0, properties::Color::MAGENTA(), properties::PointSize(13), properties::ScatterStyle::Disc());
+    scatter(x, y + 4.0, properties::Color::BLUE(), properties::PointSize(14), properties::ScatterStyle::Plus());
+    scatter(x, y + 5.0, properties::Color::RED(), properties::PointSize(14), properties::ScatterStyle::Cross());
 }
 
 void testScatter3()
@@ -86,8 +95,13 @@ void testScatter3()
     clearView();
 
     axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
-    scatter3(x, y, z, properties::Color(212, 14, 55), properties::PointSize(3));
-    plot3(x, y, z, properties::Color(21, 14, 55), properties::LineWidth(1));
+    plot3(x, y, z, properties::Color(255, 14, 255), properties::LineWidth(1));
+    scatter3(x, y, z, properties::Color(12, 14, 55));
+    scatter3(x, y, z + 1.0, properties::Color::BLACK(), properties::PointSize(11));
+    scatter3(x, y, z + 2.0, properties::Color::CYAN(), properties::PointSize(12), properties::ScatterStyle::Square());
+    scatter3(x, y, z + 3.0, properties::Color::MAGENTA(), properties::PointSize(13), properties::ScatterStyle::Disc());
+    scatter3(x, y, z + 4.0, properties::Color::BLUE(), properties::PointSize(14), properties::ScatterStyle::Plus());
+    scatter3(x, y, z + 5.0, properties::Color::RED(), properties::PointSize(14), properties::ScatterStyle::Cross());
 }
 
 void testPlotCollection()
@@ -170,31 +184,198 @@ void testPlotCollection()
     plotCollection(pcm_x, pcm_y, properties::Color(0, 0, 0));
 }
 
+void debugFunc(const Vector<float>& xp, const Vector<float>& yp)
+{
+    struct PointStruct
+    {
+        Point2Df p0;
+        Point2Df p1;
+        Point2Df p2;
+        Vec2Df v0;
+        Vec2Df v1;
+    };
+    std::vector<PointStruct> points;
+    points.resize(xp.size());
+
+    int idx = 0;
+
+    for(size_t k = 0; k < xp.size(); k++)
+    {
+        if(k == 0)
+        {
+            const Vec2Df vq = Point2Df(xp(1), yp(1)) - Point2Df(xp(0), yp(0));
+            points[k].p0 = Point2Df(xp(0), yp(0)) - vq;
+            points[k].p1 = Point2Df(xp(0), yp(0));
+            points[k].p2 = Point2Df(xp(1), yp(1));
+        }
+        else if(k == (xp.size() - 1))
+        {
+            const int last_idx = xp.size() - 1;
+            const Vec2Df vq = Point2Df(xp(last_idx), yp(last_idx)) - Point2Df(xp(last_idx - 1), yp(last_idx - 1));
+            points[k].p0 = Point2Df(xp(last_idx - 1), yp(last_idx - 1));
+            points[k].p1 = Point2Df(xp(last_idx), yp(last_idx));
+            points[k].p2 = Point2Df(xp(last_idx), yp(last_idx)) + vq;
+        }
+        else
+        {
+            points[k].p0 = Point2Df(xp(k - 1), yp(k - 1));
+            points[k].p1 = Point2Df(xp(k), yp(k));
+            points[k].p2 = Point2Df(xp(k + 1), yp(k + 1));
+        }
+
+        points[k].v0 = points[k].p1 - points[k].p0;
+        points[k].v1 = points[k].p2 - points[k].p1;
+    }
+
+    const Matrixf r_mat = {{0.0f, -1.0f}, {1.0f, 0.0f}};
+
+    const float lw = 0.17f;
+
+    std::vector<Point2Df> points_inner, points_outer;
+
+    const auto red = properties::Color(255, 0, 0);
+    const auto green = properties::Color(0, 127, 0);
+    const auto blue = properties::Color(0, 0, 255);
+
+    const auto magenta = properties::Color(127, 127, 0);
+    const auto black = properties::Color(0, 0, 0);
+
+    for(size_t k = 0; k < points.size(); k++)
+    {
+        const Point2Df p0 = points[k].p0;
+        const Point2Df p1 = points[k].p1;
+        const Point2Df p2 = points[k].p2;
+        const Vec2Df v0 = points[k].v0;
+        const Vec2Df v1 = points[k].v1;
+
+        // Line intersection method
+        const Vec2Df q0 = r_mat * (v0.normalized()) * lw;
+        const Vec2Df q1 = r_mat * (v1.normalized()) * lw;
+
+        const Point2Df p0_0 = -q0;
+        const Point2Df p0_1 = -v0.normalized() - q0;
+
+        const Point2Df p1_0 = -q1;
+        const Point2Df p1_1 = v1.normalized() - q1;
+
+        const float dp = ((p0_1 - p0_0)).normalized() * ((p1_1 - p1_0)).normalized() + 1.0f;
+
+        Vec2Df res_vec;
+        if(std::fabs(dp) < 0.000001f)
+        {
+            res_vec = -q0.normalized() * lw;
+        }
+        else
+        {
+            const HomogeneousLine2D<float> line0 = homogeneousLineFromPoints(p0_0, p0_1);
+            const HomogeneousLine2D<float> line1 = homogeneousLineFromPoints(p1_0, p1_1);
+
+            const Point2Df intersection_points = line0.lineIntersection(line1);
+            res_vec = intersection_points;
+        }
+
+        drawArrow(p1, res_vec, black);
+        drawArrow(p1, -res_vec, magenta);
+
+        points_inner.push_back(p1 + res_vec);
+        points_outer.push_back(p1 - res_vec);
+    }
+
+    Vector<float> xp_inner(points_inner.size()), yp_inner(points_inner.size()), xp_outer(points_inner.size()), yp_outer(points_inner.size());
+
+    for(int k = 0; k < (static_cast<int>(points_inner.size()) - 1); k++)
+    {
+        {
+            const auto p = Point2Df(points_inner[k].x, points_inner[k].y);
+            const auto pp = Point2Df(points_inner[k + 1].x, points_inner[k + 1].y);
+            const Vec2Df v = pp - p;
+
+            drawArrow(p, v);
+        }
+        {
+            const auto p = Point2Df(points_outer[k].x, points_outer[k].y);
+            const auto pp = Point2Df(points_outer[k + 1].x, points_outer[k + 1].y);
+            const Vec2Df v = pp - p;
+
+            drawArrow(p, v);
+        }
+    }
+}
+
 void testPlot()
 {
     const size_t num_elements = 30;
-    Vector<int64_t> x(num_elements), y(num_elements);
-    Vector<float> xf(num_elements), yf(num_elements);
-
-    double t = 0.0;
-
-    for (size_t k = 0; k < num_elements; k++)
-    {
-        xf(k) = 10.0 * cos(t) + 20.0;
-        yf(k) = 10.0 * sin(t) + 20.0 + k;
-
-        x(k) = xf(k);
-        y(k) = yf(k);
-        t = t + 0.3;
-    }
+    Vector<float> x(num_elements), y(num_elements), z(num_elements);
 
     setCurrentElement("view_00");
     clearView();
+    #if 1
+    const size_t num_points = 3;
+    Vector<float> xp(num_points), yp(num_points), zp(num_points);
+
+    xp(0) = 0.0;
+    xp(1) = 1.0;
+    xp(2) = 2.2;
+    // xp(3) = 3.0;
+    // xp(4) = 3.5;
+    // xp(5) = 3.5;
+
+    yp(0) = 0.0;
+    yp(1) = 3.5;
+    yp(2) = 3.5;
+    // yp(3) = 2.5;
+    // yp(4) = 4.0;
+    // yp(5) = 2.0;
+
+    zp.fill(0.01f);
+
+    axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
+    plot(xp, yp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
+    scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
+    debugFunc(xp, yp);
+
+    #else
+
+    float t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = 10.0 * cos(t) + 20.0;
+        y(k) = 10.0 * sin(t) + 20.0 + k;
+        z(k) = 0.01f;
+
+        t = t + 0.3;
+    }
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    plot(x, y, properties::Color(212, 14, 55), properties::LineWidth(1));
-    plot(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(4), properties::LINE_STRIP);
-    plot(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(1));
+    plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::LineWidth(1));
+    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
+    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
+    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
+    scatter3(x + 3.0f, y, z, properties::Color::BLACK(), properties::PointSize(14));
+
+    setCurrentElement("view_01");
+    clearView();
+    t = 0.0;
+    x.resize(num_elements * 10);
+    y.resize(num_elements * 10);
+    z.resize(num_elements * 10);
+
+    for (size_t k = 0; k < (num_elements * 10); k++)
+    {
+        x(k) = 10.0f * cos(t) + 20.0f;
+        y(k) = 10.0f * sin(t) + 20.0f + static_cast<float>(k) / 10.0f;
+        z(k) = 0.01f;
+
+        t = t + 0.03;
+    }
+
+    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
+    plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::LineWidth(1));
+    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
+    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
+    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
+    #endif
 }
 
 void testStairs()
@@ -230,13 +411,13 @@ void testPlot3()
 
     for (size_t k = 0; k < num_elements; k++)
     {
-        xf(k) = 10.0 * cos(t) + 20.0;
-        yf(k) = 10.0 * sin(t) + 20.0;
-        zf(k) = k;
+        xf(k) = 1.0 * cos(t) + 0.0;
+        yf(k) = 1.0 * sin(t) + 0.0;
+        zf(k) = t;
 
         x(k) = xf(k);
         y(k) = yf(k);
-        z(k) = k;
+        z(k) = t;
         t = t + 0.3;
     }
 
@@ -244,7 +425,7 @@ void testPlot3()
     clearView();
 
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
-    plot3(xf, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(1));
+    plot3(xf + 0.1f, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(7));
 }
 
 void testImShow()
@@ -281,7 +462,7 @@ void testImShow()
             // img(r, c, 2) = (r * (num_cols - 1 - c)) / max_val;
         }
     }
-
+    clearView();
     setCurrentElement("view_00");
     imShow(img3, properties::Alpha(137));
 
@@ -297,7 +478,7 @@ void testDrawPolygonFrom4Points()
     drawPolygonFrom4Points(p0, p1, p2, p3);
 }
 
-void testDrawXYPlane()
+void testDrawXYZPlane()
 {
     VecXY<double> p0_xy(0.0, 0.0), p1_xy(1.0, 1.0);
     VecXZ<float> p0_xz(0.0, 0.0), p1_xz(1.0, 1.0);
@@ -338,6 +519,68 @@ void testAxis()
     clearView();
 
     axis({-1.0, 1.5, 3.4}, {5.4, 9.2, 5.5});
+}
+
+void testLegend()
+{
+    const int num_rows = 20, num_cols = 25;
+    Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+
+    double inc = 0.4;
+    for (int r = 0; r < num_rows; r++)
+    {
+        for (int c = 0; c < num_cols; c++)
+        {
+            const double rd = static_cast<double>(r - 5) * inc;
+            const double cd = static_cast<double>(c - 5) * inc * 2;
+            x(r, c) = c;
+            y(r, c) = r;
+            z(r, c) = std::sin(std::sqrt(rd * rd + cd * cd));
+        }
+    }
+
+    const size_t num_elements = 30;
+    Vector<float> x0(num_elements), y0(num_elements);
+    Vector<float> x1(num_elements), y1(num_elements);
+    Vector<float> x2(num_elements), y2(num_elements);
+
+    double t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x0(k) = 10.0 * cos(t);
+        y0(k) = 10.0 * sin(t) + k;
+
+        t = t + 0.3;
+    }
+
+    x1 = x0 * 2.0f;
+    y1 = y0 * 2.0f;
+
+    x2 = x0 * 3.0f;
+    y2 = y0 * 3.0f;
+
+    setCurrentElement("view_00");
+    clearView();
+
+    axis({-32.0, 0.0, -2.0}, {32.0, 110.0, 2.0});
+    plot(x0, y0, properties::Color(212, 14, 55), properties::Name("AAAaaaBBBbbb"));
+    plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
+    plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
+    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET(), properties::Name("SURF_COLOR_MAP"));
+    showLegend();
+
+    setCurrentElement("view_01");
+    clearView();
+
+    axis({-32.0, 0.0, -2.0}, {32.0, 110.0, 2.0});
+    plot(x0, y0, properties::Color(212, 14, 55), properties::Name("AAAaaaBBBbbb"));
+    plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
+    plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
+    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET(), properties::Name("SURF_COLOR_MAP"));
+    showLegend();
 }
 
 void testDrawTriangles()
@@ -399,17 +642,28 @@ void testDrawMesh()
 {
     using tp = double;
 
-    Vector<Point3D<tp>> vertices(4);
-    vertices(0) = Point3D<tp>(-1.0, -1.0, -1.0);
-    vertices(1) = Point3D<tp>(1.0, -1.0, -1.0);
-    vertices(2) = Point3D<tp>(1.0, 1.0, -1.0);
-    vertices(3) = Point3D<tp>(0.0, 0.0, 1.0);
+    Vector<Point3D<tp>> vertices(12);
+    vertices(0) = Point3D<tp>(0.0, 0.0, 0.0);
+    vertices(1) = Point3D<tp>(1.0, 0.0, 0.0);
+    vertices(2) = Point3D<tp>(0.5, -1.0, 1.0);
+
+    vertices(3) = Point3D<tp>(0.0, 0.0, 0.0);
+    vertices(4) = Point3D<tp>(-1.0, 0.0, 0.0);
+    vertices(5) = Point3D<tp>(0.0, 1.0, 1.0);
+
+    vertices(6) = Point3D<tp>(0.0, 0.0, 0.0);
+    vertices(7) = Point3D<tp>(-1.0, 0.0, 0.0);
+    vertices(8) = Point3D<tp>(0.0, 1.0, -1.0);
+
+    vertices(9) = Point3D<tp>(0.0, 0.0, 0.0);
+    vertices(10) = Point3D<tp>(1.0, 0.0, 0.0);
+    vertices(11) = Point3D<tp>(0.5, -1.0, -1.0);
 
     Vector<IndexTriplet> indices(4);
     indices(0) = IndexTriplet(0, 1, 2);
-    indices(1) = IndexTriplet(0, 1, 3);
-    indices(2) = IndexTriplet(1, 2, 3);
-    indices(3) = IndexTriplet(2, 0, 3);
+    indices(1) = IndexTriplet(3, 4, 5);
+    indices(2) = IndexTriplet(6, 7, 8);
+    indices(3) = IndexTriplet(9, 10, 11);
 
     setCurrentElement("view_00");
     clearView();
@@ -448,7 +702,7 @@ void testDrawArrow()
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
-    drawArrow(p, v, properties::Color(12, 244, 244));
+    drawArrow(p, v, properties::Color(12, 14, 244));
 }
 
 void testQuiver()
@@ -470,7 +724,7 @@ void testQuiver()
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
-    quiver(x, y, u, v, properties::Color(12, 244, 244));
+    quiver(x, y, u, v, properties::Color(255, 0, 0));
 }
 
 void testDrawLine3D()
@@ -538,4 +792,4 @@ void testDrawLineBetweenPoints()
     scatter3(x, y, z, properties::Color(0, 0, 0), properties::PointSize(3));
 }
 
-#endif
+#endif // TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_

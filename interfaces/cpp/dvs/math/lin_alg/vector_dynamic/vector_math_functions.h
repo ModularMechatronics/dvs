@@ -1,5 +1,5 @@
-#ifndef DVS_VECTOR_MATH_FUNCTIONS_H_
-#define DVS_VECTOR_MATH_FUNCTIONS_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_MATH_FUNCTIONS_H_
+#define DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_MATH_FUNCTIONS_H_
 
 #include <cmath>
 #include <cstdarg>
@@ -484,4 +484,4 @@ template <typename T> Vector<T> vectorWithOnes(const size_t num_values)
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_MATH_FUNCTIONS_H_

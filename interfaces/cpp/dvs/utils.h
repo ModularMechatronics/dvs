@@ -102,4 +102,4 @@ inline bool checkAck(char data[256])
 }  // namespace internal
 }  // namespace dvs
 
-#endif
+#endif // DVS_UTILS_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_CIRCLE_CLASS_H_
-#define DVS_CIRCLE_CLASS_H_
+#ifndef DVS_MATH_GEOMETRY_CLASS_DEFS_CIRCLE_CLASS_DEF_H_
+#define DVS_MATH_GEOMETRY_CLASS_DEFS_CIRCLE_CLASS_DEF_H_
 
 #include <utility>
 
@@ -41,4 +41,4 @@ public:
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_GEOMETRY_CLASS_DEFS_CIRCLE_CLASS_DEF_H_

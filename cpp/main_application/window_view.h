@@ -1,5 +1,5 @@
-#ifndef DVS_WINDOW_VIEW_H_
-#define DVS_WINDOW_VIEW_H_
+#ifndef MAIN_APPLICATION_WINDOW_VIEW_H_
+#define MAIN_APPLICATION_WINDOW_VIEW_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -28,7 +28,11 @@ private:
 
 public:
     WindowView() = delete;
-    WindowView(wxFrame* parent, const WindowSettings& window_settings, const int callback_id);
+    WindowView(wxFrame* parent,
+        const WindowSettings& window_settings,
+        const int callback_id,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released);
 
     void newElement(const std::string& element_name);
     void newElement() override;
@@ -43,4 +47,4 @@ public:
     virtual void OnClose(wxCloseEvent& event);
 };
 
-#endif
+#endif // MAIN_APPLICATION_WINDOW_VIEW_H_

@@ -6,7 +6,7 @@ AxesSettings::AxesSettings()
     plot_box_size_factor_ = 0.5;
 
     grid_on_ = false;
-    grid_color_ = RGBTripletf(127.0f / 255.0f, 127.0f / 255.0f, 127.0f / 255.0f);
+    grid_color_ = RGBTripletf(0.7f, 0.7f, 0.7f);
 
     coordinate_axes_on_ = true;
     coord_axes_extension_factor_ = 1.5;
@@ -21,31 +21,6 @@ AxesSettings::AxesSettings()
 
     min_vec_ = Vec3Dd(-1.0, -1.0, -1.0);
     max_vec_ = Vec3Dd(1.0, 1.0, 1.0);
-}
-
-AxesSettings::AxesSettings(const Vec3Dd& min_vec, const Vec3Dd& max_vec)
-{
-    plot_box_wall_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
-    // plot_box_wall_color_ = RGBTripletf(0x86972);
-    plot_box_size_factor_ = 0.5;
-
-    grid_on_ = false;
-    // grid_color_ = RGBTripletf(127.0f / 255.0f, 127.0f / 255.0f, 127.0f / 255.0f);
-    grid_color_ = RGBTripletf(0.7f, 0.7f, 0.7f);
-
-    coordinate_axes_on_ = true;
-    coord_axes_extension_factor_ = 1.5;
-
-    x_label_ = "x";
-    y_label_ = "y";
-    z_label_ = "z";
-
-    num_axes_ticks_ = 4;
-
-    axes_state_ = AxesState::DEFAULT;
-
-    min_vec_ = min_vec;
-    max_vec_ = max_vec;
 }
 
 Vec3Dd AxesSettings::getAxesScale() const

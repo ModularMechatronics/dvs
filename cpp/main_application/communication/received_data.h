@@ -1,5 +1,5 @@
-#ifndef RECEIVED_DATA_H_
-#define RECEIVED_DATA_H_
+#ifndef MAIN_APPLICATION_COMMUNICATION_RECEIVED_DATA_H_
+#define MAIN_APPLICATION_COMMUNICATION_RECEIVED_DATA_H_
 
 #include "dvs/dvs.h"
 
@@ -19,7 +19,7 @@ public:
     {
         (void)other;
 
-        data_ = other.getDataPointer();
+        data_ = other.data();
         other.setDataPointer(nullptr);
 
         num_data_bytes_ = other.getNumDataBytes();
@@ -60,7 +60,7 @@ public:
         delete[] payload_data_;
     }
 
-    uint8_t* getDataPointer() const
+    uint8_t* data() const
     {
         return payload_data_;
     }
@@ -86,4 +86,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_COMMUNICATION_RECEIVED_DATA_H_

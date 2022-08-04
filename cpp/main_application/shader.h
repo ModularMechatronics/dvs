@@ -1,5 +1,5 @@
-#ifndef DVS_SHADER_H_
-#define DVS_SHADER_H_
+#ifndef MAIN_APPLICATION_SHADER_H_
+#define MAIN_APPLICATION_SHADER_H_
 
 #include <string>
 
@@ -50,6 +50,21 @@ public:
     static Shader createFromCode(const char* const vertex_code, const char* const fragment_code);
 
     GLuint programId() const;
+
+    void use() const;
+    void unUse() const;
 };
 
-#endif
+struct ShaderCollection
+{
+    Shader text_shader;
+    Shader plot_box_shader;
+    Shader surf_shader;
+    Shader scatter_shader;
+    Shader basic_plot_shader;
+    Shader plot_2d_shader;
+    Shader plot_3d_shader;
+    Shader img_plot_shader;
+};
+
+#endif // MAIN_APPLICATION_SHADER_H_

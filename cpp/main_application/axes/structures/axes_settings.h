@@ -1,5 +1,5 @@
-#ifndef AXES_SETTINGS_H_
-#define AXES_SETTINGS_H_
+#ifndef MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_
+#define MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_
 
 #include <unistd.h>
 
@@ -44,7 +44,6 @@ private:
 
 public:
     AxesSettings();
-    AxesSettings(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
 
     AxesState getAxesState() const;
     std::string getXLabel() const;
@@ -64,4 +63,4 @@ public:
     void setAxesScale(const Vec3Dd& new_scale);
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_

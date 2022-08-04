@@ -1,5 +1,5 @@
-#ifndef DVS_TRIANGLE_CLASS_H_
-#define DVS_TRIANGLE_CLASS_H_
+#ifndef DVS_MATH_GEOMETRY_CLASS_DEFS_TRIANGLE_CLASS_DEF_H_
+#define DVS_MATH_GEOMETRY_CLASS_DEFS_TRIANGLE_CLASS_DEF_H_
 
 #include "dvs/math/misc/forward_decl.h"
 
@@ -27,4 +27,4 @@ template <typename T> struct Triangle3D
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_GEOMETRY_CLASS_DEFS_TRIANGLE_CLASS_DEF_H_

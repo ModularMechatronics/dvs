@@ -1,5 +1,5 @@
-#ifndef COLOR_MAP_H_
-#define COLOR_MAP_H_
+#ifndef MAIN_APPLICATION_MISC_COLOR_MAP_H_
+#define MAIN_APPLICATION_MISC_COLOR_MAP_H_
 
 #include <stdlib.h>
 
@@ -8,6 +8,8 @@
 #include <iostream>
 #include <type_traits>
 #include <vector>
+
+#include "dvs/enumerations.h"
 
 template <typename T> struct RGBTriplet
 {
@@ -58,6 +60,7 @@ public:
     T* getGreenPtr() const;
     T* getBluePtr() const;
 
+    RGBTriplet<T> getColor(const double d) const;
     RGBTriplet<T> operator()(const double d) const;
     template <typename Y, typename U> RGBTriplet<T> operator()(const Y d_in, const U max_val) const;
 
@@ -219,6 +222,18 @@ template <typename T> void RGBColorMap<T>::setupTables(const std::vector<RGBTrip
     }
 }
 
+template <typename T> RGBTriplet<T> RGBColorMap<T>::getColor(const double d) const
+{
+    if ((d < 0.0) || (d > 1.0))
+    {
+        std::cout << "WARNING: Tried to index outside of map range [0.0, 1.0]!" << std::endl;
+    }
+    const double d_clamped = (d < 0.0) || (d > 1.0) ? std::max(std::min(1.0, d), 0.0) : d;
+
+    const size_t idx = std::round(static_cast<double>(num_values_ - 1) * d_clamped);
+    return RGBTriplet<T>(red_[idx], green_[idx], blue_[idx]);
+}
+
 template <typename T> RGBTriplet<T> RGBColorMap<T>::operator()(const double d) const
 {
     if ((d < 0.0) || (d > 1.0))
@@ -295,10 +310,34 @@ const extern RGBColorMap<unsigned char> magma;
 const extern RGBColorMap<unsigned char> viridis;
 const extern RGBColorMap<unsigned char> jet;
 
-const extern RGBColorMap<float> rainbowf;
-const extern RGBColorMap<float> magmaf;
-const extern RGBColorMap<float> viridisf;
-const extern RGBColorMap<float> jetf;
+extern RGBColorMap<float> rainbowf;
+extern RGBColorMap<float> magmaf;
+extern RGBColorMap<float> viridisf;
+extern RGBColorMap<float> jetf;
 }  // namespace color_maps
 
-#endif
+inline RGBColorMap<float>* getColorMapFromColorMapType(const dvs::internal::ColorMapType cmt)
+{
+    switch(cmt)
+    {
+        case dvs::internal::ColorMapType::JET:
+            return &color_maps::jetf;
+            break;
+        case dvs::internal::ColorMapType::RAINBOW:
+            return &color_maps::rainbowf;
+            break;
+        case dvs::internal::ColorMapType::MAGMA:
+            return &color_maps::magmaf;
+            break;
+        case dvs::internal::ColorMapType::VIRIDIS:
+            return &color_maps::viridisf;
+            break;
+        default:
+            std::cout << "Invalid ColorMapType!" << std::endl;
+            exit(0);
+            return nullptr;
+    }
+    
+}
+
+#endif // MAIN_APPLICATION_MISC_COLOR_MAP_H_

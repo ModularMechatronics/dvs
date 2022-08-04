@@ -1,5 +1,5 @@
-#ifndef DVS_INDEX_TRIPLET_H_
-#define DVS_INDEX_TRIPLET_H_
+#ifndef DVS_MATH_STRUCTURES_INDEX_TRIPLET_H_
+#define DVS_MATH_STRUCTURES_INDEX_TRIPLET_H_
 
 #include <stdint.h>
 
@@ -22,4 +22,4 @@ struct IndexTriplet
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_STRUCTURES_INDEX_TRIPLET_H_

@@ -1,8 +1,8 @@
-#ifndef DVS_GLOBALS_H_
-#define DVS_GLOBALS_H_
+#ifndef MAIN_APPLICATION_GLOBALS_H_
+#define MAIN_APPLICATION_GLOBALS_H_
 
 #include <atomic>
 
 extern std::atomic<int> current_unused_element_idx;
 
-#endif
+#endif // MAIN_APPLICATION_GLOBALS_H_

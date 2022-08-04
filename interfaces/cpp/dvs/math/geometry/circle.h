@@ -1,6 +1,6 @@
 
-#ifndef DVS_CIRCLE_H_
-#define DVS_CIRCLE_H_
+#ifndef DVS_MATH_GEOMETRY_CIRCLE_H_
+#define DVS_MATH_GEOMETRY_CIRCLE_H_
 
 #include <cmath>
 #include <vector>
@@ -246,4 +246,4 @@ template <typename T> void Circle3D<T>::calculateOrthogonalVectors()
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_GEOMETRY_CIRCLE_H_

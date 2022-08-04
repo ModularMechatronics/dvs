@@ -33,6 +33,10 @@ void MainApp::appInFocus(wxActivateEvent& event)
 
 bool MainApp::OnInit()
 {
+    wxImage::AddHandler(new wxPNGHandler);
+    wxImage::AddHandler(new wxBMPHandler);
+    wxImage::AddHandler(new wxICOHandler);
+
     std::vector<std::string> cmd_args;
     for (int k = 0; k < wxAppConsole::argc; k++)
     {
@@ -50,6 +54,6 @@ bool MainApp::OnInit()
 
 int MainApp::OnExit()
 {
-    std::cout << "Exit!" << std::endl;
+    std::cout << "Exit from MainApp::OnExit!" << std::endl;
     return true;
 }

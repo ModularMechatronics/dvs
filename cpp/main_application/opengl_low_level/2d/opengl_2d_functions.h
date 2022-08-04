@@ -1,5 +1,5 @@
-#ifndef OPENGL_FUNCTIONS_H_
-#define OPENGL_FUNCTIONS_H_
+#ifndef MAIN_APPLICATION_OPENGL_LOW_LEVEL_2D_OPENGL_2D_FUNCTIONS_H_
+#define MAIN_APPLICATION_OPENGL_LOW_LEVEL_2D_OPENGL_2D_FUNCTIONS_H_
 
 #include <cstddef>
 #include <vector>
@@ -15,8 +15,5 @@ void setColor(const float r, const float g, const float b);
 void setLinewidth(const float line_width);
 void setPointSize(const float point_size);
 
-void drawLine2D(const float x0, const float y0, const float x1, const float y1);
-void drawLines2D(const Vectord& x_values, const Vectord& y_values);
-void drawPoints2D(const Vectord& x_values, const Vectord& y_values);
 
-#endif
+#endif // MAIN_APPLICATION_OPENGL_LOW_LEVEL_2D_OPENGL_2D_FUNCTIONS_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_VECTOR_DYNAMIC_H_
-#define DVS_VECTOR_DYNAMIC_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_
+#define DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_
 
 #include <cmath>
 #include <cstring>
@@ -35,7 +35,7 @@ template <typename T> Vector<T>::Vector(const Vector<T>& v) : is_allocated_(true
 template <typename T> Vector<T>::Vector(Vector<T>&& v)
 {
     DVS_ASSERT(v.isAllocated()) << "Input vector not allocated!";
-    data_ = v.getDataPointer();
+    data_ = v.data();
     vector_length_ = v.size();
     is_allocated_ = true;
 
@@ -56,7 +56,7 @@ template <typename T> Vector<T>& Vector<T>::operator=(Vector<T>&& v)
         vector_length_ = v.size();
         is_allocated_ = true;
 
-        data_ = v.getDataPointer();
+        data_ = v.data();
 
         v.setInternalData(nullptr, 0);
     }
@@ -384,7 +384,7 @@ template <typename T> bool Vector<T>::isAllocated() const
 
 template <typename T> void Vector<T>::fill(const T& val)
 {
-    assert(is_allocated_ && "Tried to fill un allocated vector!");
+    assert(is_allocated_ && "Tried to fill unallocated vector!");
     for (size_t k = 0; k < vector_length_; k++)
     {
         data_[k] = val;
@@ -447,7 +447,7 @@ template <typename T> size_t Vector<T>::endIndex() const
     return vector_length_ - 1;
 }
 
-template <typename T> T* Vector<T>::getDataPointer() const
+template <typename T> T* Vector<T>::data() const
 {
     return data_;
 }
@@ -1209,4 +1209,4 @@ template <typename Y> void fillWithPtr(Vector<Y>& v, const void* const ptr, cons
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_INDEX_SPAN_H_
-#define DVS_INDEX_SPAN_H_
+#ifndef DVS_MATH_STRUCTURES_INDEX_SPAN_H_
+#define DVS_MATH_STRUCTURES_INDEX_SPAN_H_
 
 #include <stdio.h>
 
@@ -19,4 +19,4 @@ struct IndexSpan
 };
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_STRUCTURES_INDEX_SPAN_H_

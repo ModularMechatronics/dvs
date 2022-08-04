@@ -1,5 +1,5 @@
-#ifndef DVS_PROPERTIES_H_
-#define DVS_PROPERTIES_H_
+#ifndef MAIN_APPLICATION_PROPERTIES_H_
+#define MAIN_APPLICATION_PROPERTIES_H_
 
 #include "dvs/dvs.h"
 
@@ -36,6 +36,10 @@ template <typename T> PropertyType templateToPropType()
     else if (std::is_same<T, properties::ColorMap>::value)
     {
         return PropertyType::COLOR_MAP;
+    }
+    else if (std::is_same<T, properties::ScatterStyle>::value)
+    {
+        return PropertyType::SCATTER_STYLE;
     }
     else if (std::is_same<T, properties::PointSize>::value)
     {
@@ -85,6 +89,9 @@ public:
                         break;
                     case PropertyType::FACE_COLOR:
                         ptr = std::make_shared<properties::FaceColor>(values[k].as<properties::FaceColor>());
+                        break;
+                    case PropertyType::SCATTER_STYLE:
+                        ptr = std::make_shared<properties::ScatterStyle>(values[k].as<properties::ScatterStyle>());
                         break;
                     case PropertyType::COLOR_MAP:
                         ptr = std::make_shared<properties::ColorMap>(values[k].as<properties::ColorMap>());
@@ -152,4 +159,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_PROPERTIES_H_
