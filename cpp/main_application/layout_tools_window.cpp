@@ -3,12 +3,31 @@
 #include "events.h"
 #include "main_window.h"
 
-LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize size)
-    : wxFrame(main_window, wxID_ANY, "Layout tools", pos, size)
+LayoutToolsWindow::LayoutToolsWindow(wxPoint pos,
+        wxSize size,
+        std::function<void(const std::string&)>&& change_current_tab_name,
+        std::function<void(const std::string&)>&& change_current_element_name,
+        std::function<void()>&& add_new_window,
+        std::function<void()>&& delete_window,
+        std::function<void()>&& add_new_tab,
+        std::function<void()>&& delete_tab,
+        std::function<void()>&& add_new_element,
+        std::function<void()>&& delete_element,
+        std::function<void()>&& disable_editing)
+    : wxFrame(nullptr, wxID_ANY, "Layout tools", pos, size, wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP)
 {
     this->SetMinSize(size);
     this->SetMaxSize(size);
-    main_window_ = main_window;
+
+    change_current_tab_name_ = std::move(change_current_tab_name);
+    change_current_element_name_ = std::move(change_current_element_name);
+    add_new_window_ = std::move(add_new_window);
+    delete_window_ = std::move(delete_window);
+    add_new_tab_ = std::move(add_new_tab);
+    delete_tab_ = std::move(delete_tab);
+    add_new_element_ = std::move(add_new_element);
+    delete_element_ = std::move(delete_element);
+    disable_editing_ = std::move(disable_editing);
 
     Bind(wxEVT_CLOSE_WINDOW, &LayoutToolsWindow::OnClose, this);
 
@@ -28,14 +47,11 @@ LayoutToolsWindow::LayoutToolsWindow(wxFrame* main_window, wxPoint pos, wxSize s
 void LayoutToolsWindow::OnClose(wxCloseEvent& WXUNUSED(event))
 {
     this->Hide();
-    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
-    main_window_ptr->disableEditing();
+    disable_editing_();
 }
 
 void LayoutToolsWindow::setupInspector()
 {
-    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
-
     wxBoxSizer* global_sizer = new wxBoxSizer(wxVERTICAL);
 
     {
@@ -44,7 +60,7 @@ void LayoutToolsWindow::setupInspector()
             new wxStaticText(inspector_box_, wxID_ANY, "Tab name", wxDefaultPosition, wxDefaultSize);
         tab_name_ctrl_ =
             new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-        tab_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::changeCurrentTabName, main_window_ptr);
+        tab_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &LayoutToolsWindow::changeCurrentTabName, this);
 
         sizer_inside->Add(tab_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(tab_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);
@@ -56,7 +72,7 @@ void LayoutToolsWindow::setupInspector()
             new wxStaticText(inspector_box_, wxID_ANY, "Element name", wxDefaultPosition, wxDefaultSize);
         element_name_ctrl_ =
             new wxTextCtrl(inspector_box_, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-        element_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainWindow::changeCurrentElementName, main_window_ptr);
+        element_name_ctrl_->Bind(wxEVT_COMMAND_TEXT_UPDATED, &LayoutToolsWindow::changeCurrentElementName, this);
 
         sizer_inside->Add(element_name_label, 1, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(element_name_ctrl_, 1, wxALIGN_CENTER_HORIZONTAL);
@@ -67,16 +83,14 @@ void LayoutToolsWindow::setupInspector()
 
 void LayoutToolsWindow::setupShapes()
 {
-    MainWindow* main_window_ptr = dynamic_cast<MainWindow*>(main_window_);
-
     wxBoxSizer* global_sizer = new wxBoxSizer(wxVERTICAL);
 
     {
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxButton* new_tab_button = new wxButton(shapes_box_, wxID_ANY, "New tab", wxDefaultPosition);
         wxButton* delete_tab_button = new wxButton(shapes_box_, wxID_ANY, "Delete tab", wxDefaultPosition);
-        new_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::addNewTabCallback, main_window_ptr);
-        delete_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::deleteTab, main_window_ptr);
+        new_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LayoutToolsWindow::addNewTabCallback, this);
+        delete_tab_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LayoutToolsWindow::deleteTab, this);
 
         sizer_inside->Add(new_tab_button, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(delete_tab_button, 0, wxALIGN_CENTER_HORIZONTAL);
@@ -86,8 +100,8 @@ void LayoutToolsWindow::setupShapes()
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxButton* new_window_button = new wxButton(shapes_box_, wxID_ANY, "New window", wxDefaultPosition);
         wxButton* delete_window_button = new wxButton(shapes_box_, wxID_ANY, "Delete window", wxDefaultPosition);
-        new_window_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::addNewWindowCallback, main_window_ptr);
-        delete_window_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::deleteWindow, main_window_ptr);
+        new_window_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LayoutToolsWindow::addNewWindowCallback, this);
+        delete_window_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LayoutToolsWindow::deleteWindow, this);
 
         sizer_inside->Add(new_window_button, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(delete_window_button, 0, wxALIGN_CENTER_HORIZONTAL);
@@ -97,14 +111,56 @@ void LayoutToolsWindow::setupShapes()
         wxBoxSizer* sizer_inside = new wxBoxSizer(wxVERTICAL);
         wxButton* new_element_button = new wxButton(shapes_box_, wxID_ANY, "New element", wxDefaultPosition);
         wxButton* delete_element_button = new wxButton(shapes_box_, wxID_ANY, "Delete element", wxDefaultPosition);
-        new_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::newElement, main_window_ptr);
-        delete_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::deleteElement, main_window_ptr);
+        new_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LayoutToolsWindow::newElement, this);
+        delete_element_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LayoutToolsWindow::deleteElement, this);
 
         sizer_inside->Add(new_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer_inside->Add(delete_element_button, 0, wxALIGN_CENTER_HORIZONTAL);
         global_sizer->Add(sizer_inside, 1, wxALIGN_CENTER_HORIZONTAL);
     }
     shapes_box_->SetSizer(global_sizer);
+}
+
+void LayoutToolsWindow::addNewTabCallback(wxCommandEvent& WXUNUSED(event))
+{
+    add_new_tab_();
+}
+
+void LayoutToolsWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
+{
+    delete_tab_();
+}
+
+void LayoutToolsWindow::addNewWindowCallback(wxCommandEvent& WXUNUSED(event))
+{
+    add_new_window_();
+}
+
+void LayoutToolsWindow::deleteWindow(wxCommandEvent& WXUNUSED(event))
+{
+    delete_window_();
+}
+
+void LayoutToolsWindow::newElement(wxCommandEvent& WXUNUSED(event))
+{
+    add_new_element_();
+}
+
+void LayoutToolsWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
+{
+    delete_element_();
+}
+
+void LayoutToolsWindow::changeCurrentTabName(wxCommandEvent& event)
+{
+    const wxString value = event.GetString();
+    change_current_tab_name_(std::string(value.mb_str()));
+}
+
+void LayoutToolsWindow::changeCurrentElementName(wxCommandEvent& event)
+{
+    const wxString value = event.GetString();
+    change_current_element_name_(std::string(value.mb_str()));
 }
 
 void LayoutToolsWindow::setCurrentTabName(const std::string& tab_name)

@@ -1,5 +1,5 @@
-#ifndef DVS_INTERVAL_1D_H_
-#define DVS_INTERVAL_1D_H_
+#ifndef DVS_MATH_STRUCTURES_INTERVAL_1D_H_
+#define DVS_MATH_STRUCTURES_INTERVAL_1D_H_
 
 #include <cmath>
 #include <iostream>
@@ -123,4 +123,4 @@ T mapAndClampValueToInterval(const T value, const Interval1D<T>& value_interval,
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_STRUCTURES_INTERVAL_1D_H_

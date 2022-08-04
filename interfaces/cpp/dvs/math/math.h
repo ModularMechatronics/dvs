@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_H_
-#define DVS_MATH_H_
+#ifndef DVS_MATH_MATH_H_
+#define DVS_MATH_MATH_H_
 
 // clang-format off
 #include "dvs/math/misc/forward_decl.h"
@@ -41,4 +41,4 @@
 
 // clang-format on
 
-#endif
+#endif // DVS_MATH_MATH_H_

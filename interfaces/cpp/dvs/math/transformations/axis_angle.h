@@ -1,5 +1,5 @@
-#ifndef DVS_AXIS_ANGLE_H_
-#define DVS_AXIS_ANGLE_H_
+#ifndef DVS_MATH_TRANSFORMATIONS_AXIS_ANGLE_H_
+#define DVS_MATH_TRANSFORMATIONS_AXIS_ANGLE_H_
 
 #include "dvs/math/lin_alg.h"
 #include "dvs/math/transformations/class_defs/axis_angle_class_def.h"
@@ -133,4 +133,4 @@ template <typename T> AxisAngle<T> rotationMatrixToAxisAngle(const Matrix<T>& m)
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_TRANSFORMATIONS_AXIS_ANGLE_H_

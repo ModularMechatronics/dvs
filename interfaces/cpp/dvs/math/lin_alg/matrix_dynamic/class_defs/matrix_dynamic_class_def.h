@@ -1,5 +1,5 @@
-#ifndef DVS_MATRIX_DYNAMIC_CLASS_H_
-#define DVS_MATRIX_DYNAMIC_CLASS_H_
+#ifndef DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_CLASS_DEFS_MATRIX_DYNAMIC_CLASS_DEF_H_
+#define DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_CLASS_DEFS_MATRIX_DYNAMIC_CLASS_DEF_H_
 
 #include "dvs/math/misc/forward_decl.h"
 
@@ -81,7 +81,7 @@ public:
     void fill(const T val);
     void switchRows(size_t r0, size_t r1);
     void switchColumns(size_t c0, size_t c1);
-    T* getDataPointer() const;
+    T* data() const;
     void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
     Matrix<T> getTranspose() const;
     void transpose();
@@ -151,4 +151,4 @@ public:
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_CLASS_DEFS_MATRIX_DYNAMIC_CLASS_DEF_H_

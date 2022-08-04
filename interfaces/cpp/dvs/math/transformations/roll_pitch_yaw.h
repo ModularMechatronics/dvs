@@ -1,5 +1,5 @@
-#ifndef DVS_ROLL_PITCH_YAW_H_
-#define DVS_ROLL_PITCH_YAW_H_
+#ifndef DVS_MATH_TRANSFORMATIONS_ROLL_PITCH_YAW_H_
+#define DVS_MATH_TRANSFORMATIONS_ROLL_PITCH_YAW_H_
 
 #include <cmath>
 
@@ -117,4 +117,4 @@ template <typename T> RollPitchYaw<T> rotationMatrixToRollPitchYaw(const Matrix<
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_TRANSFORMATIONS_ROLL_PITCH_YAW_H_

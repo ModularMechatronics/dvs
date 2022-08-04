@@ -1,5 +1,5 @@
-#ifndef DVS_IMAGE_C1_H_
-#define DVS_IMAGE_C1_H_
+#ifndef DVS_MATH_IMAGE_IMAGE_C1_H_
+#define DVS_MATH_IMAGE_IMAGE_C1_H_
 
 #include <assert.h>
 #include <stdint.h>
@@ -42,7 +42,7 @@ public:
     void mapBetween(T image_min, T image_max, T min_value, T max_value);
     size_t numElements() const;
     size_t size() const;
-    T* getDataPointer() const;
+    T* data() const;
 };
 
 template <typename T> ImageC1<T>::~ImageC1()
@@ -136,7 +136,7 @@ template <typename T> size_t ImageC1<T>::numElements() const
     return num_rows_ * num_cols_;
 }
 
-template <typename T> T* ImageC1<T>::getDataPointer() const
+template <typename T> T* ImageC1<T>::data() const
 {
     return data_;
 }
@@ -215,4 +215,4 @@ template <typename T> T ImageC1<T>::max() const
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_IMAGE_IMAGE_C1_H_

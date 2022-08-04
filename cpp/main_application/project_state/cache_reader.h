@@ -1,5 +1,5 @@
-#ifndef DVS_CACHE_READER_H_
-#define DVS_CACHE_READER_H_
+#ifndef MAIN_APPLICATION_PROJECT_STATE_CACHE_READER_H_
+#define MAIN_APPLICATION_PROJECT_STATE_CACHE_READER_H_
 
 #include <fstream>
 #include <iomanip>
@@ -73,4 +73,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_PROJECT_STATE_CACHE_READER_H_

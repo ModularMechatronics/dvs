@@ -1,6 +1,6 @@
 
-#ifndef DVS_FORWARD_DECL_H_
-#define DVS_FORWARD_DECL_H_
+#ifndef DVS_MATH_MISC_FORWARD_DECL_H_
+#define DVS_MATH_MISC_FORWARD_DECL_H_
 
 #include <cassert>
 #include <cmath>
@@ -84,4 +84,4 @@ template <typename T> using PointYZ = VecYZ<T>;
 #include "dvs/math/structures/interval_1d.h"*/
 // clang-format on
 
-#endif
+#endif // DVS_MATH_MISC_FORWARD_DECL_H_

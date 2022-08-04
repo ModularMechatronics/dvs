@@ -1,5 +1,5 @@
-#ifndef AXES_LIMITS_H_
-#define AXES_LIMITS_H_
+#ifndef MAIN_APPLICATION_AXES_STRUCTURES_AXES_LIMITS_H_
+#define MAIN_APPLICATION_AXES_STRUCTURES_AXES_LIMITS_H_
 
 #include "dvs/math/math.h"
 
@@ -33,4 +33,4 @@ public:
     Vec3Dd getAxesScale() const;
 };
 
-#endif
+#endif // MAIN_APPLICATION_AXES_STRUCTURES_AXES_LIMITS_H_

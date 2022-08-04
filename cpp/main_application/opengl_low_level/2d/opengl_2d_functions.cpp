@@ -31,7 +31,7 @@ void setPointSize(const float point_size)
     glPointSize(point_size);
 }
 
-void drawPoints2D(const Vectord& x_values, const Vectord& y_values)
+/*void drawPoints2D(const Vectord& x_values, const Vectord& y_values)
 {
     assert(x_values.size() > 1);
     assert(x_values.size() == y_values.size());
@@ -66,4 +66,4 @@ void drawLines2D(const Vectord& x_values, const Vectord& y_values)
     }
 
     glEnd();
-}
+}*/

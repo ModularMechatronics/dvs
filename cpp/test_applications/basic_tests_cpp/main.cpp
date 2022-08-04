@@ -41,6 +41,8 @@ int main(int argc, char* argv[])
     fcns["drawLineBetweenPoints"] = testDrawLineBetweenPoints;
     fcns["drawArrow"] = testDrawArrow;
     fcns["stairs"] = testStairs;
+    fcns["xyzPlanes"] = testDrawXYZPlane;
+    fcns["legend"] = testLegend;
 
     if (argc == 1)
     {

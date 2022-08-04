@@ -110,6 +110,26 @@ bool ViewAngles::isSnappedAlongZ() const
     return (std::abs(M_PI_2 - abs_el) < angle_limit_);
 }
 
+SnappingAxis ViewAngles::getSnappingAxis() const
+{
+    if(isSnappedAlongX())
+    {
+        return SnappingAxis::X;
+    }
+    else if(isSnappedAlongY())
+    {
+        return SnappingAxis::Y;
+    }
+    else if(isSnappedAlongZ())
+    {
+        return SnappingAxis::Z;
+    }
+    else
+    {
+        return SnappingAxis::None;
+    }
+}
+
 double ViewAngles::getSnappedElevation() const
 {
     return snapped_elevation_;

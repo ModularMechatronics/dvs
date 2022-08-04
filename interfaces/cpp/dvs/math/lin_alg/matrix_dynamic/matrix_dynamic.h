@@ -1,5 +1,5 @@
-#ifndef DVS_MATRIX_DYNAMIC_H_
-#define DVS_MATRIX_DYNAMIC_H_
+#ifndef DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_
+#define DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_
 
 #include <cmath>
 #include <cstring>
@@ -48,7 +48,7 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 template <typename T> Matrix<T>::Matrix(Matrix<T>&& m)
 {
     DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
-    data_ = m.getDataPointer();
+    data_ = m.data();
     num_rows_ = m.rows();
     num_cols_ = m.cols();
 
@@ -99,7 +99,7 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
         num_cols_ = m.cols();
         is_allocated_ = true;
 
-        data_ = m.getDataPointer();
+        data_ = m.data();
 
         m.setInternalData(nullptr, 0, 0);
     }
@@ -340,7 +340,7 @@ template <typename T> void Matrix<T>::setInternalData(T* const input_ptr, const 
     num_cols_ = num_cols;
 }
 
-template <typename T> T* Matrix<T>::getDataPointer() const
+template <typename T> T* Matrix<T>::data() const
 {
     return data_;
 }
@@ -437,7 +437,7 @@ template <typename T> bool Matrix<T>::isAllocated() const
 
 template <typename T> void Matrix<T>::fill(T val)
 {
-    assert(is_allocated_ && "Tried to fill un allocated vector!");
+    assert(is_allocated_ && "Tried to fill unallocated vector!");
     for (size_t k = 0; k < num_rows_ * num_cols_; k++)
     {
         data_[k] = val;
@@ -1477,4 +1477,4 @@ template <typename T> Matrix<T> uniqueMatrix(const size_t rows, const size_t col
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_

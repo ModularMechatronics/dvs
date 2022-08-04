@@ -1,5 +1,5 @@
-#ifndef MAIN_WINDOW_H_
-#define MAIN_WINDOW_H_
+#ifndef APPLICATIONS_SHADER_APP_MAIN_WINDOW_H_
+#define APPLICATIONS_SHADER_APP_MAIN_WINDOW_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -49,4 +49,4 @@ public:
 
 };
 
-#endif
+#endif // APPLICATIONS_SHADER_APP_MAIN_WINDOW_H_

@@ -1,0 +1,23 @@
+Projection according to glm
+
+// glm::vec3 arb_pt(0.12, 0.1, 2.3);
+// glm::vec4 arb_pt4(0.12, 0.1, 2.3, 1.0);
+glm::vec3 arb_pt(1.0, 1.0, 1.0);
+glm::vec4 arb_pt4(1.0, 1.0, 1.0, 1.0);
+const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
+
+glm::vec4 res = projection_mat * view_mat * model_mat * arb_pt4;
+res /= res.w;
+res = res * 0.5f + 0.5f;
+res.x = res.x * 2.0f - 1.0f;
+res.y = res.y * 2.0f - 1.0f;
+
+const glm::vec3 vp = glm::project(arb_pt,
+                        view_mat * model_mat,
+                        projection_mat,
+                        v_viewport);
+std::cout << "arb_pt: " << vp.x << ", " << vp.y << ", " << vp.z << std::endl;
+std::cout << "   res: " << res.x << ", " << res.y << ", " << res.z << std::endl << std::endl;
+// drawGridNumbers(text_renderer_, text_shader_, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
+glUseProgram(text_shader_.programId());
+text_renderer_.renderTextFromRightCenter("Z", res.x, res.y, 0.0005f, width_, height_);

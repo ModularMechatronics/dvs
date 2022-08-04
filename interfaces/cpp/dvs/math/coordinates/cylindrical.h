@@ -1,5 +1,5 @@
-#ifndef DVS_CYLINDRICAL_H_
-#define DVS_CYLINDRICAL_H_
+#ifndef DVS_MATH_COORDINATES_CYLINDRICAL_H_
+#define DVS_MATH_COORDINATES_CYLINDRICAL_H_
 
 #include <cmath>
 #include <vector>
@@ -35,4 +35,4 @@ template <typename T> Vec3D<T> CylindricalCoord<T>::toVec3D() const
 }
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_COORDINATES_CYLINDRICAL_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_VEC3D_CLASS_H_
-#define DVS_VEC3D_CLASS_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_CLASS_DEFS_VEC3D_CLASS_DEF_H_
+#define DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_CLASS_DEFS_VEC3D_CLASS_DEF_H_
 
 #include "dvs/math/misc/forward_decl.h"
 
@@ -40,4 +40,4 @@ template <typename T> struct Vec3D
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_CLASS_DEFS_VEC3D_CLASS_DEF_H_

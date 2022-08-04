@@ -1,5 +1,5 @@
-#ifndef PLOTWINDOW_GL_PLANE_
-#define PLOTWINDOW_GL_PLANE_
+#ifndef MAIN_APPLICATION_PLOT_WINDOW_GL_PANE_H_
+#define MAIN_APPLICATION_PLOT_WINDOW_GL_PANE_H_
 
 #include <wx/glcanvas.h>
 #include <wx/notebook.h>
@@ -53,11 +53,12 @@ enum class CursorSquareState
 class PlotWindowGLPane : public wxGLCanvas, public GuiElement
 {
 private:
+    wxGLContext* getContext();
     wxGLContext* m_context;
 
-    AxesInteractor* axes_interactor_;
-    AxesPainter* axes_painter_;
     AxesSettings axes_settings_;
+    AxesInteractor axes_interactor_;
+    AxesRenderer* axes_renderer_;
     MouseButtonState left_mouse_button_;
     KeyboardState keyboard_state_;
     CursorSquareState cursor_state_at_press_;
@@ -68,15 +69,19 @@ private:
 
     int args[9];
 
+    bool perspective_projection_;
+
     int* getArgsPtr();
     wxSize parent_size_;
     Vec2Df mouse_pos_at_press_;
+    Vec2Df current_mouse_pos_;
     wxPoint pos_at_press_;
     wxSize size_at_press_;
     float grid_size_;
     float edit_size_margin_;
 
-    PlotDataHandler plot_data_handler_;
+    PlotDataHandler* plot_data_handler_;
+    ShaderCollection shader_collection_;
 
     SuperBase* view_parent_;
 
@@ -86,10 +91,16 @@ private:
     void notifyParentAboutModification();
     bool is3DFunction(const Function fcn);
     bool isImageFunction(const Function fcn);
+    void initShaders();
     MouseInteractionAxis current_mouse_interaction_axis_;
+    float legend_scale_factor_ = 1.0f;
 
 public:
-    PlotWindowGLPane(wxNotebookPage* parent, const ElementSettings& element_settings, const float grid_size);
+    PlotWindowGLPane(wxNotebookPage* parent,
+        const ElementSettings& element_settings,
+        const float grid_size,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released);
     ~PlotWindowGLPane();
 
     int getWidth();
@@ -109,6 +120,9 @@ public:
     void refresh() override;
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
+    void showLegend(const bool show_legend) override;
+    void keyPressedCallback(wxKeyEvent& evt);
+    void keyReleasedCallback(wxKeyEvent& evt);
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);
@@ -119,4 +133,4 @@ public:
     void bindCallbacks();
 };
 
-#endif
+#endif // MAIN_APPLICATION_PLOT_WINDOW_GL_PANE_H_

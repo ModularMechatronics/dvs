@@ -430,4 +430,4 @@ inline void showThreadId(const bool show_thread_id)
         DVS_LOG_DEBUG() << msg << delta_time << " us";                                                                 \
     }
 
-#endif
+#endif // DVS_LOGGING_H_

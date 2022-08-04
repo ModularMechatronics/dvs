@@ -1,5 +1,5 @@
-#ifndef DVS_VEC3D_H_
-#define DVS_VEC3D_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3D_H_
+#define DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3D_H_
 
 #include <cmath>
 
@@ -295,4 +295,4 @@ template <typename T> Vec3D<T> projectVectorOntoVector(const Vec3D<T> v0, const 
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3D_H_

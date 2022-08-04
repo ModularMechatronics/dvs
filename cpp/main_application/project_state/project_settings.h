@@ -1,5 +1,5 @@
-#ifndef PROJECT_SETTINGS_H_
-#define PROJECT_SETTINGS_H_
+#ifndef MAIN_APPLICATION_PROJECT_STATE_PROJECT_SETTINGS_H_
+#define MAIN_APPLICATION_PROJECT_STATE_PROJECT_SETTINGS_H_
 
 #include <fstream>
 #include <memory>
@@ -393,4 +393,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_PROJECT_STATE_PROJECT_SETTINGS_H_

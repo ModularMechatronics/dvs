@@ -1,5 +1,5 @@
-#ifndef DVS_VIEW_BASE_H_
-#define DVS_VIEW_BASE_H_
+#ifndef MAIN_APPLICATION_VIEW_BASE_H_
+#define MAIN_APPLICATION_VIEW_BASE_H_
 
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -38,11 +38,19 @@ protected:
     bool is_editing_;
     std::string name_of_selected_element_;
     SettingsBase* settings_;
+    std::function<void(const char key)> notify_main_window_key_pressed_;
+    std::function<void(const char key)> notify_main_window_key_released_;
 
 public:
     ViewBase() = delete;
-    ViewBase(wxFrame* parent, const WindowSettings& window_settings);
-    ViewBase(wxNotebookPage* parent, const TabSettings& tab_settings);
+    ViewBase(wxFrame* parent,
+        const WindowSettings& window_settings,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released);
+    ViewBase(wxNotebookPage* parent,
+        const TabSettings& tab_settings,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released);
 
     std::map<std::string, GuiElement*> getGuiElements() const;
     std::string getName() const;
@@ -65,7 +73,13 @@ public:
 };
 
 template <typename T>
-ViewBase<T>::ViewBase(wxFrame* parent, const WindowSettings& window_settings) : wxFrame(parent, wxID_ANY, "Figure 1")
+ViewBase<T>::ViewBase(wxFrame* parent,
+    const WindowSettings& window_settings,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released) : 
+        wxFrame(parent, wxID_ANY, "Figure 1"),
+        notify_main_window_key_pressed_{notify_main_window_key_pressed},
+        notify_main_window_key_released_{notify_main_window_key_released}
 {
     grid_size_ = 1.0f;
     name_ = window_settings.getName();
@@ -84,7 +98,13 @@ ViewBase<T>::ViewBase(wxFrame* parent, const WindowSettings& window_settings) : 
 }
 
 template <typename T>
-ViewBase<T>::ViewBase(wxNotebookPage* parent, const TabSettings& tab_settings) : wxNotebookPage(parent, -1)
+ViewBase<T>::ViewBase(wxNotebookPage* parent,
+    const TabSettings& tab_settings,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released) :
+        wxNotebookPage(parent, -1),
+        notify_main_window_key_pressed_{notify_main_window_key_pressed},
+        notify_main_window_key_released_{notify_main_window_key_released}
 {
     grid_size_ = 1.0f;
     name_ = tab_settings.getName();
@@ -260,4 +280,4 @@ template <class BaseClass> void ViewBase<BaseClass>::setSize(const wxSize& new_s
     }
 }
 
-#endif
+#endif // MAIN_APPLICATION_VIEW_BASE_H_

@@ -1,5 +1,5 @@
-#ifndef DVS_COMPLEX_H_
-#define DVS_COMPLEX_H_
+#ifndef DVS_MATH_COORDINATES_COMPLEX_H_
+#define DVS_MATH_COORDINATES_COMPLEX_H_
 
 #include <cmath>
 #include <vector>
@@ -107,4 +107,4 @@ template <typename T> ComplexCoord<T> operator/(const T f, const ComplexCoord<T>
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_COORDINATES_COMPLEX_H_

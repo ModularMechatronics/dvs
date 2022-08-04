@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_TYPE_DEFINITIONS_H_
-#define DVS_MATH_TYPE_DEFINITIONS_H_
+#ifndef DVS_MATH_PRE_DEFS_H_
+#define DVS_MATH_PRE_DEFS_H_
 
 #include "dvs/math/misc/forward_decl.h"
 
@@ -63,4 +63,4 @@ typedef Vec2D<int> Vec2Di;
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_PRE_DEFS_H_

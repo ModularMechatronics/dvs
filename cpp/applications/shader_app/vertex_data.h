@@ -1,5 +1,5 @@
-#ifndef SHADER_VERTEX_DATA_
-#define SHADER_VERTEX_DATA_
+#ifndef APPLICATIONS_SHADER_APP_VERTEX_DATA_H_
+#define APPLICATIONS_SHADER_APP_VERTEX_DATA_H_
 
 /********************** CUBE **********************/
 
@@ -117,4 +117,4 @@ Y - green
 Z - blue
 */
 
-#endif
+#endif // APPLICATIONS_SHADER_APP_VERTEX_DATA_H_

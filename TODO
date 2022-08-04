@@ -1,42 +1,90 @@
+Pre release:
+- Add "owns_memory_" field to Matrix, Vector, to signify if data should be freed
+ * Or plotting of new "view" structures, where one can set data pointers without ownership
+ * MatrixBase and VectorBase to have all operations, and own T* data, size, num_rows, num_cols
+- Generic "buffer" class that can be used to send Line3D, Triangles, etc.
+- Verify that image is not mirrored
+- Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
+- Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
+- Rename Vec2D/3D/4D to Vec2/3/4
+- Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
+- Refactor/clean up window/tabs/plot elements system
+- Add "holdClear" that only clears when new data comes in, to avoid flashing
+- Remove need to always specify num_elements
+- Function "view" is the one that sets/creates the current element
+  view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
+- Rename "linspaceFromPointsAndCount" to "linspaceEdgesAndCount" or "linspaceBoundariesAndCount"
+- Rename "cpp" folder to "src" and move "interfaces" into it (and update header_guard.py)
+- Dashed line for plot and plot3
+- Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
+- Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
+- Rename "FunctionHeader" to "TransmissionHeader" and "FunctionHeaderObject" to "TransmissionHeaderObject"
+- Rename PlotWindowGLPane to PlotCanvas, or GLPlotCanvas, or PlotPane (probably unecessary to include "GL" in name)
+- Mark all properties classes constructors explicit (and noexcept?)
+- Change to google logging
+- Change static functions of ColorMap, Color, EdgeColor etc to not be all case, but PascalCase
+- FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side
+- Add pan and zoom to scroll click and right click
+- Delete gl buffers with "glDeleteBuffers"
+- Change plot-LINE_STRIP to separate function, lineCollection, lineSet or something like that
+- Replace old c type arrays with std::array
+- Reducing number of axis numbers depending on rotation
+- Making sure that view and axes are set properly when not explicitly setting them
+  - Behaviour when plotting when no configuration is set
+- Fix layout designer
+- Change "data" to "data" for Matrix, Vector, etc.
+- Fix number formatting and grid vectors system
+- Fix showing correct plot walls when in perspective mode
+- Unify MouseActivity and InteractionType
+- Fix panning "speed"
+- Make font smaller, fewer line points per axis
+- Make sure all dynamic data is released in plot objects
+- Release all textures, VBOs/VAOs in plot objects
+- Refactor pipeline of how new plot objects are added
+- Implement findMinMax for matrices and vectors
+- Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
+- Make sure plot/plot3 works for integer data types
+- Stem plot
+- Bar plot
+- Change types from float to double, to increase precision
+- "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
+- Change Bound2/3D to actually be a bound, now it's a vector, and to get a bound you use std::pair<Bound2D, Bound2D>, which isn't ideal
+- Matrix/vector/image view for setting data in plot object: img_c1_.setInternalData(nullptr, 0, 0);  // Hack
+- Receive and push new data until there is new data available, and refresh only after last update
+- "dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();", Possible remove need for specifying type and enum?
+- Don't always update on keypress?
+- Rename getAxesScale to getScale
+- Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
+- "UInt8View" or something for "void fillBufferWithData(uint8_t* const buffer) const;" functions, that contains pointer and size
+- LegendProperties to use reference_wrapper instead of pointer to colormap
+- Gradient min/max (like for surf) for draw mesh and other 3d functions 
+- Change all functions to accept "View" types, and then have constructor of VectorView from Vector, MatrixView from Matrix etc
+- Log axes xyz
+- Time date axis
+- Unify (plot) shaders to one big shader with switch case?
+- Separate plot types so that shader switching is minimized
+
+Post release:
+- Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
+- Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
+- Contour plotting function
 - setCurrentElement doesn''t send any information to dvs, only sets internal variable on client side which is sent with the next command
   - This way, a property type could be added, so that the current element can be specified in the function call
 - The class Properties should be moved so that it is not included in the C++ client interface.
 - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
-- Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
-- Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
-- Add "owns_memory_" field to Matrix, Vector, to signify if data should be freed
-- Add "holdClear" that only clears when new data comes in, to avoid flashing
 - More general plot interface with "templated templates": plot(const VectorType<T>& x, ...), where VectorType itself is a template
 - Edge and Facecolor transparent
-- Generic "buffer" class that can be used to send Line3D, Triangles, etc.
-- Remove need to always specify num_elements
-- Verify that image is not mirrored
-- Function "view" is the one that sets/creates the current element
-  view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
-- Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
-- Rename HomogenousLine and ParametricLine to HLine and Pline?
-- Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
-- Rename Vec2D/3D/4D to Vec2/3/4
-- Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate
-  2D/3D functions
-- Rename "linspaceFromPointsAndCount" to "linspaceEdgesAndCount" or "linspaceBoundariesAndCount"
-- Remove drawLine2DBetweenXValues and drawLine2DBetweenYValues
-- Set point size before rendering text (it gets affected by setting point size in a plot)
-- Remove "drawTriangle source file" (It uses drawTriangles)
-- functions "drawArrow" and "quiver"
-- Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
-- Rename "FunctionHeader" to "Header" and "FunctionHeaderObject" to "HeaderObject"
-- Add pan and zoom to scroll click and right click
-- Delete gl buffers with "glDeleteBuffers"
-- Change plot-LINE_STRIP to separate function, lineCollection or something like that
-
-#### Bigger features
 - Fix so that one can set axis square and axis equal
-- Nice characters with AA
+- Nice looking buttons in interface
+- Ability to add button to gui
+- quiver3
+- Ability to set FOV
+- Show plot walls differently if perspective projection
+- Programatically specicy plots in different windows
 - Characters turning away from plot box when rotating
-- Reducing number of axis numbers depending on rotation
-- Zoom rectangle if snapped
-- Don't zoom perpendicular axis if snapped
-- Making sure that view and axes are set properly when not explicitly setting them
-  - Behaviour when plotting when no configuration is set
-- Imshow 1 and 3 channels + arbitrary data type
+- 3D world
+- http://www.opengl.org/wiki/Buffer_Object_Streaming
+
+Unsure:
+- Command line window that prints errors etc.
+- Set order in which different types are plotted

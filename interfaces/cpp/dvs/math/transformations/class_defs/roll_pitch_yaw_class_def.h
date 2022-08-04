@@ -1,5 +1,5 @@
-#ifndef DVS_ROLL_PITCH_YAW_CLASS_H_
-#define DVS_ROLL_PITCH_YAW_CLASS_H_
+#ifndef DVS_MATH_TRANSFORMATIONS_CLASS_DEFS_ROLL_PITCH_YAW_CLASS_DEF_H_
+#define DVS_MATH_TRANSFORMATIONS_CLASS_DEFS_ROLL_PITCH_YAW_CLASS_DEF_H_
 
 #include "dvs/math/misc/forward_decl.h"
 
@@ -27,4 +27,4 @@ template <typename T> struct RollPitchYaw
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_TRANSFORMATIONS_CLASS_DEFS_ROLL_PITCH_YAW_CLASS_DEF_H_

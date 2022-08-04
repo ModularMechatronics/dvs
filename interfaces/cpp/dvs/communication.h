@@ -1,5 +1,5 @@
-#ifndef COMMUNICATION_H_
-#define COMMUNICATION_H_
+#ifndef DVS_COMMUNICATION_H_
+#define DVS_COMMUNICATION_H_
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -83,4 +83,4 @@ public:
     }
 };
 
-#endif
+#endif // DVS_COMMUNICATION_H_

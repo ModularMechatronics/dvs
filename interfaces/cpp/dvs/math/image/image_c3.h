@@ -1,5 +1,5 @@
-#ifndef DVS_IMAGE_C3_H_
-#define DVS_IMAGE_C3_H_
+#ifndef DVS_MATH_IMAGE_IMAGE_C3_H_
+#define DVS_MATH_IMAGE_IMAGE_C3_H_
 
 #include <assert.h>
 #include <stdint.h>
@@ -38,7 +38,7 @@ public:
     void fill(T fill_val);
     size_t numElements() const;
     size_t size() const;
-    T* getDataPointer() const;
+    T* data() const;
 };
 
 template <typename T> ImageC3<T>::~ImageC3()
@@ -112,7 +112,7 @@ template <typename T> size_t ImageC3<T>::numElements() const
     return num_rows_ * num_cols_ * 3;
 }
 
-template <typename T> T* ImageC3<T>::getDataPointer() const
+template <typename T> T* ImageC3<T>::data() const
 {
     return data_;
 }
@@ -164,4 +164,4 @@ template <typename T> bool ImageC3<T>::isAllocated() const
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_IMAGE_IMAGE_C3_H_

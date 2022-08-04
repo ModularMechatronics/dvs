@@ -1,5 +1,5 @@
-#ifndef DVS_ENUMS_H_
-#define DVS_ENUMS_H_
+#ifndef DVS_ENUMERATIONS_H_
+#define DVS_ENUMERATIONS_H_
 
 #include <stdint.h>
 
@@ -48,6 +48,7 @@ enum class PropertyType : uint8_t
     POINT_SIZE,
     LINE_STRIP,
     PERSISTENT,
+    SCATTER_STYLE,
     UNKNOWN
 };
 
@@ -62,6 +63,8 @@ enum class Function : uint8_t
     GRID_OFF,
     PLOT2,
     PLOT3,
+    FAST_PLOT2,
+    FAST_PLOT3,
     PLOT2_COLLECTION,
     PLOT3_COLLECTION,
     SET_CURRENT_ELEMENT,
@@ -88,6 +91,7 @@ enum class Function : uint8_t
     CLEAR,
     SOFT_CLEAR,
     STAIRS,
+    SHOW_LEGEND,
     UNKNOWN
 };
 
@@ -124,6 +128,22 @@ enum class ColorMapType : uint8_t
     UNKNOWN
 };
 
+enum class ScatterStyleType : uint8_t
+{
+    SQUARE,
+    CIRCLE,
+    DISC,
+    PLUS,
+    CROSS
+};
+
+enum class LineStyleType : uint8_t
+{
+    DASHED,
+    DOTTED,
+    LONG_DASHED
+};
+
 }  // namespace internal
 
 namespace properties
@@ -151,4 +171,4 @@ enum class ElementParent : uint8_t
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_ENUMERATIONS_H_

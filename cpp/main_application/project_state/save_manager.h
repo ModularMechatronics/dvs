@@ -1,5 +1,5 @@
-#ifndef SAVE_MANAGER_H_
-#define SAVE_MANAGER_H_
+#ifndef MAIN_APPLICATION_PROJECT_STATE_SAVE_MANAGER_H_
+#define MAIN_APPLICATION_PROJECT_STATE_SAVE_MANAGER_H_
 
 #include <iomanip>
 #include <nlohmann/json.hpp>
@@ -124,4 +124,4 @@ public:
     }
 };
 
-#endif
+#endif // MAIN_APPLICATION_PROJECT_STATE_SAVE_MANAGER_H_

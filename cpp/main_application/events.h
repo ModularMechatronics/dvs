@@ -1,5 +1,5 @@
-#ifndef DVS_EVENTS_H_
-#define DVS_EVENTS_H_
+#ifndef MAIN_APPLICATION_EVENTS_H_
+#define MAIN_APPLICATION_EVENTS_H_
 
 #include <wx/wx.h>
 
@@ -9,6 +9,7 @@ wxDECLARE_EVENT(GUI_ELEMENT_CHANGED_EVENT, wxCommandEvent);
 wxDECLARE_EVENT(NO_ELEMENT_SELECTED, wxCommandEvent);
 wxDECLARE_EVENT(CHILD_WINDOW_CLOSED_EVENT, wxCommandEvent);
 wxDECLARE_EVENT(CHILD_WINDOW_IN_FOCUS_EVENT, wxCommandEvent);
+wxDECLARE_EVENT(NEW_EVENT, wxCommandEvent);
 
 namespace dvs_ids
 {
@@ -18,10 +19,13 @@ enum DvsIds : uint16_t
     DELETE_TAB,
     ADD_TAB,
     EDIT_LAYOUT,
+    PREFERENCES,
+    SHOW_MAIN_WINDOW,
     TOGGLE_WINDOW_VISIBILITY,
-    WINDOW_TOGGLE = wxID_HIGHEST + 1000
+    WINDOW_TOGGLE = wxID_HIGHEST + 1000,
+    NEW_EVENT_ID
 };
 
 }
 
-#endif
+#endif // MAIN_APPLICATION_EVENTS_H_

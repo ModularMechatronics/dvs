@@ -1,0 +1,8 @@
+docker build -t fd_docker .
+
+docker run --rm -it -p 2222:22 -v $(pwd):/home/app test_docker_image fish
+docker run --rm -it -v $(pwd):/home/app test_docker_image fish
+
+Change "Port 22" to "Port 2222" in /etc/ssh/sshd_config
+
+service ssh start

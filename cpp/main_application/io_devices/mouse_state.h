@@ -1,5 +1,5 @@
-#ifndef MOUSE_STATE_H_
-#define MOUSE_STATE_H_
+#ifndef MAIN_APPLICATION_IO_DEVICES_MOUSE_STATE_H_
+#define MAIN_APPLICATION_IO_DEVICES_MOUSE_STATE_H_
 
 #include "dvs/math/math.h"
 
@@ -37,4 +37,4 @@ public:
     Vec2Di getDeltaPos() const;
 };
 
-#endif
+#endif // MAIN_APPLICATION_IO_DEVICES_MOUSE_STATE_H_

@@ -2,7 +2,7 @@
 
 namespace color_maps
 {
-const RGBColorMap<float> rainbowf(
+RGBColorMap<float> rainbowf(
     {
         RGBTriplet<float>(1, 1, 0),
         RGBTriplet<float>(0, 1, 0),
@@ -13,7 +13,7 @@ const RGBColorMap<float> rainbowf(
     },
     1000);
 
-const RGBColorMap<float> magmaf(
+RGBColorMap<float> magmaf(
     {
         RGBTriplet<float>(6.0f / 255.0f, 3.0f / 255.0f, 23.0f / 255.0f),
         RGBTriplet<float>(109.0f / 255.0f, 15.0f / 255.0f, 128.0f / 255.0f),
@@ -22,7 +22,7 @@ const RGBColorMap<float> magmaf(
     },
     1000);
 
-const RGBColorMap<float> viridisf(
+RGBColorMap<float> viridisf(
     {
         RGBTriplet<float>(67.0f / 255.0f, 0.0f / 255.0f, 84.0f / 255.0f),
         RGBTriplet<float>(71.0f / 255.0f, 42.0f / 255.0f, 124.0f / 255.0f),
@@ -36,7 +36,7 @@ const RGBColorMap<float> viridisf(
     },
     1000);
 
-const RGBColorMap<float> jetf(
+RGBColorMap<float> jetf(
     {
         RGBTriplet<float>(19.0f / 255.0f, 0.0f / 255.0f, 130.05 / 255.0f),
         RGBTriplet<float>(48.0f / 255.0f, 12.0f / 255.0f, 253.05 / 255.0f),

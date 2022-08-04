@@ -1,5 +1,5 @@
-#ifndef DVS_VECTOR_DYNAMIC_CLASS_H_
-#define DVS_VECTOR_DYNAMIC_CLASS_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_CLASS_DEFS_VECTOR_DYNAMIC_CLASS_DEF_H_
+#define DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_CLASS_DEFS_VECTOR_DYNAMIC_CLASS_DEF_H_
 
 #include <iterator>
 
@@ -16,7 +16,7 @@ protected:
 
 public:
     Vector();
-    Vector(const size_t vector_length);
+    explicit Vector(const size_t vector_length);
     Vector(const Vector<T>& v);
     Vector(Vector<T>&& v);
     template <typename Y> Vector(const Vector<Y>& v);
@@ -56,7 +56,7 @@ public:
     void fill(const T& val);
     void resize(const size_t vector_length);
     size_t endIndex() const;
-    T* getDataPointer() const;
+    T* data() const;
 
     void pushBack(const T& new_value);
     void pushFront(const T& new_value);
@@ -90,4 +90,4 @@ public:
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_CLASS_DEFS_VECTOR_DYNAMIC_CLASS_DEF_H_

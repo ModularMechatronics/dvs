@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_MACROS_H_
-#define DVS_MATH_MACROS_H_
+#ifndef DVS_MATH_MISC_MATH_MACROS_H_
+#define DVS_MATH_MISC_MATH_MACROS_H_
 
 #include "dvs/logging.h"
 
@@ -36,4 +36,4 @@ namespace dvs
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_MISC_MATH_MACROS_H_

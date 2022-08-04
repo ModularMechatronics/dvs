@@ -1,5 +1,5 @@
-#ifndef SHADER_APP_GL_CANVAS_H_
-#define SHADER_APP_GL_CANVAS_H_
+#ifndef APPLICATIONS_SHADER_APP_GL_CANVAS_H_
+#define APPLICATIONS_SHADER_APP_GL_CANVAS_H_
 
 #include <wx/glcanvas.h>
 #include <wx/notebook.h>
@@ -73,4 +73,4 @@ public:
 std::string getGLErrorString(const GLenum err);
 InteractionType keyboardStateToInteractionTypeNew(const KeyboardState& keyboard_state);
 
-#endif
+#endif // APPLICATIONS_SHADER_APP_GL_CANVAS_H_

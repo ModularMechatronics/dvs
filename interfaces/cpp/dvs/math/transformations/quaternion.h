@@ -1,5 +1,5 @@
-#ifndef DVS_QUATERNION_H_
-#define DVS_QUATERNION_H_
+#ifndef DVS_MATH_TRANSFORMATIONS_QUATERNION_H_
+#define DVS_MATH_TRANSFORMATIONS_QUATERNION_H_
 
 #include <cmath>
 
@@ -119,4 +119,4 @@ template <typename T> Quaternion<T> rotationMatrixToQuaternion(const Matrix<T>& 
 
 }  // namespace dvs
 
-#endif
+#endif // DVS_MATH_TRANSFORMATIONS_QUATERNION_H_

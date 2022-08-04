@@ -1,0 +1,62 @@
+# Install required packages
+sudo apt-get update
+sudo apt-get install libncurses5-dev build-essential bc lbzip2
+
+
+# L4T Jetson Driver Package
+wget https://developer.nvidia.com/embedded/dlc/r32-3-1_Release_v1.0/t210ref_release_aarch64/Tegra210_Linux_R32.3.1_aarch64.tbz2
+
+# L4T Sample Root File System
+wget https://developer.nvidia.com/embedded/dlc/r32-3-1_Release_v1.0/t210ref_release_aarch64/Tegra_Linux_Sample-Root-Filesystem_R32.3.1_aarch64.tbz2
+
+# L4T Sources:
+wget https://developer.nvidia.com/embedded/dlc/r32-3-1_Release_v1.0/Sources/T210/public_sources.tbz2
+
+# GCC Tool Chain for 64-bit BSP
+wget https://developer.nvidia.com/embedded/dlc/l4t-gcc-7-3-1-toolchain-64-bit
+
+# Extract files
+tar -xvf l4t-gcc-7-3-1-toolchain-64-bit
+tar xpf Tegra210_Linux_R32.3.1_aarch64.tbz2
+cd Linux_for_Tegra/rootfs/
+tar xpf ../../Tegra_Linux_Sample-Root-Filesystem_R32.3.1_aarch64.tbz2
+cd ../../ 
+tar -xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+tar -xjf public_sources.tbz2
+tar -xjf Linux_for_Tegra/source/public/kernel_src.tbz2
+
+# Apply PREEMPT-RT patches
+cd kernel/kernel-4.9/
+./scripts/rt-patch.sh apply-patches
+
+# Compile kernel
+TEGRA_KERNEL_OUT=jetson_nano_kernel
+mkdir $TEGRA_KERNEL_OUT
+export CROSS_COMPILE=/home/s1000632/work/fd/deployment/jetson_nano_linux_preemptrt/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT tegra_defconfig
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT menuconfig
+
+# This option should already be selected:
+Kernel Features -> Preemption  Model: Fully Preemptible Kernel (RT)
+
+# You can modify other options for your kernel, like the timer frequency (or anything you need):
+Kernel Features -> Timer frequency: 1000 HZ
+
+# After saving the configuration and exiting, start the kernel compilation
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT -j4
+
+# Copy results
+cp jetson_nano_kernel/arch/arm64/boot/Image $HOME/jetson_nano/Linux_for_Tegra/kernel/Image
+cp -r jetson_nano_kernel/arch/arm64/boot/dts/* $HOME/jetson_nano/Linux_for_Tegra/kernel/dtb/
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT modules_install INSTALL_MOD_PATH=$HOME/jetson_nano/Linux_for_Tegra/rootfs/
+cd $HOME/jetson_nano/Linux_for_Tegra/rootfs/
+tar --owner root --group root -cjf kernel_supplements.tbz2 lib/modules
+mv kernel_supplements.tbz2  ../kernel/
+
+# Apply binaries
+cd .. 
+./apply_binaries.sh
+
+# Generate Jetson Nano image
+cd tools
+./jetson-disk-image-creator.sh -o jetson_nano.img -s 14G -b jetson-nano -r 100
