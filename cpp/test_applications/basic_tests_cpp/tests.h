@@ -310,18 +310,22 @@ void testPlot()
     setCurrentElement("view_00");
     clearView();
     #if 1
-    Vector<float> xp(5), yp(5), zp(5);
+    const size_t num_points = 3;
+    Vector<float> xp(num_points), yp(num_points), zp(num_points);
+
     xp(0) = 0.0;
     xp(1) = 1.0;
     xp(2) = 2.2;
-    xp(3) = 3.0;
-    xp(4) = 3.5;
+    // xp(3) = 3.0;
+    // xp(4) = 3.5;
+    // xp(5) = 3.5;
 
     yp(0) = 0.0;
     yp(1) = 3.5;
     yp(2) = 3.5;
-    yp(3) = 2.5;
-    yp(4) = 4.0;
+    // yp(3) = 2.5;
+    // yp(4) = 4.0;
+    // yp(5) = 2.0;
 
     zp.fill(0.01f);
 

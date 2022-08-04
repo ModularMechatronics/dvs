@@ -5,9 +5,11 @@ in vec3 fragment_color;
 in vec4 coord_out;
 flat in vec3 start_pos;
 flat in vec3 p1_out;
+flat in vec2 v0_out;
+flat in vec2 v1_out;
 in vec3 vert_pos;
 flat in float length_along_fs;
-flat in float idx_out;
+flat in float line_width_in;
 
 uniform vec4 clip_plane0;
 uniform vec4 clip_plane1;
@@ -22,6 +24,28 @@ uniform float dash_size;
 uniform float gap_size;
 
 uniform int use_dash;
+
+struct Line2D
+{
+    float a;
+    float b;
+    float c;
+};
+
+Line2D lineFromPointAndNormalVec(vec2 p, vec2 n)
+{
+   Line2D line;
+   line.a = n.x;
+   line.b = n.y; 
+   line.c = -(line.a * p.x + line.b * p.y);
+
+   return line;
+}
+
+float evalLine(Line2D line, vec2 point)
+{
+   return line.a * point.x + line.b * point.y + line.c;
+}
 
 void main()
 {
@@ -50,6 +74,27 @@ void main()
       discard;
    }
 
+   Line2D line0 = lineFromPointAndNormalVec(p1_out.xy, v0_out);
+   Line2D line1 = lineFromPointAndNormalVec(p1_out.xy, v1_out);
+
+   float val0 = evalLine(line0, vert_pos.xy);
+   float val1 = evalLine(line1, vert_pos.xy);
+
+   color = fragment_color;
+   // TODO: Can these calculations be done in the vertex shader, and val0 and val1
+   // be interpolated?
+
+   if((val0 > 0.0) && (val1 > 0.0))
+   {
+      float dist = length(vert_pos - p1_out);
+      if(dist > line_width_in)
+      {
+         // discard;
+         color = vec3(0.0, 1.0, 0.0);
+      }
+   }
+   
+
    // vec2 dir = (vert_pos.xy - start_pos.xy) * vec2(axes_width, axes_height) / 2.0;
    // float dist = length(dir);
 
@@ -74,7 +119,7 @@ void main()
       // dist = length(dir) + length_along_fs;
       dist = length(dir);
    }*/
-   dist = length(dir) + length_along_fs;
+   // dist = length(dir) + length_along_fs;
 
    float gap_size_ = 0.05;
    float dash_size_ = 0.05;
@@ -87,6 +132,6 @@ void main()
    {
       discard;
    }*/
-   color = fragment_color;
+   // color = fragment_color;
 
 }

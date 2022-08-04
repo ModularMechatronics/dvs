@@ -16,9 +16,11 @@ out vec4 coord_out;
 
 flat out vec3 start_pos;
 flat out vec3 p1_out;
+flat out vec2 v0_out;
+flat out vec2 v1_out;
 out vec3 vert_pos;
 flat out float length_along_fs;
-flat out float idx_out;
+flat out float line_width_in;
 
 uniform float axes_width_vs;
 uniform float axes_height_vs;
@@ -58,13 +60,20 @@ vec2 intersectionOfTwoLines(Line2D line0, Line2D line1)
     return p;
 }
 
-/*
-template <typename T> Point2D<T> HomogeneousLine2D<T>::lineIntersection(const HomogeneousLine2D<T>& line) const
+Line2D lineFromPointAndNormalVec(vec2 p, vec2 n)
 {
-    return Point2D<T>((b * line.c - line.b * c) / (a * line.b - line.a * b),
-                      -(a * line.c - line.a * c) / (a * line.b - line.a * b));
+   Line2D line;
+   line.a = n.x;
+   line.b = n.y; 
+   line.c = -(line.a * p.x + line.b * p.y);
+
+   return line;
 }
-*/
+
+float evalLine(Line2D line, vec2 point)
+{
+   return line.a * point.x + line.b * point.y + line.c;
+}
 
 void main()
 {
@@ -72,19 +81,20 @@ void main()
     vec4 p1_p = model_view_proj_mat * vec4(p1, 0.0, 1.0);
     vec4 p2_p = model_view_proj_mat * vec4(p2, 0.0, 1.0);
 
-    vec2 v0 = normalize(p1_p.xy - p0_p.xy);
-    vec2 v1 = normalize(p2_p.xy - p1_p.xy);
+    vec2 vec_along01 = normalize(p1_p.xy - p0_p.xy);
+    vec2 vec_along12 = normalize(p2_p.xy - p1_p.xy);
 
     // TODO: What to do if two adjecent points are at the same pos?
+    line_width_in = line_width;
 
-    vec2 q0 = rotate90deg(v0) * line_width;
-    vec2 q1 = rotate90deg(v1) * line_width;
+    vec2 q0 = rotate90deg(vec_along01) * line_width;
+    vec2 q1 = rotate90deg(vec_along12) * line_width;
 
     vec2 p0_0 = -q0;
-    vec2 p0_1 = -v0 - q0;
+    vec2 p0_1 = -q0 - vec_along01 ;
 
     vec2 p1_0 = -q1;
-    vec2 p1_1 = v1 - q1;
+    vec2 p1_1 = -q1 + vec_along12;
 
     vec2 vp0 = p0_1 - p0_0;
     vec2 vp1 = p1_1 - p1_0;
@@ -110,41 +120,54 @@ void main()
         res_vec = intersection_point;
     }
 
-    idx_out = idx;
+    p1_out = p1_p.xyz;
+
+    v0_out = vec_along01;
+    v1_out = -vec_along12;
 
     if(idx < 0.1)  // 0
     {
         gl_Position = vec4(p1_p.xy - res_vec, p1_p.z, 1.0);
+        fragment_color = vec3(1.0, 1.0, 0.0);
+        // p1_out = p2_p.xyz;
     }
     else if ((idx > 0.9) && (idx < 1.1)) // 1
     {
         gl_Position = vec4(p1_p.xy - res_vec, p1_p.z, 1.0);
+        fragment_color = vec3(1.0, 0.0, 1.0);
     }
     else if ((idx > 1.9) && (idx < 2.1)) // 2
     {
+        fragment_color = vec3(0.0, 0.0, 1.0);
         gl_Position = vec4(p1_p.xy + res_vec, p1_p.z, 1.0);
     }
     else if ((idx > 2.9) && (idx < 3.1)) // 3
     {
         gl_Position = vec4(p1_p.xy - res_vec, p1_p.z, 1.0);
+        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+        fragment_color = vec3(0.0, 1.0, 1.0);
     }
     else if ((idx > 3.9) && (idx < 4.1)) // 4
     {
         gl_Position = vec4(p1_p.xy + res_vec, p1_p.z, 1.0);
+        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+        fragment_color = vec3(0.0, 0.5, 1.0);
     }
     else if ((idx > 4.9) && (idx < 5.1)) // 5
     {
         gl_Position = vec4(p1_p.xy + res_vec, p1_p.z, 1.0);
+        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+        fragment_color = vec3(1.0, 0.5, 1.0);
     }
 
     vec4 op = inverse_model_view_proj_mat * gl_Position;
 
     coord_out = vec4(op.x, op.y, op.z, 1.0);
-    fragment_color = vertex_color;
+    // fragment_color = vertex_color;
     gl_PointSize = point_size;
     vert_pos     = gl_Position.xyz / gl_Position.w;
     // vert_pos     = vec3(p0.xy, 0.0);
     start_pos    = p0_p.xyz;
-    p1_out = p1_p.xyz;
     length_along_fs = length_along;
+
 }
