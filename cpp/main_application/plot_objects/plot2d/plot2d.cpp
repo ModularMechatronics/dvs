@@ -40,7 +40,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
     glBindVertexArray(vertex_buffer_array_);
 
     const size_t num_segments = num_elements_ - 1;
-    const size_t num_points = num_segments * 6;
+    const size_t num_points = num_segments * 12U - 6U;
 
     glGenBuffers(1, &p0_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
@@ -105,7 +105,7 @@ void Plot2D::findMinMax()
 void Plot2D::render()
 {
     const size_t num_segments = num_elements_ - 1;
-    const size_t num_points = num_segments * 6;
+    const size_t num_points = num_segments * 12U - 6U;
 
     shader_collection_.plot_2d_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "line_width"), line_width_ / 1200.0f);
@@ -275,7 +275,7 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
                        const size_t num_bytes_for_one_vec)
 {
     const size_t num_segments = num_elements - 1;
-    const size_t num_points = num_segments * 6;
+    const size_t num_points = num_segments * 12U;
     Plot2D::InputData output_data;
     output_data.p0 = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
@@ -294,7 +294,7 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         output_data.idx_data_[k] = 0;
     }
 
-    output_data.length_along[0] = 0.0f;
+    /*output_data.length_along[0] = 0.0f;
 
     for (size_t k = 1; k < num_elements; k++)
     {
@@ -315,10 +315,7 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
 
         const float d = std::sqrt(vx * vx + vy * vy);
         output_data.length_along[k] = output_data.length_along[k - 1] + d;
-    }
-
-    size_t idx = 0;
-    size_t idx_idx = 0;
+    }*/
 
     struct Points
     {
@@ -414,6 +411,9 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         pts[k].p2.y = p2y;
     }
 
+    size_t idx = 0;
+    size_t idx_idx = 0;
+
     for (size_t k = 1; k < num_elements; k++)
     {
         const Points& pt_1 = pts[k - 1];
@@ -443,6 +443,26 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         output_data.p0[idx + 10] = pt_1.p0.x;
         output_data.p0[idx + 11] = pt_1.p0.y;
 
+        // 3nd triangle
+        output_data.p0[idx + 12] = pt.p0.x;
+        output_data.p0[idx + 13] = pt.p0.y;
+
+        output_data.p0[idx + 14] = pt.p0.x;
+        output_data.p0[idx + 15] = pt.p0.y;
+
+        output_data.p0[idx + 16] = pt.p0.x;
+        output_data.p0[idx + 17] = pt.p0.y;
+
+        // 4th triangle
+        output_data.p0[idx + 18] = pt.p0.x;
+        output_data.p0[idx + 19] = pt.p0.y;
+
+        output_data.p0[idx + 20] = pt.p0.x;
+        output_data.p0[idx + 21] = pt.p0.y;
+
+        output_data.p0[idx + 22] = pt.p0.x;
+        output_data.p0[idx + 23] = pt.p0.y;
+
         // p1
         // 1st triangle
         output_data.p1[idx] = pt_1.p1.x;
@@ -463,6 +483,26 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
 
         output_data.p1[idx + 10] = pt_1.p1.x;
         output_data.p1[idx + 11] = pt_1.p1.y;
+
+        // 3nd triangle
+        output_data.p1[idx + 12] = pt.p1.x;
+        output_data.p1[idx + 13] = pt.p1.y;
+
+        output_data.p1[idx + 14] = pt.p1.x;
+        output_data.p1[idx + 15] = pt.p1.y;
+
+        output_data.p1[idx + 16] = pt.p1.x;
+        output_data.p1[idx + 17] = pt.p1.y;
+
+        // 4th triangle
+        output_data.p1[idx + 18] = pt.p1.x;
+        output_data.p1[idx + 19] = pt.p1.y;
+
+        output_data.p1[idx + 20] = pt.p1.x;
+        output_data.p1[idx + 21] = pt.p1.y;
+
+        output_data.p1[idx + 22] = pt.p1.x;
+        output_data.p1[idx + 23] = pt.p1.y;
 
         // p2
         // 1st triangle
@@ -485,6 +525,26 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         output_data.p2[idx + 10] = pt_1.p2.x;
         output_data.p2[idx + 11] = pt_1.p2.y;
 
+        // 3nd triangle
+        output_data.p2[idx + 12] = pt.p2.x;
+        output_data.p2[idx + 13] = pt.p2.y;
+
+        output_data.p2[idx + 14] = pt.p2.x;
+        output_data.p2[idx + 15] = pt.p2.y;
+
+        output_data.p2[idx + 16] = pt.p2.x;
+        output_data.p2[idx + 17] = pt.p2.y;
+
+        // 4th triangle
+        output_data.p2[idx + 18] = pt.p2.x;
+        output_data.p2[idx + 19] = pt.p2.y;
+
+        output_data.p2[idx + 20] = pt.p2.x;
+        output_data.p2[idx + 21] = pt.p2.y;
+
+        output_data.p2[idx + 22] = pt.p2.x;
+        output_data.p2[idx + 23] = pt.p2.y;
+
         // Idx
         output_data.idx_data_[idx_idx] = 0;
         output_data.idx_data_[idx_idx + 1] = 1;
@@ -492,10 +552,16 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         output_data.idx_data_[idx_idx + 3] = 3;
         output_data.idx_data_[idx_idx + 4] = 4;
         output_data.idx_data_[idx_idx + 5] = 5;
+        output_data.idx_data_[idx_idx + 6] = 6;
+        output_data.idx_data_[idx_idx + 7] = 7;
+        output_data.idx_data_[idx_idx + 8] = 8;
+        output_data.idx_data_[idx_idx + 9] = 9;
+        output_data.idx_data_[idx_idx + 10] = 10;
+        output_data.idx_data_[idx_idx + 11] = 11;
 
-        idx_idx += 6;
+        idx_idx += 12;
 
-        idx += 12;
+        idx += 24;
     }
 
     return output_data;
