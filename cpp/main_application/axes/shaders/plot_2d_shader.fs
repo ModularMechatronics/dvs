@@ -10,6 +10,7 @@ flat in vec2 v1_out;
 in vec3 vert_pos;
 flat in float length_along_fs;
 flat in float line_width_in;
+flat in float should_remove_pixels;
 
 uniform vec4 clip_plane0;
 uniform vec4 clip_plane1;
@@ -84,15 +85,18 @@ void main()
    // TODO: Can these calculations be done in the vertex shader, and val0 and val1
    // be interpolated?
 
-   if((val0 > 0.0) && (val1 > 0.0))
+   //if((val0 > 0.0) && (val1 > 0.0))
+   // {
+   if(should_remove_pixels > 0.5)
    {
       float dist = length(vert_pos - p1_out);
       if(dist > line_width_in)
       {
-         // discard;
-         color = vec3(0.0, 1.0, 0.0);
+         discard;
+         // color = vec3(0.0, 1.0, 0.0);
       }
    }
+   // }
    
 
    // vec2 dir = (vert_pos.xy - start_pos.xy) * vec2(axes_width, axes_height) / 2.0;
