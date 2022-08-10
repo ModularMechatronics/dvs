@@ -78,11 +78,17 @@ float evalLine(Line2D line, vec2 point)
 
 void main()
 {
+
+    should_remove_fragments = 0.0;
+    bool should_flip = false;
+
     vec4 p0_transformed = model_view_proj_mat * vec4(p0, 0.0, 1.0);
     vec4 p1_transformed = model_view_proj_mat * vec4(p1, 0.0, 1.0);
     vec4 p2_transformed = model_view_proj_mat * vec4(p2, 0.0, 1.0);
 
+    // vec_along01 points from point p0 to point p1
     vec2 vec_along01 = normalize(p1_transformed.xy - p0_transformed.xy);
+    // vec_along12 points from point p1 to point p2
     vec2 vec_along12 = normalize(p2_transformed.xy - p1_transformed.xy);
 
     // TODO: What to do if two adjecent points are at the same pos?
@@ -94,22 +100,18 @@ void main()
     vec2 vec_on_line_edge01 = rotate90Deg(vec_along01) * line_width;
     vec2 vec_on_line_edge12 = rotate90Deg(vec_along12) * line_width;
 
-    vec2 point0_on_edge01 = -vec_on_line_edge01;
-    vec2 point1_on_edge01 = -vec_on_line_edge01 - vec_along01;
+    // Form two points on the edge, two points per segment
+    vec2 point0_on_edge01 = vec_on_line_edge01;
+    vec2 point1_on_edge01 = vec_on_line_edge01 - vec_along01;
 
-    vec2 point0_on_edge12 = -vec_on_line_edge12;
-    vec2 point1_on_edge12 = -vec_on_line_edge12 + vec_along12;
+    vec2 point0_on_edge12 = vec_on_line_edge12;
+    vec2 point1_on_edge12 = vec_on_line_edge12 + vec_along12;
 
+    // Fit lines from those two points that are on the edges of each segment
     Line2D line0 = lineFromTwoPoints(point0_on_edge01, point1_on_edge01);
     Line2D line1 = lineFromTwoPoints(point0_on_edge12, point1_on_edge12);
 
     vec2 intersection_point = intersectionOfTwoLines(line0, line1);
-
-    p1_out = p1_transformed.xyz;
-
-    should_remove_fragments = 0.0;
-
-    bool should_flip = false;
 
     // The sign of the z component of the cross product of
     // the two vectors depends on the mirroring of the view
@@ -234,7 +236,7 @@ void main()
     else if (idx_int == 11)
     {
         triangle_id = 3.0;
-        if(!should_flip)
+        if(should_flip)
         {
             intersection_point = -intersection_point;
         }
@@ -252,5 +254,6 @@ void main()
     vert_pos     = gl_Position.xyz / gl_Position.w;
     start_pos    = p0_transformed.xyz;
     length_along_fs = length_along;
+    p1_out = p1_transformed.xyz;
 
 }
