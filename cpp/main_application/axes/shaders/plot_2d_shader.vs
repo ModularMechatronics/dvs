@@ -94,19 +94,16 @@ void main()
     vec2 vec_on_line_edge01 = rotate90Deg(vec_along01) * line_width;
     vec2 vec_on_line_edge12 = rotate90Deg(vec_along12) * line_width;
 
-    vec2 point0_on_line01 = -vec_on_line_edge01;
-    vec2 point1_on_line01 = -vec_on_line_edge01 - vec_along01 ;
+    vec2 point0_on_edge01 = -vec_on_line_edge01;
+    vec2 point1_on_edge01 = -vec_on_line_edge01 - vec_along01;
 
-    vec2 point0_on_line12 = -vec_on_line_edge12;
-    vec2 point1_on_line12 = -vec_on_line_edge12 + vec_along12;
+    vec2 point0_on_edge12 = -vec_on_line_edge12;
+    vec2 point1_on_edge12 = -vec_on_line_edge12 + vec_along12;
 
-    Line2D line0 = lineFromTwoPoints(point0_on_line01, point1_on_line01);
-    Line2D line1 = lineFromTwoPoints(point0_on_line12, point1_on_line12);
+    Line2D line0 = lineFromTwoPoints(point0_on_edge01, point1_on_edge01);
+    Line2D line1 = lineFromTwoPoints(point0_on_edge12, point1_on_edge12);
 
     vec2 intersection_point = intersectionOfTwoLines(line0, line1);
-
-    vec2 vec_on_line_edge01_normed = vec_on_line_edge01 / length(vec_on_line_edge01);
-    vec2 vec_on_line_edge12_normed = vec_on_line_edge12 / length(vec_on_line_edge12);
 
     p1_out = p1_transformed.xyz;
 
@@ -114,7 +111,9 @@ void main()
 
     bool should_flip = false;
 
-    vec3 which_side_vec = cross(vec3(vec_along01.xy, 0.0), vec3(vec_along12.xy, 0.0));
+    // The sign of the z component of the cross product of
+    // the two vectors depends on the mirroring of the view
+    vec3 which_side_vec = cross(vec3(vec_along01, 0.0), vec3(vec_along12, 0.0));
 
     if(which_side_vec.z > 0.0)
     {
