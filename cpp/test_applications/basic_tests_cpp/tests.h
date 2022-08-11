@@ -191,7 +191,7 @@ void testPlot()
 
     setCurrentElement("view_00");
     clearView();
-    #if 1
+
     const size_t num_points = 6;
     Vector<float> xp(num_points), yp(num_points), zp(num_points);
 
@@ -215,8 +215,7 @@ void testPlot()
     plot(xp, yp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
-    #else
-
+    setCurrentElement("view_01");
     float t = 0.0;
 
     for (size_t k = 0; k < num_elements; k++)
@@ -235,7 +234,7 @@ void testPlot()
     plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
     scatter3(x + 3.0f, y, z, properties::Color::BLACK(), properties::PointSize(14));
 
-    setCurrentElement("view_01");
+    setCurrentElement("view_02");
     clearView();
     t = 0.0;
     x.resize(num_elements * 10);
@@ -256,7 +255,7 @@ void testPlot()
     plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
     plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
     plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
-    #endif
+
 }
 
 void testStairs()
