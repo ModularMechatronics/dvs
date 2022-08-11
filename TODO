@@ -63,7 +63,7 @@ Pre release:
 - Time date axis
 - Unify (plot) shaders to one big shader with switch case?
 - Separate plot types so that shader switching is minimized
-
+- Change so that Matrix and Vector doesn't accept initializer list, but rather a separate vector type VectorInitializer, which accepts only initializer list as input, Vector vec = VectorInitializer({1, 6, 2, 4});
 Post release:
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
@@ -72,7 +72,7 @@ Post release:
   - This way, a property type could be added, so that the current element can be specified in the function call
 - The class Properties should be moved so that it is not included in the C++ client interface.
 - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
-- More general plot interface with "templated templates": plot(const VectorType<T>& x, ...), where VectorType itself is a template
+- More general plot interface with "templated templates": plot(const VectorType<T>& x, ...), where VectorType itself is a template, or use VectorView
 - Edge and Facecolor transparent
 - Fix so that one can set axis square and axis equal
 - Nice looking buttons in interface
