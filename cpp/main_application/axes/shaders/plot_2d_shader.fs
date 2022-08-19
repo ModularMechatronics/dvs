@@ -4,7 +4,9 @@ out vec3 color;
 in vec3 fragment_color;
 in vec4 coord_out;
 flat in vec3 start_pos;
+flat in vec3 p0_out;
 flat in vec3 p1_out;
+flat in vec3 p2_out;
 in vec3 vert_pos;
 flat in float length_along_fs;
 flat in float should_remove_fragments;
@@ -22,30 +24,6 @@ uniform float axes_width;
 uniform float axes_height;
 uniform float dash_size;
 uniform float gap_size;
-
-uniform int use_dash;
-
-struct Line2D
-{
-    float a;
-    float b;
-    float c;
-};
-
-Line2D lineFromPointAndNormalVec(vec2 p, vec2 n)
-{
-   Line2D line;
-   line.a = n.x;
-   line.b = n.y; 
-   line.c = -(line.a * p.x + line.b * p.y);
-
-   return line;
-}
-
-float evalLine(Line2D line, vec2 point)
-{
-   return line.a * point.x + line.b * point.y + line.c;
-}
 
 void main()
 {
@@ -74,8 +52,6 @@ void main()
       discard;
    }
 
-   color = fragment_color;
-
    if(should_remove_fragments > 0.5)
    {
       float dist = length(vert_pos - p1_out);
@@ -84,45 +60,39 @@ void main()
          discard;
       }
    }
-   
 
-   // vec2 dir = (vert_pos.xy - start_pos.xy) * vec2(axes_width, axes_height) / 2.0;
-   // float dist = length(dir);
+   color = fragment_color;
 
-   vec3 a = vert_pos - start_pos;
-   vec3 b = p1_out - start_pos;
+   /*
+   // TODO: Finish to enable dashed line
+   int triangle_id_int = int(triangle_id);
 
-   vec3 a1 = (dot(a, b) / dot(b, b)) * b;
+   vec3 vec_to_fragment;
+   vec3 vec_along_line;
 
-   // vec2 dir = (vert_pos.xy - start_pos.xy) * vec2(axes_width, axes_height) / 2.0;
-   // vec2 dir = (a1.xy) * vec2(axes_width, axes_height) / 2.0;
-   vec2 dir = (a1.xy);
-
-   float dist;
-   /*if(idx_out < 2.1)
+   if(triangle_id_int == 0)
    {
-      float segment_len = length(start_pos - p1_out);
-      dist = length(dir);
-      // dist = length(dir) + length_along_fs - segment_len;
+      vec_to_fragment = vert_pos - p0_out;
+      vec_along_line = p1_out - p0_out;
    }
    else
    {
-      // dist = length(dir) + length_along_fs;
-      dist = length(dir);
-   }*/
-   // dist = length(dir) + length_along_fs;
+      vec_to_fragment = vert_pos - p1_out;
+      vec_along_line = p2_out - p1_out;
+   }
+
+   vec3 projected_vec = (dot(vec_to_fragment, vec_along_line) / dot(vec_along_line, vec_along_line)) * vec_along_line;
+
+   vec2 dir = (projected_vec.xy);
+
+   float dist = length(dir) + length_along_fs;
 
    float gap_size_ = 0.05;
    float dash_size_ = 0.05;
 
-   // float gap_size_ = 5.0;
-   // float dash_size_ = 5.0;
-
-   // if ((use_dash == 1) && (fract(dist) * 10.0 > 0.9) )
-   /*if ((use_dash == 1) && (fract(dist / (dash_size_ + gap_size_)) > dash_size_ / (dash_size_ + gap_size_)) )
+   if ((use_dash == 1) && (fract(dist / (dash_size_ + gap_size_)) > dash_size_ / (dash_size_ + gap_size_)) )
    {
       discard;
    }*/
-   // color = fragment_color;
 
 }

@@ -15,7 +15,9 @@ out vec3 fragment_color;
 out vec4 coord_out;
 
 flat out vec3 start_pos;
+flat out vec3 p0_out;
 flat out vec3 p1_out;
+flat out vec3 p2_out;
 out vec3 vert_pos;
 flat out float length_along_fs;
 flat out float should_remove_fragments;
@@ -249,11 +251,13 @@ void main()
     vec4 op = inverse_model_view_proj_mat * gl_Position;
 
     coord_out = vec4(op.x, op.y, op.z, 1.0);
-    // fragment_color = vertex_color;
+    fragment_color = vertex_color;
     gl_PointSize = point_size;
     vert_pos     = gl_Position.xyz / gl_Position.w;
     start_pos    = p0_transformed.xyz;
     length_along_fs = length_along;
+    p0_out = p0_transformed.xyz;
     p1_out = p1_transformed.xyz;
+    p2_out = p2_transformed.xyz;
 
 }
