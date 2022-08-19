@@ -124,17 +124,14 @@ void main()
     {
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 0;
-        fragment_color = vec3(1.0, 1.0, 0.0);
     }
     else if (idx_int == 1)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 0;
-        fragment_color = vec3(1.0, 0.0, 1.0);
     }
     else if (idx_int == 2)
     {
-        fragment_color = vec3(0.0, 0.0, 1.0);
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 0;
     }
@@ -143,26 +140,22 @@ void main()
     {
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 1;
-        fragment_color = vec3(0.0, 1.0, 1.0);
     }
     else if (idx_int == 4)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 1;
-        fragment_color = vec3(0.0, 0.5, 1.0);
     }
     else if (idx_int == 5)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 1;
-        fragment_color = vec3(1.0, 0.5, 1.0);
     }
     // 3rd triangle
     else if (idx_int == 6)
     {
         gl_Position = vec4(p1_transformed.xy, p1_transformed.z, 1.0);
         triangle_id = 2;
-        fragment_color = vec3(1.0, 0.2, 0.6);
     }
     else if (idx_int == 7)
     {
@@ -177,7 +170,6 @@ void main()
             gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
         }
         
-        fragment_color = vec3(1.0, 0.0, 0.9);
     }
     else if (idx_int == 8)
     {
@@ -191,7 +183,6 @@ void main()
             gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         }
 
-        fragment_color = vec3(1.0, 0.5, 0.1);
     }
     // 4th triangle
     else if (idx_int == 9)
@@ -206,7 +197,6 @@ void main()
             gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
         }
 
-        fragment_color = vec3(1.0, 1.0, 0.2);
     }
     else if (idx_int == 10)
     {
@@ -220,7 +210,6 @@ void main()
             gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         }
 
-        fragment_color = vec3(0.8, 0.1, 0.7);
     }
     else if (idx_int == 11)
     {
@@ -231,13 +220,12 @@ void main()
         }
 
         gl_Position = vec4(p1_transformed.xy + intersection_point, p1_transformed.z, 1.0);
-        fragment_color = vec3(1.0, 0.7, 0.4);
     }
 
     vec4 op = inverse_model_view_proj_mat * gl_Position;
 
     coord_out = vec4(op.x, op.y, op.z, 1.0);
-    // fragment_color = vertex_color;
+    fragment_color = vertex_color;
     vert_pos     = gl_Position.xyz / gl_Position.w;
     p1_out = p1_transformed.xyz;
 }

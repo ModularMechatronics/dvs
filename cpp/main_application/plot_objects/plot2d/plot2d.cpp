@@ -139,14 +139,19 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
                        const size_t num_bytes_per_element,
                        const size_t num_bytes_for_one_vec)
 {
-    const size_t num_segments = num_elements - 1;
+    const size_t num_segments = num_elements - 1U;
     const size_t num_points = num_segments * 12U;
+
+    /* TODO: Should be something like this:
+    const size_t num_segments = num_elements - 1U;
+    const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
+    const size_t num_points = num_triangles * 3U;*/
+
     Plot2D::InputData output_data;
     output_data.p0 = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
     output_data.p2 = new float[2 * num_points];
     output_data.idx_data_ = new float[num_points];
-    output_data.length_along = new float[num_points];
 
     for(size_t k = 0; k < (2 * num_points); k++)
     {
@@ -158,29 +163,6 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
     {
         output_data.idx_data_[k] = 0;
     }
-
-    /*output_data.length_along[0] = 0.0f;
-
-    for (size_t k = 1; k < num_elements; k++)
-    {
-        const size_t idx_00 = (k - 1) * num_bytes_per_element;
-        const size_t idx_01 = num_bytes_for_one_vec + (k - 1) * num_bytes_per_element;
-
-        const size_t idx_10 = k * num_bytes_per_element;
-        const size_t idx_11 = num_bytes_for_one_vec + k * num_bytes_per_element;
-
-        const T p0x = *reinterpret_cast<const T* const>(&(input_data[idx_00]));
-        const T p0y = *reinterpret_cast<const T* const>(&(input_data[idx_01]));
-
-        const T p1x = *reinterpret_cast<const T* const>(&(input_data[idx_10]));
-        const T p1y = *reinterpret_cast<const T* const>(&(input_data[idx_11]));
-
-        const float vx = p1x - p0x;
-        const float vy = p1y - p0y;
-
-        const float d = std::sqrt(vx * vx + vy * vy);
-        output_data.length_along[k] = output_data.length_along[k - 1] + d;
-    }*/
 
     struct Points
     {
