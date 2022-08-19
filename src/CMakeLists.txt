@@ -33,7 +33,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -Wno-deprecated \
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++17")
 # endif()
 
-include_directories(${REPO_DIR}/cpp/)
+include_directories(${REPO_DIR}/src/)
 
 
 # Googletest
@@ -49,16 +49,16 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/externals/glm/)
 # ****** wxWidgets ******
 # find_package(wxWidgets COMPONENTS core base gl adv)
 
-set(WX_CUSTOM_INC_PATH ${REPO_DIR}/cpp/externals/wxwidgets/include)
-set(WX_CUSTOM_LIB_PATH ${REPO_DIR}/cpp/externals/wxwidgets/lib)
+set(WX_CUSTOM_INC_PATH ${REPO_DIR}/src/externals/wxwidgets/include)
+set(WX_CUSTOM_LIB_PATH ${REPO_DIR}/src/externals/wxwidgets/lib)
 
 include_directories(${WX_CUSTOM_INC_PATH})
 link_directories(${WX_CUSTOM_LIB_PATH})
 
 
 # ****** freetype ******
-include_directories(${REPO_DIR}/cpp/externals/freetype/build/include)
-include_directories(${REPO_DIR}/cpp/externals/freetype/include)
+include_directories(${REPO_DIR}/src/externals/freetype/build/include)
+include_directories(${REPO_DIR}/src/externals/freetype/include)
 
 set(GTEST_LIB_FILES libgtest.a
                     libgtest_main.a

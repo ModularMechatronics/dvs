@@ -2,7 +2,7 @@
 
 cd $(git rev-parse --show-toplevel)
 
-cd cpp/externals/googletest
+cd src/externals/googletest
 mkdir -p build && cd build && cmake ..
 make clean && make -j6
 cd ../..

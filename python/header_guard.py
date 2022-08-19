@@ -2,11 +2,11 @@ from asyncore import write
 import os
 import subprocess
 
-FOLDERS = [{"name": "cpp", "strip_prefix": "cpp"},
+FOLDERS = [{"name": "src", "strip_prefix": "cpp"},
            {"name": "interfaces/cpp", "strip_prefix": "cpp"},
            {"name": "interfaces/c", "strip_prefix": "interfaces/c"}]
 
-EXCLUDE_FOLDERS = ["cpp/externals"]
+EXCLUDE_FOLDERS = ["src/externals"]
 
 def get_repo_root():
     res = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True)
