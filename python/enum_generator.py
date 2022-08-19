@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-ENUM_FILE_PATH = "./interfaces/cpp/dvs/enumerations.h"
+ENUM_FILE_PATH = "./interfaces/src/dvs/enumerations.h"
 PYTHON_OUTPUT_PATH = "./python/generated_enums.py"
 TRANSMISSION_DATA_TYPE_STRING = "_TRANSMISSION_DATA_TYPE"
 

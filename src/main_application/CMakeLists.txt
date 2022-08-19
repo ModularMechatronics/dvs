@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 
 project(main-app)
 
-include_directories(${REPO_DIR}/cpp/main_application)
+include_directories(${REPO_DIR}/src/main_application)
 include_directories(${REPO_DIR}/interfaces/cpp)
 
 set(CPP_SOURCE_FILES main.cpp
@@ -67,4 +67,4 @@ target_link_libraries(dvs ${wxWidgets_LIBRARIES}
                           ${OPENGL_LIBRARIES}
                           ${GLUT_LIBRARY}
                           ${PLATFORM_LIBRARIES}
-                          /Users/danielpi/work/dvs/cpp/externals/freetype/build/libfreetype.a)
+                          /Users/danielpi/work/dvs/src/externals/freetype/build/libfreetype.a)

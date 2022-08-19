@@ -38,5 +38,5 @@ __pycache__
 # Other
 .DS_Store
 build
-cpp/externals/glog/build
+src/externals/glog/build
 .vscode

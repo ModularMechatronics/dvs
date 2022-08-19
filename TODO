@@ -67,6 +67,7 @@ Pre release:
 - Unify (plot) shaders to one big shader with switch case?
 - Separate plot types so that shader switching is minimized
 - Change so that Matrix and Vector doesn't accept initializer list, but rather a separate vector type VectorInitializer, which accepts only initializer list as input, Vector vec = VectorInitializer({1, 6, 2, 4});
+
 Post release:
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
@@ -83,7 +84,9 @@ Post release:
 - quiver3
 - Ability to set FOV
 - Show plot walls differently if perspective projection
-- Programatically specicy plots in different windows
+- Programatically specify plots in different windows
+- Command line window that outputs errors and warnings
+ - Possibility to manipulate plots and windows using this command line interface
 - Characters turning away from plot box when rotating
 - 3D world
 - http://www.opengl.org/wiki/Buffer_Object_Streaming
