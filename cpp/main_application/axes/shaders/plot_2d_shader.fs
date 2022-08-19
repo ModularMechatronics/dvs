@@ -58,8 +58,7 @@ void main()
 
    color = fragment_color;
 
-   /*
-   // TODO: Finish to enable dashed line
+   /* TODO: Finish to enable dashed line
    vec3 vec_to_fragment;
    vec3 vec_along_line;
 
