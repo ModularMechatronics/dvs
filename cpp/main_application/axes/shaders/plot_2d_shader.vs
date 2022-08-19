@@ -8,23 +8,14 @@ layout(location = 2) in vec2 p2;
 layout(location = 3) in float idx;
 layout(location = 4) in float length_along;
 uniform vec3 vertex_color;
-uniform float point_size;
 uniform float line_width;
 
 out vec3 fragment_color;
 out vec4 coord_out;
 
-flat out vec3 start_pos;
-flat out vec3 p0_out;
 flat out vec3 p1_out;
-flat out vec3 p2_out;
 out vec3 vert_pos;
-flat out float length_along_fs;
-flat out float should_remove_fragments;
-flat out float triangle_id;
-
-uniform float axes_width_vs;
-uniform float axes_height_vs;
+flat out int triangle_id;
 
 struct Line2D
 {
@@ -80,8 +71,6 @@ float evalLine(Line2D line, vec2 point)
 
 void main()
 {
-
-    should_remove_fragments = 0.0;
     bool should_flip = false;
 
     vec4 p0_transformed = model_view_proj_mat * vec4(p0, 0.0, 1.0);
@@ -134,50 +123,50 @@ void main()
     if(idx_int == 0)
     {
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
-        triangle_id = 0.0;
+        triangle_id = 0;
         fragment_color = vec3(1.0, 1.0, 0.0);
     }
     else if (idx_int == 1)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
-        triangle_id = 0.0;
+        triangle_id = 0;
         fragment_color = vec3(1.0, 0.0, 1.0);
     }
     else if (idx_int == 2)
     {
         fragment_color = vec3(0.0, 0.0, 1.0);
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
-        triangle_id = 0.0;
+        triangle_id = 0;
     }
     // 2nd triangle
     else if (idx_int == 3)
     {
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
-        triangle_id = 1.0;
+        triangle_id = 1;
         fragment_color = vec3(0.0, 1.0, 1.0);
     }
     else if (idx_int == 4)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
-        triangle_id = 1.0;
+        triangle_id = 1;
         fragment_color = vec3(0.0, 0.5, 1.0);
     }
     else if (idx_int == 5)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
-        triangle_id = 1.0;
+        triangle_id = 1;
         fragment_color = vec3(1.0, 0.5, 1.0);
     }
     // 3rd triangle
     else if (idx_int == 6)
     {
         gl_Position = vec4(p1_transformed.xy, p1_transformed.z, 1.0);
-        triangle_id = 2.0;
+        triangle_id = 2;
         fragment_color = vec3(1.0, 0.2, 0.6);
     }
     else if (idx_int == 7)
     {
-        triangle_id = 2.0;
+        triangle_id = 2;
 
         if(should_flip)
         {
@@ -192,7 +181,7 @@ void main()
     }
     else if (idx_int == 8)
     {
-        triangle_id = 2.0;
+        triangle_id = 2;
         if(should_flip)
         {
             gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
@@ -207,7 +196,7 @@ void main()
     // 4th triangle
     else if (idx_int == 9)
     {
-        triangle_id = 3.0;
+        triangle_id = 3;
         if(should_flip)
         {
             gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
@@ -218,11 +207,10 @@ void main()
         }
 
         fragment_color = vec3(1.0, 1.0, 0.2);
-        should_remove_fragments = 1.0;
     }
     else if (idx_int == 10)
     {
-        triangle_id = 3.0;
+        triangle_id = 3;
         if(should_flip)
         {
             gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
@@ -233,11 +221,10 @@ void main()
         }
 
         fragment_color = vec3(0.8, 0.1, 0.7);
-        should_remove_fragments = 1.0;
     }
     else if (idx_int == 11)
     {
-        triangle_id = 3.0;
+        triangle_id = 3;
         if(should_flip)
         {
             intersection_point = -intersection_point;
@@ -245,19 +232,12 @@ void main()
 
         gl_Position = vec4(p1_transformed.xy + intersection_point, p1_transformed.z, 1.0);
         fragment_color = vec3(1.0, 0.7, 0.4);
-        should_remove_fragments = 1.0;
     }
 
     vec4 op = inverse_model_view_proj_mat * gl_Position;
 
     coord_out = vec4(op.x, op.y, op.z, 1.0);
-    fragment_color = vertex_color;
-    gl_PointSize = point_size;
+    // fragment_color = vertex_color;
     vert_pos     = gl_Position.xyz / gl_Position.w;
-    start_pos    = p0_transformed.xyz;
-    length_along_fs = length_along;
-    p0_out = p0_transformed.xyz;
     p1_out = p1_transformed.xyz;
-    p2_out = p2_transformed.xyz;
-
 }
