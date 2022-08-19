@@ -26,6 +26,7 @@ Pre release:
 - FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side
 - Add pan and zoom to scroll click and right click
 - Delete gl buffers with "glDeleteBuffers"
+- Set color in fragment shader with uniform, instead of in vertex shader
 - Change plot-LINE_STRIP to separate function, lineCollection, lineSet or something like that
 - Replace old c type arrays with std::array
 - Reducing number of axis numbers depending on rotation

@@ -4,9 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "dvs/math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
@@ -33,8 +30,6 @@ private:
     GLuint p0_vertex_buffer_, p1_vertex_buffer_, p2_vertex_buffer_, lenth_along_vertex_buffer_;
 
     void findMinMax() override;
-
-    void debugFunction(glm::mat4 mvp_mat);
 
 public:
     Plot2D();
