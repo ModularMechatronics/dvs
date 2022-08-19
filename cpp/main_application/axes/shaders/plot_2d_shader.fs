@@ -3,14 +3,9 @@
 out vec3 color;
 in vec3 fragment_color;
 in vec4 coord_out;
-flat in vec3 start_pos;
-flat in vec3 p0_out;
 flat in vec3 p1_out;
-flat in vec3 p2_out;
 in vec3 vert_pos;
-flat in float length_along_fs;
-flat in float should_remove_fragments;
-flat in float triangle_id;
+flat in int triangle_id;
 
 uniform float line_width;
 uniform vec4 clip_plane0;
@@ -52,7 +47,7 @@ void main()
       discard;
    }
 
-   if(should_remove_fragments > 0.5)
+   if(int(triangle_id) == 3)
    {
       float dist = length(vert_pos - p1_out);
       if(dist > line_width)
@@ -65,8 +60,6 @@ void main()
 
    /*
    // TODO: Finish to enable dashed line
-   int triangle_id_int = int(triangle_id);
-
    vec3 vec_to_fragment;
    vec3 vec_along_line;
 

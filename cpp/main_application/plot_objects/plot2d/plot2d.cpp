@@ -109,8 +109,6 @@ void Plot2D::render()
 
     shader_collection_.plot_2d_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "line_width"), line_width_ / 1200.0f);
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "dash_size"), dash_size_);
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "gap_size"), gap_size_);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_points);
     glBindVertexArray(0);
