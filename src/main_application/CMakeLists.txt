@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 project(main-app)
 
 include_directories(${REPO_DIR}/src/main_application)
-include_directories(${REPO_DIR}/interfaces/cpp)
+include_directories(${REPO_DIR}/src/interfaces/cpp)
 
 set(CPP_SOURCE_FILES main.cpp
                      io_devices/keyboard_state.cpp
