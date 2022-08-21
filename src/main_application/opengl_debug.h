@@ -1,3 +1,6 @@
+#ifndef MAIN_APPLICATION_OPENGL_DEBUG_H_
+#define MAIN_APPLICATION_OPENGL_DEBUG_H_
+
 #include "opengl_low_level/opengl_low_level.h"
 
 namespace opengl_debug
@@ -8,3 +11,5 @@ void end();
 GLuint getSamplesPassed();
 
 }
+
+#endif // MAIN_APPLICATION_OPENGL_DEBUG_H_
