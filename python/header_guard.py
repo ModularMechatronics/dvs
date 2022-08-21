@@ -2,9 +2,9 @@ from asyncore import write
 import os
 import subprocess
 
-FOLDERS = [{"name": "src", "strip_prefix": "cpp"},
-           {"name": "interfaces/cpp", "strip_prefix": "cpp"},
-           {"name": "interfaces/c", "strip_prefix": "interfaces/c"}]
+FOLDERS = [{"name": "src/main_application", "strip_prefix": "src"},
+           {"name": "src/interfaces/cpp", "strip_prefix": "cpp"},
+           {"name": "src/interfaces/c", "strip_prefix": "interfaces/c"}]
 
 EXCLUDE_FOLDERS = ["src/externals"]
 
@@ -75,5 +75,3 @@ if __name__ == "__main__":
 
             if is_valid_file:
                 modify_file(f, folder["strip_prefix"])
-
-        a = 1
