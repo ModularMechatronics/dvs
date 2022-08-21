@@ -5,9 +5,9 @@
 
 #include "dvs/math/lin_alg/matrix_dynamic/matrix_dynamic.h"
 #include "dvs/math/lin_alg/vector_dynamic/vector_dynamic.h"
-#include "dvs/math/lin_alg/vector_low_dim/vec2d.h"
-#include "dvs/math/lin_alg/vector_low_dim/vec3d.h"
-#include "dvs/math/lin_alg/vector_low_dim/vec4d.h"
+#include "dvs/math/lin_alg/vector_low_dim/vec2.h"
+#include "dvs/math/lin_alg/vector_low_dim/vec3.h"
+#include "dvs/math/lin_alg/vector_low_dim/vec4.h"
 #include "dvs/math/misc/math_macros.h"
 
 namespace dvs

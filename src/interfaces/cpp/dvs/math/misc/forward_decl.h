@@ -66,9 +66,9 @@ template <typename T> using PointYZ = VecYZ<T>;
 // clang-format off
 /*#include "dvs/math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic_class_def.h"
 #include "dvs/math/lin_alg/vector_dynamic/class_defs/vector_dynamic_class_def.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec2d_class_def.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec3d_class_def.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec4d_class_def.h"
+#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec2_class_def.h"
+#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec3_class_def.h"
+#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec4_class_def.h"
 
 #include "dvs/math/geometry/class_defs/line_2d_class_def.h"
 #include "dvs/math/geometry/class_defs/line_3d_class_def.h"
