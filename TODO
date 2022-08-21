@@ -14,8 +14,6 @@ Pre release:
 - Function "view" is the one that sets/creates the current element
   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
 - Rename "linspaceFromPointsAndCount" to "linspaceEdgesAndCount" or "linspaceBoundariesAndCount"
-- Rename "cpp" folder to "src" and move "interfaces" into it (and update header_guard.py)
-- Dashed line for plot and plot3
 - Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Rename "FunctionHeader" to "TransmissionHeader" and "FunctionHeaderObject" to "TransmissionHeaderObject"
@@ -53,6 +51,7 @@ Pre release:
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Change Bound2/3D to actually be a bound, now it's a vector, and to get a bound you use std::pair<Bound2D, Bound2D>, which isn't ideal
 - Make proper test folder structure
+- Switch cache reader to configuration_agent
 - Matrix/vector/image view for setting data in plot object: img_c1_.setInternalData(nullptr, 0, 0);  // Hack
 - Receive and push new data until there is new data available, and refresh only after last update
 - "dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();", Possible remove need for specifying type and enum?
@@ -91,6 +90,7 @@ Post release:
 - Characters turning away from plot box when rotating
 - 3D world
 - http://www.opengl.org/wiki/Buffer_Object_Streaming
+- Dashed line for plot and plot3
 
 Unsure:
 - Command line window that prints errors etc.
