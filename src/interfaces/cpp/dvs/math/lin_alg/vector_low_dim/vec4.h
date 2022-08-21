@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec4d_class_def.h"
+#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec4_class_def.h"
 
 namespace dvs
 {

@@ -9,9 +9,9 @@
 #include "dvs/math/lin_alg/matrix_vector_dynamic.h"
 #include "dvs/math/lin_alg/vector_dynamic/vector_dynamic.h"
 #include "dvs/math/lin_alg/vector_dynamic/vector_math_functions.h"
-#include "dvs/math/lin_alg/vector_low_dim/vec2d.h"
-#include "dvs/math/lin_alg/vector_low_dim/vec3d.h"
-#include "dvs/math/lin_alg/vector_low_dim/vec4d.h"
+#include "dvs/math/lin_alg/vector_low_dim/vec2.h"
+#include "dvs/math/lin_alg/vector_low_dim/vec3.h"
+#include "dvs/math/lin_alg/vector_low_dim/vec4.h"
 
 #include "dvs/math/transformations/axis_angle.h"
 #include "dvs/math/transformations/quaternion.h"
