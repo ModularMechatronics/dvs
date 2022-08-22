@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec3.h"
+#include "dvs/math/lin_alg/vector_low_dim/class_def/vec3.h"
 
 // TODO:
 //  - Angle between 2d and 3d vectors

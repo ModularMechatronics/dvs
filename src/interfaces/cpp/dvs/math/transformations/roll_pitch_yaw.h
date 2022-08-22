@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "dvs/math/lin_alg.h"
-#include "dvs/math/transformations/class_defs/roll_pitch_yaw.h"
+#include "dvs/math/transformations/class_def/roll_pitch_yaw.h"
 
 namespace dvs
 {

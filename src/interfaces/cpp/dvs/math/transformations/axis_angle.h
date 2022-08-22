@@ -2,7 +2,7 @@
 #define DVS_MATH_TRANSFORMATIONS_AXIS_ANGLE_H_
 
 #include "dvs/math/lin_alg.h"
-#include "dvs/math/transformations/class_defs/axis_angle.h"
+#include "dvs/math/transformations/class_def/axis_angle.h"
 
 namespace dvs
 {

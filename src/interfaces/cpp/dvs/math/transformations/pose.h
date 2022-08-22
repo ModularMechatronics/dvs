@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "dvs/math/lin_alg.h"
-#include "dvs/math/transformations/class_defs/pose.h"
+#include "dvs/math/transformations/class_def/pose.h"
 
 namespace dvs
 {

@@ -5,7 +5,7 @@
 #include <cmath>
 #include <vector>
 
-#include "dvs/math/geometry/class_defs/circle.h"
+#include "dvs/math/geometry/class_def/circle.h"
 #include "dvs/math/lin_alg.h"
 
 namespace dvs
