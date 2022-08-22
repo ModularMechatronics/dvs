@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "dvs/math/lin_alg.h"
-#include "dvs/math/transformations/class_defs/quaternion_class_def.h"
+#include "dvs/math/transformations/class_defs/quaternion.h"
 
 namespace dvs
 {

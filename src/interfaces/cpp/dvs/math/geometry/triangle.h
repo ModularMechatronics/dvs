@@ -4,7 +4,7 @@
 #include <cmath>
 #include <vector>
 
-#include "dvs/math/geometry/class_defs/triangle_class_def.h"
+#include "dvs/math/geometry/class_defs/triangle.h"
 #include "dvs/math/lin_alg.h"
 
 namespace dvs

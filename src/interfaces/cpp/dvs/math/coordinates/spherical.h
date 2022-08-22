@@ -4,7 +4,7 @@
 #include <cmath>
 #include <vector>
 
-#include "dvs/math/coordinates/class_defs/spherical_class_def.h"
+#include "dvs/math/coordinates/class_defs/spherical.h"
 #include "dvs/math/lin_alg.h"
 
 namespace dvs

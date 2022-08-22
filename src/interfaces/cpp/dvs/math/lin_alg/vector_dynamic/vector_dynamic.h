@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "dvs/math/lin_alg/vector_dynamic/class_defs/vector_dynamic_class_def.h"
+#include "dvs/math/lin_alg/vector_dynamic/class_defs/vector_dynamic.h"
 #include "dvs/math/misc/math_macros.h"
 
 namespace dvs
