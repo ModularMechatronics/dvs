@@ -10,14 +10,14 @@ namespace dvs
 template <typename T> struct Sphere
 {
     T radius;
-    Point3D<T> center;
+    Point3<T> center;
 
-    Sphere(const T radius_, const Point3D<T>& center_);
+    Sphere(const T radius_, const Point3<T>& center_);
     Sphere();
 
     bool doesLineIntersect(const Line3D<T>& line) const;
-    // std::vector<Point3D<T>> lineIntersectionPoint(const Line3D<T>& line) const;
-    std::pair<Point3D<T>, Point3D<T>> lineIntersectionPoint(const Line3D<T>& line) const;
+    // std::vector<Point3<T>> lineIntersectionPoint(const Line3D<T>& line) const;
+    std::pair<Point3<T>, Point3<T>> lineIntersectionPoint(const Line3D<T>& line) const;
 };
 }  // namespace dvs
 

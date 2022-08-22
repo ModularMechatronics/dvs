@@ -66,13 +66,13 @@ template <typename T> Vec3<T> Vec3<T>::normalized() const
     return Vec3<T>(x, y, z) / std::sqrt(x * x + y * y + z * z);
 }
 
-template <typename T> Vec3<T> Vec3<T>::vectorBetweenPoints(const Point3D<T>& end_point) const
+template <typename T> Vec3<T> Vec3<T>::vectorBetweenPoints(const Point3<T>& end_point) const
 {
     // "This" is start point
     return end_point - *this;
 }
 
-template <typename T> Vec3<T> Vec3<T>::normalizedVectorBetweenPoints(const Point3D<T>& end_point) const
+template <typename T> Vec3<T> Vec3<T>::normalizedVectorBetweenPoints(const Point3<T>& end_point) const
 {
     // "This" is start point
     return (end_point - *this).normalized();
@@ -105,7 +105,7 @@ template <typename T> Vec3<T> Vec3<T>::crossProduct(const Vec3<T>& right_vector)
                     x * right_vector.y - y * right_vector.x);
 }
 
-template <typename T> Point3D<T> Vec3<T>::mirrorPointInThis(const Point3D<T>& point_to_mirror) const
+template <typename T> Point3<T> Vec3<T>::mirrorPointInThis(const Point3<T>& point_to_mirror) const
 {
     // Mirrors "point_to_mirror" in "this"
     return *this - this->vectorBetweenPoints(point_to_mirror);

@@ -21,8 +21,8 @@ template <typename T> struct Vec3
     SphericalCoord<T> toSphericalCoord() const;
 
     Vec3<T> normalized() const;
-    Vec3<T> vectorBetweenPoints(const Point3D<T>& end_point) const;
-    Vec3<T> normalizedVectorBetweenPoints(const Point3D<T>& end_point) const;
+    Vec3<T> vectorBetweenPoints(const Point3<T>& end_point) const;
+    Vec3<T> normalizedVectorBetweenPoints(const Point3<T>& end_point) const;
     T squaredNorm() const;
     T norm() const;
     Vec3<T> elementWiseMultiply(const Vec3<T>& factor_vector) const;
@@ -30,7 +30,7 @@ template <typename T> struct Vec3
     Vec3<T> crossProduct(const Vec3<T>& right_vector) const;
     Matrix<T> toCrossProductMatrix() const;
     Matrix<T> outerProduct(const Vec3<T>& v) const;
-    Point3D<T> mirrorPointInThis(const Point3D<T>& point_to_mirror) const;
+    Point3<T> mirrorPointInThis(const Point3<T>& point_to_mirror) const;
     T angleBetweenVectors(const Vec3<T>& v) const;
     Vec3<T> perpendicularVector() const;
 

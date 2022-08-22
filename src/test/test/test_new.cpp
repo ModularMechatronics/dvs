@@ -27,7 +27,7 @@ TEST_F(TestMathFunctions, TestBasic0)
 
     Vec2<double> v2;
     Vec3<double> v3;
-    Vec4D<double> v4;
+    Vec4<double> v4;
 
     VecXY<double> vXY;
     VecXZ<double> vXZ;
@@ -57,8 +57,8 @@ TEST_F(TestMathFunctions, TestBasic0)
     IndexSpan idx_span(2, 30);
     EndIndex end_idx;
     Point2<double> pt2D;
-    Point3D<double> pt3D;
-    Point4D<double> pt4D;
+    Point3<double> pt3D;
+    Point4<double> pt4D;
     Point<double> ptnt;
     PointXY<double> ptXY;
     PointXZ<double> ptXZ;

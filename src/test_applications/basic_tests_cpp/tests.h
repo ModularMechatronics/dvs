@@ -354,7 +354,7 @@ void testDrawPolygonFrom4Points()
 {
     setCurrentElement("view_00");
 
-    Point3D<double> p0(0.0, 0.0, 0.0), p1(1.0, 0.0, 1.0), p2(1.0, 1.0, 2.0), p3(0.0, 1.0, 3.0);
+    Point3<double> p0(0.0, 0.0, 0.0), p1(1.0, 0.0, 1.0), p2(1.0, 1.0, 2.0), p3(0.0, 1.0, 3.0);
     drawPolygonFrom4Points(p0, p1, p2, p3);
 }
 
@@ -470,15 +470,15 @@ void testDrawTriangles()
     Vector<Triangle3D<tp>> triangles(num_elements);
 
     double t = 0.0;
-    Point3D<double> p0(-1.0, -1.0, 0.0), p1(1.0, -1.0, 0.0), p2(0.0, 1.0, 0.0);
+    Point3<double> p0(-1.0, -1.0, 0.0), p1(1.0, -1.0, 0.0), p2(0.0, 1.0, 0.0);
 
     for (size_t k = 0; k < num_elements; k++)
     {
         const Matrix<double> r = rotationMatrixZ(t);
 
-        const Point3D<double> p0r = r * p0 + Point3D<double>(0.0, 0.0, t * 3);
-        const Point3D<double> p1r = r * p1 + Point3D<double>(0.0, 0.0, t * 3);
-        const Point3D<double> p2r = r * p2 + Point3D<double>(0.0, 0.0, t * 3);
+        const Point3<double> p0r = r * p0 + Point3<double>(0.0, 0.0, t * 3);
+        const Point3<double> p1r = r * p1 + Point3<double>(0.0, 0.0, t * 3);
+        const Point3<double> p2r = r * p2 + Point3<double>(0.0, 0.0, t * 3);
 
         Triangle3D<tp> tri(p0r, p1r, p2r);
         triangles(k) = tri;
@@ -522,22 +522,22 @@ void testDrawMesh()
 {
     using tp = double;
 
-    Vector<Point3D<tp>> vertices(12);
-    vertices(0) = Point3D<tp>(0.0, 0.0, 0.0);
-    vertices(1) = Point3D<tp>(1.0, 0.0, 0.0);
-    vertices(2) = Point3D<tp>(0.5, -1.0, 1.0);
+    Vector<Point3<tp>> vertices(12);
+    vertices(0) = Point3<tp>(0.0, 0.0, 0.0);
+    vertices(1) = Point3<tp>(1.0, 0.0, 0.0);
+    vertices(2) = Point3<tp>(0.5, -1.0, 1.0);
 
-    vertices(3) = Point3D<tp>(0.0, 0.0, 0.0);
-    vertices(4) = Point3D<tp>(-1.0, 0.0, 0.0);
-    vertices(5) = Point3D<tp>(0.0, 1.0, 1.0);
+    vertices(3) = Point3<tp>(0.0, 0.0, 0.0);
+    vertices(4) = Point3<tp>(-1.0, 0.0, 0.0);
+    vertices(5) = Point3<tp>(0.0, 1.0, 1.0);
 
-    vertices(6) = Point3D<tp>(0.0, 0.0, 0.0);
-    vertices(7) = Point3D<tp>(-1.0, 0.0, 0.0);
-    vertices(8) = Point3D<tp>(0.0, 1.0, -1.0);
+    vertices(6) = Point3<tp>(0.0, 0.0, 0.0);
+    vertices(7) = Point3<tp>(-1.0, 0.0, 0.0);
+    vertices(8) = Point3<tp>(0.0, 1.0, -1.0);
 
-    vertices(9) = Point3D<tp>(0.0, 0.0, 0.0);
-    vertices(10) = Point3D<tp>(1.0, 0.0, 0.0);
-    vertices(11) = Point3D<tp>(0.5, -1.0, -1.0);
+    vertices(9) = Point3<tp>(0.0, 0.0, 0.0);
+    vertices(10) = Point3<tp>(1.0, 0.0, 0.0);
+    vertices(11) = Point3<tp>(0.5, -1.0, -1.0);
 
     Vector<IndexTriplet> indices(4);
     indices(0) = IndexTriplet(0, 1, 2);
@@ -558,9 +558,9 @@ void testDrawTriangle()
     using tp = double;
 
     Triangle3D<tp> triangle;
-    triangle.p0 = Point3D<tp>(-1.0, -1.0, -1.0);
-    triangle.p1 = Point3D<tp>(1.0, -1.0, -1.0);
-    triangle.p2 = Point3D<tp>(1.0, 1.0, 1.0);
+    triangle.p0 = Point3<tp>(-1.0, -1.0, -1.0);
+    triangle.p1 = Point3<tp>(1.0, -1.0, -1.0);
+    triangle.p2 = Point3<tp>(1.0, 1.0, 1.0);
 
     setCurrentElement("view_00");
     clearView();
@@ -611,7 +611,7 @@ void testDrawLine3D()
 {
     using tp = double;
 
-    Line3D<tp> line(Point3D<tp>(0.0, 0.0, 0.0), Vec3<tp>(1.0, 1.0, 1.0));
+    Line3D<tp> line(Point3<tp>(0.0, 0.0, 0.0), Vec3<tp>(1.0, 1.0, 1.0));
     tp t0 = 0;
     tp t1 = 1.0;
 
@@ -656,8 +656,8 @@ void testDrawLineBetweenPoints()
 {
     using tp = double;
 
-    Point3D<tp> p0(0.1, 0.2, 0.2);
-    Point3D<tp> p1(2.0, 1.0, 1.0);
+    Point3<tp> p0(0.1, 0.2, 0.2);
+    Point3<tp> p1(2.0, 1.0, 1.0);
 
     Vector<double> x = {p0.x, p1.x};
     Vector<double> y = {p0.y, p1.y};

@@ -122,7 +122,7 @@ void scatter3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
-template <typename T, typename... Us> void drawPoint(const Point3D<T>& p, const Us&... settings)
+template <typename T, typename... Us> void drawPoint(const Point3<T>& p, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER3);
@@ -181,17 +181,17 @@ template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const U
 }
 
 template <typename... Us>
-void drawPolygonFrom4Points(const Point3D<double>& p0,
-                            const Point3D<double>& p1,
-                            const Point3D<double>& p2,
-                            const Point3D<double>& p3,
+void drawPolygonFrom4Points(const Point3<double>& p0,
+                            const Point3<double>& p1,
+                            const Point3<double>& p2,
+                            const Point3<double>& p3,
                             const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::POLYGON_FROM_4_POINTS);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(4));
-    Vector<Point3D<double>> points = {p0, p1, p2, p3};
+    Vector<Point3<double>> points = {p0, p1, p2, p3};
 
     hdr.extend(settings...);
 
@@ -240,7 +240,7 @@ void drawTiles(const Matrix<T>& z, const Vec2<double>& tile_size, const Us&... s
 }
 
 template <typename T, typename... Us>
-void drawMesh(const Vector<Point3D<T>>& vertices, const Vector<IndexTriplet>& indices, const Us&... settings)
+void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& indices, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_MESH);
@@ -316,9 +316,9 @@ void drawLine(const Line3D<double>& line, const double t0, const double t1, cons
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    const Point3D<double> p0 = line.eval(t0);
-    const Point3D<double> p1 = line.eval(t1);
-    Vector<Point3D<double>> points = {p0, p1};
+    const Point3<double> p0 = line.eval(t0);
+    const Point3<double> p1 = line.eval(t1);
+    Vector<Point3<double>> points = {p0, p1};
 
     hdr.extend(settings...);
 
@@ -347,7 +347,7 @@ void drawLine2D(const ParametricLine2D<double>& line, const double t0, const dou
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     const Point2<double> p0 = line.eval(t0);
     const Point2<double> p1 = line.eval(t1);
-    Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
+    Vector<Point3<double>> points = {Point3<double>(p0.x, p0.y, 0.0), Point3<double>(p1.x, p1.y, 0.0)};
 
     hdr.extend(settings...);
 
@@ -366,7 +366,7 @@ void drawLine2DBetweenXValues(const HomogeneousLine2D<double>& line,
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     const Point2<double> p0(x0, line.evalX(x0));
     const Point2<double> p1(x1, line.evalX(x1));
-    Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
+    Vector<Point3<double>> points = {Point3<double>(p0.x, p0.y, 0.0), Point3<double>(p1.x, p1.y, 0.0)};
 
     hdr.extend(settings...);
 
@@ -385,7 +385,7 @@ void drawLine2DBetweenYValues(const HomogeneousLine2D<double>& line,
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     const Point2<double> p0(line.evalX(y0), y0);
     const Point2<double> p1(line.evalX(y1), y1);
-    Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
+    Vector<Point3<double>> points = {Point3<double>(p0.x, p0.y, 0.0), Point3<double>(p1.x, p1.y, 0.0)};
 
     hdr.extend(settings...);
 
@@ -393,13 +393,13 @@ void drawLine2DBetweenYValues(const HomogeneousLine2D<double>& line,
 }
 
 template <typename... Us>
-void drawLineBetweenPoints(const Point3D<double>& p0, const Point3D<double>& p1, const Us&... settings)
+void drawLineBetweenPoints(const Point3<double>& p0, const Point3<double>& p1, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE_BETWEEN_POINTS_3D);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    Vector<Point3D<double>> points = {p0, p1};
+    Vector<Point3<double>> points = {p0, p1};
 
     hdr.extend(settings...);
 
@@ -413,8 +413,8 @@ void drawLineBetweenPoints(const Point2<double>& p0, const Point2<double>& p1, c
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE_BETWEEN_POINTS_3D);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    const Point3D<double> p0_3d(p0.x, p0.y, 0.0), p1_3d(p1.x, p1.y, 0.0);
-    Vector<Point3D<double>> points = {p0_3d, p1_3d};
+    const Point3<double> p0_3d(p0.x, p0.y, 0.0), p1_3d(p1.x, p1.y, 0.0);
+    Vector<Point3<double>> points = {p0_3d, p1_3d};
 
     hdr.extend(settings...);
 

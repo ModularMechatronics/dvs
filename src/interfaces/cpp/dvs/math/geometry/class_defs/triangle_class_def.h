@@ -17,11 +17,11 @@ template <typename T> struct Triangle2D
 
 template <typename T> struct Triangle3D
 {
-    Point3D<T> p0;
-    Point3D<T> p1;
-    Point3D<T> p2;
+    Point3<T> p0;
+    Point3<T> p1;
+    Point3<T> p2;
     Triangle3D();
-    Triangle3D(const Point3D<T>& p0_, const Point3D<T>& p1_, const Point3D<T>& p2_);
+    Triangle3D(const Point3<T>& p0_, const Point3<T>& p1_, const Point3<T>& p2_);
     template <typename Y> Triangle3D(const Triangle3D<Y>& t_other);
 };
 
