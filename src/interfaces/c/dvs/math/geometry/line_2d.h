@@ -5,8 +5,8 @@
 
 typedef struct S_PLine2DD
 {
-    Point2DD p;
-    Vec2DD v;
+    Point2d p;
+    Vec2d v;
 } PLine2DD;
 
 typedef struct S_HLine2DD

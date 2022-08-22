@@ -3,35 +3,41 @@
 
 #include <stdint.h>
 
-typedef struct S_Vec2DD
+typedef struct S_Vec2f
+{
+    float x;
+    float y;
+} Vec2f;
+
+typedef struct S_Vec2d
 {
     double x;
     double y;
-} Vec2DD;
+} Vec2d;
 
-typedef struct S_VecXYD
+typedef struct S_VecXYd
 {
     double x;
     double y;
-} VecXYD;
+} VecXYd;
 
-typedef struct S_VecXZD
+typedef struct S_VecXZd
 {
     double x;
     double z;
-} VecXZD;
+} VecXZd;
 
-typedef struct S_VecYZD
+typedef struct S_VecYZd
 {
     double y;
     double z;
-} VecYZD;
+} VecYZd;
 
-#define Point2DF Vec2DF
-#define Point2DD Vec2DD
+#define Point2f Vec2f
+#define Point2d Vec2d
 
-#define PointXYD VecXYD
-#define PointXZD VecXZD
-#define PointYZD VecYZD
+#define PointXYd VecXYd
+#define PointXZd VecXZd
+#define PointYZd VecYZd
 
 #endif // DVS_MATH_VECTOR_LOW_DIM_VEC2_H_
