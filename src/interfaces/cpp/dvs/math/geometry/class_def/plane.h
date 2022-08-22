@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_GEOMETRY_CLASS_DEFS_PLANE_CLASS_DEF_H_
-#define DVS_MATH_GEOMETRY_CLASS_DEFS_PLANE_CLASS_DEF_H_
+#ifndef DVS_MATH_GEOMETRY_CLASS_DEF_PLANE_H_
+#define DVS_MATH_GEOMETRY_CLASS_DEF_PLANE_H_
 
 #include "dvs/math/misc/forward_decl.h"
 
@@ -41,4 +41,4 @@ template <typename T> struct Plane
 };
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_CLASS_DEFS_PLANE_CLASS_DEF_H_
+#endif // DVS_MATH_GEOMETRY_CLASS_DEF_PLANE_H_

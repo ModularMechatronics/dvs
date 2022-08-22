@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC4D_H_
-#define DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC4D_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC4_H_
+#define DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC4_H_
 
 #include <cmath>
 
@@ -200,4 +200,4 @@ template <typename T> bool Vec4<T>::isAnyNan() const
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC4D_H_
+#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC4_H_
