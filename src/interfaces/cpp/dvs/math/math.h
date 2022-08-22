@@ -21,10 +21,10 @@
 #include "dvs/math/geometry/plane.h"
 #include "dvs/math/geometry/triangle.h"
 
-#include "dvs/math/structures/index_span.h"
-#include "dvs/math/structures/index_triplet.h" // Keep
+#include "dvs/math/structures/index_triplet.h"
 
-#include "dvs/math/image.h"
+#include "dvs/math/image/image_c1.h"
+#include "dvs/math/image/image_c3.h"
 
 #include "dvs/math/pre_defs.h"
 

@@ -17,14 +17,6 @@ template <typename T> Vec4<T>::Vec4(const T x_, const T y_, const T z_, const T 
 
 template <typename T> Vec4<T>::Vec4() {}
 
-template <typename T> Vec4<T>::Vec4(const T v_array[4])
-{
-    x = v_array[0];
-    y = v_array[1];
-    z = v_array[2];
-    w = v_array[3];
-}
-
 template <typename T> template <typename Y> Vec4<T>::Vec4(const Vec4<Y>& v)
 {
     x = v.x;

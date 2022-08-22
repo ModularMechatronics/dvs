@@ -17,23 +17,18 @@ public:
     Matrix();
     Matrix(const size_t num_rows, const size_t num_cols);
     Matrix(const Matrix<T>& m);
-    Matrix(const MatrixView<T>& mv);
     template <typename Y> Matrix(const Matrix<Y>& m);
-    Matrix(const std::vector<std::vector<T>>& vm);
     Matrix(const std::initializer_list<std::initializer_list<T>>& il);
     Matrix(Matrix<T>&& m);
     ~Matrix();
 
     void fillBufferWithData(uint8_t* const buffer) const;
 
-    Matrix<T>&& move();
-
     T& operator()(const size_t r, const size_t c);
     const T& operator()(const size_t r, const size_t c) const;
 
     Matrix<T>& operator=(const Matrix<T>& m);
     Matrix<T>& operator=(Matrix<T>&& m);
-    Matrix<T>& operator=(const MatrixView<T>& m);
 
     void resize(const size_t num_rows, const size_t num_cols);
     size_t rows() const;
@@ -54,39 +49,6 @@ public:
     T max() const;
     T min() const;
     T sum() const;
-};
-
-template <typename T> class MatrixView
-{
-private:
-    T* data_;
-    size_t num_rows_parent_;
-    size_t num_cols_parent_;
-    size_t num_rows_;
-    size_t num_cols_;
-    size_t start_row_;
-    size_t start_col_;
-
-    size_t start_idx_;
-
-public:
-    MatrixView() = delete;
-    MatrixView(const MatrixView<T>& m);
-    MatrixView(MatrixView&& m) = delete;
-    MatrixView(T* data,
-               const size_t start_row,
-               const size_t start_col,
-               const size_t num_rows_parent,
-               const size_t num_cols_parent,
-               const size_t num_rows,
-               const size_t num_cols);
-    // operator=(const T val);
-    MatrixView<T>& operator=(const MatrixView<T>& other);
-    T& operator()(const size_t r, const size_t c);
-    const T& operator()(const size_t r, const size_t c) const;
-
-    size_t rows() const;
-    size_t cols() const;
 };
 
 }  // namespace dvs

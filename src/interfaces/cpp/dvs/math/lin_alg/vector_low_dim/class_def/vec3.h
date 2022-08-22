@@ -14,8 +14,6 @@ template <typename T> struct Vec3
     Vec3(const T x_, const T y_, const T z_);
     template <typename Y> Vec3(const Vec3<Y>& v);
     Vec3();
-    Vec3(const T v_array[3]);
-    Vector<T> toVector() const;
 
     CylindricalCoord<T> toCylindricalVec() const;
     SphericalCoord<T> toSphericalCoord() const;
@@ -29,7 +27,6 @@ template <typename T> struct Vec3
     Vec3<T> elementWiseDivide(const Vec3<T>& numerator_vector) const;
     Vec3<T> crossProduct(const Vec3<T>& right_vector) const;
     Matrix<T> toCrossProductMatrix() const;
-    Matrix<T> outerProduct(const Vec3<T>& v) const;
     Point3<T> mirrorPointInThis(const Point3<T>& point_to_mirror) const;
     T angleBetweenVectors(const Vec3<T>& v) const;
     Vec3<T> perpendicularVector() const;

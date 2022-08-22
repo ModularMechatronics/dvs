@@ -32,7 +32,7 @@ namespace dvs
 
 #define ASSERT_VEC_VALID_INTERNAL()                       \
     DVS_ASSERT(is_allocated_) << "Vector not allocated!"; \
-    DVS_ASSERT(vector_length_ > 0) << "Number of elements is 0!"
+    DVS_ASSERT(size_ > 0) << "Number of elements is 0!"
 
 }  // namespace dvs
 

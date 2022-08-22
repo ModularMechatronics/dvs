@@ -24,7 +24,6 @@ template <typename T> struct VecYZ;
 
 template <typename T> class Vector;
 template <typename T> class Matrix;
-template <typename T> class MatrixView;
 
 template <typename T> struct ComplexCoord;
 template <typename T> struct PolarCoord;
@@ -47,11 +46,6 @@ template <typename T> class PoseSE3;
 template <typename T> struct Triangle2D;
 template <typename T> struct Triangle3D;
 
-template <typename T> struct Interval1D;
-struct IndexSpan;
-struct EndIndex;
-struct AllIndices;
-
 template <typename T> using Point2 = Vec2<T>;
 template <typename T> using Point3 = Vec3<T>;
 template <typename T> using Point4 = Vec4<T>;
@@ -62,26 +56,5 @@ template <typename T> using PointXZ = VecXZ<T>;
 template <typename T> using PointYZ = VecYZ<T>;
 
 }  // namespace dvs
-
-// clang-format off
-/*#include "dvs/math/lin_alg/matrix_dynamic/class_def/matrix_dynamic.h"
-#include "dvs/math/lin_alg/vector_dynamic/class_def/vector_dynamic.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_def/vec2.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_def/vec3.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_def/vec4.h"
-
-#include "dvs/math/geometry/class_def/line_2d.h"
-#include "dvs/math/geometry/class_def/line_3d.h"
-#include "dvs/math/geometry/class_def/plane.h"
-
-#include "dvs/math/transformations/class_def/axis_angle.h"
-#include "dvs/math/transformations/class_def/pose.h"
-#include "dvs/math/transformations/class_def/quaternion.h"
-#include "dvs/math/transformations/class_def/roll_pitch_yaw.h"
-
-#include "dvs/math/structures/end_index.h"
-#include "dvs/math/structures/index_span.h"
-#include "dvs/math/structures/interval_1d.h"*/
-// clang-format on
 
 #endif // DVS_MATH_MISC_FORWARD_DECL_H_

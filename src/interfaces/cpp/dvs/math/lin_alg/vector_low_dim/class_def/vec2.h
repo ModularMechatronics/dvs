@@ -12,9 +12,7 @@ template <typename T> struct Vec2
 
     Vec2(const T x_, const T y_);
     Vec2();
-    Vec2(const T v_array[2]);
     template <typename Y> Vec2(const Vec2<Y>& v);
-    Vector<T> toVector() const;
 
     ComplexCoord<T> toComplex() const;
     PolarCoord<T> toPolar() const;
@@ -26,7 +24,6 @@ template <typename T> struct Vec2
     T norm() const;
     Vec2<T> elementWiseMultiply(const Vec2<T>& factor_vector) const;
     Vec2<T> elementWiseDivide(const Vec2<T>& numerator_vector) const;
-    Matrix<T> outerProduct(const Vec2<T>& v) const;
     Point2<T> rotatePointAroundThis(const Point2<T>& point_to_rotate, const T angle) const;
     Point2<T> mirrorPointInThis(const Point2<T>& point_to_mirror) const;
     T angleBetweenVectors(const Vec2<T>& v) const;

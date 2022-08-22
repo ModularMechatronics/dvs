@@ -48,92 +48,6 @@ template <typename T> std::pair<Matrix<T>, Matrix<T>> meshGrid(const Vector<T>& 
     return std::pair<Matrix<T>, Matrix<T>>(x_mat, y_mat);
 }
 
-template <typename T> Matrix<T> concatenateHorizontally(const std::initializer_list<Matrix<T>>& init_list)
-{
-    size_t num_rows;
-    size_t idx = 0;
-    for (auto list_mat : init_list)
-    {
-        if (idx == 0)
-        {
-            num_rows = list_mat.rows();
-            assert(num_rows > 0);
-        }
-        else
-        {
-            assert(list_mat.rows() == num_rows);
-        }
-        assert(list_mat.isAllocated());
-        idx++;
-    }
-
-    size_t new_num_cols = 0;
-    for (auto list_mat : init_list)
-    {
-        assert(list_mat.cols() > 0);
-        new_num_cols = new_num_cols + list_mat.cols();
-    }
-    Matrix<T> mres(num_rows, new_num_cols);
-
-    size_t c_idx = 0;
-    for (auto list_mat : init_list)
-    {
-        for (size_t c = 0; c < list_mat.cols(); c++)
-        {
-            for (size_t r = 0; r < list_mat.rows(); r++)
-            {
-                mres(r, c_idx) = list_mat(r, c);
-            }
-            c_idx++;
-        }
-    }
-
-    return mres;
-}
-
-template <typename T> Matrix<T> concatenateVertically(const std::initializer_list<Matrix<T>>& init_list)
-{
-    size_t num_cols;
-    size_t idx = 0;
-    for (auto list_mat : init_list)
-    {
-        if (idx == 0)
-        {
-            num_cols = list_mat.cols();
-            assert(num_cols > 0);
-        }
-        else
-        {
-            assert(list_mat.cols() == num_cols);
-        }
-        assert(list_mat.isAllocated());
-        idx++;
-    }
-
-    size_t new_num_rows = 0;
-    for (auto list_mat : init_list)
-    {
-        assert(list_mat.rows() > 0);
-        new_num_rows = new_num_rows + list_mat.rows();
-    }
-    Matrix<T> mres(new_num_rows, num_cols);
-
-    size_t r_idx = 0;
-    for (auto list_mat : init_list)
-    {
-        for (size_t r = 0; r < list_mat.rows(); r++)
-        {
-            for (size_t c = 0; c < list_mat.cols(); c++)
-            {
-                mres(r_idx, c) = list_mat(r, c);
-            }
-            r_idx++;
-        }
-    }
-
-    return mres;
-}
-
 template <typename T> Matrix<T> log10(const Matrix<T>& m_in)
 {
     assert((m_in.rows() > 0) && (m_in.cols() > 0) && (m_in.isAllocated()));
@@ -278,38 +192,6 @@ template <typename T> T min(const Matrix<T>& m_in)
     return min_val;
 }
 
-template <typename T> T maxAbs(const Matrix<T>& m_in)
-{
-    assert((m_in.rows() > 0) && (m_in.cols() > 0) && (m_in.isAllocated()));
-    T max_val = m_in(0, 0);
-
-    for (size_t r = 0; r < m_in.rows(); r++)
-    {
-        for (size_t c = 0; c < m_in.cols(); c++)
-        {
-            max_val = std::max(max_val, std::abs(m_in(r, c)));
-        }
-    }
-
-    return max_val;
-}
-
-template <typename T> T minAbs(const Matrix<T>& m_in)
-{
-    assert((m_in.rows() > 0) && (m_in.cols() > 0) && (m_in.isAllocated()));
-    T min_val = m_in(0, 0);
-
-    for (size_t r = 0; r < m_in.rows(); r++)
-    {
-        for (size_t c = 0; c < m_in.cols(); c++)
-        {
-            min_val = std::min(min_val, std::fabs(m_in(r, c)));
-        }
-    }
-
-    return min_val;
-}
-
 template <typename T> Matrix<T> abs(const Matrix<T>& m_in)
 {
     assert((m_in.rows() > 0) && (m_in.cols() > 0) && (m_in.isAllocated()));
@@ -326,45 +208,82 @@ template <typename T> Matrix<T> abs(const Matrix<T>& m_in)
     return m;
 }
 
-template <typename T> Matrix<T> linspaceFromPointsAndCountColMat(const T x0, const T x1, const size_t num_values)
+template <typename T> Matrix<T> rotationMatrixX(const T angle)
 {
-    assert(num_values > 0);
-    Matrix<T> m(num_values, 1);
+    const T ca = std::cos(angle);
+    const T sa = std::sin(angle);
+    Matrix<T> rotation_matrix(3, 3);
 
-    const T dx = (x1 - x0) / static_cast<T>(num_values - 1);
-    m(0, 0) = x0;
+    rotation_matrix(0, 0) = 1.0;
+    rotation_matrix(0, 1) = 0.0;
+    rotation_matrix(0, 2) = 0.0;
 
-    for (size_t r = 1; r < num_values; r++)
-    {
-        m(r, 0) = m(r - 1, 0) + dx;
-    }
+    rotation_matrix(1, 0) = 0.0;
+    rotation_matrix(1, 1) = ca;
+    rotation_matrix(1, 2) = -sa;
 
-    return m;
+    rotation_matrix(2, 0) = 0.0;
+    rotation_matrix(2, 1) = sa;
+    rotation_matrix(2, 2) = ca;
+
+    return rotation_matrix;
 }
 
-template <typename T> Matrix<T> linspaceFromPointIncAndCountColMat(const T x0, const T dx, const size_t num_values)
+template <typename T> Matrix<T> rotationMatrixY(const T angle)
 {
-    assert(num_values > 0);
-    Matrix<T> m(num_values, 1);
+    const T ca = std::cos(angle);
+    const T sa = std::sin(angle);
+    Matrix<T> rotation_matrix(3, 3);
 
-    m(0, 0) = x0;
+    rotation_matrix(0, 0) = ca;
+    rotation_matrix(0, 1) = 0.0;
+    rotation_matrix(0, 2) = sa;
 
-    for (size_t r = 1; r < num_values; r++)
-    {
-        m(r, 0) = m(r - 1, 0) + dx;
-    }
+    rotation_matrix(1, 0) = 0.0;
+    rotation_matrix(1, 1) = 1.0;
+    rotation_matrix(1, 2) = 0.0;
 
-    return m;
+    rotation_matrix(2, 0) = -sa;
+    rotation_matrix(2, 1) = 0.0;
+    rotation_matrix(2, 2) = ca;
+
+    return rotation_matrix;
 }
 
-template <typename T> Matrix<T> linspaceFromPointsAndIncColMat(const T x0, const T x1, const T dx)
+template <typename T> Matrix<T> rotationMatrixZ(const T angle)
 {
-    assert(dx > 0);
-    assert(x1 > x0);
+    const T ca = std::cos(angle);
+    const T sa = std::sin(angle);
+    Matrix<T> rotation_matrix(3, 3);
 
-    const size_t num_values = (x1 - x0) / dx;
+    rotation_matrix(0, 0) = ca;
+    rotation_matrix(0, 1) = -sa;
+    rotation_matrix(0, 2) = 0.0;
 
-    return linspaceFromPointsAndCountColMat(x0, x1, num_values);
+    rotation_matrix(1, 0) = sa;
+    rotation_matrix(1, 1) = ca;
+    rotation_matrix(1, 2) = 0.0;
+
+    rotation_matrix(2, 0) = 0.0;
+    rotation_matrix(2, 1) = 0.0;
+    rotation_matrix(2, 2) = 1.0;
+
+    return rotation_matrix;
+}
+
+template <typename T> Matrix<T> rotationMatrix2D(const T angle)
+{
+    const T ca = std::cos(angle);
+    const T sa = std::sin(angle);
+    Matrix<T> rotation_matrix(2, 2);
+
+    rotation_matrix(0, 0) = ca;
+    rotation_matrix(0, 1) = -sa;
+
+    rotation_matrix(1, 0) = sa;
+    rotation_matrix(1, 1) = ca;
+
+    return rotation_matrix;
 }
 
 }  // namespace dvs
