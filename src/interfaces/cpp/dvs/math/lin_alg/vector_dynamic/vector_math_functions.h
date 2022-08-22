@@ -212,7 +212,7 @@ template <typename T> Vector<T> sin(const Vector<T>& vin)
     return v;
 }
 
-template <typename T> Vector<T> linspaceFromPointsAndCount(const T x0, const T x1, const size_t num_values)
+template <typename T> Vector<T> linspaceFromBoundariesAndCount(const T x0, const T x1, const size_t num_values)
 {
     assert(num_values > 0);
     Vector<T> v(num_values);
@@ -228,7 +228,7 @@ template <typename T> Vector<T> linspaceFromPointsAndCount(const T x0, const T x
     return v;
 }
 
-template <typename T> Vector<T> linspaceFromPointIncAndCount(const T x0, const T dx, const size_t num_values)
+template <typename T> Vector<T> linspaceFromStartPointIncAndCount(const T x0, const T dx, const size_t num_values)
 {
     assert(num_values > 0);
     Vector<T> v(num_values);
@@ -243,14 +243,14 @@ template <typename T> Vector<T> linspaceFromPointIncAndCount(const T x0, const T
     return v;
 }
 
-template <typename T> Vector<T> linspaceFromPointsAndInc(const T x0, const T x1, const T dx)
+template <typename T> Vector<T> linspaceFromBoundariesAndInc(const T x0, const T x1, const T dx)
 {
     assert(dx > 0);
     assert(x1 > x0);
 
     const size_t num_values = (x1 - x0) / dx;
 
-    return linspaceFromPointsAndCount(x0, x1, num_values);
+    return linspaceFromBoundariesAndCount(x0, x1, num_values);
 }
 
 template <typename T> T sum(const Vector<T>& vin)
