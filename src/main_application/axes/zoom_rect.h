@@ -21,8 +21,8 @@ private:
 
 public:
     ZoomRect();
-    void render(const dvs::Vec2Df mouse_pos_at_press,
-    const dvs::Vec2Df current_mouse_pos,
+    void render(const dvs::Vec2f mouse_pos_at_press,
+    const dvs::Vec2f current_mouse_pos,
     const SnappingAxis snapping_axis,
     const glm::mat4& view_mat,
     const glm::mat4& model_mat,

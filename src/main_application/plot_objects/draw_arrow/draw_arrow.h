@@ -17,10 +17,10 @@ private:
 
     float* points_ptr_;
 
-    Point2Dd p0_;
-    Point2Dd p1_;
-    Point2Dd p1_left_;
-    Point2Dd p1_right_;
+    Point2d p0_;
+    Point2d p1_;
+    Point2d p1_left_;
+    Point2d p1_right_;
 
 public:
     DrawArrow();

@@ -49,7 +49,7 @@ private:
 
     AxesLimits axes_limits_;
     AxesLimits default_axes_limits_;
-    Vec2Df mouse_pos_at_press_;
+    Vec2f mouse_pos_at_press_;
 
     AxesSettings axes_settings_;
     bool show_legend_;
@@ -68,15 +68,15 @@ public:
     void resetView();
     void setViewAngles(const double azimuth, const double elevation);
     void setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
-    void setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec);
+    void setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec);
     bool shouldDrawZoomRect() const
     {
         return should_draw_zoom_rect_;
     }
 
     void registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis, const int dx, const int dy);
-    void registerMousePressed(const Vec2Df& mouse_pos);
-    void registerMouseReleased(const Vec2Df& mouse_pos);
+    void registerMousePressed(const Vec2f& mouse_pos);
+    void registerMouseReleased(const Vec2f& mouse_pos);
     void updateMouseActivity(const InteractionType interaction_type);
 
     MouseActivity getCurrentMouseActivity() const

@@ -510,7 +510,7 @@ void testDrawTiles()
         }
     }
 
-    const Vec2Dd tile_size(0.1, 0.2);
+    const Vec2d tile_size(0.1, 0.2);
 
     setCurrentElement("view_00");
     clearView();
@@ -574,8 +574,8 @@ void testDrawArrow()
 {
     using tp = double;
 
-    Point2D<tp> p(0.1, 0.2);
-    Vec2D<tp> v(0.5, -0.3);
+    Point2<tp> p(0.1, 0.2);
+    Vec2<tp> v(0.5, -0.3);
 
     setCurrentElement("view_00");
     clearView();
@@ -632,7 +632,7 @@ void testDrawLine2D()
 {
     using tp = double;
 
-    ParametricLine2D<tp> line(Point2D<tp>(0.0, 0.0), Vec2D<tp>(1.0, 1.0));
+    ParametricLine2D<tp> line(Point2<tp>(0.0, 0.0), Vec2<tp>(1.0, 1.0));
     HomogeneousLine2D<tp> line_h(0.1, 0.2, 0.3);
     tp t0 = 0;
     tp t1 = 1.0;

@@ -23,7 +23,7 @@ protected:
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
 
-    Vec2Df parent_size_;  // Pixels
+    Vec2f parent_size_;  // Pixels
 
 
 public:

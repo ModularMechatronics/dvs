@@ -95,7 +95,7 @@ void quiver(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& u, const Ma
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, u, v);
 }
 
-template <typename T, typename... Us> void drawPoint(const Point2D<T>& p, const Us&... settings)
+template <typename T, typename... Us> void drawPoint(const Point2<T>& p, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
@@ -223,7 +223,7 @@ template <typename... Us> void drawTriangle(const Triangle3D<double>& triangle, 
 }
 
 template <typename T, typename... Us>
-void drawTiles(const Matrix<T>& z, const Vec2D<double>& tile_size, const Us&... settings)
+void drawTiles(const Matrix<T>& z, const Vec2<double>& tile_size, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_TILES);
@@ -325,13 +325,13 @@ void drawLine(const Line3D<double>& line, const double t0, const double t1, cons
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
 }
 
-template <typename... Us> void drawArrow(const Point2D<double>& p, const Vec2D<double> v, const Us&... settings)
+template <typename... Us> void drawArrow(const Point2<double>& p, const Vec2<double> v, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_ARROW);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    Vector<Point2D<double>> points = {p, v};
+    Vector<Point2<double>> points = {p, v};
 
     hdr.extend(settings...);
 
@@ -345,8 +345,8 @@ void drawLine2D(const ParametricLine2D<double>& line, const double t0, const dou
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    const Point2D<double> p0 = line.eval(t0);
-    const Point2D<double> p1 = line.eval(t1);
+    const Point2<double> p0 = line.eval(t0);
+    const Point2<double> p1 = line.eval(t1);
     Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
 
     hdr.extend(settings...);
@@ -364,8 +364,8 @@ void drawLine2DBetweenXValues(const HomogeneousLine2D<double>& line,
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    const Point2D<double> p0(x0, line.evalX(x0));
-    const Point2D<double> p1(x1, line.evalX(x1));
+    const Point2<double> p0(x0, line.evalX(x0));
+    const Point2<double> p1(x1, line.evalX(x1));
     Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
 
     hdr.extend(settings...);
@@ -383,8 +383,8 @@ void drawLine2DBetweenYValues(const HomogeneousLine2D<double>& line,
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
-    const Point2D<double> p0(line.evalX(y0), y0);
-    const Point2D<double> p1(line.evalX(y1), y1);
+    const Point2<double> p0(line.evalX(y0), y0);
+    const Point2<double> p1(line.evalX(y1), y1);
     Vector<Point3D<double>> points = {Point3D<double>(p0.x, p0.y, 0.0), Point3D<double>(p1.x, p1.y, 0.0)};
 
     hdr.extend(settings...);
@@ -407,7 +407,7 @@ void drawLineBetweenPoints(const Point3D<double>& p0, const Point3D<double>& p1,
 }
 
 template <typename... Us>
-void drawLineBetweenPoints(const Point2D<double>& p0, const Point2D<double>& p1, const Us&... settings)
+void drawLineBetweenPoints(const Point2<double>& p0, const Point2<double>& p1, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE_BETWEEN_POINTS_3D);

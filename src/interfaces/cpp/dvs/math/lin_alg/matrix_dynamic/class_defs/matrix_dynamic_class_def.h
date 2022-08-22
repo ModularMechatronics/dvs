@@ -70,8 +70,8 @@ public:
     void hCat(const Matrix<T>& m);
     void vCat(const Matrix<T>& m);
 
-    void hCat(const Vec2D<T>& v);
-    void vCat(const Vec2D<T>& v);
+    void hCat(const Vec2<T>& v);
+    void vCat(const Vec2<T>& v);
     void hCat(const Vec3D<T>& v);
     void vCat(const Vec3D<T>& v);
     void hCat(const Vec4D<T>& v);

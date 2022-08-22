@@ -31,16 +31,16 @@ float* convertQuiverData(uint8_t* input_data, const Dimension2D& dims, const siz
     {
         for (size_t c = 0; c < dims.cols; c++)
         {
-            const Point2D<float> p0(x(r, c), y(r, c));
-            const Point2D<float> p1(x(r, c) + u(r, c), y(r, c) + v(r, c));
-            const Vec2D<float> v = p1 - p0;
+            const Point2<float> p0(x(r, c), y(r, c));
+            const Point2<float> p1(x(r, c) + u(r, c), y(r, c) + v(r, c));
+            const Vec2<float> v = p1 - p0;
 
-            const Vec2D<float> vec_short = v * arrow_edge_multiplier;
-            const Vec2D<float> vec_rotated0 = r_0 * vec_short;
-            const Vec2D<float> vec_rotated1 = r_1 * vec_short;
+            const Vec2<float> vec_short = v * arrow_edge_multiplier;
+            const Vec2<float> vec_rotated0 = r_0 * vec_short;
+            const Vec2<float> vec_rotated1 = r_1 * vec_short;
 
-            const Point2D<float> p1_left = p1 + vec_rotated0;
-            const Point2D<float> p1_right = p1 + vec_rotated1;
+            const Point2<float> p1_left = p1 + vec_rotated0;
+            const Point2<float> p1_right = p1 + vec_rotated1;
 
             points_ptr[idx + 0] = p0.x;
             points_ptr[idx + 1] = p0.y;

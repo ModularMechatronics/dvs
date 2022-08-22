@@ -20,15 +20,15 @@ void drawCoordinateAxesLines(const AxesSettings& axes_settings)
 
 void drawArrowHead(const Vec3Dd& v0, const Vec3Dd& v1, const CoordinateConverter& coord_converter)
 {
-    const Vec2Dd v0_2d = coord_converter.modelToViewCoordinate(v0);
-    const Vec2Dd v1_2d = coord_converter.modelToViewCoordinate(v1);
+    const Vec2d v0_2d = coord_converter.modelToViewCoordinate(v0);
+    const Vec2d v1_2d = coord_converter.modelToViewCoordinate(v1);
 
-    const Vec2Dd v01 = v1_2d.normalizedVectorBetweenPoints(v0_2d);
+    const Vec2d v01 = v1_2d.normalizedVectorBetweenPoints(v0_2d);
 
     const double arrow_angle = M_PI / 10.0;
 
-    const Vec2Dd a0 = rotationMatrix2D(arrow_angle) * v01;
-    const Vec2Dd a1 = rotationMatrix2D(-arrow_angle) * v01;
+    const Vec2d a0 = rotationMatrix2D(arrow_angle) * v01;
+    const Vec2d a1 = rotationMatrix2D(-arrow_angle) * v01;
 
     const double f = 0.04;
 
@@ -67,9 +67,9 @@ void drawCoordinateAxesLetters(const AxesSettings& axes_settings, const Coordina
     Vec3Dd ypos(-f, ext_fac * f, -f);
     Vec3Dd zpos(-f, -f, ext_fac * f);
 
-    const Vec2Dd x_vec = coord_conv.modelToViewCoordinate(xpos);
-    const Vec2Dd y_vec = coord_conv.modelToViewCoordinate(ypos);
-    const Vec2Dd z_vec = coord_conv.modelToViewCoordinate(zpos);
+    const Vec2d x_vec = coord_conv.modelToViewCoordinate(xpos);
+    const Vec2d y_vec = coord_conv.modelToViewCoordinate(ypos);
+    const Vec2d z_vec = coord_conv.modelToViewCoordinate(zpos);
 
     setColor(0.0, 0.0, 0.0);
     putTextAt_Old("X", x_vec.x, x_vec.y);

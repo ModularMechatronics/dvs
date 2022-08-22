@@ -117,10 +117,10 @@ template <typename T> Point3D<T> Plane<T>::closestPointOnPlaneFromPoint(const Po
     m(1, 0) = 2.0 * a1 * a / c;
     m(1, 1) = 2.0 + 2.0 * a1 * b / c;
 
-    Vec2D<T> b_vec(2.0 * p.x - 2.0 * a0 * d / c - 2.0 * a0 * p.z, 2.0 * p.y - 2.0 * a1 * d / c - 2.0 * a1 * p.z);
+    Vec2<T> b_vec(2.0 * p.x - 2.0 * a0 * d / c - 2.0 * a0 * p.z, 2.0 * p.y - 2.0 * a1 * d / c - 2.0 * a1 * p.z);
 
-    Point2D<T> sol = m.solve(b_vec);
-    return Point2D<T>(sol.x, sol.y, this->evalXY(sol.x, sol.y));
+    Point2<T> sol = m.solve(b_vec);
+    return Point2<T>(sol.x, sol.y, this->evalXY(sol.x, sol.y));
 }
 
 template <typename T> T Plane<T>::pointDistanceFromPlane(const Point3D<T>& p) const

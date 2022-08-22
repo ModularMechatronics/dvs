@@ -20,7 +20,7 @@ template <typename T> Circle2D<T>::Circle2D(const T radius_, const T center_x_, 
     center.y = center_y_;
 }
 
-template <typename T> Circle2D<T>::Circle2D(const T radius_, const Vec2D<T>& center_)
+template <typename T> Circle2D<T>::Circle2D(const T radius_, const Vec2<T>& center_)
 {
     radius = radius_;
     center.x = center_.x;
@@ -32,8 +32,8 @@ template <typename T> Circle2D<T>::Circle2D() {}
 template <typename T> HomogeneousLine2D<T> Circle2D<T>::tangentLine(const T angle) const
 {
     // Computes the tangent line that touches the point P = [r*cos(angle); r*sin(angle)]
-    const Point2D<T> perimiter_point = radius * Point2D<T>(std::cos(angle), std::sin(angle));
-    const Vec2D<T> center_to_perimiter_vector = center.vectorBetweenPoints(perimiter_point);
+    const Point2<T> perimiter_point = radius * Point2<T>(std::cos(angle), std::sin(angle));
+    const Vec2<T> center_to_perimiter_vector = center.vectorBetweenPoints(perimiter_point);
 
     HomogeneousLine2D<T> line = HomogeneousLine2D<T>(center_to_perimiter_vector.x, center_to_perimiter_vector.y, 0);
     line.c = -(line.a * perimiter_point.x + line.b * perimiter_point.y);
@@ -54,20 +54,20 @@ template <typename T> bool Circle2D<T>::doesLineIntersect(const HomogeneousLine2
     }
 }
 
-template <typename T> Point2D<T> Circle2D<T>::closestPointOnPerimeterFromPoint(const Point2D<T>& p) const
+template <typename T> Point2<T> Circle2D<T>::closestPointOnPerimeterFromPoint(const Point2<T>& p) const
 {
-    const Vec2D<T> center_to_point_vector = center.normalizedVectorBetweenPoints(p);
+    const Vec2<T> center_to_point_vector = center.normalizedVectorBetweenPoints(p);
     return center + radius * center_to_point_vector;
 }
 
 template <typename T>
-std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::lineIntersectionPoints(const HomogeneousLine2D<T>& line) const
+std::pair<Point2<T>, Point2<T>> Circle2D<T>::lineIntersectionPoints(const HomogeneousLine2D<T>& line) const
 {
     // Derived using
     // E1 = cy - sqrt(r^2 - (x - cx)^2) == -(a*x + c)/b
     // E2 = cy + sqrt(r^2 - (x - cx)^2) == -(a*x + c)/b
 
-    std::pair<Point2D<T>, Point2D<T>> return_points;
+    std::pair<Point2<T>, Point2<T>> return_points;
 
     if (this->doesLineIntersect(line))
     {
@@ -100,19 +100,19 @@ std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::lineIntersectionPoints(const Homo
                                      b2 * r2 - 2.0f * b * c * cy - c2) -
                        b2 * cx + a * b * cy) /
                      a2b2;
-        return_points.first = Point2D<T>(x0, line.evalX(x0));
-        return_points.second = Point2D<T>(x1, line.evalX(x1));
+        return_points.first = Point2<T>(x0, line.evalX(x0));
+        return_points.second = Point2<T>(x1, line.evalX(x1));
     }
     else
     {
-        return_points.first = Point2D<T>(NAN, NAN);
-        return_points.second = Point2D<T>(NAN, NAN);
+        return_points.first = Point2<T>(NAN, NAN);
+        return_points.second = Point2<T>(NAN, NAN);
     }
 
     return return_points;
 }
 
-template <typename T> bool Circle2D<T>::isPointInCircle(const Point2D<T>& p) const
+template <typename T> bool Circle2D<T>::isPointInCircle(const Point2<T>& p) const
 {
     if ((p - center).norm() < radius)
     {
@@ -138,20 +138,20 @@ template <typename T> bool Circle2D<T>::doesCircleIntersect(const Circle2D<T>& c
     }
 }
 
-template <typename T> std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::circleIntersection(const Circle2D<T>& circle) const
+template <typename T> std::pair<Point2<T>, Point2<T>> Circle2D<T>::circleIntersection(const Circle2D<T>& circle) const
 {
     if (!doesCircleIntersect(circle))
     {
-        return std::pair<Point2D<T>, Point2D<T>>(Point2D<T>(NAN, NAN), Point2D<T>(NAN, NAN));
+        return std::pair<Point2<T>, Point2<T>>(Point2<T>(NAN, NAN), Point2<T>(NAN, NAN));
     }
     else
     {
-        const Point2D<T> c0 = center;
-        const Point2D<T> c1 = circle.center;
+        const Point2<T> c0 = center;
+        const Point2<T> c1 = circle.center;
         const T r0 = radius;
         const T r1 = circle.radius;
 
-        const Point2D<T> s0, s1;
+        const Point2<T> s0, s1;
 
         s0.x = (c0.x * c0.y * c0.y - c0.x * c0.x * c1.x - c0.x * c1.x * c1.x + c0.x * c1.y * c1.y + c1.x * c0.y * c0.y +
                     c1.x * c1.y * c1.y - c0.x * r0 * r0 + c0.x * r1 * r1 + c1.x * r0 * r0 - c1.x * r1 * r1 +
@@ -206,7 +206,7 @@ template <typename T> std::pair<Point2D<T>, Point2D<T>> Circle2D<T>::circleInter
                                c1.y * c1.y - r0 * r0 + 2.0 * r0 * r1 - r1 * r1)) ^
                 0.5 - 2.0 * c0.x * c1.x * c0.y - 2.0 * c0.x * c1.x * c1.y) /
                (2.0 * (c0.x * c0.x - 2.0 * c0.x * c1.x + c1.x * c1.x + c0.y * c0.y - 2.0 * c0.y * c1.y + c1.y * c1.y));
-        return std::pair<Point2D<T>, Point2D<T>>(s0, s1);
+        return std::pair<Point2<T>, Point2<T>>(s0, s1);
     }
 }
 

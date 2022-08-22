@@ -196,12 +196,12 @@ template <typename T> void Matrix<T>::vCat(const Vector<T>& v)
     data_ = temp_data;
 }
 
-template <typename T> void Matrix<T>::hCat(const Vec2D<T>& v)
+template <typename T> void Matrix<T>::hCat(const Vec2<T>& v)
 {
     this->hCat(v.toVector());
 }
 
-template <typename T> void Matrix<T>::vCat(const Vec2D<T>& v)
+template <typename T> void Matrix<T>::vCat(const Vec2<T>& v)
 {
     this->vCat(v.toVector());
 }
@@ -372,13 +372,13 @@ template <typename T> Matrix<T> vCat(const Matrix<T>& m, const Vec3D<T>& v)
     return vCat(m, vg);
 }
 
-template <typename T> Matrix<T> hCat(const Matrix<T>& m, const Vec2D<T>& v)
+template <typename T> Matrix<T> hCat(const Matrix<T>& m, const Vec2<T>& v)
 {
     Vector<T> vg = v.toVector();
     return hCat(m, vg);
 }
 
-template <typename T> Matrix<T> vCat(const Matrix<T>& m, const Vec2D<T>& v)
+template <typename T> Matrix<T> vCat(const Matrix<T>& m, const Vec2<T>& v)
 {
     Vector<T> vg = v.toVector();
     return vCat(m, vg);
@@ -408,13 +408,13 @@ template <typename T> Matrix<T> vCat(const Vec3D<T>& v, const Matrix<T>& m)
     return vCat(vg, m);
 }
 
-template <typename T> Matrix<T> hCat(const Vec2D<T>& v, const Matrix<T>& m)
+template <typename T> Matrix<T> hCat(const Vec2<T>& v, const Matrix<T>& m)
 {
     Vector<T> vg = v.toVector();
     return hCat(vg, m);
 }
 
-template <typename T> Matrix<T> vCat(const Vec2D<T>& v, const Matrix<T>& m)
+template <typename T> Matrix<T> vCat(const Vec2<T>& v, const Matrix<T>& m)
 {
     Vector<T> vg = v.toVector();
     return vCat(vg, m);
@@ -462,7 +462,7 @@ template <typename T> Matrix<T> Vector<T>::toRowVectorMat() const
 
 // Vec234D
 
-template <typename T> Matrix<T> Vec2D<T>::outerProduct(const Vec2D<T>& v) const
+template <typename T> Matrix<T> Vec2<T>::outerProduct(const Vec2<T>& v) const
 {
     Vector<T> vv0 = toVector();
     Vector<T> vv1 = v.toVector();
@@ -494,11 +494,11 @@ template <typename T> Vec3D<T> Vector<T>::toVec3D() const
     return v;
 }
 
-template <typename T> Vec2D<T> Vector<T>::toVec2D() const
+template <typename T> Vec2<T> Vector<T>::toVec2() const
 {
     DVS_ASSERT(is_allocated_) << "Error, parent vector not allocated!";
     DVS_ASSERT(vector_length_ >= 2) << "Error, parent vector not of size 2 or larger!";
-    Vec2D<T> v(data_[0], data_[1]);
+    Vec2<T> v(data_[0], data_[1]);
     return v;
 }
 
@@ -510,7 +510,7 @@ template <typename T> Matrix<T> Vec4D<T>::outerProduct(const Vec4D<T>& v) const
     return vv0.outerProduct(vv1);
 }
 
-template <typename T> Vector<T> Vec2D<T>::toVector() const
+template <typename T> Vector<T> Vec2<T>::toVector() const
 {
     const Vector<T> v({x, y});
     return v;

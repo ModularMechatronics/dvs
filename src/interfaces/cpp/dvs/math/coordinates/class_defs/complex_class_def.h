@@ -16,7 +16,7 @@ template <typename T> struct ComplexCoord
     PolarCoord<T> toPolar() const;
     ComplexCoord<T> conjugate() const;
     ComplexCoord<T> inv() const;
-    Vec2D<T> toVec2D() const;
+    Vec2<T> toVec2() const;
     T abs() const;
 };
 }  // namespace dvs

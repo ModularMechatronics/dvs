@@ -17,7 +17,7 @@ private:
     float* points_ptr_;
     Dimension2D dims_;
     GLuint buffer_handle_;
-    Vec2Dd tile_size_;
+    Vec2d tile_size_;
 
     void findMinMax() override;
 

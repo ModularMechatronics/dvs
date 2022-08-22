@@ -23,9 +23,9 @@ template <typename T> ComplexCoord<T> PolarCoord<T>::toComplex() const
     return ComplexCoord<T>(r * std::cos(phi), r * std::sin(phi));
 }
 
-template <typename T> Vec2D<T> PolarCoord<T>::toVec2D() const
+template <typename T> Vec2<T> PolarCoord<T>::toVec2() const
 {
-    return Vec2D<T>(r * std::cos(phi), r * std::sin(phi));
+    return Vec2<T>(r * std::cos(phi), r * std::sin(phi));
 }
 
 }  // namespace dvs

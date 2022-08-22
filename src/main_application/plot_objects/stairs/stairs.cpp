@@ -31,8 +31,8 @@ Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data, const Function
 
 void Stairs::findMinMax()
 {
-    Vec2Dd min_vec_2d, max_vec_2d;
-    std::tie<Vec2Dd, Vec2Dd>(min_vec_2d, max_vec_2d) =
+    Vec2d min_vec_2d, max_vec_2d;
+    std::tie<Vec2d, Vec2d>(min_vec_2d, max_vec_2d) =
         findMinMaxFromTwoVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 
     min_vec.x = min_vec_2d.x;

@@ -8,12 +8,12 @@ DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const Fu
         throw std::runtime_error("Invalid function type for DrawArrow!");
     }
 
-    Vector<Point2D<double>> points;
+    Vector<Point2<double>> points;
 
-    points.setInternalData(reinterpret_cast<Point2D<double>*>(data_ptr_), 2);
+    points.setInternalData(reinterpret_cast<Point2<double>*>(data_ptr_), 2);
 
     p0_ = points(0);
-    const Vec2Dd v = points(1);
+    const Vec2d v = points(1);
 
     points.setInternalData(nullptr, 0);
 
@@ -27,9 +27,9 @@ DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const Fu
 
     const double arrow_edge_length_ratio = 0.85;
 
-    const Vec2Dd vec_short = v * arrow_edge_length_ratio - v;
-    const Vec2Dd vec_rotated0 = r_0 * vec_short;
-    const Vec2Dd vec_rotated1 = r_1 * vec_short;
+    const Vec2d vec_short = v * arrow_edge_length_ratio - v;
+    const Vec2d vec_rotated0 = r_0 * vec_short;
+    const Vec2d vec_rotated1 = r_1 * vec_short;
 
     p1_ = p0_ + v;
     p1_left_ = p1_ + vec_rotated0;

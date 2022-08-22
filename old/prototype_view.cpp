@@ -8,7 +8,7 @@
 PrototypeView::PrototypeView(wxNotebookPage* parent,
                              const wxPoint& position,
                              const wxSize& size,
-                             const Vec2Df& num_grid_cells,
+                             const Vec2f& num_grid_cells,
                              const std::vector<ElementSettings>& elements)
      : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), position, size, wxFULL_REPAINT_ON_RESIZE)
 {
@@ -129,7 +129,7 @@ int* PrototypeView::getArgsPtr()
 
 void PrototypeView::mouseLeftPressed(wxMouseEvent& event)
 {
-    const Vec2Df mouse_pos(event.GetX(), panel_size_.GetHeight() - event.GetY());
+    const Vec2f mouse_pos(event.GetX(), panel_size_.GetHeight() - event.GetY());
 
     left_button_pressed_ = true;
 
@@ -166,7 +166,7 @@ void PrototypeView::mouseLeftReleased(wxMouseEvent& event)
 
 void PrototypeView::mouseMoved(wxMouseEvent& event)
 {
-    const Vec2Df mouse_pos(event.GetX(), panel_size_.GetHeight() - event.GetY());
+    const Vec2f mouse_pos(event.GetX(), panel_size_.GetHeight() - event.GetY());
 
     if(is_editing_)
     {
@@ -314,15 +314,15 @@ void PrototypeView::changeNumCellsY(const float change)
 void PrototypeView::updateGridStates()
 {
     // Screen
-    screen_grid_state_.grid_size = Vec2Df(panel_size_.GetWidth(), panel_size_.GetHeight());
+    screen_grid_state_.grid_size = Vec2f(panel_size_.GetWidth(), panel_size_.GetHeight());
 
-    screen_grid_state_.cell_size = Vec2Df(screen_grid_state_.grid_size.x / num_grid_cells_.x,
+    screen_grid_state_.cell_size = Vec2f(screen_grid_state_.grid_size.x / num_grid_cells_.x,
                                           screen_grid_state_.grid_size.y / num_grid_cells_.y);
 
     // GL
-    gl_grid_state_.grid_size = Vec2Df(2.0f, 2.0f);
+    gl_grid_state_.grid_size = Vec2f(2.0f, 2.0f);
 
-    gl_grid_state_.cell_size = Vec2Df(gl_grid_state_.grid_size.x / num_grid_cells_.x,
+    gl_grid_state_.cell_size = Vec2f(gl_grid_state_.grid_size.x / num_grid_cells_.x,
                                       gl_grid_state_.grid_size.y / num_grid_cells_.y);
 
     for(size_t k = 0; k < squares_.size(); k++)

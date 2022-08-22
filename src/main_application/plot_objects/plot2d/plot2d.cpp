@@ -89,8 +89,8 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
 
 void Plot2D::findMinMax()
 {
-    Vec2Dd min_vec_2d, max_vec_2d;
-    std::tie<Vec2Dd, Vec2Dd>(min_vec_2d, max_vec_2d) =
+    Vec2d min_vec_2d, max_vec_2d;
+    std::tie<Vec2d, Vec2d>(min_vec_2d, max_vec_2d) =
         findMinMaxFromTwoVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 
     min_vec.x = min_vec_2d.x;
@@ -166,9 +166,9 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
 
     struct Points
     {
-        Vec2D<float> p0;
-        Vec2D<float> p1;
-        Vec2D<float> p2;
+        Vec2<float> p0;
+        Vec2<float> p1;
+        Vec2<float> p2;
     };
     std::vector<Points> pts;
     pts.resize(num_elements);

@@ -24,7 +24,7 @@ struct Bound2Df
     Bound2Df() = default;
 };
 
-inline Bound2Df operator+(const Bound2Df& bnd, const Vec2Df& offset)
+inline Bound2Df operator+(const Bound2Df& bnd, const Vec2f& offset)
 {
     Bound2Df new_bnd;
     new_bnd.x_min = bnd.x_min + offset.x;
@@ -46,8 +46,8 @@ struct Size2Df
 
 struct GridState
 {
-    Vec2Df grid_size;
-    Vec2Df cell_size;
+    Vec2f grid_size;
+    Vec2f cell_size;
 };
 
 enum class CursorSquareState
@@ -64,7 +64,7 @@ enum class CursorSquareState
     BOTTOM_RIGHT
 };
 
-inline void drawCircle(const Vec2Df& pos, const float r)
+inline void drawCircle(const Vec2f& pos, const float r)
 {
     const int num_elements = 20;
 
@@ -81,7 +81,7 @@ inline void drawCircle(const Vec2Df& pos, const float r)
     glEnd();
 }
 
-inline void drawCircularSegment(const Vec2Df& pos, const float r, const float from_angle, const float to_angle)
+inline void drawCircularSegment(const Vec2f& pos, const float r, const float from_angle, const float to_angle)
 {
     const int num_elements = 10;
 
@@ -102,8 +102,8 @@ inline void drawCircularSegment(const Vec2Df& pos, const float r, const float fr
 
 inline void drawRoundedRectangle(const Bound2Df& bounds, const float r)
 {
-    const Vec2Df start(bounds.x_min + r, bounds.y_min + r);
-    Vec2Df vec = start;
+    const Vec2f start(bounds.x_min + r, bounds.y_min + r);
+    Vec2f vec = start;
     const float y_dist = (bounds.y_max - bounds.y_min) - 2.0f * r;
     const float x_dist = (bounds.x_max - bounds.x_min) - 2.0f * r;
 
@@ -134,10 +134,10 @@ inline void drawRoundedRectangle(const Bound2Df& bounds, const float r)
     glVertex2f(start.x, start.y);
     glEnd();
 
-    drawCircularSegment(Vec2Df(bounds.x_min, bounds.y_min) + r, r, M_PI, 3.0f * M_PI / 2.0f);
-    drawCircularSegment(Vec2Df(bounds.x_max, bounds.y_max) - r, r, 0, M_PI / 2.0f);
-    drawCircularSegment(Vec2Df(bounds.x_min + r, bounds.y_max - r), r, M_PI / 2.0f, M_PI);
-    drawCircularSegment(Vec2Df(bounds.x_max - r, bounds.y_min + r), r, 3.0f * M_PI / 2.0f, 2.0f * M_PI);
+    drawCircularSegment(Vec2f(bounds.x_min, bounds.y_min) + r, r, M_PI, 3.0f * M_PI / 2.0f);
+    drawCircularSegment(Vec2f(bounds.x_max, bounds.y_max) - r, r, 0, M_PI / 2.0f);
+    drawCircularSegment(Vec2f(bounds.x_min + r, bounds.y_max - r), r, M_PI / 2.0f, M_PI);
+    drawCircularSegment(Vec2f(bounds.x_max - r, bounds.y_min + r), r, 3.0f * M_PI / 2.0f, 2.0f * M_PI);
 }
 
 class Square
@@ -147,7 +147,7 @@ private:
     Bound2Df screen_bound_margin_;
     Bound2Df gl_bound_;
 
-    Vec2Df pos_;
+    Vec2f pos_;
     Size2Df size_;
     RGBTripletf color_;
 
@@ -194,7 +194,7 @@ public:
         delete name_field_;
     }
 
-    Vec2Df getPos() const
+    Vec2f getPos() const
     {
         return pos_;
     }
@@ -204,7 +204,7 @@ public:
         return size_;
     }
 
-    CursorSquareState mouseState(const Vec2Df mouse_pos) const
+    CursorSquareState mouseState(const Vec2f mouse_pos) const
     {
         if ((screen_bound_.x_min <= mouse_pos.x) && (mouse_pos.x <= screen_bound_.x_max) &&
             (screen_bound_.y_min <= mouse_pos.y) && (mouse_pos.y <= screen_bound_.y_max))
@@ -298,7 +298,7 @@ public:
 
     void render() const
     {
-        const Bound2Df shadow_bnd = gl_bound_ + Vec2Df(0.01f, -0.01f);
+        const Bound2Df shadow_bnd = gl_bound_ + Vec2f(0.01f, -0.01f);
 
         glColor4f(0.1f, 0.1f, 0.1f, 0.4f);
         drawRoundedRectangle(shadow_bnd, 0.02f);
@@ -375,9 +375,9 @@ private:
     GridState screen_grid_state_;
     GridState gl_grid_state_;
 
-    Vec2Df grid_pos_pressed_;
+    Vec2f grid_pos_pressed_;
 
-    Vec2Df pos_of_pressed_sq_;
+    Vec2f pos_of_pressed_sq_;
     Size2Df size_of_pressed_;
 
     Bound2Df gl_bounds_;
@@ -386,7 +386,7 @@ private:
 
     int* getArgsPtr();
 
-    Vec2Df num_grid_cells_;
+    Vec2f num_grid_cells_;
 
     std::vector<Square*> squares_;
     int idx_of_selected_square_;
@@ -401,7 +401,7 @@ public:
     PrototypeView(wxNotebookPage* parent,
                   const wxPoint& position,
                   const wxSize& size,
-                  const Vec2Df& num_grid_cells,
+                  const Vec2f& num_grid_cells,
                   const std::vector<ElementSettings>& elements);
     virtual ~PrototypeView();
 

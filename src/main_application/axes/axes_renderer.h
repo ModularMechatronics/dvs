@@ -55,8 +55,8 @@ private:
 
     GridVectors gv_;
     bool use_perspective_proj_;
-    Vec2Df mouse_pos_at_press_;
-    Vec2Df current_mouse_pos_;
+    Vec2f mouse_pos_at_press_;
+    Vec2f current_mouse_pos_;
     ZoomRect zoom_rect_;
     MouseActivity mouse_activity_;
     bool mouse_pressed_;
@@ -79,8 +79,8 @@ public:
                       const bool use_perspective_proj,
                       const float width,
                       const float height,
-                      const Vec2Df mouse_pos_at_press,
-                      const Vec2Df current_mouse_pos,
+                      const Vec2f mouse_pos_at_press,
+                      const Vec2f current_mouse_pos,
                       const MouseActivity mouse_activity,
                       const bool mouse_pressed,
                       const bool render_zoom_rect,

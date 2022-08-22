@@ -61,8 +61,8 @@ void drawArrow2D(const float x0, const float y0, const float x1, const float y1)
     const float gamma = alpha - beta;
     const float theta = M_PI - gamma;
     const float phi = M_PI - (alpha + beta);
-    const Vec2Dd vleft(s * std::cos(theta) + x1, s * std::sin(theta) + y1);
-    const Vec2Dd vright(s * std::cos(-phi) + x1, s * std::sin(-phi) + y1);
+    const Vec2d vleft(s * std::cos(theta) + x1, s * std::sin(theta) + y1);
+    const Vec2d vright(s * std::cos(-phi) + x1, s * std::sin(-phi) + y1);
 
     drawLine2D(x0, y0, x1, y1);
     drawLine2D(x1, y1, vleft.x, vleft.y);
@@ -79,8 +79,8 @@ void drawArrow2D(const float x0, const float y0, const float x1, const float y1,
     const float gamma = alpha - beta;
     const float theta = M_PI - gamma;
     const float phi = M_PI - (alpha + beta);
-    const Vec2Dd vleft(s * std::cos(theta) + x1, s * std::sin(theta) + y1);
-    const Vec2Dd vright(s * std::cos(-phi) + x1, s * std::sin(-phi) + y1);
+    const Vec2d vleft(s * std::cos(theta) + x1, s * std::sin(theta) + y1);
+    const Vec2d vright(s * std::cos(-phi) + x1, s * std::sin(-phi) + y1);
 
     drawLine2D(x0, y0, x1, y1);
     drawLine2D(x1, y1, vleft.x, vleft.y);

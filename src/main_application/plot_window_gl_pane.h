@@ -25,7 +25,7 @@ struct Bound2Df
     Bound2Df() = default;
 };
 
-inline Bound2Df operator+(const Bound2Df& bnd, const Vec2Df& offset)
+inline Bound2Df operator+(const Bound2Df& bnd, const Vec2f& offset)
 {
     Bound2Df new_bnd;
     new_bnd.x_min = bnd.x_min + offset.x;
@@ -73,8 +73,8 @@ private:
 
     int* getArgsPtr();
     wxSize parent_size_;
-    Vec2Df mouse_pos_at_press_;
-    Vec2Df current_mouse_pos_;
+    Vec2f mouse_pos_at_press_;
+    Vec2f current_mouse_pos_;
     wxPoint pos_at_press_;
     wxSize size_at_press_;
     float grid_size_;

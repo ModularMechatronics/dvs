@@ -22,6 +22,6 @@ public:
 };
 
 bool initFreetype();
-dvs::Vec2Df calculateStringSize(const std::string_view& text, const float scale, const float axes_width, const float axes_height);
+dvs::Vec2f calculateStringSize(const std::string_view& text, const float scale, const float axes_width, const float axes_height);
 
 #endif // MAIN_APPLICATION_AXES_TEXT_RENDERING_H_

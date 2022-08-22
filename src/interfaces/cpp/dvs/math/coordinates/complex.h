@@ -33,9 +33,9 @@ template <typename T> ComplexCoord<T> ComplexCoord<T>::conjugate() const
     return ComplexCoord<T>(real, -imag);
 }
 
-template <typename T> Vec2D<T> ComplexCoord<T>::toVec2D() const
+template <typename T> Vec2<T> ComplexCoord<T>::toVec2() const
 {
-    return Vec2D<T>(real, imag);
+    return Vec2<T>(real, imag);
 }
 
 template <typename T> ComplexCoord<T> ComplexCoord<T>::inv() const

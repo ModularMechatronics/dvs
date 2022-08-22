@@ -5,31 +5,31 @@
 
 namespace dvs
 {
-template <typename T> struct Vec2D
+template <typename T> struct Vec2
 {
     T x;
     T y;
 
-    Vec2D(const T x_, const T y_);
-    Vec2D();
-    Vec2D(const T v_array[2]);
-    template <typename Y> Vec2D(const Vec2D<Y>& v);
+    Vec2(const T x_, const T y_);
+    Vec2();
+    Vec2(const T v_array[2]);
+    template <typename Y> Vec2(const Vec2<Y>& v);
     Vector<T> toVector() const;
 
     ComplexCoord<T> toComplex() const;
     PolarCoord<T> toPolar() const;
 
-    Vec2D<T> normalized() const;
-    Vec2D<T> vectorBetweenPoints(const Point2D<T>& end_point) const;
-    Vec2D<T> normalizedVectorBetweenPoints(const Point2D<T>& end_point) const;
+    Vec2<T> normalized() const;
+    Vec2<T> vectorBetweenPoints(const Point2<T>& end_point) const;
+    Vec2<T> normalizedVectorBetweenPoints(const Point2<T>& end_point) const;
     T squaredNorm() const;
     T norm() const;
-    Vec2D<T> elementWiseMultiply(const Vec2D<T>& factor_vector) const;
-    Vec2D<T> elementWiseDivide(const Vec2D<T>& numerator_vector) const;
-    Matrix<T> outerProduct(const Vec2D<T>& v) const;
-    Point2D<T> rotatePointAroundThis(const Point2D<T>& point_to_rotate, const T angle) const;
-    Point2D<T> mirrorPointInThis(const Point2D<T>& point_to_mirror) const;
-    T angleBetweenVectors(const Vec2D<T>& v) const;
+    Vec2<T> elementWiseMultiply(const Vec2<T>& factor_vector) const;
+    Vec2<T> elementWiseDivide(const Vec2<T>& numerator_vector) const;
+    Matrix<T> outerProduct(const Vec2<T>& v) const;
+    Point2<T> rotatePointAroundThis(const Point2<T>& point_to_rotate, const T angle) const;
+    Point2<T> mirrorPointInThis(const Point2<T>& point_to_mirror) const;
+    T angleBetweenVectors(const Vec2<T>& v) const;
     T angle() const;
 
     bool areAllNan() const;
