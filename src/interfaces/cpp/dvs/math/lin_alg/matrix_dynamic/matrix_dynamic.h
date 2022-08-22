@@ -4,7 +4,7 @@
 #include <cmath>
 #include <cstring>
 
-#include "dvs/math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic.h"
+#include "dvs/math/lin_alg/matrix_dynamic/class_def/matrix_dynamic.h"
 #include "dvs/math/misc/math_macros.h"
 #include "dvs/math/structures/end_index.h"
 #include "dvs/math/structures/index_span.h"

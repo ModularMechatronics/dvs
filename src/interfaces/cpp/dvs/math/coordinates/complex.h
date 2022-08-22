@@ -4,7 +4,7 @@
 #include <cmath>
 #include <vector>
 
-#include "dvs/math/coordinates/class_defs/complex.h"
+#include "dvs/math/coordinates/class_def/complex.h"
 #include "dvs/math/lin_alg.h"
 
 // Reference: https://github.com/N1ckK/MandelbrotZoom/blob/master/complex.h

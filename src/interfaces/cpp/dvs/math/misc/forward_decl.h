@@ -64,20 +64,20 @@ template <typename T> using PointYZ = VecYZ<T>;
 }  // namespace dvs
 
 // clang-format off
-/*#include "dvs/math/lin_alg/matrix_dynamic/class_defs/matrix_dynamic.h"
-#include "dvs/math/lin_alg/vector_dynamic/class_defs/vector_dynamic.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec2.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec3.h"
-#include "dvs/math/lin_alg/vector_low_dim/class_defs/vec4.h"
+/*#include "dvs/math/lin_alg/matrix_dynamic/class_def/matrix_dynamic.h"
+#include "dvs/math/lin_alg/vector_dynamic/class_def/vector_dynamic.h"
+#include "dvs/math/lin_alg/vector_low_dim/class_def/vec2.h"
+#include "dvs/math/lin_alg/vector_low_dim/class_def/vec3.h"
+#include "dvs/math/lin_alg/vector_low_dim/class_def/vec4.h"
 
-#include "dvs/math/geometry/class_defs/line_2d.h"
-#include "dvs/math/geometry/class_defs/line_3d.h"
-#include "dvs/math/geometry/class_defs/plane.h"
+#include "dvs/math/geometry/class_def/line_2d.h"
+#include "dvs/math/geometry/class_def/line_3d.h"
+#include "dvs/math/geometry/class_def/plane.h"
 
-#include "dvs/math/transformations/class_defs/axis_angle.h"
-#include "dvs/math/transformations/class_defs/pose.h"
-#include "dvs/math/transformations/class_defs/quaternion.h"
-#include "dvs/math/transformations/class_defs/roll_pitch_yaw.h"
+#include "dvs/math/transformations/class_def/axis_angle.h"
+#include "dvs/math/transformations/class_def/pose.h"
+#include "dvs/math/transformations/class_def/quaternion.h"
+#include "dvs/math/transformations/class_def/roll_pitch_yaw.h"
 
 #include "dvs/math/structures/end_index.h"
 #include "dvs/math/structures/index_span.h"

@@ -5,7 +5,7 @@
 #include <cmath>
 #include <utility>
 
-#include "dvs/math/geometry/class_defs/line_2d.h"
+#include "dvs/math/geometry/class_def/line_2d.h"
 #include "dvs/math/lin_alg.h"
 
 namespace dvs
