@@ -10,7 +10,7 @@
 
 using namespace dvs;
 
-static Vec3Dd findScale(const glm::mat4& pm)
+static Vec3d findScale(const glm::mat4& pm)
 {
     // Currently unknown exactly how 'q' affects the results...
     const double q = 1.0;
@@ -74,9 +74,9 @@ static Vec3Dd findScale(const glm::mat4& pm)
     const double sy = -(pmih_x*q03*q10 - pmiw_x*q00*q13 + h*pmih_x*q03*q30 - h*pmiw_x*q00*q33 + pmih_x*pmiw_z*q02*q10 - pmih_z*pmiw_x*q00*q12 + pmih_x*q10*q33*w - pmiw_x*q13*q30*w + h*pmih_x*pmiw_z*q02*q30 - h*pmih_z*pmiw_x*q00*q32 + h*pmih_x*q30*q33*w - h*pmiw_x*q30*q33*w + pmih_x*pmiw_z*q10*q32*w - pmih_z*pmiw_x*q12*q30*w + h*pmih_x*pmiw_z*q30*q32*w - h*pmih_z*pmiw_x*q30*q32*w)/(pmih_x*pmiw_y*q01*q10 - pmih_y*pmiw_x*q00*q11 + h*pmih_x*pmiw_y*q01*q30 - h*pmih_y*pmiw_x*q00*q31 + pmih_x*pmiw_y*q10*q31*w - pmih_y*pmiw_x*q11*q30*w + h*pmih_x*pmiw_y*q30*q31*w - h*pmih_y*pmiw_x*q30*q31*w);
     const double sz = 1.0;
 
-    // std::cout << Vec3Dd(sx, sy, sz) << std::endl;
+    // std::cout << Vec3d(sx, sy, sz) << std::endl;
 
-    return Vec3Dd(sx, sy, sz);
+    return Vec3d(sx, sy, sz);
 }
 
 AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) :
@@ -117,29 +117,29 @@ void AxesRenderer::enableClipPlanes()
 {
     const double f = 0.1;
 
-    const Vec3Dd axes_center = axes_limits_.getAxesCenter();
+    const Vec3d axes_center = axes_limits_.getAxesCenter();
 
-    const Vec3Dd scale = axes_limits_.getAxesScale() / 2.0;
+    const Vec3d scale = axes_limits_.getAxesScale() / 2.0;
 
     // clang-format off
-    const Vector<Point3Dd> points_x0 = {(Point3Dd(scale.x - axes_center.x, f, f)),
-                                       (Point3Dd(scale.x - axes_center.x, -f, f)),
-                                       (Point3Dd(scale.x - axes_center.x, f, -f))};
-    const Vector<Point3Dd> points_x1 = {(Point3Dd(scale.x + axes_center.x, f, f)),
-                                       (Point3Dd(scale.x + axes_center.x, -f, f)),
-                                       (Point3Dd(scale.x + axes_center.x, f, -f))};
-    const Vector<Point3Dd> points_y0 = {(Point3Dd(-f, scale.y - axes_center.y, f)),
-                                       (Point3Dd(f, scale.y - axes_center.y, f)),
-                                       (Point3Dd(f, scale.y - axes_center.y, -f))};
-    const Vector<Point3Dd> points_y1 = {(Point3Dd(-f, scale.y + axes_center.y, f)),
-                                       (Point3Dd(f, scale.y + axes_center.y, f)),
-                                       (Point3Dd(f, scale.y + axes_center.y, -f))};
-    const Vector<Point3Dd> points_z0 = {(Point3Dd(-f, f, -(axes_center.z + scale.z))),
-                                       (Point3Dd(f, -f, -(axes_center.z + scale.z))),
-                                       (Point3Dd(-f, -f, -(axes_center.z + scale.z)))};
-    const Vector<Point3Dd> points_z1 = {(Point3Dd(-f, f, -(scale.z - axes_center.z))),
-                                       (Point3Dd(f, -f, -(scale.z - axes_center.z))),
-                                       (Point3Dd(-f, -f, -(scale.z - axes_center.z)))};
+    const Vector<Point3d> points_x0 = {(Point3d(scale.x - axes_center.x, f, f)),
+                                       (Point3d(scale.x - axes_center.x, -f, f)),
+                                       (Point3d(scale.x - axes_center.x, f, -f))};
+    const Vector<Point3d> points_x1 = {(Point3d(scale.x + axes_center.x, f, f)),
+                                       (Point3d(scale.x + axes_center.x, -f, f)),
+                                       (Point3d(scale.x + axes_center.x, f, -f))};
+    const Vector<Point3d> points_y0 = {(Point3d(-f, scale.y - axes_center.y, f)),
+                                       (Point3d(f, scale.y - axes_center.y, f)),
+                                       (Point3d(f, scale.y - axes_center.y, -f))};
+    const Vector<Point3d> points_y1 = {(Point3d(-f, scale.y + axes_center.y, f)),
+                                       (Point3d(f, scale.y + axes_center.y, f)),
+                                       (Point3d(f, scale.y + axes_center.y, -f))};
+    const Vector<Point3d> points_z0 = {(Point3d(-f, f, -(axes_center.z + scale.z))),
+                                       (Point3d(f, -f, -(axes_center.z + scale.z))),
+                                       (Point3d(-f, -f, -(axes_center.z + scale.z)))};
+    const Vector<Point3d> points_z1 = {(Point3d(-f, f, -(scale.z - axes_center.z))),
+                                       (Point3d(f, -f, -(scale.z - axes_center.z))),
+                                       (Point3d(-f, -f, -(scale.z - axes_center.z)))};
     // clang-format on*/
 
     // TODO: Simplify
@@ -193,7 +193,7 @@ void AxesRenderer::enableClipPlanes()
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
-void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const
+void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, const Point3d& p0, const Point3d& p1, const Point3d& p2, const bool invert) const
 {
     // Fit plane
     const Planed fp = planeFromThreePoints(p0, p1, p2);
@@ -247,7 +247,7 @@ void AxesRenderer::renderBoxGrid()
 {
     glUseProgram(shader_collection_.plot_box_shader.programId());
 
-    const Vec3Dd scale = axes_limits_.getAxesScale() / 2.0;
+    const Vec3d scale = axes_limits_.getAxesScale() / 2.0;
 
     scale_mat[0][0] = 1.0 / scale.x;
     scale_mat[1][1] = 1.0 / scale.y;
@@ -271,9 +271,9 @@ void AxesRenderer::renderBoxGrid()
 
 void AxesRenderer::plotBegin()
 {
-    const Vec3Dd axes_center = axes_limits_.getAxesCenter();
+    const Vec3d axes_center = axes_limits_.getAxesCenter();
 
-    const Vec3Dd scale = axes_limits_.getAxesScale() / 2.0;
+    const Vec3d scale = axes_limits_.getAxesScale() / 2.0;
 
     glm::mat4 t_mat = glm::translate(glm::mat4(1.0f), glm::vec3(-axes_center.x, -axes_center.y, -axes_center.z));
 

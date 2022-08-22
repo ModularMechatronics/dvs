@@ -29,9 +29,9 @@ template <typename T> SphericalCoord<T> CylindricalCoord<T>::toSphericalCoord() 
     return sv;
 }
 
-template <typename T> Vec3D<T> CylindricalCoord<T>::toVec3D() const
+template <typename T> Vec3<T> CylindricalCoord<T>::toVec3() const
 {
-    return Vec3D<T>(r * std::cos(phi), r * std::sin(phi), z);
+    return Vec3<T>(r * std::cos(phi), r * std::sin(phi), z);
 }
 }  // namespace dvs
 

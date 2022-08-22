@@ -54,7 +54,7 @@ private:
     AxesSettings axes_settings_;
     bool show_legend_;
 
-    Vec3Dd inc0;
+    Vec3d inc0;
 
     // Functions
     void changePan(const double dx, const double dy, const MouseInteractionAxis mia);
@@ -67,7 +67,7 @@ public:
     void update(const InteractionType interaction_type, const int window_width, const int window_height);
     void resetView();
     void setViewAngles(const double azimuth, const double elevation);
-    void setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec);
+    void setAxesLimits(const Vec3d& min_vec, const Vec3d& max_vec);
     void setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec);
     bool shouldDrawZoomRect() const
     {

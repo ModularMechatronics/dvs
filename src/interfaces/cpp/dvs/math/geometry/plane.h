@@ -19,7 +19,7 @@ template <typename T> Plane<T>::Plane(const T a_, const T b_, const T c_, const 
     d = d_;
 }
 
-template <typename T> Plane<T>::Plane(const Point3D<T>& point, const Vec3D<T>& normal_vector)
+template <typename T> Plane<T>::Plane(const Point3D<T>& point, const Vec3<T>& normal_vector)
 {
     a = normal_vector.x;
     b = normal_vector.y;
@@ -39,7 +39,7 @@ template <typename T> template <typename Y> Plane<T>::Plane(const Plane<Y>& p)
 
 template <typename T> Plane<T> Plane<T>::normalized() const
 {
-    Vec3D<T> normal_vec = this->normal();
+    Vec3<T> normal_vec = this->normal();
     T nvl = normal_vec.norm();
     return Plane<T>(a / nvl, b / nvl, c / nvl, d / nvl);
 }
@@ -64,14 +64,14 @@ template <typename T> T Plane<T>::evalYZ(const T y, const T z) const
     return -(b * y + c * z + d) / a;
 }
 
-template <typename T> Vec3D<T> Plane<T>::normal() const
+template <typename T> Vec3<T> Plane<T>::normal() const
 {
-    return Vec3D<T>(a, b, c);
+    return Vec3<T>(a, b, c);
 }
 
-template <typename T> Vec3D<T> Plane<T>::normalizedNormal() const
+template <typename T> Vec3<T> Plane<T>::normalizedNormal() const
 {
-    return Vec3D<T>(a, b, c).normalized();
+    return Vec3<T>(a, b, c).normalized();
 }
 
 template <typename T> Point3D<T> Plane<T>::lineIntersection(const Line3D<T>& line) const
@@ -82,8 +82,8 @@ template <typename T> Point3D<T> Plane<T>::lineIntersection(const Line3D<T>& lin
 
 template <typename T> Line3D<T> Plane<T>::projectLineOntoPlane(const Line3D<T>& line) const
 {
-    const Vec3D<T> line_vector = line.v;
-    const Vec3D<T> plane_normal_vector(a, b, c);
+    const Vec3<T> line_vector = line.v;
+    const Vec3<T> plane_normal_vector(a, b, c);
     const T angle_between_vectors = line_vector.angleBetweenVectors();
     if (std::fabs(angle_between_vectors) < 1e-8)
     {
@@ -135,10 +135,10 @@ template <typename T> T Plane<T>::pointDistanceFromPlane(const Point3D<T>& p) co
 // template <typename T> Plane<T> Plane<T>::mirroredPlane(const Plane<T>& plane) const {}
 // template <typename T> std::pair<Point3D<T>, Point3D<T>> Plane<T>::circleIntersection(const
 // Circle3D<T> circle) const {} template <typename T> Circle3D<T> Plane<T>::sphereIntersection(const
-// Sphere<T>& sphere) const {} template <typename T> std::pair<Point3D<T>, Vec3D<T>>
-// Plane<T>::projectPointAndVectorOntoPlane(const Point3D<T>& point, const Vec3D<T>& vec) const {}
+// Sphere<T>& sphere) const {} template <typename T> std::pair<Point3D<T>, Vec3<T>>
+// Plane<T>::projectPointAndVectorOntoPlane(const Point3D<T>& point, const Vec3<T>& vec) const {}
 // template <typename T> Plane<T> Plane<T>::planeIntersection(const Plane<T>& plane) const {}
-template <typename T> Plane<T> Plane<T>::translatePlane(const Vec3D<T>& vec) const
+template <typename T> Plane<T> Plane<T>::translatePlane(const Vec3<T>& vec) const
 {
     Plane<T> plane;
 
@@ -151,9 +151,9 @@ template <typename T> Plane<T> Plane<T>::translatePlane(const Vec3D<T>& vec) con
 
 template <typename T> Plane<T> planeFromThreePoints(const Point3D<T>& p0, const Point3D<T>& p1, const Point3D<T>& p2)
 {
-    Vec3D<T> v10 = p1.normalizedVectorBetweenPoints(p0);
-    Vec3D<T> v12 = p1.normalizedVectorBetweenPoints(p2);
-    Vec3D<T> normal_vector = v10.crossProduct(v12);
+    Vec3<T> v10 = p1.normalizedVectorBetweenPoints(p0);
+    Vec3<T> v12 = p1.normalizedVectorBetweenPoints(p2);
+    Vec3<T> normal_vector = v10.crossProduct(v12);
 
     return Plane<T>(p0, normal_vector);
 }

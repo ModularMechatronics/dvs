@@ -78,8 +78,8 @@ void testScatter3()
         const float yf = 7.0 * sin(t0) - 110.0f;
         const float zf = 0.0f;
 
-        const Vec3Df v0 = rotationMatrixY<float>(t1) * Vec3Df(xf, yf, zf);
-        const Vec3Df v1 = rotationMatrixZ<float>(t2) * (v0 + Vec3Df(50.0f, y0, 0.0f));
+        const Vec3f v0 = rotationMatrixY<float>(t1) * Vec3f(xf, yf, zf);
+        const Vec3f v1 = rotationMatrixZ<float>(t2) * (v0 + Vec3f(50.0f, y0, 0.0f));
 
         x(k) = v1.x;
         y(k) = v1.y;
@@ -611,7 +611,7 @@ void testDrawLine3D()
 {
     using tp = double;
 
-    Line3D<tp> line(Point3D<tp>(0.0, 0.0, 0.0), Vec3D<tp>(1.0, 1.0, 1.0));
+    Line3D<tp> line(Point3D<tp>(0.0, 0.0, 0.0), Vec3<tp>(1.0, 1.0, 1.0));
     tp t0 = 0;
     tp t1 = 1.0;
 

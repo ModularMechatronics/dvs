@@ -18,8 +18,8 @@ private:
     float* points_ptr_;
     GLuint buffer_idx_;
 
-    Point3Dd p0_;
-    Point3Dd p1_;
+    Point3d p0_;
+    Point3d p1_;
 
 public:
     DrawLine3D();

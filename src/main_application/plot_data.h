@@ -24,7 +24,7 @@ private:
     ShaderCollection shader_collection_;
 
 public:
-    std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors() const;
+    std::pair<Vec3d, Vec3d> getMinMaxVectors() const;
     std::vector<PlotObjectBase*> plot_datas_;
     std::vector<PlotObjectBase*> old_plot_datas_;
     PlotDataHandler(const ShaderCollection shader_collection);

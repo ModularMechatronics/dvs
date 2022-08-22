@@ -27,14 +27,14 @@ std::string_view PlotObjectBase::getNameStringView() const
     return std::string_view(name_.data);
 }
 
-std::pair<Vec3Dd, Vec3Dd> PlotObjectBase::getMinMaxVectors()
+std::pair<Vec3d, Vec3d> PlotObjectBase::getMinMaxVectors()
 {
     if (!min_max_calculated_)
     {
         min_max_calculated_ = true;
         findMinMax();
     }
-    return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
+    return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
 }
 
 size_t PlotObjectBase::getNumDimensions() const

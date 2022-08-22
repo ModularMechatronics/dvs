@@ -21,7 +21,7 @@ private:
     float azimuth_;
     float elevation_;
 
-    Vec3Dd axes_scale_;
+    Vec3d axes_scale_;
 
     void renderXYGrid(const GridVectors& gv);
     void renderXZGrid(const GridVectors& gv);

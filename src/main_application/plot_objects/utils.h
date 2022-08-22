@@ -123,11 +123,11 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
 }
 
 template <typename T>
-std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectorsInternal(uint8_t* const data_buffer,
+std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectorsInternal(uint8_t* const data_buffer,
                                                              const size_t num_elements,
                                                              const size_t num_bytes_for_one_vec)
 {
-    Vec3Dd min_vec, max_vec;
+    Vec3d min_vec, max_vec;
     Vector<T> x, y, z;
 
     x.setInternalData(reinterpret_cast<T*>(data_buffer), num_elements);
@@ -145,10 +145,10 @@ std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectorsInternal(uint8_t* const data
     y.setInternalData(nullptr, 0);
     z.setInternalData(nullptr, 0);
 
-    return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
+    return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
 }
 
-inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_buffer,
+inline std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectors(uint8_t* const data_buffer,
                                                             const size_t num_elements,
                                                             const size_t num_bytes_for_one_vec,
                                                             const DataType data_type)
@@ -202,7 +202,7 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
         throw std::runtime_error("Got default in data type switch!");
     }
 
-    return std::pair<Vec3Dd, Vec3Dd>(Vec3Dd(), Vec3Dd());
+    return std::pair<Vec3d, Vec3d>(Vec3d(), Vec3d());
 }
 
 template <typename T>
@@ -284,13 +284,13 @@ inline std::pair<Vec2d, Vec2d> findMinMaxFromTwoVectors(uint8_t* const data_buff
 }
 
 template <typename T>
-std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatricesInternal(uint8_t* const data_buffer,
+std::pair<Vec3d, Vec3d> findMinMaxFromThreeMatricesInternal(uint8_t* const data_buffer,
                                                               const size_t num_rows,
                                                               const size_t num_cols,
                                                               const size_t num_bytes_for_one_mat)
 {
     Matrix<T> x, y, z;
-    Vec3D<T> min_vec, max_vec;
+    Vec3<T> min_vec, max_vec;
 
     x.setInternalData(reinterpret_cast<T*>(data_buffer), num_rows, num_cols);
     y.setInternalData(reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_mat])), num_rows, num_cols);
@@ -307,10 +307,10 @@ std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatricesInternal(uint8_t* const dat
     y.setInternalData(nullptr, 0, 0);
     z.setInternalData(nullptr, 0, 0);
 
-    return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
+    return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
 }
 
-inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data_buffer,
+inline std::pair<Vec3d, Vec3d> findMinMaxFromThreeMatrices(uint8_t* const data_buffer,
                                                              const size_t num_rows,
                                                              const size_t num_cols,
                                                              const size_t num_bytes_for_one_mat,
@@ -360,13 +360,13 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeMatrices(uint8_t* const data
     {
         throw std::runtime_error("Unknown data type!");
 
-        return std::pair<Vec3Dd, Vec3Dd>(Vec3Dd(), Vec3Dd());
+        return std::pair<Vec3d, Vec3d>(Vec3d(), Vec3d());
     }
     else
     {
         throw std::runtime_error("Got default in data type switch!");
 
-        return std::pair<Vec3Dd, Vec3Dd>(Vec3Dd(), Vec3Dd());
+        return std::pair<Vec3d, Vec3d>(Vec3d(), Vec3d());
     }
 }
 

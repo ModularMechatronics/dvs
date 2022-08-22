@@ -134,12 +134,12 @@ void GlCanvas::render(wxPaintEvent& evt)
 
     // AxesLimits
     const AxesLimits axes_limits = axes_interactor_->getAxesLimits();
-    const Vec3Dd axes_center = axes_limits.getAxesCenter();
+    const Vec3d axes_center = axes_limits.getAxesCenter();
     // axes_settings_ = axes_interactor_->getAxesSettings();
 
     // Scales
-    // Vec3Dd sq = axes_settings_.getAxesScale();
-    const Vec3Dd s = axes_limits.getAxesScale();
+    // Vec3d sq = axes_settings_.getAxesScale();
+    const Vec3d s = axes_limits.getAxesScale();
 
     /*
     glScaled(sq.x, sq.y, sq.z);

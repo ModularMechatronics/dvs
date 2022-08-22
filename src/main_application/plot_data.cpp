@@ -158,24 +158,24 @@ std::vector<LegendProperties> PlotDataHandler::getLegendStrings() const
     return names;
 }
 
-std::pair<Vec3Dd, Vec3Dd> PlotDataHandler::getMinMaxVectors() const
+std::pair<Vec3d, Vec3d> PlotDataHandler::getMinMaxVectors() const
 {
     if (plot_datas_.size() == 0)
     {
-        return std::pair<Vec3Dd, Vec3Dd>(Vec3Dd(-1, -1, -1), Vec3Dd(1, 1, 1));
+        return std::pair<Vec3d, Vec3d>(Vec3d(-1, -1, -1), Vec3d(1, 1, 1));
     }
     else
     {
-        const std::pair<Vec3Dd, Vec3Dd> min_max = plot_datas_[0]->getMinMaxVectors();
+        const std::pair<Vec3d, Vec3d> min_max = plot_datas_[0]->getMinMaxVectors();
         size_t num_dimensions = plot_datas_[0]->getNumDimensions();
-        Vec3Dd min_vec = min_max.first;
-        Vec3Dd max_vec = min_max.second;
+        Vec3d min_vec = min_max.first;
+        Vec3d max_vec = min_max.second;
 
         bool z_is_set = num_dimensions == 3 ? true : false;
 
         for (size_t k = 1; k < plot_datas_.size(); k++)
         {
-            const std::pair<Vec3Dd, Vec3Dd> current_min_max = plot_datas_[0]->getMinMaxVectors();
+            const std::pair<Vec3d, Vec3d> current_min_max = plot_datas_[0]->getMinMaxVectors();
 
             const size_t current_num_dimensions = plot_datas_[k]->getNumDimensions();
             num_dimensions = std::max(num_dimensions, current_num_dimensions);
@@ -204,7 +204,7 @@ std::pair<Vec3Dd, Vec3Dd> PlotDataHandler::getMinMaxVectors() const
             max_vec.z = 1.0;
         }
 
-        const Vec3Dd diff_vec = max_vec - min_vec;
+        const Vec3d diff_vec = max_vec - min_vec;
 
         const Vectord v = {diff_vec.x, diff_vec.y, diff_vec.z};
 
@@ -228,7 +228,7 @@ std::pair<Vec3Dd, Vec3Dd> PlotDataHandler::getMinMaxVectors() const
             max_vec.z = largest_diff * 0.01;
         }
 
-        return std::pair<Vec3Dd, Vec3Dd>(min_vec, max_vec);
+        return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
     }
 }
 

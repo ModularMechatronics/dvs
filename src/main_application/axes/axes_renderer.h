@@ -51,7 +51,7 @@ private:
     Matrix<double> rot_mat;
 
     float width_, height_;
-    Vec3Dd scale_for_window_;
+    Vec3d scale_for_window_;
 
     GridVectors gv_;
     bool use_perspective_proj_;
@@ -68,7 +68,7 @@ private:
     void renderBoxGrid();
     void enableClipPlanes();
     void renderLegend();
-    void setClipPlane(const GLuint program_id, const std::string pln, const Point3Dd& p0, const Point3Dd& p1, const Point3Dd& p2, const bool invert) const;
+    void setClipPlane(const GLuint program_id, const std::string pln, const Point3d& p0, const Point3d& p1, const Point3d& p2, const bool invert) const;
 
 public:
     AxesRenderer(const ShaderCollection shader_collection);

@@ -65,7 +65,7 @@ void Scatter3D::modifyShader()
 
 void Scatter3D::findMinMax()
 {
-    std::tie<Vec3Dd, Vec3Dd>(min_vec, max_vec) =
+    std::tie<Vec3d, Vec3d>(min_vec, max_vec) =
         findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 }
 

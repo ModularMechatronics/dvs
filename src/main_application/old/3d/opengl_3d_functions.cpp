@@ -40,7 +40,7 @@ void drawPoints3D(const Vectord& x_values, const Vectord& y_values, const Vector
 
 void drawRectangle3D() {}
 
-void drawTriangle3D(const Vec3Dd& v0, const Vec3Dd& v1, const Vec3Dd& v2)
+void drawTriangle3D(const Vec3d& v0, const Vec3d& v1, const Vec3d& v2)
 {
     glBegin(GL_TRIANGLES);
     glVertex3f(v0.x, v0.y, v0.z);
@@ -57,7 +57,7 @@ void drawLine3D(const double x0, const double y0, const double z0, const double 
     glEnd();
 }
 
-void drawLine3D(const Vec3Dd& v0, const Vec3Dd& v1)
+void drawLine3D(const Vec3d& v0, const Vec3d& v1)
 {
     glBegin(GL_LINES);
     glVertex3f(v0.x, v0.y, v0.z);
@@ -65,7 +65,7 @@ void drawLine3D(const Vec3Dd& v0, const Vec3Dd& v1)
     glEnd();
 }
 
-void drawPolygon3D(const Vec3Dd& c0, const Vec3Dd& c1, const Vec3Dd& c2, const Vec3Dd& c3)
+void drawPolygon3D(const Vec3d& c0, const Vec3d& c1, const Vec3d& c2, const Vec3d& c3)
 {
     glBegin(GL_POLYGON);
     glVertex3f(c0.x, c0.y, c0.z);

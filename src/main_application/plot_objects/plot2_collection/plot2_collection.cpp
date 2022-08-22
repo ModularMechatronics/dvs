@@ -153,7 +153,7 @@ void Plot2Collection::findMinMax()
     size_t idx = 0;
     for (size_t k = 0; k < (num_indices_ * 3 * 3); k += 3)
     {
-        const Point3Dd current_point(points_ptr_[k], points_ptr_[k + 1], points_ptr_[k + 2]);
+        const Point3d current_point(points_ptr_[k], points_ptr_[k + 1], points_ptr_[k + 2]);
         min_vec.x = std::min(current_point.x, min_vec.x);
         min_vec.y = std::min(current_point.y, min_vec.y);
         min_vec.z = std::min(current_point.z, min_vec.z);

@@ -80,7 +80,7 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
                       const float width,
                       const float height,
                       const SnappingAxis snapping_axis,
-                      const Vec3Dd& axes_center,
+                      const Vec3d& axes_center,
                       const GridVectors& gv,
                       const GLint text_color_uniform)
 {
@@ -126,7 +126,7 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
                       const float width,
                       const float height,
                       const SnappingAxis snapping_axis,
-                      const Vec3Dd& axes_center,
+                      const Vec3d& axes_center,
                       const GridVectors& gv,
                       const GLint text_color_uniform)
 {
@@ -174,7 +174,7 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                       const double elevation,
                       const float width,
                       const float height,
-                      const Vec3Dd& axes_center,
+                      const Vec3d& axes_center,
                       const GridVectors& gv,
                       const GLint text_color_uniform)
 {
@@ -210,10 +210,10 @@ void drawGridNumbers(const TextRenderer& text_renderer, const Shader text_shader
     const GLint text_color_uniform = glGetUniformLocation(text_shader.programId(), "textColor");
 
     // AxesLimits
-    const Vec3Dd axes_center = axes_limits.getAxesCenter();
+    const Vec3d axes_center = axes_limits.getAxesCenter();
 
     // Scales
-    const Vec3Dd scale = axes_limits.getAxesScale() / 2.0;
+    const Vec3d scale = axes_limits.getAxesScale() / 2.0;
 
     model_mat_local[3][0] = 0.0;
     model_mat_local[3][1] = 0.0;

@@ -13,13 +13,13 @@ template <typename T> struct Plane
     T d;
 
     Plane(const T a_, const T b_, const T c_, const T d_);
-    Plane(const Point3D<T>& point, const Vec3D<T>& normal_vector);
+    Plane(const Point3D<T>& point, const Vec3<T>& normal_vector);
     template <typename Y> Plane(const Plane<Y>& p);
     Plane();
 
     Plane<T> normalized() const;
-    Vec3D<T> normal() const;
-    Vec3D<T> normalizedNormal() const;
+    Vec3<T> normal() const;
+    Vec3<T> normalizedNormal() const;
     Point3D<T> lineIntersection(const Line3D<T>& line) const;
     Point3D<T> closestPointOnPlaneFromPoint(const Point3D<T>& p) const;
     T pointDistanceFromPlane(const Point3D<T>& p) const;
@@ -34,10 +34,10 @@ template <typename T> struct Plane
     Plane<T> mirroredPlane(const Plane<T>& plane) const;
     std::pair<Point3D<T>, Point3D<T>> circleIntersection(const Circle3D<T> circle) const;
     Circle3D<T> sphereIntersection(const Sphere<T>& sphere) const;
-    std::pair<Point3D<T>, Vec3D<T>> projectPointAndVectorOntoPlane(const Point3D<T>& point, const Vec3D<T>& vec) const;
+    std::pair<Point3D<T>, Vec3<T>> projectPointAndVectorOntoPlane(const Point3D<T>& point, const Vec3<T>& vec) const;
     Line3D<T> projectLineOntoPlane(const Line3D<T>& line) const;
     Plane<T> planeIntersection(const Plane<T>& plane) const;
-    Plane<T> translatePlane(const Vec3D<T>& vec) const;
+    Plane<T> translatePlane(const Vec3<T>& vec) const;
 };
 }  // namespace dvs
 

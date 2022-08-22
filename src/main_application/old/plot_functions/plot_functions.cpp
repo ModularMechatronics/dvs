@@ -48,10 +48,10 @@ void surfInternal(const Matrixd& x,
     {
         for (size_t c = 0; c < x.cols() - 1; c++)
         {
-            const Vec3Dd c0(x(r, c), y(r, c), z(r, c));
-            const Vec3Dd c1(x(r, c + 1), y(r, c + 1), z(r, c + 1));
-            const Vec3Dd c2(x(r + 1, c + 1), y(r + 1, c + 1), z(r + 1, c + 1));
-            const Vec3Dd c3(x(r + 1, c), y(r + 1, c), z(r + 1, c));
+            const Vec3d c0(x(r, c), y(r, c), z(r, c));
+            const Vec3d c1(x(r, c + 1), y(r, c + 1), z(r, c + 1));
+            const Vec3d c2(x(r + 1, c + 1), y(r + 1, c + 1), z(r + 1, c + 1));
+            const Vec3d c3(x(r + 1, c), y(r + 1, c), z(r + 1, c));
 
             const double mean_val = (y(r, c) + y(r, c + 1) + y(r + 1, c + 1) + y(r + 1, c)) * 0.25;
 
@@ -73,10 +73,10 @@ void surf(const Matrixd& x, const Matrixd& y, const Matrixd& z)
     {
         for (size_t c = 0; c < x.cols() - 1; c++)
         {
-            const Vec3Dd c0(x(r, c), y(r, c), z(r, c));
-            const Vec3Dd c1(x(r, c + 1), y(r, c + 1), z(r, c + 1));
-            const Vec3Dd c2(x(r + 1, c + 1), y(r + 1, c + 1), z(r + 1, c + 1));
-            const Vec3Dd c3(x(r + 1, c), y(r + 1, c), z(r + 1, c));
+            const Vec3d c0(x(r, c), y(r, c), z(r, c));
+            const Vec3d c1(x(r, c + 1), y(r, c + 1), z(r, c + 1));
+            const Vec3d c2(x(r + 1, c + 1), y(r + 1, c + 1), z(r + 1, c + 1));
+            const Vec3d c3(x(r + 1, c), y(r + 1, c), z(r + 1, c));
 
             drawPolygon3D(c0, c1, c2, c3);
         }
@@ -92,10 +92,10 @@ void drawGrid3D(const Matrixd& x, const Matrixd& y, const Matrixd& z)
     {
         for (size_t c = 0; c < x.cols() - 1; c++)
         {
-            const Vec3Dd c0(x(r, c), y(r, c), z(r, c));
-            const Vec3Dd c1(x(r, c + 1), y(r, c + 1), z(r, c + 1));
-            const Vec3Dd c2(x(r + 1, c + 1), y(r + 1, c + 1), z(r + 1, c + 1));
-            const Vec3Dd c3(x(r + 1, c), y(r + 1, c), z(r + 1, c));
+            const Vec3d c0(x(r, c), y(r, c), z(r, c));
+            const Vec3d c1(x(r, c + 1), y(r, c + 1), z(r, c + 1));
+            const Vec3d c2(x(r + 1, c + 1), y(r + 1, c + 1), z(r + 1, c + 1));
+            const Vec3d c3(x(r + 1, c), y(r + 1, c), z(r + 1, c));
             drawLine3D(c0, c1);
             drawLine3D(c1, c2);
             drawLine3D(c2, c3);
@@ -104,7 +104,7 @@ void drawGrid3D(const Matrixd& x, const Matrixd& y, const Matrixd& z)
     }
 }
 
-void drawArrow3D(const Point3Dd& p, const Vec3Dd& v)
+void drawArrow3D(const Point3d& p, const Vec3d& v)
 {
     drawLine3D(p, p + v);
 }

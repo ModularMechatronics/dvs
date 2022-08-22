@@ -45,7 +45,7 @@ template <typename T> std::pair<Point3D<T>, Point3D<T>> Sphere<T>::lineIntersect
     }
     else
     {
-        const Vec3D<T> normalized_line_vector = line.v.normalized();
+        const Vec3<T> normalized_line_vector = line.v.normalized();
         const Point3D<T> closest_point = line.closestPointOnLineFromPoint(center);
 
         const T squared_distance_between_points = (closest_point - center).squaredNorm();

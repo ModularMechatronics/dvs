@@ -26,10 +26,10 @@ typedef Matrix<double> Matrixd;
 typedef Vector<double> Vectord;
 typedef Point<double> Pointd;
 typedef Vec2<double> Vec2d;
-typedef Vec3D<double> Vec3Dd;
+typedef Vec3<double> Vec3d;
 typedef Vec4D<double> Vec4Dd;
 typedef Point2<double> Point2d;
-typedef Point3D<double> Point3Dd;
+typedef Point3D<double> Point3d;
 typedef Point4D<double> Point4Dd;
 
 typedef PoseSE3<float> PoseSE3f;
@@ -53,10 +53,10 @@ typedef Matrix<float> Matrixf;
 typedef Vector<float> Vectorf;
 typedef Point<float> Pointf;
 typedef Vec2<float> Vec2f;
-typedef Vec3D<float> Vec3Df;
+typedef Vec3<float> Vec3f;
 typedef Vec4D<float> Vec4Df;
 typedef Point2<float> Point2f;
-typedef Point3D<float> Point3Df;
+typedef Point3D<float> Point3f;
 typedef Point4D<float> Point4Df;
 
 typedef Vec2<int> Vec2i;

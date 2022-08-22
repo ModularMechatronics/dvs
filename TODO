@@ -14,6 +14,7 @@ Pre release:
 - Function "view" is the one that sets/creates the current element
   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
 - Rename "linspaceFromPointsAndCount" to "linspaceEdgesAndCount" or "linspaceBoundariesAndCount"
+- Change name of class defs files to just "vec2.h"
 - Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Rename "FunctionHeader" to "TransmissionHeader" and "FunctionHeaderObject" to "TransmissionHeaderObject"

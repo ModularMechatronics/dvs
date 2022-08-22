@@ -87,7 +87,7 @@ void putTextAt_Old(const std::string& s, const Vec2d& v)
     putTextAt_Old(s, v.x, v.y);
 }
 
-void putTextAt3D(const std::string& s, const Vec3Dd& v)
+void putTextAt3D(const std::string& s, const Vec3d& v)
 {
     putTextAt3D(s, v.x, v.y, v.z);
 }

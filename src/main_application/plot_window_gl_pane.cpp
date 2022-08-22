@@ -256,8 +256,8 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 
         const std::pair<Bound3D, Bound3D> axes_bnd =
             hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Bound3D, Bound3D>>();
-        axes_interactor_.setAxesLimits(Vec3Dd(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
-                                        Vec3Dd(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
+        axes_interactor_.setAxesLimits(Vec3d(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
+                                        Vec3d(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
     else if (fcn == Function::VIEW)
     {
@@ -278,7 +278,7 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 
         plot_data_handler_->clear();
         axes_interactor_.setViewAngles(0, M_PI);
-        axes_interactor_.setAxesLimits(Vec3Dd(-1.0, -1.0, -1.0), Vec3Dd(1.0, 1.0, 1.0));
+        axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
     }
     else if (fcn == Function::SOFT_CLEAR)
     {
@@ -294,11 +294,11 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 
         if (!axes_set_)
         {
-            const std::pair<Vec3Dd, Vec3Dd> min_max = plot_data_handler_->getMinMaxVectors();
-            const Vec3Dd mean_vec = (min_max.second + min_max.first) / 2.0;
+            const std::pair<Vec3d, Vec3d> min_max = plot_data_handler_->getMinMaxVectors();
+            const Vec3d mean_vec = (min_max.second + min_max.first) / 2.0;
 
-            const Vec3Dd min_vec = (min_max.first - mean_vec) * 1.001 + mean_vec;
-            const Vec3Dd max_vec = (min_max.second - mean_vec) * 1.001 + mean_vec;
+            const Vec3d min_vec = (min_max.first - mean_vec) * 1.001 + mean_vec;
+            const Vec3d max_vec = (min_max.second - mean_vec) * 1.001 + mean_vec;
 
             axes_interactor_.setAxesLimits(min_vec, max_vec);
         }

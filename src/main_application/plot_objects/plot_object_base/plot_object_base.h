@@ -38,8 +38,8 @@ protected:
     Function type_;
     DataType data_type_;
 
-    Vec3Dd min_vec;
-    Vec3Dd max_vec;
+    Vec3d min_vec;
+    Vec3d max_vec;
 
     // Properties
     Name name_;
@@ -70,7 +70,7 @@ public:
     PlotObjectBase();
     PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
     virtual void render() = 0;
-    std::pair<Vec3Dd, Vec3Dd> getMinMaxVectors();
+    std::pair<Vec3d, Vec3d> getMinMaxVectors();
 
     bool isPersistent() const;
     std::string getName() const;

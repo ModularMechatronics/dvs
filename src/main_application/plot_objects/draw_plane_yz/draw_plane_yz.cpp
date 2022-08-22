@@ -21,10 +21,10 @@ DrawPlaneYZ::DrawPlaneYZ(std::unique_ptr<const ReceivedData> received_data, cons
 
     planes.setInternalData(nullptr, 0);
 
-    p00 = Point3Dd(plane.evalYZ(p0.y, p0.z), p0.y, p0.z);
-    p11 = Point3Dd(plane.evalYZ(p1.y, p1.z), p1.y, p1.z);
-    p01 = Point3Dd(plane.evalYZ(p0.y, p1.z), p0.y, p1.z);
-    p10 = Point3Dd(plane.evalYZ(p1.y, p0.z), p1.y, p0.z);
+    p00 = Point3d(plane.evalYZ(p0.y, p0.z), p0.y, p0.z);
+    p11 = Point3d(plane.evalYZ(p1.y, p1.z), p1.y, p1.z);
+    p01 = Point3d(plane.evalYZ(p0.y, p1.z), p0.y, p1.z);
+    p10 = Point3d(plane.evalYZ(p1.y, p0.z), p1.y, p0.z);
 
     points_ptr_ = new float[4 * 3];
     points_ptr_[0] = p00.x;

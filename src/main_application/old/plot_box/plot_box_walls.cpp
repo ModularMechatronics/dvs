@@ -6,7 +6,7 @@ void drawPlotBoxWalls(const AxesSettings& axes_settings, const ViewAngles& view_
 {
     setLinewidth(1.0f);
     setColor(axes_settings.getPlotBoxWallColor());
-    const Vec3Dd s = Vec3Dd(1.0, 1.0, 1.0) * axes_settings.getPlotBoxSizeFactor();
+    const Vec3d s = Vec3d(1.0, 1.0, 1.0) * axes_settings.getPlotBoxSizeFactor();
 
     if (view_angles.getSnappedElevation() > 0.0f)
     {

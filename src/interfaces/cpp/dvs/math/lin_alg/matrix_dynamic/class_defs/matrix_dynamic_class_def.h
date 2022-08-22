@@ -72,8 +72,8 @@ public:
 
     void hCat(const Vec2<T>& v);
     void vCat(const Vec2<T>& v);
-    void hCat(const Vec3D<T>& v);
-    void vCat(const Vec3D<T>& v);
+    void hCat(const Vec3<T>& v);
+    void vCat(const Vec3<T>& v);
     void hCat(const Vec4D<T>& v);
     void vCat(const Vec4D<T>& v);
 
