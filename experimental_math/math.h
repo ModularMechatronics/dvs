@@ -15,14 +15,25 @@
 
 #include "dvs/math/transformations/axis_angle.h"
 #include "dvs/math/transformations/quaternion.h"
+#include "dvs/math/transformations/roll_pitch_yaw.h"
+#include "dvs/math/transformations/pose.h"
 
+#include "dvs/math/coordinates/complex.h"
+#include "dvs/math/coordinates/cylindrical.h"
+#include "dvs/math/coordinates/polar.h"
+#include "dvs/math/coordinates/spherical.h"
+
+#include "dvs/math/geometry/circle.h"
 #include "dvs/math/geometry/line_2d.h"
 #include "dvs/math/geometry/line_3d.h"
 #include "dvs/math/geometry/plane.h"
+#include "dvs/math/geometry/sphere.h"
 #include "dvs/math/geometry/triangle.h"
 
+#include "dvs/math/structures/end_index.h"
 #include "dvs/math/structures/index_span.h"
-#include "dvs/math/structures/index_triplet.h" // Keep
+#include "dvs/math/structures/interval_1d.h"
+#include "dvs/math/structures/index_triplet.h"
 
 #include "dvs/math/image.h"
 

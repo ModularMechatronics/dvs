@@ -40,6 +40,8 @@ public:
     Vector<T>& operator=(Vector<T>&& v);
     T& operator()(const size_t idx);
     const T& operator()(const size_t idx) const;
+    T& operator()(const EndIndex& end_idx);
+    const T& operator()(const EndIndex& end_idx) const;
 
     template <typename Y> Vector<T> operator()(const Vector<Y>& idx_vector) const;
     Vector<T> operator()(const IndexSpan& idx_span) const;

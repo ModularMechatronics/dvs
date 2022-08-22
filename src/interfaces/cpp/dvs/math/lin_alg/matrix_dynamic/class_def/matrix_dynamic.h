@@ -30,90 +30,30 @@ public:
 
     T& operator()(const size_t r, const size_t c);
     const T& operator()(const size_t r, const size_t c) const;
-    T& operator()(const size_t idx);
-    const T& operator()(const size_t idx) const;
 
-    Matrix<T> operator()(const size_t row, const IndexSpan& col_idx_span) const;
-    Matrix<T> operator()(const IndexSpan& row_idx_span, const size_t col) const;
-    MatrixView<T> operator()(const IndexSpan& row_idx_span, const IndexSpan& col_idx_span) const;
-
-    MatrixView<T> operator()(const EndIndex& row_end_idx, const IndexSpan& col_idx_span) const;
-    MatrixView<T> operator()(const IndexSpan& row_idx_span, const EndIndex& col_end_idx) const;
-
-    MatrixView<T> operator()(const AllIndices& all_indices, const IndexSpan& col_idx_span) const;
-    MatrixView<T> operator()(const IndexSpan& row_idx_span, const AllIndices& all_indices) const;
-
-    MatrixView<T> operator()(const AllIndices& all_indices, const size_t col) const;
-    MatrixView<T> operator()(const size_t row, const AllIndices& all_indices) const;
-
-    T& operator()(const EndIndex& row_end_idx, const size_t c);
-    const T& operator()(const EndIndex& row_end_idx, const size_t c) const;
-    T& operator()(const size_t r, const EndIndex& col_end_idx);
-    const T& operator()(const size_t r, const EndIndex& col_end_idx) const;
     Matrix<T>& operator=(const Matrix<T>& m);
     Matrix<T>& operator=(Matrix<T>&& m);
     Matrix<T>& operator=(const MatrixView<T>& m);
 
-    void removeRowAtIndex(const size_t row_idx);
-    void removeRowsAtIndices(const IndexSpan& idx_span);
-    void removeColAtIndex(const size_t col_idx);
-    void removeColsAtIndices(const IndexSpan& idx_span);
     void resize(const size_t num_rows, const size_t num_cols);
     size_t rows() const;
     size_t cols() const;
     size_t size() const;
     size_t numElements() const;
     size_t numBytes() const;
-    void hCat(const Vector<T>& v);
-    void vCat(const Vector<T>& v);
-
-    void hCat(const Matrix<T>& m);
-    void vCat(const Matrix<T>& m);
-
-    void hCat(const Vec2<T>& v);
-    void vCat(const Vec2<T>& v);
-    void hCat(const Vec3<T>& v);
-    void vCat(const Vec3<T>& v);
-    void hCat(const Vec4<T>& v);
-    void vCat(const Vec4<T>& v);
 
     bool isAllocated() const;
     void fill(const T val);
-    void switchRows(size_t r0, size_t r1);
-    void switchColumns(size_t c0, size_t c1);
     T* data() const;
     void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
     Matrix<T> getTranspose() const;
-    void transpose();
 
-    void addToAllCols(const Vector<T>& v);
-    void addToAllRows(const Vector<T>& v);
-    void addToAllCols(const Matrix<T>& m);
-    void addToAllRows(const Matrix<T>& m);
-
-    void addToCol(const size_t col_idx, const Vector<T>& v);
-    void addToRow(const size_t row_idx, const Vector<T>& v);
-    void addToCol(const size_t col_idx, const Matrix<T>& m);
-    void addToRow(const size_t row_idx, const Matrix<T>& m);
-
-    Vector<T> toVector() const;
-
-    Vector<T> getColumnAsVector(const size_t column_idx) const;
-    Vector<T> getRowAsVector(const size_t row_idx) const;
-    Matrix<T> getColumn(const size_t column_idx) const;
-    Matrix<T> getRow(const size_t row_idx) const;
     size_t lastRowIdx() const;
     size_t lastColIdx() const;
 
     T max() const;
     T min() const;
-    Matrix<T> minAlongCols() const;
-    Matrix<T> minAlongRows() const;
-    Matrix<T> maxAlongCols() const;
-    Matrix<T> maxAlongRows() const;
     T sum() const;
-    Matrix<T> sumAlongRows() const;
-    Matrix<T> sumAlongCols() const;
 };
 
 template <typename T> class MatrixView

@@ -282,6 +282,20 @@ template <typename T> const T& Vector<T>::operator()(const size_t idx) const
     return data_[idx];
 }
 
+template <typename T> T& Vector<T>::operator()(const EndIndex& end_idx)
+{
+    const size_t idx = static_cast<size_t>(static_cast<int>(vector_length_) - 1 + end_idx.offset);
+    assert((idx < vector_length_) && is_allocated_);
+    return data_[idx];
+}
+
+template <typename T> const T& Vector<T>::operator()(const EndIndex& end_idx) const
+{
+    const size_t idx = static_cast<size_t>(static_cast<int>(vector_length_) - 1 + end_idx.offset);
+    assert((idx < vector_length_) && is_allocated_);
+    return data_[idx];
+}
+
 template <typename T> template <typename Y> Vector<T> Vector<T>::operator()(const Vector<Y>& idx_vector) const
 {
     static_assert(std::is_same<Y, bool>::value || std::is_same<Y, size_t>::value || std::is_same<Y, int>::value,
