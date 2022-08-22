@@ -9,9 +9,9 @@ DrawLine3D::DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const 
         throw std::runtime_error("Invalid function type for DrawLine3D!");
     }
 
-    Vector<Point3D<double>> points;
+    Vector<Point3<double>> points;
 
-    points.setInternalData(reinterpret_cast<Point3D<double>*>(data_ptr_), 2);
+    points.setInternalData(reinterpret_cast<Point3<double>*>(data_ptr_), 2);
 
     p0_ = points(0);
     p1_ = points(1);

@@ -10,7 +10,7 @@
 
 namespace dvs
 {
-template <typename T> Line3D<T>::Line3D(const Point3D<T>& p_, const Vec3<T>& v_) : p(p_), v(v_) {}
+template <typename T> Line3D<T>::Line3D(const Point3<T>& p_, const Vec3<T>& v_) : p(p_), v(v_) {}
 
 template <typename T> Line3D<T>::Line3D() {}
 
@@ -52,12 +52,12 @@ template <typename T> Vec3<T> Line3D<T>::vectorNormalToLine() const
     return vn.normalized();
 }
 
-template <typename T> Point3D<T> Line3D<T>::eval(const T t) const
+template <typename T> Point3<T> Line3D<T>::eval(const T t) const
 {
     return p + t * v;
 }
 
-template <typename T> Point3D<T> Line3D<T>::closestPointOnLineFromPoint(const Point3D<T>& q) const
+template <typename T> Point3<T> Line3D<T>::closestPointOnLineFromPoint(const Point3<T>& q) const
 {
     const T vx = v.x;
     const T vy = v.y;
@@ -76,23 +76,23 @@ template <typename T> Point3D<T> Line3D<T>::closestPointOnLineFromPoint(const Po
     return this->eval(t);
 }
 
-template <typename T> Vec3<T> Line3D<T>::vectorBetweenClosestPointOnLineAndPoint(const Point3D<T>& q) const
+template <typename T> Vec3<T> Line3D<T>::vectorBetweenClosestPointOnLineAndPoint(const Point3<T>& q) const
 {
-    const Point3D<T> closest_point = this->closestPointOnLineFromPoint(q);
+    const Point3<T> closest_point = this->closestPointOnLineFromPoint(q);
     return q - closest_point;
 }
 
 template <typename T> Line3D<T> Line3D<T>::translatedLine(const Vec3<T>& v) const
 {
-    Point3D<T> p0 = this->eval(0.0) + v;
-    Point3D<T> p1 = this->eval(1.0) + v;
+    Point3<T> p0 = this->eval(0.0) + v;
+    Point3<T> p1 = this->eval(1.0) + v;
 
     return Line3D<T>(p0, p0.vectorBetweenPoints());
 }
 
-template <typename T> std::vector<Point3D<T>> Line3D<T>::closestPointsBetweenLines(const Line3D<T>& line) const
+template <typename T> std::vector<Point3<T>> Line3D<T>::closestPointsBetweenLines(const Line3D<T>& line) const
 {
-    std::vector<Point3D<T>> points_vec;
+    std::vector<Point3<T>> points_vec;
 
     const T vx0 = v.x;
     const T vy0 = v.y;
@@ -121,30 +121,30 @@ template <typename T> std::vector<Point3D<T>> Line3D<T>::closestPointsBetweenLin
         (2.0 * vx0 * (px0 - px1 + t0 * vx0) + 2.0 * vy0 * (py0 - py1 + t0 * vy0) + 2.0 * vz0 * (pz0 - pz1 + t0 * vz0)) /
         (2.0 * vx0 * vx1 + 2.0 * vy0 * vy1 + 2.0 * vz0 * vz1);
 
-    Point3D<T> p0 = this->eval(t0);
-    Point3D<T> p1 = line.eval(t1);
+    Point3<T> p0 = this->eval(t0);
+    Point3<T> p1 = line.eval(t1);
     points_vec.push_back(p0);
     points_vec.push_back(p1);
     return points_vec;
 }
 
 template <typename T>
-std::pair<Point3D<T>, Vec3<T>> Line3D<T>::projectPointAndVectorOntoLine(const Point3D<T>& q, const Vec3<T>& v) const
+std::pair<Point3<T>, Vec3<T>> Line3D<T>::projectPointAndVectorOntoLine(const Point3<T>& q, const Vec3<T>& v) const
 {
-    Point3D<T> p0 = this->closestPointOnLineFromPoint(q);
-    Point3D<T> p1 = this->closestPointOnLineFromPoint(q + v);
+    Point3<T> p0 = this->closestPointOnLineFromPoint(q);
+    Point3<T> p1 = this->closestPointOnLineFromPoint(q + v);
 
-    std::pair<Point3D<T>, Vec3<T>> point_vector_pair(p0, p0.vectorBetweenPoints(p1));
+    std::pair<Point3<T>, Vec3<T>> point_vector_pair(p0, p0.vectorBetweenPoints(p1));
     return point_vector_pair;
 }
 
-template <typename T> Point3D<T> Line3D<T>::rotatePointAroundLine(const Point3D<T>& q, const T angle) const
+template <typename T> Point3<T> Line3D<T>::rotatePointAroundLine(const Point3<T>& q, const T angle) const
 {
     Vec3<T> point_offset = this->closestPointOnLineFromPoint(q);
-    Point3D<T> no_offset_point = q - point_offset;
+    Point3<T> no_offset_point = q - point_offset;
 
     Matrix<T> rotation_matrix = AxisAngle<T>(v * angle).toRotationMatrix();
-    Point3D<T> rotated_point = rotation_matrix * no_offset_point;
+    Point3<T> rotated_point = rotation_matrix * no_offset_point;
 
     return rotated_point + point_offset;
 }
@@ -154,9 +154,9 @@ template <typename T> Line3D<T> Line3D<T>::negatedLine() const
     return Line3D<T>(p, -v);
 }
 
-template <typename T> T Line3D<T>::pointDistanceFromLine(const Point3D<T>& q) const
+template <typename T> T Line3D<T>::pointDistanceFromLine(const Point3<T>& q) const
 {
-    Point3D<T> closest_point = this->closestPointOnLineFromPoint(q);
+    Point3<T> closest_point = this->closestPointOnLineFromPoint(q);
     return (closest_point - q).norm();
 }
 
@@ -165,7 +165,7 @@ template <typename T> T Line3D<T>::angleBetweenLines(const Line3D<T>& line) cons
     return v.angleBetweenVectors(line.v);
 }
 
-template <typename T> Line3D<T> lineFromTwoPoints(const Point3D<T>& p0, const Point3D<T>& p1)
+template <typename T> Line3D<T> lineFromTwoPoints(const Point3<T>& p0, const Point3<T>& p1)
 {
     Line3D<T> line;
     line.p = p0;
@@ -180,11 +180,11 @@ template <typename T>
 Line3D<T> Line3D<T>::rotateLineAroundLine(const Line3D<T>& line_to_be_rotated, const T angle) const
 {
     // Rotates "line_to_be_rotated" "angle" radians around "this"
-    Point3D<T> p0 = line_to_be_rotated.eval(0.0);
-    Point3D<T> p1 = line_to_be_rotated.eval(1.0);
+    Point3<T> p0 = line_to_be_rotated.eval(0.0);
+    Point3<T> p1 = line_to_be_rotated.eval(1.0);
 
-    Point3D<T> p0r = this->rotatePointAroundLine(p0, angle);
-    Point3D<T> p1r = this->rotatePointAroundLine(p1, angle);
+    Point3<T> p0r = this->rotatePointAroundLine(p0, angle);
+    Point3<T> p1r = this->rotatePointAroundLine(p1, angle);
 
     return lineFromTwoPoints(p0r, p1r);
 }

@@ -31,7 +31,7 @@ private:
     Vec3<T> v_vec;
     Vec3<T> a_vec;
     Vec3<T> b_vec;
-    Point3D<T> center;
+    Point3<T> center;
     void calculateOrthogonalVectors();
 
 public:

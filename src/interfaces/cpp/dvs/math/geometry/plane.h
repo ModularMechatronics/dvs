@@ -19,7 +19,7 @@ template <typename T> Plane<T>::Plane(const T a_, const T b_, const T c_, const 
     d = d_;
 }
 
-template <typename T> Plane<T>::Plane(const Point3D<T>& point, const Vec3<T>& normal_vector)
+template <typename T> Plane<T>::Plane(const Point3<T>& point, const Vec3<T>& normal_vector)
 {
     a = normal_vector.x;
     b = normal_vector.y;
@@ -44,7 +44,7 @@ template <typename T> Plane<T> Plane<T>::normalized() const
     return Plane<T>(a / nvl, b / nvl, c / nvl, d / nvl);
 }
 
-template <typename T> T Plane<T>::eval(const Point3D<T>& p) const
+template <typename T> T Plane<T>::eval(const Point3<T>& p) const
 {
     return a * p.x + b * p.y + c * p.z + d;
 }
@@ -74,7 +74,7 @@ template <typename T> Vec3<T> Plane<T>::normalizedNormal() const
     return Vec3<T>(a, b, c).normalized();
 }
 
-template <typename T> Point3D<T> Plane<T>::lineIntersection(const Line3D<T>& line) const
+template <typename T> Point3<T> Plane<T>::lineIntersection(const Line3D<T>& line) const
 {
     const T t = -(d + a * line.px + b * line.py + c * line.pz) / (a * line.vx + b * line.vy + c * line.vz);
     return line.eval(t);
@@ -89,14 +89,14 @@ template <typename T> Line3D<T> Plane<T>::projectLineOntoPlane(const Line3D<T>& 
     {
         DVS_LOG_WARNING() << "Line and plane normal vector almost parallel, degenerate case!";
     }
-    const Point3D<T> p0 = line.p;
-    const Point3D<T> p1 = line.p + line.v.normalized();
-    const Point3D<T> pp0 = closestPointOnPlaneFromPoint(p0);
-    const Point3D<T> pp1 = closestPointOnPlaneFromPoint(p1);
+    const Point3<T> p0 = line.p;
+    const Point3<T> p1 = line.p + line.v.normalized();
+    const Point3<T> pp0 = closestPointOnPlaneFromPoint(p0);
+    const Point3<T> pp1 = closestPointOnPlaneFromPoint(p1);
     return lineFromTwoPoints(pp0, pp1);
 }
 
-template <typename T> Point3D<T> Plane<T>::closestPointOnPlaneFromPoint(const Point3D<T>& p) const
+template <typename T> Point3<T> Plane<T>::closestPointOnPlaneFromPoint(const Point3<T>& p) const
 {
     T distance_from_plane = pointDistanceFromPlane(p);
 
@@ -123,33 +123,33 @@ template <typename T> Point3D<T> Plane<T>::closestPointOnPlaneFromPoint(const Po
     return Point2<T>(sol.x, sol.y, this->evalXY(sol.x, sol.y));
 }
 
-template <typename T> T Plane<T>::pointDistanceFromPlane(const Point3D<T>& p) const
+template <typename T> T Plane<T>::pointDistanceFromPlane(const Point3<T>& p) const
 {
     Plane<T> normalized_plane = this->normalized();
     return normalized_plane.eval(p);
 }
 
 // template <typename T> Plane<T> Plane<T>::rotatePlaneAroundLine(const Line3D<T>& line) const {}
-// template <typename T> Point3D<T> Plane<T>::mirroredPoint(const Point3D<T>& point) const {}
+// template <typename T> Point3<T> Plane<T>::mirroredPoint(const Point3<T>& point) const {}
 // template <typename T> Line3D<T> Plane<T>::mirroredLine(const Line3D<T>& line) const {}
 // template <typename T> Plane<T> Plane<T>::mirroredPlane(const Plane<T>& plane) const {}
-// template <typename T> std::pair<Point3D<T>, Point3D<T>> Plane<T>::circleIntersection(const
+// template <typename T> std::pair<Point3<T>, Point3<T>> Plane<T>::circleIntersection(const
 // Circle3D<T> circle) const {} template <typename T> Circle3D<T> Plane<T>::sphereIntersection(const
-// Sphere<T>& sphere) const {} template <typename T> std::pair<Point3D<T>, Vec3<T>>
-// Plane<T>::projectPointAndVectorOntoPlane(const Point3D<T>& point, const Vec3<T>& vec) const {}
+// Sphere<T>& sphere) const {} template <typename T> std::pair<Point3<T>, Vec3<T>>
+// Plane<T>::projectPointAndVectorOntoPlane(const Point3<T>& point, const Vec3<T>& vec) const {}
 // template <typename T> Plane<T> Plane<T>::planeIntersection(const Plane<T>& plane) const {}
 template <typename T> Plane<T> Plane<T>::translatePlane(const Vec3<T>& vec) const
 {
     Plane<T> plane;
 
-    Point3D<T> p0 = this->evalXY(1.0, 1.0) + vec;
-    Point3D<T> p1 = this->evalXY(1.0, 2.0) + vec;
-    Point3D<T> p2 = this->evalXY(3.0, 1.0) + vec;
+    Point3<T> p0 = this->evalXY(1.0, 1.0) + vec;
+    Point3<T> p1 = this->evalXY(1.0, 2.0) + vec;
+    Point3<T> p2 = this->evalXY(3.0, 1.0) + vec;
 
     return planeFromThreePoints(p0, p1, p2);
 }
 
-template <typename T> Plane<T> planeFromThreePoints(const Point3D<T>& p0, const Point3D<T>& p1, const Point3D<T>& p2)
+template <typename T> Plane<T> planeFromThreePoints(const Point3<T>& p0, const Point3<T>& p1, const Point3<T>& p2)
 {
     Vec3<T> v10 = p1.normalizedVectorBetweenPoints(p0);
     Vec3<T> v12 = p1.normalizedVectorBetweenPoints(p2);

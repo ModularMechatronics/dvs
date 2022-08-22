@@ -25,7 +25,7 @@ public:
 
     Vec2<T> toVec2() const;
     Vec3<T> toVec3() const;
-    Vec4D<T> toVec4D() const;
+    Vec4<T> toVec4() const;
 
     Vector(const std::initializer_list<T>& il);
     Vector(const std::vector<T>& v);
