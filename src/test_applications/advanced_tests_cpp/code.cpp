@@ -39,7 +39,7 @@ void testBasic()
          properties::LineWidth(1),
          properties::EdgeColor(55, 21, 7),
          properties::FaceColor(52, 26, 3),
-         properties::ColorMap::MAGMA(),
+         properties::ColorMap::magma(),
          properties::PointSize(137));
     sleepMS(20);
     setCurrentElement("view_01");
@@ -54,7 +54,7 @@ void testBasic()
           properties::LineWidth(1),
           properties::EdgeColor(55, 21, 7),
           properties::FaceColor(52, 26, 3),
-          properties::ColorMap::MAGMA(),
+          properties::ColorMap::magma(),
           properties::PointSize(137));
     sleepMS(20);
     setCurrentElement("view_02");
@@ -69,7 +69,7 @@ void testBasic()
           properties::LineWidth(1),
           properties::EdgeColor(55, 21, 7),
           properties::FaceColor(52, 26, 3),
-          properties::ColorMap::MAGMA(),
+          properties::ColorMap::magma(),
           properties::PointSize(137));
     sleepMS(20);
     setCurrentElement("view_00");

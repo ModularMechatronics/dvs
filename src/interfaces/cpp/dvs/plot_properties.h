@@ -345,22 +345,22 @@ struct ColorMap : internal::PropertyBase
 public:
     internal::ColorMapType data;
 
-    static ColorMap JET()
+    static ColorMap jet()
     {
         return ColorMap(internal::ColorMapType::JET);
     }
 
-    static ColorMap RAINBOW()
+    static ColorMap rainbow()
     {
         return ColorMap(internal::ColorMapType::RAINBOW);
     }
 
-    static ColorMap MAGMA()
+    static ColorMap magma()
     {
         return ColorMap(internal::ColorMapType::MAGMA);
     }
 
-    static ColorMap VIRIDIS()
+    static ColorMap viridis()
     {
         return ColorMap(internal::ColorMapType::VIRIDIS);
     }
