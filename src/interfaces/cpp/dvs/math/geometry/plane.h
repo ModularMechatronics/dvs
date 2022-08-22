@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "dvs/logging.h"
-#include "dvs/math/geometry/class_defs/plane_class_def.h"
+#include "dvs/math/geometry/class_defs/plane.h"
 #include "dvs/math/lin_alg.h"
 
 namespace dvs

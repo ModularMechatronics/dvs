@@ -4,7 +4,7 @@
 #include <cmath>
 #include <vector>
 
-#include "dvs/math/coordinates/class_defs/polar_class_def.h"
+#include "dvs/math/coordinates/class_defs/polar.h"
 #include "dvs/math/lin_alg.h"
 
 namespace dvs
