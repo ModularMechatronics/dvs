@@ -10,14 +10,14 @@
 
 namespace dvs
 {
-template <typename T> Vector<T> linspaceFromPointsAndCount(const T x0, const T x1, const size_t num_values);
+template <typename T> Vector<T> linspaceFromBoundariesAndCount(const T x0, const T x1, const size_t num_values);
 
 template <typename T>
 std::pair<Matrix<T>, Matrix<T>> meshGrid(
     const T x0, const T x1, const T y0, const T y1, const size_t xn, const size_t yn)
 {
-    const Vector<T> x_vec = linspaceFromPointsAndCount(x0, x1, xn);
-    const Vector<T> y_vec = linspaceFromPointsAndCount(y0, y1, yn);
+    const Vector<T> x_vec = linspaceFromBoundariesAndCount(x0, x1, xn);
+    const Vector<T> y_vec = linspaceFromBoundariesAndCount(y0, y1, yn);
 
     Matrix<T> x_mat(yn, xn), y_mat(yn, xn);
     for (size_t r = 0; r < yn; r++)
