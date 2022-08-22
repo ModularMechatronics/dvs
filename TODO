@@ -18,7 +18,7 @@ Pre release:
 - Rename PlotWindowGLPane to PlotCanvas, or GLPlotCanvas, or PlotPane (probably unecessary to include "GL" in name)
 - Mark all properties classes constructors explicit (and noexcept?)
 - Change to google logging
-- Change static functions of ColorMap, Color, EdgeColor etc to not be all case, but PascalCase
+- Refactor legend properties with colormap pointer
 - FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side
 - Add pan and zoom to scroll click and right click
 - Delete gl buffers with "glDeleteBuffers"
