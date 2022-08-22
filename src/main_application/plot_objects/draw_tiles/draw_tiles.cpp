@@ -3,7 +3,7 @@
 inline float* convertSingleMatrixDataOuter(uint8_t* input_data,
                                            const DataType data_type,
                                            const Dimension2D dims,
-                                           const Vec2D<double>& tile_size);
+                                           const Vec2<double>& tile_size);
 
 DrawTiles::DrawTiles(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
@@ -69,7 +69,7 @@ template <typename T>
 inline float* convertSingleMatrixDataInner(uint8_t* const data_buffer,
                                            const size_t num_rows,
                                            const size_t num_cols,
-                                           const Vec2D<double>& tile_size)
+                                           const Vec2<double>& tile_size)
 {
     float* output_data = new float[num_rows * num_cols * 6 * 3];
     Matrix<T> z;
@@ -142,7 +142,7 @@ inline float* convertSingleMatrixDataInner(uint8_t* const data_buffer,
 inline float* convertSingleMatrixDataOuter(uint8_t* input_data,
                                            const DataType data_type,
                                            const Dimension2D dims,
-                                           const Vec2D<double>& tile_size)
+                                           const Vec2<double>& tile_size)
 {
     float* output_data;
     if (data_type == DataType::FLOAT)

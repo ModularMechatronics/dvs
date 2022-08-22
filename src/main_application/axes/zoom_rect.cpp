@@ -70,8 +70,8 @@ GLfloat rect_color[] = {
         xz_r, xz_g, xz_b
 };
 
-void ZoomRect::render(const Vec2Df mouse_pos_at_press,
-                      const Vec2Df current_mouse_pos,
+void ZoomRect::render(const Vec2f mouse_pos_at_press,
+                      const Vec2f current_mouse_pos,
                       const SnappingAxis snapping_axis,
                       const glm::mat4& view_mat,
                       const glm::mat4& model_mat,
@@ -79,8 +79,8 @@ void ZoomRect::render(const Vec2Df mouse_pos_at_press,
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
 
-    const Vec2Df mouse_pos_at_press_mod = 2.0f * (mouse_pos_at_press.elementWiseMultiply(Vec2Df(1.0f, -1.0f)) + Vec2Df(0.0f, 1.0f)) - 1.0f;
-    const Vec2Df current_mouse_pos_mod = 2.0f * (current_mouse_pos.elementWiseMultiply(Vec2Df(1.0f, -1.0f)) + Vec2Df(0.0f, 1.0f)) - 1.0f;
+    const Vec2f mouse_pos_at_press_mod = 2.0f * (mouse_pos_at_press.elementWiseMultiply(Vec2f(1.0f, -1.0f)) + Vec2f(0.0f, 1.0f)) - 1.0f;
+    const Vec2f current_mouse_pos_mod = 2.0f * (current_mouse_pos.elementWiseMultiply(Vec2f(1.0f, -1.0f)) + Vec2f(0.0f, 1.0f)) - 1.0f;
 
     const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
 

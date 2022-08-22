@@ -7,11 +7,11 @@ namespace dvs
 {
 template <typename T> struct Triangle2D
 {
-    Point2D<T> p0;
-    Point2D<T> p1;
-    Point2D<T> p2;
+    Point2<T> p0;
+    Point2<T> p1;
+    Point2<T> p2;
     Triangle2D();
-    Triangle2D(const Point2D<T>& p0_, const Point2D<T>& p1_, const Point2D<T>& p2_);
+    Triangle2D(const Point2<T>& p0_, const Point2<T>& p1_, const Point2<T>& p2_);
     template <typename Y> Triangle2D(const Triangle2D<Y>& t_other);
 };
 

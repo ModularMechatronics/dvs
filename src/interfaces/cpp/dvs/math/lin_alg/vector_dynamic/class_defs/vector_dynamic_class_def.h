@@ -23,7 +23,7 @@ public:
 
     template <typename Y> friend void fillWithPtr(Vector<Y>& v, const void* const ptr, const size_t vector_length);
 
-    Vec2D<T> toVec2D() const;
+    Vec2<T> toVec2() const;
     Vec3D<T> toVec3D() const;
     Vec4D<T> toVec4D() const;
 

@@ -15,9 +15,9 @@ enum class MouseActivity
 class MouseButtonState
 {
 private:
-    Vec2Di curr_pos_;
-    Vec2Di prev_pos_;
-    Vec2Di delta_pos_;
+    Vec2i curr_pos_;
+    Vec2i prev_pos_;
+    Vec2i delta_pos_;
 
     bool is_pressed_;
 
@@ -32,9 +32,9 @@ public:
 
     void print() const;
 
-    Vec2Di getCurrPos() const;
-    Vec2Di getPrevPos() const;
-    Vec2Di getDeltaPos() const;
+    Vec2i getCurrPos() const;
+    Vec2i getPrevPos() const;
+    Vec2i getDeltaPos() const;
 };
 
 #endif // MAIN_APPLICATION_IO_DEVICES_MOUSE_STATE_H_

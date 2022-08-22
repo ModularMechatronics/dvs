@@ -5,10 +5,10 @@
 #include "opengl_low_level/2d/opengl_2d_functions.h"
 #include "opengl_low_level/opengl_header.h"
 
-/*Vec2Dd screenToViewCoordinates(const Vec2Dd& screen_coord)
+/*Vec2d screenToViewCoordinates(const Vec2d& screen_coord)
 {
-    Vec2Dd vret;
-    const Vec2Di win_size = getWindowSize();
+    Vec2d vret;
+    const Vec2i win_size = getWindowSize();
     const double w_x = static_cast<double>(win_size.x);
     const double w_y = static_cast<double>(win_size.y);
     vret.x = 2.0 * (screen_coord.x / w_x - 0.5);
@@ -82,7 +82,7 @@ void drawTextFromTopLeft(const std::string s, float x, float y)
     }
 }*/
 
-void putTextAt_Old(const std::string& s, const Vec2Dd& v)
+void putTextAt_Old(const std::string& s, const Vec2d& v)
 {
     putTextAt_Old(s, v.x, v.y);
 }

@@ -26,7 +26,7 @@ void drawAxisLetter(const double x_offset,
     glScalef(gs.x, gs.y, gs.x);
 
     const Vec3Dd v(x_offset / s.x, y_offset / s.y, z_offset / s.z);
-    const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
+    const Vec2d vv = coord_converter.modelToViewCoordinate(v);
     glPushMatrix();
     glTranslated(vv.x, vv.y, 0);
     glScalef(sx / gs.x, sy / gs.y, 1.0);
@@ -58,7 +58,7 @@ void drawNumbersForYAxis(const Vectord& y_values,
     for (size_t k = 0; k < y_values.size(); k++)
     {
         const Vec3Dd v(x_offset / s.x, y_values(k) / s.y, z_offset / s.z);
-        const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
+        const Vec2d vv = coord_converter.modelToViewCoordinate(v);
         glPushMatrix();
         glTranslated(vv.x, vv.y, 0);
         glScalef(sx / gs.x, sy / gs.y, 1.0);
@@ -90,7 +90,7 @@ void drawNumbersForZAxis(const Vectord& z_values,
     for (size_t k = 0; k < z_values.size(); k++)
     {
         const Vec3Dd v(x_offset / s.x, y_offset / s.y, z_values(k) / s.z);
-        const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
+        const Vec2d vv = coord_converter.modelToViewCoordinate(v);
         glPushMatrix();
         glTranslated(vv.x, vv.y, 0);
         glScalef(sx / gs.x, sy / gs.y, 1.0);
@@ -121,7 +121,7 @@ void drawNumbersForXAxis(const Vectord& x_values,
     for (size_t k = 0; k < x_values.size(); k++)
     {
         const Vec3Dd v(x_values(k) / s.x, y_offset / s.y, z_offset / s.z);
-        const Vec2Dd vv = coord_converter.modelToViewCoordinate(v);
+        const Vec2d vv = coord_converter.modelToViewCoordinate(v);
         glPushMatrix();
         glTranslated(vv.x, vv.y, 0);
         glScalef(sx / gs.x, sy / gs.y, 1.0);

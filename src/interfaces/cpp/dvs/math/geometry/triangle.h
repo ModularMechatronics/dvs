@@ -10,7 +10,7 @@
 namespace dvs
 {
 template <typename T> Triangle2D<T>::Triangle2D() {}
-template <typename T> Triangle2D<T>::Triangle2D(const Point2D<T>& p0_, const Point2D<T>& p1_, const Point2D<T>& p2_)
+template <typename T> Triangle2D<T>::Triangle2D(const Point2<T>& p0_, const Point2<T>& p1_, const Point2<T>& p2_)
 {
     p0 = p0_;
     p1 = p1_;

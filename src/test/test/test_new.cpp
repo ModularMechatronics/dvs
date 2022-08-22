@@ -25,7 +25,7 @@ TEST_F(TestMathFunctions, TestBasic0)
     Matrix<double> m(3, 3), m2(3, 3);
     m = m2;
 
-    Vec2D<double> v2;
+    Vec2<double> v2;
     Vec3D<double> v3;
     Vec4D<double> v4;
 
@@ -56,7 +56,7 @@ TEST_F(TestMathFunctions, TestBasic0)
     Interval1D<int> intrvl;
     IndexSpan idx_span(2, 30);
     EndIndex end_idx;
-    Point2D<double> pt2D;
+    Point2<double> pt2D;
     Point3D<double> pt3D;
     Point4D<double> pt4D;
     Point<double> ptnt;

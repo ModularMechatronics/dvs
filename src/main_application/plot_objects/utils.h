@@ -206,12 +206,12 @@ inline std::pair<Vec3Dd, Vec3Dd> findMinMaxFromThreeVectors(uint8_t* const data_
 }
 
 template <typename T>
-std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectorsInternal(uint8_t* const data_buffer,
+std::pair<Vec2d, Vec2d> findMinMaxFromTwoVectorsInternal(uint8_t* const data_buffer,
                                                            const size_t num_elements,
                                                            const size_t num_bytes_for_one_vec)
 {
     Vector<T> x, y;
-    Vec2Dd min_vec, max_vec;
+    Vec2d min_vec, max_vec;
 
     x.setInternalData(reinterpret_cast<T*>(data_buffer), num_elements);
     y.setInternalData(reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
@@ -223,10 +223,10 @@ std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectorsInternal(uint8_t* const data_b
     x.setInternalData(nullptr, 0);
     y.setInternalData(nullptr, 0);
 
-    return std::pair<Vec2Dd, Vec2Dd>(min_vec, max_vec);
+    return std::pair<Vec2d, Vec2d>(min_vec, max_vec);
 }
 
-inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_buffer,
+inline std::pair<Vec2d, Vec2d> findMinMaxFromTwoVectors(uint8_t* const data_buffer,
                                                           const size_t num_elements,
                                                           const size_t num_bytes_for_one_vec,
                                                           const DataType data_type)
@@ -280,7 +280,7 @@ inline std::pair<Vec2Dd, Vec2Dd> findMinMaxFromTwoVectors(uint8_t* const data_bu
         throw std::runtime_error("Got default in data type switch!");
     }
 
-    return std::pair<Vec2Dd, Vec2Dd>(Vec2Dd(), Vec2Dd());
+    return std::pair<Vec2d, Vec2d>(Vec2d(), Vec2d());
 }
 
 template <typename T>

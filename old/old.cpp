@@ -32,7 +32,7 @@ void drawCircle3D(const Point3Dd p)
     glEnd();
 }
 
-void drawCircle(const Point2Dd p)
+void drawCircle(const Point2d p)
 {
     const int num_points = 15;
     const float dt = 2.0f * M_PI / static_cast<float>(num_points);
@@ -110,7 +110,7 @@ void drawDebugPoints(const AxesLimits& axes_limits,
     dvs::Point3Dd p0(0.5, 0.5, 0.5);
     const auto R = view_angles.getSnappedRotationMatrix();
     const auto pr = R * p0;
-    dvs::Point2Dd p1(pr.x, pr.y);
+    dvs::Point2d p1(pr.x, pr.y);
 
     const double q = 0.5;
     // clang-format off

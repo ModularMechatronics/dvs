@@ -16,19 +16,19 @@ using namespace dvs;
 struct CoordinateConverter
 {
 private:
-    Vec2Dd window_size_;
+    Vec2d window_size_;
     ViewAngles view_angles_;
     AxesLimits axes_limits_;
 
 public:
     CoordinateConverter() = default;
-    CoordinateConverter(const Vec2Dd& window_size, const ViewAngles& view_angles, const AxesLimits& axes_limits);
-    void updateInternalState(const Vec2Dd& window_size, const ViewAngles& view_angles, const AxesLimits& axes_limits);
+    CoordinateConverter(const Vec2d& window_size, const ViewAngles& view_angles, const AxesLimits& axes_limits);
+    void updateInternalState(const Vec2d& window_size, const ViewAngles& view_angles, const AxesLimits& axes_limits);
 
-    Vec2Dd orthogonalViewToModelCoordinate(const Vec2Dd& view_coord) const;
-    Vec2Dd screenToViewCoordinate(const Vec2Dd& screen_coord) const;
-    Vec2Dd viewToScreenCoordinate(const Vec2Dd& view_coord) const;
-    Vec2Dd modelToViewCoordinate(const Vec3Dd& model_coord) const;
+    Vec2d orthogonalViewToModelCoordinate(const Vec2d& view_coord) const;
+    Vec2d screenToViewCoordinate(const Vec2d& screen_coord) const;
+    Vec2d viewToScreenCoordinate(const Vec2d& view_coord) const;
+    Vec2d modelToViewCoordinate(const Vec3Dd& model_coord) const;
 };
 
 #endif // MAIN_APPLICATION_OLD_COORDINATE_CONVERTER_H_

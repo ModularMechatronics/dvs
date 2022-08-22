@@ -10,19 +10,19 @@ namespace dvs
 template <typename T> struct Circle2D
 {
     T radius;           // Radius
-    Point2D<T> center;  // Center point
+    Point2<T> center;  // Center point
 
     Circle2D(const T radius_, const T center_x_, const T center_y_);
-    Circle2D(const T radius_, const Vec2D<T>& center_);
+    Circle2D(const T radius_, const Vec2<T>& center_);
     Circle2D();
 
     HomogeneousLine2D<T> tangentLine(const T angle) const;
     bool doesLineIntersect(const HomogeneousLine2D<T>& line) const;
-    Point2D<T> closestPointOnPerimeterFromPoint(const Point2D<T>& p) const;
-    std::pair<Point2D<T>, Point2D<T>> lineIntersectionPoints(const HomogeneousLine2D<T>& line) const;
-    bool isPointInCircle(const Point2D<T>& p) const;
+    Point2<T> closestPointOnPerimeterFromPoint(const Point2<T>& p) const;
+    std::pair<Point2<T>, Point2<T>> lineIntersectionPoints(const HomogeneousLine2D<T>& line) const;
+    bool isPointInCircle(const Point2<T>& p) const;
     bool doesCircleIntersect(const Circle2D<T>& circle) const;
-    std::pair<Point2D<T>, Point2D<T>> circleIntersection(const Circle2D<T>& circle) const;
+    std::pair<Point2<T>, Point2<T>> circleIntersection(const Circle2D<T>& circle) const;
 };
 
 template <typename T> class Circle3D

@@ -12,7 +12,7 @@
 
 using namespace dvs::internal;
 
-CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, const Vec2Df mouse_pos)
+CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, const Vec2f mouse_pos)
 {
     if ((bound.x_min <= mouse_pos.x) && (mouse_pos.x <= bound.x_max) && (bound.y_min <= mouse_pos.y) &&
         (mouse_pos.y <= bound.y_max))
@@ -247,8 +247,8 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
 
         const std::pair<Bound3D, Bound3D> axes_bnd =
             hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Bound3D, Bound3D>>();
-        axes_interactor_.setAxesLimits(Vec2Dd(axes_bnd.first.x, axes_bnd.first.y),
-                                        Vec2Dd(axes_bnd.second.x, axes_bnd.second.y));
+        axes_interactor_.setAxesLimits(Vec2d(axes_bnd.first.x, axes_bnd.first.y),
+                                        Vec2d(axes_bnd.second.x, axes_bnd.second.y));
     }
     else if (fcn == Function::AXES_3D)
     {
@@ -392,15 +392,15 @@ void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
     bnd_margin.y_min = bnd.y_min + edit_size_margin_;
     bnd_margin.y_max = bnd.y_max - edit_size_margin_;
 
-    cursor_state_at_press_ = mouseState(bnd, bnd_margin, Vec2Df(current_point.x, current_point.y));
+    cursor_state_at_press_ = mouseState(bnd, bnd_margin, Vec2f(current_point.x, current_point.y));
 
-    mouse_pos_at_press_ = Vec2Df(current_point.x, current_point.y);
+    mouse_pos_at_press_ = Vec2f(current_point.x, current_point.y);
     pos_at_press_ = this->GetPosition();
     size_at_press_ = this->GetSize();
 
     left_mouse_button_.setIsPressed(current_point.x, current_point.y);
     const wxSize size_now = this->GetSize();
-    const Vec2Df size_now_vec(size_now.x, size_now.y);
+    const Vec2f size_now_vec(size_now.x, size_now.y);
     axes_interactor_.registerMousePressed(mouse_pos_at_press_.elementWiseDivide(size_now_vec));
     
     Refresh();
@@ -410,8 +410,8 @@ void PlotWindowGLPane::mouseLeftReleased(wxMouseEvent& event)
 {
     const wxPoint mouse_pos{event.GetPosition()};
     const wxSize size_now = this->GetSize();
-    const Vec2Df size_now_vec(size_now.x, size_now.y);
-    axes_interactor_.registerMouseReleased(Vec2Df(mouse_pos.x, mouse_pos.y).elementWiseDivide(size_now_vec));
+    const Vec2f size_now_vec(size_now.x, size_now.y);
+    axes_interactor_.registerMouseReleased(Vec2f(mouse_pos.x, mouse_pos.y).elementWiseDivide(size_now_vec));
     left_mouse_button_.setIsReleased();
     Refresh();
 }
@@ -430,20 +430,20 @@ void PlotWindowGLPane::notifyParentAboutModification()
 void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
-    current_mouse_pos_ = Vec2Df(current_point.x, current_point.y);
+    current_mouse_pos_ = Vec2f(current_point.x, current_point.y);
 
     if (left_mouse_button_.isPressed())
     {
         if (is_editing_)
         {
             wxPoint pos_now = this->GetPosition();
-            const Vec2Df mouse_pos = Vec2Df(current_point.x + pos_now.x, current_point.y + pos_now.y);
-            Vec2Df delta = mouse_pos - mouse_pos_at_press_;
+            const Vec2f mouse_pos = Vec2f(current_point.x + pos_now.x, current_point.y + pos_now.y);
+            Vec2f delta = mouse_pos - mouse_pos_at_press_;
 
             delta =
-                Vec2Df(std::round(delta.x / grid_size_) * grid_size_, std::round(delta.y / grid_size_) * grid_size_);
-            const Vec2Df current_pos(this->GetPosition().x, this->GetPosition().y);
-            const Vec2Df changed_pos = delta;
+                Vec2f(std::round(delta.x / grid_size_) * grid_size_, std::round(delta.y / grid_size_) * grid_size_);
+            const Vec2f current_pos(this->GetPosition().x, this->GetPosition().y);
+            const Vec2f changed_pos = delta;
 
             const wxSize size_now = this->GetSize();
 
@@ -553,7 +553,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
             bnd_margin.x_max = bnd.x_max - edit_size_margin_;
             bnd_margin.y_min = bnd.y_min + edit_size_margin_;
             bnd_margin.y_max = bnd.y_max - edit_size_margin_;
-            const CursorSquareState cms = mouseState(bnd, bnd_margin, Vec2Df(current_point.x, current_point.y));
+            const CursorSquareState cms = mouseState(bnd, bnd_margin, Vec2f(current_point.x, current_point.y));
             switch (cms)
             {
                 case CursorSquareState::LEFT:
@@ -701,7 +701,7 @@ void PlotWindowGLPane::render(wxPaintEvent& evt)
 
     const bool draw_selected_bb = is_selected_ && is_editing_;
 
-    const Vec2Df pane_size(GetSize().x, GetSize().y);
+    const Vec2f pane_size(GetSize().x, GetSize().y);
 
     axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
                          axes_interactor_.getViewAngles(),

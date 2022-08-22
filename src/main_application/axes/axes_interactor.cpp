@@ -40,13 +40,13 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     show_legend_ = false;
 }
 
-void AxesInteractor::registerMousePressed(const Vec2Df& mouse_pos)
+void AxesInteractor::registerMousePressed(const Vec2f& mouse_pos)
 {
     mouse_pressed_ = true;
     mouse_pos_at_press_ = mouse_pos;
 }
 
-void AxesInteractor::registerMouseReleased(const Vec2Df& mouse_pos)
+void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
 {
     if(should_draw_zoom_rect_)
     {
@@ -87,14 +87,14 @@ void AxesInteractor::registerMouseReleased(const Vec2Df& mouse_pos)
         model_mat_mod[3][0] = 0.0;
         model_mat_mod[3][1] = 0.0;
         model_mat_mod[3][2] = 0.0;
-        const Vec2Df mouse_pos_at_release = mouse_pos;
-        const Vec2Df window_xy(current_window_width, current_window_height);
+        const Vec2f mouse_pos_at_release = mouse_pos;
+        const Vec2f window_xy(current_window_width, current_window_height);
 
-        const Vec2Df mouse_pos_at_press_norm = mouse_pos_at_press_; // .elementWiseDivide(window_xy);
-        const Vec2Df mouse_pos_at_release_norm = mouse_pos_at_release; // .elementWiseDivide(window_xy);
+        const Vec2f mouse_pos_at_press_norm = mouse_pos_at_press_; // .elementWiseDivide(window_xy);
+        const Vec2f mouse_pos_at_release_norm = mouse_pos_at_release; // .elementWiseDivide(window_xy);
 
-        const Vec2Df mouse_pos_at_press_mod = 2.0f * (mouse_pos_at_press_norm.elementWiseMultiply(Vec2Df(1.0f, -1.0f)) + Vec2Df(0.0f, 1.0f)) - 1.0f;
-        const Vec2Df current_mouse_pos_mod = 2.0f * (mouse_pos_at_release_norm.elementWiseMultiply(Vec2Df(1.0f, -1.0f)) + Vec2Df(0.0f, 1.0f)) - 1.0f;
+        const Vec2f mouse_pos_at_press_mod = 2.0f * (mouse_pos_at_press_norm.elementWiseMultiply(Vec2f(1.0f, -1.0f)) + Vec2f(0.0f, 1.0f)) - 1.0f;
+        const Vec2f current_mouse_pos_mod = 2.0f * (mouse_pos_at_release_norm.elementWiseMultiply(Vec2f(1.0f, -1.0f)) + Vec2f(0.0f, 1.0f)) - 1.0f;
 
         const SnappingAxis snapping_axis = view_angles_.getSnappingAxis();
 
@@ -276,7 +276,7 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
 
 void AxesInteractor::changeRotation(const double dx, const double dy, const MouseInteractionAxis mia)
 {
-    Vec2Dd sa(1.0, 1.0);
+    Vec2d sa(1.0, 1.0);
     if (mia == MouseInteractionAxis::X)
     {
         sa.y = 0.0;
@@ -456,7 +456,7 @@ void AxesInteractor::setAxesLimits(const Vec3Dd& min_vec, const Vec3Dd& max_vec)
            static_cast<double>(num_lines - 1);
 }
 
-void AxesInteractor::setAxesLimits(const Vec2Dd& min_vec, const Vec2Dd& max_vec)
+void AxesInteractor::setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec)
 {
     axes_limits_ =
         AxesLimits({min_vec.x, min_vec.y, axes_limits_.getMin().z}, {max_vec.x, max_vec.y, axes_limits_.getMax().z});

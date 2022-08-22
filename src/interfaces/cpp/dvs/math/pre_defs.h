@@ -25,10 +25,10 @@ typedef Triangle3D<double> Triangle3Dd;
 typedef Matrix<double> Matrixd;
 typedef Vector<double> Vectord;
 typedef Point<double> Pointd;
-typedef Vec2D<double> Vec2Dd;
+typedef Vec2<double> Vec2d;
 typedef Vec3D<double> Vec3Dd;
 typedef Vec4D<double> Vec4Dd;
-typedef Point2D<double> Point2Dd;
+typedef Point2<double> Point2d;
 typedef Point3D<double> Point3Dd;
 typedef Point4D<double> Point4Dd;
 
@@ -52,14 +52,14 @@ typedef Triangle3D<float> Triangle3Df;
 typedef Matrix<float> Matrixf;
 typedef Vector<float> Vectorf;
 typedef Point<float> Pointf;
-typedef Vec2D<float> Vec2Df;
+typedef Vec2<float> Vec2f;
 typedef Vec3D<float> Vec3Df;
 typedef Vec4D<float> Vec4Df;
-typedef Point2D<float> Point2Df;
+typedef Point2<float> Point2f;
 typedef Point3D<float> Point3Df;
 typedef Point4D<float> Point4Df;
 
-typedef Vec2D<int> Vec2Di;
+typedef Vec2<int> Vec2i;
 
 }  // namespace dvs
 

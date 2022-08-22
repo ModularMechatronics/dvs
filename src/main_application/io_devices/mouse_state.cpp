@@ -18,17 +18,17 @@ MouseButtonState::MouseButtonState()
     delta_pos_.y = 0;
 }
 
-Vec2Di MouseButtonState::getCurrPos() const
+Vec2i MouseButtonState::getCurrPos() const
 {
     return curr_pos_;
 }
 
-Vec2Di MouseButtonState::getPrevPos() const
+Vec2i MouseButtonState::getPrevPos() const
 {
     return prev_pos_;
 }
 
-Vec2Di MouseButtonState::getDeltaPos() const
+Vec2i MouseButtonState::getDeltaPos() const
 {
     return delta_pos_;
 }
