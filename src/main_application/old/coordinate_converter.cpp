@@ -23,17 +23,17 @@ Vec2d CoordinateConverter::orthogonalViewToModelCoordinate(const Vec2d& view_coo
     // Only works when azimuth = elevation = 0
     assert((view_angles_.getSnappedElevation() == 0.0) && (view_angles_.getSnappedAzimuth() == 0.0));
 
-    const Vec3Dd scale = axes_limits_.getAxesScale();
-    const Vec3Dd offset = axes_limits_.getAxesCenter();
-    const Vec3Dd res = Vec3Dd(view_coord.x, view_coord.y, 0.0).elementWiseMultiply(scale) + offset;
+    const Vec3d scale = axes_limits_.getAxesScale();
+    const Vec3d offset = axes_limits_.getAxesCenter();
+    const Vec3d res = Vec3d(view_coord.x, view_coord.y, 0.0).elementWiseMultiply(scale) + offset;
 
     return Vec2d(res.x, res.y);
 }
 
-Vec2d CoordinateConverter::modelToViewCoordinate(const Vec3Dd& model_coord) const
+Vec2d CoordinateConverter::modelToViewCoordinate(const Vec3d& model_coord) const
 {
     const Matrixd rotation_mat = view_angles_.getSnappedRotationMatrix();
-    const Vec3Dd vr = rotation_mat * model_coord;
+    const Vec3d vr = rotation_mat * model_coord;
 
     return Vec2d(vr.x, vr.y);
 }

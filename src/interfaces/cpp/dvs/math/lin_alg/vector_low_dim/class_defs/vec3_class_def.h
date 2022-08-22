@@ -5,34 +5,34 @@
 
 namespace dvs
 {
-template <typename T> struct Vec3D
+template <typename T> struct Vec3
 {
     T x;
     T y;
     T z;
 
-    Vec3D(const T x_, const T y_, const T z_);
-    template <typename Y> Vec3D(const Vec3D<Y>& v);
-    Vec3D();
-    Vec3D(const T v_array[3]);
+    Vec3(const T x_, const T y_, const T z_);
+    template <typename Y> Vec3(const Vec3<Y>& v);
+    Vec3();
+    Vec3(const T v_array[3]);
     Vector<T> toVector() const;
 
     CylindricalCoord<T> toCylindricalVec() const;
     SphericalCoord<T> toSphericalCoord() const;
 
-    Vec3D<T> normalized() const;
-    Vec3D<T> vectorBetweenPoints(const Point3D<T>& end_point) const;
-    Vec3D<T> normalizedVectorBetweenPoints(const Point3D<T>& end_point) const;
+    Vec3<T> normalized() const;
+    Vec3<T> vectorBetweenPoints(const Point3D<T>& end_point) const;
+    Vec3<T> normalizedVectorBetweenPoints(const Point3D<T>& end_point) const;
     T squaredNorm() const;
     T norm() const;
-    Vec3D<T> elementWiseMultiply(const Vec3D<T>& factor_vector) const;
-    Vec3D<T> elementWiseDivide(const Vec3D<T>& numerator_vector) const;
-    Vec3D<T> crossProduct(const Vec3D<T>& right_vector) const;
+    Vec3<T> elementWiseMultiply(const Vec3<T>& factor_vector) const;
+    Vec3<T> elementWiseDivide(const Vec3<T>& numerator_vector) const;
+    Vec3<T> crossProduct(const Vec3<T>& right_vector) const;
     Matrix<T> toCrossProductMatrix() const;
-    Matrix<T> outerProduct(const Vec3D<T>& v) const;
+    Matrix<T> outerProduct(const Vec3<T>& v) const;
     Point3D<T> mirrorPointInThis(const Point3D<T>& point_to_mirror) const;
-    T angleBetweenVectors(const Vec3D<T>& v) const;
-    Vec3D<T> perpendicularVector() const;
+    T angleBetweenVectors(const Vec3<T>& v) const;
+    Vec3<T> perpendicularVector() const;
 
     bool areAllNan() const;
     bool isAnyNan() const;

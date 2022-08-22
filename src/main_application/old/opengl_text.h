@@ -19,7 +19,7 @@ void putTextAt(
     const std::string& text, const double x, const double y, const float size_x, const float size_y, const float scale);
 void putTextAtNew(const std::string& text);
 void putTextAt_Old(const std::string& s, const Vec2d& v);
-void putTextAt3D(const std::string& s, const Vec3Dd& v);
+void putTextAt3D(const std::string& s, const Vec3d& v);
 void putTextAt_Old(const std::string& s, const double x, const double y);
 void putTextAt3D(const std::string& s, const double x, const double y, const double z);
 

@@ -26,7 +26,7 @@ TEST_F(TestMathFunctions, TestBasic0)
     m = m2;
 
     Vec2<double> v2;
-    Vec3D<double> v3;
+    Vec3<double> v3;
     Vec4D<double> v4;
 
     VecXY<double> vXY;

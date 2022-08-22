@@ -32,7 +32,7 @@ template <typename T> AxisAngle<T>::AxisAngle(const T x_, const T y_, const T z_
     }
 }
 
-template <typename T> AxisAngle<T>::AxisAngle(const Vec3D<T>& v)
+template <typename T> AxisAngle<T>::AxisAngle(const Vec3<T>& v)
 {
     phi = v.norm();
     if (phi == 0.0)
@@ -76,7 +76,7 @@ template <typename T> Matrix<T> AxisAngle<T>::toRotationMatrix() const
     AxisAngle<T> normalized_axis_angle = normalized();
 
     const Matrix<T> k_matrix =
-        Vec3D<T>(normalized_axis_angle.x, normalized_axis_angle.y, normalized_axis_angle.z).toCrossProductMatrix();
+        Vec3<T>(normalized_axis_angle.x, normalized_axis_angle.y, normalized_axis_angle.z).toCrossProductMatrix();
 
     const Matrix<T> unit_matrix = unitMatrix<T>(3, 3);
 
@@ -88,7 +88,7 @@ template <typename T> Matrix<T> AxisAngle<T>::toRotationMatrix() const
 
 template <typename T> Quaternion<T> AxisAngle<T>::toQuaternion() const
 {
-    Vec3D<T> v = Vec3D<T>(x, y, z).normalized();
+    Vec3<T> v = Vec3<T>(x, y, z).normalized();
     Quaternion<T> q;
     q.x = v.x * std::sin(phi / 2.0);
     q.y = v.y * std::sin(phi / 2.0);

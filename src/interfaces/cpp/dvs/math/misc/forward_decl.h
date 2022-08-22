@@ -15,7 +15,7 @@
 namespace dvs
 {
 template <typename T> struct Vec2;
-template <typename T> struct Vec3D;
+template <typename T> struct Vec3;
 template <typename T> struct Vec4D;
 
 template <typename T> struct VecXY;
@@ -53,7 +53,7 @@ struct EndIndex;
 struct AllIndices;
 
 template <typename T> using Point2 = Vec2<T>;
-template <typename T> using Point3D = Vec3D<T>;
+template <typename T> using Point3D = Vec3<T>;
 template <typename T> using Point4D = Vec4D<T>;
 template <typename T> using Point = Vector<T>;
 

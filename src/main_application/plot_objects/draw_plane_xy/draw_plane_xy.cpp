@@ -21,10 +21,10 @@ DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, cons
 
     planes.setInternalData(nullptr, 0);
 
-    p00 = Point3Dd(p0.x, p0.y, plane.evalXY(p0.x, p0.y));
-    p11 = Point3Dd(p1.x, p1.y, plane.evalXY(p1.x, p1.y));
-    p01 = Point3Dd(p0.x, p1.y, plane.evalXY(p0.x, p1.y));
-    p10 = Point3Dd(p1.x, p0.y, plane.evalXY(p1.x, p0.y));
+    p00 = Point3d(p0.x, p0.y, plane.evalXY(p0.x, p0.y));
+    p11 = Point3d(p1.x, p1.y, plane.evalXY(p1.x, p1.y));
+    p01 = Point3d(p0.x, p1.y, plane.evalXY(p0.x, p1.y));
+    p10 = Point3d(p1.x, p0.y, plane.evalXY(p1.x, p0.y));
 
     points_ptr_ = new float[4 * 3];
     points_ptr_[0] = p00.x;

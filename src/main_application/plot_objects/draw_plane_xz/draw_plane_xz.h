@@ -12,10 +12,10 @@
 class DrawPlaneXZ : public PlotObjectBase
 {
 private:
-    Point3Dd p00;
-    Point3Dd p11;
-    Point3Dd p01;
-    Point3Dd p10;
+    Point3d p00;
+    Point3d p11;
+    Point3d p01;
+    Point3d p10;
 
     GLuint buffer_idx_;
     float* points_ptr_;

@@ -19,16 +19,16 @@ AxesSettings::AxesSettings()
 
     axes_state_ = AxesState::DEFAULT;
 
-    min_vec_ = Vec3Dd(-1.0, -1.0, -1.0);
-    max_vec_ = Vec3Dd(1.0, 1.0, 1.0);
+    min_vec_ = Vec3d(-1.0, -1.0, -1.0);
+    max_vec_ = Vec3d(1.0, 1.0, 1.0);
 }
 
-Vec3Dd AxesSettings::getAxesScale() const
+Vec3d AxesSettings::getAxesScale() const
 {
     return axes_scale_;
 }
 
-void AxesSettings::setAxesScale(const Vec3Dd& new_scale)
+void AxesSettings::setAxesScale(const Vec3d& new_scale)
 {
     axes_scale_ = new_scale;
 }
@@ -38,12 +38,12 @@ double AxesSettings::getPlotBoxSizeFactor() const
     return plot_box_size_factor_;
 }
 
-Vec3Dd AxesSettings::getMinVec() const
+Vec3d AxesSettings::getMinVec() const
 {
     return min_vec_;
 }
 
-Vec3Dd AxesSettings::getMaxVec() const
+Vec3d AxesSettings::getMaxVec() const
 {
     return max_vec_;
 }

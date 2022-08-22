@@ -11,7 +11,7 @@ inline void sleepMS(const int ms)
     usleep(ms * 1000);
 }
 
-void drawCircle3D(const Point3Dd p)
+void drawCircle3D(const Point3d p)
 {
     const int num_points = 15;
     const float dt = 2.0f * M_PI / static_cast<float>(num_points);
@@ -77,7 +77,7 @@ void modifyStuff(const AxesLimits& axes_limits,
                  const float width,
                  const float height)
 {
-    dvs::Point3Dd p0(0.5, 0.5, 0.5);
+    dvs::Point3d p0(0.5, 0.5, 0.5);
     const auto R = view_angles.getSnappedRotationMatrix();
     const float azimuth = view_angles.getSnappedAzimuth();
     const float elevation = view_angles.getSnappedElevation();
@@ -91,7 +91,7 @@ void modifyStuff(const AxesLimits& axes_limits,
     const float sy = sq * sin(azimuth);
     // const float sz = cos(elevation);
 
-    Vec3Dd axes_scale = axes_settings.getAxesScale();
+    Vec3d axes_scale = axes_settings.getAxesScale();
     // axes_scale.x = axes_scale.x * sx;
     // axes_scale.y = axes_scale.y * sy;
     // axes_scale.z = axes_scale.z * sz;
@@ -107,14 +107,14 @@ void drawDebugPoints(const AxesLimits& axes_limits,
 {
     // std::cout << "Width: " << width << ", height: " << height << std::endl;
 
-    dvs::Point3Dd p0(0.5, 0.5, 0.5);
+    dvs::Point3d p0(0.5, 0.5, 0.5);
     const auto R = view_angles.getSnappedRotationMatrix();
     const auto pr = R * p0;
     dvs::Point2d p1(pr.x, pr.y);
 
     const double q = 0.5;
     // clang-format off
-    const Vector<Point3Dd> points = {{q, q, q},
+    const Vector<Point3d> points = {{q, q, q},
                                      {-q, q, q},
                                      {q, -q, q},
                                      {-q, -q, q},
@@ -122,11 +122,11 @@ void drawDebugPoints(const AxesLimits& axes_limits,
                                      {-q, q, -q},
                                      {q, -q, -q},
                                      {-q, -q, -q}};
-    Point3Dd pr0 = R * points(0);
+    Point3d pr0 = R * points(0);
     // clang-format on
-    std::pair<Point3Dd, Point3Dd> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
+    std::pair<Point3d, Point3d> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
                                   pmah = {points(0), pr0};
-    for (const Point3Dd p : points)
+    for (const Point3d p : points)
     {
         const auto pqr = R * p;
         // drawCircle({pqr.x, pqr.y});
@@ -162,11 +162,11 @@ void drawDebugPoints(const AxesLimits& axes_limits,
     drawCircle({pmih.second.x, pmih.second.y});
     drawCircle({pmah.second.x, pmah.second.y});
 
-    const Vec3Dd new_scale = findScale(R, view_angles.getSnappedAzimuth(), view_angles.getSnappedElevation());
-    for (const Point3Dd p : points)
+    const Vec3d new_scale = findScale(R, view_angles.getSnappedAzimuth(), view_angles.getSnappedElevation());
+    for (const Point3d p : points)
     {
-        // Point3Dd pq = p.elementWiseMultiply(new_scale);
-        Point3Dd p_new = R * p;
+        // Point3d pq = p.elementWiseMultiply(new_scale);
+        Point3d p_new = R * p;
         drawCircle({new_scale.x * p_new.x, new_scale.y * p_new.y});
     }
 }

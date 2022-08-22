@@ -10,7 +10,7 @@
 
 namespace dvs
 {
-template <typename T> Line3D<T>::Line3D(const Point3D<T>& p_, const Vec3D<T>& v_) : p(p_), v(v_) {}
+template <typename T> Line3D<T>::Line3D(const Point3D<T>& p_, const Vec3<T>& v_) : p(p_), v(v_) {}
 
 template <typename T> Line3D<T>::Line3D() {}
 
@@ -20,10 +20,10 @@ template <typename T> template <typename Y> Line3D<T>::Line3D(const Line3D<Y>& l
     v = l.v;
 }
 
-template <typename T> Vec3D<T> Line3D<T>::vectorNormalToLine() const
+template <typename T> Vec3<T> Line3D<T>::vectorNormalToLine() const
 {
-    Vec3D<T> vn;
-    Vec3D<T> vnorm = v.normalized();
+    Vec3<T> vn;
+    Vec3<T> vnorm = v.normalized();
 
     // Dot product equals zero: v.x * vn.x + v.y * vn.y + v.z * vn.z = 0
 
@@ -76,13 +76,13 @@ template <typename T> Point3D<T> Line3D<T>::closestPointOnLineFromPoint(const Po
     return this->eval(t);
 }
 
-template <typename T> Vec3D<T> Line3D<T>::vectorBetweenClosestPointOnLineAndPoint(const Point3D<T>& q) const
+template <typename T> Vec3<T> Line3D<T>::vectorBetweenClosestPointOnLineAndPoint(const Point3D<T>& q) const
 {
     const Point3D<T> closest_point = this->closestPointOnLineFromPoint(q);
     return q - closest_point;
 }
 
-template <typename T> Line3D<T> Line3D<T>::translatedLine(const Vec3D<T>& v) const
+template <typename T> Line3D<T> Line3D<T>::translatedLine(const Vec3<T>& v) const
 {
     Point3D<T> p0 = this->eval(0.0) + v;
     Point3D<T> p1 = this->eval(1.0) + v;
@@ -129,18 +129,18 @@ template <typename T> std::vector<Point3D<T>> Line3D<T>::closestPointsBetweenLin
 }
 
 template <typename T>
-std::pair<Point3D<T>, Vec3D<T>> Line3D<T>::projectPointAndVectorOntoLine(const Point3D<T>& q, const Vec3D<T>& v) const
+std::pair<Point3D<T>, Vec3<T>> Line3D<T>::projectPointAndVectorOntoLine(const Point3D<T>& q, const Vec3<T>& v) const
 {
     Point3D<T> p0 = this->closestPointOnLineFromPoint(q);
     Point3D<T> p1 = this->closestPointOnLineFromPoint(q + v);
 
-    std::pair<Point3D<T>, Vec3D<T>> point_vector_pair(p0, p0.vectorBetweenPoints(p1));
+    std::pair<Point3D<T>, Vec3<T>> point_vector_pair(p0, p0.vectorBetweenPoints(p1));
     return point_vector_pair;
 }
 
 template <typename T> Point3D<T> Line3D<T>::rotatePointAroundLine(const Point3D<T>& q, const T angle) const
 {
-    Vec3D<T> point_offset = this->closestPointOnLineFromPoint(q);
+    Vec3<T> point_offset = this->closestPointOnLineFromPoint(q);
     Point3D<T> no_offset_point = q - point_offset;
 
     Matrix<T> rotation_matrix = AxisAngle<T>(v * angle).toRotationMatrix();
@@ -170,7 +170,7 @@ template <typename T> Line3D<T> lineFromTwoPoints(const Point3D<T>& p0, const Po
     Line3D<T> line;
     line.p = p0;
 
-    const Vec3D<T> line_vector = p1 - p0;
+    const Vec3<T> line_vector = p1 - p0;
     line.v = line_vector;
 
     return line;

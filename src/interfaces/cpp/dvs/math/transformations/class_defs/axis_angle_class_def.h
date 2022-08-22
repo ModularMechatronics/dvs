@@ -14,7 +14,7 @@ template <typename T> struct AxisAngle
 
     AxisAngle(const T phi_, const T x_, const T y_, const T z_);
     AxisAngle(const T x_, const T y_, const T z_);
-    AxisAngle(const Vec3D<T>& v);
+    AxisAngle(const Vec3<T>& v);
     AxisAngle();
 
     AxisAngle<T> normalized() const;

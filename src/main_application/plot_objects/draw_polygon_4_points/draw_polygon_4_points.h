@@ -16,10 +16,10 @@ private:
     RGBTripletf face_color_;
     float line_width_;
 
-    Point3Dd p0;
-    Point3Dd p1;
-    Point3Dd p2;
-    Point3Dd p3;
+    Point3d p0;
+    Point3d p1;
+    Point3d p2;
+    Point3d p3;
 
     void findMinMax() override;
 

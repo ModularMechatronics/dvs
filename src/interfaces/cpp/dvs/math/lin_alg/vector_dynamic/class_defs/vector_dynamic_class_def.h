@@ -24,7 +24,7 @@ public:
     template <typename Y> friend void fillWithPtr(Vector<Y>& v, const void* const ptr, const size_t vector_length);
 
     Vec2<T> toVec2() const;
-    Vec3D<T> toVec3D() const;
+    Vec3<T> toVec3() const;
     Vec4D<T> toVec4D() const;
 
     Vector(const std::initializer_list<T>& il);

@@ -28,7 +28,7 @@ public:
     Vec2d orthogonalViewToModelCoordinate(const Vec2d& view_coord) const;
     Vec2d screenToViewCoordinate(const Vec2d& screen_coord) const;
     Vec2d viewToScreenCoordinate(const Vec2d& view_coord) const;
-    Vec2d modelToViewCoordinate(const Vec3Dd& model_coord) const;
+    Vec2d modelToViewCoordinate(const Vec3d& model_coord) const;
 };
 
 #endif // MAIN_APPLICATION_OLD_COORDINATE_CONVERTER_H_

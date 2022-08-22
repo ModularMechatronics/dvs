@@ -206,12 +206,12 @@ template <typename T> void Matrix<T>::vCat(const Vec2<T>& v)
     this->vCat(v.toVector());
 }
 
-template <typename T> void Matrix<T>::hCat(const Vec3D<T>& v)
+template <typename T> void Matrix<T>::hCat(const Vec3<T>& v)
 {
     this->hCat(v.toVector());
 }
 
-template <typename T> void Matrix<T>::vCat(const Vec3D<T>& v)
+template <typename T> void Matrix<T>::vCat(const Vec3<T>& v)
 {
     this->vCat(v.toVector());
 }
@@ -360,13 +360,13 @@ template <typename T> Matrix<T> vCat(const Matrix<T>& m, const Vec4D<T>& v)
     return vCat(m, vg);
 }
 
-template <typename T> Matrix<T> hCat(const Matrix<T>& m, const Vec3D<T>& v)
+template <typename T> Matrix<T> hCat(const Matrix<T>& m, const Vec3<T>& v)
 {
     Vector<T> vg = v.toVector();
     return hCat(m, vg);
 }
 
-template <typename T> Matrix<T> vCat(const Matrix<T>& m, const Vec3D<T>& v)
+template <typename T> Matrix<T> vCat(const Matrix<T>& m, const Vec3<T>& v)
 {
     Vector<T> vg = v.toVector();
     return vCat(m, vg);
@@ -396,13 +396,13 @@ template <typename T> Matrix<T> vCat(const Vec4D<T>& v, const Matrix<T>& m)
     return vCat(vg, m);
 }
 
-template <typename T> Matrix<T> hCat(const Vec3D<T>& v, const Matrix<T>& m)
+template <typename T> Matrix<T> hCat(const Vec3<T>& v, const Matrix<T>& m)
 {
     Vector<T> vg = v.toVector();
     return hCat(vg, m);
 }
 
-template <typename T> Matrix<T> vCat(const Vec3D<T>& v, const Matrix<T>& m)
+template <typename T> Matrix<T> vCat(const Vec3<T>& v, const Matrix<T>& m)
 {
     Vector<T> vg = v.toVector();
     return vCat(vg, m);
@@ -470,7 +470,7 @@ template <typename T> Matrix<T> Vec2<T>::outerProduct(const Vec2<T>& v) const
     return vv0.outerProduct(vv1);
 }
 
-template <typename T> Matrix<T> Vec3D<T>::outerProduct(const Vec3D<T>& v) const
+template <typename T> Matrix<T> Vec3<T>::outerProduct(const Vec3<T>& v) const
 {
     Vector<T> vv0 = toVector();
     Vector<T> vv1 = v.toVector();
@@ -486,11 +486,11 @@ template <typename T> Vec4D<T> Vector<T>::toVec4D() const
     return v;
 }
 
-template <typename T> Vec3D<T> Vector<T>::toVec3D() const
+template <typename T> Vec3<T> Vector<T>::toVec3() const
 {
     DVS_ASSERT(is_allocated_) << "Error, parent vector not allocated!";
     DVS_ASSERT(vector_length_ >= 3) << "Error, parent vector not of size 3 or larger!";
-    Vec3D<T> v(data_[0], data_[1], data_[2]);
+    Vec3<T> v(data_[0], data_[1], data_[2]);
     return v;
 }
 
@@ -516,7 +516,7 @@ template <typename T> Vector<T> Vec2<T>::toVector() const
     return v;
 }
 
-template <typename T> Vector<T> Vec3D<T>::toVector() const
+template <typename T> Vector<T> Vec3<T>::toVector() const
 {
     const Vector<T> v({x, y, z});
     return v;
@@ -528,7 +528,7 @@ template <typename T> Vector<T> Vec4D<T>::toVector() const
     return v;
 }
 
-template <typename T> Matrix<T> Vec3D<T>::toCrossProductMatrix() const
+template <typename T> Matrix<T> Vec3<T>::toCrossProductMatrix() const
 {
     Matrix<T> m(3, 3);
     m(0, 0) = 0.0;
@@ -545,15 +545,15 @@ template <typename T> Matrix<T> Vec3D<T>::toCrossProductMatrix() const
     return m;
 }
 
-template <typename T> Vec3D<T> crossProductMatrixToVec3D(const Matrix<T>& m)
+template <typename T> Vec3<T> crossProductMatrixToVec3(const Matrix<T>& m)
 {
-    return Vec3D<T>(m(2, 1), m(0, 2), m(1, 0));
+    return Vec3<T>(m(2, 1), m(0, 2), m(1, 0));
 }
 
 template <typename T>
-AxisAngle<T> estimateRotationFromTwoVectors(const Vec3D<T>& v_unrotated, const Vec3D<T>& v_rotated)
+AxisAngle<T> estimateRotationFromTwoVectors(const Vec3<T>& v_unrotated, const Vec3<T>& v_rotated)
 {
-    Vec3D<T> rotation_vector = v_unrotated.crossProduct(v_rotated);
+    Vec3<T> rotation_vector = v_unrotated.crossProduct(v_rotated);
     T phi = v_unrotated.angleBetweenVectors(v_rotated);
 
     return AxisAngle<T>(phi, rotation_vector.x, rotation_vector.y, rotation_vector.z);

@@ -18,7 +18,7 @@ void drawCoordinateAxesLines(const AxesSettings& axes_settings)
     drawLine3D({-f, -f, f}, {-f, -f, ext_fac * f});
 }
 
-void drawArrowHead(const Vec3Dd& v0, const Vec3Dd& v1, const CoordinateConverter& coord_converter)
+void drawArrowHead(const Vec3d& v0, const Vec3d& v1, const CoordinateConverter& coord_converter)
 {
     const Vec2d v0_2d = coord_converter.modelToViewCoordinate(v0);
     const Vec2d v1_2d = coord_converter.modelToViewCoordinate(v1);
@@ -41,13 +41,13 @@ void drawCoordinateArrowHead(const AxesSettings& axes_settings, const Coordinate
     const double ext_fac = axes_settings.getCoordAxExtFac();
 
     const double f = axes_settings.getPlotBoxSizeFactor();
-    const Vec3Dd x1(ext_fac * f, -f, -f);
-    const Vec3Dd y1(-f, ext_fac * f, -f);
-    const Vec3Dd z1(-f, -f, ext_fac * f);
+    const Vec3d x1(ext_fac * f, -f, -f);
+    const Vec3d y1(-f, ext_fac * f, -f);
+    const Vec3d z1(-f, -f, ext_fac * f);
 
-    const Vec3Dd x0 = x1 - Vec3Dd(1.0, 0.0, 0.0);
-    const Vec3Dd y0 = y1 - Vec3Dd(0.0, 1.0, 0.0);
-    const Vec3Dd z0 = z1 - Vec3Dd(0.0, 0.0, 1.0);
+    const Vec3d x0 = x1 - Vec3d(1.0, 0.0, 0.0);
+    const Vec3d y0 = y1 - Vec3d(0.0, 1.0, 0.0);
+    const Vec3d z0 = z1 - Vec3d(0.0, 0.0, 1.0);
 
     setColor(1.0, 0.0, 0.0);
     drawArrowHead(x0, x1, coord_conv);
@@ -63,9 +63,9 @@ void drawCoordinateAxesLetters(const AxesSettings& axes_settings, const Coordina
     const double ext_fac = axes_settings.getCoordAxExtFac() * 1.1;
 
     const double f = axes_settings.getPlotBoxSizeFactor();
-    Vec3Dd xpos(ext_fac * f, -f, -f);
-    Vec3Dd ypos(-f, ext_fac * f, -f);
-    Vec3Dd zpos(-f, -f, ext_fac * f);
+    Vec3d xpos(ext_fac * f, -f, -f);
+    Vec3d ypos(-f, ext_fac * f, -f);
+    Vec3d zpos(-f, -f, ext_fac * f);
 
     const Vec2d x_vec = coord_conv.modelToViewCoordinate(xpos);
     const Vec2d y_vec = coord_conv.modelToViewCoordinate(ypos);

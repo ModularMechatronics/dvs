@@ -8,8 +8,8 @@ float* convertMatrixColorDataOuter(uint8_t* input_data,
                                      const DataType data_type,
                                      const Dimension2D dims,
                                      const size_t num_bytes_for_one_vec,
-                                     const Vec3Dd min_vec,
-                                     const Vec3Dd max_vec,
+                                     const Vec3d min_vec,
+                                     const Vec3d max_vec,
                                      const RGBColorMap<float>* const color_map_function);
 
 Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
@@ -60,7 +60,7 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHead
 
 void Surf::findMinMax()
 {
-    std::tie<Vec3Dd, Vec3Dd>(min_vec, max_vec) =
+    std::tie<Vec3d, Vec3d>(min_vec, max_vec) =
         findMinMaxFromThreeMatrices(data_ptr_, dims_.rows, dims_.cols, num_bytes_for_one_vec_, data_type_);
 }
 
@@ -192,7 +192,7 @@ float* convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size
 }
 
 template <typename T>
-float* convertMatrixColorData(uint8_t* input_data, const Dimension2D dims, const size_t num_bytes_for_one_vec, const Vec3Dd min_vec, const Vec3Dd max_vec, const RGBColorMap<float>* const color_map_function)
+float* convertMatrixColorData(uint8_t* input_data, const Dimension2D dims, const size_t num_bytes_for_one_vec, const Vec3d min_vec, const Vec3d max_vec, const RGBColorMap<float>* const color_map_function)
 {
     Matrix<T> x, y, z;
     x.setInternalData(reinterpret_cast<T*>(input_data), dims.rows, dims.cols);
@@ -330,8 +330,8 @@ float* convertMatrixColorDataOuter(uint8_t* input_data,
                                      const DataType data_type,
                                      const Dimension2D dims,
                                      const size_t num_bytes_for_one_vec,
-                                     const Vec3Dd min_vec,
-                                     const Vec3Dd max_vec,
+                                     const Vec3d min_vec,
+                                     const Vec3d max_vec,
                                      const RGBColorMap<float>* const color_map_function)
 {
     float* output_data;

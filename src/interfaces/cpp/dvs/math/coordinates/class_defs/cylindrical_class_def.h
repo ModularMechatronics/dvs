@@ -15,7 +15,7 @@ template <typename T> struct CylindricalCoord
     CylindricalCoord();
 
     SphericalCoord<T> toSphericalCoord() const;
-    Vec3D<T> toVec3D() const;
+    Vec3<T> toVec3() const;
 };
 
 }  // namespace dvs

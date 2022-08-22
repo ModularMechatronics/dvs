@@ -15,11 +15,11 @@ void drawXZGrid(const double y_coord,
     assert((x_values.size()) > 0 && (z_values.size() > 0));
     for (size_t k = 0; k < x_values.size(); k++)
     {
-        drawLine3D(Vec3Dd(x_values(k), y_coord, z0), Vec3Dd(x_values(k), y_coord, z1));
+        drawLine3D(Vec3d(x_values(k), y_coord, z0), Vec3d(x_values(k), y_coord, z1));
     }
     for (size_t k = 0; k < z_values.size(); k++)
     {
-        drawLine3D(Vec3Dd(x0, y_coord, z_values(k)), Vec3Dd(x1, y_coord, z_values(k)));
+        drawLine3D(Vec3d(x0, y_coord, z_values(k)), Vec3d(x1, y_coord, z_values(k)));
     }
 }
 
@@ -34,11 +34,11 @@ void drawXYGrid(const double z_coord,
     assert((x_values.size()) > 0 && (y_values.size() > 0));
     for (size_t k = 0; k < x_values.size(); k++)
     {
-        drawLine3D(Vec3Dd(x_values(k), y0, z_coord), Vec3Dd(x_values(k), y1, z_coord));
+        drawLine3D(Vec3d(x_values(k), y0, z_coord), Vec3d(x_values(k), y1, z_coord));
     }
     for (size_t k = 0; k < y_values.size(); k++)
     {
-        drawLine3D(Vec3Dd(x0, y_values(k), z_coord), Vec3Dd(x1, y_values(k), z_coord));
+        drawLine3D(Vec3d(x0, y_values(k), z_coord), Vec3d(x1, y_values(k), z_coord));
     }
 }
 
@@ -53,11 +53,11 @@ void drawYZGrid(const double x_coord,
     assert((z_values.size()) > 0 && (y_values.size() > 0));
     for (size_t k = 0; k < y_values.size(); k++)
     {
-        drawLine3D(Vec3Dd(x_coord, y_values(k), z0), Vec3Dd(x_coord, y_values(k), z1));
+        drawLine3D(Vec3d(x_coord, y_values(k), z0), Vec3d(x_coord, y_values(k), z1));
     }
     for (size_t k = 0; k < z_values.size(); k++)
     {
-        drawLine3D(Vec3Dd(x_coord, y0, z_values(k)), Vec3Dd(x_coord, y1, z_values(k)));
+        drawLine3D(Vec3d(x_coord, y0, z_values(k)), Vec3d(x_coord, y1, z_values(k)));
     }
 }
 
@@ -69,7 +69,7 @@ void drawGrid(const GridVectors& gv,
     glLineWidth(0.1f);
     setColor(axes_settings.getGridColor());
 
-    const Vec3Dd s = axes_limits.getAxesScale();
+    const Vec3d s = axes_limits.getAxesScale();
 
     const double box_x_2 = s.x / 2.0f;
     const double box_y_2 = s.y / 2.0f;

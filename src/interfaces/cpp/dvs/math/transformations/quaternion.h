@@ -98,9 +98,9 @@ template <typename T> Quaternion<T> Quaternion<T>::normalized() const
 
 template <typename T> Quaternion<T> operator*(const Quaternion<T>& q, const Quaternion<T>& p)
 {
-    Vec3D<T> qv = Vec3D<T>(q.x, q.y, q.z);
-    Vec3D<T> pv = Vec3D<T>(p.x, p.y, p.z);
-    Vec3D<T> intermediate_vector = qv.crossProduct(pv) + q.w * pv + p.w * qv;
+    Vec3<T> qv = Vec3<T>(q.x, q.y, q.z);
+    Vec3<T> pv = Vec3<T>(p.x, p.y, p.z);
+    Vec3<T> intermediate_vector = qv.crossProduct(pv) + q.w * pv + p.w * qv;
     return Quaternion<T>(q.w * p.w - pv * qv, intermediate_vector.x, intermediate_vector.y, intermediate_vector.z);
 }
 

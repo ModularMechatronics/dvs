@@ -23,7 +23,7 @@ private:
     RGBTripletf plot_box_wall_color_;
     double plot_box_size_factor_;
 
-    Vec3Dd axes_scale_;
+    Vec3d axes_scale_;
 
     bool grid_on_;
     RGBTripletf grid_color_;
@@ -39,8 +39,8 @@ private:
 
     AxesState axes_state_;
 
-    Vec3Dd min_vec_;
-    Vec3Dd max_vec_;
+    Vec3d min_vec_;
+    Vec3d max_vec_;
 
 public:
     AxesSettings();
@@ -55,12 +55,12 @@ public:
     bool getCoordinateAxesOn() const;
     RGBTripletf getPlotBoxWallColor() const;
     double getCoordAxExtFac() const;
-    Vec3Dd getMinVec() const;
-    Vec3Dd getMaxVec() const;
+    Vec3d getMinVec() const;
+    Vec3d getMaxVec() const;
     double getPlotBoxSizeFactor() const;
 
-    Vec3Dd getAxesScale() const;
-    void setAxesScale(const Vec3Dd& new_scale);
+    Vec3d getAxesScale() const;
+    void setAxesScale(const Vec3d& new_scale);
 };
 
 #endif // MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_

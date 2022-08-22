@@ -28,14 +28,14 @@ template <typename T> struct Circle2D
 template <typename T> class Circle3D
 {
 private:
-    Vec3D<T> v_vec;
-    Vec3D<T> a_vec;
-    Vec3D<T> b_vec;
+    Vec3<T> v_vec;
+    Vec3<T> a_vec;
+    Vec3<T> b_vec;
     Point3D<T> center;
     void calculateOrthogonalVectors();
 
 public:
-    Circle3D(const Vec3D<T>& v_, const Vec3D<T>& c_);
+    Circle3D(const Vec3<T>& v_, const Vec3<T>& c_);
     Circle3D();
 };
 

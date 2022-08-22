@@ -215,7 +215,7 @@ template <typename T> std::pair<Point2<T>, Point2<T>> Circle2D<T>::circleInterse
 /* **************************************************************** */
 
 template <typename T>
-Circle3D<T>::Circle3D(const Vec3D<T>& v_vec_, const Vec3D<T>& center_) : v_vec(v_vec_), center(center_)
+Circle3D<T>::Circle3D(const Vec3<T>& v_vec_, const Vec3<T>& center_) : v_vec(v_vec_), center(center_)
 {
     calculateOrthogonalVectors();
 }
@@ -229,17 +229,17 @@ template <typename T> void Circle3D<T>::calculateOrthogonalVectors()
     if ((v_vec.x > v_vec.y) && (v_vec.x > v_vec.z))
     {
         const T x = -(v_vec.y + v_vec.z) / v_vec.x;
-        a_vec = Vec3D<T>(x, 1.0, 1.0).normalized();
+        a_vec = Vec3<T>(x, 1.0, 1.0).normalized();
     }
     else if ((v_vec.y > v_vec.x) && (v_vec.y > v_vec.z))
     {
         const T y = -(v_vec.x + v_vec.z) / v_vec.y;
-        a_vec = Vec3D<T>(1.0, y, 1.0).normalized();
+        a_vec = Vec3<T>(1.0, y, 1.0).normalized();
     }
     else
     {
         const T z = -(v_vec.x + v_vec.y) / v_vec.z;
-        a_vec = Vec3D<T>(1.0, 1.0, z).normalized();
+        a_vec = Vec3<T>(1.0, 1.0, z).normalized();
     }
     b_vec = a_vec.crossProduct(v_vec);
 }

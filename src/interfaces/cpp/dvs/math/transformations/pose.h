@@ -10,7 +10,7 @@
 namespace dvs
 {
 template <typename T>
-PoseSE3<T>::PoseSE3(const Matrix<T>& rotation_matrix, const Vec3D<T>& translation_vector)
+PoseSE3<T>::PoseSE3(const Matrix<T>& rotation_matrix, const Vec3<T>& translation_vector)
     : rotation_matrix(rotation_matrix), translation_vector(translation_vector)
 {
 }
@@ -36,7 +36,7 @@ template <typename T> Matrix<T> PoseSE3<T>::getRotationMatrix() const
     return rotation_matrix;
 }
 
-template <typename T> Vec3D<T> PoseSE3<T>::getTranslationVector() const
+template <typename T> Vec3<T> PoseSE3<T>::getTranslationVector() const
 {
     return translation_vector;
 }
@@ -54,7 +54,7 @@ template <typename T> PoseSE3<T> operator*(const PoseSE3<T>& p0, const PoseSE3<T
 template <typename T> Matrix<T> PoseSE3<T>::getInversePoseMatrix() const
 {
     Matrix<T> inverse_rotation_matrix = transpose(rotation_matrix);
-    Vec3D<T> inverse_translation_vector = inverse_rotation_matrix * translation_vector;
+    Vec3<T> inverse_translation_vector = inverse_rotation_matrix * translation_vector;
     inverse_translation_vector.x = -inverse_translation_vector.x;
     inverse_translation_vector.y = -inverse_translation_vector.y;
     inverse_translation_vector.z = -inverse_translation_vector.z;
@@ -66,7 +66,7 @@ template <typename T> void PoseSE3<T>::invert() {}
 
 // Non class functions
 template <typename T>
-Matrix<T> poseMatrixFromMatrixAndVector(const Matrix<T>& rotation_matrix, const Vec3D<T>& translation_vector)
+Matrix<T> poseMatrixFromMatrixAndVector(const Matrix<T>& rotation_matrix, const Vec3<T>& translation_vector)
 {
     Matrix<T> pose_matrix(4, 4);
     for (int r = 0; r < 3; r++)
