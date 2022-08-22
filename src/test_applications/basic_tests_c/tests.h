@@ -74,10 +74,10 @@ void testSurf()
 
 void testDrawPolygonFrom4Points()
 {
-    Point3DD p0 = {0.0, 0.0, 0.0};
-    Point3DD p1 = {0.0, 1.0, 1.0};
-    Point3DD p2 = {1.0, 1.0, 2.0};
-    Point3DD p3 = {0.0, 2.0, 0.6};
+    Point3d p0 = {0.0, 0.0, 0.0};
+    Point3d p1 = {0.0, 1.0, 1.0};
+    Point3d p2 = {1.0, 1.0, 2.0};
+    Point3d p3 = {0.0, 2.0, 0.6};
 
     setCurrentElement("view_02");
     clearView();
@@ -89,9 +89,9 @@ void testDrawTriangle()
 {
     Triangle3DD triangle;
 
-    triangle.p0 = createPoint3DD(0.0, 0.0, 0.0);
-    triangle.p1 = createPoint3DD(1.0, 1.0, 0.0);
-    triangle.p2 = createPoint3DD(1.5, 0.0, 0.0);
+    triangle.p0 = createPoint3d(0.0, 0.0, 0.0);
+    triangle.p1 = createPoint3d(1.0, 1.0, 0.0);
+    triangle.p2 = createPoint3d(1.5, 0.0, 0.0);
 
     setCurrentElement("view_00");
     clearView();
@@ -102,9 +102,9 @@ void testDrawTriangles()
 {
     const size_t num_elements = 10;
 
-    const Point3DF p0 = createPoint3DF(0.0, 0.0, 0.0);
-    const Point3DF p1 = createPoint3DF(1.0, 1.0, 0.0);
-    const Point3DF p2 = createPoint3DF(1.5, 0.0, 0.0);
+    const Point3f p0 = createPoint3f(0.0, 0.0, 0.0);
+    const Point3f p1 = createPoint3f(1.0, 1.0, 0.0);
+    const Point3f p2 = createPoint3f(1.5, 0.0, 0.0);
 
     Triangle3DFArray tri_array = createTriangle3DFArray(num_elements);
 
@@ -125,8 +125,8 @@ void testDrawTriangles()
 
 void testDrawLine3D()
 {
-    const Point3DD p0 = createPoint3DD(0.0, 0.0, 0.0);
-    const Point3DD p1 = createPoint3DD(1.0, 1.0, 1.0);
+    const Point3d p0 = createPoint3d(0.0, 0.0, 0.0);
+    const Point3d p1 = createPoint3d(1.0, 1.0, 1.0);
 
     const Line3DD line = {p0, p1};
 
@@ -137,8 +137,8 @@ void testDrawLine3D()
 
 void testDrawLine2D()
 {
-    const Point2DD p0 = {0.0, 0.0};
-    const Point2DD p1 = {1.0, 1.5};
+    const Point2d p0 = {0.0, 0.0};
+    const Point2d p1 = {1.0, 1.5};
 
     const PLine2DD line = {p0, p1};
 
@@ -150,8 +150,8 @@ void testDrawLine2D()
 void testDrawPlaneXY()
 {
     const PlaneD plane = {0.0, 0.2, 1.0, 0.5};
-    const PointXYD p0 = {0.0, 0.0};
-    const PointXYD p1 = {1.0, 1.0};
+    const PointXYd p0 = {0.0, 0.0};
+    const PointXYd p1 = {1.0, 1.0};
 
     setCurrentElement("view_00");
     clearView();
@@ -161,8 +161,8 @@ void testDrawPlaneXY()
 void testDrawPlaneXZ()
 {
     const PlaneD plane = {0.0, 1.0, 0.2, 0.5};
-    const PointXZD p0 = {0.0, 0.0};
-    const PointXZD p1 = {1.0, 1.0};
+    const PointXZd p0 = {0.0, 0.0};
+    const PointXZd p1 = {1.0, 1.0};
 
     setCurrentElement("view_01");
     clearView();
@@ -172,8 +172,8 @@ void testDrawPlaneXZ()
 void testDrawPlaneYZ()
 {
     const PlaneD plane = {1.0, 0.0, 0.2, 0.5};
-    const PointYZD p0 = {0.0, 0.0};
-    const PointYZD p1 = {1.0, 1.0};
+    const PointYZd p0 = {0.0, 0.0};
+    const PointYZd p1 = {1.0, 1.0};
 
     setCurrentElement("view_02");
     clearView();
@@ -225,11 +225,11 @@ void testImShow()
 
 void testDrawLineBetweenPoints()
 {
-    const Point3DD p0 = {0.1, 0.1, 0.1};
-    const Point3DD p1 = {1.0, 2.0, 3.0};
+    const Point3d p0 = {0.1, 0.1, 0.1};
+    const Point3d p1 = {1.0, 2.0, 3.0};
 
-    const Point2DD p0_2 = {p0.x, p0.y};
-    const Point2DD p1_2 = {p1.x, p1.y};
+    const Point2d p0_2 = {p0.x, p0.y};
+    const Point2d p1_2 = {p1.x, p1.y};
 
     setCurrentElement("view_00");  // TODO: <- Move to setup
     clearView();

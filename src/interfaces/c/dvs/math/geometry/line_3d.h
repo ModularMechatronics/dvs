@@ -5,8 +5,8 @@
 
 typedef struct S_Line3DD
 {
-    Point3DD p;
-    Vec3DD v;
+    Point3d p;
+    Vec3d v;
 } Line3DD;
 
 

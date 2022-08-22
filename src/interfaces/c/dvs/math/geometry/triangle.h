@@ -9,25 +9,25 @@
 
 typedef struct S_Triangle3DF
 {
-    Point3DF p0;
-    Point3DF p1;
-    Point3DF p2;
+    Point3f p0;
+    Point3f p1;
+    Point3f p2;
 } Triangle3DF;
 
 typedef struct S_Triangle3DD
 {
-    Point3DD p0;
-    Point3DD p1;
-    Point3DD p2;
+    Point3d p0;
+    Point3d p1;
+    Point3d p2;
 } Triangle3DD;
 
-Triangle3DD createTriangle3DD(const Point3DD p0, const Point3DD p1, const Point3DD p2)
+Triangle3DD createTriangle3DD(const Point3d p0, const Point3d p1, const Point3d p2)
 {
     const Triangle3DD t = {p0, p1, p2};
     return t;
 }
 
-Triangle3DF createTriangle3DF(const Point3DF p0, const Point3DF p1, const Point3DF p2)
+Triangle3DF createTriangle3DF(const Point3f p0, const Point3f p1, const Point3f p2)
 {
     const Triangle3DF t = {p0, p1, p2};
     return t;

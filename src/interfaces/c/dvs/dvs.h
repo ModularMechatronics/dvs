@@ -62,10 +62,10 @@ void surfFunction(
     sendHeaderAndThreeMatrices(getSendFunction(), x, y, z, &hdr);
 }
 
-void drawPolygonFrom4PointsFunction(const Point3DD p0,
-                                    const Point3DD p1,
-                                    const Point3DD p2,
-                                    const Point3DD p3,
+void drawPolygonFrom4PointsFunction(const Point3d p0,
+                                    const Point3d p1,
+                                    const Point3d p2,
+                                    const Point3d p3,
                                     const FunctionHeaderObject first_prop,
                                     ...)
 {
@@ -77,9 +77,9 @@ void drawPolygonFrom4PointsFunction(const Point3DD p0,
     APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 4, uint32_t);
 
     APPEND_PROPERTIES(hdr, first_prop);
-    const Point3DD points[4] = {p0, p1, p2, p3};
+    const Point3d points[4] = {p0, p1, p2, p3};
 
-    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, sizeof(Point3DD) * 4, &hdr);
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, sizeof(Point3d) * 4, &hdr);
 }
 
 void drawTriangleFunction(const Triangle3DD triangle, const FunctionHeaderObject first_prop, ...)
@@ -111,7 +111,7 @@ void drawTrianglesFunction(const Triangle3DFArray triangles, const FunctionHeade
         getSendFunction(), (uint8_t*)(triangles.elements), triangles.num_elements * sizeof(Triangle3DF), &hdr);
 }
 
-void drawMeshFunction(const Point3DDArray vertices,
+void drawMeshFunction(const Point3dArray vertices,
                       const IndexTripletArray indices,
                       const FunctionHeaderObject first_prop,
                       ...)
@@ -135,7 +135,7 @@ void drawMeshFunction(const Point3DDArray vertices,
                                &hdr);
 }
 
-void drawLineBetweenPointsFunction(const Point3DD p0, const Point3DD p1, const FunctionHeaderObject first_prop, ...)
+void drawLineBetweenPointsFunction(const Point3d p0, const Point3d p1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -145,12 +145,12 @@ void drawLineBetweenPointsFunction(const Point3DD p0, const Point3DD p1, const F
     APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 0, uint32_t);
 
     APPEND_PROPERTIES(hdr, first_prop);
-    const Point3DD points[2] = {p0, p1};
+    const Point3d points[2] = {p0, p1};
 
-    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3d), &hdr);
 }
 
-void drawLineBetween2DPointsFunction(const Point2DD p0, const Point2DD p1, const FunctionHeaderObject first_prop, ...)
+void drawLineBetween2DPointsFunction(const Point2d p0, const Point2d p1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -160,10 +160,10 @@ void drawLineBetween2DPointsFunction(const Point2DD p0, const Point2DD p1, const
     APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, 0, uint32_t);
 
     APPEND_PROPERTIES(hdr, first_prop);
-    const Point3DD p0_e = {p0.x, p0.y, 0.0}, p1_e = {p1.x, p1.y, 0.0};
-    const Point3DD points[2] = {p0_e, p1_e};
+    const Point3d p0_e = {p0.x, p0.y, 0.0}, p1_e = {p1.x, p1.y, 0.0};
+    const Point3d points[2] = {p0_e, p1_e};
 
-    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3d), &hdr);
 }
 
 void drawLine3DFunction(const Line3DD line, const double t0, const double t1, const FunctionHeaderObject first_prop, ...)
@@ -177,7 +177,7 @@ void drawLine3DFunction(const Line3DD line, const double t0, const double t1, co
 
     APPEND_PROPERTIES(hdr, first_prop);
 
-    Point3DD p0, p1;
+    Point3d p0, p1;
     p0.x = line.p.x + line.v.x * t0;
     p0.y = line.p.y + line.v.y * t0;
     p0.z = line.p.z + line.v.z * t0;
@@ -186,9 +186,9 @@ void drawLine3DFunction(const Line3DD line, const double t0, const double t1, co
     p1.y = line.p.y + line.v.y * t1;
     p1.z = line.p.z + line.v.z * t1;
 
-    const Point3DD points[2] = {p0, p1};
+    const Point3d points[2] = {p0, p1};
 
-    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3d), &hdr);
 }
 
 void drawLine2DFunction(
@@ -203,7 +203,7 @@ void drawLine2DFunction(
 
     APPEND_PROPERTIES(hdr, first_prop);
 
-    Point3DD p0, p1;
+    Point3d p0, p1;
     p0.x = line.p.x + line.v.x * t0;
     p0.y = line.p.y + line.v.y * t0;
     p0.z = 0.0;
@@ -212,13 +212,13 @@ void drawLine2DFunction(
     p1.y = line.p.y + line.v.y * t1;
     p1.z = 0.0;
 
-    const Point3DD points[2] = {p0, p1};
+    const Point3d points[2] = {p0, p1};
 
-    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3DD), &hdr);
+    sendHeaderAndByteArray(getSendFunction(), (uint8_t*)points, 2 * sizeof(Point3d), &hdr);
 }
 
 void drawPlaneXYFunction(
-    const PlaneD plane, const PointXYD p0, const PointXYD p1, const FunctionHeaderObject first_prop, ...)
+    const PlaneD plane, const PointXYd p0, const PointXYd p1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -231,8 +231,8 @@ void drawPlaneXYFunction(
 
     struct PlanePointsStruct
     {
-        PointXYD p0;
-        PointXYD p1;
+        PointXYd p0;
+        PointXYd p1;
         PlaneD plane;
     } pps;
 
@@ -244,7 +244,7 @@ void drawPlaneXYFunction(
 }
 
 void drawPlaneXZFunction(
-    const PlaneD plane, const PointXZD p0, const PointXZD p1, const FunctionHeaderObject first_prop, ...)
+    const PlaneD plane, const PointXZd p0, const PointXZd p1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -257,8 +257,8 @@ void drawPlaneXZFunction(
 
     struct PlanePointsStruct
     {
-        PointXZD p0;
-        PointXZD p1;
+        PointXZd p0;
+        PointXZd p1;
         PlaneD plane;
     } pps;
 
@@ -270,7 +270,7 @@ void drawPlaneXZFunction(
 }
 
 void drawPlaneYZFunction(
-    const PlaneD plane, const PointYZD p0, const PointYZD p1, const FunctionHeaderObject first_prop, ...)
+    const PlaneD plane, const PointYZd p0, const PointYZd p1, const FunctionHeaderObject first_prop, ...)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -283,8 +283,8 @@ void drawPlaneYZFunction(
 
     struct PlanePointsStruct
     {
-        PointYZD p0;
-        PointYZD p1;
+        PointYZd p0;
+        PointYZd p1;
         PlaneD plane;
     } pps;
 
@@ -419,7 +419,7 @@ void view(const float azimuth, const float elevation)
     sendHeader(getSendFunction(), &hdr);
 }
 
-void axis(const Vec3DD min_bound, const Vec3DD max_bound)
+void axis(const Vec3d min_bound, const Vec3d max_bound)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -427,8 +427,8 @@ void axis(const Vec3DD min_bound, const Vec3DD max_bound)
 
     typedef struct S_Bnd3D
     {
-        Vec3DD min_bnd;
-        Vec3DD max_bnd;
+        Vec3d min_bnd;
+        Vec3d max_bnd;
     } Bnd3D;
 
     const Bnd3D bnd = {min_bound, max_bound};
@@ -438,7 +438,7 @@ void axis(const Vec3DD min_bound, const Vec3DD max_bound)
     sendHeader(getSendFunction(), &hdr);
 }
 
-void axis2D(const Vec2DD min_bound, const Vec2DD max_bound)
+void axis2D(const Vec2d min_bound, const Vec2d max_bound)
 {
     FunctionHeader hdr;
     initFunctionHeader(&hdr);
@@ -446,11 +446,11 @@ void axis2D(const Vec2DD min_bound, const Vec2DD max_bound)
 
     typedef struct S_Bnd3D
     {
-        Vec3DD min_bnd;
-        Vec3DD max_bnd;
+        Vec3d min_bnd;
+        Vec3d max_bnd;
     } Bnd3D;
-    const Vec3DD v0 = {min_bound.x, min_bound.y, 0.0};
-    const Vec3DD v1 = {max_bound.x, max_bound.y, 0.0};
+    const Vec3d v0 = {min_bound.x, min_bound.y, 0.0};
+    const Vec3d v1 = {max_bound.x, max_bound.y, 0.0};
 
     const Bnd3D bnd = {v0, v1};
 
