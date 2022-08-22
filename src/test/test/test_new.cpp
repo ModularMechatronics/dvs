@@ -53,9 +53,6 @@ TEST_F(TestMathFunctions, TestBasic0)
     AxisAngle<double> aa;
     PoseSE3<double> pse3;
 
-    Interval1D<int> intrvl;
-    IndexSpan idx_span(2, 30);
-    EndIndex end_idx;
     Point2<double> pt2D;
     Point3<double> pt3D;
     Point4<double> pt4D;
