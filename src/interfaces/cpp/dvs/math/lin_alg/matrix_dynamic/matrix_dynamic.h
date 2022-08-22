@@ -6,8 +6,6 @@
 
 #include "dvs/math/lin_alg/matrix_dynamic/class_def/matrix_dynamic.h"
 #include "dvs/math/misc/math_macros.h"
-#include "dvs/math/structures/end_index.h"
-#include "dvs/math/structures/index_span.h"
 
 namespace dvs
 {
@@ -48,12 +46,15 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 template <typename T> Matrix<T>::Matrix(Matrix<T>&& m)
 {
     DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
-    data_ = m.data();
-    num_rows_ = m.rows();
-    num_cols_ = m.cols();
+    data_ = m.data_;
+    num_rows_ = m.num_rows_;
+    num_cols_ = m.num_cols_;
 
     is_allocated_ = true;
-    m.setInternalData(nullptr, 0, 0);
+
+    m.data_ = nullptr;
+    m.num_rows_ = 0;
+    m.num_cols_ = 0;
 }
 
 template <typename T> template <typename Y> Matrix<T>::Matrix(const Matrix<Y>& m) : is_allocated_(true)
@@ -79,11 +80,6 @@ template <typename T> void Matrix<T>::fillBufferWithData(uint8_t* const buffer) 
     std::memcpy(buffer, internal_ptr, num_bytes);
 }
 
-template <typename T> Matrix<T>&& Matrix<T>::move()
-{
-    return std::move(*this);
-}
-
 template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
 {
     if (this != &m)
@@ -105,84 +101,6 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
     }
 
     return *this;
-}
-
-template <typename T> Matrix<T> rotationMatrixX(const T angle)
-{
-    const T ca = std::cos(angle);
-    const T sa = std::sin(angle);
-    Matrix<T> rotation_matrix(3, 3);
-
-    rotation_matrix(0, 0) = 1.0;
-    rotation_matrix(0, 1) = 0.0;
-    rotation_matrix(0, 2) = 0.0;
-
-    rotation_matrix(1, 0) = 0.0;
-    rotation_matrix(1, 1) = ca;
-    rotation_matrix(1, 2) = -sa;
-
-    rotation_matrix(2, 0) = 0.0;
-    rotation_matrix(2, 1) = sa;
-    rotation_matrix(2, 2) = ca;
-
-    return rotation_matrix;
-}
-
-template <typename T> Matrix<T> rotationMatrixY(const T angle)
-{
-    const T ca = std::cos(angle);
-    const T sa = std::sin(angle);
-    Matrix<T> rotation_matrix(3, 3);
-
-    rotation_matrix(0, 0) = ca;
-    rotation_matrix(0, 1) = 0.0;
-    rotation_matrix(0, 2) = sa;
-
-    rotation_matrix(1, 0) = 0.0;
-    rotation_matrix(1, 1) = 1.0;
-    rotation_matrix(1, 2) = 0.0;
-
-    rotation_matrix(2, 0) = -sa;
-    rotation_matrix(2, 1) = 0.0;
-    rotation_matrix(2, 2) = ca;
-
-    return rotation_matrix;
-}
-
-template <typename T> Matrix<T> rotationMatrixZ(const T angle)
-{
-    const T ca = std::cos(angle);
-    const T sa = std::sin(angle);
-    Matrix<T> rotation_matrix(3, 3);
-
-    rotation_matrix(0, 0) = ca;
-    rotation_matrix(0, 1) = -sa;
-    rotation_matrix(0, 2) = 0.0;
-
-    rotation_matrix(1, 0) = sa;
-    rotation_matrix(1, 1) = ca;
-    rotation_matrix(1, 2) = 0.0;
-
-    rotation_matrix(2, 0) = 0.0;
-    rotation_matrix(2, 1) = 0.0;
-    rotation_matrix(2, 2) = 1.0;
-
-    return rotation_matrix;
-}
-
-template <typename T> Matrix<T> rotationMatrix2D(const T angle)
-{
-    const T ca = std::cos(angle);
-    const T sa = std::sin(angle);
-    Matrix<T> rotation_matrix(2, 2);
-
-    rotation_matrix(0, 0) = ca;
-    rotation_matrix(0, 1) = -sa;
-
-    rotation_matrix(1, 0) = sa;
-    rotation_matrix(1, 1) = ca;
-
-    return rotation_matrix;
 }
 
 template <typename T> Matrix<T>::Matrix() : data_(nullptr), num_rows_(0), num_cols_(0), is_allocated_(false) {}
@@ -232,31 +150,6 @@ template <typename T> Matrix<T>::Matrix(const std::initializer_list<std::initial
         for (size_t c = 0; c < il.begin()[r].size(); c++)
         {
             data_[r * num_cols_ + c] = il.begin()[r].begin()[c];
-        }
-    }
-}
-
-template <typename T> Matrix<T>::Matrix(const std::vector<std::vector<T>>& vm)
-{
-    DVS_ASSERT(vm.size() > 0) << "Tried to initialize with empty vector matrix!";
-    DVS_ASSERT(vm[0].size() > 0) << "Tried to initialize with empty vector matrix!";
-
-    for (size_t r = 0; r < vm.size(); r++)
-    {
-        DVS_ASSERT(vm[0].size() == vm[r].size()) << "All row vectors in input std vectors do not have the same size!";
-    }
-
-    num_rows_ = vm.size();
-    num_cols_ = vm[0].size();
-
-    DATA_ALLOCATION(data_, num_cols_ * num_rows_, T, "Matrix");
-    is_allocated_ = true;
-
-    for (size_t r = 0; r < vm.size(); r++)
-    {
-        for (size_t c = 0; c < vm[r].size(); c++)
-        {
-            data_[r * num_cols_ + c] = vm[r][c];
         }
     }
 }
@@ -313,11 +206,13 @@ template <typename T> T* Matrix<T>::data() const
 
 template <typename T> size_t Matrix<T>::lastRowIdx() const
 {
+    assert(num_rows_ != 0);
     return num_rows_ - 1;
 }
 
 template <typename T> size_t Matrix<T>::lastColIdx() const
 {
+    assert(num_cols_ != 0);
     return num_cols_ - 1;
 }
 
@@ -370,114 +265,6 @@ template <typename T> const T& Matrix<T>::operator()(const size_t r, const size_
     assert(c < num_cols_ && "Column index is larger than num_cols_-1!");
 
     return data_[r * num_cols_ + c];
-}
-
-template <typename T> Matrix<T>& Matrix<T>::operator=(const MatrixView<T>& mv)
-{
-    if (is_allocated_)
-    {
-        delete[] data_;
-    }
-
-    num_rows_ = mv.rows();
-    num_cols_ = mv.cols();
-    is_allocated_ = true;
-
-    DATA_ALLOCATION(data_, num_rows_ * num_cols_, T, "Matrix");
-    for (size_t r = 0; r < num_rows_; r++)
-    {
-        for (size_t c = 0; c < num_cols_; c++)
-        {
-            data_[r * num_cols_ + c] = mv(r, c);
-        }
-    }
-
-    return *this;
-}
-
-template <typename T> T& MatrixView<T>::operator()(const size_t r, const size_t c)
-{
-    const size_t idx = start_idx_ + num_cols_parent_ * r + c;
-
-    return data_[idx];
-}
-
-template <typename T> const T& MatrixView<T>::operator()(const size_t r, const size_t c) const
-{
-    const size_t idx = start_idx_ + num_cols_parent_ * r + c;
-
-    return data_[idx];
-}
-
-template <typename T> size_t MatrixView<T>::rows() const
-{
-    return num_rows_;
-}
-
-template <typename T> size_t MatrixView<T>::cols() const
-{
-    return num_cols_;
-}
-
-template <typename T> Matrix<T>::Matrix(const MatrixView<T>& mv)
-{
-    is_allocated_ = true;
-    num_rows_ = mv.rows();
-    num_cols_ = mv.cols();
-
-    DATA_ALLOCATION(data_, num_rows_ * num_cols_, T, "Matrix");
-    for (size_t r = 0; r < num_rows_; r++)
-    {
-        for (size_t c = 0; c < num_cols_; c++)
-        {
-            data_[r * num_cols_ + c] = mv(r, c);
-        }
-    }
-}
-
-template <typename T> MatrixView<T>::MatrixView(const MatrixView<T>& m)
-{
-    data_ = m.data_;
-    num_rows_parent_ = m.num_rows_parent_;
-    num_cols_parent_ = m.num_cols_parent_;
-    num_rows_ = m.num_rows_;
-    num_cols_ = m.num_cols_;
-    start_row_ = m.start_row_;
-    start_col_ = m.start_col_;
-    start_idx_ = m.start_idx_;
-}
-
-template <typename T> MatrixView<T>& MatrixView<T>::operator=(const MatrixView<T>& other)
-{
-    for (size_t r = 0; r < num_rows_; r++)
-    {
-        for (size_t c = 0; c < num_cols_; c++)
-        {
-            const size_t idx = start_idx_ + num_cols_parent_ * r + c;
-            data_[idx] = other(r, c);
-        }
-    }
-
-    return *this;
-}
-
-template <typename T>
-MatrixView<T>::MatrixView(T* data,
-                          const size_t start_row,
-                          const size_t start_col,
-                          const size_t num_rows_parent,
-                          const size_t num_cols_parent,
-                          const size_t num_rows,
-                          const size_t num_cols)
-{
-    data_ = data;
-    start_row_ = start_row;
-    start_col_ = start_col;
-    num_rows_parent_ = num_rows_parent;
-    num_cols_parent_ = num_cols_parent;
-    num_rows_ = num_rows;
-    num_cols_ = num_cols;
-    start_idx_ = num_cols_parent_ * start_row_ + start_col_;
 }
 
 template <typename T> Matrix<T> operator*(const Matrix<T>& m0, const Matrix<T>& m1)

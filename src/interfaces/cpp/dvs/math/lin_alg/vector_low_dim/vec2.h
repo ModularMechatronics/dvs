@@ -15,12 +15,6 @@ template <typename T> Vec2<T>::Vec2(const T x_, const T y_)
 
 template <typename T> Vec2<T>::Vec2() {}
 
-template <typename T> Vec2<T>::Vec2(const T v_array[2])
-{
-    x = v_array[0];
-    y = v_array[1];
-}
-
 template <typename T> template <typename Y> Vec2<T>::Vec2(const Vec2<Y>& v)
 {
     x = v.x;

@@ -21,13 +21,6 @@ template <typename T> Vec3<T>::Vec3(const T x_, const T y_, const T z_)
 
 template <typename T> Vec3<T>::Vec3() {}
 
-template <typename T> Vec3<T>::Vec3(const T v_array[3])
-{
-    x = v_array[0];
-    y = v_array[1];
-    z = v_array[2];
-}
-
 template <typename T> template <typename Y> Vec3<T>::Vec3(const Vec3<Y>& v)
 {
     x = v.x;
