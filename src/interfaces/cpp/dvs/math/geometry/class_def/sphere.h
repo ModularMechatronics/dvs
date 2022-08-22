@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_GEOMETRY_CLASS_DEFS_SPHERE_CLASS_DEF_H_
-#define DVS_MATH_GEOMETRY_CLASS_DEFS_SPHERE_CLASS_DEF_H_
+#ifndef DVS_MATH_GEOMETRY_CLASS_DEF_SPHERE_H_
+#define DVS_MATH_GEOMETRY_CLASS_DEF_SPHERE_H_
 
 #include <utility>
 
@@ -21,4 +21,4 @@ template <typename T> struct Sphere
 };
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_CLASS_DEFS_SPHERE_CLASS_DEF_H_
+#endif // DVS_MATH_GEOMETRY_CLASS_DEF_SPHERE_H_

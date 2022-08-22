@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3D_H_
-#define DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3D_H_
+#ifndef DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3_H_
+#define DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3_H_
 
 #include <cmath>
 
@@ -295,4 +295,4 @@ template <typename T> Vec3<T> projectVectorOntoVector(const Vec3<T> v0, const Ve
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3D_H_
+#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3_H_

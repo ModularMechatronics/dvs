@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_COORDINATES_CLASS_DEFS_COMPLEX_CLASS_DEF_H_
-#define DVS_MATH_COORDINATES_CLASS_DEFS_COMPLEX_CLASS_DEF_H_
+#ifndef DVS_MATH_COORDINATES_CLASS_DEF_COMPLEX_H_
+#define DVS_MATH_COORDINATES_CLASS_DEF_COMPLEX_H_
 
 #include "dvs/math/misc/forward_decl.h"
 
@@ -21,4 +21,4 @@ template <typename T> struct ComplexCoord
 };
 }  // namespace dvs
 
-#endif // DVS_MATH_COORDINATES_CLASS_DEFS_COMPLEX_CLASS_DEF_H_
+#endif // DVS_MATH_COORDINATES_CLASS_DEF_COMPLEX_H_
