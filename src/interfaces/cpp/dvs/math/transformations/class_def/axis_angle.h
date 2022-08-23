@@ -21,7 +21,6 @@ template <typename T> struct AxisAngle
 
     Matrix<T> toRotationMatrix() const;
     Quaternion<T> toQuaternion() const;
-    RollPitchYaw<T> toRollPitchYaw() const;
 };
 
 }  // namespace dvs

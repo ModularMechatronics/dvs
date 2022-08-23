@@ -158,8 +158,8 @@ template <typename T, typename... Us> void imShow(const ImageC1<T>& img, const U
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_CHANNELS, internal::toUInt8(1));
-    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.size()));  // TODO: Needed?
-    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.rows(), img.cols()));
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.numElements()));  // TODO: Needed?
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.numRows(), img.numCols()));
 
     hdr.extend(settings...);
 
@@ -172,8 +172,8 @@ template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const U
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_CHANNELS, internal::toUInt8(3));
-    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.size()));  // TODO: Needed?
-    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.rows(), img.cols()));
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.numRows() * img.numCols()));  // TODO: Needed?
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.numRows(), img.numCols()));
 
     hdr.extend(settings...);
 

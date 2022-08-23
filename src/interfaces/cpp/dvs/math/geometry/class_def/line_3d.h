@@ -17,18 +17,7 @@ template <typename T> struct Line3D
     template <typename Y> Line3D(const Line3D<Y>& l);
     Line3D();
 
-    Vec3<T> vectorNormalToLine() const;
     Point3<T> eval(const T t) const;
-    Point3<T> closestPointOnLineFromPoint(const Point3<T>& q) const;
-    Vec3<T> vectorBetweenClosestPointOnLineAndPoint(const Point3<T>& q) const;
-    Line3D<T> translatedLine(const Vec3<T>& v) const;
-    std::vector<Point3<T>> closestPointsBetweenLines(const Line3D<T>& line) const;
-    std::pair<Point3<T>, Vec3<T>> projectPointAndVectorOntoLine(const Point3<T>& q, const Vec3<T>& v) const;
-    Point3<T> rotatePointAroundLine(const Point3<T>& q, const T angle) const;
-    Line3D<T> negatedLine() const;
-    T pointDistanceFromLine(const Point3<T>& q) const;
-    T angleBetweenLines(const Line3D<T>& line) const;
-    Line3D<T> rotateLineAroundLine(const Line3D<T>& line_to_be_rotated, const T angle) const;
 };
 }  // namespace dvs
 

@@ -29,6 +29,7 @@ Pre release:
 - Replace old c type arrays with std::array
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
+- Change "cols" and "rows" to "numCols" and "numRows" for ImageC1/3 and Matrix
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix layout designer

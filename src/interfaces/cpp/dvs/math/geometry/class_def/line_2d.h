@@ -19,22 +19,6 @@ template <typename T> struct HomogeneousLine2D
     T evalX(const T x) const;
     T evalY(const T y) const;
     T eval(const Point2<T>& p) const;
-    Vec2<T> normal() const;
-    Vec2<T> normalizedNormal() const;
-    Vec2<T> vectorAlongLine() const;
-
-    HomogeneousLine2D<T> normalized() const;
-    HomogeneousLine2D<T> negated() const;
-    T pointDistanceFromLine(const Point2<T>& p) const;
-    Point2<T> closestPointOnLineFromPoint(const Point2<T>& p) const;
-    Point2<T> pointReflection(const Point2<T>& p) const;
-    Point2<T> lineIntersection(const HomogeneousLine2D<T>& line) const;
-    Point2<T> lineReflection(const HomogeneousLine2D<T>& line_for_reflection) const;
-    bool isOnNormalVectorSide(const Point2<T>& p) const;
-    HomogeneousLine2D<T> calculateLineRotatedAroundPoint(const Point2<T>& p, const T angle) const;
-    HomogeneousLine2D<T> translatedLine(const Vec2<T>& v) const;
-    std::pair<Point2<T>, Vec2<T>> projectPointAndVectorOntoLine(const Point2<T>& p, const Vec2<T>& v) const;
-    T angleBetweenLines(const HomogeneousLine2D<T>& line) const;
 };
 
 template <typename T> struct ParametricLine2D
@@ -54,7 +38,6 @@ template <typename T> struct ParametricLine2D
     T tFromX(const T x) const;
     T tFromY(const T y) const;
     Vec2<T> eval(const T t) const;
-    ParametricLine2D<T> calculateLineRotatedAroundPoint(const Point2<T>& q, const T angle) const;
 };
 
 }  // namespace dvs

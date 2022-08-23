@@ -18,7 +18,6 @@ template <typename T> struct Quaternion
 
     Matrix<T> toRotationMatrix() const;
     AxisAngle<T> toAxisAngle() const;
-    RollPitchYaw<T> toRollPitchYaw() const;
 
     T norm() const;
     T squaredNorm() const;

@@ -37,13 +37,6 @@ template <typename T> template <typename Y> Plane<T>::Plane(const Plane<Y>& p)
     d = p.d;
 }
 
-template <typename T> Plane<T> Plane<T>::normalized() const
-{
-    Vec3<T> normal_vec = this->normal();
-    T nvl = normal_vec.norm();
-    return Plane<T>(a / nvl, b / nvl, c / nvl, d / nvl);
-}
-
 template <typename T> T Plane<T>::eval(const Point3<T>& p) const
 {
     return a * p.x + b * p.y + c * p.z + d;
@@ -62,91 +55,6 @@ template <typename T> T Plane<T>::evalXZ(const T x, const T z) const
 template <typename T> T Plane<T>::evalYZ(const T y, const T z) const
 {
     return -(b * y + c * z + d) / a;
-}
-
-template <typename T> Vec3<T> Plane<T>::normal() const
-{
-    return Vec3<T>(a, b, c);
-}
-
-template <typename T> Vec3<T> Plane<T>::normalizedNormal() const
-{
-    return Vec3<T>(a, b, c).normalized();
-}
-
-template <typename T> Point3<T> Plane<T>::lineIntersection(const Line3D<T>& line) const
-{
-    const T t = -(d + a * line.px + b * line.py + c * line.pz) / (a * line.vx + b * line.vy + c * line.vz);
-    return line.eval(t);
-}
-
-template <typename T> Line3D<T> Plane<T>::projectLineOntoPlane(const Line3D<T>& line) const
-{
-    const Vec3<T> line_vector = line.v;
-    const Vec3<T> plane_normal_vector(a, b, c);
-    const T angle_between_vectors = line_vector.angleBetweenVectors();
-    if (std::fabs(angle_between_vectors) < 1e-8)
-    {
-        DVS_LOG_WARNING() << "Line and plane normal vector almost parallel, degenerate case!";
-    }
-    const Point3<T> p0 = line.p;
-    const Point3<T> p1 = line.p + line.v.normalized();
-    const Point3<T> pp0 = closestPointOnPlaneFromPoint(p0);
-    const Point3<T> pp1 = closestPointOnPlaneFromPoint(p1);
-    return lineFromTwoPoints(pp0, pp1);
-}
-
-template <typename T> Point3<T> Plane<T>::closestPointOnPlaneFromPoint(const Point3<T>& p) const
-{
-    T distance_from_plane = pointDistanceFromPlane(p);
-
-    // a*x + b*y + c*z + d = 0
-    // z = -(a*x + b*y + d)/c
-    // E = (x - p.x)^2 + (y - p.y)^2 + (-a*x/c - b*y/c - d/c - p.z)^2
-
-    // [2 + 2*a0*a/c, 2*a0*b/c] [ x ] = [2*p.x - 2*a0*d/c - 2*a0*p.z]
-    // [2*a1*a/c, 2 + 2*a1*b/c] [ y ] = [2*p.y - 2*a1*d/c - 2*a1*p.z]
-    // TODO: Implement cases where plane is in xz or yz plane (-> xy degenerate)
-    T a0 = a / c;
-    T a1 = b / c;
-
-    Matrix<T> m(2, 2);
-    m(0, 0) = 2.0 + 2.0 * a0 * a / c;
-    m(0, 1) = 2.0 * 2.0 * a0 * b / c;
-
-    m(1, 0) = 2.0 * a1 * a / c;
-    m(1, 1) = 2.0 + 2.0 * a1 * b / c;
-
-    Vec2<T> b_vec(2.0 * p.x - 2.0 * a0 * d / c - 2.0 * a0 * p.z, 2.0 * p.y - 2.0 * a1 * d / c - 2.0 * a1 * p.z);
-
-    Point2<T> sol = m.solve(b_vec);
-    return Point2<T>(sol.x, sol.y, this->evalXY(sol.x, sol.y));
-}
-
-template <typename T> T Plane<T>::pointDistanceFromPlane(const Point3<T>& p) const
-{
-    Plane<T> normalized_plane = this->normalized();
-    return normalized_plane.eval(p);
-}
-
-// template <typename T> Plane<T> Plane<T>::rotatePlaneAroundLine(const Line3D<T>& line) const {}
-// template <typename T> Point3<T> Plane<T>::mirroredPoint(const Point3<T>& point) const {}
-// template <typename T> Line3D<T> Plane<T>::mirroredLine(const Line3D<T>& line) const {}
-// template <typename T> Plane<T> Plane<T>::mirroredPlane(const Plane<T>& plane) const {}
-// template <typename T> std::pair<Point3<T>, Point3<T>> Plane<T>::circleIntersection(const
-// Circle3D<T> circle) const {} template <typename T> Circle3D<T> Plane<T>::sphereIntersection(const
-// Sphere<T>& sphere) const {} template <typename T> std::pair<Point3<T>, Vec3<T>>
-// Plane<T>::projectPointAndVectorOntoPlane(const Point3<T>& point, const Vec3<T>& vec) const {}
-// template <typename T> Plane<T> Plane<T>::planeIntersection(const Plane<T>& plane) const {}
-template <typename T> Plane<T> Plane<T>::translatePlane(const Vec3<T>& vec) const
-{
-    Plane<T> plane;
-
-    Point3<T> p0 = this->evalXY(1.0, 1.0) + vec;
-    Point3<T> p1 = this->evalXY(1.0, 2.0) + vec;
-    Point3<T> p2 = this->evalXY(3.0, 1.0) + vec;
-
-    return planeFromThreePoints(p0, p1, p2);
 }
 
 template <typename T> Plane<T> planeFromThreePoints(const Point3<T>& p0, const Point3<T>& p1, const Point3<T>& p2)
