@@ -24,13 +24,9 @@ template <typename T> struct Vec2
     T norm() const;
     Vec2<T> elementWiseMultiply(const Vec2<T>& factor_vector) const;
     Vec2<T> elementWiseDivide(const Vec2<T>& numerator_vector) const;
-    Point2<T> rotatePointAroundThis(const Point2<T>& point_to_rotate, const T angle) const;
-    Point2<T> mirrorPointInThis(const Point2<T>& point_to_mirror) const;
     T angleBetweenVectors(const Vec2<T>& v) const;
     T angle() const;
 
-    bool areAllNan() const;
-    bool isAnyNan() const;
 };
 
 template <typename T> struct VecXY

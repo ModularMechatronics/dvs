@@ -23,11 +23,8 @@ template <typename T> struct Vec4
     T norm() const;
     Vec4<T> elementWiseMultiply(const Vec4<T>& factor_vector) const;
     Vec4<T> elementWiseDivide(const Vec4<T>& numerator_vector) const;
-    Point4<T> mirrorPointInThis(const Point4<T>& point_to_mirror) const;
     T angleBetweenVectors(const Vec4<T>& v) const;
 
-    bool areAllNan() const;
-    bool isAnyNan() const;
 };
 }  // namespace dvs
 

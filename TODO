@@ -28,11 +28,10 @@ Pre release:
 - Change plot-LINE_STRIP to separate function, lineCollection, lineSet or something like that
 - Replace old c type arrays with std::array
 - Reducing number of axis numbers depending on rotation
-- Replace use of dynamic matrices with MatrixFixed with template size, since most uses can be static (in dvs gui)
+- Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix layout designer
-- Change "data" to "data" for Matrix, Vector, etc.
 - Fix number formatting and grid vectors system
 - Fix showing correct plot walls when in perspective mode
 - Unify MouseActivity and InteractionType
