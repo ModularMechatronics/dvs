@@ -97,12 +97,6 @@ template <typename T> Quaternion<T> AxisAngle<T>::toQuaternion() const
     return q;
 }
 
-template <typename T> RollPitchYaw<T> AxisAngle<T>::toRollPitchYaw() const
-{
-    const Quaternion<T> q = toQuaternion();
-    return q.toRollPitchYaw();
-}
-
 // Non class methods
 
 template <typename T> AxisAngle<T> rotationMatrixToAxisAngle(const Matrix<T>& m)

@@ -27,17 +27,12 @@ public:
     const T& operator()(const size_t r, const size_t c, const size_t ch) const;
 
     bool isAllocated() const;
-    size_t rows() const;
-    size_t cols() const;
+    size_t numRows() const;
+    size_t numCols() const;
     size_t numBytes() const;
     void fillBufferWithData(uint8_t* const buffer) const;
     void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
 
-    void scale(T factor);
-    void addTo(T term);
-    void fill(T fill_val);
-    size_t numElements() const;
-    size_t size() const;
     T* data() const;
 };
 
@@ -92,53 +87,19 @@ template <typename T> size_t ImageC3<T>::numBytes() const
     return 3 * num_rows_ * num_cols_ * sizeof(T);
 }
 
-template <typename T> size_t ImageC3<T>::rows() const
+template <typename T> size_t ImageC3<T>::numRows() const
 {
     return num_rows_;
 }
 
-template <typename T> size_t ImageC3<T>::cols() const
+template <typename T> size_t ImageC3<T>::numCols() const
 {
     return num_cols_;
-}
-
-template <typename T> size_t ImageC3<T>::size() const
-{
-    return num_rows_ * num_cols_ * 3;
-}
-
-template <typename T> size_t ImageC3<T>::numElements() const
-{
-    return num_rows_ * num_cols_ * 3;
 }
 
 template <typename T> T* ImageC3<T>::data() const
 {
     return data_;
-}
-
-template <typename T> void ImageC3<T>::scale(T factor)
-{
-    for (size_t idx = 0; idx < num_rows_ * num_cols_ * 3; idx++)
-    {
-        data_[idx] = data_[idx] * factor;
-    }
-}
-
-template <typename T> void ImageC3<T>::fill(T fill_val)
-{
-    for (size_t idx = 0; idx < num_rows_ * num_cols_ * 3; idx++)
-    {
-        data_[idx] = fill_val;
-    }
-}
-
-template <typename T> void ImageC3<T>::addTo(T term)
-{
-    for (size_t idx = 0; idx < num_rows_ * num_cols_ * 3; idx++)
-    {
-        data_[idx] = data_[idx] + term;
-    }
 }
 
 template <typename T> T& ImageC3<T>::operator()(const size_t r, const size_t c, const size_t ch)

@@ -26,22 +26,15 @@ public:
     const T& operator()(const size_t r, const size_t c) const;
 
     bool isAllocated() const;
-    T min() const;
-    T max() const;
-    size_t rows() const;
-    size_t cols() const;
+    size_t numRows() const;
+    size_t numCols() const;
     size_t numBytes() const;
     void fillBufferWithData(uint8_t* const buffer) const;
     void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
 
-    void reallocate(const size_t num_rows_, const size_t num_cols_);
+    void resize(const size_t num_rows_, const size_t num_cols_);
 
-    void scale(T factor);
-    void addTo(T term);
-    void fill(T fill_val);
-    void mapBetween(T image_min, T image_max, T min_value, T max_value);
     size_t numElements() const;
-    size_t size() const;
     T* data() const;
 };
 
@@ -91,7 +84,7 @@ template <typename T> size_t ImageC1<T>::numBytes() const
     return num_rows_ * num_cols_ * sizeof(T);
 }
 
-template <typename T> void ImageC1<T>::reallocate(const size_t num_rows, const size_t num_cols)
+template <typename T> void ImageC1<T>::resize(const size_t num_rows, const size_t num_cols)
 {
     if (is_allocated_)
     {
@@ -107,28 +100,14 @@ template <typename T> void ImageC1<T>::reallocate(const size_t num_rows, const s
     is_allocated_ = true;
 }
 
-template <typename T> void ImageC1<T>::mapBetween(T image_min, T image_max, T min_value, T max_value)
-{
-    const T factor = (max_value - min_value) / (image_max - image_min);
-    for (int idx = 0; idx < num_rows_ * num_cols_; idx++)
-    {
-        data_[idx] = data_[idx] * factor + min_value;
-    }
-}
-
-template <typename T> size_t ImageC1<T>::rows() const
+template <typename T> size_t ImageC1<T>::numRows() const
 {
     return num_rows_;
 }
 
-template <typename T> size_t ImageC1<T>::cols() const
+template <typename T> size_t ImageC1<T>::numCols() const
 {
     return num_cols_;
-}
-
-template <typename T> size_t ImageC1<T>::size() const
-{
-    return num_rows_ * num_cols_;
 }
 
 template <typename T> size_t ImageC1<T>::numElements() const
@@ -139,30 +118,6 @@ template <typename T> size_t ImageC1<T>::numElements() const
 template <typename T> T* ImageC1<T>::data() const
 {
     return data_;
-}
-
-template <typename T> void ImageC1<T>::scale(T factor)
-{
-    for (size_t idx = 0; idx < num_rows_ * num_cols_; idx++)
-    {
-        data_[idx] = data_[idx] * factor;
-    }
-}
-
-template <typename T> void ImageC1<T>::fill(T fill_val)
-{
-    for (size_t idx = 0; idx < num_rows_ * num_cols_; idx++)
-    {
-        data_[idx] = fill_val;
-    }
-}
-
-template <typename T> void ImageC1<T>::addTo(T term)
-{
-    for (size_t idx = 0; idx < num_rows_ * num_cols_; idx++)
-    {
-        data_[idx] = data_[idx] + term;
-    }
 }
 
 template <typename T> T& ImageC1<T>::operator()(const size_t r, const size_t c)
@@ -184,33 +139,6 @@ template <typename T> const T& ImageC1<T>::operator()(const size_t r, const size
 template <typename T> bool ImageC1<T>::isAllocated() const
 {
     return is_allocated_;
-}
-
-template <typename T> T ImageC1<T>::min() const
-{
-    assert(is_allocated_ && "Image not allocated!");
-    T min_value = data_[0];
-
-    // TODO: Crashes without "-1" in less than condition
-    for (size_t idx = 1; idx < num_rows_ * num_cols_ - 1; idx++)
-    {
-        min_value = data_[idx] < min_value ? data_[idx] : min_value;
-    }
-
-    return min_value;
-}
-
-template <typename T> T ImageC1<T>::max() const
-{
-    // TODO: Crashes without "-1" in less than condition
-    assert(is_allocated_ && "Image not allocated!");
-    T max_value = data_[0];
-    for (size_t idx = 1; idx < num_rows_ * num_cols_ - 1; idx++)
-    {
-        max_value = data_[idx] > max_value ? data_[idx] : max_value;
-    }
-
-    return max_value;
 }
 
 }  // namespace dvs
