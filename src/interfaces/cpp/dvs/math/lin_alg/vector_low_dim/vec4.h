@@ -63,12 +63,6 @@ template <typename T> Vec4<T> Vec4<T>::normalizedVectorBetweenPoints(const Point
     return (end_point - *this).normalized();
 }
 
-template <typename T> Point4<T> Vec4<T>::mirrorPointInThis(const Point4<T>& point_to_mirror) const
-{
-    // Mirrors "point_to_mirror" in "this"
-    return *this - this->vectorBetweenPoints(point_to_mirror);
-}
-
 template <typename T> T Vec4<T>::angleBetweenVectors(const Vec4<T>& v) const
 {
     T dot_product = (*this) * v;
@@ -179,15 +173,6 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const Vec4<T>& 
                     std::to_string(v.w) + " ]";
     os << s;
     return os;
-}
-
-template <typename T> bool Vec4<T>::areAllNan() const
-{
-    return (x == NAN) && (y == NAN) && (z == NAN) && (w == NAN);
-}
-template <typename T> bool Vec4<T>::isAnyNan() const
-{
-    return (x == NAN) || (y == NAN) || (z == NAN) || (w == NAN);
 }
 
 }  // namespace dvs

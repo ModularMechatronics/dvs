@@ -98,12 +98,6 @@ template <typename T> Vec3<T> Vec3<T>::crossProduct(const Vec3<T>& right_vector)
                     x * right_vector.y - y * right_vector.x);
 }
 
-template <typename T> Point3<T> Vec3<T>::mirrorPointInThis(const Point3<T>& point_to_mirror) const
-{
-    // Mirrors "point_to_mirror" in "this"
-    return *this - this->vectorBetweenPoints(point_to_mirror);
-}
-
 template <typename T> T Vec3<T>::angleBetweenVectors(const Vec3<T>& v) const
 {
     T dot_product = (*this) * v;
@@ -218,72 +212,9 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const Vec3<T>& 
     return os;
 }
 
-template <typename T> bool Vec3<T>::areAllNan() const
-{
-    return (x == NAN) && (y == NAN) && (z == NAN);
-}
-template <typename T> bool Vec3<T>::isAnyNan() const
-{
-    return (x == NAN) || (y == NAN) || (z == NAN);
-}
-
-template <typename T> Vec3<T> Vec3<T>::perpendicularVector() const
-{
-    if ((x == 0) && (y == 0) && (z == 0))
-    {
-        return Vec3<T>(NAN, NAN, NAN);
-    }
-    else
-    {
-        const T a = x;
-        const T b = y;
-        const T c = z;
-        T xn, yn, zn;
-        if (x >= y && x >= z)
-        {
-            yn = 1.0;
-            zn = 1.0;
-            xn = -(b * yn + c * zn) / a;
-        }
-        else if (y >= x && y >= z)
-        {
-            xn = 1.0;
-            zn = 1.0;
-            yn = -(a * xn + c * zn) / b;
-        }
-        else if (z >= x && z >= y)
-        {
-            xn = 1.0;
-            yn = 1.0;
-            zn = -(a * xn + b * yn) / c;
-        }
-        else
-        {
-            // This 'else' statement is mainly to surpress compiler warning
-            xn = NAN;
-            yn = NAN;
-            zn = NAN;
-            DVS_LOG_WARNING() << "Something's weird";
-        }
-
-        return Vec3<T>(xn, yn, zn);
-    }
-}
-
 template <typename T> T angleBetweenVectors(const Vec3<T> v0, const Vec3<T> v1)
 {
     return std::acos((v0 * v1) / (v0.norm() * v1.norm()));
-}
-
-template <typename T> T cosOfAngleBetweenVectors(const Vec3<T> v0, const Vec3<T> v1)
-{
-    return v0 * v1 / (v0.norm() * v1.norm());
-}
-
-template <typename T> Vec3<T> projectVectorOntoVector(const Vec3<T> v0, const Vec3<T> v1)
-{
-    // Projects v0 onto v1
-    return v0.norm() * cosOfAngleBetweenVectors(v0, v1) * v1.normalized();
 }
 
 }  // namespace dvs

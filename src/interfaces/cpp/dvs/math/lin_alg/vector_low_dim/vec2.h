@@ -73,21 +73,6 @@ template <typename T> Vec2<T> Vec2<T>::elementWiseDivide(const Vec2<T>& denomina
     return Vec2<T>(x / denominator_vector.x, y / denominator_vector.y);
 }
 
-template <typename T> Point2<T> Vec2<T>::rotatePointAroundThis(const Point2<T>& point_to_rotate, const T angle) const
-{
-    // Rotates "point_to_rotate" "angle" radians around "this"
-    Point2<T> no_offset_point = point_to_rotate - *this;
-    Point2<T> rotated_point = rotationMatrix2D(angle) * no_offset_point;
-
-    return rotated_point + *this;
-}
-
-template <typename T> Point2<T> Vec2<T>::mirrorPointInThis(const Point2<T>& point_to_mirror) const
-{
-    // Mirrors "point_to_mirror" in "this"
-    return *this - this->vectorBetweenPoints(point_to_mirror);
-}
-
 template <typename T> T Vec2<T>::angleBetweenVectors(const Vec2<T>& v) const
 {
     T dot_product = (*this) * v;
@@ -193,16 +178,6 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const Vec2<T>& 
     std::string s = "[ " + std::to_string(v.x) + ", " + std::to_string(v.y) + " ]";
     os << s;
     return os;
-}
-
-template <typename T> bool Vec2<T>::areAllNan() const
-{
-    return (x == NAN) && (y == NAN);
-}
-
-template <typename T> bool Vec2<T>::isAnyNan() const
-{
-    return (x == NAN) || (y == NAN);
 }
 
 }  // namespace dvs

@@ -27,12 +27,8 @@ template <typename T> struct Vec3
     Vec3<T> elementWiseDivide(const Vec3<T>& numerator_vector) const;
     Vec3<T> crossProduct(const Vec3<T>& right_vector) const;
     Matrix<T> toCrossProductMatrix() const;
-    Point3<T> mirrorPointInThis(const Point3<T>& point_to_mirror) const;
     T angleBetweenVectors(const Vec3<T>& v) const;
-    Vec3<T> perpendicularVector() const;
 
-    bool areAllNan() const;
-    bool isAnyNan() const;
 };
 
 }  // namespace dvs
