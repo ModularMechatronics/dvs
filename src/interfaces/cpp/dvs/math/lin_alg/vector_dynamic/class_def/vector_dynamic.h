@@ -7,6 +7,39 @@
 
 namespace dvs
 {
+template <typename T> class VectorInitializer
+{
+private:
+    T* data_;
+    size_t size_;
+    friend class Vector<T>;
+
+public:
+    VectorInitializer() = delete;
+    VectorInitializer(const VectorInitializer<T>& v) = delete;
+    VectorInitializer(VectorInitializer<T>&& v);
+    VectorInitializer<T>& operator=(const VectorInitializer<T>& v) = delete;
+    VectorInitializer<T>& operator=(VectorInitializer<T>&& v) = delete;
+    explicit VectorInitializer(const std::initializer_list<T>& il)
+    {
+        DATA_ALLOCATION(data_, il.size(), T, "VectorInitializer");
+
+        size_ = il.size();
+
+        size_t idx = 0;
+        for (auto list_element : il)
+        {
+            data_[idx] = list_element;
+            idx++;
+        }
+    }
+
+    ~VectorInitializer()
+    {
+        delete[] data_;
+    }
+};
+
 template <typename T> class Vector
 {
 protected:
@@ -19,11 +52,21 @@ public:
     explicit Vector(const size_t vector_length);
     Vector(const Vector<T>& v);
     Vector(Vector<T>&& v);
+
+    Vector(VectorInitializer<T>&& v)
+    {
+        data_ = v.data_;
+        size_ = v.size_;
+        is_allocated_ = true;
+
+        v.data_ = nullptr;
+        v.size_ = 0U;
+    }
+
     template <typename Y> Vector(const Vector<Y>& v);
 
     template <typename Y> friend void fillWithPtr(Vector<Y>& v, const void* const ptr, const size_t vector_length);
 
-    Vector(const std::initializer_list<T>& il);
     Vector(const std::vector<T>& v);
 
     ~Vector();
