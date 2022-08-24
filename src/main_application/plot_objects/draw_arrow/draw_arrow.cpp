@@ -22,8 +22,8 @@ DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const Fu
     const double ca = std::cos(ang), sa = std::sin(ang);
     const double nca = std::cos(-ang), nsa = std::sin(-ang);
 
-    const Matrix<double> r_0 = {{ca, -sa}, {sa, ca}};
-    const Matrix<double> r_1 = {{nca, -nsa}, {nsa, nca}};
+    const Matrix<double> r_0{MatrixInitializer{{ca, -sa}, {sa, ca}}};
+    const Matrix<double> r_1{MatrixInitializer{{nca, -nsa}, {nsa, nca}}};
 
     const double arrow_edge_length_ratio = 0.85;
 

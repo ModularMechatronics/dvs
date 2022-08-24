@@ -20,8 +20,8 @@ float* convertQuiverData(uint8_t* input_data, const Dimension2D& dims, const siz
     const float ca = std::cos(ang), sa = std::sin(ang);
     const float nca = std::cos(-ang), nsa = std::sin(-ang);
 
-    const Matrix<float> r_0 = {{ca, -sa}, {sa, ca}};
-    const Matrix<float> r_1 = {{nca, -nsa}, {nsa, nca}};
+    const Matrix<float> r_0{MatrixInitializer{{ca, -sa}, {sa, ca}}};
+    const Matrix<float> r_1{MatrixInitializer{{nca, -nsa}, {nsa, nca}}};
 
     float* points_ptr = new float[dims.rows * dims.cols * 6 * 2];
 
