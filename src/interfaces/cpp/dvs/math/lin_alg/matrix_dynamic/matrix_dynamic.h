@@ -128,32 +128,6 @@ template <typename T> Matrix<T>::Matrix(const Matrix<T>& m) : is_allocated_(true
     }
 }
 
-template <typename T> Matrix<T>::Matrix(const std::initializer_list<std::initializer_list<T>>& il)
-{
-    DVS_ASSERT(il.size() > 0) << "Tried to initialize with empty vector matrix!";
-    DVS_ASSERT(il.begin()[0].size() > 0) << "Tried to initialize with empty vector matrix!";
-
-    for (size_t r = 0; r < il.size(); r++)
-    {
-        DVS_ASSERT(il.begin()[0].size() == il.begin()[r].size())
-            << "All row vectors in input std vectors do not have the same size!";
-    }
-
-    num_rows_ = il.size();
-    num_cols_ = il.begin()[0].size();
-
-    DATA_ALLOCATION(data_, num_cols_ * num_rows_, T, "Matrix");
-    is_allocated_ = true;
-
-    for (size_t r = 0; r < il.size(); r++)
-    {
-        for (size_t c = 0; c < il.begin()[r].size(); c++)
-        {
-            data_[r * num_cols_ + c] = il.begin()[r].begin()[c];
-        }
-    }
-}
-
 template <typename T> Matrix<T>::~Matrix()
 {
     if (is_allocated_)
