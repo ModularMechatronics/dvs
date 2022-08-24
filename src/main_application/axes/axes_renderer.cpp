@@ -15,14 +15,14 @@ static Vec3d findScale(const glm::mat4& pm)
     // Currently unknown exactly how 'q' affects the results...
     const double q = 1.0;
     // clang-format off
-    const Vector<glm::vec4> points = {{q, q, q, 1.0},
-                                     {-q, q, q, 1.0},
-                                     {q, -q, q, 1.0},
-                                     {-q, -q, q, 1.0},
-                                     {q, q, -q, 1.0},
-                                     {-q, q, -q, 1.0},
-                                     {q, -q, -q, 1.0},
-                                     {-q, -q, -q, 1.0}};
+    const Vector<glm::vec4> points{VectorInitializer{{glm::vec4{q, q, q, 1.0},
+                                     glm::vec4{-q, q, q, 1.0},
+                                     glm::vec4{q, -q, q, 1.0},
+                                     glm::vec4{-q, -q, q, 1.0},
+                                     glm::vec4{q, q, -q, 1.0},
+                                     glm::vec4{-q, q, -q, 1.0},
+                                     glm::vec4{q, -q, -q, 1.0},
+                                     glm::vec4{-q, -q, -q, 1.0}}}};
     const glm::vec4 pr0 = pm * points(0);
     // clang-format on
     std::pair<glm::vec4, glm::vec4> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
@@ -122,24 +122,24 @@ void AxesRenderer::enableClipPlanes()
     const Vec3d scale = axes_limits_.getAxesScale() / 2.0;
 
     // clang-format off
-    const Vector<Point3d> points_x0 = {(Point3d(scale.x - axes_center.x, f, f)),
+    const Vector<Point3d> points_x0{VectorInitializer{(Point3d(scale.x - axes_center.x, f, f)),
                                        (Point3d(scale.x - axes_center.x, -f, f)),
-                                       (Point3d(scale.x - axes_center.x, f, -f))};
-    const Vector<Point3d> points_x1 = {(Point3d(scale.x + axes_center.x, f, f)),
+                                       (Point3d(scale.x - axes_center.x, f, -f))}};
+    const Vector<Point3d> points_x1{VectorInitializer{(Point3d(scale.x + axes_center.x, f, f)),
                                        (Point3d(scale.x + axes_center.x, -f, f)),
-                                       (Point3d(scale.x + axes_center.x, f, -f))};
-    const Vector<Point3d> points_y0 = {(Point3d(-f, scale.y - axes_center.y, f)),
+                                       (Point3d(scale.x + axes_center.x, f, -f))}};
+    const Vector<Point3d> points_y0{VectorInitializer{(Point3d(-f, scale.y - axes_center.y, f)),
                                        (Point3d(f, scale.y - axes_center.y, f)),
-                                       (Point3d(f, scale.y - axes_center.y, -f))};
-    const Vector<Point3d> points_y1 = {(Point3d(-f, scale.y + axes_center.y, f)),
+                                       (Point3d(f, scale.y - axes_center.y, -f))}};
+    const Vector<Point3d> points_y1{VectorInitializer{(Point3d(-f, scale.y + axes_center.y, f)),
                                        (Point3d(f, scale.y + axes_center.y, f)),
-                                       (Point3d(f, scale.y + axes_center.y, -f))};
-    const Vector<Point3d> points_z0 = {(Point3d(-f, f, -(axes_center.z + scale.z))),
+                                       (Point3d(f, scale.y + axes_center.y, -f))}};
+    const Vector<Point3d> points_z0{VectorInitializer{(Point3d(-f, f, -(axes_center.z + scale.z))),
                                        (Point3d(f, -f, -(axes_center.z + scale.z))),
-                                       (Point3d(-f, -f, -(axes_center.z + scale.z)))};
-    const Vector<Point3d> points_z1 = {(Point3d(-f, f, -(scale.z - axes_center.z))),
+                                       (Point3d(-f, -f, -(axes_center.z + scale.z)))}};
+    const Vector<Point3d> points_z1{VectorInitializer{(Point3d(-f, f, -(scale.z - axes_center.z))),
                                        (Point3d(f, -f, -(scale.z - axes_center.z))),
-                                       (Point3d(-f, -f, -(scale.z - axes_center.z)))};
+                                       (Point3d(-f, -f, -(scale.z - axes_center.z)))}};
     // clang-format on*/
 
     // TODO: Simplify

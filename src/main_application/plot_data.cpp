@@ -206,7 +206,7 @@ std::pair<Vec3d, Vec3d> PlotDataHandler::getMinMaxVectors() const
 
         const Vec3d diff_vec = max_vec - min_vec;
 
-        const Vectord v = {diff_vec.x, diff_vec.y, diff_vec.z};
+        const Vectord v{VectorInitializer{diff_vec.x, diff_vec.y, diff_vec.z}};
 
         const double largest_diff = dvs::max(v);
 

@@ -20,9 +20,9 @@ DrawPolygon4Points::DrawPolygon4Points(std::unique_ptr<const ReceivedData> recei
 
 void DrawPolygon4Points::findMinMax()
 {
-    const Vectord vx = {p0.x, p1.x, p2.x, p3.x};
-    const Vectord vy = {p0.y, p1.y, p2.y, p3.y};
-    const Vectord vz = {p0.z, p1.z, p2.z, p3.z};
+    const Vectord vx{VectorInitializer{p0.x, p1.x, p2.x, p3.x}};
+    const Vectord vy{VectorInitializer{p0.y, p1.y, p2.y, p3.y}};
+    const Vectord vz{VectorInitializer{p0.z, p1.z, p2.z, p3.z}};
 
     min_vec.x = min(vx);
     min_vec.y = min(vy);

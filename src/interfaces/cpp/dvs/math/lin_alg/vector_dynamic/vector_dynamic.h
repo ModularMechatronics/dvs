@@ -149,23 +149,6 @@ template <typename T> template <typename Y> Vector<T>& Vector<T>::operator=(cons
     return *this;
 }
 
-template <typename T> Vector<T>::Vector(const std::initializer_list<T>& il)
-{
-    DVS_ASSERT(il.size() > 0) << "Tried to initialize with empty vector!";
-
-    DATA_ALLOCATION(data_, il.size(), T, "Vector");
-    is_allocated_ = true;
-
-    size_ = il.size();
-
-    size_t idx = 0;
-    for (auto list_element : il)
-    {
-        data_[idx] = list_element;
-        idx++;
-    }
-}
-
 template <typename T> Vector<T>::Vector(const std::vector<T>& v)
 {
     if (v.size() == 0)

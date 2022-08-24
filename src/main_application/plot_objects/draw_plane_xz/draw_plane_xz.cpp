@@ -47,9 +47,9 @@ DrawPlaneXZ::DrawPlaneXZ(std::unique_ptr<const ReceivedData> received_data, cons
 
 void DrawPlaneXZ::findMinMax()
 {
-    const Vectord vx = {p00.x, p01.x, p10.x, p11.x};
-    const Vectord vy = {p00.y, p01.y, p10.y, p11.y};
-    const Vectord vz = {p00.z, p01.z, p10.z, p11.z};
+    const Vectord vx{VectorInitializer{p00.x, p01.x, p10.x, p11.x}};
+    const Vectord vy{VectorInitializer{p00.y, p01.y, p10.y, p11.y}};
+    const Vectord vz{VectorInitializer{p00.z, p01.z, p10.z, p11.z}};
 
     min_vec.x = min(vx);
     min_vec.y = min(vy);

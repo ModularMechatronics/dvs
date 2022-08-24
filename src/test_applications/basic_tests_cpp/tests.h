@@ -615,9 +615,9 @@ void testDrawLine3D()
     tp t0 = 0;
     tp t1 = 1.0;
 
-    Vector<double> x = {0.0, 1.0};
-    Vector<double> y = {0.0, 1.0};
-    Vector<double> z = {0.0, 1.0};
+    Vector<double> x{VectorInitializer<double>{0.0, 1.0}};
+    Vector<double> y{VectorInitializer<double>{0.0, 1.0}};
+    Vector<double> z{VectorInitializer<double>{0.0, 1.0}};
 
     setCurrentElement("view_00");
     clearView();
@@ -637,9 +637,9 @@ void testDrawLine2D()
     tp t0 = 0;
     tp t1 = 1.0;
 
-    Vector<double> x = {0.0, 1.0};
-    Vector<double> y = {0.0, 1.0};
-    Vector<double> z = {0.0, 0.0};
+    Vector<double> x{VectorInitializer<double>{0.0, 1.0}};
+    Vector<double> y{VectorInitializer<double>{0.0, 1.0}};
+    Vector<double> z{VectorInitializer<double>{0.0, 0.0}};
 
     setCurrentElement("view_00");
     clearView();
@@ -659,9 +659,9 @@ void testDrawLineBetweenPoints()
     Point3<tp> p0(0.1, 0.2, 0.2);
     Point3<tp> p1(2.0, 1.0, 1.0);
 
-    Vector<double> x = {p0.x, p1.x};
-    Vector<double> y = {p0.y, p1.y};
-    Vector<double> z = {p0.z, p1.z};
+    Vector<double> x{VectorInitializer{p0.x, p1.x}};
+    Vector<double> y{VectorInitializer{p0.y, p1.y}};
+    Vector<double> z{VectorInitializer{p0.z, p1.z}};
 
     setCurrentElement("view_00");
     clearView();
