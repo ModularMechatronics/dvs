@@ -20,7 +20,6 @@ template <typename T> struct AxisAngle
     AxisAngle<T> normalized() const;
 
     Matrix<T> toRotationMatrix() const;
-    Quaternion<T> toQuaternion() const;
 };
 
 }  // namespace dvs

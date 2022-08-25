@@ -28,32 +28,6 @@ template <typename T> template <typename Y> Vec3<T>::Vec3(const Vec3<Y>& v)
     z = v.z;
 }
 
-template <typename T> CylindricalCoord<T> Vec3<T>::toCylindricalVec() const
-{
-    T phi;
-    if (x == 0.0 && y == 0.0)
-    {
-        phi = 0.0;
-    }
-    else
-    {
-        phi = std::atan2(y, x);
-    }
-
-    return CylindricalCoord<T>(std::sqrt(x * x + y * y), z, phi);
-}
-
-template <typename T> SphericalCoord<T> Vec3<T>::toSphericalCoord() const
-{
-    SphericalCoord<T> sv;
-    sv.r = std::sqrt(x * x + y * y + z * z);
-    sv.phi = std::acos(z / sv.r);
-    sv.theta = std::atan2(y, x);
-    return sv;
-}
-
-///////////////////////////
-
 template <typename T> Vec3<T> Vec3<T>::normalized() const
 {
     return Vec3<T>(x, y, z) / std::sqrt(x * x + y * y + z * z);

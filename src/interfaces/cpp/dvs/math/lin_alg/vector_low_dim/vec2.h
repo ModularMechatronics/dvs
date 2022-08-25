@@ -21,16 +21,6 @@ template <typename T> template <typename Y> Vec2<T>::Vec2(const Vec2<Y>& v)
     y = v.y;
 }
 
-template <typename T> ComplexCoord<T> Vec2<T>::toComplex() const
-{
-    return ComplexCoord<T>(x, y);
-}
-
-template <typename T> PolarCoord<T> Vec2<T>::toPolar() const
-{
-    return PolarCoord<T>(std::sqrt(x * x + y * y), std::atan2(y, x));
-}
-
 template <typename T> T Vec2<T>::angle() const
 {
     return std::atan2(y, x);
