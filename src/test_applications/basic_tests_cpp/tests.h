@@ -31,7 +31,7 @@ void testSurf()
 
     setCurrentElement("view_01");
     clearView();
-    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::jet());
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet());
 }
 
 void testScatter()
@@ -58,11 +58,11 @@ void testScatter()
 
     plot(xf, yf, properties::Color(212, 14, 55));
     scatter(x, y, properties::Color(12, 14, 55));
-    scatter(x, y + 1.0, properties::Color::BLACK(), properties::PointSize(11));
-    scatter(x, y + 2.0, properties::Color::CYAN(), properties::PointSize(12), properties::ScatterStyle::Square());
-    scatter(x, y + 3.0, properties::Color::MAGENTA(), properties::PointSize(13), properties::ScatterStyle::Disc());
-    scatter(x, y + 4.0, properties::Color::BLUE(), properties::PointSize(14), properties::ScatterStyle::Plus());
-    scatter(x, y + 5.0, properties::Color::RED(), properties::PointSize(14), properties::ScatterStyle::Cross());
+    scatter(x, y + 1.0, properties::Color::Black(), properties::PointSize(11));
+    scatter(x, y + 2.0, properties::Color::Cyan(), properties::PointSize(12), properties::ScatterStyle::Square());
+    scatter(x, y + 3.0, properties::Color::Magenta(), properties::PointSize(13), properties::ScatterStyle::Disc());
+    scatter(x, y + 4.0, properties::Color::Blue(), properties::PointSize(14), properties::ScatterStyle::Plus());
+    scatter(x, y + 5.0, properties::Color::Red(), properties::PointSize(14), properties::ScatterStyle::Cross());
 }
 
 void testScatter3()
@@ -97,11 +97,11 @@ void testScatter3()
     axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
     plot3(x, y, z, properties::Color(255, 14, 255), properties::LineWidth(1));
     scatter3(x, y, z, properties::Color(12, 14, 55));
-    scatter3(x, y, z + 1.0, properties::Color::BLACK(), properties::PointSize(11));
-    scatter3(x, y, z + 2.0, properties::Color::CYAN(), properties::PointSize(12), properties::ScatterStyle::Square());
-    scatter3(x, y, z + 3.0, properties::Color::MAGENTA(), properties::PointSize(13), properties::ScatterStyle::Disc());
-    scatter3(x, y, z + 4.0, properties::Color::BLUE(), properties::PointSize(14), properties::ScatterStyle::Plus());
-    scatter3(x, y, z + 5.0, properties::Color::RED(), properties::PointSize(14), properties::ScatterStyle::Cross());
+    scatter3(x, y, z + 1.0, properties::Color::Black(), properties::PointSize(11));
+    scatter3(x, y, z + 2.0, properties::Color::Cyan(), properties::PointSize(12), properties::ScatterStyle::Square());
+    scatter3(x, y, z + 3.0, properties::Color::Magenta(), properties::PointSize(13), properties::ScatterStyle::Disc());
+    scatter3(x, y, z + 4.0, properties::Color::Blue(), properties::PointSize(14), properties::ScatterStyle::Plus());
+    scatter3(x, y, z + 5.0, properties::Color::Red(), properties::PointSize(14), properties::ScatterStyle::Cross());
 }
 
 void testPlotCollection()
@@ -232,7 +232,7 @@ void testPlot()
     plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
     plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
     plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
-    scatter3(x + 3.0f, y, z, properties::Color::BLACK(), properties::PointSize(14));
+    scatter3(x + 3.0f, y, z, properties::Color::Black(), properties::PointSize(14));
 
     setCurrentElement("view_02");
     clearView();
@@ -269,7 +269,7 @@ void testStem()
     clearView();
 
     axis({0.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    stem(x, y, properties::Color::RED());
+    stem(x, y, properties::Color::Red());
 }
 
 void testStairs()
@@ -462,7 +462,7 @@ void testLegend()
     plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
     plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
     surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
-    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::jet(), properties::Name("SURF_COLOR_MAP"));
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
     showLegend();
 
     setCurrentElement("view_01");
@@ -473,7 +473,7 @@ void testLegend()
     plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
     plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
     surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
-    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::jet(), properties::Name("SURF_COLOR_MAP"));
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
     showLegend();
 }
 

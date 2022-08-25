@@ -44,8 +44,6 @@ Pre release:
 - Implement findMinMax for matrices and vectors
 - Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
 - Make sure plot/plot3 works for integer data types
-- Stem plot
-- Bar plot
 - Change types from float to double, to increase precision
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Change Bound2/3D to actually be a bound, now it's a vector, and to get a bound you use std::pair<Bound2D, Bound2D>, which isn't ideal
@@ -64,6 +62,7 @@ Pre release:
 - Separate plot types so that shader switching is minimized
 
 Post release:
+- Bar plot
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
 - Contour plotting function

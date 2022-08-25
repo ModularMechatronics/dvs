@@ -171,47 +171,47 @@ struct Color : internal::PropertyBase
 public:
     uint8_t red, green, blue;
 
-    static Color RED()
+    static Color Red()
     {
         return Color(255, 0, 0);
     }
 
-    static Color GREEN()
+    static Color Green()
     {
         return Color(0, 255, 0);
     }
 
-    static Color BLUE()
+    static Color Blue()
     {
         return Color(0, 0, 255);
     }
 
-    static Color CYAN()
+    static Color Cyan()
     {
         return Color(0, 255, 255);
     }
 
-    static Color MAGENTA()
+    static Color Magenta()
     {
         return Color(255, 0, 255);
     }
 
-    static Color YELLOW()
+    static Color Yellow()
     {
         return Color(255, 255, 0);
     }
 
-    static Color BLACK()
+    static Color Black()
     {
         return Color(0, 0, 0);
     }
 
-    static Color WHITE()
+    static Color White()
     {
         return Color(255, 255, 255);
     }
 
-    static Color GRAY()
+    static Color Gray()
     {
         return Color(127, 127, 127);
     }
@@ -229,47 +229,47 @@ struct EdgeColor : internal::PropertyBase
 public:
     uint8_t red, green, blue;
 
-    static EdgeColor RED()
+    static EdgeColor Red()
     {
         return EdgeColor(255, 0, 0);
     }
 
-    static EdgeColor GREEN()
+    static EdgeColor Green()
     {
         return EdgeColor(0, 255, 0);
     }
 
-    static EdgeColor BLUE()
+    static EdgeColor Blue()
     {
         return EdgeColor(0, 0, 255);
     }
 
-    static EdgeColor CYAN()
+    static EdgeColor Cyan()
     {
         return EdgeColor(0, 255, 255);
     }
 
-    static EdgeColor MAGENTA()
+    static EdgeColor Magenta()
     {
         return EdgeColor(255, 0, 255);
     }
 
-    static EdgeColor YELLOW()
+    static EdgeColor Yellow()
     {
         return EdgeColor(255, 255, 0);
     }
 
-    static EdgeColor BLACK()
+    static EdgeColor Black()
     {
         return EdgeColor(0, 0, 0);
     }
 
-    static EdgeColor WHITE()
+    static EdgeColor White()
     {
         return EdgeColor(255, 255, 255);
     }
 
-    static EdgeColor GRAY()
+    static EdgeColor Gray()
     {
         return EdgeColor(127, 127, 127);
     }
@@ -287,47 +287,47 @@ struct FaceColor : internal::PropertyBase
 public:
     uint8_t red, green, blue;
 
-    static FaceColor RED()
+    static FaceColor Red()
     {
         return FaceColor(255, 0, 0);
     }
 
-    static FaceColor GREEN()
+    static FaceColor Green()
     {
         return FaceColor(0, 255, 0);
     }
 
-    static FaceColor BLUE()
+    static FaceColor Blue()
     {
         return FaceColor(0, 0, 255);
     }
 
-    static FaceColor CYAN()
+    static FaceColor Cyan()
     {
         return FaceColor(0, 255, 255);
     }
 
-    static FaceColor MAGENTA()
+    static FaceColor Magenta()
     {
         return FaceColor(255, 0, 255);
     }
 
-    static FaceColor YELLOW()
+    static FaceColor Yellow()
     {
         return FaceColor(255, 255, 0);
     }
 
-    static FaceColor BLACK()
+    static FaceColor Black()
     {
         return FaceColor(0, 0, 0);
     }
 
-    static FaceColor WHITE()
+    static FaceColor White()
     {
         return FaceColor(255, 255, 255);
     }
 
-    static FaceColor GRAY()
+    static FaceColor Gray()
     {
         return FaceColor(127, 127, 127);
     }
@@ -345,22 +345,22 @@ struct ColorMap : internal::PropertyBase
 public:
     internal::ColorMapType data;
 
-    static ColorMap jet()
+    static ColorMap Jet()
     {
         return ColorMap(internal::ColorMapType::JET);
     }
 
-    static ColorMap rainbow()
+    static ColorMap Rainbow()
     {
         return ColorMap(internal::ColorMapType::RAINBOW);
     }
 
-    static ColorMap magma()
+    static ColorMap Magma()
     {
         return ColorMap(internal::ColorMapType::MAGMA);
     }
 
-    static ColorMap viridis()
+    static ColorMap Viridis()
     {
         return ColorMap(internal::ColorMapType::VIRIDIS);
     }
