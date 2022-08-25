@@ -21,7 +21,6 @@ class AxesSettings
 {
 private:
     RGBTripletf plot_box_wall_color_;
-    double plot_box_size_factor_;
 
     Vec3d axes_scale_;
 
@@ -57,7 +56,6 @@ public:
     double getCoordAxExtFac() const;
     Vec3d getMinVec() const;
     Vec3d getMaxVec() const;
-    double getPlotBoxSizeFactor() const;
 
     Vec3d getAxesScale() const;
     void setAxesScale(const Vec3d& new_scale);
