@@ -3,7 +3,6 @@
 AxesSettings::AxesSettings()
 {
     plot_box_wall_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
-    plot_box_size_factor_ = 0.5;
 
     grid_on_ = false;
     grid_color_ = RGBTripletf(0.7f, 0.7f, 0.7f);
@@ -31,11 +30,6 @@ Vec3d AxesSettings::getAxesScale() const
 void AxesSettings::setAxesScale(const Vec3d& new_scale)
 {
     axes_scale_ = new_scale;
-}
-
-double AxesSettings::getPlotBoxSizeFactor() const
-{
-    return plot_box_size_factor_;
 }
 
 Vec3d AxesSettings::getMinVec() const
