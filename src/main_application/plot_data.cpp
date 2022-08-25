@@ -50,6 +50,10 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Plot3D(std::move(received_data), hdr, shader_collection_)));
             break;
 
+        case Function::STEM:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Stem(std::move(received_data), hdr, shader_collection_)));
+            break;
+
         case Function::SCATTER2:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Scatter2D(std::move(received_data), hdr, shader_collection_)));
             break;

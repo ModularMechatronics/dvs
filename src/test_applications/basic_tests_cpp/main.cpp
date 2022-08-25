@@ -28,6 +28,7 @@ int main(int argc, char* argv[])
     fcns["quiver"] = testQuiver;
     fcns["plot"] = testPlot;
     fcns["plot3"] = testPlot3;
+    fcns["stem"] = testStem;
     fcns["plotCollection"] = testPlotCollection;
     fcns["surf"] = testSurf;
     fcns["imShow"] = testImShow;

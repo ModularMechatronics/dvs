@@ -258,6 +258,20 @@ void testPlot()
 
 }
 
+void testStem()
+{
+    const size_t num_elements = 30;
+
+    const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
+    const Vector<float> y = dvs::sin(x);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    axis({0.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
+    stem(x, y, properties::Color::RED());
+}
+
 void testStairs()
 {
     const size_t num_elements = 30;
