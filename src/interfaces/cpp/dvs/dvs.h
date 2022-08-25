@@ -71,6 +71,18 @@ void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
+template <typename T, typename... Us>
+void stem(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::STEM);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
 template <typename T, typename... Us> void scatter(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
     internal::FunctionHeader hdr;
