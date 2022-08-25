@@ -14,9 +14,6 @@ template <typename T> struct Vec2
     Vec2();
     template <typename Y> Vec2(const Vec2<Y>& v);
 
-    ComplexCoord<T> toComplex() const;
-    PolarCoord<T> toPolar() const;
-
     Vec2<T> normalized() const;
     Vec2<T> vectorBetweenPoints(const Point2<T>& end_point) const;
     Vec2<T> normalizedVectorBetweenPoints(const Point2<T>& end_point) const;

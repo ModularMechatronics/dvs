@@ -86,17 +86,6 @@ template <typename T> Matrix<T> AxisAngle<T>::toRotationMatrix() const
     return rotation_matrix;
 }
 
-template <typename T> Quaternion<T> AxisAngle<T>::toQuaternion() const
-{
-    Vec3<T> v = Vec3<T>(x, y, z).normalized();
-    Quaternion<T> q;
-    q.x = v.x * std::sin(phi / 2.0);
-    q.y = v.y * std::sin(phi / 2.0);
-    q.z = v.z * std::sin(phi / 2.0);
-    q.w = std::cos(phi / 2.0);
-    return q;
-}
-
 // Non class methods
 
 template <typename T> AxisAngle<T> rotationMatrixToAxisAngle(const Matrix<T>& m)

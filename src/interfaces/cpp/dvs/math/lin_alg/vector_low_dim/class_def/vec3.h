@@ -15,9 +15,6 @@ template <typename T> struct Vec3
     template <typename Y> Vec3(const Vec3<Y>& v);
     Vec3();
 
-    CylindricalCoord<T> toCylindricalVec() const;
-    SphericalCoord<T> toSphericalCoord() const;
-
     Vec3<T> normalized() const;
     Vec3<T> vectorBetweenPoints(const Point3<T>& end_point) const;
     Vec3<T> normalizedVectorBetweenPoints(const Point3<T>& end_point) const;

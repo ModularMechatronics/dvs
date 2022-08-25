@@ -48,7 +48,6 @@ TEST_F(TestMathFunctions, TestBasic0)
     Triangle2D<double> tri2d;
     Triangle3D<double> tri3d;
 
-    Quaternion<double> q;
     RollPitchYaw<double> rpy;
     AxisAngle<double> aa;
     PoseSE3<double> pse3;

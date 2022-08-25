@@ -14,7 +14,6 @@
 #include "dvs/math/lin_alg/vector_low_dim/vec4.h"
 
 #include "dvs/math/transformations/axis_angle.h"
-#include "dvs/math/transformations/quaternion.h"
 
 #include "dvs/math/geometry/line_2d.h"
 #include "dvs/math/geometry/line_3d.h"
@@ -27,7 +26,6 @@
 #include "dvs/math/image/image_c3.h"
 
 #include "dvs/math/pre_defs.h"
-
 // clang-format on
 
 #endif // DVS_MATH_MATH_H_

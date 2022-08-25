@@ -25,23 +25,11 @@ template <typename T> struct VecYZ;
 template <typename T> class Vector;
 template <typename T> class Matrix;
 
-template <typename T> struct ComplexCoord;
-template <typename T> struct PolarCoord;
-template <typename T> struct CylindricalCoord;
-template <typename T> struct SphericalCoord;
-
-template <typename T> class Circle3D;
-template <typename T> struct Circle2D;
 template <typename T> struct Line3D;
 template <typename T> struct ParametricLine2D;
 template <typename T> struct HomogeneousLine2D;
 template <typename T> struct Plane;
 template <typename T> struct Sphere;
-
-template <typename T> struct Quaternion;
-template <typename T> struct RollPitchYaw;
-template <typename T> struct AxisAngle;
-template <typename T> class PoseSE3;
 
 template <typename T> struct Triangle2D;
 template <typename T> struct Triangle3D;
