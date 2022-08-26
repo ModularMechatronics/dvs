@@ -29,18 +29,17 @@ Pre release:
 - Replace old c type arrays with std::array
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
-- Change "cols" and "rows" to "numCols" and "numRows" for ImageC1/3 and Matrix
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix layout designer
 - Fix number formatting and grid vectors system
 - Fix showing correct plot walls when in perspective mode
 - Unify MouseActivity and InteractionType
-- Fix panning "speed"
 - Make font smaller, fewer line points per axis
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
+- Refactor from top down, from the app and down into the GUI
 - Implement findMinMax for matrices and vectors
 - Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
 - Make sure plot/plot3 works for integer data types

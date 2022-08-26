@@ -16,23 +16,23 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
     {
         if (is_allocated_)
         {
-            if ((m.rows() != num_rows_) || (m.cols() != num_cols_))
+            if ((m.numRows() != num_rows_) || (m.numCols() != num_cols_))
             {
                 delete[] data_;
-                DATA_ALLOCATION(data_, m.rows() * m.cols(), T, "Matrix");
+                DATA_ALLOCATION(data_, m.numRows() * m.numCols(), T, "Matrix");
             }
         }
         else
         {
-            DATA_ALLOCATION(data_, m.rows() * m.cols(), T, "Matrix");
+            DATA_ALLOCATION(data_, m.numRows() * m.numCols(), T, "Matrix");
         }
 
-        num_rows_ = m.rows();
-        num_cols_ = m.cols();
+        num_rows_ = m.numRows();
+        num_cols_ = m.numCols();
 
-        for (size_t r = 0; r < m.rows(); r++)
+        for (size_t r = 0; r < m.numRows(); r++)
         {
-            for (size_t c = 0; c < m.cols(); c++)
+            for (size_t c = 0; c < m.numCols(); c++)
             {
                 data_[r * num_cols_ + c] = m(r, c);
             }
@@ -60,15 +60,15 @@ template <typename T> Matrix<T>::Matrix(Matrix<T>&& m)
 template <typename T> template <typename Y> Matrix<T>::Matrix(const Matrix<Y>& m) : is_allocated_(true)
 {
     DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
-    num_rows_ = m.rows();
-    num_cols_ = m.cols();
+    num_rows_ = m.numRows();
+    num_cols_ = m.numCols();
 
-    DATA_ALLOCATION(data_, m.rows() * m.cols(), T, "Matrix");
-    for (size_t r = 0; r < m.rows(); r++)
+    DATA_ALLOCATION(data_, m.numRows() * m.numCols(), T, "Matrix");
+    for (size_t r = 0; r < m.numRows(); r++)
     {
-        for (size_t c = 0; c < m.cols(); c++)
+        for (size_t c = 0; c < m.numCols(); c++)
         {
-            data_[r * m.cols() + c] = m(r, c);
+            data_[r * m.numCols() + c] = m(r, c);
         }
     }
 }
@@ -91,8 +91,8 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
             delete[] data_;
         }
 
-        num_rows_ = m.rows();
-        num_cols_ = m.cols();
+        num_rows_ = m.numRows();
+        num_cols_ = m.numCols();
         is_allocated_ = true;
 
         data_ = m.data();
@@ -115,15 +115,15 @@ template <typename T> Matrix<T>::Matrix(const size_t num_rows, const size_t num_
 
 template <typename T> Matrix<T>::Matrix(const Matrix<T>& m) : is_allocated_(true)
 {
-    num_rows_ = m.rows();
-    num_cols_ = m.cols();
+    num_rows_ = m.numRows();
+    num_cols_ = m.numCols();
 
-    DATA_ALLOCATION(data_, m.rows() * m.cols(), T, "Matrix");
-    for (size_t r = 0; r < m.rows(); r++)
+    DATA_ALLOCATION(data_, m.numRows() * m.numCols(), T, "Matrix");
+    for (size_t r = 0; r < m.numRows(); r++)
     {
-        for (size_t c = 0; c < m.cols(); c++)
+        for (size_t c = 0; c < m.numCols(); c++)
         {
-            data_[r * m.cols() + c] = m(r, c);
+            data_[r * m.numCols() + c] = m(r, c);
         }
     }
 }
@@ -190,12 +190,12 @@ template <typename T> size_t Matrix<T>::lastColIdx() const
     return num_cols_ - 1;
 }
 
-template <typename T> size_t Matrix<T>::rows() const
+template <typename T> size_t Matrix<T>::numRows() const
 {
     return num_rows_;
 }
 
-template <typename T> size_t Matrix<T>::cols() const
+template <typename T> size_t Matrix<T>::numCols() const
 {
     return num_cols_;
 }
@@ -243,15 +243,15 @@ template <typename T> const T& Matrix<T>::operator()(const size_t r, const size_
 
 template <typename T> Matrix<T> operator*(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    assert(m0.cols() == m1.rows());
-    Matrix<T> res(m0.rows(), m1.cols());
+    assert(m0.numCols() == m1.numRows());
+    Matrix<T> res(m0.numRows(), m1.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             T p = 0.0f;
-            for (size_t i = 0; i < m0.cols(); i++)
+            for (size_t i = 0; i < m0.numCols(); i++)
             {
                 p = p + m0(r, i) * m1(i, c);
             }
@@ -263,13 +263,13 @@ template <typename T> Matrix<T> operator*(const Matrix<T>& m0, const Matrix<T>& 
 
 template <typename T> Matrix<T> operator+(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    assert(m0.cols() == m1.cols());
-    assert(m0.rows() == m1.rows());
-    Matrix<T> res(m0.rows(), m1.cols());
+    assert(m0.numCols() == m1.numCols());
+    assert(m0.numRows() == m1.numRows());
+    Matrix<T> res(m0.numRows(), m1.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = m0(r, c) + m1(r, c);
         }
@@ -279,13 +279,13 @@ template <typename T> Matrix<T> operator+(const Matrix<T>& m0, const Matrix<T>& 
 
 template <typename T> Matrix<T> operator-(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    assert(m0.cols() == m1.cols());
-    assert(m0.rows() == m1.rows());
-    Matrix<T> res(m0.rows(), m1.cols());
+    assert(m0.numCols() == m1.numCols());
+    assert(m0.numRows() == m1.numRows());
+    Matrix<T> res(m0.numRows(), m1.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = m0(r, c) - m1(r, c);
         }
@@ -295,11 +295,11 @@ template <typename T> Matrix<T> operator-(const Matrix<T>& m0, const Matrix<T>& 
 
 template <typename T> Matrix<T> operator*(const Matrix<T>& m, const T f)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = f * m(r, c);
         }
@@ -309,11 +309,11 @@ template <typename T> Matrix<T> operator*(const Matrix<T>& m, const T f)
 
 template <typename T> Matrix<T> operator*(const T f, const Matrix<T>& m)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = f * m(r, c);
         }
@@ -323,14 +323,14 @@ template <typename T> Matrix<T> operator*(const T f, const Matrix<T>& m)
 
 template <typename T> Matrix<T> operator^(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    DVS_ASSERT(m0.rows() == m1.rows());
-    DVS_ASSERT(m0.cols() == m1.cols());
+    DVS_ASSERT(m0.numRows() == m1.numRows());
+    DVS_ASSERT(m0.numCols() == m1.numCols());
 
-    Matrix<T> res(m0.rows(), m0.cols());
+    Matrix<T> res(m0.numRows(), m0.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = m0(r, c) * m1(r, c);
         }
@@ -340,14 +340,14 @@ template <typename T> Matrix<T> operator^(const Matrix<T>& m0, const Matrix<T>& 
 
 template <typename T> Matrix<T> operator/(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    DVS_ASSERT(m0.rows() == m1.rows());
-    DVS_ASSERT(m0.cols() == m1.cols());
+    DVS_ASSERT(m0.numRows() == m1.numRows());
+    DVS_ASSERT(m0.numCols() == m1.numCols());
 
-    Matrix<T> res(m0.rows(), m0.cols());
+    Matrix<T> res(m0.numRows(), m0.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = m0(r, c) / m1(r, c);
         }
@@ -357,11 +357,11 @@ template <typename T> Matrix<T> operator/(const Matrix<T>& m0, const Matrix<T>& 
 
 template <typename T> Matrix<T> operator/(const Matrix<T>& m, const T f)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = m(r, c) / f;
         }
@@ -371,11 +371,11 @@ template <typename T> Matrix<T> operator/(const Matrix<T>& m, const T f)
 
 template <typename T> Matrix<T> operator/(const T f, const Matrix<T>& m)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = f / m(r, c);
         }
@@ -385,11 +385,11 @@ template <typename T> Matrix<T> operator/(const T f, const Matrix<T>& m)
 
 template <typename T> Matrix<T> operator-(const Matrix<T>& m, const T f)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = m(r, c) - f;
         }
@@ -399,11 +399,11 @@ template <typename T> Matrix<T> operator-(const Matrix<T>& m, const T f)
 
 template <typename T> Matrix<T> operator-(const T f, const Matrix<T>& m)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = f - m(r, c);
         }
@@ -413,11 +413,11 @@ template <typename T> Matrix<T> operator-(const T f, const Matrix<T>& m)
 
 template <typename T> Matrix<T> operator+(const Matrix<T>& m, const T f)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = m(r, c) + f;
         }
@@ -427,11 +427,11 @@ template <typename T> Matrix<T> operator+(const Matrix<T>& m, const T f)
 
 template <typename T> Matrix<T> operator+(const T f, const Matrix<T>& m)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = m(r, c) + f;
         }
@@ -441,11 +441,11 @@ template <typename T> Matrix<T> operator+(const T f, const Matrix<T>& m)
 
 template <typename T> Matrix<T> operator-(const Matrix<T>& m)
 {
-    Matrix<T> res(m.rows(), m.cols());
+    Matrix<T> res(m.numRows(), m.numCols());
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = -m(r, c);
         }
@@ -455,13 +455,13 @@ template <typename T> Matrix<T> operator-(const Matrix<T>& m)
 
 template <typename T> Vector<T> operator*(const Matrix<T>& m, const Vector<T>& v)
 {
-    assert(m.cols() == v.size());
-    Vector<T> res(m.rows());
+    assert(m.numCols() == v.size());
+    Vector<T> res(m.numRows());
 
-    for (size_t r = 0; r < m.rows(); r++)
+    for (size_t r = 0; r < m.numRows(); r++)
     {
         T p = 0.0f;
-        for (size_t c = 0; c < m.cols(); c++)
+        for (size_t c = 0; c < m.numCols(); c++)
         {
             p = p + m(r, c) * v(c);
         }
@@ -472,13 +472,13 @@ template <typename T> Vector<T> operator*(const Matrix<T>& m, const Vector<T>& v
 
 template <typename T> Vector<T> operator*(const Vector<T>& v, const Matrix<T>& m)
 {
-    assert(m.rows() == v.size());
-    Vector<T> res(m.cols());
+    assert(m.numRows() == v.size());
+    Vector<T> res(m.numCols());
 
-    for (size_t c = 0; c < m.cols(); c++)
+    for (size_t c = 0; c < m.numCols(); c++)
     {
         T p = 0.0f;
-        for (size_t r = 0; r < m.rows(); r++)
+        for (size_t r = 0; r < m.numRows(); r++)
         {
             p = p + m(r, c) * v(r);
         }
@@ -491,9 +491,9 @@ template <typename T> Matrix<T> Matrix<T>::getTranspose() const
 {
     Matrix<T> res(num_cols_, num_rows_);
 
-    for (size_t r = 0; r < res.rows(); r++)
+    for (size_t r = 0; r < res.numRows(); r++)
     {
-        for (size_t c = 0; c < res.cols(); c++)
+        for (size_t c = 0; c < res.numCols(); c++)
         {
             res(r, c) = data_[c * num_cols_ + r];
         }
@@ -564,13 +564,13 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const Matrix<T>
 {
     std::string s = "";
 
-    for (size_t r = 0; r < m.rows(); r++)
+    for (size_t r = 0; r < m.numRows(); r++)
     {
         s = s + "[ ";
-        for (size_t c = 0; c < m.cols(); c++)
+        for (size_t c = 0; c < m.numCols(); c++)
         {
             s = s + std::to_string(m(r, c));
-            if (c != m.cols() - 1)
+            if (c != m.numCols() - 1)
             {
                 s = s + ", ";
             }
