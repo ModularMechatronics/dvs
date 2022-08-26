@@ -11,10 +11,10 @@ namespace dvs
 {
 template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 {
-    DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated before assignment!";
+    DVS_ASSERT((m.numRows() > 0U) && (m.numCols() > 0U)) << "Input matrix not allocated before assignment!";
     if (this != &m)
     {
-        if (is_allocated_)
+        if ((num_rows_ > 0U) && (num_cols_ > 0U))
         {
             if ((m.numRows() != num_rows_) || (m.numCols() != num_cols_))
             {
@@ -38,28 +38,25 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
             }
         }
 
-        is_allocated_ = true;
     }
     return *this;
 }
 
 template <typename T> Matrix<T>::Matrix(Matrix<T>&& m)
 {
-    DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
+    DVS_ASSERT((m.numRows() > 0U) && (m.numCols() > 0U)) << "Input matrix not allocated!";
     data_ = m.data_;
     num_rows_ = m.num_rows_;
     num_cols_ = m.num_cols_;
-
-    is_allocated_ = true;
 
     m.data_ = nullptr;
     m.num_rows_ = 0;
     m.num_cols_ = 0;
 }
 
-template <typename T> template <typename Y> Matrix<T>::Matrix(const Matrix<Y>& m) : is_allocated_(true)
+template <typename T> template <typename Y> Matrix<T>::Matrix(const Matrix<Y>& m)
 {
-    DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated!";
+    DVS_ASSERT((m.numRows() > 0U) && (m.numCols() > 0U)) << "Input matrix not allocated!";
     num_rows_ = m.numRows();
     num_cols_ = m.numCols();
 
@@ -84,16 +81,15 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
 {
     if (this != &m)
     {
-        DVS_ASSERT(m.isAllocated()) << "Input matrix not allocated before assignment!";
+        DVS_ASSERT((m.numRows() > 0U) && (m.numCols() > 0U)) << "Input matrix not allocated before assignment!";
 
-        if (is_allocated_)
+        if ((num_rows_ > 0U) && (num_cols_ > 0U))
         {
             delete[] data_;
         }
 
         num_rows_ = m.numRows();
         num_cols_ = m.numCols();
-        is_allocated_ = true;
 
         data_ = m.data();
 
@@ -103,18 +99,23 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
     return *this;
 }
 
-template <typename T> Matrix<T>::Matrix() : data_(nullptr), num_rows_(0), num_cols_(0), is_allocated_(false) {}
+template <typename T> Matrix<T>::Matrix() : data_(nullptr), num_rows_(0), num_cols_(0) {}
 
-template <typename T> Matrix<T>::Matrix(const size_t num_rows, const size_t num_cols) : is_allocated_(true)
+template <typename T> Matrix<T>::Matrix(const size_t num_rows, const size_t num_cols)
 {
+    DVS_ASSERT(num_rows > 0U) << "Cannot set number of rows to 0!";
+    DVS_ASSERT(num_cols > 0U) << "Cannot set number of columns to 0!";
+
     num_rows_ = num_rows;
     num_cols_ = num_cols;
 
     DATA_ALLOCATION(data_, num_rows_ * num_cols_, T, "Matrix");
 }
 
-template <typename T> Matrix<T>::Matrix(const Matrix<T>& m) : is_allocated_(true)
+template <typename T> Matrix<T>::Matrix(const Matrix<T>& m)
 {
+    DVS_ASSERT((m.numRows() > 0U) && (m.numCols() > 0U)) << "Input matrix not allocated before assignment!";
+
     num_rows_ = m.numRows();
     num_cols_ = m.numCols();
 
@@ -130,10 +131,9 @@ template <typename T> Matrix<T>::Matrix(const Matrix<T>& m) : is_allocated_(true
 
 template <typename T> Matrix<T>::~Matrix()
 {
-    if (is_allocated_)
+    if ((num_rows_ > 0U) && (num_cols_ > 0U))
     {
         delete[] data_;
-        is_allocated_ = false;
     }
 }
 
@@ -144,30 +144,19 @@ template <typename T> size_t Matrix<T>::size() const
 
 template <typename T> void Matrix<T>::resize(const size_t num_rows, const size_t num_cols)
 {
-    if (is_allocated_)
+    if ((num_rows_ > 0U) && (num_cols_ > 0U))
     {
         delete[] data_;
-        is_allocated_ = false;
     }
 
     num_rows_ = num_rows;
     num_cols_ = num_cols;
 
     DATA_ALLOCATION(data_, num_rows_ * num_cols_, T, "Matrix");
-    is_allocated_ = true;
 }
 
 template <typename T> void Matrix<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
 {
-    if (input_ptr == nullptr)
-    {
-        is_allocated_ = false;
-    }
-    else
-    {
-        is_allocated_ = true;
-    }
-
     data_ = input_ptr;
     num_rows_ = num_rows;
     num_cols_ = num_cols;
@@ -211,15 +200,10 @@ template <typename T> size_t Matrix<T>::numBytes() const
     return num_rows_ * num_cols_ * sizeof(T);
 }
 
-template <typename T> bool Matrix<T>::isAllocated() const
-{
-    return is_allocated_;
-}
-
 template <typename T> void Matrix<T>::fill(T val)
 {
-    assert(is_allocated_ && "Tried to fill unallocated vector!");
-    for (size_t k = 0; k < num_rows_ * num_cols_; k++)
+    assert(((num_rows_ > 0U) && (num_cols_ > 0U)) && "Tried to fill unallocated matrix!");
+    for (size_t k = 0; k < (num_rows_ * num_cols_); k++)
     {
         data_[k] = val;
     }

@@ -45,7 +45,6 @@ template <typename T> class Vector
 protected:
     T* data_;
     size_t size_;
-    bool is_allocated_;
 
 public:
     Vector();
@@ -57,7 +56,6 @@ public:
     {
         data_ = v.data_;
         size_ = v.size_;
-        is_allocated_ = true;
 
         v.data_ = nullptr;
         v.size_ = 0U;
@@ -81,7 +79,6 @@ public:
     size_t size() const;
     size_t numElements() const;
     size_t numBytes() const;
-    bool isAllocated() const;
     void fill(const T& val);
     void resize(const size_t new_size);
     size_t endIndex() const;

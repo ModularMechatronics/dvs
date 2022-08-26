@@ -50,7 +50,7 @@ template <typename T> std::pair<Matrix<T>, Matrix<T>> meshGrid(const Vector<T>& 
 
 template <typename T> Matrix<T> log10(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     Matrix<T> m(m_in.numRows(), m_in.numCols());
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -66,7 +66,7 @@ template <typename T> Matrix<T> log10(const Matrix<T>& m_in)
 
 template <typename T> Matrix<T> pow(const Matrix<T>& m_in, const T e)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     Matrix<T> m(m_in.numRows(), m_in.numCols());
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -82,7 +82,7 @@ template <typename T> Matrix<T> pow(const Matrix<T>& m_in, const T e)
 
 template <typename T> Matrix<T> log(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     Matrix<T> m(m_in.numRows(), m_in.numCols());
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -98,7 +98,7 @@ template <typename T> Matrix<T> log(const Matrix<T>& m_in)
 
 template <typename T> Matrix<T> exp(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     Matrix<T> m(m_in.numRows(), m_in.numCols());
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -114,7 +114,7 @@ template <typename T> Matrix<T> exp(const Matrix<T>& m_in)
 
 template <typename T> Matrix<T> cos(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     Matrix<T> m(m_in.numRows(), m_in.numCols());
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -130,7 +130,7 @@ template <typename T> Matrix<T> cos(const Matrix<T>& m_in)
 
 template <typename T> Matrix<T> sin(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     Matrix<T> m(m_in.numRows(), m_in.numCols());
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -146,7 +146,7 @@ template <typename T> Matrix<T> sin(const Matrix<T>& m_in)
 
 template <typename T> Matrix<T> sqrt(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     Matrix<T> m(m_in.numRows(), m_in.numCols());
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -162,7 +162,7 @@ template <typename T> Matrix<T> sqrt(const Matrix<T>& m_in)
 
 template <typename T> T max(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     T max_val = m_in(0, 0);
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -178,7 +178,7 @@ template <typename T> T max(const Matrix<T>& m_in)
 
 template <typename T> T min(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     T min_val = m_in(0, 0);
 
     for (size_t r = 0; r < m_in.numRows(); r++)
@@ -194,7 +194,7 @@ template <typename T> T min(const Matrix<T>& m_in)
 
 template <typename T> Matrix<T> abs(const Matrix<T>& m_in)
 {
-    assert((m_in.numRows() > 0) && (m_in.numCols() > 0) && (m_in.isAllocated()));
+    assert((m_in.numRows() > 0) && (m_in.numCols() > 0));
     Matrix<T> m(m_in.numRows(), m_in.numCols());
 
     for (size_t r = 0; r < m_in.numRows(); r++)
