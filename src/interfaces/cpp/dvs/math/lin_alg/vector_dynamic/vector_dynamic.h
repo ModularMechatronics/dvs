@@ -11,16 +11,16 @@
 
 namespace dvs
 {
-template <typename T> Vector<T>::Vector() : data_(nullptr), size_(0), is_allocated_(false) {}
+template <typename T> Vector<T>::Vector() : data_(nullptr), size_(0) {}
 
-template <typename T> Vector<T>::Vector(const size_t vector_length) : is_allocated_(true)
+template <typename T> Vector<T>::Vector(const size_t vector_length)
 {
     size_ = vector_length;
 
     DATA_ALLOCATION(data_, vector_length, T, "Vector");
 }
 
-template <typename T> Vector<T>::Vector(const Vector<T>& v) : is_allocated_(true)
+template <typename T> Vector<T>::Vector(const Vector<T>& v)
 {
     size_ = v.size();
 
@@ -34,31 +34,30 @@ template <typename T> Vector<T>::Vector(const Vector<T>& v) : is_allocated_(true
 
 template <typename T> Vector<T>::Vector(Vector<T>&& v)
 {
-    DVS_ASSERT(v.isAllocated()) << "Input vector not allocated!";
+    DVS_ASSERT(v.size() > 0U) << "Input vector size is 0!";
     data_ = v.data();
     size_ = v.size();
-    is_allocated_ = true;
 
-    v.setInternalData(nullptr, 0);
+    v.data_ = nullptr;
+    v.size_ = 0U;
 }
 
 template <typename T> Vector<T>& Vector<T>::operator=(Vector<T>&& v)
 {
     if (this != &v)
     {
-        DVS_ASSERT(v.isAllocated()) << "Input vector not allocated before assignment!";
+        DVS_ASSERT(v.size() > 0U) << "Input vector size is 0!";
 
-        if (is_allocated_)
+        if (size_ > 0U)
         {
             delete[] data_;
         }
 
         size_ = v.size();
-        is_allocated_ = true;
-
         data_ = v.data();
 
-        v.setInternalData(nullptr, 0);
+        v.data_ = nullptr;
+        v.size_ = 0U;
     }
 
     return *this;
@@ -66,10 +65,9 @@ template <typename T> Vector<T>& Vector<T>::operator=(Vector<T>&& v)
 
 template <typename T> Vector<T>::~Vector()
 {
-    if (is_allocated_)
+    if (size_ > 0U)
     {
         delete[] data_;
-        is_allocated_ = false;
     }
 }
 
@@ -83,11 +81,11 @@ template <typename T> void Vector<T>::fillBufferWithData(uint8_t* const buffer) 
 
 template <typename T> Vector<T>& Vector<T>::operator=(const Vector<T>& v)
 {
-    DVS_ASSERT(v.isAllocated()) << "Input vector not allocated before assignment!";
+    DVS_ASSERT(v.size() > 0U) << "Input vector size is 0!";
 
     if (this != &v)
     {
-        if (is_allocated_)
+        if (size_ > 0U)
         {
             if (v.size() != size_)
             {
@@ -101,8 +99,6 @@ template <typename T> Vector<T>& Vector<T>::operator=(const Vector<T>& v)
         }
         size_ = v.size();
 
-        is_allocated_ = true;
-
         for (size_t k = 0; k < v.size(); k++)
         {
             data_[k] = v(k);
@@ -112,7 +108,7 @@ template <typename T> Vector<T>& Vector<T>::operator=(const Vector<T>& v)
     return *this;
 }
 
-template <typename T> template <typename Y> Vector<T>::Vector(const Vector<Y>& v) : is_allocated_(true)
+template <typename T> template <typename Y> Vector<T>::Vector(const Vector<Y>& v)
 {
     size_ = v.size();
 
@@ -126,7 +122,7 @@ template <typename T> template <typename Y> Vector<T>::Vector(const Vector<Y>& v
 
 template <typename T> template <typename Y> Vector<T>& Vector<T>::operator=(const Vector<Y>& v)
 {
-    if (is_allocated_)
+    if (size_ > 0U)
     {
         if (v.size() != size_)
         {
@@ -139,7 +135,6 @@ template <typename T> template <typename Y> Vector<T>& Vector<T>::operator=(cons
         DATA_ALLOCATION(data_, v.size(), T, "Vector");
     }
     size_ = v.size();
-    is_allocated_ = true;
 
     for (size_t k = 0; k < v.size(); k++)
     {
@@ -154,14 +149,13 @@ template <typename T> Vector<T>::Vector(const std::vector<T>& v)
     if (v.size() == 0)
     {
         size_ = 0;
-        is_allocated_ = false;
+        data_ = nullptr;
     }
     else
     {
         size_ = v.size();
 
         DATA_ALLOCATION(data_, v.size(), T, "Vector");
-        is_allocated_ = true;
 
         size_t idx = 0;
         for (auto vec_element : v)
@@ -174,13 +168,13 @@ template <typename T> Vector<T>::Vector(const std::vector<T>& v)
 
 template <typename T> T& Vector<T>::operator()(const size_t idx)
 {
-    assert(idx < size_ && is_allocated_);
+    assert(idx < size_);
     return data_[idx];
 }
 
 template <typename T> const T& Vector<T>::operator()(const size_t idx) const
 {
-    assert(idx < size_ && is_allocated_);
+    assert(idx < size_);
     return data_[idx];
 }
 
@@ -199,14 +193,9 @@ template <typename T> size_t Vector<T>::numBytes() const
     return size_ * sizeof(T);
 }
 
-template <typename T> bool Vector<T>::isAllocated() const
-{
-    return is_allocated_;
-}
-
 template <typename T> void Vector<T>::fill(const T& val)
 {
-    assert(is_allocated_ && "Tried to fill unallocated vector!");
+    assert((size_ > 0U) && "Tried to fill unallocated vector!");
     for (size_t k = 0; k < size_; k++)
     {
         data_[k] = val;
@@ -217,19 +206,18 @@ template <typename T> void Vector<T>::resize(const size_t new_size)
 {
     if ((new_size != size_) && (new_size != 0))
     {
-        if (is_allocated_)
+        if (size_ > 0U)
         {
             delete[] data_;
         }
 
         if (new_size == 0)
         {
-            is_allocated_ = false;
             size_ = 0;
+            data_ = nullptr;
         }
         else
         {
-            is_allocated_ = true;
             DATA_ALLOCATION(data_, new_size, T, "Vector");
             size_ = new_size;
         }
@@ -249,15 +237,6 @@ template <typename T> T* Vector<T>::data() const
 
 template <typename T> void Vector<T>::setInternalData(T* const input_ptr, const size_t num_elements)
 {
-    if (input_ptr == nullptr)
-    {
-        is_allocated_ = false;
-    }
-    else
-    {
-        is_allocated_ = true;
-    }
-
     data_ = input_ptr;
     size_ = num_elements;
 }
@@ -809,7 +788,6 @@ template <typename T> Vector<bool> operator!(const Vector<T>& v)
 
 template <typename Y> void fillWithPtr(Vector<Y>& v, const void* const ptr, const size_t vector_length)
 {
-    v.is_allocated_ = true;
     v.size_ = vector_length;
     DATA_ALLOCATION(v.data_, vector_length, Y, "Vector");
 

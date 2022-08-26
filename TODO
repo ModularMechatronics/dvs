@@ -59,7 +59,7 @@ Pre release:
 - Change all functions to accept "View" types, and then have constructor of VectorView from Vector, MatrixView from Matrix etc
 - Time date axis
 - Separate plot types so that shader switching is minimized
-
+- Implement fastPlot/3
 Post release:
 - Bar plot
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc

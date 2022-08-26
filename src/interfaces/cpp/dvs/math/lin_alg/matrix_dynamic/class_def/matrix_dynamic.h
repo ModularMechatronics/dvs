@@ -57,20 +57,18 @@ protected:
     T* data_;
     size_t num_rows_;
     size_t num_cols_;
-    bool is_allocated_;
 
 public:
     Matrix();
     Matrix(const size_t num_rows, const size_t num_cols);
     Matrix(const Matrix<T>& m);
     template <typename Y> Matrix(const Matrix<Y>& m);
-    // Matrix(const std::initializer_list<std::initializer_list<T>>& il);
+
     Matrix(MatrixInitializer<T>&& m)
     {
         data_ = m.data_;
         num_rows_ = m.num_rows_;
         num_cols_ = m.num_cols_;
-        is_allocated_ = true;
 
         m.data_ = nullptr;
         m.num_rows_ = 0U;
@@ -94,7 +92,6 @@ public:
     size_t numElements() const;
     size_t numBytes() const;
 
-    bool isAllocated() const;
     void fill(const T val);
     T* data() const;
     void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
