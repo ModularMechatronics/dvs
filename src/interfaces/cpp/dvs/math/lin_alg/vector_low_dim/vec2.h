@@ -114,8 +114,8 @@ template <typename T> Vec2<T> operator-(const Vec2<T>& v0, const Vec2<T>& v1)
 template <typename T> Vec2<T> operator*(const Matrix<T>& m, const Vec2<T>& v)
 {
     DVS_ASSERT(m.isAllocated()) << "Matrix not allocated!";
-    DVS_ASSERT(m.rows() == 2) << "Matrix dimension mismatch!";
-    DVS_ASSERT(m.cols() == 2) << "Matrix dimension mismatch!";
+    DVS_ASSERT(m.numRows() == 2) << "Matrix dimension mismatch!";
+    DVS_ASSERT(m.numCols() == 2) << "Matrix dimension mismatch!";
     Vec2<T> res;
     res.x = m(0, 0) * v.x + m(0, 1) * v.y;
     res.y = m(1, 0) * v.x + m(1, 1) * v.y;
@@ -125,8 +125,8 @@ template <typename T> Vec2<T> operator*(const Matrix<T>& m, const Vec2<T>& v)
 template <typename T> Vec2<T> operator*(const Vec2<T>& v, const Matrix<T>& m)
 {
     DVS_ASSERT(m.isAllocated()) << "Matrix not allocated!";
-    DVS_ASSERT(m.rows() == 2) << "Matrix dimension mismatch!";
-    DVS_ASSERT(m.cols() == 2) << "Matrix dimension mismatch!";
+    DVS_ASSERT(m.numRows() == 2) << "Matrix dimension mismatch!";
+    DVS_ASSERT(m.numCols() == 2) << "Matrix dimension mismatch!";
     Vec2<T> res;
     res.x = v.x * m(0, 0) + v.y * m(1, 0);
     res.y = v.x * m(0, 1) + v.y * m(1, 1);

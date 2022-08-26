@@ -88,8 +88,8 @@ public:
     Matrix<T>& operator=(Matrix<T>&& m);
 
     void resize(const size_t num_rows, const size_t num_cols);
-    size_t rows() const;
-    size_t cols() const;
+    size_t numRows() const;
+    size_t numCols() const;
     size_t size() const;
     size_t numElements() const;
     size_t numBytes() const;

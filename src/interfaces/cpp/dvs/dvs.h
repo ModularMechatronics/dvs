@@ -101,7 +101,7 @@ void quiver(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& u, const Ma
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::QUIVER);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
-    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.rows(), x.cols()));
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.numRows(), x.numCols()));
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, u, v);
@@ -157,7 +157,7 @@ void surf(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& z, const Us&.
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SURF);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));  // TODO: Needed?
-    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.rows(), x.cols()));
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.numRows(), x.numCols()));
 
     hdr.extend(settings...);
 
@@ -241,7 +241,7 @@ void drawTiles(const Matrix<T>& z, const Vec2<double>& tile_size, const Us&... s
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::DRAW_TILES);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(z.size()));
-    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(z.rows(), z.cols()));
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(z.numRows(), z.numCols()));
     hdr.extend(settings...);
 
     Vector<double> v(2);
