@@ -162,11 +162,6 @@ void GlCanvas::render(wxPaintEvent& evt)
     glm::mat4 model_mat = glm::mat4(1.0f);
     glm::mat4 scale_mat = glm::mat4(0.1);
 
-    Matrix<float> mat;
-    mat.setInternalData(&projection_mat[0][0], 4, 4);
-    // std::cout << mat << std::endl;
-    mat.setInternalData(nullptr, 0, 0);
-
     model_mat[3][0] = axes_center.x;
     model_mat[3][1] = axes_center.y;
     model_mat[3][2] = axes_center.z;

@@ -4,14 +4,12 @@
 template <typename T>
 float* convertQuiverData(uint8_t* input_data, const Dimension2D& dims, const size_t num_bytes_per_element)
 {
-    Matrix<T> x, y, u, v;
-
     const size_t num_bytes_per_matrix = (dims.rows * dims.cols) * num_bytes_per_element;
 
-    x.setInternalData(reinterpret_cast<T*>(input_data), dims.rows, dims.cols);
-    y.setInternalData(reinterpret_cast<T*>(input_data + num_bytes_per_matrix), dims.rows, dims.cols);
-    u.setInternalData(reinterpret_cast<T*>(input_data + 2 * num_bytes_per_matrix), dims.rows, dims.cols);
-    v.setInternalData(reinterpret_cast<T*>(input_data + 3 * num_bytes_per_matrix), dims.rows, dims.cols);
+    MatrixView<T> x{reinterpret_cast<T*>(input_data), dims.rows, dims.cols},
+        y{reinterpret_cast<T*>(input_data + num_bytes_per_matrix), dims.rows, dims.cols},
+        u{reinterpret_cast<T*>(input_data + 2 * num_bytes_per_matrix), dims.rows, dims.cols},
+        v{reinterpret_cast<T*>(input_data + 3 * num_bytes_per_matrix), dims.rows, dims.cols};
 
     const float ang = 30.0 * M_PI / 180.0;
     const float arrow_edge_length_ratio = 0.85;
@@ -63,11 +61,6 @@ float* convertQuiverData(uint8_t* input_data, const Dimension2D& dims, const siz
             idx += 12;
         }
     }
-
-    x.setInternalData(nullptr, 0, 0);
-    y.setInternalData(nullptr, 0, 0);
-    u.setInternalData(nullptr, 0, 0);
-    v.setInternalData(nullptr, 0, 0);
 
     return points_ptr;
 }

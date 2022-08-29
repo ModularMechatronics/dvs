@@ -51,6 +51,92 @@ public:
     }
 };
 
+template <typename T> class MatrixView
+{
+private:
+    T* data_;
+    size_t num_rows_;
+    size_t num_cols_;
+
+public:
+    MatrixView() : data_{nullptr}, num_rows_{0U}, num_cols_{0U}
+    {
+
+    }
+
+    MatrixView(T* const data_ptr_in, const size_t num_rows, const size_t num_cols) :
+        data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
+    {}
+
+    T* data() const
+    {
+        return data_;
+    }
+
+    size_t numRows() const
+    {
+        return num_rows_;
+    }
+
+    size_t numCols() const
+    {
+        return num_cols_;
+    }
+
+    size_t numBytes() const
+    {
+        return num_rows_ * num_cols_ * sizeof(T);
+    }
+
+    void fillBufferWithData(uint8_t* const buffer) const
+    {
+        const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
+        const size_t num_bytes = num_rows_ * num_cols_ * sizeof(T);
+
+        std::memcpy(buffer, internal_ptr, num_bytes);
+    }
+
+    T& operator()(const size_t r, const size_t c)
+    {
+        assert(r < num_rows_ && "Row index is larger than num_rows_-1!");
+        assert(c < num_cols_ && "Column index is larger than num_cols_-1!");
+
+        return data_[r * num_cols_ + c];
+    }
+
+    const T& operator()(const size_t r, const size_t c) const
+    {
+        assert(r < num_rows_ && "Row index is larger than num_rows_-1!");
+        assert(c < num_cols_ && "Column index is larger than num_cols_-1!");
+
+        return data_[r * num_cols_ + c];
+    }
+
+    std::pair<T, T> findMinMax() const
+    {
+        T min_value = data_[0], max_value = data_[0];
+
+        for(size_t r = 0; r < num_rows_; r++)
+        {
+            const size_t idx = r * num_cols_;
+            for(size_t c = 0; c < num_cols_; c++)
+            {
+                const T val = data_[idx + c];
+                if(val < min_value)
+                {
+                    min_value = val;
+                }
+                if(val > max_value)
+                {
+                    max_value = val;
+                }
+            }
+        }
+
+        return {min_value, max_value};
+    }
+};
+
 template <typename T> class Matrix
 {
 protected:
@@ -94,7 +180,6 @@ public:
 
     void fill(const T val);
     T* data() const;
-    void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
     Matrix<T> getTranspose() const;
 
     size_t lastRowIdx() const;

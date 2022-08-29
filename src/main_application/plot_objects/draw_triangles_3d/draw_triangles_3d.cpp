@@ -59,9 +59,7 @@ DrawTriangles3D::~DrawTriangles3D()
 template <typename T> float* convertTrianglesDataInner(uint8_t* input_data, const uint32_t num_elements)
 {
     float* output_data = new float[num_elements * 3 * 3];
-    Vector<Triangle3D<T>> vertices;
-
-    vertices.setInternalData(reinterpret_cast<Triangle3D<T>*>(input_data), num_elements);
+    VectorView<Triangle3D<T>> vertices{reinterpret_cast<Triangle3D<T>*>(input_data), num_elements};
 
     size_t idx = 0;
 
@@ -82,8 +80,6 @@ template <typename T> float* convertTrianglesDataInner(uint8_t* input_data, cons
         output_data[idx + 8] = tri.p2.z;
         idx += 9;
     }
-
-    vertices.setInternalData(nullptr, 0);
 
     return output_data;
 }

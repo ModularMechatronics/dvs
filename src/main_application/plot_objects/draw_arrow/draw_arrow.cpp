@@ -8,14 +8,10 @@ DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const Fu
         throw std::runtime_error("Invalid function type for DrawArrow!");
     }
 
-    Vector<Point2<double>> points;
-
-    points.setInternalData(reinterpret_cast<Point2<double>*>(data_ptr_), 2);
+    VectorView<Point2<double>> points{reinterpret_cast<Point2<double>*>(data_ptr_), 2};
 
     p0_ = points(0);
     const Vec2d v = points(1);
-
-    points.setInternalData(nullptr, 0);
 
     const double ang = 30.0 * M_PI / 180.0;
 

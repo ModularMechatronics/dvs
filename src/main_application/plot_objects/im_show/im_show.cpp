@@ -47,7 +47,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
 
     if(num_channels_ == 3)
     {
-        img_c3_.setInternalData(reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols);
+        ImageC3View<float> img_c3{reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols};
 
         points_ptr_ = new float[dims_.rows * dims_.cols * 6 * 6];
         colors_ptr_ = new float[dims_.rows * dims_.cols * 6 * 6];
@@ -127,9 +127,9 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
                 points_ptr_[idx4_z] = 0.0f;
                 points_ptr_[idx5_z] = 0.0f;
 
-                const float color_val_r = img_c3_(r, c, 0);
-                const float color_val_g = img_c3_(r, c, 1);
-                const float color_val_b = img_c3_(r, c, 2);
+                const float color_val_r = img_c3(r, c, 0);
+                const float color_val_g = img_c3(r, c, 1);
+                const float color_val_b = img_c3(r, c, 2);
 
                 points_ptr_[idx0_r] = color_val_r;
                 points_ptr_[idx1_r] = color_val_r;
@@ -154,11 +154,10 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
             }
         }
 
-        img_c3_.setInternalData(nullptr, 0, 0);  // Hack
     }
     else if(num_channels_ == 1)
     {
-        img_c1_.setInternalData(reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols);
+        ImageC1View<float> img_c1{reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols};
 
         points_ptr_ = new float[dims_.rows * dims_.cols * 6 * 6];
         colors_ptr_ = new float[dims_.rows * dims_.cols * 6 * 6];
@@ -238,9 +237,9 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
                 points_ptr_[idx4_z] = 0.0f;
                 points_ptr_[idx5_z] = 0.0f;
 
-                const float color_val_r = img_c1_(r, c);
-                const float color_val_g = img_c1_(r, c);
-                const float color_val_b = img_c1_(r, c);
+                const float color_val_r = img_c1(r, c);
+                const float color_val_g = img_c1(r, c);
+                const float color_val_b = img_c1(r, c);
 
                 points_ptr_[idx0_r] = color_val_r;
                 points_ptr_[idx1_r] = color_val_r;
@@ -264,8 +263,6 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Function
                 points_ptr_[idx5_b] = color_val_b;
             }
         }
-
-        img_c1_.setInternalData(nullptr, 0, 0);  // Hack
     }
     else
     {

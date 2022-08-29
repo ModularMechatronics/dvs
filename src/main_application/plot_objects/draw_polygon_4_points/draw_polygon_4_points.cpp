@@ -8,14 +8,12 @@ DrawPolygon4Points::DrawPolygon4Points(std::unique_ptr<const ReceivedData> recei
         throw std::runtime_error("Invalid function type for DrawPolygon4Points!");
     }
 
-    Vector<Point3d> points;
-    points.setInternalData(reinterpret_cast<Point3d*>(data_ptr_), 4);
+    VectorView<Point3d> points{reinterpret_cast<Point3d*>(data_ptr_), 4};
+
     p0 = points(0);
     p1 = points(1);
     p2 = points(2);
     p3 = points(3);
-
-    points.setInternalData(nullptr, 0);
 }
 
 void DrawPolygon4Points::findMinMax()
