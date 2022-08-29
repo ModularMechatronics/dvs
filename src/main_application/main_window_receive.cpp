@@ -102,7 +102,8 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::AXES_2D) || (fcn == Function::AXES_3D) || (fcn == Function::VIEW) ||
            (fcn == Function::SOFT_CLEAR) || (fcn == Function::STAIRS) || (fcn == Function::DRAW_TILES) ||
            (fcn == Function::DRAW_ARROW) || (fcn == Function::PLOT2_COLLECTION) || (fcn == Function::QUIVER) ||
-           (fcn == Function::STEM) || (fcn == Function::FAST_PLOT2) || (fcn == Function::FAST_PLOT3);
+           (fcn == Function::STEM) || (fcn == Function::FAST_PLOT2) || (fcn == Function::FAST_PLOT3) ||
+           (fcn == Function::LINE_COLLECTION2) || (fcn == Function::LINE_COLLECTION3);
 }
 
 void MainWindow::receiveData()

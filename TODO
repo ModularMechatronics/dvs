@@ -25,7 +25,6 @@ Pre release:
 - Set color in fragment shader with uniform, instead of in vertex shader
 - Finalize small quirks in plot
 - Implement new shader stuff that's in plot for plot3
-- Change plot-LINE_STRIP to separate function, lineCollection, lineSet or something like that
 - Replace old c type arrays with std::array
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
@@ -61,7 +60,8 @@ Pre release:
 - Look through assertions, and replace to DVS_ASSERT
 - Do something better/neater than "fillBufferWithData"?
 - Separate plot types so that shader switching is minimized
-- Implement fastPlot/3
+- Remove "LINE_STRIP"
+- plotCollection3
 Post release:
 - Bar plot
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc

@@ -304,6 +304,66 @@ void testFastPlot()
 
 }
 
+void testLineCollection()
+{
+    const size_t num_lines = 5;
+    Vector<float> x(num_lines * 2), y(num_lines * 2);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    float t = 0.0f;
+
+    size_t idx = 0;
+
+    for (size_t k = 0; k < num_lines; k++)
+    {
+        x(idx) = t * 2.0f;
+        y(idx) = t * 2.0f;
+
+        x(idx + 1) = t * 2.0f + cos(t);
+        y(idx + 1) = t * 2.0f + sin(t);
+
+        idx += 2;
+
+        t = t + 0.3;
+    }
+
+    axis({0.0, 0.0, -1.0}, {10.0, 10.0, 1.0});
+    lineCollection(x, y, properties::Color(255, 0, 0));
+}
+
+void testLineCollection3()
+{
+    const size_t num_lines = 5;
+    Vector<float> x(num_lines * 2), y(num_lines * 2), z(num_lines * 2);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    float t = 0.0f;
+
+    size_t idx = 0;
+
+    for (size_t k = 0; k < num_lines; k++)
+    {
+        x(idx) = t * 2.0f;
+        y(idx) = t * 2.0f;
+        z(idx) = t * 2.0f;
+
+        x(idx + 1) = t * 2.0f + cos(t);
+        y(idx + 1) = t * 2.0f + sin(t);
+        z(idx + 1) = t * 2.0f + sin(t) + cos(t);
+
+        idx += 2;
+
+        t = t + 0.3;
+    }
+
+    axis({0.0, 0.0, -1.0}, {10.0, 10.0, 10.0});
+    lineCollection3(x, y, z, properties::Color(255, 0, 0));
+}
+
 void testStem()
 {
     const size_t num_elements = 30;
