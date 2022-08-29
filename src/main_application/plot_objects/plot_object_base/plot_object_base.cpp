@@ -81,8 +81,6 @@ void PlotObjectBase::assignProperties(const Properties& props)
 {
     is_persistent_ = props.hasProperty(PropertyType::PERSISTENT);
 
-    line_type_ = props.hasProperty(PropertyType::LINE_STRIP) ? GL_LINES : GL_LINE_STRIP;
-
     if (props.hasProperty(PropertyType::NAME))
     {
         name_ = props.getProperty<Name>();

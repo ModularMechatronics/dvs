@@ -8,6 +8,8 @@
 #include "plot_objects/plot3d/plot3d.h"
 #include "plot_objects/fast_plot2d/fast_plot2d.h"
 #include "plot_objects/fast_plot3d/fast_plot3d.h"
+#include "plot_objects/line_collection2/line_collection2.h"
+#include "plot_objects/line_collection3/line_collection3.h"
 #include "plot_objects/stem/stem.h"
 #include "plot_objects/plot2_collection/plot2_collection.h"
 #include "plot_objects/quiver/quiver.h"

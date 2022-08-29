@@ -63,6 +63,8 @@ enum class Function : uint8_t
     GRID_OFF,
     PLOT2,
     PLOT3,
+    LINE_COLLECTION2,
+    LINE_COLLECTION3,
     STEM,
     FAST_PLOT2,
     FAST_PLOT3,

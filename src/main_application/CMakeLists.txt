@@ -44,6 +44,8 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_objects/plot3d/plot3d.cpp
                      plot_objects/fast_plot2d/fast_plot2d.cpp
                      plot_objects/fast_plot3d/fast_plot3d.cpp
+                     plot_objects/line_collection2/line_collection2.cpp
+                     plot_objects/line_collection3/line_collection3.cpp
                      plot_objects/stem/stem.cpp
                      plot_objects/quiver/quiver.cpp
                      plot_objects/scatter/scatter.cpp

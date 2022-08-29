@@ -56,7 +56,6 @@ protected:
     bool is_persistent_;
     bool min_max_calculated_;
     bool visualize_has_run_;
-    GLuint line_type_; // TODO: Shall be moved to plot2d.h
     bool has_name_;
     bool color_map_set_;
     ShaderCollection shader_collection_;

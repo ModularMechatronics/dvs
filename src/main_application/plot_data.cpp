@@ -53,6 +53,14 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
         case Function::FAST_PLOT2:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new FastPlot2D(std::move(received_data), hdr, shader_collection_)));
             break;
+        
+        case Function::LINE_COLLECTION2:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new LineCollection2D(std::move(received_data), hdr, shader_collection_)));
+            break;
+
+        case Function::LINE_COLLECTION3:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new LineCollection3D(std::move(received_data), hdr, shader_collection_)));
+            break;
 
         case Function::FAST_PLOT3:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new FastPlot3D(std::move(received_data), hdr, shader_collection_)));
