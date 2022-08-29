@@ -46,7 +46,6 @@ enum class PropertyType : uint8_t
     FACE_COLOR,
     COLOR_MAP,
     POINT_SIZE,
-    LINE_STRIP,
     PERSISTENT,
     SCATTER_STYLE,
     UNKNOWN
@@ -152,7 +151,6 @@ enum class LineStyleType : uint8_t
 namespace properties
 {
 constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
-constexpr internal::PropertyType LINE_STRIP = internal::PropertyType::LINE_STRIP;
 }  // namespace properties
 
 enum class ElementType : uint8_t

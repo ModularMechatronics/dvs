@@ -59,8 +59,7 @@ Pre release:
 - Time date axis
 - Look through assertions, and replace to DVS_ASSERT
 - Do something better/neater than "fillBufferWithData"?
-- Separate plot types so that shader switching is minimized
-- Remove "LINE_STRIP"
+- Separate plot object vectors so that shader switching is minimized
 - plotCollection3
 Post release:
 - Bar plot

@@ -258,14 +258,7 @@ private:
         if(std::is_same<U, PropertyType>::value)
         {
             const PropertyType* const obj_ptr = reinterpret_cast<const PropertyType* const>(&obj);
-            if(*obj_ptr == PropertyType::LINE_STRIP)
-            {
-                ptr->num_bytes = sizeof(PropertyBase);
-                PropertyBase ps;
-                ps.setPropertyType(PropertyType::LINE_STRIP);
-                fillBufferWithObjects(ptr->data, ps);
-            }
-            else if(*obj_ptr == PropertyType::PERSISTENT)
+            if(*obj_ptr == PropertyType::PERSISTENT)
             {
                 ptr->num_bytes = sizeof(PropertyBase);
                 PropertyBase ps;
@@ -295,14 +288,7 @@ private:
         if(std::is_same<U, PropertyType>::value)
         {
             const PropertyType* const obj_ptr = reinterpret_cast<const PropertyType* const>(&obj);
-            if(*obj_ptr == PropertyType::LINE_STRIP)
-            {
-                ptr->num_bytes = sizeof(PropertyBase);
-                PropertyBase ps;
-                ps.setPropertyType(PropertyType::LINE_STRIP);
-                fillBufferWithObjects(ptr->data, ps);
-            }
-            else if(*obj_ptr == PropertyType::PERSISTENT)
+            if(*obj_ptr == PropertyType::PERSISTENT)
             {
                 ptr->num_bytes = sizeof(PropertyBase);
                 PropertyBase ps;

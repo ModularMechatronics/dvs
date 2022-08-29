@@ -103,10 +103,6 @@ public:
                         ptr = std::make_shared<PropertyBase>();
                         ptr->setPropertyType(PropertyType::PERSISTENT);
                         break;
-                    case PropertyType::LINE_STRIP:
-                        ptr = std::make_shared<PropertyBase>();
-                        ptr->setPropertyType(PropertyType::LINE_STRIP);
-                        break;
                     case PropertyType::UNKNOWN:
                         throw std::runtime_error("'UNKNOWN' type found!");
                         break;
