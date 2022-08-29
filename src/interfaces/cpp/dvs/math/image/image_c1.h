@@ -9,13 +9,67 @@
 
 namespace dvs
 {
+
+template <typename T> class ImageC1View
+{
+private:
+    T* data_;
+    size_t num_rows_;
+    size_t num_cols_;
+
+public:
+    ImageC1View() : data_{nullptr}, num_rows_{0U}, num_cols_{0U}
+    {
+
+    }
+
+    ImageC1View(T* const data_ptr_in, const size_t num_rows, const size_t num_cols) :
+        data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
+    {}
+
+    T* data() const
+    {
+        return data_;
+    }
+
+    size_t numRows() const
+    {
+        return num_rows_;
+    }
+
+    size_t numCols() const
+    {
+        return num_cols_;
+    }
+
+    size_t numBytes() const
+    {
+        return num_rows_ * num_cols_ * sizeof(T);
+    }
+
+    T& operator()(const size_t r, const size_t c)
+    {
+        assert(r < num_rows_ && "Row index is larger than num_rows_ - 1!");
+        assert(c < num_cols_ && "Column index is larger than num_cols_ - 1!");
+
+        return data_[r * num_cols_ + c];
+    }
+
+    const T& operator()(const size_t r, const size_t c) const
+    {
+        assert(r < num_rows_ && "Row index is larger than num_rows_ - 1!");
+        assert(c < num_cols_ && "Column index is larger than num_cols_ - 1!");
+
+        return data_[r * num_cols_ + c];
+    }
+};
+
 template <typename T> class ImageC1
 {
 private:
     T* data_;
     size_t num_rows_;
     size_t num_cols_;
-    bool is_allocated_;
 
 public:
     ImageC1();
@@ -25,12 +79,10 @@ public:
     T& operator()(const size_t r, const size_t c);
     const T& operator()(const size_t r, const size_t c) const;
 
-    bool isAllocated() const;
     size_t numRows() const;
     size_t numCols() const;
     size_t numBytes() const;
     void fillBufferWithData(uint8_t* const buffer) const;
-    void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
 
     void resize(const size_t num_rows_, const size_t num_cols_);
 
@@ -40,34 +92,19 @@ public:
 
 template <typename T> ImageC1<T>::~ImageC1()
 {
-    if (is_allocated_)
+    if (num_rows_ > 0U)
     {
         delete[] data_;
     }
 }
 
-template <typename T> ImageC1<T>::ImageC1() : num_rows_(0), num_cols_(0), is_allocated_(false) {}
+template <typename T> ImageC1<T>::ImageC1() : data_{nullptr}, num_rows_{0}, num_cols_{0} {}
 
 template <typename T> ImageC1<T>::ImageC1(const size_t num_rows, const size_t num_cols)
 {
+    DVS_ASSERT(num_rows > 0U) << "Cannot initialize with number of rows to 0!";
+    DVS_ASSERT(num_cols > 0U) << "Cannot initialize with number of columns to 0!";
     data_ = new T[num_rows * num_cols];
-    num_rows_ = num_rows;
-    num_cols_ = num_cols;
-    is_allocated_ = true;
-}
-
-template <typename T> void ImageC1<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
-{
-    if (input_ptr == nullptr)
-    {
-        is_allocated_ = false;
-    }
-    else
-    {
-        is_allocated_ = true;
-    }
-
-    data_ = input_ptr;
     num_rows_ = num_rows;
     num_cols_ = num_cols;
 }
@@ -86,18 +123,17 @@ template <typename T> size_t ImageC1<T>::numBytes() const
 
 template <typename T> void ImageC1<T>::resize(const size_t num_rows, const size_t num_cols)
 {
-    if (is_allocated_)
+    DVS_ASSERT(num_rows > 0U) << "Cannot initialize with number of rows to 0!";
+    DVS_ASSERT(num_cols > 0U) << "Cannot initialize with number of columns to 0!";
+
+    if (num_rows_ > 0U)
     {
         delete[] data_;
-        is_allocated_ = false;
-        num_rows_ = 0;
-        num_cols_ = 0;
     }
 
     data_ = new T[num_rows * num_cols];
     num_rows_ = num_rows;
     num_cols_ = num_cols;
-    is_allocated_ = true;
 }
 
 template <typename T> size_t ImageC1<T>::numRows() const
@@ -134,11 +170,6 @@ template <typename T> const T& ImageC1<T>::operator()(const size_t r, const size
     assert(c < num_cols_ && "Column index is larger than num_cols_-1!");
 
     return data_[r * num_cols_ + c];
-}
-
-template <typename T> bool ImageC1<T>::isAllocated() const
-{
-    return is_allocated_;
 }
 
 }  // namespace dvs

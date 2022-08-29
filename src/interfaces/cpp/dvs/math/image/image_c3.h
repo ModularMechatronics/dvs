@@ -9,13 +9,70 @@
 
 namespace dvs
 {
+
+template <typename T> class ImageC3View
+{
+private:
+    T* data_;
+    size_t num_rows_;
+    size_t num_cols_;
+    size_t num_element_per_channel_;
+
+public:
+    ImageC3View() : data_{nullptr}, num_rows_{0U}, num_cols_{0U}, num_element_per_channel_{0U}
+    {
+
+    }
+
+    ImageC3View(T* const data_ptr_in, const size_t num_rows, const size_t num_cols) :
+        data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}, num_element_per_channel_{num_rows_ * num_cols_}
+    {}
+
+    T* data() const
+    {
+        return data_;
+    }
+
+    size_t numRows() const
+    {
+        return num_rows_;
+    }
+
+    size_t numCols() const
+    {
+        return num_cols_;
+    }
+
+    size_t numBytes() const
+    {
+        return 3 * num_rows_ * num_cols_ * sizeof(T);
+    }
+
+    T& operator()(const size_t r, const size_t c, const size_t ch)
+    {
+        assert(r < num_rows_ && "Row index is larger than num_rows_ - 1!");
+        assert(c < num_cols_ && "Column index is larger than num_cols_ - 1!");
+        assert(ch < 3 && "Channel index is larger than 2!");
+
+        return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
+    }
+
+    const T& operator()(const size_t r, const size_t c, const size_t ch) const
+    {
+        assert(r < num_rows_ && "Row index is larger than num_rows_ - 1!");
+        assert(c < num_cols_ && "Column index is larger than num_cols_ - 1!");
+        assert(ch < 3 && "Channel index is larger than 2!");
+
+        return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
+    }
+};
+
 template <typename T> class ImageC3
 {
 private:
     T* data_;
     size_t num_rows_;
     size_t num_cols_;
-    bool is_allocated_;
     size_t num_element_per_channel_;
 
 public:
@@ -26,50 +83,33 @@ public:
     T& operator()(const size_t r, const size_t c, const size_t ch);
     const T& operator()(const size_t r, const size_t c, const size_t ch) const;
 
-    bool isAllocated() const;
     size_t numRows() const;
     size_t numCols() const;
     size_t numBytes() const;
     void fillBufferWithData(uint8_t* const buffer) const;
-    void setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols);
 
     T* data() const;
 };
 
 template <typename T> ImageC3<T>::~ImageC3()
 {
-    if (is_allocated_)
+    if (num_rows_ > 0U)
     {
         delete[] data_;
     }
 }
 
 template <typename T>
-ImageC3<T>::ImageC3() : num_rows_(0), num_cols_(0), is_allocated_(false), num_element_per_channel_(0)
+ImageC3<T>::ImageC3() : data_{nullptr}, num_rows_(0U), num_cols_(0U), num_element_per_channel_(0U)
 {
 }
 
 template <typename T> ImageC3<T>::ImageC3(const size_t num_rows, const size_t num_cols)
 {
+    DVS_ASSERT(num_rows > 0U) << "Cannot initialize with number of rows to 0!";
+    DVS_ASSERT(num_cols > 0U) << "Cannot initialize with number of columns to 0!";
+
     data_ = new T[num_rows * num_cols * 3];
-    num_rows_ = num_rows;
-    num_cols_ = num_cols;
-    num_element_per_channel_ = num_rows_ * num_cols_;
-    is_allocated_ = true;
-}
-
-template <typename T> void ImageC3<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
-{
-    if (input_ptr == nullptr)
-    {
-        is_allocated_ = false;
-    }
-    else
-    {
-        is_allocated_ = true;
-    }
-
-    data_ = input_ptr;
     num_rows_ = num_rows;
     num_cols_ = num_cols;
     num_element_per_channel_ = num_rows_ * num_cols_;
@@ -104,8 +144,9 @@ template <typename T> T* ImageC3<T>::data() const
 
 template <typename T> T& ImageC3<T>::operator()(const size_t r, const size_t c, const size_t ch)
 {
-    assert(r < num_rows_ && "Row index is larger than num_rows_-1!");
-    assert(c < num_cols_ && "Column index is larger than num_cols_-1!");
+    assert(r < num_rows_ && "Row index is larger than num_rows_ - 1!");
+    assert(c < num_cols_ && "Column index is larger than num_cols_ - 1!");
+    assert(ch < 3 && "Channel index is larger than 2!");
 
     return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
 }
@@ -114,13 +155,9 @@ template <typename T> const T& ImageC3<T>::operator()(const size_t r, const size
 {
     assert(r < num_rows_ && "Row index is larger than num_rows_-1!");
     assert(c < num_cols_ && "Column index is larger than num_cols_-1!");
+    assert(ch < 3 && "Channel index is larger than 2!");
 
     return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
-}
-
-template <typename T> bool ImageC3<T>::isAllocated() const
-{
-    return is_allocated_;
 }
 
 }  // namespace dvs

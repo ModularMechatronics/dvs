@@ -72,9 +72,7 @@ inline float* convertSingleMatrixDataInner(uint8_t* const data_buffer,
                                            const Vec2<double>& tile_size)
 {
     float* output_data = new float[num_rows * num_cols * 6 * 3];
-    Matrix<T> z;
-
-    z.setInternalData(reinterpret_cast<T*>(data_buffer), num_rows, num_cols);
+    MatrixView<T> z{reinterpret_cast<T*>(data_buffer), num_rows, num_cols};
 
     size_t idx = 0;
     for (size_t r = 0; r < num_rows; r++)
@@ -133,8 +131,6 @@ inline float* convertSingleMatrixDataInner(uint8_t* const data_buffer,
             output_data[idx5_z] = z(r, c);
         }
     }
-
-    z.setInternalData(nullptr, 0, 0);
 
     return output_data;
 }

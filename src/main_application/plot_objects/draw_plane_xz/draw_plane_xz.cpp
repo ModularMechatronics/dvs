@@ -9,18 +9,13 @@ DrawPlaneXZ::DrawPlaneXZ(std::unique_ptr<const ReceivedData> received_data, cons
         throw std::runtime_error("Invalid function type for DrawPolygon4Points!");
     }
 
-    Vector<PointXZ<double>> points;
-    points.setInternalData(reinterpret_cast<PointXZ<double>*>(data_ptr_), 2);
+    VectorView<PointXZ<double>> points{reinterpret_cast<PointXZ<double>*>(data_ptr_), 2};
+
     PointXZ<double> p0 = points(0);
     PointXZ<double> p1 = points(1);
 
-    points.setInternalData(nullptr, 0);
-
-    Vector<Plane<double>> planes;
-    planes.setInternalData(reinterpret_cast<Plane<double>*>(data_ptr_ + sizeof(PointXZ<double>) * 2), 1);
+    VectorView<Plane<double>> planes{reinterpret_cast<Plane<double>*>(data_ptr_ + sizeof(PointXZ<double>) * 2), 1};
     const Planed plane = planes(0);
-
-    planes.setInternalData(nullptr, 0);
 
     p00 = Point3d(p0.x, plane.evalXZ(p0.x, p0.z), p0.z);
     p11 = Point3d(p1.x, plane.evalXZ(p1.x, p1.z), p1.z);

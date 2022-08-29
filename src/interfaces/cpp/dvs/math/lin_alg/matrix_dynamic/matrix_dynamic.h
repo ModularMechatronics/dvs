@@ -93,7 +93,9 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& m)
 
         data_ = m.data();
 
-        m.setInternalData(nullptr, 0, 0);
+        m.data_ = nullptr;
+        m.num_rows_ = 0U;
+        m.num_cols_ = 0U;
     }
 
     return *this;
@@ -144,6 +146,8 @@ template <typename T> size_t Matrix<T>::size() const
 
 template <typename T> void Matrix<T>::resize(const size_t num_rows, const size_t num_cols)
 {
+    DVS_ASSERT(num_rows > 0U) << "Cannot set number of rows to 0!";
+    DVS_ASSERT(num_cols > 0U) << "Cannot set number of columns to 0!";
     if ((num_rows_ > 0U) && (num_cols_ > 0U))
     {
         delete[] data_;
@@ -153,13 +157,6 @@ template <typename T> void Matrix<T>::resize(const size_t num_rows, const size_t
     num_cols_ = num_cols;
 
     DATA_ALLOCATION(data_, num_rows_ * num_cols_, T, "Matrix");
-}
-
-template <typename T> void Matrix<T>::setInternalData(T* const input_ptr, const size_t num_rows, const size_t num_cols)
-{
-    data_ = input_ptr;
-    num_rows_ = num_rows;
-    num_cols_ = num_cols;
 }
 
 template <typename T> T* Matrix<T>::data() const

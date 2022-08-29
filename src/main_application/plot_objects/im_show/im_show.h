@@ -22,9 +22,6 @@ private:
 
     uint8_t num_channels_;
 
-    ImageC1<float> img_c1_;
-    ImageC3<float> img_c3_;
-
     internal::Dimension2D dims_;
     unsigned char* pixel_data_;
     GLuint program_id_;

@@ -15,6 +15,7 @@ template <typename T> Vector<T>::Vector() : data_(nullptr), size_(0) {}
 
 template <typename T> Vector<T>::Vector(const size_t vector_length)
 {
+    assert(vector_length > 0U && "Length of vector can't be 0!");
     size_ = vector_length;
 
     DATA_ALLOCATION(data_, vector_length, T, "Vector");
@@ -204,23 +205,16 @@ template <typename T> void Vector<T>::fill(const T& val)
 
 template <typename T> void Vector<T>::resize(const size_t new_size)
 {
-    if ((new_size != size_) && (new_size != 0))
+    assert((new_size > 0U) && "Length of vector can't be 0!");
+    if (new_size != size_)
     {
         if (size_ > 0U)
         {
             delete[] data_;
         }
 
-        if (new_size == 0)
-        {
-            size_ = 0;
-            data_ = nullptr;
-        }
-        else
-        {
-            DATA_ALLOCATION(data_, new_size, T, "Vector");
-            size_ = new_size;
-        }
+        DATA_ALLOCATION(data_, new_size, T, "Vector");
+        size_ = new_size;
     }
 }
 
@@ -233,12 +227,6 @@ template <typename T> size_t Vector<T>::endIndex() const
 template <typename T> T* Vector<T>::data() const
 {
     return data_;
-}
-
-template <typename T> void Vector<T>::setInternalData(T* const input_ptr, const size_t num_elements)
-{
-    data_ = input_ptr;
-    size_ = num_elements;
 }
 
 template <typename T> T* Vector<T>::begin() const

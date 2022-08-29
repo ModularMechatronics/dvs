@@ -67,12 +67,8 @@ inline float* convertVerticesData(uint8_t* input_data,
                                   const uint32_t num_bytes_per_element)
 {
     float* output_data = new float[num_indices * 3 * 3];
-    Vector<Point3<T>> vertices;
-    Vector<IndexTriplet> indices;
-
-    vertices.setInternalData(reinterpret_cast<Point3<T>*>(input_data), num_vertices);
-    indices.setInternalData(reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])),
-                            num_indices);
+    VectorView<Point3<T>> vertices{reinterpret_cast<Point3<T>*>(input_data), num_vertices};
+    VectorView<IndexTriplet> indices{reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
 
     size_t idx = 0;
 
@@ -95,9 +91,6 @@ inline float* convertVerticesData(uint8_t* input_data,
         output_data[idx + 8] = p2.z;
         idx += 9;
     }
-
-    vertices.setInternalData(nullptr, 0);
-    indices.setInternalData(nullptr, 0);
 
     return output_data;
 }

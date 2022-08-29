@@ -130,22 +130,20 @@ std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectorsInternal(uint8_t* const data_b
                                                              const size_t num_bytes_for_one_vec)
 {
     Vec3d min_vec, max_vec;
-    Vector<T> x, y, z;
+    VectorView<T> x{reinterpret_cast<T*>(data_buffer), num_elements},
+        y{reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_vec])), num_elements},
+        z{reinterpret_cast<T*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements};
 
-    x.setInternalData(reinterpret_cast<T*>(data_buffer), num_elements);
-    y.setInternalData(reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
-    z.setInternalData(reinterpret_cast<T*>(&(data_buffer[2 * num_bytes_for_one_vec])), num_elements);
-    min_vec.x = dvs::min(x);
+    std::tie<double, double>(min_vec.x, max_vec.x) = x.findMinMax();
+    std::tie<double, double>(min_vec.y, max_vec.y) = y.findMinMax();
+    std::tie<double, double>(min_vec.z, max_vec.z) = z.findMinMax();
+    /*min_vec.x = dvs::min(x);
     min_vec.y = dvs::min(y);
     min_vec.z = dvs::min(z);
 
     max_vec.x = dvs::max(x);
     max_vec.y = dvs::max(y);
-    max_vec.z = dvs::max(z);
-
-    x.setInternalData(nullptr, 0);
-    y.setInternalData(nullptr, 0);
-    z.setInternalData(nullptr, 0);
+    max_vec.z = dvs::max(z);*/
 
     return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
 }
@@ -212,18 +210,12 @@ std::pair<Vec2d, Vec2d> findMinMaxFromTwoVectorsInternal(uint8_t* const data_buf
                                                            const size_t num_elements,
                                                            const size_t num_bytes_for_one_vec)
 {
-    Vector<T> x, y;
+    VectorView<T> x{reinterpret_cast<T*>(data_buffer), num_elements},
+        y{reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_vec])), num_elements};
     Vec2d min_vec, max_vec;
 
-    x.setInternalData(reinterpret_cast<T*>(data_buffer), num_elements);
-    y.setInternalData(reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_vec])), num_elements);
-    min_vec.x = dvs::min(x);
-    min_vec.y = dvs::min(y);
-
-    max_vec.x = dvs::max(x);
-    max_vec.y = dvs::max(y);
-    x.setInternalData(nullptr, 0);
-    y.setInternalData(nullptr, 0);
+    std::tie<double, double>(min_vec.x, max_vec.x) = x.findMinMax();
+    std::tie<double, double>(min_vec.y, max_vec.y) = y.findMinMax();
 
     return std::pair<Vec2d, Vec2d>(min_vec, max_vec);
 }
@@ -291,23 +283,14 @@ std::pair<Vec3d, Vec3d> findMinMaxFromThreeMatricesInternal(uint8_t* const data_
                                                               const size_t num_cols,
                                                               const size_t num_bytes_for_one_mat)
 {
-    Matrix<T> x, y, z;
+    MatrixView<T> x{reinterpret_cast<T*>(data_buffer), num_rows, num_cols},
+        y{reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_mat])), num_rows, num_cols},
+        z{reinterpret_cast<T*>(&(data_buffer[2 * num_bytes_for_one_mat])), num_rows, num_cols};
     Vec3<T> min_vec, max_vec;
 
-    x.setInternalData(reinterpret_cast<T*>(data_buffer), num_rows, num_cols);
-    y.setInternalData(reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_mat])), num_rows, num_cols);
-    z.setInternalData(reinterpret_cast<T*>(&(data_buffer[2 * num_bytes_for_one_mat])), num_rows, num_cols);
-    // TODO: Replace with findMinMax
-    min_vec.x = dvs::min(x);
-    min_vec.y = dvs::min(y);
-    min_vec.z = dvs::min(z);
-
-    max_vec.x = dvs::max(x);
-    max_vec.y = dvs::max(y);
-    max_vec.z = dvs::max(z);
-    x.setInternalData(nullptr, 0, 0);
-    y.setInternalData(nullptr, 0, 0);
-    z.setInternalData(nullptr, 0, 0);
+    std::tie<T, T>(min_vec.x, max_vec.x) = x.findMinMax();
+    std::tie<T, T>(min_vec.y, max_vec.y) = y.findMinMax();
+    std::tie<T, T>(min_vec.z, max_vec.z) = z.findMinMax();
 
     return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
 }

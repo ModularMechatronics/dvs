@@ -120,10 +120,9 @@ LegendProperties Surf::getLegendProperties() const
 template <typename T>
 float* convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size_t num_bytes_for_one_vec)
 {
-    Matrix<T> x, y, z;
-    x.setInternalData(reinterpret_cast<T*>(input_data), dims.rows, dims.cols);
-    y.setInternalData(reinterpret_cast<T*>(&(input_data[num_bytes_for_one_vec])), dims.rows, dims.cols);
-    z.setInternalData(reinterpret_cast<T*>(&(input_data[2 * num_bytes_for_one_vec])), dims.rows, dims.cols);
+    MatrixView<T> x{reinterpret_cast<T*>(input_data), dims.rows, dims.cols},
+        y{reinterpret_cast<T*>(&(input_data[num_bytes_for_one_vec])), dims.rows, dims.cols},
+        z{reinterpret_cast<T*>(&(input_data[2 * num_bytes_for_one_vec])), dims.rows, dims.cols};
 
     const size_t new_data_size = (dims.rows - 1) * (dims.cols - 1) * 6 * 3;
 
@@ -184,20 +183,15 @@ float* convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size
         }
     }
 
-    x.setInternalData(nullptr, 0, 0);
-    y.setInternalData(nullptr, 0, 0);
-    z.setInternalData(nullptr, 0, 0);
-
     return output_data;
 }
 
 template <typename T>
 float* convertMatrixColorData(uint8_t* input_data, const Dimension2D dims, const size_t num_bytes_for_one_vec, const Vec3d min_vec, const Vec3d max_vec, const RGBColorMap<float>* const color_map_function)
 {
-    Matrix<T> x, y, z;
-    x.setInternalData(reinterpret_cast<T*>(input_data), dims.rows, dims.cols);
-    y.setInternalData(reinterpret_cast<T*>(&(input_data[num_bytes_for_one_vec])), dims.rows, dims.cols);
-    z.setInternalData(reinterpret_cast<T*>(&(input_data[2 * num_bytes_for_one_vec])), dims.rows, dims.cols);
+    MatrixView<T> x{reinterpret_cast<T*>(input_data), dims.rows, dims.cols},
+        y{reinterpret_cast<T*>(&(input_data[num_bytes_for_one_vec])), dims.rows, dims.cols},
+        z{reinterpret_cast<T*>(&(input_data[2 * num_bytes_for_one_vec])), dims.rows, dims.cols};
 
     const size_t new_data_size = (dims.rows - 1) * (dims.cols - 1) * 6 * 3;
     const float delta = max_vec.z - min_vec.z;
@@ -264,10 +258,6 @@ float* convertMatrixColorData(uint8_t* input_data, const Dimension2D dims, const
 
         }
     }
-
-    x.setInternalData(nullptr, 0, 0);
-    y.setInternalData(nullptr, 0, 0);
-    z.setInternalData(nullptr, 0, 0);
 
     return output_data;
 }
