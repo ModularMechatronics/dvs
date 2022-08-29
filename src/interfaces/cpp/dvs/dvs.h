@@ -57,7 +57,7 @@ template <typename T, typename... Us>
 void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>>& y, const Us&... settings)
 {
     internal::FunctionHeader hdr;
-    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT2_COLLECTION);
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION2);
     hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::FunctionHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
