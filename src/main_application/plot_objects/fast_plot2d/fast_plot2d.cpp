@@ -1,21 +1,21 @@
-#include "main_application/plot_objects/plot2d/plot2d.h"
+#include "main_application/plot_objects/fast_plot2d/fast_plot2d.h"
 
-float* convertData2DOuter(const uint8_t* const input_data,
+float* convertData2DOuterFastPlot2(const uint8_t* const input_data,
                           const DataType data_type,
                           const size_t num_elements,
                           const size_t num_bytes_per_element,
                           const size_t num_bytes_for_one_vec);
 
-Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+FastPlot2D::FastPlot2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
-    if (type_ != Function::PLOT2)
+    if (type_ != Function::FAST_PLOT2)
     {
-        throw std::runtime_error("Invalid function type for Plot2D!");
+        throw std::runtime_error("Invalid function type for FastPlot2D!");
     }
 
     points_ptr_ =
-        convertData2DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+        convertData2DOuterFastPlot2(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
@@ -29,7 +29,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Function
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
-void Plot2D::findMinMax()
+void FastPlot2D::findMinMax()
 {
     Vec2d min_vec_2d, max_vec_2d;
     std::tie<Vec2d, Vec2d>(min_vec_2d, max_vec_2d) =
@@ -44,19 +44,19 @@ void Plot2D::findMinMax()
     max_vec.z = 1.0;
 }
 
-void Plot2D::render()
+void FastPlot2D::render()
 {
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(line_type_, 0, num_elements_);
     glBindVertexArray(0);
 }
 
-Plot2D::~Plot2D()
+FastPlot2D::~FastPlot2D()
 {
     delete[] points_ptr_;
 }
 
-LegendProperties Plot2D::getLegendProperties() const
+LegendProperties FastPlot2D::getLegendProperties() const
 {
     LegendProperties lp{PlotObjectBase::getLegendProperties()};
     lp.type = LegendType::LINE;
@@ -66,7 +66,7 @@ LegendProperties Plot2D::getLegendProperties() const
 }
 
 template <typename T>
-float* convertData2D(const uint8_t* const input_data,
+float* convertData2DFastPlot2(const uint8_t* const input_data,
                        const size_t num_elements,
                        const size_t num_bytes_per_element,
                        const size_t num_bytes_for_one_vec)
@@ -90,7 +90,7 @@ float* convertData2D(const uint8_t* const input_data,
     return output_data;
 }
 
-float* convertData2DOuter(const uint8_t* const input_data,
+float* convertData2DOuterFastPlot2(const uint8_t* const input_data,
                                    const DataType data_type,
                                    const size_t num_elements,
                                    const size_t num_bytes_per_element,
@@ -99,43 +99,43 @@ float* convertData2DOuter(const uint8_t* const input_data,
     float* output_data;
     if (data_type == DataType::FLOAT)
     {
-        output_data = convertData2D<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::DOUBLE)
     {
-        output_data = convertData2D<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT8)
     {
-        output_data = convertData2D<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT16)
     {
-        output_data = convertData2D<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT32)
     {
-        output_data = convertData2D<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT64)
     {
-        output_data = convertData2D<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT8)
     {
-        output_data = convertData2D<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT16)
     {
-        output_data = convertData2D<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT32)
     {
-        output_data = convertData2D<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT64)
     {
-        output_data = convertData2D<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DFastPlot2<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else
     {

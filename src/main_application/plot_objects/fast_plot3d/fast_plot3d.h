@@ -10,7 +10,7 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 
-class Plot3D : public PlotObjectBase
+class FastPlot3D : public PlotObjectBase
 {
 private:
     uint8_t* points_ptr_;
@@ -18,9 +18,9 @@ private:
     void findMinMax() override;
 
 public:
-    Plot3D();
-    Plot3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
-    ~Plot3D();
+    FastPlot3D();
+    FastPlot3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
+    ~FastPlot3D();
 
     void render() override;
 };
