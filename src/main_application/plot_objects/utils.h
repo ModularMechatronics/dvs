@@ -29,6 +29,10 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 2;
         case Function::PLOT3:
             return 3;
+        case Function::FAST_PLOT2:
+            return 2;
+        case Function::FAST_PLOT3:
+            return 3;
         case Function::STEM:
             return 2;
         case Function::SCATTER2:

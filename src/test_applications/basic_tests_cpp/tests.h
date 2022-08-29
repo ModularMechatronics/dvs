@@ -258,6 +258,52 @@ void testPlot()
 
 }
 
+void testFastPlot()
+{
+    const size_t num_elements = 30;
+    Vector<float> x(num_elements), y(num_elements);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    float t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = 10.0 * cos(t) + 20.0;
+        y(k) = 10.0 * sin(t) + 20.0 + k;
+
+        t = t + 0.3;
+    }
+
+    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
+    fastPlot(x + 3.0f, y, properties::Color(0, 255, 255));
+    fastPlot(x + 4.0f, y, properties::Color(212, 14, 55));
+    fastPlot(x + 5.0f, y, properties::Color(212, 255, 55));
+    fastPlot(x + 6.0f, y, properties::Color(212, 14, 255));
+
+    setCurrentElement("view_02");
+    clearView();
+    t = 0.0;
+    x.resize(num_elements * 10);
+    y.resize(num_elements * 10);
+
+    for (size_t k = 0; k < (num_elements * 10); k++)
+    {
+        x(k) = 10.0f * cos(t) + 20.0f;
+        y(k) = 10.0f * sin(t) + 20.0f + static_cast<float>(k) / 10.0f;
+
+        t = t + 0.03;
+    }
+
+    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
+    fastPlot(x + 3.0f, y, properties::Color(0, 255, 255));
+    fastPlot(x + 4.0f, y, properties::Color(212, 14, 55));
+    fastPlot(x + 5.0f, y, properties::Color(212, 255, 55));
+    fastPlot(x + 6.0f, y, properties::Color(212, 14, 255));
+
+}
+
 void testStem()
 {
     const size_t num_elements = 30;
@@ -320,6 +366,33 @@ void testPlot3()
 
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
     plot3(xf + 0.1f, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(7));
+}
+
+void testFastPlot3()
+{
+    const size_t num_elements = 30;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements);
+    Vector<float> xf(num_elements), yf(num_elements), zf(num_elements);
+
+    double t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        xf(k) = 1.0 * cos(t) + 0.0;
+        yf(k) = 1.0 * sin(t) + 0.0;
+        zf(k) = t;
+
+        x(k) = xf(k);
+        y(k) = yf(k);
+        z(k) = t;
+        t = t + 0.3;
+    }
+
+    setCurrentElement("view_00");
+    clearView();
+
+    fastPlot3(x, y, z, properties::Color(212, 14, 55));
+    fastPlot3(xf + 0.1f, yf, zf, properties::Color(21, 14, 55));
 }
 
 void testImShow()
