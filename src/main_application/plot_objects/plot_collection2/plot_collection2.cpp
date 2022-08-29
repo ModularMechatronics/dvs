@@ -1,4 +1,4 @@
-#include "main_application/plot_objects/plot2_collection/plot2_collection.h"
+#include "main_application/plot_objects/plot_collection2/plot_collection2.h"
 
 template <typename T>
 inline float* convertCollectionData(uint8_t* input_data,
@@ -102,12 +102,12 @@ inline float* convertCollectionDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-Plot2Collection::Plot2Collection(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
-    if (type_ != Function::PLOT2_COLLECTION)
+    if (type_ != Function::PLOT_COLLECTION2)
     {
-        throw std::runtime_error("Invalid function type for Plot2Collection!");
+        throw std::runtime_error("Invalid function type for PlotCollection2D!");
     }
 
     num_points_ = 0;
@@ -143,7 +143,7 @@ Plot2Collection::Plot2Collection(std::unique_ptr<const ReceivedData> received_da
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
-void Plot2Collection::findMinMax()
+void PlotCollection2D::findMinMax()
 {
     // TODO
     min_vec = {-1.0, -1.0, -1.0};
@@ -166,11 +166,11 @@ void Plot2Collection::findMinMax()
     }*/
 }
 
-void Plot2Collection::render()
+void PlotCollection2D::render()
 {
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_LINES, 0, num_points_);
     glBindVertexArray(0);
 }
 
-Plot2Collection::~Plot2Collection() {}
+PlotCollection2D::~PlotCollection2D() {}

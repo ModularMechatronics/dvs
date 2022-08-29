@@ -10,7 +10,7 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 
-class Plot2Collection : public PlotObjectBase
+class PlotCollection2D : public PlotObjectBase
 {
 private:
     float* points_ptr_;
@@ -21,9 +21,9 @@ private:
     void findMinMax() override;
 
 public:
-    Plot2Collection();
-    Plot2Collection(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
-    ~Plot2Collection();
+    PlotCollection2D();
+    PlotCollection2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
+    ~PlotCollection2D();
 
     void render() override;
 };

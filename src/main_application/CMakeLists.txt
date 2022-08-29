@@ -39,7 +39,7 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_objects/draw_tiles/draw_tiles.cpp
                      plot_objects/draw_triangles_3d/draw_triangles_3d.cpp
                      plot_objects/im_show/im_show.cpp
-                     plot_objects/plot2_collection/plot2_collection.cpp
+                     plot_objects/plot_collection2/plot_collection2.cpp
                      plot_objects/plot2d/plot2d.cpp
                      plot_objects/plot3d/plot3d.cpp
                      plot_objects/fast_plot2d/fast_plot2d.cpp
