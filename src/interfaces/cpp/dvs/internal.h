@@ -248,6 +248,77 @@ void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
     delete[] data_blob;
 }
 
+template <typename T> void fillBufferWithRefCollection(uint8_t* const data_blob, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent)
+{
+    size_t total_num_bytes = 0;
+    for (size_t k = 0; k < data_to_be_sent.size(); k++)
+    {
+        const Vector<T>& data_ref = data_to_be_sent[k];
+        data_ref.fillBufferWithData(&(data_blob[total_num_bytes]));
+        total_num_bytes += data_ref.numBytes();
+    }
+}
+
+template <typename T, typename... Us>
+void fillBufferWithRefCollection(uint8_t* const data_blob, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent, const Us&... other_elements)
+{
+    size_t total_num_bytes = 0;
+    for (size_t k = 0; k < data_to_be_sent.size(); k++)
+    {
+        const Vector<T>& data_ref = data_to_be_sent[k];
+        data_ref.fillBufferWithData(&(data_blob[total_num_bytes]));
+        total_num_bytes += data_ref.numBytes();
+    }
+    fillBufferWithRefCollection(&(data_blob[total_num_bytes]), other_elements...);
+}
+
+template <typename T, typename... Us>
+void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
+                                      const FunctionHeader& hdr,
+                                      const Vector<uint8_t>& vector_lengths,
+                                      const size_t num_bytes_to_send,
+                                      const std::vector<std::reference_wrapper<Vector<T>>>& first_element,
+                                      const Us&... other_elements)
+{
+    const uint64_t num_bytes_hdr = hdr.numBytes();
+    const uint64_t num_bytes_from_object = num_bytes_to_send + num_bytes_hdr;
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t) + vector_lengths.numBytes();
+
+    uint8_t* const data_blob = new uint8_t[num_bytes];
+
+    uint64_t idx = 0;
+    data_blob[idx] = isBigEndian();
+    idx += 1;
+
+    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    idx += sizeof(uint64_t);
+
+    hdr.fillBufferWithData(&(data_blob[idx]));
+    idx += num_bytes_hdr;
+
+    vector_lengths.fillBufferWithData(&(data_blob[idx]));
+    idx += vector_lengths.numBytes();
+
+    for (size_t k = 0; k < first_element.size(); k++)
+    {
+        const Vector<T>& fe_ref = first_element[k];
+        fe_ref.fillBufferWithData(&(data_blob[idx]));
+        idx += fe_ref.numBytes();
+    }
+
+    fillBufferWithRefCollection(&(data_blob[idx]), other_elements...);
+
+    send_function(data_blob, num_bytes + 8);
+
+    delete[] data_blob;
+}
+
 inline void sendHeaderOnly(const SendFunctionType& send_function, const FunctionHeader& hdr)
 {
     const uint64_t num_bytes_hdr = hdr.numBytes();

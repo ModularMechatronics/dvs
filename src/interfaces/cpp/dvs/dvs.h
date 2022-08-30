@@ -65,7 +65,7 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
 
     assert(x.size() == y.size());
 
-    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths has to be larger than uint8_t
+    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths type has to be larger than uint8_t
 
     for (size_t k = 0; k < x.size(); k++)
     {
@@ -83,6 +83,37 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
 }
 
 template <typename T, typename... Us>
+void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x, const std::vector<std::reference_wrapper<Vector<T>>>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION2);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
+
+    uint32_t num_elements = 0;
+
+    assert(x.size() == y.size());
+
+    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths type has to be larger than uint8_t
+
+    for (size_t k = 0; k < x.size(); k++)
+    {
+        const Vector<T>& x_ref = x[k];
+        const Vector<T>& y_ref = y[k];
+        assert(x_ref.size() == y_ref.size());
+        vector_lengths(k) = x_ref.size();
+        num_elements += x_ref.size();
+    }
+
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, num_elements);
+    hdr.extend(settings...);
+
+    const size_t num_bytes_to_send = sizeof(T) * 2 * num_elements;
+
+    internal::sendHeaderAndRefVectorCollection(internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y);
+}
+
+template <typename T, typename... Us>
 void plotCollection3(const std::vector<Vector<T>>& x, const std::vector<Vector<T>>& y, const std::vector<Vector<T>>& z, const Us&... settings)
 {
     internal::FunctionHeader hdr;
@@ -95,7 +126,7 @@ void plotCollection3(const std::vector<Vector<T>>& x, const std::vector<Vector<T
     assert(x.size() == y.size());
     assert(x.size() == z.size());
 
-    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths has to be larger than uint8_t
+    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths type has to be larger than uint8_t
 
     for (size_t k = 0; k < x.size(); k++)
     {
@@ -111,6 +142,40 @@ void plotCollection3(const std::vector<Vector<T>>& x, const std::vector<Vector<T
     const size_t num_bytes_to_send = sizeof(T) * 3 * num_elements;
 
     internal::sendHeaderAndVectorCollection(internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y, z);
+}
+
+template <typename T, typename... Us>
+void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x, const std::vector<std::reference_wrapper<Vector<T>>>& y, const std::vector<std::reference_wrapper<Vector<T>>>& z, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION3);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
+
+    uint32_t num_elements = 0;
+
+    assert(x.size() == y.size());
+    assert(x.size() == z.size());
+
+    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths type has to be larger than uint8_t
+
+    for (size_t k = 0; k < x.size(); k++)
+    {
+        const Vector<T>& x_ref = x[k];
+        const Vector<T>& y_ref = y[k];
+        const Vector<T>& z_ref = z[k];
+        assert(x_ref.size() == y_ref.size());
+        assert(x_ref.size() == z_ref.size());
+        vector_lengths(k) = x_ref.size();
+        num_elements += x_ref.size();
+    }
+
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, num_elements);
+    hdr.extend(settings...);
+
+    const size_t num_bytes_to_send = sizeof(T) * 3 * num_elements;
+
+    internal::sendHeaderAndRefVectorCollection(internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y, z);
 }
 
 template <typename T, typename... Us> void stairs(const Vector<T>& x, const Vector<T>& y, const Us&... settings)

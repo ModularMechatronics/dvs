@@ -107,8 +107,9 @@ void testScatter3()
 void testPlotCollection()
 {
     const size_t num_elements = 40;
-    Vector<double> x0(num_elements), y0(num_elements), x1(num_elements), y1(num_elements), x2(num_elements),
-        y2(num_elements);
+    Vector<double> x0(num_elements), y0(num_elements),
+        x1(num_elements), y1(num_elements),
+        x2(num_elements), y2(num_elements);
 
     double t = 0.0;
 
@@ -126,8 +127,8 @@ void testPlotCollection()
         t = t + 0.1;
     }
 
-    std::vector<Vector<double>> pc_x = {x0, x1, x2};
-    std::vector<Vector<double>> pc_y = {y0, y1, y2};
+    std::vector<std::reference_wrapper<Vector<double>>> pc_x = {x0, x1, x2};
+    std::vector<std::reference_wrapper<Vector<double>>> pc_y = {y0, y1, y2};
 
     setCurrentElement("view_00");
     clearView();
@@ -208,9 +209,9 @@ void testPlotCollection3()
         t = t + 0.1;
     }
 
-    std::vector<Vector<double>> pc_x = {x0, x1, x2};
-    std::vector<Vector<double>> pc_y = {y0, y1, y2};
-    std::vector<Vector<double>> pc_z = {z0, z1, z2};
+    std::vector<std::reference_wrapper<Vector<double>>> pc_x = {x0, x1, x2};
+    std::vector<std::reference_wrapper<Vector<double>>> pc_y = {y0, y1, y2};
+    std::vector<std::reference_wrapper<Vector<double>>> pc_z = {z0, z1, z2};
 
     setCurrentElement("view_00");
     clearView();
