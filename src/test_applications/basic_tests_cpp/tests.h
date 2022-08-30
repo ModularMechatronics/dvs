@@ -129,12 +129,20 @@ void testPlotCollection()
     std::vector<Vector<double>> pc_x = {x0, x1, x2};
     std::vector<Vector<double>> pc_y = {y0, y1, y2};
 
+    setCurrentElement("view_00");
+    clearView();
+
+    axis({-48.0, -48.0, -1.0}, {48.0, 48.0, 1.0});
+
+    plotCollection(pc_x, pc_y, properties::Color(0, 0, 0));
+    scatter(x0, y0, properties::Color(212, 14, 55), properties::PointSize(10));
+    scatter(x1, y1, properties::Color(0, 14, 55), properties::PointSize(10));
+    scatter(x2, y2, properties::Color(0, 255, 55), properties::PointSize(10));
+
     std::vector<Vector<double>> pcm_x;
     std::vector<Vector<double>> pcm_y;
 
     auto rand_num = [](void) -> double { return static_cast<double>(rand() % 1001) / 1000.0; };
-
-    uint32_t num_points = 0;
 
     std::vector<size_t> np = {50, 50, 50, 50, 56};
 
@@ -142,7 +150,7 @@ void testPlotCollection()
     {
         const size_t num_elems = (rand() % 20) + 50;
         Vector<double> x(num_elems), y(num_elems);
-        num_points += num_elems;
+
         t = 0.0;
 
         const double t_inc = rand_num() / 100.0 + 0.05;
@@ -161,27 +169,105 @@ void testPlotCollection()
         pcm_y.push_back(std::move(y));
     }
 
+    setCurrentElement("view_01");
+    clearView();
+
+    for (size_t k = 0; k < pcm_x.size(); k++)
+    {
+        scatter(pcm_x[k], pcm_y[k], properties::Color(255, 0, 0), properties::PointSize(10));
+    }
+
+    axis({-8.0, -8.0, -1.0}, {8.0, 8.0, 1.0});
+
+    plotCollection(pcm_x, pcm_y, properties::Color(0, 0, 0));
+}
+
+void testPlotCollection3()
+{
+    const size_t num_elements = 40;
+    Vector<double> x0(num_elements), y0(num_elements), z0(num_elements),
+        x1(num_elements), y1(num_elements), z1(num_elements),
+        x2(num_elements), y2(num_elements), z2(num_elements);
+
+    double t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const double kd = k;
+        x0(k) = 10.0 * cos(t);
+        y0(k) = kd * 0.05 * 10.0 * sin(t) + 0.2;
+        z0(k) = kd * 0.05 * 10.0 * cos(t) * sin(t) + 0.3;
+
+        x1(k) = 14.0 * cos(t);
+        y1(k) = kd * 0.07 * 11.0 * sin(t) + 0.3;
+        z1(k) = kd * 0.07 * 11.0 * sin(t) * cos(t) + 0.3;
+
+        x2(k) = 9.0 * cos(t);
+        y2(k) = kd * 0.08 * 15.0 * sin(t) + 0.4;
+        z2(k) = kd * 0.08 * 15.0 * sin(t) * cos(t) + 0.4;
+        t = t + 0.1;
+    }
+
+    std::vector<Vector<double>> pc_x = {x0, x1, x2};
+    std::vector<Vector<double>> pc_y = {y0, y1, y2};
+    std::vector<Vector<double>> pc_z = {z0, z1, z2};
+
     setCurrentElement("view_00");
     clearView();
 
-    axis({-48.0, -48.0, -1.0}, {48.0, 48.0, 1.0});
+    axis({-48.0, -48.0, -48.0}, {48.0, 48.0, 48.0});
 
-    plotCollection(pc_x, pc_y, properties::Color(0, 0, 0));
-    scatter(x0, y0, properties::Color(212, 14, 55), properties::PointSize(3));
-    scatter(x1, y1, properties::Color(0, 14, 55), properties::PointSize(3));
-    scatter(x2, y2, properties::Color(0, 255, 55), properties::PointSize(3));
+    plotCollection3(pc_x, pc_y, pc_z, properties::Color(0, 0, 0));
+    scatter3(x0, y0, z0, properties::Color(212, 14, 55), properties::PointSize(10));
+    scatter3(x1, y1, z1, properties::Color(0, 14, 55), properties::PointSize(10));
+    scatter3(x2, y2, z2, properties::Color(0, 255, 55), properties::PointSize(10));
+
+    std::vector<Vector<double>> pcm_x;
+    std::vector<Vector<double>> pcm_y;
+    std::vector<Vector<double>> pcm_z;
+
+    auto rand_num = [](void) -> double { return static_cast<double>(rand() % 1001) / 1000.0; };
+
+    std::vector<size_t> np = {50, 50, 50, 50, 56};
+
+    for (size_t k = 0; k < 30; k++)
+    {
+        const size_t num_elems = (rand() % 20) + 50;
+        Vector<double> x(num_elems), y(num_elems), z(num_elems);
+
+        t = 0.0;
+
+        const double t_inc = rand_num() / 100.0 + 0.05;
+        const double x_a = rand_num() * 3.0;
+        const double y_a = rand_num() * 3.0;
+        const double z_a = rand_num() * 3.0;
+        const double x_o = rand_num() * 10.0;
+        const double y_o = rand_num() * 10.0;
+        const double z_o = rand_num() * 10.0;
+
+        for (size_t i = 0; i < num_elems; i++)
+        {
+            x(i) = x_a * cos(t) + x_o;
+            y(i) = y_a * t * sin(t) + y_o;
+            z(i) = z_a * t * sin(t) * cos(t) + z_o;
+            t += t_inc;
+        }
+        pcm_x.push_back(std::move(x));
+        pcm_y.push_back(std::move(y));
+        pcm_z.push_back(std::move(z));
+    }
 
     setCurrentElement("view_01");
     clearView();
 
     for (size_t k = 0; k < pcm_x.size(); k++)
     {
-        scatter(pcm_x[k], pcm_y[k], properties::Color(255, 0, 0), properties::PointSize(3));
+        scatter3(pcm_x[k], pcm_y[k], pcm_z[k], properties::Color(255, 0, 0), properties::PointSize(10));
     }
 
-    axis({-8.0, -8.0, -1.0}, {8.0, 8.0, 1.0});
+    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
 
-    plotCollection(pcm_x, pcm_y, properties::Color(0, 0, 0));
+    plotCollection3(pcm_x, pcm_y, pcm_z, properties::Color(0, 0, 0));
 }
 
 void testPlot()

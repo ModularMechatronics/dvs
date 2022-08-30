@@ -113,6 +113,10 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
         case Function::PLOT_COLLECTION2:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new PlotCollection2D(std::move(received_data), hdr, shader_collection_)));
             break;
+        
+        case Function::PLOT_COLLECTION3:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new PlotCollection3D(std::move(received_data), hdr, shader_collection_)));
+            break;
 
         case Function::DRAW_MESH:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), hdr, shader_collection_)));

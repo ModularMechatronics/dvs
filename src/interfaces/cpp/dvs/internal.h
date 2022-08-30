@@ -234,7 +234,6 @@ void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
 
     vector_lengths.fillBufferWithData(&(data_blob[idx]));
     idx += vector_lengths.numBytes();
-    std::cout << "Num bytes: " << vector_lengths.numBytes() << std::endl;
 
     for (size_t k = 0; k < first_element.size(); k++)
     {

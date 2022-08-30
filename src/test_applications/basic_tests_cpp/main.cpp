@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
     fcns["lineCollection3"] = testLineCollection3;
     fcns["stem"] = testStem;
     fcns["plotCollection"] = testPlotCollection;
+    fcns["plotCollection3"] = testPlotCollection3;
     fcns["surf"] = testSurf;
     fcns["imShow"] = testImShow;
     fcns["axis"] = testAxis;

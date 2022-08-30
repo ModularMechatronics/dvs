@@ -344,7 +344,7 @@ bool PlotWindowGLPane::is3DFunction(const Function fcn)
            (fcn == Function::DRAW_TRIANGLE_3D) || (fcn == Function::SURF) || (fcn == Function::PLOT3) ||
            (fcn == Function::SCATTER3) || (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
            (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_TILES) ||
-           (fcn == Function::PLOT3_COLLECTION) || (fcn == Function::FAST_PLOT3) || (fcn == Function::LINE_COLLECTION3);
+           (fcn == Function::PLOT_COLLECTION3) || (fcn == Function::FAST_PLOT3) || (fcn == Function::LINE_COLLECTION3);
 }
 
 void PlotWindowGLPane::showLegend(const bool show_legend)
