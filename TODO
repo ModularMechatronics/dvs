@@ -1,7 +1,5 @@
 Pre release:
-- Add "owns_memory_" field to Matrix, Vector, to signify if data should be freed
- * Or plotting of new "view" structures, where one can set data pointers without ownership
- * MatrixBase and VectorBase to have all operations, and own T* data, size, num_rows, num_cols
+- Plot functions with VectorView and MatrixView
 - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
 - Verify that image is not mirrored
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
@@ -32,7 +30,6 @@ Pre release:
   - Behaviour when plotting when no configuration is set
 - Fix layout designer
 - Fix number formatting and grid vectors system
-- Fix showing correct plot walls when in perspective mode
 - Unify MouseActivity and InteractionType
 - Make font smaller, fewer line points per axis
 - Make sure all dynamic data is released in plot objects
@@ -47,7 +44,6 @@ Pre release:
 - Change Bound2/3D to actually be a bound, now it's a vector, and to get a bound you use std::pair<Bound2D, Bound2D>, which isn't ideal
 - Make proper test folder structure
 - Switch cache reader to configuration_agent
-- Matrix/vector/image view for setting data in plot object: img_c1_.setInternalData(nullptr, 0, 0);  // Hack
 - Receive and push new data until there is new data available, and refresh only after last update
 - "dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();", Possible remove need for specifying type and enum?
 - Don't always update on keypress?
@@ -60,9 +56,14 @@ Pre release:
 - Look through assertions, and replace to DVS_ASSERT
 - Do something better/neater than "fillBufferWithData"?
 - Separate plot object vectors so that shader switching is minimized
+- Investigate std::vector<std::reference_wrapper<...>> for plotCollection/3
 - plotCollection3
+- Solve all TODOs
+- Change vector_lengths from uint8 to uint16 for plotCollection/3
+
 Post release:
 - Bar plot
+- Fix showing correct plot walls when in perspective mode
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
 - Contour plotting function
@@ -71,6 +72,7 @@ Post release:
 - The class Properties should be moved so that it is not included in the C++ client interface.
 - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
 - Logarithmic axes xyz
+- MatrixBase and VectorBase to have all operations, and own T* data, size, num_rows, num_cols
 - Unify some compatible shaders to one big shader with switch case
 - More general plot interface with "templated templates": plot(const VectorType<T>& x, ...), where VectorType itself is a template, or use VectorView
 - Edge and Facecolor transparent

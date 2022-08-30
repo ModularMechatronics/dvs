@@ -73,7 +73,7 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 1;
         case Function::PLOT_COLLECTION2:
             return 2;
-        case Function::PLOT3_COLLECTION:
+        case Function::PLOT_COLLECTION3:
             return 3;
 
         default:

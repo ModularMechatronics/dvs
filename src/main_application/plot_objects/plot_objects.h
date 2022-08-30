@@ -12,6 +12,7 @@
 #include "plot_objects/line_collection3/line_collection3.h"
 #include "plot_objects/stem/stem.h"
 #include "plot_objects/plot_collection2/plot_collection2.h"
+#include "plot_objects/plot_collection3/plot_collection3.h"
 #include "plot_objects/quiver/quiver.h"
 #include "plot_objects/scatter/scatter.h"
 #include "plot_objects/scatter3/scatter3.h"
