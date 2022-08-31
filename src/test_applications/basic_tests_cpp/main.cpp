@@ -6,11 +6,12 @@
 #include "dvs/dvs.h"
 #include "tests.h"
 
-std::map<std::string, std::function<void()>> fcns;
+using StringFunctionMap = std::map<std::string, std::function<void()>>;
+StringFunctionMap fcns;
 
 void displayHelp()
 {
-    std::cout << "Usage: ./test-app [-h, --help, help] [";
+    std::cout << "Usage: ./basic-tests-app [-h, --help, help] [";
     std::map<std::string, std::function<void()>>::iterator it;
 
     for (it = fcns.begin(); it != fcns.end(); it++)
@@ -23,32 +24,34 @@ void displayHelp()
 
 int main(int argc, char* argv[])
 {
-    fcns["scatter"] = testScatter;
-    fcns["scatter3"] = testScatter3;
-    fcns["quiver"] = testQuiver;
-    fcns["plot"] = testPlot;
-    fcns["plot3"] = testPlot3;
-    fcns["fastPlot"] = testFastPlot;
-    fcns["fastPlot3"] = testFastPlot3;
-    fcns["lineCollection"] = testLineCollection;
-    fcns["lineCollection3"] = testLineCollection3;
-    fcns["stem"] = testStem;
-    fcns["plotCollection"] = testPlotCollection;
-    fcns["plotCollection3"] = testPlotCollection3;
-    fcns["surf"] = testSurf;
-    fcns["imShow"] = testImShow;
-    fcns["axis"] = testAxis;
-    fcns["drawTriangles"] = testDrawTriangles;
-    fcns["drawTriangle"] = testDrawTriangle;
-    fcns["drawTiles"] = testDrawTiles;
-    fcns["drawMesh"] = testDrawMesh;
-    fcns["drawLine3D"] = testDrawLine3D;
-    fcns["drawLine2D"] = testDrawLine2D;
-    fcns["drawLineBetweenPoints"] = testDrawLineBetweenPoints;
-    fcns["drawArrow"] = testDrawArrow;
-    fcns["stairs"] = testStairs;
-    fcns["xyzPlanes"] = testDrawXYZPlane;
-    fcns["legend"] = testLegend;
+    fcns = StringFunctionMap{
+        {"scatter", testScatter},
+        {"scatter3", testScatter3},
+        {"quiver", testQuiver},
+        {"plot", testPlot},
+        {"plot3", testPlot3},
+        {"fastPlot", testFastPlot},
+        {"fastPlot3", testFastPlot3},
+        {"lineCollection", testLineCollection},
+        {"lineCollection3", testLineCollection3},
+        {"stem", testStem},
+        {"plotCollection", testPlotCollection},
+        {"plotCollection3", testPlotCollection3},
+        {"surf", testSurf},
+        {"imShow", testImShow},
+        {"axis", testAxis},
+        {"drawTriangles", testDrawTriangles},
+        {"drawTriangle", testDrawTriangle},
+        {"drawTiles", testDrawTiles},
+        {"drawMesh", testDrawMesh},
+        {"drawLine3D", testDrawLine3D},
+        {"drawLine2D", testDrawLine2D},
+        {"drawLineBetweenPoints", testDrawLineBetweenPoints},
+        {"drawArrow", testDrawArrow},
+        {"stairs", testStairs},
+        {"xyzPlanes", testDrawXYZPlane},
+        {"legend", testLegend}
+    };
 
     if (argc == 1)
     {
@@ -77,17 +80,7 @@ int main(int argc, char* argv[])
         }
         else if (fcns.count(arg) > 0)
         {
-            std::map<std::string, std::function<void()>>::iterator it;
-
-            for (it = fcns.begin(); it != fcns.end(); it++)
-            {
-                if (arg == it->first)
-                {
-                    std::cout << "Running '" << it->first << "'" << std::endl << std::endl;
-                    it->second();
-                    break;
-                }
-            }
+            fcns[arg]();
         }
         else
         {

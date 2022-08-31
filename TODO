@@ -57,6 +57,7 @@ Pre release:
 - Don't iterate over map in tests.h, just index with the key directly, for basic-tests-cpp
 - map initializer list for tests in basic-tests-cpp (like in advanced-tests-cpp)
 - Change vector_lengths from uint8 to uint16 for plotCollection/3
+- Zoom with rect only if certain button is pressed
 - Solve all TODOs
 
 Post release:
