@@ -143,6 +143,11 @@ public:
 
     ~Vector();
 
+    VectorView<T> view() const
+    {
+        return VectorView{data_, size_};
+    }
+
     void fillBufferWithData(uint8_t* const buffer) const;
 
     Vector<T>& operator=(const Vector<T>& v);

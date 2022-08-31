@@ -213,6 +213,18 @@ void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&
 }
 
 template <typename T, typename... Us>
+void plot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::PLOT3);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
+}
+
+template <typename T, typename... Us>
 void fastPlot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
 {
     internal::FunctionHeader hdr;
@@ -237,6 +249,17 @@ void stem(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 }
 
 template <typename T, typename... Us> void scatter(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
+template <typename T, typename... Us> void scatter(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
@@ -277,6 +300,18 @@ template <typename T, typename... Us> void drawPoint(const Point2<T>& p, const U
 
 template <typename T, typename... Us>
 void scatter3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER3);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
+}
+
+template <typename T, typename... Us>
+void scatter3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SCATTER3);

@@ -171,6 +171,11 @@ public:
     Matrix<T>& operator=(const Matrix<T>& m);
     Matrix<T>& operator=(Matrix<T>&& m);
 
+    MatrixView<T> view() const
+    {
+        return MatrixView{data_, num_rows_, num_cols_};
+    }
+
     void resize(const size_t num_rows, const size_t num_cols);
     size_t numRows() const;
     size_t numCols() const;
