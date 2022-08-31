@@ -2,7 +2,7 @@
 
 #include "events.h"
 #include "globals.h"
-#include "plot_window_gl_pane.h"
+#include "plot_pane.h"
 
 WindowView::WindowView(wxFrame* parent,
     const WindowSettings& window_settings,
@@ -20,7 +20,7 @@ WindowView::WindowView(wxFrame* parent,
 
     for (const auto& elem : elements)
     {
-        GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxFrame*>(this),
+        GuiElement* const ge = new PlotPane(dynamic_cast<wxFrame*>(this),
             elem,
             grid_size_,
             notify_main_window_key_pressed_,
@@ -103,7 +103,7 @@ void WindowView::newElement(const std::string& element_name)
     elem.height = 0.3;
     elem.name = element_name;
 
-    GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this),
+    GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
         elem,
         grid_size_,
         notify_main_window_key_pressed_,
@@ -126,7 +126,7 @@ void WindowView::newElement()
     elem.height = 0.3;
     elem.name = "new-element-" + std::to_string(current_unused_element_idx++);
 
-    GuiElement* const ge = new PlotWindowGLPane(dynamic_cast<wxNotebookPage*>(this),
+    GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
         elem,
         grid_size_,
         notify_main_window_key_pressed_,

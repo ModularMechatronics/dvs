@@ -1,4 +1,4 @@
-#include "plot_window_gl_pane.h"
+#include "plot_pane.h"
 
 #include <wx/event.h>
 #include <wx/glcanvas.h>
@@ -66,7 +66,7 @@ CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, 
     }
 }
 
-wxGLContext* PlotWindowGLPane::getContext()
+wxGLContext* PlotPane::getContext()
 {
 #ifdef PLATFORM_APPLE_M
     wxGLContextAttrs cxtAttrs;
@@ -80,7 +80,7 @@ wxGLContext* PlotWindowGLPane::getContext()
 #endif
 }
 
-void PlotWindowGLPane::initShaders()
+void PlotPane::initShaders()
 {
     const std::string v_path = "../main_application/axes/shaders/basic.vs";
     const std::string f_path = "../main_application/axes/shaders/basic.fs";
@@ -115,7 +115,7 @@ void PlotWindowGLPane::initShaders()
     shader_collection_.scatter_shader = Shader::createFromFiles(v_path_scatter_shader, f_path_scatter_shader);
 }
 
-PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent,
+PlotPane::PlotPane(wxWindow* parent,
     const ElementSettings& element_settings,
     const float grid_size,
     const std::function<void(const char key)>& notify_main_window_key_pressed,
@@ -154,7 +154,7 @@ PlotWindowGLPane::PlotWindowGLPane(wxWindow* parent,
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 }
 
-void PlotWindowGLPane::updateSizeFromParent(const wxSize& parent_size)
+void PlotPane::updateSizeFromParent(const wxSize& parent_size)
 {
     parent_size_ = parent_size;
     const float px = parent_size_.GetWidth();
@@ -170,12 +170,12 @@ void PlotWindowGLPane::updateSizeFromParent(const wxSize& parent_size)
     this->setSize(wxSize(width, height));
 }
 
-void PlotWindowGLPane::setPosition(const wxPoint& new_pos)
+void PlotPane::setPosition(const wxPoint& new_pos)
 {
     this->SetPosition(new_pos);
 }
 
-void PlotWindowGLPane::setSize(const wxSize& new_size)
+void PlotPane::setSize(const wxSize& new_size)
 {
     // axes_renderer_->setWindowSize(new_size.GetWidth(), new_size.GetHeight());
 #ifdef PLATFORM_LINUX_M
@@ -185,28 +185,28 @@ void PlotWindowGLPane::setSize(const wxSize& new_size)
     this->SetSize(new_size);
 }
 
-void PlotWindowGLPane::show()
+void PlotPane::show()
 {
     this->Show();
 }
 
-void PlotWindowGLPane::hide()
+void PlotPane::hide()
 {
     this->Hide();
 }
 
-void PlotWindowGLPane::bindCallbacks()
+void PlotPane::bindCallbacks()
 {
-    Bind(wxEVT_MOTION, &PlotWindowGLPane::mouseMoved, this);
-    Bind(wxEVT_LEFT_DOWN, &PlotWindowGLPane::mouseLeftPressed, this);
-    Bind(wxEVT_LEFT_UP, &PlotWindowGLPane::mouseLeftReleased, this);
-    Bind(wxEVT_KEY_DOWN, &PlotWindowGLPane::keyPressedCallback, this);
-    Bind(wxEVT_KEY_UP, &PlotWindowGLPane::keyReleasedCallback, this);
-    Bind(wxEVT_PAINT, &PlotWindowGLPane::render, this);
-    Bind(wxEVT_LEAVE_WINDOW, &PlotWindowGLPane::mouseLeftWindow, this);
+    Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
+    Bind(wxEVT_LEFT_DOWN, &PlotPane::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &PlotPane::mouseLeftReleased, this);
+    Bind(wxEVT_KEY_DOWN, &PlotPane::keyPressedCallback, this);
+    Bind(wxEVT_KEY_UP, &PlotPane::keyReleasedCallback, this);
+    Bind(wxEVT_PAINT, &PlotPane::render, this);
+    Bind(wxEVT_LEAVE_WINDOW, &PlotPane::mouseLeftWindow, this);
 }
 
-int* PlotWindowGLPane::getArgsPtr()
+int* PlotPane::getArgsPtr()
 {
     args[0] = WX_GL_RGBA;
     args[1] = WX_GL_DOUBLEBUFFER;
@@ -221,12 +221,12 @@ int* PlotWindowGLPane::getArgsPtr()
     return args;
 }
 
-PlotWindowGLPane::~PlotWindowGLPane()
+PlotPane::~PlotPane()
 {
     delete m_context;
 }
 
-void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data,
+void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
                                const dvs::internal::FunctionHeader& hdr)
 {
     const internal::Function fcn = hdr.getObjectAtIdx(0).as<internal::Function>();
@@ -332,12 +332,12 @@ void PlotWindowGLPane::addData(std::unique_ptr<const ReceivedData> received_data
     Refresh();
 }
 
-bool PlotWindowGLPane::isImageFunction(const Function fcn)
+bool PlotPane::isImageFunction(const Function fcn)
 {
     return fcn == Function::IM_SHOW;
 }
 
-bool PlotWindowGLPane::is3DFunction(const Function fcn)
+bool PlotPane::is3DFunction(const Function fcn)
 {
     return (fcn == Function::DRAW_LINE3D) || (fcn == Function::PLANE_XY) || (fcn == Function::PLANE_XZ) ||
            (fcn == Function::PLANE_YZ) || (fcn == Function::DRAW_MESH) || (fcn == Function::DRAW_TRIANGLES_3D) ||
@@ -347,28 +347,28 @@ bool PlotWindowGLPane::is3DFunction(const Function fcn)
            (fcn == Function::PLOT_COLLECTION3) || (fcn == Function::FAST_PLOT3) || (fcn == Function::LINE_COLLECTION3);
 }
 
-void PlotWindowGLPane::showLegend(const bool show_legend)
+void PlotPane::showLegend(const bool show_legend)
 {
     axes_interactor_.showLegend(show_legend);
     Refresh();
 }
 
-void PlotWindowGLPane::setSelection()
+void PlotPane::setSelection()
 {
     is_selected_ = true;
 }
 
-void PlotWindowGLPane::resetSelection()
+void PlotPane::resetSelection()
 {
     is_selected_ = false;
 }
 
-void PlotWindowGLPane::destroy()
+void PlotPane::destroy()
 {
     this->Destroy();
 }
 
-void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
+void PlotPane::mouseLeftPressed(wxMouseEvent& event)
 {
     view_parent_->resetSelectionForAllChildren();
     wxCommandEvent evt(MY_EVENT, GetId());
@@ -406,7 +406,7 @@ void PlotWindowGLPane::mouseLeftPressed(wxMouseEvent& event)
     Refresh();
 }
 
-void PlotWindowGLPane::mouseLeftReleased(wxMouseEvent& event)
+void PlotPane::mouseLeftReleased(wxMouseEvent& event)
 {
     const wxPoint mouse_pos{event.GetPosition()};
     const wxSize size_now = this->GetSize();
@@ -416,18 +416,18 @@ void PlotWindowGLPane::mouseLeftReleased(wxMouseEvent& event)
     Refresh();
 }
 
-void PlotWindowGLPane::mouseLeftWindow(wxMouseEvent& WXUNUSED(event))
+void PlotPane::mouseLeftWindow(wxMouseEvent& WXUNUSED(event))
 {
     wxSetCursor(wxCursor(wxCURSOR_ARROW));
 }
 
-void PlotWindowGLPane::notifyParentAboutModification()
+void PlotPane::notifyParentAboutModification()
 {
     wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
     wxPostEvent(GetParent(), parent_event);
 }
 
-void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
+void PlotPane::mouseMoved(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
     current_mouse_pos_ = Vec2f(current_point.x, current_point.y);
@@ -590,7 +590,7 @@ void PlotWindowGLPane::mouseMoved(wxMouseEvent& event)
     }
 }
 
-void PlotWindowGLPane::keyPressed(const char key)
+void PlotPane::keyPressed(const char key)
 {
     // Only add alpha numeric keys due to errors when clicking outside of window
     if (std::isalnum(key))
@@ -601,7 +601,7 @@ void PlotWindowGLPane::keyPressed(const char key)
     Refresh();
 }
 
-void PlotWindowGLPane::keyReleased(const char key)
+void PlotPane::keyReleased(const char key)
 {
     // Only add alpha numeric keys due to errors when clicking outside of window
     if (std::isalnum(key))
@@ -612,26 +612,26 @@ void PlotWindowGLPane::keyReleased(const char key)
     Refresh();
 }
 
-void PlotWindowGLPane::keyPressedCallback(wxKeyEvent& evt)
+void PlotPane::keyPressedCallback(wxKeyEvent& evt)
 {
     const int key = evt.GetUnicodeKey();
     notify_main_window_key_pressed_(key);
 }
 
-void PlotWindowGLPane::keyReleasedCallback(wxKeyEvent& evt)
+void PlotPane::keyReleasedCallback(wxKeyEvent& evt)
 {
     const int key = evt.GetUnicodeKey();
     notify_main_window_key_released_(key);
 }
 
 // Returns window width in pixels
-int PlotWindowGLPane::getWidth()
+int PlotPane::getWidth()
 {
     return GetSize().x;
 }
 
 // Returns window height in pixels
-int PlotWindowGLPane::getHeight()
+int PlotPane::getHeight()
 {
     return GetSize().y;
 }
@@ -660,12 +660,12 @@ InteractionType keyboardStateToInteractionType(const KeyboardState& keyboard_sta
     }
 }
 
-void PlotWindowGLPane::refresh()
+void PlotPane::refresh()
 {
     Refresh();
 }
 
-void PlotWindowGLPane::render(wxPaintEvent& evt)
+void PlotPane::render(wxPaintEvent& evt)
 {
     (void)evt;
     if (!IsShown())

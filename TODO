@@ -42,6 +42,7 @@ Pre release:
 - Change types from float to double, to increase precision
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Change Bound2/3D to actually be a bound, now it's a vector, and to get a bound you use std::pair<Bound2D, Bound2D>, which isn't ideal
+- Unify Bound types
 - Make proper test folder structure
 - Switch cache reader to configuration_agent
 - Receive and push new data until there is new data available, and refresh only after last update
