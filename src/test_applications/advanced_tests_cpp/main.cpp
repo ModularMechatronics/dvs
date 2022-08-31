@@ -27,11 +27,30 @@ void displayHelp()
 
 int main(int argc, char* argv[])
 {
-    std::map<std::string, std::function<void()>> plot2_functions;
+    // ######################### plot #########################
+    std::map<std::string, std::function<void()>> plot2_functions{
+        {"view", plot2::testWithVectorView}
+    };
 
-    plot2_functions["vectorView"] = plot2::testWithVectorView;
+    // ######################### plot3 #########################
+    std::map<std::string, std::function<void()>> plot3_functions{
+        {"view", plot3_ns::testWithVectorView}
+    };
+
+    // ######################### scatter #######################
+    std::map<std::string, std::function<void()>> scatter2_functions{
+        {"view", scatter2::testWithVectorView}
+    };
+
+    // ######################### scatter3 ######################
+    std::map<std::string, std::function<void()>> scatter3_functions{
+        {"view", scatter3_ns::testWithVectorView}
+    };
 
     fcns["plot"] = plot2_functions;
+    fcns["plot3"] = plot3_functions;
+    fcns["scatter"] = scatter2_functions;
+    fcns["scatter3"] = scatter3_functions;
 
     if (argc == 1)
     {
