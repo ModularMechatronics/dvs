@@ -3,8 +3,7 @@
 #include <map>
 #include <vector>
 
-#include "dvs/dvs.h"
-#include "tests/tests.h"
+#include "tests.h"
 
 using StringFunctionMap = std::map<std::string, std::function<void()>>;
 
@@ -23,19 +22,16 @@ void displayHelp()
         {
             std::cout << "    * \033[33m" << it->first << "\033[0m" << std::endl;
         }
-        
     }
 }
 
 int main(int argc, char* argv[])
 {
     std::map<std::string, std::function<void()>> plot2_functions;
-    plot2_functions["basic0"] = plot2::testBasic;
-    plot2_functions["basic1"] = plot2::testBasic;
-    plot2_functions["basic2"] = plot2::testBasic;
+
+    plot2_functions["vectorView"] = plot2::testWithVectorView;
+
     fcns["plot"] = plot2_functions;
-    fcns["scatter"] = plot2_functions;
-    fcns["surf"] = plot2_functions;
 
     if (argc == 1)
     {
