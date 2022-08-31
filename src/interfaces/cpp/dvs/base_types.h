@@ -20,25 +20,6 @@ struct Dimension2D
 
 }  // namespace internal
 
-struct Bound2D
-{
-    double x;
-    double y;
-
-    Bound2D() : x(0), y(0) {}
-    Bound2D(const double x_, const double y_) : x(x_), y(y_) {}
-};
-
-struct Bound3D
-{
-    double x;
-    double y;
-    double z;
-
-    Bound3D() : x(0), y(0), z(0) {}
-    Bound3D(const double x_, const double y_, const double z_) : x(x_), y(y_), z(z_) {}
-};
-
 }  // namespace dvs
 
 #endif // DVS_BASE_TYPES_H_

@@ -738,24 +738,24 @@ inline void view(const float azimuth, const float elevation)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void axis(const Bound3D& min_bound, const Bound3D& max_bound)
+inline void axis(const Vec3<double>& min_bound, const Vec3<double>& max_bound)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES_3D);
-    hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, std::pair<Bound3D, Bound3D>(min_bound, max_bound));
+    hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC, std::pair<Vec3<double>, Vec3<double>>(min_bound, max_bound));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void axis(const Bound2D& min_bound, const Bound2D& max_bound)
+inline void axis(const Vec2<double>& min_bound, const Vec2<double>& max_bound)
 {
-    const Bound3D min_bound_3d(min_bound.x, min_bound.y, -1.0);
-    const Bound3D max_bound_3d(max_bound.x, max_bound.y, 1.0);
+    const Vec3<double> min_bound_3d(min_bound.x, min_bound.y, -1.0);
+    const Vec3<double> max_bound_3d(max_bound.x, max_bound.y, 1.0);
 
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::AXES_2D);
     hdr.append(internal::FunctionHeaderObjectType::AXIS_MIN_MAX_VEC,
-               std::pair<Bound3D, Bound3D>(min_bound_3d, max_bound_3d));
+               std::pair<Vec3<double>, Vec3<double>>(min_bound_3d, max_bound_3d));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }

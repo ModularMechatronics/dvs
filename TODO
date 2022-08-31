@@ -41,8 +41,6 @@ Pre release:
 - Make sure plot/plot3 works for integer data types
 - Change types from float to double, to increase precision
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
-- Change Bound2/3D to actually be a bound, now it's a vector, and to get a bound you use std::pair<Bound2D, Bound2D>, which isn't ideal
-- Unify Bound types
 - Make proper test folder structure
 - Switch cache reader to configuration_agent
 - Receive and push new data until there is new data available, and refresh only after last update
@@ -52,7 +50,6 @@ Pre release:
 - "UInt8View" or something for "void fillBufferWithData(uint8_t* const buffer) const;" functions, that contains pointer and size
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Gradient min/max (like for surf) for draw mesh and other 3d functions 
-- Change all functions to accept "View" types, and then have constructor of VectorView from Vector, MatrixView from Matrix etc
 - Time date axis
 - Look through assertions, and replace to DVS_ASSERT
 - Do something better/neater than "fillBufferWithData"?
@@ -90,6 +87,7 @@ Post release:
 - 3D world
 - http://www.opengl.org/wiki/Buffer_Object_Streaming
 - Dashed line for plot and plot3
+- Change all relevant functions to accept "View" types
 
 Unsure:
 - Command line window that prints errors etc.

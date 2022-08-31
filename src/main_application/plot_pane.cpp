@@ -12,7 +12,7 @@
 
 using namespace dvs::internal;
 
-CursorSquareState mouseState(const Bound2Df bound, const Bound2Df bound_margin, const Vec2f mouse_pos)
+CursorSquareState mouseState(const Bound2D bound, const Bound2D bound_margin, const Vec2f mouse_pos)
 {
     if ((bound.x_min <= mouse_pos.x) && (mouse_pos.x <= bound.x_max) && (bound.y_min <= mouse_pos.y) &&
         (mouse_pos.y <= bound.y_max))
@@ -245,8 +245,8 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
     {
         axes_set_ = true;
 
-        const std::pair<Bound3D, Bound3D> axes_bnd =
-            hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Bound3D, Bound3D>>();
+        const std::pair<Vec3d, Vec3d> axes_bnd =
+            hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Vec3d, Vec3d>>();
         axes_interactor_.setAxesLimits(Vec2d(axes_bnd.first.x, axes_bnd.first.y),
                                         Vec2d(axes_bnd.second.x, axes_bnd.second.y));
     }
@@ -254,8 +254,8 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
     {
         axes_set_ = true;
 
-        const std::pair<Bound3D, Bound3D> axes_bnd =
-            hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Bound3D, Bound3D>>();
+        const std::pair<Vec3d, Vec3d> axes_bnd =
+            hdr.get(FunctionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Vec3d, Vec3d>>();
         axes_interactor_.setAxesLimits(Vec3d(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
                                         Vec3d(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
@@ -380,13 +380,13 @@ void PlotPane::mouseLeftPressed(wxMouseEvent& event)
 
     const wxPoint current_point = event.GetPosition();
 
-    Bound2Df bnd;
+    Bound2D bnd;
     bnd.x_min = 0.0f;
     bnd.x_max = this->GetSize().GetWidth();
     bnd.y_min = 0.0f;
     bnd.y_max = this->GetSize().GetHeight();
 
-    Bound2Df bnd_margin;
+    Bound2D bnd_margin;
     bnd_margin.x_min = bnd.x_min + edit_size_margin_;
     bnd_margin.x_max = bnd.x_max - edit_size_margin_;
     bnd_margin.y_min = bnd.y_min + edit_size_margin_;
@@ -542,13 +542,13 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
     {
         if (is_editing_)
         {
-            Bound2Df bnd;
+            Bound2D bnd;
             bnd.x_min = 0.0f;
             bnd.x_max = this->GetSize().GetWidth();
             bnd.y_min = 0.0f;
             bnd.y_max = this->GetSize().GetHeight();
 
-            Bound2Df bnd_margin;
+            Bound2D bnd_margin;
             bnd_margin.x_min = bnd.x_min + edit_size_margin_;
             bnd_margin.x_max = bnd.x_max - edit_size_margin_;
             bnd_margin.y_min = bnd.y_min + edit_size_margin_;
