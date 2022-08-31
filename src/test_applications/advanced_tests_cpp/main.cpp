@@ -47,10 +47,16 @@ int main(int argc, char* argv[])
         {"view", scatter3_ns::testWithVectorView}
     };
 
+    // ######################### surf ##########################
+    std::map<std::string, std::function<void()>> surf_functions{
+        {"view", surf_ns::testWithMatrixView}
+    };
+
     fcns["plot"] = plot2_functions;
     fcns["plot3"] = plot3_functions;
     fcns["scatter"] = scatter2_functions;
     fcns["scatter3"] = scatter3_functions;
+    fcns["surf"] = surf_functions;
 
     if (argc == 1)
     {

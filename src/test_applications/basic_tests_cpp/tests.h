@@ -12,7 +12,7 @@ void testSurf()
     const int num_rows = 20, num_cols = 25;
     Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
 
-    double inc = 0.4;
+    const double inc = 0.4;
     for (int r = 0; r < num_rows; r++)
     {
         for (int c = 0; c < num_cols; c++)
