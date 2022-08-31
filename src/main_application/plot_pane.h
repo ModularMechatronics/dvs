@@ -50,7 +50,7 @@ enum class CursorSquareState
     BOTTOM_RIGHT
 };
 
-class PlotWindowGLPane : public wxGLCanvas, public GuiElement
+class PlotPane : public wxGLCanvas, public GuiElement
 {
 private:
     wxGLContext* getContext();
@@ -96,12 +96,12 @@ private:
     float legend_scale_factor_ = 1.0f;
 
 public:
-    PlotWindowGLPane(wxNotebookPage* parent,
+    PlotPane(wxNotebookPage* parent,
         const ElementSettings& element_settings,
         const float grid_size,
         const std::function<void(const char key)>& notify_main_window_key_pressed,
         const std::function<void(const char key)>& notify_main_window_key_released);
-    ~PlotWindowGLPane();
+    ~PlotPane();
 
     int getWidth();
     int getHeight();

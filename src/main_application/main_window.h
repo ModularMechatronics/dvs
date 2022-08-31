@@ -23,7 +23,7 @@
 #include "events.h"
 #include "gui_element.h"
 #include "layout_tools_window.h"
-#include "plot_window_gl_pane.h"
+#include "plot_pane.h"
 #include "project_state/cache_reader.h"
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
