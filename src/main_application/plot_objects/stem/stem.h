@@ -29,4 +29,4 @@ public:
     void modifyShader() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_FAST_PLOT2D_STEM_H_
+#endif // MAIN_APPLICATION_PLOT_OBJECTS_STEM_STEM_H_
