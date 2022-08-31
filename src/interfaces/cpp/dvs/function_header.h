@@ -11,6 +11,7 @@
 #include "dvs/enumerations.h"
 #include "dvs/plot_properties.h"
 #include "dvs/utils.h"
+#include "dvs/math/math.h"
 
 namespace dvs
 {
@@ -201,7 +202,7 @@ template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object
     }
     else if (object_type == FunctionHeaderObjectType::AXIS_MIN_MAX_VEC)
     {
-        return std::is_same<U, std::pair<Bound3D, Bound3D>>::value;
+        return std::is_same<U, std::pair<Vec3<double>, Vec3<double>>>::value;
     }
     else if (object_type == FunctionHeaderObjectType::ELEMENT_NAME)
     {

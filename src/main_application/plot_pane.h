@@ -15,19 +15,19 @@
 #include "plot_data.h"
 #include "view_base.h"
 
-struct Bound2Df
+struct Bound2D
 {
     float x_min;
     float x_max;
     float y_min;
     float y_max;
 
-    Bound2Df() = default;
+    Bound2D() = default;
 };
 
-inline Bound2Df operator+(const Bound2Df& bnd, const Vec2f& offset)
+inline Bound2D operator+(const Bound2D& bnd, const Vec2f& offset)
 {
-    Bound2Df new_bnd;
+    Bound2D new_bnd;
     new_bnd.x_min = bnd.x_min + offset.x;
     new_bnd.x_max = bnd.x_max + offset.x;
     new_bnd.y_min = bnd.y_min + offset.y;
