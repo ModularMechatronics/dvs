@@ -58,9 +58,8 @@ Pre release:
 - Separate plot object vectors so that shader switching is minimized
 - Don't iterate over map in tests.h, just index with the key directly, for basic-tests-cpp
 - map initializer list for tests in basic-tests-cpp (like in advanced-tests-cpp)
-- plotCollection3
-- Solve all TODOs
 - Change vector_lengths from uint8 to uint16 for plotCollection/3
+- Solve all TODOs
 
 Post release:
 - Bar plot

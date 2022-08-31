@@ -73,6 +73,11 @@ public:
         return data_;
     }
 
+    size_t size() const
+    {
+        return num_rows_ * num_cols_;
+    }
+
     size_t numRows() const
     {
         return num_rows_;

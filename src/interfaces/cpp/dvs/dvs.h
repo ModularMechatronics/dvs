@@ -41,7 +41,29 @@ template <typename T, typename... Us> void fastPlot(const Vector<T>& x, const Ve
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
+template <typename T, typename... Us> void fastPlot(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::FAST_PLOT2);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
 template <typename T, typename... Us> void lineCollection(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION2);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
+template <typename T, typename... Us> void lineCollection(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION2);
@@ -54,6 +76,18 @@ template <typename T, typename... Us> void lineCollection(const Vector<T>& x, co
 
 template <typename T, typename... Us>
 void lineCollection3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION3);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
+}
+
+template <typename T, typename... Us>
+void lineCollection3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION3);
@@ -200,6 +234,17 @@ template <typename T, typename... Us> void stairs(const Vector<T>& x, const Vect
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
+template <typename T, typename... Us> void stairs(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::STAIRS);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
 template <typename T, typename... Us>
 void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
 {
@@ -237,7 +282,31 @@ void fastPlot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const
 }
 
 template <typename T, typename... Us>
+void fastPlot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::FAST_PLOT3);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
+}
+
+template <typename T, typename... Us>
 void stem(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::STEM);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
+template <typename T, typename... Us>
+void stem(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::STEM);
@@ -340,6 +409,20 @@ template <typename T, typename... Us> void drawPoint(const Point3<T>& p, const U
 
 template <typename T, typename... Us>
 void surf(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& z, const Us&... settings)
+{
+    internal::FunctionHeader hdr;
+    hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SURF);
+    hdr.append(internal::FunctionHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::FunctionHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));  // TODO: Needed?
+    hdr.append(internal::FunctionHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.numRows(), x.numCols()));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
+}
+
+template <typename T, typename... Us>
+void surf(const MatrixView<T>& x, const MatrixView<T>& y, const MatrixView<T>& z, const Us&... settings)
 {
     internal::FunctionHeader hdr;
     hdr.append(internal::FunctionHeaderObjectType::FUNCTION, internal::Function::SURF);
