@@ -56,7 +56,7 @@ Pre release:
 - Look through assertions, and replace to DVS_ASSERT
 - Do something better/neater than "fillBufferWithData"?
 - Separate plot object vectors so that shader switching is minimized
-- Investigate std::vector<std::reference_wrapper<...>> for plotCollection/3
+- Don't iterate over map in tests.h, just index with the key directly, for basic-tests-cpp
 - plotCollection3
 - Solve all TODOs
 - Change vector_lengths from uint8 to uint16 for plotCollection/3

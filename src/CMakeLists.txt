@@ -73,6 +73,7 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 # Adding subdirectories
 add_subdirectory(test_applications/basic_tests_cpp)
 add_subdirectory(test_applications/basic_tests_c)
+add_subdirectory(test_applications/advanced_tests_cpp)
 # add_subdirectory(test)
 add_subdirectory(main_application)
 add_subdirectory(test/interface_test)
