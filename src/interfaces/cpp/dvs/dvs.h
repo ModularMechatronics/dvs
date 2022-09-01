@@ -110,7 +110,7 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
 
     assert(x.size() == y.size());
 
-    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths type has to be larger than uint8_t
+    Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
     {
@@ -139,7 +139,7 @@ void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x, con
 
     assert(x.size() == y.size());
 
-    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths type has to be larger than uint8_t
+    Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
     {
@@ -171,7 +171,7 @@ void plotCollection3(const std::vector<Vector<T>>& x, const std::vector<Vector<T
     assert(x.size() == y.size());
     assert(x.size() == z.size());
 
-    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths type has to be larger than uint8_t
+    Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
     {
@@ -202,7 +202,7 @@ void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x, co
     assert(x.size() == y.size());
     assert(x.size() == z.size());
 
-    Vector<uint8_t> vector_lengths(x.size());  // TODO: vector_lengths type has to be larger than uint8_t
+    Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
     {

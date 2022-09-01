@@ -118,10 +118,7 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
 
     Vector<uint16_t> vector_lengths(num_objects_);
 
-    for (size_t k = 0; k < num_objects_; k++)
-    {
-        vector_lengths(k) = data_ptr_[k];
-    }
+    std::memcpy(vector_lengths.data(), data_ptr_, num_objects_ * sizeof(uint16_t));
 
     for (size_t k = 0; k < num_objects_; k++)
     {
@@ -129,7 +126,7 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
     }
 
     // Advance pointer to account for first bytes where 'vector_lengths' are stored
-    data_ptr_ += num_objects_ * sizeof(uint8_t);
+    data_ptr_ += num_objects_ * sizeof(uint16_t);
 
     points_ptr_ = convertCollection3DDataOuter(
         data_ptr_, data_type_, num_objects_, num_bytes_per_element_, num_points_, vector_lengths);
