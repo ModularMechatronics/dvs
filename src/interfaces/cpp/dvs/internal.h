@@ -205,7 +205,7 @@ void fillBufferWithCollection(uint8_t* const data_blob, const U& data_to_be_sent
 template <typename U, typename... Us>
 void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
                                    const FunctionHeader& hdr,
-                                   const Vector<uint8_t>& vector_lengths,
+                                   const Vector<uint16_t>& vector_lengths,
                                    const size_t num_bytes_to_send,
                                    const U& first_element,
                                    const Us&... other_elements)
@@ -275,7 +275,7 @@ void fillBufferWithRefCollection(uint8_t* const data_blob, const std::vector<std
 template <typename T, typename... Us>
 void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
                                       const FunctionHeader& hdr,
-                                      const Vector<uint8_t>& vector_lengths,
+                                      const Vector<uint16_t>& vector_lengths,
                                       const size_t num_bytes_to_send,
                                       const std::vector<std::reference_wrapper<Vector<T>>>& first_element,
                                       const Us&... other_elements)
