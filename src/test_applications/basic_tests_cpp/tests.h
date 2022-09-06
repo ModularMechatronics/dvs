@@ -133,8 +133,6 @@ void testPlotCollection()
     setCurrentElement("view_00");
     clearView();
 
-    axis({-48.0, -48.0, -1.0}, {48.0, 48.0, 1.0});
-
     plotCollection(pc_x, pc_y, properties::Color(0, 0, 0));
     scatter(x0, y0, properties::Color(212, 14, 55), properties::PointSize(10));
     scatter(x1, y1, properties::Color(0, 14, 55), properties::PointSize(10));
@@ -178,8 +176,6 @@ void testPlotCollection()
         scatter(pcm_x[k], pcm_y[k], properties::Color(255, 0, 0), properties::PointSize(10));
     }
 
-    axis({-8.0, -8.0, -1.0}, {8.0, 8.0, 1.0});
-
     plotCollection(pcm_x, pcm_y, properties::Color(0, 0, 0));
 }
 
@@ -215,8 +211,6 @@ void testPlotCollection3()
 
     setCurrentElement("view_00");
     clearView();
-
-    axis({-48.0, -48.0, -48.0}, {48.0, 48.0, 48.0});
 
     plotCollection3(pc_x, pc_y, pc_z, properties::Color(0, 0, 0));
     scatter3(x0, y0, z0, properties::Color(212, 14, 55), properties::PointSize(10));
@@ -265,8 +259,6 @@ void testPlotCollection3()
     {
         scatter3(pcm_x[k], pcm_y[k], pcm_z[k], properties::Color(255, 0, 0), properties::PointSize(10));
     }
-
-    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
 
     plotCollection3(pcm_x, pcm_y, pcm_z, properties::Color(0, 0, 0));
 }
