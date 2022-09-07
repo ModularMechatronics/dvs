@@ -1,8 +1,7 @@
 #ifndef DVS_DVS_H_
 #define DVS_DVS_H_
 
-#include "dvs/communication.h"
-#include "dvs/transmission_header.h"
+// #include "dvs/transmission_header.h"
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
 
