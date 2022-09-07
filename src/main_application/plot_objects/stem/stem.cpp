@@ -8,7 +8,7 @@ std::pair<float*, float*> convertStemDataOuter(const uint8_t* const input_data,
                           const size_t num_bytes_per_element,
                           const size_t num_bytes_for_one_vec);
 
-Stem::Stem(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+Stem::Stem(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::STEM)

@@ -111,7 +111,7 @@ public:
     void setPosition(const wxPoint& new_pos);
     void setSize(const wxSize& new_size);
     void updateSizeFromParent(const wxSize& parent_size) override;
-    void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::FunctionHeader& hdr) override;
+    void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::TransmissionHeader& hdr) override;
     void show() override;
     void hide() override;
     void resetSelection() override;

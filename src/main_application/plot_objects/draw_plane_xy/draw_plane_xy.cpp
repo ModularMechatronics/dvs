@@ -1,6 +1,6 @@
 #include "main_application/plot_objects/draw_plane_xy/draw_plane_xy.h"
 
-DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+DrawPlaneXY::DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLANE_XY)

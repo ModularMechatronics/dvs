@@ -6,7 +6,7 @@
 class ReceivedData
 {
 private:
-    dvs::internal::FunctionHeader hdr_;
+    dvs::internal::TransmissionHeader hdr_;
     uint8_t* payload_data_;
     uint64_t num_data_bytes_;
 
@@ -25,7 +25,7 @@ public:
         num_data_bytes_ = other.getNumDataBytes();
         other.setNumDataBytes(0);
 
-        hdr_ = other.getFunctionHeader();
+        hdr_ = other.getTransmissionHeader();
     }*/
 
     ReceivedData(const uint8_t* const data, const uint64_t num_received_bytes)
@@ -80,7 +80,7 @@ public:
         return num_data_bytes_;
     }
 
-    dvs::internal::FunctionHeader getFunctionHeader() const
+    dvs::internal::TransmissionHeader getTransmissionHeader() const
     {
         return hdr_;
     }

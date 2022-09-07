@@ -58,11 +58,11 @@ private:
 
 public:
     Properties() = default;
-    Properties(const std::vector<FunctionHeaderObject>& values)
+    Properties(const std::vector<TransmissionHeaderObject>& values)
     {
         for (size_t k = 0; k < values.size(); k++)
         {
-            if (values[k].type == FunctionHeaderObjectType::PROPERTY)
+            if (values[k].type == TransmissionHeaderObjectType::PROPERTY)
             {
                 const PropertyBase pb = values[k].as<PropertyBase>();
                 std::shared_ptr<PropertyBase> ptr;

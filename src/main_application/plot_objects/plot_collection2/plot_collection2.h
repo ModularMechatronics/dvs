@@ -22,7 +22,7 @@ private:
 
 public:
     PlotCollection2D();
-    PlotCollection2D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
+    PlotCollection2D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
     ~PlotCollection2D();
 
     void render() override;

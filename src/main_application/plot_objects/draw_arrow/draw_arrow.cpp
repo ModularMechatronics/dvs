@@ -1,6 +1,6 @@
 #include "main_application/plot_objects/draw_arrow/draw_arrow.h"
 
-DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+DrawArrow::DrawArrow(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::DRAW_ARROW)

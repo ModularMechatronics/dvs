@@ -6,7 +6,7 @@
 #include <functional>
 
 #include "dvs/communication.h"
-#include "dvs/function_header.h"
+#include "dvs/transmission_header.h"
 #include "dvs/utils.h"
 #include "math/math.h"
 
@@ -107,7 +107,7 @@ void fillBuffer(uint8_t* const data_blob, const U& data_to_be_sent, const Us&...
 }
 
 template <typename U>
-void sendHeaderAndData(const SendFunctionType& send_function, const FunctionHeader& hdr, const U& first_element)
+void sendHeaderAndData(const SendFunctionType& send_function, const TransmissionHeader& hdr, const U& first_element)
 {
     const uint64_t num_bytes_hdr = hdr.numBytes();
     const uint64_t num_bytes_first = first_element.numBytes();
@@ -142,7 +142,7 @@ void sendHeaderAndData(const SendFunctionType& send_function, const FunctionHead
 
 template <typename U, typename... Us>
 void sendHeaderAndData(const SendFunctionType& send_function,
-                       const FunctionHeader& hdr,
+                       const TransmissionHeader& hdr,
                        const U& first_element,
                        const Us&... other_elements)
 {
@@ -204,7 +204,7 @@ void fillBufferWithCollection(uint8_t* const data_blob, const U& data_to_be_sent
 
 template <typename U, typename... Us>
 void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
-                                   const FunctionHeader& hdr,
+                                   const TransmissionHeader& hdr,
                                    const Vector<uint16_t>& vector_lengths,
                                    const size_t num_bytes_to_send,
                                    const U& first_element,
@@ -274,7 +274,7 @@ void fillBufferWithRefCollection(uint8_t* const data_blob, const std::vector<std
 
 template <typename T, typename... Us>
 void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
-                                      const FunctionHeader& hdr,
+                                      const TransmissionHeader& hdr,
                                       const Vector<uint16_t>& vector_lengths,
                                       const size_t num_bytes_to_send,
                                       const std::vector<std::reference_wrapper<Vector<T>>>& first_element,
@@ -319,7 +319,7 @@ void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
     delete[] data_blob;
 }
 
-inline void sendHeaderOnly(const SendFunctionType& send_function, const FunctionHeader& hdr)
+inline void sendHeaderOnly(const SendFunctionType& send_function, const TransmissionHeader& hdr)
 {
     const uint64_t num_bytes_hdr = hdr.numBytes();
 

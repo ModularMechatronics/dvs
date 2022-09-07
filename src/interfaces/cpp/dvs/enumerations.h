@@ -7,7 +7,7 @@ namespace dvs
 {
 namespace internal
 {
-enum class FunctionHeaderObjectType : uint16_t
+enum class TransmissionHeaderObjectType : uint16_t
 {
     FUNCTION,
     NUM_BUFFERS_REQUIRED,

@@ -25,15 +25,15 @@ protected:
 
 constexpr uint64_t num_elements = 20;
 
-template <typename... Us> FunctionHeader variadicTemplateFunction(const Us&... settings)
+template <typename... Us> TransmissionHeader variadicTemplateFunction(const Us&... settings)
 {
-    FunctionHeader hdr;
+    TransmissionHeader hdr;
 
-    hdr.append(FunctionHeaderObjectType::FUNCTION, Function::PLOT2);
-    hdr.append(FunctionHeaderObjectType::DATA_STRUCTURE, DataStructure::VECTOR);
-    hdr.append(FunctionHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
-    hdr.append(FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
-    hdr.append(FunctionHeaderObjectType::NUM_ELEMENTS, toUInt32(num_elements));
+    hdr.append(TransmissionHeaderObjectType::FUNCTION, Function::PLOT2);
+    hdr.append(TransmissionHeaderObjectType::DATA_STRUCTURE, DataStructure::VECTOR);
+    hdr.append(TransmissionHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
+    hdr.append(TransmissionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
+    hdr.append(TransmissionHeaderObjectType::NUM_ELEMENTS, toUInt32(num_elements));
     hdr.extend(settings...);
 
     return hdr;
@@ -68,35 +68,35 @@ TEST_F(TestTransmission, TestBasic)
     const prp::LineWidth lw(27);
     const prp::PointSize ps(11);
 
-    const FunctionHeader hdr = variadicTemplateFunction(col, alpha, name, ls, lw, ps, prp::PERSISTENT);
+    const TransmissionHeader hdr = variadicTemplateFunction(col, alpha, name, ls, lw, ps, prp::PERSISTENT);
 
     resetBuffer();
     sendHeaderAndData(simpleSendFunction, hdr, x, y);
 
-    const FunctionHeader received_header(&(buffer[fcn_header_idx_start]));
+    const TransmissionHeader received_header(&(buffer[fcn_header_idx_start]));
 
-    const std::vector<FunctionHeaderObject> values = received_header.getValues();
+    const std::vector<TransmissionHeaderObject> values = received_header.getValues();
 
     for (size_t k = 0; k < values.size(); k++)
     {
         switch (values[k].type)
         {
-            case FunctionHeaderObjectType::FUNCTION:
+            case TransmissionHeaderObjectType::FUNCTION:
                 ASSERT_EQ(values[k].as<Function>(), Function::PLOT2);
                 break;
-            case FunctionHeaderObjectType::DATA_STRUCTURE:
+            case TransmissionHeaderObjectType::DATA_STRUCTURE:
                 ASSERT_EQ(values[k].as<DataStructure>(), DataStructure::VECTOR);
                 break;
-            case FunctionHeaderObjectType::DATA_TYPE:
+            case TransmissionHeaderObjectType::DATA_TYPE:
                 ASSERT_EQ(values[k].as<DataType>(), DataType::DOUBLE);
                 break;
-            case FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED:
+            case TransmissionHeaderObjectType::NUM_BUFFERS_REQUIRED:
                 ASSERT_EQ(values[k].as<uint8_t>(), static_cast<uint8_t>(2));
                 break;
-            case FunctionHeaderObjectType::NUM_ELEMENTS:
+            case TransmissionHeaderObjectType::NUM_ELEMENTS:
                 ASSERT_EQ(values[k].as<uint8_t>(), toUInt8(num_elements));
                 break;
-            case FunctionHeaderObjectType::PROPERTY:
+            case TransmissionHeaderObjectType::PROPERTY:
                 switch (values[k].as<PropertyBase>().getPropertyType())
                 {
                     case dvs::internal::PropertyType::COLOR:

@@ -5,7 +5,7 @@ inline float* convertSingleMatrixDataOuter(uint8_t* input_data,
                                            const Dimension2D dims,
                                            const Vec2<double>& tile_size);
 
-DrawTiles::DrawTiles(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+DrawTiles::DrawTiles(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::DRAW_TILES)
@@ -13,7 +13,7 @@ DrawTiles::DrawTiles(std::unique_ptr<const ReceivedData> received_data, const Fu
         throw std::runtime_error("Invalid function type for DrawTiles!");
     }
 
-    dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+    dims_ = hdr.get(TransmissionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
     const size_t num_bytes_for_matrix = num_bytes_per_element_ * dims_.rows * dims_.cols;
 
     fillObjectsFromBuffer(&(data_ptr_[num_bytes_for_matrix]), tile_size_);
