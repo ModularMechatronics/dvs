@@ -26,7 +26,7 @@ private:
 
 public:
     Surf();
-    Surf(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
+    Surf(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
     ~Surf();
 
     LegendProperties getLegendProperties() const override;

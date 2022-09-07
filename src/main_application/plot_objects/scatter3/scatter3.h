@@ -19,7 +19,7 @@ private:
 
 public:
     Scatter3D();
-    Scatter3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
+    Scatter3D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
     ~Scatter3D();
 
     void render() override;

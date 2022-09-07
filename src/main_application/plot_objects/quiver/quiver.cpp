@@ -119,7 +119,7 @@ inline float* convertQuiverDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-Quiver::Quiver(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+Quiver::Quiver(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::QUIVER)
@@ -127,7 +127,7 @@ Quiver::Quiver(std::unique_ptr<const ReceivedData> received_data, const Function
         throw std::runtime_error("Invalid function type for Quiver!");
     }
 
-    dims_ = hdr.get(FunctionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+    dims_ = hdr.get(TransmissionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
     points_ptr_ = convertQuiverDataOuter(data_ptr_, data_type_, dims_, num_bytes_per_element_);
 
     glGenVertexArrays(1, &vertex_buffer_array_);

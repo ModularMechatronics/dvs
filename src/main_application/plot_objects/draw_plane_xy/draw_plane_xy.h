@@ -24,7 +24,7 @@ private:
 
 public:
     DrawPlaneXY();
-    DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
+    DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
     ~DrawPlaneXY();
 
     void render() override;

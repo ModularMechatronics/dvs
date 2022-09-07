@@ -7,10 +7,19 @@
 #include "dvs/function_header.h"
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
-#include "dvs/internal.h"
 
 const uint64_t kMagicNumber = 0xdeadbeefcafebabe;
 const uint64_t max_bytes_for_one_msg = 1380;
+
+int checkAck(char data[256])
+{
+    const int ack_received = data[0] == 'a' &&
+        data[1] == 'c' &&
+        data[2] == 'k' &&
+        data[3] == '#' &&
+        data[4] == '\0';
+    return ack_received;
+}
 
 uint8_t isBigEndian()
 {
@@ -57,7 +66,7 @@ void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_
 
             const int num_received_bytes = receiveData(&sock_struct, data);
 
-            const bool ack_received = checkAck(data);
+            const int ack_received = checkAck(data);
 
             if (!ack_received)
             {
@@ -77,7 +86,7 @@ void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_
 
         const int num_received_bytes = receiveData(&sock_struct, data);
 
-        const bool ack_received = checkAck(data);
+        const int ack_received = checkAck(data);
 
         if (!ack_received)
         {

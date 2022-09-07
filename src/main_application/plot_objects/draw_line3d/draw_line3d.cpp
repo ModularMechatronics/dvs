@@ -1,7 +1,7 @@
 #include "main_application/plot_objects/draw_line3d/draw_line3d.h"
 
 
-DrawLine3D::DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+DrawLine3D::DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if ((type_ != Function::DRAW_LINE3D) && (type_ != Function::DRAW_LINE_BETWEEN_POINTS_3D))

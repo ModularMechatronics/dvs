@@ -51,7 +51,7 @@ def np_data_type_to_data_type(dt: type):
     return dt_ret
 
 
-class FunctionHeader:
+class TransmissionHeader:
 
     def __init__(self):
         self.properties = {}
@@ -73,11 +73,11 @@ class FunctionHeader:
     def num_bytes(self):
         total_size = 0
         for key, val in self.properties.items():
-            # + 2 for FunctionHeaderObjectType, + 1 for num bytes of setting, + 1 for type of property
+            # + 2 for TransmissionHeaderObjectType, + 1 for num bytes of setting, + 1 for type of property
             total_size += SIZE_OF_PROPERTY[key] + 2 + 1 + 1
 
         for key, val in self.settings.items():
-            # + 2 for FunctionHeaderObjectType, + 1 for num bytes of setting
+            # + 2 for TransmissionHeaderObjectType, + 1 for num bytes of setting
             total_size += SIZE_OF_FUNCTION_HEADER_OBJECT[key] + 2 + 1
 
         # + 1 for number of header elements
@@ -93,7 +93,7 @@ class FunctionHeader:
                 + FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
 
         for key, val in self.properties.items():
-            bts += FunctionHeaderObjectType.PROPERTY.value.to_bytes(2, sys.byteorder) + \
+            bts += TransmissionHeaderObjectType.PROPERTY.value.to_bytes(2, sys.byteorder) + \
                 SIZE_OF_PROPERTY[key].to_bytes(1, sys.byteorder) + \
                 PROPERTY_SERIALIZATION_FUNCTIONS[key](val)
 
@@ -220,51 +220,51 @@ def axis(min_vec: Union[Vec2D, Vec3D], max_vec: Union[Vec2D, Vec3D]):
 
     # TODO: Add if statement if Vec2D is input
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.AXES_3D)
-    hdr.append(FunctionHeaderObjectType.AXIS_MIN_MAX_VEC, (min_vec, max_vec))
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.AXES_3D)
+    hdr.append(TransmissionHeaderObjectType.AXIS_MIN_MAX_VEC, (min_vec, max_vec))
     send_header(send_with_udp, hdr)
 
 
 def view(azimuth, elevation):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.VIEW)
-    hdr.append(FunctionHeaderObjectType.AZIMUTH, azimuth)
-    hdr.append(FunctionHeaderObjectType.ELEVATION, elevation)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.VIEW)
+    hdr.append(TransmissionHeaderObjectType.AZIMUTH, azimuth)
+    hdr.append(TransmissionHeaderObjectType.ELEVATION, elevation)
     send_header(send_with_udp, hdr)
 
 
 def soft_clear_view():
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SOFT_CLEAR)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.SOFT_CLEAR)
     send_header(send_with_udp, hdr)
 
 
 def clear_view():
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.CLEAR)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.CLEAR)
     send_header(send_with_udp, hdr)
 
 
 def set_current_element(name: str):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SET_CURRENT_ELEMENT)
-    hdr.append(FunctionHeaderObjectType.ELEMENT_NAME, name)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.SET_CURRENT_ELEMENT)
+    hdr.append(TransmissionHeaderObjectType.ELEMENT_NAME, name)
     send_header(send_with_udp, hdr)
 
 
 def hold_on(name: str):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.HOLD_ON)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.HOLD_ON)
     send_header(send_with_udp, hdr)
 
 
 def hold_off(name: str):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.HOLD_OFF)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.HOLD_OFF)
     send_header(send_with_udp, hdr)
 
 ####### Plot functions #######
@@ -272,15 +272,15 @@ def hold_off(name: str):
 
 def plot(x: np.array, y: np.array, **properties):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.PLOT2)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.PLOT2)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, x.size)
 
     if len(x.shape) == 2:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+        hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0][0].__class__))
     else:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+        hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0].__class__))
 
     hdr.append_properties(properties)
@@ -290,15 +290,15 @@ def plot(x: np.array, y: np.array, **properties):
 
 def plot3(x: np.array, y: np.array, z: np.array, **properties):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.PLOT3)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.PLOT3)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, x.size)
 
     if len(x.shape) == 2:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+        hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0][0].__class__))
     else:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+        hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0].__class__))
 
     hdr.append_properties(properties)
@@ -308,15 +308,15 @@ def plot3(x: np.array, y: np.array, z: np.array, **properties):
 
 def scatter(x: np.array, y: np.array, **properties):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SCATTER2)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.SCATTER2)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, x.size)
 
     if len(x.shape) == 2:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+        hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0][0].__class__))
     else:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+        hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0].__class__))
 
     hdr.append_properties(properties)
@@ -326,15 +326,15 @@ def scatter(x: np.array, y: np.array, **properties):
 
 def scatter3(x: np.array, y: np.array, z: np.array, **properties):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SCATTER3)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.SCATTER3)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, x.size)
 
     if len(x.shape) == 2:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+        hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0][0].__class__))
     else:
-        hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+        hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                    np_data_type_to_data_type(x[0].__class__))
 
     hdr.append_properties(properties)
@@ -343,12 +343,12 @@ def scatter3(x: np.array, y: np.array, z: np.array, **properties):
 
 
 def surf(x: np.array, y: np.array, z: np.array, **properties):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.SURF)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, x.size)
-    hdr.append(FunctionHeaderObjectType.DIMENSION_2D, x.shape)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.SURF)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr.append(TransmissionHeaderObjectType.DIMENSION_2D, x.shape)
 
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                np_data_type_to_data_type(x[0][0].__class__))
 
     hdr.append_properties(properties)
@@ -357,18 +357,18 @@ def surf(x: np.array, y: np.array, z: np.array, **properties):
 
 
 def imshow(img: np.array, **properties):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.IM_SHOW)
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.IM_SHOW)
 
     if len(img.shape) == 2:
-        hdr.append(FunctionHeaderObjectType.NUM_CHANNELS, 1)
-        hdr.append(FunctionHeaderObjectType.DIMENSION_2D, img.shape)
+        hdr.append(TransmissionHeaderObjectType.NUM_CHANNELS, 1)
+        hdr.append(TransmissionHeaderObjectType.DIMENSION_2D, img.shape)
     else:
-        hdr.append(FunctionHeaderObjectType.NUM_CHANNELS, 3)
-        hdr.append(FunctionHeaderObjectType.DIMENSION_2D, img[0].shape)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, img.size)
+        hdr.append(TransmissionHeaderObjectType.NUM_CHANNELS, 3)
+        hdr.append(TransmissionHeaderObjectType.DIMENSION_2D, img[0].shape)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, img.size)
 
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE,
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE,
                np_data_type_to_data_type(img[0][0][0].__class__))
 
     hdr.append_properties(properties)
@@ -377,12 +377,12 @@ def imshow(img: np.array, **properties):
 
 
 def draw_polygon_from_4_points(p0: Point3D, p1: Point3D, p2: Point3D, p3: Point3D, **properties):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION,
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION,
                Function.POLYGON_FROM_4_POINTS)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 4)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, 4)
 
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
     hdr.append_properties(properties)
 
@@ -391,11 +391,11 @@ def draw_polygon_from_4_points(p0: Point3D, p1: Point3D, p2: Point3D, p3: Point3
 
 def draw_triangle(triangle: Triangle3D, **properties):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION,
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION,
                Function.DRAW_TRIANGLES_3D)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 1)
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, 1)
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
     hdr.append_properties(properties)
 
@@ -403,10 +403,10 @@ def draw_triangle(triangle: Triangle3D, **properties):
 
 
 def draw_triangles(triangles: List[Triangle3D], **properties):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION, Function.DRAW_TRIANGLES_3D)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, len(triangles))
-    # hdr.append(FunctionHeaderObjectType.DATA_TYPE, ) TODO
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION, Function.DRAW_TRIANGLES_3D)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, len(triangles))
+    # hdr.append(TransmissionHeaderObjectType.DATA_TYPE, ) TODO
 
     hdr.append_properties(properties)
 
@@ -418,11 +418,11 @@ def draw_mesh(points: List[Point3D], indices: List[IndexTriplet], **properties):
 
 
 def draw_plane_xy(plane: Plane, p0: PointXY, p1: PointXY, **properties):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION,
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION,
                Function.PLANE_XY)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 2)
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, 2)
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
     hdr.append_properties(properties)
 
@@ -430,11 +430,11 @@ def draw_plane_xy(plane: Plane, p0: PointXY, p1: PointXY, **properties):
 
 
 def draw_plane_xz(plane: Plane, p0: PointXZ, p1: PointXZ, **properties):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION,
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION,
                Function.PLANE_XZ)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 2)
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, 2)
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
     hdr.append_properties(properties)
 
@@ -442,11 +442,11 @@ def draw_plane_xz(plane: Plane, p0: PointXZ, p1: PointXZ, **properties):
 
 
 def draw_plane_yz(plane: Plane, p0: PointYZ, p1: PointYZ, **properties):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION,
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION,
                Function.PLANE_YZ)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 2)
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, 2)
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
     hdr.append_properties(properties)
 
@@ -454,11 +454,11 @@ def draw_plane_yz(plane: Plane, p0: PointYZ, p1: PointYZ, **properties):
 
 
 def draw_line(line: Line3D, t0: np.float64, t1: np.float64, **properties):
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION,
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION,
                Function.DRAW_LINE3D)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 0)
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, 0)
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
     hdr.append_properties(properties)
 
@@ -470,11 +470,11 @@ def draw_line(line: Line3D, t0: np.float64, t1: np.float64, **properties):
 
 def draw_line_2d(line: PLine2D, t0: np.float64, t1: np.float64, **properties):
 
-    hdr = FunctionHeader()
-    hdr.append(FunctionHeaderObjectType.FUNCTION,
+    hdr = TransmissionHeader()
+    hdr.append(TransmissionHeaderObjectType.FUNCTION,
                Function.DRAW_LINE3D)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 0)
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, 0)
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
     hdr.append_properties(properties)
 
@@ -490,7 +490,7 @@ def draw_line_between_points(p0: Union[Point2D, Point3D], p1: Union[Point2D, Poi
 
     assert(type(p0) == type(p1))
 
-    hdr = FunctionHeader()
+    hdr = TransmissionHeader()
 
     if type(p0) == Point3D:
         p0_u = p0
@@ -499,10 +499,10 @@ def draw_line_between_points(p0: Union[Point2D, Point3D], p1: Union[Point2D, Poi
         p0_u = Point3D(p0.x, p0.y, 0.0)
         p1_u = Point3D(p1.x, p1.y, 0.0)
         
-    hdr.append(FunctionHeaderObjectType.FUNCTION,
+    hdr.append(TransmissionHeaderObjectType.FUNCTION,
                Function.DRAW_LINE3D)
-    hdr.append(FunctionHeaderObjectType.NUM_ELEMENTS, 0)
-    hdr.append(FunctionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
+    hdr.append(TransmissionHeaderObjectType.NUM_ELEMENTS, 0)
+    hdr.append(TransmissionHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
 
     hdr.append_properties(properties)
 

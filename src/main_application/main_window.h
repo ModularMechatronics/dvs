@@ -80,8 +80,8 @@ private:
     void OnRefreshTimer(wxTimerEvent&);
     void OnKeyboardTimer(wxTimerEvent&);
     void setupGui();
-    void setCurrentElement(const internal::FunctionHeader& hdr);
-    void createNewElement(const internal::FunctionHeader& hdr);
+    void setCurrentElement(const internal::TransmissionHeader& hdr);
+    void createNewElement(const internal::TransmissionHeader& hdr);
     void receiveData();
 
     bool hasTabWithName(const std::string& tab_name);

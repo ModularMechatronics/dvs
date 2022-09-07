@@ -25,7 +25,7 @@ private:
 
 public:
     DrawPolygon4Points();
-    DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection);
+    DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
 
     void render() override;
 };

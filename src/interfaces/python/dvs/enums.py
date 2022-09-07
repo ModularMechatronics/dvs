@@ -2,7 +2,7 @@ from enum import Enum
 import numpy as np
 
 
-class FunctionHeaderObjectType(Enum):
+class TransmissionHeaderObjectType(Enum):
     FUNCTION = 0
     NUM_BUFFERS_REQUIRED = 1
     NUM_BYTES = 2

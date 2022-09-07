@@ -44,7 +44,7 @@ size_t PlotObjectBase::getNumDimensions() const
 
 PlotObjectBase::PlotObjectBase() {}
 
-PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const FunctionHeader& hdr, const ShaderCollection shader_collection)
+PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
     const uint64_t num_data_bytes = received_data_->getNumDataBytes();
@@ -55,11 +55,11 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     min_max_calculated_ = false;
     visualize_has_run_ = false;
 
-    type_ = hdr.get(FunctionHeaderObjectType::FUNCTION).as<Function>();
-    data_type_ = hdr.get(FunctionHeaderObjectType::DATA_TYPE).as<DataType>();
+    type_ = hdr.get(TransmissionHeaderObjectType::FUNCTION).as<Function>();
+    data_type_ = hdr.get(TransmissionHeaderObjectType::DATA_TYPE).as<DataType>();
 
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
-    num_elements_ = hdr.get(FunctionHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
+    num_elements_ = hdr.get(TransmissionHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
     num_data_bytes_ = received_data_->getNumDataBytes();
     num_dimensions_ = getNumDimensionsFromFunction(type_);
 

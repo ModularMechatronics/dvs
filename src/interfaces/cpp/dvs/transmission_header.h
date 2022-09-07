@@ -17,7 +17,7 @@ namespace dvs
 {
 namespace internal
 {
-constexpr uint8_t kMaxNumFunctionHeaderBytes = SCHAR_MAX;
+constexpr uint8_t kNumTransmissionHeaderObjectBytes = SCHAR_MAX;
 
 template <typename T> uint8_t toUInt8(const T v)
 {
@@ -29,11 +29,11 @@ template <typename T> uint32_t toUInt32(const T v)
     return static_cast<uint32_t>(v);
 }
 
-struct FunctionHeaderObject
+struct TransmissionHeaderObject
 {
-    FunctionHeaderObjectType type;
+    TransmissionHeaderObjectType type;
     uint8_t num_bytes;
-    uint8_t data[kMaxNumFunctionHeaderBytes];
+    uint8_t data[kNumTransmissionHeaderObjectBytes];
 
     template <typename T> T as() const
     {
@@ -158,65 +158,65 @@ template <typename T> DataType typeToDataTypeEnum()
     }
 }
 
-template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object_type)
+template <typename U> bool checkTypeValid(const TransmissionHeaderObjectType& object_type)
 {
-    if (object_type == FunctionHeaderObjectType::NUM_BUFFERS_REQUIRED)
+    if (object_type == TransmissionHeaderObjectType::NUM_BUFFERS_REQUIRED)
     {
         return std::is_same<U, uint8_t>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::NUM_BYTES)
+    else if (object_type == TransmissionHeaderObjectType::NUM_BYTES)
     {
         return std::is_same<U, uint32_t>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::DATA_STRUCTURE)
+    else if (object_type == TransmissionHeaderObjectType::DATA_STRUCTURE)
     {
         return std::is_same<U, DataStructure>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::BYTES_PER_ELEMENT)
+    else if (object_type == TransmissionHeaderObjectType::BYTES_PER_ELEMENT)
     {
         return std::is_same<U, uint8_t>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::DATA_TYPE)
+    else if (object_type == TransmissionHeaderObjectType::DATA_TYPE)
     {
         return std::is_same<U, DataType>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::NUM_ELEMENTS)
+    else if (object_type == TransmissionHeaderObjectType::NUM_ELEMENTS)
     {
         return std::is_same<U, uint32_t>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::DIMENSION_2D)
+    else if (object_type == TransmissionHeaderObjectType::DIMENSION_2D)
     {
         return std::is_same<U, Dimension2D>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::HAS_PAYLOAD)
+    else if (object_type == TransmissionHeaderObjectType::HAS_PAYLOAD)
     {
         return std::is_same<U, bool>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::AZIMUTH)
+    else if (object_type == TransmissionHeaderObjectType::AZIMUTH)
     {
         return std::is_same<U, float>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::ELEVATION)
+    else if (object_type == TransmissionHeaderObjectType::ELEVATION)
     {
         return std::is_same<U, float>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::AXIS_MIN_MAX_VEC)
+    else if (object_type == TransmissionHeaderObjectType::AXIS_MIN_MAX_VEC)
     {
         return std::is_same<U, std::pair<Vec3<double>, Vec3<double>>>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::ELEMENT_NAME)
+    else if (object_type == TransmissionHeaderObjectType::ELEMENT_NAME)
     {
         return std::is_same<U, std::string>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::FIGURE_NUM)
+    else if (object_type == TransmissionHeaderObjectType::FIGURE_NUM)
     {
         return std::is_same<U, uint8_t>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::FUNCTION)
+    else if (object_type == TransmissionHeaderObjectType::FUNCTION)
     {
         return std::is_same<U, Function>::value;
     }
-    else if (object_type == FunctionHeaderObjectType::PROPERTY)
+    else if (object_type == TransmissionHeaderObjectType::PROPERTY)
     {
         return std::is_base_of<PropertyBase, U>::value;
     }
@@ -226,26 +226,26 @@ template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object
     }
 }
 
-class FunctionHeader
+class TransmissionHeader
 {
 private:
-    std::vector<FunctionHeaderObject> values;
+    std::vector<TransmissionHeaderObject> values;
 
-    void extendInternal(__attribute__((unused)) std::vector<FunctionHeaderObject>& values)
+    void extendInternal(__attribute__((unused)) std::vector<TransmissionHeaderObject>& values)
     {
         //  To catch when there are no arguments to extend
     }
 
-    template <typename U> void extendInternal(std::vector<FunctionHeaderObject>& values, const U& obj)
+    template <typename U> void extendInternal(std::vector<TransmissionHeaderObject>& values, const U& obj)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
-        assert((sizeof(U) <= kMaxNumFunctionHeaderBytes) && "Too many data bytes!");
+        assert((sizeof(U) <= kNumTransmissionHeaderObjectBytes) && "Too many data bytes!");
 
-        values.push_back(FunctionHeaderObject());
-        FunctionHeaderObject* const ptr = &(values[values.size() - 1]); // TODO: Change to ref
+        values.push_back(TransmissionHeaderObject());
+        TransmissionHeaderObject* const ptr = &(values[values.size() - 1]); // TODO: Change to ref
 
-        ptr->type = FunctionHeaderObjectType::PROPERTY;
+        ptr->type = TransmissionHeaderObjectType::PROPERTY;
 
         if(std::is_same<U, PropertyType>::value)
         {
@@ -266,16 +266,16 @@ private:
     }
 
     template <typename U, typename... Us>
-    void extendInternal(std::vector<FunctionHeaderObject>& values, const U& obj, const Us&... other_objs)
+    void extendInternal(std::vector<TransmissionHeaderObject>& values, const U& obj, const Us&... other_objs)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
-        assert((sizeof(U) <= kMaxNumFunctionHeaderBytes) && "Too many data bytes!");
+        assert((sizeof(U) <= kNumTransmissionHeaderObjectBytes) && "Too many data bytes!");
 
-        values.push_back(FunctionHeaderObject());
-        FunctionHeaderObject* const ptr = &(values[values.size() - 1]); // TODO: Change to ref
+        values.push_back(TransmissionHeaderObject());
+        TransmissionHeaderObject* const ptr = &(values[values.size() - 1]); // TODO: Change to ref
 
-        ptr->type = FunctionHeaderObjectType::PROPERTY;
+        ptr->type = TransmissionHeaderObjectType::PROPERTY;
 
         if(std::is_same<U, PropertyType>::value)
         {
@@ -298,12 +298,12 @@ private:
     }
 
 public:
-    FunctionHeader()
+    TransmissionHeader()
     {
         values.reserve(16);
     }
 
-    FunctionHeader(const uint8_t* const buffer, const bool is_big_endian)
+    TransmissionHeader(const uint8_t* const buffer, const bool is_big_endian)
     {
         (void)is_big_endian;
         const uint8_t num_expected_values = buffer[0];
@@ -315,14 +315,14 @@ public:
 
         while (num_values < num_expected_values)
         {
-            values.push_back(FunctionHeaderObject());
-            FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
+            values.push_back(TransmissionHeaderObject());
+            TransmissionHeaderObject* const ptr = &(values[values.size() - 1]);
 
-            std::memcpy(&(ptr->type), &(buffer[idx]), sizeof(FunctionHeaderObjectType));
-            idx += sizeof(FunctionHeaderObjectType);
+            std::memcpy(&(ptr->type), &(buffer[idx]), sizeof(TransmissionHeaderObjectType));
+            idx += sizeof(TransmissionHeaderObjectType);
 
-            std::memcpy(&(ptr->num_bytes), &(buffer[idx]), sizeof(FunctionHeaderObject::num_bytes));
-            idx += sizeof(FunctionHeaderObject::num_bytes);
+            std::memcpy(&(ptr->num_bytes), &(buffer[idx]), sizeof(TransmissionHeaderObject::num_bytes));
+            idx += sizeof(TransmissionHeaderObject::num_bytes);
 
             std::memcpy(ptr->data, &(buffer[idx]), ptr->num_bytes);
             idx += ptr->num_bytes;
@@ -333,46 +333,46 @@ public:
         assert(static_cast<size_t>(num_values) == values.size());
     }
 
-    template <typename U> void append(const FunctionHeaderObjectType& object_type, const U& data)
+    template <typename U> void append(const TransmissionHeaderObjectType& object_type, const U& data)
     {
         // assert(checkTypeValid<U>(object_type) && "Invalid data type for object_type data!");
 
-        values.push_back(FunctionHeaderObject());
-        FunctionHeaderObject* const ptr = &(values[values.size() - 1]);
+        values.push_back(TransmissionHeaderObject());
+        TransmissionHeaderObject* const ptr = &(values[values.size() - 1]);
 
         ptr->type = object_type;
         ptr->num_bytes = sizeof(U);
 
-        assert((ptr->num_bytes <= kMaxNumFunctionHeaderBytes) && "Too many data bytes!");
+        assert((ptr->num_bytes <= kNumTransmissionHeaderObjectBytes) && "Too many data bytes!");
 
         fillBufferWithObjects(ptr->data, data);
     }
 
-    bool hasType(const FunctionHeaderObjectType tp) const
+    bool hasType(const TransmissionHeaderObjectType tp) const
     {
-        return std::find_if(values.begin(), values.end(), [&tp](const FunctionHeaderObject& fo) -> bool {
+        return std::find_if(values.begin(), values.end(), [&tp](const TransmissionHeaderObject& fo) -> bool {
                    return fo.type == tp;
                }) != values.end();
     }
 
-    const std::vector<FunctionHeaderObject>& getValues() const
+    const std::vector<TransmissionHeaderObject>& getValues() const
     {
         return values;
     }
 
-    FunctionHeaderObject getObjectAtIdx(const size_t idx) const
+    TransmissionHeaderObject getObjectAtIdx(const size_t idx) const
     {
         return values.at(idx);
     }
 
-    FunctionHeaderObject get(const FunctionHeaderObjectType tp) const
+    TransmissionHeaderObject get(const TransmissionHeaderObjectType tp) const
     {
         if (!hasType(tp))
         {
             throw std::runtime_error("Requested object that is not in value list!");
         }
 
-        FunctionHeaderObject obj;
+        TransmissionHeaderObject obj;
 
         for (size_t k = 0; k < values.size(); k++)
         {
@@ -408,7 +408,7 @@ public:
 
         for (size_t k = 0; k < values.size(); k++)
         {
-            s = s + sizeof(FunctionHeaderObjectType) + sizeof(FunctionHeaderObject::num_bytes) + values[k].num_bytes;
+            s = s + sizeof(TransmissionHeaderObjectType) + sizeof(TransmissionHeaderObject::num_bytes) + values[k].num_bytes;
         }
 
         return s;
@@ -421,11 +421,11 @@ public:
 
         for (size_t k = 0; k < values.size(); k++)
         {
-            std::memcpy(&(buffer[idx]), &(values[k].type), sizeof(FunctionHeaderObjectType));
-            idx += sizeof(FunctionHeaderObjectType);
+            std::memcpy(&(buffer[idx]), &(values[k].type), sizeof(TransmissionHeaderObjectType));
+            idx += sizeof(TransmissionHeaderObjectType);
 
-            std::memcpy(&(buffer[idx]), &(values[k].num_bytes), sizeof(FunctionHeaderObject::num_bytes));
-            idx += sizeof(FunctionHeaderObject::num_bytes);
+            std::memcpy(&(buffer[idx]), &(values[k].num_bytes), sizeof(TransmissionHeaderObject::num_bytes));
+            idx += sizeof(TransmissionHeaderObject::num_bytes);
 
             std::memcpy(&(buffer[idx]), values[k].data, values[k].num_bytes);
             idx += values[k].num_bytes;
