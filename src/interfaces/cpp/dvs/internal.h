@@ -37,7 +37,7 @@ inline void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64
 
             const int num_received_bytes = udp_client.receiveData(data);
 
-            bool ack_received = checkAck(data);
+            const bool ack_received = checkAck(data);
 
             if (!ack_received)
             {
@@ -55,7 +55,7 @@ inline void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64
 
         const int num_received_bytes = udp_client.receiveData(data);
 
-        bool ack_received = checkAck(data);
+        const bool ack_received = checkAck(data);
 
         if (!ack_received)
         {

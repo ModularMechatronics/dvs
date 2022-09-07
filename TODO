@@ -14,6 +14,8 @@ Pre release:
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Rename "FunctionHeader" to "TransmissionHeader" and "FunctionHeaderObject" to "TransmissionHeaderObject"
 - Rename PlotWindowGLPane to PlotCanvas, or GLPlotCanvas, or PlotPane (probably unecessary to include "GL" in name)
+- Change "Name" plot property to use std::string instead?
+- Add MatrixFixed and VectorFixed
 - Mark all properties classes constructors explicit (and noexcept?)
 - Change to google logging
 - Refactor legend properties with colormap pointer
@@ -39,7 +41,7 @@ Pre release:
 - Implement findMinMax for matrices and vectors
 - Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
 - Make sure plot/plot3 works for integer data types
-- Change types from float to double, to increase precision
+- Change opengl types from float to double, to increase precision
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Make proper test folder structure
 - Switch cache reader to configuration_agent

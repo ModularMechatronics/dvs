@@ -95,8 +95,12 @@ inline uint8_t isBigEndian()
 
 inline bool checkAck(char data[256])
 {
-    const bool ar = data[0] == 'a' && data[1] == 'c' && data[2] == 'k' && data[3] == '#' && data[4] == '\0';
-    return ar;
+    const bool ack_received = data[0] == 'a' &&
+        data[1] == 'c' &&
+        data[2] == 'k' &&
+        data[3] == '#' &&
+        data[4] == '\0';
+    return ack_received;
 }
 
 }  // namespace internal
