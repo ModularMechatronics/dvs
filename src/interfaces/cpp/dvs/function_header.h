@@ -226,15 +226,6 @@ template <typename U> bool checkTypeValid(const FunctionHeaderObjectType& object
     }
 }
 
-/*template <typename U> constexpr bool isCorrectType()
-{
-    return std::is_same<U, LineWidth>::value || std::is_same<U, Alpha>::value ||
-           std::is_same<U, Name>::value || std::is_same<U, LineStyle>::value ||
-           std::is_same<U, Color>::value || std::is_same<U, EdgeColor>::value ||
-           std::is_same<U, FaceColor>::value || std::is_same<U, ColorMap>::value ||
-           std::is_same<U, PointSize>::value || std::is_same<U, Property>::value;
-}*/
-
 class FunctionHeader
 {
 private:
