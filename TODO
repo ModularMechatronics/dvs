@@ -12,7 +12,6 @@ Pre release:
   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
 - Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
-- Rename "FunctionHeader" to "TransmissionHeader" and "TransmissionHeaderObject" to "TransmissionHeaderObject"
 - Rename PlotWindowGLPane to PlotCanvas, or GLPlotCanvas, or PlotPane (probably unecessary to include "GL" in name)
 - Change "Name" plot property to use std::string instead?
 - Add MatrixFixed and VectorFixed

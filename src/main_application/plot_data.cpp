@@ -27,8 +27,7 @@ void PlotDataHandler::clear()
 
 void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr)
 {
-    const TransmissionHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
-    Function fcn = fcn_obj.as<Function>();
+    const Function fcn = hdr.getObjectAtIdx(0).as<Function>();
 
     if (pending_clear_)
     {
