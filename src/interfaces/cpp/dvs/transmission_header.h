@@ -10,6 +10,7 @@
 #include "dvs/base_types.h"
 #include "dvs/enumerations.h"
 #include "dvs/plot_properties.h"
+#include "dvs/constants.h"
 #include "dvs/utils.h"
 #include "dvs/math/math.h"
 #include "dvs/fillable_uint8_array.h"
@@ -18,7 +19,6 @@ namespace dvs
 {
 namespace internal
 {
-constexpr uint8_t kNumTransmissionHeaderObjectBytes = SCHAR_MAX;
 
 template <typename T> uint8_t toUInt8(const T v)
 {
@@ -34,17 +34,18 @@ struct TransmissionHeaderObject
 {
     TransmissionHeaderObjectType type;
     uint8_t num_bytes;
-    uint8_t data[kNumTransmissionHeaderObjectBytes];
+    uint8_t data[kTransmissionHeaderObjectDataSize];
 
     template <typename T> T as() const
     {
         T out_var;
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(&out_var);
+        std::memcpy(reinterpret_cast<uint8_t*>(&out_var), data, sizeof(T));
+        /*uint8_t* const ptr = reinterpret_cast<uint8_t* const>(&out_var);
 
         for (size_t k = 0; k < sizeof(T); k++)
         {
             ptr[k] = data[k];
-        }
+        }*/
 
         return out_var;
     }
@@ -234,14 +235,14 @@ private:
 
     void extendInternal(__attribute__((unused)) std::vector<TransmissionHeaderObject>& values)
     {
-        //  To catch when there are no arguments to extend
+        // To catch when there are no arguments to extend
     }
 
     template <typename U> void extendInternal(std::vector<TransmissionHeaderObject>& values, const U& obj)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
-        assert((sizeof(U) <= kNumTransmissionHeaderObjectBytes) && "Too many data bytes!");
+        assert((sizeof(U) <= kTransmissionHeaderObjectDataSize) && "Too many data bytes!");
 
         values.push_back(TransmissionHeaderObject());
         TransmissionHeaderObject* const ptr = &(values[values.size() - 1]); // TODO: Change to ref
@@ -271,7 +272,7 @@ private:
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
-        assert((sizeof(U) <= kNumTransmissionHeaderObjectBytes) && "Too many data bytes!");
+        assert((sizeof(U) <= kTransmissionHeaderObjectDataSize) && "Too many data bytes!");
 
         values.push_back(TransmissionHeaderObject());
         TransmissionHeaderObject* const ptr = &(values[values.size() - 1]); // TODO: Change to ref
@@ -344,7 +345,7 @@ public:
         ptr->type = object_type;
         ptr->num_bytes = sizeof(U);
 
-        assert((ptr->num_bytes <= kNumTransmissionHeaderObjectBytes) && "Too many data bytes!");
+        assert((ptr->num_bytes <= kTransmissionHeaderObjectDataSize) && "Too many data bytes!");
 
         fillBufferWithObjects(ptr->data, data);
     }

@@ -27,49 +27,48 @@
 class UdpClient
 {
 private:
-    int sock_file_descr;
-    struct sockaddr_in tx_addr;
-    struct sockaddr* tx_addr_ptr;
+    int sock_file_descr_;
+    struct sockaddr_in tx_addr_;
+    struct sockaddr* tx_addr_ptr_;
 
 public:
-    UdpClient() : sock_file_descr(-1), tx_addr_ptr(nullptr) {}
+    UdpClient() : sock_file_descr_(-1), tx_addr_ptr_(nullptr) {}
 
     UdpClient(const uint64_t port_num)
     {
-        if ((sock_file_descr = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+        if ((sock_file_descr_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         {
-            perror("socket failed");
-            sock_file_descr = -1;
+            throw std::runtime_error("socket failed!");
         }
 
-        memset(&tx_addr, 0, sizeof(tx_addr));
-        tx_addr.sin_family = AF_INET;
-        tx_addr.sin_port = htons(port_num);
-        tx_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        tx_addr_ptr = (struct sockaddr*)&tx_addr;
+        std::memset(&tx_addr_, 0, sizeof(tx_addr_));
+        tx_addr_.sin_family = AF_INET;
+        tx_addr_.sin_port = htons(port_num);
+        tx_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
+        tx_addr_ptr_ = (struct sockaddr*)&tx_addr_;
     }
 
     ~UdpClient()
     {
-        close(sock_file_descr);
+        close(sock_file_descr_);
     }
 
     int receiveData(char data[256]) const
     {
-        socklen_t client_len = sizeof(tx_addr);
-        const int num_received_bytes = recvfrom(sock_file_descr, data, 256, 0, (struct sockaddr*)&tx_addr, &client_len);
+        socklen_t client_len = sizeof(tx_addr_);
+        const int num_received_bytes = recvfrom(sock_file_descr_, data, 256, 0, (struct sockaddr*)&tx_addr_, &client_len);
         return num_received_bytes;
     }
 
     void sendData(const uint8_t* const data, const uint64_t num_bytes) const
     {
-        if (sock_file_descr == -1)
+        if (sock_file_descr_ == -1)
         {
-            perror("Invalid socket!");
+            throw std::runtime_error("Invalid socket!");
         }
-        else if (sendto(sock_file_descr, data, num_bytes, 0, tx_addr_ptr, sizeof(tx_addr)) < 0)
+        else if (sendto(sock_file_descr_, data, num_bytes, 0, tx_addr_ptr_, sizeof(tx_addr_)) < 0)
         {
-            perror("sendto failed");
+            throw std::runtime_error("sendto failed!");
         }
     }
 };
