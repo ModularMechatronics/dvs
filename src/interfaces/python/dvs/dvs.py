@@ -106,14 +106,14 @@ size_t num_sent_bytes = 0;
 while (num_sent_bytes < num_bytes)
 {
     const size_t num_bytes_to_send =
-        std::min(max_bytes_for_one_msg, static_cast<size_t>(num_bytes) - num_sent_bytes);
+        std::min(kMaxNumBytesForOneTransmission, static_cast<size_t>(num_bytes) - num_sent_bytes);
 
     udp_client.sendData(&(data_blob[num_sent_bytes]), num_bytes_to_send);
     num_sent_bytes += num_bytes_to_send;
 
     const int num_received_bytes = udp_client.receiveData(data);
 
-    bool ack_received = checkAck(data);
+    bool ack_received = ackValid(data);
 
     if (!ack_received)
     {

@@ -8,6 +8,7 @@
 #include "dvs/communication.h"
 #include "dvs/transmission_header.h"
 #include "dvs/fillable_uint8_array.h"
+#include "dvs/constants.h"
 #include "dvs/utils.h"
 #include "math/math.h"
 
@@ -15,37 +16,34 @@ namespace dvs
 {
 namespace internal
 {
-constexpr uint64_t kMagicNumber = 0xdeadbeefcafebabe;
-using SendFunctionType = std::function<void(const FillableUInt8Array& fillable_array)>;
 
-inline void sendThroughUdpInterface(const FillableUInt8Array& fillable_array)
+using SendFunctionType = std::function<void(const UInt8ArrayView& input_array)>;
+
+inline void sendThroughUdpInterface(const UInt8ArrayView& input_array)
 {
-    const uint8_t* const data_blob = fillable_array.data();
-    const uint64_t num_bytes = fillable_array.size();
+    const uint8_t* const data_to_send = input_array.data();
+    const uint64_t total_num_bytes_to_send = input_array.size();
 
-    const size_t max_bytes_for_one_msg = 1380;
-    UdpClient udp_client(9752);
-    char data[256];
+    const UdpClient udp_client(kUdpPortNum);
+    char received_data[256];
 
-    if (num_bytes > max_bytes_for_one_msg)
+    if (total_num_bytes_to_send >= kMaxNumBytesForOneTransmission)
     {
         size_t num_sent_bytes = 0;
 
-        while (num_sent_bytes < num_bytes)
+        while (num_sent_bytes < total_num_bytes_to_send)
         {
             const size_t num_bytes_to_send =
-                std::min(max_bytes_for_one_msg, static_cast<size_t>(num_bytes) - num_sent_bytes);
+                std::min(kMaxNumBytesForOneTransmission, static_cast<size_t>(total_num_bytes_to_send) - num_sent_bytes);
 
-            udp_client.sendData(&(data_blob[num_sent_bytes]), num_bytes_to_send);
+            udp_client.sendData(data_to_send + num_sent_bytes, num_bytes_to_send);
             num_sent_bytes += num_bytes_to_send;
 
-            const int num_received_bytes = udp_client.receiveData(data);
+            const int num_received_bytes = udp_client.receiveData(received_data);
 
-            const bool ack_received = checkAck(data);
-
-            if (!ack_received)
+            if (!ackValid(received_data))
             {
-                throw std::runtime_error("No ack received!");
+                throw std::runtime_error("No valid ack received!");
             }
             else if (num_received_bytes != 5)
             {
@@ -55,15 +53,13 @@ inline void sendThroughUdpInterface(const FillableUInt8Array& fillable_array)
     }
     else
     {
-        udp_client.sendData(data_blob, num_bytes);
+        udp_client.sendData(data_to_send, total_num_bytes_to_send);
 
-        const int num_received_bytes = udp_client.receiveData(data);
+        const int num_received_bytes = udp_client.receiveData(received_data);
 
-        const bool ack_received = checkAck(data);
-
-        if (!ack_received)
+        if (!ackValid(received_data))
         {
-            throw std::runtime_error("No ack received!");
+            throw std::runtime_error("No valid ack received!");
         }
         else if (num_received_bytes != 5)
         {
@@ -132,7 +128,7 @@ void sendHeaderAndData(const SendFunctionType& send_function, const Transmission
 
     fillable_array.fillWithDataFromPointer(first_element.data(), first_element.numElements());
 
-    send_function(fillable_array);
+    send_function(fillable_array.view());
 }
 
 template <typename U, typename... Us>
@@ -164,7 +160,7 @@ void sendHeaderAndData(const SendFunctionType& send_function,
 
     fillBuffer(fillable_array, other_elements...);
 
-    send_function(fillable_array);
+    send_function(fillable_array.view());
 }
 
 template <typename U> void fillBufferWithCollection(FillableUInt8Array& fillable_array, const U& data_to_be_sent)
@@ -220,7 +216,7 @@ void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
 
     fillBufferWithCollection(fillable_array, other_elements...);
 
-    send_function(fillable_array);
+    send_function(fillable_array.view());
 }
 
 template <typename T> void fillBufferWithRefCollection(FillableUInt8Array& fillable_array, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent)
@@ -278,7 +274,7 @@ void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
 
     fillBufferWithRefCollection(fillable_array, other_elements...);
 
-    send_function(fillable_array);
+    send_function(fillable_array.view());
 }
 
 inline void sendHeaderOnly(const SendFunctionType& send_function, const TransmissionHeader& hdr)
@@ -299,7 +295,7 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Transmis
 
     hdr.fillBufferWithData(fillable_array);
 
-    send_function(fillable_array);
+    send_function(fillable_array.view());
 }
 
 }  // namespace internal

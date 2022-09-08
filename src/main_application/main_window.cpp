@@ -25,6 +25,7 @@
 #include "events.h"
 #include "filesystem_include.h"
 #include "layout_tools_window.h"
+#include "dvs/constants.h"
 
 using namespace dvs::internal;
 
@@ -64,7 +65,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     : wxFrame(NULL, wxID_ANY, "", wxPoint(0, 30), wxSize(1500, 700))
 {
     static_cast<void>(cmdl_args);
-    udp_server_ = new UdpServer(9752);
+    udp_server_ = new UdpServer(dvs::internal::kUdpPortNum);
     udp_server_->start();
     current_gui_element_ = nullptr;
     current_gui_element_set_ = false;

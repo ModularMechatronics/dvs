@@ -125,7 +125,7 @@ public:
     {
         client_len = sizeof(claddr);
 
-        const size_t max_bytes_for_one_msg = 1380;
+        const size_t kMaxNumBytesForOneTransmission = 1380;
 
         bool should_run = true;
         while (should_run)
@@ -150,7 +150,7 @@ public:
             }
             sendAck();
 
-            if (num_expected_bytes > max_bytes_for_one_msg)
+            if (num_expected_bytes > kMaxNumBytesForOneTransmission)
             {
                 while (num_received_bytes_total < num_expected_bytes)
                 {
