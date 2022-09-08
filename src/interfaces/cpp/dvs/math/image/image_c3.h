@@ -86,6 +86,7 @@ public:
     size_t numRows() const;
     size_t numCols() const;
     size_t numBytes() const;
+    size_t numElements() const;
     void fillBufferWithData(uint8_t* const buffer) const;
 
     T* data() const;
@@ -125,6 +126,11 @@ template <typename T> void ImageC3<T>::fillBufferWithData(uint8_t* const buffer)
 template <typename T> size_t ImageC3<T>::numBytes() const
 {
     return 3 * num_rows_ * num_cols_ * sizeof(T);
+}
+
+template <typename T> size_t ImageC3<T>::numElements() const
+{
+    return 3 * num_rows_ * num_cols_;
 }
 
 template <typename T> size_t ImageC3<T>::numRows() const

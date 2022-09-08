@@ -7,6 +7,7 @@
 
 #include "dvs/communication.h"
 #include "dvs/transmission_header.h"
+#include "dvs/fillable_uint8_array.h"
 #include "dvs/utils.h"
 #include "math/math.h"
 
@@ -17,6 +18,7 @@ namespace internal
 constexpr uint64_t kMagicNumber = 0xdeadbeefcafebabe;
 using SendFunctionType = std::function<void(const uint8_t* const data_blob, const uint64_t num_bytes)>;
 
+// TODO: Take UInt8ArrayView as input argument instead
 inline void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
 {
     const size_t max_bytes_for_one_msg = 1380;
@@ -92,18 +94,16 @@ template <typename... Us> uint64_t countNumBytes(const Us&... datas)
     return num_bytes;
 }
 
-template <typename U> void fillBuffer(uint8_t* const data_blob, const U& data_to_be_sent)
+template <typename U> void fillBuffer(FillableUInt8Array& fillable_array, const U& data_to_be_sent)
 {
-    data_to_be_sent.fillBufferWithData(data_blob);
+    fillable_array.fillWithDataFromPointer(data_to_be_sent.data(), data_to_be_sent.numElements());
 }
 
 template <typename U, typename... Us>
-void fillBuffer(uint8_t* const data_blob, const U& data_to_be_sent, const Us&... other_elements)
+void fillBuffer(FillableUInt8Array& fillable_array, const U& data_to_be_sent, const Us&... other_elements)
 {
-    const uint64_t num_bytes = data_to_be_sent.numBytes();
-
-    data_to_be_sent.fillBufferWithData(data_blob);
-    fillBuffer(&(data_blob[num_bytes]), other_elements...);
+    fillable_array.fillWithDataFromPointer(data_to_be_sent.data(), data_to_be_sent.numElements());
+    fillBuffer(fillable_array, other_elements...);
 }
 
 template <typename U>
@@ -118,26 +118,19 @@ void sendHeaderAndData(const SendFunctionType& send_function, const Transmission
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
     const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
 
-    uint8_t* const data_blob = new uint8_t[num_bytes];
+    FillableUInt8Array fillable_array{num_bytes};
 
-    uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
-    idx += 1;
+    fillable_array.fillWithStaticType(isBigEndian());
 
-    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(kMagicNumber);
 
-    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(num_bytes);
 
-    hdr.fillBufferWithData(&(data_blob[idx]));
-    idx += num_bytes_hdr;
+    hdr.fillBufferWithData(fillable_array);
 
-    first_element.fillBufferWithData(&(data_blob[idx]));
+    fillable_array.fillWithDataFromPointer(first_element.data(), first_element.numElements());
 
-    send_function(data_blob, num_bytes);
-
-    delete[] data_blob;
+    send_function(fillable_array.data(), fillable_array.size());
 }
 
 template <typename U, typename... Us>
@@ -155,29 +148,21 @@ void sendHeaderAndData(const SendFunctionType& send_function,
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
     const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
 
-    uint8_t* const data_blob = new uint8_t[num_bytes];
+    FillableUInt8Array fillable_array{num_bytes};
 
-    uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
-    idx += 1;
+    fillable_array.fillWithStaticType(isBigEndian());
 
-    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(kMagicNumber);
 
-    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(num_bytes);
 
-    hdr.fillBufferWithData(&(data_blob[idx]));
-    idx += num_bytes_hdr;
+    hdr.fillBufferWithData(fillable_array);
 
-    first_element.fillBufferWithData(&(data_blob[idx]));
-    idx += num_bytes_first;
+    fillable_array.fillWithDataFromPointer(first_element.data(), first_element.numElements());
 
-    fillBuffer(&(data_blob[idx]), other_elements...);
+    fillBuffer(fillable_array, other_elements...);
 
-    send_function(data_blob, num_bytes);
-
-    delete[] data_blob;
+    send_function(fillable_array.data(), fillable_array.size());
 }
 
 template <typename U> void fillBufferWithCollection(uint8_t* const data_blob, const U& data_to_be_sent)
