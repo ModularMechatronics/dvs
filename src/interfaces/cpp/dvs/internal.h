@@ -16,11 +16,13 @@ namespace dvs
 namespace internal
 {
 constexpr uint64_t kMagicNumber = 0xdeadbeefcafebabe;
-using SendFunctionType = std::function<void(const uint8_t* const data_blob, const uint64_t num_bytes)>;
+using SendFunctionType = std::function<void(const FillableUInt8Array& fillable_array)>;
 
-// TODO: Take UInt8ArrayView as input argument instead
-inline void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
+inline void sendThroughUdpInterface(const FillableUInt8Array& fillable_array)
 {
+    const uint8_t* const data_blob = fillable_array.data();
+    const uint64_t num_bytes = fillable_array.size();
+
     const size_t max_bytes_for_one_msg = 1380;
     UdpClient udp_client(9752);
     char data[256];
@@ -130,7 +132,7 @@ void sendHeaderAndData(const SendFunctionType& send_function, const Transmission
 
     fillable_array.fillWithDataFromPointer(first_element.data(), first_element.numElements());
 
-    send_function(fillable_array.data(), fillable_array.size());
+    send_function(fillable_array);
 }
 
 template <typename U, typename... Us>
@@ -162,7 +164,7 @@ void sendHeaderAndData(const SendFunctionType& send_function,
 
     fillBuffer(fillable_array, other_elements...);
 
-    send_function(fillable_array.data(), fillable_array.size());
+    send_function(fillable_array);
 }
 
 template <typename U> void fillBufferWithCollection(FillableUInt8Array& fillable_array, const U& data_to_be_sent)
@@ -218,7 +220,7 @@ void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
 
     fillBufferWithCollection(fillable_array, other_elements...);
 
-    send_function(fillable_array.data(), fillable_array.size());
+    send_function(fillable_array);
 }
 
 template <typename T> void fillBufferWithRefCollection(FillableUInt8Array& fillable_array, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent)
@@ -276,7 +278,7 @@ void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
 
     fillBufferWithRefCollection(fillable_array, other_elements...);
 
-    send_function(fillable_array.data(), fillable_array.size());
+    send_function(fillable_array);
 }
 
 inline void sendHeaderOnly(const SendFunctionType& send_function, const TransmissionHeader& hdr)
@@ -297,7 +299,7 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Transmis
 
     hdr.fillBufferWithData(fillable_array);
 
-    send_function(fillable_array.data(), fillable_array.size());
+    send_function(fillable_array);
 }
 
 }  // namespace internal
