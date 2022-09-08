@@ -93,7 +93,7 @@ inline uint8_t isBigEndian()
     }
 }
 
-inline bool checkAck(char data[256])
+inline bool ackValid(char data[256])
 {
     const bool ack_received = data[0] == 'a' &&
         data[1] == 'c' &&

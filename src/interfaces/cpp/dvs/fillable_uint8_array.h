@@ -4,13 +4,25 @@
 #include <stdint.h>
 #include <assert.h>
 
-/*class UInt8ArrayView
+class UInt8ArrayView
 {
 private:
     uint8_t* data_;
     size_t size_;
 public:
-};*/
+    UInt8ArrayView() : data_{nullptr}, size_{0U} {}
+    UInt8ArrayView(uint8_t* data_in, const size_t size_in) : data_{data_in}, size_{size_in} {}
+
+    uint8_t* data() const
+    {
+        return data_;
+    }
+
+    size_t size() const
+    {
+        return size_;
+    }
+};
 
 class FillableUInt8Array
 {
@@ -54,6 +66,11 @@ public:
         idx_ += num_elements * sizeof(T);
 
         assert(idx_ <= size_);
+    }
+
+    UInt8ArrayView view() const
+    {
+        return UInt8ArrayView{data_, size_};
     }
 };
 
