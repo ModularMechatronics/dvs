@@ -165,26 +165,23 @@ void sendHeaderAndData(const SendFunctionType& send_function,
     send_function(fillable_array.data(), fillable_array.size());
 }
 
-template <typename U> void fillBufferWithCollection(uint8_t* const data_blob, const U& data_to_be_sent)
+template <typename U> void fillBufferWithCollection(FillableUInt8Array& fillable_array, const U& data_to_be_sent)
 {
-    size_t total_num_bytes = 0;
     for (size_t k = 0; k < data_to_be_sent.size(); k++)
     {
-        data_to_be_sent[k].fillBufferWithData(&(data_blob[total_num_bytes]));
-        total_num_bytes += data_to_be_sent[k].numBytes();
+        fillable_array.fillWithDataFromPointer(data_to_be_sent[k].data(), data_to_be_sent[k].numElements());
     }
 }
 
 template <typename U, typename... Us>
-void fillBufferWithCollection(uint8_t* const data_blob, const U& data_to_be_sent, const Us&... other_elements)
+void fillBufferWithCollection(FillableUInt8Array& fillable_array, const U& data_to_be_sent, const Us&... other_elements)
 {
-    size_t total_num_bytes = 0;
     for (size_t k = 0; k < data_to_be_sent.size(); k++)
     {
-        data_to_be_sent[k].fillBufferWithData(&(data_blob[total_num_bytes]));
-        total_num_bytes += data_to_be_sent[k].numBytes();
+        fillable_array.fillWithDataFromPointer(data_to_be_sent[k].data(), data_to_be_sent[k].numElements());
     }
-    fillBufferWithCollection(&(data_blob[total_num_bytes]), other_elements...);
+
+    fillBufferWithCollection(fillable_array, other_elements...);
 }
 
 template <typename U, typename... Us>
@@ -202,59 +199,46 @@ void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
     const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t) + vector_lengths.numBytes();
 
-    uint8_t* const data_blob = new uint8_t[num_bytes];
+    FillableUInt8Array fillable_array{num_bytes};
 
-    uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
-    idx += 1;
+    fillable_array.fillWithStaticType(isBigEndian());
 
-    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(kMagicNumber);
 
-    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(num_bytes);
 
-    hdr.fillBufferWithData(&(data_blob[idx]));
-    idx += num_bytes_hdr;
+    hdr.fillBufferWithData(fillable_array);
 
-    vector_lengths.fillBufferWithData(&(data_blob[idx]));
-    idx += vector_lengths.numBytes();
+    fillable_array.fillWithDataFromPointer(vector_lengths.data(), vector_lengths.numElements());
 
     for (size_t k = 0; k < first_element.size(); k++)
     {
-        first_element[k].fillBufferWithData(&(data_blob[idx]));
-        idx += first_element[k].numBytes();
+        fillable_array.fillWithDataFromPointer(first_element[k].data(), first_element[k].numElements());
     }
 
-    fillBufferWithCollection(&(data_blob[idx]), other_elements...);
+    fillBufferWithCollection(fillable_array, other_elements...);
 
-    send_function(data_blob, num_bytes + 8);
-
-    delete[] data_blob;
+    send_function(fillable_array.data(), fillable_array.size());
 }
 
-template <typename T> void fillBufferWithRefCollection(uint8_t* const data_blob, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent)
+template <typename T> void fillBufferWithRefCollection(FillableUInt8Array& fillable_array, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent)
 {
-    size_t total_num_bytes = 0;
     for (size_t k = 0; k < data_to_be_sent.size(); k++)
     {
         const Vector<T>& data_ref = data_to_be_sent[k];
-        data_ref.fillBufferWithData(&(data_blob[total_num_bytes]));
-        total_num_bytes += data_ref.numBytes();
+        fillable_array.fillWithDataFromPointer(data_ref.data(), data_ref.numElements());
     }
 }
 
 template <typename T, typename... Us>
-void fillBufferWithRefCollection(uint8_t* const data_blob, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent, const Us&... other_elements)
+void fillBufferWithRefCollection(FillableUInt8Array& fillable_array, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent, const Us&... other_elements)
 {
-    size_t total_num_bytes = 0;
     for (size_t k = 0; k < data_to_be_sent.size(); k++)
     {
         const Vector<T>& data_ref = data_to_be_sent[k];
-        data_ref.fillBufferWithData(&(data_blob[total_num_bytes]));
-        total_num_bytes += data_ref.numBytes();
+        fillable_array.fillWithDataFromPointer(data_ref.data(), data_ref.numElements());
     }
-    fillBufferWithRefCollection(&(data_blob[total_num_bytes]), other_elements...);
+    fillBufferWithRefCollection(fillable_array, other_elements...);
 }
 
 template <typename T, typename... Us>
@@ -272,36 +256,27 @@ void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
     const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t) + vector_lengths.numBytes();
 
-    uint8_t* const data_blob = new uint8_t[num_bytes];
+    FillableUInt8Array fillable_array{num_bytes};
 
-    uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
-    idx += 1;
+    fillable_array.fillWithStaticType(isBigEndian());
 
-    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(kMagicNumber);
 
-    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(num_bytes);
 
-    hdr.fillBufferWithData(&(data_blob[idx]));
-    idx += num_bytes_hdr;
+    hdr.fillBufferWithData(fillable_array);
 
-    vector_lengths.fillBufferWithData(&(data_blob[idx]));
-    idx += vector_lengths.numBytes();
+    fillable_array.fillWithDataFromPointer(vector_lengths.data(), vector_lengths.numElements());
 
     for (size_t k = 0; k < first_element.size(); k++)
     {
         const Vector<T>& fe_ref = first_element[k];
-        fe_ref.fillBufferWithData(&(data_blob[idx]));
-        idx += fe_ref.numBytes();
+        fillable_array.fillWithDataFromPointer(fe_ref.data(), fe_ref.numElements());
     }
 
-    fillBufferWithRefCollection(&(data_blob[idx]), other_elements...);
+    fillBufferWithRefCollection(fillable_array, other_elements...);
 
-    send_function(data_blob, num_bytes + 8);
-
-    delete[] data_blob;
+    send_function(fillable_array.data(), fillable_array.size());
 }
 
 inline void sendHeaderOnly(const SendFunctionType& send_function, const TransmissionHeader& hdr)
@@ -312,23 +287,17 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Transmis
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
     const uint64_t num_bytes = num_bytes_hdr + 1 + 2 * sizeof(uint64_t);
 
-    uint8_t* const data_blob = new uint8_t[num_bytes];
+    FillableUInt8Array fillable_array{num_bytes};
 
-    uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
-    idx += 1;
+    fillable_array.fillWithStaticType(isBigEndian());
 
-    std::memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(kMagicNumber);
 
-    std::memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
-    idx += sizeof(uint64_t);
+    fillable_array.fillWithStaticType(num_bytes);
 
-    hdr.fillBufferWithData(&(data_blob[idx]));
+    hdr.fillBufferWithData(fillable_array);
 
-    send_function(data_blob, num_bytes);
-
-    delete[] data_blob;
+    send_function(fillable_array.data(), fillable_array.size());
 }
 
 }  // namespace internal
