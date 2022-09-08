@@ -47,6 +47,11 @@ public:
         return num_rows_ * num_cols_ * sizeof(T);
     }
 
+    size_t numElements() const
+    {
+        return num_rows_ * num_cols_;
+    }
+
     T& operator()(const size_t r, const size_t c)
     {
         assert(r < num_rows_ && "Row index is larger than num_rows_ - 1!");

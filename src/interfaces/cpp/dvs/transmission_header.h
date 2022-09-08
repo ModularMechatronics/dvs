@@ -12,6 +12,7 @@
 #include "dvs/plot_properties.h"
 #include "dvs/utils.h"
 #include "dvs/math/math.h"
+#include "dvs/fillable_uint8_array.h"
 
 namespace dvs
 {
@@ -429,6 +430,20 @@ public:
 
             std::memcpy(&(buffer[idx]), values[k].data, values[k].num_bytes);
             idx += values[k].num_bytes;
+        }
+    }
+
+    void fillBufferWithData(FillableUInt8Array& fillable_array) const
+    {
+        fillable_array.fillWithStaticType(static_cast<uint8_t>(values.size()));
+
+        for (size_t k = 0; k < values.size(); k++)
+        {
+            fillable_array.fillWithStaticType(values[k].type);
+
+            fillable_array.fillWithStaticType(values[k].num_bytes);
+
+            fillable_array.fillWithDataFromPointer(values[k].data, values[k].num_bytes);
         }
     }
 };
