@@ -54,7 +54,7 @@ public:
     void setupTables(const std::vector<RGBTriplet<T>>& color_brake_points);
     void setupTablesFloat(const std::vector<RGBTriplet<T>>& color_brake_points);
 
-    size_t getNumValues() const;
+    size_t getNumObjects() const;
     size_t getNumColorBrakePoints() const;
     T* getRedPtr() const;
     T* getGreenPtr() const;
@@ -96,7 +96,7 @@ template <typename T> RGBColorMap<T>& RGBColorMap<T>::operator=(const RGBColorMa
 {
     if (this != &color_map)
     {
-        num_values_ = color_map.getNumValues();
+        num_values_ = color_map.getNumObjects();
         num_color_brake_points_ = color_map.getNumColorBrakePoints();
 
         red_ = new T[num_values_];
@@ -120,7 +120,7 @@ template <typename T> RGBColorMap<T>& RGBColorMap<T>::operator=(const RGBColorMa
 
 template <typename T> RGBColorMap<T>::RGBColorMap(const RGBColorMap<T>& color_map)
 {
-    num_values_ = color_map.getNumValues();
+    num_values_ = color_map.getNumObjects();
     num_color_brake_points_ = color_map.getNumColorBrakePoints();
 
     red_ = new T[num_values_];
@@ -278,7 +278,7 @@ RGBTriplet<T> RGBColorMap<T>::operator()(const Y d_in, const U min_val, const U 
     return RGBTriplet<T>(red_[idx], green_[idx], blue_[idx]);
 }
 
-template <typename T> size_t RGBColorMap<T>::getNumValues() const
+template <typename T> size_t RGBColorMap<T>::getNumObjects() const
 {
     return num_values_;
 }
