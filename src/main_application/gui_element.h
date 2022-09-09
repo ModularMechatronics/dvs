@@ -76,7 +76,7 @@ public:
 
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
     virtual void addData(std::unique_ptr<const ReceivedData> received_data,
-                         const dvs::internal::TransmissionHeader& hdr) = 0;
+                         const dvs::internal::CommunicationHeader& hdr) = 0;
     virtual void keyPressed(const char key) = 0;
     virtual void keyReleased(const char key) = 0;
     virtual void resetSelection() = 0;

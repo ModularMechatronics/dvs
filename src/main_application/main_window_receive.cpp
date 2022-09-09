@@ -9,9 +9,9 @@
 
 using namespace dvs::internal;
 
-void MainWindow::setCurrentElement(const TransmissionHeader& hdr)
+void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
 {
-    const TransmissionHeaderObject elem_obj = hdr.get(TransmissionHeaderObjectType::ELEMENT_NAME);
+    const CommunicationHeaderObject elem_obj = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME);
     const properties::Name elem_name = elem_obj.as<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
@@ -40,9 +40,9 @@ void MainWindow::setCurrentElement(const TransmissionHeader& hdr)
     }
 }
 
-void MainWindow::createNewElement(const TransmissionHeader& hdr)
+void MainWindow::createNewElement(const CommunicationHeader& hdr)
 {
-    const TransmissionHeaderObject elem_obj = hdr.get(TransmissionHeaderObjectType::ELEMENT_NAME);
+    const CommunicationHeaderObject elem_obj = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME);
     const properties::Name elem_name = elem_obj.as<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
@@ -53,10 +53,10 @@ void MainWindow::createNewElement(const TransmissionHeader& hdr)
     }
     else
     {
-        const TransmissionHeaderObject parent_name_obj = hdr.get(TransmissionHeaderObjectType::PARENT_NAME);
+        const CommunicationHeaderObject parent_name_obj = hdr.get(CommunicationHeaderObjectType::PARENT_NAME);
         std::string parent_name = parent_name_obj.as<properties::Name>().data;
 
-        const TransmissionHeaderObject parent_type_obj = hdr.get(TransmissionHeaderObjectType::PARENT_TYPE);
+        const CommunicationHeaderObject parent_type_obj = hdr.get(CommunicationHeaderObjectType::PARENT_TYPE);
         const dvs::ElementParent parent_type = parent_type_obj.as<dvs::ElementParent>();
 
         if (parent_name == "#DEFAULTNAME#")
@@ -111,10 +111,10 @@ void MainWindow::receiveData()
     std::unique_ptr<const ReceivedData> received_data = udp_server_->getReceivedData();
     if (received_data)
     {
-        const TransmissionHeader hdr = received_data->getTransmissionHeader();
+        const CommunicationHeader hdr = received_data->getCommunicationHeader();
 
-        const TransmissionHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
-        if (fcn_obj.type != TransmissionHeaderObjectType::FUNCTION)
+        const CommunicationHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
+        if (fcn_obj.type != CommunicationHeaderObjectType::FUNCTION)
         {
             throw std::runtime_error("Function object was not at element 0 in function header!");
         }

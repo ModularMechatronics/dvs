@@ -25,15 +25,15 @@ protected:
 
 constexpr uint64_t num_elements = 20;
 
-template <typename... Us> TransmissionHeader variadicTemplateFunction(const Us&... settings)
+template <typename... Us> CommunicationHeader variadicTemplateFunction(const Us&... settings)
 {
-    TransmissionHeader hdr;
+    CommunicationHeader hdr;
 
-    hdr.append(TransmissionHeaderObjectType::FUNCTION, Function::PLOT2);
-    hdr.append(TransmissionHeaderObjectType::DATA_STRUCTURE, DataStructure::VECTOR);
-    hdr.append(TransmissionHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
-    hdr.append(TransmissionHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
-    hdr.append(TransmissionHeaderObjectType::NUM_ELEMENTS, toUInt32(num_elements));
+    hdr.append(CommunicationHeaderObjectType::FUNCTION, Function::PLOT2);
+    hdr.append(CommunicationHeaderObjectType::DATA_STRUCTURE, DataStructure::VECTOR);
+    hdr.append(CommunicationHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
+    hdr.append(CommunicationHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
+    hdr.append(CommunicationHeaderObjectType::NUM_ELEMENTS, toUInt32(num_elements));
     hdr.extend(settings...);
 
     return hdr;
@@ -68,35 +68,35 @@ TEST_F(TestTransmission, TestBasic)
     const prp::LineWidth lw(27);
     const prp::PointSize ps(11);
 
-    const TransmissionHeader hdr = variadicTemplateFunction(col, alpha, name, ls, lw, ps, prp::PERSISTENT);
+    const CommunicationHeader hdr = variadicTemplateFunction(col, alpha, name, ls, lw, ps, prp::PERSISTENT);
 
     resetBuffer();
     sendHeaderAndData(simpleSendFunction, hdr, x, y);
 
-    const TransmissionHeader received_header(&(buffer[fcn_header_idx_start]));
+    const CommunicationHeader received_header(&(buffer[fcn_header_idx_start]));
 
-    const std::vector<TransmissionHeaderObject> values = received_header.getValues();
+    const std::vector<CommunicationHeaderObject> values = received_header.getValues();
 
     for (size_t k = 0; k < values.size(); k++)
     {
         switch (values[k].type)
         {
-            case TransmissionHeaderObjectType::FUNCTION:
+            case CommunicationHeaderObjectType::FUNCTION:
                 ASSERT_EQ(values[k].as<Function>(), Function::PLOT2);
                 break;
-            case TransmissionHeaderObjectType::DATA_STRUCTURE:
+            case CommunicationHeaderObjectType::DATA_STRUCTURE:
                 ASSERT_EQ(values[k].as<DataStructure>(), DataStructure::VECTOR);
                 break;
-            case TransmissionHeaderObjectType::DATA_TYPE:
+            case CommunicationHeaderObjectType::DATA_TYPE:
                 ASSERT_EQ(values[k].as<DataType>(), DataType::DOUBLE);
                 break;
-            case TransmissionHeaderObjectType::NUM_BUFFERS_REQUIRED:
+            case CommunicationHeaderObjectType::NUM_BUFFERS_REQUIRED:
                 ASSERT_EQ(values[k].as<uint8_t>(), static_cast<uint8_t>(2));
                 break;
-            case TransmissionHeaderObjectType::NUM_ELEMENTS:
+            case CommunicationHeaderObjectType::NUM_ELEMENTS:
                 ASSERT_EQ(values[k].as<uint8_t>(), toUInt8(num_elements));
                 break;
-            case TransmissionHeaderObjectType::PROPERTY:
+            case CommunicationHeaderObjectType::PROPERTY:
                 switch (values[k].as<PropertyBase>().getPropertyType())
                 {
                     case dvs::internal::PropertyType::COLOR:

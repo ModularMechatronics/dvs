@@ -12,7 +12,7 @@ float* convertMatrixColorDataOuter(uint8_t* input_data,
                                      const Vec3d max_vec,
                                      const RGBColorMap<float>* const color_map_function);
 
-Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
+Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::SURF)
@@ -20,7 +20,7 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const Transmission
         throw std::runtime_error("Invalid function type for Surf!");
     }
 
-    dims_ = hdr.get(TransmissionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+    dims_ = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
 
     points_ptr_ = convertMatrixDataOuter(data_ptr_, data_type_, dims_, num_bytes_for_one_vec_);
 

@@ -32,7 +32,7 @@ private:
 
 public:
     ImShow();
-    ImShow(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
+    ImShow(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
     ~ImShow();
 
     void render() override;

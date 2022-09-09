@@ -227,7 +227,7 @@ PlotPane::~PlotPane()
 }
 
 void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
-                               const dvs::internal::TransmissionHeader& hdr)
+                               const dvs::internal::CommunicationHeader& hdr)
 {
     const internal::Function fcn = hdr.getObjectAtIdx(0).as<internal::Function>();
 
@@ -246,7 +246,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         axes_set_ = true;
 
         const std::pair<Vec3d, Vec3d> axes_bnd =
-            hdr.get(TransmissionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Vec3d, Vec3d>>();
+            hdr.get(CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Vec3d, Vec3d>>();
         axes_interactor_.setAxesLimits(Vec2d(axes_bnd.first.x, axes_bnd.first.y),
                                         Vec2d(axes_bnd.second.x, axes_bnd.second.y));
     }
@@ -255,15 +255,15 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         axes_set_ = true;
 
         const std::pair<Vec3d, Vec3d> axes_bnd =
-            hdr.get(TransmissionHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Vec3d, Vec3d>>();
+            hdr.get(CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Vec3d, Vec3d>>();
         axes_interactor_.setAxesLimits(Vec3d(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
                                         Vec3d(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
     else if (fcn == Function::VIEW)
     {
         view_set_ = true;
-        const float azimuth = hdr.get(internal::TransmissionHeaderObjectType::AZIMUTH).as<float>();
-        const float elevation = hdr.get(internal::TransmissionHeaderObjectType::ELEVATION).as<float>();
+        const float azimuth = hdr.get(internal::CommunicationHeaderObjectType::AZIMUTH).as<float>();
+        const float elevation = hdr.get(internal::CommunicationHeaderObjectType::ELEVATION).as<float>();
 
         const float azimuth_rad = azimuth * M_PI / 180.0f;
         const float elevation_rad = elevation * M_PI / 180.0f;

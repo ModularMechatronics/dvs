@@ -6,7 +6,7 @@ float* convertVerticesDataOuter(uint8_t* input_data,
                                 const uint32_t num_indices,
                                 const uint32_t num_bytes_per_element);
 
-DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
+DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::DRAW_MESH)
@@ -14,8 +14,8 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const Tran
         throw std::runtime_error("Invalid function type for DrawMesh!");
     }
 
-    num_vertices_ = hdr.get(TransmissionHeaderObjectType::NUM_VERTICES).as<uint32_t>();
-    num_indices_ = hdr.get(TransmissionHeaderObjectType::NUM_INDICES).as<uint32_t>();
+    num_vertices_ = hdr.get(CommunicationHeaderObjectType::NUM_VERTICES).as<uint32_t>();
+    num_indices_ = hdr.get(CommunicationHeaderObjectType::NUM_INDICES).as<uint32_t>();
 
     points_ptr_ = convertVerticesDataOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
 

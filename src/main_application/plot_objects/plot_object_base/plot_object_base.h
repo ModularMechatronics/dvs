@@ -67,7 +67,7 @@ public:
     size_t getNumDimensions() const;
     virtual ~PlotObjectBase();
     PlotObjectBase();
-    PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
+    PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
     virtual void render() = 0;
     std::pair<Vec3d, Vec3d> getMinMaxVectors();
 

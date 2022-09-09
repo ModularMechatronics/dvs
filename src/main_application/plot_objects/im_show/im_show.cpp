@@ -29,7 +29,7 @@ template <typename T> GLuint loadTexture(const int width, const int height, cons
     return textureID;
 }
 
-ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
+ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::IM_SHOW)
@@ -39,8 +39,8 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Transmis
 
     // https://stackoverflow.com/questions/34963324/c-opengl-mesh-rendering
 
-    dims_ = hdr.get(TransmissionHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
-    num_channels_ = hdr.get(TransmissionHeaderObjectType::NUM_CHANNELS).as<uint8_t>();
+    dims_ = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+    num_channels_ = hdr.get(CommunicationHeaderObjectType::NUM_CHANNELS).as<uint8_t>();
 
     width = dims_.cols;
     height = dims_.rows;
