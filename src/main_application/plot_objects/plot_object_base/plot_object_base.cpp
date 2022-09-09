@@ -47,7 +47,7 @@ PlotObjectBase::PlotObjectBase() {}
 PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
-    const uint64_t num_data_bytes = received_data_->getNumDataBytes();
+    const uint64_t num_data_bytes = received_data_->size();
     if (num_data_bytes == 0)
     {
         throw std::runtime_error("No data bytes!");
@@ -60,7 +60,7 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
 
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
     num_elements_ = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
-    num_data_bytes_ = received_data_->getNumDataBytes();
+    num_data_bytes_ = received_data_->size();
     num_dimensions_ = getNumDimensionsFromFunction(type_);
 
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;

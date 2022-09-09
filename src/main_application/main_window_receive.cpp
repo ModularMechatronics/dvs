@@ -111,7 +111,7 @@ void MainWindow::receiveData()
     std::unique_ptr<const ReceivedData> received_data = udp_server_->getReceivedData();
     if (received_data)
     {
-        const CommunicationHeader hdr = received_data->getCommunicationHeader();
+        const CommunicationHeader& hdr = received_data->getCommunicationHeader();
 
         const CommunicationHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
         if (fcn_obj.type != CommunicationHeaderObjectType::FUNCTION)
