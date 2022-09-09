@@ -6,7 +6,7 @@
 #include <functional>
 
 #include "dvs/communication.h"
-#include "dvs/transmission_header.h"
+#include "dvs/communication_header.h"
 #include "dvs/fillable_uint8_array.h"
 #include "dvs/constants.h"
 #include "dvs/utils.h"
