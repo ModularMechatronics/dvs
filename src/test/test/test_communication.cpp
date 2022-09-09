@@ -75,7 +75,7 @@ TEST_F(TestCommunication, TestBasic)
 
     const CommunicationHeader received_header(&(buffer[fcn_header_idx_start]));
 
-    const std::vector<CommunicationHeaderObject> values = received_header.getValues();
+    const std::vector<CommunicationHeaderObject> values = received_header.getObjects();
 
     for (size_t k = 0; k < values.size(); k++)
     {
@@ -131,8 +131,8 @@ TEST_F(TestCommunication, TestBasic)
         }
     }
 
-    ASSERT_EQ(hdr.getNumValues(), 12UL);
-    ASSERT_EQ(received_header.getNumValues(), 12UL);
+    ASSERT_EQ(hdr.getNumObjects(), 12UL);
+    ASSERT_EQ(received_header.getNumObjects(), 12UL);
     ASSERT_EQ(values.size(), 12UL);
 
     uint64_t data_idx = received_header.numBytes() + 1 + 2 * sizeof(uint64_t);

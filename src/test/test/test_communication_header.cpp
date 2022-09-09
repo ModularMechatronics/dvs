@@ -78,7 +78,7 @@ TEST_F(TestCommunicationHeader, TestBasic)
 
     const CommunicationHeader received_hdr(data_bytes);
 
-    const std::vector<CommunicationHeaderObject> values = received_hdr.getValues();
+    const std::vector<CommunicationHeaderObject> values = received_hdr.getObjects();
 
     for (size_t k = 0; k < values.size(); k++)
     {
@@ -125,8 +125,8 @@ TEST_F(TestCommunicationHeader, TestBasic)
         }
     }
 
-    ASSERT_EQ(hdr.getNumValues(), 9UL);
-    ASSERT_EQ(received_hdr.getNumValues(), 9UL);
+    ASSERT_EQ(hdr.getNumObjects(), 9UL);
+    ASSERT_EQ(received_hdr.getNumObjects(), 9UL);
 
     delete[] data_bytes;
 

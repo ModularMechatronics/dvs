@@ -70,7 +70,7 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
         throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
     }*/
 
-    const Properties props(hdr.getValues());
+    const Properties props(hdr.getObjects());
 
     assignProperties(props);
 
