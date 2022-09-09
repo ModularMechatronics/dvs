@@ -13,6 +13,7 @@ Pre release:
 - Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Rename PlotWindowGLPane to PlotCanvas, or GLPlotCanvas, or PlotPane (probably unecessary to include "GL" in name)
+- Change "Transmission" to "Communication" in TransmissionHeader, TransmissionHeaderObject etc...
 - Change "Name" plot property to use std::string instead?
 - Add MatrixFixed and VectorFixed
 - Mark all properties classes constructors explicit (and noexcept?)
