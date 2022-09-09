@@ -3,47 +3,47 @@
 
 #include "dvs/dvs.h"
 
-template <typename T> PropertyType templateToPropType()
+template <typename T> dvs::internal::PropertyType templateToPropertyType()
 {
-    if (std::is_same<T, properties::Alpha>::value)
+    if (std::is_same<T, dvs::properties::Alpha>::value)
     {
-        return PropertyType::ALPHA;
+        return dvs::internal::PropertyType::ALPHA;
     }
-    else if (std::is_same<T, properties::Name>::value)
+    else if (std::is_same<T, dvs::properties::Name>::value)
     {
-        return PropertyType::NAME;
+        return dvs::internal::PropertyType::NAME;
     }
-    else if (std::is_same<T, properties::LineWidth>::value)
+    else if (std::is_same<T, dvs::properties::LineWidth>::value)
     {
-        return PropertyType::LINE_WIDTH;
+        return dvs::internal::PropertyType::LINE_WIDTH;
     }
-    else if (std::is_same<T, properties::LineStyle>::value)
+    else if (std::is_same<T, dvs::properties::LineStyle>::value)
     {
-        return PropertyType::LINE_STYLE;
+        return dvs::internal::PropertyType::LINE_STYLE;
     }
-    else if (std::is_same<T, properties::Color>::value)
+    else if (std::is_same<T, dvs::properties::Color>::value)
     {
-        return PropertyType::COLOR;
+        return dvs::internal::PropertyType::COLOR;
     }
-    else if (std::is_same<T, properties::EdgeColor>::value)
+    else if (std::is_same<T, dvs::properties::EdgeColor>::value)
     {
-        return PropertyType::EDGE_COLOR;
+        return dvs::internal::PropertyType::EDGE_COLOR;
     }
-    else if (std::is_same<T, properties::FaceColor>::value)
+    else if (std::is_same<T, dvs::properties::FaceColor>::value)
     {
-        return PropertyType::FACE_COLOR;
+        return dvs::internal::PropertyType::FACE_COLOR;
     }
-    else if (std::is_same<T, properties::ColorMap>::value)
+    else if (std::is_same<T, dvs::properties::ColorMap>::value)
     {
-        return PropertyType::COLOR_MAP;
+        return dvs::internal::PropertyType::COLOR_MAP;
     }
-    else if (std::is_same<T, properties::ScatterStyle>::value)
+    else if (std::is_same<T, dvs::properties::ScatterStyle>::value)
     {
-        return PropertyType::SCATTER_STYLE;
+        return dvs::internal::PropertyType::SCATTER_STYLE;
     }
-    else if (std::is_same<T, properties::PointSize>::value)
+    else if (std::is_same<T, dvs::properties::PointSize>::value)
     {
-        return PropertyType::POINT_SIZE;
+        return dvs::internal::PropertyType::POINT_SIZE;
     }
     else
     {
@@ -54,89 +54,22 @@ template <typename T> PropertyType templateToPropType()
 class Properties
 {
 private:
-    std::vector<std::shared_ptr<PropertyBase>> props;
+    std::vector<std::shared_ptr<dvs::internal::PropertyBase>> props;
 
 public:
     Properties() = default;
-    Properties(const std::vector<CommunicationHeaderObject>& values)
-    {
-        for (size_t k = 0; k < values.size(); k++)
-        {
-            if (values[k].type == CommunicationHeaderObjectType::PROPERTY)
-            {
-                const PropertyBase pb = values[k].as<PropertyBase>();
-                std::shared_ptr<PropertyBase> ptr;
-
-                switch (pb.getPropertyType())
-                {
-                    case PropertyType::ALPHA:
-                        ptr = std::make_shared<properties::Alpha>(values[k].as<properties::Alpha>());
-                        break;
-                    case PropertyType::NAME:
-                        ptr = std::make_shared<properties::Name>(values[k].as<properties::Name>());
-                        break;
-                    case PropertyType::LINE_WIDTH:
-                        ptr = std::make_shared<properties::LineWidth>(values[k].as<properties::LineWidth>());
-                        break;
-                    case PropertyType::LINE_STYLE:
-                        ptr = std::make_shared<properties::LineStyle>(values[k].as<properties::LineStyle>());
-                        break;
-                    case PropertyType::COLOR:
-                        ptr = std::make_shared<properties::Color>(values[k].as<properties::Color>());
-                        break;
-                    case PropertyType::EDGE_COLOR:
-                        ptr = std::make_shared<properties::EdgeColor>(values[k].as<properties::EdgeColor>());
-                        break;
-                    case PropertyType::FACE_COLOR:
-                        ptr = std::make_shared<properties::FaceColor>(values[k].as<properties::FaceColor>());
-                        break;
-                    case PropertyType::SCATTER_STYLE:
-                        ptr = std::make_shared<properties::ScatterStyle>(values[k].as<properties::ScatterStyle>());
-                        break;
-                    case PropertyType::COLOR_MAP:
-                        ptr = std::make_shared<properties::ColorMap>(values[k].as<properties::ColorMap>());
-                        break;
-                    case PropertyType::POINT_SIZE:
-                        ptr = std::make_shared<properties::PointSize>(values[k].as<properties::PointSize>());
-                        break;
-                    case PropertyType::PERSISTENT:
-                        ptr = std::make_shared<PropertyBase>();
-                        ptr->setPropertyType(PropertyType::PERSISTENT);
-                        break;
-                    case PropertyType::UNKNOWN:
-                        throw std::runtime_error("'UNKNOWN' type found!");
-                        break;
-                    default:
-                        throw std::runtime_error("No valid type found!");
-                }
-
-                props.push_back(ptr);
-            }
-        }
-    }
-
-    bool hasProperty(const PropertyType tp) const
-    {
-        for (size_t k = 0; k < props.size(); k++)
-        {
-            if (props[k]->getPropertyType() == tp)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    Properties(const std::vector<dvs::internal::CommunicationHeaderObject>& objects);
+    bool hasProperty(const dvs::internal::PropertyType tp) const;
     template <typename T> T getProperty() const
     {
-        const PropertyType tp = templateToPropType<T>();
+        const dvs::internal::PropertyType tp = templateToPropertyType<T>();
 
         if (!hasProperty(tp))
         {
             throw std::runtime_error("Property not present!");
         }
 
-        std::shared_ptr<T> t_ptr = std::shared_ptr<T>(new T());
+        std::shared_ptr<T> t_ptr = std::make_shared<T>();
 
         for (size_t k = 0; k < props.size(); k++)
         {
@@ -149,10 +82,7 @@ public:
         return *t_ptr;
     }
 
-    std::vector<std::shared_ptr<PropertyBase>> getAllProperties() const
-    {
-        return props;
-    }
+    std::vector<std::shared_ptr<dvs::internal::PropertyBase>> getAllProperties() const;
 };
 
 #endif // MAIN_APPLICATION_PROPERTIES_H_
