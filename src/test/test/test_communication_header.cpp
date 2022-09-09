@@ -36,24 +36,24 @@ TEST_F(TestCommunicationHeader, TestBasic0)
 
     variadicTemplateFunction(hdr, prp::Color(14, 56, 72), prp::Alpha(187), prp::LineWidth(4), prp::PERSISTENT);
 
-    ASSERT_TRUE(hdr.hasType(CommunicationHeaderObjectType::FUNCTION));
-    ASSERT_TRUE(hdr.hasType(CommunicationHeaderObjectType::DATA_STRUCTURE));
-    ASSERT_TRUE(hdr.hasType(CommunicationHeaderObjectType::DATA_TYPE));
-    ASSERT_TRUE(hdr.hasType(CommunicationHeaderObjectType::NUM_BUFFERS_REQUIRED));
-    ASSERT_TRUE(hdr.hasType(CommunicationHeaderObjectType::PROPERTY));
+    ASSERT_TRUE(hdr.hasObjectWithType(CommunicationHeaderObjectType::FUNCTION));
+    ASSERT_TRUE(hdr.hasObjectWithType(CommunicationHeaderObjectType::DATA_STRUCTURE));
+    ASSERT_TRUE(hdr.hasObjectWithType(CommunicationHeaderObjectType::DATA_TYPE));
+    ASSERT_TRUE(hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_BUFFERS_REQUIRED));
+    ASSERT_TRUE(hdr.hasObjectWithType(CommunicationHeaderObjectType::PROPERTY));
 
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::UNKNOWN));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::NUM_BYTES));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::BYTES_PER_ELEMENT));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::NUM_ELEMENTS));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::DIMENSION_2D));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::HAS_PAYLOAD));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::AZIMUTH));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::ELEVATION));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::NUM_AXES));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::POS2D));
-    ASSERT_FALSE(hdr.hasType(CommunicationHeaderObjectType::FIGURE_NUM));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::UNKNOWN));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_BYTES));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::BYTES_PER_ELEMENT));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_ELEMENTS));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::DIMENSION_2D));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_PAYLOAD));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::AZIMUTH));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::ELEVATION));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_AXES));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::POS2D));
+    ASSERT_FALSE(hdr.hasObjectWithType(CommunicationHeaderObjectType::FIGURE_NUM));
 }
 
 TEST_F(TestCommunicationHeader, TestBasic)
@@ -71,7 +71,7 @@ TEST_F(TestCommunicationHeader, TestBasic)
 
     variadicTemplateFunction(hdr, col, alpha, lw, prp::PERSISTENT, ps);
 
-    const size_t num_bytes_required = hdr.totalNumBytesFromBuffer();
+    const size_t num_bytes_required = hdr.numBytes();
 
     uint8_t* const data_bytes = new uint8_t[num_bytes_required];
     hdr.fillBufferWithData(data_bytes);

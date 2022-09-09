@@ -35,6 +35,15 @@ struct CommunicationHeaderObject
     CommunicationHeaderObjectType type;
     uint8_t num_bytes;
     uint8_t data[kCommunicationHeaderObjectDataSize];
+    CommunicationHeaderObject() = default;
+
+    template <typename U>
+    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const U& input_data) :
+        type{input_type}, num_bytes{sizeof(U)}
+    {
+        static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
+        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), num_bytes);
+    }
 
     template <typename T> T as() const
     {
@@ -266,7 +275,7 @@ private:
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
-        assert((sizeof(U) <= kCommunicationHeaderObjectDataSize) && "Too many data bytes!");
+        static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
         objects.push_back(CommunicationHeaderObject());
         CommunicationHeaderObject* const ptr = &(objects[objects.size() - 1]); // TODO: Change to ref
@@ -299,9 +308,9 @@ public:
         objects.reserve(16);
     }
 
-    CommunicationHeader(const uint8_t* const buffer, const bool is_big_endian)
+    CommunicationHeader(const UInt8ArrayView received_array_view)
     {
-        (void)is_big_endian;
+        const uint8_t* const buffer = received_array_view.data() + kHeaderDataStartOffset;
         const uint8_t num_expected_objects = buffer[0];
         objects.reserve(num_expected_objects);
 
@@ -312,16 +321,16 @@ public:
         while (num_objects < num_expected_objects)
         {
             objects.push_back(CommunicationHeaderObject());
-            CommunicationHeaderObject* const ptr = &(objects[objects.size() - 1]);
+            CommunicationHeaderObject& obj = objects.back();
 
-            std::memcpy(&(ptr->type), &(buffer[idx]), sizeof(CommunicationHeaderObjectType));
+            std::memcpy(&(obj.type), buffer + idx, sizeof(CommunicationHeaderObjectType));
             idx += sizeof(CommunicationHeaderObjectType);
 
-            std::memcpy(&(ptr->num_bytes), &(buffer[idx]), sizeof(CommunicationHeaderObject::num_bytes));
+            std::memcpy(&(obj.num_bytes), buffer + idx, sizeof(CommunicationHeaderObject::num_bytes));
             idx += sizeof(CommunicationHeaderObject::num_bytes);
 
-            std::memcpy(ptr->data, &(buffer[idx]), ptr->num_bytes);
-            idx += ptr->num_bytes;
+            std::memcpy(obj.data, buffer + idx, obj.num_bytes);
+            idx += obj.num_bytes;
 
             num_objects++;
         }
@@ -331,23 +340,15 @@ public:
 
     template <typename U> void append(const CommunicationHeaderObjectType& object_type, const U& data)
     {
-        // assert(checkTypeValid<U>(object_type) && "Invalid data type for object_type data!");
+        static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
-        objects.push_back(CommunicationHeaderObject());
-        CommunicationHeaderObject* const ptr = &(objects[objects.size() - 1]);
-
-        ptr->type = object_type;
-        ptr->num_bytes = sizeof(U);
-
-        assert((ptr->num_bytes <= kCommunicationHeaderObjectDataSize) && "Too many data bytes!");
-
-        fillBufferWithObjects(ptr->data, data);
+        objects.emplace_back(object_type, data);
     }
 
-    bool hasType(const CommunicationHeaderObjectType tp) const
+    bool hasObjectWithType(const CommunicationHeaderObjectType tp) const
     {
-        return std::find_if(objects.begin(), objects.end(), [&tp](const CommunicationHeaderObject& fo) -> bool {
-                   return fo.type == tp;
+        return std::find_if(objects.begin(), objects.end(), [&tp](const CommunicationHeaderObject& obj) -> bool {
+                   return obj.type == tp;
                }) != objects.end();
     }
 
@@ -363,22 +364,17 @@ public:
 
     CommunicationHeaderObject get(const CommunicationHeaderObjectType tp) const
     {
-        if (!hasType(tp))
+        if (!hasObjectWithType(tp))
         {
-            throw std::runtime_error("Requested object that is not in value list!");
+            throw std::runtime_error("Requested object that is not present in header!");
         }
 
-        CommunicationHeaderObject obj;
+        const auto obj = std::find_if(
+            objects.begin(), objects.end(), [&tp](const CommunicationHeaderObject& obj) -> bool {
+                   return obj.type == tp;
+               });
 
-        for (size_t k = 0; k < objects.size(); k++)
-        {
-            if (objects[k].type == tp)
-            {
-                obj = objects[k];
-            }
-        }
-
-        return obj;
+        return *obj;
     }
 
     size_t getNumObjects() const
@@ -393,11 +389,6 @@ public:
 
     size_t numBytes() const
     {
-        return totalNumBytesFromBuffer();
-    }
-
-    size_t totalNumBytesFromBuffer() const
-    {
         // 1 for first byte, that indicates how many attributes in buffer, which is
         // same as objects.size()
         size_t s = 1;
@@ -408,24 +399,6 @@ public:
         }
 
         return s;
-    }
-
-    void fillBufferWithData(uint8_t* const buffer) const
-    {
-        size_t idx = 1;
-        buffer[0] = static_cast<uint8_t>(objects.size());
-
-        for (size_t k = 0; k < objects.size(); k++)
-        {
-            std::memcpy(&(buffer[idx]), &(objects[k].type), sizeof(CommunicationHeaderObjectType));
-            idx += sizeof(CommunicationHeaderObjectType);
-
-            std::memcpy(&(buffer[idx]), &(objects[k].num_bytes), sizeof(CommunicationHeaderObject::num_bytes));
-            idx += sizeof(CommunicationHeaderObject::num_bytes);
-
-            std::memcpy(&(buffer[idx]), objects[k].data, objects[k].num_bytes);
-            idx += objects[k].num_bytes;
-        }
     }
 
     void fillBufferWithData(FillableUInt8Array& fillable_array) const

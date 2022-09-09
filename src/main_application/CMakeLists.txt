@@ -56,6 +56,8 @@ set(CPP_SOURCE_FILES main.cpp
 
                      globals.cpp
 
+                     communication/received_data.cpp
+                     communication/udp_server.cpp
                      tray_icon.cpp
                      tab_view.cpp
                      window_view.cpp
