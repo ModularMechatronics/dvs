@@ -13,7 +13,6 @@ Pre release:
 - Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Rename PlotWindowGLPane to PlotCanvas, or GLPlotCanvas, or PlotPane (probably unecessary to include "GL" in name)
-- Change "Transmission" to "Communication" in TransmissionHeader, TransmissionHeaderObject etc...
 - Change "Name" plot property to use std::string instead?
 - Add MatrixFixed and VectorFixed
 - Mark all properties classes constructors explicit (and noexcept?)
@@ -46,10 +45,8 @@ Pre release:
 - Make proper test folder structure
 - Switch cache reader to configuration_agent
 - Receive and push new data until there is new data available, and refresh only after last update
-- "dims_ = hdr.get(TransmissionObjectType::DIMENSION_2D).as<internal::Dimension2D>();", Possible remove need for specifying type and enum?
 - Don't always update on keypress?
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
-- "UInt8View" or something for "void fillBufferWithData(uint8_t* const buffer) const;" functions, that contains pointer and size
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Gradient min/max (like for surf) for draw mesh and other 3d functions 
 - Time date axis
@@ -58,7 +55,6 @@ Pre release:
 - Separate plot object vectors so that shader switching is minimized
 - Don't iterate over map in tests.h, just index with the key directly, for basic-tests-cpp
 - map initializer list for tests in basic-tests-cpp (like in advanced-tests-cpp)
-- Change vector_lengths from uint8 to uint16 for plotCollection/3
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
 
