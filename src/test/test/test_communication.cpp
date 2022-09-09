@@ -15,7 +15,7 @@ namespace prp = dvs::properties;
 
 uint8_t buffer[2048];
 
-class TestTransmission : public testing::Test
+class TestCommunication : public testing::Test
 {
 protected:
     void SetUp() override {}
@@ -51,7 +51,7 @@ void resetBuffer()
 
 constexpr uint64_t fcn_header_idx_start = 1 + 2 * sizeof(uint64_t);
 
-TEST_F(TestTransmission, TestBasic)
+TEST_F(TestCommunication, TestBasic)
 {
     Vector<uint16_t> x(num_elements), y(num_elements);
 

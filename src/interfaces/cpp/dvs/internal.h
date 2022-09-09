@@ -24,8 +24,9 @@ inline void sendThroughUdpInterface(const UInt8ArrayView& input_array)
     const uint8_t* const data_to_send = input_array.data();
     const uint64_t total_num_bytes_to_send = input_array.size();
 
+    constexpr int kNumReceiveBytes = 10;
     const UdpClient udp_client(kUdpPortNum);
-    char received_data[256];
+    char received_data[kNumReceiveBytes];
 
     if (total_num_bytes_to_send >= kMaxNumBytesForOneTransmission)
     {
@@ -39,7 +40,7 @@ inline void sendThroughUdpInterface(const UInt8ArrayView& input_array)
             udp_client.sendData(data_to_send + num_sent_bytes, num_bytes_to_send);
             num_sent_bytes += num_bytes_to_send;
 
-            const int num_received_bytes = udp_client.receiveData(received_data);
+            const int num_received_bytes = udp_client.receiveData<kNumReceiveBytes>(received_data);
 
             if (!ackValid(received_data))
             {
@@ -55,7 +56,7 @@ inline void sendThroughUdpInterface(const UInt8ArrayView& input_array)
     {
         udp_client.sendData(data_to_send, total_num_bytes_to_send);
 
-        const int num_received_bytes = udp_client.receiveData(received_data);
+        const int num_received_bytes = udp_client.receiveData<kNumReceiveBytes>(received_data);
 
         if (!ackValid(received_data))
         {

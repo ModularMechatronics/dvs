@@ -53,10 +53,11 @@ public:
         close(sock_file_descr_);
     }
 
-    int receiveData(char data[256]) const
+    template <int N>
+    int receiveData(char data[N]) const
     {
         socklen_t client_len = sizeof(tx_addr_);
-        const int num_received_bytes = recvfrom(sock_file_descr_, data, 256, 0, (struct sockaddr*)&tx_addr_, &client_len);
+        const int num_received_bytes = recvfrom(sock_file_descr_, data, N, 0, (struct sockaddr*)&tx_addr_, &client_len);
         return num_received_bytes;
     }
 
