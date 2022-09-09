@@ -6,7 +6,7 @@ float* convertDataScatter2DOuter(const uint8_t* const input_data,
                                    const size_t num_bytes_per_element,
                                    const size_t num_bytes_for_one_vec);
 
-Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
+Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::SCATTER2)

@@ -19,7 +19,7 @@ private:
 
 public:
     FastPlot3D();
-    FastPlot3D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
+    FastPlot3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
     ~FastPlot3D();
 
     void render() override;

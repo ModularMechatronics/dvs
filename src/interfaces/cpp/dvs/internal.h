@@ -105,7 +105,7 @@ void fillBuffer(FillableUInt8Array& fillable_array, const U& data_to_be_sent, co
 }
 
 template <typename U>
-void sendHeaderAndData(const SendFunctionType& send_function, const TransmissionHeader& hdr, const U& first_element)
+void sendHeaderAndData(const SendFunctionType& send_function, const CommunicationHeader& hdr, const U& first_element)
 {
     const uint64_t num_bytes_hdr = hdr.numBytes();
     const uint64_t num_bytes_first = first_element.numBytes();
@@ -133,7 +133,7 @@ void sendHeaderAndData(const SendFunctionType& send_function, const Transmission
 
 template <typename U, typename... Us>
 void sendHeaderAndData(const SendFunctionType& send_function,
-                       const TransmissionHeader& hdr,
+                       const CommunicationHeader& hdr,
                        const U& first_element,
                        const Us&... other_elements)
 {
@@ -184,7 +184,7 @@ void fillBufferWithCollection(FillableUInt8Array& fillable_array, const U& data_
 
 template <typename U, typename... Us>
 void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
-                                   const TransmissionHeader& hdr,
+                                   const CommunicationHeader& hdr,
                                    const Vector<uint16_t>& vector_lengths,
                                    const size_t num_bytes_to_send,
                                    const U& first_element,
@@ -241,7 +241,7 @@ void fillBufferWithRefCollection(FillableUInt8Array& fillable_array, const std::
 
 template <typename T, typename... Us>
 void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
-                                      const TransmissionHeader& hdr,
+                                      const CommunicationHeader& hdr,
                                       const Vector<uint16_t>& vector_lengths,
                                       const size_t num_bytes_to_send,
                                       const std::vector<std::reference_wrapper<Vector<T>>>& first_element,
@@ -277,7 +277,7 @@ void sendHeaderAndRefVectorCollection(const SendFunctionType& send_function,
     send_function(fillable_array.view());
 }
 
-inline void sendHeaderOnly(const SendFunctionType& send_function, const TransmissionHeader& hdr)
+inline void sendHeaderOnly(const SendFunctionType& send_function, const CommunicationHeader& hdr)
 {
     const uint64_t num_bytes_hdr = hdr.numBytes();
 

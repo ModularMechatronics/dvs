@@ -131,7 +131,7 @@ inline OutputData convertCollectionDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
+PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLOT_COLLECTION2)
@@ -140,7 +140,7 @@ PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_
     }
 
     num_points_ = 0;
-    num_objects_ = hdr.get(TransmissionHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
+    num_objects_ = hdr.get(CommunicationHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
 
     Vector<uint16_t> vector_lengths(num_objects_);
 

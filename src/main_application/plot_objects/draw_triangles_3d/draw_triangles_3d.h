@@ -21,7 +21,7 @@ private:
 
 public:
     DrawTriangles3D();
-    DrawTriangles3D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
+    DrawTriangles3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
     ~DrawTriangles3D();
 
     void render() override;

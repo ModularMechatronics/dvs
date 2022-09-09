@@ -23,7 +23,7 @@ private:
 
 public:
     DrawLine3D();
-    DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection);
+    DrawLine3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
 
     void render() override;
 };

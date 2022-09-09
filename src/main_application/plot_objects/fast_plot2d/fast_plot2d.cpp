@@ -6,7 +6,7 @@ float* convertData2DOuterFastPlot2(const uint8_t* const input_data,
                           const size_t num_bytes_per_element,
                           const size_t num_bytes_for_one_vec);
 
-FastPlot2D::FastPlot2D(std::unique_ptr<const ReceivedData> received_data, const TransmissionHeader& hdr, const ShaderCollection shader_collection)
+FastPlot2D::FastPlot2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::FAST_PLOT2)
