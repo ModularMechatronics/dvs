@@ -17,8 +17,7 @@ public:
         float* p0;
         float* p1;
         float* p2;
-        float* idx_data_;
-        float* length_along;
+        float* idx_data;
     };
 
 private:
@@ -27,7 +26,7 @@ private:
     float gap_size_, dash_size_;
 
     GLuint idx_buffer_;
-    GLuint p0_vertex_buffer_, p1_vertex_buffer_, p2_vertex_buffer_, lenth_along_vertex_buffer_;
+    GLuint p0_vertex_buffer_, p1_vertex_buffer_, p2_vertex_buffer_;
 
     void findMinMax() override;
 
