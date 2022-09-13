@@ -32,12 +32,12 @@ using namespace dvs::internal;
 #ifdef PLATFORM_LINUX_M
 std::string getExecutablePath()
 {
-    char result[PATH_MAX];
-    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    std::array<char, PATH_MAX> result;
+    ssize_t count = readlink("/proc/self/exe", result.data(), PATH_MAX);
     const char* path;
     if (count != -1)
     {
-        path = dirname(result);
+        path = dirname(result.data());
     }
     return std::string(path);
 }
@@ -48,15 +48,15 @@ std::string getExecutablePath()
 
 std::string getExecutablePath()
 {
-    char path[2048];
-    uint32_t size = sizeof(path);
+    std::array<char, 2048> path;
+    uint32_t size = path.size();
 
-    if (_NSGetExecutablePath(path, &size) != 0)
+    if (_NSGetExecutablePath(path.data(), &size) != 0)
     {
         printf("Buffer too small; need size %u\n", size);
     }
 
-    return std::string(path);
+    return std::string(path.data());
 }
 
 #endif
