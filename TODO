@@ -10,10 +10,7 @@ Pre release:
 - Remove need to always specify num_elements
 - Function "view" is the one that sets/creates the current element
   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
-- Set point size before rendering text (it gets affected by setting point size in a plot) (not relevant anymore I think)
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
-- Rename PlotWindowGLPane to PlotCanvas, or GLPlotCanvas, or PlotPane (probably unecessary to include "GL" in name)
-- Change "Name" plot property to use std::string instead?
 - Add MatrixFixed and VectorFixed
 - Mark all properties classes constructors explicit (and noexcept?)
 - Change to google logging
@@ -24,7 +21,6 @@ Pre release:
 - Set color in fragment shader with uniform, instead of in vertex shader
 - Finalize small quirks in plot
 - Implement new shader stuff that's in plot for plot3
-- Replace old c type arrays with std::array
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
 - Making sure that view and axes are set properly when not explicitly setting them
@@ -37,10 +33,8 @@ Pre release:
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
 - Refactor from top down, from the app and down into the GUI
-- Implement findMinMax for matrices and vectors
 - Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
 - Make sure plot/plot3 works for integer data types
-- Change opengl types from float to double, to increase precision
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Make proper test folder structure
 - Switch cache reader to configuration_agent
@@ -54,12 +48,13 @@ Pre release:
 - Do something better/neater than "fillBufferWithData"?
 - Separate plot object vectors so that shader switching is minimized
 - Don't iterate over map in tests.h, just index with the key directly, for basic-tests-cpp
-- map initializer list for tests in basic-tests-cpp (like in advanced-tests-cpp)
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
 
 Post release:
 - Bar plot
+- Replace old c type arrays with std::array
+- Change opengl types from float to double, to increase precision
 - Fix showing correct plot walls when in perspective mode
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
@@ -87,6 +82,7 @@ Post release:
 - http://www.opengl.org/wiki/Buffer_Object_Streaming
 - Dashed line for plot and plot3
 - Change all relevant functions to accept "View" types
+- Implement findMinMax for matrices and vectors
 
 Unsure:
 - Command line window that prints errors etc.
