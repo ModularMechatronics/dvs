@@ -6,7 +6,6 @@ layout(location = 0) in vec2 p0;
 layout(location = 1) in vec2 p1;
 layout(location = 2) in vec2 p2;
 layout(location = 3) in float idx;
-layout(location = 4) in float length_along;
 uniform vec3 vertex_color;
 uniform float line_width;
 

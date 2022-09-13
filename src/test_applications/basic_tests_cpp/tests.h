@@ -311,6 +311,7 @@ void testPlot()
     plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
     plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
     plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
+    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed(), properties::PERSISTENT);
     scatter3(x + 3.0f, y, z, properties::Color::Black(), properties::PointSize(14));
 
     setCurrentElement("view_02");

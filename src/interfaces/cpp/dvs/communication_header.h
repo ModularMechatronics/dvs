@@ -35,7 +35,10 @@ struct CommunicationHeaderObject
     CommunicationHeaderObjectType type;
     uint8_t num_bytes;
     uint8_t data[kCommunicationHeaderObjectDataSize];
-    CommunicationHeaderObject() = default;
+
+    CommunicationHeaderObject() : type{CommunicationHeaderObjectType::UNKNOWN}, num_bytes{0U} {}
+    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type) :
+        type{input_type}, num_bytes{0U} {}
 
     template <typename U>
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const U& input_data) :
@@ -177,28 +180,24 @@ private:
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
-        assert((sizeof(U) <= kCommunicationHeaderObjectDataSize) && "Too many data bytes!");
+        assert((sizeof(U) <= kCommunicationHeaderObjectDataSize) && "Object too big!");
 
-        objects.push_back(CommunicationHeaderObject());
-        CommunicationHeaderObject* const ptr = &(objects[objects.size() - 1]); // TODO: Change to ref
-
-        ptr->type = CommunicationHeaderObjectType::PROPERTY;
+        objects.push_back(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
+        CommunicationHeaderObject& current_obj = objects.back();
 
         if(std::is_same<U, PropertyType>::value)
         {
-            const PropertyType* const obj_ptr = reinterpret_cast<const PropertyType* const>(&obj);
-            if(*obj_ptr == PropertyType::PERSISTENT)
+            const PropertyType tp = *reinterpret_cast<const PropertyType* const>(&obj);
+            if(tp == PropertyType::PERSISTENT)
             {
-                ptr->num_bytes = sizeof(PropertyBase);
-                PropertyBase ps;
-                ps.setPropertyType(PropertyType::PERSISTENT);
-                fillBufferWithObjects(ptr->data, ps);
+                current_obj.num_bytes = sizeof(PropertyBase);
+                fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::PERSISTENT});
             }
         }
         else
         {
-            ptr->num_bytes = sizeof(U);
-            fillBufferWithObjects(ptr->data, obj);
+            current_obj.num_bytes = sizeof(U);
+            fillBufferWithObjects(current_obj.data, obj);
         }
     }
 
@@ -209,26 +208,22 @@ private:
                       "Incorrect type!");
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
-        objects.push_back(CommunicationHeaderObject());
-        CommunicationHeaderObject* const ptr = &(objects[objects.size() - 1]); // TODO: Change to ref
-
-        ptr->type = CommunicationHeaderObjectType::PROPERTY;
+        objects.push_back(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
+        CommunicationHeaderObject& current_obj = objects.back();
 
         if(std::is_same<U, PropertyType>::value)
         {
-            const PropertyType* const obj_ptr = reinterpret_cast<const PropertyType* const>(&obj);
-            if(*obj_ptr == PropertyType::PERSISTENT)
+            const PropertyType tp = *reinterpret_cast<const PropertyType* const>(&obj);
+            if(tp == PropertyType::PERSISTENT)
             {
-                ptr->num_bytes = sizeof(PropertyBase);
-                PropertyBase ps;
-                ps.setPropertyType(PropertyType::PERSISTENT);
-                fillBufferWithObjects(ptr->data, ps);
+                current_obj.num_bytes = sizeof(PropertyBase);
+                fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::PERSISTENT});
             }
         }
         else
         {
-            ptr->num_bytes = sizeof(U);
-            fillBufferWithObjects(ptr->data, obj);
+            current_obj.num_bytes = sizeof(U);
+            fillBufferWithObjects(current_obj.data, obj);
         }
 
         extendInternal(objects, other_objs...);
