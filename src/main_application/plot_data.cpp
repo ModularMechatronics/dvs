@@ -214,11 +214,15 @@ std::pair<Vec3d, Vec3d> PlotDataHandler::getMinMaxVectors() const
                 else
                 {
                     min_vec.z = std::min(min_vec.z, current_min_max.first.z);
+                    max_vec.z = std::max(max_vec.z, current_min_max.second.z);
                 }
             }
 
             min_vec.x = std::min(min_vec.x, current_min_max.first.x);
             min_vec.y = std::min(min_vec.y, current_min_max.first.y);
+
+            max_vec.x = std::max(max_vec.x, current_min_max.second.x);
+            max_vec.y = std::max(max_vec.y, current_min_max.second.y);
         }
 
         if (num_dimensions == 2)

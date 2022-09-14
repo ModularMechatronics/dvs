@@ -72,6 +72,11 @@ public:
         return size_ * sizeof(T);
     }
 
+    size_t numElements() const
+    {
+        return size_;
+    }
+
     void fillBufferWithData(uint8_t* const buffer) const
     {
         const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
