@@ -88,6 +88,11 @@ public:
         return num_cols_;
     }
 
+    size_t numElements() const
+    {
+        return num_rows_ * num_cols_;
+    }
+
     size_t numBytes() const
     {
         return num_rows_ * num_cols_ * sizeof(T);

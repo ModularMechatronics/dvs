@@ -52,11 +52,18 @@ int main(int argc, char* argv[])
         {"view", surf_ns::testWithMatrixView}
     };
 
+    // ######################### dynamic_plotting ##########################
+    std::map<std::string, std::function<void()>> dynamic_plotting_functions{
+        {"2d_expanding", dynamic_plotting::test2DFunctionExpandinAxes},
+        {"3d_expanding", dynamic_plotting::test3DFunctionExpandinAxes}
+    };
+
     fcns["plot"] = plot2_functions;
     fcns["plot3"] = plot3_functions;
     fcns["scatter"] = scatter2_functions;
     fcns["scatter3"] = scatter3_functions;
     fcns["surf"] = surf_functions;
+    fcns["dynamic_plotting"] = dynamic_plotting_functions;
 
     if (argc == 1)
     {
