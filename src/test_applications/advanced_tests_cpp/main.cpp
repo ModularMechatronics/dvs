@@ -54,8 +54,14 @@ int main(int argc, char* argv[])
 
     // ######################### dynamic_plotting ##########################
     std::map<std::string, std::function<void()>> dynamic_plotting_functions{
-        {"2d_expanding", dynamic_plotting::test2DFunctionExpandinAxes},
-        {"3d_expanding", dynamic_plotting::test3DFunctionExpandinAxes}
+        {"2d_expanding_plot", dynamic_plotting::test2DFunctionExpandingPlotObject},
+        {"3d_expanding_plot", dynamic_plotting::test3DFunctionExpandingPlotObject},
+        {"2d_changing_rotation", dynamic_plotting::test2DFunctionRotatingView},
+        {"2d_changing_axes", dynamic_plotting::test2DFunctionChangingAxes},
+        {"2d_new_data_clear", dynamic_plotting::test2DFunctionNewDataAndClear},
+        {"3d_new_data_clear", dynamic_plotting::test3DFunctionNewDataAndClear},
+        
+        
     };
 
     fcns["plot"] = plot2_functions;
