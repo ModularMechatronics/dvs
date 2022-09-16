@@ -202,11 +202,10 @@ void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, 
 
 void AxesRenderer::render()
 {
+    glUseProgram(shader_collection_.plot_box_shader.programId());
     renderPlotBox();
     if(render_zoom_rect_)
     {
-        glUseProgram(shader_collection_.plot_box_shader.programId());
-
         model_mat[3][0] = 0.0;
         model_mat[3][1] = 0.0;
         model_mat[3][2] = 0.0;
@@ -214,9 +213,8 @@ void AxesRenderer::render()
         const glm::mat4 mvp = projection_mat * view_mat * model_mat * window_scale_mat_;
 
         glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
-        
+
         zoom_rect_.render(mouse_pos_at_press_, current_mouse_pos_, view_angles_.getSnappingAxis(), view_mat, model_mat * window_scale_mat_, projection_mat);
-        glUseProgram(0);
     }
 
     renderBoxGrid();
@@ -236,13 +234,10 @@ void AxesRenderer::renderLegend()
 
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
     legend_renderer_.render(legend_properties_, width_, height_);
-    glUseProgram(0);
 }
 
 void AxesRenderer::renderBoxGrid()
 {
-    glUseProgram(shader_collection_.plot_box_shader.programId());
-
     const Vec3d scale = axes_limits_.getAxesScale() / 2.0;
 
     scale_mat[0][0] = 1.0 / scale.x;
@@ -261,8 +256,6 @@ void AxesRenderer::renderBoxGrid()
     plot_box_grid_.render(grid_vectors_,
                           axes_limits_,
                           view_angles_);
-
-    glUseProgram(0);
 }
 
 void AxesRenderer::plotBegin()
@@ -312,8 +305,6 @@ void AxesRenderer::plotEnd()
 
 void AxesRenderer::renderPlotBox()
 {
-    glUseProgram(shader_collection_.plot_box_shader.programId());
-
     model_mat[3][0] = 0.0;
     model_mat[3][1] = 0.0;
     model_mat[3][2] = 0.0;
@@ -332,8 +323,6 @@ void AxesRenderer::renderPlotBox()
 
     glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0f, 0.0f, 0.0f);
     plot_box_silhouette_.render(view_angles_.getAzimuth(), view_angles_.getElevation());
-
-    glUseProgram(0);
 }
 
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,
