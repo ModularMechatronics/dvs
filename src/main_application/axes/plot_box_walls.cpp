@@ -27,7 +27,7 @@ float walls_vertices[] = {
     1.0f, 0.0f, 1.0f,
     -1.0f, 0.0f, 1.0f,
     1.0f, 0.0f, -1.0f,
-    };
+};
 
 void PlotBoxWalls::setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val)
 {
@@ -39,8 +39,6 @@ void PlotBoxWalls::setIndices(const size_t first_vertex_idx, const size_t last_v
 
 void PlotBoxWalls::render(const float azimuth, const float elevation)
 {
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-
     const float xy_val = (elevation < 0.0f) ? 1.0f : -1.0f;
     setIndices(kXYFirstIdx, kXYLastIdx, kXYChangeDimension, xy_val);
 
@@ -50,28 +48,26 @@ void PlotBoxWalls::render(const float azimuth, const float elevation)
     const float xz_val = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
     setIndices(kXZFirstIdx, kXZLastIdx, kXZChangeDimension, xz_val);
 
-    glBufferSubData(GL_ARRAY_BUFFER, 0, 18 * 3 * sizeof(float), data_array_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_, data_array_);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_vertices_);
     glBindVertexArray(0);
 }
 
-PlotBoxWalls::PlotBoxWalls()
+PlotBoxWalls::PlotBoxWalls() :
+    num_vertices_{18U},
+    num_bytes_{sizeof(float) * num_vertices_ * 3U},
+    data_array_{new float[num_vertices_ * 3]}
 {
-    num_vertices_ = 18;
-    const size_t num_elements = num_vertices_ * 3;
-    const size_t num_bytes = sizeof(float) * num_elements;
-
-    data_array_ = new float[num_elements];
-
-    std::memcpy(data_array_, walls_vertices, sizeof(float) * num_elements);
+    std::memcpy(data_array_, walls_vertices, num_bytes_);
 
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, num_bytes, data_array_, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, num_bytes_, data_array_, GL_DYNAMIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
