@@ -7,8 +7,12 @@
 class PlotBoxWalls
 {
 private:
+    const size_t num_vertices_;
+    const size_t num_bytes_;
+    float* const data_array_;
+
     GLuint vertex_buffer_, vertex_buffer_array_;
-    size_t num_vertices_;
+
     void setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val);
 
     static constexpr size_t kXYFirstIdx = 0;
@@ -22,8 +26,6 @@ private:
     static constexpr size_t kXZFirstIdx = 12;
     static constexpr size_t kXZLastIdx = 18;
     static constexpr size_t kXZChangeDimension = 1;
-
-    float* data_array_;
 
 public:
     PlotBoxWalls();
