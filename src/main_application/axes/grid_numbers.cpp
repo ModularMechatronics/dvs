@@ -203,9 +203,9 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
 
 void drawGridNumbers(const TextRenderer& text_renderer, const Shader text_shader, const AxesLimits& axes_limits, const ViewAngles& view_angles, const glm::mat4& view_mat, const glm::mat4& model_mat, const glm::mat4& projection_mat, const float width, const float height, const GridVectors& gv)
 {
-    glm::mat4 model_mat_local = model_mat;
-    
     glUseProgram(text_shader.programId());
+
+    glm::mat4 model_mat_local = model_mat;
 
     const GLint text_color_uniform = glGetUniformLocation(text_shader.programId(), "textColor");
 
