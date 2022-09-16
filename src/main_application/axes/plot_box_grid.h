@@ -14,22 +14,20 @@
 class PlotBoxGrid
 {
 private:
-    GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
+    GLuint vertex_buffer_, vertex_buffer_array_;
     float* grid_points_;
-    GLfloat* color_;
     size_t idx_;
     float azimuth_;
     float elevation_;
 
     Vec3d axes_scale_;
 
-    void renderXYGrid(const GridVectors& gv);
-    void renderXZGrid(const GridVectors& gv);
-    void renderYZGrid(const GridVectors& gv);
+    void fillXYGrid(const GridVectors& gv);
+    void fillXZGrid(const GridVectors& gv);
+    void fillYZGrid(const GridVectors& gv);
 
 public:
-    PlotBoxGrid() = delete;
-    PlotBoxGrid(const float size);
+    PlotBoxGrid();
     ~PlotBoxGrid();
 
     void render(const GridVectors& gv,

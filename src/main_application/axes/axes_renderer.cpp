@@ -80,12 +80,8 @@ static Vec3d findScale(const glm::mat4& pm)
 }
 
 AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) :
-shader_collection_{shader_collection}, legend_renderer_{text_renderer_, shader_collection_}
+    shader_collection_{shader_collection}, legend_renderer_{text_renderer_, shader_collection_}
 {
-    plot_box_walls_ = new PlotBoxWalls(1.0f);
-    plot_box_silhouette_ = new PlotBoxSilhouette(1.0f);
-    plot_box_grid_ = new PlotBoxGrid(1.0f);
-
     glUseProgram(shader_collection_.text_shader.programId());
 
     initFreetype();
@@ -122,24 +118,24 @@ void AxesRenderer::enableClipPlanes()
     const Vec3d scale = axes_limits_.getAxesScale() / 2.0;
 
     // clang-format off
-    const Vector<Point3d> points_x0{VectorInitializer{(Point3d(scale.x - axes_center.x, f, f)),
-                                       (Point3d(scale.x - axes_center.x, -f, f)),
-                                       (Point3d(scale.x - axes_center.x, f, -f))}};
+    const Vector<Point3d> points_x0{VectorInitializer{Point3d(scale.x - axes_center.x, f, f),
+                                       Point3d(scale.x - axes_center.x, -f, f),
+                                       Point3d(scale.x - axes_center.x, f, -f)}};
     const Vector<Point3d> points_x1{VectorInitializer{(Point3d(scale.x + axes_center.x, f, f)),
-                                       (Point3d(scale.x + axes_center.x, -f, f)),
-                                       (Point3d(scale.x + axes_center.x, f, -f))}};
-    const Vector<Point3d> points_y0{VectorInitializer{(Point3d(-f, scale.y - axes_center.y, f)),
-                                       (Point3d(f, scale.y - axes_center.y, f)),
-                                       (Point3d(f, scale.y - axes_center.y, -f))}};
-    const Vector<Point3d> points_y1{VectorInitializer{(Point3d(-f, scale.y + axes_center.y, f)),
-                                       (Point3d(f, scale.y + axes_center.y, f)),
-                                       (Point3d(f, scale.y + axes_center.y, -f))}};
-    const Vector<Point3d> points_z0{VectorInitializer{(Point3d(-f, f, -(axes_center.z + scale.z))),
-                                       (Point3d(f, -f, -(axes_center.z + scale.z))),
-                                       (Point3d(-f, -f, -(axes_center.z + scale.z)))}};
-    const Vector<Point3d> points_z1{VectorInitializer{(Point3d(-f, f, -(scale.z - axes_center.z))),
-                                       (Point3d(f, -f, -(scale.z - axes_center.z))),
-                                       (Point3d(-f, -f, -(scale.z - axes_center.z)))}};
+                                       Point3d(scale.x + axes_center.x, -f, f),
+                                       Point3d(scale.x + axes_center.x, f, -f)}};
+    const Vector<Point3d> points_y0{VectorInitializer{Point3d(-f, scale.y - axes_center.y, f),
+                                       Point3d(f, scale.y - axes_center.y, f),
+                                       Point3d(f, scale.y - axes_center.y, -f)}};
+    const Vector<Point3d> points_y1{VectorInitializer{Point3d(-f, scale.y + axes_center.y, f),
+                                       Point3d(f, scale.y + axes_center.y, f),
+                                       Point3d(f, scale.y + axes_center.y, -f)}};
+    const Vector<Point3d> points_z0{VectorInitializer{Point3d(-f, f, -(axes_center.z + scale.z)),
+                                       Point3d(f, -f, -(axes_center.z + scale.z)),
+                                       Point3d(-f, -f, -(axes_center.z + scale.z))}};
+    const Vector<Point3d> points_z1{VectorInitializer{Point3d(-f, f, -(scale.z - axes_center.z)),
+                                       Point3d(f, -f, -(scale.z - axes_center.z)),
+                                       Point3d(-f, -f, -(scale.z - axes_center.z))}};
     // clang-format on*/
 
     // TODO: Simplify
@@ -224,7 +220,7 @@ void AxesRenderer::render()
     }
 
     renderBoxGrid();
-    drawGridNumbers(text_renderer_, shader_collection_.text_shader, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, gv_);
+    drawGridNumbers(text_renderer_, shader_collection_.text_shader, axes_limits_, view_angles_, view_mat, model_mat * window_scale_mat_, projection_mat, width_, height_, grid_vectors_);
     if(render_legend_)
     {
         renderLegend();
@@ -262,9 +258,9 @@ void AxesRenderer::renderBoxGrid()
 
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    plot_box_grid_->render(gv_,
-                           axes_limits_,
-                           view_angles_);
+    plot_box_grid_.render(grid_vectors_,
+                          axes_limits_,
+                          view_angles_);
 
     glUseProgram(0);
 }
@@ -330,9 +326,12 @@ void AxesRenderer::renderPlotBox()
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * window_scale_mat_;
 
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 1.0f, 1.0f, 1.0f);
 
-    plot_box_walls_->render(view_angles_.getAzimuth(), view_angles_.getElevation());
-    plot_box_silhouette_->render();
+    plot_box_walls_.render(view_angles_.getAzimuth(), view_angles_.getElevation());
+
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0f, 0.0f, 0.0f);
+    plot_box_silhouette_.render(view_angles_.getAzimuth(), view_angles_.getElevation());
 
     glUseProgram(0);
 }
@@ -354,7 +353,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
-    gv_ = gv;
+    grid_vectors_ = gv;
     use_perspective_proj_ = use_perspective_proj;
     width_ = width;
     height_ = height;

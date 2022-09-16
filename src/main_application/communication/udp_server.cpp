@@ -111,7 +111,6 @@ void UdpServer::receiveThreadFunction()
         }
 
         const UInt8ArrayView array_view{reinterpret_cast<uint8_t*>(receive_buffer_), num_received_bytes_total};
-        const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(receive_buffer_);
 
         uint64_t received_magic_num;
         std::memcpy(&received_magic_num, array_view.data() + 1, sizeof(uint64_t));

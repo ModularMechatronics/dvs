@@ -1,8 +1,8 @@
 #version 330
 
-out vec3 color;
-// uniform vec4 ourColor;
 in vec3 fragment_color;
+
+out vec3 color;
 
 void main()
 {

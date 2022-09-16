@@ -2,117 +2,97 @@
 
 #include <iostream>
 
+// The value '0.0f' corresponds to the dimension that will be changed
 static float walls_vertices[] = {
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, 1.0f, -1.0f,
-    
-        -1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
+    // XZ Plane
+    -1.0f, 0.0f, -1.0f,
+    1.0f, 0.0f, -1.0f,
 
-        1.0f, 1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
+    -1.0f, 0.0f, 1.0f,
+    1.0f, 0.0f, 1.0f,
 
-        1.0f, 1.0f, -1.0f,
-        -1.0f, 1.0f, -1.0f,
+    -1.0f, 0.0f, -1.0f,
+    -1.0f, 0.0f, 1.0f,
 
-        -1.0f, -1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
+    1.0f, 0.0f, -1.0f,
+    1.0f, 0.0f, 1.0f,
 
-        -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f,
+    // XY Plane
+    -1.0f, -1.0f, 0.0f,
+    1.0f, -1.0f, 0.0f,
 
-        1.0f, 1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f,
+    -1.0f, 1.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,
 
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
+    -1.0f, 1.0f, 0.0f,
+    -1.0f, -1.0f, 0.0f,
 
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, 1.0f,
+    1.0f, 1.0f, 0.0f,
+    1.0f, -1.0f, 0.0f,
 
-        -1.0f, 1.0f, -1.0f,
-        -1.0f, 1.0f, 1.0f,
+    // YZ Plane
+    0.0f, -1.0f, -1.0f,
+    0.0f, 1.0f, -1.0f,
 
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, 1.0f,
+    0.0f, -1.0f, 1.0f,
+    0.0f, 1.0f, 1.0f,
 
-        1.0f, 1.0f, -1.0f,
-        1.0f, 1.0f, 1.0f,
-    };
+    0.0f, -1.0f, -1.0f,
+    0.0f, -1.0f, 1.0f,
 
-
-constexpr GLfloat kColor = 0.0f;
-
-static GLfloat walls_color[] = {
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
-        kColor, kColor, kColor,
+    0.0f, 1.0f, -1.0f,
+    0.0f, 1.0f, 1.0f,
 };
 
-void PlotBoxSilhouette::render() const
+void PlotBoxSilhouette::setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val)
 {
+    for(size_t k = first_vertex_idx; k < last_vertex_idx; k++)
+    {
+        data_array_[k * 3 + dimension_idx] = val;
+    }
+}
+
+void PlotBoxSilhouette::render(const float azimuth, const float elevation)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+
+    const float xz_val = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
+    setIndices(0, 8, 1, xz_val);
+
+    const float xy_val = (elevation > 0.0f) ? -1.0f : 1.0f;
+    setIndices(8, 16, 2, xy_val);
+
+    const float yz_val = (azimuth >= 0.0f) ? 1.0f : -1.0f;
+    setIndices(16, 24, 0, yz_val);
+
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 12 * 2 * 3, data_array_);
     glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_LINES, 0, num_vertices_);
+    glDrawArrays(GL_LINES, 0, 2 * 12);
     glBindVertexArray(0);
 }
 
-PlotBoxSilhouette::PlotBoxSilhouette(const float size)
+PlotBoxSilhouette::PlotBoxSilhouette()
 {
-    num_vertices_ = sizeof(walls_vertices) / (sizeof(float) * 3);
-    const size_t num_bytes = sizeof(float) * 3 * num_vertices_;
+    num_vertices_ = 3U * 8U;
+    const size_t num_elements = num_vertices_ * 3U;
+    const size_t num_bytes = sizeof(float) * num_elements;
+    data_array_ = new float[num_elements];
+
+    std::memcpy(data_array_, walls_vertices, num_bytes);
 
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, num_bytes, walls_vertices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, num_bytes, data_array_, GL_DYNAMIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+}
 
-    glGenBuffers(1, &color_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, num_bytes, walls_color, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-    glVertexAttribPointer(
-        1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-        3,                                // size
-        GL_FLOAT,                         // type
-        GL_FALSE,                         // normalized?
-        0,                                // stride
-        (void*)0                          // array buffer offset
-    );
-    glBindVertexArray(0);
+PlotBoxSilhouette::~PlotBoxSilhouette()
+{
+    delete[] data_array_;
 }
