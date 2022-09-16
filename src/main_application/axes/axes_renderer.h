@@ -36,9 +36,9 @@ private:
 
     AxesSettings axes_settings_;
 
-    PlotBoxWalls* plot_box_walls_;
-    PlotBoxSilhouette* plot_box_silhouette_;
-    PlotBoxGrid* plot_box_grid_;
+    PlotBoxWalls plot_box_walls_{};
+    PlotBoxSilhouette plot_box_silhouette_{};
+    PlotBoxGrid plot_box_grid_{};
 
     glm::mat4 orth_projection_mat;
     glm::mat4 persp_projection_mat;
@@ -53,7 +53,7 @@ private:
     float width_, height_;
     Vec3d scale_for_window_;
 
-    GridVectors gv_;
+    GridVectors grid_vectors_;
     bool use_perspective_proj_;
     Vec2f mouse_pos_at_press_;
     Vec2f current_mouse_pos_;

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-void PlotBoxGrid::renderXYGrid(const GridVectors& gv)
+void PlotBoxGrid::fillXYGrid(const GridVectors& gv)
 {
     const float z_val = elevation_ > 0.0f ? (-axes_scale_.z) : axes_scale_.z;
     for(size_t k = 0; k < gv.x.num_valid_values; k++)
@@ -37,7 +37,7 @@ void PlotBoxGrid::renderXYGrid(const GridVectors& gv)
 }
 
 
-void PlotBoxGrid::renderXZGrid(const GridVectors& gv)
+void PlotBoxGrid::fillXZGrid(const GridVectors& gv)
 {
     const bool cond = ((-M_PI / 2.0f) <= azimuth_) && (azimuth_ <= (M_PI / 2.0f));
     const float y_val = cond ? axes_scale_.y : (-axes_scale_.y);
@@ -73,7 +73,7 @@ void PlotBoxGrid::renderXZGrid(const GridVectors& gv)
     }
 }
 
-void PlotBoxGrid::renderYZGrid(const GridVectors& gv)
+void PlotBoxGrid::fillYZGrid(const GridVectors& gv)
 {
     const float x_val = (azimuth_ >= 0.0f) ? axes_scale_.x : (-axes_scale_.x);
 
@@ -119,9 +119,9 @@ void PlotBoxGrid::render(const GridVectors& gv,
 
     axes_scale_ = axes_limits.getAxesScale() / 2.0;
 
-    renderXYGrid(gv);
-    renderXZGrid(gv);
-    renderYZGrid(gv);
+    fillXYGrid(gv);
+    fillXZGrid(gv);
+    fillYZGrid(gv);
 
     const size_t num_vertices_to_render = idx_ / 3;
 
@@ -132,7 +132,7 @@ void PlotBoxGrid::render(const GridVectors& gv,
     glBindVertexArray(0);
 }
 
-PlotBoxGrid::PlotBoxGrid(const float size)
+PlotBoxGrid::PlotBoxGrid()
 {
     const size_t max_num_grid_lines_per_plane = 10;
     const size_t num_vertices = max_num_grid_lines_per_plane * 3 * 2 * 2;
@@ -140,16 +140,6 @@ PlotBoxGrid::PlotBoxGrid(const float size)
     const size_t num_bytes = num_array_elements * sizeof(float);
 
     grid_points_ = new float[num_array_elements];
-    color_ = new GLfloat[num_array_elements];
-
-    constexpr GLfloat kLineColor = 0.1;
-
-    for(size_t k = 0; k < num_array_elements; k += 3)
-    {
-        color_[k] = 0.0f;
-        color_[k + 1] = 0.0f;
-        color_[k + 2] = 0.0f;
-    }
 
     azimuth_ = 0.0f;
     elevation_ = 0.0f;
@@ -166,25 +156,9 @@ PlotBoxGrid::PlotBoxGrid(const float size)
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &color_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, num_bytes, color_, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-    glVertexAttribPointer(
-        1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-        3,                                // size
-        GL_FLOAT,                         // type
-        GL_FALSE,                         // normalized?
-        0,                                // stride
-        (void*)0                          // array buffer offset
-    );
 }
 
 PlotBoxGrid::~PlotBoxGrid()
 {
     delete[] grid_points_;
-    delete[] color_;
 }

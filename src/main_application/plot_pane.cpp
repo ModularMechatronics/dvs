@@ -82,8 +82,8 @@ wxGLContext* PlotPane::getContext()
 
 void PlotPane::initShaders()
 {
-    const std::string v_path = "../main_application/axes/shaders/basic.vs";
-    const std::string f_path = "../main_application/axes/shaders/basic.fs";
+    const std::string v_path = "../main_application/axes/shaders/plot_box_shader.vs";
+    const std::string f_path = "../main_application/axes/shaders/plot_box_shader.fs";
     shader_collection_.plot_box_shader = Shader::createFromFiles(v_path, f_path);
 
     const std::string v_path_text = "../main_application/axes/shaders/text.vs";
