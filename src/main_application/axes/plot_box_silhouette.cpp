@@ -4,19 +4,6 @@
 
 // The value '0.0f' corresponds to the dimension that will be changed
 static float walls_vertices[] = {
-    // XZ Plane
-    -1.0f, 0.0f, -1.0f,
-    1.0f, 0.0f, -1.0f,
-
-    -1.0f, 0.0f, 1.0f,
-    1.0f, 0.0f, 1.0f,
-
-    -1.0f, 0.0f, -1.0f,
-    -1.0f, 0.0f, 1.0f,
-
-    1.0f, 0.0f, -1.0f,
-    1.0f, 0.0f, 1.0f,
-
     // XY Plane
     -1.0f, -1.0f, 0.0f,
     1.0f, -1.0f, 0.0f,
@@ -42,6 +29,19 @@ static float walls_vertices[] = {
 
     0.0f, 1.0f, -1.0f,
     0.0f, 1.0f, 1.0f,
+
+    // XZ Plane
+    -1.0f, 0.0f, -1.0f,
+    1.0f, 0.0f, -1.0f,
+
+    -1.0f, 0.0f, 1.0f,
+    1.0f, 0.0f, 1.0f,
+
+    -1.0f, 0.0f, -1.0f,
+    -1.0f, 0.0f, 1.0f,
+
+    1.0f, 0.0f, -1.0f,
+    1.0f, 0.0f, 1.0f,
 };
 
 void PlotBoxSilhouette::setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val)
@@ -56,14 +56,14 @@ void PlotBoxSilhouette::render(const float azimuth, const float elevation)
 {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
 
-    const float xz_val = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
-    setIndices(0, 8, 1, xz_val);
-
     const float xy_val = (elevation > 0.0f) ? -1.0f : 1.0f;
-    setIndices(8, 16, 2, xy_val);
+    setIndices(kXYFirstIdx, kXYLastIdx, kXYChangeDimension, xy_val);
 
     const float yz_val = (azimuth >= 0.0f) ? 1.0f : -1.0f;
-    setIndices(16, 24, 0, yz_val);
+    setIndices(kYZFirstIdx, kYZLastIdx, kYZChangeDimension, yz_val);
+
+    const float xz_val = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
+    setIndices(kXZFirstIdx, kXZLastIdx, kXZChangeDimension, xz_val);
 
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 12 * 2 * 3, data_array_);
     glBindVertexArray(vertex_buffer_array_);
