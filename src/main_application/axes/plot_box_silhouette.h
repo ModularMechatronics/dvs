@@ -12,15 +12,15 @@ private:
     void setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val);
 
     static constexpr size_t kXYFirstIdx = 0;
-    static constexpr size_t kXYLastIdx = 6;
+    static constexpr size_t kXYLastIdx = 8;
     static constexpr size_t kXYChangeDimension = 2;
 
-    static constexpr size_t kYZFirstIdx = 6;
-    static constexpr size_t kYZLastIdx = 12;
+    static constexpr size_t kYZFirstIdx = 8;
+    static constexpr size_t kYZLastIdx = 16;
     static constexpr size_t kYZChangeDimension = 0;
 
-    static constexpr size_t kXZFirstIdx = 12;
-    static constexpr size_t kXZLastIdx = 18;
+    static constexpr size_t kXZFirstIdx = 16;
+    static constexpr size_t kXZLastIdx = 24;
     static constexpr size_t kXZChangeDimension = 1;
 
     float* data_array_;
