@@ -10,6 +10,7 @@
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 
+#include "axes/structures/grid_vectors.h"
 #include "dvs/math/math.h"
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_low_level.h"
@@ -31,7 +32,7 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     default_view_angles_ = view_angles_;
 
     axes_settings_ = axes_settings;
-    current_mouse_activity = MouseActivity::ROTATE;
+    current_mouse_interaction_type_ = MouseInteractionType::ROTATE;
 
     const size_t num_lines = axes_settings_.getNumAxesTicks();
     inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
@@ -192,22 +193,6 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
     mouse_pressed_ = false;
 }
 
-void AxesInteractor::updateMouseActivity(const InteractionType interaction_type)
-{
-    if (interaction_type == InteractionType::PAN)
-    {
-        current_mouse_activity = MouseActivity::PAN;
-    }
-    else if (interaction_type == InteractionType::ZOOM)
-    {
-        current_mouse_activity = MouseActivity::ZOOM;
-    }
-    else if (interaction_type == InteractionType::ROTATE)
-    {
-        current_mouse_activity = MouseActivity::ROTATE;
-    }
-}
-
 ViewAngles AxesInteractor::getViewAngles() const
 {
     return view_angles_;
@@ -223,18 +208,14 @@ void AxesInteractor::showLegend(const bool show_legend)
     show_legend_ = show_legend;
 }
 
-void AxesInteractor::update(const InteractionType interaction_type, const int window_width, const int window_height)
+void AxesInteractor::update(const MouseInteractionType interaction_type,const int window_width, const int window_height)
 {
     current_window_width = window_width;
     current_window_height = window_height;
 
-    if (interaction_type == InteractionType::RESET)
+    if(interaction_type != MouseInteractionType::UNCHANGED)
     {
-        resetView();
-    }
-    else
-    {
-        updateMouseActivity(interaction_type);
+        current_mouse_interaction_type_ = interaction_type;
     }
 }
 
@@ -251,12 +232,12 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
     const float dx_mod = 250.0f * static_cast<float>(dx) / current_window_width;
     const float dy_mod = 250.0f * static_cast<float>(dy) / current_window_height;
     should_draw_zoom_rect_ = false;
-    switch (current_mouse_activity)
+    switch (current_mouse_interaction_type_)
     {
-        case MouseActivity::ROTATE:
+        case MouseInteractionType::ROTATE:
             changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain, current_mouse_interaction_axis);
             break;
-        case MouseActivity::ZOOM:
+        case MouseInteractionType::ZOOM:
             if(SnappingAxis::None == view_angles_.getSnappingAxis())
             {
                 changeZoom(dy_mod * zoom_mouse_gain, current_mouse_interaction_axis);
@@ -266,7 +247,7 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
                 should_draw_zoom_rect_ = true;
             }
             break;
-        case MouseActivity::PAN:
+        case MouseInteractionType::PAN:
             changePan(dx_mod * pan_mouse_gain, dy_mod * pan_mouse_gain, current_mouse_interaction_axis);
             break;
         default:

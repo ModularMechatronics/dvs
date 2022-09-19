@@ -636,27 +636,35 @@ int PlotPane::getHeight()
     return GetSize().y;
 }
 
-InteractionType keyboardStateToInteractionType(const KeyboardState& keyboard_state)
+MouseInteractionType keyboardStateToMouseInteractionType(const KeyboardState& keyboard_state)
 {
-    if (wxGetKeyState(static_cast<wxKeyCode>('c')))
+    if (wxGetKeyState(static_cast<wxKeyCode>('t')) || wxGetKeyState(static_cast<wxKeyCode>('T')))
     {
-        return InteractionType::RESET;
-    }
-    else if (wxGetKeyState(static_cast<wxKeyCode>('t')) || wxGetKeyState(static_cast<wxKeyCode>('T')))
-    {
-        return InteractionType::PAN;
+        return MouseInteractionType::PAN;
     }
     else if (wxGetKeyState(static_cast<wxKeyCode>('r')) || wxGetKeyState(static_cast<wxKeyCode>('R')))
     {
-        return InteractionType::ROTATE;
+        return MouseInteractionType::ROTATE;
     }
     else if(wxGetKeyState(static_cast<wxKeyCode>('z')) || wxGetKeyState(static_cast<wxKeyCode>('Z')))
     {
-        return InteractionType::ZOOM;
+        return MouseInteractionType::ZOOM;
     }
     else
     {
-        return InteractionType::UNCHANGED;
+        return MouseInteractionType::UNCHANGED;
+    }
+}
+
+bool viewShouldBeReset(const KeyboardState& keyboard_state)
+{
+    if (wxGetKeyState(static_cast<wxKeyCode>('c')))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
@@ -687,8 +695,13 @@ void PlotPane::render(wxPaintEvent& evt)
         perspective_projection_ = !perspective_projection_;
     }
 
+    if(viewShouldBeReset(keyboard_state_))
+    {
+        axes_interactor_.resetView();
+    }
+
     axes_interactor_.update(
-        keyboardStateToInteractionType(keyboard_state_), getWidth(), getHeight());
+        keyboardStateToMouseInteractionType(keyboard_state_), getWidth(), getHeight());
 
     if(wxGetKeyState(static_cast<wxKeyCode>('y')) || wxGetKeyState(static_cast<wxKeyCode>('Y')))
     {
@@ -711,7 +724,7 @@ void PlotPane::render(wxPaintEvent& evt)
                          getHeight(),
                          mouse_pos_at_press_.elementWiseDivide(pane_size),
                          current_mouse_pos_.elementWiseDivide(pane_size),
-                         axes_interactor_.getCurrentMouseActivity(),
+                         axes_interactor_.getMouseInteractionType(),
                          left_mouse_button_.isPressed(),
                          axes_interactor_.shouldDrawZoomRect(),
                          axes_interactor_.getShowLegend(),

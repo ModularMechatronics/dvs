@@ -333,7 +333,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const float height,
                                 const Vec2f mouse_pos_at_press,
                                 const Vec2f current_mouse_pos,
-                                const MouseActivity mouse_activity,
+                                const MouseInteractionType mouse_interaction_type,
                                 const bool mouse_pressed,
                                 const bool render_zoom_rect,
                                 const bool render_legend,
@@ -348,7 +348,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     height_ = height;
     mouse_pos_at_press_ = mouse_pos_at_press;
     current_mouse_pos_ = current_mouse_pos;
-    mouse_activity_ = mouse_activity;
+    mouse_interaction_type_ = mouse_interaction_type;
     mouse_pressed_ = mouse_pressed;
     render_zoom_rect_ = render_zoom_rect;
     render_legend_ = render_legend;

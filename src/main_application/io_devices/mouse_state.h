@@ -5,13 +5,6 @@
 
 using namespace dvs;
 
-enum class MouseActivity
-{
-    PAN,
-    ZOOM,
-    ROTATE
-};
-
 class MouseButtonState
 {
 private:

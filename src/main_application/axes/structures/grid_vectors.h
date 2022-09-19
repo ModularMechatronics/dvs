@@ -8,13 +8,13 @@
 
 using namespace dvs;
 
-enum class InteractionType
+enum class MouseInteractionType
 {
-    UNCHANGED,
-    PAN,
     ROTATE,
-    RESET,
+    PAN,
     ZOOM,
+    UNCHANGED,
+    UNKNOWN
 };
 
 struct GridVector
