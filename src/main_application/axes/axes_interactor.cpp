@@ -385,60 +385,6 @@ void AxesInteractor::changePan(const double dx, const double dy, const MouseInte
     axes_limits_.incrementMinMax(v_scaled);
 }
 
-// TODO: Remove?
-double findFirstPointBeforeMin(const double min_point, const double start_point, const double inc)
-{
-    assert(inc > 0.0);
-    double t0 = start_point;
-    if (start_point <= min_point)
-    {
-        while ((t0 + inc) < min_point)
-        {
-            t0 = t0 + inc;
-        }
-    }
-    else
-    {
-        while (t0 > min_point)
-        {
-            t0 = t0 - inc;
-        }
-    }
-    return t0;
-}
-
-// TODO: Remove?
-double findFirstPointInInterval(const double min_point,
-                                const double max_point,
-                                const double start_point,
-                                const double inc)
-{
-    assert(min_point < max_point);
-    const double t0 = findFirstPointBeforeMin(min_point, start_point, inc);
-    double new_inc = inc;
-    double t1 = t0;
-
-    while (t1 < min_point)
-    {
-        while (t1 < min_point)
-        {
-            t1 = t1 + new_inc;
-        }
-        if (t1 > max_point)
-        {
-            new_inc = new_inc * 0.5;
-            t1 = t0;
-        }
-        else if ((t1 < max_point) && ((t1 - new_inc) > min_point))
-        {
-            new_inc = new_inc * 0.5;
-            t1 = t0;
-        }
-    }
-
-    return t1;
-}
-
 void AxesInteractor::setViewAngles(const double azimuth, const double elevation)
 {
     view_angles_.setAngles(azimuth, elevation);
@@ -490,6 +436,7 @@ GridVector generateAxisVector(const double min_val, const double max_val, const 
         if (it > static_cast<int>(num_lines * 3))
         {
             std::cout << "ERROR: Number of lines grew a lot!" << std::endl;
+            break;
         }
     }
 

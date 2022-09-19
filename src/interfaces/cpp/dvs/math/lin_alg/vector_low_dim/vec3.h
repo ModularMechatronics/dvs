@@ -5,11 +5,6 @@
 
 #include "dvs/math/lin_alg/vector_low_dim/class_def/vec3.h"
 
-// TODO:
-//  - Angle between 2d and 3d vectors
-//  - Projection of vector to vector/plane/line
-//  - Find angle axis rotation from two vectors
-
 namespace dvs
 {
 template <typename T> Vec3<T>::Vec3(const T x_, const T y_, const T z_)

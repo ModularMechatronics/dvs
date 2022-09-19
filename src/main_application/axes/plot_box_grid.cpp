@@ -134,8 +134,9 @@ void PlotBoxGrid::render(const GridVectors& gv,
 
 PlotBoxGrid::PlotBoxGrid()
 {
-    const size_t max_num_grid_lines_per_plane = 10;
-    const size_t num_vertices = max_num_grid_lines_per_plane * 3 * 2 * 2;
+    // TODO: Remove last ' * 2' for num_vertices_per_plane?
+    const size_t num_vertices_per_plane = GridVector::kMaxNumGridNumbers * 2 * 2;
+    const size_t num_vertices = num_vertices_per_plane * 3;
     const size_t num_array_elements = num_vertices * 3;
     const size_t num_bytes = num_array_elements * sizeof(float);
 
