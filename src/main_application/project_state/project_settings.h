@@ -14,9 +14,8 @@ inline void throwIfMissing(const nlohmann::json& j, const std::string& field_nam
     }
 }
 
-class ElementSettings
+struct ElementSettings
 {
-public:
     float x;
     float y;
     float width;
@@ -30,7 +29,7 @@ public:
     {
     }
 
-    ElementSettings(const nlohmann::json& j)
+    explicit ElementSettings(const nlohmann::json& j)
     {
         name = j["name"];
 
@@ -91,18 +90,15 @@ public:
 
     bool hasElementWithName(const std::string& name) const
     {
-        for (const ElementSettings& e : elements_)
-        {
-            if (e.name == name)
-            {
-                return true;
-            }
-        }
-        return false;
+        return std::find_if(
+                elements_.begin(), elements_.end(), [&](const ElementSettings& es) -> bool {
+                    return es.name == name;
+                }) != elements_.end();
     }
 
     ElementSettings getElementWithName(const std::string& name) const
     {
+        assert(hasElementWithName(name));
         ElementSettings res(0.0f, 0.0f, 0.0f, 0.0f, "");
         for (const ElementSettings& e : elements_)
         {
@@ -206,11 +202,6 @@ public:
         windows_.push_back(ws);
     }
 
-    TabSettings getTabFromIdx(const size_t idx) const
-    {
-        return tabs_.at(idx);
-    }
-
     std::vector<TabSettings> getTabs() const
     {
         return tabs_;
@@ -297,18 +288,15 @@ public:
 
     bool hasTabWithName(const std::string& name) const
     {
-        for (const TabSettings& ts : tabs_)
-        {
-            if (ts.getName() == name)
-            {
-                return true;
-            }
-        }
-        return false;
+        return std::find_if(
+                tabs_.begin(), tabs_.end(), [&](const TabSettings& ts) -> bool {
+                    return ts.getName() == name;
+                }) != tabs_.end();
     }
 
     TabSettings getTabWithName(const std::string& name) const
     {
+        assert(hasTabWithName(name));
         TabSettings res;
         for (const TabSettings& ts : tabs_)
         {
@@ -323,18 +311,15 @@ public:
 
     bool hasWindowWithName(const std::string& name) const
     {
-        for (const WindowSettings& ws : windows_)
-        {
-            if (ws.getName() == name)
-            {
-                return true;
-            }
-        }
-        return false;
+        return std::find_if(
+                windows_.begin(), windows_.end(), [&](const WindowSettings& ws) -> bool {
+                    return ws.getName() == name;
+                }) != windows_.end();
     }
 
     WindowSettings getWindowWithName(const std::string& name) const
     {
+        assert(hasWindowWithName(name));
         WindowSettings res;
         for (const WindowSettings& ws : windows_)
         {
@@ -350,6 +335,11 @@ public:
     bool operator==(const ProjectSettings& other) const
     {
         if (tabs_.size() != other.tabs_.size())
+        {
+            return false;
+        }
+
+        if (windows_.size() != other.windows_.size())
         {
             return false;
         }
