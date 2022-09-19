@@ -9,7 +9,7 @@
 
 #include <unistd.h>
 
-#include "filesystem_include.h"
+#include "filesystem.h"
 #include "dvs/logging.h"
 
 struct AppPreferences
@@ -40,16 +40,16 @@ public:
             return;
         }
 
-        const dvs_filesystem::path home_dir_path("/home/" + username_and_status.first);
-        const dvs_filesystem::path config_dir_path{home_dir_path / dvs_filesystem::path{configuration_folder_name}};
-        const dvs_filesystem::path dvs_dir_path{config_dir_path / dvs_filesystem::path{"dvs"}};
+        const dvs::filesystem::path home_dir_path("/home/" + username_and_status.first);
+        const dvs::filesystem::path config_dir_path{home_dir_path / dvs::filesystem::path{configuration_folder_name}};
+        const dvs::filesystem::path dvs_dir_path{config_dir_path / dvs::filesystem::path{"dvs"}};
 
-        if (!dvs_filesystem::exists(config_dir_path))
+        if (!dvs::filesystem::exists(config_dir_path))
         {
             DVS_LOG_INFO() << config_dir_path << " dir does not exist, creating...";
             try
             {
-                dvs_filesystem::create_directory(config_dir_path);
+                dvs::filesystem::create_directory(config_dir_path);
             }
             catch(const std::exception& e)
             {
@@ -59,12 +59,12 @@ public:
             }
         }
 
-        if (!dvs_filesystem::exists(dvs_dir_path))
+        if (!dvs::filesystem::exists(dvs_dir_path))
         {
             DVS_LOG_INFO() << "dvs dir does not exist, creating...";
             try
             {
-                dvs_filesystem::create_directory(dvs_dir_path);
+                dvs::filesystem::create_directory(dvs_dir_path);
             }
             catch(const std::exception& e)
             {
@@ -73,9 +73,9 @@ public:
                 return;
             }
         }
-        configuration_file_path_ = dvs_filesystem::path(dvs_dir_path / "configuration.json");
+        configuration_file_path_ = dvs::filesystem::path(dvs_dir_path / "configuration.json");
 
-        if (!dvs_filesystem::exists(configuration_file_path_))
+        if (!dvs::filesystem::exists(configuration_file_path_))
         {
             DVS_LOG_INFO() << "The file \"" << configuration_file_path_ << "\" file does not exist, creating...";
             try
