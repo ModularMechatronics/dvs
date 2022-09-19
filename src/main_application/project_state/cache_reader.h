@@ -6,7 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-#include "filesystem_include.h"
+#include "filesystem.h"
 
 class CacheReader
 {
@@ -20,13 +20,13 @@ public:
     {
         createCacheFile();
     }
-    CacheReader(const dvs_filesystem::path& cache_file_path)
+    CacheReader(const dvs::filesystem::path& cache_file_path)
     {
         cache_file_path_ = cache_file_path;
-        cache_file_path_ += dvs_filesystem::path("cache.json");
+        cache_file_path_ += dvs::filesystem::path("cache.json");
         j_["empty"] = "empty";
 
-        if (!dvs_filesystem::exists(cache_file_path_))
+        if (!dvs::filesystem::exists(cache_file_path_))
         {
             createCacheFile();
         }
