@@ -58,7 +58,7 @@ private:
     Vec2f mouse_pos_at_press_;
     Vec2f current_mouse_pos_;
     ZoomRect zoom_rect_;
-    MouseActivity mouse_activity_;
+    MouseInteractionType mouse_interaction_type_;
     bool mouse_pressed_;
     bool render_zoom_rect_;
     bool render_legend_;
@@ -81,7 +81,7 @@ public:
                       const float height,
                       const Vec2f mouse_pos_at_press,
                       const Vec2f current_mouse_pos,
-                      const MouseActivity mouse_activity,
+                      const MouseInteractionType mouse_interaction_type,
                       const bool mouse_pressed,
                       const bool render_zoom_rect,
                       const bool render_legend,

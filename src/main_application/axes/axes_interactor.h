@@ -5,7 +5,6 @@
 #include <utility>
 #include <vector>
 
-// #include "axes/axes_interactor.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
@@ -40,7 +39,7 @@ private:
     double current_window_width;
     double current_window_height;
 
-    MouseActivity current_mouse_activity;
+    MouseInteractionType current_mouse_interaction_type_;
     bool mouse_pressed_;
     bool should_draw_zoom_rect_;
 
@@ -64,7 +63,7 @@ private:
 public:
     AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width);
 
-    void update(const InteractionType interaction_type, const int window_width, const int window_height);
+    void update(const MouseInteractionType interaction_type, const int window_width, const int window_height);
     void resetView();
     void setViewAngles(const double azimuth, const double elevation);
     void setAxesLimits(const Vec3d& min_vec, const Vec3d& max_vec);
@@ -77,11 +76,10 @@ public:
     void registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis, const int dx, const int dy);
     void registerMousePressed(const Vec2f& mouse_pos);
     void registerMouseReleased(const Vec2f& mouse_pos);
-    void updateMouseActivity(const InteractionType interaction_type);
 
-    MouseActivity getCurrentMouseActivity() const
+    MouseInteractionType getMouseInteractionType() const
     {
-        return current_mouse_activity;
+        return current_mouse_interaction_type_;
     }
 
     bool getShowLegend() const

@@ -27,7 +27,6 @@ Pre release:
   - Behaviour when plotting when no configuration is set
 - Fix layout designer
 - Fix number formatting and grid vectors system
-- Unify MouseActivity and InteractionType
 - Make font smaller, fewer line points per axis
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
