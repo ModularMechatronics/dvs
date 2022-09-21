@@ -106,13 +106,13 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
 
     uint32_t num_elements = 0;
 
-    assert(x.size() == y.size());
+    DVS_ASSERT(x.size() == y.size());
 
     Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
     {
-        assert(x[k].size() == y[k].size());
+        DVS_ASSERT(x[k].size() == y[k].size());
         vector_lengths(k) = x[k].size();
         num_elements += x[k].size();
     }
@@ -135,7 +135,7 @@ void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x, con
 
     uint32_t num_elements = 0;
 
-    assert(x.size() == y.size());
+    DVS_ASSERT(x.size() == y.size());
 
     Vector<uint16_t> vector_lengths(x.size());
 
@@ -143,7 +143,7 @@ void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x, con
     {
         const Vector<T>& x_ref = x[k];
         const Vector<T>& y_ref = y[k];
-        assert(x_ref.size() == y_ref.size());
+        DVS_ASSERT(x_ref.size() == y_ref.size());
         vector_lengths(k) = x_ref.size();
         num_elements += x_ref.size();
     }
@@ -166,15 +166,15 @@ void plotCollection3(const std::vector<Vector<T>>& x, const std::vector<Vector<T
 
     uint32_t num_elements = 0;
 
-    assert(x.size() == y.size());
-    assert(x.size() == z.size());
+    DVS_ASSERT(x.size() == y.size());
+    DVS_ASSERT(x.size() == z.size());
 
     Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
     {
-        assert(x[k].size() == y[k].size());
-        assert(x[k].size() == z[k].size());
+        DVS_ASSERT(x[k].size() == y[k].size());
+        DVS_ASSERT(x[k].size() == z[k].size());
         vector_lengths(k) = x[k].size();
         num_elements += x[k].size();
     }
@@ -197,8 +197,8 @@ void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x, co
 
     uint32_t num_elements = 0;
 
-    assert(x.size() == y.size());
-    assert(x.size() == z.size());
+    DVS_ASSERT(x.size() == y.size());
+    DVS_ASSERT(x.size() == z.size());
 
     Vector<uint16_t> vector_lengths(x.size());
 
@@ -207,8 +207,8 @@ void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x, co
         const Vector<T>& x_ref = x[k];
         const Vector<T>& y_ref = y[k];
         const Vector<T>& z_ref = z[k];
-        assert(x_ref.size() == y_ref.size());
-        assert(x_ref.size() == z_ref.size());
+        DVS_ASSERT(x_ref.size() == y_ref.size());
+        DVS_ASSERT(x_ref.size() == z_ref.size());
         vector_lengths(k) = x_ref.size();
         num_elements += x_ref.size();
     }

@@ -1,10 +1,9 @@
-#include <wx/splash.h>
 #include <wx/wx.h>
 
-#include <csignal>
 #include <iostream>
 
 #include "main_window.h"
+#include "dvs/logging.h"
 
 class MainApp : public wxApp
 {
@@ -12,14 +11,14 @@ private:
 public:
     virtual bool OnInit();
     virtual int OnExit();
-    void appInFocus(wxActivateEvent& event);
+    void appInFocus(const wxActivateEvent& event);
 };
 
 MainWindow* main_window;
 
 IMPLEMENT_APP(MainApp)
 
-void MainApp::appInFocus(wxActivateEvent& event)
+void MainApp::appInFocus(const wxActivateEvent& event)
 {
     if (event.GetActive())
     {
@@ -34,7 +33,6 @@ void MainApp::appInFocus(wxActivateEvent& event)
 bool MainApp::OnInit()
 {
     wxImage::AddHandler(new wxPNGHandler);
-    wxImage::AddHandler(new wxBMPHandler);
     wxImage::AddHandler(new wxICOHandler);
 
     std::vector<std::string> cmd_args;
@@ -42,6 +40,7 @@ bool MainApp::OnInit()
     {
         cmd_args.emplace_back(wxAppConsole::argv[k].mb_str());
     }
+
     main_window = new MainWindow(cmd_args);
     main_window->Show();
 
@@ -54,6 +53,6 @@ bool MainApp::OnInit()
 
 int MainApp::OnExit()
 {
-    std::cout << "Exit from MainApp::OnExit!" << std::endl;
+    DVS_LOG_INFO() << "Exit from MainApp::OnExit!";
     return true;
 }

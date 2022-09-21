@@ -8,6 +8,7 @@
 
 #include "dvs/math/lin_alg/vector_dynamic/class_def/vector_dynamic.h"
 #include "dvs/math/misc/math_macros.h"
+#include "dvs/logging.h"
 
 namespace dvs
 {
@@ -15,7 +16,7 @@ template <typename T> Vector<T>::Vector() : data_(nullptr), size_(0) {}
 
 template <typename T> Vector<T>::Vector(const size_t vector_length)
 {
-    assert(vector_length > 0U && "Length of vector can't be 0!");
+    DVS_ASSERT(vector_length > 0U) << "Length of vector can't be 0!";
     size_ = vector_length;
 
     DATA_ALLOCATION(data_, vector_length, T, "Vector");
@@ -169,13 +170,13 @@ template <typename T> Vector<T>::Vector(const std::vector<T>& v)
 
 template <typename T> T& Vector<T>::operator()(const size_t idx)
 {
-    assert(idx < size_);
+    DVS_ASSERT(idx < size_);
     return data_[idx];
 }
 
 template <typename T> const T& Vector<T>::operator()(const size_t idx) const
 {
-    assert(idx < size_);
+    DVS_ASSERT(idx < size_);
     return data_[idx];
 }
 
@@ -196,7 +197,7 @@ template <typename T> size_t Vector<T>::numBytes() const
 
 template <typename T> void Vector<T>::fill(const T& val)
 {
-    assert((size_ > 0U) && "Tried to fill unallocated vector!");
+    DVS_ASSERT(size_ > 0U) << "Tried to fill unallocated vector!";
     for (size_t k = 0; k < size_; k++)
     {
         data_[k] = val;
@@ -205,7 +206,7 @@ template <typename T> void Vector<T>::fill(const T& val)
 
 template <typename T> void Vector<T>::resize(const size_t new_size)
 {
-    assert((new_size > 0U) && "Length of vector can't be 0!");
+    DVS_ASSERT(new_size > 0U) << "Length of vector can't be 0!";
     if (new_size != size_)
     {
         if (size_ > 0U)
@@ -220,7 +221,7 @@ template <typename T> void Vector<T>::resize(const size_t new_size)
 
 template <typename T> size_t Vector<T>::endIndex() const
 {
-    assert(size_ != 0U);
+    DVS_ASSERT(size_ != 0U);
     return size_ - 1;
 }
 
@@ -299,7 +300,7 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const Vector<T>
 
 template <typename T> T operator*(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     T d = 0.0;
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -342,7 +343,7 @@ template <typename T> Vector<T> operator*(const Vector<T>& v, const T f)
 
 template <typename T> Vector<T> operator^(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<T> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -353,7 +354,7 @@ template <typename T> Vector<T> operator^(const Vector<T>& v0, const Vector<T>& 
 
 template <typename T> Vector<T> operator/(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<T> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -434,7 +435,7 @@ template <typename T> Vector<T> operator-(const Vector<T>& v)
 
 template <typename T> Vector<T> operator+(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<T> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -445,7 +446,7 @@ template <typename T> Vector<T> operator+(const Vector<T>& v0, const Vector<T>& 
 
 template <typename T> Vector<T> operator-(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<T> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -456,7 +457,7 @@ template <typename T> Vector<T> operator-(const Vector<T>& v0, const Vector<T>& 
 
 template <typename T> Vector<bool> operator==(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<bool> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -487,7 +488,7 @@ template <typename T> Vector<bool> operator==(const T s, const Vector<T>& v)
 
 template <typename T> Vector<bool> operator!=(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<bool> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -518,7 +519,7 @@ template <typename T> Vector<bool> operator!=(const T s, const Vector<T>& v)
 
 template <typename T> Vector<bool> operator<(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<bool> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -549,7 +550,7 @@ template <typename T> Vector<bool> operator<(const T s, const Vector<T>& v)
 
 template <typename T> Vector<bool> operator>(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<bool> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -580,7 +581,7 @@ template <typename T> Vector<bool> operator>(const T s, const Vector<T>& v)
 
 template <typename T> Vector<bool> operator<=(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<bool> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -611,7 +612,7 @@ template <typename T> Vector<bool> operator<=(const T s, const Vector<T>& v)
 
 template <typename T> Vector<bool> operator>=(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<bool> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -642,7 +643,7 @@ template <typename T> Vector<bool> operator>=(const T s, const Vector<T>& v)
 
 template <typename T> Vector<T> operator&(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<T> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -673,7 +674,7 @@ template <typename T> Vector<T> operator&(const T s, const Vector<T>& v)
 
 template <typename T> Vector<T> operator|(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<T> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -704,7 +705,7 @@ template <typename T> Vector<T> operator|(const T s, const Vector<T>& v)
 
 template <typename T> Vector<bool> operator&&(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<bool> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
@@ -735,7 +736,7 @@ template <typename T> Vector<bool> operator&&(const T s, const Vector<T>& v)
 
 template <typename T> Vector<bool> operator||(const Vector<T>& v0, const Vector<T>& v1)
 {
-    assert(v0.size() == v1.size());
+    DVS_ASSERT(v0.size() == v1.size());
     Vector<bool> v_res(v0.size());
     for (size_t k = 0; k < v0.size(); k++)
     {
