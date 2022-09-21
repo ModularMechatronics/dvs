@@ -2,6 +2,7 @@
 #define DVS_MATH_IMAGE_IMAGE_C3_H_
 
 #include <stdint.h>
+#include <assert.h>
 
 #include <cstring>
 #include <iostream>
@@ -51,18 +52,18 @@ public:
 
     T& operator()(const size_t r, const size_t c, const size_t ch)
     {
-        DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_ - 1!";
-        DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_ - 1!";
-        DVS_ASSERT(ch < 3) << "Channel index is larger than 2!";
+        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
+        assert((ch < 3) && "Channel index is larger than 2!");
 
         return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
     }
 
     const T& operator()(const size_t r, const size_t c, const size_t ch) const
     {
-        DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_ - 1!";
-        DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_ - 1!";
-        DVS_ASSERT(ch < 3) << "Channel index is larger than 2!";
+        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
+        assert((ch < 3) && "Channel index is larger than 2!");
 
         return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
     }
@@ -151,18 +152,18 @@ template <typename T> T* ImageC3<T>::data() const
 
 template <typename T> T& ImageC3<T>::operator()(const size_t r, const size_t c, const size_t ch)
 {
-    DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_ - 1!";
-    DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_ - 1!";
-    DVS_ASSERT(ch < 3) << "Channel index is larger than 2!";
+    assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+    assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
+    assert((ch < 3) && "Channel index is larger than 2!");
 
     return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
 }
 
 template <typename T> const T& ImageC3<T>::operator()(const size_t r, const size_t c, const size_t ch) const
 {
-    DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
-    DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
-    DVS_ASSERT(ch < 3) << "Channel index is larger than 2!";
+    assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+    assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
+    assert((ch < 3) && "Channel index is larger than 2!");
 
     return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
 }

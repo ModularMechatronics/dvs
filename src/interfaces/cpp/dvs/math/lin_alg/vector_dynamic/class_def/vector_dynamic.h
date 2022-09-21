@@ -2,6 +2,7 @@
 #define DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_CLASS_DEF_VECTOR_DYNAMIC_H_
 
 #include <iterator>
+#include <assert.h>
 
 #include "dvs/math/misc/forward_decl.h"
 #include "dvs/logging.h"
@@ -88,13 +89,13 @@ public:
 
     T& operator()(const size_t idx)
     {
-        DVS_ASSERT(idx < size_);
+        assert(idx < size_);
         return data_[idx];
     }
 
     const T& operator()(const size_t idx) const
     {
-        DVS_ASSERT(idx < size_);
+        assert(idx < size_);
         return data_[idx];
     }
 

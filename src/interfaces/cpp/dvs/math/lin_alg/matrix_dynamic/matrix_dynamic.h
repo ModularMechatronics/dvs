@@ -209,16 +209,16 @@ template <typename T> void Matrix<T>::fill(T val)
 
 template <typename T> T& Matrix<T>::operator()(const size_t r, const size_t c)
 {
-    DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
-    DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
+    assert((r < num_rows_) && "Row index is larger than num_rows_-1!");
+    assert((c < num_cols_) && "Column index is larger than num_cols_-1!");
 
     return data_[r * num_cols_ + c];
 }
 
 template <typename T> const T& Matrix<T>::operator()(const size_t r, const size_t c) const
 {
-    DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
-    DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
+    assert((r < num_rows_) && "Row index is larger than num_rows_-1!");
+    assert((c < num_cols_) && "Column index is larger than num_cols_-1!");
 
     return data_[r * num_cols_ + c];
 }
