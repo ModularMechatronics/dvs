@@ -2,7 +2,8 @@
 #define DVS_FILLABLE_UINT8_ARRAY_H_
 
 #include <stdint.h>
-#include <assert.h>
+
+#include "dvs/logging.h"
 
 class UInt8ArrayView
 {
@@ -56,7 +57,7 @@ public:
         std::memcpy(&(data_[idx_]), &d, sizeof(T));
         idx_ += sizeof(T);
 
-        assert(idx_ <= size_);
+        DVS_ASSERT(idx_ <= size_);
     }
 
     template <typename T>
@@ -65,7 +66,7 @@ public:
         std::memcpy(&(data_[idx_]), d, num_elements * sizeof(T));
         idx_ += num_elements * sizeof(T);
 
-        assert(idx_ <= size_);
+        DVS_ASSERT(idx_ <= size_);
     }
 
     UInt8ArrayView view() const

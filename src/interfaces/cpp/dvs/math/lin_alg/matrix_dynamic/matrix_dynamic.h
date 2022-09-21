@@ -6,6 +6,7 @@
 
 #include "dvs/math/lin_alg/matrix_dynamic/class_def/matrix_dynamic.h"
 #include "dvs/math/misc/math_macros.h"
+#include "dvs/logging.h"
 
 namespace dvs
 {
@@ -166,13 +167,13 @@ template <typename T> T* Matrix<T>::data() const
 
 template <typename T> size_t Matrix<T>::lastRowIdx() const
 {
-    assert(num_rows_ != 0);
+    DVS_ASSERTSERT(num_rows_ != 0);
     return num_rows_ - 1;
 }
 
 template <typename T> size_t Matrix<T>::lastColIdx() const
 {
-    assert(num_cols_ != 0);
+    DVS_ASSERT(num_cols_ != 0);
     return num_cols_ - 1;
 }
 
@@ -199,7 +200,7 @@ template <typename T> size_t Matrix<T>::numBytes() const
 
 template <typename T> void Matrix<T>::fill(T val)
 {
-    assert(((num_rows_ > 0U) && (num_cols_ > 0U)) && "Tried to fill unallocated matrix!");
+    DVS_ASSERT((num_rows_ > 0U) && (num_cols_ > 0U)) << "Tried to fill unallocated matrix!";
     for (size_t k = 0; k < (num_rows_ * num_cols_); k++)
     {
         data_[k] = val;
@@ -208,23 +209,23 @@ template <typename T> void Matrix<T>::fill(T val)
 
 template <typename T> T& Matrix<T>::operator()(const size_t r, const size_t c)
 {
-    assert(r < num_rows_ && "Row index is larger than num_rows_-1!");
-    assert(c < num_cols_ && "Column index is larger than num_cols_-1!");
+    DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
+    DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
 
     return data_[r * num_cols_ + c];
 }
 
 template <typename T> const T& Matrix<T>::operator()(const size_t r, const size_t c) const
 {
-    assert(r < num_rows_ && "Row index is larger than num_rows_-1!");
-    assert(c < num_cols_ && "Column index is larger than num_cols_-1!");
+    DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
+    DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
 
     return data_[r * num_cols_ + c];
 }
 
 template <typename T> Matrix<T> operator*(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    assert(m0.numCols() == m1.numRows());
+    DVS_ASSERT(m0.numCols() == m1.numRows());
     Matrix<T> res(m0.numRows(), m1.numCols());
 
     for (size_t r = 0; r < res.numRows(); r++)
@@ -244,8 +245,8 @@ template <typename T> Matrix<T> operator*(const Matrix<T>& m0, const Matrix<T>& 
 
 template <typename T> Matrix<T> operator+(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    assert(m0.numCols() == m1.numCols());
-    assert(m0.numRows() == m1.numRows());
+    DVS_ASSERT(m0.numCols() == m1.numCols());
+    DVS_ASSERT(m0.numRows() == m1.numRows());
     Matrix<T> res(m0.numRows(), m1.numCols());
 
     for (size_t r = 0; r < res.numRows(); r++)
@@ -260,8 +261,8 @@ template <typename T> Matrix<T> operator+(const Matrix<T>& m0, const Matrix<T>& 
 
 template <typename T> Matrix<T> operator-(const Matrix<T>& m0, const Matrix<T>& m1)
 {
-    assert(m0.numCols() == m1.numCols());
-    assert(m0.numRows() == m1.numRows());
+    DVS_ASSERT(m0.numCols() == m1.numCols());
+    DVS_ASSERT(m0.numRows() == m1.numRows());
     Matrix<T> res(m0.numRows(), m1.numCols());
 
     for (size_t r = 0; r < res.numRows(); r++)
@@ -436,7 +437,7 @@ template <typename T> Matrix<T> operator-(const Matrix<T>& m)
 
 template <typename T> Vector<T> operator*(const Matrix<T>& m, const Vector<T>& v)
 {
-    assert(m.numCols() == v.size());
+    DVS_ASSERT(m.numCols() == v.size());
     Vector<T> res(m.numRows());
 
     for (size_t r = 0; r < m.numRows(); r++)
@@ -453,7 +454,7 @@ template <typename T> Vector<T> operator*(const Matrix<T>& m, const Vector<T>& v
 
 template <typename T> Vector<T> operator*(const Vector<T>& v, const Matrix<T>& m)
 {
-    assert(m.numRows() == v.size());
+    DVS_ASSERT(m.numRows() == v.size());
     Vector<T> res(m.numCols());
 
     for (size_t c = 0; c < m.numCols(); c++)

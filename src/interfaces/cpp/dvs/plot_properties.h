@@ -1,11 +1,11 @@
 #ifndef DVS_PLOT_PROPERTIES_H_
 #define DVS_PLOT_PROPERTIES_H_
 
-#include <cassert>
 #include <cstring>
 #include <iostream>
 
 #include "dvs/enumerations.h"
+#include "dvs/logging.h"
 
 namespace dvs
 {
@@ -82,10 +82,10 @@ public:
     }
     Name(const char* const name) : internal::PropertyBase(internal::PropertyType::NAME)
     {
-        assert(name && "Input name string is null!");
+        DVS_ASSERT(name) << "Input name string is null!";
         const size_t idx = internal::safeStringLenCheck(name, max_length + 1);
 
-        assert(idx <= max_length && "Name can't be more than 100 characters!");
+        DVS_ASSERT(idx <= max_length) << "Name can't be more than 100 characters!";
         length = idx;
 
         std::memcpy(data, name, idx);

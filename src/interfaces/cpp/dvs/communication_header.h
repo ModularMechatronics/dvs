@@ -180,7 +180,7 @@ private:
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
                       "Incorrect type!");
-        assert((sizeof(U) <= kCommunicationHeaderObjectDataSize) && "Object too big!");
+        DVS_ASSERT(sizeof(U) <= kCommunicationHeaderObjectDataSize) << "Object too big!";
 
         objects.push_back(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
         CommunicationHeaderObject& current_obj = objects.back();
@@ -262,7 +262,7 @@ public:
             num_objects++;
         }
 
-        assert(static_cast<size_t>(num_objects) == objects.size());
+        DVS_ASSERT(static_cast<size_t>(num_objects) == objects.size());
     }
 
     template <typename U> void append(const CommunicationHeaderObjectType& object_type, const U& data)

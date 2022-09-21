@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include "dvs/math/misc/forward_decl.h"
+#include "dvs/logging.h"
 
 namespace dvs
 {
@@ -87,13 +88,13 @@ public:
 
     T& operator()(const size_t idx)
     {
-        assert(idx < size_);
+        DVS_ASSERT(idx < size_);
         return data_[idx];
     }
 
     const T& operator()(const size_t idx) const
     {
-        assert(idx < size_);
+        DVS_ASSERT(idx < size_);
         return data_[idx];
     }
 
