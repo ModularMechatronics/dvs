@@ -1,6 +1,8 @@
 #ifndef DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_
 #define DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_
 
+#include <assert.h>
+
 #include <cmath>
 #include <cstring>
 #include <type_traits>
@@ -170,13 +172,13 @@ template <typename T> Vector<T>::Vector(const std::vector<T>& v)
 
 template <typename T> T& Vector<T>::operator()(const size_t idx)
 {
-    DVS_ASSERT(idx < size_);
+    assert(idx < size_);
     return data_[idx];
 }
 
 template <typename T> const T& Vector<T>::operator()(const size_t idx) const
 {
-    DVS_ASSERT(idx < size_);
+    assert(idx < size_);
     return data_[idx];
 }
 

@@ -1,6 +1,8 @@
 #ifndef DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_CLASS_DEF_MATRIX_DYNAMIC_H_
 #define DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_CLASS_DEF_MATRIX_DYNAMIC_H_
 
+#include <assert.h>
+
 #include "dvs/math/misc/forward_decl.h"
 #include "dvs/logging.h"
 
@@ -109,16 +111,16 @@ public:
 
     T& operator()(const size_t r, const size_t c)
     {
-        DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
-        DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
+        assert((r < num_rows_) && "Row index is larger than num_rows_-1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_-1!");
 
         return data_[r * num_cols_ + c];
     }
 
     const T& operator()(const size_t r, const size_t c) const
     {
-        DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
-        DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
+        assert((r < num_rows_) && "Row index is larger than num_rows_-1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_-1!");
 
         return data_[r * num_cols_ + c];
     }

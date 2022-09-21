@@ -2,6 +2,7 @@
 #define DVS_MATH_IMAGE_IMAGE_C1_H_
 
 #include <stdint.h>
+#include <assert.h>
 
 #include <cstring>
 #include <iostream>
@@ -55,16 +56,16 @@ public:
 
     T& operator()(const size_t r, const size_t c)
     {
-        DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_ - 1!";
-        DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_ - 1!";
+        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
 
         return data_[r * num_cols_ + c];
     }
 
     const T& operator()(const size_t r, const size_t c) const
     {
-        DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_ - 1!";
-        DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_ - 1!";
+        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
 
         return data_[r * num_cols_ + c];
     }
@@ -164,16 +165,16 @@ template <typename T> T* ImageC1<T>::data() const
 
 template <typename T> T& ImageC1<T>::operator()(const size_t r, const size_t c)
 {
-    DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
-    DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
+    assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+    assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
 
     return data_[r * num_cols_ + c];
 }
 
 template <typename T> const T& ImageC1<T>::operator()(const size_t r, const size_t c) const
 {
-    DVS_ASSERT(r < num_rows_) << "Row index is larger than num_rows_-1!";
-    DVS_ASSERT(c < num_cols_) << "Column index is larger than num_cols_-1!";
+    assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+    assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
 
     return data_[r * num_cols_ + c];
 }

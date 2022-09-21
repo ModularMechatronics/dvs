@@ -28,6 +28,7 @@ Pre release:
 - Fix layout designer
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
+- imShow for different data types (only float for now)
 - Make font smaller, fewer line points per axis
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
