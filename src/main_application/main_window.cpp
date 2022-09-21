@@ -1,18 +1,5 @@
 #include "main_window.h"
 
-#ifdef PLATFORM_LINUX_M
-#include <libgen.h>
-#include <linux/limits.h>
-#include <unistd.h>
-
-#endif
-
-#ifdef PLATFORM_APPLE_M
-
-#include <mach-o/dyld.h>
-
-#endif
-
 #include <unistd.h>
 #include <wx/wfstream.h>
 #include <wx/wxprec.h>
@@ -29,38 +16,6 @@
 
 using namespace dvs::internal;
 
-#ifdef PLATFORM_LINUX_M
-std::string getExecutablePath()
-{
-    std::array<char, PATH_MAX> result;
-    ssize_t count = readlink("/proc/self/exe", result.data(), PATH_MAX);
-    const char* path;
-    if (count != -1)
-    {
-        path = dirname(result.data());
-    }
-    return std::string(path);
-}
-
-#endif
-
-#ifdef PLATFORM_APPLE_M
-
-std::string getExecutablePath()
-{
-    std::array<char, 2048> path;
-    uint32_t size = path.size();
-
-    if (_NSGetExecutablePath(path.data(), &size) != 0)
-    {
-        printf("Buffer too small; need size %u\n", size);
-    }
-
-    return std::string(path.data());
-}
-
-#endif
-
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     : wxFrame(NULL, wxID_ANY, "", wxPoint(0, 30), wxSize(1500, 700))
 {
@@ -71,8 +26,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     current_gui_element_set_ = false;
     is_editing_ = false;
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
-    dvs::filesystem::path pa = dvs::filesystem::absolute(getExecutablePath());
-    cache_reader_ = new CacheReader(pa.remove_filename());
+
+    configuration_agent_ = new ConfigurationAgent();
     main_window_last_in_focus_ = true;
 
     task_bar_ = new CustomTaskBarIcon();
@@ -126,10 +81,10 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     glutInit(&argc, argv);
 #endif
 
-    if (cache_reader_->hasKey("last_opened_file") &&
-        dvs::filesystem::exists(cache_reader_->readCache<std::string>("last_opened_file")))
+    if (configuration_agent_->hasKey("last_opened_file") &&
+        dvs::filesystem::exists(configuration_agent_->readValue<std::string>("last_opened_file")))
     {
-        save_manager_ = new SaveManager(cache_reader_->readCache<std::string>("last_opened_file"));
+        save_manager_ = new SaveManager(configuration_agent_->readValue<std::string>("last_opened_file"));
     }
     else
     {
@@ -320,7 +275,7 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
 
 MainWindow::~MainWindow()
 {
-    delete cache_reader_;
+    delete configuration_agent_;
 }
 
 void MainWindow::editingFinished(wxCommandEvent& WXUNUSED(event))
@@ -344,7 +299,7 @@ void MainWindow::saveProjectAs()
 
     const std::string new_save_path = std::string(openFileDialog.GetPath().mb_str());
 
-    cache_reader_->writeToCache("last_opened_file", new_save_path);
+    configuration_agent_->writeValue("last_opened_file", new_save_path);
 
     if (new_save_path == save_manager_->getCurrentFilePath())
     {
@@ -385,7 +340,7 @@ void MainWindow::saveProject()
         }
 
         SetLabel(save_manager_->getCurrentFileName());
-        cache_reader_->writeToCache("last_opened_file", save_manager_->getCurrentFilePath());
+        configuration_agent_->writeValue("last_opened_file", save_manager_->getCurrentFilePath());
 
         save_manager_->save(ps);
     }
@@ -784,7 +739,7 @@ void MainWindow::openExistingFile()
         layout_tools_window_->Hide();
     }
 
-    cache_reader_->writeToCache("last_opened_file", std::string(openFileDialog.GetPath().mb_str()));
+    configuration_agent_->writeValue("last_opened_file", std::string(openFileDialog.GetPath().mb_str()));
 
     save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
     SetLabel(save_manager_->getCurrentFileName());

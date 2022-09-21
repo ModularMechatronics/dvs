@@ -24,7 +24,7 @@
 #include "gui_element.h"
 #include "layout_tools_window.h"
 #include "plot_pane.h"
-#include "project_state/cache_reader.h"
+#include "project_state/configuration_agent.h"
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
 #include "tab_view.h"
@@ -35,7 +35,7 @@ class MainWindow : public wxFrame
 {
 private:
     SaveManager* save_manager_;
-    CacheReader* cache_reader_;
+    ConfigurationAgent* configuration_agent_;
 
     UdpServer* udp_server_;
     wxTimer timer_;
