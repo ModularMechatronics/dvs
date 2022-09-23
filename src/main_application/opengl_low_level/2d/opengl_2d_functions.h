@@ -9,11 +9,11 @@
 
 using namespace dvs;
 
-void setColor(const RGBTripletf& pc);
-void setColor(const float r, const float g, const float b);
+// void setColor(const RGBTripletf& pc);
+// void setColor(const float r, const float g, const float b);
 
-void setLinewidth(const float line_width);
-void setPointSize(const float point_size);
+// void setLinewidth(const float line_width);
+// void setPointSize(const float point_size);
 
 
 #endif // MAIN_APPLICATION_OPENGL_LOW_LEVEL_2D_OPENGL_2D_FUNCTIONS_H_

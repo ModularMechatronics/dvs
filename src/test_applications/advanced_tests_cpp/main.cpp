@@ -29,7 +29,8 @@ int main(int argc, char* argv[])
 {
     // ######################### plot #########################
     std::map<std::string, std::function<void()>> plot2_functions{
-        {"view", plot2::testWithVectorView}
+        {"view", plot2::testWithVectorView},
+        {"klein-basic", plot2::Klein_testBasic}
     };
 
     // ######################### plot3 #########################

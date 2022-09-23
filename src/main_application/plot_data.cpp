@@ -85,22 +85,6 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new ImShow(std::move(received_data), hdr, shader_collection_)));
             break;
 
-        case Function::POLYGON_FROM_4_POINTS:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPolygon4Points(std::move(received_data), hdr, shader_collection_)));
-            break;
-
-        case Function::PLANE_XY:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneXY(std::move(received_data), hdr, shader_collection_)));
-            break;
-
-        case Function::PLANE_XZ:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneXZ(std::move(received_data), hdr, shader_collection_)));
-            break;
-
-        case Function::PLANE_YZ:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawPlaneYZ(std::move(received_data), hdr, shader_collection_)));
-            break;
-
         case Function::DRAW_TRIANGLES_3D:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawTriangles3D(std::move(received_data), hdr, shader_collection_)));
             break;

@@ -48,6 +48,7 @@ enum class PropertyType : uint8_t
     POINT_SIZE,
     PERSISTENT,
     SCATTER_STYLE,
+    FLAG,
     UNKNOWN
 };
 

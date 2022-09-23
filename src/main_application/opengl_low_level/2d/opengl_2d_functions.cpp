@@ -11,7 +11,7 @@
 #include "dvs/math/math.h"
 #include "opengl_low_level/opengl_header.h"
 
-void setColor(const float r, const float g, const float b)
+/*void setColor(const float r, const float g, const float b)
 {
     glColor3f(r, g, b);
 }
@@ -29,7 +29,7 @@ void setLinewidth(const float line_width)
 void setPointSize(const float point_size)
 {
     glPointSize(point_size);
-}
+}*/
 
 /*void drawPoints2D(const Vectord& x_values, const Vectord& y_values)
 {

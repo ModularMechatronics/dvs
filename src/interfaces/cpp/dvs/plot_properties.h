@@ -11,7 +11,7 @@ namespace dvs
 {
 namespace internal
 {
-struct PropertyBase
+struct PropertyBase // TODO: Should be class? Should all properties be classes?
 {
 protected:
     PropertyType property_type_;
@@ -31,6 +31,20 @@ public:
     }
 
     virtual ~PropertyBase() {}
+};
+
+
+// TODO: Finish
+struct PropertyFlagContainer : PropertyBase
+{
+public:
+    // PropertyFlag data;
+
+    /*enum class PropertyFlag : uint8_t
+    {
+    PERSISTENT,
+    CALCULATE_NORMALS,
+    }*/
 };
 
 inline size_t safeStringLenCheck(const char* const str, const size_t max_length)
