@@ -1,8 +1,9 @@
 #version 330
 
-out vec3 color;
+out vec4 color;
 in vec3 fragment_color;
 in vec4 coord_out;
+uniform int use_color;
 
 uniform vec4 clip_plane0;
 uniform vec4 clip_plane1;
@@ -37,7 +38,8 @@ void main()
    {
       discard;
    }
-   color = fragment_color;
+   color = vec4(fragment_color, 0.5);
+   color.a = 0.5;
 
 		
 }
