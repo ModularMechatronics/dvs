@@ -113,6 +113,10 @@ void PlotPane::initShaders()
     const std::string v_path_scatter_shader = "../main_application/axes/shaders/scatter_shader.vs";
     const std::string f_path_scatter_shader = "../main_application/axes/shaders/scatter_shader.fs";
     shader_collection_.scatter_shader = Shader::createFromFiles(v_path_scatter_shader, f_path_scatter_shader);
+
+    const std::string v_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.vs";
+    const std::string f_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.fs";
+    shader_collection_.draw_mesh_shader = Shader::createFromFiles(v_path_draw_mesh_shader, f_path_draw_mesh_shader);
 }
 
 PlotPane::PlotPane(wxWindow* parent,

@@ -259,7 +259,7 @@ void Klein_testAdvanced1()
 
         t += 0.02f;
 
-        axis(Vec3d{-3.5, 0.0, -1.0} * 3.0, Vec3d{3.5, 5.0, 1.0} * 3.0);
+        axis(Vec3d{-3.5, 0.0, -1.0}, Vec3d{3.5, 5.0, 1.0});
         azimuth = azimuth > 180.0f ? -180.0f : azimuth + 0.2f;
         view(azimuth, 30);
         usleep(10000);
