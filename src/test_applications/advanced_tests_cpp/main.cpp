@@ -30,7 +30,9 @@ int main(int argc, char* argv[])
     // ######################### plot #########################
     std::map<std::string, std::function<void()>> plot2_functions{
         {"view", plot2::testWithVectorView},
-        {"klein-basic", plot2::Klein_testBasic}
+        {"klein-basic", plot2::Klein_testBasic},
+        {"klein-adv0", plot2::Klein_testAdvanced0},
+        {"klein-adv1", plot2::Klein_testAdvanced1}
     };
 
     // ######################### plot3 #########################

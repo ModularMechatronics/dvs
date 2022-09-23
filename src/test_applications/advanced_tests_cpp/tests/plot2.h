@@ -127,7 +127,34 @@ void evalKlein(const Matrix<float>& u, const Matrix<float>& v, Matrix<float>& x,
 void Klein_testBasic()
 {
     const size_t nu = 50, nv = 50;
+
+    std::pair<Matrix<float>, Matrix<float>> uv_mats = meshGrid<float>(0.0f, M_PI, 0.0f, 2.0f * M_PI, nv, nu);
+
+    Matrix<float> x(nu, nv), y(nu, nv), z(nu, nv);
+
+    Matrix<float>& u_mat = uv_mats.first;
+    Matrix<float>& v_mat = uv_mats.second;
+
+    KleinParams klein_params{};
+
+    VectorView<float> vx(x.data(), nu * nv);
+    VectorView<float> vy(y.data(), nu * nv);
+    VectorView<float> vz(z.data(), nu * nv);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    evalKlein(u_mat, v_mat, x, y, z, 0.0f, 0.0f, klein_params);
+
+    scatter3(vx, vy, vz, properties::Color::Red());
+    plot3(vx, vy, vz, properties::Color::Blue());
+}
+
+void Klein_testAdvanced0()
+{
+    const size_t nu = 50, nv = 50;
     const size_t num_its = 10;
+
     std::pair<Matrix<float>, Matrix<float>> uv_mats = meshGrid<float>(0.0f, M_PI, 0.0f, 2.0f * M_PI, nv, nu);
 
     Matrix<float> x(nu, nv), y(nu, nv), z(nu, nv);
@@ -160,6 +187,63 @@ void Klein_testBasic()
     }    
     
     
+}
+
+void Klein_testAdvanced1()
+{
+    const size_t nu = 50, nv = 50;
+    const size_t num_triangles = nu * nv * 2;
+    const size_t num_its = 100;
+
+    Vector<IndexTriplet> indices(num_triangles);
+
+    std::pair<Matrix<float>, Matrix<float>> uv_mats = meshGrid<float>(0.0f, M_PI, 0.0f, 2.0f * M_PI, nv, nu);
+
+    Matrix<float> x(nu, nv), y(nu, nv), z(nu, nv);
+
+    Matrix<float>& u_mat = uv_mats.first;
+    Matrix<float>& v_mat = uv_mats.second;
+
+    KleinParams klein_params{};
+
+    VectorView<float> vx(x.data(), nu * nv);
+    VectorView<float> vy(y.data(), nu * nv);
+    VectorView<float> vz(z.data(), nu * nv);
+
+    size_t idx = 0U;
+    for(size_t ku = 0; ku < (nu - 1U); ku++)
+    {
+        for(size_t kv = 0; kv < (nv - 1U); kv++)
+        {
+            const size_t idx2 = ku * nv + kv;
+            indices(idx).i0 = idx2;
+            indices(idx).i1 = idx2 + 1;
+            indices(idx).i2 = idx2 + nv;
+
+            idx += 1;
+
+            indices(idx).i0 = idx2 + nv + 1;
+            indices(idx).i1 = idx2 + 1;
+            indices(idx).i2 = idx2 + nv;
+
+            idx += 1;
+        }
+    }
+
+    setCurrentElement("view_00");
+    clearView();
+    float u_offset = 0.0f, v_offset = 0.0f;
+
+    for(size_t k = 0; k < num_its; k++)
+    {
+        evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params);
+        drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 244));
+        u_offset += 0.01;
+
+        usleep(10000);
+
+        softClearView();
+    }
 }
 
 }

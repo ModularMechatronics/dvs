@@ -59,6 +59,7 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 3;
         case Function::DRAW_TRIANGLE_3D:
             return 3;
+        case Function::DRAW_MESH_SEPARATE_VECTORS:
         case Function::DRAW_MESH:
             return 3;
         case Function::DRAW_LINE3D:
