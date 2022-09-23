@@ -101,6 +101,7 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new PlotCollection3D(std::move(received_data), hdr, shader_collection_)));
             break;
 
+        case Function::DRAW_MESH_SEPARATE_VECTORS:
         case Function::DRAW_MESH:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), hdr, shader_collection_)));
             break;

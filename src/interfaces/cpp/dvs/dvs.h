@@ -536,6 +536,38 @@ void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& ind
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, vertices, indices);
 }
 
+template <typename T, typename... Us>
+void drawMesh(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<IndexTriplet>& indices, const Us&... settings)
+{
+    internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_MESH_SEPARATE_VECTORS);
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, indices);
+}
+
+template <typename T, typename... Us>
+void drawMesh(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const VectorView<IndexTriplet>& indices, const Us&... settings)
+{
+    internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_MESH_SEPARATE_VECTORS);
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, indices);
+}
+
 template <typename... Us>
 void drawPlaneXY(const PointXY<double>& p0,
                  const PointXY<double>& p1,
@@ -754,6 +786,15 @@ inline void axis(const Vec2<double>& min_bound, const Vec2<double>& max_bound)
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::AXES_2D);
     hdr.append(internal::CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC,
                std::pair<Vec3<double>, Vec3<double>>(min_bound_3d, max_bound_3d));
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void diffuseLight(const Vec3<double>& light_position)
+{
+    internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DIFFUSE_LIGHT);
+    hdr.append(internal::CommunicationHeaderObjectType::VEC3, light_position);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }

@@ -772,12 +772,22 @@ void testDrawMesh()
     indices(2) = IndexTriplet(6, 7, 8);
     indices(3) = IndexTriplet(9, 10, 11);
 
+    Vector<tp> x(12), y(12), z(12);
+
+    for(size_t k = 0; k < x.size(); k++)
+    {
+        x(k) = vertices(k).x;
+        y(k) = vertices(k).y;
+        z(k) = vertices(k).z + 2.0;
+    }
+
     setCurrentElement("view_00");
     clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
 
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
+    drawMesh(x, y, z, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 244));
 }
 
 void testDrawTriangle()

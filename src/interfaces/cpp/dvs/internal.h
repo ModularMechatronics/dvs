@@ -299,6 +299,15 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Communic
     send_function(fillable_array.view());
 }
 
+class FlagContainer
+{
+private:
+    Flag flag_;
+public:
+    FlagContainer() : flag_{Flag::UNKNOWN} {}
+    FlagContainer(const Flag flag) : flag_{flag} {}
+};
+
 }  // namespace internal
 }  // namespace dvs
 

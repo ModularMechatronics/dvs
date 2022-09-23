@@ -96,7 +96,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::GRID_ON) || (fcn == Function::GRID_OFF) || (fcn == Function::PLOT2) ||
            (fcn == Function::PLOT3) || (fcn == Function::DRAW_TRIANGLES_3D) || (fcn == Function::SCATTER2) ||
            (fcn == Function::SCATTER3) || (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
-           (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_MESH) || (fcn == Function::DRAW_LINE3D) ||
+           (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_MESH) || (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_LINE3D) ||
            (fcn == Function::CLEAR) || (fcn == Function::HOLD_ON) || (fcn == Function::HOLD_OFF) ||
            (fcn == Function::POSITION) || (fcn == Function::SURF) || (fcn == Function::IM_SHOW) ||
            (fcn == Function::AXES_2D) || (fcn == Function::AXES_3D) || (fcn == Function::VIEW) ||

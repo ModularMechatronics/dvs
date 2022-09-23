@@ -25,6 +25,7 @@ enum class CommunicationHeaderObjectType : uint16_t
     AZIMUTH,
     ELEVATION,
     AXIS_MIN_MAX_VEC,
+    VEC3,
     POS2D,
     FIGURE_NUM,
     PARENT_NAME,
@@ -32,6 +33,13 @@ enum class CommunicationHeaderObjectType : uint16_t
     ELEMENT_NAME,
     GUI_ELEMENT_TYPE,
     PROPERTY,
+    FLAG_CONTAINER,
+    UNKNOWN
+};
+
+enum class Flag : uint8_t
+{
+    CALCULATE_NORMALS,
     UNKNOWN
 };
 
@@ -83,11 +91,13 @@ enum class Function : uint8_t
     DRAW_TRIANGLE_3D,
     DRAW_TILES,
     DRAW_MESH,
+    DRAW_MESH_SEPARATE_VECTORS,
     HOLD_ON,
     HOLD_OFF,
     POSITION,
     SURF,
     IM_SHOW,
+    DIFFUSE_LIGHT,
     AXES_2D,
     AXES_3D,
     VIEW,
