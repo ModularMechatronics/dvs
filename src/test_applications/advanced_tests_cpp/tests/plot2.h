@@ -85,7 +85,7 @@ struct KleinParams
 
 };
 
-void evalKlein(const Matrix<float>& u, const Matrix<float>& v, Matrix<float>& x, Matrix<float>& y, Matrix<float>& z, const float u_offset, const float v_offset, const KleinParams& klein_params)
+void evalKlein(const Matrix<float>& u, const Matrix<float>& v, Matrix<float>& x, Matrix<float>& y, Matrix<float>& z, const float u_offset, const float v_offset, const KleinParams& klein_params, const Matrix<float>& r_mat)
 {
     const size_t nu = u.numRows();
     const size_t nv = u.numCols();
@@ -111,15 +111,21 @@ void evalKlein(const Matrix<float>& u, const Matrix<float>& v, Matrix<float>& x,
             const float cos6_u = cos5_u * cos_u;
             const float cos7_u = cos6_u * cos_u;
 
-            x(ku, kv) = kp.x.a * cos_u * (kp.x.b * cos_v - kp.x.c * sin_u +
+            Point3f p;
+
+            p.x = kp.x.a * cos_u * (kp.x.b * cos_v - kp.x.c * sin_u +
                 kp.x.d * cos4_u * sin_u - kp.x.e * cos6_u * sin_u + kp.x.f * cos_u * cos_v * sin_u);
 
-            y(ku, kv) = kp.y.a * sin_u * (kp.y.b * cos_v - kp.y.c * cos2_u * cos_v -
+            p.y = kp.y.a * sin_u * (kp.y.b * cos_v - kp.y.c * cos2_u * cos_v -
                 kp.y.d * cos4_u * cos_v + kp.y.e * cos6_u * cos_v - kp.y.f * sin_u +
                 kp.y.g * cos_u * cos_v * sin_u - kp.y.h * cos3_u * cos_v * sin_u - 
                 kp.y.i * cos5_u * cos_v * sin_u + kp.y.j * cos7_u * cos_v * sin_u);
 
-            z(ku, kv) = kp.z.a * (kp.z.b + kp.z.c * cos_u * sin_u) * sin_v;
+            p.z = kp.z.a * (kp.z.b + kp.z.c * cos_u * sin_u) * sin_v;
+            const Point3f pr = r_mat * p;
+            x(ku, kv) = pr.x;
+            y(ku, kv) = pr.y;
+            z(ku, kv) = pr.z;
         }
     }
 }
@@ -144,7 +150,7 @@ void Klein_testBasic()
     setCurrentElement("view_00");
     clearView();
 
-    evalKlein(u_mat, v_mat, x, y, z, 0.0f, 0.0f, klein_params);
+    evalKlein(u_mat, v_mat, x, y, z, 0.0f, 0.0f, klein_params, unitMatrix<float>(3, 3));
 
     scatter3(vx, vy, vz, properties::Color::Red());
     plot3(vx, vy, vz, properties::Color::Blue());
@@ -174,7 +180,7 @@ void Klein_testAdvanced0()
 
     for(size_t k = 0; k < num_its; k++)
     {
-        evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params);
+        evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params, unitMatrix<float>(3, 3));
         u_offset += 0.1;
 
         scatter3(vx, vy, vz, properties::Color::Red());
@@ -235,17 +241,27 @@ void Klein_testAdvanced1()
     float u_offset = 0.0f, v_offset = 0.0f;
 
     float t = 0.0f;
+    float azimuth = 10.0;
+
+    float ax = 0.0f, ay = 0.0f, az = 0.0f;
 
     for(size_t k = 0; k < num_its; k++)
     {
-        evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params);
+        const Matrix<float> r_mat = rotationMatrixZ(az) * rotationMatrixY(ay) * rotationMatrixX(ax);
+        evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params, r_mat);
         drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 244));
+        // ax += 0.05;
+        // ay += 0.02;
 
-        klein_params.x.a = (-2.0f / 15.05) + std::sin(t) * 0.1;
+        klein_params.x.a = KleinParams().x.a + std::sin(t) * 0.1;
+
         u_offset += 0.01;
-        t += 0.02f;
-        axis({-1.5, 0.0, -1.0}, {1.5, 5.0, 1.0});
 
+        t += 0.02f;
+
+        axis(Vec3d{-3.5, 0.0, -1.0} * 3.0, Vec3d{3.5, 5.0, 1.0} * 3.0);
+        azimuth = azimuth > 180.0f ? -180.0f : azimuth + 0.2f;
+        view(azimuth, 30);
         usleep(10000);
 
         softClearView();

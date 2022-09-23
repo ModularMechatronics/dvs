@@ -66,17 +66,24 @@ void DrawMesh::findMinMax()
 
 void DrawMesh::render()
 {
+    glEnable(GL_BLEND);
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE);
     glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"), edge_color_.red, edge_color_.green, edge_color_.blue);
+    glUniform1i(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "use_color"), 1);
 
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);
+
+    glUniform1i(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "use_color"), 0);
     glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"), face_color_.red, face_color_.green, face_color_.blue);
+    glUniform1f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "min_z"), -0.75f); // min_vec.z);
+    glUniform1f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "max_z"), 0.75f); // max_vec.z);
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);
 
     glBindVertexArray(0);
+    glDisable(GL_BLEND);
 }
 
 DrawMesh::~DrawMesh() {}
