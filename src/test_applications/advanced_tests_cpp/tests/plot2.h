@@ -193,7 +193,7 @@ void Klein_testAdvanced1()
 {
     const size_t nu = 50, nv = 50;
     const size_t num_triangles = nu * nv * 2;
-    const size_t num_its = 100;
+    const size_t num_its = 1000;
 
     Vector<IndexTriplet> indices(num_triangles);
 
@@ -234,11 +234,17 @@ void Klein_testAdvanced1()
     clearView();
     float u_offset = 0.0f, v_offset = 0.0f;
 
+    float t = 0.0f;
+
     for(size_t k = 0; k < num_its; k++)
     {
         evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params);
         drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 244));
+
+        klein_params.x.a = (-2.0f / 15.05) + std::sin(t) * 0.1;
         u_offset += 0.01;
+        t += 0.02f;
+        axis({-1.5, 0.0, -1.0}, {1.5, 5.0, 1.0});
 
         usleep(10000);
 
