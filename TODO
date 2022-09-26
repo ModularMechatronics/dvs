@@ -36,6 +36,8 @@ Pre release:
  * Something with autonomous driving data
  * Something with drone simulation data
  * Somethin with robotics
+ * Wave equation
+ * Physics simulation (bouncy ball)
 - Make font smaller, fewer line points per axis
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects

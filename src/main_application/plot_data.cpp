@@ -170,6 +170,7 @@ std::pair<Vec3d, Vec3d> PlotDataHandler::getMinMaxVectors() const
 {
     if (plot_datas_.size() == 0)
     {
+        std::cout << "Is zero!" << std::endl;
         return std::pair<Vec3d, Vec3d>(Vec3d(-1, -1, -1), Vec3d(1, 1, 1));
     }
     else

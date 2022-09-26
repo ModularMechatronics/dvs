@@ -78,8 +78,8 @@ void DrawMesh::render()
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "use_color"), 0);
     glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "vertex_color"), face_color_.red, face_color_.green, face_color_.blue);
-    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), -0.75f); // min_vec.z);
-    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), 0.75f); // max_vec.z);
+    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
+    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);

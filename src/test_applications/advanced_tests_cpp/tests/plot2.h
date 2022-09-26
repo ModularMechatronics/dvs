@@ -216,21 +216,23 @@ void Klein_testAdvanced1()
     VectorView<float> vy(y.data(), nu * nv);
     VectorView<float> vz(z.data(), nu * nv);
 
+    indices.fill(IndexTriplet{0, 0, 0});
+
     size_t idx = 0U;
     for(size_t ku = 0; ku < (nu - 1U); ku++)
     {
         for(size_t kv = 0; kv < (nv - 1U); kv++)
         {
-            const size_t idx2 = ku * nv + kv;
-            indices(idx).i0 = idx2;
-            indices(idx).i1 = idx2 + 1;
-            indices(idx).i2 = idx2 + nv;
+            const size_t vec_idx = ku * nv + kv;
+            indices(idx).i0 = vec_idx;
+            indices(idx).i1 = vec_idx + 1;
+            indices(idx).i2 = vec_idx + nv;
 
             idx += 1;
 
-            indices(idx).i0 = idx2 + nv + 1;
-            indices(idx).i1 = idx2 + 1;
-            indices(idx).i2 = idx2 + nv;
+            indices(idx).i0 = vec_idx + nv + 1;
+            indices(idx).i1 = vec_idx + nv;
+            indices(idx).i2 = vec_idx + 1;
 
             idx += 1;
         }
