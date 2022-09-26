@@ -296,9 +296,19 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         }
         plot_data_handler_->addData(std::move(received_data), hdr);
 
+        // TODO: The fundamental design of this min/max needs to be changed.
+        // For some types of plot data, it shouldn't be executed if axes is set,
+        // but for some it should always be executed, for drawMesh for example,
+        // to correctly set the color map min max values
+        // And if it has already been executed once for a plot data, it shouldn't need
+        // to be executed again. Also, if there are multiple color map plot datas
+        // they should get their color map min max values from a global min/max of
+        // all the plot datas
+        // The whole getMinMaxVectors logic in plot_datas should probably also be redesigned
+        const std::pair<Vec3d, Vec3d> min_max = plot_data_handler_->getMinMaxVectors();
+
         if (!axes_set_)
         {
-            const std::pair<Vec3d, Vec3d> min_max = plot_data_handler_->getMinMaxVectors();
             const Vec3d mean_vec = (min_max.second + min_max.first) / 2.0;
 
             const Vec3d min_vec = (min_max.first - mean_vec) * 1.001 + mean_vec;

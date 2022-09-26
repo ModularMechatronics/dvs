@@ -39,7 +39,6 @@ void main()
       discard;
    }
    color = vec4(fragment_color, 0.5);
-   color.a = 0.5;
+   color.a = 1.0;
 
-		
 }
