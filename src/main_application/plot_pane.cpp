@@ -137,6 +137,7 @@ PlotPane::PlotPane(wxWindow* parent,
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     view_parent_ = dynamic_cast<SuperBase*>(parent);
+    wait_for_flush_ = false;
 
     is_selected_ = false;
 
@@ -279,6 +280,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         axes_set_ = false;
         hold_on_ = true;
         view_set_ = false;
+        wait_for_flush_ = false;
 
         plot_data_handler_->clear();
         axes_interactor_.setViewAngles(0, M_PI);
@@ -343,7 +345,10 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         }
     }
 
-    Refresh();
+    if(!wait_for_flush_)
+    {
+        Refresh();
+    }
 }
 
 bool PlotPane::isImageFunction(const Function fcn)
@@ -361,10 +366,18 @@ bool PlotPane::is3DFunction(const Function fcn)
            (fcn == Function::PLOT_COLLECTION3) || (fcn == Function::FAST_PLOT3) || (fcn == Function::LINE_COLLECTION3);
 }
 
+void PlotPane::waitForFlush()
+{
+    wait_for_flush_ = true;
+}
+
 void PlotPane::showLegend(const bool show_legend)
 {
     axes_interactor_.showLegend(show_legend);
-    Refresh();
+    if(!wait_for_flush_)
+    {
+        Refresh();
+    }
 }
 
 void PlotPane::setSelection()
@@ -416,7 +429,7 @@ void PlotPane::mouseLeftPressed(wxMouseEvent& event)
     const wxSize size_now = this->GetSize();
     const Vec2f size_now_vec(size_now.x, size_now.y);
     axes_interactor_.registerMousePressed(mouse_pos_at_press_.elementWiseDivide(size_now_vec));
-    
+
     Refresh();
 }
 
@@ -427,6 +440,7 @@ void PlotPane::mouseLeftReleased(wxMouseEvent& event)
     const Vec2f size_now_vec(size_now.x, size_now.y);
     axes_interactor_.registerMouseReleased(Vec2f(mouse_pos.x, mouse_pos.y).elementWiseDivide(size_now_vec));
     left_mouse_button_.setIsReleased();
+
     Refresh();
 }
 

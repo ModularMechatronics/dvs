@@ -40,6 +40,14 @@ void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
     }
 }
 
+void MainWindow::setWaitForFlush()
+{
+    if (current_gui_element_set_)
+    {
+        current_gui_element_->waitForFlush();
+    }
+}
+
 void MainWindow::createNewElement(const CommunicationHeader& hdr)
 {
     const CommunicationHeaderObject elem_obj = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME);
@@ -138,10 +146,23 @@ void MainWindow::receiveData()
             {
                 case Function::SET_CURRENT_ELEMENT:
                     setCurrentElement(hdr);
-
                     break;
+
+                case Function::WAIT_FOR_FLUSH:
+                    setWaitForFlush();
+                    break;
+
+                case Function::FLUSH_ELEMENT:
+                    if(current_gui_element_set_)
+                    {
+                        current_gui_element_->refresh();
+                    }
+                    break;
+
                 case Function::CREATE_NEW_ELEMENT:
                     createNewElement(hdr);
+                    break;
+
                 case Function::SHOW_LEGEND:
                     if (current_gui_element_set_)
                     {

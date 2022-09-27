@@ -144,7 +144,7 @@ void testBasic()
 void testAdvanced0()
 {
     const size_t nu = 50, nv = 50;
-    const size_t num_its = 10;
+    const size_t num_its = 100;
 
     std::pair<Matrix<float>, Matrix<float>> uv_mats = meshGrid<float>(0.0f, M_PI, 0.0f, 2.0f * M_PI, nv, nu);
 
@@ -161,6 +161,7 @@ void testAdvanced0()
 
     setCurrentElement("view_00");
     clearView();
+    waitForFlush();
     float u_offset = 0.0f, v_offset = 0.0f;
 
     for(size_t k = 0; k < num_its; k++)
@@ -169,8 +170,9 @@ void testAdvanced0()
         u_offset += 0.1;
 
         scatter3(vx, vy, vz, properties::Color::Red());
-        // plot3(vx, vy, vz, properties::Color::Blue());
+        plot3(vx, vy, vz, properties::Color::Blue());
         // axis({-130.0, 0.0, -1.0}, {110.0, 4.0, 1.0});
+        flushElement();
 
         usleep(50000);
 

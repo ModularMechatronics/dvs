@@ -758,6 +758,22 @@ inline void setCurrentElement(const std::string& name)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void waitForFlush()
+{
+    internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::WAIT_FOR_FLUSH);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void flushElement()
+{
+    internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::FLUSH_ELEMENT);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void view(const float azimuth, const float elevation)
 {
     internal::CommunicationHeader hdr;

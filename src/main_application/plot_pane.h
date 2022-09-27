@@ -70,6 +70,7 @@ private:
     int args[9];
 
     bool perspective_projection_;
+    bool wait_for_flush_;
 
     int* getArgsPtr();
     wxSize parent_size_;
@@ -121,6 +122,7 @@ public:
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
     void showLegend(const bool show_legend) override;
+    void waitForFlush() override;
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
 
