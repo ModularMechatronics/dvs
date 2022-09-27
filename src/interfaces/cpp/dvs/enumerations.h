@@ -81,6 +81,8 @@ enum class Function : uint8_t
     SET_CURRENT_ELEMENT,
     CREATE_NEW_ELEMENT,
     NEW_ELEMENT,
+    WAIT_FOR_FLUSH,
+    FLUSH_ELEMENT,
     SCATTER2,
     SCATTER3,
     QUIVER,

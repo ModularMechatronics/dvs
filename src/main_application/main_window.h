@@ -82,6 +82,7 @@ private:
     void setupGui();
     void setCurrentElement(const internal::CommunicationHeader& hdr);
     void createNewElement(const internal::CommunicationHeader& hdr);
+    void setWaitForFlush();
     void receiveData();
 
     bool hasTabWithName(const std::string& tab_name);

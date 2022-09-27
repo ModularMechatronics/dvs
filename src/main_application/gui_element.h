@@ -85,6 +85,7 @@ public:
     virtual void hide() = 0;
     virtual void destroy() = 0;
     virtual void refresh() = 0;
+    virtual void waitForFlush() = 0;
     virtual void showLegend(const bool show_legend)
     {
         static_cast<void>(show_legend);
