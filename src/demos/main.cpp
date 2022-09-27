@@ -27,49 +27,14 @@ void displayHelp()
 
 int main(int argc, char* argv[])
 {
-    // ######################### plot #########################
-    std::map<std::string, std::function<void()>> plot2_functions{
-        {"view", plot2::testWithVectorView},
+    // ######################### klein #########################
+    std::map<std::string, std::function<void()>> klein_functions{
+        {"basic", klein::testBasic},
+        {"adv0", klein::testAdvanced0},
+        {"adv1", klein::testAdvanced1}
     };
 
-    // ######################### plot3 #########################
-    std::map<std::string, std::function<void()>> plot3_functions{
-        {"view", plot3_ns::testWithVectorView}
-    };
-
-    // ######################### scatter #######################
-    std::map<std::string, std::function<void()>> scatter2_functions{
-        {"view", scatter2::testWithVectorView}
-    };
-
-    // ######################### scatter3 ######################
-    std::map<std::string, std::function<void()>> scatter3_functions{
-        {"view", scatter3_ns::testWithVectorView}
-    };
-
-    // ######################### surf ##########################
-    std::map<std::string, std::function<void()>> surf_functions{
-        {"view", surf_ns::testWithMatrixView}
-    };
-
-    // ######################### dynamic_plotting ##########################
-    std::map<std::string, std::function<void()>> dynamic_plotting_functions{
-        {"2d_expanding_plot", dynamic_plotting::test2DFunctionExpandingPlotObject},
-        {"3d_expanding_plot", dynamic_plotting::test3DFunctionExpandingPlotObject},
-        {"2d_changing_rotation", dynamic_plotting::test2DFunctionRotatingView},
-        {"2d_changing_axes", dynamic_plotting::test2DFunctionChangingAxes},
-        {"2d_new_data_clear", dynamic_plotting::test2DFunctionNewDataAndClear},
-        {"3d_new_data_clear", dynamic_plotting::test3DFunctionNewDataAndClear},
-        
-        
-    };
-
-    fcns["plot"] = plot2_functions;
-    fcns["plot3"] = plot3_functions;
-    fcns["scatter"] = scatter2_functions;
-    fcns["scatter3"] = scatter3_functions;
-    fcns["surf"] = surf_functions;
-    fcns["dynamic_plotting"] = dynamic_plotting_functions;
+    fcns["klein"] = klein_functions;
 
     if (argc == 1)
     {
