@@ -25,7 +25,7 @@ template <typename T> template <typename Y> Vec3<T>::Vec3(const Vec3<Y>& v)
 
 template <typename T> Vec3<T> Vec3<T>::normalized() const
 {
-    return Vec3<T>(x, y, z) / std::sqrt(x * x + y * y + z * z);
+    return Vec3<T>(x, y, z) / static_cast<T>(std::sqrt(x * x + y * y + z * z));
 }
 
 template <typename T> Vec3<T> Vec3<T>::vectorBetweenPoints(const Point3<T>& end_point) const

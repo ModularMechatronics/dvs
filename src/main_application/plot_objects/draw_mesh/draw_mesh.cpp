@@ -1,12 +1,18 @@
 #include "main_application/plot_objects/draw_mesh/draw_mesh.h"
 
-float* convertVerticesDataOuter(uint8_t* input_data,
+struct OutputData
+{
+    float* points_ptr;
+    float* normals_ptr;
+};
+
+OutputData convertVerticesDataOuter(uint8_t* input_data,
                                 const DataType data_type,
                                 const uint32_t num_vertices,
                                 const uint32_t num_indices,
                                 const uint32_t num_bytes_per_element);
 
-float* convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
+OutputData convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
                                        const DataType data_type,
                                        const uint32_t num_vertices,
                                        const uint32_t num_indices,
@@ -22,26 +28,36 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const Comm
 
     num_vertices_ = hdr.get(CommunicationHeaderObjectType::NUM_VERTICES).as<uint32_t>();
     num_indices_ = hdr.get(CommunicationHeaderObjectType::NUM_INDICES).as<uint32_t>();
+    OutputData output_data;
 
     if (type_ == Function::DRAW_MESH)
     {
-        points_ptr_ = convertVerticesDataOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
+        output_data = convertVerticesDataOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
     }
     else
     {
-        points_ptr_ = convertVerticesDataSeparateVectorsOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
+        output_data = convertVerticesDataSeparateVectorsOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
     }
+
+    points_ptr_ = output_data.points_ptr;
+    normals_ptr_ = output_data.normals_ptr;
 
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
-
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3 * 3, points_ptr_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &normals_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3 * 3, normals_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void DrawMesh::findMinMax()
@@ -93,12 +109,15 @@ void DrawMesh::render()
 DrawMesh::~DrawMesh() {}
 
 template <typename T>
-inline float* convertVerticesData(uint8_t* input_data,
+OutputData convertVerticesData(uint8_t* input_data,
                                   const uint32_t num_vertices,
                                   const uint32_t num_indices,
                                   const uint32_t num_bytes_per_element)
 {
-    float* output_data = new float[num_indices * 3 * 3];
+    OutputData output_data;
+    output_data.points_ptr = new float[num_indices * 3 * 3];
+    output_data.normals_ptr = new float[num_indices * 3 * 3];
+
     VectorView<Point3<T>> vertices{reinterpret_cast<Point3<T>*>(input_data), num_vertices};
     VectorView<IndexTriplet> indices{reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
 
@@ -110,17 +129,33 @@ inline float* convertVerticesData(uint8_t* input_data,
         const Point3<T> p1 = vertices(indices(k).i1);
         const Point3<T> p2 = vertices(indices(k).i2);
 
-        output_data[idx] = p0.x;
-        output_data[idx + 1] = p0.y;
-        output_data[idx + 2] = p0.z;
+        const Plane<T> plane{planeFromThreePoints<T>(p0, p1, p2)};
+        const Vec3<T> normal_vec{plane.a, plane.b, plane.c};
+        const Vec3<T> normalized_normal_vec{normal_vec.normalized()};
 
-        output_data[idx + 3] = p1.x;
-        output_data[idx + 4] = p1.y;
-        output_data[idx + 5] = p1.z;
+        output_data.points_ptr[idx] = p0.x;
+        output_data.points_ptr[idx + 1] = p0.y;
+        output_data.points_ptr[idx + 2] = p0.z;
 
-        output_data[idx + 6] = p2.x;
-        output_data[idx + 7] = p2.y;
-        output_data[idx + 8] = p2.z;
+        output_data.points_ptr[idx + 3] = p1.x;
+        output_data.points_ptr[idx + 4] = p1.y;
+        output_data.points_ptr[idx + 5] = p1.z;
+
+        output_data.points_ptr[idx + 6] = p2.x;
+        output_data.points_ptr[idx + 7] = p2.y;
+        output_data.points_ptr[idx + 8] = p2.z;
+
+        output_data.normals_ptr[idx] = normalized_normal_vec.x;
+        output_data.normals_ptr[idx + 1] = normalized_normal_vec.y;
+        output_data.normals_ptr[idx + 2] = normalized_normal_vec.z;
+
+        output_data.normals_ptr[idx + 3] = normalized_normal_vec.x;
+        output_data.normals_ptr[idx + 4] = normalized_normal_vec.y;
+        output_data.normals_ptr[idx + 5] = normalized_normal_vec.z;
+
+        output_data.normals_ptr[idx + 6] = normalized_normal_vec.x;
+        output_data.normals_ptr[idx + 7] = normalized_normal_vec.y;
+        output_data.normals_ptr[idx + 8] = normalized_normal_vec.z;
         idx += 9;
     }
 
@@ -128,12 +163,15 @@ inline float* convertVerticesData(uint8_t* input_data,
 }
 
 template <typename T>
-inline float* convertVerticesDataSeparateVectors(uint8_t* input_data,
+OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
                                   const uint32_t num_vertices,
                                   const uint32_t num_indices,
                                   const uint32_t num_bytes_per_element)
 {
-    float* output_data = new float[num_indices * 3 * 3];
+    OutputData output_data;
+
+    output_data.points_ptr = new float[num_indices * 3 * 3];
+    output_data.normals_ptr = new float[num_indices * 3 * 3];
     VectorView<T> x{reinterpret_cast<T*>(input_data), num_vertices};
     VectorView<T> y{reinterpret_cast<T*>(&(input_data[num_vertices * num_bytes_per_element])), num_vertices};
     VectorView<T> z{reinterpret_cast<T*>(&(input_data[num_vertices * num_bytes_per_element * 2])), num_vertices};
@@ -148,30 +186,46 @@ inline float* convertVerticesDataSeparateVectors(uint8_t* input_data,
         const Point3<T> p1{x(indices(k).i1), y(indices(k).i1), z(indices(k).i1)};
         const Point3<T> p2{x(indices(k).i2), y(indices(k).i2), z(indices(k).i2)};
 
-        output_data[idx] = p0.x;
-        output_data[idx + 1] = p0.y;
-        output_data[idx + 2] = p0.z;
+        const Plane<T> plane{planeFromThreePoints<T>(p0, p1, p2)};
+        const Vec3<T> normal_vec{plane.a, plane.b, plane.c};
+        const Vec3<T> normalized_normal_vec{normal_vec.normalized()};
 
-        output_data[idx + 3] = p1.x;
-        output_data[idx + 4] = p1.y;
-        output_data[idx + 5] = p1.z;
+        output_data.points_ptr[idx] = p0.x;
+        output_data.points_ptr[idx + 1] = p0.y;
+        output_data.points_ptr[idx + 2] = p0.z;
 
-        output_data[idx + 6] = p2.x;
-        output_data[idx + 7] = p2.y;
-        output_data[idx + 8] = p2.z;
+        output_data.points_ptr[idx + 3] = p1.x;
+        output_data.points_ptr[idx + 4] = p1.y;
+        output_data.points_ptr[idx + 5] = p1.z;
+
+        output_data.points_ptr[idx + 6] = p2.x;
+        output_data.points_ptr[idx + 7] = p2.y;
+        output_data.points_ptr[idx + 8] = p2.z;
+
+        output_data.normals_ptr[idx] = normalized_normal_vec.x;
+        output_data.normals_ptr[idx + 1] = normalized_normal_vec.y;
+        output_data.normals_ptr[idx + 2] = normalized_normal_vec.z;
+
+        output_data.normals_ptr[idx + 3] = normalized_normal_vec.x;
+        output_data.normals_ptr[idx + 4] = normalized_normal_vec.y;
+        output_data.normals_ptr[idx + 5] = normalized_normal_vec.z;
+
+        output_data.normals_ptr[idx + 6] = normalized_normal_vec.x;
+        output_data.normals_ptr[idx + 7] = normalized_normal_vec.y;
+        output_data.normals_ptr[idx + 8] = normalized_normal_vec.z;
         idx += 9;
     }
 
     return output_data;
 }
 
-float* convertVerticesDataOuter(uint8_t* input_data,
+OutputData convertVerticesDataOuter(uint8_t* input_data,
                                        const DataType data_type,
                                        const uint32_t num_vertices,
                                        const uint32_t num_indices,
                                        const uint32_t num_bytes_per_element)
 {
-    float* output_data;
+    OutputData output_data;
     if (data_type == DataType::FLOAT)
     {
         output_data = convertVerticesData<float>(input_data, num_vertices, num_indices, num_bytes_per_element);
@@ -220,13 +274,13 @@ float* convertVerticesDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-float* convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
+OutputData convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
                                        const DataType data_type,
                                        const uint32_t num_vertices,
                                        const uint32_t num_indices,
                                        const uint32_t num_bytes_per_element)
 {
-    float* output_data;
+    OutputData output_data;
     if (data_type == DataType::FLOAT)
     {
         output_data = convertVerticesDataSeparateVectors<float>(input_data, num_vertices, num_indices, num_bytes_per_element);

@@ -186,7 +186,7 @@ void testAdvanced1()
 {
     const size_t nu = 50, nv = 50;
     const size_t num_triangles = nu * nv * 2;
-    const size_t num_its = 1000;
+    const size_t num_its = 1;
 
     Vector<IndexTriplet> indices(num_triangles);
 

@@ -14,6 +14,9 @@ class DrawMesh : public PlotObjectBase
 {
 private:
     float* points_ptr_;
+    float* normals_ptr_;
+
+    GLuint normals_vertex_buffer_;
 
     GLuint buffer_handle_;
     uint32_t num_vertices_;
