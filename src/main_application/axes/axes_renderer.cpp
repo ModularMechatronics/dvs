@@ -220,6 +220,7 @@ void AxesRenderer::plotBegin()
 
     glUseProgram(shader_collection_.draw_mesh_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "rotation_mat"), 1, GL_FALSE, &model_mat[0][0]);
 
     glUseProgram(shader_collection_.scatter_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
