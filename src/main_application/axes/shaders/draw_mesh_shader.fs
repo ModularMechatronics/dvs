@@ -43,6 +43,8 @@ void main()
    }
 
    vec3 object_color = vec3(233.0 / 255.0, 116.0 / 255.0, 74.0 / 255.0);
+   // vec3 object_color = vec3(255.0 / 255.0, 0.0, 74.0 / 244.0);
+
    vec3 light_color = vec3(1.0, 1.0, 1.0);
    float ambient_strength = 1.0;
    vec3 ambient = ambient_strength * light_color;
@@ -53,7 +55,7 @@ void main()
 
    vec3 diffuse = diff * light_color;
 
-   color = vec4((diffuse + ambient) * object_color, 1.0);
+   color = vec4((diffuse + ambient) * fragment_color, 1.0);
    color.r = min(color.r, 1.0);
    color.g = min(color.g, 1.0);
    color.b = min(color.b, 1.0);

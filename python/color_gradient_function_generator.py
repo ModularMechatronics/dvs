@@ -1,5 +1,5 @@
-from cgi import test
-import matplotlib.pyplot as plt
+# from cgi import test
+# import matplotlib.pyplot as plt
 import numpy as np
 
 rainbow = [
@@ -25,6 +25,16 @@ test_table = [
         [0.0, 0.0, 1.0],
         [1.0, 0.8, 0.1],
         [0.5, 1.0, 0.2]
+]
+
+test_table = [
+        [0.0, 0.0, 1.0],
+        [1.0, 0.0, 0.1],
+        [0.0, 0.5, 0.2],
+        [1.0, 0.0, 1.0],
+        [0.0, 0.0, 0.9],
+        [1.0, 0.0, 0.5],
+        [0.0, 0.2, 0.0]
 ]
 
 magma = [
@@ -64,9 +74,8 @@ function_body = ["    if(value < 0.0)",
 "    {",
 "        value = 0.99999;",
 "    }",
-
-
 ]
+
 def calculate_intermediate_val(bp_val, next_bp_val, fractional_part):
     if bp_val > next_bp_val:
         d = bp_val - next_bp_val
@@ -122,12 +131,31 @@ def interpolate_colors(values, colormap_breakpoints):
     return r, g, b, fr
 
 def print_diff(bp_val, next_bp_val, fs, color_char):
+
     if bp_val > next_bp_val:
         d = bp_val - next_bp_val
-        fs.append(f"        {color_char} = {bp_val} - fractional_part * {d};")
+        if d == 1.0:
+            d_string = ""
+        else:
+            d_string = f" * {d}"
+
+        if bp_val == 0.0:
+            bp_val_string = ""
+        else:
+            bp_val_string = f"{bp_val}"
+        fs.append(f"        {color_char} = {bp_val_string} - fraction_part{d_string};")
     else:
         d = next_bp_val - bp_val
-        fs.append(f"        {color_char} = {bp_val} + fractional_part * {d};")
+        if d == 1.0:
+            d_string = ""
+        else:
+            d_string = f" * {d}"
+        
+        if bp_val == 0.0:
+            bp_val_string = ""
+        else:
+            bp_val_string = f"{bp_val} + "
+        fs.append(f"        {color_char} = {bp_val_string}fraction_part{d_string};")
 
 
 def print_colormap_function(colormap_name, colormap_breakpoints):
@@ -137,12 +165,15 @@ def print_colormap_function(colormap_name, colormap_breakpoints):
     fs.append(f"vec3 calculateColormap{colormap_name}(float value)")
     fs.append("{")
     fs.extend(function_body)
+    fs.append("")
 
     fs.append(f"    float full_range_value = value * {float(num_bp_values - 1)};")
     fs.append(f"    float integer_part = floor(full_range_value);")
     fs.append(f"    float fraction_part = full_range_value - integer_part;")
 
+    fs.append("")
     fs.append("    float r, g, b;")
+    fs.append("")
 
     for idx, bp in enumerate(colormap_breakpoints[:-1]):
         if idx == 0:
@@ -172,14 +203,16 @@ def print_colormap_function(colormap_name, colormap_breakpoints):
 
         fs.append("    }")
 
+    fs.append("")
+    fs.append("    return vec3(r, g, b);")
     fs.append("}")
 
     for l in fs:
         print(l)
 
 if __name__ == "__main__":
-    # colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet}
-    colormaps = {"Test": test_table}
+    colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet}
+    # colormaps = {"Test": test_table}
 
     for colormap_name, colormap_breakpoints in colormaps.items():
         print_colormap_function(colormap_name, colormap_breakpoints)
