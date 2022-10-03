@@ -241,6 +241,7 @@ public:
 struct EdgeColor : internal::PropertyBase
 {
 public:
+    uint8_t use_color;
     uint8_t red, green, blue;
 
     static EdgeColor Red()
@@ -288,10 +289,20 @@ public:
         return EdgeColor(127, 127, 127);
     }
 
-    EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR) {}
+    static EdgeColor None()
+    {
+        return EdgeColor(0U);
+    }
+
+    EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{1U} {}
 
     EdgeColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
-        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), red(red_), green(green_), blue(blue_)
+        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{1U}, red(red_), green(green_), blue(blue_)
+    {
+    }
+
+    EdgeColor(const uint8_t use_color_)
+        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{use_color_}, red(0U), green(0U), blue(0U)
     {
     }
 };
@@ -299,6 +310,7 @@ public:
 struct FaceColor : internal::PropertyBase
 {
 public:
+    uint8_t use_color;
     uint8_t red, green, blue;
 
     static FaceColor Red()
@@ -346,10 +358,20 @@ public:
         return FaceColor(127, 127, 127);
     }
 
-    FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(0), green(0), blue(0) {}
+    static FaceColor None()
+    {
+        return FaceColor(0U);
+    }
+
+    FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{1U}, red(0), green(0), blue(0) {}
 
     FaceColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
-        : internal::PropertyBase(internal::PropertyType::FACE_COLOR), red(red_), green(green_), blue(blue_)
+        : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{1U}, red(red_), green(green_), blue(blue_)
+    {
+    }
+
+    FaceColor(const uint8_t use_color_)
+        : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{use_color_}, red(0U), green(0U), blue(0U)
     {
     }
 };

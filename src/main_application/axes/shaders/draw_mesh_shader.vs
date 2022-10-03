@@ -7,13 +7,12 @@ layout(location = 1) in vec3 in_normal;
 uniform vec3 vertex_color;
 uniform float min_z;
 uniform float max_z;
-uniform int use_color;
+uniform int has_color_map;
 
 out vec3 fragment_color;
 out vec3 frag_normal;
 out vec4 coord_out;
 out vec3 frag_pos;
-flat out vec3 light_pos_in;
 
 vec3 calculateColormapRainbow(float value)
 {
@@ -279,13 +278,13 @@ void main()
     coord_out = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
     float delta = max_z - min_z;
     
-    if(use_color == 1)
+    if(has_color_map == 1)
     {
-        fragment_color = vertex_color;
+        fragment_color = calculateColor((in_vertex.z - min_z) / delta);
     }
     else
     {
-        fragment_color = calculateColor((in_vertex.z - min_z) / delta);
+        fragment_color = vertex_color;
     }
     // fragment_color = vertex_color;
     fragment_color = calculateColormapJet((in_vertex.z - min_z) / delta);
@@ -297,6 +296,4 @@ void main()
     vec4 frag_normal_tmp = rotation_mat * vec4(in_normal, 1.0);
     frag_normal = frag_normal_tmp.xyz;
     frag_pos = in_vertex;
-    vec4 light_pos = vec4(6.0, 6.0, 6.0, 1.0);
-    light_pos_in = (rotation_mat * light_pos).xyz;
 }

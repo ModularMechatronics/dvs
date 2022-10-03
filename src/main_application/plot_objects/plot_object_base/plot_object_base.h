@@ -46,6 +46,10 @@ protected:
     RGBTripletf color_;
     RGBTripletf edge_color_;
     RGBTripletf face_color_;
+
+    bool has_edge_color_;
+    bool has_face_color_;
+
     ColorMapType color_map_;
     LineStyle line_style_;
     int is_dashed_;

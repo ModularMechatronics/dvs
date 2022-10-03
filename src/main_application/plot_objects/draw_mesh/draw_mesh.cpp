@@ -86,16 +86,19 @@ void DrawMesh::render()
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     shader_collection_.draw_mesh_shader.use();
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "vertex_color"), edge_color_.red, edge_color_.green, edge_color_.blue);
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "use_color"), 1);
+    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "edge_color"), edge_color_.red, edge_color_.green, edge_color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "face_color"), face_color_.red, face_color_.green, face_color_.blue);
+    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
+    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_edge_color"), static_cast<int>(has_edge_color_));
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), static_cast<int>(has_face_color_));
+
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);
 
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "use_color"), 0);
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "vertex_color"), face_color_.red, face_color_.green, face_color_.blue);
-    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
-    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);

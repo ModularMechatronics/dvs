@@ -122,16 +122,24 @@ void PlotObjectBase::assignProperties(const Properties& props)
     }
     else
     {
-        color_map_ = ColorMapType::JET;
         color_map_set_ = false;
     }
 
     if (props.hasProperty(PropertyType::EDGE_COLOR))
     {
         const EdgeColor ec = props.getProperty<EdgeColor>();
-        edge_color_.red = static_cast<float>(ec.red) / 255.0f;
-        edge_color_.green = static_cast<float>(ec.green) / 255.0f;
-        edge_color_.blue = static_cast<float>(ec.blue) / 255.0f;
+
+        if(ec.use_color)
+        {
+            edge_color_.red = static_cast<float>(ec.red) / 255.0f;
+            edge_color_.green = static_cast<float>(ec.green) / 255.0f;
+            edge_color_.blue = static_cast<float>(ec.blue) / 255.0f;
+            has_edge_color_ = true;
+        }
+        else
+        {
+            has_edge_color_ = false;
+        }
     }
     else
     {
@@ -141,9 +149,18 @@ void PlotObjectBase::assignProperties(const Properties& props)
     if (props.hasProperty(PropertyType::FACE_COLOR))
     {
         const FaceColor fc = props.getProperty<FaceColor>();
-        face_color_.red = static_cast<float>(fc.red) / 255.0f;
-        face_color_.green = static_cast<float>(fc.green) / 255.0f;
-        face_color_.blue = static_cast<float>(fc.blue) / 255.0f;
+
+        if(fc.use_color)
+        {
+            face_color_.red = static_cast<float>(fc.red) / 255.0f;
+            face_color_.green = static_cast<float>(fc.green) / 255.0f;
+            face_color_.blue = static_cast<float>(fc.blue) / 255.0f;
+            has_face_color_ = true;
+        }
+        else
+        {
+            has_face_color_ = false;
+        }
     }
     else
     {
