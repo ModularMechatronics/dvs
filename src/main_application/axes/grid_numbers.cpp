@@ -12,7 +12,7 @@
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 
-const float kTextScale = 1.0f / 8.0f;
+const float kTextScale{0.00035f};
 
 void drawXLetter(const TextRenderer& text_renderer,
                  const glm::mat4& view_model,
@@ -30,7 +30,7 @@ void drawXLetter(const TextRenderer& text_renderer,
                         projection,
                         v_viewport);
 
-    text_renderer.renderTextFromRightCenter("X", v_projected[0], v_projected[1], 0.0005f, width, height);
+    text_renderer.renderTextFromRightCenter("X", v_projected[0], v_projected[1], 0.0004f, width, height);
 }
 
 void drawYLetter(const TextRenderer& text_renderer,
@@ -49,7 +49,7 @@ void drawYLetter(const TextRenderer& text_renderer,
                         projection,
                         v_viewport);
 
-    text_renderer.renderTextFromRightCenter("Y", v_projected[0], v_projected[1], 0.0005f, width, height);
+    text_renderer.renderTextFromRightCenter("Y", v_projected[0], v_projected[1], 0.0004f, width, height);
 }
 
 void drawZLetter(const TextRenderer& text_renderer,
@@ -68,7 +68,7 @@ void drawZLetter(const TextRenderer& text_renderer,
                         projection,
                         v_viewport);
 
-    text_renderer.renderTextFromRightCenter("Z", v_projected[0], v_projected[1], 0.0005f, width, height);
+    text_renderer.renderTextFromRightCenter("Z", v_projected[0], v_projected[1], 0.0004f, width, height);
 }
 
 void drawXAxisNumbers(const TextRenderer& text_renderer,
@@ -108,11 +108,11 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
         const std::string val = formatNumber(gv.x.data[k] + axes_center.x, 3);
         if(cond2)
         {
-            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }
         else
         {
-            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }
     }
 }
@@ -153,15 +153,15 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
         const std::string val = formatNumber(gv.y.data[k] + axes_center.y, 3);
         if(elevation == M_PI/2.0)
         {
-            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }
         else if(cond2)
         {
-            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }
         else
         {
-            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }
     }
 }
@@ -197,7 +197,7 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                          v_viewport);
         const std::string val = formatNumber(gv.z.data[k] + axes_center.z, 3);
 
-        text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], 0.0005f, width, height);
+        text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
     }
 }
 

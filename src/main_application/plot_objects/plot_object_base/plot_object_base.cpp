@@ -105,9 +105,8 @@ void PlotObjectBase::assignProperties(const Properties& props)
 
     if (props.hasProperty(PropertyType::ALPHA))
     {
-        // TODO: Alpha should be a number between 0-100
         const Alpha alp = props.getProperty<Alpha>();
-        alpha_ = static_cast<float>(alp.data) / 255.0f;
+        alpha_ = static_cast<float>(alp.data > 100 ? 100 : alp.data) / 100.0f;
     }
     else
     {

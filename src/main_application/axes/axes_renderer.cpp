@@ -38,6 +38,8 @@ AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) :
     window_scale_mat_[0][0] = 2.7;
     window_scale_mat_[1][1] = 2.7;
     window_scale_mat_[2][2] = 2.7;
+
+    global_illumination_active_ = false;
 }
 
 void AxesRenderer::enableClipPlanes()
@@ -221,6 +223,8 @@ void AxesRenderer::plotBegin()
     glUseProgram(shader_collection_.draw_mesh_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "rotation_mat"), 1, GL_FALSE, &model_mat[0][0]);
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "global_illumination_active"), static_cast<int>(global_illumination_active_));
+    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "light_pos"), light_pos_.x, light_pos_.y, light_pos_.z);
 
     glUseProgram(shader_collection_.scatter_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
@@ -245,6 +249,17 @@ void AxesRenderer::plotBegin()
 void AxesRenderer::plotEnd()
 {
     glUseProgram(0);
+}
+
+void AxesRenderer::activateGlobalIllumination(const Vec3d& light_pos)
+{
+    global_illumination_active_ = true;
+    light_pos_ = light_pos;
+}
+
+void AxesRenderer::resetGlobalIllumination()
+{
+    global_illumination_active_ = false;
 }
 
 void AxesRenderer::renderPlotBox()

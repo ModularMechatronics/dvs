@@ -90,8 +90,20 @@ void DrawMesh::render()
     glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "face_color"), face_color_.red, face_color_.green, face_color_.blue);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
+    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "alpha"), alpha_);
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_edge_color"), static_cast<int>(has_edge_color_));
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), static_cast<int>(has_face_color_));
+
+    if(color_map_set_)
+    {
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), static_cast<int>(color_map_) + 1);
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), 1);
+    }
+    else
+    {
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), 0);
+    }
+    
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 

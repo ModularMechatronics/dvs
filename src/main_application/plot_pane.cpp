@@ -264,6 +264,10 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         axes_interactor_.setAxesLimits(Vec3d(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
                                         Vec3d(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
+    else if (fcn == Function::GLOBAL_ILLUMINATION)
+    {
+        axes_renderer_->activateGlobalIllumination(hdr.get(CommunicationHeaderObjectType::VEC3).as<Vec3d>());
+    }
     else if (fcn == Function::VIEW)
     {
         view_set_ = true;
@@ -285,6 +289,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         plot_data_handler_->clear();
         axes_interactor_.setViewAngles(0, M_PI);
         axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
+        axes_renderer_->resetGlobalIllumination();
     }
     else if (fcn == Function::SOFT_CLEAR)
     {

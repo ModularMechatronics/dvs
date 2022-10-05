@@ -1,7 +1,8 @@
 #version 330
 
 out vec4 color;
-in vec3 fragment_color;
+in vec3 colormap_color;
+uniform int color_map_selection;
 
 uniform vec3 edge_color;
 uniform vec3 face_color;
@@ -11,9 +12,13 @@ in vec3 frag_normal;
 
 uniform int use_color;
 
+uniform vec3 light_pos;
 uniform int has_face_color;
 uniform int has_edge_color;
 uniform int is_edge;
+uniform int global_illumination_active;
+
+uniform float alpha;
 
 uniform vec4 clip_plane0;
 uniform vec4 clip_plane1;
@@ -49,42 +54,62 @@ void main()
       discard;
    }
 
-   if((is_edge == int(0)) && (has_face_color == int(0)))
-   {
-      discard;
-   }
-
    vec3 object_color;
    if(is_edge == int(1))
    {
-      object_color = edge_color;
+      if(has_edge_color == int(0))
+      {
+         if(color_map_selection > 0)
+         {
+            object_color = colormap_color;
+         }
+         else
+         {
+            object_color = face_color;
+         }
+      }
+      else
+      {
+         object_color = edge_color;
+      }
    }
    else
    {
-      object_color = face_color;
+      if(has_face_color == int(0))
+      {
+         discard;
+      }
+      else if(color_map_selection > 0)
+      {
+         object_color = colormap_color;
+      }
+      else
+      {
+         object_color = face_color;
+      }
    }
 
-   if((is_edge == int(1)) && (has_edge_color == int(0)))
+   if(global_illumination_active == int(1))
    {
-      object_color.xyz = face_color;
+      vec3 light_color = vec3(1.0, 1.0, 1.0);
+      float ambient_strength = 1.0;
+      vec3 ambient = ambient_strength * light_color;
+
+      vec3 light_dir = normalize(light_pos - frag_pos);
+      float diff = max(dot(frag_normal, light_dir), 0.0);
+
+      vec3 diffuse = diff * light_color;
+
+      color = vec4((diffuse + ambient) * object_color, 1.0);
+      color.r = min(color.r, 1.0);
+      color.g = min(color.g, 1.0);
+      color.b = min(color.b, 1.0);
+   }
+   else
+   {
+      color = vec4(object_color, 1.0);
    }
 
-   // object_color = vec3(255.0 / 255.0, 0.0, 74.0 / 244.0);
-
-   vec3 light_color = vec3(1.0, 1.0, 1.0);
-   float ambient_strength = 1.0;
-   vec3 ambient = ambient_strength * light_color;
-
-   vec3 light_pos = vec3(6.0, 6.0, 6.0);
-   vec3 light_dir = normalize(light_pos - frag_pos);
-   float diff = max(dot(frag_normal, light_dir), 0.0);
-
-   vec3 diffuse = diff * light_color;
-
-   color = vec4((diffuse + ambient) * object_color, 1.0);
-   color.r = min(color.r, 1.0);
-   color.g = min(color.g, 1.0);
-   color.b = min(color.b, 1.0);
-   color.a = 1.0;
+   color.a = alpha;
 
 }

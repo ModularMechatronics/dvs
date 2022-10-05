@@ -99,7 +99,7 @@ enum class Function : uint8_t
     POSITION,
     SURF,
     IM_SHOW,
-    DIFFUSE_LIGHT,
+    GLOBAL_ILLUMINATION,
     AXES_2D,
     AXES_3D,
     VIEW,
