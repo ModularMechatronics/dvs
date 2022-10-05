@@ -58,6 +58,7 @@ protected:
     float line_width_;
     float point_size_;
     bool is_persistent_;
+    bool interpolate_colormap_;
     bool min_max_calculated_;
     bool visualize_has_run_;
     bool has_name_;

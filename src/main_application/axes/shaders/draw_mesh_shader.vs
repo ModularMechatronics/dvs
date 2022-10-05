@@ -9,6 +9,7 @@ uniform float min_z;
 uniform float max_z;
 uniform int color_map_selection;
 
+flat out vec3 flat_colormap_color;
 out vec3 colormap_color;
 out vec3 frag_normal;
 out vec4 coord_out;
@@ -257,6 +258,7 @@ void main()
         {
             colormap_color = calculateColormapJet((in_vertex.z - min_z) / delta);
         }
+        flat_colormap_color = colormap_color;
     }
 
     vec4 frag_normal_tmp = rotation_mat * vec4(in_normal, 1.0);

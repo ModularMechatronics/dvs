@@ -52,6 +52,10 @@ Properties::Properties(const std::vector<CommunicationHeaderObject>& objects)
                     ptr = std::make_shared<PropertyBase>();
                     ptr->setPropertyType(PropertyType::PERSISTENT);
                     break;
+                case PropertyType::INTERPOLATE_COLORMAP:
+                    ptr = std::make_shared<PropertyBase>();
+                    ptr->setPropertyType(PropertyType::INTERPOLATE_COLORMAP);
+                    break;
                 case PropertyType::UNKNOWN:
                     throw std::runtime_error("'UNKNOWN' type found!");
                     break;

@@ -193,6 +193,11 @@ private:
                 current_obj.num_bytes = sizeof(PropertyBase);
                 fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::PERSISTENT});
             }
+            else if(tp == PropertyType::INTERPOLATE_COLORMAP)
+            {
+                current_obj.num_bytes = sizeof(PropertyBase);
+                fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::INTERPOLATE_COLORMAP});
+            }
         }
         else
         {
@@ -218,6 +223,11 @@ private:
             {
                 current_obj.num_bytes = sizeof(PropertyBase);
                 fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::PERSISTENT});
+            }
+            else if(tp == PropertyType::INTERPOLATE_COLORMAP)
+            {
+                current_obj.num_bytes = sizeof(PropertyBase);
+                fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::INTERPOLATE_COLORMAP});
             }
         }
         else

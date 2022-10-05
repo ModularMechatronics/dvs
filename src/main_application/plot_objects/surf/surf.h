@@ -15,9 +15,10 @@ class Surf : public PlotObjectBase
 private:
     Dimension2D dims_;
     // RGBColorMap<float> color_map_;
-    GLuint buffer_idx_;
+    GLuint normals_vertex_buffer_;
 
     float* points_ptr_;
+    float* normals_ptr_;
     float* colors_ptr_;
 
     bool face_color_set_;
