@@ -234,26 +234,36 @@ void testAdvanced1()
 
     float ax = 0.0f, ay = 0.0f, az = 0.0f;
 
+    globalIllumination({ax, ay, 0});
+
     for(size_t k = 0; k < num_its; k++)
     {
         const Matrix<float> r_mat = rotationMatrixZ(az) * rotationMatrixY(ay) * rotationMatrixX(ax);
+        // const Matrix<float> r_mat = unitMatrix<float>(3, 3);
         evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params, r_mat);
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::FaceColor(255, 0, 74));
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 74));
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Rainbow());
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Jet());
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Viridis());
+        drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Magma());
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 255, 0), properties::FaceColor::None());
-        drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::FaceColor(233, 116, 74));
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::FaceColor(233, 116, 74));
         
         // ax += 0.05;
         // ay += 0.02;
 
-        klein_params.x.a = KleinParams().x.a + std::sin(t) * 0.1;
+        // klein_params.x.a = KleinParams().x.a + std::sin(t) * 0.1;
 
-        u_offset += 0.01;
+        // u_offset += 0.01;
 
         t += 0.02f;
+        ax = 6.0 * sin(t);
+        ay = 6.0 * cos(t);
 
         axis(Vec3d{-3.5, 0.0, -2.5}, Vec3d{3.5, 5.0, 2.5});
-        azimuth = azimuth > 180.0f ? -180.0f : azimuth + 0.2f;
-        view(azimuth, 30);
+        // azimuth = azimuth > 180.0f ? -180.0f : azimuth + 0.2f;
+        // view(azimuth, 30);
         usleep(10000);
 
         softClearView();

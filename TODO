@@ -44,6 +44,8 @@ Pre release:
 - Refactor pipeline of how new plot objects are added
 - Refactor from top down, from the app and down into the GUI
 - Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
+- Replace use of reference_wrapper in plotCollection to std::vector<VectorView<T>>...
+- Remove "MainWindow" alltogether, and enable all windows to have tabs?
 - Make sure plot/plot3 works for integer data types
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Make proper test folder structure

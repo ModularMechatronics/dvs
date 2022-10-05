@@ -7,9 +7,9 @@ layout(location = 1) in vec3 in_normal;
 uniform vec3 vertex_color;
 uniform float min_z;
 uniform float max_z;
-uniform int has_color_map;
+uniform int color_map_selection;
 
-out vec3 fragment_color;
+out vec3 colormap_color;
 out vec3 frag_normal;
 out vec4 coord_out;
 out vec3 frag_pos;
@@ -228,70 +228,36 @@ vec3 calculateColormapJet(float value)
     return vec3(r, g, b);
 }
 
-vec3 calculateColor(float z_val_norm)
-{
-    float a = (1.0 - z_val_norm) / 0.25;
-    int X = int(floor(a));
-    float Y = floor(255.0 * (a - X));
-
-    float r, g, b;
-
-    if(X == 0)
-    {
-        r = 255.0;
-        g = Y;
-        b = 0.0;
-    }
-    else if(X == 1)
-    {
-        r = 255.0 - Y;
-        g = 255;
-        b = 0;
-    }
-    else if(X == 2)
-    {
-        r = 0;
-        g = 255;
-        b = Y;
-    }
-    else if(X == 3)
-    {
-        r = 0;
-        g = 255 - Y;
-        b = 255;
-    }
-    else if(X == 4)
-    {
-        r = 0;
-        g = 0;
-        b = 255;
-    }
-
-    return vec3(r / 255.0, g / 255.0, b / 255.0);
-}
-
 void main()
 {
-    // float pi_2 = 1.57079632679489661923132169163975144209858469968;
-
     gl_Position = model_view_proj_mat * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
     coord_out = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
-    float delta = max_z - min_z;
-    
-    if(has_color_map == 1)
-    {
-        fragment_color = calculateColor((in_vertex.z - min_z) / delta);
-    }
-    else
-    {
-        fragment_color = vertex_color;
-    }
-    // fragment_color = vertex_color;
-    fragment_color = calculateColormapJet((in_vertex.z - min_z) / delta);
-    // fragment_color = calculateColormapRainbow((in_vertex.z - min_z) / delta);
-    // fragment_color = calculateColormapMagma((in_vertex.z - min_z) / delta);
-    // fragment_color = calculateColormapViridis((in_vertex.z - min_z) / delta);
 
+    if(color_map_selection > 0)
+    {
+        float delta = max_z - min_z;
+
+        if(color_map_selection == 1)
+        {
+            colormap_color = calculateColormapJet((in_vertex.z - min_z) / delta);
+        }
+        else if(color_map_selection == 2)
+        {
+            colormap_color = calculateColormapRainbow((in_vertex.z - min_z) / delta);
+        }
+        else if(color_map_selection == 3)
+        {
+            colormap_color = calculateColormapMagma((in_vertex.z - min_z) / delta);
+        }
+        else if(color_map_selection == 4)
+        {
+            colormap_color = calculateColormapViridis((in_vertex.z - min_z) / delta);
+        }
+        else
+        {
+            colormap_color = calculateColormapJet((in_vertex.z - min_z) / delta);
+        }
+    }
 
     vec4 frag_normal_tmp = rotation_mat * vec4(in_normal, 1.0);
     frag_normal = frag_normal_tmp.xyz;

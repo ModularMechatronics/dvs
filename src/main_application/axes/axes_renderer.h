@@ -62,6 +62,8 @@ private:
     bool mouse_pressed_;
     bool render_zoom_rect_;
     bool render_legend_;
+    bool global_illumination_active_;
+    Vec3d light_pos_;
     std::vector<LegendProperties> legend_properties_;
 
     void renderPlotBox();
@@ -90,6 +92,8 @@ public:
     void render();
     void plotBegin();
     void plotEnd();
+    void activateGlobalIllumination(const Vec3d& light_pos);
+    void resetGlobalIllumination();
 };
 
 

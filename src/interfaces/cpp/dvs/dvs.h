@@ -806,10 +806,10 @@ inline void axis(const Vec2<double>& min_bound, const Vec2<double>& max_bound)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void diffuseLight(const Vec3<double>& light_position)
+inline void globalIllumination(const Vec3<double>& light_position)
 {
     internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DIFFUSE_LIGHT);
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::GLOBAL_ILLUMINATION);
     hdr.append(internal::CommunicationHeaderObjectType::VEC3, light_position);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
