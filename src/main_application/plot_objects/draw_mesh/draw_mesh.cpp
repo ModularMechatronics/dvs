@@ -98,6 +98,7 @@ void DrawMesh::render()
     {
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), static_cast<int>(color_map_) + 1);
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), 1);
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"), static_cast<int>(interpolate_colormap_));
     }
     else
     {
@@ -121,7 +122,11 @@ void DrawMesh::render()
     shader_collection_.basic_plot_shader.use();
 }
 
-DrawMesh::~DrawMesh() {}
+DrawMesh::~DrawMesh()
+{
+    delete[] points_ptr_;
+    delete[] normals_ptr_;
+}
 
 template <typename T>
 OutputData convertVerticesData(uint8_t* input_data,

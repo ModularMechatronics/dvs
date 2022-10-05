@@ -55,6 +55,7 @@ enum class PropertyType : uint8_t
     COLOR_MAP,
     POINT_SIZE,
     PERSISTENT,
+    INTERPOLATE_COLORMAP,
     SCATTER_STYLE,
     FLAG,
     UNKNOWN
@@ -164,6 +165,7 @@ enum class LineStyleType : uint8_t
 namespace properties
 {
 constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
+constexpr internal::PropertyType INTERPOLATE_COLORMAP = internal::PropertyType::INTERPOLATE_COLORMAP;
 }  // namespace properties
 
 enum class ElementType : uint8_t

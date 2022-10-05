@@ -2,6 +2,7 @@
 
 out vec4 color;
 in vec3 colormap_color;
+flat in vec3 flat_colormap_color;
 uniform int color_map_selection;
 
 uniform vec3 edge_color;
@@ -16,6 +17,7 @@ uniform vec3 light_pos;
 uniform int has_face_color;
 uniform int has_edge_color;
 uniform int is_edge;
+uniform int interpolate_colormap;
 uniform int global_illumination_active;
 
 uniform float alpha;
@@ -61,7 +63,14 @@ void main()
       {
          if(color_map_selection > 0)
          {
-            object_color = colormap_color;
+            if(interpolate_colormap == int(1))
+            {
+               object_color = colormap_color;
+            }
+            else
+            {
+               object_color = flat_colormap_color;
+            }
          }
          else
          {
@@ -81,7 +90,14 @@ void main()
       }
       else if(color_map_selection > 0)
       {
-         object_color = colormap_color;
+         if(interpolate_colormap == int(1))
+         {
+            object_color = colormap_color;
+         }
+         else
+         {
+            object_color = flat_colormap_color;
+         }
       }
       else
       {
@@ -104,12 +120,10 @@ void main()
       color.r = min(color.r, 1.0);
       color.g = min(color.g, 1.0);
       color.b = min(color.b, 1.0);
+      color.a = alpha;
    }
    else
    {
-      color = vec4(object_color, 1.0);
+      color = vec4(object_color, alpha);
    }
-
-   color.a = alpha;
-
 }
