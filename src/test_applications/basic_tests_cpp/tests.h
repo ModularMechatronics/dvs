@@ -582,44 +582,6 @@ void testImShow()
     imShow(img1, properties::Alpha(137));
 }
 
-void testDrawPolygonFrom4Points()
-{
-    setCurrentElement("view_00");
-
-    Point3<double> p0(0.0, 0.0, 0.0), p1(1.0, 0.0, 1.0), p2(1.0, 1.0, 2.0), p3(0.0, 1.0, 3.0);
-    drawPolygonFrom4Points(p0, p1, p2, p3);
-}
-
-void testDrawXYZPlane()
-{
-    VecXY<double> p0_xy(0.0, 0.0), p1_xy(1.0, 1.0);
-    VecXZ<float> p0_xz(0.0, 0.0), p1_xz(1.0, 1.0);
-    VecYZ<int16_t> p0_yz(0.0, 0.0), p1_yz(1.0, 1.0);
-    setCurrentElement("view_00");
-    clearView();
-    drawPlaneXY(p0_xy,
-                p1_xy,
-                Plane<float>(0.1, 0.1, 0.1, 0.4),
-                properties::FaceColor(126, 225, 12),
-                properties::EdgeColor(0, 0, 0));
-
-    setCurrentElement("view_01");
-    clearView();
-    drawPlaneXZ(p0_xz,
-                p1_xz,
-                Plane<double>(0.1, 0.1, 0.1, 0.4),
-                properties::FaceColor(126, 225, 12),
-                properties::EdgeColor(0, 0, 0));
-
-    setCurrentElement("view_02");
-    clearView();
-    drawPlaneYZ(p0_yz,
-                p1_yz,
-                Plane<double>(0.1, 0.1, 0.1, 0.4),
-                properties::FaceColor(126, 225, 12),
-                properties::EdgeColor(0, 0, 0));
-}
-
 void testAxis()
 {
     setCurrentElement("view_00");
@@ -697,35 +659,6 @@ void testLegend()
     showLegend();
 }
 
-void testDrawTriangles()
-{
-    const size_t num_elements = 10;
-    using tp = float;
-    Vector<Triangle3D<tp>> triangles(num_elements);
-
-    double t = 0.0;
-    Point3<double> p0(-1.0, -1.0, 0.0), p1(1.0, -1.0, 0.0), p2(0.0, 1.0, 0.0);
-
-    for (size_t k = 0; k < num_elements; k++)
-    {
-        const Matrix<double> r = rotationMatrixZ(t);
-
-        const Point3<double> p0r = r * p0 + Point3<double>(0.0, 0.0, t * 3);
-        const Point3<double> p1r = r * p1 + Point3<double>(0.0, 0.0, t * 3);
-        const Point3<double> p2r = r * p2 + Point3<double>(0.0, 0.0, t * 3);
-
-        Triangle3D<tp> tri(p0r, p1r, p2r);
-        triangles(k) = tri;
-
-        t = t + 0.3;
-    }
-
-    setCurrentElement("view_00");
-    clearView();
-
-    drawTriangles(triangles, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
-}
-
 void testDrawTiles()
 {
     const int num_rows = 20, num_cols = 25;
@@ -795,23 +728,6 @@ void testDrawMesh()
 
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
     drawMesh(x, y, z, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 244));
-}
-
-void testDrawTriangle()
-{
-    using tp = double;
-
-    Triangle3D<tp> triangle;
-    triangle.p0 = Point3<tp>(-1.0, -1.0, -1.0);
-    triangle.p1 = Point3<tp>(1.0, -1.0, -1.0);
-    triangle.p2 = Point3<tp>(1.0, 1.0, 1.0);
-
-    setCurrentElement("view_00");
-    clearView();
-
-    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
-
-    drawTriangle(triangle, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
 }
 
 void testDrawArrow()

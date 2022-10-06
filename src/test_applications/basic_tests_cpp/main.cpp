@@ -39,8 +39,6 @@ int main(int argc, char* argv[])
                              {"surf", testSurf},
                              {"imShow", testImShow},
                              {"axis", testAxis},
-                             {"drawTriangles", testDrawTriangles},
-                             {"drawTriangle", testDrawTriangle},
                              {"drawTiles", testDrawTiles},
                              {"drawMesh", testDrawMesh},
                              {"drawLine3D", testDrawLine3D},
@@ -48,7 +46,6 @@ int main(int argc, char* argv[])
                              {"drawLineBetweenPoints", testDrawLineBetweenPoints},
                              {"drawArrow", testDrawArrow},
                              {"stairs", testStairs},
-                             {"xyzPlanes", testDrawXYZPlane},
                              {"legend", testLegend}};
 
     if (argc == 1)

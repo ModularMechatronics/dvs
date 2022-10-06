@@ -477,48 +477,6 @@ template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const U
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename... Us>
-void drawPolygonFrom4Points(const Point3<double>& p0,
-                            const Point3<double>& p1,
-                            const Point3<double>& p2,
-                            const Point3<double>& p3,
-                            const Us&... settings)
-{
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::POLYGON_FROM_4_POINTS);
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(4));
-    Vector<Point3<double>> points{VectorInitializer{p0, p1, p2, p3}};
-
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
-}
-
-template <typename T, typename... Us> void drawTriangles(const Vector<Triangle3D<T>>& triangles, const Us&... settings)
-{
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_TRIANGLES_3D);
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(triangles.size()));
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, triangles);
-}
-
-template <typename... Us> void drawTriangle(const Triangle3D<double>& triangle, const Us&... settings)
-{
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_TRIANGLES_3D);
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1));
-    hdr.extend(settings...);
-
-    const Vector<Triangle3D<double>> triangles{VectorInitializer{triangle}};
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, triangles);
-}
-
 template <typename T, typename... Us>
 void drawTiles(const Matrix<T>& z, const Vec2<double>& tile_size, const Us&... settings)
 {
@@ -590,60 +548,6 @@ void drawMesh(const VectorView<T>& x,
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, indices);
-}
-
-template <typename... Us>
-void drawPlaneXY(const PointXY<double>& p0,
-                 const PointXY<double>& p1,
-                 const Plane<double>& plane,
-                 const Us&... settings)
-{
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLANE_XY);
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
-    Vector<PointXY<double>> points{VectorInitializer{p0, p1}};
-    Vector<Plane<double>> planes{VectorInitializer{plane}};
-
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
-}
-
-template <typename... Us>
-void drawPlaneXZ(const PointXZ<double>& p0,
-                 const PointXZ<double>& p1,
-                 const Plane<double>& plane,
-                 const Us&... settings)
-{
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLANE_XZ);
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
-    Vector<PointXZ<double>> points{VectorInitializer{p0, p1}};
-    Vector<Plane<double>> planes{VectorInitializer{plane}};
-
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
-}
-
-template <typename... Us>
-void drawPlaneYZ(const PointYZ<double>& p0,
-                 const PointYZ<double>& p1,
-                 const Plane<double>& plane,
-                 const Us&... settings)
-{
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLANE_YZ);
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(2));
-    Vector<PointYZ<double>> points{{p0, p1}};
-    Vector<Plane<double>> planes{{plane}};
-
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, points, planes);
 }
 
 template <typename... Us>
