@@ -129,7 +129,7 @@ void Surf::render()
 Surf::~Surf()
 {
     delete[] points_ptr_;
-    delete[] normals_pts_;
+    delete[] normals_ptr_;
 }
 
 LegendProperties Surf::getLegendProperties() const
