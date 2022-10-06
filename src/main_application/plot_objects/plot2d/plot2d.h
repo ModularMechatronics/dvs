@@ -21,7 +21,6 @@ public:
     };
 
 private:
-
     InputData input_data_;
     float gap_size_, dash_size_;
 
@@ -32,7 +31,9 @@ private:
 
 public:
     Plot2D();
-    Plot2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    Plot2D(std::unique_ptr<const ReceivedData> received_data,
+           const CommunicationHeader& hdr,
+           const ShaderCollection shader_collection);
     ~Plot2D();
 
     LegendProperties getLegendProperties() const override;
@@ -40,4 +41,4 @@ public:
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_PLOT2D_PLOT2D_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT2D_PLOT2D_H_

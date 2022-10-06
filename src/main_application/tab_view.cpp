@@ -5,23 +5,20 @@
 #include "plot_pane.h"
 
 TabView::TabView(wxNotebookPage* parent,
-    const TabSettings& tab_settings,
-    const std::function<void(const char key)>& notify_main_window_key_pressed,
-    const std::function<void(const char key)>& notify_main_window_key_released)
-    : ViewBase<wxNotebookPage>(parent,
-        tab_settings,
-        notify_main_window_key_pressed,
-        notify_main_window_key_released)
+                 const TabSettings& tab_settings,
+                 const std::function<void(const char key)>& notify_main_window_key_pressed,
+                 const std::function<void(const char key)>& notify_main_window_key_released)
+    : ViewBase<wxNotebookPage>(parent, tab_settings, notify_main_window_key_pressed, notify_main_window_key_released)
 {
     const std::vector<ElementSettings> elements = settings_->getElementSettingsList();
 
     for (const auto& elem : elements)
     {
         GuiElement* const ge = new PlotPane(dynamic_cast<wxWindow*>(this),
-            elem,
-            grid_size_,
-            notify_main_window_key_pressed_,
-            notify_main_window_key_released_);
+                                            elem,
+                                            grid_size_,
+                                            notify_main_window_key_pressed_,
+                                            notify_main_window_key_released_);
 
         ge->updateSizeFromParent(this->GetSize());
         gui_elements_[elem.name] = ge;
@@ -48,9 +45,10 @@ void TabView::newElement(const std::string& element_name)
     elem.name = element_name;
 
     GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
-        elem, grid_size_,
-        notify_main_window_key_pressed_,
-        notify_main_window_key_released_);
+                                        elem,
+                                        grid_size_,
+                                        notify_main_window_key_pressed_,
+                                        notify_main_window_key_released_);
 
     ge->updateSizeFromParent(this->GetSize());
     if (is_editing_)
@@ -70,10 +68,10 @@ void TabView::newElement()
     elem.name = "new-element-" + std::to_string(current_unused_element_idx++);
 
     GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
-        elem,
-        grid_size_,
-        notify_main_window_key_pressed_,
-        notify_main_window_key_released_);
+                                        elem,
+                                        grid_size_,
+                                        notify_main_window_key_pressed_,
+                                        notify_main_window_key_released_);
 
     ge->updateSizeFromParent(this->GetSize());
     if (is_editing_)

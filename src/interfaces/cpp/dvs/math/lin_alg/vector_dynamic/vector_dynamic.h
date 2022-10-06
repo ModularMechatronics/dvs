@@ -8,9 +8,9 @@
 #include <type_traits>
 #include <utility>
 
+#include "dvs/logging.h"
 #include "dvs/math/lin_alg/vector_dynamic/class_def/vector_dynamic.h"
 #include "dvs/math/misc/math_macros.h"
-#include "dvs/logging.h"
 
 namespace dvs
 {
@@ -787,4 +787,4 @@ template <typename Y> void fillWithPtr(Vector<Y>& v, const void* const ptr, cons
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_
+#endif  // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_DYNAMIC_H_

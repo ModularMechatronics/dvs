@@ -85,4 +85,4 @@ public:
     std::vector<std::shared_ptr<dvs::internal::PropertyBase>> getAllProperties() const;
 };
 
-#endif // MAIN_APPLICATION_PROPERTIES_H_
+#endif  // MAIN_APPLICATION_PROPERTIES_H_

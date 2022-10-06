@@ -33,4 +33,4 @@ public:
     Vec3d getAxesScale() const;
 };
 
-#endif // MAIN_APPLICATION_AXES_STRUCTURES_AXES_LIMITS_H_
+#endif  // MAIN_APPLICATION_AXES_STRUCTURES_AXES_LIMITS_H_

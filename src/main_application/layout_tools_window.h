@@ -12,11 +12,11 @@
 #include <wx/wx.h>
 
 #include <csignal>
+#include <functional>
 #include <iostream>
 #include <map>
 #include <mutex>
 #include <stdexcept>
-#include <functional>
 #include <string>
 #include <thread>
 #include <tuple>
@@ -54,7 +54,7 @@ public:
                       std::function<void()>&& add_new_element,
                       std::function<void()>&& delete_element,
                       std::function<void()>&& disable_editing);
-    
+
     void addNewTabCallback(wxCommandEvent& event);
     void deleteTab(wxCommandEvent& event);
     void addNewWindowCallback(wxCommandEvent& event);
@@ -74,4 +74,4 @@ public:
     virtual void OnClose(wxCloseEvent& event);
 };
 
-#endif // MAIN_APPLICATION_LAYOUT_TOOLS_WINDOW_H_
+#endif  // MAIN_APPLICATION_LAYOUT_TOOLS_WINDOW_H_

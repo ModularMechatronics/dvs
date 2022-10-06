@@ -18,10 +18,12 @@ private:
 
 public:
     Stairs();
-    Stairs(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    Stairs(std::unique_ptr<const ReceivedData> received_data,
+           const CommunicationHeader& hdr,
+           const ShaderCollection shader_collection);
     ~Stairs();
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_STAIRS_STAIRS_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_STAIRS_STAIRS_H_

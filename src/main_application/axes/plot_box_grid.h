@@ -3,13 +3,12 @@
 
 #include <stddef.h>
 
-#include "opengl_low_level/opengl_header.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "dvs/math/math.h"
-
+#include "opengl_low_level/opengl_header.h"
 
 class PlotBoxGrid
 {
@@ -30,9 +29,7 @@ public:
     PlotBoxGrid();
     ~PlotBoxGrid();
 
-    void render(const GridVectors& gv,
-                const AxesLimits& axes_limits,
-                const ViewAngles& view_angles);
+    void render(const GridVectors& gv, const AxesLimits& axes_limits, const ViewAngles& view_angles);
 };
 
-#endif // MAIN_APPLICATION_AXES_PLOT_BOX_GRID_H_
+#endif  // MAIN_APPLICATION_AXES_PLOT_BOX_GRID_H_

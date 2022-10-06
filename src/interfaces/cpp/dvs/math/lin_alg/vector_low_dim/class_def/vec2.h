@@ -23,7 +23,6 @@ template <typename T> struct Vec2
     Vec2<T> elementWiseDivide(const Vec2<T>& numerator_vector) const;
     T angleBetweenVectors(const Vec2<T>& v) const;
     T angle() const;
-
 };
 
 template <typename T> struct VecXY
@@ -55,4 +54,4 @@ template <typename T> struct VecYZ
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_CLASS_DEF_VEC2_H_
+#endif  // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_CLASS_DEF_VEC2_H_

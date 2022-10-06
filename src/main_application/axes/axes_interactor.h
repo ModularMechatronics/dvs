@@ -93,4 +93,4 @@ public:
     void showLegend(const bool show_legend);
 };
 
-#endif // MAIN_APPLICATION_AXES_AXES_INTERACTOR_H_
+#endif  // MAIN_APPLICATION_AXES_AXES_INTERACTOR_H_

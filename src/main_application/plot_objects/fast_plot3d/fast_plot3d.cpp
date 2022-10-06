@@ -1,12 +1,14 @@
 #include "main_application/plot_objects/fast_plot3d/fast_plot3d.h"
 
 uint8_t* convertData3DFastPlot3Outer(const uint8_t* const input_data,
-                            const DataType data_type,
-                            const size_t num_elements,
-                            const size_t num_bytes_per_element,
-                            const size_t num_bytes_for_one_vec);
+                                     const DataType data_type,
+                                     const size_t num_elements,
+                                     const size_t num_bytes_per_element,
+                                     const size_t num_bytes_for_one_vec);
 
-FastPlot3D::FastPlot3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+FastPlot3D::FastPlot3D(std::unique_ptr<const ReceivedData> received_data,
+                       const CommunicationHeader& hdr,
+                       const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::FAST_PLOT3)
@@ -14,8 +16,8 @@ FastPlot3D::FastPlot3D(std::unique_ptr<const ReceivedData> received_data, const 
         throw std::runtime_error("Invalid function type for FastPlot3D!");
     }
 
-    points_ptr_ =
-        convertData3DFastPlot3Outer(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+    points_ptr_ = convertData3DFastPlot3Outer(
+        data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
@@ -49,9 +51,9 @@ FastPlot3D::~FastPlot3D()
 
 template <typename T>
 uint8_t* convertData3DFastPlot3(const uint8_t* const input_data,
-                       const size_t num_elements,
-                       const size_t num_bytes_per_element,
-                       const size_t num_bytes_for_one_vec)
+                                const size_t num_elements,
+                                const size_t num_bytes_per_element,
+                                const size_t num_bytes_for_one_vec)
 {
     uint8_t* output_data = new uint8_t[sizeof(float) * 3 * num_elements];
 
@@ -104,51 +106,61 @@ uint8_t* convertData3DFastPlot3(const uint8_t* const input_data,
 }
 
 uint8_t* convertData3DFastPlot3Outer(const uint8_t* const input_data,
-                                   const DataType data_type,
-                                   const size_t num_elements,
-                                   const size_t num_bytes_per_element,
-                                   const size_t num_bytes_for_one_vec)
+                                     const DataType data_type,
+                                     const size_t num_elements,
+                                     const size_t num_bytes_per_element,
+                                     const size_t num_bytes_for_one_vec)
 {
     uint8_t* output_data;
     if (data_type == DataType::FLOAT)
     {
-        output_data = convertData3DFastPlot3<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::DOUBLE)
     {
-        output_data = convertData3DFastPlot3<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT8)
     {
-        output_data = convertData3DFastPlot3<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT16)
     {
-        output_data = convertData3DFastPlot3<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT32)
     {
-        output_data = convertData3DFastPlot3<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT64)
     {
-        output_data = convertData3DFastPlot3<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT8)
     {
-        output_data = convertData3DFastPlot3<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT16)
     {
-        output_data = convertData3DFastPlot3<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT32)
     {
-        output_data = convertData3DFastPlot3<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT64)
     {
-        output_data = convertData3DFastPlot3<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData3DFastPlot3<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else
     {
@@ -157,4 +169,3 @@ uint8_t* convertData3DFastPlot3Outer(const uint8_t* const input_data,
 
     return output_data;
 }
-

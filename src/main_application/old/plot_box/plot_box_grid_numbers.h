@@ -16,4 +16,4 @@ void drawAxisNumbers(const GridVectors& gv,
                      const float width,
                      const float height);
 
-#endif // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_NUMBERS_H_
+#endif  // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_NUMBERS_H_

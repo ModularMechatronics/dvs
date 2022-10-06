@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "main_window.h"
 #include "dvs/logging.h"
+#include "main_window.h"
 
 class MainApp : public wxApp
 {

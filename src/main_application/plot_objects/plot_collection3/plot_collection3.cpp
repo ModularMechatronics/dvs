@@ -9,10 +9,10 @@ struct OutputData
 
 template <typename T>
 OutputData convertCollection3DData(uint8_t* input_data,
-                                    const size_t num_objects,
-                                    const size_t num_bytes_per_element,
-                                    const size_t num_points,
-                                    const Vector<uint16_t>& vector_lengths)
+                                   const size_t num_objects,
+                                   const size_t num_bytes_per_element,
+                                   const size_t num_points,
+                                   const Vector<uint16_t>& vector_lengths)
 {
     const size_t total_num_bytes = num_points * 3 * num_bytes_per_element;
     const size_t num_bytes_per_collection = vector_lengths.sum() * num_bytes_per_element;
@@ -73,11 +73,11 @@ OutputData convertCollection3DData(uint8_t* input_data,
 }
 
 inline OutputData convertCollection3DDataOuter(uint8_t* input_data,
-                                         const DataType data_type,
-                                         const size_t num_objects,
-                                         const size_t num_bytes_per_element,
-                                         const size_t num_points,
-                                         const Vector<uint16_t>& vector_lengths)
+                                               const DataType data_type,
+                                               const size_t num_objects,
+                                               const size_t num_bytes_per_element,
+                                               const size_t num_points,
+                                               const Vector<uint16_t>& vector_lengths)
 {
     OutputData output_data;
     if (data_type == DataType::FLOAT)
@@ -97,38 +97,38 @@ inline OutputData convertCollection3DDataOuter(uint8_t* input_data,
     }
     else if (data_type == DataType::INT16)
     {
-        output_data =
-            convertCollection3DData<int16_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+        output_data = convertCollection3DData<int16_t>(
+            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
     }
     else if (data_type == DataType::INT32)
     {
-        output_data =
-            convertCollection3DData<int32_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+        output_data = convertCollection3DData<int32_t>(
+            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
     }
     else if (data_type == DataType::INT64)
     {
-        output_data =
-            convertCollection3DData<int64_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+        output_data = convertCollection3DData<int64_t>(
+            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
     }
     else if (data_type == DataType::UINT8)
     {
-        output_data =
-            convertCollection3DData<uint8_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+        output_data = convertCollection3DData<uint8_t>(
+            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
     }
     else if (data_type == DataType::UINT16)
     {
-        output_data =
-            convertCollection3DData<uint16_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+        output_data = convertCollection3DData<uint16_t>(
+            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
     }
     else if (data_type == DataType::UINT32)
     {
-        output_data =
-            convertCollection3DData<uint32_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+        output_data = convertCollection3DData<uint32_t>(
+            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
     }
     else if (data_type == DataType::UINT64)
     {
-        output_data =
-            convertCollection3DData<uint64_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
+        output_data = convertCollection3DData<uint64_t>(
+            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
     }
     else
     {
@@ -138,7 +138,9 @@ inline OutputData convertCollection3DDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_data,
+                                   const CommunicationHeader& hdr,
+                                   const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLOT_COLLECTION3)
@@ -163,7 +165,7 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
 
     OutputData output_data = convertCollection3DDataOuter(
         data_ptr_, data_type_, num_objects_, num_bytes_per_element_, num_points_, vector_lengths);
-    
+
     points_ptr_ = output_data.data_ptr;
     min_vec = output_data.min_vec;
     max_vec = output_data.max_vec;

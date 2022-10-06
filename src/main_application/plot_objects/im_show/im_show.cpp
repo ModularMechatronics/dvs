@@ -29,7 +29,9 @@ template <typename T> GLuint loadTexture(const int width, const int height, cons
     return textureID;
 }
 
-ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
+               const CommunicationHeader& hdr,
+               const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::IM_SHOW)
@@ -45,7 +47,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Communic
     width = dims_.cols;
     height = dims_.rows;
 
-    if(num_channels_ == 3)
+    if (num_channels_ == 3)
     {
         ImageC3View<float> img_c3{reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols};
 
@@ -153,9 +155,8 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data, const Communic
                 points_ptr_[idx5_b] = color_val_b;
             }
         }
-
     }
-    else if(num_channels_ == 1)
+    else if (num_channels_ == 1)
     {
         ImageC1View<float> img_c1{reinterpret_cast<float*>(data_ptr_), dims_.rows, dims_.cols};
 

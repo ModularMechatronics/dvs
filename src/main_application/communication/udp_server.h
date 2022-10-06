@@ -26,8 +26,8 @@
 #include <thread>
 
 #include "communication/received_data.h"
-#include "dvs/dvs.h"
 #include "dvs/constants.h"
+#include "dvs/dvs.h"
 
 class UdpServer
 {
@@ -48,7 +48,6 @@ private:
     void receiveThreadFunction();
 
 public:
-
     UdpServer() = delete;
     UdpServer(const UdpServer& other) = delete;
     UdpServer(UdpServer&& other) = delete;
@@ -61,4 +60,4 @@ public:
     ~UdpServer();
 };
 
-#endif // MAIN_APPLICATION_COMMUNICATION_UDP_SERVER_H_
+#endif  // MAIN_APPLICATION_COMMUNICATION_UDP_SERVER_H_

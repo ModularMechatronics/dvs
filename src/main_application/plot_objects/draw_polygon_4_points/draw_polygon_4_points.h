@@ -25,9 +25,11 @@ private:
 
 public:
     DrawPolygon4Points();
-    DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    DrawPolygon4Points(std::unique_ptr<const ReceivedData> received_data,
+                       const CommunicationHeader& hdr,
+                       const ShaderCollection shader_collection);
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_POLYGON_4_POINTS_DRAW_POLYGON_4_POINTS_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_POLYGON_4_POINTS_DRAW_POLYGON_4_POINTS_H_

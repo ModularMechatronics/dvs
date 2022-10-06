@@ -21,9 +21,11 @@ private:
 
 public:
     Quiver();
-    Quiver(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    Quiver(std::unique_ptr<const ReceivedData> received_data,
+           const CommunicationHeader& hdr,
+           const ShaderCollection shader_collection);
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_QUIVER_QUIVER_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_QUIVER_QUIVER_H_

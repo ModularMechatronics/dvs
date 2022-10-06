@@ -1,12 +1,14 @@
 #include "main_application/plot_objects/plot3d/plot3d.h"
 
 Plot3D::InputData convertData3DOuter(const uint8_t* const input_data,
-                            const DataType data_type,
-                            const size_t num_elements,
-                            const size_t num_bytes_per_element,
-                            const size_t num_bytes_for_one_vec);
+                                     const DataType data_type,
+                                     const size_t num_elements,
+                                     const size_t num_bytes_per_element,
+                                     const size_t num_bytes_for_one_vec);
 
-Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
+               const CommunicationHeader& hdr,
+               const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLOT3)
@@ -71,7 +73,8 @@ void Plot3D::render()
     const size_t num_points = num_segments * 6;
 
     shader_collection_.plot_3d_shader.use();
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "line_width"), line_width_ / 1200.0f);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "line_width"),
+                line_width_ / 1200.0f);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_points);
     glBindVertexArray(0);
@@ -88,9 +91,9 @@ Plot3D::~Plot3D()
 
 template <typename T>
 Plot3D::InputData convertData3D(const uint8_t* const input_data,
-                       const size_t num_elements,
-                       const size_t num_bytes_per_element,
-                       const size_t num_bytes_for_one_vec)
+                                const size_t num_elements,
+                                const size_t num_bytes_per_element,
+                                const size_t num_bytes_for_one_vec)
 {
     const size_t num_segments = num_elements - 1;
     const size_t num_points = num_segments * 6;
@@ -343,10 +346,10 @@ Plot3D::InputData convertData3D(const uint8_t* const input_data,
 }
 
 Plot3D::InputData convertData3DOuter(const uint8_t* const input_data,
-                                   const DataType data_type,
-                                   const size_t num_elements,
-                                   const size_t num_bytes_per_element,
-                                   const size_t num_bytes_for_one_vec)
+                                     const DataType data_type,
+                                     const size_t num_elements,
+                                     const size_t num_bytes_per_element,
+                                     const size_t num_bytes_for_one_vec)
 {
     Plot3D::InputData output_data;
     if (data_type == DataType::FLOAT)
@@ -396,4 +399,3 @@ Plot3D::InputData convertData3DOuter(const uint8_t* const input_data,
 
     return output_data;
 }
-

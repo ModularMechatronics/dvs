@@ -18,4 +18,4 @@ public:
     void keyGotReleased(const char key);
 };
 
-#endif // MAIN_APPLICATION_IO_DEVICES_KEYBOARD_STATE_H_
+#endif  // MAIN_APPLICATION_IO_DEVICES_KEYBOARD_STATE_H_

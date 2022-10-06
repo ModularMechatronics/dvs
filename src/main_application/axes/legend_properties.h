@@ -5,9 +5,9 @@
 #include <string_view>
 
 #include "dvs/enumerations.h"
-#include "opengl_low_level/data_structures.h"
 #include "dvs/plot_properties.h"
 #include "misc/color_map.h"
+#include "opengl_low_level/data_structures.h"
 
 // TODO: This should be filled in plot_object_base and the individual object types
 
@@ -30,4 +30,4 @@ struct LegendProperties
     dvs::properties::LineStyle line_style;
 };
 
-#endif // MAIN_APPLICATION_AXES_LEGEND_PROPERTIES_H_
+#endif  // MAIN_APPLICATION_AXES_LEGEND_PROPERTIES_H_

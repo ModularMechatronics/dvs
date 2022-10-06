@@ -4,9 +4,9 @@
 #include <cmath>
 #include <cstring>
 
+#include "dvs/logging.h"
 #include "dvs/math/lin_alg/matrix_dynamic/class_def/matrix_dynamic.h"
 #include "dvs/math/misc/math_macros.h"
-#include "dvs/logging.h"
 
 namespace dvs
 {
@@ -38,7 +38,6 @@ template <typename T> Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
                 data_[r * num_cols_ + c] = m(r, c);
             }
         }
-
     }
     return *this;
 }
@@ -626,4 +625,4 @@ template <typename T> T Matrix<T>::sum() const
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_
+#endif  // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_

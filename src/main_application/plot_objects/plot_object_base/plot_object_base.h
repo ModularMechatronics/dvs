@@ -4,9 +4,10 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <vector>
 #include <string_view>
+#include <vector>
 
+#include "axes/legend_properties.h"
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
@@ -15,7 +16,6 @@
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_objects/utils.h"
 #include "properties.h"
-#include "axes/legend_properties.h"
 #include "shader.h"
 
 using namespace dvs;
@@ -72,7 +72,9 @@ public:
     size_t getNumDimensions() const;
     virtual ~PlotObjectBase();
     PlotObjectBase();
-    PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    PlotObjectBase(std::unique_ptr<const ReceivedData> received_data,
+                   const CommunicationHeader& hdr,
+                   const ShaderCollection shader_collection);
     virtual void render() = 0;
     std::pair<Vec3d, Vec3d> getMinMaxVectors();
 
@@ -97,7 +99,7 @@ public:
     {
         return color_;
     }
-    
+
     bool hasName()
     {
         return has_name_;
@@ -106,4 +108,4 @@ public:
     virtual void modifyShader();
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_

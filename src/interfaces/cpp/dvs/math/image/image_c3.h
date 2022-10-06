@@ -1,8 +1,8 @@
 #ifndef DVS_MATH_IMAGE_IMAGE_C3_H_
 #define DVS_MATH_IMAGE_IMAGE_C3_H_
 
-#include <stdint.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include <cstring>
 #include <iostream>
@@ -21,14 +21,12 @@ private:
     size_t num_element_per_channel_;
 
 public:
-    ImageC3View() : data_{nullptr}, num_rows_{0U}, num_cols_{0U}, num_element_per_channel_{0U}
+    ImageC3View() : data_{nullptr}, num_rows_{0U}, num_cols_{0U}, num_element_per_channel_{0U} {}
+
+    ImageC3View(T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
+        : data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}, num_element_per_channel_{num_rows_ * num_cols_}
     {
-
     }
-
-    ImageC3View(T* const data_ptr_in, const size_t num_rows, const size_t num_cols) :
-        data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}, num_element_per_channel_{num_rows_ * num_cols_}
-    {}
 
     T* data() const
     {
@@ -102,8 +100,7 @@ template <typename T> ImageC3<T>::~ImageC3()
     }
 }
 
-template <typename T>
-ImageC3<T>::ImageC3() : data_{nullptr}, num_rows_(0U), num_cols_(0U), num_element_per_channel_(0U)
+template <typename T> ImageC3<T>::ImageC3() : data_{nullptr}, num_rows_(0U), num_cols_(0U), num_element_per_channel_(0U)
 {
 }
 
@@ -170,4 +167,4 @@ template <typename T> const T& ImageC3<T>::operator()(const size_t r, const size
 
 }  // namespace dvs
 
-#endif // DVS_MATH_IMAGE_IMAGE_C3_H_
+#endif  // DVS_MATH_IMAGE_IMAGE_C3_H_

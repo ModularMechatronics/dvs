@@ -21,8 +21,7 @@ template <typename T> struct Plane
     T evalXY(const T x, const T y) const;
     T evalXZ(const T x, const T z) const;
     T evalYZ(const T y, const T z) const;
-
 };
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_CLASS_DEF_PLANE_H_
+#endif  // DVS_MATH_GEOMETRY_CLASS_DEF_PLANE_H_

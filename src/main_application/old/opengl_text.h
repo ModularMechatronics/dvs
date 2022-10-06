@@ -23,4 +23,4 @@ void putTextAt3D(const std::string& s, const Vec3d& v);
 void putTextAt_Old(const std::string& s, const double x, const double y);
 void putTextAt3D(const std::string& s, const double x, const double y, const double z);
 
-#endif // MAIN_APPLICATION_OLD_OPENGL_TEXT_H_
+#endif  // MAIN_APPLICATION_OLD_OPENGL_TEXT_H_

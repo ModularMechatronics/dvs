@@ -1,29 +1,29 @@
 #include "tray_icon.h"
+
 #include "events.h"
 
-wxBEGIN_EVENT_TABLE(CustomTaskBarIcon, wxTaskBarIcon)
-    EVT_MENU(PU_EXIT,    CustomTaskBarIcon::onMenuExit)
+wxBEGIN_EVENT_TABLE(CustomTaskBarIcon, wxTaskBarIcon) EVT_MENU(PU_EXIT, CustomTaskBarIcon::onMenuExit)
     EVT_MENU(PU_SHOW_MAIN_WINDOW, CustomTaskBarIcon::onMenuMainWindow)
-    EVT_MENU(PU_FILE_NEW, CustomTaskBarIcon::onMenuFileNew)
-    EVT_MENU(PU_FILE_OPEN, CustomTaskBarIcon::onMenuFileOpen)
-    EVT_MENU(PU_FILE_SAVE, CustomTaskBarIcon::onMenuFileSave)
-    EVT_MENU(PU_FILE_SAVE_AS, CustomTaskBarIcon::onMenuFileSaveAs)
-    EVT_MENU(PU_EDIT_LAYOUT, CustomTaskBarIcon::onMenuEdit)
-    EVT_MENU(PU_PREFERENCES, CustomTaskBarIcon::onMenuPreferences)
-wxEND_EVENT_TABLE()
+        EVT_MENU(PU_FILE_NEW, CustomTaskBarIcon::onMenuFileNew)
+            EVT_MENU(PU_FILE_OPEN, CustomTaskBarIcon::onMenuFileOpen)
+                EVT_MENU(PU_FILE_SAVE, CustomTaskBarIcon::onMenuFileSave)
+                    EVT_MENU(PU_FILE_SAVE_AS, CustomTaskBarIcon::onMenuFileSaveAs)
+                        EVT_MENU(PU_EDIT_LAYOUT, CustomTaskBarIcon::onMenuEdit)
+                            EVT_MENU(PU_PREFERENCES, CustomTaskBarIcon::onMenuPreferences) wxEND_EVENT_TABLE()
 
 #if defined(__WXOSX__) && wxOSX_USE_COCOA
-CustomTaskBarIcon::CustomTaskBarIcon(wxTaskBarIconType iconType) :
-  wxTaskBarIcon(iconType),
+                                CustomTaskBarIcon::CustomTaskBarIcon(wxTaskBarIconType iconType)
+    : wxTaskBarIcon(iconType),
 #else
-    CustomTaskBarIcon::CustomTaskBarIcon() : 
+                                CustomTaskBarIcon::CustomTaskBarIcon()
+    :
 #endif
-    // menu_{nullptr},
+      // menu_{nullptr},
       file_submenu_{nullptr},
       windows_submenu_{nullptr},
       edit_label_{"Edit layout"}
 {
-    for(int k = PU_FIRST_WINDOW_ID; k <= PU_LAST_WINDOW_ID; k++)
+    for (int k = PU_FIRST_WINDOW_ID; k <= PU_LAST_WINDOW_ID; k++)
     {
         free_ids_.push_back(k);
     }
@@ -70,11 +70,10 @@ void CustomTaskBarIcon::setOnMenuShowMainWindow(std::function<void()>&& main_men
     main_menu_function_ = std::move(main_menu_function);
 }
 
-void CustomTaskBarIcon::onMenuExit(wxCommandEvent& )
+void CustomTaskBarIcon::onMenuExit(wxCommandEvent&)
 {
     exit_function_();
 }
-
 
 void CustomTaskBarIcon::onMenuMainWindow(wxCommandEvent& evt)
 {
@@ -85,9 +84,9 @@ void CustomTaskBarIcon::onMenuSubWindow(wxCommandEvent& evt)
 {
     bool window_found = false;
     std::string window_name;
-    for ( const auto &p : window_event_ids_)
+    for (const auto& p : window_event_ids_)
     {
-        if(p.second == evt.GetId())
+        if (p.second == evt.GetId())
         {
             window_found = true;
             window_name = p.first;
@@ -152,12 +151,11 @@ void CustomTaskBarIcon::setOnMenuPreferences(std::function<void()>&& preferences
 {
     preferences_function_ = preferences_function;
 }
-    
 
-wxMenu *CustomTaskBarIcon::CreatePopupMenu()
+wxMenu* CustomTaskBarIcon::CreatePopupMenu()
 {
-    MyMenu* menu_ = new MyMenu{[this] () -> void {
-        for ( const auto &p : window_events_ )
+    MyMenu* menu_ = new MyMenu{[this]() -> void {
+        for (const auto& p : window_events_)
         {
             Unbind(wxEVT_MENU, &CustomTaskBarIcon::onMenuSubWindow, this, window_event_ids_[p.first]);
         }
@@ -169,7 +167,7 @@ wxMenu *CustomTaskBarIcon::CreatePopupMenu()
     file_submenu_->Append(PU_FILE_OPEN, wxT("Open..."));
     file_submenu_->Append(PU_FILE_SAVE, wxT("Save"));
     file_submenu_->Append(PU_FILE_SAVE_AS, wxT("Save As..."));
-    
+
     menu_->Append(PU_FILE, wxT("&File"), file_submenu_);
     menu_->AppendSeparator();
 
@@ -180,7 +178,7 @@ wxMenu *CustomTaskBarIcon::CreatePopupMenu()
     windows_submenu_->Append(PU_SHOW_MAIN_WINDOW, wxT("Main window"));
     windows_submenu_->AppendSeparator();
 
-    for ( const auto &p : window_events_ )
+    for (const auto& p : window_events_)
     {
         windows_submenu_->Append(window_event_ids_[p.first], p.first);
         Bind(wxEVT_MENU, &CustomTaskBarIcon::onMenuSubWindow, this, p.second);
@@ -188,8 +186,8 @@ wxMenu *CustomTaskBarIcon::CreatePopupMenu()
 
     menu_->Append(PU_SUBMAIN, wxT("Windows"), windows_submenu_);
 
-#ifdef __WXOSX__ 
-    if ( OSXIsStatusItem() )
+#ifdef __WXOSX__
+    if (OSXIsStatusItem())
 #endif
     {
         menu_->AppendSeparator();

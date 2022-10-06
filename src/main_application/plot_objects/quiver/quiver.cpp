@@ -1,6 +1,5 @@
 #include "main_application/plot_objects/quiver/quiver.h"
 
-
 template <typename T>
 float* convertQuiverData(uint8_t* input_data, const Dimension2D& dims, const size_t num_bytes_per_element)
 {
@@ -119,7 +118,9 @@ inline float* convertQuiverDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-Quiver::Quiver(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+Quiver::Quiver(std::unique_ptr<const ReceivedData> received_data,
+               const CommunicationHeader& hdr,
+               const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::QUIVER)

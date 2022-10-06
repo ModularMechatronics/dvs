@@ -22,4 +22,4 @@ struct IndexTriplet
 
 }  // namespace dvs
 
-#endif // DVS_MATH_STRUCTURES_INDEX_TRIPLET_H_
+#endif  // DVS_MATH_STRUCTURES_INDEX_TRIPLET_H_

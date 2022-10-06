@@ -45,4 +45,4 @@ template <typename T> using PointYZ = VecYZ<T>;
 
 }  // namespace dvs
 
-#endif // DVS_MATH_MISC_FORWARD_DECL_H_
+#endif  // DVS_MATH_MISC_FORWARD_DECL_H_

@@ -5,14 +5,11 @@
 #include "plot_pane.h"
 
 WindowView::WindowView(wxFrame* parent,
-    const WindowSettings& window_settings,
-    const int callback_id,
-    const std::function<void(const char key)>& notify_main_window_key_pressed,
-    const std::function<void(const char key)>& notify_main_window_key_released)
-    : ViewBase<wxFrame>(parent,
-        window_settings,
-        notify_main_window_key_pressed,
-        notify_main_window_key_released)
+                       const WindowSettings& window_settings,
+                       const int callback_id,
+                       const std::function<void(const char key)>& notify_main_window_key_pressed,
+                       const std::function<void(const char key)>& notify_main_window_key_released)
+    : ViewBase<wxFrame>(parent, window_settings, notify_main_window_key_pressed, notify_main_window_key_released)
 {
     callback_id_ = callback_id;
 
@@ -21,10 +18,10 @@ WindowView::WindowView(wxFrame* parent,
     for (const auto& elem : elements)
     {
         GuiElement* const ge = new PlotPane(dynamic_cast<wxFrame*>(this),
-            elem,
-            grid_size_,
-            notify_main_window_key_pressed_,
-            notify_main_window_key_released_);
+                                            elem,
+                                            grid_size_,
+                                            notify_main_window_key_pressed_,
+                                            notify_main_window_key_released_);
 
         ge->updateSizeFromParent(this->GetSize());
         gui_elements_[elem.name] = ge;
@@ -104,10 +101,10 @@ void WindowView::newElement(const std::string& element_name)
     elem.name = element_name;
 
     GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
-        elem,
-        grid_size_,
-        notify_main_window_key_pressed_,
-        notify_main_window_key_released_);
+                                        elem,
+                                        grid_size_,
+                                        notify_main_window_key_pressed_,
+                                        notify_main_window_key_released_);
 
     ge->updateSizeFromParent(this->GetSize());
     if (is_editing_)
@@ -127,10 +124,10 @@ void WindowView::newElement()
     elem.name = "new-element-" + std::to_string(current_unused_element_idx++);
 
     GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
-        elem,
-        grid_size_,
-        notify_main_window_key_pressed_,
-        notify_main_window_key_released_);
+                                        elem,
+                                        grid_size_,
+                                        notify_main_window_key_pressed_,
+                                        notify_main_window_key_released_);
 
     ge->updateSizeFromParent(this->GetSize());
     if (is_editing_)

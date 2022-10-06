@@ -4,4 +4,4 @@
 #include "io_devices/keyboard_state.h"
 #include "io_devices/mouse_state.h"
 
-#endif // MAIN_APPLICATION_IO_DEVICES_IO_DEVICES_H_
+#endif  // MAIN_APPLICATION_IO_DEVICES_IO_DEVICES_H_

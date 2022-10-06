@@ -1,17 +1,17 @@
 #include "axes_renderer.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
+
 #include "dvs/math/math.h"
 #include "misc/misc.h"
 
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
-
 using namespace dvs;
 
-AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) :
-    shader_collection_{shader_collection}, legend_renderer_{text_renderer_, shader_collection_}
+AxesRenderer::AxesRenderer(const ShaderCollection shader_collection)
+    : shader_collection_{shader_collection}, legend_renderer_{text_renderer_, shader_collection_}
 {
     glUseProgram(shader_collection_.text_shader.programId());
 
@@ -20,7 +20,8 @@ AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) :
     glUniform1i(glGetUniformLocation(shader_collection_.text_shader.programId(), "text_sampler"), 0);
 
     const float sw = 3.0f;
-    orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);;
+    orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);
+    ;
     persp_projection_mat = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
 
     use_perspective_proj_ = false;
@@ -28,12 +29,10 @@ AxesRenderer::AxesRenderer(const ShaderCollection shader_collection) :
     projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
 
     // Camera matrix
-    view_mat = glm::lookAt(glm::vec3(0, -6.0, 0),
-                           glm::vec3(0, 0, 0),
-                           glm::vec3(0, 0, 1));
+    view_mat = glm::lookAt(glm::vec3(0, -6.0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
     model_mat = glm::mat4(1.0f);
     scale_mat = glm::mat4(1.0f);
-    
+
     window_scale_mat_ = glm::mat4(1.0f);
     window_scale_mat_[0][0] = 2.7;
     window_scale_mat_[1][1] = 2.7;

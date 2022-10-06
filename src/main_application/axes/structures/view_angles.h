@@ -51,4 +51,4 @@ public:
     SnappingAxis getSnappingAxis() const;
 };
 
-#endif // MAIN_APPLICATION_AXES_STRUCTURES_VIEW_ANGLES_H_
+#endif  // MAIN_APPLICATION_AXES_STRUCTURES_VIEW_ANGLES_H_

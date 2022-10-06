@@ -7,4 +7,4 @@
 void drawDottedBox(const AxesSettings& axes_settings);
 void drawOutline(const AxesSettings& axes_settings, const ViewAngles& view_angles);
 
-#endif // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_OUTLINE_H_
+#endif  // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_OUTLINE_H_

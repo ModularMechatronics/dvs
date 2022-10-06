@@ -42,4 +42,4 @@ template <typename T> struct ParametricLine2D
 
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_CLASS_DEF_LINE_2D_H_
+#endif  // DVS_MATH_GEOMETRY_CLASS_DEF_LINE_2D_H_

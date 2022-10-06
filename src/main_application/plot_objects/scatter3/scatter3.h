@@ -19,11 +19,13 @@ private:
 
 public:
     Scatter3D();
-    Scatter3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    Scatter3D(std::unique_ptr<const ReceivedData> received_data,
+              const CommunicationHeader& hdr,
+              const ShaderCollection shader_collection);
     ~Scatter3D();
 
     void render() override;
     void modifyShader() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER3_SCATTER3_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER3_SCATTER3_H_

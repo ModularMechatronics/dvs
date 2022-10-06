@@ -35,10 +35,8 @@ void MainWindow::setupTabs(const ProjectSettings& project_settings)
     {
         const std::string tab_name = tab.getName();
 
-        TabView* tab_element = new TabView(tabs_view,
-            tab,
-            notification_from_gui_element_key_pressed_,
-            notification_from_gui_element_key_released_);
+        TabView* tab_element = new TabView(
+            tabs_view, tab, notification_from_gui_element_key_pressed_, notification_from_gui_element_key_released_);
         tabs_.push_back(tab_element);
 
         tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);

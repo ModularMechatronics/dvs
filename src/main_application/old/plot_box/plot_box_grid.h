@@ -12,4 +12,4 @@ void drawGrid(const GridVectors& gv,
               const AxesLimits& axes_limits,
               const ViewAngles& view_angles);
 
-#endif // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_H_
+#endif  // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_GRID_H_

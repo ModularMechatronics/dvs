@@ -1,8 +1,8 @@
 #ifndef DVS_MATH_IMAGE_IMAGE_C1_H_
 #define DVS_MATH_IMAGE_IMAGE_C1_H_
 
-#include <stdint.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include <cstring>
 #include <iostream>
@@ -20,14 +20,12 @@ private:
     size_t num_cols_;
 
 public:
-    ImageC1View() : data_{nullptr}, num_rows_{0U}, num_cols_{0U}
+    ImageC1View() : data_{nullptr}, num_rows_{0U}, num_cols_{0U} {}
+
+    ImageC1View(T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
+        : data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
     {
-
     }
-
-    ImageC1View(T* const data_ptr_in, const size_t num_rows, const size_t num_cols) :
-        data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
-    {}
 
     T* data() const
     {
@@ -181,4 +179,4 @@ template <typename T> const T& ImageC1<T>::operator()(const size_t r, const size
 
 }  // namespace dvs
 
-#endif // DVS_MATH_IMAGE_IMAGE_C1_H_
+#endif  // DVS_MATH_IMAGE_IMAGE_C1_H_

@@ -1,12 +1,14 @@
 #include "main_application/plot_objects/scatter3/scatter3.h"
 
 uint8_t* convertScatterData3DOuter(const uint8_t* const input_data,
-                            const DataType data_type,
-                            const size_t num_elements,
-                            const size_t num_bytes_per_element,
-                            const size_t num_bytes_for_one_vec);
+                                   const DataType data_type,
+                                   const size_t num_elements,
+                                   const size_t num_bytes_per_element,
+                                   const size_t num_bytes_for_one_vec);
 
-Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data,
+                     const CommunicationHeader& hdr,
+                     const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::SCATTER3)
@@ -51,7 +53,6 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data, const Co
         0,
         (void*)0
     );*/
-
 }
 
 void Scatter3D::modifyShader()
@@ -59,7 +60,8 @@ void Scatter3D::modifyShader()
     PlotObjectBase::modifyShader();
     glUseProgram(shader_collection_.scatter_shader.programId());
     glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "point_size"), point_size_);
-    glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"), static_cast<int>(scatter_style_type_));
+    glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"),
+                static_cast<int>(scatter_style_type_));
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
@@ -83,12 +85,11 @@ Scatter3D::~Scatter3D()
     delete[] points_ptr_;
 }
 
-
 template <typename T>
 uint8_t* convertScatterData3D(const uint8_t* const input_data,
-                       const size_t num_elements,
-                       const size_t num_bytes_per_element,
-                       const size_t num_bytes_for_one_vec)
+                              const size_t num_elements,
+                              const size_t num_bytes_per_element,
+                              const size_t num_bytes_for_one_vec)
 {
     uint8_t* output_data = new uint8_t[sizeof(float) * 3 * num_elements];
 
@@ -148,43 +149,53 @@ uint8_t* convertScatterData3DOuter(const uint8_t* const input_data,
     uint8_t* output_data;
     if (data_type == DataType::FLOAT)
     {
-        output_data = convertScatterData3D<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::DOUBLE)
     {
-        output_data = convertScatterData3D<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT8)
     {
-        output_data = convertScatterData3D<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT16)
     {
-        output_data = convertScatterData3D<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT32)
     {
-        output_data = convertScatterData3D<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT64)
     {
-        output_data = convertScatterData3D<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT8)
     {
-        output_data = convertScatterData3D<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT16)
     {
-        output_data = convertScatterData3D<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT32)
     {
-        output_data = convertScatterData3D<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT64)
     {
-        output_data = convertScatterData3D<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertScatterData3D<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else
     {
@@ -193,4 +204,3 @@ uint8_t* convertScatterData3DOuter(const uint8_t* const input_data,
 
     return output_data;
 }
-

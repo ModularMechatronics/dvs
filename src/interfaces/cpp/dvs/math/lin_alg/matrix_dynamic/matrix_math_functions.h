@@ -6,8 +6,8 @@
 #include <cstdarg>
 #include <utility>
 
-#include "dvs/math/lin_alg/matrix_dynamic/matrix_dynamic.h"
 #include "dvs/logging.h"
+#include "dvs/math/lin_alg/matrix_dynamic/matrix_dynamic.h"
 
 namespace dvs
 {
@@ -289,4 +289,4 @@ template <typename T> Matrix<T> rotationMatrix2D(const T angle)
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_MATH_FUNCTIONS_H_
+#endif  // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_MATH_FUNCTIONS_H_

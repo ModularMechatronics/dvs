@@ -24,4 +24,4 @@ public:
     const dvs::internal::CommunicationHeader& getCommunicationHeader() const;
 };
 
-#endif // MAIN_APPLICATION_COMMUNICATION_RECEIVED_DATA_H_
+#endif  // MAIN_APPLICATION_COMMUNICATION_RECEIVED_DATA_H_

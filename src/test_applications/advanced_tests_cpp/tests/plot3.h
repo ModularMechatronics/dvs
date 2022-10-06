@@ -25,6 +25,6 @@ void testWithVectorView()
     plot3(xv, yv, zv, properties::Color::Blue());
 }
 
-}
+}  // namespace plot3_ns
 
-#endif // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_PLOT3_H_
+#endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_PLOT3_H_

@@ -24,4 +24,4 @@ void surf(const Matrixd& x, const Matrixd& y, const Matrixd& z);
 void drawArrow3D(const Point3d& p, const Vec3d& v);
 void setSettings(const std::vector<std::pair<std::string, std::string>>& settings_vector);
 
-#endif // MAIN_APPLICATION_OLD_PLOT_FUNCTIONS_PLOT_FUNCTIONS_H_
+#endif  // MAIN_APPLICATION_OLD_PLOT_FUNCTIONS_PLOT_FUNCTIONS_H_

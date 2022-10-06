@@ -170,4 +170,4 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const Vec2<T>& 
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC2_H_
+#endif  // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC2_H_

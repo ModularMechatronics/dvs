@@ -12,7 +12,6 @@ void plotSomething(int i)
     plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1), properties::PointSize(137));
 }
 
-
 void testBasic()
 {
     Vector<double> x(20), y(20), z(20);
@@ -81,8 +80,6 @@ void testBasic()
     }
 }
 
-
-
 void testDifferentViews()
 {
     const std::vector<std::string> views = {"view_100",
@@ -132,7 +129,6 @@ void testDifferentViews()
     }
 }
 
-
 void testCube()
 {
     setCurrentElement("view_00");
@@ -148,7 +144,6 @@ void testCube()
     drawPolygonFrom4Points({x, y, z}, {-x, y, z}, {-x, y, -z}, {x, y, -z});
     drawPolygonFrom4Points({x, -y, z}, {-x, -y, z}, {-x, -y, -z}, {x, -y, -z});
 }
-
 
 void testMultipleStuff()
 {
@@ -173,7 +168,6 @@ void testMultipleStuff()
     plot3(x, y, z, properties::Color(12, 14, 55), properties::LineWidth(1));
     scatter3(x, y, z, properties::Color(255, 0, 0), properties::PointSize(3));
 }
-
 
 void testDrawMeshAdvanced()
 {

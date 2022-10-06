@@ -18,11 +18,13 @@ private:
 
 public:
     Scatter2D();
-    Scatter2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    Scatter2D(std::unique_ptr<const ReceivedData> received_data,
+              const CommunicationHeader& hdr,
+              const ShaderCollection shader_collection);
     ~Scatter2D();
 
     void render() override;
     void modifyShader() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER_SCATTER_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER_SCATTER_H_

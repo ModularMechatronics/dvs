@@ -19,10 +19,12 @@ private:
 
 public:
     LineCollection3D();
-    LineCollection3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    LineCollection3D(std::unique_ptr<const ReceivedData> received_data,
+                     const CommunicationHeader& hdr,
+                     const ShaderCollection shader_collection);
     ~LineCollection3D();
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_LINE_COLLECTION3_LINE_COLLECTION3_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_LINE_COLLECTION3_LINE_COLLECTION3_H_

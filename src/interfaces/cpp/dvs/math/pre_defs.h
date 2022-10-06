@@ -43,4 +43,4 @@ typedef Vec2<int> Vec2i;
 
 }  // namespace dvs
 
-#endif // DVS_MATH_PRE_DEFS_H_
+#endif  // DVS_MATH_PRE_DEFS_H_

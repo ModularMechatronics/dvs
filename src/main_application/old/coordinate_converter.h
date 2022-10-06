@@ -31,4 +31,4 @@ public:
     Vec2d modelToViewCoordinate(const Vec3d& model_coord) const;
 };
 
-#endif // MAIN_APPLICATION_OLD_COORDINATE_CONVERTER_H_
+#endif  // MAIN_APPLICATION_OLD_COORDINATE_CONVERTER_H_

@@ -2,13 +2,12 @@
 
 #include <cassert>
 #include <cmath>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 #include <iostream>
 #include <utility>
-
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
 
 #include "axes/structures/grid_vectors.h"
 #include "dvs/math/math.h"
@@ -49,10 +48,11 @@ void AxesInteractor::registerMousePressed(const Vec2f& mouse_pos)
 
 void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
 {
-    if(should_draw_zoom_rect_)
+    if (should_draw_zoom_rect_)
     {
         const float sw = 3.0f;
-        const glm::mat4 orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);;
+        const glm::mat4 orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);
+        ;
         const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
         const float az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
         const float el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
@@ -66,22 +66,20 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
         window_scale_mat[0][0] = f - az - el;
         window_scale_mat[1][1] = f - az - el;
         window_scale_mat[2][2] = f - az - el;
-        const Matrix<double> rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * 
-              rotationMatrixX(-view_angles_.getSnappedElevation());
+        const Matrix<double> rot_mat =
+            rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * rotationMatrixX(-view_angles_.getSnappedElevation());
 
         glm::mat4 model_mat = glm::mat4(1.0f);
 
-        for(int r = 0; r < 3; r++)
+        for (int r = 0; r < 3; r++)
         {
-            for(int c = 0; c < 3; c++)
+            for (int c = 0; c < 3; c++)
             {
                 model_mat[r][c] = rot_mat(r, c);
             }
         }
 
-        const glm::mat4 view_mat = glm::lookAt(glm::vec3(0, -6.0, 0),
-                                               glm::vec3(0, 0, 0),
-                                               glm::vec3(0, 0, 1));
+        const glm::mat4 view_mat = glm::lookAt(glm::vec3(0, -6.0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 
         glm::mat4 model_mat_mod = view_mat * model_mat * window_scale_mat;
 
@@ -91,11 +89,13 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
         const Vec2f mouse_pos_at_release = mouse_pos;
         const Vec2f window_xy(current_window_width, current_window_height);
 
-        const Vec2f mouse_pos_at_press_norm = mouse_pos_at_press_; // .elementWiseDivide(window_xy);
-        const Vec2f mouse_pos_at_release_norm = mouse_pos_at_release; // .elementWiseDivide(window_xy);
+        const Vec2f mouse_pos_at_press_norm = mouse_pos_at_press_;     // .elementWiseDivide(window_xy);
+        const Vec2f mouse_pos_at_release_norm = mouse_pos_at_release;  // .elementWiseDivide(window_xy);
 
-        const Vec2f mouse_pos_at_press_mod = 2.0f * (mouse_pos_at_press_norm.elementWiseMultiply(Vec2f(1.0f, -1.0f)) + Vec2f(0.0f, 1.0f)) - 1.0f;
-        const Vec2f current_mouse_pos_mod = 2.0f * (mouse_pos_at_release_norm.elementWiseMultiply(Vec2f(1.0f, -1.0f)) + Vec2f(0.0f, 1.0f)) - 1.0f;
+        const Vec2f mouse_pos_at_press_mod =
+            2.0f * (mouse_pos_at_press_norm.elementWiseMultiply(Vec2f(1.0f, -1.0f)) + Vec2f(0.0f, 1.0f)) - 1.0f;
+        const Vec2f current_mouse_pos_mod =
+            2.0f * (mouse_pos_at_release_norm.elementWiseMultiply(Vec2f(1.0f, -1.0f)) + Vec2f(0.0f, 1.0f)) - 1.0f;
 
         const SnappingAxis snapping_axis = view_angles_.getSnappingAxis();
 
@@ -104,8 +104,10 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
 
         const glm::mat4 view_model = view_mat * model_mat * window_scale_mat;
 
-        const glm::vec3 current_mouse_pos_unprojected = glm::unProject(current_mouse_pos_projected, view_model, orth_projection_mat, v_viewport);
-        const glm::vec3 mouse_pos_at_press_unprojected = glm::unProject(mouse_pos_at_press_projected, view_model, orth_projection_mat, v_viewport);
+        const glm::vec3 current_mouse_pos_unprojected =
+            glm::unProject(current_mouse_pos_projected, view_model, orth_projection_mat, v_viewport);
+        const glm::vec3 mouse_pos_at_press_unprojected =
+            glm::unProject(mouse_pos_at_press_projected, view_model, orth_projection_mat, v_viewport);
 
         const Vec3f scale_vec_div_2 = axes_limits_.getAxesScale() / 2.0;
         const Vec3f scale_vec = axes_limits_.getAxesScale();
@@ -113,14 +115,14 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
         const Vec3f min_vec = axes_center - scale_vec_div_2;
         const Vec3f max_vec = axes_center + scale_vec_div_2;
 
-        if(SnappingAxis::X == snapping_axis)
+        if (SnappingAxis::X == snapping_axis)
         {
             const float x_start = mouse_pos_at_press_unprojected.y / 2.0f + 0.5f;
             const float y_start = mouse_pos_at_press_unprojected.z / 2.0f + 0.5f;
 
             const float x_end = current_mouse_pos_unprojected.y / 2.0f + 0.5f;
             const float y_end = current_mouse_pos_unprojected.z / 2.0f + 0.5f;
-    
+
             // Min/max
             const float x_min = std::min(x_start, x_end);
             const float x_max = std::max(x_start, x_end);
@@ -137,7 +139,7 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
             axes_limits_.setMin(Vec3f(min_vec.x, new_y_min, new_z_min));
             axes_limits_.setMax(Vec3f(max_vec.x, new_y_max, new_z_max));
         }
-        else if(SnappingAxis::Y == snapping_axis)
+        else if (SnappingAxis::Y == snapping_axis)
         {
             // Normalize to be in the interval [0.0, 1.0]
             const float x_start = mouse_pos_at_press_unprojected.x / 2.0f + 0.5f;
@@ -161,9 +163,8 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
 
             axes_limits_.setMin(Vec3f(new_x_min, min_vec.y, new_z_min));
             axes_limits_.setMax(Vec3f(new_x_max, max_vec.y, new_z_max));
-            
         }
-        else if(SnappingAxis::Z == snapping_axis)
+        else if (SnappingAxis::Z == snapping_axis)
         {
             const float x_start = mouse_pos_at_press_unprojected.x / 2.0f + 0.5f;
             const float y_start = mouse_pos_at_press_unprojected.y / 2.0f + 0.5f;
@@ -208,12 +209,14 @@ void AxesInteractor::showLegend(const bool show_legend)
     show_legend_ = show_legend;
 }
 
-void AxesInteractor::update(const MouseInteractionType interaction_type,const int window_width, const int window_height)
+void AxesInteractor::update(const MouseInteractionType interaction_type,
+                            const int window_width,
+                            const int window_height)
 {
     current_window_width = window_width;
     current_window_height = window_height;
 
-    if(interaction_type != MouseInteractionType::UNCHANGED)
+    if (interaction_type != MouseInteractionType::UNCHANGED)
     {
         current_mouse_interaction_type_ = interaction_type;
     }
@@ -238,7 +241,7 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
             changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain, current_mouse_interaction_axis);
             break;
         case MouseInteractionType::ZOOM:
-            if(SnappingAxis::None == view_angles_.getSnappingAxis())
+            if (SnappingAxis::None == view_angles_.getSnappingAxis())
             {
                 changeZoom(dy_mod * zoom_mouse_gain, current_mouse_interaction_axis);
             }
@@ -294,7 +297,7 @@ void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
     const SnappingAxis snapping_axis = view_angles_.getSnappingAxis();
     Vec3d sa(1.0, 1.0, 1.0);
 
-    if(SnappingAxis::None == snapping_axis)
+    if (SnappingAxis::None == snapping_axis)
     {
         if (mia == MouseInteractionAxis::X)
         {
@@ -394,7 +397,8 @@ void AxesInteractor::setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec)
            static_cast<double>(num_lines - 1);
 }
 
-GridVector generateAxisVector(const double min_val, const double max_val, const double num_lines, const double offset, GridVector& ret_vec)
+GridVector generateAxisVector(
+    const double min_val, const double max_val, const double num_lines, const double offset, GridVector& ret_vec)
 {
     const double d = max_val - min_val;
 
@@ -446,4 +450,3 @@ GridVectors AxesInteractor::generateGridVectors()
 
     return gv;
 }
-

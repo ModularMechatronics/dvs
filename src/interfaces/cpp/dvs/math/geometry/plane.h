@@ -68,4 +68,4 @@ template <typename T> Plane<T> planeFromThreePoints(const Point3<T>& p0, const P
 
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_PLANE_H_
+#endif  // DVS_MATH_GEOMETRY_PLANE_H_

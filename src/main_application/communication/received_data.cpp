@@ -2,8 +2,7 @@
 
 #include "dvs/constants.h"
 
-ReceivedData::ReceivedData(const UInt8ArrayView received_array_view)
-        : hdr_(received_array_view)
+ReceivedData::ReceivedData(const UInt8ArrayView received_array_view) : hdr_(received_array_view)
 {
     const uint64_t transmission_data_offset = hdr_.numBytes() + dvs::internal::kHeaderDataStartOffset;
 

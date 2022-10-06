@@ -10,6 +10,7 @@ class UInt8ArrayView
 private:
     uint8_t* data_;
     size_t size_;
+
 public:
     UInt8ArrayView() : data_{nullptr}, size_{0U} {}
     UInt8ArrayView(uint8_t* data_in, const size_t size_in) : data_{data_in}, size_{size_in} {}
@@ -51,8 +52,7 @@ public:
         return size_;
     }
 
-    template <typename T>
-    void fillWithStaticType(const T& d)
+    template <typename T> void fillWithStaticType(const T& d)
     {
         std::memcpy(&(data_[idx_]), &d, sizeof(T));
         idx_ += sizeof(T);
@@ -60,8 +60,7 @@ public:
         DVS_ASSERT(idx_ <= size_);
     }
 
-    template <typename T>
-    void fillWithDataFromPointer(const T* const d, const size_t num_elements)
+    template <typename T> void fillWithDataFromPointer(const T* const d, const size_t num_elements)
     {
         std::memcpy(&(data_[idx_]), d, num_elements * sizeof(T));
         idx_ += num_elements * sizeof(T);
@@ -75,4 +74,4 @@ public:
     }
 };
 
-#endif // DVS_FILLABLE_UINT8_ARRAY_H_
+#endif  // DVS_FILLABLE_UINT8_ARRAY_H_

@@ -6,7 +6,9 @@ inline uint8_t* convertStairsOuter(const uint8_t* const input_data,
                                    const size_t num_bytes_per_element,
                                    const size_t num_bytes_for_one_vec);
 
-Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data,
+               const CommunicationHeader& hdr,
+               const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::STAIRS)
@@ -16,7 +18,7 @@ Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data, const Communic
 
     points_ptr_ =
         convertStairsOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
-    
+
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 

@@ -98,10 +98,10 @@ private:
 
 public:
     PlotPane(wxNotebookPage* parent,
-        const ElementSettings& element_settings,
-        const float grid_size,
-        const std::function<void(const char key)>& notify_main_window_key_pressed,
-        const std::function<void(const char key)>& notify_main_window_key_released);
+             const ElementSettings& element_settings,
+             const float grid_size,
+             const std::function<void(const char key)>& notify_main_window_key_pressed,
+             const std::function<void(const char key)>& notify_main_window_key_released);
     ~PlotPane();
 
     int getWidth();
@@ -112,7 +112,8 @@ public:
     void setPosition(const wxPoint& new_pos);
     void setSize(const wxSize& new_size);
     void updateSizeFromParent(const wxSize& parent_size) override;
-    void addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::CommunicationHeader& hdr) override;
+    void addData(std::unique_ptr<const ReceivedData> received_data,
+                 const dvs::internal::CommunicationHeader& hdr) override;
     void show() override;
     void hide() override;
     void resetSelection() override;
@@ -135,4 +136,4 @@ public:
     void bindCallbacks();
 };
 
-#endif // MAIN_APPLICATION_PLOT_WINDOW_GL_PANE_H_
+#endif  // MAIN_APPLICATION_PLOT_WINDOW_GL_PANE_H_

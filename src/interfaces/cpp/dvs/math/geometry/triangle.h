@@ -41,4 +41,4 @@ template <typename T> template <typename Y> Triangle3D<T>::Triangle3D(const Tria
 
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_TRIANGLE_H_
+#endif  // DVS_MATH_GEOMETRY_TRIANGLE_H_

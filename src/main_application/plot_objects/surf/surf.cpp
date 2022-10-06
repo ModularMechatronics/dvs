@@ -7,9 +7,9 @@ struct OutputData
 };
 
 inline OutputData convertMatrixDataOuter(uint8_t* input_data,
-                                     const DataType data_type,
-                                     const Dimension2D dims,
-                                     const size_t num_bytes_for_one_vec);
+                                         const DataType data_type,
+                                         const Dimension2D dims,
+                                         const size_t num_bytes_for_one_vec);
 /*OutputData convertMatrixColorDataOuter(uint8_t* input_data,
                                      const DataType data_type,
                                      const Dimension2D dims,
@@ -18,7 +18,9 @@ inline OutputData convertMatrixDataOuter(uint8_t* input_data,
                                      const Vec3d max_vec,
                                      const RGBColorMap<float>* const color_map_function);*/
 
-Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
+           const CommunicationHeader& hdr,
+           const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::SURF)
@@ -37,7 +39,8 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const Communicatio
 
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), points_ptr_, GL_STATIC_DRAW);
+    glBufferData(
+        GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), points_ptr_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
@@ -45,7 +48,8 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const Communicatio
 
     glGenBuffers(1, &normals_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), normals_ptr_, GL_STATIC_DRAW);
+    glBufferData(
+        GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), normals_ptr_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
@@ -57,11 +61,13 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const Communicatio
     {
         findMinMax();
         const RGBColorMap<float>* const color_map_function = getColorMapFromColorMapType(color_map_);
-        colors_ptr_ = convertMatrixColorDataOuter(data_ptr_, data_type_, dims_, num_bytes_for_one_vec_, min_vec, max_vec, color_map_function);
+        colors_ptr_ = convertMatrixColorDataOuter(data_ptr_, data_type_, dims_, num_bytes_for_one_vec_, min_vec,
+    max_vec, color_map_function);
 
         glGenBuffers(1, &color_buffer_);
         glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), colors_ptr_, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), colors_ptr_,
+    GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
@@ -71,14 +77,14 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data, const Communicatio
             GL_FLOAT,
             GL_FALSE,
             0,
-            (void*)0 
+            (void*)0
         );
     }*/
 }
 
 void Surf::findMinMax()
 {
-    if(!min_max_calculated_)
+    if (!min_max_calculated_)
     {
         std::tie<Vec3d, Vec3d>(min_vec, max_vec) =
             findMinMaxFromThreeMatrices(data_ptr_, dims_.rows, dims_.cols, num_bytes_for_one_vec_, data_type_);
@@ -91,25 +97,35 @@ void Surf::render()
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     shader_collection_.draw_mesh_shader.use();
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "edge_color"), edge_color_.red, edge_color_.green, edge_color_.blue);
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "face_color"), face_color_.red, face_color_.green, face_color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "edge_color"),
+                edge_color_.red,
+                edge_color_.green,
+                edge_color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "face_color"),
+                face_color_.red,
+                face_color_.green,
+                face_color_.blue);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "alpha"), alpha_);
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_edge_color"), static_cast<int>(has_edge_color_));
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), static_cast<int>(has_face_color_));
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_edge_color"),
+                static_cast<int>(has_edge_color_));
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"),
+                static_cast<int>(has_face_color_));
 
-    if(color_map_set_)
+    if (color_map_set_)
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), static_cast<int>(color_map_) + 1);
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
+                    static_cast<int>(color_map_) + 1);
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), 1);
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"), static_cast<int>(interpolate_colormap_));
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"),
+                    static_cast<int>(interpolate_colormap_));
     }
     else
     {
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), 0);
     }
-    
+
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 
     glBindVertexArray(vertex_buffer_array_);
@@ -117,7 +133,7 @@ void Surf::render()
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
 
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, (dims_.rows - 1) * (dims_.cols - 1) * 6);
 
     glBindVertexArray(0);
@@ -138,7 +154,7 @@ LegendProperties Surf::getLegendProperties() const
     lp.type = LegendType::POLYGON;
     lp.edge_color = edge_color_;
 
-    if(color_map_set_)
+    if (color_map_set_)
     {
         lp.color_map_set = true;
         lp.color_map = getColorMapFromColorMapType(color_map_);
@@ -207,7 +223,7 @@ OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const 
             output_data.points_ptr[idx0_x] = x(r, c);
             output_data.points_ptr[idx1_x] = x(r + 1, c);
             output_data.points_ptr[idx2_x] = x(r + 1, c + 1);
-        
+
             output_data.points_ptr[idx3_x] = x(r, c);
             output_data.points_ptr[idx4_x] = x(r, c + 1);
             output_data.points_ptr[idx5_x] = x(r + 1, c + 1);
@@ -232,7 +248,7 @@ OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const 
             output_data.normals_ptr[idx0_x] = normalized_normal_vec.x;
             output_data.normals_ptr[idx1_x] = normalized_normal_vec.y;
             output_data.normals_ptr[idx2_x] = normalized_normal_vec.z;
-        
+
             output_data.normals_ptr[idx3_x] = normalized_normal_vec.x;
             output_data.normals_ptr[idx4_x] = normalized_normal_vec.y;
             output_data.normals_ptr[idx5_x] = normalized_normal_vec.z;
@@ -259,9 +275,9 @@ OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const 
 }
 
 OutputData convertMatrixDataOuter(uint8_t* input_data,
-                                     const DataType data_type,
-                                     const Dimension2D dims,
-                                     const size_t num_bytes_for_one_vec)
+                                  const DataType data_type,
+                                  const Dimension2D dims,
+                                  const size_t num_bytes_for_one_vec)
 {
     OutputData output_data;
     if (data_type == DataType::FLOAT)

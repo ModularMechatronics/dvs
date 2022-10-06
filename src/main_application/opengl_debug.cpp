@@ -7,7 +7,7 @@ namespace internal
 {
 GLuint samples_query = 0;
 GLuint samples_passed = 0;
-}
+}  // namespace internal
 
 void begin()
 {
@@ -19,7 +19,7 @@ void begin()
     // Set up the values on the stencil buffer ...
 
     // Now we count the fragments that pass the stencil test
-    glDepthFunc(GL_ALWAYS); // Set up the depth test to always pass
+    glDepthFunc(GL_ALWAYS);  // Set up the depth test to always pass
     glBeginQuery(GL_SAMPLES_PASSED, internal::samples_query);
     // Render your meshes here
 }
@@ -37,5 +37,4 @@ GLuint getSamplesPassed()
     return internal::samples_passed;
 }
 
-}
-
+}  // namespace opengl_debug

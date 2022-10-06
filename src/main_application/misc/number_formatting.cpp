@@ -45,13 +45,11 @@ std::string formatNumberInternal(const double num, const size_t n)
     }
     else if (abs_num > 1.0e6)
     {
-        return toStringWithNumDecimalPlaces(getBase(num), n) + "e" + "+" +
-               std::to_string(getIntExponent(num));
+        return toStringWithNumDecimalPlaces(getBase(num), n) + "e" + "+" + std::to_string(getIntExponent(num));
     }
     else if (abs_num < 1.0e-4)
     {
-        return toStringWithNumDecimalPlaces(getBase(num), n) + "e" +
-               std::to_string(getIntExponent(num));
+        return toStringWithNumDecimalPlaces(getBase(num), n) + "e" + std::to_string(getIntExponent(num));
     }
     else
     {
@@ -71,19 +69,19 @@ std::string formatNumber(const double num, const size_t n)
 {
     const std::string s = formatNumberInternal(num, n);
 
-    if((s.length() > 1) && (s.find('.') != std::string::npos))
+    if ((s.length() > 1) && (s.find('.') != std::string::npos))
     {
         const int point_idx = s.find('.');
         int idx = s.length() - 1;
-        while(idx > 0)
+        while (idx > 0)
         {
-            if((s[idx] == '0') && (idx > point_idx))
+            if ((s[idx] == '0') && (idx > point_idx))
             {
                 idx--;
             }
             else
             {
-                if(s[idx] == '.')
+                if (s[idx] == '.')
                 {
                     idx--;
                 }

@@ -32,4 +32,4 @@ template <typename T> Matrix<T> Vec3<T>::toCrossProductMatrix() const
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_MATRIX_VECTOR_DYNAMIC_H_
+#endif  // DVS_MATH_LIN_ALG_MATRIX_VECTOR_DYNAMIC_H_

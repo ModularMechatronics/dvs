@@ -7,8 +7,8 @@
 
 #include "dvs/communication.h"
 #include "dvs/communication_header.h"
-#include "dvs/fillable_uint8_array.h"
 #include "dvs/constants.h"
+#include "dvs/fillable_uint8_array.h"
 #include "dvs/utils.h"
 #include "math/math.h"
 
@@ -220,7 +220,9 @@ void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
     send_function(fillable_array.view());
 }
 
-template <typename T> void fillBufferWithRefCollection(FillableUInt8Array& fillable_array, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent)
+template <typename T>
+void fillBufferWithRefCollection(FillableUInt8Array& fillable_array,
+                                 const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent)
 {
     for (size_t k = 0; k < data_to_be_sent.size(); k++)
     {
@@ -230,7 +232,9 @@ template <typename T> void fillBufferWithRefCollection(FillableUInt8Array& filla
 }
 
 template <typename T, typename... Us>
-void fillBufferWithRefCollection(FillableUInt8Array& fillable_array, const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent, const Us&... other_elements)
+void fillBufferWithRefCollection(FillableUInt8Array& fillable_array,
+                                 const std::vector<std::reference_wrapper<Vector<T>>>& data_to_be_sent,
+                                 const Us&... other_elements)
 {
     for (size_t k = 0; k < data_to_be_sent.size(); k++)
     {
@@ -303,6 +307,7 @@ class FlagContainer
 {
 private:
     Flag flag_;
+
 public:
     FlagContainer() : flag_{Flag::UNKNOWN} {}
     FlagContainer(const Flag flag) : flag_{flag} {}
@@ -311,4 +316,4 @@ public:
 }  // namespace internal
 }  // namespace dvs
 
-#endif // DVS_INTERNAL_H_
+#endif  // DVS_INTERNAL_H_

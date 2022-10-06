@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <utility>
 
-#include "dvs/math/lin_alg/vector_dynamic/vector_dynamic.h"
 #include "dvs/logging.h"
+#include "dvs/math/lin_alg/vector_dynamic/vector_dynamic.h"
 
 namespace dvs
 {
@@ -15,7 +15,7 @@ template <typename T> bool any(const Vector<T>& v)
 {
     for (size_t k = 0; k < v.size(); k++)
     {
-        if(v(k))
+        if (v(k))
         {
             return true;
         }
@@ -28,7 +28,7 @@ template <typename T> bool all(const Vector<T>& v)
 {
     for (size_t k = 0; k < v.size(); k++)
     {
-        if(!v(k))
+        if (!v(k))
         {
             return false;
         }
@@ -214,4 +214,4 @@ template <typename T> T sum(const Vector<T>& vin)
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_MATH_FUNCTIONS_H_
+#endif  // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_VECTOR_MATH_FUNCTIONS_H_

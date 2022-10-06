@@ -95,15 +95,11 @@ inline uint8_t isBigEndian()
 
 inline bool ackValid(const char data[256])
 {
-    const bool ack_received = data[0] == 'a' &&
-        data[1] == 'c' &&
-        data[2] == 'k' &&
-        data[3] == '#' &&
-        data[4] == '\0';
+    const bool ack_received = data[0] == 'a' && data[1] == 'c' && data[2] == 'k' && data[3] == '#' && data[4] == '\0';
     return ack_received;
 }
 
 }  // namespace internal
 }  // namespace dvs
 
-#endif // DVS_UTILS_H_
+#endif  // DVS_UTILS_H_

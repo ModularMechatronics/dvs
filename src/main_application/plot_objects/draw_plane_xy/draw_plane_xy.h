@@ -24,10 +24,12 @@ private:
 
 public:
     DrawPlaneXY();
-    DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    DrawPlaneXY(std::unique_ptr<const ReceivedData> received_data,
+                const CommunicationHeader& hdr,
+                const ShaderCollection shader_collection);
     ~DrawPlaneXY();
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_PLANE_XY_DRAW_PLANE_XY_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_PLANE_XY_DRAW_PLANE_XY_H_

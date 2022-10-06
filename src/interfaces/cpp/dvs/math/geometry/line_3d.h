@@ -27,4 +27,4 @@ template <typename T> Point3<T> Line3D<T>::eval(const T t) const
 
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_LINE_3D_H_
+#endif  // DVS_MATH_GEOMETRY_LINE_3D_H_

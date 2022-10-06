@@ -24,9 +24,11 @@ private:
 
 public:
     DrawArrow();
-    DrawArrow(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    DrawArrow(std::unique_ptr<const ReceivedData> received_data,
+              const CommunicationHeader& hdr,
+              const ShaderCollection shader_collection);
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_ARROW_DRAW_ARROW_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_ARROW_DRAW_ARROW_H_

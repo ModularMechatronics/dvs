@@ -27,7 +27,9 @@ private:
 
 public:
     Surf();
-    Surf(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    Surf(std::unique_ptr<const ReceivedData> received_data,
+         const CommunicationHeader& hdr,
+         const ShaderCollection shader_collection);
     ~Surf();
 
     LegendProperties getLegendProperties() const override;
@@ -35,4 +37,4 @@ public:
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_SURF_SURF_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_SURF_SURF_H_

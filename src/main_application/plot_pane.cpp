@@ -120,13 +120,14 @@ void PlotPane::initShaders()
 }
 
 PlotPane::PlotPane(wxWindow* parent,
-    const ElementSettings& element_settings,
-    const float grid_size,
-    const std::function<void(const char key)>& notify_main_window_key_pressed,
-    const std::function<void(const char key)>& notify_main_window_key_released)
+                   const ElementSettings& element_settings,
+                   const float grid_size,
+                   const std::function<void(const char key)>& notify_main_window_key_pressed,
+                   const std::function<void(const char key)>& notify_main_window_key_released)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
-      GuiElement(element_settings, notify_main_window_key_pressed,
-        notify_main_window_key_released), m_context(getContext()), axes_interactor_(axes_settings_, getWidth(), getHeight())
+      GuiElement(element_settings, notify_main_window_key_pressed, notify_main_window_key_released),
+      m_context(getContext()),
+      axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
     is_editing_ = false;
     parent_size_ = parent->GetSize();
@@ -231,8 +232,7 @@ PlotPane::~PlotPane()
     delete m_context;
 }
 
-void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
-                               const dvs::internal::CommunicationHeader& hdr)
+void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::CommunicationHeader& hdr)
 {
     const internal::Function fcn = hdr.getObjectAtIdx(0).as<internal::Function>();
 
@@ -253,7 +253,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         const std::pair<Vec3d, Vec3d> axes_bnd =
             hdr.get(CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Vec3d, Vec3d>>();
         axes_interactor_.setAxesLimits(Vec2d(axes_bnd.first.x, axes_bnd.first.y),
-                                        Vec2d(axes_bnd.second.x, axes_bnd.second.y));
+                                       Vec2d(axes_bnd.second.x, axes_bnd.second.y));
     }
     else if (fcn == Function::AXES_3D)
     {
@@ -262,7 +262,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         const std::pair<Vec3d, Vec3d> axes_bnd =
             hdr.get(CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC).as<std::pair<Vec3d, Vec3d>>();
         axes_interactor_.setAxesLimits(Vec3d(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
-                                        Vec3d(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
+                                       Vec3d(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
     else if (fcn == Function::GLOBAL_ILLUMINATION)
     {
@@ -350,7 +350,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data,
         }
     }
 
-    if(!wait_for_flush_)
+    if (!wait_for_flush_)
     {
         Refresh();
     }
@@ -364,7 +364,8 @@ bool PlotPane::isImageFunction(const Function fcn)
 bool PlotPane::is3DFunction(const Function fcn)
 {
     return (fcn == Function::DRAW_LINE3D) || (fcn == Function::PLANE_XY) || (fcn == Function::PLANE_XZ) ||
-           (fcn == Function::PLANE_YZ) || (fcn == Function::DRAW_MESH) || (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_TRIANGLES_3D) ||
+           (fcn == Function::PLANE_YZ) || (fcn == Function::DRAW_MESH) ||
+           (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_TRIANGLES_3D) ||
            (fcn == Function::DRAW_TRIANGLE_3D) || (fcn == Function::SURF) || (fcn == Function::PLOT3) ||
            (fcn == Function::SCATTER3) || (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
            (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_TILES) ||
@@ -379,7 +380,7 @@ void PlotPane::waitForFlush()
 void PlotPane::showLegend(const bool show_legend)
 {
     axes_interactor_.showLegend(show_legend);
-    if(!wait_for_flush_)
+    if (!wait_for_flush_)
     {
         Refresh();
     }
@@ -473,8 +474,7 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
             const Vec2f mouse_pos = Vec2f(current_point.x + pos_now.x, current_point.y + pos_now.y);
             Vec2f delta = mouse_pos - mouse_pos_at_press_;
 
-            delta =
-                Vec2f(std::round(delta.x / grid_size_) * grid_size_, std::round(delta.y / grid_size_) * grid_size_);
+            delta = Vec2f(std::round(delta.x / grid_size_) * grid_size_, std::round(delta.y / grid_size_) * grid_size_);
             const Vec2f current_pos(this->GetPosition().x, this->GetPosition().y);
             const Vec2f changed_pos = delta;
 
@@ -565,8 +565,8 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
                 current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
             }
             axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
-                                                     left_mouse_button_.getDeltaPos().x,
-                                                     left_mouse_button_.getDeltaPos().y);
+                                                    left_mouse_button_.getDeltaPos().x,
+                                                    left_mouse_button_.getDeltaPos().y);
         }
 
         Refresh();
@@ -630,7 +630,7 @@ void PlotPane::keyPressed(const char key)
     {
         keyboard_state_.keyGotPressed(key);
     }
-    
+
     Refresh();
 }
 
@@ -679,7 +679,7 @@ MouseInteractionType keyboardStateToMouseInteractionType(const KeyboardState& ke
     {
         return MouseInteractionType::ROTATE;
     }
-    else if(wxGetKeyState(static_cast<wxKeyCode>('z')) || wxGetKeyState(static_cast<wxKeyCode>('Z')))
+    else if (wxGetKeyState(static_cast<wxKeyCode>('z')) || wxGetKeyState(static_cast<wxKeyCode>('Z')))
     {
         return MouseInteractionType::ZOOM;
     }
@@ -723,24 +723,23 @@ void PlotPane::render(wxPaintEvent& evt)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // TODO: Move to keypressed? And deal with key hold...
-    if(keyboard_state_.keyIsPressed('p') || keyboard_state_.keyIsPressed('P'))
+    if (keyboard_state_.keyIsPressed('p') || keyboard_state_.keyIsPressed('P'))
     {
         perspective_projection_ = !perspective_projection_;
     }
 
-    if(viewShouldBeReset(keyboard_state_))
+    if (viewShouldBeReset(keyboard_state_))
     {
         axes_interactor_.resetView();
     }
 
-    axes_interactor_.update(
-        keyboardStateToMouseInteractionType(keyboard_state_), getWidth(), getHeight());
+    axes_interactor_.update(keyboardStateToMouseInteractionType(keyboard_state_), getWidth(), getHeight());
 
-    if(wxGetKeyState(static_cast<wxKeyCode>('y')) || wxGetKeyState(static_cast<wxKeyCode>('Y')))
+    if (wxGetKeyState(static_cast<wxKeyCode>('y')) || wxGetKeyState(static_cast<wxKeyCode>('Y')))
     {
         legend_scale_factor_ -= 0.05;
     }
-    else if(wxGetKeyState(static_cast<wxKeyCode>('u')) || wxGetKeyState(static_cast<wxKeyCode>('U')))
+    else if (wxGetKeyState(static_cast<wxKeyCode>('u')) || wxGetKeyState(static_cast<wxKeyCode>('U')))
     {
         legend_scale_factor_ += 0.05;
     }
@@ -750,19 +749,19 @@ void PlotPane::render(wxPaintEvent& evt)
     const Vec2f pane_size(GetSize().x, GetSize().y);
 
     axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
-                         axes_interactor_.getViewAngles(),
-                         axes_interactor_.generateGridVectors(),
-                         perspective_projection_,
-                         getWidth(),
-                         getHeight(),
-                         mouse_pos_at_press_.elementWiseDivide(pane_size),
-                         current_mouse_pos_.elementWiseDivide(pane_size),
-                         axes_interactor_.getMouseInteractionType(),
-                         left_mouse_button_.isPressed(),
-                         axes_interactor_.shouldDrawZoomRect(),
-                         axes_interactor_.getShowLegend(),
-                         legend_scale_factor_,
-                         plot_data_handler_->getLegendStrings());
+                                 axes_interactor_.getViewAngles(),
+                                 axes_interactor_.generateGridVectors(),
+                                 perspective_projection_,
+                                 getWidth(),
+                                 getHeight(),
+                                 mouse_pos_at_press_.elementWiseDivide(pane_size),
+                                 current_mouse_pos_.elementWiseDivide(pane_size),
+                                 axes_interactor_.getMouseInteractionType(),
+                                 left_mouse_button_.isPressed(),
+                                 axes_interactor_.shouldDrawZoomRect(),
+                                 axes_interactor_.getShowLegend(),
+                                 legend_scale_factor_,
+                                 plot_data_handler_->getLegendStrings());
 
     axes_renderer_->render();
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?

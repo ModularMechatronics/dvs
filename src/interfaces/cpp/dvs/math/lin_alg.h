@@ -8,4 +8,4 @@
 #include "dvs/math/lin_alg/vector_low_dim/vec3.h"
 #include "dvs/math/lin_alg/vector_low_dim/vec4.h"
 
-#endif // DVS_MATH_LIN_ALG_H_
+#endif  // DVS_MATH_LIN_ALG_H_

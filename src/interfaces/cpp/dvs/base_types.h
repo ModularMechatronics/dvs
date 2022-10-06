@@ -22,4 +22,4 @@ struct Dimension2D
 
 }  // namespace dvs
 
-#endif // DVS_BASE_TYPES_H_
+#endif  // DVS_BASE_TYPES_H_

@@ -4,9 +4,9 @@
 #include <wx/taskbar.h>
 #include <wx/wx.h>
 
+#include <functional>
 #include <iostream>
 #include <map>
-#include <functional>
 
 #include "constants.h"
 
@@ -31,13 +31,12 @@ class MyMenu : public wxMenu
 {
 private:
     std::function<void()> menu_teardown_function_;
+
 public:
     MyMenu() = delete;
-    MyMenu(std::function<void()>&& menu_teardown_function) : 
-        wxMenu{}, 
-        menu_teardown_function_{std::move(menu_teardown_function)}
+    MyMenu(std::function<void()>&& menu_teardown_function)
+        : wxMenu{}, menu_teardown_function_{std::move(menu_teardown_function)}
     {
-
     }
 
     ~MyMenu()
@@ -45,7 +44,6 @@ public:
         menu_teardown_function_();
     }
 };
-
 
 class CustomTaskBarIcon : public wxTaskBarIcon
 {
@@ -80,11 +78,11 @@ public:
     void setOnMenuEdit(std::function<void()>&& edit_function);
     void setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function);
     void setOnMenuShowMainWindow(std::function<void()>&& main_menu_function);
-    void setOnMenuPreferences(std::function<void()>&& preferences_function);    
+    void setOnMenuPreferences(std::function<void()>&& preferences_function);
 
     void onMenuExit(wxCommandEvent&);
     void onMenuMainWindow(wxCommandEvent& evt);
-    
+
     void onMenuFileNew(wxCommandEvent&);
     void onMenuFileOpen(wxCommandEvent&);
     void onMenuFileSave(wxCommandEvent&);
@@ -97,7 +95,7 @@ public:
     void onMenuSubWindow(wxCommandEvent& evt);
     void addNewWindow(const std::string& window_name);
     void removeWindow(const std::string& window_name);
-    virtual wxMenu *CreatePopupMenu();
+    virtual wxMenu* CreatePopupMenu();
 
     wxDECLARE_EVENT_TABLE();
 
@@ -115,14 +113,12 @@ private:
     std::vector<int> free_ids_;
     std::vector<int> taken_ids_;
     std::string edit_label_;
-    wxMenu *windows_submenu_;
+    wxMenu* windows_submenu_;
     // wxMenu *menu_;
-    wxMenu *file_submenu_;
+    wxMenu* file_submenu_;
 
     std::map<std::string, wxEventTypeTag<wxCommandEvent>> window_events_;
     std::map<std::string, int> window_event_ids_;
-
 };
 
-
-#endif // MAIN_APPLICATION_TRAY_ICON_H_
+#endif  // MAIN_APPLICATION_TRAY_ICON_H_

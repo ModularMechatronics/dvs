@@ -28,4 +28,4 @@
 #include "dvs/math/pre_defs.h"
 // clang-format on
 
-#endif // DVS_MATH_MATH_H_
+#endif  // DVS_MATH_MATH_H_

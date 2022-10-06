@@ -1,16 +1,15 @@
 #ifndef MAIN_APPLICATION_PROJECT_STATE_CONFIGURATION_AGENT_H_
 #define MAIN_APPLICATION_PROJECT_STATE_CONFIGURATION_AGENT_H_
 
+#include <unistd.h>
+
 #include <fstream>
 #include <iomanip>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <fstream>
 
-#include <unistd.h>
-
-#include "filesystem.h"
 #include "dvs/logging.h"
+#include "filesystem.h"
 
 struct AppPreferences
 {
@@ -30,7 +29,7 @@ public:
 
     template <typename T> T readValue(const std::string& key)
     {
-        if(is_valid_)
+        if (is_valid_)
         {
             nlohmann::json json_data;
             T data;
@@ -38,10 +37,11 @@ public:
             {
                 json_data = readConfigurationFile();
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 is_valid_ = false;
-                DVS_LOG_ERROR() << "Error reading configuration file \"" << configuration_file_path_ << "\"! Returning empty value.";
+                DVS_LOG_ERROR() << "Error reading configuration file \"" << configuration_file_path_
+                                << "\"! Returning empty value.";
                 return data;
             }
 
@@ -49,7 +49,7 @@ public:
             {
                 data = json_data[key].get<T>();
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 DVS_LOG_ERROR() << "Error reading value for key " << key << "! Returning empty value.";
             }
@@ -57,7 +57,8 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "Tried calling ConfigurationAgent::readValue(" << key << ") for invalid ConfigurationAgent!";
+            DVS_LOG_ERROR() << "Tried calling ConfigurationAgent::readValue(" << key
+                            << ") for invalid ConfigurationAgent!";
             T data;
             return data;
         }
@@ -65,7 +66,7 @@ public:
 
     template <typename T> void writeValue(const std::string& key, const T& val)
     {
-        if(is_valid_)
+        if (is_valid_)
         {
             nlohmann::json json_data = readConfigurationFile();
             json_data[key] = val;
@@ -74,21 +75,22 @@ public:
             {
                 writeToConfigurationFile(json_data);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
-                DVS_LOG_ERROR() << "Failed to overwrite configuration.json at \"" << configuration_file_path_ << "\". Exception: " <<  e.what() << ". Exiting.";
+                DVS_LOG_ERROR() << "Failed to overwrite configuration.json at \"" << configuration_file_path_
+                                << "\". Exception: " << e.what() << ". Exiting.";
                 is_valid_ = false;
                 return;
             }
         }
         else
         {
-            DVS_LOG_ERROR() << "Tried calling ConfigurationAgent::writeValue(" << key << ") for invalid ConfigurationAgent!";
+            DVS_LOG_ERROR() << "Tried calling ConfigurationAgent::writeValue(" << key
+                            << ") for invalid ConfigurationAgent!";
         }
     }
 
 private:
-
     nlohmann::json readConfigurationFile() const;
     void createEmptyConfigurationFile() const;
     void writeToConfigurationFile(const nlohmann::json& json_data) const;
@@ -97,4 +99,4 @@ private:
     std::string configuration_file_path_;
 };
 
-#endif // MAIN_APPLICATION_PROJECT_STATE_CONFIGURATION_AGENT_H_
+#endif  // MAIN_APPLICATION_PROJECT_STATE_CONFIGURATION_AGENT_H_

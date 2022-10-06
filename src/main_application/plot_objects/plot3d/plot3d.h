@@ -20,6 +20,7 @@ public:
         float* p2;
         float* idx_data_;
     };
+
 private:
     InputData input_data_;
 
@@ -30,10 +31,12 @@ private:
 
 public:
     Plot3D();
-    Plot3D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    Plot3D(std::unique_ptr<const ReceivedData> received_data,
+           const CommunicationHeader& hdr,
+           const ShaderCollection shader_collection);
     ~Plot3D();
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_PLOT3D_PLOT3D_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT3D_PLOT3D_H_

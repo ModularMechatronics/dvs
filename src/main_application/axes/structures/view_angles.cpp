@@ -112,15 +112,15 @@ bool ViewAngles::isSnappedAlongZ() const
 
 SnappingAxis ViewAngles::getSnappingAxis() const
 {
-    if(isSnappedAlongX())
+    if (isSnappedAlongX())
     {
         return SnappingAxis::X;
     }
-    else if(isSnappedAlongY())
+    else if (isSnappedAlongY())
     {
         return SnappingAxis::Y;
     }
-    else if(isSnappedAlongZ())
+    else if (isSnappedAlongZ())
     {
         return SnappingAxis::Z;
     }

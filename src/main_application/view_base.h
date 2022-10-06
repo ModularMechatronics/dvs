@@ -44,13 +44,13 @@ protected:
 public:
     ViewBase() = delete;
     ViewBase(wxFrame* parent,
-        const WindowSettings& window_settings,
-        const std::function<void(const char key)>& notify_main_window_key_pressed,
-        const std::function<void(const char key)>& notify_main_window_key_released);
+             const WindowSettings& window_settings,
+             const std::function<void(const char key)>& notify_main_window_key_pressed,
+             const std::function<void(const char key)>& notify_main_window_key_released);
     ViewBase(wxNotebookPage* parent,
-        const TabSettings& tab_settings,
-        const std::function<void(const char key)>& notify_main_window_key_pressed,
-        const std::function<void(const char key)>& notify_main_window_key_released);
+             const TabSettings& tab_settings,
+             const std::function<void(const char key)>& notify_main_window_key_pressed,
+             const std::function<void(const char key)>& notify_main_window_key_released);
 
     std::map<std::string, GuiElement*> getGuiElements() const;
     std::string getName() const;
@@ -74,12 +74,12 @@ public:
 
 template <typename T>
 ViewBase<T>::ViewBase(wxFrame* parent,
-    const WindowSettings& window_settings,
-    const std::function<void(const char key)>& notify_main_window_key_pressed,
-    const std::function<void(const char key)>& notify_main_window_key_released) : 
-        wxFrame(parent, wxID_ANY, "Figure 1"),
-        notify_main_window_key_pressed_{notify_main_window_key_pressed},
-        notify_main_window_key_released_{notify_main_window_key_released}
+                      const WindowSettings& window_settings,
+                      const std::function<void(const char key)>& notify_main_window_key_pressed,
+                      const std::function<void(const char key)>& notify_main_window_key_released)
+    : wxFrame(parent, wxID_ANY, "Figure 1"),
+      notify_main_window_key_pressed_{notify_main_window_key_pressed},
+      notify_main_window_key_released_{notify_main_window_key_released}
 {
     grid_size_ = 1.0f;
     name_ = window_settings.getName();
@@ -99,12 +99,12 @@ ViewBase<T>::ViewBase(wxFrame* parent,
 
 template <typename T>
 ViewBase<T>::ViewBase(wxNotebookPage* parent,
-    const TabSettings& tab_settings,
-    const std::function<void(const char key)>& notify_main_window_key_pressed,
-    const std::function<void(const char key)>& notify_main_window_key_released) :
-        wxNotebookPage(parent, -1),
-        notify_main_window_key_pressed_{notify_main_window_key_pressed},
-        notify_main_window_key_released_{notify_main_window_key_released}
+                      const TabSettings& tab_settings,
+                      const std::function<void(const char key)>& notify_main_window_key_pressed,
+                      const std::function<void(const char key)>& notify_main_window_key_released)
+    : wxNotebookPage(parent, -1),
+      notify_main_window_key_pressed_{notify_main_window_key_pressed},
+      notify_main_window_key_released_{notify_main_window_key_released}
 {
     grid_size_ = 1.0f;
     name_ = tab_settings.getName();
@@ -280,4 +280,4 @@ template <class BaseClass> void ViewBase<BaseClass>::setSize(const wxSize& new_s
     }
 }
 
-#endif // MAIN_APPLICATION_VIEW_BASE_H_
+#endif  // MAIN_APPLICATION_VIEW_BASE_H_

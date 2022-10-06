@@ -5,7 +5,6 @@
 #include <sstream>
 #include <vector>
 
-
 Shader::Shader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
 {
     if (ShaderSource::FILE == src)

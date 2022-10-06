@@ -24,4 +24,4 @@ void drawFilledTriangle2D(const float xc, const float yc, const float r);
 void drawEllipse2D();
 */
 
-#endif // MAIN_APPLICATION_OLD_OPENGL_2D_SHAPE_PRIMITIVES_H_
+#endif  // MAIN_APPLICATION_OLD_OPENGL_2D_SHAPE_PRIMITIVES_H_

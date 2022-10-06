@@ -1,12 +1,14 @@
 #include "main_application/plot_objects/line_collection2/line_collection2.h"
 
 float* convertData2DOuterLineCollection2(const uint8_t* const input_data,
-                          const DataType data_type,
-                          const size_t num_elements,
-                          const size_t num_bytes_per_element,
-                          const size_t num_bytes_for_one_vec);
+                                         const DataType data_type,
+                                         const size_t num_elements,
+                                         const size_t num_bytes_per_element,
+                                         const size_t num_bytes_for_one_vec);
 
-LineCollection2D::LineCollection2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+LineCollection2D::LineCollection2D(std::unique_ptr<const ReceivedData> received_data,
+                                   const CommunicationHeader& hdr,
+                                   const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::LINE_COLLECTION2)
@@ -14,8 +16,8 @@ LineCollection2D::LineCollection2D(std::unique_ptr<const ReceivedData> received_
         throw std::runtime_error("Invalid function type for LineCollection2D!");
     }
 
-    points_ptr_ =
-        convertData2DOuterLineCollection2(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+    points_ptr_ = convertData2DOuterLineCollection2(
+        data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
@@ -67,9 +69,9 @@ LegendProperties LineCollection2D::getLegendProperties() const
 
 template <typename T>
 float* convertData2DLineCollection2(const uint8_t* const input_data,
-                       const size_t num_elements,
-                       const size_t num_bytes_per_element,
-                       const size_t num_bytes_for_one_vec)
+                                    const size_t num_elements,
+                                    const size_t num_bytes_per_element,
+                                    const size_t num_bytes_for_one_vec)
 {
     float* output_data = new float[2 * num_elements];
     size_t idx = 0;
@@ -91,51 +93,61 @@ float* convertData2DLineCollection2(const uint8_t* const input_data,
 }
 
 float* convertData2DOuterLineCollection2(const uint8_t* const input_data,
-                                   const DataType data_type,
-                                   const size_t num_elements,
-                                   const size_t num_bytes_per_element,
-                                   const size_t num_bytes_for_one_vec)
+                                         const DataType data_type,
+                                         const size_t num_elements,
+                                         const size_t num_bytes_per_element,
+                                         const size_t num_bytes_for_one_vec)
 {
     float* output_data;
     if (data_type == DataType::FLOAT)
     {
-        output_data = convertData2DLineCollection2<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data =
+            convertData2DLineCollection2<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::DOUBLE)
     {
-        output_data = convertData2DLineCollection2<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<double>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT8)
     {
-        output_data = convertData2DLineCollection2<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<int8_t>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT16)
     {
-        output_data = convertData2DLineCollection2<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<int16_t>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT32)
     {
-        output_data = convertData2DLineCollection2<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<int32_t>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::INT64)
     {
-        output_data = convertData2DLineCollection2<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<int64_t>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT8)
     {
-        output_data = convertData2DLineCollection2<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<uint8_t>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT16)
     {
-        output_data = convertData2DLineCollection2<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<uint16_t>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT32)
     {
-        output_data = convertData2DLineCollection2<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<uint32_t>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else if (data_type == DataType::UINT64)
     {
-        output_data = convertData2DLineCollection2<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
+        output_data = convertData2DLineCollection2<uint64_t>(
+            input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
     }
     else
     {
