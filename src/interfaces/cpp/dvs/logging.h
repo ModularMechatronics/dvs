@@ -367,4 +367,4 @@ inline void showThreadId(const bool show_thread_id)
     dvs::logging::internal::Log(dvs::logging::internal::MessageSeverity::EXIT, __FILE__, __func__, __LINE__, false) \
         .getStream()
 
-#endif // DVS_LOGGING_H_
+#endif  // DVS_LOGGING_H_

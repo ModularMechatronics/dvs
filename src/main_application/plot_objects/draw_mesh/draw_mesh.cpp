@@ -7,18 +7,20 @@ struct OutputData
 };
 
 OutputData convertVerticesDataOuter(uint8_t* input_data,
-                                const DataType data_type,
-                                const uint32_t num_vertices,
-                                const uint32_t num_indices,
-                                const uint32_t num_bytes_per_element);
+                                    const DataType data_type,
+                                    const uint32_t num_vertices,
+                                    const uint32_t num_indices,
+                                    const uint32_t num_bytes_per_element);
 
 OutputData convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
-                                       const DataType data_type,
-                                       const uint32_t num_vertices,
-                                       const uint32_t num_indices,
-                                       const uint32_t num_bytes_per_element);
+                                                   const DataType data_type,
+                                                   const uint32_t num_vertices,
+                                                   const uint32_t num_indices,
+                                                   const uint32_t num_bytes_per_element);
 
-DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
+                   const CommunicationHeader& hdr,
+                   const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if ((type_ != Function::DRAW_MESH) && (type_ != Function::DRAW_MESH_SEPARATE_VECTORS))
@@ -32,11 +34,13 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const Comm
 
     if (type_ == Function::DRAW_MESH)
     {
-        output_data = convertVerticesDataOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
+        output_data =
+            convertVerticesDataOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
     }
     else
     {
-        output_data = convertVerticesDataSeparateVectorsOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
+        output_data = convertVerticesDataSeparateVectorsOuter(
+            data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
     }
 
     points_ptr_ = output_data.points_ptr;
@@ -88,25 +92,34 @@ void DrawMesh::render()
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     shader_collection_.draw_mesh_shader.use();
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "edge_color"), edge_color_.red, edge_color_.green, edge_color_.blue);
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "face_color"), face_color_.red, face_color_.green, face_color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "edge_color"),
+                edge_color_.red,
+                edge_color_.green,
+                edge_color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "face_color"),
+                face_color_.red,
+                face_color_.green,
+                face_color_.blue);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "alpha"), alpha_);
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_edge_color"), static_cast<int>(has_edge_color_));
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), static_cast<int>(has_face_color_));
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_edge_color"),
+                static_cast<int>(has_edge_color_));
+    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"),
+                static_cast<int>(has_face_color_));
 
-    if(color_map_set_)
+    if (color_map_set_)
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), static_cast<int>(color_map_) + 1);
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
+                    static_cast<int>(color_map_) + 1);
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), 1);
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"), static_cast<int>(interpolate_colormap_));
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"),
+                    static_cast<int>(interpolate_colormap_));
     }
     else
     {
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), 0);
     }
-    
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 
@@ -115,7 +128,7 @@ void DrawMesh::render()
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
 
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);
 
     glBindVertexArray(0);
@@ -132,16 +145,17 @@ DrawMesh::~DrawMesh()
 
 template <typename T>
 OutputData convertVerticesData(uint8_t* input_data,
-                                  const uint32_t num_vertices,
-                                  const uint32_t num_indices,
-                                  const uint32_t num_bytes_per_element)
+                               const uint32_t num_vertices,
+                               const uint32_t num_indices,
+                               const uint32_t num_bytes_per_element)
 {
     OutputData output_data;
     output_data.points_ptr = new float[num_indices * 3 * 3];
     output_data.normals_ptr = new float[num_indices * 3 * 3];
 
     VectorView<Point3<T>> vertices{reinterpret_cast<Point3<T>*>(input_data), num_vertices};
-    VectorView<IndexTriplet> indices{reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
+    VectorView<IndexTriplet> indices{
+        reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
 
     size_t idx = 0;
 
@@ -186,9 +200,9 @@ OutputData convertVerticesData(uint8_t* input_data,
 
 template <typename T>
 OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
-                                  const uint32_t num_vertices,
-                                  const uint32_t num_indices,
-                                  const uint32_t num_bytes_per_element)
+                                              const uint32_t num_vertices,
+                                              const uint32_t num_indices,
+                                              const uint32_t num_bytes_per_element)
 {
     OutputData output_data;
 
@@ -198,7 +212,8 @@ OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
     VectorView<T> y{reinterpret_cast<T*>(&(input_data[num_vertices * num_bytes_per_element])), num_vertices};
     VectorView<T> z{reinterpret_cast<T*>(&(input_data[num_vertices * num_bytes_per_element * 2])), num_vertices};
 
-    VectorView<IndexTriplet> indices{reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
+    VectorView<IndexTriplet> indices{
+        reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
 
     size_t idx = 0;
 
@@ -242,10 +257,10 @@ OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
 }
 
 OutputData convertVerticesDataOuter(uint8_t* input_data,
-                                       const DataType data_type,
-                                       const uint32_t num_vertices,
-                                       const uint32_t num_indices,
-                                       const uint32_t num_bytes_per_element)
+                                    const DataType data_type,
+                                    const uint32_t num_vertices,
+                                    const uint32_t num_indices,
+                                    const uint32_t num_bytes_per_element)
 {
     OutputData output_data;
     if (data_type == DataType::FLOAT)
@@ -297,51 +312,61 @@ OutputData convertVerticesDataOuter(uint8_t* input_data,
 }
 
 OutputData convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
-                                       const DataType data_type,
-                                       const uint32_t num_vertices,
-                                       const uint32_t num_indices,
-                                       const uint32_t num_bytes_per_element)
+                                                   const DataType data_type,
+                                                   const uint32_t num_vertices,
+                                                   const uint32_t num_indices,
+                                                   const uint32_t num_bytes_per_element)
 {
     OutputData output_data;
     if (data_type == DataType::FLOAT)
     {
-        output_data = convertVerticesDataSeparateVectors<float>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<float>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::DOUBLE)
     {
-        output_data = convertVerticesDataSeparateVectors<double>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<double>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::INT8)
     {
-        output_data = convertVerticesDataSeparateVectors<int8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<int8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::INT16)
     {
-        output_data = convertVerticesDataSeparateVectors<int16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<int16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::INT32)
     {
-        output_data = convertVerticesDataSeparateVectors<int32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<int32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::INT64)
     {
-        output_data = convertVerticesDataSeparateVectors<int64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<int64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::UINT8)
     {
-        output_data = convertVerticesDataSeparateVectors<uint8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<uint8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::UINT16)
     {
-        output_data = convertVerticesDataSeparateVectors<uint16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<uint16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::UINT32)
     {
-        output_data = convertVerticesDataSeparateVectors<uint32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<uint32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else if (data_type == DataType::UINT64)
     {
-        output_data = convertVerticesDataSeparateVectors<uint64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
+        output_data =
+            convertVerticesDataSeparateVectors<uint64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
     }
     else
     {

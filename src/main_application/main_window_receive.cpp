@@ -104,15 +104,16 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::GRID_ON) || (fcn == Function::GRID_OFF) || (fcn == Function::PLOT2) ||
            (fcn == Function::PLOT3) || (fcn == Function::DRAW_TRIANGLES_3D) || (fcn == Function::SCATTER2) ||
            (fcn == Function::SCATTER3) || (fcn == Function::DRAW_LINE_BETWEEN_POINTS_3D) ||
-           (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_MESH) || (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_LINE3D) ||
+           (fcn == Function::POLYGON_FROM_4_POINTS) || (fcn == Function::DRAW_MESH) ||
+           (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_LINE3D) ||
            (fcn == Function::CLEAR) || (fcn == Function::HOLD_ON) || (fcn == Function::HOLD_OFF) ||
            (fcn == Function::POSITION) || (fcn == Function::SURF) || (fcn == Function::IM_SHOW) ||
            (fcn == Function::AXES_2D) || (fcn == Function::AXES_3D) || (fcn == Function::VIEW) ||
            (fcn == Function::SOFT_CLEAR) || (fcn == Function::STAIRS) || (fcn == Function::DRAW_TILES) ||
            (fcn == Function::DRAW_ARROW) || (fcn == Function::PLOT_COLLECTION2) || (fcn == Function::QUIVER) ||
            (fcn == Function::STEM) || (fcn == Function::FAST_PLOT2) || (fcn == Function::FAST_PLOT3) ||
-           (fcn == Function::LINE_COLLECTION2) || (fcn == Function::LINE_COLLECTION3) || (fcn == Function::PLOT_COLLECTION3) ||
-           (fcn == Function::GLOBAL_ILLUMINATION);
+           (fcn == Function::LINE_COLLECTION2) || (fcn == Function::LINE_COLLECTION3) ||
+           (fcn == Function::PLOT_COLLECTION3) || (fcn == Function::GLOBAL_ILLUMINATION);
 }
 
 void MainWindow::receiveData()
@@ -154,7 +155,7 @@ void MainWindow::receiveData()
                     break;
 
                 case Function::FLUSH_ELEMENT:
-                    if(current_gui_element_set_)
+                    if (current_gui_element_set_)
                     {
                         current_gui_element_->refresh();
                     }

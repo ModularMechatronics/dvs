@@ -10,6 +10,6 @@ void begin();
 void end();
 GLuint getSamplesPassed();
 
-}
+}  // namespace opengl_debug
 
-#endif // MAIN_APPLICATION_OPENGL_DEBUG_H_
+#endif  // MAIN_APPLICATION_OPENGL_DEBUG_H_

@@ -23,6 +23,6 @@ void testWithVectorView()
     plot(xv, yv, properties::Color::Blue());
 }
 
-}
+}  // namespace plot2
 
-#endif // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_PLOT2_H_
+#endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_PLOT2_H_

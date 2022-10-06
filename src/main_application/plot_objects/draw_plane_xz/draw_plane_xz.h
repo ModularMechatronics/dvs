@@ -24,10 +24,12 @@ private:
 
 public:
     DrawPlaneXZ();
-    DrawPlaneXZ(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    DrawPlaneXZ(std::unique_ptr<const ReceivedData> received_data,
+                const CommunicationHeader& hdr,
+                const ShaderCollection shader_collection);
     ~DrawPlaneXZ();
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_PLANE_XZ_DRAW_PLANE_XZ_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_PLANE_XZ_DRAW_PLANE_XZ_H_

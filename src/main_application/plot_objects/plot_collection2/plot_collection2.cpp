@@ -9,10 +9,10 @@ struct OutputData
 
 template <typename T>
 OutputData convertCollectionData(uint8_t* input_data,
-                                    const size_t num_objects,
-                                    const size_t num_bytes_per_element,
-                                    const size_t num_points,
-                                    const Vector<uint16_t>& vector_lengths)
+                                 const size_t num_objects,
+                                 const size_t num_bytes_per_element,
+                                 const size_t num_points,
+                                 const Vector<uint16_t>& vector_lengths)
 {
     const size_t total_num_bytes = num_points * 2 * num_bytes_per_element;
     const size_t num_bytes_per_collection = vector_lengths.sum() * num_bytes_per_element;
@@ -66,11 +66,11 @@ OutputData convertCollectionData(uint8_t* input_data,
 }
 
 inline OutputData convertCollectionDataOuter(uint8_t* input_data,
-                                         const DataType data_type,
-                                         const size_t num_objects,
-                                         const size_t num_bytes_per_element,
-                                         const size_t num_points,
-                                         const Vector<uint16_t>& vector_lengths)
+                                             const DataType data_type,
+                                             const size_t num_objects,
+                                             const size_t num_bytes_per_element,
+                                             const size_t num_points,
+                                             const Vector<uint16_t>& vector_lengths)
 {
     OutputData output_data;
     if (data_type == DataType::FLOAT)
@@ -131,7 +131,9 @@ inline OutputData convertCollectionDataOuter(uint8_t* input_data,
     return output_data;
 }
 
-PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_data,
+                                   const CommunicationHeader& hdr,
+                                   const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLOT_COLLECTION2)
@@ -160,7 +162,7 @@ PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_
     points_ptr_ = output_data.data_ptr;
     min_vec = Vec3d(output_data.min_vec.x, output_data.min_vec.y, -1.0);
     max_vec = Vec3d(output_data.max_vec.x, output_data.max_vec.y, 1.0);
-    
+
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 

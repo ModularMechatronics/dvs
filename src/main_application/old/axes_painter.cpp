@@ -56,7 +56,7 @@ Vec3d findScale(const Matrixd& R)
     const Point3d pr0 = R * points(0);
     // clang-format on
     std::pair<Point3d, Point3d> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
-                                  pmah = {points(0), pr0};
+                                pmah = {points(0), pr0};
     for (const Point3d p : points)
     {
         const auto pqr = R * p;
@@ -100,9 +100,9 @@ Vec3d findScale(const Matrixd& R)
 }
 
 void AxesPainter::updateStates(const AxesLimits& axes_limits,
-                        const ViewAngles& view_angles,
-                        const GridVectors& gv,
-                        const CoordinateConverter& coord_converter)
+                               const ViewAngles& view_angles,
+                               const GridVectors& gv,
+                               const CoordinateConverter& coord_converter)
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;

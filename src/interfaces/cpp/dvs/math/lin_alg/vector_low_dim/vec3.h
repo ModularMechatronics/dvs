@@ -63,8 +63,8 @@ template <typename T> Vec3<T> Vec3<T>::elementWiseDivide(const Vec3<T>& denomina
 template <typename T> Vec3<T> Vec3<T>::crossProduct(const Vec3<T>& right_vector) const
 {
     return Vec3<T>(y * right_vector.z - z * right_vector.y,
-                    z * right_vector.x - x * right_vector.z,
-                    x * right_vector.y - y * right_vector.x);
+                   z * right_vector.x - x * right_vector.z,
+                   x * right_vector.y - y * right_vector.x);
 }
 
 template <typename T> T Vec3<T>::angleBetweenVectors(const Vec3<T>& v) const
@@ -186,4 +186,4 @@ template <typename T> T angleBetweenVectors(const Vec3<T> v0, const Vec3<T> v1)
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3_H_
+#endif  // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_VEC3_H_

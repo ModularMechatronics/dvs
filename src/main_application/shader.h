@@ -68,4 +68,4 @@ struct ShaderCollection
     Shader draw_mesh_shader;
 };
 
-#endif // MAIN_APPLICATION_SHADER_H_
+#endif  // MAIN_APPLICATION_SHADER_H_

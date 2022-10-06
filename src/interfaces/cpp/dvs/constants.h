@@ -15,7 +15,7 @@ constexpr uint8_t kCommunicationHeaderObjectDataSize = SCHAR_MAX;
 constexpr size_t kUdpServerMaxBufferSize = 100000000;
 constexpr size_t kHeaderDataStartOffset = 2 * sizeof(uint64_t) + 1;
 
-}
-}
+}  // namespace internal
+}  // namespace dvs
 
-#endif // DVS_CONSTANTS_
+#endif  // DVS_CONSTANTS_

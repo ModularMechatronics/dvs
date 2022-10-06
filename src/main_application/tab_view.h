@@ -34,15 +34,16 @@ private:
         const int key = event.GetKeyCode();
         notify_main_window_key_released_(key);
     }
+
 public:
     TabView() = delete;
     TabView(wxNotebookPage* parent,
-        const TabSettings& tab_settings,
-        const std::function<void(const char key)>& notify_main_window_key_pressed,
-        const std::function<void(const char key)>& notify_main_window_key_released);
+            const TabSettings& tab_settings,
+            const std::function<void(const char key)>& notify_main_window_key_pressed,
+            const std::function<void(const char key)>& notify_main_window_key_released);
 
     void newElement(const std::string& element_name);
     void newElement() override;
 };
 
-#endif // MAIN_APPLICATION_TAB_VIEW_H_
+#endif  // MAIN_APPLICATION_TAB_VIEW_H_

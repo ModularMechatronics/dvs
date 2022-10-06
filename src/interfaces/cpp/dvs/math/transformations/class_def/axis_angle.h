@@ -24,4 +24,4 @@ template <typename T> struct AxisAngle
 
 }  // namespace dvs
 
-#endif // DVS_MATH_TRANSFORMATIONS_CLASS_DEF_AXIS_ANGLE_H_
+#endif  // DVS_MATH_TRANSFORMATIONS_CLASS_DEF_AXIS_ANGLE_H_

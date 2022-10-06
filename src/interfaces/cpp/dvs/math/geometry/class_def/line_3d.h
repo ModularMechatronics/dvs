@@ -21,4 +21,4 @@ template <typename T> struct Line3D
 };
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_CLASS_DEF_LINE_3D_H_
+#endif  // DVS_MATH_GEOMETRY_CLASS_DEF_LINE_3D_H_

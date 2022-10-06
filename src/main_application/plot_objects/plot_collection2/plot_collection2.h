@@ -22,10 +22,12 @@ private:
 
 public:
     PlotCollection2D();
-    PlotCollection2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    PlotCollection2D(std::unique_ptr<const ReceivedData> received_data,
+                     const CommunicationHeader& hdr,
+                     const ShaderCollection shader_collection);
     ~PlotCollection2D();
 
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_COLLECTION2_PLOT_COLLECTION2_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_COLLECTION2_PLOT_COLLECTION2_H_

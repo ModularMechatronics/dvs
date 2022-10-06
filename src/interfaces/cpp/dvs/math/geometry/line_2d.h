@@ -109,4 +109,4 @@ template <typename T> Vec2<T> ParametricLine2D<T>::eval(const T t) const
 
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_LINE_2D_H_
+#endif  // DVS_MATH_GEOMETRY_LINE_2D_H_

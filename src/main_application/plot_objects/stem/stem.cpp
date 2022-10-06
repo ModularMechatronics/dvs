@@ -3,12 +3,14 @@
 #include <utility>
 
 std::pair<float*, float*> convertStemDataOuter(const uint8_t* const input_data,
-                          const DataType data_type,
-                          const size_t num_elements,
-                          const size_t num_bytes_per_element,
-                          const size_t num_bytes_for_one_vec);
+                                               const DataType data_type,
+                                               const size_t num_elements,
+                                               const size_t num_bytes_per_element,
+                                               const size_t num_bytes_for_one_vec);
 
-Stem::Stem(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+Stem::Stem(std::unique_ptr<const ReceivedData> received_data,
+           const CommunicationHeader& hdr,
+           const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::STEM)
@@ -42,7 +44,6 @@ Stem::Stem(std::unique_ptr<const ReceivedData> received_data, const Communicatio
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
 }
 
 void Stem::findMinMax()
@@ -78,7 +79,8 @@ void Stem::modifyShader()
     PlotObjectBase::modifyShader();
     glUseProgram(shader_collection_.scatter_shader.programId());
     glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "point_size"), 10);
-    glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"), static_cast<int>(2));
+    glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"),
+                static_cast<int>(2));
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
@@ -99,9 +101,9 @@ LegendProperties Stem::getLegendProperties() const
 
 template <typename T>
 std::pair<float*, float*> convertStemData(const uint8_t* const input_data,
-                       const size_t num_elements,
-                       const size_t num_bytes_per_element,
-                       const size_t num_bytes_for_one_vec)
+                                          const size_t num_elements,
+                                          const size_t num_bytes_per_element,
+                                          const size_t num_bytes_for_one_vec)
 {
     float* lines_data = new float[4 * num_elements];
     float* points_data = new float[2 * num_elements];
@@ -122,7 +124,7 @@ std::pair<float*, float*> convertStemData(const uint8_t* const input_data,
 
         points_data[points_idx] = data_x;
         points_data[points_idx + 1] = data_y;
-    
+
         lines_idx += 4;
         points_idx += 2;
     }
@@ -135,10 +137,10 @@ std::pair<float*, float*> convertStemData(const uint8_t* const input_data,
 }
 
 std::pair<float*, float*> convertStemDataOuter(const uint8_t* const input_data,
-                                   const DataType data_type,
-                                   const size_t num_elements,
-                                   const size_t num_bytes_per_element,
-                                   const size_t num_bytes_for_one_vec)
+                                               const DataType data_type,
+                                               const size_t num_elements,
+                                               const size_t num_bytes_per_element,
+                                               const size_t num_bytes_for_one_vec)
 {
     std::pair<float*, float*> output_data;
     if (data_type == DataType::FLOAT)

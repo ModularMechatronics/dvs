@@ -39,7 +39,8 @@ template <typename T, typename... Us> void fastPlot(const Vector<T>& x, const Ve
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
-template <typename T, typename... Us> void fastPlot(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+template <typename T, typename... Us>
+void fastPlot(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::FAST_PLOT2);
@@ -61,7 +62,8 @@ template <typename T, typename... Us> void lineCollection(const Vector<T>& x, co
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
-template <typename T, typename... Us> void lineCollection(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+template <typename T, typename... Us>
+void lineCollection(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION2);
@@ -126,7 +128,9 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
 }
 
 template <typename T, typename... Us>
-void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x, const std::vector<std::reference_wrapper<Vector<T>>>& y, const Us&... settings)
+void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x,
+                    const std::vector<std::reference_wrapper<Vector<T>>>& y,
+                    const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION2);
@@ -153,11 +157,15 @@ void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x, con
 
     const size_t num_bytes_to_send = sizeof(T) * 2 * num_elements;
 
-    internal::sendHeaderAndRefVectorCollection(internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y);
+    internal::sendHeaderAndRefVectorCollection(
+        internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y);
 }
 
 template <typename T, typename... Us>
-void plotCollection3(const std::vector<Vector<T>>& x, const std::vector<Vector<T>>& y, const std::vector<Vector<T>>& z, const Us&... settings)
+void plotCollection3(const std::vector<Vector<T>>& x,
+                     const std::vector<Vector<T>>& y,
+                     const std::vector<Vector<T>>& z,
+                     const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION3);
@@ -184,11 +192,15 @@ void plotCollection3(const std::vector<Vector<T>>& x, const std::vector<Vector<T
 
     const size_t num_bytes_to_send = sizeof(T) * 3 * num_elements;
 
-    internal::sendHeaderAndVectorCollection(internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y, z);
+    internal::sendHeaderAndVectorCollection(
+        internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y, z);
 }
 
 template <typename T, typename... Us>
-void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x, const std::vector<std::reference_wrapper<Vector<T>>>& y, const std::vector<std::reference_wrapper<Vector<T>>>& z, const Us&... settings)
+void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x,
+                     const std::vector<std::reference_wrapper<Vector<T>>>& y,
+                     const std::vector<std::reference_wrapper<Vector<T>>>& z,
+                     const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION3);
@@ -218,7 +230,8 @@ void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x, co
 
     const size_t num_bytes_to_send = sizeof(T) * 3 * num_elements;
 
-    internal::sendHeaderAndRefVectorCollection(internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y, z);
+    internal::sendHeaderAndRefVectorCollection(
+        internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y, z);
 }
 
 template <typename T, typename... Us> void stairs(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
@@ -291,8 +304,7 @@ void fastPlot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
-template <typename T, typename... Us>
-void stem(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
+template <typename T, typename... Us> void stem(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::STEM);
@@ -303,8 +315,7 @@ void stem(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
-template <typename T, typename... Us>
-void stem(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+template <typename T, typename... Us> void stem(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::STEM);
@@ -326,7 +337,8 @@ template <typename T, typename... Us> void scatter(const Vector<T>& x, const Vec
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
-template <typename T, typename... Us> void scatter(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+template <typename T, typename... Us>
+void scatter(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
@@ -439,8 +451,10 @@ template <typename T, typename... Us> void imShow(const ImageC1<T>& img, const U
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(1));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.numElements()));  // TODO: Needed?
-    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.numRows(), img.numCols()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(img.numElements()));  // TODO: Needed?
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,
+               internal::Dimension2D(img.numRows(), img.numCols()));
 
     hdr.extend(settings...);
 
@@ -453,8 +467,10 @@ template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const U
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(3));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(img.numRows() * img.numCols()));  // TODO: Needed?
-    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D, internal::Dimension2D(img.numRows(), img.numCols()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(img.numRows() * img.numCols()));  // TODO: Needed?
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,
+               internal::Dimension2D(img.numRows(), img.numCols()));
 
     hdr.extend(settings...);
 
@@ -537,7 +553,11 @@ void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& ind
 }
 
 template <typename T, typename... Us>
-void drawMesh(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<IndexTriplet>& indices, const Us&... settings)
+void drawMesh(const Vector<T>& x,
+              const Vector<T>& y,
+              const Vector<T>& z,
+              const Vector<IndexTriplet>& indices,
+              const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_MESH_SEPARATE_VECTORS);
@@ -553,7 +573,11 @@ void drawMesh(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const 
 }
 
 template <typename T, typename... Us>
-void drawMesh(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const VectorView<IndexTriplet>& indices, const Us&... settings)
+void drawMesh(const VectorView<T>& x,
+              const VectorView<T>& y,
+              const VectorView<T>& z,
+              const VectorView<IndexTriplet>& indices,
+              const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_MESH_SEPARATE_VECTORS);
@@ -788,7 +812,8 @@ inline void axis(const Vec3<double>& min_bound, const Vec3<double>& max_bound)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::AXES_3D);
-    hdr.append(internal::CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC, std::pair<Vec3<double>, Vec3<double>>(min_bound, max_bound));
+    hdr.append(internal::CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC,
+               std::pair<Vec3<double>, Vec3<double>>(min_bound, max_bound));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
@@ -849,4 +874,4 @@ inline void clearView()
 
 }  // namespace dvs
 
-#endif // DVS_DVS_H_
+#endif  // DVS_DVS_H_

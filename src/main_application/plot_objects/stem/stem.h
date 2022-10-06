@@ -20,7 +20,9 @@ private:
 
 public:
     Stem();
-    Stem(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    Stem(std::unique_ptr<const ReceivedData> received_data,
+         const CommunicationHeader& hdr,
+         const ShaderCollection shader_collection);
     ~Stem();
 
     LegendProperties getLegendProperties() const override;
@@ -29,4 +31,4 @@ public:
     void modifyShader() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_STEM_STEM_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_STEM_STEM_H_

@@ -28,4 +28,4 @@ enum DvsIds : uint16_t
 
 }
 
-#endif // MAIN_APPLICATION_EVENTS_H_
+#endif  // MAIN_APPLICATION_EVENTS_H_

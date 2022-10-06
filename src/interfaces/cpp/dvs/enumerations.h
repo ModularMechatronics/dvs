@@ -187,4 +187,4 @@ enum class ElementParent : uint8_t
 
 }  // namespace dvs
 
-#endif // DVS_ENUMERATIONS_H_
+#endif  // DVS_ENUMERATIONS_H_

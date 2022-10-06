@@ -11,7 +11,7 @@ namespace dvs
 {
 namespace internal
 {
-struct PropertyBase // TODO: Should be class? Should all properties be classes?
+struct PropertyBase  // TODO: Should be class? Should all properties be classes?
 {
 protected:
     PropertyType property_type_;
@@ -32,7 +32,6 @@ public:
 
     virtual ~PropertyBase() {}
 };
-
 
 // TODO: Finish
 struct PropertyFlagContainer : PropertyBase
@@ -115,7 +114,8 @@ inline bool operator==(const Name& n0, const Name& n1)
 struct LineStyle : internal::PropertyBase
 {
 private:
-    LineStyle(const internal::LineStyleType line_style_type) : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
+    LineStyle(const internal::LineStyleType line_style_type)
+        : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
     {
         data = line_style_type;
     }
@@ -142,7 +142,6 @@ public:
     {
         return LineStyle(internal::LineStyleType::LONG_DASHED);
     }
-
 };
 
 struct ScatterStyle : internal::PropertyBase
@@ -150,34 +149,35 @@ struct ScatterStyle : internal::PropertyBase
     internal::ScatterStyleType data;
 
     ScatterStyle() : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE) {}
-    ScatterStyle(const internal::ScatterStyleType scatter_style_type) : 
-        internal::PropertyBase(internal::PropertyType::SCATTER_STYLE), data{scatter_style_type} {}
+    ScatterStyle(const internal::ScatterStyleType scatter_style_type)
+        : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE), data{scatter_style_type}
+    {
+    }
 
     static ScatterStyle Cross()
     {
         return {internal::ScatterStyleType::CROSS};
     }
-    
+
     static ScatterStyle Circle()
     {
         return {internal::ScatterStyleType::CIRCLE};
     }
-    
+
     static ScatterStyle Disc()
     {
         return {internal::ScatterStyleType::DISC};
     }
-    
+
     static ScatterStyle Square()
     {
         return {internal::ScatterStyleType::SQUARE};
     }
-    
+
     static ScatterStyle Plus()
     {
         return {internal::ScatterStyleType::PLUS};
     }
-    
 };
 
 struct Color : internal::PropertyBase
@@ -297,12 +297,20 @@ public:
     EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{1U} {}
 
     EdgeColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
-        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{1U}, red(red_), green(green_), blue(blue_)
+        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR),
+          use_color{1U},
+          red(red_),
+          green(green_),
+          blue(blue_)
     {
     }
 
     EdgeColor(const uint8_t use_color_)
-        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{use_color_}, red(0U), green(0U), blue(0U)
+        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR),
+          use_color{use_color_},
+          red(0U),
+          green(0U),
+          blue(0U)
     {
     }
 };
@@ -363,15 +371,25 @@ public:
         return FaceColor(0U);
     }
 
-    FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{1U}, red(0), green(0), blue(0) {}
+    FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{1U}, red(0), green(0), blue(0)
+    {
+    }
 
     FaceColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
-        : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{1U}, red(red_), green(green_), blue(blue_)
+        : internal::PropertyBase(internal::PropertyType::FACE_COLOR),
+          use_color{1U},
+          red(red_),
+          green(green_),
+          blue(blue_)
     {
     }
 
     FaceColor(const uint8_t use_color_)
-        : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{use_color_}, red(0U), green(0U), blue(0U)
+        : internal::PropertyBase(internal::PropertyType::FACE_COLOR),
+          use_color{use_color_},
+          red(0U),
+          green(0U),
+          blue(0U)
     {
     }
 };
@@ -419,4 +437,4 @@ public:
 
 }  // namespace dvs
 
-#endif // DVS_PLOT_PROPERTIES_H_
+#endif  // DVS_PLOT_PROPERTIES_H_

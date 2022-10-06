@@ -3,4 +3,4 @@
 
 constexpr int kMaxNumWindows = 20;
 
-#endif // MAIN_APPLICATION_CONSTANTS_H_
+#endif  // MAIN_APPLICATION_CONSTANTS_H_

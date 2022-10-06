@@ -23,6 +23,6 @@ void testWithVectorView()
     scatter(xv, yv, properties::Color::Red());
 }
 
-}
+}  // namespace scatter2
 
-#endif // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SCATTER2_H_
+#endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SCATTER2_H_

@@ -28,8 +28,8 @@
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
 #include "tab_view.h"
-#include "window_view.h"
 #include "tray_icon.h"
+#include "window_view.h"
 
 class MainWindow : public wxFrame
 {
@@ -154,4 +154,4 @@ public:
     void appActive();
 };
 
-#endif // MAIN_APPLICATION_MAIN_WINDOW_H_
+#endif  // MAIN_APPLICATION_MAIN_WINDOW_H_

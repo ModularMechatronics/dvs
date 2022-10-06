@@ -4,16 +4,16 @@
 #include "main_window.h"
 
 LayoutToolsWindow::LayoutToolsWindow(wxPoint pos,
-        wxSize size,
-        std::function<void(const std::string&)>&& change_current_tab_name,
-        std::function<void(const std::string&)>&& change_current_element_name,
-        std::function<void()>&& add_new_window,
-        std::function<void()>&& delete_window,
-        std::function<void()>&& add_new_tab,
-        std::function<void()>&& delete_tab,
-        std::function<void()>&& add_new_element,
-        std::function<void()>&& delete_element,
-        std::function<void()>&& disable_editing)
+                                     wxSize size,
+                                     std::function<void(const std::string&)>&& change_current_tab_name,
+                                     std::function<void(const std::string&)>&& change_current_element_name,
+                                     std::function<void()>&& add_new_window,
+                                     std::function<void()>&& delete_window,
+                                     std::function<void()>&& add_new_tab,
+                                     std::function<void()>&& delete_tab,
+                                     std::function<void()>&& add_new_element,
+                                     std::function<void()>&& delete_element,
+                                     std::function<void()>&& disable_editing)
     : wxFrame(nullptr, wxID_ANY, "Layout tools", pos, size, wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP)
 {
     this->SetMinSize(size);

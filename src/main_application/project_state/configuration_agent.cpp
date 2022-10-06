@@ -1,8 +1,8 @@
 #include "project_state/configuration_agent.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include <iomanip>
@@ -21,7 +21,6 @@
 #endif
 
 constexpr char* kConfigFolderName = ".config";
-
 
 #ifdef PLATFORM_LINUX_M
 std::string getExecutablePath()
@@ -96,16 +95,14 @@ ConfigurationAgent::~ConfigurationAgent() {}
 // dvs::filesystem::path pa = dvs::filesystem::absolute(getExecutablePath());
 // configuration_agent_ = new ConfigurationAgent(pa.remove_filename());
 
-ConfigurationAgent::ConfigurationAgent() : ConfigurationAgent{kConfigFolderName}
-{
-}
+ConfigurationAgent::ConfigurationAgent() : ConfigurationAgent{kConfigFolderName} {}
 
 ConfigurationAgent::ConfigurationAgent(const std::string& configuration_folder_name) : is_valid_{true}
 {
 #ifdef PLATFORM_LINUX_M
     const std::pair<std::string, bool> username_and_status{getUsername()};
 
-    if(!username_and_status.second)
+    if (!username_and_status.second)
     {
         DVS_LOG_ERROR() << "Failed to get login name! Exiting...";
         is_valid_ = false;
@@ -119,7 +116,7 @@ ConfigurationAgent::ConfigurationAgent(const std::string& configuration_folder_n
 
     const std::pair<std::string, bool> home_dir_path_and_status{getHomeDirPath()};
 
-    if(!home_dir_path_and_status.second)
+    if (!home_dir_path_and_status.second)
     {
         DVS_LOG_ERROR() << "Failed to get home dir path! Exiting...";
         is_valid_ = false;
@@ -143,9 +140,10 @@ ConfigurationAgent::ConfigurationAgent(const std::string& configuration_folder_n
         {
             dvs::filesystem::create_directory(config_dir_path);
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
-            DVS_LOG_ERROR() << "Failed to create config directory at \"" << config_dir_path << "\". Exception: " <<  e.what();
+            DVS_LOG_ERROR() << "Failed to create config directory at \"" << config_dir_path
+                            << "\". Exception: " << e.what();
             is_valid_ = false;
             return;
         }
@@ -158,9 +156,9 @@ ConfigurationAgent::ConfigurationAgent(const std::string& configuration_folder_n
         {
             dvs::filesystem::create_directory(dvs_dir_path);
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
-            DVS_LOG_ERROR() << "Failed to create dvs directory at \"" << dvs_dir_path << "\". Exception: " <<  e.what();
+            DVS_LOG_ERROR() << "Failed to create dvs directory at \"" << dvs_dir_path << "\". Exception: " << e.what();
             is_valid_ = false;
             return;
         }
@@ -174,9 +172,10 @@ ConfigurationAgent::ConfigurationAgent(const std::string& configuration_folder_n
         {
             createEmptyConfigurationFile();
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
-            DVS_LOG_ERROR() << "Failed to create configuration file at \"" << configuration_file_path_ << "\". Exception: " <<  e.what();
+            DVS_LOG_ERROR() << "Failed to create configuration file at \"" << configuration_file_path_
+                            << "\". Exception: " << e.what();
             is_valid_ = false;
             return;
         }
@@ -189,20 +188,22 @@ ConfigurationAgent::ConfigurationAgent(const std::string& configuration_folder_n
             readConfigurationFile();
             reading_successful = true;
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
-            DVS_LOG_WARNING() << "Error reading existing configuration file \"" << configuration_file_path_ << "\". Exception: " <<  e.what() << ". Creating a new one.";
+            DVS_LOG_WARNING() << "Error reading existing configuration file \"" << configuration_file_path_
+                              << "\". Exception: " << e.what() << ". Creating a new one.";
         }
 
-        if(!reading_successful)
+        if (!reading_successful)
         {
             try
             {
                 createEmptyConfigurationFile();
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
-                DVS_LOG_ERROR() << "Failed to create configuration.json at \"" << configuration_file_path_ << "\". Exception: " <<  e.what() << ". Exiting.";
+                DVS_LOG_ERROR() << "Failed to create configuration.json at \"" << configuration_file_path_
+                                << "\". Exception: " << e.what() << ". Exiting.";
                 is_valid_ = false;
                 return;
             }
@@ -217,16 +218,17 @@ bool ConfigurationAgent::isValid() const
 
 bool ConfigurationAgent::hasKey(const std::string& key)
 {
-    if(is_valid_)
+    if (is_valid_)
     {
         try
         {
             const nlohmann::json json_data = readConfigurationFile();
             return json_data.count(key) > 0;
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
-            DVS_LOG_ERROR() << "Error calling ConfigurationAgent::hasKey(" << key << ") in configuration file \"" << configuration_file_path_ << "\".";
+            DVS_LOG_ERROR() << "Error calling ConfigurationAgent::hasKey(" << key << ") in configuration file \""
+                            << configuration_file_path_ << "\".";
             return 0;
         }
     }

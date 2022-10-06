@@ -5,12 +5,12 @@
 
 #include <iostream>
 
-#include "dvs/enumerations.h"
 #include "dvs/base_types.h"
-#include "opengl_low_level/opengl_header.h"
+#include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "main_application/plot_objects/utils.h"
 #include "opengl_low_level/data_structures.h"
+#include "opengl_low_level/opengl_header.h"
 #include "opengl_low_level/opengl_low_level.h"
 
 using namespace dvs::internal;
@@ -135,8 +135,8 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
 
 template <typename T>
 std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectorsInternal(uint8_t* const data_buffer,
-                                                             const size_t num_elements,
-                                                             const size_t num_bytes_for_one_vec)
+                                                           const size_t num_elements,
+                                                           const size_t num_bytes_for_one_vec)
 {
     Vec3d min_vec, max_vec;
     VectorView<T> x{reinterpret_cast<T*>(data_buffer), num_elements},
@@ -158,9 +158,9 @@ std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectorsInternal(uint8_t* const data_b
 }
 
 inline std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectors(uint8_t* const data_buffer,
-                                                            const size_t num_elements,
-                                                            const size_t num_bytes_for_one_vec,
-                                                            const DataType data_type)
+                                                          const size_t num_elements,
+                                                          const size_t num_bytes_for_one_vec,
+                                                          const DataType data_type)
 {
     if (data_type == DataType::FLOAT)
     {
@@ -216,8 +216,8 @@ inline std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectors(uint8_t* const data_bu
 
 template <typename T>
 std::pair<Vec2d, Vec2d> findMinMaxFromTwoVectorsInternal(uint8_t* const data_buffer,
-                                                           const size_t num_elements,
-                                                           const size_t num_bytes_for_one_vec)
+                                                         const size_t num_elements,
+                                                         const size_t num_bytes_for_one_vec)
 {
     VectorView<T> x{reinterpret_cast<T*>(data_buffer), num_elements},
         y{reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_vec])), num_elements};
@@ -230,9 +230,9 @@ std::pair<Vec2d, Vec2d> findMinMaxFromTwoVectorsInternal(uint8_t* const data_buf
 }
 
 inline std::pair<Vec2d, Vec2d> findMinMaxFromTwoVectors(uint8_t* const data_buffer,
-                                                          const size_t num_elements,
-                                                          const size_t num_bytes_for_one_vec,
-                                                          const DataType data_type)
+                                                        const size_t num_elements,
+                                                        const size_t num_bytes_for_one_vec,
+                                                        const DataType data_type)
 {
     if (data_type == DataType::FLOAT)
     {
@@ -288,9 +288,9 @@ inline std::pair<Vec2d, Vec2d> findMinMaxFromTwoVectors(uint8_t* const data_buff
 
 template <typename T>
 std::pair<Vec3d, Vec3d> findMinMaxFromThreeMatricesInternal(uint8_t* const data_buffer,
-                                                              const size_t num_rows,
-                                                              const size_t num_cols,
-                                                              const size_t num_bytes_for_one_mat)
+                                                            const size_t num_rows,
+                                                            const size_t num_cols,
+                                                            const size_t num_bytes_for_one_mat)
 {
     MatrixView<T> x{reinterpret_cast<T*>(data_buffer), num_rows, num_cols},
         y{reinterpret_cast<T*>(&(data_buffer[num_bytes_for_one_mat])), num_rows, num_cols},
@@ -305,10 +305,10 @@ std::pair<Vec3d, Vec3d> findMinMaxFromThreeMatricesInternal(uint8_t* const data_
 }
 
 inline std::pair<Vec3d, Vec3d> findMinMaxFromThreeMatrices(uint8_t* const data_buffer,
-                                                             const size_t num_rows,
-                                                             const size_t num_cols,
-                                                             const size_t num_bytes_for_one_mat,
-                                                             const DataType data_type)
+                                                           const size_t num_rows,
+                                                           const size_t num_cols,
+                                                           const size_t num_bytes_for_one_mat,
+                                                           const DataType data_type)
 {
     if (data_type == DataType::FLOAT)
     {
@@ -364,5 +364,4 @@ inline std::pair<Vec3d, Vec3d> findMinMaxFromThreeMatrices(uint8_t* const data_b
     }
 }
 
-
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_UTILS_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_UTILS_H_

@@ -6,4 +6,4 @@
 
 void drawPlotBoxWalls(const AxesSettings& axes_settings, const ViewAngles& view_angles);
 
-#endif // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_WALLS_H_
+#endif  // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_WALLS_H_

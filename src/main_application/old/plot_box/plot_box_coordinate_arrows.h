@@ -10,4 +10,4 @@ void drawCoordinateAxesLines(const AxesSettings& axes_settings);
 void drawCoordinateArrowHead(const AxesSettings& axes_settings, const CoordinateConverter& coord_conv);
 void drawCoordinateAxesLetters(const AxesSettings& axes_settings, const CoordinateConverter& coord_conv);
 
-#endif // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_COORDINATE_ARROWS_H_
+#endif  // MAIN_APPLICATION_OLD_PLOT_BOX_PLOT_BOX_COORDINATE_ARROWS_H_

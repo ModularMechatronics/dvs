@@ -71,8 +71,8 @@ Properties::Properties(const std::vector<CommunicationHeaderObject>& objects)
 bool Properties::hasProperty(const PropertyType tp) const
 {
     return std::find_if(props.begin(), props.end(), [&tp](const std::shared_ptr<PropertyBase>& p) -> bool {
-                return p->getPropertyType() == tp;
-            }) != props.end();
+               return p->getPropertyType() == tp;
+           }) != props.end();
 }
 
 std::vector<std::shared_ptr<PropertyBase>> Properties::getAllProperties() const

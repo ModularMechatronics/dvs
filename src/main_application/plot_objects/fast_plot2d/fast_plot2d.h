@@ -18,7 +18,9 @@ private:
 
 public:
     FastPlot2D();
-    FastPlot2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    FastPlot2D(std::unique_ptr<const ReceivedData> received_data,
+               const CommunicationHeader& hdr,
+               const ShaderCollection shader_collection);
     ~FastPlot2D();
 
     LegendProperties getLegendProperties() const override;
@@ -26,4 +28,4 @@ public:
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_FAST_PLOT2D_FAST_PLOT2D_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_FAST_PLOT2D_FAST_PLOT2D_H_

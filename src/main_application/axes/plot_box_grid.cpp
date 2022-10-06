@@ -5,7 +5,7 @@
 void PlotBoxGrid::fillXYGrid(const GridVectors& gv)
 {
     const float z_val = elevation_ > 0.0f ? (-axes_scale_.z) : axes_scale_.z;
-    for(size_t k = 0; k < gv.x.num_valid_values; k++)
+    for (size_t k = 0; k < gv.x.num_valid_values; k++)
     {
         grid_points_[idx_] = gv.x.data[k];
         grid_points_[idx_ + 1] = -axes_scale_.y;
@@ -20,7 +20,7 @@ void PlotBoxGrid::fillXYGrid(const GridVectors& gv)
         idx_ += 3;
     }
 
-    for(size_t k = 0; k < gv.y.num_valid_values; k++)
+    for (size_t k = 0; k < gv.y.num_valid_values; k++)
     {
         grid_points_[idx_] = axes_scale_.x;
         grid_points_[idx_ + 1] = gv.y.data[k];
@@ -36,13 +36,12 @@ void PlotBoxGrid::fillXYGrid(const GridVectors& gv)
     }
 }
 
-
 void PlotBoxGrid::fillXZGrid(const GridVectors& gv)
 {
     const bool cond = ((-M_PI / 2.0f) <= azimuth_) && (azimuth_ <= (M_PI / 2.0f));
     const float y_val = cond ? axes_scale_.y : (-axes_scale_.y);
 
-    for(size_t k = 0; k < gv.x.num_valid_values; k++)
+    for (size_t k = 0; k < gv.x.num_valid_values; k++)
     {
         grid_points_[idx_] = gv.x.data[k];
         grid_points_[idx_ + 1] = y_val;
@@ -57,7 +56,7 @@ void PlotBoxGrid::fillXZGrid(const GridVectors& gv)
         idx_ += 3;
     }
 
-    for(size_t k = 0; k < gv.z.num_valid_values; k++)
+    for (size_t k = 0; k < gv.z.num_valid_values; k++)
     {
         grid_points_[idx_] = axes_scale_.x;
         grid_points_[idx_ + 1] = y_val;
@@ -77,7 +76,7 @@ void PlotBoxGrid::fillYZGrid(const GridVectors& gv)
 {
     const float x_val = (azimuth_ >= 0.0f) ? axes_scale_.x : (-axes_scale_.x);
 
-    for(size_t k = 0; k < gv.y.num_valid_values; k++)
+    for (size_t k = 0; k < gv.y.num_valid_values; k++)
     {
         grid_points_[idx_] = x_val;
         grid_points_[idx_ + 1] = gv.y.data[k];
@@ -92,7 +91,7 @@ void PlotBoxGrid::fillYZGrid(const GridVectors& gv)
         idx_ += 3;
     }
 
-    for(size_t k = 0; k < gv.z.num_valid_values; k++)
+    for (size_t k = 0; k < gv.z.num_valid_values; k++)
     {
         grid_points_[idx_] = x_val;
         grid_points_[idx_ + 1] = axes_scale_.y;
@@ -108,9 +107,7 @@ void PlotBoxGrid::fillYZGrid(const GridVectors& gv)
     }
 }
 
-void PlotBoxGrid::render(const GridVectors& gv,
-                         const AxesLimits& axes_limits,
-                         const ViewAngles& view_angles)
+void PlotBoxGrid::render(const GridVectors& gv, const AxesLimits& axes_limits, const ViewAngles& view_angles)
 {
     azimuth_ = view_angles.getSnappedAzimuth();
     elevation_ = view_angles.getSnappedElevation();

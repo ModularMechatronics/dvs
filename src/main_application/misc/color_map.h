@@ -318,7 +318,7 @@ extern RGBColorMap<float> jetf;
 
 inline RGBColorMap<float>* getColorMapFromColorMapType(const dvs::internal::ColorMapType cmt)
 {
-    switch(cmt)
+    switch (cmt)
     {
         case dvs::internal::ColorMapType::JET:
             return &color_maps::jetf;
@@ -337,7 +337,6 @@ inline RGBColorMap<float>* getColorMapFromColorMapType(const dvs::internal::Colo
             exit(0);
             return nullptr;
     }
-    
 }
 
-#endif // MAIN_APPLICATION_MISC_COLOR_MAP_H_
+#endif  // MAIN_APPLICATION_MISC_COLOR_MAP_H_

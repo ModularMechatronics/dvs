@@ -4,34 +4,25 @@
 
 // The value '0.0f' corresponds to the dimension that will be changed
 float walls_vertices[] = {
-    -1.0f, -1.0f, 0.0f,
-    1.0f, -1.0f, 0.0f,
-    -1.0f, 1.0f, 0.0f,
+    -1.0f, -1.0f, 0.0f,  1.0f,  -1.0f, 0.0f, -1.0f, 1.0f, 0.0f,
 
-    1.0f, 1.0f, 0.0f,
-    1.0f, -1.0f, 0.0f,
-    -1.0f, 1.0f, 0.0f,
+    1.0f,  1.0f,  0.0f,  1.0f,  -1.0f, 0.0f, -1.0f, 1.0f, 0.0f,
 
-    0.0f, -1.0f, -1.0f,
-    0.0f, -1.0f, 1.0f,
-    0.0f, 1.0f, -1.0f,
+    0.0f,  -1.0f, -1.0f, 0.0f,  -1.0f, 1.0f, 0.0f,  1.0f, -1.0f,
 
-    0.0f, 1.0f, 1.0f,
-    0.0f, -1.0f, 1.0f,
-    0.0f, 1.0f, -1.0f,
+    0.0f,  1.0f,  1.0f,  0.0f,  -1.0f, 1.0f, 0.0f,  1.0f, -1.0f,
 
-    -1.0f, 0.0f, -1.0f,
-    -1.0f, 0.0f, 1.0f,
-    1.0f, 0.0f, -1.0f,
+    -1.0f, 0.0f,  -1.0f, -1.0f, 0.0f,  1.0f, 1.0f,  0.0f, -1.0f,
 
-    1.0f, 0.0f, 1.0f,
-    -1.0f, 0.0f, 1.0f,
-    1.0f, 0.0f, -1.0f,
+    1.0f,  0.0f,  1.0f,  -1.0f, 0.0f,  1.0f, 1.0f,  0.0f, -1.0f,
 };
 
-void PlotBoxWalls::setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val)
+void PlotBoxWalls::setIndices(const size_t first_vertex_idx,
+                              const size_t last_vertex_idx,
+                              const size_t dimension_idx,
+                              const float val)
 {
-    for(size_t k = first_vertex_idx; k < last_vertex_idx; k++)
+    for (size_t k = first_vertex_idx; k < last_vertex_idx; k++)
     {
         data_array_[k * 3 + dimension_idx] = val;
     }
@@ -55,10 +46,8 @@ void PlotBoxWalls::render(const float azimuth, const float elevation)
     glBindVertexArray(0);
 }
 
-PlotBoxWalls::PlotBoxWalls() :
-    num_vertices_{18U},
-    num_bytes_{sizeof(float) * num_vertices_ * 3U},
-    data_array_{new float[num_vertices_ * 3]}
+PlotBoxWalls::PlotBoxWalls()
+    : num_vertices_{18U}, num_bytes_{sizeof(float) * num_vertices_ * 3U}, data_array_{new float[num_vertices_ * 3]}
 {
     std::memcpy(data_array_, walls_vertices, num_bytes_);
 

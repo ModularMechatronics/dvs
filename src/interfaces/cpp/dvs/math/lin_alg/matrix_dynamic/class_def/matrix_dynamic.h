@@ -3,8 +3,8 @@
 
 #include <assert.h>
 
-#include "dvs/math/misc/forward_decl.h"
 #include "dvs/logging.h"
+#include "dvs/math/misc/forward_decl.h"
 
 namespace dvs
 {
@@ -62,14 +62,12 @@ private:
     size_t num_cols_;
 
 public:
-    MatrixView() : data_{nullptr}, num_rows_{0U}, num_cols_{0U}
+    MatrixView() : data_{nullptr}, num_rows_{0U}, num_cols_{0U} {}
+
+    MatrixView(T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
+        : data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
     {
-
     }
-
-    MatrixView(T* const data_ptr_in, const size_t num_rows, const size_t num_cols) :
-        data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
-    {}
 
     T* data() const
     {
@@ -129,17 +127,17 @@ public:
     {
         T min_value = data_[0], max_value = data_[0];
 
-        for(size_t r = 0; r < num_rows_; r++)
+        for (size_t r = 0; r < num_rows_; r++)
         {
             const size_t idx = r * num_cols_;
-            for(size_t c = 0; c < num_cols_; c++)
+            for (size_t c = 0; c < num_cols_; c++)
             {
                 const T val = data_[idx + c];
-                if(val < min_value)
+                if (val < min_value)
                 {
                     min_value = val;
                 }
-                if(val > max_value)
+                if (val > max_value)
                 {
                     max_value = val;
                 }
@@ -210,4 +208,4 @@ public:
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_CLASS_DEF_MATRIX_DYNAMIC_H_
+#endif  // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_CLASS_DEF_MATRIX_DYNAMIC_H_

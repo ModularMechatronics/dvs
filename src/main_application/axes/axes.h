@@ -9,4 +9,4 @@
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 
-#endif // MAIN_APPLICATION_AXES_AXES_H_
+#endif  // MAIN_APPLICATION_AXES_AXES_H_

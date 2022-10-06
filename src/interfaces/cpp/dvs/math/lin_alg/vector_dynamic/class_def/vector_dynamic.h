@@ -1,11 +1,12 @@
 #ifndef DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_CLASS_DEF_VECTOR_DYNAMIC_H_
 #define DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_CLASS_DEF_VECTOR_DYNAMIC_H_
 
-#include <iterator>
 #include <assert.h>
 
-#include "dvs/math/misc/forward_decl.h"
+#include <iterator>
+
 #include "dvs/logging.h"
+#include "dvs/math/misc/forward_decl.h"
 
 namespace dvs
 {
@@ -49,15 +50,9 @@ private:
     size_t size_;
 
 public:
-    VectorView() : data_{nullptr}, size_{0U}
-    {
+    VectorView() : data_{nullptr}, size_{0U} {}
 
-    }
-
-    VectorView(T* const data_ptr_in, const size_t size_in) : data_{data_ptr_in}, size_{size_in}
-    {
-
-    }
+    VectorView(T* const data_ptr_in, const size_t size_in) : data_{data_ptr_in}, size_{size_in} {}
 
     T* data() const
     {
@@ -103,14 +98,14 @@ public:
     {
         T min_value = data_[0], max_value = data_[0];
 
-        for(size_t k = 0; k < size_; k++)
+        for (size_t k = 0; k < size_; k++)
         {
             const T val = data_[k];
-            if(val < min_value)
+            if (val < min_value)
             {
                 min_value = val;
             }
-            if(val > max_value)
+            if (val > max_value)
             {
                 max_value = val;
             }
@@ -118,7 +113,6 @@ public:
 
         return {min_value, max_value};
     }
-
 };
 
 template <typename T> class Vector
@@ -180,4 +174,4 @@ public:
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_CLASS_DEF_VECTOR_DYNAMIC_H_
+#endif  // DVS_MATH_LIN_ALG_VECTOR_DYNAMIC_CLASS_DEF_VECTOR_DYNAMIC_H_

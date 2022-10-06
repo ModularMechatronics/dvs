@@ -116,4 +116,4 @@ template <typename T> AxisAngle<T> rotationMatrixToAxisAngle(const Matrix<T>& m)
 
 }  // namespace dvs
 
-#endif // DVS_MATH_TRANSFORMATIONS_AXIS_ANGLE_H_
+#endif  // DVS_MATH_TRANSFORMATIONS_AXIS_ANGLE_H_

@@ -247,4 +247,4 @@ inline void CustomButton::OnSize(wxSizeEvent& WXUNUSED(event))
     // this->Set
 }
 
-#endif // MAIN_APPLICATION_CUSTOM_BUTTON_H_
+#endif  // MAIN_APPLICATION_CUSTOM_BUTTON_H_

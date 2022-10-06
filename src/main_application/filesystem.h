@@ -17,4 +17,4 @@ namespace filesystem = std::filesystem;
 }
 #endif
 
-#endif // MAIN_APPLICATION_FILESYSTEM_INCLUDE_H_
+#endif  // MAIN_APPLICATION_FILESYSTEM_INCLUDE_H_

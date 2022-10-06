@@ -5,48 +5,99 @@
 // The value '0.0f' corresponds to the dimension that will be changed
 static float silhouette_vertices[] = {
     // XY Plane
-    -1.0f, -1.0f, 0.0f,
-    1.0f, -1.0f, 0.0f,
+    -1.0f,
+    -1.0f,
+    0.0f,
+    1.0f,
+    -1.0f,
+    0.0f,
 
-    -1.0f, 1.0f, 0.0f,
-    1.0f, 1.0f, 0.0f,
+    -1.0f,
+    1.0f,
+    0.0f,
+    1.0f,
+    1.0f,
+    0.0f,
 
-    -1.0f, 1.0f, 0.0f,
-    -1.0f, -1.0f, 0.0f,
+    -1.0f,
+    1.0f,
+    0.0f,
+    -1.0f,
+    -1.0f,
+    0.0f,
 
-    1.0f, 1.0f, 0.0f,
-    1.0f, -1.0f, 0.0f,
+    1.0f,
+    1.0f,
+    0.0f,
+    1.0f,
+    -1.0f,
+    0.0f,
 
     // YZ Plane
-    0.0f, -1.0f, -1.0f,
-    0.0f, 1.0f, -1.0f,
+    0.0f,
+    -1.0f,
+    -1.0f,
+    0.0f,
+    1.0f,
+    -1.0f,
 
-    0.0f, -1.0f, 1.0f,
-    0.0f, 1.0f, 1.0f,
+    0.0f,
+    -1.0f,
+    1.0f,
+    0.0f,
+    1.0f,
+    1.0f,
 
-    0.0f, -1.0f, -1.0f,
-    0.0f, -1.0f, 1.0f,
+    0.0f,
+    -1.0f,
+    -1.0f,
+    0.0f,
+    -1.0f,
+    1.0f,
 
-    0.0f, 1.0f, -1.0f,
-    0.0f, 1.0f, 1.0f,
+    0.0f,
+    1.0f,
+    -1.0f,
+    0.0f,
+    1.0f,
+    1.0f,
 
     // XZ Plane
-    -1.0f, 0.0f, -1.0f,
-    1.0f, 0.0f, -1.0f,
+    -1.0f,
+    0.0f,
+    -1.0f,
+    1.0f,
+    0.0f,
+    -1.0f,
 
-    -1.0f, 0.0f, 1.0f,
-    1.0f, 0.0f, 1.0f,
+    -1.0f,
+    0.0f,
+    1.0f,
+    1.0f,
+    0.0f,
+    1.0f,
 
-    -1.0f, 0.0f, -1.0f,
-    -1.0f, 0.0f, 1.0f,
+    -1.0f,
+    0.0f,
+    -1.0f,
+    -1.0f,
+    0.0f,
+    1.0f,
 
-    1.0f, 0.0f, -1.0f,
-    1.0f, 0.0f, 1.0f,
+    1.0f,
+    0.0f,
+    -1.0f,
+    1.0f,
+    0.0f,
+    1.0f,
 };
 
-void PlotBoxSilhouette::setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val)
+void PlotBoxSilhouette::setIndices(const size_t first_vertex_idx,
+                                   const size_t last_vertex_idx,
+                                   const size_t dimension_idx,
+                                   const float val)
 {
-    for(size_t k = first_vertex_idx; k < last_vertex_idx; k++)
+    for (size_t k = first_vertex_idx; k < last_vertex_idx; k++)
     {
         data_array_[k * 3 + dimension_idx] = val;
     }
@@ -70,10 +121,8 @@ void PlotBoxSilhouette::render(const float azimuth, const float elevation)
     glBindVertexArray(0);
 }
 
-PlotBoxSilhouette::PlotBoxSilhouette() :
-    num_vertices_{3U * 8U},
-    num_bytes_{sizeof(float) * num_vertices_ * 3U},
-    data_array_{new float[num_vertices_ * 3]}
+PlotBoxSilhouette::PlotBoxSilhouette()
+    : num_vertices_{3U * 8U}, num_bytes_{sizeof(float) * num_vertices_ * 3U}, data_array_{new float[num_vertices_ * 3]}
 {
     std::memcpy(data_array_, silhouette_vertices, num_bytes_);
 

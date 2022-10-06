@@ -74,8 +74,12 @@ void UdpServer::receiveThreadFunction()
     while (true)
     {
         size_t num_received_bytes_total = 0;
-        int num_received_bytes =
-            recvfrom(socket_file_descr_, receive_buffer_, dvs::internal::kMaxNumBytesForOneTransmission, 0, (struct sockaddr*)&client_addr_, &client_len);
+        int num_received_bytes = recvfrom(socket_file_descr_,
+                                          receive_buffer_,
+                                          dvs::internal::kMaxNumBytesForOneTransmission,
+                                          0,
+                                          (struct sockaddr*)&client_addr_,
+                                          &client_len);
 
         if (num_received_bytes < 0)
         {
@@ -90,7 +94,7 @@ void UdpServer::receiveThreadFunction()
         if (static_cast<size_t>(num_expected_bytes) >= dvs::internal::kUdpServerMaxBufferSize)
         {
             throw std::runtime_error("Too many bytes to receive! Client wants to send " +
-            std::to_string(num_expected_bytes) + " bytes");
+                                     std::to_string(num_expected_bytes) + " bytes");
         }
         sendAck();
 
@@ -99,11 +103,11 @@ void UdpServer::receiveThreadFunction()
             while (num_received_bytes_total < num_expected_bytes)
             {
                 num_received_bytes = recvfrom(socket_file_descr_,
-                                                receive_buffer_ + num_received_bytes_total,
-                                                dvs::internal::kMaxNumBytesForOneTransmission,
-                                                0,
-                                                (struct sockaddr*)&client_addr_,
-                                                &client_len);
+                                              receive_buffer_ + num_received_bytes_total,
+                                              dvs::internal::kMaxNumBytesForOneTransmission,
+                                              0,
+                                              (struct sockaddr*)&client_addr_,
+                                              &client_len);
 
                 num_received_bytes_total += num_received_bytes;
                 sendAck();

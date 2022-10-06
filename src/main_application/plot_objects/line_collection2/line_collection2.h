@@ -18,7 +18,9 @@ private:
 
 public:
     LineCollection2D();
-    LineCollection2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection);
+    LineCollection2D(std::unique_ptr<const ReceivedData> received_data,
+                     const CommunicationHeader& hdr,
+                     const ShaderCollection shader_collection);
     ~LineCollection2D();
 
     LegendProperties getLegendProperties() const override;
@@ -26,4 +28,4 @@ public:
     void render() override;
 };
 
-#endif // MAIN_APPLICATION_PLOT_OBJECTS_LINE_COLLECTION2_LINE_COLLECTION2_H_
+#endif  // MAIN_APPLICATION_PLOT_OBJECTS_LINE_COLLECTION2_LINE_COLLECTION2_H_

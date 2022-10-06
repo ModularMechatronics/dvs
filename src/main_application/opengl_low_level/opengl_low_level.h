@@ -9,9 +9,9 @@
 #include <iostream>
 #include <vector>
 
+#include "dvs/math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_header.h"
-#include "dvs/math/math.h"
 
 /*inline void setColor(const float r, const float g, const float b)
 {
@@ -33,4 +33,4 @@ inline void setPointSize(const float point_size)
     glPointSize(point_size);
 }*/
 
-#endif // MAIN_APPLICATION_OPENGL_LOW_LEVEL_OPENGL_LOW_LEVEL_H_
+#endif  // MAIN_APPLICATION_OPENGL_LOW_LEVEL_OPENGL_LOW_LEVEL_H_

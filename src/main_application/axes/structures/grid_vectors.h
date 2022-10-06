@@ -1,8 +1,8 @@
 #ifndef MAIN_APPLICATION_AXES_STRUCTURES_GRID_VECTORS_H_
 #define MAIN_APPLICATION_AXES_STRUCTURES_GRID_VECTORS_H_
 
-#include <cstdint>
 #include <array>
+#include <cstdint>
 
 #include "dvs/math/math.h"
 
@@ -31,4 +31,4 @@ struct GridVectors
     GridVector z;
 };
 
-#endif // MAIN_APPLICATION_AXES_STRUCTURES_GRID_VECTORS_H_
+#endif  // MAIN_APPLICATION_AXES_STRUCTURES_GRID_VECTORS_H_

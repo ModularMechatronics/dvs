@@ -61,4 +61,4 @@ public:
     void setAxesScale(const Vec3d& new_scale);
 };
 
-#endif // MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_
+#endif  // MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_

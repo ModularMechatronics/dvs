@@ -11,4 +11,4 @@ std::string getBaseAsString(const double num);
 std::string toStringWithNumDecimalPlaces(const double input_val, const size_t n = 6);
 std::string formatNumber(const double num, const size_t n = 6);
 
-#endif // MAIN_APPLICATION_MISC_MISC_H_
+#endif  // MAIN_APPLICATION_MISC_MISC_H_

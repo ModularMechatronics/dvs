@@ -1,12 +1,14 @@
 #include "main_application/plot_objects/plot2d/plot2d.h"
 
 Plot2D::InputData convertData2DOuter(const uint8_t* const input_data,
-                          const DataType data_type,
-                          const size_t num_elements,
-                          const size_t num_bytes_per_element,
-                          const size_t num_bytes_for_one_vec);
+                                     const DataType data_type,
+                                     const size_t num_elements,
+                                     const size_t num_bytes_per_element,
+                                     const size_t num_bytes_for_one_vec);
 
-Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
+               const CommunicationHeader& hdr,
+               const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, shader_collection)
 {
     if (type_ != Function::PLOT2)
@@ -17,19 +19,19 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data, const Communic
     input_data_ =
         convertData2DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 
-    if(is_dashed_)
+    if (is_dashed_)
     {
-        if(line_style_.data == internal::LineStyleType::DASHED)
+        if (line_style_.data == internal::LineStyleType::DASHED)
         {
             gap_size_ = 3.0f;
             dash_size_ = 3.0f;
         }
-        else if(line_style_.data == internal::LineStyleType::DOTTED)
+        else if (line_style_.data == internal::LineStyleType::DOTTED)
         {
             gap_size_ = 6.0f;
             dash_size_ = 3.0f;
         }
-        else if(line_style_.data == internal::LineStyleType::LONG_DASHED)
+        else if (line_style_.data == internal::LineStyleType::LONG_DASHED)
         {
             gap_size_ = 2.0f;
             dash_size_ = 6.0f;
@@ -99,7 +101,8 @@ void Plot2D::render()
     const size_t num_points = num_segments * 12U - 6U;
 
     shader_collection_.plot_2d_shader.use();
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "line_width"), line_width_ / 1200.0f);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "line_width"),
+                line_width_ / 1200.0f);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_points);
     glBindVertexArray(0);
@@ -125,9 +128,9 @@ LegendProperties Plot2D::getLegendProperties() const
 
 template <typename T>
 Plot2D::InputData convertData2D(const uint8_t* const input_data,
-                       const size_t num_elements,
-                       const size_t num_bytes_per_element,
-                       const size_t num_bytes_for_one_vec)
+                                const size_t num_elements,
+                                const size_t num_bytes_per_element,
+                                const size_t num_bytes_for_one_vec)
 {
     const size_t num_segments = num_elements - 1U;
     const size_t num_points = num_segments * 12U;
@@ -143,13 +146,13 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
     output_data.p2 = new float[2 * num_points];
     output_data.idx_data = new float[num_points];
 
-    for(size_t k = 0; k < (2 * num_points); k++)
+    for (size_t k = 0; k < (2 * num_points); k++)
     {
         output_data.p0[k] = 0;
         output_data.p1[k] = 0;
         output_data.p2[k] = 0;
     }
-    for(size_t k = 0; k < num_points; k++)
+    for (size_t k = 0; k < num_points; k++)
     {
         output_data.idx_data[k] = 0;
     }
@@ -405,10 +408,10 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
 }
 
 Plot2D::InputData convertData2DOuter(const uint8_t* const input_data,
-                                   const DataType data_type,
-                                   const size_t num_elements,
-                                   const size_t num_bytes_per_element,
-                                   const size_t num_bytes_for_one_vec)
+                                     const DataType data_type,
+                                     const size_t num_elements,
+                                     const size_t num_bytes_per_element,
+                                     const size_t num_bytes_for_one_vec)
 {
     Plot2D::InputData output_data;
     if (data_type == DataType::FLOAT)

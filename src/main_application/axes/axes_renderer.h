@@ -2,27 +2,26 @@
 #define MAIN_APPLICATION_AXES_AXES_RENDERER_H_
 
 #include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <utility>
 #include <vector>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include "axes/text_rendering.h"
+#include "axes/grid_numbers.h"
+#include "axes/legend_properties.h"
+#include "axes/legend_renderer.h"
+#include "axes/plot_box_grid.h"
+#include "axes/plot_box_silhouette.h"
+#include "axes/plot_box_walls.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
-#include "opengl_low_level/opengl_low_level.h"
-#include "axes/legend_properties.h"
-#include "shader.h"
-#include "axes/plot_box_walls.h"
-#include "axes/plot_box_silhouette.h"
-#include "axes/plot_box_grid.h"
-#include "axes/grid_numbers.h"
+#include "axes/text_rendering.h"
 #include "axes/zoom_rect.h"
 #include "io_devices/mouse_state.h"
-#include "axes/legend_renderer.h"
+#include "opengl_low_level/opengl_low_level.h"
+#include "shader.h"
 
 class AxesRenderer
 {
@@ -70,7 +69,12 @@ private:
     void renderBoxGrid();
     void enableClipPlanes();
     void renderLegend();
-    void setClipPlane(const GLuint program_id, const std::string pln, const Point3d& p0, const Point3d& p1, const Point3d& p2, const bool invert) const;
+    void setClipPlane(const GLuint program_id,
+                      const std::string pln,
+                      const Point3d& p0,
+                      const Point3d& p1,
+                      const Point3d& p2,
+                      const bool invert) const;
 
 public:
     AxesRenderer(const ShaderCollection shader_collection);
@@ -96,5 +100,4 @@ public:
     void resetGlobalIllumination();
 };
 
-
-#endif // MAIN_APPLICATION_AXES_AXES_RENDERER_H_
+#endif  // MAIN_APPLICATION_AXES_AXES_RENDERER_H_

@@ -25,9 +25,8 @@ template <typename T> struct Vec3
     Vec3<T> crossProduct(const Vec3<T>& right_vector) const;
     Matrix<T> toCrossProductMatrix() const;
     T angleBetweenVectors(const Vec3<T>& v) const;
-
 };
 
 }  // namespace dvs
 
-#endif // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_CLASS_DEF_VEC3_H_
+#endif  // DVS_MATH_LIN_ALG_VECTOR_LOW_DIM_CLASS_DEF_VEC3_H_

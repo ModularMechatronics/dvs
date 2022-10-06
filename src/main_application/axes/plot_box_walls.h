@@ -1,8 +1,9 @@
 #ifndef MAIN_APPLICATION_AXES_PLOT_BOX_WALLS_H_
 #define MAIN_APPLICATION_AXES_PLOT_BOX_WALLS_H_
 
-#include "opengl_low_level/opengl_header.h"
 #include <stddef.h>
+
+#include "opengl_low_level/opengl_header.h"
 
 class PlotBoxWalls
 {
@@ -13,7 +14,10 @@ private:
 
     GLuint vertex_buffer_, vertex_buffer_array_;
 
-    void setIndices(const size_t first_vertex_idx, const size_t last_vertex_idx, const size_t dimension_idx, const float val);
+    void setIndices(const size_t first_vertex_idx,
+                    const size_t last_vertex_idx,
+                    const size_t dimension_idx,
+                    const float val);
 
     static constexpr size_t kXYFirstIdx = 0;
     static constexpr size_t kXYLastIdx = 6;
@@ -34,4 +38,4 @@ public:
     void render(const float azimuth, const float elevation);
 };
 
-#endif // MAIN_APPLICATION_AXES_PLOT_BOX_WALLS_H_
+#endif  // MAIN_APPLICATION_AXES_PLOT_BOX_WALLS_H_

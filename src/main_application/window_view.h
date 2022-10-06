@@ -29,10 +29,10 @@ private:
 public:
     WindowView() = delete;
     WindowView(wxFrame* parent,
-        const WindowSettings& window_settings,
-        const int callback_id,
-        const std::function<void(const char key)>& notify_main_window_key_pressed,
-        const std::function<void(const char key)>& notify_main_window_key_released);
+               const WindowSettings& window_settings,
+               const int callback_id,
+               const std::function<void(const char key)>& notify_main_window_key_pressed,
+               const std::function<void(const char key)>& notify_main_window_key_released);
 
     void newElement(const std::string& element_name);
     void newElement() override;
@@ -47,4 +47,4 @@ public:
     virtual void OnClose(wxCloseEvent& event);
 };
 
-#endif // MAIN_APPLICATION_WINDOW_VIEW_H_
+#endif  // MAIN_APPLICATION_WINDOW_VIEW_H_

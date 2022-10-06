@@ -30,4 +30,4 @@ public:
     Vec2i getDeltaPos() const;
 };
 
-#endif // MAIN_APPLICATION_IO_DEVICES_MOUSE_STATE_H_
+#endif  // MAIN_APPLICATION_IO_DEVICES_MOUSE_STATE_H_

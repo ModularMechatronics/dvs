@@ -31,6 +31,6 @@ void testWithMatrixView()
     surf(x.view(), y.view(), z.view(), properties::ColorMap::Jet());
 }
 
-}
+}  // namespace surf_ns
 
-#endif // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SURF_H_
+#endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SURF_H_

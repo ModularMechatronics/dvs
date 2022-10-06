@@ -2,13 +2,25 @@
 
 void PlotObjectBase::modifyShader()
 {
-    glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"),
+                color_.red,
+                color_.green,
+                color_.blue);
     glUseProgram(shader_collection_.scatter_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "vertex_color"),
+                color_.red,
+                color_.green,
+                color_.blue);
     glUseProgram(shader_collection_.plot_2d_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "vertex_color"),
+                color_.red,
+                color_.green,
+                color_.blue);
     glUseProgram(shader_collection_.plot_3d_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "vertex_color"), color_.red, color_.green, color_.blue);
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "vertex_color"),
+                color_.red,
+                color_.green,
+                color_.blue);
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
@@ -44,7 +56,9 @@ size_t PlotObjectBase::getNumDimensions() const
 
 PlotObjectBase::PlotObjectBase() {}
 
-PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr, const ShaderCollection shader_collection)
+PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data,
+                               const CommunicationHeader& hdr,
+                               const ShaderCollection shader_collection)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
     const uint64_t num_data_bytes = received_data_->size();
@@ -129,7 +143,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     {
         const EdgeColor ec = props.getProperty<EdgeColor>();
 
-        if(ec.use_color)
+        if (ec.use_color)
         {
             edge_color_.red = static_cast<float>(ec.red) / 255.0f;
             edge_color_.green = static_cast<float>(ec.green) / 255.0f;
@@ -150,7 +164,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     {
         const FaceColor fc = props.getProperty<FaceColor>();
 
-        if(fc.use_color)
+        if (fc.use_color)
         {
             face_color_.red = static_cast<float>(fc.red) / 255.0f;
             face_color_.green = static_cast<float>(fc.green) / 255.0f;

@@ -25,6 +25,6 @@ void testWithVectorView()
     plot3(x, y, z, properties::Color::Magenta());
 }
 
-}
+}  // namespace scatter3_ns
 
-#endif // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SCATTER3_H_
+#endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SCATTER3_H_

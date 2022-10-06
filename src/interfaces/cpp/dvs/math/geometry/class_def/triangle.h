@@ -27,4 +27,4 @@ template <typename T> struct Triangle3D
 
 }  // namespace dvs
 
-#endif // DVS_MATH_GEOMETRY_CLASS_DEF_TRIANGLE_H_
+#endif  // DVS_MATH_GEOMETRY_CLASS_DEF_TRIANGLE_H_

@@ -111,9 +111,8 @@ void testScatter3()
 void testPlotCollection()
 {
     const size_t num_elements = 40;
-    Vector<double> x0(num_elements), y0(num_elements),
-        x1(num_elements), y1(num_elements),
-        x2(num_elements), y2(num_elements);
+    Vector<double> x0(num_elements), y0(num_elements), x1(num_elements), y1(num_elements), x2(num_elements),
+        y2(num_elements);
 
     double t = 0.0;
 
@@ -186,9 +185,8 @@ void testPlotCollection()
 void testPlotCollection3()
 {
     const size_t num_elements = 40;
-    Vector<double> x0(num_elements), y0(num_elements), z0(num_elements),
-        x1(num_elements), y1(num_elements), z1(num_elements),
-        x2(num_elements), y2(num_elements), z2(num_elements);
+    Vector<double> x0(num_elements), y0(num_elements), z0(num_elements), x1(num_elements), y1(num_elements),
+        z1(num_elements), x2(num_elements), y2(num_elements), z2(num_elements);
 
     double t = 0.0;
 
@@ -315,7 +313,12 @@ void testPlot()
     plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
     plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
     plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
-    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed(), properties::PERSISTENT);
+    plot(x + 6.0f,
+         y,
+         properties::Color(212, 14, 255),
+         properties::LineWidth(7),
+         properties::LineStyle::LongDashed(),
+         properties::PERSISTENT);
     scatter3(x + 3.0f, y, z, properties::Color::Black(), properties::PointSize(14));
 
     setCurrentElement("view_02");
@@ -339,7 +342,6 @@ void testPlot()
     plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
     plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
     plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
-
 }
 
 void testFastPlot()
@@ -385,7 +387,6 @@ void testFastPlot()
     fastPlot(x + 4.0f, y, properties::Color(212, 14, 55));
     fastPlot(x + 5.0f, y, properties::Color(212, 255, 55));
     fastPlot(x + 6.0f, y, properties::Color(212, 14, 255));
-
 }
 
 void testLineCollection()
@@ -679,7 +680,8 @@ void testLegend()
     plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
     plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
     surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
-    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
+    surf(
+        x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
     showLegend();
 
     setCurrentElement("view_01");
@@ -690,7 +692,8 @@ void testLegend()
     plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
     plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
     surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
-    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
+    surf(
+        x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
     showLegend();
 }
 
@@ -778,7 +781,7 @@ void testDrawMesh()
 
     Vector<tp> x(12), y(12), z(12);
 
-    for(size_t k = 0; k < x.size(); k++)
+    for (size_t k = 0; k < x.size(); k++)
     {
         x(k) = vertices(k).x;
         y(k) = vertices(k).y;
@@ -913,4 +916,4 @@ void testDrawLineBetweenPoints()
     scatter3(x, y, z, properties::Color(0, 0, 0), properties::PointSize(3));
 }
 
-#endif // TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_
+#endif  // TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_

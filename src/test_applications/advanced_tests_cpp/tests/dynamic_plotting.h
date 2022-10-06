@@ -1,9 +1,9 @@
 #ifndef TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_DYNAMIC_PLOTTING_H_
 #define TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_DYNAMIC_PLOTTING_H_
 
-#include "dvs/dvs.h"
-
 #include <unistd.h>
+
+#include "dvs/dvs.h"
 
 using namespace dvs;
 
@@ -19,7 +19,7 @@ void test2DFunctionExpandingPlotObject()
 
     double t = 0.0;
 
-    for(size_t k = 0; k < 100; k++)
+    for (size_t k = 0; k < 100; k++)
     {
         const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0 + t, 5.0 + t, num_elements);
         const Vector<double> y = dvs::sin(x) + t;
@@ -29,7 +29,6 @@ void test2DFunctionExpandingPlotObject()
         plot(x, y, properties::Color::Blue());
         usleep(1000);
     }
-
 }
 
 void test3DFunctionExpandingPlotObject()
@@ -41,7 +40,7 @@ void test3DFunctionExpandingPlotObject()
 
     double t = 0.0;
 
-    for(size_t k = 0; k < 100; k++)
+    for (size_t k = 0; k < 100; k++)
     {
         const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0 + t, 5.0 + t, num_elements);
         const Vector<double> y = dvs::sin(x) + t;
@@ -52,7 +51,6 @@ void test3DFunctionExpandingPlotObject()
         plot3(x, y, z, properties::Color::Blue());
         usleep(1000);
     }
-
 }
 
 void test2DFunctionRotatingView()
@@ -66,7 +64,7 @@ void test2DFunctionRotatingView()
     const Vector<double> y = dvs::sin(x);
     plot(x, y, properties::Color::Blue(), properties::LineWidth(14));
 
-    for(size_t k = 0; k < 100; k++)
+    for (size_t k = 0; k < 100; k++)
     {
         view(30 + k, 180);
         usleep(10000);
@@ -87,7 +85,7 @@ void test2DFunctionChangingAxes()
     const Vec2d min_vec(dvs::min(x), dvs::min(y));
     const Vec2d max_vec(dvs::max(x), dvs::max(y));
 
-    for(size_t k = 0; k < 100; k++)
+    for (size_t k = 0; k < 100; k++)
     {
         axis({min_vec.x, min_vec.y}, {max_vec.x + static_cast<double>(k) / 10.0, max_vec.y});
         usleep(10000);
@@ -106,7 +104,7 @@ void test2DFunctionNewDataAndClear()
     const double min_x = dvs::min(x);
     const double max_x = dvs::max(x);
 
-    for(size_t k = 0; k < 100; k++)
+    for (size_t k = 0; k < 100; k++)
     {
         const Vector<double> y = dvs::sin(x + t);
 
@@ -127,7 +125,7 @@ void test3DFunctionNewDataAndClear()
 {
     const size_t num_elements = 100;
 
-    const auto mat_xy = dvs::meshGrid<double>(-1.0, 1.0, -1.0, 1.0, 100,100);
+    const auto mat_xy = dvs::meshGrid<double>(-1.0, 1.0, -1.0, 1.0, 100, 100);
     const Matrix<double>& x_mat = mat_xy.first;
     const Matrix<double>& y_mat = mat_xy.second;
     Matrix<double> z_mat{100, 100};
@@ -140,7 +138,7 @@ void test3DFunctionNewDataAndClear()
     view(10, 10);
     float azimuth = 10.0;
 
-    for(size_t k = 0; k < 1000; k++)
+    for (size_t k = 0; k < 1000; k++)
     {
         const Vector<double> y = dvs::sin(x + t);
         const Vector<double> z = dvs::cos(x + t);
@@ -170,6 +168,6 @@ void test3DFunctionNewDataAndClear()
     }
 }
 
-}
+}  // namespace dynamic_plotting
 
-#endif // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_DYNAMIC_PLOTTING_H_
+#endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_DYNAMIC_PLOTTING_H_

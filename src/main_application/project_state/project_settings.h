@@ -90,10 +90,9 @@ public:
 
     bool hasElementWithName(const std::string& name) const
     {
-        return std::find_if(
-                elements_.begin(), elements_.end(), [&](const ElementSettings& es) -> bool {
-                    return es.name == name;
-                }) != elements_.end();
+        return std::find_if(elements_.begin(), elements_.end(), [&](const ElementSettings& es) -> bool {
+                   return es.name == name;
+               }) != elements_.end();
     }
 
     ElementSettings getElementWithName(const std::string& name) const
@@ -288,10 +287,9 @@ public:
 
     bool hasTabWithName(const std::string& name) const
     {
-        return std::find_if(
-                tabs_.begin(), tabs_.end(), [&](const TabSettings& ts) -> bool {
-                    return ts.getName() == name;
-                }) != tabs_.end();
+        return std::find_if(tabs_.begin(), tabs_.end(), [&](const TabSettings& ts) -> bool {
+                   return ts.getName() == name;
+               }) != tabs_.end();
     }
 
     TabSettings getTabWithName(const std::string& name) const
@@ -311,10 +309,9 @@ public:
 
     bool hasWindowWithName(const std::string& name) const
     {
-        return std::find_if(
-                windows_.begin(), windows_.end(), [&](const WindowSettings& ws) -> bool {
-                    return ws.getName() == name;
-                }) != windows_.end();
+        return std::find_if(windows_.begin(), windows_.end(), [&](const WindowSettings& ws) -> bool {
+                   return ws.getName() == name;
+               }) != windows_.end();
     }
 
     WindowSettings getWindowWithName(const std::string& name) const
@@ -383,4 +380,4 @@ public:
     }
 };
 
-#endif // MAIN_APPLICATION_PROJECT_STATE_PROJECT_SETTINGS_H_
+#endif  // MAIN_APPLICATION_PROJECT_STATE_PROJECT_SETTINGS_H_

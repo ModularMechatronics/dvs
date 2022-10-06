@@ -8,12 +8,12 @@
 #include <vector>
 
 #include "dvs/base_types.h"
-#include "dvs/enumerations.h"
-#include "dvs/plot_properties.h"
 #include "dvs/constants.h"
-#include "dvs/utils.h"
-#include "dvs/math/math.h"
+#include "dvs/enumerations.h"
 #include "dvs/fillable_uint8_array.h"
+#include "dvs/math/math.h"
+#include "dvs/plot_properties.h"
+#include "dvs/utils.h"
 
 namespace dvs
 {
@@ -37,12 +37,11 @@ struct CommunicationHeaderObject
     uint8_t data[kCommunicationHeaderObjectDataSize];
 
     CommunicationHeaderObject() : type{CommunicationHeaderObjectType::UNKNOWN}, num_bytes{0U} {}
-    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type) :
-        type{input_type}, num_bytes{0U} {}
+    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type) : type{input_type}, num_bytes{0U} {}
 
     template <typename U>
-    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const U& input_data) :
-        type{input_type}, num_bytes{sizeof(U)}
+    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const U& input_data)
+        : type{input_type}, num_bytes{sizeof(U)}
     {
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
         std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), num_bytes);
@@ -185,15 +184,15 @@ private:
         objects.push_back(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
         CommunicationHeaderObject& current_obj = objects.back();
 
-        if(std::is_same<U, PropertyType>::value)
+        if (std::is_same<U, PropertyType>::value)
         {
             const PropertyType tp = *reinterpret_cast<const PropertyType* const>(&obj);
-            if(tp == PropertyType::PERSISTENT)
+            if (tp == PropertyType::PERSISTENT)
             {
                 current_obj.num_bytes = sizeof(PropertyBase);
                 fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::PERSISTENT});
             }
-            else if(tp == PropertyType::INTERPOLATE_COLORMAP)
+            else if (tp == PropertyType::INTERPOLATE_COLORMAP)
             {
                 current_obj.num_bytes = sizeof(PropertyBase);
                 fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::INTERPOLATE_COLORMAP});
@@ -216,15 +215,15 @@ private:
         objects.push_back(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
         CommunicationHeaderObject& current_obj = objects.back();
 
-        if(std::is_same<U, PropertyType>::value)
+        if (std::is_same<U, PropertyType>::value)
         {
             const PropertyType tp = *reinterpret_cast<const PropertyType* const>(&obj);
-            if(tp == PropertyType::PERSISTENT)
+            if (tp == PropertyType::PERSISTENT)
             {
                 current_obj.num_bytes = sizeof(PropertyBase);
                 fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::PERSISTENT});
             }
-            else if(tp == PropertyType::INTERPOLATE_COLORMAP)
+            else if (tp == PropertyType::INTERPOLATE_COLORMAP)
             {
                 current_obj.num_bytes = sizeof(PropertyBase);
                 fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::INTERPOLATE_COLORMAP});
@@ -306,10 +305,9 @@ public:
             throw std::runtime_error("Requested object that is not present in header!");
         }
 
-        const auto obj = std::find_if(
-            objects.begin(), objects.end(), [&tp](const CommunicationHeaderObject& obj) -> bool {
-                   return obj.type == tp;
-               });
+        const auto obj = std::find_if(objects.begin(),
+                                      objects.end(),
+                                      [&tp](const CommunicationHeaderObject& obj) -> bool { return obj.type == tp; });
 
         return *obj;
     }
@@ -332,7 +330,8 @@ public:
 
         for (size_t k = 0; k < objects.size(); k++)
         {
-            s = s + sizeof(CommunicationHeaderObjectType) + sizeof(CommunicationHeaderObject::num_bytes) + objects[k].num_bytes;
+            s = s + sizeof(CommunicationHeaderObjectType) + sizeof(CommunicationHeaderObject::num_bytes) +
+                objects[k].num_bytes;
         }
 
         return s;
@@ -357,4 +356,4 @@ public:
 
 }  // namespace dvs
 
-#endif // DVS_COMMUNICATION_HEADER_H_
+#endif  // DVS_COMMUNICATION_HEADER_H_

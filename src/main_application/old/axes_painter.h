@@ -58,4 +58,4 @@ public:
                       const CoordinateConverter& coord_converter);
 };
 
-#endif // MAIN_APPLICATION_OLD_AXES_PAINTER_H_
+#endif  // MAIN_APPLICATION_OLD_AXES_PAINTER_H_

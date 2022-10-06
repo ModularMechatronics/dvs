@@ -8,11 +8,11 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "dvs/constants.h"
 #include "dvs/math/math.h"
 #include "events.h"
 #include "filesystem.h"
 #include "layout_tools_window.h"
-#include "dvs/constants.h"
 
 using namespace dvs::internal;
 
@@ -39,41 +39,19 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         wxLogError("Could not set icon.");
     }
 
-    task_bar_->setOnMenuExitCallback([this] () -> void {
-        this->Destroy();
-    });
-    task_bar_->setOnMenuFileNew([this] () -> void {
-        newProject();
-    });
-    task_bar_->setOnMenuFileOpen([this] () -> void {
-        openExistingFile();
-    });
-    task_bar_->setOnMenuFileSave([this] () -> void {
-        saveProject();
-    });
-    task_bar_->setOnMenuFileSaveAs([this] () -> void {
-        saveProjectAs();
-    });
-    task_bar_->setOnMenuEdit([this] () -> void {
-        toggleEditLayout();
-    });
-    task_bar_->setOnMenuSubWindow([this] (const std::string& window_name) -> void {
-        toggleWindowVisibility(window_name);
-    });
-    task_bar_->setOnMenuShowMainWindow([this] () -> void {
-        showMainWindow();
-    });
-    task_bar_->setOnMenuPreferences([this] () -> void {
-        preferences();
-    });
+    task_bar_->setOnMenuExitCallback([this]() -> void { this->Destroy(); });
+    task_bar_->setOnMenuFileNew([this]() -> void { newProject(); });
+    task_bar_->setOnMenuFileOpen([this]() -> void { openExistingFile(); });
+    task_bar_->setOnMenuFileSave([this]() -> void { saveProject(); });
+    task_bar_->setOnMenuFileSaveAs([this]() -> void { saveProjectAs(); });
+    task_bar_->setOnMenuEdit([this]() -> void { toggleEditLayout(); });
+    task_bar_->setOnMenuSubWindow(
+        [this](const std::string& window_name) -> void { toggleWindowVisibility(window_name); });
+    task_bar_->setOnMenuShowMainWindow([this]() -> void { showMainWindow(); });
+    task_bar_->setOnMenuPreferences([this]() -> void { preferences(); });
 
-    notification_from_gui_element_key_pressed_ = [this] (const char key) {
-        notifyChildrenOnKeyPressed(key);
-    };
-    notification_from_gui_element_key_released_ = [this] (const char key) {
-        notifyChildrenOnKeyReleased(key);
-    };
-    
+    notification_from_gui_element_key_pressed_ = [this](const char key) { notifyChildrenOnKeyPressed(key); };
+    notification_from_gui_element_key_released_ = [this](const char key) { notifyChildrenOnKeyReleased(key); };
 
 #ifdef PLATFORM_LINUX_M
     int argc = 1;
@@ -121,14 +99,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     current_tab_num_ = 0;
 
-    layout_tools_window_ = new LayoutToolsWindow(wxPoint(1500, 30), wxSize(200, 500),
-        [this] (const std::string& new_tab_name) {
-            changeCurrentTabName(new_tab_name);
-        },
-        [this] (const std::string& new_element_name) {
-            changeCurrentElementName(new_element_name);
-        },
-        [this] () {
+    layout_tools_window_ = new LayoutToolsWindow(
+        wxPoint(1500, 30),
+        wxSize(200, 500),
+        [this](const std::string& new_tab_name) { changeCurrentTabName(new_tab_name); },
+        [this](const std::string& new_element_name) { changeCurrentElementName(new_element_name); },
+        [this]() {
             const std::string window_name = "new-window-" + std::to_string(current_tab_num_);
             current_tab_num_++;
             layout_tools_window_->setCurrentElementName("");
@@ -136,26 +112,16 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
             addNewWindow(window_name);
             task_bar_->addNewWindow(window_name);
         },
-        [this] () {
-            deleteWindow();
-        },
-        [this] () {
+        [this]() { deleteWindow(); },
+        [this]() {
             const std::string tab_name = "new-tab-" + std::to_string(current_tab_num_);
             current_tab_num_++;
             addNewTab(tab_name);
         },
-        [this] () {
-            deleteTab();
-        },
-        [this] () {
-            newElement();
-        },
-        [this] () {
-            deleteSelectedElement();
-        },
-        [this] () {
-            disableEditing();
-        });
+        [this]() { deleteTab(); },
+        [this]() { newElement(); },
+        [this]() { deleteSelectedElement(); },
+        [this]() { disableEditing(); });
     layout_tools_window_->Hide();
 
     Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
@@ -262,10 +228,10 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
     for (const WindowSettings& ws : project_settings.getWindows())
     {
         windows_.emplace_back(new WindowView(this,
-            ws,
-            window_callback_id_,
-            notification_from_gui_element_key_pressed_,
-            notification_from_gui_element_key_released_));
+                                             ws,
+                                             window_callback_id_,
+                                             notification_from_gui_element_key_pressed_,
+                                             notification_from_gui_element_key_released_));
         window_callback_id_++;
         const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
         gui_elements_.insert(ges.begin(), ges.end());
@@ -411,10 +377,8 @@ void MainWindow::addNewTab(const std::string& tab_name)
 {
     TabSettings tab;
     tab.setName(tab_name);
-    TabView* tab_element = new TabView(tabs_view,
-        tab,
-        notification_from_gui_element_key_pressed_,
-        notification_from_gui_element_key_released_);
+    TabView* tab_element = new TabView(
+        tabs_view, tab, notification_from_gui_element_key_pressed_, notification_from_gui_element_key_released_);
     tabs_.push_back(tab_element);
 
     tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
@@ -472,9 +436,10 @@ void MainWindow::addNewWindow(const std::string& window_name)
     window_settings.width = 600;
     window_settings.height = 628;
     WindowView* window_element = new WindowView(this,
-        window_settings, window_callback_id_,
-        notification_from_gui_element_key_pressed_,
-        notification_from_gui_element_key_released_);
+                                                window_settings,
+                                                window_callback_id_,
+                                                notification_from_gui_element_key_pressed_,
+                                                notification_from_gui_element_key_released_);
     window_callback_id_++;
     windows_.push_back(window_element);
 
@@ -654,7 +619,7 @@ wxMenuBar* MainWindow::createMainMenuBar()
 
 void MainWindow::showMainWindow()
 {
-    if(IsShown())
+    if (IsShown())
     {
         Raise();
     }
@@ -798,7 +763,7 @@ void MainWindow::OnTimer(wxTimerEvent&)
 void MainWindow::notifyChildrenOnKeyPressed(const char key)
 {
     // std::cout << "Key pressed: " << key << std::endl;
-    if((key == 'E') || (key == 'e'))
+    if ((key == 'E') || (key == 'e'))
     {
         toggleEditLayout();
         return;
@@ -814,7 +779,7 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
 void MainWindow::notifyChildrenOnKeyReleased(const char key)
 {
     // std::cout << "Key released: " << key << std::endl;
-    if((key == 'E') || (key == 'e'))
+    if ((key == 'E') || (key == 'e'))
     {
         return;
     }
