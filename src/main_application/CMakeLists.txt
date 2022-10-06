@@ -33,7 +33,6 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_objects/draw_line3d/draw_line3d.cpp
                      plot_objects/draw_mesh/draw_mesh.cpp
                      plot_objects/draw_tiles/draw_tiles.cpp
-                     plot_objects/draw_triangles_3d/draw_triangles_3d.cpp
                      plot_objects/im_show/im_show.cpp
                      plot_objects/plot_collection2/plot_collection2.cpp
                      plot_objects/plot_collection3/plot_collection3.cpp

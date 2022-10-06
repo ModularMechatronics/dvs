@@ -85,44 +85,6 @@ void testDrawPolygonFrom4Points()
     drawPolygonFrom4Points(p0, p1, p2, p3, Color(255, 0, 11));
 }
 
-void testDrawTriangle()
-{
-    Triangle3DD triangle;
-
-    triangle.p0 = createPoint3d(0.0, 0.0, 0.0);
-    triangle.p1 = createPoint3d(1.0, 1.0, 0.0);
-    triangle.p2 = createPoint3d(1.5, 0.0, 0.0);
-
-    setCurrentElement("view_00");
-    clearView();
-    drawTriangle(triangle, Color(255, 0, 11));
-}
-
-void testDrawTriangles()
-{
-    const size_t num_elements = 10;
-
-    const Point3f p0 = createPoint3f(0.0, 0.0, 0.0);
-    const Point3f p1 = createPoint3f(1.0, 1.0, 0.0);
-    const Point3f p2 = createPoint3f(1.5, 0.0, 0.0);
-
-    Triangle3DFArray tri_array = createTriangle3DFArray(num_elements);
-
-    Triangle3DF triangle = createTriangle3DF(p0, p1, p2);
-    for (size_t k = 0; k < num_elements; k++)
-    {
-        triangle.p0.z += 0.1;
-        triangle.p1.z += 0.15;
-        triangle.p2.z += 0.12;
-
-        tri_array.elements[k] = triangle;
-    }
-
-    setCurrentElement("view_00");
-    clearView();
-    drawTriangles(tri_array, Color(255, 0, 11));
-}
-
 void testDrawLine3D()
 {
     const Point3d p0 = createPoint3d(0.0, 0.0, 0.0);
