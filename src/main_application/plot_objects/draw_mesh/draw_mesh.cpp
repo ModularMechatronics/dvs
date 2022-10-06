@@ -42,6 +42,8 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data, const Comm
     points_ptr_ = output_data.points_ptr;
     normals_ptr_ = output_data.normals_ptr;
 
+    interpolate_colormap_ = true;
+
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
     glGenBuffers(1, &vertex_buffer_);
