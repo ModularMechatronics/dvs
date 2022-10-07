@@ -33,6 +33,7 @@ public:
     ~Surf();
 
     LegendProperties getLegendProperties() const override;
+    bool affectsColormapMinMax() const override;
 
     void render() override;
 };

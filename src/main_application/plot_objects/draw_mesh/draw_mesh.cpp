@@ -66,6 +66,11 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
+bool DrawMesh::affectsColormapMinMax() const
+{
+    return color_map_set_;
+}
+
 void DrawMesh::findMinMax()
 {
     min_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};

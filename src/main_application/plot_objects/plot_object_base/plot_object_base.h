@@ -76,6 +76,10 @@ public:
                    const CommunicationHeader& hdr,
                    const ShaderCollection shader_collection);
     virtual void render() = 0;
+    virtual bool affectsColormapMinMax() const
+    {
+        return false;
+    }
     std::pair<Vec3d, Vec3d> getMinMaxVectors();
 
     bool isPersistent() const;
