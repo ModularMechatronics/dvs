@@ -28,6 +28,7 @@ public:
               const ShaderCollection shader_collection);
     ~DrawTiles();
 
+    bool affectsColormapMinMax() const override;
     void render() override;
 };
 

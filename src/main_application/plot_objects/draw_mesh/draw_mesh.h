@@ -31,6 +31,7 @@ public:
              const ShaderCollection shader_collection);
     ~DrawMesh();
 
+    bool affectsColormapMinMax() const override;
     void render() override;
 };
 

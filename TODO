@@ -21,6 +21,7 @@ Pre release:
 - Set color in fragment shader with uniform, instead of in vertex shader
 - Finalize small quirks in plot
 - Implement new shader stuff that's in plot for plot3
+- Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
 - Making sure that view and axes are set properly when not explicitly setting them

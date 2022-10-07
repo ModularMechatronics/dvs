@@ -56,30 +56,6 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     findMinMax();
-
-    /*if(color_map_set_)
-    {
-        findMinMax();
-        const RGBColorMap<float>* const color_map_function = getColorMapFromColorMapType(color_map_);
-        colors_ptr_ = convertMatrixColorDataOuter(data_ptr_, data_type_, dims_, num_bytes_for_one_vec_, min_vec,
-    max_vec, color_map_function);
-
-        glGenBuffers(1, &color_buffer_);
-        glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), colors_ptr_,
-    GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-        glVertexAttribPointer(
-            1,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            (void*)0
-        );
-    }*/
 }
 
 void Surf::findMinMax()
@@ -89,6 +65,11 @@ void Surf::findMinMax()
         std::tie<Vec3d, Vec3d>(min_vec, max_vec) =
             findMinMaxFromThreeMatrices(data_ptr_, dims_.rows, dims_.cols, num_bytes_for_one_vec_, data_type_);
     }
+}
+
+bool Surf::affectsColormapMinMax() const
+{
+    return color_map_set_;
 }
 
 void Surf::render()
