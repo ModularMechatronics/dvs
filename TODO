@@ -1,5 +1,4 @@
 Pre release:
-- Plot functions with VectorView and MatrixView
 - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
 - Verify that image is not mirrored
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
@@ -13,7 +12,6 @@ Pre release:
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Add MatrixFixed and VectorFixed
 - Mark all properties classes constructors explicit (and noexcept?)
-- Change to google logging
 - Refactor legend properties with colormap pointer
 - FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side
 - Add pan and zoom to scroll click and right click
@@ -21,6 +19,7 @@ Pre release:
 - Set color in fragment shader with uniform, instead of in vertex shader
 - Finalize small quirks in plot
 - Implement new shader stuff that's in plot for plot3
+- Real time plot with option to add new samples
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
@@ -50,14 +49,13 @@ Pre release:
 - Make sure plot/plot3 works for integer data types
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Make proper test folder structure
-- Switch cache reader to configuration_agent
 - Receive and push new data until there is new data available, and refresh only after last update
 - Don't always update on keypress?
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
 - LegendProperties to use reference_wrapper instead of pointer to colormap
-- Gradient min/max (like for surf) for draw mesh and other 3d functions 
 - Time date axis
-- Look through assertions, and replace to DVS_ASSERT
+- Look through assertions, and replace to DVS_ASSERT, but not for performance critical functions
+- Use "assert" for performance critical functions, and not DVS_ASSERT
 - Do something better/neater than "fillBufferWithData"?
 - Separate plot object vectors so that shader switching is minimized
 - Don't iterate over map in tests.h, just index with the key directly, for basic-tests-cpp
@@ -66,6 +64,8 @@ Pre release:
 
 Post release:
 - Bar plot
+- Change to google logging
+- Plot functions with VectorView and MatrixView
 - Replace old c type arrays with std::array
 - Change opengl types from float to double, to increase precision
 - Fix showing correct plot walls when in perspective mode
