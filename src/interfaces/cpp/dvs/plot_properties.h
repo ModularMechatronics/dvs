@@ -33,17 +33,13 @@ public:
     virtual ~PropertyBase() {}
 };
 
-// TODO: Finish
 struct PropertyFlagContainer : PropertyBase
 {
 public:
-    // PropertyFlag data;
+    PropertyFlag data;
 
-    /*enum class PropertyFlag : uint8_t
-    {
-    PERSISTENT,
-    CALCULATE_NORMALS,
-    }*/
+    PropertyFlagContainer() : PropertyBase(PropertyType::FLAG), data{PropertyFlag::UNKNOWN} {}
+    PropertyFlagContainer(const PropertyFlag flag) : PropertyBase(PropertyType::FLAG), data{flag} {}
 };
 
 inline size_t safeStringLenCheck(const char* const str, const size_t max_length)
@@ -432,6 +428,9 @@ public:
     {
     }
 };
+
+constexpr internal::PropertyFlag PERSISTENT = internal::PropertyFlag::PERSISTENT;
+constexpr internal::PropertyFlag INTERPOLATE_COLORMAP = internal::PropertyFlag::INTERPOLATE_COLORMAP;
 
 }  // namespace properties
 

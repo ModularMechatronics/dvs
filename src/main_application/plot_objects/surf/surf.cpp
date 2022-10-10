@@ -10,13 +10,6 @@ inline OutputData convertMatrixDataOuter(uint8_t* input_data,
                                          const DataType data_type,
                                          const Dimension2D dims,
                                          const size_t num_bytes_for_one_vec);
-/*OutputData convertMatrixColorDataOuter(uint8_t* input_data,
-                                     const DataType data_type,
-                                     const Dimension2D dims,
-                                     const size_t num_bytes_for_one_vec,
-                                     const Vec3d min_vec,
-                                     const Vec3d max_vec,
-                                     const RGBColorMap<float>* const color_map_function);*/
 
 Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
            const CommunicationHeader& hdr,

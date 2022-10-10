@@ -31,11 +31,11 @@ void testSurf()
 
     setCurrentElement("view_01");
     clearView();
-    surf(x, y, z + 1.0, properties::EdgeColor::None(), properties::ColorMap::Jet());
+    surf(x, y, z, properties::EdgeColor::None(), properties::ColorMap::Jet());
 
     setCurrentElement("view_02");
     clearView();
-    surf(x, y, z + 1.0, properties::EdgeColor::None(), properties::ColorMap::Jet(), properties::INTERPOLATE_COLORMAP);
+    surf(x, y, z, properties::EdgeColor::None(), properties::ColorMap::Jet(), properties::INTERPOLATE_COLORMAP);
 }
 
 void testScatter()

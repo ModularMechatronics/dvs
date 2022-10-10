@@ -93,8 +93,8 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
 
 void PlotObjectBase::assignProperties(const Properties& props)
 {
-    is_persistent_ = props.hasProperty(PropertyType::PERSISTENT);
-    interpolate_colormap_ = props.hasProperty(PropertyType::INTERPOLATE_COLORMAP);
+    is_persistent_ = props.hasFlag(PropertyFlag::PERSISTENT);
+    interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP);
 
     if (props.hasProperty(PropertyType::NAME))
     {

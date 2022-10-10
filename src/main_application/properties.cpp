@@ -48,13 +48,8 @@ Properties::Properties(const std::vector<CommunicationHeaderObject>& objects)
                 case PropertyType::POINT_SIZE:
                     ptr = std::make_shared<properties::PointSize>(obj.as<properties::PointSize>());
                     break;
-                case PropertyType::PERSISTENT:
-                    ptr = std::make_shared<PropertyBase>();
-                    ptr->setPropertyType(PropertyType::PERSISTENT);
-                    break;
-                case PropertyType::INTERPOLATE_COLORMAP:
-                    ptr = std::make_shared<PropertyBase>();
-                    ptr->setPropertyType(PropertyType::INTERPOLATE_COLORMAP);
+                case PropertyType::FLAG:
+                    flags.push_back(obj.as<internal::PropertyFlagContainer>());
                     break;
                 case PropertyType::UNKNOWN:
                     throw std::runtime_error("'UNKNOWN' type found!");
@@ -63,9 +58,19 @@ Properties::Properties(const std::vector<CommunicationHeaderObject>& objects)
                     throw std::runtime_error("No valid type found!");
             }
 
-            props.push_back(ptr);
+            if (pb.getPropertyType() != PropertyType::FLAG)  // TODO: Hack
+            {
+                props.push_back(ptr);
+            }
         }
     }
+}
+
+bool Properties::hasFlag(const dvs::internal::PropertyFlag f) const
+{
+    return std::find_if(flags.begin(), flags.end(), [&f](const internal::PropertyFlagContainer& fc) -> bool {
+               return fc.data == f;
+           }) != flags.end();
 }
 
 bool Properties::hasProperty(const PropertyType tp) const
