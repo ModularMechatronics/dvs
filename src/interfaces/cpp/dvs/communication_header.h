@@ -177,26 +177,19 @@ private:
 
     template <typename U> void extendInternal(std::vector<CommunicationHeaderObject>& objects, const U& obj)
     {
-        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
+        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
+                          std::is_same<PropertyFlag, U>::value,
                       "Incorrect type!");
         DVS_ASSERT(sizeof(U) <= kCommunicationHeaderObjectDataSize) << "Object too big!";
 
         objects.push_back(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
         CommunicationHeaderObject& current_obj = objects.back();
 
-        if (std::is_same<U, PropertyType>::value)
+        if (std::is_same<U, PropertyFlag>::value)
         {
-            const PropertyType tp = *reinterpret_cast<const PropertyType* const>(&obj);
-            if (tp == PropertyType::PERSISTENT)
-            {
-                current_obj.num_bytes = sizeof(PropertyBase);
-                fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::PERSISTENT});
-            }
-            else if (tp == PropertyType::INTERPOLATE_COLORMAP)
-            {
-                current_obj.num_bytes = sizeof(PropertyBase);
-                fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::INTERPOLATE_COLORMAP});
-            }
+            const PropertyFlag f = *reinterpret_cast<const PropertyFlag* const>(&obj);
+            fillBufferWithObjects(current_obj.data, PropertyFlagContainer{f});
+            current_obj.num_bytes = sizeof(PropertyFlagContainer);
         }
         else
         {
@@ -208,26 +201,19 @@ private:
     template <typename U, typename... Us>
     void extendInternal(std::vector<CommunicationHeaderObject>& objects, const U& obj, const Us&... other_objs)
     {
-        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value,
+        static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
+                          std::is_same<PropertyFlag, U>::value,
                       "Incorrect type!");
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
         objects.push_back(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
         CommunicationHeaderObject& current_obj = objects.back();
 
-        if (std::is_same<U, PropertyType>::value)
+        if (std::is_same<U, PropertyFlag>::value)
         {
-            const PropertyType tp = *reinterpret_cast<const PropertyType* const>(&obj);
-            if (tp == PropertyType::PERSISTENT)
-            {
-                current_obj.num_bytes = sizeof(PropertyBase);
-                fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::PERSISTENT});
-            }
-            else if (tp == PropertyType::INTERPOLATE_COLORMAP)
-            {
-                current_obj.num_bytes = sizeof(PropertyBase);
-                fillBufferWithObjects(current_obj.data, PropertyBase{PropertyType::INTERPOLATE_COLORMAP});
-            }
+            const PropertyFlag f = *reinterpret_cast<const PropertyFlag* const>(&obj);
+            current_obj.num_bytes = sizeof(PropertyFlagContainer);
+            fillBufferWithObjects(current_obj.data, PropertyFlagContainer{f});
         }
         else
         {

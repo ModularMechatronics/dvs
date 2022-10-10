@@ -55,13 +55,16 @@ class Properties
 {
 private:
     std::vector<std::shared_ptr<dvs::internal::PropertyBase>> props;
+    std::vector<dvs::internal::PropertyFlagContainer> flags;
 
 public:
     Properties() = default;
     Properties(const std::vector<dvs::internal::CommunicationHeaderObject>& objects);
     bool hasProperty(const dvs::internal::PropertyType tp) const;
+    bool hasFlag(const dvs::internal::PropertyFlag f) const;
     template <typename T> T getProperty() const
     {
+        // TODO: Refactor
         const dvs::internal::PropertyType tp = templateToPropertyType<T>();
 
         if (!hasProperty(tp))
