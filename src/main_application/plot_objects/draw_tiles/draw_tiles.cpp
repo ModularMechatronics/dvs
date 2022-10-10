@@ -195,3 +195,54 @@ inline float* convertSingleMatrixDataOuter(uint8_t* input_data,
 
     return output_data;
 }
+
+/*
+// dvs function code
+
+template <typename T, typename... Us>
+void drawTiles(const Matrix<T>& z, const Vec2<double>& tile_size, const Us&... settings)
+{
+    internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_TILES);
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(z.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D, internal::Dimension2D(z.numRows(), z.numCols()));
+    hdr.extend(settings...);
+
+    Vector<double> v(2);
+    v(0) = tile_size.x;
+    v(1) = tile_size.y;
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, z, v);
+}
+
+// basic-tests-cpp test
+
+void testDrawTiles()
+{
+    const int num_rows = 20, num_cols = 25;
+    Matrix<float> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+
+    double inc = 0.4;
+    for (int r = 0; r < num_rows; r++)
+    {
+        for (int c = 0; c < num_cols; c++)
+        {
+            const double rd = static_cast<double>(r - 5) * inc;
+            const double cd = static_cast<double>(c - 5) * inc * 2;
+            x(r, c) = c;
+            y(r, c) = r;
+            z(r, c) = 50.0 * std::sin(std::sqrt(rd * rd + cd * cd));
+        }
+    }
+
+    const Vec2d tile_size(0.1, 0.2);
+
+    setCurrentElement("view_00");
+    clearView();
+
+    drawTiles(z, tile_size, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
+}
+
+
+*/

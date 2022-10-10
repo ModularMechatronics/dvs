@@ -39,7 +39,6 @@ int main(int argc, char* argv[])
                              {"surf", testSurf},
                              {"imShow", testImShow},
                              {"axis", testAxis},
-                             {"drawTiles", testDrawTiles},
                              {"drawMesh", testDrawMesh},
                              {"drawLine3D", testDrawLine3D},
                              {"drawLine2D", testDrawLine2D},

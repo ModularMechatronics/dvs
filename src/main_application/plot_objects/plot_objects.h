@@ -18,7 +18,6 @@
 #include "plot_objects/scatter3/scatter3.h"
 #include "plot_objects/surf/surf.h"
 #include "plot_objects/im_show/im_show.h"
-#include "plot_objects/draw_tiles/draw_tiles.h"
 #include "plot_objects/draw_mesh/draw_mesh.h"
 #include "plot_objects/draw_line3d/draw_line3d.h"
 #include "plot_objects/draw_arrow/draw_arrow.h"
