@@ -99,11 +99,6 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
                 dynamic_cast<PlotObjectBase*>(new ImShow(std::move(received_data), hdr, shader_collection_)));
             break;
 
-        case Function::DRAW_TILES:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawTiles(std::move(received_data), hdr, shader_collection_)));
-            break;
-
         case Function::PLOT_COLLECTION2:
             plot_datas_.push_back(
                 dynamic_cast<PlotObjectBase*>(new PlotCollection2D(std::move(received_data), hdr, shader_collection_)));

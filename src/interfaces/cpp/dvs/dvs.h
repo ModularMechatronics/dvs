@@ -478,23 +478,6 @@ template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const U
 }
 
 template <typename T, typename... Us>
-void drawTiles(const Matrix<T>& z, const Vec2<double>& tile_size, const Us&... settings)
-{
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_TILES);
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(z.size()));
-    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D, internal::Dimension2D(z.numRows(), z.numCols()));
-    hdr.extend(settings...);
-
-    Vector<double> v(2);
-    v(0) = tile_size.x;
-    v(1) = tile_size.y;
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, z, v);
-}
-
-template <typename T, typename... Us>
 void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& indices, const Us&... settings)
 {
     internal::CommunicationHeader hdr;
