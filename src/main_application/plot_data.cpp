@@ -27,6 +27,11 @@ void PlotDataHandler::clear()
     pending_clear_ = false;
 }
 
+bool PlotDataHandler::isUpdatable(const Function fcn) const
+{
+    return (fcn == Function::REAL_TIME_PLOT);
+}
+
 void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr)
 {
     const Function fcn = hdr.getObjectAtIdx(0).as<Function>();
@@ -35,6 +40,25 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
     {
         pending_clear_ = false;
         old_plot_datas_.clear();
+    }
+
+    if (isUpdatable(fcn))
+    {
+        if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+        {
+            throw std::runtime_error("No slot provided for updatable function!");
+        }
+        const internal::PlotSlot slot = hdr.get(CommunicationHeaderObjectType::SLOT).as<internal::PlotSlot>();
+
+        const auto q = std::find_if(plot_datas_.begin(),
+                                    plot_datas_.end(),
+                                    [&slot](const PlotObjectBase* const pd) -> bool { return pd->getSlot() == slot; });
+
+        if (q != plot_datas_.end())
+        {
+            (*q)->updateWithNewData(std::move(received_data), hdr);
+            return;
+        }
     }
 
     switch (fcn)
@@ -123,6 +147,11 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
         case Function::DRAW_ARROW:
             plot_datas_.push_back(
                 dynamic_cast<PlotObjectBase*>(new DrawArrow(std::move(received_data), hdr, shader_collection_)));
+            break;
+
+        case Function::REAL_TIME_PLOT:
+            plot_datas_.push_back(
+                dynamic_cast<PlotObjectBase*>(new ScrollingPlot2D(std::move(received_data), hdr, shader_collection_)));
             break;
 
         case Function::QUIVER:

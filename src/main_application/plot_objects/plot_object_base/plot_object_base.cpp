@@ -77,6 +77,15 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     num_data_bytes_ = received_data_->size();
     num_dimensions_ = getNumDimensionsFromFunction(type_);
 
+    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+    {
+        slot_ = hdr.get(CommunicationHeaderObjectType::SLOT).as<internal::PlotSlot>();
+    }
+    else
+    {
+        slot_ = internal::PlotSlot::UNKNOWN;
+    }
+
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
     /*if((num_dimensions_ * num_bytes_for_one_vec_) != num_data_bytes_)
@@ -219,6 +228,12 @@ void PlotObjectBase::assignProperties(const Properties& props)
     {
         is_dashed_ = 0;
     }
+}
+
+void PlotObjectBase::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+                                       const CommunicationHeader& hdr)
+{
+    std::cout << "Update with new data from PlotObjectBase!" << std::endl;
 }
 
 PlotObjectBase::~PlotObjectBase() {}

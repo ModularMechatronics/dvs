@@ -645,6 +645,31 @@ void drawLineBetweenPoints(const Point2<double>& p0, const Point2<double>& p1, c
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
 }
 
+template <typename T> void realTimePlot(const T dt, const T y, const internal::PlotSlot slot)
+{
+    internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::REAL_TIME_PLOT);
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1U));
+    hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
+
+    const Vector<T> data{VectorInitializer<T>{dt, y}};
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, data);
+}
+
+template <typename T, typename... Us> void setPlotProperties(const internal::PlotSlot slot, const Us&... settings)
+{
+    /*internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::REAL_TIME_PLOT);
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1U));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, data);*/
+}
+
 inline void setCurrentElement(const std::string& name,
                               const ElementType element_type,
                               const std::string& parent_name = "#DEFAULTNAME#",

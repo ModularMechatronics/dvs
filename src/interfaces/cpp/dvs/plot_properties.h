@@ -429,6 +429,17 @@ public:
     }
 };
 
+struct BufferSize : internal::PropertyBase
+{
+public:
+    uint16_t data;
+    BufferSize() : internal::PropertyBase(internal::PropertyType::BUFFER_SIZE) {}
+    BufferSize(const uint16_t buffer_size)
+        : internal::PropertyBase(internal::PropertyType::BUFFER_SIZE), data(buffer_size)
+    {
+    }
+};
+
 constexpr internal::PropertyFlag PERSISTENT = internal::PropertyFlag::PERSISTENT;
 constexpr internal::PropertyFlag INTERPOLATE_COLORMAP = internal::PropertyFlag::INTERPOLATE_COLORMAP;
 constexpr internal::PropertyFlag UPDATABLE = internal::PropertyFlag::UPDATABLE;

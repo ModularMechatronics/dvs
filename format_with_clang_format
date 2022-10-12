@@ -1,0 +1,6 @@
+find src/main_application/ -iname "*.h" -o -iname "*.cpp" | xargs clang-format -i
+find src/interfaces/cpp/ -iname "*.h" -o -iname "*.cpp" | xargs clang-format -i
+find src/demos/ -iname "*.h" -o -iname "*.cpp" | xargs clang-format -i
+find src/test_applications/advanced_tests_cpp/ -iname "*.h" -o -iname "*.cpp" | xargs clang-format -i
+find src/test_applications/basic_tests_cpp/ -iname "*.h" -o -iname "*.cpp" | xargs clang-format -i
+

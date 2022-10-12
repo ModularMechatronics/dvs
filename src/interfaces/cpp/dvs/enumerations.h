@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "dvs/plot_slots.h"
+
 namespace dvs
 {
 namespace internal
@@ -34,6 +36,7 @@ enum class CommunicationHeaderObjectType : uint16_t
     GUI_ELEMENT_TYPE,
     PROPERTY,
     FLAG_CONTAINER,
+    SLOT,
     UNKNOWN
 };
 
@@ -56,6 +59,7 @@ enum class PropertyType : uint8_t
     FACE_COLOR,
     COLOR_MAP,
     POINT_SIZE,
+    BUFFER_SIZE,
     SCATTER_STYLE,
     FLAG,
     UNKNOWN
@@ -72,6 +76,7 @@ enum class Function : uint8_t
     GRID_OFF,
     PLOT2,
     PLOT3,
+    REAL_TIME_PLOT,
     LINE_COLLECTION2,
     LINE_COLLECTION3,
     STEM,

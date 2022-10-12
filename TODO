@@ -20,6 +20,7 @@ Pre release:
 - Finalize small quirks in plot
 - Implement new shader stuff that's in plot for plot3
 - Real time plot with option to add new samples
+ * And extended functionality to add multiple slots in same function call
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
