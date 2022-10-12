@@ -64,6 +64,7 @@ protected:
     bool has_name_;
     bool color_map_set_;
     ShaderCollection shader_collection_;
+    internal::PlotSlot slot_;
 
     void assignProperties(const Properties& props);
     virtual void findMinMax() = 0;
@@ -80,6 +81,12 @@ public:
     {
         return false;
     }
+
+    internal::PlotSlot getSlot() const
+    {
+        return slot_;
+    }
+
     std::pair<Vec3d, Vec3d> getMinMaxVectors();
 
     bool isPersistent() const;
@@ -93,6 +100,8 @@ public:
 
         return lp;
     }
+
+    virtual void updateWithNewData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr);
 
     Function getType() const
     {

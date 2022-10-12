@@ -21,6 +21,7 @@
 #include "plot_objects/draw_mesh/draw_mesh.h"
 #include "plot_objects/draw_line3d/draw_line3d.h"
 #include "plot_objects/draw_arrow/draw_arrow.h"
+#include "plot_objects/scrolling_plot2d/scrolling_plot2d.h"
 
 // clang-format on
 

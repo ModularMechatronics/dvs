@@ -22,6 +22,7 @@ class PlotDataHandler
 private:
     bool pending_clear_;
     ShaderCollection shader_collection_;
+    bool isUpdatable(const Function fcn) const;
 
 public:
     std::pair<Vec3d, Vec3d> getMinMaxVectors() const;

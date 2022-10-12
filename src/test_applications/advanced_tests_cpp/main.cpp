@@ -29,24 +29,24 @@ void displayHelp()
 int main(int argc, char* argv[])
 {
     // ######################### plot #########################
-    std::map<std::string, std::function<void()>> plot2_functions{
+    StringFunctionMap plot2_functions{
         {"view", plot2::testWithVectorView},
     };
 
     // ######################### plot3 #########################
-    std::map<std::string, std::function<void()>> plot3_functions{{"view", plot3_ns::testWithVectorView}};
+    StringFunctionMap plot3_functions{{"view", plot3_ns::testWithVectorView}};
 
     // ######################### scatter #######################
-    std::map<std::string, std::function<void()>> scatter2_functions{{"view", scatter2::testWithVectorView}};
+    StringFunctionMap scatter2_functions{{"view", scatter2::testWithVectorView}};
 
     // ######################### scatter3 ######################
-    std::map<std::string, std::function<void()>> scatter3_functions{{"view", scatter3_ns::testWithVectorView}};
+    StringFunctionMap scatter3_functions{{"view", scatter3_ns::testWithVectorView}};
 
     // ######################### surf ##########################
-    std::map<std::string, std::function<void()>> surf_functions{{"view", surf_ns::testWithMatrixView}};
+    StringFunctionMap surf_functions{{"view", surf_ns::testWithMatrixView}};
 
     // ######################### dynamic_plotting ##########################
-    std::map<std::string, std::function<void()>> dynamic_plotting_functions{
+    StringFunctionMap dynamic_plotting_functions{
         {"2d_expanding_plot", dynamic_plotting::test2DFunctionExpandingPlotObject},
         {"3d_expanding_plot", dynamic_plotting::test3DFunctionExpandingPlotObject},
         {"2d_changing_rotation", dynamic_plotting::test2DFunctionRotatingView},
@@ -56,12 +56,18 @@ int main(int argc, char* argv[])
 
     };
 
+    // ######################### dynamic_plotting ##########################
+    StringFunctionMap scrolling_plot_tests{
+        {"basic", scrolling_plot::testBasic},
+    };
+
     fcns["plot"] = plot2_functions;
     fcns["plot3"] = plot3_functions;
     fcns["scatter"] = scatter2_functions;
     fcns["scatter3"] = scatter3_functions;
     fcns["surf"] = surf_functions;
     fcns["dynamic_plotting"] = dynamic_plotting_functions;
+    fcns["scrolling_plot"] = scrolling_plot_tests;
 
     if (argc == 1)
     {
