@@ -35,7 +35,6 @@ enum class CommunicationHeaderObjectType : uint16_t
     ELEMENT_NAME,
     GUI_ELEMENT_TYPE,
     PROPERTY,
-    FLAG_CONTAINER,
     SLOT,
     UNKNOWN
 };

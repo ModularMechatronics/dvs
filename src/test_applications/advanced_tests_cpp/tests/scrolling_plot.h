@@ -13,7 +13,7 @@ void testBasic()
     const size_t num_its = 1000;
 
     float t = 0.0f;
-    float dt = 0.01f;
+    float dt = 0.1f;
 
     setCurrentElement("view_00");
     clearView();
