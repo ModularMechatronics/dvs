@@ -660,6 +660,8 @@ template <typename T> void realTimePlot(const T dt, const T y, const internal::P
 
 template <typename T, typename... Us> void setPlotProperties(const internal::PlotSlot slot, const Us&... settings)
 {
+    // TODO: Don't use DATA_ABSENT flag, implement "awaiting data" or something that fills a
+    // plot data when the matching slot comes in
     /*internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::REAL_TIME_PLOT);
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
