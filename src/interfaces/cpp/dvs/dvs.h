@@ -645,13 +645,15 @@ void drawLineBetweenPoints(const Point2<double>& p0, const Point2<double>& p1, c
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, points);
 }
 
-template <typename T> void realTimePlot(const T dt, const T y, const internal::PlotSlot slot)
+template <typename T, typename... Us>
+void realTimePlot(const T dt, const T y, const internal::PlotSlot slot, const Us&... settings)
 {
     internal::CommunicationHeader hdr;
     hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::REAL_TIME_PLOT);
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1U));
     hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
+    hdr.extend(settings...);
 
     const Vector<T> data{VectorInitializer<T>{dt, y}};
 

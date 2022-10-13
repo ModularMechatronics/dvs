@@ -18,7 +18,6 @@ ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_da
         throw std::runtime_error("Invalid function type for ScrollingPlot2D!");
     }
 
-    buffer_size_ = kDefaultBufferSize;
     num_elements_to_draw_ = 1U;
 
     points_ptr_ = new float[buffer_size_ * 2U];
@@ -81,6 +80,45 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
                                         const CommunicationHeader& hdr)
 {
     data_ptr_ = received_data->data();
+
+    const Properties props(hdr.getObjects());
+
+    if (props.hasProperty(PropertyType::BUFFER_SIZE))
+    {
+        const BufferSize b = props.getProperty<BufferSize>();
+        if (buffer_size_ != b.data)
+        {
+            std::cout << "New buffer size: " << b.data << std::endl;
+            float* points_ptr_tmp = new float[b.data * 2U];
+            float* dt_vec_tmp = new float[b.data];
+
+            std::memcpy(points_ptr_tmp, points_ptr_, sizeof(float) * buffer_size_ * 2U);
+            std::memcpy(dt_vec_tmp, dt_vec_, sizeof(float) * buffer_size_);
+
+            delete[] points_ptr_;
+            delete[] dt_vec_;
+
+            points_ptr_ = points_ptr_tmp;
+            dt_vec_ = dt_vec_tmp;
+
+            const size_t num_bytes = b.data * 2U * sizeof(float);
+
+            glGenVertexArrays(1, &vertex_buffer_array_);
+            glBindVertexArray(vertex_buffer_array_);
+
+            glGenBuffers(1, &vertex_buffer_);
+            glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+            glBufferData(GL_ARRAY_BUFFER, num_bytes, points_ptr_, GL_DYNAMIC_DRAW);
+
+            glEnableVertexAttribArray(0);
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+            buffer_size_ = b.data;
+
+            // TODO: Delete old GL buffer
+        }
+    }
 
     const OutputData output_data = convertDataScrollingPlotOuter(data_ptr_, data_type_);
 

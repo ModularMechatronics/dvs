@@ -137,6 +137,16 @@ void PlotObjectBase::assignProperties(const Properties& props)
         alpha_ = 1.0f;
     }
 
+    if (props.hasProperty(PropertyType::BUFFER_SIZE))
+    {
+        const BufferSize b = props.getProperty<BufferSize>();
+        buffer_size_ = b.data;
+    }
+    else
+    {
+        buffer_size_ = kDefaultBufferSize;
+    }
+
     if (props.hasProperty(PropertyType::COLOR_MAP))
     {
         color_map_ = props.getProperty<ColorMap>().data;

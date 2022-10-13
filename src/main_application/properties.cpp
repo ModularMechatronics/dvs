@@ -51,11 +51,14 @@ Properties::Properties(const std::vector<CommunicationHeaderObject>& objects)
                 case PropertyType::FLAG:
                     flags.push_back(obj.as<internal::PropertyFlagContainer>());
                     break;
+                case PropertyType::BUFFER_SIZE:
+                    ptr = std::make_shared<properties::BufferSize>(obj.as<properties::BufferSize>());
+                    break;
                 case PropertyType::UNKNOWN:
                     throw std::runtime_error("'UNKNOWN' type found!");
                     break;
                 default:
-                    throw std::runtime_error("No valid type found!");
+                    throw std::runtime_error("No valid property type found!");
             }
 
             if (pb.getPropertyType() != PropertyType::FLAG)  // TODO: Hack
