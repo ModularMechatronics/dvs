@@ -25,6 +25,7 @@ using namespace dvs::properties;
 class PlotObjectBase
 {
 protected:
+    static constexpr size_t kDefaultBufferSize = 500U;
     std::unique_ptr<const ReceivedData> received_data_;
     size_t num_dimensions_;
     size_t num_bytes_per_element_;
@@ -46,6 +47,7 @@ protected:
     RGBTripletf color_;
     RGBTripletf edge_color_;
     RGBTripletf face_color_;
+    size_t buffer_size_;
 
     bool has_edge_color_;
     bool has_face_color_;

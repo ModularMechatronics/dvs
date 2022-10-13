@@ -16,9 +16,7 @@ private:
     float* dt_vec_;
 
     void findMinMax() override;
-    static constexpr size_t kDefaultBufferSize = 500U;
 
-    size_t buffer_size_;
     size_t num_elements_to_draw_;
 
 public:

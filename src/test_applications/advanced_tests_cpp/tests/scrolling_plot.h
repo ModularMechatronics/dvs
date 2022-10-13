@@ -10,10 +10,10 @@ namespace scrolling_plot
 
 void testBasic()
 {
-    const size_t num_its = 1000;
+    const size_t num_its = 1500;
 
     float t = 0.0f;
-    float dt = 0.1f;
+    float dt = 0.01f;
 
     setCurrentElement("view_00");
     clearView();
@@ -24,7 +24,14 @@ void testBasic()
     {
         const float y = std::sin(t) + 0.1f * std::sin(t * 10.0f);
         t += dt;
-        realTimePlot(dt, y, properties::SLOT0);
+        if (k < 800)
+        {
+            realTimePlot(dt, y, properties::SLOT0);
+        }
+        else
+        {
+            realTimePlot(dt, y, properties::SLOT0, properties::BufferSize(1000));
+        }
         usleep(10000);
     }
 }
