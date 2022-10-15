@@ -137,7 +137,8 @@ void PlotObjectBase::assignProperties(const Properties& props)
         alpha_ = 1.0f;
     }
 
-    if (props.hasProperty(PropertyType::BUFFER_SIZE))
+    buffer_size_ = props.getPropertyOrValue<BufferSize>(kDefaultBufferSize);
+    /*if (props.hasProperty(PropertyType::BUFFER_SIZE))
     {
         const BufferSize b = props.getProperty<BufferSize>();
         buffer_size_ = b.data;
@@ -145,7 +146,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     else
     {
         buffer_size_ = kDefaultBufferSize;
-    }
+    }*/
 
     if (props.hasProperty(PropertyType::COLOR_MAP))
     {
@@ -200,16 +201,18 @@ void PlotObjectBase::assignProperties(const Properties& props)
         face_color_ = RGBTripletf(0.1f, 0.2f, 0.3f);
     }
 
-    if (props.hasProperty(PropertyType::SCATTER_STYLE))
+    scatter_style_type_ = props.getPropertyOrValue<ScatterStyle>(ScatterStyleType::CIRCLE);
+    /*if (props.hasProperty(PropertyType::SCATTER_STYLE))
     {
         scatter_style_type_ = props.getProperty<ScatterStyle>().data;
     }
     else
     {
         scatter_style_type_ = ScatterStyleType::CIRCLE;
-    }
+    }*/
 
-    if (props.hasProperty(PropertyType::LINE_WIDTH))
+    line_width_ = props.getPropertyOrValue<LineWidth>(1.0f);
+    /*if (props.hasProperty(PropertyType::LINE_WIDTH))
     {
         const LineWidth lw = props.getProperty<LineWidth>();
         line_width_ = lw.data;
@@ -217,9 +220,10 @@ void PlotObjectBase::assignProperties(const Properties& props)
     else
     {
         line_width_ = 1.0f;
-    }
+    }*/
 
-    if (props.hasProperty(PropertyType::POINT_SIZE))
+    point_size_ = props.getPropertyOrValue<PointSize>(10.0f);
+    /*if (props.hasProperty(PropertyType::POINT_SIZE))
     {
         const PointSize ps = props.getProperty<PointSize>();
         point_size_ = ps.data;
@@ -227,7 +231,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     else
     {
         point_size_ = 10.0f;
-    }
+    }*/
 
     if (props.hasProperty(PropertyType::LINE_STYLE))
     {

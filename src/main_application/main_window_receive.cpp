@@ -114,7 +114,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::STEM) || (fcn == Function::FAST_PLOT2) || (fcn == Function::FAST_PLOT3) ||
            (fcn == Function::LINE_COLLECTION2) || (fcn == Function::LINE_COLLECTION3) ||
            (fcn == Function::PLOT_COLLECTION3) || (fcn == Function::GLOBAL_ILLUMINATION) ||
-           (fcn == Function::REAL_TIME_PLOT);
+           (fcn == Function::REAL_TIME_PLOT) || (fcn == Function::HEADER_EXTENSION);
 }
 
 void MainWindow::receiveData()
