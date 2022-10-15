@@ -10,6 +10,7 @@
 PlotDataHandler::PlotDataHandler(const ShaderCollection shader_collection)
     : pending_clear_(false), shader_collection_{shader_collection}
 {
+    awaiting_headers_.resize(UINT8_MAX);
 }
 
 void PlotDataHandler::clear()
@@ -34,6 +35,8 @@ bool PlotDataHandler::isUpdatable(const Function fcn) const
 
 void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr)
 {
+    // TODO: Break of Properties from hdr here or earlier, replace awaiting_headers_ with awaiting_properties_
+    // and make Properties the structure that gets updated, and not the CommunicationHeader
     const Function fcn = hdr.getObjectAtIdx(0).as<Function>();
 
     if (pending_clear_)
@@ -42,13 +45,24 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
         old_plot_datas_.clear();
     }
 
-    if (isUpdatable(fcn))
+    if (fcn == internal::Function::HEADER_EXTENSION)
     {
         if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
         {
             throw std::runtime_error("No slot provided for updatable function!");
         }
-        const internal::PlotSlot slot = hdr.get(CommunicationHeaderObjectType::SLOT).as<internal::PlotSlot>();
+        const internal::PlotSlot slot = hdr.value<internal::PlotSlot>();
+
+        awaiting_headers_[static_cast<int>(slot)] = hdr;
+        return;
+    }
+    else if (isUpdatable(fcn))
+    {
+        if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+        {
+            throw std::runtime_error("No slot provided for updatable function!");
+        }
+        const internal::PlotSlot slot = hdr.value<internal::PlotSlot>();
 
         const auto q = std::find_if(plot_datas_.begin(),
                                     plot_datas_.end(),
@@ -56,8 +70,30 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 
         if (q != plot_datas_.end())
         {
-            (*q)->updateWithNewData(std::move(received_data), hdr);
+            if (awaiting_headers_[static_cast<int>(slot)].isEmpty())
+            {
+                (*q)->updateWithNewData(std::move(received_data), hdr);
+            }
+            else
+            {
+                CommunicationHeader new_header{hdr};
+                new_header.extendWithHeader(awaiting_headers_[static_cast<int>(slot)]);
+                awaiting_headers_[static_cast<int>(slot)].reset();
+                (*q)->updateWithNewData(std::move(received_data), new_header);
+            }
+
             return;
+        }
+    }
+
+    const internal::PlotSlot slot = hdr.valueOr<internal::PlotSlot>(internal::PlotSlot::UNKNOWN);
+    CommunicationHeader new_header{hdr};
+    if (slot != internal::PlotSlot::UNKNOWN)
+    {
+        if (!awaiting_headers_[static_cast<int>(slot)].isEmpty())
+        {
+            new_header.extendWithHeader(awaiting_headers_[static_cast<int>(slot)]);
+            awaiting_headers_[static_cast<int>(slot)].reset();
         }
     }
 
@@ -65,103 +101,103 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
     {
         case Function::STAIRS:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Stairs(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new Stairs(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::PLOT2:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Plot2D(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new Plot2D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::PLOT3:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Plot3D(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new Plot3D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::FAST_PLOT2:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new FastPlot2D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new FastPlot2D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::LINE_COLLECTION2:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new LineCollection2D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new LineCollection2D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::LINE_COLLECTION3:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new LineCollection3D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new LineCollection3D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::FAST_PLOT3:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new FastPlot3D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new FastPlot3D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::STEM:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Stem(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new Stem(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::SCATTER2:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Scatter2D(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new Scatter2D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::SCATTER3:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Scatter3D(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new Scatter3D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::SURF:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Surf(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new Surf(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::IM_SHOW:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new ImShow(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new ImShow(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::PLOT_COLLECTION2:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new PlotCollection2D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new PlotCollection2D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::PLOT_COLLECTION3:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new PlotCollection3D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new PlotCollection3D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::DRAW_MESH_SEPARATE_VECTORS:
         case Function::DRAW_MESH:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::DRAW_LINE3D:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new DrawLine3D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::DRAW_ARROW:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawArrow(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new DrawArrow(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::REAL_TIME_PLOT:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new ScrollingPlot2D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new ScrollingPlot2D(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::QUIVER:
             plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Quiver(std::move(received_data), hdr, shader_collection_)));
+                dynamic_cast<PlotObjectBase*>(new Quiver(std::move(received_data), new_header, shader_collection_)));
             break;
 
         case Function::DRAW_LINE_BETWEEN_POINTS_3D:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawLine3D(std::move(received_data), hdr, shader_collection_)));
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new DrawLine3D(std::move(received_data), new_header, shader_collection_)));
             break;
 
             break;

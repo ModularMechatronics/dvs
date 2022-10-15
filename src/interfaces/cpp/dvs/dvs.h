@@ -660,18 +660,14 @@ void realTimePlot(const T dt, const T y, const internal::PlotSlot slot, const Us
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, data);
 }
 
-template <typename T, typename... Us> void setPlotProperties(const internal::PlotSlot slot, const Us&... settings)
+template <typename... Us> void setPlotProperties(const internal::PlotSlot slot, const Us&... settings)
 {
-    // TODO: Don't use DATA_ABSENT flag, implement "awaiting data" or something that fills a
-    // plot data when the matching slot comes in
-    /*internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::REAL_TIME_PLOT);
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1U));
-
+    internal::CommunicationHeader hdr;
+    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::HEADER_EXTENSION);
+    hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
     hdr.extend(settings...);
 
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, data);*/
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
 inline void setCurrentElement(const std::string& name,

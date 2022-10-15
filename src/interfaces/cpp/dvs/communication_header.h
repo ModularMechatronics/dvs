@@ -165,6 +165,36 @@ template <typename T> DataType typeToDataTypeEnum()
     }
 }
 
+/*
+struct PropertyInfo
+{
+    uint8_t start_idx; // Index at which the first property is at, in the objects list
+    uint8_t num_properties;
+}
+
+struct PropertyLookupTable
+{
+    uint8_t data[256];
+    uint8_t num_bytes;
+
+    PropertyLookupTable() : num_bytes{Set to only be as large as number of PropertyType enums}
+{
+}
+
+}
+
+
+struct HeaderObjectLookupTable
+{
+    uint8_t data[256];
+    uint8_t num_bytes;
+
+    HeaderObjectLookupTable() : num_bytes{Set to only be as large as number of CommunicationHeaderObjectType enums}
+    {
+    }
+}
+*/
+
 class CommunicationHeader
 {
 private:
@@ -224,6 +254,16 @@ private:
         extendInternal(objects, other_objs...);
     }
 
+    template <typename T> CommunicationHeaderObjectType templateToObjectType() const
+    {
+        static_assert(std::is_same<T, internal::PlotSlot>::value, "Type not allowed for template to type deduction!");
+        if (std::is_same<T, internal::PlotSlot>::value)
+        {
+            return CommunicationHeaderObjectType::SLOT;
+        }
+        assert(false);  // TODO: Ugly
+    }
+
 public:
     CommunicationHeader()
     {
@@ -260,11 +300,54 @@ public:
         DVS_ASSERT(static_cast<size_t>(num_objects) == objects.size());
     }
 
+    bool isEmpty() const
+    {
+        return objects.size() == 0U;
+    }
+
+    void reset()
+    {
+        objects.clear();
+    }
+
+    template <typename T> T valueOr(const T& alternative_value) const
+    {
+        const CommunicationHeaderObjectType type = templateToObjectType<T>();
+        if (hasObjectWithType(type))
+        {
+            return get(type).as<T>();
+        }
+        else
+        {
+            return alternative_value;
+        }
+    }
+
+    template <typename T> T value() const
+    {
+        const CommunicationHeaderObjectType type = templateToObjectType<T>();
+        return get(type).as<T>();
+    }
+
     template <typename U> void append(const CommunicationHeaderObjectType& object_type, const U& data)
     {
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
         objects.emplace_back(object_type, data);
+    }
+
+    void extendWithHeader(const CommunicationHeader& other_header)
+    {
+        for (size_t k = 0; k < other_header.objects.size(); k++)
+        {
+            const CommunicationHeaderObject& current_obj = other_header.objects[k];
+            if (std::find_if(objects.begin(), objects.end(), [&current_obj](const CommunicationHeaderObject& this_obj) {
+                    return this_obj.type == current_obj.type;
+                }) == objects.end())
+            {
+                objects.push_back(current_obj);
+            }
+        }
     }
 
     bool hasObjectWithType(const CommunicationHeaderObjectType tp) const
@@ -286,15 +369,13 @@ public:
 
     CommunicationHeaderObject get(const CommunicationHeaderObjectType tp) const
     {
-        if (!hasObjectWithType(tp))
-        {
-            throw std::runtime_error("Requested object that is not present in header!");
-        }
-
         const auto obj = std::find_if(objects.begin(),
                                       objects.end(),
                                       [&tp](const CommunicationHeaderObject& obj) -> bool { return obj.type == tp; });
-
+        if (obj == objects.end())
+        {
+            throw std::runtime_error("Requested object that is not present in header!");
+        }
         return *obj;
     }
 

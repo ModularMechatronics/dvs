@@ -76,6 +76,7 @@ enum class Function : uint8_t
     PLOT2,
     PLOT3,
     REAL_TIME_PLOT,
+    HEADER_EXTENSION,
     LINE_COLLECTION2,
     LINE_COLLECTION3,
     STEM,

@@ -78,6 +78,7 @@ public:
 
         std::shared_ptr<T> t_ptr = std::make_shared<T>();
 
+        // TODO: Use std::find_if instead
         for (size_t k = 0; k < props.size(); k++)
         {
             if (props[k]->getPropertyType() == tp)
@@ -89,7 +90,42 @@ public:
         return *t_ptr;
     }
 
+    template <typename T, typename Y> Y getPropertyOrValue(const Y& alternative_value) const
+    {
+        const dvs::internal::PropertyType tp = templateToPropertyType<T>();
+
+        if (hasProperty(tp))
+        {
+            std::shared_ptr<T> t_ptr = std::make_shared<T>();
+
+            // TODO: Use std::find_if instead
+            for (size_t k = 0; k < props.size(); k++)
+            {
+                if (props[k]->getPropertyType() == tp)
+                {
+                    t_ptr = std::dynamic_pointer_cast<T>(props[k]);
+                }
+            }
+
+            return (*t_ptr).data;
+        }
+        else
+        {
+            return alternative_value;
+        }
+    }
+
     std::vector<std::shared_ptr<dvs::internal::PropertyBase>> getAllProperties() const;
+
+    size_t numProperties() const
+    {
+        return props.size();
+    }
+
+    size_t numFlags() const
+    {
+        return flags.size();
+    }
 };
 
 #endif  // MAIN_APPLICATION_PROPERTIES_H_
