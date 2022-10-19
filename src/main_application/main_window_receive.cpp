@@ -124,13 +124,7 @@ void MainWindow::receiveData()
     {
         const CommunicationHeader& hdr = received_data->getCommunicationHeader();
 
-        const CommunicationHeaderObject fcn_obj = hdr.getObjectAtIdx(0);
-        if (fcn_obj.type != CommunicationHeaderObjectType::FUNCTION)
-        {
-            throw std::runtime_error("Function object was not at element 0 in function header!");
-        }
-
-        const Function fcn = fcn_obj.as<Function>();
+        const Function fcn = hdr.getFunction();
 
         if (isGuiElementFunction(fcn))
         {

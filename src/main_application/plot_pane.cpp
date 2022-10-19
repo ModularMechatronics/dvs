@@ -234,7 +234,7 @@ PlotPane::~PlotPane()
 
 void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::CommunicationHeader& hdr)
 {
-    const internal::Function fcn = hdr.getObjectAtIdx(0).as<internal::Function>();
+    const Function fcn = hdr.getFunction();
 
     wxGLCanvas::SetCurrent(*m_context);
 

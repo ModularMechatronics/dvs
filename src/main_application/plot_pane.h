@@ -12,7 +12,7 @@
 #include "gui_element.h"
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_header.h"
-#include "plot_data.h"
+#include "plot_data_handler.h"
 #include "view_base.h"
 
 struct Bound2D

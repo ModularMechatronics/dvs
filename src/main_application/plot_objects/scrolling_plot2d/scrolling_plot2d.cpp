@@ -81,7 +81,7 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
 {
     data_ptr_ = received_data->data();
 
-    const Properties props(hdr.getObjects());
+    const Properties props(hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags());
 
     if (props.numProperties() > 0U)
     {
