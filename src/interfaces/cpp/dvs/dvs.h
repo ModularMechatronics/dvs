@@ -8,8 +8,7 @@ namespace dvs
 {
 template <typename T, typename... Us> void plot(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT2);
+    internal::CommunicationHeader hdr{internal::Function::PLOT2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -19,8 +18,7 @@ template <typename T, typename... Us> void plot(const Vector<T>& x, const Vector
 
 template <typename T, typename... Us> void plot(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT2);
+    internal::CommunicationHeader hdr{internal::Function::PLOT2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -30,8 +28,7 @@ template <typename T, typename... Us> void plot(const VectorView<T>& x, const Ve
 
 template <typename T, typename... Us> void fastPlot(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::FAST_PLOT2);
+    internal::CommunicationHeader hdr{internal::Function::FAST_PLOT2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -42,8 +39,7 @@ template <typename T, typename... Us> void fastPlot(const Vector<T>& x, const Ve
 template <typename T, typename... Us>
 void fastPlot(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::FAST_PLOT2);
+    internal::CommunicationHeader hdr{internal::Function::FAST_PLOT2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -53,8 +49,7 @@ void fastPlot(const VectorView<T>& x, const VectorView<T>& y, const Us&... setti
 
 template <typename T, typename... Us> void lineCollection(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION2);
+    internal::CommunicationHeader hdr{internal::Function::LINE_COLLECTION2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -65,8 +60,7 @@ template <typename T, typename... Us> void lineCollection(const Vector<T>& x, co
 template <typename T, typename... Us>
 void lineCollection(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION2);
+    internal::CommunicationHeader hdr{internal::Function::LINE_COLLECTION2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -77,8 +71,7 @@ void lineCollection(const VectorView<T>& x, const VectorView<T>& y, const Us&...
 template <typename T, typename... Us>
 void lineCollection3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION3);
+    internal::CommunicationHeader hdr{internal::Function::LINE_COLLECTION3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -89,8 +82,7 @@ void lineCollection3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z,
 template <typename T, typename... Us>
 void lineCollection3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::LINE_COLLECTION3);
+    internal::CommunicationHeader hdr{internal::Function::LINE_COLLECTION3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -101,8 +93,7 @@ void lineCollection3(const VectorView<T>& x, const VectorView<T>& y, const Vecto
 template <typename T, typename... Us>
 void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION2);
+    internal::CommunicationHeader hdr{internal::Function::PLOT_COLLECTION2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
@@ -132,8 +123,7 @@ void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x,
                     const std::vector<std::reference_wrapper<Vector<T>>>& y,
                     const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION2);
+    internal::CommunicationHeader hdr{internal::Function::PLOT_COLLECTION2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
@@ -167,8 +157,7 @@ void plotCollection3(const std::vector<Vector<T>>& x,
                      const std::vector<Vector<T>>& z,
                      const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION3);
+    internal::CommunicationHeader hdr{internal::Function::PLOT_COLLECTION3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
@@ -202,8 +191,7 @@ void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x,
                      const std::vector<std::reference_wrapper<Vector<T>>>& z,
                      const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT_COLLECTION3);
+    internal::CommunicationHeader hdr{internal::Function::PLOT_COLLECTION3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
@@ -236,8 +224,7 @@ void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x,
 
 template <typename T, typename... Us> void stairs(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::STAIRS);
+    internal::CommunicationHeader hdr{internal::Function::STAIRS};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -247,8 +234,7 @@ template <typename T, typename... Us> void stairs(const Vector<T>& x, const Vect
 
 template <typename T, typename... Us> void stairs(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::STAIRS);
+    internal::CommunicationHeader hdr{internal::Function::STAIRS};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -259,8 +245,7 @@ template <typename T, typename... Us> void stairs(const VectorView<T>& x, const 
 template <typename T, typename... Us>
 void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT3);
+    internal::CommunicationHeader hdr{internal::Function::PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -271,8 +256,7 @@ void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&
 template <typename T, typename... Us>
 void plot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::PLOT3);
+    internal::CommunicationHeader hdr{internal::Function::PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -283,8 +267,7 @@ void plot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& 
 template <typename T, typename... Us>
 void fastPlot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::FAST_PLOT3);
+    internal::CommunicationHeader hdr{internal::Function::FAST_PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -295,8 +278,7 @@ void fastPlot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const
 template <typename T, typename... Us>
 void fastPlot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::FAST_PLOT3);
+    internal::CommunicationHeader hdr{internal::Function::FAST_PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -306,8 +288,7 @@ void fastPlot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<
 
 template <typename T, typename... Us> void stem(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::STEM);
+    internal::CommunicationHeader hdr{internal::Function::STEM};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -317,8 +298,7 @@ template <typename T, typename... Us> void stem(const Vector<T>& x, const Vector
 
 template <typename T, typename... Us> void stem(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::STEM);
+    internal::CommunicationHeader hdr{internal::Function::STEM};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -328,8 +308,7 @@ template <typename T, typename... Us> void stem(const VectorView<T>& x, const Ve
 
 template <typename T, typename... Us> void scatter(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
+    internal::CommunicationHeader hdr{internal::Function::SCATTER2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -340,8 +319,7 @@ template <typename T, typename... Us> void scatter(const Vector<T>& x, const Vec
 template <typename T, typename... Us>
 void scatter(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
+    internal::CommunicationHeader hdr{internal::Function::SCATTER2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -352,8 +330,7 @@ void scatter(const VectorView<T>& x, const VectorView<T>& y, const Us&... settin
 template <typename T, typename... Us>
 void quiver(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& u, const Matrix<T>& v, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::QUIVER);
+    internal::CommunicationHeader hdr{internal::Function::QUIVER};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.numRows(), x.numCols()));
@@ -364,8 +341,7 @@ void quiver(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& u, const Ma
 
 template <typename T, typename... Us> void drawPoint(const Point2<T>& p, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SCATTER2);
+    internal::CommunicationHeader hdr{internal::Function::SCATTER2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1));
     hdr.extend(settings...);
@@ -380,8 +356,7 @@ template <typename T, typename... Us> void drawPoint(const Point2<T>& p, const U
 template <typename T, typename... Us>
 void scatter3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SCATTER3);
+    internal::CommunicationHeader hdr{internal::Function::SCATTER3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -392,8 +367,7 @@ void scatter3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const 
 template <typename T, typename... Us>
 void scatter3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SCATTER3);
+    internal::CommunicationHeader hdr{internal::Function::SCATTER3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
@@ -403,8 +377,7 @@ void scatter3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T
 
 template <typename T, typename... Us> void drawPoint(const Point3<T>& p, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SCATTER3);
+    internal::CommunicationHeader hdr{internal::Function::SCATTER3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1));
     hdr.extend(settings...);
@@ -420,8 +393,7 @@ template <typename T, typename... Us> void drawPoint(const Point3<T>& p, const U
 template <typename T, typename... Us>
 void surf(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SURF);
+    internal::CommunicationHeader hdr{internal::Function::SURF};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));  // TODO: Needed?
     hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.numRows(), x.numCols()));
@@ -434,8 +406,7 @@ void surf(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& z, const Us&.
 template <typename T, typename... Us>
 void surf(const MatrixView<T>& x, const MatrixView<T>& y, const MatrixView<T>& z, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SURF);
+    internal::CommunicationHeader hdr{internal::Function::SURF};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));  // TODO: Needed?
     hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.numRows(), x.numCols()));
@@ -447,8 +418,7 @@ void surf(const MatrixView<T>& x, const MatrixView<T>& y, const MatrixView<T>& z
 
 template <typename T, typename... Us> void imShow(const ImageC1<T>& img, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
+    internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(1));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
@@ -463,8 +433,7 @@ template <typename T, typename... Us> void imShow(const ImageC1<T>& img, const U
 
 template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::IM_SHOW);
+    internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(3));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
@@ -480,8 +449,7 @@ template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const U
 template <typename T, typename... Us>
 void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& indices, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_MESH);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_MESH};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(vertices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
@@ -500,8 +468,7 @@ void drawMesh(const Vector<T>& x,
               const Vector<IndexTriplet>& indices,
               const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_MESH_SEPARATE_VECTORS);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_MESH_SEPARATE_VECTORS};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
@@ -520,8 +487,7 @@ void drawMesh(const VectorView<T>& x,
               const VectorView<IndexTriplet>& indices,
               const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_MESH_SEPARATE_VECTORS);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_MESH_SEPARATE_VECTORS};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
@@ -536,8 +502,7 @@ void drawMesh(const VectorView<T>& x,
 template <typename... Us>
 void drawLine(const Line3D<double>& line, const double t0, const double t1, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_LINE3D};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     const Point3<double> p0 = line.eval(t0);
@@ -551,8 +516,7 @@ void drawLine(const Line3D<double>& line, const double t0, const double t1, cons
 
 template <typename... Us> void drawArrow(const Point2<double>& p, const Vec2<double> v, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_ARROW);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_ARROW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     Vector<Point2<double>> points{VectorInitializer{p, v}};
@@ -565,8 +529,7 @@ template <typename... Us> void drawArrow(const Point2<double>& p, const Vec2<dou
 template <typename... Us>
 void drawLine2D(const ParametricLine2D<double>& line, const double t0, const double t1, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_LINE3D};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     const Point2<double> p0 = line.eval(t0);
@@ -584,8 +547,7 @@ void drawLine2DBetweenXValues(const HomogeneousLine2D<double>& line,
                               const double x1,
                               const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_LINE3D};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     const Point2<double> p0(x0, line.evalX(x0));
@@ -603,8 +565,7 @@ void drawLine2DBetweenYValues(const HomogeneousLine2D<double>& line,
                               const double y1,
                               const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE3D);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_LINE3D};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     const Point2<double> p0(line.evalX(y0), y0);
@@ -619,8 +580,7 @@ void drawLine2DBetweenYValues(const HomogeneousLine2D<double>& line,
 template <typename... Us>
 void drawLineBetweenPoints(const Point3<double>& p0, const Point3<double>& p1, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE_BETWEEN_POINTS_3D);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_LINE_BETWEEN_POINTS_3D};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     Vector<Point3<double>> points{VectorInitializer{p0, p1}};
@@ -633,8 +593,7 @@ void drawLineBetweenPoints(const Point3<double>& p0, const Point3<double>& p1, c
 template <typename... Us>
 void drawLineBetweenPoints(const Point2<double>& p0, const Point2<double>& p1, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::DRAW_LINE_BETWEEN_POINTS_3D);
+    internal::CommunicationHeader hdr{internal::Function::DRAW_LINE_BETWEEN_POINTS_3D};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::DOUBLE);
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(0));
     const Point3<double> p0_3d(p0.x, p0.y, 0.0), p1_3d(p1.x, p1.y, 0.0);
@@ -648,8 +607,7 @@ void drawLineBetweenPoints(const Point2<double>& p0, const Point2<double>& p1, c
 template <typename T, typename... Us>
 void realTimePlot(const T dt, const T y, const internal::PlotSlot slot, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::REAL_TIME_PLOT);
+    internal::CommunicationHeader hdr{internal::Function::REAL_TIME_PLOT};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(1U));
     hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
@@ -662,8 +620,7 @@ void realTimePlot(const T dt, const T y, const internal::PlotSlot slot, const Us
 
 template <typename... Us> void setPlotProperties(const internal::PlotSlot slot, const Us&... settings)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::HEADER_EXTENSION);
+    internal::CommunicationHeader hdr{internal::Function::HEADER_EXTENSION};
     hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
     hdr.extend(settings...);
 
@@ -675,8 +632,7 @@ inline void setCurrentElement(const std::string& name,
                               const std::string& parent_name = "#DEFAULTNAME#",
                               const ElementParent element_parent = ElementParent::TAB)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::CREATE_NEW_ELEMENT);
+    internal::CommunicationHeader hdr{internal::Function::CREATE_NEW_ELEMENT};
     hdr.append(internal::CommunicationHeaderObjectType::PARENT_NAME, properties::Name(parent_name.c_str()));
     hdr.append(internal::CommunicationHeaderObjectType::GUI_ELEMENT_TYPE, element_type);
     hdr.append(internal::CommunicationHeaderObjectType::PARENT_TYPE, element_parent);
@@ -687,8 +643,7 @@ inline void setCurrentElement(const std::string& name,
 
 inline void setCurrentElement(const std::string& name)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SET_CURRENT_ELEMENT);
+    internal::CommunicationHeader hdr{internal::Function::SET_CURRENT_ELEMENT};
     hdr.append(internal::CommunicationHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
@@ -696,24 +651,21 @@ inline void setCurrentElement(const std::string& name)
 
 inline void waitForFlush()
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::WAIT_FOR_FLUSH);
+    internal::CommunicationHeader hdr{internal::Function::WAIT_FOR_FLUSH};
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
 inline void flushElement()
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::FLUSH_ELEMENT);
+    internal::CommunicationHeader hdr{internal::Function::FLUSH_ELEMENT};
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
 inline void view(const float azimuth, const float elevation)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::VIEW);
+    internal::CommunicationHeader hdr{internal::Function::VIEW};
     hdr.append(internal::CommunicationHeaderObjectType::AZIMUTH, azimuth);
     hdr.append(internal::CommunicationHeaderObjectType::ELEVATION, elevation);
 
@@ -722,8 +674,7 @@ inline void view(const float azimuth, const float elevation)
 
 inline void axis(const Vec3<double>& min_bound, const Vec3<double>& max_bound)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::AXES_3D);
+    internal::CommunicationHeader hdr{internal::Function::AXES_3D};
     hdr.append(internal::CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC,
                std::pair<Vec3<double>, Vec3<double>>(min_bound, max_bound));
 
@@ -735,8 +686,7 @@ inline void axis(const Vec2<double>& min_bound, const Vec2<double>& max_bound)
     const Vec3<double> min_bound_3d(min_bound.x, min_bound.y, -1.0);
     const Vec3<double> max_bound_3d(max_bound.x, max_bound.y, 1.0);
 
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::AXES_2D);
+    internal::CommunicationHeader hdr{internal::Function::AXES_2D};
     hdr.append(internal::CommunicationHeaderObjectType::AXIS_MIN_MAX_VEC,
                std::pair<Vec3<double>, Vec3<double>>(min_bound_3d, max_bound_3d));
 
@@ -745,8 +695,7 @@ inline void axis(const Vec2<double>& min_bound, const Vec2<double>& max_bound)
 
 inline void globalIllumination(const Vec3<double>& light_position)
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::GLOBAL_ILLUMINATION);
+    internal::CommunicationHeader hdr{internal::Function::GLOBAL_ILLUMINATION};
     hdr.append(internal::CommunicationHeaderObjectType::VEC3, light_position);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
@@ -754,32 +703,28 @@ inline void globalIllumination(const Vec3<double>& light_position)
 
 inline void showLegend()
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SHOW_LEGEND);
+    internal::CommunicationHeader hdr{internal::Function::SHOW_LEGEND};
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
 inline void holdOn()
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::HOLD_ON);
+    internal::CommunicationHeader hdr{internal::Function::HOLD_ON};
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
 inline void softClearView()
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::SOFT_CLEAR);
+    internal::CommunicationHeader hdr{internal::Function::SOFT_CLEAR};
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
 inline void clearView()
 {
-    internal::CommunicationHeader hdr;
-    hdr.append(internal::CommunicationHeaderObjectType::FUNCTION, internal::Function::CLEAR);
+    internal::CommunicationHeader hdr{internal::Function::CLEAR};
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }

@@ -1,4 +1,4 @@
-#include "main_application/plot_data.h"
+#include "main_application/plot_data_handler.h"
 
 #include "dvs/math/math.h"
 #include "dvs/utils.h"
@@ -10,7 +10,7 @@
 PlotDataHandler::PlotDataHandler(const ShaderCollection shader_collection)
     : pending_clear_(false), shader_collection_{shader_collection}
 {
-    awaiting_headers_.resize(UINT8_MAX);
+    // awaiting_headers_.resize(UINT8_MAX);
 }
 
 void PlotDataHandler::clear()
@@ -37,7 +37,7 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 {
     // TODO: Break of Properties from hdr here or earlier, replace awaiting_headers_ with awaiting_properties_
     // and make Properties the structure that gets updated, and not the CommunicationHeader
-    const Function fcn = hdr.getObjectAtIdx(0).as<Function>();
+    const Function fcn = hdr.getFunction();
 
     if (pending_clear_)
     {
@@ -47,18 +47,18 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 
     if (fcn == internal::Function::HEADER_EXTENSION)
     {
-        if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+        /*if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
         {
             throw std::runtime_error("No slot provided for updatable function!");
         }
         const internal::PlotSlot slot = hdr.value<internal::PlotSlot>();
 
         awaiting_headers_[static_cast<int>(slot)] = hdr;
-        return;
+        return;*/
     }
     else if (isUpdatable(fcn))
     {
-        if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+        /*if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
         {
             throw std::runtime_error("No slot provided for updatable function!");
         }
@@ -83,10 +83,10 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             }
 
             return;
-        }
+        }*/
     }
 
-    const internal::PlotSlot slot = hdr.valueOr<internal::PlotSlot>(internal::PlotSlot::UNKNOWN);
+    /*const internal::PlotSlot slot = hdr.valueOr<internal::PlotSlot>(internal::PlotSlot::UNKNOWN);
     CommunicationHeader new_header{hdr};
     if (slot != internal::PlotSlot::UNKNOWN)
     {
@@ -95,7 +95,8 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             new_header.extendWithHeader(awaiting_headers_[static_cast<int>(slot)]);
             awaiting_headers_[static_cast<int>(slot)].reset();
         }
-    }
+    }*/
+    CommunicationHeader new_header{hdr};
 
     switch (fcn)
     {

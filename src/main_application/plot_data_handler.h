@@ -29,7 +29,7 @@ public:
     std::vector<PlotObjectBase*> plot_datas_;
     std::vector<PlotObjectBase*> old_plot_datas_;
 
-    std::vector<CommunicationHeader> awaiting_headers_;
+    // std::vector<CommunicationHeader> awaiting_headers_;
     PlotDataHandler(const ShaderCollection shader_collection);
     void clear();
     void softClear();

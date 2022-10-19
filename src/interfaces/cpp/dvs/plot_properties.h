@@ -33,15 +33,6 @@ public:
     virtual ~PropertyBase() {}
 };
 
-struct PropertyFlagContainer : PropertyBase
-{
-public:
-    PropertyFlag data;
-
-    PropertyFlagContainer() : PropertyBase(PropertyType::FLAG), data{PropertyFlag::UNKNOWN} {}
-    PropertyFlagContainer(const PropertyFlag flag) : PropertyBase(PropertyType::FLAG), data{flag} {}
-};
-
 inline size_t safeStringLenCheck(const char* const str, const size_t max_length)
 {
     size_t idx = 0;

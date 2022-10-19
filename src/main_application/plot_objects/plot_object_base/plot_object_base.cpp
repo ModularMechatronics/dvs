@@ -69,7 +69,7 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     min_max_calculated_ = false;
     visualize_has_run_ = false;
 
-    type_ = hdr.get(CommunicationHeaderObjectType::FUNCTION).as<Function>();
+    type_ = hdr.getFunction();
     data_type_ = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
 
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
@@ -93,7 +93,7 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
         throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
     }*/
 
-    const Properties props(hdr.getObjects());
+    const Properties props(hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags());
 
     assignProperties(props);
 
@@ -102,8 +102,16 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
 
 void PlotObjectBase::assignProperties(const Properties& props)
 {
+    // Flags
     is_persistent_ = props.hasFlag(PropertyFlag::PERSISTENT);
     interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP);
+
+    // Properties
+    alpha_ = props.getPropertyOrValue<Alpha>(100.0f) / 100.0f;
+    buffer_size_ = props.getPropertyOrValue<BufferSize>(kDefaultBufferSize);
+    scatter_style_type_ = props.getPropertyOrValue<ScatterStyle>(ScatterStyleType::CIRCLE);
+    line_width_ = props.getPropertyOrValue<LineWidth>(1.0f);
+    point_size_ = props.getPropertyOrValue<PointSize>(10.0f);
 
     if (props.hasProperty(PropertyType::NAME))
     {
@@ -126,27 +134,6 @@ void PlotObjectBase::assignProperties(const Properties& props)
     {
         color_ = RGBTripletf(0.1, 0.2, 0.1);
     }
-
-    if (props.hasProperty(PropertyType::ALPHA))
-    {
-        const Alpha alp = props.getProperty<Alpha>();
-        alpha_ = static_cast<float>(alp.data > 100 ? 100 : alp.data) / 100.0f;
-    }
-    else
-    {
-        alpha_ = 1.0f;
-    }
-
-    buffer_size_ = props.getPropertyOrValue<BufferSize>(kDefaultBufferSize);
-    /*if (props.hasProperty(PropertyType::BUFFER_SIZE))
-    {
-        const BufferSize b = props.getProperty<BufferSize>();
-        buffer_size_ = b.data;
-    }
-    else
-    {
-        buffer_size_ = kDefaultBufferSize;
-    }*/
 
     if (props.hasProperty(PropertyType::COLOR_MAP))
     {
@@ -201,38 +188,6 @@ void PlotObjectBase::assignProperties(const Properties& props)
         face_color_ = RGBTripletf(0.1f, 0.2f, 0.3f);
     }
 
-    scatter_style_type_ = props.getPropertyOrValue<ScatterStyle>(ScatterStyleType::CIRCLE);
-    /*if (props.hasProperty(PropertyType::SCATTER_STYLE))
-    {
-        scatter_style_type_ = props.getProperty<ScatterStyle>().data;
-    }
-    else
-    {
-        scatter_style_type_ = ScatterStyleType::CIRCLE;
-    }*/
-
-    line_width_ = props.getPropertyOrValue<LineWidth>(1.0f);
-    /*if (props.hasProperty(PropertyType::LINE_WIDTH))
-    {
-        const LineWidth lw = props.getProperty<LineWidth>();
-        line_width_ = lw.data;
-    }
-    else
-    {
-        line_width_ = 1.0f;
-    }*/
-
-    point_size_ = props.getPropertyOrValue<PointSize>(10.0f);
-    /*if (props.hasProperty(PropertyType::POINT_SIZE))
-    {
-        const PointSize ps = props.getProperty<PointSize>();
-        point_size_ = ps.data;
-    }
-    else
-    {
-        point_size_ = 10.0f;
-    }*/
-
     if (props.hasProperty(PropertyType::LINE_STYLE))
     {
         line_style_ = props.getProperty<LineStyle>();
@@ -247,7 +202,8 @@ void PlotObjectBase::assignProperties(const Properties& props)
 void PlotObjectBase::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
                                        const CommunicationHeader& hdr)
 {
-    std::cout << "Update with new data from PlotObjectBase!" << std::endl;
+    static_cast<void>(received_data);
+    static_cast<void>(hdr);
 }
 
 PlotObjectBase::~PlotObjectBase() {}

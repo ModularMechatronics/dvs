@@ -60,7 +60,7 @@ set(CPP_SOURCE_FILES main.cpp
                      window_view.cpp
                      events.cpp
                      layout_tools_window.cpp
-                     plot_data.cpp
+                     plot_data_handler.cpp
                      plot_pane.cpp
                      main_window.cpp
                      main_window_receive.cpp

@@ -58,73 +58,66 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
 class Properties
 {
 private:
-    std::vector<std::shared_ptr<dvs::internal::PropertyBase>> props;
-    std::vector<dvs::internal::PropertyFlagContainer> flags;
+    dvs::internal::CommunicationHeader::PropertiesArray props_;
+    dvs::internal::PropertyLookupTable props_lut_;
+    dvs::internal::CommunicationHeader::FlagsArray flags_;
 
 public:
     Properties() = default;
-    Properties(const std::vector<dvs::internal::CommunicationHeaderObject>& objects);
+    Properties(const dvs::internal::CommunicationHeader::PropertiesArray& props,
+               const dvs::internal::PropertyLookupTable& props_lut,
+               const dvs::internal::CommunicationHeader::FlagsArray& flags);
     bool hasProperty(const dvs::internal::PropertyType tp) const;
     bool hasFlag(const dvs::internal::PropertyFlag f) const;
     template <typename T> T getProperty() const
     {
-        // TODO: Refactor
         const dvs::internal::PropertyType tp = templateToPropertyType<T>();
 
-        if (!hasProperty(tp))
+        const uint8_t idx = props_lut_.data[static_cast<uint8_t>(tp)];
+
+        if (idx == 255)
         {
             throw std::runtime_error("Property not present!");
         }
 
-        std::shared_ptr<T> t_ptr = std::make_shared<T>();
-
-        // TODO: Use std::find_if instead
-        for (size_t k = 0; k < props.size(); k++)
-        {
-            if (props[k]->getPropertyType() == tp)
-            {
-                t_ptr = std::dynamic_pointer_cast<T>(props[k]);
-            }
-        }
-
-        return *t_ptr;
+        return props_[idx].as<T>();
     }
 
     template <typename T, typename Y> Y getPropertyOrValue(const Y& alternative_value) const
     {
         const dvs::internal::PropertyType tp = templateToPropertyType<T>();
 
-        if (hasProperty(tp))
-        {
-            std::shared_ptr<T> t_ptr = std::make_shared<T>();
+        const uint8_t idx = props_lut_.data[static_cast<uint8_t>(tp)];
 
-            // TODO: Use std::find_if instead
-            for (size_t k = 0; k < props.size(); k++)
-            {
-                if (props[k]->getPropertyType() == tp)
-                {
-                    t_ptr = std::dynamic_pointer_cast<T>(props[k]);
-                }
-            }
-
-            return (*t_ptr).data;
-        }
-        else
+        if (idx == 255)
         {
             return alternative_value;
         }
+        else
+        {
+            return props_[idx].as<T>().data;
+        }
     }
 
-    std::vector<std::shared_ptr<dvs::internal::PropertyBase>> getAllProperties() const;
+    /*bool isEmpty() const
+    {
+        // for (size_t k = 0; k < props_lut_.size(); k++) {}
+        return objects_.usedSize() == 0;
+    }
+
+    void reset()
+    {
+        objects_.clear();
+    }*/
 
     size_t numProperties() const
     {
-        return props.size();
+        return props_.size();
     }
 
     size_t numFlags() const
     {
-        return flags.size();
+        return flags_.size();
     }
 };
 
