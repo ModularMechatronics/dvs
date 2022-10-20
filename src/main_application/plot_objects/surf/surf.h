@@ -15,13 +15,11 @@ class Surf : public PlotObjectBase
 private:
     Dimension2D dims_;
     // RGBColorMap<float> color_map_;
-    GLuint normals_vertex_buffer_;
+    GLuint normals_vertex_buffer_, mean_height_vertex_buffer_;
 
     float* points_ptr_;
+    float* mean_height_ptr_;
     float* normals_ptr_;
-    float* colors_ptr_;
-
-    bool face_color_set_;
 
     void findMinMax() override;
 

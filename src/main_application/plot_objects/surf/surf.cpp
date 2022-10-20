@@ -4,6 +4,7 @@ struct OutputData
 {
     float* points_ptr;
     float* normals_ptr;
+    float* mean_height_ptr;
 };
 
 inline OutputData convertMatrixDataOuter(uint8_t* input_data,
@@ -26,6 +27,7 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     OutputData output_data = convertMatrixDataOuter(data_ptr_, data_type_, dims_, num_bytes_for_one_vec_);
     points_ptr_ = output_data.points_ptr;
     normals_ptr_ = output_data.normals_ptr;
+    mean_height_ptr_ = output_data.mean_height_ptr;
 
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
@@ -47,6 +49,15 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &mean_height_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, mean_height_vertex_buffer_);
+    glBufferData(
+        GL_ARRAY_BUFFER, sizeof(float) * (dims_.rows - 1) * (dims_.cols - 1) * 3 * 2, mean_height_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, mean_height_vertex_buffer_);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
     findMinMax();
 }
@@ -120,6 +131,7 @@ Surf::~Surf()
 {
     delete[] points_ptr_;
     delete[] normals_ptr_;
+    delete[] mean_height_ptr_;
 }
 
 LegendProperties Surf::getLegendProperties() const
@@ -145,7 +157,7 @@ LegendProperties Surf::getLegendProperties() const
 template <typename T>
 OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size_t num_bytes_for_one_vec)
 {
-    MatrixView<T> x{reinterpret_cast<T*>(input_data), dims.rows, dims.cols},
+    const MatrixView<T> x{reinterpret_cast<T*>(input_data), dims.rows, dims.cols},
         y{reinterpret_cast<T*>(&(input_data[num_bytes_for_one_vec])), dims.rows, dims.cols},
         z{reinterpret_cast<T*>(&(input_data[2 * num_bytes_for_one_vec])), dims.rows, dims.cols};
 
@@ -154,8 +166,9 @@ OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const 
     OutputData output_data;
     output_data.points_ptr = new float[new_data_size];
     output_data.normals_ptr = new float[new_data_size];
+    output_data.mean_height_ptr = new float[new_data_size / 3];
 
-    size_t idx = 0;
+    size_t idx = 0, mean_height_idx = 0;
     for (size_t r = 0; r < (dims.rows - 1); r++)
     {
         for (size_t c = 0; c < (dims.cols - 1); c++)
@@ -242,6 +255,17 @@ OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const 
             output_data.normals_ptr[idx3_z] = normalized_normal_vec.x;
             output_data.normals_ptr[idx4_z] = normalized_normal_vec.y;
             output_data.normals_ptr[idx5_z] = normalized_normal_vec.z;
+
+            const float z_m = (z(r, c) + z(r + 1, c) + z(r, c + 1) + z(r + 1, c + 1)) * 0.25f;
+
+            // Mean height
+            output_data.mean_height_ptr[mean_height_idx] = z_m;
+            output_data.mean_height_ptr[mean_height_idx + 1] = z_m;
+            output_data.mean_height_ptr[mean_height_idx + 2] = z_m;
+            output_data.mean_height_ptr[mean_height_idx + 3] = z_m;
+            output_data.mean_height_ptr[mean_height_idx + 4] = z_m;
+            output_data.mean_height_ptr[mean_height_idx + 5] = z_m;
+            mean_height_idx += 6;
         }
     }
 

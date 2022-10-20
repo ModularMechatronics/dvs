@@ -4,10 +4,12 @@ uniform mat4 model_view_proj_mat;
 uniform mat4 rotation_mat;
 layout(location = 0) in vec3 in_vertex;
 layout(location = 1) in vec3 in_normal;
+layout(location = 2) in float mean_height;
 uniform vec3 vertex_color;
 uniform float min_z;
 uniform float max_z;
 uniform int color_map_selection;
+uniform int interpolate_colormap;
 
 flat out vec3 flat_colormap_color;
 out vec3 colormap_color;
@@ -233,6 +235,16 @@ void main()
 {
     gl_Position = model_view_proj_mat * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
     coord_out = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
+    float height_val;
+
+    if(interpolate_colormap == int(1))
+    {
+        height_val = in_vertex.z;
+    }
+    else
+    {
+        height_val = mean_height;
+    }
 
     if(color_map_selection > 0)
     {
@@ -240,23 +252,23 @@ void main()
 
         if(color_map_selection == 1)
         {
-            colormap_color = calculateColormapJet((in_vertex.z - min_z) / delta);
+            colormap_color = calculateColormapJet((height_val - min_z) / delta);
         }
         else if(color_map_selection == 2)
         {
-            colormap_color = calculateColormapRainbow((in_vertex.z - min_z) / delta);
+            colormap_color = calculateColormapRainbow((height_val - min_z) / delta);
         }
         else if(color_map_selection == 3)
         {
-            colormap_color = calculateColormapMagma((in_vertex.z - min_z) / delta);
+            colormap_color = calculateColormapMagma((height_val - min_z) / delta);
         }
         else if(color_map_selection == 4)
         {
-            colormap_color = calculateColormapViridis((in_vertex.z - min_z) / delta);
+            colormap_color = calculateColormapViridis((height_val - min_z) / delta);
         }
         else
         {
-            colormap_color = calculateColormapJet((in_vertex.z - min_z) / delta);
+            colormap_color = calculateColormapJet((height_val - min_z) / delta);
         }
         flat_colormap_color = colormap_color;
     }
