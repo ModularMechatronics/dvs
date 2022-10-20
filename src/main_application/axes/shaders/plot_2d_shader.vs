@@ -5,7 +5,7 @@ uniform mat4 inverse_model_view_proj_mat;
 layout(location = 0) in vec2 p0;
 layout(location = 1) in vec2 p1;
 layout(location = 2) in vec2 p2;
-layout(location = 3) in float idx;
+layout(location = 3) in int idx;
 uniform vec3 vertex_color;
 uniform float line_width;
 
@@ -105,9 +105,9 @@ void main()
 
     // The sign of the z component of the cross product of
     // the two vectors depends on the mirroring of the view
-    vec3 which_side_vec = cross(vec3(vec_along01, 0.0), vec3(vec_along12, 0.0));
+    float which_side_vec_z = vec_along01.x * vec_along12.y - vec_along01.y * vec_along12.x;
 
-    if(which_side_vec.z > 0.0)
+    if(which_side_vec_z > 0.0)
     {
         should_flip = true;
     }
@@ -116,47 +116,45 @@ void main()
         should_flip = false;
     }
 
-    int idx_int = int(idx);
-
     // 1st triangle
-    if(idx_int == 0)
+    if(idx == 0)
     {
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 0;
     }
-    else if (idx_int == 1)
+    else if (idx == 1)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 0;
     }
-    else if (idx_int == 2)
+    else if (idx == 2)
     {
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 0;
     }
     // 2nd triangle
-    else if (idx_int == 3)
+    else if (idx == 3)
     {
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 1;
     }
-    else if (idx_int == 4)
+    else if (idx == 4)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 1;
     }
-    else if (idx_int == 5)
+    else if (idx == 5)
     {
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 1;
     }
     // 3rd triangle
-    else if (idx_int == 6)
+    else if (idx == 6)
     {
         gl_Position = vec4(p1_transformed.xy, p1_transformed.z, 1.0);
         triangle_id = 2;
     }
-    else if (idx_int == 7)
+    else if (idx == 7)
     {
         triangle_id = 2;
 
@@ -170,7 +168,7 @@ void main()
         }
         
     }
-    else if (idx_int == 8)
+    else if (idx == 8)
     {
         triangle_id = 2;
         if(should_flip)
@@ -184,7 +182,7 @@ void main()
 
     }
     // 4th triangle
-    else if (idx_int == 9)
+    else if (idx == 9)
     {
         triangle_id = 3;
         if(should_flip)
@@ -197,7 +195,7 @@ void main()
         }
 
     }
-    else if (idx_int == 10)
+    else if (idx == 10)
     {
         triangle_id = 3;
         if(should_flip)
@@ -210,7 +208,7 @@ void main()
         }
 
     }
-    else if (idx_int == 11)
+    else if (idx == 11)
     {
         triangle_id = 3;
         if(should_flip)
