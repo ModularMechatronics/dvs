@@ -73,11 +73,11 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points, input_data_.idx_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, input_data_.idx_data, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribIPointer(3, 1, GL_INT, 0, 0);
 }
 
 void Plot2D::findMinMax()
@@ -144,18 +144,13 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
     output_data.p0 = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
     output_data.p2 = new float[2 * num_points];
-    output_data.idx_data = new float[num_points];
+    output_data.idx_data = new int32_t[num_points];
 
-    for (size_t k = 0; k < (2 * num_points); k++)
-    {
-        output_data.p0[k] = 0;
-        output_data.p1[k] = 0;
-        output_data.p2[k] = 0;
-    }
-    for (size_t k = 0; k < num_points; k++)
-    {
-        output_data.idx_data[k] = 0;
-    }
+    std::memset(output_data.p0, 0, 2 * num_points * sizeof(output_data.p0[0]));
+    std::memset(output_data.p1, 0, 2 * num_points * sizeof(output_data.p1[0]));
+    std::memset(output_data.p2, 0, 2 * num_points * sizeof(output_data.p2[0]));
+
+    std::memset(output_data.idx_data, 0, num_points * sizeof(output_data.idx_data[0]));
 
     struct Points
     {

@@ -17,7 +17,7 @@ public:
         float* p0;
         float* p1;
         float* p2;
-        float* idx_data;
+        int32_t* idx_data;
     };
 
 private:

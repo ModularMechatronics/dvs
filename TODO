@@ -74,6 +74,8 @@ Post release:
 - Plot functions with VectorView and MatrixView
 - Replace old c type arrays with std::array
 - Change opengl types from float to double, to increase precision
+  - https://stackoverflow.com/questions/28014864/why-do-different-variations-of-glvertexattribpointer-exist
+  - https://stackoverflow.com/questions/62292163/opengl-pass-integer-array-with-gl-array-buffer
 - Fix showing correct plot walls when in perspective mode
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
