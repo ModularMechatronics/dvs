@@ -145,6 +145,7 @@ enum class ColorMapType : uint8_t
     RAINBOW,
     MAGMA,
     VIRIDIS,
+    PASTEL,
     UNKNOWN
 };
 
