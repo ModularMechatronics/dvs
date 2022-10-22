@@ -11,16 +11,6 @@ rainbow = [
         [1.0, 0.0, 0.0]
 ]
 
-"""test_table = [
-        [0.0, 0.0, 1.0],
-        [1.0, 1.0, 0.1],
-        [0.2, 0.5, 0.2],
-        [0.1, 0.0, 1.0],
-        [0.8, 0.0, 0.9],
-        [1.0, 0.0, 0.5],
-        [1.0, 0.2, 0.0]
-]"""
-
 test_table = [
         [0.0, 0.0, 1.0],
         [1.0, 0.8, 0.1],
@@ -64,6 +54,15 @@ jet = [
         [250.0 / 255.0, 205.0 / 255.0, 34.05 / 255.0],
         [247.0 / 255.0, 49.0 / 255.0, 21.05 / 255.0],
         [127.0 / 255.0, 0.0 / 255.0, 5.05 / 255.0],
+    ]
+
+rainbow_pastel = [
+        [255.0 / 255.0, 154.0 / 255.0, 162.0 / 255.0],
+        [255.0 / 255.0, 183.0 / 255.0, 178.0 / 255.0],
+        [255.0 / 255.0, 218.0 / 255.0, 194.0 / 255.0],
+        [226.0 / 255.0, 240.0 / 255.0, 205.0 / 255.0],
+        [180.0 / 255.0, 234.0 / 255.0, 216.0 / 255.0],
+        [199.0 / 255.0, 206.0 / 255.0, 233.0 / 255.0],
     ]
 
 function_body = ["    if(value < 0.0)",
@@ -211,8 +210,7 @@ def print_colormap_function(colormap_name, colormap_breakpoints):
         print(l)
 
 if __name__ == "__main__":
-    colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet}
-    # colormaps = {"Test": test_table}
+    colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet, "RainbowPastel": rainbow_pastel}
 
     for colormap_name, colormap_breakpoints in colormaps.items():
         print_colormap_function(colormap_name, colormap_breakpoints)
@@ -226,4 +224,3 @@ if __name__ == "__main__":
     plt.plot(d, b, 'b')
     plt.plot(d, fr, 'y--')
     plt.show()"""
-    a = 1

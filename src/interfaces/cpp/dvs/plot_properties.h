@@ -406,6 +406,11 @@ public:
         return ColorMap(internal::ColorMapType::VIRIDIS);
     }
 
+    static ColorMap Pastel()
+    {
+        return ColorMap(internal::ColorMapType::PASTEL);
+    }
+
     ColorMap() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(internal::ColorMapType::JET) {}
     ColorMap(const internal::ColorMapType ct) : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(ct) {}
 };

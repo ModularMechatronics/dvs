@@ -231,6 +231,57 @@ vec3 calculateColormapJet(float value)
     return vec3(r, g, b);
 }
 
+vec3 calculateColormapRainbowPastel(float value)
+{
+    if(value < 0.0)
+    {
+        value = 0.0;
+    }
+    else if(value >= 1.0)
+    {
+        value = 0.99999;
+    }
+
+    float full_range_value = value * 5.0;
+    float integer_part = floor(full_range_value);
+    float fraction_part = full_range_value - integer_part;
+
+    float r, g, b;
+
+    if(int(integer_part) == 0)
+    {
+        r = 1.0;
+        g = 0.6039215686274509 + fraction_part * 0.11372549019607847;
+        b = 0.6352941176470588 + fraction_part * 0.06274509803921569;
+    }
+    else if(int(integer_part) == 1)
+    {
+        r = 1.0;
+        g = 0.7176470588235294 + fraction_part * 0.13725490196078427;
+        b = 0.6980392156862745 + fraction_part * 0.06274509803921569;
+    }
+    else if(int(integer_part) == 2)
+    {
+        r = 1.0 - fraction_part * 0.11372549019607847;
+        g = 0.8549019607843137 + fraction_part * 0.0862745098039216;
+        b = 0.7607843137254902 + fraction_part * 0.04313725490196085;
+    }
+    else if(int(integer_part) == 3)
+    {
+        r = 0.8862745098039215 - fraction_part * 0.180392156862745;
+        g = 0.9411764705882353 - fraction_part * 0.02352941176470591;
+        b = 0.803921568627451 + fraction_part * 0.04313725490196074;
+    }
+    else if(int(integer_part) == 4)
+    {
+        r = 0.7058823529411765 + fraction_part * 0.07450980392156858;
+        g = 0.9176470588235294 - fraction_part * 0.1098039215686274;
+        b = 0.8470588235294118 + fraction_part * 0.06666666666666665;
+    }
+
+    return vec3(r, g, b);
+}
+
 void main()
 {
     gl_Position = model_view_proj_mat * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
@@ -266,6 +317,10 @@ void main()
         else if(color_map_selection == 4)
         {
             colormap_color = calculateColormapViridis((height_val - min_z) / delta);
+        }
+        else if(color_map_selection == 5)
+        {
+            colormap_color = calculateColormapRainbowPastel((height_val - min_z) / delta);
         }
         else
         {
