@@ -1,5 +1,5 @@
-#ifndef MAIN_APPLICATION_PLOT_DATA_H_
-#define MAIN_APPLICATION_PLOT_DATA_H_
+#ifndef MAIN_APPLICATION_PLOT_DATA_HANDLER_H_
+#define MAIN_APPLICATION_PLOT_DATA_HANDLER_H_
 
 #include <string>
 #include <vector>
@@ -38,4 +38,4 @@ public:
     std::vector<LegendProperties> getLegendStrings() const;
 };
 
-#endif  // MAIN_APPLICATION_PLOT_DATA_H_
+#endif  // MAIN_APPLICATION_PLOT_DATA_HANDLER_H_

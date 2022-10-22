@@ -1,5 +1,5 @@
-#ifndef DVS_CONSTANTS_
-#define DVS_CONSTANTS_
+#ifndef DVS_CONSTANTS_H_
+#define DVS_CONSTANTS_H_
 
 #include <stdint.h>
 
@@ -21,4 +21,4 @@ constexpr size_t kHeaderDataStartOffset = 2 * sizeof(uint64_t) + 1;
 }  // namespace internal
 }  // namespace dvs
 
-#endif  // DVS_CONSTANTS_
+#endif  // DVS_CONSTANTS_H_

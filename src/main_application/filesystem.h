@@ -1,5 +1,5 @@
-#ifndef MAIN_APPLICATION_FILESYSTEM_INCLUDE_H_
-#define MAIN_APPLICATION_FILESYSTEM_INCLUDE_H_
+#ifndef MAIN_APPLICATION_FILESYSTEM_H_
+#define MAIN_APPLICATION_FILESYSTEM_H_
 
 #ifdef PLATFORM_LINUX_M
 #include <experimental/filesystem>
@@ -17,4 +17,4 @@ namespace filesystem = std::filesystem;
 }
 #endif
 
-#endif  // MAIN_APPLICATION_FILESYSTEM_INCLUDE_H_
+#endif  // MAIN_APPLICATION_FILESYSTEM_H_
