@@ -11,6 +11,7 @@ Pre release:
   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Add MatrixFixed and VectorFixed
+- Custom tab views with opengl buttons and using Hide/Show for the plot_panes
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
 - FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side
