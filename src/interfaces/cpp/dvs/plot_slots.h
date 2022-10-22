@@ -1,5 +1,5 @@
-#ifndef DVS_RT_SLOTS_H_
-#define DVS_RT_SLOTS_H_
+#ifndef DVS_PLOT_SLOTS_H_
+#define DVS_PLOT_SLOTS_H_
 
 #include <stdint.h>
 
@@ -534,4 +534,4 @@ constexpr internal::PlotSlot SLOT254 = internal::PlotSlot::SLOT254;
 }  // namespace properties
 }  // namespace dvs
 
-#endif  // DVS_RT_SLOTS_H_
+#endif  // DVS_PLOT_SLOTS_H_

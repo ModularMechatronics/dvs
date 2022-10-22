@@ -6,7 +6,7 @@ FOLDERS = [{"name": "src/main_application", "strip_prefix": "src"},
            {"name": "src/interfaces/cpp", "strip_prefix": "cpp"},
            {"name": "src/interfaces/c", "strip_prefix": "interfaces/c"}]
 
-EXCLUDE_FOLDERS = ["src/externals"]
+EXCLUDE_FOLDERS = ["src/externals", "src/main_application/old"]
 
 def get_repo_root():
     res = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True)
@@ -49,7 +49,7 @@ def modify_file(file_path, strip_prefix):
 
     ifndef_line = "#ifndef " + header_guard_string + "\n"
     define_line = "#define " + header_guard_string + "\n"
-    endif_line = "#endif // " + header_guard_string + "\n"
+    endif_line = "#endif  // " + header_guard_string + "\n"
 
     file_lines[ifndef_idx] = ifndef_line
     file_lines[define_idx] = define_line
