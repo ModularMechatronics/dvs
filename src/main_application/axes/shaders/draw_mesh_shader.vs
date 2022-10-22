@@ -235,20 +235,21 @@ void main()
 {
     gl_Position = model_view_proj_mat * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
     coord_out = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
-    float height_val;
-
-    if(interpolate_colormap == int(1))
-    {
-        height_val = in_vertex.z;
-    }
-    else
-    {
-        height_val = mean_height;
-    }
 
     if(color_map_selection > 0)
     {
         float delta = max_z - min_z;
+
+        float height_val;
+
+        if(interpolate_colormap == int(1))
+        {
+            height_val = in_vertex.z;
+        }
+        else
+        {
+            height_val = mean_height;
+        }
 
         if(color_map_selection == 1)
         {

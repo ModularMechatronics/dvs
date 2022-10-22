@@ -4,6 +4,7 @@ struct OutputData
 {
     float* points_ptr;
     float* normals_ptr;
+    float* mean_height_ptr;
 };
 
 OutputData convertVerticesDataOuter(uint8_t* input_data,
@@ -45,6 +46,7 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
 
     points_ptr_ = output_data.points_ptr;
     normals_ptr_ = output_data.normals_ptr;
+    mean_height_ptr_ = output_data.mean_height_ptr;
 
     interpolate_colormap_ = true;
 
@@ -52,18 +54,26 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
     glBindVertexArray(vertex_buffer_array_);
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3 * 3, points_ptr_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_indices_ * 3 * 3, points_ptr_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     glGenBuffers(1, &normals_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3 * 3, normals_ptr_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_indices_ * 3 * 3, normals_ptr_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &mean_height_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, mean_height_vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_indices_ * 3, mean_height_ptr_, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, mean_height_vertex_buffer_);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 bool DrawMesh::affectsColormapMinMax() const
@@ -157,12 +167,13 @@ OutputData convertVerticesData(uint8_t* input_data,
     OutputData output_data;
     output_data.points_ptr = new float[num_indices * 3 * 3];
     output_data.normals_ptr = new float[num_indices * 3 * 3];
+    output_data.mean_height_ptr = new float[num_indices * 3];
 
     VectorView<Point3<T>> vertices{reinterpret_cast<Point3<T>*>(input_data), num_vertices};
     VectorView<IndexTriplet> indices{
         reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
 
-    size_t idx = 0;
+    size_t idx = 0, height_idx = 0;
 
     for (size_t k = 0; k < num_indices; k++)
     {
@@ -197,7 +208,14 @@ OutputData convertVerticesData(uint8_t* input_data,
         output_data.normals_ptr[idx + 6] = normalized_normal_vec.x;
         output_data.normals_ptr[idx + 7] = normalized_normal_vec.y;
         output_data.normals_ptr[idx + 8] = normalized_normal_vec.z;
+
+        const float z_m = (p0.z + p1.z + p2.z) * 0.33333333333f;
+        output_data.mean_height_ptr[height_idx] = z_m;
+        output_data.mean_height_ptr[height_idx + 1] = z_m;
+        output_data.mean_height_ptr[height_idx + 2] = z_m;
+
         idx += 9;
+        height_idx += 3;
     }
 
     return output_data;
@@ -213,6 +231,8 @@ OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
 
     output_data.points_ptr = new float[num_indices * 3 * 3];
     output_data.normals_ptr = new float[num_indices * 3 * 3];
+    output_data.mean_height_ptr = new float[num_indices * 3];
+
     VectorView<T> x{reinterpret_cast<T*>(input_data), num_vertices};
     VectorView<T> y{reinterpret_cast<T*>(&(input_data[num_vertices * num_bytes_per_element])), num_vertices};
     VectorView<T> z{reinterpret_cast<T*>(&(input_data[num_vertices * num_bytes_per_element * 2])), num_vertices};
@@ -220,7 +240,7 @@ OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
     VectorView<IndexTriplet> indices{
         reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
 
-    size_t idx = 0;
+    size_t idx = 0, height_idx = 0;
 
     for (size_t k = 0; k < num_indices; k++)
     {
@@ -255,7 +275,14 @@ OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
         output_data.normals_ptr[idx + 6] = normalized_normal_vec.x;
         output_data.normals_ptr[idx + 7] = normalized_normal_vec.y;
         output_data.normals_ptr[idx + 8] = normalized_normal_vec.z;
+
+        const float z_m = (p0.z + p1.z + p2.z) * 0.33333333333f;
+        output_data.mean_height_ptr[height_idx] = z_m;
+        output_data.mean_height_ptr[height_idx + 1] = z_m;
+        output_data.mean_height_ptr[height_idx + 2] = z_m;
+
         idx += 9;
+        height_idx += 3;
     }
 
     return output_data;
