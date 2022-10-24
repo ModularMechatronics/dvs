@@ -719,7 +719,9 @@ void PlotPane::render(wxPaintEvent& evt)
 
     const float bg_color = 240.0f;
 
-    glClearColor(bg_color / 255.0f, bg_color / 255.0f, bg_color / 255.0f, 0.0f);
+    const RGBTripletf color_vec{axes_settings_.window_background_};
+    glClearColor(color_vec.red, color_vec.green, color_vec.blue, 0.0f);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // TODO: Move to keypressed? And deal with key hold...

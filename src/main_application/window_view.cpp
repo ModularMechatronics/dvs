@@ -9,8 +9,11 @@ WindowView::WindowView(wxFrame* parent,
                        const int callback_id,
                        const std::function<void(const char key)>& notify_main_window_key_pressed,
                        const std::function<void(const char key)>& notify_main_window_key_released)
-    : ViewBase<wxFrame>(parent, window_settings, notify_main_window_key_pressed, notify_main_window_key_released)
+    : ViewBase<wxFrame>(parent, window_settings, notify_main_window_key_pressed, notify_main_window_key_released),
+      tab_container_{this, window_settings}
 {
+    const RGBTripletf color_vec{axes_settings_.window_background_};
+    SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
     callback_id_ = callback_id;
 
     const std::vector<ElementSettings> elements = settings_->getElementSettingsList();
@@ -37,6 +40,7 @@ WindowView::WindowView(wxFrame* parent,
     Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
     Bind(wxEVT_SIZE, &WindowView::OnSize, this);
 
+    tab_container_.windowWasResized(this->GetSize());
     show();
 }
 
@@ -44,6 +48,8 @@ void WindowView::OnSize(wxSizeEvent& event)
 {
     wxFrame::OnSize(event);
     const wxSize new_size = event.GetSize();
+
+    tab_container_.windowWasResized(new_size);
 
     for (auto it : gui_elements_)
     {

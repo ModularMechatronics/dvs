@@ -21,7 +21,6 @@ AxesRenderer::AxesRenderer(const ShaderCollection shader_collection)
 
     const float sw = 3.0f;
     orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);
-    ;
     persp_projection_mat = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
 
     use_perspective_proj_ = false;
@@ -143,6 +142,7 @@ void AxesRenderer::setClipPlane(const GLuint program_id, const std::string pln, 
 void AxesRenderer::render()
 {
     glUseProgram(shader_collection_.plot_box_shader.programId());
+    renderBackground();
     renderPlotBox();
     if(render_zoom_rect_)
     {
@@ -191,6 +191,9 @@ void AxesRenderer::renderBoxGrid()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
 
+    const RGBTripletf color_vec{axes_settings_.grid_color_};
+    
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
     plot_box_grid_.render(grid_vectors_,
@@ -261,6 +264,29 @@ void AxesRenderer::resetGlobalIllumination()
     global_illumination_active_ = false;
 }
 
+void AxesRenderer::renderBackground()
+{
+    model_mat[3][0] = 0.0;
+    model_mat[3][1] = 0.0;
+    model_mat[3][2] = 0.0;
+
+    scale_mat[0][0] = 1.0;
+    scale_mat[1][1] = 1.0;
+    scale_mat[2][2] = 1.0;
+    scale_mat[3][3] = 1.0;
+
+    const glm::mat4 rotation_mat = glm::rotate(static_cast<float>(M_PI / 2.0), glm::vec3(1.0, 0.0, 0.0));
+    const glm::mat4 mvp = projection_mat * view_mat * rotation_mat;
+
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
+
+    const RGBTripletf color_vec{axes_settings_.plot_pane_background_};
+
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);
+    plot_pane_background_.render(width_, height_);
+
+}
+
 void AxesRenderer::renderPlotBox()
 {
     model_mat[3][0] = 0.0;
@@ -274,8 +300,10 @@ void AxesRenderer::renderPlotBox()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * window_scale_mat_;
 
+    const RGBTripletf color_vec{axes_settings_.plot_box_wall_color_};
+    
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 1.0f, 1.0f, 1.0f);
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);
 
     plot_box_walls_.render(view_angles_.getAzimuth(), view_angles_.getElevation());
 

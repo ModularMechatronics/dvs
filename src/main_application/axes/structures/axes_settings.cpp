@@ -2,10 +2,19 @@
 
 AxesSettings::AxesSettings()
 {
+    // Dark
+    plot_pane_background_ = RGBTripletf(58.0f / 255.0f, 63.0f / 255.0f, 66.0f / 255.0f);
+    window_background_ = RGBTripletf(35.0f / 255.0f, 42.0f / 255.0f, 48.0f / 255.0f);
+    plot_box_wall_color_ = RGBTripletf(44.0f / 255.0f, 45.0f / 255.0f, 108.0f / 255.0f);
+    grid_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
+
+    // Light
+    plot_pane_background_ = RGBTripletf(164.0f / 255.0f, 217.0f / 255.0f, 200.0f / 255.0f);
+    window_background_ = RGBTripletf(174.0f / 255.0f, 227.0f / 255.0f, 209.0f / 255.0f);
     plot_box_wall_color_ = RGBTripletf(1.0f, 1.0f, 1.0f);
+    grid_color_ = RGBTripletf(0.7f, 0.7f, 0.7f);
 
     grid_on_ = false;
-    grid_color_ = RGBTripletf(0.7f, 0.7f, 0.7f);
 
     coordinate_axes_on_ = true;
     coord_axes_extension_factor_ = 1.5;

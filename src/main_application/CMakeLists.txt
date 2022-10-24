@@ -13,6 +13,7 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/axes_renderer.cpp
                      axes/plot_box_walls.cpp
                      axes/plot_box_silhouette.cpp
+                     axes/plot_pane_background.cpp
                      axes/zoom_rect.cpp
                      axes/grid_numbers.cpp
                      axes/plot_box_grid.cpp
@@ -59,6 +60,7 @@ set(CPP_SOURCE_FILES main.cpp
                      tab_view.cpp
                      window_view.cpp
                      events.cpp
+                     tab_container.cpp
                      layout_tools_window.cpp
                      plot_data_handler.cpp
                      plot_pane.cpp
