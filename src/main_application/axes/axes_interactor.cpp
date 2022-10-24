@@ -52,7 +52,6 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
     {
         const float sw = 3.0f;
         const glm::mat4 orth_projection_mat = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);
-        ;
         const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
         const float az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
         const float el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;

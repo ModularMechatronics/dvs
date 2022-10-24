@@ -17,15 +17,21 @@ enum class AxesState
     SQUARE
 };
 
+// TODO: Remake this into a struct
 class AxesSettings
 {
-private:
+public:
+    RGBTripletf plot_pane_background_;
+    RGBTripletf window_background_;
     RGBTripletf plot_box_wall_color_;
+    RGBTripletf grid_color_;
+    RGBTripletf axes_numbers_color_;
+    RGBTripletf axes_letters_color_;
 
+private:
     Vec3d axes_scale_;
 
     bool grid_on_;
-    RGBTripletf grid_color_;
 
     bool coordinate_axes_on_;
     double coord_axes_extension_factor_;

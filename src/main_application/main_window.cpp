@@ -78,6 +78,9 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         SetLabel(save_manager_->getCurrentFileName() + "*");
     }
 
+    const RGBTripletf color_vec{AxesSettings().window_background_};
+    SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+
     Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
     Bind(NO_ELEMENT_SELECTED, &MainWindow::noElementSelected, this, wxID_ANY);
     Bind(CHILD_WINDOW_CLOSED_EVENT, &MainWindow::childWindowClosed, this, wxID_ANY);

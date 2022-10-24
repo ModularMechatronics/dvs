@@ -17,14 +17,18 @@
 #include <utility>
 #include <vector>
 
+#include "axes/axes.h"
 #include "gui_element.h"
 #include "project_state/project_settings.h"
+#include "tab_container.h"
 #include "view_base.h"
 
 class WindowView : public ViewBase<wxFrame>
 {
 private:
+    TabContainer tab_container_;
     int callback_id_;
+    AxesSettings axes_settings_{};
 
 public:
     WindowView() = delete;
