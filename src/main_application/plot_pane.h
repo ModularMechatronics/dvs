@@ -13,7 +13,6 @@
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data_handler.h"
-#include "view_base.h"
 
 struct Bound2D
 {
@@ -84,10 +83,7 @@ private:
     PlotDataHandler* plot_data_handler_;
     ShaderCollection shader_collection_;
 
-    SuperBase* view_parent_;
-
-    // ViewBase<wxNotebookPage>* tab_view_parent_;
-    // ViewBase<wxFrame>* window_view_parent_;
+    // WindowView* view_parent_; // TODO: Fix
 
     void notifyParentAboutModification();
     bool is3DFunction(const Function fcn);
@@ -101,7 +97,8 @@ public:
              const ElementSettings& element_settings,
              const float grid_size,
              const std::function<void(const char key)>& notify_main_window_key_pressed,
-             const std::function<void(const char key)>& notify_main_window_key_released);
+             const std::function<void(const char key)>& notify_main_window_key_released,
+             const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed);
     ~PlotPane();
 
     int getWidth();
@@ -126,6 +123,7 @@ public:
     void waitForFlush() override;
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
+    void mouseRightPressed(wxMouseEvent& event);
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);

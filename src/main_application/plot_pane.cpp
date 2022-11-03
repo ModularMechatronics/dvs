@@ -123,9 +123,13 @@ PlotPane::PlotPane(wxWindow* parent,
                    const ElementSettings& element_settings,
                    const float grid_size,
                    const std::function<void(const char key)>& notify_main_window_key_pressed,
-                   const std::function<void(const char key)>& notify_main_window_key_released)
+                   const std::function<void(const char key)>& notify_main_window_key_released,
+                   const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
-      GuiElement(element_settings, notify_main_window_key_pressed, notify_main_window_key_released),
+      GuiElement(element_settings,
+                 notify_main_window_key_pressed,
+                 notify_main_window_key_released,
+                 notify_parent_window_right_mouse_pressed),
       m_context(getContext()),
       axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
@@ -137,7 +141,7 @@ PlotPane::PlotPane(wxWindow* parent,
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    view_parent_ = dynamic_cast<SuperBase*>(parent);
+    // view_parent_ = dynamic_cast<SuperBase*>(parent); // TODO: Fix
     wait_for_flush_ = false;
 
     is_selected_ = false;
@@ -153,6 +157,8 @@ PlotPane::PlotPane(wxWindow* parent,
     hold_on_ = true;
     axes_set_ = false;
     view_set_ = false;
+
+    Bind(wxEVT_RIGHT_DOWN, &PlotPane::mouseRightPressed, this);
 
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -174,6 +180,11 @@ void PlotPane::updateSizeFromParent(const wxSize& parent_size)
 
     this->setPosition(wxPoint(xpos, ypos));
     this->setSize(wxSize(width, height));
+}
+
+void PlotPane::mouseRightPressed(wxMouseEvent& event)
+{
+    notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition());
 }
 
 void PlotPane::setPosition(const wxPoint& new_pos)
@@ -403,7 +414,7 @@ void PlotPane::destroy()
 
 void PlotPane::mouseLeftPressed(wxMouseEvent& event)
 {
-    view_parent_->resetSelectionForAllChildren();
+    // view_parent_->resetSelectionForAllChildren(); // TODO: Fix
     wxCommandEvent evt(MY_EVENT, GetId());
     evt.SetEventObject(this);
     evt.SetString(element_settings_.name);
@@ -468,7 +479,7 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
 
     if (left_mouse_button_.isPressed())
     {
-        if (is_editing_)
+        if (wxGetKeyState(WXK_COMMAND))
         {
             wxPoint pos_now = this->GetPosition();
             const Vec2f mouse_pos = Vec2f(current_point.x + pos_now.x, current_point.y + pos_now.y);

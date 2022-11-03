@@ -12,10 +12,19 @@ Pre release:
 - Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Add MatrixFixed and VectorFixed
 - Custom tab views with opengl buttons and using Hide/Show for the plot_panes
+- Display element name in plot panes
+- Fix not being able to interact with plot_pane while plotting continuously
+- Remove layouttools, and replace everything with a right click menu in the windows, move and resize windows with left click + alt?
+- Add zoom/rotate/pan symbol in upper left corner of the plot pane which the mouse is hoovering over, and symbol for locked rotation/zoom/pan axis
+- Add locking rotation/zoom/pan plane, so xy, xz, yz
+- Help pane that shows up with keyboard shortcuts when you hold 'H'
+- Add rendering of plot pane name
+- Change MainWindow to just a wxObject or something, something that can have a timer and own the windows?
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
 - FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side
-- Add pan and zoom to scroll click and right click
+- Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
+- Image view (same level as plot pane) which is zoomable and panable only
 - Delete gl buffers with "glDeleteBuffers"
 - For surf, drawMesh etc, add calculation of mean triangle value, to base color off of
 - Set color in fragment shader with uniform, instead of in vertex shader

@@ -25,15 +25,15 @@ void testSurf()
         }
     }
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 0));
 
-    setCurrentElement("view_01");
+    setCurrentElement("p_view_1");
     clearView();
     surf(x, y, z, properties::EdgeColor::None(), properties::ColorMap::Jet());
 
-    setCurrentElement("view_02");
+    setCurrentElement("p_view_2");
     clearView();
     surf(x, y, z, properties::EdgeColor::None(), properties::ColorMap::Jet(), properties::INTERPOLATE_COLORMAP);
 }
@@ -56,7 +56,7 @@ void testScatter()
         t = t + 0.1;
     }
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     axis({0.0, -8.0, -3.3}, {32.0, 32.0, 6.6});
 
@@ -95,7 +95,7 @@ void testScatter3()
         z0 = z0 + 0.02;
     }
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
@@ -133,7 +133,7 @@ void testPlotCollection()
     std::vector<std::reference_wrapper<Vector<double>>> pc_x = {x0, x1, x2};
     std::vector<std::reference_wrapper<Vector<double>>> pc_y = {y0, y1, y2};
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     plotCollection(pc_x, pc_y, properties::Color(0, 0, 0));
@@ -171,7 +171,7 @@ void testPlotCollection()
         pcm_y.push_back(std::move(y));
     }
 
-    setCurrentElement("view_01");
+    setCurrentElement("p_view_1");
     clearView();
 
     for (size_t k = 0; k < pcm_x.size(); k++)
@@ -211,7 +211,7 @@ void testPlotCollection3()
     std::vector<std::reference_wrapper<Vector<double>>> pc_y = {y0, y1, y2};
     std::vector<std::reference_wrapper<Vector<double>>> pc_z = {z0, z1, z2};
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     plotCollection3(pc_x, pc_y, pc_z, properties::Color(0, 0, 0));
@@ -254,7 +254,7 @@ void testPlotCollection3()
         pcm_z.push_back(std::move(z));
     }
 
-    setCurrentElement("view_01");
+    setCurrentElement("p_view_1");
     clearView();
 
     for (size_t k = 0; k < pcm_x.size(); k++)
@@ -270,7 +270,7 @@ void testPlot()
     const size_t num_elements = 30;
     Vector<float> x(num_elements), y(num_elements), z(num_elements);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     const size_t num_points = 6;
@@ -296,7 +296,7 @@ void testPlot()
     plot(xp, yp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
-    setCurrentElement("view_01");
+    setCurrentElement("p_view_1");
     float t = 0.0;
 
     for (size_t k = 0; k < num_elements; k++)
@@ -321,7 +321,7 @@ void testPlot()
          properties::PERSISTENT);
     scatter3(x + 3.0f, y, z, properties::Color::Black(), properties::PointSize(14));
 
-    setCurrentElement("view_02");
+    setCurrentElement("p_view_2");
     clearView();
     t = 0.0;
     x.resize(num_elements * 10);
@@ -349,7 +349,7 @@ void testFastPlot()
     const size_t num_elements = 30;
     Vector<float> x(num_elements), y(num_elements);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     float t = 0.0;
@@ -368,7 +368,7 @@ void testFastPlot()
     fastPlot(x + 5.0f, y, properties::Color(212, 255, 55));
     fastPlot(x + 6.0f, y, properties::Color(212, 14, 255));
 
-    setCurrentElement("view_02");
+    setCurrentElement("p_view_2");
     clearView();
     t = 0.0;
     x.resize(num_elements * 10);
@@ -394,7 +394,7 @@ void testLineCollection()
     const size_t num_lines = 5;
     Vector<float> x(num_lines * 2), y(num_lines * 2);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     float t = 0.0f;
@@ -423,7 +423,7 @@ void testLineCollection3()
     const size_t num_lines = 5;
     Vector<float> x(num_lines * 2), y(num_lines * 2), z(num_lines * 2);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     float t = 0.0f;
@@ -456,7 +456,7 @@ void testStem()
     const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
     const Vector<float> y = dvs::sin(x);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({0.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
@@ -478,7 +478,7 @@ void testStairs()
         t = t + 0.3;
     }
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     stairs(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(2));
@@ -506,7 +506,7 @@ void testPlot3()
         t = t + 0.3;
     }
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
@@ -533,7 +533,7 @@ void testFastPlot3()
         t = t + 0.3;
     }
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     fastPlot3(x, y, z, properties::Color(212, 14, 55));
@@ -574,22 +574,22 @@ void testImShow()
             // img(r, c, 2) = (r * (num_cols - 1 - c)) / max_val;
         }
     }
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     imShow(img3, properties::Alpha(137));
 
-    setCurrentElement("view_01");
+    setCurrentElement("p_view_1");
     imShow(img1, properties::Alpha(137));
 }
 
 void testAxis()
 {
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({1.0, 2.5}, {7.2, 8.4});
 
-    setCurrentElement("view_01");
+    setCurrentElement("p_view_1");
     clearView();
 
     axis({-1.0, 1.5, 3.4}, {5.4, 9.2, 5.5});
@@ -634,7 +634,7 @@ void testLegend()
     x2 = x0 * 3.0f;
     y2 = y0 * 3.0f;
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-32.0, 0.0, -2.0}, {32.0, 110.0, 2.0});
@@ -646,7 +646,7 @@ void testLegend()
         x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
     showLegend();
 
-    setCurrentElement("view_01");
+    setCurrentElement("p_view_1");
     clearView();
 
     axis({-32.0, 0.0, -2.0}, {32.0, 110.0, 2.0});
@@ -695,7 +695,7 @@ void testDrawMesh()
         z(k) = vertices(k).z + 2.0;
     }
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
@@ -711,7 +711,7 @@ void testDrawArrow()
     Point2<tp> p(0.1, 0.2);
     Vec2<tp> v(0.5, -0.3);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
@@ -733,7 +733,7 @@ void testQuiver()
     u = dvs::cos(x);
     v = dvs::sin(y);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
@@ -753,7 +753,7 @@ void testDrawLine3D()
     Vector<double> y{VectorInitializer<double>{0.0, 1.0}};
     Vector<double> z{VectorInitializer<double>{0.0, 1.0}};
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
@@ -775,7 +775,7 @@ void testDrawLine2D()
     Vector<double> y{VectorInitializer<double>{0.0, 1.0}};
     Vector<double> z{VectorInitializer<double>{0.0, 0.0}};
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
@@ -797,7 +797,7 @@ void testDrawLineBetweenPoints()
     Vector<double> y{VectorInitializer{p0.y, p1.y}};
     Vector<double> z{VectorInitializer{p0.z, p1.z}};
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});

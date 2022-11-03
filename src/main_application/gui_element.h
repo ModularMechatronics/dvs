@@ -22,6 +22,7 @@ protected:
     bool is_selected_;
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
+    std::function<void(const wxPoint pos)> notify_parent_window_right_mouse_pressed_;
 
     Vec2f parent_size_;  // Pixels
 
@@ -33,10 +34,12 @@ public:
     }
     GuiElement(const ElementSettings& element_settings,
                const std::function<void(const char key)>& notify_main_window_key_pressed,
-               const std::function<void(const char key)>& notify_main_window_key_released)
+               const std::function<void(const char key)>& notify_main_window_key_released,
+               const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed)
         : element_settings_{element_settings},
           notify_main_window_key_pressed_{notify_main_window_key_pressed},
-          notify_main_window_key_released_{notify_main_window_key_released}
+          notify_main_window_key_released_{notify_main_window_key_released},
+          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed}
     {
         is_editing_ = false;
     }

@@ -57,10 +57,10 @@ set(CPP_SOURCE_FILES main.cpp
                      communication/received_data.cpp
                      communication/udp_server.cpp
                      tray_icon.cpp
-                     tab_view.cpp
+                     tab_button.cpp
                      window_view.cpp
                      events.cpp
-                     tab_container.cpp
+                     tab_buttons.cpp
                      layout_tools_window.cpp
                      plot_data_handler.cpp
                      plot_pane.cpp
