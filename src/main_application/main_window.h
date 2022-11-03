@@ -26,7 +26,6 @@
 #include "project_state/configuration_agent.h"
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
-#include "tab_view.h"
 #include "tray_icon.h"
 #include "window_view.h"
 
@@ -40,7 +39,6 @@ private:
     wxTimer timer_;
     wxTimer refresh_timer_;
 
-    std::vector<TabView*> tabs_;
     std::vector<WindowView*> windows_;
     std::map<std::string, GuiElement*> gui_elements_;
 
@@ -61,7 +59,6 @@ private:
     LayoutToolsWindow* layout_tools_window_;
     wxBoxSizer* tabs_sizer_v;
 
-    wxMenuBar* m_pMenuBar;
     wxMenuItem* edit_layout_menu_option_;
     wxMenu* m_pWindowsMenu;
     int window_callback_id_;
@@ -84,8 +81,6 @@ private:
     void setWaitForFlush();
     void receiveData();
 
-    bool hasTabWithName(const std::string& tab_name);
-    TabView* getTabWithName(const std::string& tab_name);
     bool hasWindowWithName(const std::string& window_name);
     WindowView* getWindowWithName(const std::string& window_name);
     void onActivate(wxActivateEvent& event);

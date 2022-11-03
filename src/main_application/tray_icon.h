@@ -13,7 +13,6 @@
 enum
 {
     PU_EXIT = 10001,
-    PU_SHOW_MAIN_WINDOW,
     PU_SHOW_SUB_WINDOW,
     PU_EDIT_LAYOUT,
     PU_PREFERENCES,
@@ -77,11 +76,9 @@ public:
     void setOnMenuFileSaveAs(std::function<void()>&& file_save_as_function);
     void setOnMenuEdit(std::function<void()>&& edit_function);
     void setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function);
-    void setOnMenuShowMainWindow(std::function<void()>&& main_menu_function);
     void setOnMenuPreferences(std::function<void()>&& preferences_function);
 
     void onMenuExit(wxCommandEvent&);
-    void onMenuMainWindow(wxCommandEvent& evt);
 
     void onMenuFileNew(wxCommandEvent&);
     void onMenuFileOpen(wxCommandEvent&);
@@ -107,7 +104,6 @@ private:
     std::function<void()> file_open_function_;
     std::function<void()> file_save_function_;
     std::function<void()> file_save_as_function_;
-    std::function<void()> main_menu_function_;
     std::function<void(const std::string&)> submenu_function_;
 
     std::vector<int> free_ids_;

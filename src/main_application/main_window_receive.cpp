@@ -17,9 +17,7 @@ void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
 
     if (element_name_str.length() == 0)
     {
-        // TODO: Throw exception
-        std::cout << "Name string had zero length!" << std::endl;
-        return;
+        throw std::runtime_error("Name string had zero length!");
     }
 
     if (gui_elements_.count(element_name_str) > 0)
@@ -29,14 +27,8 @@ void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
     }
     else
     {
-        if (tabs_.size() == 0)
-        {
-            const std::string tab_name = "new-tab-" + std::to_string(current_tab_num_);
-            current_tab_num_++;
-            addNewTab(tab_name);
-        }
-
-        newNamedElement(element_name_str);
+        /*TODO: Handle this
+        newNamedElement(element_name_str);*/
     }
 }
 
@@ -50,7 +42,7 @@ void MainWindow::setWaitForFlush()
 
 void MainWindow::createNewElement(const CommunicationHeader& hdr)
 {
-    const CommunicationHeaderObject elem_obj = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME);
+    /*const CommunicationHeaderObject elem_obj = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME);
     const properties::Name elem_name = elem_obj.as<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
@@ -73,29 +65,29 @@ void MainWindow::createNewElement(const CommunicationHeader& hdr)
             current_tab_num_++;
         }
 
-        if (parent_type == ElementParent::TAB)
-        {
-            if (!hasTabWithName(parent_name))
-            {
-                addNewTab(parent_name);
-            }
-            main_window_last_in_focus_ = true;
-        }
-        else if (parent_type == ElementParent::WINDOW)
-        {
-            if (!hasWindowWithName(parent_name))
-            {
-                addNewWindow(parent_name);
-            }
-            else
-            {
-                // TODO: Set focus of the window with this name
-                // TODO2: No, don't set focus of window, will be annoying
-            }
-        }
+        // if (parent_type == ElementParent::TAB)
+        // {
+        //     if (!hasTabWithName(parent_name))
+        //     {
+        //         addNewTab(parent_name);
+        //     }
+        //     main_window_last_in_focus_ = true;
+        // }
+        // else if (parent_type == ElementParent::WINDOW)
+        // {
+        //     if (!hasWindowWithName(parent_name))
+        //     {
+        //         addNewWindow(parent_name);
+        //     }
+        //     else
+        //     {
+        //         // TODO: Set focus of the window with this name
+        //         // TODO2: No, don't set focus of window, will be annoying
+        //     }
+        // }
 
         newNamedElement(element_name_str);
-    }
+    }*/
 }
 
 bool isGuiElementFunction(const Function fcn)
@@ -157,7 +149,9 @@ void MainWindow::receiveData()
                     break;
 
                 case Function::CREATE_NEW_ELEMENT:
-                    createNewElement(hdr);
+                    // createNewElement(hdr);
+                    // TODO
+                    std::cout << "Not implemented yet!" << std::endl;
                     break;
 
                 case Function::SHOW_LEGEND:
