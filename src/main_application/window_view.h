@@ -82,23 +82,6 @@ public:
         return name_;
     }
 
-    void setIsEditing(const bool is_editing)
-    {
-        for (auto const& ge : gui_elements_)
-        {
-            ge.second->setIsEditing(is_editing);
-        }
-    }
-
-    void resetSelection()
-    {
-        for (auto it : gui_elements_)
-        {
-            it.second->resetSelection();
-            it.second->refresh();
-        }
-    }
-
     TabSettings getTabSettings() const
     {
         TabSettings ts;
@@ -140,7 +123,6 @@ private:
     std::string name_;
     std::map<std::string, GuiElement*> gui_elements_;
     int current_unnamed_idx_;
-    bool is_editing_;
     std::string name_of_selected_element_;
     WindowSettings* settings_;
 
@@ -165,9 +147,6 @@ public:
     void hide();
     void show();
     void setName(const std::string& new_name);
-    void startEdit();
-    void stopEdit();
-    void resetSelectionForAllChildren();
     WindowSettings getWindowSettings() const;
     std::map<std::string, GuiElement*> getGuiElements() const;
     std::string getName() const;
@@ -183,8 +162,6 @@ public:
     void mouseRightPressedCallback(wxMouseEvent& event);
 
     std::vector<ElementSettings> getElementSettingsList() const;
-
-    std::string getSelectedElementName();
 
     virtual void OnClose(wxCloseEvent& event);
 };

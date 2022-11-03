@@ -133,7 +133,6 @@ PlotPane::PlotPane(wxWindow* parent,
       m_context(getContext()),
       axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
-    is_editing_ = false;
     parent_size_ = parent->GetSize();
     grid_size_ = grid_size;
     edit_size_margin_ = 20.0f;
@@ -143,8 +142,6 @@ PlotPane::PlotPane(wxWindow* parent,
 
     // view_parent_ = dynamic_cast<SuperBase*>(parent); // TODO: Fix
     wait_for_flush_ = false;
-
-    is_selected_ = false;
 
     bindCallbacks();
 
@@ -397,16 +394,6 @@ void PlotPane::showLegend(const bool show_legend)
     }
 }
 
-void PlotPane::setSelection()
-{
-    is_selected_ = true;
-}
-
-void PlotPane::resetSelection()
-{
-    is_selected_ = false;
-}
-
 void PlotPane::destroy()
 {
     this->Destroy();
@@ -419,8 +406,6 @@ void PlotPane::mouseLeftPressed(wxMouseEvent& event)
     evt.SetEventObject(this);
     evt.SetString(element_settings_.name);
     ProcessWindowEvent(evt);
-
-    is_selected_ = true;
 
     const wxPoint current_point = event.GetPosition();
 
@@ -584,7 +569,7 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
     }
     else
     {
-        if (is_editing_)
+        if (wxGetKeyState(WXK_COMMAND))
         {
             Bound2D bnd;
             bnd.x_min = 0.0f;
@@ -756,8 +741,6 @@ void PlotPane::render(wxPaintEvent& evt)
     {
         legend_scale_factor_ += 0.05;
     }
-
-    const bool draw_selected_bb = is_selected_ && is_editing_;
 
     const Vec2f pane_size(GetSize().x, GetSize().y);
 

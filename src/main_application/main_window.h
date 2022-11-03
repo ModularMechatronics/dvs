@@ -21,7 +21,6 @@
 #include "communication/udp_server.h"
 #include "events.h"
 #include "gui_element.h"
-#include "layout_tools_window.h"
 #include "plot_pane.h"
 #include "project_state/configuration_agent.h"
 #include "project_state/project_settings.h"
@@ -46,18 +45,10 @@ private:
     bool current_gui_element_set_;
     int current_tab_num_;
 
-    bool is_editing_;
-
-    bool app_in_focus_;
-
     std::function<void(const char key)> notification_from_gui_element_key_pressed_;
     std::function<void(const char key)> notification_from_gui_element_key_released_;
 
     CustomTaskBarIcon* task_bar_;
-
-    wxNotebook* tabs_view;
-    LayoutToolsWindow* layout_tools_window_;
-    wxBoxSizer* tabs_sizer_v;
 
     wxMenuItem* edit_layout_menu_option_;
     wxMenu* m_pWindowsMenu;
@@ -85,15 +76,9 @@ private:
     WindowView* getWindowWithName(const std::string& window_name);
     void onActivate(wxActivateEvent& event);
     void tabChanged(wxCommandEvent& event);
-    void toggleEditLayout(wxCommandEvent& event);
-    void toggleEditLayoutCallback(wxCommandEvent& event);
     void preferencesCallback(wxCommandEvent& event);
     void preferences();
-    void showMainWindow();
-    void showMainWindowCallback(wxCommandEvent& event);
     wxMenuBar* createMainMenuBar();
-    void toggleEditLayout();
-    void editingFinished(wxCommandEvent& event);
     void guiElementModified(wxCommandEvent& event);
     void childWindowClosed(wxCommandEvent& event);
     void childWindowInFocus(wxCommandEvent& event);
@@ -109,7 +94,6 @@ private:
     void saveProjectAs();
     void saveProjectAsCallback(wxCommandEvent& event);
 
-    void setupTabs(const ProjectSettings& project_settings);
     void setupWindows(const ProjectSettings& project_settings);
     void fileModified();
 
@@ -119,7 +103,6 @@ public:
     ~MainWindow();
 
     virtual void OnClose(wxCloseEvent& event);
-    virtual void OnSize(wxSizeEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
     void toggleWindowVisibilityCallback(wxCommandEvent& event);
@@ -127,12 +110,7 @@ public:
     void openExistingFile(wxCommandEvent& event);
     void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
     void openExistingFile();
-    void changeCurrentTabName(const std::string& new_tab_name);
     void changeCurrentElementName(const std::string new_element_name);
-    void currentElementSelectionChanged(wxCommandEvent& event);
-    void addNewTabCallback(wxCommandEvent& event);
-    void addNewTab(const std::string& tab_name);
-    void deleteTab();
     void addNewWindow(const std::string& window_name);
     void addNewWindowCallback(wxCommandEvent& event);
     void deleteWindow();
@@ -143,9 +121,6 @@ public:
     void deleteSelectedElement();
 
     void disableEditing();
-
-    void appInactive();
-    void appActive();
 };
 
 #endif  // MAIN_APPLICATION_MAIN_WINDOW_H_
