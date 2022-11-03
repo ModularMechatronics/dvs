@@ -159,7 +159,7 @@ struct WindowSettings
     float y;
     float width;
     float height;
-    std::string name_;
+    std::string name;
     std::vector<TabSettings> tabs;
 
     WindowSettings() {}
@@ -170,7 +170,7 @@ struct WindowSettings
         width = j["width"];
         height = j["height"];
 
-        name_ = j["name"];
+        name = j["name"];
 
         for (size_t k = 0; k < j["tabs"].size(); k++)
         {
@@ -192,20 +192,10 @@ struct WindowSettings
         j["y"] = y;
         j["width"] = width;
         j["height"] = height;
-        j["name"] = name_;
+        j["name"] = name;
         j["tabs"] = json_tabs;
 
         return j;
-    }
-
-    std::string getName() const
-    {
-        return name_;
-    }
-
-    void setName(const std::string name)
-    {
-        name_ = name;
     }
 
     bool hasTabWithName(const std::string& name) const
@@ -262,7 +252,7 @@ struct WindowSettings
 
     bool operator==(const WindowSettings& other) const
     {
-        if ((name_ != other.name_) || (tabs.size() != other.tabs.size()))
+        if ((name != other.name) || (tabs.size() != other.tabs.size()))
         {
             return false;
         }
@@ -351,33 +341,10 @@ public:
         return all_elements;
     }
 
-    bool hasTabWithName(const std::string& name) const
-    {
-        return false;
-        // return std::find_if(tabs_.begin(), tabs_.end(), [&](const TabSettings& ts) -> bool {
-        //            return ts.getName() == name;
-        //        }) != tabs_.end();
-    }
-
-    TabSettings getTabWithName(const std::string& name) const
-    {
-        assert(hasTabWithName(name));
-        TabSettings res;
-        /*for (const TabSettings& ts : tabs_)
-        {
-            if (ts.getName() == name)
-            {
-                res = ts;
-                break;
-            }
-        }*/
-        return res;
-    }
-
     bool hasWindowWithName(const std::string& name) const
     {
         return std::find_if(windows_.begin(), windows_.end(), [&](const WindowSettings& ws) -> bool {
-                   return ws.getName() == name;
+                   return ws.name == name;
                }) != windows_.end();
     }
 
@@ -387,7 +354,7 @@ public:
         WindowSettings res;
         for (const WindowSettings& ws : windows_)
         {
-            if (ws.getName() == name)
+            if (ws.name == name)
             {
                 res = ws;
                 break;
@@ -403,26 +370,11 @@ public:
             return false;
         }
 
-        /*for (const TabSettings& ts : tabs_)
-        {
-            if (other.hasTabWithName(ts.getName()))
-            {
-                if (other.getTabWithName(ts.getName()) != ts)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }*/
-
         for (const WindowSettings& ws : windows_)
         {
-            if (other.hasWindowWithName(ws.getName()))
+            if (other.hasWindowWithName(ws.name))
             {
-                if (other.getWindowWithName(ws.getName()) != ws)
+                if (other.getWindowWithName(ws.name) != ws)
                 {
                     return false;
                 }

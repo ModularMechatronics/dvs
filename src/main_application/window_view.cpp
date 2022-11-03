@@ -23,7 +23,9 @@ WindowView::WindowView(wxFrame* parent,
     SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
     callback_id_ = callback_id;
 
-    this->SetLabel(window_settings.getName());
+    this->SetPosition(wxPoint(window_settings.x, window_settings.y));
+    this->SetLabel(window_settings.name);
+    this->SetSize(wxSize(window_settings.width, window_settings.height));
 
     for (size_t k = 0; k < window_settings.tabs.size(); k++)
     {
@@ -34,25 +36,6 @@ WindowView::WindowView(wxFrame* parent,
                                      notify_main_window_key_released,
                                      [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::GUI_ELEMENT); });
     }
-
-    /*const std::vector<ElementSettings> elements = settings_->getElementSettingsList();
-
-    for (const auto& elem : elements)
-    {
-        GuiElement* const ge = new PlotPane(dynamic_cast<wxFrame*>(this),
-                                            elem,
-                                            grid_size_,
-                                            notify_main_window_key_pressed_,
-                                            notify_main_window_key_released_);
-
-        ge->updateSizeFromParent(this->GetSize());
-        gui_elements_[elem.name] = ge;
-    }
-
-    if (gui_elements_.size() > 0)
-    {
-        gui_elements_.begin()->second->setIsSelected();
-    }*/
 
     for (const auto& tab : tabs_)
     {
@@ -65,7 +48,6 @@ WindowView::WindowView(wxFrame* parent,
             tab.second->hideAllElements();
         }
     }
-    this->SetPosition(wxPoint(20, 30));
 
     popup_menu_window_ = new wxMenu(wxT(""));
     popup_menu_element_ = new wxMenu(wxT(""));
