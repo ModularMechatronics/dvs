@@ -59,9 +59,9 @@ void MainWindow::changeCurrentElementName(const std::string new_element_name)
 {
     // const bool name_exists = elementNameExists(new_element_name);
 
-    if (main_window_last_in_focus_)
+    /*if (main_window_last_in_focus_)
     {
-        /*const int current_tab_idx = tabs_view->GetSelection();
+        const int current_tab_idx = tabs_view->GetSelection();
 
         if (current_tab_idx != wxNOT_FOUND)
         {
@@ -73,7 +73,7 @@ void MainWindow::changeCurrentElementName(const std::string new_element_name)
             {
                 tabs_.at(current_tab_idx)->setSelectedElementName(new_element_name);
             }
-        }*/
+        }
     }
     else
     {
@@ -91,15 +91,15 @@ void MainWindow::changeCurrentElementName(const std::string new_element_name)
         //         }
         //     }
         // }
-    }
+    }*/
     // fileModified();
 }
 
 void MainWindow::newNamedElement(const std::string& element_name)
 {
-    if (main_window_last_in_focus_)
+    /*if (main_window_last_in_focus_)
     {
-        /*const int current_tab_idx = tabs_view->GetSelection();
+        const int current_tab_idx = tabs_view->GetSelection();
         if (current_tab_idx != wxNOT_FOUND)
         {
             tabs_.at(current_tab_idx)->newElement(element_name);
@@ -112,7 +112,7 @@ void MainWindow::newNamedElement(const std::string& element_name)
                     gui_elements_[q.first] = q.second;
                 }
             }
-        }*/
+        }
     }
     else
     {
@@ -121,7 +121,7 @@ void MainWindow::newNamedElement(const std::string& element_name)
         //     if (we->getName() == current_tab_name_)
         //     {
         //         we->newElement(element_name);
-        //         /*const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
+        //         const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
 
         //         for (const auto& q : new_elements)
         //         {
@@ -129,18 +129,18 @@ void MainWindow::newNamedElement(const std::string& element_name)
         //             {
         //                 gui_elements_[q.first] = q.second;
         //             }
-        //         }*/
+        //         }
         //     }
         // }
     }
-    fileModified();
+    fileModified();*/
 }
 
 void MainWindow::newElement()
 {
-    if (main_window_last_in_focus_)
+    /*if (main_window_last_in_focus_)
     {
-        /*const int current_tab_idx = tabs_view->GetSelection();
+        const int current_tab_idx = tabs_view->GetSelection();
         if (current_tab_idx != wxNOT_FOUND)
         {
             tabs_.at(current_tab_idx)->resetSelectionForAllChildren();
@@ -155,7 +155,7 @@ void MainWindow::newElement()
                     q.second->setSelection();
                 }
             }
-        }*/
+        }
     }
     else
     {
@@ -165,7 +165,7 @@ void MainWindow::newElement()
         //     {
         //         we->resetSelectionForAllChildren();
         //         we->newElement();
-        //         /*const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
+        //         const std::map<std::string, GuiElement*> new_elements = we->getGuiElements();
 
         //         for (const auto& q : new_elements)
         //         {
@@ -174,11 +174,11 @@ void MainWindow::newElement()
         //                 gui_elements_[q.first] = q.second;
         //                 q.second->setSelection();
         //             }
-        //         }*/
+        //         }
         //     }
         // }
     }
-    fileModified();
+    fileModified();*/
 }
 
 void MainWindow::deleteSelectedElement()
