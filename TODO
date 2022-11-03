@@ -19,7 +19,7 @@ Pre release:
 - Add locking rotation/zoom/pan plane, so xy, xz, yz
 - Help pane that shows up with keyboard shortcuts when you hold 'H'
 - Add rendering of plot pane name
-- Change MainWindow to just a wxObject or something, something that can have a timer and own the windows?
+- Hide dock icon https://stackoverflow.com/questions/620841/how-to-hide-the-dock-icon
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
 - FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side

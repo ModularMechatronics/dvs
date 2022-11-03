@@ -137,7 +137,7 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         window_callback_id_++;
         const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
         gui_elements_.insert(ges.begin(), ges.end());
-        task_bar_->addNewWindow(ws.getName());
+        task_bar_->addNewWindow(ws.name);
     }
 }
 
@@ -372,7 +372,7 @@ void MainWindow::childWindowInFocus(wxCommandEvent& event)
 
 void MainWindow::preferencesCallback(wxCommandEvent& WXUNUSED(event))
 {
-    // preferences();
+    preferences();
 }
 
 void MainWindow::preferences()
