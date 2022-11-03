@@ -26,7 +26,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
 
     configuration_agent_ = new ConfigurationAgent();
-    main_window_last_in_focus_ = true;
 
     task_bar_ = new CustomTaskBarIcon();
     wxIcon* icon = new wxIcon();
@@ -221,7 +220,6 @@ void MainWindow::newProject()
     // Unbind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
 
     // current_tab_name_ = "";
-    // current_element_name_ = "";
 
     // save_manager_->reset();
 

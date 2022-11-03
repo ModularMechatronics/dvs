@@ -53,13 +53,6 @@ private:
     wxMenuItem* edit_layout_menu_option_;
     wxMenu* m_pWindowsMenu;
     int window_callback_id_;
-    bool main_window_last_in_focus_;
-
-    int initial_width_;
-    int initial_height_;
-
-    std::string current_tab_name_;
-    std::string current_element_name_;
 
     bool elementNameExists(const std::string& element_name) const;
 
