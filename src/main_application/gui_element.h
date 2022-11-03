@@ -18,8 +18,6 @@ class GuiElement
 {
 protected:
     ElementSettings element_settings_;
-    bool is_editing_;
-    bool is_selected_;
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<void(const wxPoint pos)> notify_parent_window_right_mouse_pressed_;
@@ -28,10 +26,7 @@ protected:
 
 public:
     GuiElement() = delete;
-    GuiElement(const ElementSettings& element_settings) : element_settings_{element_settings}
-    {
-        is_editing_ = false;
-    }
+    GuiElement(const ElementSettings& element_settings) : element_settings_{element_settings} {}
     GuiElement(const ElementSettings& element_settings,
                const std::function<void(const char key)>& notify_main_window_key_pressed,
                const std::function<void(const char key)>& notify_main_window_key_released,
@@ -41,7 +36,6 @@ public:
           notify_main_window_key_released_{notify_main_window_key_released},
           notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed}
     {
-        is_editing_ = false;
     }
 
     std::string getName() const
@@ -54,22 +48,6 @@ public:
         element_settings_.name = new_name;
     }
 
-    void setIsEditing(const bool is_editing)
-    {
-        is_editing_ = is_editing;
-        refresh();
-    }
-
-    bool isSelected()
-    {
-        return is_selected_;
-    }
-
-    void setIsSelected()
-    {
-        is_selected_ = true;
-    }
-
     ElementSettings getElementSettings() const
     {
         return element_settings_;
@@ -80,8 +58,6 @@ public:
                          const dvs::internal::CommunicationHeader& hdr) = 0;
     virtual void keyPressed(const char key) = 0;
     virtual void keyReleased(const char key) = 0;
-    virtual void resetSelection() = 0;
-    virtual void setSelection() = 0;
     virtual void show() = 0;
     virtual void hide() = 0;
     virtual void destroy() = 0;

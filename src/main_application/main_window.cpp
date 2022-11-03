@@ -12,19 +12,17 @@
 #include "dvs/math/math.h"
 #include "events.h"
 #include "filesystem.h"
-#include "layout_tools_window.h"
 
 using namespace dvs::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
-    : wxFrame(NULL, wxID_ANY, "", wxPoint(1500, 30), wxSize(200, 500))
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50))
 {
     static_cast<void>(cmdl_args);
     udp_server_ = new UdpServer(dvs::internal::kUdpPortNum);
     udp_server_->start();
     current_gui_element_ = nullptr;
     current_gui_element_set_ = false;
-    is_editing_ = false;
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
 
     configuration_agent_ = new ConfigurationAgent();
@@ -44,7 +42,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     task_bar_->setOnMenuFileOpen([this]() -> void { openExistingFile(); });
     task_bar_->setOnMenuFileSave([this]() -> void { saveProject(); });
     task_bar_->setOnMenuFileSaveAs([this]() -> void { saveProjectAs(); });
-    task_bar_->setOnMenuEdit([this]() -> void { toggleEditLayout(); });
+    task_bar_->setOnMenuEdit([this]() -> void {});
     task_bar_->setOnMenuSubWindow(
         [this](const std::string& window_name) -> void { toggleWindowVisibility(window_name); });
     task_bar_->setOnMenuPreferences([this]() -> void { preferences(); });
@@ -68,15 +66,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         save_manager_ = new SaveManager();
     }
 
-    if (save_manager_->pathIsSet())
-    {
-        SetLabel(save_manager_->getCurrentFileName());
-    }
-    else
-    {
-        SetLabel(save_manager_->getCurrentFileName() + "*");
-    }
-
     const RGBTripletf color_vec{AxesSettings().window_background_};
     SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
 
@@ -88,33 +77,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     current_tab_num_ = 0;
 
-    layout_tools_window_ = new LayoutToolsWindow(
-        wxPoint(1500, 30),
-        wxSize(200, 500),
-        [this](const std::string& new_tab_name) { changeCurrentTabName(new_tab_name); },
-        [this](const std::string& new_element_name) { changeCurrentElementName(new_element_name); },
-        [this]() {
-            const std::string window_name = "new-window-" + std::to_string(current_tab_num_);
-            current_tab_num_++;
-            layout_tools_window_->setCurrentElementName("");
-
-            addNewWindow(window_name);
-            task_bar_->addNewWindow(window_name);
-        },
-        [this]() { deleteWindow(); },
-        [this]() {
-            const std::string tab_name = "new-tab-" + std::to_string(current_tab_num_);
-            current_tab_num_++;
-            addNewTab(tab_name);
-        },
-        [this]() { deleteTab(); },
-        [this]() { newElement(); },
-        [this]() { deleteSelectedElement(); },
-        [this]() { disableEditing(); });
-    layout_tools_window_->Hide();
-
-    Bind(MY_EVENT, &MainWindow::currentElementSelectionChanged, this);
-
     setupGui();
 
     for (auto we : windows_)
@@ -123,53 +85,10 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
     }
 
-    Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
-    Bind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
-
     timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
     timer_.Start(10);
 
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
-    SetPosition(wxPoint(500, 30));
-
-    app_in_focus_ = true;
-}
-
-void MainWindow::appInactive()
-{
-    app_in_focus_ = false;
-}
-
-void MainWindow::appActive()
-{
-    app_in_focus_ = true;
-}
-
-void MainWindow::onActivate(wxActivateEvent& event)
-{
-    // main_window_last_in_focus_ = true;
-    // if (event.GetActive())
-    // {
-    //     for (auto we : windows_)
-    //     {
-    //         we->resetSelectionForAllChildren();
-    //     }
-
-    //     /*for (auto te : tabs_)
-    //     {
-    //         te->resetSelectionForAllChildren();
-    //         te->setFirstElementSelected();
-    //     }
-
-    //     const int current_tab_idx = tabs_view->GetSelection();
-    //     if (current_tab_idx != wxNOT_FOUND)
-    //     {
-    //         current_tab_name_ = tabs_.at(current_tab_idx)->getName();
-    //         current_element_name_ = tabs_.at(current_tab_idx)->getSelectedElementName();
-    //     }
-    //     layout_tools_window_->setCurrentTabName(current_tab_name_);
-    //     layout_tools_window_->setCurrentElementName(current_element_name_);*/
-    // }
 }
 
 void MainWindow::toggleWindowVisibility(const std::string& window_name)
@@ -181,13 +100,10 @@ void MainWindow::toggleWindowVisibility(const std::string& window_name)
     //     {
     //         we->setFirstElementSelected();
     //         current_tab_name_ = we->getName();
-    //         current_element_name_ = we->getSelectedElementName();
     //         we->Hide();
     //         we->show();
     //     }
     // }
-    // layout_tools_window_->setCurrentTabName(current_tab_name_);
-    // layout_tools_window_->setCurrentElementName(current_element_name_);
 }
 
 void MainWindow::toggleWindowVisibilityCallback(wxCommandEvent& event)
@@ -204,13 +120,10 @@ void MainWindow::toggleWindowVisibilityCallback(wxCommandEvent& event)
     //     {
     //         we->setFirstElementSelected();
     //         current_tab_name_ = we->getName();
-    //         current_element_name_ = we->getSelectedElementName();
     //         we->Hide();
     //         we->show();
     //     }
     // }
-    // layout_tools_window_->setCurrentTabName(current_tab_name_);
-    // layout_tools_window_->setCurrentElementName(current_element_name_);
 }
 
 void MainWindow::setupWindows(const ProjectSettings& project_settings)
@@ -232,12 +145,6 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
 MainWindow::~MainWindow()
 {
     delete configuration_agent_;
-}
-
-void MainWindow::editingFinished(wxCommandEvent& WXUNUSED(event))
-{
-    // disableEditing();
-    // layout_tools_window_->Hide();
 }
 
 void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
@@ -271,7 +178,6 @@ void MainWindow::saveProjectAs()
     }
 
     save_manager_->saveToNewFile(new_save_path, ps);
-    SetLabel(save_manager_->getCurrentFileName());
 }
 
 void MainWindow::saveProject()
@@ -289,7 +195,6 @@ void MainWindow::saveProject()
             ps.pushBackWindowSettings(we->getWindowSettings());
         }
 
-        SetLabel(save_manager_->getCurrentFileName());
         configuration_agent_->writeValue("last_opened_file", save_manager_->getCurrentFilePath());
 
         save_manager_->save(ps);
@@ -320,14 +225,6 @@ void MainWindow::newProject()
 
     // save_manager_->reset();
 
-    // if (is_editing_)
-    // {
-    //     disableEditing();
-    //     layout_tools_window_->Hide();
-    // }
-
-    // SetLabel(save_manager_->getCurrentFileName() + "*");
-
     // /*tabs_ = std::vector<TabView*>();
     // tabs_view->DeleteAllPages();
     // tabs_view->Destroy();*/
@@ -345,7 +242,6 @@ void MainWindow::newProject()
 
     // Bind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
 
-    // setupTabs(save_manager_->getCurrentProjectSettings());
     // setupWindows(save_manager_->getCurrentProjectSettings());
 
     // SendSizeEvent();
@@ -357,55 +253,10 @@ void MainWindow::saveProjectCallback(wxCommandEvent& WXUNUSED(event))
     // saveProject();
 }
 
-void MainWindow::addNewTab(const std::string& tab_name)
-{
-    /*TabSettings tab;
-    tab.setName(tab_name);
-    TabView* tab_element = new TabView(
-        tabs_view, tab, notification_from_gui_element_key_pressed_, notification_from_gui_element_key_released_);
-    tabs_.push_back(tab_element);
-
-    tabs_view->AddPage(dynamic_cast<wxNotebookPage*>(tab_element), tab_name);
-
-    if (is_editing_)
-    {
-        tab_element->startEdit();
-    }
-
-    fileModified();*/
-}
-
-void MainWindow::addNewTabCallback(wxCommandEvent& WXUNUSED(event))
-{
-    // const std::string tab_name = "new-tab-" + std::to_string(current_tab_num_);
-    // current_tab_num_++;
-    // addNewTab(tab_name);
-}
-
-void MainWindow::deleteTab()
-{
-    /*const int current_tab_idx = tabs_view->GetSelection();
-    if (current_tab_idx != wxNOT_FOUND)
-    {
-        const std::map<std::string, GuiElement*> tab_gui_elements = tabs_.at(current_tab_idx)->getGuiElements();
-
-        for (const auto& q : tab_gui_elements)
-        {
-            gui_elements_.erase(q.first);
-        }
-
-        tabs_view->DeletePage(current_tab_idx);
-        tabs_.erase(tabs_.begin() + current_tab_idx);
-    }
-
-    fileModified();*/
-}
-
 void MainWindow::addNewWindowCallback(wxCommandEvent& WXUNUSED(event))
 {
     // const std::string window_name = "new-window-" + std::to_string(current_tab_num_);
     // current_tab_num_++;
-    // layout_tools_window_->setCurrentElementName("");
 
     // addNewWindow(window_name);
     // task_bar_->addNewWindow(window_name);
@@ -427,11 +278,6 @@ void MainWindow::addNewWindow(const std::string& window_name)
     // window_callback_id_++;
     // windows_.push_back(window_element);
 
-    // if (is_editing_)
-    // {
-    //     window_element->startEdit();
-    // }
-
     // m_pWindowsMenu->Append(window_element->getCallbackId(), window_element->getName());
     // Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, window_element->getCallbackId());
 
@@ -446,9 +292,7 @@ void MainWindow::addNewWindow(const std::string& window_name)
     //     we->resetSelectionForAllChildren();
     // }
 
-    // layout_tools_window_->setCurrentTabName(window_name);
     // current_tab_name_ = window_element->getName();
-    // current_element_name_ = window_element->getSelectedElementName();
 
     // fileModified();
 }
@@ -501,26 +345,12 @@ void MainWindow::deleteWindow()
     // fileModified();*/
 }
 
-void MainWindow::disableEditing()
-{
-    // edit_layout_menu_option_->SetItemLabel("Edit layout");
-    is_editing_ = false;
-
-    for (auto we : windows_)
-    {
-        we->stopEdit();
-    }
-}
-
 void MainWindow::guiElementModified(wxCommandEvent& WXUNUSED(event))
 {
     // fileModified();
 }
 
-void MainWindow::noElementSelected(wxCommandEvent& WXUNUSED(event))
-{
-    // layout_tools_window_->setCurrentElementName("");
-}
+void MainWindow::noElementSelected(wxCommandEvent& WXUNUSED(event)) {}
 
 void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event)) {}
 
@@ -538,16 +368,8 @@ void MainWindow::childWindowInFocus(wxCommandEvent& event)
     //     if (we->getCallbackId() == event.GetId())
     //     {
     //         current_tab_name_ = we->getName();
-    //         current_element_name_ = we->getSelectedElementName();
     //     }
     // }
-    // layout_tools_window_->setCurrentTabName(current_tab_name_);
-    // layout_tools_window_->setCurrentElementName(current_element_name_);
-}
-
-void MainWindow::toggleEditLayoutCallback(wxCommandEvent& WXUNUSED(event))
-{
-    // toggleEditLayout();
 }
 
 void MainWindow::preferencesCallback(wxCommandEvent& WXUNUSED(event))
@@ -560,80 +382,36 @@ void MainWindow::preferences()
     std::cout << "Preferences!" << std::endl;
 }
 
-void MainWindow::showMainWindowCallback(wxCommandEvent& WXUNUSED(event))
-{
-    // showMainWindow();
-}
-
 wxMenuBar* MainWindow::createMainMenuBar()
 {
     wxMenuBar* menu_bar_tmp = new wxMenuBar();
 
     // // File Menu
-    // wxMenu* m_pFileMenu = new wxMenu();
-    // m_pFileMenu->Append(wxID_NEW, _T("&New"));
-    // m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
-    // m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
-    // m_pFileMenu->Append(wxID_SAVEAS, _T("&Save As..."));
-    // m_pFileMenu->AppendSeparator();
-    // m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
-    // menu_bar_tmp->Append(m_pFileMenu, _T("&File"));
+    wxMenu* m_pFileMenu = new wxMenu();
+    m_pFileMenu->Append(wxID_NEW, _T("&New"));
+    m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
+    m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
+    m_pFileMenu->Append(wxID_SAVEAS, _T("&Save As..."));
+    m_pFileMenu->AppendSeparator();
+    m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
+    menu_bar_tmp->Append(m_pFileMenu, _T("&File"));
 
-    // wxMenu* m_edit_menu = new wxMenu();
+    wxMenu* m_edit_menu = new wxMenu();
 
-    // edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
-    // edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::PREFERENCES, _T("Preferences"));
-    // menu_bar_tmp->Append(m_edit_menu, _T("Edit"));
+    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
+    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::PREFERENCES, _T("Preferences"));
+    menu_bar_tmp->Append(m_edit_menu, _T("Edit"));
 
-    // m_pWindowsMenu = new wxMenu();
-    // m_pWindowsMenu->Append(dvs_ids::SHOW_MAIN_WINDOW, "Main window");
-    // m_pWindowsMenu->AppendSeparator();
-    // menu_bar_tmp->Append(m_pWindowsMenu, _T("&Windows"));
+    m_pWindowsMenu = new wxMenu();
+    m_pWindowsMenu->Append(dvs_ids::SHOW_MAIN_WINDOW, "Main window");
+    m_pWindowsMenu->AppendSeparator();
+    menu_bar_tmp->Append(m_pWindowsMenu, _T("&Windows"));
 
-    // wxMenu* m_pHelpMenu = new wxMenu();
-    // m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
-    // menu_bar_tmp->Append(m_pHelpMenu, _T("&Help"));
+    wxMenu* m_pHelpMenu = new wxMenu();
+    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
+    menu_bar_tmp->Append(m_pHelpMenu, _T("&Help"));
 
     return menu_bar_tmp;
-}
-
-void MainWindow::showMainWindow()
-{
-    if (IsShown())
-    {
-        Raise();
-    }
-    else
-    {
-        this->Show();
-    }
-}
-
-void MainWindow::toggleEditLayout()
-{
-    if (is_editing_)
-    {
-        // edit_layout_menu_option_->SetItemLabel("Edit layout");
-        task_bar_->setEditLabel("Edit layout");
-        layout_tools_window_->Hide();
-
-        for (auto we : windows_)
-        {
-            we->stopEdit();
-        }
-    }
-    else
-    {
-        // edit_layout_menu_option_->SetItemLabel("Stop editing");
-        task_bar_->setEditLabel("Stop editing");
-        layout_tools_window_->Show();
-
-        for (auto we : windows_)
-        {
-            we->startEdit();
-        }
-    }
-    is_editing_ = !is_editing_;
 }
 
 void MainWindow::openExistingFileCallback(wxCommandEvent& WXUNUSED(event))
@@ -667,16 +445,9 @@ void MainWindow::openExistingFile()
     //     return;
     // }
 
-    // if (is_editing_)
-    // {
-    //     disableEditing();
-    //     layout_tools_window_->Hide();
-    // }
-
     // configuration_agent_->writeValue("last_opened_file", std::string(openFileDialog.GetPath().mb_str()));
 
     // save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
-    // SetLabel(save_manager_->getCurrentFileName());
 
     // /*tabs_ = std::vector<TabView*>();
     // tabs_view->DeleteAllPages();
@@ -695,7 +466,6 @@ void MainWindow::openExistingFile()
 
     // Bind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
 
-    // setupTabs(save_manager_->getCurrentProjectSettings());
     // setupWindows(save_manager_->getCurrentProjectSettings());
 
     // refresh_timer_.Start(10);
@@ -732,12 +502,6 @@ void MainWindow::OnTimer(wxTimerEvent&)
 void MainWindow::notifyChildrenOnKeyPressed(const char key)
 {
     std::cout << "Key pressed: " << key << std::endl;
-    // std::cout << "Key pressed: " << key << std::endl;
-    // if ((key == 'E') || (key == 'e'))
-    // {
-    //     toggleEditLayout();
-    //     return;
-    // }
     std::map<std::string, GuiElement*>::iterator it;
 
     for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)

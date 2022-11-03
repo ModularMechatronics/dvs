@@ -11,24 +11,11 @@ private:
 public:
     virtual bool OnInit();
     virtual int OnExit();
-    void appInFocus(const wxActivateEvent& event);
 };
 
 MainWindow* main_window;
 
 IMPLEMENT_APP(MainApp)
-
-void MainApp::appInFocus(const wxActivateEvent& event)
-{
-    if (event.GetActive())
-    {
-        main_window->appActive();
-    }
-    else
-    {
-        main_window->appInactive();
-    }
-}
 
 bool MainApp::OnInit()
 {
@@ -42,11 +29,8 @@ bool MainApp::OnInit()
     }
 
     main_window = new MainWindow(cmd_args);
-    main_window->Show();
 
-    Bind(wxEVT_ACTIVATE_APP, &MainApp::appInFocus, this);
-
-    SetTopWindow(main_window);
+    // SetTopWindow(main_window);
 
     return true;
 }

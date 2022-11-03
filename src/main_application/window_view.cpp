@@ -131,14 +131,6 @@ void WindowView::mouseRightPressedCallback(wxMouseEvent& event)
     mouseRightPressed(event.GetPosition(), ClickSource::THIS);
 }
 
-void WindowView::resetSelectionForAllChildren()
-{
-    /*for (const auto& tab : tabs_)
-    {
-        tab.second->resetSelection();
-    }*/
-}
-
 void WindowView::childModified(wxCommandEvent& WXUNUSED(event))
 {
     // wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
@@ -255,29 +247,7 @@ void WindowView::newElement(const std::string& element_name)
                                         notify_main_window_key_released_);
 
     ge->updateSizeFromParent(this->GetSize());
-    if (is_editing_)
-    {
-        ge->setIsEditing(true);
-    }
     gui_elements_[elem.name] = ge;*/
-}
-
-void WindowView::startEdit()
-{
-    is_editing_ = true;
-    for (const auto& tab : tabs_)
-    {
-        tab.second->setIsEditing(true);
-    }
-}
-
-void WindowView::stopEdit()
-{
-    is_editing_ = false;
-    for (const auto& tab : tabs_)
-    {
-        tab.second->setIsEditing(false);
-    }
 }
 
 void WindowView::newElement()
@@ -296,23 +266,7 @@ void WindowView::newElement()
                                         notify_main_window_key_released_);
 
     ge->updateSizeFromParent(this->GetSize());
-    if (is_editing_)
-    {
-        ge->setIsEditing(true);
-    }
     gui_elements_[elem.name] = ge;*/
-}
-
-std::string WindowView::getSelectedElementName()
-{
-    /*for (auto it : gui_elements_)
-    {
-        if (it.second->isSelected())
-        {
-            name_of_selected_element_ = it.second->getName();
-        }
-    }
-    return name_of_selected_element_;*/
 }
 
 WindowSettings WindowView::getWindowSettings() const

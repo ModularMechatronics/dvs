@@ -113,8 +113,6 @@ public:
                  const dvs::internal::CommunicationHeader& hdr) override;
     void show() override;
     void hide() override;
-    void resetSelection() override;
-    void setSelection() override;
     void destroy() override;
     void refresh() override;
     void keyPressed(const char key) override;
