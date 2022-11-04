@@ -294,11 +294,18 @@ public:
     {
         std::ifstream input_file(file_path);
         nlohmann::json j;
-        input_file >> j;
-
-        for (size_t k = 0; k < j["windows"].size(); k++)
+        try
         {
-            windows_.emplace_back(j["windows"][k]);
+            input_file >> j;
+
+            for (size_t k = 0; k < j["windows"].size(); k++)
+            {
+                windows_.emplace_back(j["windows"][k]);
+            }
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Exception thrown when reading file " << file_path << ": " << e.what() << std::endl;
         }
     }
 

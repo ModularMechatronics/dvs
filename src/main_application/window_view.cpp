@@ -2,22 +2,28 @@
 
 #include "events.h"
 #include "globals.h"
+#include "main_window.h"
 #include "plot_pane.h"
 
-WindowView::WindowView(wxFrame* parent,
+WindowView::WindowView(wxFrame* main_window,
                        const WindowSettings& window_settings,
                        const int callback_id,
                        const std::function<void(const char key)>& notify_main_window_key_pressed,
-                       const std::function<void(const char key)>& notify_main_window_key_released)
-    : wxFrame(parent, wxID_ANY, "Figure 1"),
+                       const std::function<void(const char key)>& notify_main_window_key_released,
+                       const std::function<void(const int callback_id)>& notify_main_window_delete_window,
+                       const std::function<void()>& notify_main_window_new_window)
+    : wxFrame(main_window, wxID_ANY, "Figure 1"),
       tab_buttons_{this,
                    window_settings,
                    [this](const std::string name) { tabChanged(name); },
                    [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::TAB_BUTTON); }},
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
-      notify_main_window_key_released_{notify_main_window_key_released}
-
+      notify_main_window_key_released_{notify_main_window_key_released},
+      notify_main_window_delete_window_{notify_main_window_delete_window},
+      notify_main_window_new_window_{notify_main_window_new_window}
 {
+    main_window_ = main_window;
+    current_tab_num_ = 0;
     grid_size_ = 1.0f;
     const RGBTripletf color_vec{axes_settings_.window_background_};
     SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
@@ -26,6 +32,7 @@ WindowView::WindowView(wxFrame* parent,
     this->SetPosition(wxPoint(window_settings.x, window_settings.y));
     this->SetLabel(window_settings.name);
     this->SetSize(wxSize(window_settings.width, window_settings.height));
+    name_ = window_settings.name;
 
     for (size_t k = 0; k < window_settings.tabs.size(); k++)
     {
@@ -41,11 +48,11 @@ WindowView::WindowView(wxFrame* parent,
     {
         if (tab.second->getName() == window_settings.tabs[0].name)
         {
-            tab.second->showAllElements();
+            tab.second->show();
         }
         else
         {
-            tab.second->hideAllElements();
+            tab.second->hide();
         }
     }
 
@@ -54,32 +61,42 @@ WindowView::WindowView(wxFrame* parent,
     popup_menu_tab_ = new wxMenu(wxT(""));
 
     popup_menu_window_->AppendSeparator();
-    popup_menu_window_->Append(wxID_ADD, wxT("&Edit window name"));
-    popup_menu_window_->Append(wxID_ADD, wxT("&Delete window"));
+    popup_menu_window_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
+    popup_menu_window_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_window_->AppendSeparator();
-    popup_menu_window_->Append(wxID_ADD, wxT("&New window"));
-    popup_menu_window_->Append(wxID_ADD, wxT("&New tab"));
-    popup_menu_window_->Append(wxID_ADD, wxT("&New element"));
+    popup_menu_window_->Append(dvs_ids::NEW_WINDOW, wxT("New window"));
+    popup_menu_window_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
+    popup_menu_window_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
 
-    popup_menu_element_->Append(wxID_ADD, wxT("&Edit element name"));
-    popup_menu_element_->Append(wxID_ADD, wxT("&Delete element"));
+    popup_menu_element_->Append(dvs_ids::EDIT_ELEMENT_NAME, wxT("Edit element name"));
+    popup_menu_element_->Append(dvs_ids::DELETE_ELEMENT, wxT("Delete element"));
     popup_menu_element_->AppendSeparator();
-    popup_menu_element_->Append(wxID_ADD, wxT("&Edit window name"));
-    popup_menu_element_->Append(wxID_ADD, wxT("&Delete window"));
+    popup_menu_element_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
+    popup_menu_element_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_element_->AppendSeparator();
-    popup_menu_element_->Append(wxID_ADD, wxT("&New window"));
-    popup_menu_element_->Append(wxID_ADD, wxT("&New tab"));
-    popup_menu_element_->Append(wxID_ADD, wxT("&New element"));
+    popup_menu_element_->Append(dvs_ids::NEW_WINDOW, wxT("New window"));
+    popup_menu_element_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
+    popup_menu_element_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
 
-    popup_menu_tab_->Append(wxID_ADD, wxT("&Edit tab name"));
-    popup_menu_tab_->Append(wxID_ADD, wxT("&Delete tab"));
+    popup_menu_tab_->Append(dvs_ids::EDIT_TAB_NAME, wxT("Edit tab name"));
+    popup_menu_tab_->Append(dvs_ids::DELETE_TAB, wxT("Delete tab"));
     popup_menu_tab_->AppendSeparator();
-    popup_menu_tab_->Append(wxID_ADD, wxT("&Edit window name"));
-    popup_menu_tab_->Append(wxID_ADD, wxT("&Delete window"));
+    popup_menu_tab_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
+    popup_menu_tab_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_tab_->AppendSeparator();
-    popup_menu_tab_->Append(wxID_ADD, wxT("&New window"));
-    popup_menu_tab_->Append(wxID_ADD, wxT("&New tab"));
-    popup_menu_tab_->Append(wxID_ADD, wxT("&New element"));
+    popup_menu_tab_->Append(dvs_ids::NEW_WINDOW, wxT("New window"));
+    popup_menu_tab_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
+    popup_menu_tab_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
+
+    // Bind(wxEVT_MENU, &WindowView::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
+    Bind(wxEVT_MENU, &MainWindow::deleteWindowNew, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
+    // Bind(wxEVT_MENU, &WindowView::newWindow, this, dvs_ids::NEW_WINDOW);
+    // Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
+    // Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
+    // Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
+    // Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
+    // Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
+    // Bind(wxEVT_MENU, &WindowView::deleteTab, this, dvs_ids::DELETE_TAB);
 
     // Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
     // Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
@@ -88,6 +105,11 @@ WindowView::WindowView(wxFrame* parent,
 
     tab_buttons_.windowWasResized(this->GetSize());
     show();
+}
+
+WindowView::~WindowView()
+{
+    std::cout << "Destructor of window " << name_ << std::endl;
 }
 
 void WindowView::mouseRightPressed(const wxPoint pos, const ClickSource source)
@@ -139,11 +161,11 @@ void WindowView::tabChanged(const std::string name)
     {
         if (tab.first == name)
         {
-            tab.second->showAllElements();
+            tab.second->show();
         }
         else
         {
-            tab.second->hideAllElements();
+            tab.second->hide();
         }
     }
 }
@@ -213,9 +235,9 @@ void WindowView::OnClose(wxCloseEvent& WXUNUSED(event))
     // hide();
 }
 
-void WindowView::newElement(const std::string& element_name)
+/*void WindowView::newElement(const std::string& element_name)
 {
-    /*ElementSettings elem;
+    ElementSettings elem;
     elem.x = 0;
     elem.y = 0;
     elem.width = 0.3;
@@ -229,12 +251,12 @@ void WindowView::newElement(const std::string& element_name)
                                         notify_main_window_key_released_);
 
     ge->updateSizeFromParent(this->GetSize());
-    gui_elements_[elem.name] = ge;*/
-}
+    gui_elements_[elem.name] = ge;
+}*/
 
-void WindowView::newElement()
+/*void WindowView::newElement()
 {
-    /*ElementSettings elem;
+    ElementSettings elem;
     elem.x = 0;
     elem.y = 0;
     elem.width = 0.3;
@@ -248,8 +270,8 @@ void WindowView::newElement()
                                         notify_main_window_key_released_);
 
     ge->updateSizeFromParent(this->GetSize());
-    gui_elements_[elem.name] = ge;*/
-}
+    gui_elements_[elem.name] = ge;
+}*/
 
 WindowSettings WindowView::getWindowSettings() const
 {
@@ -322,4 +344,63 @@ void WindowView::setFirstElementSelected()
         gui_elements_.begin()->second->setSelection();
         gui_elements_.begin()->second->refresh();
     }*/
+}
+
+void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from editWindowName" << std::endl;
+}
+
+void WindowView::deleteWindow(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from deleteWindow" << std::endl;
+    notify_main_window_delete_window_(callback_id_);
+}
+
+void WindowView::newWindow(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from newWindow" << std::endl;
+    notify_main_window_new_window_();
+}
+
+void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from newTab" << std::endl;
+
+    TabSettings tab_settings;
+    tab_settings.name = "Tab " + std::to_string(current_tab_num_);
+    current_tab_num_++;
+
+    tabs_[tab_settings.name] =
+        new GuiTab(this,
+                   tab_settings,
+                   notify_main_window_key_pressed_,
+                   notify_main_window_key_released_,
+                   [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::GUI_ELEMENT); });
+    tab_buttons_.addNewTab(tab_settings.name);
+}
+
+void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from newElement" << std::endl;
+}
+
+void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from editElementName" << std::endl;
+}
+
+void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from deleteElement" << std::endl;
+}
+
+void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from editTabName" << std::endl;
+}
+
+void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
+{
+    std::cout << "Event from deleteTab" << std::endl;
 }

@@ -28,6 +28,8 @@ private:
     int button_height_, button_width_;
     WindowSettings window_settings_;
     int tab_button_id_counter_;
+    wxFrame* parent_;
+    std::function<void(const wxPoint pos)> notify_parent_window_right_mouse_pressed_;
 
     void layoutButtons();
 
@@ -39,6 +41,7 @@ public:
 
     void setSelection(const std::string id);
     void windowWasResized(const wxSize new_size);
+    void addNewTab(const std::string name);
 };
 
 #endif  // MAIN_APPLICATION_TAB_CONTAINER_H_

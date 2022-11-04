@@ -8,6 +8,8 @@ TabButtons::TabButtons(wxFrame* parent,
     tab_changed_callback_ = tab_changed_callback;
     window_settings_ = window_settings;
     tab_button_id_counter_ = 0;
+    parent_ = parent;
+    notify_parent_window_right_mouse_pressed_ = notify_parent_window_right_mouse_pressed;
 
     button_height_ = 30;
     button_width_ = 70;
@@ -43,6 +45,25 @@ void TabButtons::setSelection(const std::string name)
             tab_buttons_[k]->setDeselected();
         }
     }*/
+}
+
+void TabButtons::addNewTab(const std::string name)
+{
+    tab_buttons_.push_back(new TabButton(
+        parent_,
+        name,
+        [this](std::string name_) {
+            // setSelection(id);
+            tab_changed_callback_(name_);
+        },
+        tab_button_id_counter_,
+        wxPoint(0, tab_buttons_.size() * 20),
+        wxSize(button_width_, button_height_),
+        notify_parent_window_right_mouse_pressed_));
+
+    tab_button_id_counter_++;
+
+    layoutButtons();
 }
 
 void TabButtons::layoutButtons()

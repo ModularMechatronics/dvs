@@ -3,13 +3,15 @@
 #include "events.h"
 
 // clang-format off
-wxBEGIN_EVENT_TABLE(CustomTaskBarIcon, wxTaskBarIcon) EVT_MENU(PU_EXIT, CustomTaskBarIcon::onMenuExit)
+wxBEGIN_EVENT_TABLE(CustomTaskBarIcon, wxTaskBarIcon)
+EVT_MENU(PU_EXIT, CustomTaskBarIcon::onMenuExit)
 EVT_MENU(PU_FILE_NEW, CustomTaskBarIcon::onMenuFileNew)
 EVT_MENU(PU_FILE_OPEN, CustomTaskBarIcon::onMenuFileOpen)
 EVT_MENU(PU_FILE_SAVE, CustomTaskBarIcon::onMenuFileSave)
 EVT_MENU(PU_FILE_SAVE_AS, CustomTaskBarIcon::onMenuFileSaveAs)
 EVT_MENU(PU_EDIT_LAYOUT, CustomTaskBarIcon::onMenuEdit)
-EVT_MENU(PU_PREFERENCES, CustomTaskBarIcon::onMenuPreferences) wxEND_EVENT_TABLE()
+EVT_MENU(PU_PREFERENCES, CustomTaskBarIcon::onMenuPreferences)
+wxEND_EVENT_TABLE()
 
 #if defined(__WXOSX__) && wxOSX_USE_COCOA
     CustomTaskBarIcon::CustomTaskBarIcon(wxTaskBarIconType iconType)
@@ -168,11 +170,12 @@ wxMenu* CustomTaskBarIcon::CreatePopupMenu()
 
     windows_submenu_->AppendSeparator();
 
-    for (const auto& p : window_events_)
+    // TODO: Fix
+    /*for (const auto& p : window_events_)
     {
         windows_submenu_->Append(window_event_ids_[p.first], p.first);
         Bind(wxEVT_MENU, &CustomTaskBarIcon::onMenuSubWindow, this, p.second);
-    }
+    }*/
 
     menu_->Append(PU_SUBMAIN, wxT("Windows"), windows_submenu_);
 

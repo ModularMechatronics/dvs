@@ -28,32 +28,50 @@ class GuiTab
 private:
     std::string name_;
     std::map<std::string, GuiElement*> gui_elements_;
+    wxFrame* parent_window_;
 
 public:
-    GuiTab(wxFrame* parent,
+    GuiTab(wxFrame* parent_window,
            const TabSettings& tab_settings,
            const std::function<void(const char key)>& notify_main_window_key_pressed,
            const std::function<void(const char key)>& notify_main_window_key_released,
            const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed)
         : name_{tab_settings.name}
     {
+        parent_window_ = parent_window;
         const float grid_size_ = 1.0f;
 
         for (const auto& elem : tab_settings.elements)
         {
-            GuiElement* const ge = new PlotPane(parent,
+            GuiElement* const ge = new PlotPane(parent_window_,
                                                 elem,
                                                 grid_size_,
                                                 notify_main_window_key_pressed,
                                                 notify_main_window_key_released,
                                                 notify_parent_window_right_mouse_pressed);
 
-            ge->updateSizeFromParent(parent->GetSize());
+            ge->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_[elem.name] = ge;
         }
     }
 
-    void showAllElements()
+    void newElement()
+    {
+        /*const float grid_size_ = 1.0f;
+
+        ElementSettings elem_settings;
+        GuiElement* const ge = new PlotPane(parent_window_,
+                                            elem_settings,
+                                            grid_size_,
+                                            notify_main_window_key_pressed,
+                                            notify_main_window_key_released,
+                                            notify_parent_window_right_mouse_pressed);
+
+        ge->updateSizeFromParent(parent_window_->GetSize());
+        gui_elements_[elem_settings.name] = ge;*/
+    }
+
+    void show()
     {
         for (auto const& ge : gui_elements_)
         {
@@ -61,7 +79,7 @@ public:
         }
     }
 
-    void hideAllElements()
+    void hide()
     {
         for (auto const& ge : gui_elements_)
         {
@@ -119,27 +137,35 @@ private:
     void tabChanged(const std::string name);
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
+
+    std::function<void(const int callback_id)> notify_main_window_delete_window_;
+    std::function<void()> notify_main_window_new_window_;
     float grid_size_;
     std::string name_;
     std::map<std::string, GuiElement*> gui_elements_;
     int current_unnamed_idx_;
     std::string name_of_selected_element_;
     WindowSettings* settings_;
+    wxFrame* main_window_;
 
     wxMenu* popup_menu_window_;
     wxMenu* popup_menu_element_;
     wxMenu* popup_menu_tab_;
 
+    int current_tab_num_;
+
 public:
     WindowView() = delete;
-    WindowView(wxFrame* parent,
+    WindowView(wxFrame* main_window,
                const WindowSettings& window_settings,
                const int callback_id,
                const std::function<void(const char key)>& notify_main_window_key_pressed,
-               const std::function<void(const char key)>& notify_main_window_key_released);
-
-    void newElement(const std::string& element_name);
-    void newElement();
+               const std::function<void(const char key)>& notify_main_window_key_released,
+               const std::function<void(const int callback_id)>& notify_main_window_delete_window,
+               const std::function<void()>& notify_main_window_new_window);
+    ~WindowView();
+    // void newElement(const std::string& element_name);
+    // void newElement();
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);
 
@@ -162,6 +188,19 @@ public:
     void mouseRightPressedCallback(wxMouseEvent& event);
 
     std::vector<ElementSettings> getElementSettingsList() const;
+
+    void editWindowName(wxCommandEvent& WXUNUSED(event));
+    void deleteWindow(wxCommandEvent& WXUNUSED(event));
+
+    void newWindow(wxCommandEvent& WXUNUSED(event));
+    void newTab(wxCommandEvent& WXUNUSED(event));
+    void newElement(wxCommandEvent& WXUNUSED(event));
+
+    void editElementName(wxCommandEvent& WXUNUSED(event));
+    void deleteElement(wxCommandEvent& WXUNUSED(event));
+
+    void editTabName(wxCommandEvent& WXUNUSED(event));
+    void deleteTab(wxCommandEvent& WXUNUSED(event));
 
     virtual void OnClose(wxCloseEvent& event);
 };

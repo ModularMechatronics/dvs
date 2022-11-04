@@ -6,6 +6,7 @@
 
 #include "dvs/math/math.h"
 #include "main_window.h"
+#include "window_view.h"
 
 using namespace dvs::internal;
 
