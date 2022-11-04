@@ -26,7 +26,8 @@
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
 #include "tray_icon.h"
-#include "window_view.h"
+// #include "window_view.h"
+class WindowView;
 
 class MainWindow : public wxFrame
 {
@@ -71,7 +72,6 @@ private:
     void tabChanged(wxCommandEvent& event);
     void preferencesCallback(wxCommandEvent& event);
     void preferences();
-    wxMenuBar* createMainMenuBar();
     void guiElementModified(wxCommandEvent& event);
     void childWindowClosed(wxCommandEvent& event);
     void childWindowInFocus(wxCommandEvent& event);
@@ -98,6 +98,7 @@ public:
     virtual void OnClose(wxCloseEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
+    void deleteWindowNew(wxCommandEvent& event);
     void toggleWindowVisibilityCallback(wxCommandEvent& event);
     void toggleWindowVisibility(const std::string& window_name);
     void openExistingFile(wxCommandEvent& event);
@@ -108,6 +109,8 @@ public:
     void addNewWindowCallback(wxCommandEvent& event);
     void deleteWindow();
     void noElementSelected(wxCommandEvent& event);
+    void newWindow();
+    void deleteWindow(const int callback_id);
 
     void newNamedElement(const std::string& element_name);
     void newElement();

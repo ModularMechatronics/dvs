@@ -157,7 +157,7 @@ void TabButton::setDeselected()
 
 void TabButton::mouseRightPressed(wxMouseEvent& event)
 {
-    notify_parent_window_right_mouse_pressed_(event.GetPosition());
+    notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition());
 }
 
 void TabButton::mouseLeftReleased(wxMouseEvent& event)

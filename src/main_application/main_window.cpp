@@ -12,6 +12,7 @@
 #include "dvs/math/math.h"
 #include "events.h"
 #include "filesystem.h"
+#include "window_view.h"
 
 using namespace dvs::internal;
 
@@ -129,16 +130,52 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
 {
     for (const WindowSettings& ws : project_settings.getWindows())
     {
-        windows_.emplace_back(new WindowView(this,
-                                             ws,
-                                             window_callback_id_,
-                                             notification_from_gui_element_key_pressed_,
-                                             notification_from_gui_element_key_released_));
-        window_callback_id_++;
+        windows_.emplace_back(new WindowView(
+            this,
+            ws,
+            window_callback_id_,
+            notification_from_gui_element_key_pressed_,
+            notification_from_gui_element_key_released_,
+            [this](const int callback_id) { deleteWindow(callback_id); },
+            [this]() { newWindow(); }));
+        window_callback_id_ += 20;
         const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
         gui_elements_.insert(ges.begin(), ges.end());
         task_bar_->addNewWindow(ws.name);
     }
+}
+
+void MainWindow::newWindow()
+{
+    WindowSettings window_settings;
+    window_settings.name = "Window " + std::to_string(current_tab_num_);
+    window_settings.x = 30;
+    window_settings.y = 30;
+    window_settings.width = 600;
+    window_settings.height = 628;
+
+    WindowView* window_element = new WindowView(
+        this,
+        window_settings,
+        window_callback_id_,
+        notification_from_gui_element_key_pressed_,
+        notification_from_gui_element_key_released_,
+        [this](const int callback_id) { deleteWindow(callback_id); },
+        [this]() { newWindow(); });
+
+    current_tab_num_++;
+    window_callback_id_++;
+
+    windows_.push_back(window_element);
+
+    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, window_element->getCallbackId());
+
+    fileModified();
+}
+
+void MainWindow::deleteWindow(const int callback_id)
+{
+    std::cout << "I'll delete " << callback_id << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -380,38 +417,6 @@ void MainWindow::preferences()
     std::cout << "Preferences!" << std::endl;
 }
 
-wxMenuBar* MainWindow::createMainMenuBar()
-{
-    wxMenuBar* menu_bar_tmp = new wxMenuBar();
-
-    // // File Menu
-    wxMenu* m_pFileMenu = new wxMenu();
-    m_pFileMenu->Append(wxID_NEW, _T("&New"));
-    m_pFileMenu->Append(wxID_OPEN, _T("&Open..."));
-    m_pFileMenu->Append(wxID_SAVE, _T("&Save"));
-    m_pFileMenu->Append(wxID_SAVEAS, _T("&Save As..."));
-    m_pFileMenu->AppendSeparator();
-    m_pFileMenu->Append(wxID_EXIT, _T("&Quit"));
-    menu_bar_tmp->Append(m_pFileMenu, _T("&File"));
-
-    wxMenu* m_edit_menu = new wxMenu();
-
-    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::EDIT_LAYOUT, _T("Edit layout"));
-    edit_layout_menu_option_ = m_edit_menu->Append(dvs_ids::PREFERENCES, _T("Preferences"));
-    menu_bar_tmp->Append(m_edit_menu, _T("Edit"));
-
-    m_pWindowsMenu = new wxMenu();
-    m_pWindowsMenu->Append(dvs_ids::SHOW_MAIN_WINDOW, "Main window");
-    m_pWindowsMenu->AppendSeparator();
-    menu_bar_tmp->Append(m_pWindowsMenu, _T("&Windows"));
-
-    wxMenu* m_pHelpMenu = new wxMenu();
-    m_pHelpMenu->Append(wxID_ABOUT, _T("&About"));
-    menu_bar_tmp->Append(m_pHelpMenu, _T("&Help"));
-
-    return menu_bar_tmp;
-}
-
 void MainWindow::openExistingFileCallback(wxCommandEvent& WXUNUSED(event))
 {
     // openExistingFile();
@@ -538,4 +543,19 @@ void MainWindow::OnClose(wxCloseEvent& WXUNUSED(event))
 
     std::cout << "Window close" << std::endl;
     // Destroy();
+}
+
+void MainWindow::deleteWindowNew(wxCommandEvent& event)
+{
+    auto q = std::find_if(windows_.begin(), windows_.end(), [&event](const WindowView* const w) -> bool {
+        return w->getCallbackId() == (event.GetId() - 1);
+    });
+
+    if (q != windows_.end())
+    {
+        std::cout << "Erasing element at " << std::distance(windows_.begin(), q) << std::endl;
+        std::cout << "Name: " << (*q)->getName() << std::endl;
+        delete (*q);
+        windows_.erase(q);
+    }
 }
