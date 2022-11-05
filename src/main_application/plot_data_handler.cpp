@@ -341,3 +341,16 @@ void PlotDataHandler::softClear()
     }
     plot_datas_ = new_plot_datas;
 }
+
+PlotDataHandler::~PlotDataHandler()
+{
+    for (size_t k = 0; k < plot_datas_.size(); k++)
+    {
+        delete plot_datas_[k];
+    }
+
+    for (size_t k = 0; k < old_plot_datas_.size(); k++)
+    {
+        delete old_plot_datas_[k];
+    }
+}

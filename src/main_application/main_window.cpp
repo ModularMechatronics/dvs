@@ -23,7 +23,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     udp_server_ = new UdpServer(dvs::internal::kUdpPortNum);
     udp_server_->start();
     current_gui_element_ = nullptr;
-    current_gui_element_set_ = false;
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
 
     configuration_agent_ = new ConfigurationAgent();
@@ -42,7 +41,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     task_bar_->setOnMenuFileOpen([this]() -> void { openExistingFile(); });
     task_bar_->setOnMenuFileSave([this]() -> void { saveProject(); });
     task_bar_->setOnMenuFileSaveAs([this]() -> void { saveProjectAs(); });
-    task_bar_->setOnMenuEdit([this]() -> void {});
     task_bar_->setOnMenuSubWindow(
         [this](const std::string& window_name) -> void { toggleWindowVisibility(window_name); });
     task_bar_->setOnMenuPreferences([this]() -> void { preferences(); });
@@ -73,9 +71,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(NO_ELEMENT_SELECTED, &MainWindow::noElementSelected, this, wxID_ANY);
     Bind(CHILD_WINDOW_CLOSED_EVENT, &MainWindow::childWindowClosed, this, wxID_ANY);
     Bind(wxEVT_CLOSE_WINDOW, &MainWindow::onCloseButton, this, wxID_ANY);
-    Bind(CHILD_WINDOW_IN_FOCUS_EVENT, &MainWindow::childWindowInFocus, this, wxID_ANY);
 
-    current_tab_num_ = 0;
+    current_window_num_ = 0;
 
     setupGui();
 
@@ -85,8 +82,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
     }
 
-    timer_.Bind(wxEVT_TIMER, &MainWindow::OnTimer, this);
-    timer_.Start(10);
+    receive_timer_.Bind(wxEVT_TIMER, &MainWindow::OnReceiveTimer, this);
+    receive_timer_.Start(10);
 
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
 }
@@ -130,17 +127,15 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
 {
     for (const WindowSettings& ws : project_settings.getWindows())
     {
-        windows_.emplace_back(new WindowView(
-            this,
-            ws,
-            window_callback_id_,
-            notification_from_gui_element_key_pressed_,
-            notification_from_gui_element_key_released_,
-            [this](const int callback_id) { deleteWindow(callback_id); },
-            [this]() { newWindow(); }));
+        windows_.emplace_back(new WindowView(this,
+                                             ws,
+                                             window_callback_id_,
+                                             notification_from_gui_element_key_pressed_,
+                                             notification_from_gui_element_key_released_,
+                                             [this]() { newWindow(); }));
         window_callback_id_ += 20;
-        const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
-        gui_elements_.insert(ges.begin(), ges.end());
+        // const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
+        // gui_elements_.insert(ges.begin(), ges.end());
         task_bar_->addNewWindow(ws.name);
     }
 }
@@ -148,22 +143,20 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
 void MainWindow::newWindow()
 {
     WindowSettings window_settings;
-    window_settings.name = "Window " + std::to_string(current_tab_num_);
+    window_settings.name = "Window " + std::to_string(current_window_num_);
     window_settings.x = 30;
     window_settings.y = 30;
     window_settings.width = 600;
     window_settings.height = 628;
 
-    WindowView* window_element = new WindowView(
-        this,
-        window_settings,
-        window_callback_id_,
-        notification_from_gui_element_key_pressed_,
-        notification_from_gui_element_key_released_,
-        [this](const int callback_id) { deleteWindow(callback_id); },
-        [this]() { newWindow(); });
+    WindowView* window_element = new WindowView(this,
+                                                window_settings,
+                                                window_callback_id_,
+                                                notification_from_gui_element_key_pressed_,
+                                                notification_from_gui_element_key_released_,
+                                                [this]() { newWindow(); });
 
-    current_tab_num_++;
+    current_window_num_++;
     window_callback_id_++;
 
     windows_.push_back(window_element);
@@ -173,11 +166,6 @@ void MainWindow::newWindow()
     fileModified();
 }
 
-void MainWindow::deleteWindow(const int callback_id)
-{
-    std::cout << "I'll delete " << callback_id << std::endl;
-}
-
 MainWindow::~MainWindow()
 {
     delete configuration_agent_;
@@ -185,7 +173,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
 {
-    // saveProjectAs();
+    saveProjectAs();
 }
 
 void MainWindow::saveProjectAs()
@@ -239,145 +227,41 @@ void MainWindow::saveProject()
 
 void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
 {
-    // newProject();
+    newProject();
 }
 
 void MainWindow::newProject()
 {
-    // if (!save_manager_->isSaved())
-    // {
-    //     if (wxMessageBox(_("Current content has not been saved! Proceed?"),
-    //                      _("Please confirm"),
-    //                      wxICON_QUESTION | wxYES_NO,
-    //                      this) == wxNO)
-    //     {
-    //         return;
-    //     }
-    // }
-    // Unbind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
+    if (!save_manager_->isSaved())
+    {
+        if (wxMessageBox(_("Current content has not been saved! Proceed?"),
+                         _("Please confirm"),
+                         wxICON_QUESTION | wxYES_NO,
+                         this) == wxNO)
+        {
+            return;
+        }
+    }
 
     // current_tab_name_ = "";
 
-    // save_manager_->reset();
+    save_manager_->reset();
 
-    // /*tabs_ = std::vector<TabView*>();
-    // tabs_view->DeleteAllPages();
-    // tabs_view->Destroy();*/
+    for (auto we : windows_)
+    {
+        we->Destroy();
+    }
+    windows_.clear();
 
-    // for (auto we : windows_)
-    // {
-    //     we->Destroy();
-    // }
-    // windows_.clear();
+    setupWindows(save_manager_->getCurrentProjectSettings());
 
-    // // tabs_view = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
-    // // tabs_view->Layout();
-
-    // // tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
-
-    // Bind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
-
-    // setupWindows(save_manager_->getCurrentProjectSettings());
-
-    // SendSizeEvent();
-    // Refresh();
+    SendSizeEvent();
+    Refresh();
 }
 
 void MainWindow::saveProjectCallback(wxCommandEvent& WXUNUSED(event))
 {
-    // saveProject();
-}
-
-void MainWindow::addNewWindowCallback(wxCommandEvent& WXUNUSED(event))
-{
-    // const std::string window_name = "new-window-" + std::to_string(current_tab_num_);
-    // current_tab_num_++;
-
-    // addNewWindow(window_name);
-    // task_bar_->addNewWindow(window_name);
-}
-
-void MainWindow::addNewWindow(const std::string& window_name)
-{
-    // WindowSettings window_settings;
-    // window_settings.setName(window_name);
-    // window_settings.x = 30;
-    // window_settings.y = 30;
-    // window_settings.width = 600;
-    // window_settings.height = 628;
-    // WindowView* window_element = new WindowView(this,
-    //                                             window_settings,
-    //                                             window_callback_id_,
-    //                                             notification_from_gui_element_key_pressed_,
-    //                                             notification_from_gui_element_key_released_);
-    // window_callback_id_++;
-    // windows_.push_back(window_element);
-
-    // m_pWindowsMenu->Append(window_element->getCallbackId(), window_element->getName());
-    // Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, window_element->getCallbackId());
-
-    // main_window_last_in_focus_ = false;
-    // /*for (auto te : tabs_)
-    // {
-    //     te->resetSelectionForAllChildren();
-    // }*/
-
-    // for (auto we : windows_)
-    // {
-    //     we->resetSelectionForAllChildren();
-    // }
-
-    // current_tab_name_ = window_element->getName();
-
-    // fileModified();
-}
-
-void MainWindow::deleteWindow()
-{
-    // int window_idx = 0;
-    // if (!main_window_last_in_focus_)
-    // {
-    //     for (auto we : windows_)
-    //     {
-    //         if (we->getName() == current_tab_name_)
-    //         {
-    //             Unbind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
-    //             task_bar_->removeWindow(current_tab_name_);
-
-    //             const int menu_id = m_pWindowsMenu->FindItem(we->getName());
-    //             m_pWindowsMenu->Destroy(menu_id);
-
-    //             /*const std::map<std::string, GuiElement*> window_gui_elements = we->getGuiElements();
-    //             for (const auto& q : window_gui_elements)
-    //             {
-    //                 gui_elements_.erase(q.first);
-    //             }
-    //             we->Destroy();
-
-    //             main_window_last_in_focus_ = true;
-    //             break;*/
-    //         }
-
-    //         window_idx++;
-    //     }
-    //     windows_.erase(windows_.begin() + window_idx);
-    // }
-    // /*const int current_tab_idx = tabs_view->GetSelection();
-    // if(current_tab_idx != wxNOT_FOUND)
-    // {
-
-    //     const std::map<std::string, GuiElement*> tab_gui_elements = tabs_.at(current_tab_idx)->getGuiElements();
-
-    //     for(const auto& q : tab_gui_elements)
-    //     {
-    //         gui_elements_.erase(q.first);
-    //     }
-
-    //     tabs_view->DeletePage(current_tab_idx);
-    //     tabs_.erase(tabs_.begin() + current_tab_idx);
-    // }
-
-    // fileModified();*/
+    saveProject();
 }
 
 void MainWindow::guiElementModified(wxCommandEvent& WXUNUSED(event))
@@ -388,24 +272,6 @@ void MainWindow::guiElementModified(wxCommandEvent& WXUNUSED(event))
 void MainWindow::noElementSelected(wxCommandEvent& WXUNUSED(event)) {}
 
 void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event)) {}
-
-void MainWindow::childWindowInFocus(wxCommandEvent& event)
-{
-    // main_window_last_in_focus_ = false;
-    // /*for (auto te : tabs_)
-    // {
-    //     te->resetSelectionForAllChildren();
-    // }*/
-
-    // for (auto we : windows_)
-    // {
-    //     we->resetSelectionForAllChildren();
-    //     if (we->getCallbackId() == event.GetId())
-    //     {
-    //         current_tab_name_ = we->getName();
-    //     }
-    // }
-}
 
 void MainWindow::preferencesCallback(wxCommandEvent& WXUNUSED(event))
 {
@@ -419,74 +285,61 @@ void MainWindow::preferences()
 
 void MainWindow::openExistingFileCallback(wxCommandEvent& WXUNUSED(event))
 {
-    // openExistingFile();
+    openExistingFile();
 }
 
 void MainWindow::openExistingFile()
 {
-    // if (!save_manager_->isSaved())
-    // {
-    //     if (wxMessageBox(_("Current content has not been saved! Proceed?"),
-    //                      _("Please confirm"),
-    //                      wxICON_QUESTION | wxYES_NO,
-    //                      this) == wxNO)
-    //     {
-    //         return;
-    //     }
-    // }
-    // Unbind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
+    if (!save_manager_->isSaved())
+    {
+        if (wxMessageBox(_("Current content has not been saved! Proceed?"),
+                         _("Please confirm"),
+                         wxICON_QUESTION | wxYES_NO,
+                         this) == wxNO)
+        {
+            return;
+        }
+    }
 
-    // wxFileDialog openFileDialog(
-    //     this, _("Open dvs file"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-    // if (openFileDialog.ShowModal() == wxID_CANCEL)
-    // {
-    //     return;
-    // }
+    wxFileDialog openFileDialog(
+        this, _("Open dvs file"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if (openFileDialog.ShowModal() == wxID_CANCEL)
+    {
+        return;
+    }
 
-    // if (save_manager_->getCurrentFilePath() == std::string(openFileDialog.GetPath().mb_str()))
-    // {
-    //     return;
-    // }
+    if (save_manager_->getCurrentFilePath() == std::string(openFileDialog.GetPath().mb_str()))
+    {
+        return;
+    }
 
-    // configuration_agent_->writeValue("last_opened_file", std::string(openFileDialog.GetPath().mb_str()));
+    configuration_agent_->writeValue("last_opened_file", std::string(openFileDialog.GetPath().mb_str()));
 
-    // save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
+    save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
 
-    // /*tabs_ = std::vector<TabView*>();
-    // tabs_view->DeleteAllPages();
-    // tabs_view->Destroy();*/
+    for (auto we : windows_)
+    {
+        we->Destroy();
+    }
+    windows_.clear();
 
-    // for (auto we : windows_)
-    // {
-    //     we->Destroy();
-    // }
-    // windows_.clear();
-
-    // // tabs_view = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
-    // // tabs_view->Layout();
-
-    // // tabs_sizer_v->Add(tabs_view, 1, wxEXPAND);
-
-    // Bind(wxEVT_ACTIVATE, &MainWindow::onActivate, this);
-
-    // setupWindows(save_manager_->getCurrentProjectSettings());
+    setupWindows(save_manager_->getCurrentProjectSettings());
 
     // refresh_timer_.Start(10);
-
-    // SendSizeEvent();
-    // Refresh();
-}
-
-void MainWindow::OnRefreshTimer(wxTimerEvent&)
-{
-    refresh_timer_.Stop();
-    // tabs_view->Refresh();
 
     SendSizeEvent();
     Refresh();
 }
 
-void MainWindow::OnTimer(wxTimerEvent&)
+void MainWindow::OnRefreshTimer(wxTimerEvent&)
+{
+    refresh_timer_.Stop();
+
+    SendSizeEvent();
+    Refresh();
+}
+
+void MainWindow::OnReceiveTimer(wxTimerEvent&)
 {
     try
     {
@@ -505,27 +358,20 @@ void MainWindow::OnTimer(wxTimerEvent&)
 void MainWindow::notifyChildrenOnKeyPressed(const char key)
 {
     std::cout << "Key pressed: " << key << std::endl;
-    std::map<std::string, GuiElement*>::iterator it;
 
-    for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
+    for (auto& we : windows_)
     {
-        it->second->keyPressed(key);
+        we->notifyChildrenOnKeyPressed(key);
     }
 }
 
 void MainWindow::notifyChildrenOnKeyReleased(const char key)
 {
     std::cout << "Key released: " << key << std::endl;
-    // // std::cout << "Key released: " << key << std::endl;
-    // if ((key == 'E') || (key == 'e'))
-    // {
-    //     return;
-    // }
-    std::map<std::string, GuiElement*>::iterator it;
 
-    for (it = gui_elements_.begin(); it != gui_elements_.end(); it++)
+    for (auto& we : windows_)
     {
-        it->second->keyReleased(key);
+        we->notifyChildrenOnKeyReleased(key);
     }
 }
 
@@ -545,7 +391,7 @@ void MainWindow::OnClose(wxCloseEvent& WXUNUSED(event))
     // Destroy();
 }
 
-void MainWindow::deleteWindowNew(wxCommandEvent& event)
+void MainWindow::deleteWindow(wxCommandEvent& event)
 {
     auto q = std::find_if(windows_.begin(), windows_.end(), [&event](const WindowView* const w) -> bool {
         return w->getCallbackId() == (event.GetId() - 1);

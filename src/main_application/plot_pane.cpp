@@ -140,7 +140,6 @@ PlotPane::PlotPane(wxWindow* parent,
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    // view_parent_ = dynamic_cast<SuperBase*>(parent); // TODO: Fix
     wait_for_flush_ = false;
 
     bindCallbacks();
@@ -237,6 +236,7 @@ int* PlotPane::getArgsPtr()
 
 PlotPane::~PlotPane()
 {
+    delete plot_data_handler_;
     delete m_context;
 }
 
@@ -401,7 +401,6 @@ void PlotPane::destroy()
 
 void PlotPane::mouseLeftPressed(wxMouseEvent& event)
 {
-    // view_parent_->resetSelectionForAllChildren(); // TODO: Fix
     wxCommandEvent evt(MY_EVENT, GetId());
     evt.SetEventObject(this);
     evt.SetString(element_settings_.name);

@@ -38,6 +38,8 @@ public:
     {
     }
 
+    virtual ~GuiElement() {}
+
     std::string getName() const
     {
         return element_settings_.name;

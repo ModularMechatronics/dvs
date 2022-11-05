@@ -21,21 +21,34 @@ void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
         throw std::runtime_error("Name string had zero length!");
     }
 
-    if (gui_elements_.count(element_name_str) > 0)
+    for (auto we : windows_)
+    {
+        current_gui_element_ = we->getGuiElement(element_name_str);
+        if (current_gui_element_ != nullptr)
+        {
+            break;
+        }
+    }
+
+    if (!currentGuiElementSet())
+    {
+        // TODO: Create new window with gui element or something
+    }
+    /*if (gui_elements_.count(element_name_str) > 0)
     {
         current_gui_element_ = gui_elements_[element_name_str];
-        current_gui_element_set_ = true;
+        // current_gui_element_set_ = true;
     }
     else
     {
-        /*TODO: Handle this
-        newNamedElement(element_name_str);*/
-    }
+        // TODO: Handle this
+        // newNamedElement(element_name_str);
+    }*/
 }
 
 void MainWindow::setWaitForFlush()
 {
-    if (current_gui_element_set_)
+    if (currentGuiElementSet())
     {
         current_gui_element_->waitForFlush();
     }
@@ -50,7 +63,7 @@ void MainWindow::createNewElement(const CommunicationHeader& hdr)
     if (gui_elements_.count(element_name_str) > 0)
     {
         current_gui_element_ = gui_elements_[element_name_str];
-        current_gui_element_set_ = true;
+        // current_gui_element_set_ = true;
     }
     else
     {
@@ -62,8 +75,8 @@ void MainWindow::createNewElement(const CommunicationHeader& hdr)
 
         if (parent_name == "#DEFAULTNAME#")
         {
-            parent_name = "New figure " + std::to_string(current_tab_num_);
-            current_tab_num_++;
+            parent_name = "New figure " + std::to_string(current_window_num_);
+            current_window_num_++;
         }
 
         // if (parent_type == ElementParent::TAB)
@@ -110,6 +123,11 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::REAL_TIME_PLOT) || (fcn == Function::HEADER_EXTENSION);
 }
 
+bool MainWindow::currentGuiElementSet() const
+{
+    return current_gui_element_ != nullptr;
+}
+
 void MainWindow::receiveData()
 {
     std::unique_ptr<const ReceivedData> received_data = udp_server_->getReceivedData();
@@ -121,7 +139,7 @@ void MainWindow::receiveData()
 
         if (isGuiElementFunction(fcn))
         {
-            if (current_gui_element_set_)
+            if (currentGuiElementSet())
             {
                 current_gui_element_->addData(std::move(received_data), hdr);
             }
@@ -143,7 +161,7 @@ void MainWindow::receiveData()
                     break;
 
                 case Function::FLUSH_ELEMENT:
-                    if (current_gui_element_set_)
+                    if (currentGuiElementSet())
                     {
                         current_gui_element_->refresh();
                     }
@@ -156,7 +174,7 @@ void MainWindow::receiveData()
                     break;
 
                 case Function::SHOW_LEGEND:
-                    if (current_gui_element_set_)
+                    if (currentGuiElementSet())
                     {
                         current_gui_element_->showLegend(true);
                     }

@@ -31,6 +31,7 @@ public:
 
     // std::vector<CommunicationHeader> awaiting_headers_;
     PlotDataHandler(const ShaderCollection shader_collection);
+    ~PlotDataHandler();
     void clear();
     void softClear();
     void addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr);
