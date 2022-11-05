@@ -182,35 +182,6 @@ void MainWindow::newElement()
     fileModified();*/
 }
 
-void MainWindow::deleteSelectedElement()
-{
-    /*if (main_window_last_in_focus_) {}
-    else
-    {
-        for (auto we : windows_)
-        {
-            if (we->getName() == current_tab_name_)
-            {
-                const std::map<std::string, GuiElement*> all_elements = we->getGuiElements();
-
-                we->deleteSelectedElement();
-
-                const std::map<std::string, GuiElement*> elements_after_delete = we->getGuiElements();
-
-                for (const auto& q : all_elements)
-                {
-                    if (elements_after_delete.count(q.first) == 0)
-                    {
-                        gui_elements_.erase(q.first);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    fileModified();*/
-}
-
 bool MainWindow::hasWindowWithName(const std::string& window_name)
 {
     for (const auto we : windows_)

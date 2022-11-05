@@ -58,11 +58,6 @@ void CustomTaskBarIcon::setOnMenuFileSaveAs(std::function<void()>&& file_save_as
     file_save_as_function_ = std::move(file_save_as_function);
 }
 
-void CustomTaskBarIcon::setOnMenuEdit(std::function<void()>&& edit_function)
-{
-    edit_function_ = std::move(edit_function);
-}
-
 void CustomTaskBarIcon::setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function)
 {
     submenu_function_ = std::move(submenu_function);

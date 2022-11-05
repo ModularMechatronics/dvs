@@ -10,7 +10,6 @@ WindowView::WindowView(wxFrame* main_window,
                        const int callback_id,
                        const std::function<void(const char key)>& notify_main_window_key_pressed,
                        const std::function<void(const char key)>& notify_main_window_key_released,
-                       const std::function<void(const int callback_id)>& notify_main_window_delete_window,
                        const std::function<void()>& notify_main_window_new_window)
     : wxFrame(main_window, wxID_ANY, "Figure 1"),
       tab_buttons_{this,
@@ -19,7 +18,6 @@ WindowView::WindowView(wxFrame* main_window,
                    [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::TAB_BUTTON); }},
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
       notify_main_window_key_released_{notify_main_window_key_released},
-      notify_main_window_delete_window_{notify_main_window_delete_window},
       notify_main_window_new_window_{notify_main_window_new_window}
 {
     main_window_ = main_window;
@@ -37,11 +35,12 @@ WindowView::WindowView(wxFrame* main_window,
     for (size_t k = 0; k < window_settings.tabs.size(); k++)
     {
         const std::string tab_name = window_settings.tabs[k].name;
-        tabs_[tab_name] = new GuiTab(this,
-                                     window_settings.tabs[k],
-                                     notify_main_window_key_pressed,
-                                     notify_main_window_key_released,
-                                     [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::GUI_ELEMENT); });
+        tabs_[tab_name] =
+            new WindowTab(this,
+                          window_settings.tabs[k],
+                          notify_main_window_key_pressed,
+                          notify_main_window_key_released,
+                          [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::GUI_ELEMENT); });
     }
 
     for (const auto& tab : tabs_)
@@ -89,8 +88,8 @@ WindowView::WindowView(wxFrame* main_window,
     popup_menu_tab_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
 
     // Bind(wxEVT_MENU, &WindowView::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
-    Bind(wxEVT_MENU, &MainWindow::deleteWindowNew, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
-    // Bind(wxEVT_MENU, &WindowView::newWindow, this, dvs_ids::NEW_WINDOW);
+    Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
+    Bind(wxEVT_MENU, &WindowView::newWindow, this, dvs_ids::NEW_WINDOW);
     // Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
     // Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
     // Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
@@ -109,7 +108,41 @@ WindowView::WindowView(wxFrame* main_window,
 
 WindowView::~WindowView()
 {
-    std::cout << "Destructor of window " << name_ << std::endl;
+    for (const auto& tab : tabs_)
+    {
+        delete tab.second;
+    }
+}
+
+GuiElement* WindowView::getGuiElement(const std::string& element_name) const
+{
+    GuiElement* ge;
+    for (const auto& tab : tabs_)
+    {
+        ge = tab.second->getGuiElement(element_name);
+        if (ge != nullptr)
+        {
+            return ge;
+        }
+    }
+
+    return nullptr;
+}
+
+void WindowView::notifyChildrenOnKeyPressed(const char key)
+{
+    for (const auto& tab : tabs_)
+    {
+        tab.second->notifyChildrenOnKeyPressed(key);
+    }
+}
+
+void WindowView::notifyChildrenOnKeyReleased(const char key)
+{
+    for (const auto& tab : tabs_)
+    {
+        tab.second->notifyChildrenOnKeyReleased(key);
+    }
 }
 
 void WindowView::mouseRightPressed(const wxPoint pos, const ClickSource source)
@@ -278,6 +311,7 @@ WindowSettings WindowView::getWindowSettings() const
     WindowSettings ws;
     const wxPoint pos = GetPosition();
     const wxSize size = GetSize();
+    ws.name = name_;
 
     ws.x = pos.x;
     ws.y = pos.y;
@@ -295,24 +329,6 @@ WindowSettings WindowView::getWindowSettings() const
 std::string WindowView::getName() const
 {
     return name_;
-}
-
-void WindowView::deleteSelectedElement()
-{
-    /*std::string key_to_delete = "";
-    for (auto it : gui_elements_)
-    {
-        if (it.second->isSelected())
-        {
-            key_to_delete = it.first;
-        }
-    }
-
-    if (key_to_delete != "")
-    {
-        gui_elements_[key_to_delete]->destroy();
-        gui_elements_.erase(key_to_delete);
-    }*/
 }
 
 void WindowView::setSelectedElementName(const std::string& new_name)
@@ -351,12 +367,6 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
     std::cout << "Event from editWindowName" << std::endl;
 }
 
-void WindowView::deleteWindow(wxCommandEvent& WXUNUSED(event))
-{
-    std::cout << "Event from deleteWindow" << std::endl;
-    notify_main_window_delete_window_(callback_id_);
-}
-
 void WindowView::newWindow(wxCommandEvent& WXUNUSED(event))
 {
     std::cout << "Event from newWindow" << std::endl;
@@ -372,11 +382,11 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
     current_tab_num_++;
 
     tabs_[tab_settings.name] =
-        new GuiTab(this,
-                   tab_settings,
-                   notify_main_window_key_pressed_,
-                   notify_main_window_key_released_,
-                   [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::GUI_ELEMENT); });
+        new WindowTab(this,
+                      tab_settings,
+                      notify_main_window_key_pressed_,
+                      notify_main_window_key_released_,
+                      [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::GUI_ELEMENT); });
     tab_buttons_.addNewTab(tab_settings.name);
 }
 

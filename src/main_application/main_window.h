@@ -36,15 +36,14 @@ private:
     ConfigurationAgent* configuration_agent_;
 
     UdpServer* udp_server_;
-    wxTimer timer_;
+    wxTimer receive_timer_;
     wxTimer refresh_timer_;
 
     std::vector<WindowView*> windows_;
     std::map<std::string, GuiElement*> gui_elements_;
 
     GuiElement* current_gui_element_;
-    bool current_gui_element_set_;
-    int current_tab_num_;
+    int current_window_num_;
 
     std::function<void(const char key)> notification_from_gui_element_key_pressed_;
     std::function<void(const char key)> notification_from_gui_element_key_released_;
@@ -57,7 +56,7 @@ private:
 
     bool elementNameExists(const std::string& element_name) const;
 
-    void OnTimer(wxTimerEvent&);
+    void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
     void OnKeyboardTimer(wxTimerEvent&);
     void setupGui();
@@ -74,7 +73,6 @@ private:
     void preferences();
     void guiElementModified(wxCommandEvent& event);
     void childWindowClosed(wxCommandEvent& event);
-    void childWindowInFocus(wxCommandEvent& event);
     void onCloseButton(wxCloseEvent& event);
 
     void notifyChildrenOnKeyPressed(const char key);
@@ -89,6 +87,7 @@ private:
 
     void setupWindows(const ProjectSettings& project_settings);
     void fileModified();
+    bool currentGuiElementSet() const;
 
 public:
     MainWindow();
@@ -98,23 +97,18 @@ public:
     virtual void OnClose(wxCloseEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
-    void deleteWindowNew(wxCommandEvent& event);
+    void deleteWindow(wxCommandEvent& event);
     void toggleWindowVisibilityCallback(wxCommandEvent& event);
     void toggleWindowVisibility(const std::string& window_name);
     void openExistingFile(wxCommandEvent& event);
     void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
     void openExistingFile();
     void changeCurrentElementName(const std::string new_element_name);
-    void addNewWindow(const std::string& window_name);
-    void addNewWindowCallback(wxCommandEvent& event);
-    void deleteWindow();
     void noElementSelected(wxCommandEvent& event);
     void newWindow();
-    void deleteWindow(const int callback_id);
 
     void newNamedElement(const std::string& element_name);
     void newElement();
-    void deleteSelectedElement();
 
     void disableEditing();
 };

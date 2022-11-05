@@ -83,8 +83,6 @@ private:
     PlotDataHandler* plot_data_handler_;
     ShaderCollection shader_collection_;
 
-    // WindowView* view_parent_; // TODO: Fix
-
     void notifyParentAboutModification();
     bool is3DFunction(const Function fcn);
     bool isImageFunction(const Function fcn);

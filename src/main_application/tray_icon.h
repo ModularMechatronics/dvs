@@ -74,7 +74,6 @@ public:
     void setOnMenuFileOpen(std::function<void()>&& file_open_function);
     void setOnMenuFileSave(std::function<void()>&& file_save_function);
     void setOnMenuFileSaveAs(std::function<void()>&& file_save_as_function);
-    void setOnMenuEdit(std::function<void()>&& edit_function);
     void setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function);
     void setOnMenuPreferences(std::function<void()>&& preferences_function);
 
