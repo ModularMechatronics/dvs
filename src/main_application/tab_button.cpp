@@ -6,7 +6,8 @@ TabButton::TabButton(wxFrame* parent,
                      const int id,
                      const wxPoint& pos,
                      const wxSize& size,
-                     const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed)
+                     const std::function<void(const wxPoint pos, const std::string& item_name)>&
+                         notify_parent_window_right_mouse_pressed)
     : wxPanel(parent, wxID_ANY, pos, size),
       notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed}
 {
@@ -157,7 +158,7 @@ void TabButton::setDeselected()
 
 void TabButton::mouseRightPressed(wxMouseEvent& event)
 {
-    notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition());
+    notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), button_label_);
 }
 
 void TabButton::mouseLeftReleased(wxMouseEvent& event)

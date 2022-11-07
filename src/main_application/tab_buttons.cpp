@@ -3,7 +3,8 @@
 TabButtons::TabButtons(wxFrame* parent,
                        const WindowSettings& window_settings,
                        const std::function<void(std::string)> tab_changed_callback,
-                       const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed)
+                       const std::function<void(const wxPoint pos, const std::string& item_name)>&
+                           notify_parent_window_right_mouse_pressed)
 {
     tab_changed_callback_ = tab_changed_callback;
     window_settings_ = window_settings;

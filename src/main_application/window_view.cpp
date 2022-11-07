@@ -15,7 +15,9 @@ WindowView::WindowView(wxFrame* main_window,
       tab_buttons_{this,
                    window_settings,
                    [this](const std::string name) { tabChanged(name); },
-                   [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::TAB_BUTTON); }},
+                   [this](const wxPoint pos, const std::string& item_name) {
+                       mouseRightPressed(pos, ClickSource::TAB_BUTTON, item_name);
+                   }},
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
       notify_main_window_key_released_{notify_main_window_key_released},
       notify_main_window_new_window_{notify_main_window_new_window}
@@ -35,12 +37,13 @@ WindowView::WindowView(wxFrame* main_window,
     for (size_t k = 0; k < window_settings.tabs.size(); k++)
     {
         const std::string tab_name = window_settings.tabs[k].name;
-        tabs_[tab_name] =
-            new WindowTab(this,
-                          window_settings.tabs[k],
-                          notify_main_window_key_pressed,
-                          notify_main_window_key_released,
-                          [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::GUI_ELEMENT); });
+        tabs_[tab_name] = new WindowTab(this,
+                                        window_settings.tabs[k],
+                                        notify_main_window_key_pressed,
+                                        notify_main_window_key_released,
+                                        [this](const wxPoint pos, const std::string& item_name) {
+                                            mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
+                                        });
     }
 
     for (const auto& tab : tabs_)
@@ -92,8 +95,8 @@ WindowView::WindowView(wxFrame* main_window,
     Bind(wxEVT_MENU, &WindowView::newWindow, this, dvs_ids::NEW_WINDOW);
     // Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
     // Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
-    // Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
-    // Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
+    Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
+    Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
     // Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
     // Bind(wxEVT_MENU, &WindowView::deleteTab, this, dvs_ids::DELETE_TAB);
 
@@ -145,8 +148,10 @@ void WindowView::notifyChildrenOnKeyReleased(const char key)
     }
 }
 
-void WindowView::mouseRightPressed(const wxPoint pos, const ClickSource source)
+void WindowView::mouseRightPressed(const wxPoint pos, const ClickSource source, const std::string& item_name)
 {
+    last_clicked_item_ = item_name;
+
     wxMenu menu(wxT(""));
 
     if (source == ClickSource::GUI_ELEMENT)
@@ -165,27 +170,13 @@ void WindowView::mouseRightPressed(const wxPoint pos, const ClickSource source)
 
 void WindowView::mouseRightPressedCallback(wxMouseEvent& event)
 {
-    mouseRightPressed(event.GetPosition(), ClickSource::THIS);
+    mouseRightPressed(event.GetPosition(), ClickSource::THIS, "");
 }
 
 void WindowView::childModified(wxCommandEvent& WXUNUSED(event))
 {
     // wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
     // wxPostEvent(this->GetParent(), parent_event);
-}
-
-std::map<std::string, GuiElement*> WindowView::getGuiElements() const
-{
-    std::map<std::string, GuiElement*> gui_elements;
-
-    for (const auto& tab : tabs_)
-    {
-        const auto ges = tab.second->getGuiElements();
-
-        gui_elements.insert(ges.begin(), ges.end());
-    }
-
-    return gui_elements;
 }
 
 void WindowView::tabChanged(const std::string name)
@@ -381,12 +372,13 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
     tab_settings.name = "Tab " + std::to_string(current_tab_num_);
     current_tab_num_++;
 
-    tabs_[tab_settings.name] =
-        new WindowTab(this,
-                      tab_settings,
-                      notify_main_window_key_pressed_,
-                      notify_main_window_key_released_,
-                      [this](const wxPoint pos) { mouseRightPressed(pos, ClickSource::GUI_ELEMENT); });
+    tabs_[tab_settings.name] = new WindowTab(this,
+                                             tab_settings,
+                                             notify_main_window_key_pressed_,
+                                             notify_main_window_key_released_,
+                                             [this](const wxPoint pos, const std::string& item_name) {
+                                                 mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
+                                             });
     tab_buttons_.addNewTab(tab_settings.name);
 }
 
@@ -397,11 +389,65 @@ void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
 
 void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
 {
-    std::cout << "Event from editElementName" << std::endl;
+    wxTextEntryDialog name_dialog(this, "Enter the new name for the element", "Edit element name", last_clicked_item_);
+
+    const RGBTripletf color_vec{axes_settings_.window_background_};
+    name_dialog.SetBackgroundColour(
+        wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+
+    std::string new_name;
+
+    while (true)
+    {
+        if (name_dialog.ShowModal() == wxID_CANCEL)
+        {
+            return;
+        }
+
+        new_name = name_dialog.GetValue().mb_str();
+
+        if (new_name == last_clicked_item_)
+        {
+            return;
+        }
+        else
+        {
+            bool element_exists;
+            for (const auto& t : tabs_)
+            {
+                element_exists = t.second->elementWithNameExists(new_name);
+                if (element_exists)
+                {
+                    wxMessageDialog dlg(
+                        &name_dialog, "Choose a unique name", "Element name \"" + new_name + "\" exists!");
+                    dlg.SetBackgroundColour(
+                        wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+                    dlg.ShowModal();
+                    break;
+                }
+            }
+
+            if (!element_exists)
+            {
+                break;
+            }
+        }
+    }
+    for (const auto& t : tabs_)
+    {
+        t.second->changeNameOfElementIfElementExists(last_clicked_item_, new_name);
+    }
+    // TODO: Now change name of element
+    // std::cout << "Event from editElementName: " << new_name << std::endl;
 }
 
 void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
 {
+    for (const auto& t : tabs_)
+    {
+        t.second->deleteElement(last_clicked_item_);
+    }
+    std::cout << "Will delete " << last_clicked_item_ << std::endl;
     std::cout << "Event from deleteElement" << std::endl;
 }
 

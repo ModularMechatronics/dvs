@@ -35,7 +35,8 @@ public:
               const TabSettings& tab_settings,
               const std::function<void(const char key)>& notify_main_window_key_pressed,
               const std::function<void(const char key)>& notify_main_window_key_released,
-              const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed)
+              const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                  notify_parent_window_right_mouse_pressed)
         : name_{tab_settings.name}
     {
         parent_window_ = parent_window;
@@ -122,11 +123,6 @@ public:
         return ts;
     }
 
-    std::map<std::string, GuiElement*> getGuiElements() const
-    {
-        return gui_elements_;
-    }
-
     GuiElement* getGuiElement(const std::string& element_name) const
     {
         if (gui_elements_.count(element_name) > 0)
@@ -154,6 +150,60 @@ public:
             ge.second->keyReleased(key);
         }
     }
+
+    void deleteElement(const std::string& element_name)
+    {
+        auto q = std::find_if(gui_elements_.begin(),
+                              gui_elements_.end(),
+                              [this, &element_name](std::pair<std::string, GuiElement*> const& item) -> bool {
+                                  return item.second->getName() == element_name;
+                              });
+
+        if (gui_elements_.end() != q)
+        {
+            delete q->second;
+            gui_elements_.erase(element_name);
+        }
+    }
+
+    bool elementWithNameExists(const std::string& element_name)
+    {
+        auto q = std::find_if(gui_elements_.begin(),
+                              gui_elements_.end(),
+                              [this, &element_name](std::pair<std::string, GuiElement*> const& item) -> bool {
+                                  return item.second->getName() == element_name;
+                              });
+
+        if (gui_elements_.end() != q)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool changeNameOfElementIfElementExists(const std::string& element_name, const std::string& new_name)
+    {
+        auto q = std::find_if(gui_elements_.begin(),
+                              gui_elements_.end(),
+                              [this, &element_name](std::pair<std::string, GuiElement*> const& item) -> bool {
+                                  return item.second->getName() == element_name;
+                              });
+
+        if (gui_elements_.end() != q)
+        {
+            (*q).second->setName(new_name);
+            gui_elements_.erase(element_name);
+            gui_elements_[new_name] = (*q).second;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 };
 
 class WindowView : public wxFrame
@@ -177,7 +227,6 @@ private:
     std::function<void()> notify_main_window_new_window_;
     float grid_size_;
     std::string name_;
-    // std::map<std::string, GuiElement*> gui_elements_;
     int current_unnamed_idx_;
     std::string name_of_selected_element_;
     WindowSettings* settings_;
@@ -188,6 +237,8 @@ private:
     wxMenu* popup_menu_tab_;
 
     int current_tab_num_;
+
+    std::string last_clicked_item_;
 
 public:
     WindowView() = delete;
@@ -208,7 +259,6 @@ public:
     void show();
     void setName(const std::string& new_name);
     WindowSettings getWindowSettings() const;
-    std::map<std::string, GuiElement*> getGuiElements() const;
     std::string getName() const;
     void childModified(wxCommandEvent& event);
 
@@ -218,7 +268,7 @@ public:
 
     GuiElement* getGuiElement(const std::string& element_name) const;
 
-    void mouseRightPressed(const wxPoint pos, const ClickSource source);
+    void mouseRightPressed(const wxPoint pos, const ClickSource source, const std::string& item_name);
 
     void mouseRightPressedCallback(wxMouseEvent& event);
     void notifyChildrenOnKeyPressed(const char key);

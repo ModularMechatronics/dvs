@@ -32,11 +32,11 @@ public:
               const int id,
               const wxPoint& pos,
               const wxSize& size,
-              const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed);
+              const std::function<void(const wxPoint pos, const std::string& item_name)>& notify_parent_window_right_mouse_pressed);
     int getId() const;
     void setSelected();
     void setDeselected();
-    std::function<void(const wxPoint pos)> notify_parent_window_right_mouse_pressed_;
+    std::function<void(const wxPoint pos, const std::string& item_name)> notify_parent_window_right_mouse_pressed_;
 
 private:
     void OnPaint(wxPaintEvent& event);

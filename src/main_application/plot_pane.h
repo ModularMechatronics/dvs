@@ -96,7 +96,8 @@ public:
              const float grid_size,
              const std::function<void(const char key)>& notify_main_window_key_pressed,
              const std::function<void(const char key)>& notify_main_window_key_released,
-             const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed);
+             const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                 notify_parent_window_right_mouse_pressed);
     ~PlotPane();
 
     int getWidth();
