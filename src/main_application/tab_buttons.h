@@ -29,7 +29,7 @@ private:
     WindowSettings window_settings_;
     int tab_button_id_counter_;
     wxFrame* parent_;
-    std::function<void(const wxPoint pos)> notify_parent_window_right_mouse_pressed_;
+    std::function<void(const wxPoint pos, const std::string& item_name)> notify_parent_window_right_mouse_pressed_;
 
     void layoutButtons();
 
@@ -37,7 +37,7 @@ public:
     TabButtons(wxFrame* parent,
                const WindowSettings& window_settings,
                const std::function<void(std::string)> tab_changed_callback,
-               const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed);
+               const std::function<void(const wxPoint pos, const std::string& item_name)>& notify_parent_window_right_mouse_pressed);
 
     void setSelection(const std::string id);
     void windowWasResized(const wxSize new_size);

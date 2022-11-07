@@ -124,7 +124,8 @@ PlotPane::PlotPane(wxWindow* parent,
                    const float grid_size,
                    const std::function<void(const char key)>& notify_main_window_key_pressed,
                    const std::function<void(const char key)>& notify_main_window_key_released,
-                   const std::function<void(const wxPoint pos)>& notify_parent_window_right_mouse_pressed)
+                   const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                       notify_parent_window_right_mouse_pressed)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
       GuiElement(element_settings,
                  notify_main_window_key_pressed,
@@ -180,7 +181,7 @@ void PlotPane::updateSizeFromParent(const wxSize& parent_size)
 
 void PlotPane::mouseRightPressed(wxMouseEvent& event)
 {
-    notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition());
+    notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), element_settings_.name);
 }
 
 void PlotPane::setPosition(const wxPoint& new_pos)

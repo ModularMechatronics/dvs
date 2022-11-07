@@ -193,15 +193,3 @@ bool MainWindow::hasWindowWithName(const std::string& window_name)
     }
     return false;
 }
-
-WindowView* MainWindow::getWindowWithName(const std::string& window_name)
-{
-    for (const auto we : windows_)
-    {
-        if (we->getName() == window_name)
-        {
-            return we;
-        }
-    }
-    return nullptr;
-}

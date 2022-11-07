@@ -40,7 +40,6 @@ private:
     wxTimer refresh_timer_;
 
     std::vector<WindowView*> windows_;
-    std::map<std::string, GuiElement*> gui_elements_;
 
     GuiElement* current_gui_element_;
     int current_window_num_;
@@ -50,15 +49,12 @@ private:
 
     CustomTaskBarIcon* task_bar_;
 
-    wxMenuItem* edit_layout_menu_option_;
-    wxMenu* m_pWindowsMenu;
     int window_callback_id_;
 
     bool elementNameExists(const std::string& element_name) const;
 
     void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
-    void OnKeyboardTimer(wxTimerEvent&);
     void setupGui();
     void setCurrentElement(const internal::CommunicationHeader& hdr);
     void createNewElement(const internal::CommunicationHeader& hdr);
@@ -66,9 +62,6 @@ private:
     void receiveData();
 
     bool hasWindowWithName(const std::string& window_name);
-    WindowView* getWindowWithName(const std::string& window_name);
-    void onActivate(wxActivateEvent& event);
-    void tabChanged(wxCommandEvent& event);
     void preferencesCallback(wxCommandEvent& event);
     void preferences();
     void guiElementModified(wxCommandEvent& event);
