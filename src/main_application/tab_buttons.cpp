@@ -119,9 +119,17 @@ void TabButtons::layoutButtons()
     const int num_buttons = tab_buttons_.size();
     const int y_offset = 10;
 
-    for (size_t k = 0; k < tab_buttons_.size(); k++)
+    if (tab_buttons_.size() == 1)
     {
-        tab_buttons_[k]->SetPosition(wxPoint(0, y_offset + k * button_height_ * 2));
+        tab_buttons_[0]->hide();
+    }
+    else
+    {
+        for (size_t k = 0; k < tab_buttons_.size(); k++)
+        {
+            tab_buttons_[k]->show();
+            tab_buttons_[k]->SetPosition(wxPoint(0, y_offset + k * button_height_ * 2));
+        }
     }
 }
 

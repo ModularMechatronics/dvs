@@ -177,6 +177,15 @@ bool TabButton::isSelected() const
     return is_selected_;
 }
 
+void TabButton::show()
+{
+    this->Show();
+}
+void TabButton::hide()
+{
+    this->Hide();
+}
+
 void TabButton::mouseLeftReleased(wxMouseEvent& event)
 {
     std::cout << "Released..." << std::endl;
