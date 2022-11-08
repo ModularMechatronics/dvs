@@ -27,8 +27,12 @@ class WindowTab
 {
 private:
     std::string name_;
-    std::map<std::string, GuiElement*> gui_elements_;
+    std::vector<GuiElement*> gui_elements_;
     wxFrame* parent_window_;
+    std::function<void(const char key)> notify_main_window_key_pressed_;
+    std::function<void(const char key)> notify_main_window_key_released_;
+    std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
+    int current_element_idx_;
 
 public:
     WindowTab(wxFrame* parent_window,
@@ -37,10 +41,14 @@ public:
               const std::function<void(const char key)>& notify_main_window_key_released,
               const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                   notify_parent_window_right_mouse_pressed)
-        : name_{tab_settings.name}
+        : name_{tab_settings.name},
+          notify_main_window_key_pressed_{notify_main_window_key_pressed},
+          notify_main_window_key_released_{notify_main_window_key_released},
+          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed}
     {
         parent_window_ = parent_window;
         const float grid_size_ = 1.0f;
+        current_element_idx_ = 0;
 
         for (const auto& elem : tab_settings.elements)
         {
@@ -52,7 +60,9 @@ public:
                                                 notify_parent_window_right_mouse_pressed);
 
             ge->updateSizeFromParent(parent_window_->GetSize());
-            gui_elements_[elem.name] = ge;
+            gui_elements_.push_back(ge);
+
+            current_element_idx_++;
         }
     }
 
@@ -60,31 +70,61 @@ public:
     {
         for (auto const& ge : gui_elements_)
         {
-            delete ge.second;
+            delete ge;
         }
     }
 
     void newElement()
     {
-        /*const float grid_size_ = 1.0f;
+        const float grid_size_ = 1.0f;
 
         ElementSettings elem_settings;
+        elem_settings.x = 0.1;
+        elem_settings.y = 0;
+        elem_settings.width = 0.4;
+        elem_settings.height = 0.4;
+        elem_settings.name = "element-" + std::to_string(current_element_idx_);
+
         GuiElement* const ge = new PlotPane(parent_window_,
                                             elem_settings,
                                             grid_size_,
-                                            notify_main_window_key_pressed,
-                                            notify_main_window_key_released,
-                                            notify_parent_window_right_mouse_pressed);
+                                            notify_main_window_key_pressed_,
+                                            notify_main_window_key_released_,
+                                            notify_parent_window_right_mouse_pressed_);
 
         ge->updateSizeFromParent(parent_window_->GetSize());
-        gui_elements_[elem_settings.name] = ge;*/
+        gui_elements_.push_back(ge);
+        current_element_idx_++;
+    }
+
+    void newElement(const std::string& element_name)
+    {
+        const float grid_size_ = 1.0f;
+
+        ElementSettings elem_settings;
+        elem_settings.x = 0.1;
+        elem_settings.y = 0;
+        elem_settings.width = 0.4;
+        elem_settings.height = 0.4;
+        elem_settings.name = element_name;
+
+        GuiElement* const ge = new PlotPane(parent_window_,
+                                            elem_settings,
+                                            grid_size_,
+                                            notify_main_window_key_pressed_,
+                                            notify_main_window_key_released_,
+                                            notify_parent_window_right_mouse_pressed_);
+
+        ge->updateSizeFromParent(parent_window_->GetSize());
+        gui_elements_.push_back(ge);
+        current_element_idx_++;
     }
 
     void show()
     {
         for (auto const& ge : gui_elements_)
         {
-            ge.second->show();
+            ge->show();
         }
     }
 
@@ -92,7 +132,7 @@ public:
     {
         for (auto const& ge : gui_elements_)
         {
-            ge.second->hide();
+            ge->hide();
         }
     }
 
@@ -100,7 +140,7 @@ public:
     {
         for (auto const& ge : gui_elements_)
         {
-            ge.second->updateSizeFromParent(new_size);
+            ge->updateSizeFromParent(new_size);
         }
     }
 
@@ -117,7 +157,7 @@ public:
 
         for (const auto& ge : gui_elements_)
         {
-            ts.elements.push_back(ge.second->getElementSettings());
+            ts.elements.push_back(ge->getElementSettings());
         }
 
         return ts;
@@ -125,9 +165,14 @@ public:
 
     GuiElement* getGuiElement(const std::string& element_name) const
     {
-        if (gui_elements_.count(element_name) > 0)
+        auto q = std::find_if(
+            gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
+                return elem->getName() == element_name;
+            });
+
+        if (gui_elements_.end() != q)
         {
-            return gui_elements_.at(element_name);
+            return (*q);
         }
         else
         {
@@ -139,7 +184,7 @@ public:
     {
         for (const auto& ge : gui_elements_)
         {
-            ge.second->keyPressed(key);
+            ge->keyPressed(key);
         }
     }
 
@@ -147,32 +192,30 @@ public:
     {
         for (const auto& ge : gui_elements_)
         {
-            ge.second->keyReleased(key);
+            ge->keyReleased(key);
         }
     }
 
-    void deleteElement(const std::string& element_name)
+    void deleteElementIfItExists(const std::string& element_name)
     {
-        auto q = std::find_if(gui_elements_.begin(),
-                              gui_elements_.end(),
-                              [this, &element_name](std::pair<std::string, GuiElement*> const& item) -> bool {
-                                  return item.second->getName() == element_name;
-                              });
+        auto q = std::find_if(
+            gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
+                return elem->getName() == element_name;
+            });
 
         if (gui_elements_.end() != q)
         {
-            delete q->second;
-            gui_elements_.erase(element_name);
+            delete (*q);
+            gui_elements_.erase(q);
         }
     }
 
     bool elementWithNameExists(const std::string& element_name)
     {
-        auto q = std::find_if(gui_elements_.begin(),
-                              gui_elements_.end(),
-                              [this, &element_name](std::pair<std::string, GuiElement*> const& item) -> bool {
-                                  return item.second->getName() == element_name;
-                              });
+        auto q = std::find_if(
+            gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const& elem) -> bool {
+                return elem->getName() == element_name;
+            });
 
         if (gui_elements_.end() != q)
         {
@@ -186,23 +229,32 @@ public:
 
     bool changeNameOfElementIfElementExists(const std::string& element_name, const std::string& new_name)
     {
-        auto q = std::find_if(gui_elements_.begin(),
-                              gui_elements_.end(),
-                              [this, &element_name](std::pair<std::string, GuiElement*> const& item) -> bool {
-                                  return item.second->getName() == element_name;
-                              });
+        auto q = std::find_if(
+            gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
+                return elem->getName() == element_name;
+            });
 
         if (gui_elements_.end() != q)
         {
-            (*q).second->setName(new_name);
-            gui_elements_.erase(element_name);
-            gui_elements_[new_name] = (*q).second;
+            (*q)->setName(new_name);
             return true;
         }
         else
         {
             return false;
         }
+    }
+
+    std::vector<std::string> getElementNames() const
+    {
+        std::vector<std::string> element_names;
+
+        for (const auto& ge : gui_elements_)
+        {
+            element_names.push_back(ge->getName());
+        }
+
+        return element_names;
     }
 };
 
@@ -223,6 +275,7 @@ private:
     void tabChanged(const std::string name);
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
+    std::function<std::vector<std::string>(void)> get_all_element_names_;
 
     std::function<void()> notify_main_window_new_window_;
     float grid_size_;
@@ -247,7 +300,7 @@ public:
                const int callback_id,
                const std::function<void(const char key)>& notify_main_window_key_pressed,
                const std::function<void(const char key)>& notify_main_window_key_released,
-               const std::function<void()>& notify_main_window_new_window);
+               const std::function<std::vector<std::string>(void)>& get_all_element_names);
     ~WindowView();
     // void newElement(const std::string& element_name);
     // void newElement();
@@ -274,11 +327,8 @@ public:
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
 
-    std::vector<ElementSettings> getElementSettingsList() const;
-
     void editWindowName(wxCommandEvent& WXUNUSED(event));
 
-    void newWindow(wxCommandEvent& WXUNUSED(event));
     void newTab(wxCommandEvent& WXUNUSED(event));
     void newElement(wxCommandEvent& WXUNUSED(event));
 
@@ -289,6 +339,8 @@ public:
     void deleteTab(wxCommandEvent& WXUNUSED(event));
 
     virtual void OnClose(wxCloseEvent& event);
+
+    std::vector<std::string> getElementNames() const;
 };
 
 #endif  // MAIN_APPLICATION_WINDOW_VIEW_H_

@@ -90,6 +90,8 @@ public:
     virtual void OnClose(wxCloseEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
+    std::vector<std::string> getAllElementNames() const;
+
     void deleteWindow(wxCommandEvent& event);
     void toggleWindowVisibilityCallback(wxCommandEvent& event);
     void toggleWindowVisibility(const std::string& window_name);
@@ -98,7 +100,7 @@ public:
     void openExistingFile();
     void changeCurrentElementName(const std::string new_element_name);
     void noElementSelected(wxCommandEvent& event);
-    void newWindow();
+    void newWindow(wxCommandEvent& WXUNUSED(event));
 
     void newNamedElement(const std::string& element_name);
     void newElement();
