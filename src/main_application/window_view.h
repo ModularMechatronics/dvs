@@ -302,8 +302,6 @@ public:
                const std::function<void(const char key)>& notify_main_window_key_released,
                const std::function<std::vector<std::string>(void)>& get_all_element_names);
     ~WindowView();
-    // void newElement(const std::string& element_name);
-    // void newElement();
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);
 
@@ -314,10 +312,6 @@ public:
     WindowSettings getWindowSettings() const;
     std::string getName() const;
     void childModified(wxCommandEvent& event);
-
-    void setSelectedElementName(const std::string& new_name);
-    void mouseLeftPressed(wxMouseEvent& WXUNUSED(event));
-    void setFirstElementSelected();
 
     GuiElement* getGuiElement(const std::string& element_name) const;
 

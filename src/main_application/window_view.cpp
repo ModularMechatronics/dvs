@@ -91,7 +91,7 @@ WindowView::WindowView(wxFrame* main_window,
     popup_menu_tab_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
     popup_menu_tab_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
 
-    // Bind(wxEVT_MENU, &WindowView::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
+    Bind(wxEVT_MENU, &WindowView::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
     Bind(wxEVT_MENU, &MainWindow::newWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
     Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
@@ -248,44 +248,6 @@ void WindowView::OnClose(wxCloseEvent& WXUNUSED(event))
     // hide();
 }
 
-/*void WindowView::newElement(const std::string& element_name)
-{
-    ElementSettings elem;
-    elem.x = 0;
-    elem.y = 0;
-    elem.width = 0.3;
-    elem.height = 0.3;
-    elem.name = element_name;
-
-    GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
-                                        elem,
-                                        grid_size_,
-                                        notify_main_window_key_pressed_,
-                                        notify_main_window_key_released_);
-
-    ge->updateSizeFromParent(this->GetSize());
-    gui_elements_[elem.name] = ge;
-}*/
-
-/*void WindowView::newElement()
-{
-    ElementSettings elem;
-    elem.x = 0;
-    elem.y = 0;
-    elem.width = 0.3;
-    elem.height = 0.3;
-    elem.name = "new-element-" + std::to_string(current_unused_element_idx++);
-
-    GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
-                                        elem,
-                                        grid_size_,
-                                        notify_main_window_key_pressed_,
-                                        notify_main_window_key_released_);
-
-    ge->updateSizeFromParent(this->GetSize());
-    gui_elements_[elem.name] = ge;
-}*/
-
 WindowSettings WindowView::getWindowSettings() const
 {
     WindowSettings ws;
@@ -311,40 +273,26 @@ std::string WindowView::getName() const
     return name_;
 }
 
-void WindowView::setSelectedElementName(const std::string& new_name)
-{
-    /*name_of_selected_element_ = new_name;
-    for (auto it : gui_elements_)
-    {
-        if (it.second->isSelected())
-        {
-            it.second->setName(new_name);
-        }
-    }*/
-}
-
-void WindowView::mouseLeftPressed(wxMouseEvent& WXUNUSED(event))
-{
-    /*// Since this event will only be caught if the mouse is pressed outside of an
-    // element, we know we can deselect all elements.
-    // resetSelectionForAllChildren();
-    name_of_selected_element_ = "";
-    wxCommandEvent parent_event(NO_ELEMENT_SELECTED);
-    wxPostEvent(this->GetParent(), parent_event);*/
-}
-
-void WindowView::setFirstElementSelected()
-{
-    /*if (gui_elements_.size() > 0)
-    {
-        gui_elements_.begin()->second->setSelection();
-        gui_elements_.begin()->second->refresh();
-    }*/
-}
-
 void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
 {
-    std::cout << "Event from editWindowName" << std::endl;
+    wxTextEntryDialog name_dialog(this, "Enter the name for the new element", "Enter element name", name_);
+
+    const RGBTripletf color_vec{axes_settings_.window_background_};
+    name_dialog.SetBackgroundColour(
+        wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+
+    if (name_dialog.ShowModal() == wxID_CANCEL)
+    {
+        return;
+    }
+
+    const std::string window_name{name_dialog.GetValue().mb_str()};
+
+    if (window_name.length() > 0)
+    {
+        name_ = window_name;
+        this->SetLabel(name_);
+    }
 }
 
 void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
