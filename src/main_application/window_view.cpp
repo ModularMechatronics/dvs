@@ -10,7 +10,7 @@ WindowView::WindowView(wxFrame* main_window,
                        const int callback_id,
                        const std::function<void(const char key)>& notify_main_window_key_pressed,
                        const std::function<void(const char key)>& notify_main_window_key_released,
-                       const std::function<void()>& notify_main_window_new_window)
+                       const std::function<std::vector<std::string>(void)>& get_all_element_names)
     : wxFrame(main_window, wxID_ANY, "Figure 1"),
       tab_buttons_{this,
                    window_settings,
@@ -20,7 +20,7 @@ WindowView::WindowView(wxFrame* main_window,
                    }},
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
       notify_main_window_key_released_{notify_main_window_key_released},
-      notify_main_window_new_window_{notify_main_window_new_window}
+      get_all_element_names_{get_all_element_names}
 {
     main_window_ = main_window;
     current_tab_num_ = 0;
@@ -44,6 +44,7 @@ WindowView::WindowView(wxFrame* main_window,
                                         [this](const wxPoint pos, const std::string& item_name) {
                                             mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
                                         });
+        current_tab_num_++;
     }
 
     for (const auto& tab : tabs_)
@@ -66,7 +67,7 @@ WindowView::WindowView(wxFrame* main_window,
     popup_menu_window_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_window_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_window_->AppendSeparator();
-    popup_menu_window_->Append(dvs_ids::NEW_WINDOW, wxT("New window"));
+    popup_menu_window_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_window_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
     popup_menu_window_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
 
@@ -76,7 +77,7 @@ WindowView::WindowView(wxFrame* main_window,
     popup_menu_element_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_element_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_element_->AppendSeparator();
-    popup_menu_element_->Append(dvs_ids::NEW_WINDOW, wxT("New window"));
+    popup_menu_element_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_element_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
     popup_menu_element_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
 
@@ -86,19 +87,19 @@ WindowView::WindowView(wxFrame* main_window,
     popup_menu_tab_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_tab_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_tab_->AppendSeparator();
-    popup_menu_tab_->Append(dvs_ids::NEW_WINDOW, wxT("New window"));
+    popup_menu_tab_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_tab_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
     popup_menu_tab_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
 
     // Bind(wxEVT_MENU, &WindowView::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
-    Bind(wxEVT_MENU, &WindowView::newWindow, this, dvs_ids::NEW_WINDOW);
-    // Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
-    // Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
+    Bind(wxEVT_MENU, &MainWindow::newWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
+    Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
+    Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
     // Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
-    // Bind(wxEVT_MENU, &WindowView::deleteTab, this, dvs_ids::DELETE_TAB);
+    Bind(wxEVT_MENU, &WindowView::deleteTab, this, dvs_ids::DELETE_TAB);
 
     // Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
     // Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
@@ -192,18 +193,6 @@ void WindowView::tabChanged(const std::string name)
             tab.second->hide();
         }
     }
-}
-
-std::vector<ElementSettings> WindowView::getElementSettingsList() const
-{
-    std::vector<ElementSettings> elements;
-
-    /*for (auto it : gui_elements_)
-    {
-        elements.push_back(it.second->getElementSettings());
-    }*/
-
-    return elements;
 }
 
 void WindowView::OnSize(wxSizeEvent& event)
@@ -358,12 +347,6 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
     std::cout << "Event from editWindowName" << std::endl;
 }
 
-void WindowView::newWindow(wxCommandEvent& WXUNUSED(event))
-{
-    std::cout << "Event from newWindow" << std::endl;
-    notify_main_window_new_window_();
-}
-
 void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
 {
     std::cout << "Event from newTab" << std::endl;
@@ -384,7 +367,61 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
 
 void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
 {
-    std::cout << "Event from newElement" << std::endl;
+    const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
+    if (tabs_.count(selected_tab) > 0)
+    {
+        wxTextEntryDialog name_dialog(
+            this, "Enter the name for the new element", "Enter element name", "<element-name>");
+
+        const RGBTripletf color_vec{axes_settings_.window_background_};
+        name_dialog.SetBackgroundColour(
+            wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+        std::string element_name;
+
+        while (true)
+        {
+            if (name_dialog.ShowModal() == wxID_CANCEL)
+            {
+                return;
+            }
+
+            element_name = name_dialog.GetValue().mb_str();
+
+            const std::vector<std::string> all_element_names = get_all_element_names_();
+
+            auto q = std::find(all_element_names.begin(), all_element_names.end(), element_name);
+
+            const bool element_exists = q != all_element_names.end();
+
+            if (element_exists)
+            {
+                wxMessageDialog dlg(
+                    &name_dialog, "Choose a unique name", "Element name \"" + element_name + "\" exists!");
+                dlg.SetBackgroundColour(
+                    wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+                dlg.ShowModal();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        tabs_[selected_tab]->newElement(element_name);
+    }
+}
+
+std::vector<std::string> WindowView::getElementNames() const
+{
+    std::vector<std::string> element_names;
+    for (const auto& t : tabs_)
+    {
+        const std::vector<std::string> tab_element_names = t.second->getElementNames();
+
+        element_names.insert(element_names.end(), tab_element_names.begin(), tab_element_names.end());
+    }
+
+    return element_names;
 }
 
 void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
@@ -412,22 +449,22 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
         }
         else
         {
-            bool element_exists;
-            for (const auto& t : tabs_)
-            {
-                element_exists = t.second->elementWithNameExists(new_name);
-                if (element_exists)
-                {
-                    wxMessageDialog dlg(
-                        &name_dialog, "Choose a unique name", "Element name \"" + new_name + "\" exists!");
-                    dlg.SetBackgroundColour(
-                        wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
-                    dlg.ShowModal();
-                    break;
-                }
-            }
+            new_name = name_dialog.GetValue().mb_str();
 
-            if (!element_exists)
+            const std::vector<std::string> all_element_names = get_all_element_names_();
+
+            auto q = std::find(all_element_names.begin(), all_element_names.end(), new_name);
+
+            const bool element_exists = q != all_element_names.end();
+
+            if (element_exists)
+            {
+                wxMessageDialog dlg(&name_dialog, "Choose a unique name", "Element name \"" + new_name + "\" exists!");
+                dlg.SetBackgroundColour(
+                    wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+                dlg.ShowModal();
+            }
+            else
             {
                 break;
             }
@@ -437,18 +474,14 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
     {
         t.second->changeNameOfElementIfElementExists(last_clicked_item_, new_name);
     }
-    // TODO: Now change name of element
-    // std::cout << "Event from editElementName: " << new_name << std::endl;
 }
 
 void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
 {
     for (const auto& t : tabs_)
     {
-        t.second->deleteElement(last_clicked_item_);
+        t.second->deleteElementIfItExists(last_clicked_item_);
     }
-    std::cout << "Will delete " << last_clicked_item_ << std::endl;
-    std::cout << "Event from deleteElement" << std::endl;
 }
 
 void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
@@ -458,5 +491,26 @@ void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
 
 void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
 {
-    std::cout << "Event from deleteTab" << std::endl;
+    if (tabs_.count(last_clicked_item_) > 0)
+    {
+        delete tabs_.at(last_clicked_item_);
+        tabs_.erase(last_clicked_item_);
+    }
+    tab_buttons_.deleteTabButton(last_clicked_item_);
+
+    if (tabs_.size() > 0)
+    {
+        const std::string selected_button = tab_buttons_.getNameOfSelectedTab();
+        for (const auto& tab : tabs_)
+        {
+            if (tab.second->getName() == selected_button)
+            {
+                tab.second->show();
+            }
+            else
+            {
+                tab.second->hide();
+            }
+        }
+    }
 }

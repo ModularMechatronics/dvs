@@ -132,15 +132,28 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
                                              window_callback_id_,
                                              notification_from_gui_element_key_pressed_,
                                              notification_from_gui_element_key_released_,
-                                             [this]() { newWindow(); }));
+                                             [this]() -> std::vector<std::string> { return getAllElementNames(); }));
         window_callback_id_ += 20;
-        // const std::map<std::string, GuiElement*> ges = windows_.back()->getGuiElements();
-        // gui_elements_.insert(ges.begin(), ges.end());
+        current_window_num_++;
         task_bar_->addNewWindow(ws.name);
     }
 }
 
-void MainWindow::newWindow()
+std::vector<std::string> MainWindow::getAllElementNames() const
+{
+    std::vector<std::string> element_names;
+
+    for (auto we : windows_)
+    {
+        const std::vector<std::string> window_element_names = we->getElementNames();
+
+        element_names.insert(element_names.end(), window_element_names.begin(), window_element_names.end());
+    }
+
+    return element_names;
+}
+
+void MainWindow::newWindow(wxCommandEvent& WXUNUSED(event))
 {
     WindowSettings window_settings;
     window_settings.name = "Window " + std::to_string(current_window_num_);
@@ -154,7 +167,7 @@ void MainWindow::newWindow()
                                                 window_callback_id_,
                                                 notification_from_gui_element_key_pressed_,
                                                 notification_from_gui_element_key_released_,
-                                                [this]() { newWindow(); });
+                                                [this]() -> std::vector<std::string> { return getAllElementNames(); });
 
     current_window_num_++;
     window_callback_id_++;

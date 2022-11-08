@@ -19,6 +19,8 @@ Pre release:
 - Add locking rotation/zoom/pan plane, so xy, xz, yz
 - Help pane that shows up with keyboard shortcuts when you hold 'H'
 - Add rendering of plot pane name
+- Use weak_ptr for current_gui_element_?
+- Investigate if main_window can be just a wxObject or something
 - Hide dock icon https://stackoverflow.com/questions/620841/how-to-hide-the-dock-icon
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer

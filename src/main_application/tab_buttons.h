@@ -21,7 +21,6 @@
 class TabButtons
 {
 private:
-    // std::vector<wxButton*> tab_buttons_;
     std::function<void(std::string)> tab_changed_callback_;
     std::vector<TabButton*> tab_buttons_;
     wxSize window_size_;
@@ -37,11 +36,14 @@ public:
     TabButtons(wxFrame* parent,
                const WindowSettings& window_settings,
                const std::function<void(std::string)> tab_changed_callback,
-               const std::function<void(const wxPoint pos, const std::string& item_name)>& notify_parent_window_right_mouse_pressed);
+               const std::function<void(const wxPoint pos, const std::string& item_name)>&
+                   notify_parent_window_right_mouse_pressed);
 
     void setSelection(const std::string id);
     void windowWasResized(const wxSize new_size);
     void addNewTab(const std::string name);
+    std::string getNameOfSelectedTab() const;
+    void deleteTabButton(const std::string& button_name);
 };
 
 #endif  // MAIN_APPLICATION_TAB_CONTAINER_H_

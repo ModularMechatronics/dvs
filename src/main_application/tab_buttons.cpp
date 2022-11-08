@@ -21,7 +21,7 @@ TabButtons::TabButtons(wxFrame* parent,
             parent,
             window_settings_.tabs[k].name,
             [this](std::string name) {
-                // setSelection(id);
+                setSelection(name);
                 tab_changed_callback_(name);
             },
             tab_button_id_counter_,
@@ -31,13 +31,36 @@ TabButtons::TabButtons(wxFrame* parent,
 
         tab_button_id_counter_++;
     }
+    if (tab_buttons_.size() > 0)
+    {
+        tab_buttons_[0]->setSelected();
+    }
+}
+
+void TabButtons::deleteTabButton(const std::string& button_name)
+{
+    auto q = std::find_if(tab_buttons_.begin(), tab_buttons_.end(), [&button_name](const TabButton* const tb) -> bool {
+        return tb->getButtonLabel() == button_name;
+    });
+
+    if (q != tab_buttons_.end())
+    {
+        delete (*q);
+        tab_buttons_.erase(q);
+
+        if (tab_buttons_.size() > 0)
+        {
+            tab_buttons_[0]->setSelected();
+        }
+        layoutButtons();
+    }
 }
 
 void TabButtons::setSelection(const std::string name)
 {
-    /*for (size_t k = 0; k < tab_buttons_.size(); k++)
+    for (size_t k = 0; k < tab_buttons_.size(); k++)
     {
-        if (tab_buttons_[k]->getId() == id)
+        if (tab_buttons_[k]->getButtonLabel() == name)
         {
             tab_buttons_[k]->setSelected();
         }
@@ -45,17 +68,29 @@ void TabButtons::setSelection(const std::string name)
         {
             tab_buttons_[k]->setDeselected();
         }
-    }*/
+    }
 }
 
-void TabButtons::addNewTab(const std::string name)
+std::string TabButtons::getNameOfSelectedTab() const
+{
+    auto q = std::find_if(
+        tab_buttons_.begin(), tab_buttons_.end(), [](const TabButton* const tb) -> bool { return tb->isSelected(); });
+    if (q == tab_buttons_.end())
+    {
+        throw std::runtime_error("Could not find a selected button!");
+    }
+
+    return (*q)->getButtonLabel();
+}
+
+void TabButtons::addNewTab(const std::string tab_name)
 {
     tab_buttons_.push_back(new TabButton(
         parent_,
-        name,
-        [this](std::string name_) {
-            // setSelection(id);
-            tab_changed_callback_(name_);
+        tab_name,
+        [this](std::string name) {
+            setSelection(name);
+            tab_changed_callback_(name);
         },
         tab_button_id_counter_,
         wxPoint(0, tab_buttons_.size() * 20),

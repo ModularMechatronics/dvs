@@ -161,6 +161,16 @@ void TabButton::mouseRightPressed(wxMouseEvent& event)
     notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), button_label_);
 }
 
+std::string TabButton::getButtonLabel() const
+{
+    return button_label_;
+}
+
+bool TabButton::isSelected() const
+{
+    return is_selected_;
+}
+
 void TabButton::mouseLeftReleased(wxMouseEvent& event)
 {
     std::cout << "Released..." << std::endl;
