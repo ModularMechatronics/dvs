@@ -41,6 +41,8 @@ public:
     std::string getButtonLabel() const;
     void setButtonLabel(const std::string& new_label);
     std::function<void(const wxPoint pos, const std::string& item_name)> notify_parent_window_right_mouse_pressed_;
+    void show();
+    void hide();
 
 private:
     void OnPaint(wxPaintEvent& event);

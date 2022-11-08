@@ -34,28 +34,47 @@ WindowView::WindowView(wxFrame* main_window,
     this->SetSize(wxSize(window_settings.width, window_settings.height));
     name_ = window_settings.name;
 
-    for (size_t k = 0; k < window_settings.tabs.size(); k++)
+    if (window_settings.tabs.size() == 0)
     {
-        const std::string tab_name = window_settings.tabs[k].name;
+        TabSettings tab_settings;
+        tab_settings.name = "Tab " + std::to_string(current_tab_num_);
         tabs_.push_back(new WindowTab(this,
-                                      window_settings.tabs[k],
+                                      tab_settings,
                                       notify_main_window_key_pressed,
                                       notify_main_window_key_released,
                                       [this](const wxPoint pos, const std::string& item_name) {
                                           mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
                                       }));
+        tab_buttons_.addNewTab(tab_settings.name);
         current_tab_num_++;
     }
-
-    for (const auto& tab : tabs_)
+    else
     {
-        if (tab->getName() == window_settings.tabs[0].name)
+        for (size_t k = 0; k < window_settings.tabs.size(); k++)
         {
-            tab->show();
+            tabs_.push_back(new WindowTab(this,
+                                          window_settings.tabs[k],
+                                          notify_main_window_key_pressed,
+                                          notify_main_window_key_released,
+                                          [this](const wxPoint pos, const std::string& item_name) {
+                                              mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
+                                          }));
+            current_tab_num_++;
         }
-        else
+    }
+
+    if (window_settings.tabs.size() > 0)
+    {
+        for (const auto& tab : tabs_)
         {
-            tab->hide();
+            if (tab->getName() == window_settings.tabs[0].name)
+            {
+                tab->show();
+            }
+            else
+            {
+                tab->hide();
+            }
         }
     }
 
@@ -297,8 +316,6 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
 
 void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
 {
-    std::cout << "Event from newTab" << std::endl;
-
     TabSettings tab_settings;
     tab_settings.name = "Tab " + std::to_string(current_tab_num_);
     current_tab_num_++;
@@ -498,6 +515,8 @@ void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
         delete (*q);
         tabs_.erase(q);
     }
+
+    tab_buttons_.deleteTabButton(last_clicked_item_);
 
     if (tabs_.size() > 0)
     {
