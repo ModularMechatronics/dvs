@@ -166,6 +166,12 @@ std::string TabButton::getButtonLabel() const
     return button_label_;
 }
 
+void TabButton::setButtonLabel(const std::string& new_label)
+{
+    button_label_ = new_label;
+    Refresh();
+}
+
 bool TabButton::isSelected() const
 {
     return is_selected_;

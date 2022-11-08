@@ -56,6 +56,18 @@ void TabButtons::deleteTabButton(const std::string& button_name)
     }
 }
 
+void TabButtons::changeButtonName(const std::string& old_label, const std::string& new_label)
+{
+    for (size_t k = 0; k < tab_buttons_.size(); k++)
+    {
+        if (tab_buttons_[k]->getButtonLabel() == old_label)
+        {
+            tab_buttons_[k]->setButtonLabel(new_label);
+            break;
+        }
+    }
+}
+
 void TabButtons::setSelection(const std::string name)
 {
     for (size_t k = 0; k < tab_buttons_.size(); k++)

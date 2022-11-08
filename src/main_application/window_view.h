@@ -256,6 +256,11 @@ public:
 
         return element_names;
     }
+
+    void setName(const std::string& new_name)
+    {
+        name_ = new_name;
+    }
 };
 
 class WindowView : public wxFrame
@@ -269,7 +274,7 @@ private:
     };
 
     TabButtons tab_buttons_;
-    std::map<std::string, WindowTab*> tabs_;
+    std::vector<WindowTab*> tabs_;
     int callback_id_;
     AxesSettings axes_settings_{};
     void tabChanged(const std::string name);

@@ -44,6 +44,7 @@ public:
     void addNewTab(const std::string name);
     std::string getNameOfSelectedTab() const;
     void deleteTabButton(const std::string& button_name);
+    void changeButtonName(const std::string& old_label, const std::string& new_label);
 };
 
 #endif  // MAIN_APPLICATION_TAB_CONTAINER_H_
