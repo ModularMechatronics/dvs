@@ -5,7 +5,6 @@ Pre release:
 - Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 - Refactor/clean up window/tabs/plot elements system
-- Add "holdClear" that only clears when new data comes in, to avoid flashing
 - Remove need to always specify num_elements
 - Function "view" is the one that sets/creates the current element
   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window

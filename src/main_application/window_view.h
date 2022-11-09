@@ -32,6 +32,7 @@ private:
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
+    std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
     int current_element_idx_;
 
 public:
@@ -40,11 +41,13 @@ public:
               const std::function<void(const char key)>& notify_main_window_key_pressed,
               const std::function<void(const char key)>& notify_main_window_key_released,
               const std::function<void(const wxPoint pos, const std::string& elem_name)>&
-                  notify_parent_window_right_mouse_pressed)
+                  notify_parent_window_right_mouse_pressed,
+              const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted)
         : name_{tab_settings.name},
           notify_main_window_key_pressed_{notify_main_window_key_pressed},
           notify_main_window_key_released_{notify_main_window_key_released},
-          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed}
+          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
+          notify_main_window_element_deleted_{notify_main_window_element_deleted}
     {
         parent_window_ = parent_window;
         const float grid_size_ = 1.0f;
@@ -57,7 +60,8 @@ public:
                                                 grid_size_,
                                                 notify_main_window_key_pressed,
                                                 notify_main_window_key_released,
-                                                notify_parent_window_right_mouse_pressed);
+                                                notify_parent_window_right_mouse_pressed,
+                                                notify_main_window_element_deleted_);
 
             ge->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_.push_back(ge);
@@ -90,7 +94,8 @@ public:
                                             grid_size_,
                                             notify_main_window_key_pressed_,
                                             notify_main_window_key_released_,
-                                            notify_parent_window_right_mouse_pressed_);
+                                            notify_parent_window_right_mouse_pressed_,
+                                            notify_main_window_element_deleted_);
 
         ge->updateSizeFromParent(parent_window_->GetSize());
         gui_elements_.push_back(ge);
@@ -113,7 +118,8 @@ public:
                                             grid_size_,
                                             notify_main_window_key_pressed_,
                                             notify_main_window_key_released_,
-                                            notify_parent_window_right_mouse_pressed_);
+                                            notify_parent_window_right_mouse_pressed_,
+                                            notify_main_window_element_deleted_);
 
         ge->updateSizeFromParent(parent_window_->GetSize());
         gui_elements_.push_back(ge);
@@ -281,6 +287,7 @@ private:
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<std::vector<std::string>(void)> get_all_element_names_;
+    std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
 
     std::function<void()> notify_main_window_new_window_;
     float grid_size_;
@@ -305,7 +312,8 @@ public:
                const int callback_id,
                const std::function<void(const char key)>& notify_main_window_key_pressed,
                const std::function<void(const char key)>& notify_main_window_key_released,
-               const std::function<std::vector<std::string>(void)>& get_all_element_names);
+               const std::function<std::vector<std::string>(void)>& get_all_element_names,
+               const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted);
     ~WindowView();
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);
