@@ -67,14 +67,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     const RGBTripletf color_vec{AxesSettings().window_background_};
     SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
 
-    Bind(GUI_ELEMENT_CHANGED_EVENT, &MainWindow::guiElementModified, this, wxID_ANY);
-    Bind(NO_ELEMENT_SELECTED, &MainWindow::noElementSelected, this, wxID_ANY);
     Bind(CHILD_WINDOW_CLOSED_EVENT, &MainWindow::childWindowClosed, this, wxID_ANY);
-    Bind(wxEVT_CLOSE_WINDOW, &MainWindow::onCloseButton, this, wxID_ANY);
+    // Bind(wxEVT_CLOSE_WINDOW, &MainWindow::onCloseButton, this, wxID_ANY);
 
     current_window_num_ = 0;
 
-    setupGui();
+    setupWindows(save_manager_->getCurrentProjectSettings());
 
     for (auto we : windows_)
     {
@@ -85,6 +83,19 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     receive_timer_.Start(10);
 
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
+}
+
+void MainWindow::fileModified()
+{
+    save_manager_->setIsModified();
+}
+
+bool MainWindow::hasWindowWithName(const std::string& window_name)
+{
+    auto q = std::find_if(windows_.begin(), windows_.end(), [&window_name](const WindowView* const w) -> bool {
+        return window_name == w->getName();
+    });
+    return q != windows_.end();
 }
 
 void MainWindow::toggleWindowVisibility(const std::string& window_name)
@@ -276,13 +287,6 @@ void MainWindow::saveProjectCallback(wxCommandEvent& WXUNUSED(event))
     saveProject();
 }
 
-void MainWindow::guiElementModified(wxCommandEvent& WXUNUSED(event))
-{
-    // fileModified();
-}
-
-void MainWindow::noElementSelected(wxCommandEvent& WXUNUSED(event)) {}
-
 void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event)) {}
 
 void MainWindow::preferencesCallback(wxCommandEvent& WXUNUSED(event))
@@ -385,22 +389,6 @@ void MainWindow::notifyChildrenOnKeyReleased(const char key)
     {
         we->notifyChildrenOnKeyReleased(key);
     }
-}
-
-void MainWindow::onCloseButton(wxCloseEvent& WXUNUSED(event))
-{
-    this->Hide();
-}
-
-void MainWindow::OnClose(wxCloseEvent& WXUNUSED(event))
-{
-    if (wxMessageBox("Are you sure you want to exit?", "Please confirm", wxICON_QUESTION | wxYES_NO) != wxYES)
-    {
-        return;
-    }
-
-    std::cout << "Window close" << std::endl;
-    // Destroy();
 }
 
 void MainWindow::deleteWindow(wxCommandEvent& event)

@@ -65,7 +65,6 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_pane.cpp
                      main_window.cpp
                      main_window_receive.cpp
-                     main_window_gui.cpp
 
                      properties.cpp)
 

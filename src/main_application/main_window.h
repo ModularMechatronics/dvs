@@ -51,11 +51,8 @@ private:
 
     int window_callback_id_;
 
-    bool elementNameExists(const std::string& element_name) const;
-
     void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
-    void setupGui();
     void setCurrentElement(const internal::CommunicationHeader& hdr);
     void createNewElement(const internal::CommunicationHeader& hdr);
     void setWaitForFlush();
@@ -64,9 +61,7 @@ private:
     bool hasWindowWithName(const std::string& window_name);
     void preferencesCallback(wxCommandEvent& event);
     void preferences();
-    void guiElementModified(wxCommandEvent& event);
     void childWindowClosed(wxCommandEvent& event);
-    void onCloseButton(wxCloseEvent& event);
 
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
@@ -87,7 +82,6 @@ public:
     MainWindow(const std::vector<std::string>& cmdl_args);
     ~MainWindow();
 
-    virtual void OnClose(wxCloseEvent& event);
     void OnChildDestroy(wxCloseEvent& event);
 
     std::vector<std::string> getAllElementNames() const;
@@ -98,12 +92,7 @@ public:
     void openExistingFile(wxCommandEvent& event);
     void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
     void openExistingFile();
-    void changeCurrentElementName(const std::string new_element_name);
-    void noElementSelected(wxCommandEvent& event);
     void newWindow(wxCommandEvent& WXUNUSED(event));
-
-    void newNamedElement(const std::string& element_name);
-    void newElement();
 
     void disableEditing();
 };
