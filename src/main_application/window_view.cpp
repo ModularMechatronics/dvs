@@ -10,7 +10,8 @@ WindowView::WindowView(wxFrame* main_window,
                        const int callback_id,
                        const std::function<void(const char key)>& notify_main_window_key_pressed,
                        const std::function<void(const char key)>& notify_main_window_key_released,
-                       const std::function<std::vector<std::string>(void)>& get_all_element_names)
+                       const std::function<std::vector<std::string>(void)>& get_all_element_names,
+                       const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted)
     : wxFrame(main_window, wxID_ANY, "Figure 1"),
       tab_buttons_{this,
                    window_settings,
@@ -20,7 +21,8 @@ WindowView::WindowView(wxFrame* main_window,
                    }},
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
       notify_main_window_key_released_{notify_main_window_key_released},
-      get_all_element_names_{get_all_element_names}
+      get_all_element_names_{get_all_element_names},
+      notify_main_window_element_deleted_{notify_main_window_element_deleted}
 {
     main_window_ = main_window;
     current_tab_num_ = 0;
@@ -38,13 +40,15 @@ WindowView::WindowView(wxFrame* main_window,
     {
         TabSettings tab_settings;
         tab_settings.name = "Tab " + std::to_string(current_tab_num_);
-        tabs_.push_back(new WindowTab(this,
-                                      tab_settings,
-                                      notify_main_window_key_pressed,
-                                      notify_main_window_key_released,
-                                      [this](const wxPoint pos, const std::string& item_name) {
-                                          mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
-                                      }));
+        tabs_.push_back(new WindowTab(
+            this,
+            tab_settings,
+            notify_main_window_key_pressed,
+            notify_main_window_key_released,
+            [this](const wxPoint pos, const std::string& item_name) {
+                mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
+            },
+            notify_main_window_element_deleted_));
         tab_buttons_.addNewTab(tab_settings.name);
         tab_buttons_.setSelection(tab_settings.name);
         current_tab_num_++;
@@ -53,13 +57,15 @@ WindowView::WindowView(wxFrame* main_window,
     {
         for (size_t k = 0; k < window_settings.tabs.size(); k++)
         {
-            tabs_.push_back(new WindowTab(this,
-                                          window_settings.tabs[k],
-                                          notify_main_window_key_pressed,
-                                          notify_main_window_key_released,
-                                          [this](const wxPoint pos, const std::string& item_name) {
-                                              mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
-                                          }));
+            tabs_.push_back(new WindowTab(
+                this,
+                window_settings.tabs[k],
+                notify_main_window_key_pressed,
+                notify_main_window_key_released,
+                [this](const wxPoint pos, const std::string& item_name) {
+                    mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
+                },
+                notify_main_window_element_deleted_));
             current_tab_num_++;
         }
     }
@@ -321,13 +327,15 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
     tab_settings.name = "Tab " + std::to_string(current_tab_num_);
     current_tab_num_++;
 
-    tabs_.push_back(new WindowTab(this,
-                                  tab_settings,
-                                  notify_main_window_key_pressed_,
-                                  notify_main_window_key_released_,
-                                  [this](const wxPoint pos, const std::string& item_name) {
-                                      mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
-                                  }));
+    tabs_.push_back(new WindowTab(
+        this,
+        tab_settings,
+        notify_main_window_key_pressed_,
+        notify_main_window_key_released_,
+        [this](const wxPoint pos, const std::string& item_name) {
+            mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
+        },
+        notify_main_window_element_deleted_));
     tab_buttons_.addNewTab(tab_settings.name);
 }
 

@@ -83,10 +83,7 @@ public:
     void onMenuFileOpen(wxCommandEvent&);
     void onMenuFileSave(wxCommandEvent&);
     void onMenuFileSaveAs(wxCommandEvent&);
-    void onMenuEdit(wxCommandEvent&);
     void onMenuPreferences(wxCommandEvent&);
-
-    void setEditLabel(const std::string edit_label);
 
     void onMenuSubWindow(wxCommandEvent& evt);
     void addNewWindow(const std::string& window_name);
@@ -97,7 +94,6 @@ public:
 
 private:
     std::function<void()> exit_function_;
-    std::function<void()> edit_function_;
     std::function<void()> preferences_function_;
     std::function<void()> file_new_function_;
     std::function<void()> file_open_function_;
@@ -107,10 +103,7 @@ private:
 
     std::vector<int> free_ids_;
     std::vector<int> taken_ids_;
-    std::string edit_label_;
     wxMenu* windows_submenu_;
-    // wxMenu *menu_;
-    wxMenu* file_submenu_;
 
     std::map<std::string, wxEventTypeTag<wxCommandEvent>> window_events_;
     std::map<std::string, int> window_event_ids_;

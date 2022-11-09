@@ -26,7 +26,7 @@
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
 #include "tray_icon.h"
-// #include "window_view.h"
+
 class WindowView;
 
 class MainWindow : public wxFrame
@@ -93,6 +93,7 @@ public:
     void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
     void openExistingFile();
     void newWindow(wxCommandEvent& WXUNUSED(event));
+    void elementWasDeleted(const GuiElement* const ge);
 
     void disableEditing();
 };

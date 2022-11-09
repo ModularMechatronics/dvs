@@ -125,12 +125,14 @@ PlotPane::PlotPane(wxWindow* parent,
                    const std::function<void(const char key)>& notify_main_window_key_pressed,
                    const std::function<void(const char key)>& notify_main_window_key_released,
                    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
-                       notify_parent_window_right_mouse_pressed)
+                       notify_parent_window_right_mouse_pressed,
+                   const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
       GuiElement(element_settings,
                  notify_main_window_key_pressed,
                  notify_main_window_key_released,
-                 notify_parent_window_right_mouse_pressed),
+                 notify_parent_window_right_mouse_pressed,
+                 notify_main_window_element_deleted),
       m_context(getContext()),
       axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
@@ -237,6 +239,7 @@ int* PlotPane::getArgsPtr()
 
 PlotPane::~PlotPane()
 {
+    notify_main_window_element_deleted_(this);
     delete plot_data_handler_;
     delete m_context;
 }

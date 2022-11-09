@@ -85,6 +85,14 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
 }
 
+void MainWindow::elementWasDeleted(const GuiElement* const ge)
+{
+    if (ge == current_gui_element_)
+    {
+        current_gui_element_ = nullptr;
+    }
+}
+
 void MainWindow::fileModified()
 {
     save_manager_->setIsModified();
@@ -137,12 +145,14 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
 {
     for (const WindowSettings& ws : project_settings.getWindows())
     {
-        windows_.emplace_back(new WindowView(this,
-                                             ws,
-                                             window_callback_id_,
-                                             notification_from_gui_element_key_pressed_,
-                                             notification_from_gui_element_key_released_,
-                                             [this]() -> std::vector<std::string> { return getAllElementNames(); }));
+        windows_.emplace_back(new WindowView(
+            this,
+            ws,
+            window_callback_id_,
+            notification_from_gui_element_key_pressed_,
+            notification_from_gui_element_key_released_,
+            [this]() -> std::vector<std::string> { return getAllElementNames(); },
+            [this](const GuiElement* const ge) -> void { elementWasDeleted(ge); }));
         window_callback_id_ += 20;
         current_window_num_++;
         task_bar_->addNewWindow(ws.name);
@@ -172,12 +182,14 @@ void MainWindow::newWindow(wxCommandEvent& WXUNUSED(event))
     window_settings.width = 600;
     window_settings.height = 628;
 
-    WindowView* window_element = new WindowView(this,
-                                                window_settings,
-                                                window_callback_id_,
-                                                notification_from_gui_element_key_pressed_,
-                                                notification_from_gui_element_key_released_,
-                                                [this]() -> std::vector<std::string> { return getAllElementNames(); });
+    WindowView* window_element = new WindowView(
+        this,
+        window_settings,
+        window_callback_id_,
+        notification_from_gui_element_key_pressed_,
+        notification_from_gui_element_key_released_,
+        [this]() -> std::vector<std::string> { return getAllElementNames(); },
+        [this](const GuiElement* const ge) -> void { elementWasDeleted(ge); });
 
     current_window_num_++;
     window_callback_id_ += 20;
@@ -399,8 +411,8 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
 
     if (q != windows_.end())
     {
-        std::cout << "Erasing element at " << std::distance(windows_.begin(), q) << std::endl;
-        std::cout << "Name: " << (*q)->getName() << std::endl;
+        // std::cout << "Erasing element at " << std::distance(windows_.begin(), q) << std::endl;
+        // std::cout << "Name: " << (*q)->getName() << std::endl;
         delete (*q);
         windows_.erase(q);
     }

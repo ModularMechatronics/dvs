@@ -9,7 +9,6 @@ EVT_MENU(PU_FILE_NEW, CustomTaskBarIcon::onMenuFileNew)
 EVT_MENU(PU_FILE_OPEN, CustomTaskBarIcon::onMenuFileOpen)
 EVT_MENU(PU_FILE_SAVE, CustomTaskBarIcon::onMenuFileSave)
 EVT_MENU(PU_FILE_SAVE_AS, CustomTaskBarIcon::onMenuFileSaveAs)
-EVT_MENU(PU_EDIT_LAYOUT, CustomTaskBarIcon::onMenuEdit)
 EVT_MENU(PU_PREFERENCES, CustomTaskBarIcon::onMenuPreferences)
 wxEND_EVENT_TABLE()
 
@@ -22,9 +21,7 @@ wxEND_EVENT_TABLE()
 #endif
       // clang-format on
       // menu_{nullptr},
-      file_submenu_{nullptr},
-      windows_submenu_{nullptr},
-      edit_label_{"Edit layout"}
+      windows_submenu_{nullptr}
 {
     for (int k = PU_FIRST_WINDOW_ID; k <= PU_LAST_WINDOW_ID; k++)
     {
@@ -105,11 +102,6 @@ void CustomTaskBarIcon::onMenuFileSaveAs(wxCommandEvent&)
     file_save_as_function_();
 }
 
-void CustomTaskBarIcon::onMenuEdit(wxCommandEvent&)
-{
-    edit_function_();
-}
-
 void CustomTaskBarIcon::onMenuPreferences(wxCommandEvent&)
 {
     preferences_function_();
@@ -130,11 +122,6 @@ void CustomTaskBarIcon::removeWindow(const std::string& window_name)
     window_event_ids_.erase(window_event_ids_.find(window_name));
 }
 
-void CustomTaskBarIcon::setEditLabel(const std::string edit_label)
-{
-    edit_label_ = edit_label;
-}
-
 void CustomTaskBarIcon::setOnMenuPreferences(std::function<void()>&& preferences_function)
 {
     preferences_function_ = preferences_function;
@@ -148,18 +135,15 @@ wxMenu* CustomTaskBarIcon::CreatePopupMenu()
             Unbind(wxEVT_MENU, &CustomTaskBarIcon::onMenuSubWindow, this, window_event_ids_[p.first]);
         }
     }};
-    file_submenu_ = new wxMenu;
     windows_submenu_ = new wxMenu;
 
-    file_submenu_->Append(PU_FILE_NEW, wxT("New"));
-    file_submenu_->Append(PU_FILE_OPEN, wxT("Open..."));
-    file_submenu_->Append(PU_FILE_SAVE, wxT("Save"));
-    file_submenu_->Append(PU_FILE_SAVE_AS, wxT("Save As..."));
+    menu_->Append(PU_FILE_NEW, wxT("New"));
+    menu_->Append(PU_FILE_OPEN, wxT("Open..."));
+    menu_->Append(PU_FILE_SAVE, wxT("Save"));
+    menu_->Append(PU_FILE_SAVE_AS, wxT("Save As..."));
 
-    menu_->Append(PU_FILE, wxT("&File"), file_submenu_);
     menu_->AppendSeparator();
 
-    menu_->Append(PU_EDIT_LAYOUT, edit_label_);
     menu_->Append(PU_PREFERENCES, "Preferences");
     menu_->AppendSeparator();
 
