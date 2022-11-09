@@ -318,9 +318,6 @@ public:
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);
 
-    void onActivate(wxActivateEvent& event);
-    void hide();
-    void show();
     void setName(const std::string& new_name);
     WindowSettings getWindowSettings() const;
     std::string getName() const;

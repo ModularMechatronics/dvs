@@ -61,7 +61,6 @@ private:
     bool hasWindowWithName(const std::string& window_name);
     void preferencesCallback(wxCommandEvent& event);
     void preferences();
-    void childWindowClosed(wxCommandEvent& event);
 
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
@@ -87,7 +86,6 @@ public:
     std::vector<std::string> getAllElementNames() const;
 
     void deleteWindow(wxCommandEvent& event);
-    void toggleWindowVisibilityCallback(wxCommandEvent& event);
     void toggleWindowVisibility(const std::string& window_name);
     void openExistingFile(wxCommandEvent& event);
     void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
