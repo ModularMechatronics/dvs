@@ -117,7 +117,7 @@ void TabButtons::addNewTab(const std::string tab_name)
 void TabButtons::layoutButtons()
 {
     const int num_buttons = tab_buttons_.size();
-    const int y_offset = 10;
+    const int y_offset = 30;
 
     if (tab_buttons_.size() == 1)
     {
