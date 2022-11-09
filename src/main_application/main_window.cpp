@@ -78,7 +78,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     for (auto we : windows_)
     {
-        // m_pWindowsMenu->Append(we->getCallbackId(), we->getName());
         Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
     }
 
@@ -170,7 +169,7 @@ void MainWindow::newWindow(wxCommandEvent& WXUNUSED(event))
                                                 [this]() -> std::vector<std::string> { return getAllElementNames(); });
 
     current_window_num_++;
-    window_callback_id_++;
+    window_callback_id_ += 20;
 
     windows_.push_back(window_element);
 
