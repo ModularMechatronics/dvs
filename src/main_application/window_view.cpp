@@ -127,13 +127,12 @@ WindowView::WindowView(wxFrame* main_window,
     Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
     Bind(wxEVT_MENU, &WindowView::deleteTab, this, dvs_ids::DELETE_TAB);
 
-    // Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
-    // Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
+    Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
     Bind(wxEVT_SIZE, &WindowView::OnSize, this);
     Bind(wxEVT_RIGHT_DOWN, &WindowView::mouseRightPressedCallback, this);
 
     tab_buttons_.windowWasResized(this->GetSize());
-    show();
+    Show();
 }
 
 WindowView::~WindowView()
@@ -241,37 +240,13 @@ int WindowView::getCallbackId() const
 
 void WindowView::setName(const std::string& new_name)
 {
-    // this->SetLabel(new_name);
-    // name_ = new_name;
-}
-
-void WindowView::onActivate(wxActivateEvent& event)
-{
-    if (event.GetActive())
-    {
-        wxCommandEvent parent_event(CHILD_WINDOW_IN_FOCUS_EVENT);
-        parent_event.SetId(callback_id_);
-        wxPostEvent(GetParent(), parent_event);
-    }
-}
-
-void WindowView::hide()
-{
-    Unbind(wxEVT_ACTIVATE, &WindowView::onActivate, this);
-    this->Hide();
-}
-
-void WindowView::show()
-{
-    this->Show();
-    Bind(wxEVT_ACTIVATE, &WindowView::onActivate, this);
+    this->SetLabel(new_name);
+    name_ = new_name;
 }
 
 void WindowView::OnClose(wxCloseEvent& WXUNUSED(event))
 {
-    // wxCommandEvent parent_event(CHILD_WINDOW_CLOSED_EVENT);
-    // wxPostEvent(GetParent(), parent_event);
-    // hide();
+    Hide();
 }
 
 WindowSettings WindowView::getWindowSettings() const

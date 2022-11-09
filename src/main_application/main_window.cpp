@@ -67,17 +67,9 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     const RGBTripletf color_vec{AxesSettings().window_background_};
     SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
 
-    Bind(CHILD_WINDOW_CLOSED_EVENT, &MainWindow::childWindowClosed, this, wxID_ANY);
-    // Bind(wxEVT_CLOSE_WINDOW, &MainWindow::onCloseButton, this, wxID_ANY);
-
     current_window_num_ = 0;
 
     setupWindows(save_manager_->getCurrentProjectSettings());
-
-    for (auto we : windows_)
-    {
-        Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
-    }
 
     receive_timer_.Bind(wxEVT_TIMER, &MainWindow::OnReceiveTimer, this);
     receive_timer_.Start(10);
@@ -108,37 +100,18 @@ bool MainWindow::hasWindowWithName(const std::string& window_name)
 
 void MainWindow::toggleWindowVisibility(const std::string& window_name)
 {
-    // for (auto we : windows_)
-    // {
-    //     we->resetSelectionForAllChildren();
-    //     if (we->getName() == window_name)
-    //     {
-    //         we->setFirstElementSelected();
-    //         current_tab_name_ = we->getName();
-    //         we->Hide();
-    //         we->show();
-    //     }
-    // }
-}
-
-void MainWindow::toggleWindowVisibilityCallback(wxCommandEvent& event)
-{
-    /*for (auto te : tabs_)
+    for (auto we : windows_)
     {
-        te->resetSelectionForAllChildren();
-    }*/
+        if (we->getName() == window_name)
+        {
+            if (!(we->IsVisible()))
+            {
+                we->Show();
+            }
 
-    // for (auto we : windows_)
-    // {
-    //     we->resetSelectionForAllChildren();
-    //     if (we->getCallbackId() == event.GetId())
-    //     {
-    //         we->setFirstElementSelected();
-    //         current_tab_name_ = we->getName();
-    //         we->Hide();
-    //         we->show();
-    //     }
-    // }
+            we->Raise();
+        }
+    }
 }
 
 void MainWindow::setupWindows(const ProjectSettings& project_settings)
@@ -153,7 +126,7 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
             notification_from_gui_element_key_released_,
             [this]() -> std::vector<std::string> { return getAllElementNames(); },
             [this](const GuiElement* const ge) -> void { elementWasDeleted(ge); }));
-        window_callback_id_ += 20;
+        window_callback_id_ += 1;
         current_window_num_++;
         task_bar_->addNewWindow(ws.name);
     }
@@ -191,12 +164,11 @@ void MainWindow::newWindow(wxCommandEvent& WXUNUSED(event))
         [this]() -> std::vector<std::string> { return getAllElementNames(); },
         [this](const GuiElement* const ge) -> void { elementWasDeleted(ge); });
 
+    task_bar_->addNewWindow(window_settings.name);
     current_window_num_++;
-    window_callback_id_ += 20;
+    window_callback_id_ += 1;
 
     windows_.push_back(window_element);
-
-    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, window_element->getCallbackId());
 
     fileModified();
 }
@@ -298,8 +270,6 @@ void MainWindow::saveProjectCallback(wxCommandEvent& WXUNUSED(event))
 {
     saveProject();
 }
-
-void MainWindow::childWindowClosed(wxCommandEvent& WXUNUSED(event)) {}
 
 void MainWindow::preferencesCallback(wxCommandEvent& WXUNUSED(event))
 {
@@ -411,8 +381,7 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
 
     if (q != windows_.end())
     {
-        // std::cout << "Erasing element at " << std::distance(windows_.begin(), q) << std::endl;
-        // std::cout << "Name: " << (*q)->getName() << std::endl;
+        task_bar_->removeWindow((*q)->getName());
         delete (*q);
         windows_.erase(q);
     }

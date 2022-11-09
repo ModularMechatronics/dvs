@@ -20,7 +20,6 @@ wxEND_EVENT_TABLE()
     :
 #endif
       // clang-format on
-      // menu_{nullptr},
       windows_submenu_{nullptr}
 {
     for (int k = PU_FIRST_WINDOW_ID; k <= PU_LAST_WINDOW_ID; k++)
@@ -149,12 +148,11 @@ wxMenu* CustomTaskBarIcon::CreatePopupMenu()
 
     windows_submenu_->AppendSeparator();
 
-    // TODO: Fix
-    /*for (const auto& p : window_events_)
+    for (const auto& p : window_events_)
     {
         windows_submenu_->Append(window_event_ids_[p.first], p.first);
         Bind(wxEVT_MENU, &CustomTaskBarIcon::onMenuSubWindow, this, p.second);
-    }*/
+    }
 
     menu_->Append(PU_SUBMAIN, wxT("Windows"), windows_submenu_);
 
