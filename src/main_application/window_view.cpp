@@ -46,6 +46,7 @@ WindowView::WindowView(wxFrame* main_window,
                                           mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
                                       }));
         tab_buttons_.addNewTab(tab_settings.name);
+        tab_buttons_.setSelection(tab_settings.name);
         current_tab_num_++;
     }
     else
