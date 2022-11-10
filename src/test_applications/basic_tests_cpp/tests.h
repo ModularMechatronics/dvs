@@ -130,8 +130,8 @@ void testPlotCollection()
         t = t + 0.1;
     }
 
-    std::vector<std::reference_wrapper<Vector<double>>> pc_x = {x0, x1, x2};
-    std::vector<std::reference_wrapper<Vector<double>>> pc_y = {y0, y1, y2};
+    std::vector<VectorView<double>> pc_x = {x0.view(), x1.view(), x2.view()};
+    std::vector<VectorView<double>> pc_y = {y0.view(), y1.view(), y2.view()};
 
     setCurrentElement("p_view_0");
     clearView();
@@ -167,8 +167,8 @@ void testPlotCollection()
             y(i) = y_a * t * sin(t) + y_o;
             t += t_inc;
         }
-        pcm_x.push_back(std::move(x));
-        pcm_y.push_back(std::move(y));
+        pcm_x.push_back(x);
+        pcm_y.push_back(y);
     }
 
     setCurrentElement("p_view_1");
@@ -207,9 +207,9 @@ void testPlotCollection3()
         t = t + 0.1;
     }
 
-    std::vector<std::reference_wrapper<Vector<double>>> pc_x = {x0, x1, x2};
-    std::vector<std::reference_wrapper<Vector<double>>> pc_y = {y0, y1, y2};
-    std::vector<std::reference_wrapper<Vector<double>>> pc_z = {z0, z1, z2};
+    std::vector<VectorView<double>> pc_x = {x0.view(), x1.view(), x2.view()};
+    std::vector<VectorView<double>> pc_y = {y0.view(), y1.view(), y2.view()};
+    std::vector<VectorView<double>> pc_z = {z0.view(), z1.view(), z2.view()};
 
     setCurrentElement("p_view_0");
     clearView();

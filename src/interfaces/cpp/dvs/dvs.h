@@ -97,10 +97,9 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
-    uint32_t num_elements = 0;
-
     DVS_ASSERT(x.size() == y.size());
 
+    uint32_t num_elements = 0;
     Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
@@ -119,27 +118,24 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
 }
 
 template <typename T, typename... Us>
-void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x,
-                    const std::vector<std::reference_wrapper<Vector<T>>>& y,
-                    const Us&... settings)
+void plotCollection(const std::vector<VectorView<T>>& x, const std::vector<VectorView<T>>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT_COLLECTION2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
-    uint32_t num_elements = 0;
-
     DVS_ASSERT(x.size() == y.size());
 
+    uint32_t num_elements = 0;
     Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
     {
-        const Vector<T>& x_ref = x[k];
-        const Vector<T>& y_ref = y[k];
-        DVS_ASSERT(x_ref.size() == y_ref.size());
-        vector_lengths(k) = x_ref.size();
-        num_elements += x_ref.size();
+        const VectorView<T> x_view = x[k];
+        const VectorView<T> y_view = y[k];
+        DVS_ASSERT(x_view.size() == y_view.size());
+        vector_lengths(k) = x_view.size();
+        num_elements += x_view.size();
     }
 
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, num_elements);
@@ -147,8 +143,7 @@ void plotCollection(const std::vector<std::reference_wrapper<Vector<T>>>& x,
 
     const size_t num_bytes_to_send = sizeof(T) * 2 * num_elements;
 
-    internal::sendHeaderAndRefVectorCollection(
-        internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y);
+    internal::sendHeaderAndVectorCollection(internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y);
 }
 
 template <typename T, typename... Us>
@@ -161,11 +156,10 @@ void plotCollection3(const std::vector<Vector<T>>& x,
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
-    uint32_t num_elements = 0;
-
     DVS_ASSERT(x.size() == y.size());
     DVS_ASSERT(x.size() == z.size());
 
+    uint32_t num_elements = 0;
     Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
@@ -186,31 +180,30 @@ void plotCollection3(const std::vector<Vector<T>>& x,
 }
 
 template <typename T, typename... Us>
-void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x,
-                     const std::vector<std::reference_wrapper<Vector<T>>>& y,
-                     const std::vector<std::reference_wrapper<Vector<T>>>& z,
+void plotCollection3(const std::vector<VectorView<T>>& x,
+                     const std::vector<VectorView<T>>& y,
+                     const std::vector<VectorView<T>>& z,
                      const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT_COLLECTION3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_OBJECTS, internal::toUInt32(x.size()));
 
-    uint32_t num_elements = 0;
-
     DVS_ASSERT(x.size() == y.size());
     DVS_ASSERT(x.size() == z.size());
 
+    uint32_t num_elements = 0;
     Vector<uint16_t> vector_lengths(x.size());
 
     for (size_t k = 0; k < x.size(); k++)
     {
-        const Vector<T>& x_ref = x[k];
-        const Vector<T>& y_ref = y[k];
-        const Vector<T>& z_ref = z[k];
-        DVS_ASSERT(x_ref.size() == y_ref.size());
-        DVS_ASSERT(x_ref.size() == z_ref.size());
-        vector_lengths(k) = x_ref.size();
-        num_elements += x_ref.size();
+        const VectorView<T> x_view = x[k];
+        const VectorView<T> y_view = y[k];
+        const VectorView<T> z_view = z[k];
+        DVS_ASSERT(x_view.size() == y_view.size());
+        DVS_ASSERT(x_view.size() == z_view.size());
+        vector_lengths(k) = x_view.size();
+        num_elements += x_view.size();
     }
 
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, num_elements);
@@ -218,7 +211,7 @@ void plotCollection3(const std::vector<std::reference_wrapper<Vector<T>>>& x,
 
     const size_t num_bytes_to_send = sizeof(T) * 3 * num_elements;
 
-    internal::sendHeaderAndRefVectorCollection(
+    internal::sendHeaderAndVectorCollection(
         internal::getSendFunction(), hdr, vector_lengths, num_bytes_to_send, x, y, z);
 }
 
