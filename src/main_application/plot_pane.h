@@ -75,6 +75,7 @@ private:
     wxSize parent_size_;
     Vec2f mouse_pos_at_press_;
     Vec2f current_mouse_pos_;
+    Vec2f previous_mouse_pos_;
     wxPoint pos_at_press_;
     wxSize size_at_press_;
     float grid_size_;
@@ -103,6 +104,7 @@ public:
 
     int getWidth();
     int getHeight();
+    void setNumTabs(const int num_tabs) override;
 
     void render(wxPaintEvent& evt);
 
@@ -122,9 +124,11 @@ public:
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
     void mouseRightPressed(wxMouseEvent& event);
+    void setMinimumXPos(const int new_min_x_pos);
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);
+    void mouseEntered(wxMouseEvent& event);
     void mouseLeftWindow(wxMouseEvent& event);
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);

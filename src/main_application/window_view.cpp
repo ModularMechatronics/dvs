@@ -312,6 +312,11 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
         },
         notify_main_window_element_deleted_));
     tab_buttons_.addNewTab(tab_settings.name);
+
+    for (const auto& t : tabs_)
+    {
+        t->setNumTabs(tabs_.size());
+    }
 }
 
 void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
@@ -498,6 +503,10 @@ void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
     {
         delete (*q);
         tabs_.erase(q);
+        for (const auto& t : tabs_)
+        {
+            t->setNumTabs(tabs_.size());
+        }
     }
 
     tab_buttons_.deleteTabButton(last_clicked_item_);

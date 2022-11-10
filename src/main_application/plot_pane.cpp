@@ -139,6 +139,7 @@ PlotPane::PlotPane(wxWindow* parent,
     parent_size_ = parent->GetSize();
     grid_size_ = grid_size;
     edit_size_margin_ = 20.0f;
+    minimum_x_pos_ = 70;
     perspective_projection_ = false;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
@@ -181,6 +182,23 @@ void PlotPane::updateSizeFromParent(const wxSize& parent_size)
     this->setSize(wxSize(width, height));
 }
 
+void PlotPane::setMinimumXPos(const int new_min_x_pos)
+{
+    minimum_x_pos_ = new_min_x_pos;
+}
+
+void PlotPane::setNumTabs(const int num_tabs)
+{
+    if (num_tabs == 1)
+    {
+        minimum_x_pos_ = 0;
+    }
+    else
+    {
+        minimum_x_pos_ = 70;
+    }
+}
+
 void PlotPane::mouseRightPressed(wxMouseEvent& event)
 {
     notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), element_settings_.name);
@@ -214,6 +232,7 @@ void PlotPane::hide()
 void PlotPane::bindCallbacks()
 {
     Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
+    Bind(wxEVT_ENTER_WINDOW, &PlotPane::mouseEntered, this);
     Bind(wxEVT_LEFT_DOWN, &PlotPane::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &PlotPane::mouseLeftReleased, this);
     Bind(wxEVT_KEY_DOWN, &PlotPane::keyPressedCallback, this);
@@ -460,22 +479,27 @@ void PlotPane::notifyParentAboutModification()
     wxPostEvent(GetParent(), parent_event);
 }
 
+void PlotPane::mouseEntered(wxMouseEvent& event)
+{
+    const wxPoint current_point = event.GetPosition();
+    const wxPoint current_position = this->GetPosition();
+    previous_mouse_pos_ = Vec2f(current_position.x + current_point.x, current_position.y + current_point.y);
+}
+
 void PlotPane::mouseMoved(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
-    current_mouse_pos_ = Vec2f(current_point.x, current_point.y);
+    const wxPoint current_pane_position = this->GetPosition();
+
+    current_mouse_pos_ = Vec2f(current_pane_position.x + current_point.x, current_pane_position.y + current_point.y);
 
     if (left_mouse_button_.isPressed())
     {
         if (wxGetKeyState(WXK_COMMAND))
         {
-            wxPoint pos_now = this->GetPosition();
-            const Vec2f mouse_pos = Vec2f(current_point.x + pos_now.x, current_point.y + pos_now.y);
-            Vec2f delta = mouse_pos - mouse_pos_at_press_;
+            const Vec2f delta = current_mouse_pos_ - previous_mouse_pos_;
 
-            delta = Vec2f(std::round(delta.x / grid_size_) * grid_size_, std::round(delta.y / grid_size_) * grid_size_);
             const Vec2f current_pos(this->GetPosition().x, this->GetPosition().y);
-            const Vec2f changed_pos = delta;
 
             const wxSize size_now = this->GetSize();
 
@@ -485,46 +509,102 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
             switch (cursor_state_at_press_)
             {
                 case CursorSquareState::LEFT:
-                    new_position = wxPoint(changed_pos.x, pos_at_press_.y);
+                    new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
                     new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight());
                     break;
                 case CursorSquareState::RIGHT:
-                    new_size = wxSize(size_at_press_.GetWidth() + delta.x, size_at_press_.GetHeight());
+                    new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight());
                     break;
                 case CursorSquareState::TOP:
-                    new_position = wxPoint(pos_at_press_.x, changed_pos.y);
+                    new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
                     new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() - delta.y);
                     break;
                 case CursorSquareState::BOTTOM:
-                    new_size = wxSize(size_at_press_.GetWidth(), size_at_press_.GetHeight() + delta.y);
-                    break;
-                case CursorSquareState::BOTTOM_RIGHT:
-                    new_size = wxSize(size_at_press_.GetWidth() + delta.x, size_at_press_.GetHeight() + delta.y);
-                    break;
-                case CursorSquareState::BOTTOM_LEFT:
-                    new_position = wxPoint(changed_pos.x, pos_at_press_.y);
-                    new_size = wxSize(size_now.GetWidth() - delta.x, size_at_press_.GetHeight() + delta.y);
-                    break;
-                case CursorSquareState::TOP_RIGHT:
-                    new_position = wxPoint(pos_at_press_.x, changed_pos.y);
-                    new_size = wxSize(size_at_press_.GetWidth() + delta.x, size_now.GetHeight() - delta.y);
-                    break;
-                case CursorSquareState::TOP_LEFT:
-                    new_position = wxPoint(changed_pos.x, changed_pos.y);
-                    new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y);
+                    new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() + delta.y);
                     break;
                 case CursorSquareState::INSIDE:
-                    new_position = wxPoint(changed_pos.x, changed_pos.y);
+                    new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
                     new_size = size_at_press_;
+                    break;
+                case CursorSquareState::BOTTOM_RIGHT:
+                    new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight() + delta.y);
+                    break;
+                case CursorSquareState::BOTTOM_LEFT:
+                    new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
+                    new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() + delta.y);
+                    break;
+                case CursorSquareState::TOP_RIGHT:
+                    new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
+                    new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight() - delta.y);
+                    break;
+                case CursorSquareState::TOP_LEFT:
+                    new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
+                    new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y);
                     break;
                 default:
                     std::cout << "Do nothing..." << std::endl;
             }
-            new_size.SetWidth(std::max(50, new_size.GetWidth()));
-            new_size.SetHeight(std::max(50, new_size.GetHeight()));
+            if (new_size.GetWidth() < 50)
+            {
+                new_size.SetWidth(50);
+                new_position.x = current_pos.x;
+            }
+            if (new_size.GetHeight() < 50)
+            {
+                new_size.SetHeight(50);
+                new_position.y = current_pos.y;
+            }
 
             const float px = parent_size_.GetWidth();
             const float py = parent_size_.GetHeight();
+
+            if (new_position.x < minimum_x_pos_)
+            {
+                if (cursor_state_at_press_ == CursorSquareState::INSIDE)
+                {
+                    new_position.x = current_pos.x;
+                }
+                else
+                {
+                    new_size.SetWidth(size_now.GetWidth());
+                    new_position.x = current_pos.x;
+                }
+            }
+            else if ((new_position.x + new_size.GetWidth()) > px)
+            {
+                if (cursor_state_at_press_ == CursorSquareState::INSIDE)
+                {
+                    new_position.x = current_pos.x;
+                }
+                else
+                {
+                    new_size.SetWidth(size_now.GetWidth());
+                }
+            }
+
+            if (new_position.y < 30)
+            {
+                if (cursor_state_at_press_ == CursorSquareState::INSIDE)
+                {
+                    new_position.y = current_pos.y;
+                }
+                else
+                {
+                    new_size.SetHeight(size_now.GetHeight());
+                    new_position.y = current_pos.y;
+                }
+            }
+            else if ((new_position.y + new_size.GetHeight()) > py)
+            {
+                if (cursor_state_at_press_ == CursorSquareState::INSIDE)
+                {
+                    new_position.y = current_pos.y;
+                }
+                else
+                {
+                    new_size.SetHeight(size_now.GetHeight());
+                }
+            }
 
             element_settings_.width = static_cast<float>(new_size.GetWidth()) / px;
             element_settings_.height = static_cast<float>(new_size.GetHeight()) / py;
@@ -535,9 +615,11 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
                 (new_size.GetWidth() != this->GetSize().GetWidth()) ||
                 (new_size.GetHeight() != this->GetSize().GetHeight()))
             {
+                Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
                 notifyParentAboutModification();
                 this->setPosition(new_position);
                 this->setSize(new_size);
+                Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
             }
         }
         else
@@ -620,6 +702,8 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
             }
         }
     }
+
+    previous_mouse_pos_ = current_mouse_pos_;
 }
 
 void PlotPane::keyPressed(const char key)
@@ -715,8 +799,6 @@ void PlotPane::render(wxPaintEvent& evt)
     wxPaintDC(this);
 
     glEnable(GL_MULTISAMPLE);
-
-    const float bg_color = 240.0f;
 
     const RGBTripletf color_vec{axes_settings_.window_background_};
     glClearColor(color_vec.red, color_vec.green, color_vec.blue, 0.0f);

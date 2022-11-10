@@ -78,6 +78,14 @@ public:
         }
     }
 
+    void setNumTabs(const int num_tabs)
+    {
+        for (auto const& ge : gui_elements_)
+        {
+            ge->setNumTabs(num_tabs);
+        }
+    }
+
     void newElement()
     {
         const float grid_size_ = 1.0f;

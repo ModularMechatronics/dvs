@@ -23,6 +23,7 @@ protected:
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
     std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
 
+    int minimum_x_pos_;
     Vec2f parent_size_;  // Pixels
 
 public:
@@ -69,6 +70,7 @@ public:
     virtual void destroy() = 0;
     virtual void refresh() = 0;
     virtual void waitForFlush() = 0;
+    virtual void setNumTabs(const int num_tabs) = 0;
     virtual void showLegend(const bool show_legend)
     {
         static_cast<void>(show_legend);
