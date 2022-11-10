@@ -1,4 +1,5 @@
 Pre release:
+- Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
 - Verify that image is not mirrored
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
