@@ -165,6 +165,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     else
     {
         edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
+        has_edge_color_ = true;
     }
 
     if (props.hasProperty(PropertyType::FACE_COLOR))

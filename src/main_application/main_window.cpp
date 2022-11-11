@@ -355,8 +355,6 @@ void MainWindow::OnReceiveTimer(wxTimerEvent&)
 
 void MainWindow::notifyChildrenOnKeyPressed(const char key)
 {
-    std::cout << "Key pressed: " << key << std::endl;
-
     for (auto& we : windows_)
     {
         we->notifyChildrenOnKeyPressed(key);
@@ -365,8 +363,6 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
 
 void MainWindow::notifyChildrenOnKeyReleased(const char key)
 {
-    std::cout << "Key released: " << key << std::endl;
-
     for (auto& we : windows_)
     {
         we->notifyChildrenOnKeyReleased(key);
