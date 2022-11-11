@@ -166,7 +166,7 @@ template <typename T> T* Matrix<T>::data() const
 
 template <typename T> size_t Matrix<T>::lastRowIdx() const
 {
-    DVS_ASSERTSERT(num_rows_ != 0);
+    DVS_ASSERT(num_rows_ != 0);
     return num_rows_ - 1;
 }
 
@@ -569,19 +569,15 @@ template <typename T> T Matrix<T>::max() const
     ASSERT_MAT_VALID_INTERNAL();
 
     T max_val = data_[0];
-    for (size_t c = 1; c < num_cols_; c++)
-    {
-        max_val = std::max(max_val, data_[c]);
-    }
 
-    for (size_t r = 1; r < num_rows_; r++)
+    for (size_t r = 0; r < num_rows_; r++)
     {
-        T max_val_internal = data_[r * num_cols_];
-        for (size_t c = 1; c < num_cols_; c++)
+        const size_t r_times_num_cols = r * num_cols_;
+
+        for (size_t c = 0; c < num_cols_; c++)
         {
-            max_val_internal = std::max(max_val_internal, data_[r * num_cols_ + c]);
+            max_val = std::max(max_val, data_[r_times_num_cols + c]);
         }
-        max_val = std::max(max_val, max_val_internal);
     }
 
     return max_val;
@@ -592,19 +588,15 @@ template <typename T> T Matrix<T>::min() const
     ASSERT_MAT_VALID_INTERNAL();
 
     T min_val = data_[0];
-    for (size_t c = 1; c < num_cols_; c++)
-    {
-        min_val = std::min(min_val, data_[c]);
-    }
 
-    for (size_t r = 1; r < num_rows_; r++)
+    for (size_t r = 0; r < num_rows_; r++)
     {
-        T min_val_internal = data_[r * num_cols_];
-        for (size_t c = 1; c < num_cols_; c++)
+        const size_t r_times_num_cols = r * num_cols_;
+
+        for (size_t c = 0; c < num_cols_; c++)
         {
-            min_val_internal = std::min(min_val_internal, data_[r * num_cols_ + c]);
+            min_val = std::min(min_val, data_[r_times_num_cols + c]);
         }
-        min_val = std::min(min_val, min_val_internal);
     }
 
     return min_val;
@@ -615,9 +607,11 @@ template <typename T> T Matrix<T>::sum() const
     T s = 0.0;
     for (size_t r = 0; r < num_rows_; r++)
     {
+        const size_t r_times_num_cols = r * num_cols_;
+
         for (size_t c = 0; c < num_cols_; c++)
         {
-            s = s + data_[r * num_cols_ + c];
+            s = s + data_[r_times_num_cols + c];
         }
     }
     return s;

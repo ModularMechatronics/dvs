@@ -313,6 +313,18 @@ void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
             sa.x = 0.0;
             sa.y = 0.0;
         }
+        else if (mia == MouseInteractionAxis::XY)
+        {
+            sa.z = 0.0;
+        }
+        else if (mia == MouseInteractionAxis::YZ)
+        {
+            sa.x = 0.0;
+        }
+        else if (mia == MouseInteractionAxis::XZ)
+        {
+            sa.y = 0.0;
+        }
     }
     else
     {
@@ -356,6 +368,18 @@ void AxesInteractor::changePan(const double dx, const double dy, const MouseInte
     else if (mia == MouseInteractionAxis::Z)
     {
         sa.x = 0.0;
+        sa.y = 0.0;
+    }
+    else if (mia == MouseInteractionAxis::XY)
+    {
+        sa.z = 0.0;
+    }
+    else if (mia == MouseInteractionAxis::YZ)
+    {
+        sa.x = 0.0;
+    }
+    else if (mia == MouseInteractionAxis::XZ)
+    {
         sa.y = 0.0;
     }
     const Matrixd rotation_mat = view_angles_.getSnappedRotationMatrix();

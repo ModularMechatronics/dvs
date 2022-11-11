@@ -25,6 +25,9 @@ enum class MouseInteractionAxis
     X,
     Y,
     Z,
+    XY,
+    YZ,
+    XZ,
     ALL
 };
 

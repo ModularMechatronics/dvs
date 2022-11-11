@@ -628,15 +628,27 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
 
             if (keyboard_state_.isPressed())
             {
-                if (keyboard_state_.keyIsPressed('1'))
+                if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('2')))
+                {
+                    current_mouse_interaction_axis_ = MouseInteractionAxis::XY;
+                }
+                else if (wxGetKeyState(static_cast<wxKeyCode>('2')) && wxGetKeyState(static_cast<wxKeyCode>('3')))
+                {
+                    current_mouse_interaction_axis_ = MouseInteractionAxis::YZ;
+                }
+                else if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('3')))
+                {
+                    current_mouse_interaction_axis_ = MouseInteractionAxis::XZ;
+                }
+                else if (wxGetKeyState(static_cast<wxKeyCode>('1')))
                 {
                     current_mouse_interaction_axis_ = MouseInteractionAxis::X;
                 }
-                else if (keyboard_state_.keyIsPressed('2'))
+                else if (wxGetKeyState(static_cast<wxKeyCode>('2')))
                 {
                     current_mouse_interaction_axis_ = MouseInteractionAxis::Y;
                 }
-                else if (keyboard_state_.keyIsPressed('3'))
+                else if (wxGetKeyState(static_cast<wxKeyCode>('3')))
                 {
                     current_mouse_interaction_axis_ = MouseInteractionAxis::Z;
                 }
