@@ -62,6 +62,7 @@ private:
     KeyboardState keyboard_state_;
     CursorSquareState cursor_state_at_press_;
 
+    bool axes_from_min_max_disabled_;
     bool hold_on_;
     bool axes_set_;
     bool view_set_;

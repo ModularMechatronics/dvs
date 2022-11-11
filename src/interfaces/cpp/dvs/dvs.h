@@ -722,6 +722,13 @@ inline void clearView()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void disableAutomaticAxesSetting()
+{
+    internal::CommunicationHeader hdr{internal::Function::DISABLE_AXES_FROM_MIN_MAX};
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 }  // namespace dvs
 
 #endif  // DVS_DVS_H_

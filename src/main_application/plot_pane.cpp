@@ -157,6 +157,7 @@ PlotPane::PlotPane(wxWindow* parent,
     hold_on_ = true;
     axes_set_ = false;
     view_set_ = false;
+    axes_from_min_max_disabled_ = false;
 
     Bind(wxEVT_RIGHT_DOWN, &PlotPane::mouseRightPressed, this);
 
@@ -316,6 +317,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
         hold_on_ = true;
         view_set_ = false;
         wait_for_flush_ = false;
+        axes_from_min_max_disabled_ = false;
 
         plot_data_handler_->clear();
         axes_interactor_.setViewAngles(0, M_PI);
@@ -325,6 +327,10 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
     else if (fcn == Function::SOFT_CLEAR)
     {
         plot_data_handler_->softClear();
+    }
+    else if (fcn == Function::DISABLE_AXES_FROM_MIN_MAX)
+    {
+        axes_from_min_max_disabled_ = true;
     }
     else
     {
@@ -345,7 +351,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
         // The whole getMinMaxVectors logic in plot_datas should probably also be redesigned
         const std::pair<Vec3d, Vec3d> min_max = plot_data_handler_->getMinMaxVectors();
 
-        if (!axes_set_)
+        if ((!axes_set_) && (!axes_from_min_max_disabled_))
         {
             const Vec3d mean_vec = (min_max.second + min_max.first) / 2.0;
 
@@ -354,7 +360,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
 
             axes_interactor_.setAxesLimits(min_vec, max_vec);
         }
-        if (!view_set_)
+        if ((!view_set_) && (!axes_from_min_max_disabled_))
         {
             if (is3DFunction(fcn))
             {

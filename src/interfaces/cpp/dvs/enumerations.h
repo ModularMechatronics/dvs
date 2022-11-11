@@ -104,6 +104,7 @@ enum class Function : uint8_t
     POSITION,
     SURF,
     IM_SHOW,
+    DISABLE_AXES_FROM_MIN_MAX,
     GLOBAL_ILLUMINATION,
     AXES_2D,
     AXES_3D,

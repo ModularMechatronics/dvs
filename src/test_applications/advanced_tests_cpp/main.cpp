@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
         {"2d_changing_axes", dynamic_plotting::test2DFunctionChangingAxes},
         {"2d_new_data_clear", dynamic_plotting::test2DFunctionNewDataAndClear},
         {"3d_new_data_clear", dynamic_plotting::test3DFunctionNewDataAndClear},
-
+        {"3d_manual_interaction", dynamic_plotting::test3DFunctionManualInteraction},
     };
 
     // ######################### dynamic_plotting ##########################

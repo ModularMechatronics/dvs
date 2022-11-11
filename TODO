@@ -16,7 +16,6 @@ Pre release:
  * Add VectorFixed
 - Custom tab views with opengl buttons and using Hide/Show for the plot_panes
 - Display element name in plot panes
-- Fix not being able to interact with plot_pane while plotting continuously
 - Add zoom/rotate/pan symbol in upper left corner of the plot pane which the mouse is hoovering over, and symbol for locked rotation/zoom/pan axis
 - Help pane that shows up with keyboard shortcuts when you hold 'H'
 - Add rendering of plot pane name
