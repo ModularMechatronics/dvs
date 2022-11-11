@@ -12,6 +12,7 @@
 #include "dvs/constants.h"
 #include "dvs/enumerations.h"
 #include "dvs/fillable_uint8_array.h"
+#include "dvs/logging.h"
 #include "dvs/math/math.h"
 #include "dvs/plot_properties.h"
 #include "dvs/utils.h"
@@ -346,7 +347,7 @@ private:
         {
             return CommunicationHeaderObjectType::SLOT;
         }
-        assert(false);  // TODO: Ugly
+        DVS_ASSERT(false);  // TODO: Ugly
     }
 
     // TODO: Remove or move to lambda
@@ -559,7 +560,7 @@ public:
 
     CommunicationHeaderObject get(const CommunicationHeaderObjectType tp) const
     {
-        assert(static_cast<uint8_t>(tp) < objects_lut_.size);
+        DVS_ASSERT(static_cast<uint8_t>(tp) < objects_lut_.size);
         const uint8_t idx = objects_lut_.data[static_cast<uint8_t>(tp)];
         if (idx == 255)
         {

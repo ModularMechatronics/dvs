@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "dvs/enumerations.h"
+#include "dvs/logging.h"
 
 template <typename T> struct RGBTriplet
 {
@@ -72,8 +73,8 @@ template <typename T> RGBColorMap<T>::RGBColorMap() : red_(nullptr), green_(null
 template <typename T>
 RGBColorMap<T>::RGBColorMap(const std::vector<RGBTriplet<T>>& color_brake_points, const size_t num_values)
 {
-    assert(num_values > 1);
-    assert(color_brake_points.size() > 1);
+    DVS_ASSERT(num_values > 1);
+    DVS_ASSERT(color_brake_points.size() > 1);
 
     num_values_ = num_values;
     num_color_brake_points_ = color_brake_points.size();

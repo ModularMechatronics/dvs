@@ -16,9 +16,9 @@
 
 AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width)
 {
-    assert(axes_settings.getMinVec().x < axes_settings.getMaxVec().x && "x min larger than x max!");
-    assert(axes_settings.getMinVec().y < axes_settings.getMaxVec().y && "y min larger than y max!");
-    assert(axes_settings.getMinVec().z < axes_settings.getMaxVec().z && "z min larger than z max!");
+    DVS_ASSERT(axes_settings.getMinVec().x < axes_settings.getMaxVec().x) << "x min larger than x max!";
+    DVS_ASSERT(axes_settings.getMinVec().y < axes_settings.getMaxVec().y) << "y min larger than y max!";
+    DVS_ASSERT(axes_settings.getMinVec().z < axes_settings.getMaxVec().z) << "z min larger than z max!";
 
     axes_limits_ = AxesLimits(axes_settings.getMinVec(), axes_settings.getMaxVec());
     default_axes_limits_ = axes_limits_;
@@ -448,7 +448,7 @@ GridVector generateAxisVector(
         }
     }
 
-    assert(vec.size() <= GridVector::kMaxNumGridNumbers);
+    DVS_ASSERT(vec.size() <= GridVector::kMaxNumGridNumbers);
     ret_vec.num_valid_values = vec.size();
     for (size_t k = 0; k < vec.size(); k++)
     {

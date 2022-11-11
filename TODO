@@ -1,7 +1,6 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
-- Verify that image is not mirrored
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
 - Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
@@ -14,7 +13,6 @@ Pre release:
  * Finalize MatrixFixed functions
  * Use MatrixFixed instead of Matrix where possible
  * Add VectorFixed
-- Custom tab views with opengl buttons and using Hide/Show for the plot_panes
 - Display element name in plot panes
 - Add zoom/rotate/pan symbol in upper left corner of the plot pane which the mouse is hoovering over, and symbol for locked rotation/zoom/pan axis
 - Help pane that shows up with keyboard shortcuts when you hold 'H'
@@ -28,22 +26,16 @@ Pre release:
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Image view (same level as plot pane) which is zoomable and panable only
 - Delete gl buffers with "glDeleteBuffers"
-- For surf, drawMesh etc, add calculation of mean triangle value, to base color off of
 - Set color in fragment shader with uniform, instead of in vertex shader
 - Finalize small quirks in plot
 - Implement new shader stuff that's in plot for plot3
 - Real time plot with option to add new samples
  * And extended functionality to add multiple slots in same function call
-- Make it so that CommunicationHeader::append and ::extend returns reference to self, so that one can write
-  hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>())
-     .append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()))
-     .append(internal::CommunicationHeaderObjectType::DIMENSION_2D, internal::Dimension2D(x.numRows(), x.numCols()));
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
-- Fix layout designer
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
 - imShow for different data types (only float for now)
@@ -62,7 +54,6 @@ Pre release:
 - Refactor pipeline of how new plot objects are added
 - Refactor from top down, from the app and down into the GUI
 - Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
-- Remove "MainWindow" alltogether, and enable all windows to have tabs?
 - Make sure plot/plot3 works for integer data types
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Make proper test folder structure
@@ -71,8 +62,6 @@ Pre release:
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Time date axis
-- Look through assertions, and replace to DVS_ASSERT, but not for performance critical functions
-- Use "assert" for performance critical functions, and not DVS_ASSERT
 - Do something better/neater than "fillBufferWithData"?
 - Separate plot object vectors so that shader switching is minimized
 - Don't iterate over map in tests.h, just index with the key directly, for basic-tests-cpp
