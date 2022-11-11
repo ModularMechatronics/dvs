@@ -77,7 +77,7 @@ void CustomTaskBarIcon::onMenuSubWindow(wxCommandEvent& evt)
             break;
         }
     }
-    assert(window_found);
+    DVS_ASSERT(window_found);
     submenu_function_(window_name);
 }
 

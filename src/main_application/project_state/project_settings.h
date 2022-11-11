@@ -6,6 +6,8 @@
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 
+#include "dvs/logging.h"
+
 inline void throwIfMissing(const nlohmann::json& j, const std::string& field_name, const std::string& exception_string)
 {
     if (j.count(field_name) == 0)
@@ -106,7 +108,7 @@ struct TabSettings
 
     ElementSettings getElementWithName(const std::string& name) const
     {
-        assert(hasElementWithName(name));
+        DVS_ASSERT(hasElementWithName(name));
         ElementSettings res(0.0f, 0.0f, 0.0f, 0.0f, "");
 
         // TODO: Use find_if?
@@ -206,7 +208,7 @@ struct WindowSettings
 
     TabSettings getTabWithName(const std::string& name) const
     {
-        assert(hasTabWithName(name));
+        DVS_ASSERT(hasTabWithName(name));
         TabSettings res{};
 
         // TODO: Use find_if?
@@ -221,12 +223,6 @@ struct WindowSettings
         return res;
     }
 
-    std::vector<ElementSettings> getElementSettingsList() const
-    {
-        return std::vector<ElementSettings>();
-        // return elements_;
-    }
-
     bool hasElementWithName(const std::string& name) const
     {
         return false;
@@ -237,7 +233,7 @@ struct WindowSettings
 
     ElementSettings getElementWithName(const std::string& name) const
     {
-        assert(hasElementWithName(name));
+        DVS_ASSERT(hasElementWithName(name));
         ElementSettings res(0.0f, 0.0f, 0.0f, 0.0f, "");
         /*for (const ElementSettings& e : elements_)
         {
@@ -332,22 +328,6 @@ public:
         return j_to_save;
     }
 
-    std::vector<ElementSettings> getElementSettingsList() const
-    {
-        std::vector<ElementSettings> all_elements;
-
-        /*for (auto t : tabs_)
-        {
-            std::vector<ElementSettings> v = t.getElementSettingsList();
-            for (auto tv : v)
-            {
-                all_elements.push_back(tv);
-            }
-        }*/
-
-        return all_elements;
-    }
-
     bool hasWindowWithName(const std::string& name) const
     {
         return std::find_if(windows_.begin(), windows_.end(), [&](const WindowSettings& ws) -> bool {
@@ -357,7 +337,7 @@ public:
 
     WindowSettings getWindowWithName(const std::string& name) const
     {
-        assert(hasWindowWithName(name));
+        DVS_ASSERT(hasWindowWithName(name));
         WindowSettings res;
         for (const WindowSettings& ws : windows_)
         {

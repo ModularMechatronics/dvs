@@ -7,6 +7,7 @@
 
 #include "dvs/base_types.h"
 #include "dvs/enumerations.h"
+#include "dvs/logging.h"
 #include "dvs/math/math.h"
 #include "main_application/plot_objects/utils.h"
 #include "opengl_low_level/data_structures.h"
@@ -109,7 +110,7 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
             break;
         case DataType::INT64:
             gl_type = GL_FLOAT;
-            assert(false);  // Haven't fround int64 in opengl enums yet...
+            DVS_ASSERT(false);  // Haven't fround int64 in opengl enums yet...
             break;
         case DataType::UINT8:
             gl_type = GL_UNSIGNED_BYTE;
@@ -121,7 +122,7 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
             gl_type = GL_UNSIGNED_INT;
             break;
         case DataType::UINT64:
-            assert(false);  // Haven't fround uint64 in opengl enums yet...
+            DVS_ASSERT(false);  // Haven't fround uint64 in opengl enums yet...
             gl_type = GL_FLOAT;
             break;
         case DataType::UNKNOWN:
