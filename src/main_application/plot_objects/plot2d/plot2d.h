@@ -11,17 +11,7 @@
 
 class Plot2D : public PlotObjectBase
 {
-public:
-    struct InputData
-    {
-        float* p0;
-        float* p1;
-        float* p2;
-        int32_t* idx_data;
-    };
-
 private:
-    InputData input_data_;
     float gap_size_, dash_size_;
 
     GLuint idx_buffer_;
