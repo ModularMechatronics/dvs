@@ -1,10 +1,39 @@
 #include "main_application/plot_objects/plot2d/plot2d.h"
 
-Plot2D::InputData convertData2DOuter(const uint8_t* const input_data,
-                                     const DataType data_type,
-                                     const size_t num_elements,
-                                     const size_t num_bytes_per_element,
-                                     const size_t num_bytes_for_one_vec);
+#include <functional>
+
+struct OutputData
+{
+    float* p0;
+    float* p1;
+    float* p2;
+    int32_t* idx_data;
+};
+
+struct InputParams
+{
+    size_t num_elements;
+    size_t num_bytes_per_element;
+    size_t num_bytes_for_one_vec;
+
+    InputParams() = default;
+    InputParams(const size_t num_elements_, const size_t num_bytes_per_element_, const size_t num_bytes_for_one_vec_)
+        : num_elements{num_elements_},
+          num_bytes_per_element{num_bytes_per_element_},
+          num_bytes_for_one_vec{num_bytes_for_one_vec_}
+    {
+    }
+};
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+
+struct Converter
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertData<T>(input_data, input_params);
+    }
+};
 
 Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
@@ -16,8 +45,9 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    input_data_ =
-        convertData2DOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_};
+
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
     if (is_dashed_)
     {
@@ -46,7 +76,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
 
     glGenBuffers(1, &p0_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, input_data_.p0, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p0, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
@@ -55,7 +85,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     // Prev
     glGenBuffers(1, &p1_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, input_data_.p1, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p1, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
@@ -64,7 +94,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     // Next
     glGenBuffers(1, &p2_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, input_data_.p2, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p2, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
@@ -73,11 +103,16 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, input_data_.idx_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, output_data.idx_data, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
     glVertexAttribIPointer(3, 1, GL_INT, 0, 0);
+
+    delete[] output_data.p0;
+    delete[] output_data.p1;
+    delete[] output_data.p2;
+    delete[] output_data.idx_data;
 }
 
 void Plot2D::findMinMax()
@@ -109,13 +144,7 @@ void Plot2D::render()
     shader_collection_.basic_plot_shader.use();
 }
 
-Plot2D::~Plot2D()
-{
-    delete[] input_data_.p0;
-    delete[] input_data_.p1;
-    delete[] input_data_.p2;
-    delete[] input_data_.idx_data;
-}
+Plot2D::~Plot2D() {}
 
 LegendProperties Plot2D::getLegendProperties() const
 {
@@ -126,13 +155,9 @@ LegendProperties Plot2D::getLegendProperties() const
     return lp;
 }
 
-template <typename T>
-Plot2D::InputData convertData2D(const uint8_t* const input_data,
-                                const size_t num_elements,
-                                const size_t num_bytes_per_element,
-                                const size_t num_bytes_for_one_vec)
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
-    const size_t num_segments = num_elements - 1U;
+    const size_t num_segments = input_params.num_elements - 1U;
     const size_t num_points = num_segments * 12U;
 
     /* TODO: Should be something like this:
@@ -140,7 +165,7 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
     const size_t num_points = num_triangles * 3U;*/
 
-    Plot2D::InputData output_data;
+    OutputData output_data;
     output_data.p0 = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
     output_data.p2 = new float[2 * num_points];
@@ -159,15 +184,15 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         Vec2<float> p2;
     };
     std::vector<Points> pts;
-    pts.resize(num_elements);
+    pts.resize(input_params.num_elements);
 
     {
         // First segment
         const size_t idx_10 = 0;
-        const size_t idx_11 = num_bytes_for_one_vec;
+        const size_t idx_11 = input_params.num_bytes_for_one_vec;
 
-        const size_t idx_20 = num_bytes_per_element;
-        const size_t idx_21 = num_bytes_for_one_vec + num_bytes_per_element;
+        const size_t idx_20 = input_params.num_bytes_per_element;
+        const size_t idx_21 = input_params.num_bytes_for_one_vec + input_params.num_bytes_per_element;
 
         const T p1x = *reinterpret_cast<const T* const>(&(input_data[idx_10]));
         const T p1y = *reinterpret_cast<const T* const>(&(input_data[idx_11]));
@@ -190,11 +215,13 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
 
     {
         // Last segment
-        const size_t idx_00 = (num_elements - 2) * num_bytes_per_element;
-        const size_t idx_01 = num_bytes_for_one_vec + (num_elements - 2) * num_bytes_per_element;
+        const size_t idx_00 = (input_params.num_elements - 2) * input_params.num_bytes_per_element;
+        const size_t idx_01 =
+            input_params.num_bytes_for_one_vec + (input_params.num_elements - 2) * input_params.num_bytes_per_element;
 
-        const size_t idx_10 = (num_elements - 1) * num_bytes_per_element;
-        const size_t idx_11 = num_bytes_for_one_vec + (num_elements - 1) * num_bytes_per_element;
+        const size_t idx_10 = (input_params.num_elements - 1) * input_params.num_bytes_per_element;
+        const size_t idx_11 =
+            input_params.num_bytes_for_one_vec + (input_params.num_elements - 1) * input_params.num_bytes_per_element;
 
         const T p0x = *reinterpret_cast<const T* const>(&(input_data[idx_00]));
         const T p0y = *reinterpret_cast<const T* const>(&(input_data[idx_01]));
@@ -205,27 +232,27 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         const T vx = p1x - p0x;
         const T vy = p1y - p0y;
 
-        pts[num_elements - 1].p0.x = p0x;
-        pts[num_elements - 1].p0.y = p0y;
+        pts[input_params.num_elements - 1].p0.x = p0x;
+        pts[input_params.num_elements - 1].p0.y = p0y;
 
-        pts[num_elements - 1].p1.x = p1x;
-        pts[num_elements - 1].p1.y = p1y;
+        pts[input_params.num_elements - 1].p1.x = p1x;
+        pts[input_params.num_elements - 1].p1.y = p1y;
 
-        pts[num_elements - 1].p2.x = p1x + vx;
-        pts[num_elements - 1].p2.y = p1y + vy;
+        pts[input_params.num_elements - 1].p2.x = p1x + vx;
+        pts[input_params.num_elements - 1].p2.y = p1y + vy;
     }
 
     // Segments inbetween
-    for (size_t k = 1; k < (num_elements - 1); k++)
+    for (size_t k = 1; k < (input_params.num_elements - 1); k++)
     {
-        const size_t idx_00 = (k - 1) * num_bytes_per_element;
-        const size_t idx_01 = num_bytes_for_one_vec + (k - 1) * num_bytes_per_element;
+        const size_t idx_00 = (k - 1) * input_params.num_bytes_per_element;
+        const size_t idx_01 = input_params.num_bytes_for_one_vec + (k - 1) * input_params.num_bytes_per_element;
 
-        const size_t idx_10 = k * num_bytes_per_element;
-        const size_t idx_11 = num_bytes_for_one_vec + k * num_bytes_per_element;
+        const size_t idx_10 = k * input_params.num_bytes_per_element;
+        const size_t idx_11 = input_params.num_bytes_for_one_vec + k * input_params.num_bytes_per_element;
 
-        const size_t idx_20 = (k + 1) * num_bytes_per_element;
-        const size_t idx_21 = num_bytes_for_one_vec + (k + 1) * num_bytes_per_element;
+        const size_t idx_20 = (k + 1) * input_params.num_bytes_per_element;
+        const size_t idx_21 = input_params.num_bytes_for_one_vec + (k + 1) * input_params.num_bytes_per_element;
 
         const T p0x = *reinterpret_cast<const T* const>(&(input_data[idx_00]));
         const T p0y = *reinterpret_cast<const T* const>(&(input_data[idx_01]));
@@ -249,7 +276,7 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
     size_t idx = 0;
     size_t idx_idx = 0;
 
-    for (size_t k = 1; k < num_elements; k++)
+    for (size_t k = 1; k < input_params.num_elements; k++)
     {
         const Points& pt_1 = pts[k - 1];
         const Points& pt = pts[k];
@@ -397,61 +424,6 @@ Plot2D::InputData convertData2D(const uint8_t* const input_data,
         idx_idx += 12;
 
         idx += 24;
-    }
-
-    return output_data;
-}
-
-Plot2D::InputData convertData2DOuter(const uint8_t* const input_data,
-                                     const DataType data_type,
-                                     const size_t num_elements,
-                                     const size_t num_bytes_per_element,
-                                     const size_t num_bytes_for_one_vec)
-{
-    Plot2D::InputData output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data = convertData2D<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data = convertData2D<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data = convertData2D<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data = convertData2D<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data = convertData2D<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data = convertData2D<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data = convertData2D<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data = convertData2D<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data = convertData2D<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data = convertData2D<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
     }
 
     return output_data;
