@@ -22,7 +22,6 @@ Pre release:
 - Hide dock icon https://stackoverflow.com/questions/620841/how-to-hide-the-dock-icon
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
-- FunctionHeader should add look up table for added objects, so no map search is necessary on the receiver side
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Image view (same level as plot pane) which is zoomable and panable only
 - Delete gl buffers with "glDeleteBuffers"
