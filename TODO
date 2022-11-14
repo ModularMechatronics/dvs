@@ -60,6 +60,7 @@ Pre release:
 - Receive and push new data until there is new data available, and refresh only after last update
 - Don't always update on keypress?
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
+- Apply 'applyConverter' to all functions (like in Plot2D/Plot3D)
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Time date axis
 - Do something better/neater than "fillBufferWithData"?

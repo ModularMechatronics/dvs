@@ -14,7 +14,6 @@
 #include "dvs/plot_properties.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
-#include "outer_converter.h"
 #include "plot_objects/utils.h"
 #include "properties.h"
 #include "shader.h"
