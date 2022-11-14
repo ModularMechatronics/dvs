@@ -38,7 +38,6 @@ Pre release:
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
-- imShow for different data types (only float for now)
 - Create demos application
 - Demos:
  * Something for mathematicians (klein bottle, torus turning inside out)

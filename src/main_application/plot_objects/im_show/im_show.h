@@ -17,17 +17,14 @@ private:
     GLuint buffer_idx_;
     GLuint color_buffer_;
 
-    float* points_ptr_;
-    float* colors_ptr_;
-
     uint8_t num_channels_;
 
     internal::Dimension2D dims_;
     unsigned char* pixel_data_;
     GLuint program_id_;
     GLuint texture_id_;
-    int width;
-    int height;
+    int width_;
+    int height_;
     void findMinMax() override;
 
 public:

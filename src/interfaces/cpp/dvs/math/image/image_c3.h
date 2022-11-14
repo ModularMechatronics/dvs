@@ -67,6 +67,61 @@ public:
     }
 };
 
+template <typename T> class ImageC3ConstView
+{
+private:
+    const T* data_;
+    size_t num_rows_;
+    size_t num_cols_;
+    size_t num_element_per_channel_;
+
+public:
+    ImageC3ConstView() : data_{nullptr}, num_rows_{0U}, num_cols_{0U}, num_element_per_channel_{0U} {}
+
+    ImageC3ConstView(const T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
+        : data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}, num_element_per_channel_{num_rows_ * num_cols_}
+    {
+    }
+
+    T* data() const
+    {
+        return data_;
+    }
+
+    size_t numRows() const
+    {
+        return num_rows_;
+    }
+
+    size_t numCols() const
+    {
+        return num_cols_;
+    }
+
+    size_t numBytes() const
+    {
+        return 3 * num_rows_ * num_cols_ * sizeof(T);
+    }
+
+    T& operator()(const size_t r, const size_t c, const size_t ch)
+    {
+        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
+        assert((ch < 3) && "Channel index is larger than 2!");
+
+        return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
+    }
+
+    const T& operator()(const size_t r, const size_t c, const size_t ch) const
+    {
+        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
+        assert((ch < 3) && "Channel index is larger than 2!");
+
+        return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
+    }
+};
+
 template <typename T> class ImageC3
 {
 private:
