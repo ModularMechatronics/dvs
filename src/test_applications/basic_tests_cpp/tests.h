@@ -545,7 +545,8 @@ void testImShow()
     const uint32_t num_rows = 800, num_cols = 800;
     ImageC3<float> img3(num_rows, num_cols);
     ImageC1<float> img1(num_rows, num_cols);
-    // const double max_val = num_rows * num_cols;
+
+    ImageC1<uint8_t> img_uint8(num_rows, num_cols);
 
     for (uint32_t r = 0; r < num_rows; r++)
     {
@@ -569,6 +570,8 @@ void testImShow()
 
             img1(r, c) = (std::sin(rb) / rr + 1.0f) * 0.5f;
 
+            img_uint8(r, c) = static_cast<uint8_t>((100.0f * (std::sin(rb) + 1.0f)) / rr);
+
             // img(r, c, 0) = (r * c) / max_val;
             // img(r, c, 1) = 1.0f - (r * c) / max_val;
             // img(r, c, 2) = (r * (num_cols - 1 - c)) / max_val;
@@ -576,10 +579,13 @@ void testImShow()
     }
     setCurrentElement("p_view_0");
     clearView();
-    imShow(img3, properties::Alpha(137));
+    imShow(img3);
 
     setCurrentElement("p_view_1");
-    imShow(img1, properties::Alpha(137));
+    imShow(img1);
+
+    setCurrentElement("p_view_2");
+    imShow(img_uint8);
 }
 
 void testAxis()

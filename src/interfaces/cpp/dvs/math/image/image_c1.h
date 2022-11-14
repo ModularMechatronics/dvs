@@ -69,6 +69,63 @@ public:
     }
 };
 
+template <typename T> class ImageC1ConstView
+{
+private:
+    const T* data_;
+    size_t num_rows_;
+    size_t num_cols_;
+
+public:
+    ImageC1ConstView() : data_{nullptr}, num_rows_{0U}, num_cols_{0U} {}
+
+    ImageC1ConstView(const T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
+        : data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
+    {
+    }
+
+    T* data() const
+    {
+        return data_;
+    }
+
+    size_t numRows() const
+    {
+        return num_rows_;
+    }
+
+    size_t numCols() const
+    {
+        return num_cols_;
+    }
+
+    size_t numBytes() const
+    {
+        return num_rows_ * num_cols_ * sizeof(T);
+    }
+
+    size_t numElements() const
+    {
+        return num_rows_ * num_cols_;
+    }
+
+    T& operator()(const size_t r, const size_t c)
+    {
+        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
+
+        return data_[r * num_cols_ + c];
+    }
+
+    const T& operator()(const size_t r, const size_t c) const
+    {
+        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
+        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
+
+        return data_[r * num_cols_ + c];
+    }
+};
+
 template <typename T> class ImageC1
 {
 private:
