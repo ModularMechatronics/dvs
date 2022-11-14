@@ -2,6 +2,11 @@
 
 #include <functional>
 
+#include "outer_converter.h"
+
+namespace
+{
+
 struct OutputData
 {
     float* p0;
@@ -34,6 +39,8 @@ struct Converter
         return convertData<T>(input_data, input_params);
     }
 };
+
+}  // namespace
 
 Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
@@ -155,6 +162,8 @@ LegendProperties Plot2D::getLegendProperties() const
     return lp;
 }
 
+namespace
+{
 template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t num_segments = input_params.num_elements - 1U;
@@ -428,3 +437,5 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     return output_data;
 }
+
+}  // namespace
