@@ -38,6 +38,7 @@ WindowView::WindowView(wxFrame* main_window,
 
     if (window_settings.tabs.size() == 0)
     {
+        element_x_offset_ = 0;
         TabSettings tab_settings;
         tab_settings.name = "Tab " + std::to_string(current_tab_num_);
         tabs_.push_back(new WindowTab(
@@ -55,6 +56,7 @@ WindowView::WindowView(wxFrame* main_window,
     }
     else
     {
+        element_x_offset_ = 70;
         for (size_t k = 0; k < window_settings.tabs.size(); k++)
         {
             tabs_.push_back(new WindowTab(
@@ -301,6 +303,7 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
     TabSettings tab_settings;
     tab_settings.name = "Tab " + std::to_string(current_tab_num_);
     current_tab_num_++;
+    element_x_offset_ = 70;
 
     tabs_.push_back(new WindowTab(
         this,
@@ -315,7 +318,7 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
 
     for (const auto& t : tabs_)
     {
-        t->setNumTabs(tabs_.size());
+        t->setMinXPos(element_x_offset_);
     }
 }
 
@@ -503,15 +506,17 @@ void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
     {
         delete (*q);
         tabs_.erase(q);
-        for (const auto& t : tabs_)
+        if (tabs_.size() == 1)
         {
-            t->setNumTabs(tabs_.size());
+            element_x_offset_ = 0;
+            tabs_[0]->setMinXPos(element_x_offset_);
+            std::cout << "Only one tab left!" << std::endl;
         }
     }
 
     tab_buttons_.deleteTabButton(last_clicked_item_);
 
-    if (tabs_.size() > 0)
+    if (tabs_.size() > 1)
     {
         const std::string selected_button = tab_buttons_.getNameOfSelectedTab();
         for (const auto& tab : tabs_)

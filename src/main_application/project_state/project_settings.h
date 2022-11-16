@@ -39,6 +39,12 @@ struct ElementSettings
         y = j["y"];
         width = j["width"];
         height = j["height"];
+
+        width = std::min(std::max(width, 0.1f), 1.0f);
+        height = std::min(std::max(height, 0.1f), 1.0f);
+
+        x = std::max(std::min(x, 0.9f), 0.0f);
+        y = std::max(std::min(y, 0.9f), 0.0f);
     }
 
     nlohmann::json toJson() const

@@ -170,17 +170,18 @@ PlotPane::PlotPane(wxWindow* parent,
 void PlotPane::updateSizeFromParent(const wxSize& parent_size)
 {
     parent_size_ = parent_size;
-    const float px = parent_size_.GetWidth();
+    /*const float px = parent_size_.GetWidth();
     const float py = parent_size_.GetHeight();
 
     const float xpos = px * element_settings_.x;
     const float ypos = py * element_settings_.y;
 
     const float width = px * element_settings_.width;
-    const float height = py * element_settings_.height;
+    const float height = py * element_settings_.height;*/
 
-    this->setPosition(wxPoint(xpos, ypos));
-    this->setSize(wxSize(width, height));
+    setElementPositionAndSize();
+    // this->SetPosition(wxPoint(xpos, ypos));
+    // this->setSize(wxSize(width, height));
 }
 
 void PlotPane::setMinimumXPos(const int new_min_x_pos)
@@ -188,26 +189,9 @@ void PlotPane::setMinimumXPos(const int new_min_x_pos)
     minimum_x_pos_ = new_min_x_pos;
 }
 
-void PlotPane::setNumTabs(const int num_tabs)
-{
-    if (num_tabs == 1)
-    {
-        minimum_x_pos_ = 0;
-    }
-    else
-    {
-        minimum_x_pos_ = 70;
-    }
-}
-
 void PlotPane::mouseRightPressed(wxMouseEvent& event)
 {
     notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), element_settings_.name);
-}
-
-void PlotPane::setPosition(const wxPoint& new_pos)
-{
-    this->SetPosition(new_pos);
 }
 
 void PlotPane::setSize(const wxSize& new_size)
@@ -612,19 +596,20 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
                 }
             }
 
-            element_settings_.width = static_cast<float>(new_size.GetWidth()) / px;
-            element_settings_.height = static_cast<float>(new_size.GetHeight()) / py;
-            element_settings_.x = static_cast<float>(new_position.x) / px;
-            element_settings_.y = static_cast<float>(new_position.y) / py;
-
             if ((this->GetPosition().x != new_position.x) || (this->GetPosition().y != new_position.y) ||
                 (new_size.GetWidth() != this->GetSize().GetWidth()) ||
                 (new_size.GetHeight() != this->GetSize().GetHeight()))
             {
-                Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
+                const float ratio = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+
+                element_settings_.width = static_cast<float>(new_size.GetWidth()) / (px * ratio);
+                element_settings_.height = static_cast<float>(new_size.GetHeight()) / py;
+                element_settings_.x = static_cast<float>(new_position.x - minimum_x_pos_) / px;
+                element_settings_.y = static_cast<float>(new_position.y) / py;
+
+                Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);  // TODO: Needed?
                 notifyParentAboutModification();
-                this->setPosition(new_position);
-                this->setSize(new_size);
+                setElementPositionAndSize();
                 Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
             }
         }
@@ -756,6 +741,31 @@ void PlotPane::keyReleasedCallback(wxKeyEvent& evt)
 {
     const int key = evt.GetUnicodeKey();
     notify_main_window_key_released_(key);
+}
+
+void PlotPane::setElementPositionAndSize()
+{
+    const float px = parent_size_.GetWidth();
+    const float py = parent_size_.GetHeight();
+
+    wxPoint new_pos;
+    wxSize new_size;
+
+    const float ratio = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+
+    new_size.SetWidth(element_settings_.width * px * ratio);
+    new_size.SetHeight(element_settings_.height * py);
+    new_pos.x = minimum_x_pos_ + element_settings_.x * px;
+    new_pos.y = element_settings_.y * py;
+
+    SetPosition(new_pos);
+    setSize(new_size);
+}
+
+void PlotPane::setMinXPos(const int min_x_pos)
+{
+    minimum_x_pos_ = min_x_pos;
+    setElementPositionAndSize();
 }
 
 // Returns window width in pixels

@@ -45,6 +45,8 @@ public:
 
     virtual ~GuiElement() {}
 
+    virtual void setMinXPos(const int min_x_pos) = 0;
+
     std::string getName() const
     {
         return element_settings_.name;
@@ -70,7 +72,6 @@ public:
     virtual void destroy() = 0;
     virtual void refresh() = 0;
     virtual void waitForFlush() = 0;
-    virtual void setNumTabs(const int num_tabs) = 0;
     virtual void showLegend(const bool show_legend)
     {
         static_cast<void>(show_legend);

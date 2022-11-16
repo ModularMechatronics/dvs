@@ -27,6 +27,7 @@ class WindowTab
 {
 private:
     std::string name_;
+    int element_x_offset_;
     std::vector<GuiElement*> gui_elements_;
     wxFrame* parent_window_;
     std::function<void(const char key)> notify_main_window_key_pressed_;
@@ -78,11 +79,11 @@ public:
         }
     }
 
-    void setNumTabs(const int num_tabs)
+    void setMinXPos(const int min_x_pos)
     {
         for (auto const& ge : gui_elements_)
         {
-            ge->setNumTabs(num_tabs);
+            ge->setMinXPos(min_x_pos);
         }
     }
 
@@ -289,6 +290,7 @@ private:
 
     TabButtons tab_buttons_;
     std::vector<WindowTab*> tabs_;
+    int element_x_offset_;
     int callback_id_;
     AxesSettings axes_settings_{};
     void tabChanged(const std::string name);
