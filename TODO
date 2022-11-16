@@ -22,6 +22,8 @@ Pre release:
 - Hide dock icon https://stackoverflow.com/questions/620841/how-to-hide-the-dock-icon
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
+- Add background colors to json project file
+- Change ElementSettings to clamp x,y,width,height to only have valid values ([0, 1], not outside of Window bounds)
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Image view (same level as plot pane) which is zoomable and panable only
 - Delete gl buffers with "glDeleteBuffers"

@@ -105,11 +105,11 @@ public:
 
     int getWidth();
     int getHeight();
-    void setNumTabs(const int num_tabs) override;
 
     void render(wxPaintEvent& evt);
 
-    void setPosition(const wxPoint& new_pos);
+    void setElementPositionAndSize();
+    void setMinXPos(const int min_x_pos) override;
     void setSize(const wxSize& new_size);
     void updateSizeFromParent(const wxSize& parent_size) override;
     void addData(std::unique_ptr<const ReceivedData> received_data,
