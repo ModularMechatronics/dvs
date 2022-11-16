@@ -140,6 +140,7 @@ PlotPane::PlotPane(wxWindow* parent,
     grid_size_ = grid_size;
     edit_size_margin_ = 20.0f;
     minimum_x_pos_ = 70;
+    minimum_y_pos_ = 30;
     perspective_projection_ = false;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
@@ -572,7 +573,7 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
                 }
             }
 
-            if (new_position.y < 30)
+            if (new_position.y < minimum_y_pos_)
             {
                 if (cursor_state_at_press_ == CursorSquareState::INSIDE)
                 {
@@ -600,12 +601,13 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
                 (new_size.GetWidth() != this->GetSize().GetWidth()) ||
                 (new_size.GetHeight() != this->GetSize().GetHeight()))
             {
-                const float ratio = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+                const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+                const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
 
-                element_settings_.width = static_cast<float>(new_size.GetWidth()) / (px * ratio);
-                element_settings_.height = static_cast<float>(new_size.GetHeight()) / py;
+                element_settings_.width = static_cast<float>(new_size.GetWidth()) / (px * ratio_x);
+                element_settings_.height = static_cast<float>(new_size.GetHeight()) / (py * ratio_y);
                 element_settings_.x = static_cast<float>(new_position.x - minimum_x_pos_) / px;
-                element_settings_.y = static_cast<float>(new_position.y) / py;
+                element_settings_.y = static_cast<float>(new_position.y - minimum_y_pos_) / py;
 
                 Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);  // TODO: Needed?
                 notifyParentAboutModification();
@@ -751,12 +753,13 @@ void PlotPane::setElementPositionAndSize()
     wxPoint new_pos;
     wxSize new_size;
 
-    const float ratio = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+    const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+    const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
 
-    new_size.SetWidth(element_settings_.width * px * ratio);
-    new_size.SetHeight(element_settings_.height * py);
+    new_size.SetWidth(element_settings_.width * px * ratio_x);
+    new_size.SetHeight(element_settings_.height * py * ratio_y);
     new_pos.x = minimum_x_pos_ + element_settings_.x * px;
-    new_pos.y = element_settings_.y * py;
+    new_pos.y = minimum_y_pos_ + element_settings_.y * py;
 
     SetPosition(new_pos);
     setSize(new_size);
@@ -828,7 +831,7 @@ void PlotPane::render(wxPaintEvent& evt)
 
     glEnable(GL_MULTISAMPLE);
 
-    const RGBTripletf color_vec{axes_settings_.window_background_};
+    const RGBTripletf color_vec{axes_settings_.plot_pane_background_};
     glClearColor(color_vec.red, color_vec.green, color_vec.blue, 0.0f);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

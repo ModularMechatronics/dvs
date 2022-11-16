@@ -24,11 +24,11 @@ protected:
     std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
 
     int minimum_x_pos_;
+    int minimum_y_pos_;
     Vec2f parent_size_;  // Pixels
 
 public:
     GuiElement() = delete;
-    GuiElement(const ElementSettings& element_settings) : element_settings_{element_settings} {}
     GuiElement(const ElementSettings& element_settings,
                const std::function<void(const char key)>& notify_main_window_key_pressed,
                const std::function<void(const char key)>& notify_main_window_key_released,

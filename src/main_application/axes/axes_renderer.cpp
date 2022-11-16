@@ -280,7 +280,7 @@ void AxesRenderer::renderBackground()
 
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    const RGBTripletf color_vec{axes_settings_.plot_pane_background_};
+    const RGBTripletf color_vec{axes_settings_.window_background_};
 
     glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);
     plot_pane_background_.render(width_, height_);

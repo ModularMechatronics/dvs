@@ -27,7 +27,6 @@ class WindowTab
 {
 private:
     std::string name_;
-    int element_x_offset_;
     std::vector<GuiElement*> gui_elements_;
     wxFrame* parent_window_;
     std::function<void(const char key)> notify_main_window_key_pressed_;
