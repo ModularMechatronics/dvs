@@ -229,29 +229,6 @@ struct WindowSettings
         return res;
     }
 
-    bool hasElementWithName(const std::string& name) const
-    {
-        return false;
-        /*return std::find_if(elements_.begin(), elements_.end(), [&](const ElementSettings& es) -> bool {
-                   return es.name == name;
-               }) != elements_.end();*/
-    }
-
-    ElementSettings getElementWithName(const std::string& name) const
-    {
-        DVS_ASSERT(hasElementWithName(name));
-        ElementSettings res(0.0f, 0.0f, 0.0f, 0.0f, "");
-        /*for (const ElementSettings& e : elements_)
-        {
-            if (e.name == name)
-            {
-                res = e;
-                break;
-            }
-        }*/
-        return res;
-    }
-
     bool operator==(const WindowSettings& other) const
     {
         if ((name != other.name) || (tabs.size() != other.tabs.size()))
@@ -259,7 +236,6 @@ struct WindowSettings
             return false;
         }
 
-        // TODO: Use find_if?
         for (size_t k = 0; k < tabs.size(); k++)
         {
             if (other.hasTabWithName(tabs[k].name))
