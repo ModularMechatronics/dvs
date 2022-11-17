@@ -25,13 +25,10 @@ Pre release:
 - Add background colors to json project file
 - use switch()case for plot2d/plot3d shaders, and for colormap functions
 - Use T* data = reinterpret_cast<const T* const>(&(input_data[idx_10])); directly in converter functions, like in Plot2D's convert function
-- Change ElementSettings to clamp x,y,width,height to only have valid values ([0, 1], not outside of Window bounds)
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Image view (same level as plot pane) which is zoomable and panable only
 - Delete gl buffers with "glDeleteBuffers"
 - Set color in fragment shader with uniform, instead of in vertex shader
-- Finalize small quirks in plot
-- Implement new shader stuff that's in plot for plot3
 - Real time plot with option to add new samples
  * And extended functionality to add multiple slots in same function call
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
