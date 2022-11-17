@@ -145,7 +145,7 @@ void Plot2D::render()
     const size_t num_points = num_triangles * 3U;
 
     shader_collection_.plot_2d_shader.use();
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "line_width"),
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "half_line_width"),
                 line_width_ / 1200.0f);
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, num_points);

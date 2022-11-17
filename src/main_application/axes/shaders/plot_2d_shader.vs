@@ -7,7 +7,7 @@ layout(location = 1) in vec2 p1;
 layout(location = 2) in vec2 p2;
 layout(location = 3) in int idx;
 uniform vec3 vertex_color;
-uniform float line_width;
+uniform float half_line_width;
 
 out vec3 fragment_color;
 out vec4 coord_out;
@@ -76,22 +76,16 @@ void main()
     vec4 p1_transformed = model_view_proj_mat * vec4(p1, 0.0, 1.0);
     vec4 p2_transformed = model_view_proj_mat * vec4(p2, 0.0, 1.0);
 
-    // bool vec_along01_norm_zero = length(p1_transformed.xy - p0_transformed.xy) == 0;
-    // bool vec_along12_norm_zero = length(p2_transformed.xy - p1_transformed.xy) == 0;
-
     // vec_along01 points from point p0 to point p1
     vec2 vec_along01 = normalize(p1_transformed.xy - p0_transformed.xy);
     // vec_along12 points from point p1 to point p2
     vec2 vec_along12 = normalize(p2_transformed.xy - p1_transformed.xy);
 
-    // TODO: What to do if two adjecent points are at the same pos?
-    // TODO: line_width should be divided by 2 everywhere? Or to uniform call outside shader...
-
     // Rotate the two vectors so that they are perpendicular to
     // their original direction, thereby reaching the edge of the
     // line.
-    vec2 vec_on_line_edge01 = rotate90Deg(vec_along01) * line_width;
-    vec2 vec_on_line_edge12 = rotate90Deg(vec_along12) * line_width;
+    vec2 vec_on_line_edge01 = rotate90Deg(vec_along01) * half_line_width;
+    vec2 vec_on_line_edge12 = rotate90Deg(vec_along12) * half_line_width;
 
     // Form two points on the edge, two points per segment
     vec2 point0_on_edge01 = vec_on_line_edge01;
