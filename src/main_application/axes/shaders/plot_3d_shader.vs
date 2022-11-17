@@ -5,7 +5,7 @@ uniform mat4 inverse_model_view_proj_mat;
 layout(location = 0) in vec3 p0;
 layout(location = 1) in vec3 p1;
 layout(location = 2) in vec3 p2;
-layout(location = 3) in float idx;
+layout(location = 3) in int idx;
 uniform vec3 vertex_color;
 uniform float point_size;
 uniform float line_width;
@@ -30,27 +30,27 @@ void main()
     float v1_len = sqrt(v1p.x * v1p.x + v1p.y * v1p.y);
     v1p *= line_width / v1_len;
 
-    if(idx < 0.1)
+    if(idx == 0)
     {
         gl_Position = vec4(p0_p.xy + v0p, p0_p.z, 1.0);
     }
-    else if ((idx > 0.9) && (idx < 1.1))
+    else if (idx == 1)
     {
         gl_Position = vec4(p0_p.xy - v0p, p0_p.z, 1.0);
     }
-    else if ((idx > 1.9) && (idx < 2.1))
+    else if (idx == 2)
     {
         gl_Position = vec4(p1_p.xy + v1p, p1_p.z, 1.0);
     }
-    else if ((idx > 2.9) && (idx < 3.1))
+    else if (idx == 3)
     {
         gl_Position = vec4(p0_p.xy - v0p, p0_p.z, 1.0);
     }
-    else if ((idx > 3.9) && (idx < 4.1))
+    else if (idx == 4)
     {
         gl_Position = vec4(p1_p.xy + v1p, p1_p.z, 1.0);
     }
-    else if ((idx > 4.9) && (idx < 5.1))
+    else if (idx == 5)
     {
         gl_Position = vec4(p1_p.xy - v1p, p1_p.z, 1.0);
     }
