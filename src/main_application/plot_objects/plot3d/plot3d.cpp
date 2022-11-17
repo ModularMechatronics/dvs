@@ -9,7 +9,7 @@ struct OutputData
     float* p0;
     float* p1;
     float* p2;
-    float* idx_data;
+    int32_t* idx_data;
 };
 
 struct InputParams
@@ -87,11 +87,11 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points, output_data.idx_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, output_data.idx_data, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribIPointer(3, 1, GL_INT, 0, 0);
 
     delete[] output_data.p0;
     delete[] output_data.p1;
@@ -131,7 +131,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.p0 = new float[3 * num_points];
     output_data.p1 = new float[3 * num_points];
     output_data.p2 = new float[3 * num_points];
-    output_data.idx_data = new float[num_points];
+    output_data.idx_data = new int32_t[num_points];
 
     size_t idx = 0;
     size_t idx_idx = 0;
