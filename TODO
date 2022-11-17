@@ -1,9 +1,5 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
-- Generic "buffer" class that can be used to send Line3D, Triangles, etc.
-- Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
-- Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
-- Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 - Refactor/clean up window/tabs/plot elements system
 - Remove need to always specify num_elements
 - Function "view" is the one that sets/creates the current element
@@ -19,7 +15,6 @@ Pre release:
 - Add rendering of plot pane name
 - Use weak_ptr for current_gui_element_?
 - Investigate if main_window can be just a wxObject or something
-- Hide dock icon https://stackoverflow.com/questions/620841/how-to-hide-the-dock-icon
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
 - Add background colors to json project file
@@ -52,25 +47,27 @@ Pre release:
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
 - Refactor from top down, from the app and down into the GUI
-- Add option to setCurrentElement or something, that forces one to call a function "flush" or something, once everything should be plotted, thus eliminating need for Refresh() after every operation, which could improve speed
-- Make sure plot/plot3 works for integer data types
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Make proper test folder structure
 - Receive and push new data until there is new data available, and refresh only after last update
-- Don't always update on keypress?
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
 - Apply 'applyConverter' to all functions (like in Plot2D/Plot3D)
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Time date axis
 - Do something better/neater than "fillBufferWithData"?
 - Separate plot object vectors so that shader switching is minimized
-- Don't iterate over map in tests.h, just index with the key directly, for basic-tests-cpp
+- Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
+- Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
+- Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)
+- Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
 - Bar plot
 - Change to google logging
+- Generic "buffer" class that can be used to send Line3D, Triangles, etc.
+- Don't always update on keypress?
 - What to do if two adjecent points are at the same pos for plot/plot3
 - Plot functions with VectorView and MatrixView
 - Replace old c type arrays with std::array

@@ -14,6 +14,7 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/plot_box_walls.cpp
                      axes/plot_box_silhouette.cpp
                      axes/plot_pane_background.cpp
+                     axes/plot_pane_help.cpp
                      axes/zoom_rect.cpp
                      axes/grid_numbers.cpp
                      axes/plot_box_grid.cpp

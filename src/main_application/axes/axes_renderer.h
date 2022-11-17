@@ -14,6 +14,7 @@
 #include "axes/plot_box_silhouette.h"
 #include "axes/plot_box_walls.h"
 #include "axes/plot_pane_background.h"
+#include "axes/plot_pane_help.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
@@ -40,6 +41,7 @@ private:
     PlotBoxSilhouette plot_box_silhouette_{};
     PlotBoxGrid plot_box_grid_{};
     PlotPaneBackground plot_pane_background_{};
+    PlotPaneHelp plot_pane_help_{};
 
     glm::mat4 orth_projection_mat;
     glm::mat4 persp_projection_mat;

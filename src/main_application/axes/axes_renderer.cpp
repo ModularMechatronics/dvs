@@ -285,6 +285,10 @@ void AxesRenderer::renderBackground()
     glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);
     plot_pane_background_.render(width_, height_);
 
+    // RGBTripletf black_col{0.0, 0.0, 0.0};
+    // glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);
+    // plot_pane_help_.render(width_, height_);
+
 }
 
 void AxesRenderer::renderPlotBox()
