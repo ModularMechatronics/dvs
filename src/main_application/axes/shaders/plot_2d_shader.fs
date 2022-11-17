@@ -7,7 +7,7 @@ flat in vec3 p1_out;
 in vec3 vert_pos;
 flat in int triangle_id;
 
-uniform float line_width;
+uniform float half_line_width;
 uniform vec4 clip_plane0;
 uniform vec4 clip_plane1;
 uniform vec4 clip_plane2;
@@ -47,10 +47,10 @@ void main()
       discard;
    }
 
-   if(int(triangle_id) == 3)
+   if(triangle_id == 3)
    {
       float dist = length(vert_pos - p1_out);
-      if(dist > line_width)
+      if(dist > half_line_width)
       {
          discard;
       }
