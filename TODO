@@ -23,6 +23,7 @@ Pre release:
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
 - Add background colors to json project file
+- Use T* data = reinterpret_cast<const T* const>(&(input_data[idx_10])); directly in converter functions, like in Plot2D's convert function
 - Change ElementSettings to clamp x,y,width,height to only have valid values ([0, 1], not outside of Window bounds)
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Image view (same level as plot pane) which is zoomable and panable only
