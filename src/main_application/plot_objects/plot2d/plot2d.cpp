@@ -82,15 +82,15 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
     const size_t num_points = num_triangles * 3U;
 
+    // p0
     glGenBuffers(1, &p0_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p0, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-    // Prev
+    // p1
     glGenBuffers(1, &p1_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p1, GL_STATIC_DRAW);
@@ -99,7 +99,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-    // Next
+    // p2
     glGenBuffers(1, &p2_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p2, GL_STATIC_DRAW);
