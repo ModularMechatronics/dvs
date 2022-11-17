@@ -488,6 +488,39 @@ void testStairs()
 
 void testPlot3()
 {
+    setCurrentElement("p_view_0");
+    clearView();
+
+    const size_t num_points = 6;
+    Vector<float> xp(num_points), yp(num_points), zp(num_points);
+
+    xp(0) = 0.0;
+    xp(1) = 1.0;
+    xp(2) = 2.2;
+    xp(3) = 3.0;
+    xp(4) = 3.5;
+    xp(5) = 3.5;
+
+    yp(0) = 0.0;
+    yp(1) = 3.5;
+    yp(2) = 3.5;
+    yp(3) = 2.5;
+    yp(4) = 4.0;
+    yp(5) = 2.0;
+
+    zp(0) = 0.0;
+    zp(1) = 0.1;
+    zp(2) = 0.2;
+    zp(3) = 0.3;
+    zp(4) = 0.4;
+    zp(5) = 0.5;
+
+    zp.fill(0.01f);
+
+    axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
+    plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
+    scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
+
     const size_t num_elements = 30;
     Vector<double> x(num_elements), y(num_elements), z(num_elements);
     Vector<float> xf(num_elements), yf(num_elements), zf(num_elements);
@@ -506,7 +539,7 @@ void testPlot3()
         t = t + 0.3;
     }
 
-    setCurrentElement("p_view_0");
+    setCurrentElement("p_view_1");
     clearView();
 
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));

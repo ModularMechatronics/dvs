@@ -182,7 +182,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     std::memset(output_data.p1, 0, 2 * num_points * sizeof(float));
     std::memset(output_data.p2, 0, 2 * num_points * sizeof(float));
 
-    std::memset(output_data.idx_data, 0, num_points * sizeof(output_data.idx_data[0]));
+    std::memset(output_data.idx_data, 0, num_points * sizeof(int32_t));
 
     struct Points
     {
