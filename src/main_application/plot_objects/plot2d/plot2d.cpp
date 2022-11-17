@@ -78,8 +78,9 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 
-    const size_t num_segments = num_elements_ - 1;
-    const size_t num_points = num_segments * 12U - 6U;
+    const size_t num_segments = num_elements_ - 1U;
+    const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
+    const size_t num_points = num_triangles * 3U;
 
     glGenBuffers(1, &p0_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
@@ -139,8 +140,9 @@ void Plot2D::findMinMax()
 
 void Plot2D::render()
 {
-    const size_t num_segments = num_elements_ - 1;
-    const size_t num_points = num_segments * 12U - 6U;
+    const size_t num_segments = num_elements_ - 1U;
+    const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
+    const size_t num_points = num_triangles * 3U;
 
     shader_collection_.plot_2d_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "line_width"),
@@ -167,12 +169,8 @@ namespace
 template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t num_segments = input_params.num_elements - 1U;
-    const size_t num_points = num_segments * 12U;
-
-    /* TODO: Should be something like this:
-    const size_t num_segments = num_elements - 1U;
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
-    const size_t num_points = num_triangles * 3U;*/
+    const size_t num_points = num_triangles * 3U;
 
     OutputData output_data;
     output_data.p0 = new float[2 * num_points];
@@ -180,9 +178,9 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.p2 = new float[2 * num_points];
     output_data.idx_data = new int32_t[num_points];
 
-    std::memset(output_data.p0, 0, 2 * num_points * sizeof(output_data.p0[0]));
-    std::memset(output_data.p1, 0, 2 * num_points * sizeof(output_data.p1[0]));
-    std::memset(output_data.p2, 0, 2 * num_points * sizeof(output_data.p2[0]));
+    std::memset(output_data.p0, 0, 2 * num_points * sizeof(float));
+    std::memset(output_data.p1, 0, 2 * num_points * sizeof(float));
+    std::memset(output_data.p2, 0, 2 * num_points * sizeof(float));
 
     std::memset(output_data.idx_data, 0, num_points * sizeof(output_data.idx_data[0]));
 
@@ -195,19 +193,15 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     std::vector<Points> pts;
     pts.resize(input_params.num_elements);
 
+    const T* const input_data_dt = reinterpret_cast<const T* const>(input_data);
+
     {
         // First segment
-        const size_t idx_10 = 0;
-        const size_t idx_11 = input_params.num_bytes_for_one_vec;
+        const T p1x = input_data_dt[0];
+        const T p1y = input_data_dt[input_params.num_elements];
 
-        const size_t idx_20 = input_params.num_bytes_per_element;
-        const size_t idx_21 = input_params.num_bytes_for_one_vec + input_params.num_bytes_per_element;
-
-        const T p1x = *reinterpret_cast<const T* const>(&(input_data[idx_10]));
-        const T p1y = *reinterpret_cast<const T* const>(&(input_data[idx_11]));
-
-        const T p2x = *reinterpret_cast<const T* const>(&(input_data[idx_20]));
-        const T p2y = *reinterpret_cast<const T* const>(&(input_data[idx_21]));
+        const T p2x = input_data_dt[1];
+        const T p2y = input_data_dt[input_params.num_elements + 1];
 
         const T vx = p2x - p1x;
         const T vy = p2y - p1y;
@@ -224,19 +218,11 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     {
         // Last segment
-        const size_t idx_00 = (input_params.num_elements - 2) * input_params.num_bytes_per_element;
-        const size_t idx_01 =
-            input_params.num_bytes_for_one_vec + (input_params.num_elements - 2) * input_params.num_bytes_per_element;
+        const T p0x = input_data_dt[input_params.num_elements - 2];
+        const T p0y = input_data_dt[input_params.num_elements + input_params.num_elements - 2];
 
-        const size_t idx_10 = (input_params.num_elements - 1) * input_params.num_bytes_per_element;
-        const size_t idx_11 =
-            input_params.num_bytes_for_one_vec + (input_params.num_elements - 1) * input_params.num_bytes_per_element;
-
-        const T p0x = *reinterpret_cast<const T* const>(&(input_data[idx_00]));
-        const T p0y = *reinterpret_cast<const T* const>(&(input_data[idx_01]));
-
-        const T p1x = *reinterpret_cast<const T* const>(&(input_data[idx_10]));
-        const T p1y = *reinterpret_cast<const T* const>(&(input_data[idx_11]));
+        const T p1x = input_data_dt[input_params.num_elements - 1];
+        const T p1y = input_data_dt[input_params.num_elements + input_params.num_elements - 1];
 
         const T vx = p1x - p0x;
         const T vy = p1y - p0y;
@@ -254,23 +240,14 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     // Segments inbetween
     for (size_t k = 1; k < (input_params.num_elements - 1); k++)
     {
-        const size_t idx_00 = (k - 1) * input_params.num_bytes_per_element;
-        const size_t idx_01 = input_params.num_bytes_for_one_vec + (k - 1) * input_params.num_bytes_per_element;
+        const T p0x = input_data_dt[k - 1];
+        const T p0y = input_data_dt[input_params.num_elements + k - 1];
 
-        const size_t idx_10 = k * input_params.num_bytes_per_element;
-        const size_t idx_11 = input_params.num_bytes_for_one_vec + k * input_params.num_bytes_per_element;
+        const T p1x = input_data_dt[k];
+        const T p1y = input_data_dt[input_params.num_elements + k];
 
-        const size_t idx_20 = (k + 1) * input_params.num_bytes_per_element;
-        const size_t idx_21 = input_params.num_bytes_for_one_vec + (k + 1) * input_params.num_bytes_per_element;
-
-        const T p0x = *reinterpret_cast<const T* const>(&(input_data[idx_00]));
-        const T p0y = *reinterpret_cast<const T* const>(&(input_data[idx_01]));
-
-        const T p1x = *reinterpret_cast<const T* const>(&(input_data[idx_10]));
-        const T p1y = *reinterpret_cast<const T* const>(&(input_data[idx_11]));
-
-        const T p2x = *reinterpret_cast<const T* const>(&(input_data[idx_20]));
-        const T p2y = *reinterpret_cast<const T* const>(&(input_data[idx_21]));
+        const T p2x = input_data_dt[k + 1];
+        const T p2y = input_data_dt[input_params.num_elements + k + 1];
 
         pts[k].p0.x = p0x;
         pts[k].p0.y = p0y;
@@ -285,22 +262,18 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     size_t idx = 0;
     size_t idx_idx = 0;
 
-    for (size_t k = 1; k < input_params.num_elements; k++)
+    for (size_t k = 1; k < (input_params.num_elements - 1U); k++)
     {
         const Points& pt_1 = pts[k - 1];
         const Points& pt = pts[k];
 
-        // p0
         // 1st triangle
-        // 0
         output_data.p0[idx] = pt_1.p0.x;
         output_data.p0[idx + 1] = pt_1.p0.y;
 
-        // 1
         output_data.p0[idx + 2] = pt.p0.x;
         output_data.p0[idx + 3] = pt.p0.y;
 
-        // 2
         output_data.p0[idx + 4] = pt.p0.x;
         output_data.p0[idx + 5] = pt.p0.y;
 
@@ -334,7 +307,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         output_data.p0[idx + 22] = pt.p0.x;
         output_data.p0[idx + 23] = pt.p0.y;
 
-        // p1
         // 1st triangle
         output_data.p1[idx] = pt_1.p1.x;
         output_data.p1[idx + 1] = pt_1.p1.y;
@@ -375,7 +347,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         output_data.p1[idx + 22] = pt.p1.x;
         output_data.p1[idx + 23] = pt.p1.y;
 
-        // p2
         // 1st triangle
         output_data.p2[idx] = pt_1.p2.x;
         output_data.p2[idx + 1] = pt_1.p2.y;
@@ -416,7 +387,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         output_data.p2[idx + 22] = pt.p2.x;
         output_data.p2[idx + 23] = pt.p2.y;
 
-        // Idx
         output_data.idx_data[idx_idx] = 0;
         output_data.idx_data[idx_idx + 1] = 1;
         output_data.idx_data[idx_idx + 2] = 2;
@@ -430,10 +400,80 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         output_data.idx_data[idx_idx + 10] = 10;
         output_data.idx_data[idx_idx + 11] = 11;
 
-        idx_idx += 12;
-
         idx += 24;
+        idx_idx += 12;
     }
+
+    // Last segment will not have the two "Inbetween triangles"
+    const Points& pt_1 = pts[input_params.num_elements - 2];
+    const Points& pt = pts[input_params.num_elements - 1];
+
+    // 1st triangle
+    output_data.p0[idx] = pt_1.p0.x;
+    output_data.p0[idx + 1] = pt_1.p0.y;
+
+    output_data.p0[idx + 2] = pt.p0.x;
+    output_data.p0[idx + 3] = pt.p0.y;
+
+    output_data.p0[idx + 4] = pt.p0.x;
+    output_data.p0[idx + 5] = pt.p0.y;
+
+    // 2nd triangle
+    output_data.p0[idx + 6] = pt_1.p0.x;
+    output_data.p0[idx + 7] = pt_1.p0.y;
+
+    output_data.p0[idx + 8] = pt.p0.x;
+    output_data.p0[idx + 9] = pt.p0.y;
+
+    output_data.p0[idx + 10] = pt_1.p0.x;
+    output_data.p0[idx + 11] = pt_1.p0.y;
+
+    // 1st triangle
+    output_data.p1[idx] = pt_1.p1.x;
+    output_data.p1[idx + 1] = pt_1.p1.y;
+
+    output_data.p1[idx + 2] = pt.p1.x;
+    output_data.p1[idx + 3] = pt.p1.y;
+
+    output_data.p1[idx + 4] = pt.p1.x;
+    output_data.p1[idx + 5] = pt.p1.y;
+
+    // 2nd triangle
+    output_data.p1[idx + 6] = pt_1.p1.x;
+    output_data.p1[idx + 7] = pt_1.p1.y;
+
+    output_data.p1[idx + 8] = pt.p1.x;
+    output_data.p1[idx + 9] = pt.p1.y;
+
+    output_data.p1[idx + 10] = pt_1.p1.x;
+    output_data.p1[idx + 11] = pt_1.p1.y;
+
+    // 1st triangle
+    output_data.p2[idx] = pt_1.p2.x;
+    output_data.p2[idx + 1] = pt_1.p2.y;
+
+    output_data.p2[idx + 2] = pt.p2.x;
+    output_data.p2[idx + 3] = pt.p2.y;
+
+    output_data.p2[idx + 4] = pt.p2.x;
+    output_data.p2[idx + 5] = pt.p2.y;
+
+    // 2nd triangle
+    output_data.p2[idx + 6] = pt_1.p2.x;
+    output_data.p2[idx + 7] = pt_1.p2.y;
+
+    output_data.p2[idx + 8] = pt.p2.x;
+    output_data.p2[idx + 9] = pt.p2.y;
+
+    output_data.p2[idx + 10] = pt_1.p2.x;
+    output_data.p2[idx + 11] = pt_1.p2.y;
+
+    output_data.idx_data[idx_idx] = 0;
+    output_data.idx_data[idx_idx + 1] = 1;
+    output_data.idx_data[idx_idx + 2] = 2;
+    output_data.idx_data[idx_idx + 3] = 3;
+    output_data.idx_data[idx_idx + 4] = 4;
+    output_data.idx_data[idx_idx + 5] = 5;
 
     return output_data;
 }

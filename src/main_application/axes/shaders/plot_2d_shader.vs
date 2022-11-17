@@ -76,6 +76,9 @@ void main()
     vec4 p1_transformed = model_view_proj_mat * vec4(p1, 0.0, 1.0);
     vec4 p2_transformed = model_view_proj_mat * vec4(p2, 0.0, 1.0);
 
+    // bool vec_along01_norm_zero = length(p1_transformed.xy - p0_transformed.xy) == 0;
+    // bool vec_along12_norm_zero = length(p2_transformed.xy - p1_transformed.xy) == 0;
+
     // vec_along01 points from point p0 to point p1
     vec2 vec_along01 = normalize(p1_transformed.xy - p0_transformed.xy);
     // vec_along12 points from point p1 to point p2
