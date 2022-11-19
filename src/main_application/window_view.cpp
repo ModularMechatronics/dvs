@@ -22,7 +22,8 @@ WindowView::WindowView(wxFrame* main_window,
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
       notify_main_window_key_released_{notify_main_window_key_released},
       get_all_element_names_{get_all_element_names},
-      notify_main_window_element_deleted_{notify_main_window_element_deleted}
+      notify_main_window_element_deleted_{notify_main_window_element_deleted},
+      help_pane_{this, wxPoint(150, 150), wxSize(100, 100), this->GetSize()}
 {
     main_window_ = main_window;
     current_tab_num_ = 0;
@@ -128,6 +129,8 @@ WindowView::WindowView(wxFrame* main_window,
     Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
     Bind(wxEVT_MENU, &WindowView::deleteTab, this, dvs_ids::DELETE_TAB);
+    Bind(wxEVT_KEY_DOWN, &WindowView::keyPressedCallback, this);
+    Bind(wxEVT_KEY_UP, &WindowView::keyReleasedCallback, this);
 
     Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
     Bind(wxEVT_SIZE, &WindowView::OnSize, this);
@@ -160,8 +163,33 @@ GuiElement* WindowView::getGuiElement(const std::string& element_name) const
     return nullptr;
 }
 
+void WindowView::keyPressedCallback(wxKeyEvent& evt)
+{
+    // TODO: This callback doesn't work
+    const int key = evt.GetUnicodeKey();
+    if (key == 'H')
+    {
+        help_pane_.show();
+    }
+}
+
+void WindowView::keyReleasedCallback(wxKeyEvent& evt)
+{
+    // TODO: This callback doesn't work
+    const int key = evt.GetUnicodeKey();
+    if (key == 'H')
+    {
+        help_pane_.hide();
+    }
+}
+
 void WindowView::notifyChildrenOnKeyPressed(const char key)
 {
+    if (key == 'H')
+    {
+        help_pane_.show();
+    }
+
     for (const auto& tab : tabs_)
     {
         tab->notifyChildrenOnKeyPressed(key);
@@ -170,6 +198,11 @@ void WindowView::notifyChildrenOnKeyPressed(const char key)
 
 void WindowView::notifyChildrenOnKeyReleased(const char key)
 {
+    if (key == 'H')
+    {
+        help_pane_.hide();
+    }
+
     for (const auto& tab : tabs_)
     {
         tab->notifyChildrenOnKeyReleased(key);
@@ -233,6 +266,8 @@ void WindowView::OnSize(wxSizeEvent& event)
     {
         tab->updateSizeFromParent(new_size);
     }
+
+    help_pane_.updateParentSize(new_size);
 }
 
 int WindowView::getCallbackId() const
