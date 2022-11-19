@@ -84,10 +84,15 @@ void TextRenderer::renderTextFromLeftCenter(
         const Character& ch = characters[text[k]];
 
         const float xpos = x + ch.bearing.x * scale;
-        const float ypos = y - (ch.size.y - ch.bearing.y) * scale;
+        float ypos = y - (ch.size.y - ch.bearing.y) * scale;
 
         const float w = ch.size.x * scale * sx;
         const float h = ch.size.y * scale * sy;
+
+        if ((text[k] == 'p') || (text[k] == 'q') || (text[k] == 'j') || (text[k] == 'y') || (text[k] == 'g'))
+        {
+            ypos = ypos - 0.01f;
+        }
 
         const float vertices[6][4] = {{xpos, ypos + h, 0.0f, 0.0f},
                                       {xpos, ypos, 0.0f, 1.0f},
@@ -184,8 +189,8 @@ bool initFreetype()
     return true;
 }
 
-// TODO: This is incorrect, it shouldn't depend on width/height. Maybe it
-// calculates the height/width in the local "compressed" axes window?
+// Calculates relative string size in the pane it's in, which is in the interval [-1.0, 1.0]
+// So a width of 2.0 covers the full pane from left to right
 Vec2f calculateStringSize(const std::string_view& text,
                           const float scale,
                           const float axes_width,

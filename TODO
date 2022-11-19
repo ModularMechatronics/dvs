@@ -1,6 +1,7 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Refactor/clean up window/tabs/plot elements system
+- Refactor from top down, from the app and down into the GUI
 - Remove need to always specify num_elements
 - Function "view" is the one that sets/creates the current element
   view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
@@ -46,7 +47,6 @@ Pre release:
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
-- Refactor from top down, from the app and down into the GUI
 - "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
 - Make proper test folder structure
 - Receive and push new data until there is new data available, and refresh only after last update

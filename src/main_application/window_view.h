@@ -19,6 +19,7 @@
 
 #include "axes/axes.h"
 #include "gui_element.h"
+#include "help_pane.h"
 #include "plot_pane.h"
 #include "project_state/project_settings.h"
 #include "tab_buttons.h"
@@ -314,6 +315,8 @@ private:
 
     std::string last_clicked_item_;
 
+    HelpPane help_pane_;
+
 public:
     WindowView() = delete;
     WindowView(wxFrame* main_window,
@@ -326,6 +329,8 @@ public:
     ~WindowView();
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);
+    void keyPressedCallback(wxKeyEvent& evt);
+    void keyReleasedCallback(wxKeyEvent& evt);
 
     void setName(const std::string& new_name);
     WindowSettings getWindowSettings() const;

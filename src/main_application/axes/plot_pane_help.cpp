@@ -5,12 +5,72 @@
 
 void PlotPaneHelp::render(const float pane_width, const float pane_height)
 {
-    const float radius = 100.0f;
+    const float radius = 20.0f;
 
     const float rx = radius / pane_width;
     const float ry = radius / pane_height;
 
-    constexpr float kVal = 3.0f;
+    const float used_width = 500.0f / pane_width;
+    const float used_height = 400.0f / pane_height;
+    // First triangle
+    data_array_[0] = -used_width + rx;
+    data_array_[1] = used_height;
+
+    data_array_[2] = -used_width + rx;
+    data_array_[3] = -used_height;
+
+    data_array_[4] = used_width - rx;
+    data_array_[5] = -used_height;
+
+    // Second triangle
+    data_array_[6] = -used_width + rx;
+    data_array_[7] = used_height;
+
+    data_array_[8] = used_width - rx;
+    data_array_[9] = used_height;
+
+    data_array_[10] = used_width - rx;
+    data_array_[11] = -used_height;
+
+    // Third triangle
+    data_array_[12] = -used_width;
+    data_array_[13] = used_height - ry;
+
+    data_array_[14] = -used_width + rx;
+    data_array_[15] = used_height - ry;
+
+    data_array_[16] = -used_width + rx;
+    data_array_[17] = -used_height + ry;
+
+    // Fourth triangle
+    data_array_[18] = -used_width + rx;
+    data_array_[19] = -used_height + ry;
+
+    data_array_[20] = -used_width;
+    data_array_[21] = -used_height + ry;
+
+    data_array_[22] = -used_width;
+    data_array_[23] = used_height - ry;
+
+    // Fifth triangle
+    data_array_[24] = used_width - rx;
+    data_array_[25] = used_height - ry;
+
+    data_array_[26] = used_width;
+    data_array_[27] = used_height - ry;
+
+    data_array_[28] = used_width;
+    data_array_[29] = -used_height + ry;
+
+    // Sixth triangle
+    data_array_[30] = used_width - rx;
+    data_array_[31] = used_height - ry;
+
+    data_array_[32] = used_width - rx;
+    data_array_[33] = -used_height + ry;
+
+    data_array_[34] = used_width;
+    data_array_[35] = -used_height + ry;
 
     const float dtheta = (M_PI / 2.0f) / static_cast<float>(num_corner_segments_);
     float theta = 0.0f;
@@ -19,17 +79,17 @@ void PlotPaneHelp::render(const float pane_width, const float pane_height)
     // Upper left corner
     for (size_t k = 0; k < num_corner_segments_; k++)
     {
-        const float cx = -kVal + rx;
-        const float cy = kVal - ry;
+        const float cx = -used_width + rx;
+        const float cy = used_height - ry;
 
-        data_array_[idx] = -kVal;
-        data_array_[idx + 1] = kVal;
+        data_array_[36 + idx] = cx;
+        data_array_[36 + idx + 1] = cy;
 
-        data_array_[idx + 2] = cx - rx * std::cos(theta);
-        data_array_[idx + 3] = cy + ry * std::sin(theta);
+        data_array_[36 + idx + 2] = cx - rx * std::cos(theta);
+        data_array_[36 + idx + 3] = cy + ry * std::sin(theta);
 
-        data_array_[idx + 4] = cx - rx * std::cos(theta + dtheta);
-        data_array_[idx + 5] = cy + ry * std::sin(theta + dtheta);
+        data_array_[36 + idx + 4] = cx - rx * std::cos(theta + dtheta);
+        data_array_[36 + idx + 5] = cy + ry * std::sin(theta + dtheta);
 
         theta += dtheta;
 
@@ -40,17 +100,17 @@ void PlotPaneHelp::render(const float pane_width, const float pane_height)
     // Upper right corner
     for (size_t k = 0; k < num_corner_segments_; k++)
     {
-        const float cx = kVal - rx;
-        const float cy = kVal - ry;
+        const float cx = used_width - rx;
+        const float cy = used_height - ry;
 
-        data_array_[idx] = kVal;
-        data_array_[idx + 1] = kVal;
+        data_array_[36 + idx] = cx;
+        data_array_[36 + idx + 1] = cy;
 
-        data_array_[idx + 2] = cx + rx * std::cos(theta);
-        data_array_[idx + 3] = cy + ry * std::sin(theta);
+        data_array_[36 + idx + 2] = cx + rx * std::cos(theta);
+        data_array_[36 + idx + 3] = cy + ry * std::sin(theta);
 
-        data_array_[idx + 4] = cx + rx * std::cos(theta + dtheta);
-        data_array_[idx + 5] = cy + ry * std::sin(theta + dtheta);
+        data_array_[36 + idx + 4] = cx + rx * std::cos(theta + dtheta);
+        data_array_[36 + idx + 5] = cy + ry * std::sin(theta + dtheta);
 
         theta += dtheta;
 
@@ -61,17 +121,17 @@ void PlotPaneHelp::render(const float pane_width, const float pane_height)
     // Lower right corner
     for (size_t k = 0; k < num_corner_segments_; k++)
     {
-        const float cx = kVal - rx;
-        const float cy = -kVal + ry;
+        const float cx = used_width - rx;
+        const float cy = -used_height + ry;
 
-        data_array_[idx] = kVal;
-        data_array_[idx + 1] = -kVal;
+        data_array_[36 + idx] = cx;
+        data_array_[36 + idx + 1] = cy;
 
-        data_array_[idx + 2] = cx + rx * std::cos(theta);
-        data_array_[idx + 3] = cy - ry * std::sin(theta);
+        data_array_[36 + idx + 2] = cx + rx * std::cos(theta);
+        data_array_[36 + idx + 3] = cy - ry * std::sin(theta);
 
-        data_array_[idx + 4] = cx + rx * std::cos(theta + dtheta);
-        data_array_[idx + 5] = cy - ry * std::sin(theta + dtheta);
+        data_array_[36 + idx + 4] = cx + rx * std::cos(theta + dtheta);
+        data_array_[36 + idx + 5] = cy - ry * std::sin(theta + dtheta);
 
         theta += dtheta;
 
@@ -82,17 +142,17 @@ void PlotPaneHelp::render(const float pane_width, const float pane_height)
     // Lower left corner
     for (size_t k = 0; k < num_corner_segments_; k++)
     {
-        const float cx = -kVal + rx;
-        const float cy = -kVal + ry;
+        const float cx = -used_width + rx;
+        const float cy = -used_height + ry;
 
-        data_array_[idx] = -kVal;
-        data_array_[idx + 1] = -kVal;
+        data_array_[36 + idx] = cx;
+        data_array_[36 + idx + 1] = cy;
 
-        data_array_[idx + 2] = cx - rx * std::cos(theta);
-        data_array_[idx + 3] = cy - ry * std::sin(theta);
+        data_array_[36 + idx + 2] = cx - rx * std::cos(theta);
+        data_array_[36 + idx + 3] = cy - ry * std::sin(theta);
 
-        data_array_[idx + 4] = cx - rx * std::cos(theta + dtheta);
-        data_array_[idx + 5] = cy - ry * std::sin(theta + dtheta);
+        data_array_[36 + idx + 4] = cx - rx * std::cos(theta + dtheta);
+        data_array_[36 + idx + 5] = cy - ry * std::sin(theta + dtheta);
 
         theta += dtheta;
 
@@ -110,7 +170,7 @@ PlotPaneHelp::PlotPaneHelp()
 {
     num_corner_segments_ = 10U;
     num_corner_vertices_ = num_corner_segments_ * 3U;
-    num_vertices_ = num_corner_vertices_ * 4U;
+    num_vertices_ = 18U + num_corner_vertices_ * 4U;
     num_bytes_ = sizeof(float) * num_vertices_ * 2U;
     data_array_ = new float[num_vertices_ * 2];
 
