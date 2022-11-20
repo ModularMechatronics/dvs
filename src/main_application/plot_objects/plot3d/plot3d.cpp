@@ -421,7 +421,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     const Points& pt_1 = pts[input_params.num_elements - 2];
     const Points& pt = pts[input_params.num_elements - 1];
 
-    // 1st triangle
     output_data.p0[idx] = pt_1.p0.x;
     output_data.p0[idx + 1] = pt_1.p0.y;
     output_data.p0[idx + 2] = pt_1.p0.z;
@@ -434,7 +433,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.p0[idx + 7] = pt.p0.y;
     output_data.p0[idx + 8] = pt.p0.z;
 
-    // 2nd triangle
     output_data.p0[idx + 9] = pt_1.p0.x;
     output_data.p0[idx + 10] = pt_1.p0.y;
     output_data.p0[idx + 11] = pt_1.p0.z;
@@ -447,7 +445,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.p0[idx + 16] = pt_1.p0.y;
     output_data.p0[idx + 17] = pt_1.p0.z;
 
-    // 1st triangle
     output_data.p1[idx] = pt_1.p1.x;
     output_data.p1[idx + 1] = pt_1.p1.y;
     output_data.p1[idx + 2] = pt_1.p1.z;
@@ -460,7 +457,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.p1[idx + 7] = pt.p1.y;
     output_data.p1[idx + 8] = pt.p1.z;
 
-    // 2nd triangle
     output_data.p1[idx + 9] = pt_1.p1.x;
     output_data.p1[idx + 10] = pt_1.p1.y;
     output_data.p1[idx + 11] = pt_1.p1.z;
@@ -473,7 +469,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.p1[idx + 16] = pt_1.p1.y;
     output_data.p1[idx + 17] = pt_1.p1.z;
 
-    // 1st triangle
     output_data.p2[idx] = pt_1.p2.x;
     output_data.p2[idx + 1] = pt_1.p2.y;
     output_data.p2[idx + 2] = pt_1.p2.z;
@@ -486,7 +481,6 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.p2[idx + 7] = pt.p2.y;
     output_data.p2[idx + 8] = pt.p2.z;
 
-    // 2nd triangle
     output_data.p2[idx + 9] = pt_1.p2.x;
     output_data.p2[idx + 10] = pt_1.p2.y;
     output_data.p2[idx + 11] = pt_1.p2.z;

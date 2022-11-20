@@ -7,11 +7,32 @@
 namespace
 {
 
+template <typename T> struct HomogeneousLine2D
+{
+    T a;
+    T b;
+    T c;
+    HomogeneousLine2D(const T a_, const T b_, const T c_) : a{a_}, b{b_}, c{c_} {}
+    HomogeneousLine2D() = default;
+};
+
+template <typename T> HomogeneousLine2D<T> lineFromTwoPoints(const Vec2<T>& p0, const Vec2<T>& p1)
+{
+    HomogeneousLine2D<T> line;
+
+    Vec2<T> v = p1 - p0;
+
+    line.a = -v.y;
+    line.b = v.x;
+    line.c = -(line.a * p0.x + line.b * p0.y);
+
+    return line;
+}
+
 struct OutputData
 {
-    float* p0;
+    float* pts;
     float* p1;
-    float* p2;
     int32_t* idx_data;
 };
 
@@ -20,12 +41,17 @@ struct InputParams
     size_t num_elements;
     size_t num_bytes_per_element;
     size_t num_bytes_for_one_vec;
+    float line_width;
 
     InputParams() = default;
-    InputParams(const size_t num_elements_, const size_t num_bytes_per_element_, const size_t num_bytes_for_one_vec_)
+    InputParams(const size_t num_elements_,
+                const size_t num_bytes_per_element_,
+                const size_t num_bytes_for_one_vec_,
+                const float line_width_)
         : num_elements{num_elements_},
           num_bytes_per_element{num_bytes_per_element_},
-          num_bytes_for_one_vec{num_bytes_for_one_vec_}
+          num_bytes_for_one_vec{num_bytes_for_one_vec_},
+          line_width{line_width_}
     {
     }
 };
@@ -40,6 +66,17 @@ struct Converter
     }
 };
 
+template <typename T>
+Vec2<T> intersectionOfTwoLines(const HomogeneousLine2D<T>& line0, const HomogeneousLine2D<T>& line1)
+{
+    Vec2<T> p;
+
+    p.x = (line0.b * line1.c - line1.b * line0.c) / (line0.a * line1.b - line1.a * line0.b);
+    p.y = -(line0.a * line1.c - line1.a * line0.c) / (line0.a * line1.b - line1.a * line0.b);
+
+    return p;
+}
+
 }  // namespace
 
 Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
@@ -52,7 +89,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_};
+    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, line_width_ / 100.0f};
 
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
@@ -82,10 +119,10 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
     const size_t num_points = num_triangles * 3U;
 
-    // p0
-    glGenBuffers(1, &p0_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p0, GL_STATIC_DRAW);
+    // pts
+    glGenBuffers(1, &pts_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, pts_vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.pts, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -96,30 +133,18 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p1, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // p2
-    glGenBuffers(1, &p2_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p2, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, output_data.idx_data, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glVertexAttribIPointer(3, 1, GL_INT, 0, 0);
+    glVertexAttribIPointer(2, 1, GL_INT, 0, 0);
 
-    delete[] output_data.p0;
-    delete[] output_data.p1;
-    delete[] output_data.p2;
+    delete[] output_data.pts;
     delete[] output_data.idx_data;
 }
 
@@ -173,14 +198,12 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     const size_t num_points = num_triangles * 3U;
 
     OutputData output_data;
-    output_data.p0 = new float[2 * num_points];
+    output_data.pts = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
-    output_data.p2 = new float[2 * num_points];
     output_data.idx_data = new int32_t[num_points];
 
-    std::memset(output_data.p0, 0, 2 * num_points * sizeof(float));
-    std::memset(output_data.p1, 0, 2 * num_points * sizeof(float));
-    std::memset(output_data.p2, 0, 2 * num_points * sizeof(float));
+    const float half_line_width = input_params.line_width / 2.0f;
+    std::memset(output_data.pts, 0, 2 * num_points * sizeof(float));
 
     std::memset(output_data.idx_data, 0, num_points * sizeof(int32_t));
 
@@ -267,77 +290,135 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         const Points& pt_1 = pts[k - 1];
         const Points& pt = pts[k];
 
-        // 1st triangle
-        output_data.p0[idx] = pt_1.p0.x;
-        output_data.p0[idx + 1] = pt_1.p0.y;
+        const Vec2f vec_along01 = (pt.p1 - pt.p0).normalized();
+        const Vec2f vec_along12 = (pt.p2 - pt.p1).normalized();
 
-        output_data.p0[idx + 2] = pt.p0.x;
-        output_data.p0[idx + 3] = pt.p0.y;
+        const Vec2f vec_on_line_edge01(-vec_along01.y * half_line_width, vec_along01.x * half_line_width);
+        const Vec2f vec_on_line_edge12(-vec_along12.y * half_line_width, vec_along12.x * half_line_width);
 
-        output_data.p0[idx + 4] = pt.p0.x;
-        output_data.p0[idx + 5] = pt.p0.y;
+        const Vec2f vec_along01_1 = (pt_1.p1 - pt_1.p0).normalized();
+        const Vec2f vec_along12_1 = (pt_1.p2 - pt_1.p1).normalized();
 
-        // 2nd triangle
-        output_data.p0[idx + 6] = pt_1.p0.x;
-        output_data.p0[idx + 7] = pt_1.p0.y;
+        const Vec2f vec_on_line_edge01_1(-vec_along01_1.y * half_line_width, vec_along01_1.x * half_line_width);
+        const Vec2f vec_on_line_edge12_1(-vec_along12_1.y * half_line_width, vec_along12_1.x * half_line_width);
 
-        output_data.p0[idx + 8] = pt.p0.x;
-        output_data.p0[idx + 9] = pt.p0.y;
+        const float which_side_vec_z = vec_along01.x * vec_along12.y - vec_along01.y * vec_along12.x;
 
-        output_data.p0[idx + 10] = pt_1.p0.x;
-        output_data.p0[idx + 11] = pt_1.p0.y;
+        bool should_flip;
+        if (which_side_vec_z > 0.0)
+        {
+            should_flip = true;
+        }
+        else
+        {
+            should_flip = false;
+        }
 
-        // 3nd triangle
-        output_data.p0[idx + 12] = pt.p0.x;
-        output_data.p0[idx + 13] = pt.p0.y;
+        const Vec2 point0_on_edge01 = vec_on_line_edge01;
+        const Vec2 point1_on_edge01 = vec_on_line_edge01 - vec_along01;
 
-        output_data.p0[idx + 14] = pt.p0.x;
-        output_data.p0[idx + 15] = pt.p0.y;
+        const Vec2 point0_on_edge12 = vec_on_line_edge12;
+        const Vec2 point1_on_edge12 = vec_on_line_edge12 + vec_along12;
 
-        output_data.p0[idx + 16] = pt.p0.x;
-        output_data.p0[idx + 17] = pt.p0.y;
+        const HomogeneousLine2D<float> line0 = lineFromTwoPoints(point0_on_edge01, point1_on_edge01);
+        const HomogeneousLine2D<float> line1 = lineFromTwoPoints(point0_on_edge12, point1_on_edge12);
 
-        // 4th triangle
-        output_data.p0[idx + 18] = pt.p0.x;
-        output_data.p0[idx + 19] = pt.p0.y;
+        Vec2 intersection_point = intersectionOfTwoLines(line0, line1);
 
-        output_data.p0[idx + 20] = pt.p0.x;
-        output_data.p0[idx + 21] = pt.p0.y;
+        const Vec2f t00 = pt.p1 + vec_on_line_edge01;
+        const Vec2f t01 = pt_1.p1 - vec_on_line_edge12_1;
+        const Vec2f t02 = pt_1.p1 + vec_on_line_edge12_1;
 
-        output_data.p0[idx + 22] = pt.p0.x;
-        output_data.p0[idx + 23] = pt.p0.y;
+        output_data.pts[idx] = t00.x;
+        output_data.pts[idx + 1] = t00.y;
 
-        // 1st triangle
-        output_data.p1[idx] = pt_1.p1.x;
-        output_data.p1[idx + 1] = pt_1.p1.y;
+        output_data.pts[idx + 2] = t01.x;
+        output_data.pts[idx + 3] = t01.y;
 
-        output_data.p1[idx + 2] = pt.p1.x;
-        output_data.p1[idx + 3] = pt.p1.y;
+        output_data.pts[idx + 4] = t02.x;
+        output_data.pts[idx + 5] = t02.y;
 
-        output_data.p1[idx + 4] = pt.p1.x;
-        output_data.p1[idx + 5] = pt.p1.y;
+        // Second triangle
+        const Vec2f t10 = pt.p1 + vec_on_line_edge01;
+        const Vec2f t11 = pt.p1 - vec_on_line_edge01;
+        const Vec2f t12 = pt_1.p1 - vec_on_line_edge12_1;
 
-        // 2nd triangle
-        output_data.p1[idx + 6] = pt_1.p1.x;
-        output_data.p1[idx + 7] = pt_1.p1.y;
+        output_data.pts[idx + 6] = t10.x;
+        output_data.pts[idx + 7] = t10.y;
 
-        output_data.p1[idx + 8] = pt.p1.x;
-        output_data.p1[idx + 9] = pt.p1.y;
+        output_data.pts[idx + 8] = t11.x;
+        output_data.pts[idx + 9] = t11.y;
 
-        output_data.p1[idx + 10] = pt_1.p1.x;
-        output_data.p1[idx + 11] = pt_1.p1.y;
+        output_data.pts[idx + 10] = t12.x;
+        output_data.pts[idx + 11] = t12.y;
 
-        // 3nd triangle
-        output_data.p1[idx + 12] = pt.p1.x;
-        output_data.p1[idx + 13] = pt.p1.y;
+        // Third triangle
+        const Vec2f t20 = pt.p1;
 
-        output_data.p1[idx + 14] = pt.p1.x;
-        output_data.p1[idx + 15] = pt.p1.y;
+        Vec2f t21;
+        if (should_flip)
+        {
+            t21 = pt.p1 - vec_on_line_edge01;
+        }
+        else
+        {
+            t21 = pt.p1 + vec_on_line_edge01;
+        }
 
-        output_data.p1[idx + 16] = pt.p1.x;
-        output_data.p1[idx + 17] = pt.p1.y;
+        Vec2f t22;
+        if (should_flip)
+        {
+            t22 = pt.p1 - vec_on_line_edge12;
+        }
+        else
+        {
+            t22 = pt.p1 + vec_on_line_edge12;
+        }
 
-        // 4th triangle
+        output_data.pts[idx + 12] = t20.x;
+        output_data.pts[idx + 13] = t20.y;
+
+        output_data.pts[idx + 14] = t21.x;
+        output_data.pts[idx + 15] = t21.y;
+
+        output_data.pts[idx + 16] = t22.x;
+        output_data.pts[idx + 17] = t22.y;
+
+        // Fourth triangle
+        Vec2f t30, t31, t32;
+        if (should_flip)
+        {
+            t30 = pt.p1 - vec_on_line_edge01;
+        }
+        else
+        {
+            t30 = pt.p1 + vec_on_line_edge01;
+        }
+
+        if (should_flip)
+        {
+            t31 = pt.p1 - vec_on_line_edge12;
+        }
+        else
+        {
+            t31 = pt.p1 + vec_on_line_edge12;
+        }
+
+        if (should_flip)
+        {
+            intersection_point = -intersection_point;
+        }
+        t32 = pt.p1 + intersection_point;
+
+        output_data.pts[idx + 18] = t30.x;
+        output_data.pts[idx + 19] = t30.y;
+
+        output_data.pts[idx + 20] = t31.x;
+        output_data.pts[idx + 21] = t31.y;
+
+        output_data.pts[idx + 22] = t32.x;
+        output_data.pts[idx + 23] = t32.y;
+
         output_data.p1[idx + 18] = pt.p1.x;
         output_data.p1[idx + 19] = pt.p1.y;
 
@@ -347,60 +428,21 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         output_data.p1[idx + 22] = pt.p1.x;
         output_data.p1[idx + 23] = pt.p1.y;
 
-        // 1st triangle
-        output_data.p2[idx] = pt_1.p2.x;
-        output_data.p2[idx + 1] = pt_1.p2.y;
-
-        output_data.p2[idx + 2] = pt.p2.x;
-        output_data.p2[idx + 3] = pt.p2.y;
-
-        output_data.p2[idx + 4] = pt.p2.x;
-        output_data.p2[idx + 5] = pt.p2.y;
-
-        // 2nd triangle
-        output_data.p2[idx + 6] = pt_1.p2.x;
-        output_data.p2[idx + 7] = pt_1.p2.y;
-
-        output_data.p2[idx + 8] = pt.p2.x;
-        output_data.p2[idx + 9] = pt.p2.y;
-
-        output_data.p2[idx + 10] = pt_1.p2.x;
-        output_data.p2[idx + 11] = pt_1.p2.y;
-
-        // 3nd triangle
-        output_data.p2[idx + 12] = pt.p2.x;
-        output_data.p2[idx + 13] = pt.p2.y;
-
-        output_data.p2[idx + 14] = pt.p2.x;
-        output_data.p2[idx + 15] = pt.p2.y;
-
-        output_data.p2[idx + 16] = pt.p2.x;
-        output_data.p2[idx + 17] = pt.p2.y;
-
-        // 4th triangle
-        output_data.p2[idx + 18] = pt.p2.x;
-        output_data.p2[idx + 19] = pt.p2.y;
-
-        output_data.p2[idx + 20] = pt.p2.x;
-        output_data.p2[idx + 21] = pt.p2.y;
-
-        output_data.p2[idx + 22] = pt.p2.x;
-        output_data.p2[idx + 23] = pt.p2.y;
+        idx += 24;
 
         output_data.idx_data[idx_idx] = 0;
-        output_data.idx_data[idx_idx + 1] = 1;
-        output_data.idx_data[idx_idx + 2] = 2;
-        output_data.idx_data[idx_idx + 3] = 3;
-        output_data.idx_data[idx_idx + 4] = 4;
-        output_data.idx_data[idx_idx + 5] = 5;
-        output_data.idx_data[idx_idx + 6] = 6;
-        output_data.idx_data[idx_idx + 7] = 7;
-        output_data.idx_data[idx_idx + 8] = 8;
-        output_data.idx_data[idx_idx + 9] = 9;
-        output_data.idx_data[idx_idx + 10] = 10;
-        output_data.idx_data[idx_idx + 11] = 11;
+        output_data.idx_data[idx_idx + 1] = 0;
+        output_data.idx_data[idx_idx + 2] = 0;
+        output_data.idx_data[idx_idx + 3] = 0;
+        output_data.idx_data[idx_idx + 4] = 0;
+        output_data.idx_data[idx_idx + 5] = 0;
+        output_data.idx_data[idx_idx + 6] = 0;
+        output_data.idx_data[idx_idx + 7] = 0;
+        output_data.idx_data[idx_idx + 8] = 0;
+        output_data.idx_data[idx_idx + 9] = 1;
+        output_data.idx_data[idx_idx + 10] = 1;
+        output_data.idx_data[idx_idx + 11] = 1;
 
-        idx += 24;
         idx_idx += 12;
     }
 
@@ -408,72 +450,44 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     const Points& pt_1 = pts[input_params.num_elements - 2];
     const Points& pt = pts[input_params.num_elements - 1];
 
-    // 1st triangle
-    output_data.p0[idx] = pt_1.p0.x;
-    output_data.p0[idx + 1] = pt_1.p0.y;
+    const Vec2f vec_along01 = (pt.p1 - pt.p0).normalized();
+    const Vec2f vec_along12 = (pt.p2 - pt.p1).normalized();
 
-    output_data.p0[idx + 2] = pt.p0.x;
-    output_data.p0[idx + 3] = pt.p0.y;
+    const Vec2f vec_on_line_edge01(-vec_along01.y * half_line_width, vec_along01.x * half_line_width);
+    const Vec2f vec_on_line_edge12(-vec_along12.y * half_line_width, vec_along12.x * half_line_width);
 
-    output_data.p0[idx + 4] = pt.p0.x;
-    output_data.p0[idx + 5] = pt.p0.y;
+    const Vec2f vec_along01_1 = (pt_1.p1 - pt_1.p0).normalized();
+    const Vec2f vec_along12_1 = (pt_1.p2 - pt_1.p1).normalized();
 
-    // 2nd triangle
-    output_data.p0[idx + 6] = pt_1.p0.x;
-    output_data.p0[idx + 7] = pt_1.p0.y;
+    const Vec2f vec_on_line_edge01_1(-vec_along01_1.y * half_line_width, vec_along01_1.x * half_line_width);
+    const Vec2f vec_on_line_edge12_1(-vec_along12_1.y * half_line_width, vec_along12_1.x * half_line_width);
 
-    output_data.p0[idx + 8] = pt.p0.x;
-    output_data.p0[idx + 9] = pt.p0.y;
+    const Vec2f t00 = pt.p1 + vec_on_line_edge01;
+    const Vec2f t01 = pt_1.p1 - vec_on_line_edge12_1;
+    const Vec2f t02 = pt_1.p1 + vec_on_line_edge12_1;
 
-    output_data.p0[idx + 10] = pt_1.p0.x;
-    output_data.p0[idx + 11] = pt_1.p0.y;
+    output_data.pts[idx] = t00.x;
+    output_data.pts[idx + 1] = t00.y;
 
-    // 1st triangle
-    output_data.p1[idx] = pt_1.p1.x;
-    output_data.p1[idx + 1] = pt_1.p1.y;
+    output_data.pts[idx + 2] = t01.x;
+    output_data.pts[idx + 3] = t01.y;
 
-    output_data.p1[idx + 2] = pt.p1.x;
-    output_data.p1[idx + 3] = pt.p1.y;
+    output_data.pts[idx + 4] = t02.x;
+    output_data.pts[idx + 5] = t02.y;
 
-    output_data.p1[idx + 4] = pt.p1.x;
-    output_data.p1[idx + 5] = pt.p1.y;
+    // Second triangle
+    const Vec2f t10 = pt.p1 + vec_on_line_edge01;
+    const Vec2f t11 = pt.p1 - vec_on_line_edge01;
+    const Vec2f t12 = pt_1.p1 - vec_on_line_edge12_1;
 
-    // 2nd triangle
-    output_data.p1[idx + 6] = pt_1.p1.x;
-    output_data.p1[idx + 7] = pt_1.p1.y;
+    output_data.pts[idx + 6] = t10.x;
+    output_data.pts[idx + 7] = t10.y;
 
-    output_data.p1[idx + 8] = pt.p1.x;
-    output_data.p1[idx + 9] = pt.p1.y;
+    output_data.pts[idx + 8] = t11.x;
+    output_data.pts[idx + 9] = t11.y;
 
-    output_data.p1[idx + 10] = pt_1.p1.x;
-    output_data.p1[idx + 11] = pt_1.p1.y;
-
-    // 1st triangle
-    output_data.p2[idx] = pt_1.p2.x;
-    output_data.p2[idx + 1] = pt_1.p2.y;
-
-    output_data.p2[idx + 2] = pt.p2.x;
-    output_data.p2[idx + 3] = pt.p2.y;
-
-    output_data.p2[idx + 4] = pt.p2.x;
-    output_data.p2[idx + 5] = pt.p2.y;
-
-    // 2nd triangle
-    output_data.p2[idx + 6] = pt_1.p2.x;
-    output_data.p2[idx + 7] = pt_1.p2.y;
-
-    output_data.p2[idx + 8] = pt.p2.x;
-    output_data.p2[idx + 9] = pt.p2.y;
-
-    output_data.p2[idx + 10] = pt_1.p2.x;
-    output_data.p2[idx + 11] = pt_1.p2.y;
-
-    output_data.idx_data[idx_idx] = 0;
-    output_data.idx_data[idx_idx + 1] = 1;
-    output_data.idx_data[idx_idx + 2] = 2;
-    output_data.idx_data[idx_idx + 3] = 3;
-    output_data.idx_data[idx_idx + 4] = 4;
-    output_data.idx_data[idx_idx + 5] = 5;
+    output_data.pts[idx + 10] = t12.x;
+    output_data.pts[idx + 11] = t12.y;
 
     return output_data;
 }
