@@ -32,6 +32,7 @@ template <typename T> HomogeneousLine2D<T> lineFromTwoPoints(const Vec2<T>& p0, 
 struct OutputData
 {
     float* pts;
+    float* length_along;
     float* p1;
     int32_t* idx_data;
 };
@@ -135,14 +136,22 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+    // length_along
+    glGenBuffers(1, &length_along_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, length_along_vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points, output_data.length_along, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, output_data.idx_data, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glVertexAttribIPointer(2, 1, GL_INT, 0, 0);
+    glVertexAttribIPointer(3, 1, GL_INT, 0, 0);
 
     delete[] output_data.pts;
     delete[] output_data.idx_data;
@@ -200,7 +209,10 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     OutputData output_data;
     output_data.pts = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
+    output_data.length_along = new float[num_points];
     output_data.idx_data = new int32_t[num_points];
+
+    float* length_along_tmp = new float[input_params.num_elements];
 
     const float half_line_width = input_params.line_width / 2.0f;
     std::memset(output_data.pts, 0, 2 * num_points * sizeof(float));
@@ -217,6 +229,25 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     pts.resize(input_params.num_elements);
 
     const T* const input_data_dt = reinterpret_cast<const T* const>(input_data);
+
+    length_along_tmp[0] = 0.0f;
+
+    for (size_t k = 1; k < input_params.num_elements; k++)
+    {
+        // First segment
+        const T p0x = input_data_dt[k - 1];
+        const T p0y = input_data_dt[input_params.num_elements + k - 1];
+
+        const T p1x = input_data_dt[k];
+        const T p1y = input_data_dt[input_params.num_elements + k];
+
+        const float x = static_cast<float>(p0x - p1x);
+        const float y = static_cast<float>(p0y - p1y);
+
+        const float d = std::sqrt(x * x + y * y);
+
+        length_along_tmp[k] = length_along_tmp[k - 1U] + d;
+    }
 
     {
         // First segment
@@ -284,6 +315,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     size_t idx = 0;
     size_t idx_idx = 0;
+    size_t length_along_idx = 1;
 
     for (size_t k = 1; k < (input_params.num_elements - 1U); k++)
     {
@@ -428,7 +460,24 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         output_data.p1[idx + 22] = pt.p1.x;
         output_data.p1[idx + 23] = pt.p1.y;
 
-        idx += 24;
+        const float la_1 = length_along_tmp[k - 1];
+        const float la = length_along_tmp[k];
+
+        output_data.length_along[length_along_idx] = la;
+        output_data.length_along[length_along_idx + 1] = la_1;
+        output_data.length_along[length_along_idx + 2] = la_1;
+
+        output_data.length_along[length_along_idx + 3] = la;
+        output_data.length_along[length_along_idx + 4] = la;
+        output_data.length_along[length_along_idx + 5] = la_1;
+
+        output_data.length_along[length_along_idx + 6] = la;
+        output_data.length_along[length_along_idx + 7] = la;
+        output_data.length_along[length_along_idx + 8] = la;
+
+        output_data.length_along[length_along_idx + 9] = la;
+        output_data.length_along[length_along_idx + 10] = la;
+        output_data.length_along[length_along_idx + 11] = la;
 
         output_data.idx_data[idx_idx] = 0;
         output_data.idx_data[idx_idx + 1] = 0;
@@ -443,6 +492,8 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         output_data.idx_data[idx_idx + 10] = 1;
         output_data.idx_data[idx_idx + 11] = 1;
 
+        idx += 24;
+        length_along_idx += 12;
         idx_idx += 12;
     }
 
@@ -488,6 +539,19 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     output_data.pts[idx + 10] = t12.x;
     output_data.pts[idx + 11] = t12.y;
+
+    const float la_1 = length_along_tmp[input_params.num_elements - 2];
+    const float la = length_along_tmp[input_params.num_elements - 1];
+
+    output_data.length_along[length_along_idx] = la;
+    output_data.length_along[length_along_idx + 1] = la_1;
+    output_data.length_along[length_along_idx + 2] = la_1;
+
+    output_data.length_along[length_along_idx + 3] = la;
+    output_data.length_along[length_along_idx + 4] = la;
+    output_data.length_along[length_along_idx + 5] = la_1;
+
+    delete[] length_along_tmp;
 
     return output_data;
 }
