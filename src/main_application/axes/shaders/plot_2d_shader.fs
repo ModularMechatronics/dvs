@@ -47,6 +47,8 @@ void main()
       discard;
    }
 
+   color = fragment_color;
+
    if(triangle_id == 3)
    {
       float dist = length(vert_pos - p1_out);
@@ -55,8 +57,6 @@ void main()
          discard;
       }
    }
-
-   color = fragment_color;
 
    /* TODO: Finish to enable dashed line
    vec3 vec_to_fragment;

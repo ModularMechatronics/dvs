@@ -73,14 +73,10 @@ void main()
 {
     bool should_flip = false;
 
-    vec4 p0_transformed = model_view_proj_mat * vec4(p0, 0.0, 1.0);
-    vec4 p1_transformed = model_view_proj_mat * vec4(p1, 0.0, 1.0);
-    vec4 p2_transformed = model_view_proj_mat * vec4(p2, 0.0, 1.0);
-
     // vec_along01 points from point p0 to point p1
-    vec2 vec_along01 = normalize(p1_transformed.xy - p0_transformed.xy);
+    vec2 vec_along01 = normalize(p1 - p0);
     // vec_along12 points from point p1 to point p2
-    vec2 vec_along12 = normalize(p2_transformed.xy - p1_transformed.xy);
+    vec2 vec_along12 = normalize(p2 - p1);
 
     // Rotate the two vectors so that they are perpendicular to
     // their original direction, thereby reaching the edge of the
@@ -117,39 +113,39 @@ void main()
     // 1st triangle
     if(idx == 0)
     {
-        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
+        gl_Position = model_view_proj_mat * vec4(p1 + vec_on_line_edge12, 0.0, 1.0);
         triangle_id = 0;
     }
     else if (idx == 1)
     {
-        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
+        gl_Position = model_view_proj_mat * vec4(p1 - vec_on_line_edge01, 0.0, 1.0);
         triangle_id = 0;
     }
     else if (idx == 2)
     {
-        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
+        gl_Position = model_view_proj_mat * vec4(p1 + vec_on_line_edge01, 0.0, 1.0);
         triangle_id = 0;
     }
     // 2nd triangle
     else if (idx == 3)
     {
-        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
+        gl_Position = model_view_proj_mat * vec4(p1 + vec_on_line_edge12, 0.0, 1.0);
         triangle_id = 1;
     }
     else if (idx == 4)
     {
-        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
+        gl_Position = model_view_proj_mat * vec4(p1 - vec_on_line_edge01, 0.0, 1.0);
         triangle_id = 1;
     }
     else if (idx == 5)
     {
-        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
+        gl_Position = model_view_proj_mat * vec4(p1 - vec_on_line_edge12, 0.0, 1.0);
         triangle_id = 1;
     }
     // 3rd triangle
     else if (idx == 6)
     {
-        gl_Position = vec4(p1_transformed.xy, p1_transformed.z, 1.0);
+        gl_Position = model_view_proj_mat * vec4(p1, 0.0, 1.0);
         triangle_id = 2;
     }
     else if (idx == 7)
@@ -158,26 +154,24 @@ void main()
 
         if(should_flip)
         {
-            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
+            gl_Position = model_view_proj_mat * vec4(p1 - vec_on_line_edge01, 0.0, 1.0);
         }
         else
         {
-            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
+            gl_Position = model_view_proj_mat * vec4(p1 + vec_on_line_edge01, 0.0, 1.0);
         }
-        
     }
     else if (idx == 8)
     {
         triangle_id = 2;
         if(should_flip)
         {
-            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
+            gl_Position = model_view_proj_mat * vec4(p1 - vec_on_line_edge12, 0.0, 1.0);
         }
         else
         {
-            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
+            gl_Position = model_view_proj_mat * vec4(p1 + vec_on_line_edge12, 0.0, 1.0);
         }
-
     }
     // 4th triangle
     else if (idx == 9)
@@ -185,26 +179,24 @@ void main()
         triangle_id = 3;
         if(should_flip)
         {
-            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
+            gl_Position = model_view_proj_mat * vec4(p1 - vec_on_line_edge01, 0.0, 1.0);
         }
         else
         {
-            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
+            gl_Position = model_view_proj_mat * vec4(p1 + vec_on_line_edge01, 0.0, 1.0);
         }
-
     }
     else if (idx == 10)
     {
         triangle_id = 3;
         if(should_flip)
         {
-            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
+            gl_Position = model_view_proj_mat * vec4(p1 - vec_on_line_edge12, 0.0, 1.0);
         }
         else
         {
-            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
+            gl_Position = model_view_proj_mat * vec4(p1 + vec_on_line_edge12, 0.0, 1.0);
         }
-
     }
     else if (idx == 11)
     {
@@ -214,13 +206,13 @@ void main()
             intersection_point = -intersection_point;
         }
 
-        gl_Position = vec4(p1_transformed.xy + intersection_point, p1_transformed.z, 1.0);
+        gl_Position = model_view_proj_mat * vec4(p1 + intersection_point, 0.0, 1.0);
     }
 
     vec4 op = inverse_model_view_proj_mat * gl_Position;
 
     coord_out = vec4(op.x, op.y, op.z, 1.0);
     fragment_color = vertex_color;
-    vert_pos     = gl_Position.xyz / gl_Position.w;
-    p1_out = p1_transformed.xyz;
+    vert_pos     = (inverse_model_view_proj_mat * gl_Position).xyz;
+    p1_out = vec3(p1, 0.0);
 }
