@@ -15,7 +15,7 @@ private:
     float gap_size_, dash_size_;
 
     GLuint idx_buffer_;
-    GLuint pts_vertex_buffer_, p1_vertex_buffer_;
+    GLuint pts_vertex_buffer_, p1_vertex_buffer_, length_along_vertex_buffer_;
 
     void findMinMax() override;
 

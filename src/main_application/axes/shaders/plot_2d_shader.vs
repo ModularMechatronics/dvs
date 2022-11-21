@@ -3,7 +3,8 @@
 uniform mat4 model_view_proj_mat;
 layout(location = 0) in vec3 in_vertex;
 layout(location = 1) in vec3 p1;
-layout(location = 2) in int idx;
+layout(location = 2) in float length_along;
+layout(location = 3) in int idx;
 uniform vec3 vertex_color;
 
 out vec3 fragment_color;
