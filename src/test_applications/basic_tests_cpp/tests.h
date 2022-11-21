@@ -296,6 +296,11 @@ void testPlot()
     plot(xp, yp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
+    zp.fill(-0.01f);
+    plot3(xp, yp, zp, properties::LineWidth(120), properties::LineStyle::Dashed(), properties::Color(255, 0, 0));
+
+    view(0, 90);
+
     setCurrentElement("p_view_1");
     float t = 0.0;
 
