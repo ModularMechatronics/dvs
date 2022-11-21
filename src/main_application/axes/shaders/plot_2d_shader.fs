@@ -3,9 +3,9 @@
 out vec3 color;
 in vec3 fragment_color;
 in vec4 coord_out;
-flat in int triangle_id;
 flat in vec3 p1_out;
 in vec3 vert_pos;
+flat in int triangle_id;
 
 uniform float half_line_width;
 uniform vec4 clip_plane0;
@@ -47,22 +47,22 @@ void main()
       discard;
    }
 
-   color = fragment_color;
-
-   if(triangle_id == 1)
+   if(triangle_id == 3)
    {
       float dist = length(vert_pos - p1_out);
-      if(dist > (half_line_width * 6.0)) // TODO: Magic number 6.0 because of projection matrix?
+      if(dist > half_line_width)
       {
          discard;
       }
    }
 
-   // TODO: Finish to enable dashed line
-   /*vec3 vec_to_fragment;
+   color = fragment_color;
+
+   /* TODO: Finish to enable dashed line
+   vec3 vec_to_fragment;
    vec3 vec_along_line;
 
-   if(triangle_id_int == 1)
+   if(triangle_id_int == 0)
    {
       vec_to_fragment = vert_pos - p0_out;
       vec_along_line = p1_out - p0_out;
