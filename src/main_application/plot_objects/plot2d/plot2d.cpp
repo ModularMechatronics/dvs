@@ -33,6 +33,7 @@ struct OutputData
 {
     float* pts;
     float* length_along;
+    float* p0;
     float* p1;
     int32_t* idx_data;
 };
@@ -128,13 +129,21 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+    // p0
+    glGenBuffers(1, &p0_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p0, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
     // p1
     glGenBuffers(1, &p1_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p1, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     // length_along
     glGenBuffers(1, &length_along_vertex_buffer_);
@@ -142,16 +151,16 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points, output_data.length_along, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, output_data.idx_data, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(4);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glVertexAttribIPointer(3, 1, GL_INT, 0, 0);
+    glVertexAttribIPointer(4, 1, GL_INT, 0, 0);
 
     delete[] output_data.pts;
     delete[] output_data.idx_data;
@@ -208,6 +217,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     OutputData output_data;
     output_data.pts = new float[2 * num_points];
+    output_data.p0 = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
     output_data.length_along = new float[num_points];
     output_data.idx_data = new int32_t[num_points];
@@ -451,6 +461,81 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         output_data.pts[idx + 22] = t32.x;
         output_data.pts[idx + 23] = t32.y;
 
+        // const Vec2f t00 = pt.p1 + vec_on_line_edge01;
+        // const Vec2f t01 = pt_1.p1 - vec_on_line_edge12_1;
+        // const Vec2f t02 = pt_1.p1 + vec_on_line_edge12_1;
+
+        // 1st triangle
+        output_data.p0[idx] = pt_1.p0.x;
+        output_data.p0[idx + 1] = pt_1.p0.y;
+
+        output_data.p0[idx + 2] = pt.p0.x;
+        output_data.p0[idx + 3] = pt.p0.y;
+
+        output_data.p0[idx + 4] = pt.p0.x;
+        output_data.p0[idx + 5] = pt.p0.y;
+
+        // 2nd triangle
+        output_data.p0[idx + 6] = pt_1.p0.x;
+        output_data.p0[idx + 7] = pt_1.p0.y;
+
+        output_data.p0[idx + 8] = pt.p0.x;
+        output_data.p0[idx + 9] = pt.p0.y;
+
+        output_data.p0[idx + 10] = pt_1.p0.x;
+        output_data.p0[idx + 11] = pt_1.p0.y;
+
+        // 3nd triangle
+        output_data.p0[idx + 12] = pt.p0.x;
+        output_data.p0[idx + 13] = pt.p0.y;
+
+        output_data.p0[idx + 14] = pt.p0.x;
+        output_data.p0[idx + 15] = pt.p0.y;
+
+        output_data.p0[idx + 16] = pt.p0.x;
+        output_data.p0[idx + 17] = pt.p0.y;
+
+        // 4th triangle
+        output_data.p0[idx + 18] = pt.p0.x;
+        output_data.p0[idx + 19] = pt.p0.y;
+
+        output_data.p0[idx + 20] = pt.p0.x;
+        output_data.p0[idx + 21] = pt.p0.y;
+
+        output_data.p0[idx + 22] = pt.p0.x;
+        output_data.p0[idx + 23] = pt.p0.y;
+
+        // 1st triangle
+        output_data.p1[idx] = pt_1.p1.x;
+        output_data.p1[idx + 1] = pt_1.p1.y;
+
+        output_data.p1[idx + 2] = pt.p1.x;
+        output_data.p1[idx + 3] = pt.p1.y;
+
+        output_data.p1[idx + 4] = pt.p1.x;
+        output_data.p1[idx + 5] = pt.p1.y;
+
+        // 2nd triangle
+        output_data.p1[idx + 6] = pt_1.p1.x;
+        output_data.p1[idx + 7] = pt_1.p1.y;
+
+        output_data.p1[idx + 8] = pt.p1.x;
+        output_data.p1[idx + 9] = pt.p1.y;
+
+        output_data.p1[idx + 10] = pt_1.p1.x;
+        output_data.p1[idx + 11] = pt_1.p1.y;
+
+        // 3nd triangle
+        output_data.p1[idx + 12] = pt.p1.x;
+        output_data.p1[idx + 13] = pt.p1.y;
+
+        output_data.p1[idx + 14] = pt.p1.x;
+        output_data.p1[idx + 15] = pt.p1.y;
+
+        output_data.p1[idx + 16] = pt.p1.x;
+        output_data.p1[idx + 17] = pt.p1.y;
+
+        // 4th triangle
         output_data.p1[idx + 18] = pt.p1.x;
         output_data.p1[idx + 19] = pt.p1.y;
 
