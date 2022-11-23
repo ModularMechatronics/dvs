@@ -13,8 +13,11 @@ uniform float half_line_width;
 out vec3 fragment_color;
 out vec4 coord_out;
 
+flat out vec3 p0_out;
 flat out vec3 p1_out;
-out vec3 vert_pos;
+flat out float length_along_fs;
+flat out float theta;
+out vec3 fragment_pos;
 flat out int triangle_id;
 
 struct Line2D
@@ -213,6 +216,63 @@ void main()
 
     coord_out = vec4(op.x, op.y, op.z, 1.0);
     fragment_color = vertex_color;
-    vert_pos     = (inverse_model_view_proj_mat * gl_Position).xyz;
-    p1_out = vec3(p1, 0.0);
+    fragment_pos     = (inverse_model_view_proj_mat * gl_Position).xyz;
+    theta = atan(vec_on_line_edge01.y, vec_on_line_edge01.x);
+
+    if(triangle_id == 0)
+    {
+        if(idx == 0)
+        {
+            p0_out = vec3(p1, 0.0);
+            p1_out = vec3(p2, 0.0);
+            length_along_fs = length_along;
+        }
+        else if (idx == 1)
+        {
+            p0_out = vec3(p0, 0.0);
+            p1_out = vec3(p1, 0.0);
+            length_along_fs = length_along - length(p1 - p0);
+        }
+        else if (idx == 2)
+        {
+            p0_out = vec3(p0, 0.0);
+            p1_out = vec3(p1, 0.0);
+            length_along_fs = length_along - length(p1 - p0);
+        }
+    }
+    else if(triangle_id == 1)
+    {
+        if (idx == 3)
+        {
+            p0_out = vec3(p1, 0.0);
+            p1_out = vec3(p2, 0.0);
+            length_along_fs = length_along;
+        }
+        else if (idx == 4)
+        {
+            p0_out = vec3(p0, 0.0);
+            p1_out = vec3(p1, 0.0);
+            length_along_fs = length_along - length(p1 - p0);
+        }
+        else if (idx == 5)
+        {
+            p0_out = vec3(p1, 0.0);
+            p1_out = vec3(p2, 0.0);
+            length_along_fs = length_along;
+        }
+    }
+    else if(triangle_id == 2)
+    {
+        p0_out = vec3(p0, 0.0);
+        p1_out = vec3(p1, 0.0);
+        length_along_fs = length_along;
+    }
+    else if(triangle_id == 3)
+    {
+        p0_out = vec3(p0, 0.0);
+        p1_out = vec3(p1, 0.0);
+        length_along_fs = length_along;
+    }
+    
+    
 }
