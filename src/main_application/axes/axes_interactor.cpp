@@ -240,14 +240,14 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
             changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain, current_mouse_interaction_axis);
             break;
         case MouseInteractionType::ZOOM:
-            if (SnappingAxis::None == view_angles_.getSnappingAxis())
+            // if (SnappingAxis::None == view_angles_.getSnappingAxis()) // TODO: Add back
             {
                 changeZoom(dy_mod * zoom_mouse_gain, current_mouse_interaction_axis);
             }
-            else
+            /*else
             {
-                should_draw_zoom_rect_ = true;
-            }
+                should_draw_zoom_rect_ = false;  // TODO: Temporary, should be true for it to work
+            }*/
             break;
         case MouseInteractionType::PAN:
             changePan(dx_mod * pan_mouse_gain, dy_mod * pan_mouse_gain, current_mouse_interaction_axis);
@@ -296,7 +296,7 @@ void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
     const SnappingAxis snapping_axis = view_angles_.getSnappingAxis();
     Vec3d sa(1.0, 1.0, 1.0);
 
-    if (SnappingAxis::None == snapping_axis)
+    if (SnappingAxis::None == snapping_axis)  // TODO: Add back
     {
         if (mia == MouseInteractionAxis::X)
         {

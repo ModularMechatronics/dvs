@@ -10,6 +10,7 @@ struct OutputData
     float* p1;
     float* p2;
     int32_t* idx_data;
+    size_t num_points;
 };
 
 struct InputParams
@@ -55,14 +56,12 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 
-    const size_t num_segments = num_elements_ - 1U;
-    const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
-    const size_t num_points = num_triangles * 3U;
+    num_points_ = output_data.num_points;
 
     // p0
     glGenBuffers(1, &p0_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 3, output_data.p0, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, output_data.p0, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -70,7 +69,7 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
     // p1
     glGenBuffers(1, &p1_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 3, output_data.p1, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, output_data.p1, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
@@ -79,7 +78,7 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
     // p2
     glGenBuffers(1, &p2_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 3, output_data.p2, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, output_data.p2, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
@@ -88,7 +87,7 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, output_data.idx_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points_, output_data.idx_data, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
@@ -108,15 +107,11 @@ void Plot3D::findMinMax()
 
 void Plot3D::render()
 {
-    const size_t num_segments = num_elements_ - 1U;
-    const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
-    const size_t num_points = num_triangles * 3U;
-
     shader_collection_.plot_3d_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "half_line_width"),
                 line_width_ / 1200.0f);
     glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_TRIANGLES, 0, num_points);
+    glDrawArrays(GL_TRIANGLES, 0, num_points_);
     glBindVertexArray(0);
     shader_collection_.basic_plot_shader.use();
 }
@@ -132,6 +127,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     const size_t num_points = num_triangles * 3U;
 
     OutputData output_data;
+    output_data.num_points = num_points;
     output_data.p0 = new float[3 * num_points];
     output_data.p1 = new float[3 * num_points];
     output_data.p2 = new float[3 * num_points];

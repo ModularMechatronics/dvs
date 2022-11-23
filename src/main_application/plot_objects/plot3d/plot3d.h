@@ -17,6 +17,8 @@ private:
     GLuint idx_buffer_;
     GLuint p0_vertex_buffer_, p1_vertex_buffer_, p2_vertex_buffer_;
 
+    size_t num_points_;
+
     void findMinMax() override;
 
 public:

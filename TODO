@@ -11,6 +11,7 @@ Pre release:
  * Use MatrixFixed instead of Matrix where possible
  * Add VectorFixed
 - Display element name in plot panes
+- ImageC4, that includes alpha channel
 - Add zoom/rotate/pan symbol in upper left corner of the plot pane which the mouse is hoovering over, and symbol for locked rotation/zoom/pan axis
 - Help pane that shows up with keyboard shortcuts when you hold 'H'
 - Add rendering of plot pane name

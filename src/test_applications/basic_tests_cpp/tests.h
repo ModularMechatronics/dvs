@@ -273,8 +273,14 @@ void testPlot()
     setCurrentElement("p_view_0");
     clearView();
 
-    const size_t num_points = 6;
+    const size_t num_points = 7;
     Vector<float> xp(num_points), yp(num_points), zp(num_points);
+
+    for (size_t k = 0; k < num_points; k++)
+    {
+        xp(k) = static_cast<float>(k) * (5.0 / 25.0);
+        yp(k) = static_cast<float>(k) * (5.0 / 25.0);
+    }
 
     xp(0) = 0.0;
     xp(1) = 1.0;
@@ -282,6 +288,7 @@ void testPlot()
     xp(3) = 3.0;
     xp(4) = 3.5;
     xp(5) = 3.5;
+    xp(6) = 4.5;
 
     yp(0) = 0.0;
     yp(1) = 3.5;
@@ -289,6 +296,7 @@ void testPlot()
     yp(3) = 2.5;
     yp(4) = 4.0;
     yp(5) = 2.0;
+    yp(6) = 2.0;
 
     zp.fill(0.01f);
 
@@ -297,8 +305,29 @@ void testPlot()
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
-    plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(255, 0, 0));
+    plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(0, 255, 0));
 
+    view(0, 90);
+
+    setCurrentElement("p1");
+    clearView();
+
+    xp(0) = 0.0;
+    xp(1) = 0.0;
+    xp(2) = 1.0;
+    xp(3) = 1.0;
+    xp(4) = 3.5;
+    xp(5) = 3.5;
+
+    yp(0) = 0.0;
+    yp(1) = 3.0;
+    yp(2) = 3.0;
+    yp(3) = 0.0;
+    yp(4) = 4.0;
+    yp(5) = 2.0;
+
+    axis({-0.5, 2.5, -1.0}, {0.5, 3.5, 1.0});
+    plot(xp, yp, properties::LineWidth(50), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
     view(0, 90);
 
     setCurrentElement("p_view_1");

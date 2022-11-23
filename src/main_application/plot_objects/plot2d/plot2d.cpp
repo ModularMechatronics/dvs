@@ -14,6 +14,7 @@ struct OutputData
     float* p2;
     float* length_along;
     int32_t* idx_data;
+    size_t num_points;
 };
 
 struct InputParams
@@ -57,6 +58,8 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
 
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
+    num_points_ = output_data.num_points;
+
     if (is_dashed_)
     {
         if (line_style_.data == internal::LineStyleType::DASHED)
@@ -79,14 +82,10 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     glGenVertexArrays(1, &vertex_buffer_array_);
     glBindVertexArray(vertex_buffer_array_);
 
-    const size_t num_segments = num_elements_ - 1U;
-    const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
-    const size_t num_points = num_triangles * 3U;
-
     // p0
     glGenBuffers(1, &p0_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p0, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, output_data.p0, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -94,7 +93,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     // p1
     glGenBuffers(1, &p1_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p1, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, output_data.p1, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
@@ -103,7 +102,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     // p2
     glGenBuffers(1, &p2_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points * 2, output_data.p2, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, output_data.p2, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
@@ -112,7 +111,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     // Idx
     glGenBuffers(1, &idx_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points, output_data.idx_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points_, output_data.idx_data, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
@@ -121,7 +120,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     // length_along
     glGenBuffers(1, &length_along_vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, length_along_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points, output_data.length_along, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_, output_data.length_along, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, 0, 0);
@@ -150,15 +149,12 @@ void Plot2D::findMinMax()
 
 void Plot2D::render()
 {
-    const size_t num_segments = num_elements_ - 1U;
-    const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
-    const size_t num_points = num_triangles * 3U;
-
     shader_collection_.plot_2d_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "half_line_width"),
-                line_width_ / 1200.0f);
+                line_width_ / 600.0f);
+    glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "use_dash"), 0);
     glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_TRIANGLES, 0, num_points);
+    glDrawArrays(GL_TRIANGLES, 0, num_points_);
     glBindVertexArray(0);
     shader_collection_.basic_plot_shader.use();
 }
@@ -183,6 +179,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     const size_t num_points = num_triangles * 3U;
 
     OutputData output_data;
+    output_data.num_points = num_points;
     output_data.p0 = new float[2 * num_points];
     output_data.p1 = new float[2 * num_points];
     output_data.p2 = new float[2 * num_points];
@@ -423,13 +420,13 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         const float la_1 = length_along_tmp[k - 1];
         const float la = length_along_tmp[k];
 
-        output_data.length_along[length_along_idx] = la;
-        output_data.length_along[length_along_idx + 1] = la_1;
-        output_data.length_along[length_along_idx + 2] = la_1;
+        output_data.length_along[length_along_idx] = la_1;
+        output_data.length_along[length_along_idx + 1] = la;
+        output_data.length_along[length_along_idx + 2] = la;
 
-        output_data.length_along[length_along_idx + 3] = la;
-        output_data.length_along[length_along_idx + 4] = la;
-        output_data.length_along[length_along_idx + 5] = la_1;
+        output_data.length_along[length_along_idx + 3] = la_1;
+        output_data.length_along[length_along_idx + 4] = la_1;
+        output_data.length_along[length_along_idx + 5] = la;
 
         output_data.length_along[length_along_idx + 6] = la;
         output_data.length_along[length_along_idx + 7] = la;
@@ -454,6 +451,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
         idx += 24;
         idx_idx += 12;
+        length_along_idx += 12;
     }
 
     // Last segment will not have the two "Inbetween triangles"
@@ -530,13 +528,13 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     const float la_1 = length_along_tmp[input_params.num_elements - 2];
     const float la = length_along_tmp[input_params.num_elements - 1];
 
-    output_data.length_along[length_along_idx] = la;
-    output_data.length_along[length_along_idx + 1] = la_1;
-    output_data.length_along[length_along_idx + 2] = la_1;
+    output_data.length_along[length_along_idx] = la_1;
+    output_data.length_along[length_along_idx + 1] = la;
+    output_data.length_along[length_along_idx + 2] = la;
 
-    output_data.length_along[length_along_idx + 3] = la;
-    output_data.length_along[length_along_idx + 4] = la;
-    output_data.length_along[length_along_idx + 5] = la_1;
+    output_data.length_along[length_along_idx + 3] = la_1;
+    output_data.length_along[length_along_idx + 4] = la_1;
+    output_data.length_along[length_along_idx + 5] = la;
 
     delete[] length_along_tmp;
 
