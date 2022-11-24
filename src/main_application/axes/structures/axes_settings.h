@@ -10,61 +10,26 @@
 
 using namespace dvs;
 
-enum class AxesState
-{
-    DEFAULT,
-    EQUAL,
-    SQUARE
-};
-
-// TODO: Remake this into a struct
-class AxesSettings
+struct AxesSettings
 {
 public:
-    RGBTripletf plot_pane_background_;
-    RGBTripletf window_background_;
-    RGBTripletf plot_box_wall_color_;
-    RGBTripletf grid_color_;
-    RGBTripletf axes_numbers_color_;
-    RGBTripletf axes_letters_color_;
+    RGBTripletf plot_pane_background_color;
+    RGBTripletf tab_background_color;
+    RGBTripletf tab_button_color;
+    RGBTripletf plot_box_wall_color;
+    RGBTripletf grid_color;
+    RGBTripletf axes_numbers_color;
+    RGBTripletf axes_letters_color;
 
-private:
-    Vec3d axes_scale_;
+    bool grid_on;
 
-    bool grid_on_;
+    std::string x_label;
+    std::string y_label;
+    std::string z_label;
 
-    bool coordinate_axes_on_;
-    double coord_axes_extension_factor_;
+    size_t num_axes_ticks;
 
-    std::string x_label_;
-    std::string y_label_;
-    std::string z_label_;
-
-    size_t num_axes_ticks_;
-
-    AxesState axes_state_;
-
-    Vec3d min_vec_;
-    Vec3d max_vec_;
-
-public:
     AxesSettings();
-
-    AxesState getAxesState() const;
-    std::string getXLabel() const;
-    std::string getYLabel() const;
-    std::string getZLabel() const;
-    size_t getNumAxesTicks() const;
-    RGBTripletf getGridColor() const;
-    bool getGridOn() const;
-    bool getCoordinateAxesOn() const;
-    RGBTripletf getPlotBoxWallColor() const;
-    double getCoordAxExtFac() const;
-    Vec3d getMinVec() const;
-    Vec3d getMaxVec() const;
-
-    Vec3d getAxesScale() const;
-    void setAxesScale(const Vec3d& new_scale);
 };
 
 #endif  // MAIN_APPLICATION_AXES_STRUCTURES_AXES_SETTINGS_H_

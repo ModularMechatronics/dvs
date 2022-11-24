@@ -28,7 +28,7 @@ WindowView::WindowView(wxFrame* main_window,
     main_window_ = main_window;
     current_tab_num_ = 0;
     grid_size_ = 1.0f;
-    const RGBTripletf color_vec{axes_settings_.window_background_};
+    const RGBTripletf color_vec{axes_settings_.tab_background_color};
     SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
     callback_id_ = callback_id;
 
@@ -315,7 +315,7 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
 {
     wxTextEntryDialog name_dialog(this, "Enter the name for the window", "Enter window name", name_);
 
-    const RGBTripletf color_vec{axes_settings_.window_background_};
+    const RGBTripletf color_vec{axes_settings_.tab_background_color};
     name_dialog.SetBackgroundColour(
         wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
 
@@ -370,7 +370,7 @@ void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
         wxTextEntryDialog name_dialog(
             this, "Enter the name for the new element", "Enter element name", "<element-name>");
 
-        const RGBTripletf color_vec{axes_settings_.window_background_};
+        const RGBTripletf color_vec{axes_settings_.tab_background_color};
         name_dialog.SetBackgroundColour(
             wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
         std::string element_name;
@@ -434,7 +434,7 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
 {
     wxTextEntryDialog name_dialog(this, "Enter the new name for the element", "Edit element name", last_clicked_item_);
 
-    const RGBTripletf color_vec{axes_settings_.window_background_};
+    const RGBTripletf color_vec{axes_settings_.tab_background_color};
     name_dialog.SetBackgroundColour(
         wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
 
@@ -504,7 +504,7 @@ void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
     std::cout << "Event from editTabName" << std::endl;
     wxTextEntryDialog name_dialog(this, "Enter the new name for tab", "Enter tab name", last_clicked_item_);
 
-    const RGBTripletf color_vec{axes_settings_.window_background_};
+    const RGBTripletf color_vec{axes_settings_.tab_background_color};
     name_dialog.SetBackgroundColour(
         wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
 
