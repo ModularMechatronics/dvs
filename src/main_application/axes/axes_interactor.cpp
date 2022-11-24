@@ -16,11 +16,10 @@
 
 AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width)
 {
-    DVS_ASSERT(axes_settings.getMinVec().x < axes_settings.getMaxVec().x) << "x min larger than x max!";
-    DVS_ASSERT(axes_settings.getMinVec().y < axes_settings.getMaxVec().y) << "y min larger than y max!";
-    DVS_ASSERT(axes_settings.getMinVec().z < axes_settings.getMaxVec().z) << "z min larger than z max!";
+    const Vec3d min_vec = Vec3d(-1.0, -1.0, -1.0);
+    const Vec3d max_vec = Vec3d(1.0, 1.0, 1.0);
 
-    axes_limits_ = AxesLimits(axes_settings.getMinVec(), axes_settings.getMaxVec());
+    axes_limits_ = AxesLimits(min_vec, max_vec);
     default_axes_limits_ = axes_limits_;
     should_draw_zoom_rect_ = false;
 
@@ -33,7 +32,7 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     axes_settings_ = axes_settings;
     current_mouse_interaction_type_ = MouseInteractionType::ROTATE;
 
-    const size_t num_lines = axes_settings_.getNumAxesTicks();
+    const size_t num_lines = axes_settings_.num_axes_ticks;
     inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
            static_cast<double>(num_lines - 1);
     mouse_pressed_ = false;
@@ -346,7 +345,7 @@ void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
     axes_limits_.setMin(axes_limits_.getMin() - inc_vec);
     axes_limits_.setMax(axes_limits_.getMax() + inc_vec);
 
-    const size_t num_lines = axes_settings_.getNumAxesTicks();
+    const size_t num_lines = axes_settings_.num_axes_ticks;
     inc0.x = changeIncrement(s.x, inc0.x, num_lines);
     inc0.y = changeIncrement(s.y, inc0.y, num_lines);
     inc0.z = changeIncrement(s.z, inc0.z, num_lines);
@@ -404,7 +403,7 @@ void AxesInteractor::setAxesLimits(const Vec3d& min_vec, const Vec3d& max_vec)
     default_axes_limits_ = axes_limits_;
 
     // TODO: Remove below?
-    const size_t num_lines = axes_settings_.getNumAxesTicks();
+    const size_t num_lines = axes_settings_.num_axes_ticks;
     inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
            static_cast<double>(num_lines - 1);
 }
@@ -415,7 +414,7 @@ void AxesInteractor::setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec)
         AxesLimits({min_vec.x, min_vec.y, axes_limits_.getMin().z}, {max_vec.x, max_vec.y, axes_limits_.getMax().z});
     default_axes_limits_ = axes_limits_;
 
-    const size_t num_lines = axes_settings_.getNumAxesTicks();
+    const size_t num_lines = axes_settings_.num_axes_ticks;
     inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
            static_cast<double>(num_lines - 1);
 }
@@ -467,9 +466,9 @@ GridVectors AxesInteractor::generateGridVectors()
     const Vec3d v_min = (axes_limits_.getMin() - axes_center) + axes_center;
     const Vec3d v_max = (axes_limits_.getMax() - axes_center) + axes_center;
 
-    generateAxisVector(v_min.x, v_max.x, axes_settings_.getNumAxesTicks(), axes_center.x, gv.x);
-    generateAxisVector(v_min.y, v_max.y, axes_settings_.getNumAxesTicks(), axes_center.y, gv.y);
-    generateAxisVector(v_min.z, v_max.z, axes_settings_.getNumAxesTicks(), axes_center.z, gv.z);
+    generateAxisVector(v_min.x, v_max.x, axes_settings_.num_axes_ticks, axes_center.x, gv.x);
+    generateAxisVector(v_min.y, v_max.y, axes_settings_.num_axes_ticks, axes_center.y, gv.y);
+    generateAxisVector(v_min.z, v_max.z, axes_settings_.num_axes_ticks, axes_center.z, gv.z);
 
     return gv;
 }

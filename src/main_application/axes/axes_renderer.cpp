@@ -191,7 +191,7 @@ void AxesRenderer::renderBoxGrid()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
 
-    const RGBTripletf color_vec{axes_settings_.grid_color_};
+    const RGBTripletf color_vec{axes_settings_.grid_color};
     
     glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
@@ -280,7 +280,7 @@ void AxesRenderer::renderBackground()
 
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
 
-    const RGBTripletf color_vec{axes_settings_.window_background_};
+    const RGBTripletf color_vec{axes_settings_.tab_background_color};
 
     glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);
     plot_pane_background_.render(width_, height_);
@@ -300,7 +300,7 @@ void AxesRenderer::renderPlotBox()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * window_scale_mat_;
 
-    const RGBTripletf color_vec{axes_settings_.plot_box_wall_color_};
+    const RGBTripletf color_vec{axes_settings_.plot_box_wall_color};
     
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"), 1, GL_FALSE, &mvp[0][0]);
     glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), color_vec.red, color_vec.green, color_vec.blue);

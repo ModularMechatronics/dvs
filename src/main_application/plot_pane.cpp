@@ -831,7 +831,7 @@ void PlotPane::render(wxPaintEvent& evt)
 
     glEnable(GL_MULTISAMPLE);
 
-    const RGBTripletf color_vec{axes_settings_.plot_pane_background_};
+    const RGBTripletf color_vec{axes_settings_.plot_pane_background_color};
     glClearColor(color_vec.red, color_vec.green, color_vec.blue, 0.0f);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

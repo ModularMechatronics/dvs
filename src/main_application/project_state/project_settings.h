@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include "dvs/logging.h"
+#include "opengl_low_level/data_structures.h"
 
 inline void throwIfMissing(const nlohmann::json& j, const std::string& field_name, const std::string& exception_string)
 {
@@ -22,6 +23,11 @@ struct ElementSettings
     float y;
     float width;
     float height;
+    RGBTripletf background_color;
+    RGBTripletf plot_box_color;
+    RGBTripletf grid_color;
+    RGBTripletf axes_numbers_color;
+    RGBTripletf axes_letters_color;
 
     std::string name;
 
@@ -77,6 +83,8 @@ struct TabSettings
 {
     std::vector<ElementSettings> elements;
     std::string name;
+    RGBTripletf background_color;
+    RGBTripletf button_color;
 
     TabSettings() = default;
     TabSettings(const nlohmann::json& j)
