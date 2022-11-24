@@ -301,7 +301,7 @@ void testPlot()
     zp.fill(0.01f);
 
     axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    plot(xp, yp, properties::LineWidth(100), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
+    plot(xp, yp, properties::LineWidth(20), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
