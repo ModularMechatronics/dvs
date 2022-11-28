@@ -22,6 +22,7 @@
 #include "axes/zoom_rect.h"
 #include "io_devices/mouse_state.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "project_state/project_settings.h"
 #include "shader.h"
 
 class AxesRenderer
@@ -39,7 +40,9 @@ private:
     PlotBoxWalls plot_box_walls_{};
     PlotBoxSilhouette plot_box_silhouette_{};
     PlotBoxGrid plot_box_grid_{};
-    PlotPaneBackground plot_pane_background_{};
+    ElementSettings element_settings_;
+    PlotPaneBackground plot_pane_background_;
+    RGBTripletf tab_background_color_;
 
     glm::mat4 orth_projection_mat;
     glm::mat4 persp_projection_mat;
@@ -80,7 +83,9 @@ private:
                       const bool invert) const;
 
 public:
-    AxesRenderer(const ShaderCollection shader_collection);
+    AxesRenderer(const ShaderCollection shader_collection,
+                 const ElementSettings& element_settings,
+                 const RGBTripletf& tab_background_color);
 
     void updateStates(const AxesLimits& axes_limits,
                       const ViewAngles& view_angles,

@@ -12,12 +12,14 @@
 #include "axes/text_rendering.h"
 #include "dvs/math/math.h"
 #include "opengl_low_level/opengl_header.h"
+#include "project_state/project_settings.h"
 #include "shader.h"
 
 void drawGridNumbers(const TextRenderer& text_renderer,
                      const Shader text_shader,
                      const AxesLimits& axes_limits,
                      const ViewAngles& view_angles,
+                     const ElementSettings& element_settings,
                      const glm::mat4& view_mat,
                      const glm::mat4& model_mat,
                      const glm::mat4& projection_mat,

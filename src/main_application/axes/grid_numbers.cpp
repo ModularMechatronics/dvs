@@ -62,6 +62,7 @@ void drawZLetter(const TextRenderer& text_renderer,
 }
 
 void drawXAxisNumbers(const TextRenderer& text_renderer,
+                      const ElementSettings& element_settings,
                       const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
@@ -79,9 +80,19 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
     const double z0 = elevation > 0.0 ? -1.05 : 1.05;
     const double z = ((snapping_axis == SnappingAxis::X) || (snapping_axis == SnappingAxis::Y)) ? -1.05 : z0;
 
-    glUniform3f(text_color_uniform, 1.0f, 0.0f, 0.0f);
-    drawXLetter(text_renderer, view_model, v_viewport, projection, width, height, y, z);
-    glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
+    if (element_settings.axes_letters_on)
+    {
+        const auto c = element_settings.axes_letters_color;
+        glUniform3f(text_color_uniform, c.red, c.green, c.blue);
+        drawXLetter(text_renderer, view_model, v_viewport, projection, width, height, y, z);
+    }
+
+    if (!element_settings.axes_numbers_on)
+    {
+        return;
+    }
+    const auto c = element_settings.axes_numbers_color;
+    glUniform3f(text_color_uniform, c.red, c.green, c.blue);
 
     const bool cond2 =
         ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
@@ -105,6 +116,7 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
 }
 
 void drawYAxisNumbers(const TextRenderer& text_renderer,
+                      const ElementSettings& element_settings,
                       const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
@@ -124,9 +136,19 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
     const bool cond2 =
         ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
 
-    glUniform3f(text_color_uniform, 1.0f, 0.0f, 0.0f);
-    drawYLetter(text_renderer, view_model, v_viewport, projection, width, height, x, z);
-    glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
+    if (element_settings.axes_letters_on)
+    {
+        const auto c = element_settings.axes_letters_color;
+        glUniform3f(text_color_uniform, c.red, c.green, c.blue);
+        drawYLetter(text_renderer, view_model, v_viewport, projection, width, height, x, z);
+    }
+
+    if (!element_settings.axes_numbers_on)
+    {
+        return;
+    }
+    const auto c = element_settings.axes_numbers_color;
+    glUniform3f(text_color_uniform, c.red, c.green, c.blue);
 
     for (size_t k = 0; k < gv.y.num_valid_values; k++)
     {
@@ -151,6 +173,7 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
 }
 
 void drawZAxisNumbers(const TextRenderer& text_renderer,
+                      const ElementSettings& element_settings,
                       const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
@@ -166,9 +189,19 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
     const double x = cond ? 1.05 : -1.05;
     const double y = (azimuth > 0.0f) ? 1.05 : -1.05;
 
-    glUniform3f(text_color_uniform, 1.0f, 0.0f, 0.0f);
-    drawZLetter(text_renderer, view_model, v_viewport, projection, width, height, x, y);
-    glUniform3f(text_color_uniform, 0.0f, 0.0f, 0.0f);
+    if (element_settings.axes_letters_on)
+    {
+        const auto c = element_settings.axes_letters_color;
+        glUniform3f(text_color_uniform, c.red, c.green, c.blue);
+        drawZLetter(text_renderer, view_model, v_viewport, projection, width, height, x, y);
+    }
+
+    if (!element_settings.axes_numbers_on)
+    {
+        return;
+    }
+    const auto c = element_settings.axes_numbers_color;
+    glUniform3f(text_color_uniform, c.red, c.green, c.blue);
 
     for (size_t k = 0; k < gv.z.num_valid_values; k++)
     {
@@ -186,6 +219,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                      const Shader text_shader,
                      const AxesLimits& axes_limits,
                      const ViewAngles& view_angles,
+                     const ElementSettings& element_settings,
                      const glm::mat4& view_mat,
                      const glm::mat4& model_mat,
                      const glm::mat4& projection_mat,
@@ -234,6 +268,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
     if (!view_angles.isSnappedAlongX())
     {
         drawXAxisNumbers(text_renderer,
+                         element_settings,
                          view_model_x,
                          v_viewport,
                          projection_mat,
@@ -249,6 +284,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
     if (!view_angles.isSnappedAlongY())
     {
         drawYAxisNumbers(text_renderer,
+                         element_settings,
                          view_model_y,
                          v_viewport,
                          projection_mat,
@@ -264,6 +300,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
     if (!view_angles.isSnappedAlongZ())
     {
         drawZAxisNumbers(text_renderer,
+                         element_settings,
                          view_model_z,
                          v_viewport,
                          projection_mat,

@@ -11,6 +11,8 @@
 
 #include <functional>
 
+#include "project_state/project_settings.h"
+
 constexpr int kCirclePeriod = 20;
 constexpr int kEnteredPeriod = 10;
 constexpr int kNumCircleIterationsMax = 20;
@@ -27,7 +29,7 @@ class TabButton : public wxPanel
 public:
     TabButton() = delete;
     TabButton(wxFrame* parent,
-              const std::string& button_label,
+              const TabSettings& tab_settings,
               const std::function<void(std::string)> button_pressed_callback,
               const int id,
               const wxPoint& pos,
@@ -61,6 +63,8 @@ private:
 
     bool button_pressed_;
     bool is_selected_;
+
+    TabSettings tab_settings_;
 
     int id_;
     std::string button_label_;

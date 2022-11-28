@@ -13,11 +13,12 @@ private:
     size_t num_corner_vertices_;
     size_t num_bytes_;
     float* data_array_;
+    float radius_;
 
     GLuint vertex_buffer_, vertex_buffer_array_;
 
 public:
-    PlotPaneBackground();
+    PlotPaneBackground(const float radius);
     ~PlotPaneBackground();
 
     void render(const float pane_width, const float pane_height);

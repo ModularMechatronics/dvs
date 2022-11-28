@@ -5,10 +5,8 @@
 
 void PlotPaneBackground::render(const float pane_width, const float pane_height)
 {
-    const float radius = 100.0f;
-
-    const float rx = radius / pane_width;
-    const float ry = radius / pane_height;
+    const float rx = radius_ / pane_width;
+    const float ry = radius_ / pane_height;
 
     constexpr float kVal = 3.0f;
 
@@ -106,8 +104,9 @@ void PlotPaneBackground::render(const float pane_width, const float pane_height)
     glBindVertexArray(0);
 }
 
-PlotPaneBackground::PlotPaneBackground()
+PlotPaneBackground::PlotPaneBackground(const float radius)
 {
+    radius_ = radius;
     num_corner_segments_ = 10U;
     num_corner_vertices_ = num_corner_segments_ * 3U;
     num_vertices_ = num_corner_vertices_ * 4U;

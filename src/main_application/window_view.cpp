@@ -27,10 +27,8 @@ WindowView::WindowView(wxFrame* main_window,
 {
     main_window_ = main_window;
     current_tab_num_ = 0;
-    grid_size_ = 1.0f;
-    const RGBTripletf color_vec{axes_settings_.tab_background_color};
-    SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
     callback_id_ = callback_id;
+    dialog_color_ = RGBTripletf(0.5, 0.0, 0.0);
 
     this->SetPosition(wxPoint(window_settings.x, window_settings.y));
     this->SetLabel(window_settings.name);
@@ -53,6 +51,9 @@ WindowView::WindowView(wxFrame* main_window,
             notify_main_window_element_deleted_));
         tab_buttons_.addNewTab(tab_settings.name);
         tab_buttons_.setSelection(tab_settings.name);
+        SetBackgroundColour(wxColour(tab_settings.background_color.red * 255.0f,
+                                     tab_settings.background_color.green * 255.0f,
+                                     tab_settings.background_color.blue * 255.0f));
         current_tab_num_++;
     }
     else
@@ -80,6 +81,8 @@ WindowView::WindowView(wxFrame* main_window,
             if (tab->getName() == window_settings.tabs[0].name)
             {
                 tab->show();
+                const auto c = tab->getBackgroundColor();
+                SetBackgroundColour(wxColour(c.red * 255.0f, c.green * 255.0f, c.blue * 255.0f));
             }
             else
             {
@@ -102,6 +105,8 @@ WindowView::WindowView(wxFrame* main_window,
 
     popup_menu_element_->Append(dvs_ids::EDIT_ELEMENT_NAME, wxT("Edit element name"));
     popup_menu_element_->Append(dvs_ids::DELETE_ELEMENT, wxT("Delete element"));
+    popup_menu_element_->Append(dvs_ids::RAISE_ELEMENT, wxT("Raise"));
+    popup_menu_element_->Append(dvs_ids::LOWER_ELEMENT, wxT("Lower"));
     popup_menu_element_->AppendSeparator();
     popup_menu_element_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_element_->Append(callback_id_ + 1, wxT("Delete window"));
@@ -127,6 +132,8 @@ WindowView::WindowView(wxFrame* main_window,
     Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
+    Bind(wxEVT_MENU, &WindowView::raiseElement, this, dvs_ids::RAISE_ELEMENT);
+    Bind(wxEVT_MENU, &WindowView::lowerElement, this, dvs_ids::LOWER_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
     Bind(wxEVT_MENU, &WindowView::deleteTab, this, dvs_ids::DELETE_TAB);
     Bind(wxEVT_KEY_DOWN, &WindowView::keyPressedCallback, this);
@@ -247,6 +254,9 @@ void WindowView::tabChanged(const std::string name)
         if (tab->getName() == name)
         {
             tab->show();
+            const auto c = tab->getBackgroundColor();
+            SetBackgroundColour(wxColour(c.red * 255.0f, c.green * 255.0f, c.blue * 255.0f));
+            Refresh();
         }
         else
         {
@@ -315,9 +325,8 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
 {
     wxTextEntryDialog name_dialog(this, "Enter the name for the window", "Enter window name", name_);
 
-    const RGBTripletf color_vec{axes_settings_.tab_background_color};
     name_dialog.SetBackgroundColour(
-        wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+        wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
 
     if (name_dialog.ShowModal() == wxID_CANCEL)
     {
@@ -370,9 +379,8 @@ void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
         wxTextEntryDialog name_dialog(
             this, "Enter the name for the new element", "Enter element name", "<element-name>");
 
-        const RGBTripletf color_vec{axes_settings_.tab_background_color};
         name_dialog.SetBackgroundColour(
-            wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+            wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
         std::string element_name;
 
         while (true)
@@ -388,7 +396,7 @@ void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
             {
                 wxMessageDialog dlg(&name_dialog, "Can't have an empty element name!", "Invalid name!");
                 dlg.SetBackgroundColour(
-                    wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+                    wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
                 dlg.ShowModal();
                 continue;
             }
@@ -404,7 +412,7 @@ void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
                 wxMessageDialog dlg(
                     &name_dialog, "Choose a unique name", "Element name \"" + element_name + "\" exists!");
                 dlg.SetBackgroundColour(
-                    wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+                    wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
                 dlg.ShowModal();
             }
             else
@@ -434,9 +442,8 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
 {
     wxTextEntryDialog name_dialog(this, "Enter the new name for the element", "Edit element name", last_clicked_item_);
 
-    const RGBTripletf color_vec{axes_settings_.tab_background_color};
     name_dialog.SetBackgroundColour(
-        wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+        wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
 
     std::string new_name;
 
@@ -461,7 +468,7 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
             {
                 wxMessageDialog dlg(&name_dialog, "Can't have an empty element name!", "Invalid name!");
                 dlg.SetBackgroundColour(
-                    wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+                    wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
                 dlg.ShowModal();
                 continue;
             }
@@ -476,7 +483,7 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
             {
                 wxMessageDialog dlg(&name_dialog, "Choose a unique name", "Element name \"" + new_name + "\" exists!");
                 dlg.SetBackgroundColour(
-                    wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+                    wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
                 dlg.ShowModal();
             }
             else
@@ -499,14 +506,28 @@ void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
     }
 }
 
+void WindowView::raiseElement(wxCommandEvent& WXUNUSED(event))
+{
+    for (const auto& t : tabs_)
+    {
+        t->raiseElement(last_clicked_item_);
+    }
+}
+
+void WindowView::lowerElement(wxCommandEvent& WXUNUSED(event))
+{
+    for (const auto& t : tabs_)
+    {
+        t->lowerElement(last_clicked_item_);
+    }
+}
+
 void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
 {
-    std::cout << "Event from editTabName" << std::endl;
     wxTextEntryDialog name_dialog(this, "Enter the new name for tab", "Enter tab name", last_clicked_item_);
 
-    const RGBTripletf color_vec{axes_settings_.tab_background_color};
     name_dialog.SetBackgroundColour(
-        wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
+        wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
 
     if (name_dialog.ShowModal() == wxID_CANCEL)
     {
@@ -545,7 +566,6 @@ void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
         {
             element_x_offset_ = 0;
             tabs_[0]->setMinXPos(element_x_offset_);
-            std::cout << "Only one tab left!" << std::endl;
         }
     }
 

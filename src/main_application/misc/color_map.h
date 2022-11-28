@@ -27,7 +27,26 @@ template <typename T> struct RGBTriplet
         green = static_cast<float>((hex_color_code >> 8) & 0xFF) / 255.0f;
         blue = static_cast<float>(hex_color_code & 0xFF) / 255.0f;
     }
+
+    bool operator==(const RGBTriplet& other) const
+    {
+        return (red == other.red) && (green == other.green) && (blue == other.blue);
+    }
+
+    bool operator!=(const RGBTriplet& other) const
+    {
+        return !(*this == other);
+    }
 };
+
+template <typename T> std::ostream& operator<<(std::ostream& os, const RGBTriplet<T>& c)
+{
+    const std::string s =
+        "{ " + std::to_string(c.red) + ", " + std::to_string(c.green) + ", " + std::to_string(c.blue) + " }";
+    os << s;
+
+    return os;
+}
 
 // ******************************************************
 // ********************* RGBTriplet *********************

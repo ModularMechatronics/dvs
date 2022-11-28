@@ -12,16 +12,19 @@ using namespace dvs;
 
 struct AxesSettings
 {
-public:
+    bool is_default;
+
     RGBTripletf plot_pane_background_color;
-    RGBTripletf tab_background_color;
-    RGBTripletf tab_button_color;
     RGBTripletf plot_box_wall_color;
     RGBTripletf grid_color;
     RGBTripletf axes_numbers_color;
     RGBTripletf axes_letters_color;
 
     bool grid_on;
+    bool plot_box_on;
+    bool axes_numbers_on;
+    bool axes_letters_on;
+    bool clipping_on;
 
     std::string x_label;
     std::string y_label;
