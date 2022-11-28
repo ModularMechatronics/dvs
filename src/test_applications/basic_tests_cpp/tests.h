@@ -647,6 +647,7 @@ void testImShow()
     }
     setCurrentElement("p_view_0");
     clearView();
+    setPlotBoxScaleFactor({1.0, 1.0, 1.0});
     imShow(img3);
 
     setCurrentElement("p_view_1");
