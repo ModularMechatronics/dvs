@@ -1,7 +1,7 @@
 #include "tab_button.h"
 
 TabButton::TabButton(wxFrame* parent,
-                     const std::string& button_label,
+                     const TabSettings& tab_settings,
                      const std::function<void(std::string)> button_pressed_callback,
                      const int id,
                      const wxPoint& pos,
@@ -11,8 +11,9 @@ TabButton::TabButton(wxFrame* parent,
     : wxPanel(parent, wxID_ANY, pos, size),
       notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed}
 {
+    tab_settings_ = tab_settings;
     button_pressed_callback_ = button_pressed_callback;
-    button_label_ = button_label;
+    button_label_ = tab_settings.name;
     id_ = id;
     num_timer_iterations_clicked_ = 0;
     num_timer_iterations_entered_ = 0;
@@ -22,21 +23,20 @@ TabButton::TabButton(wxFrame* parent,
     circle_radius_ = kInitialCircleRadius;
     button_size_ = wxSize(size.GetWidth(), size.GetHeight());
 
-    original_color_ = wxColor(30, 174, 152);
+    const auto nc = tab_settings_.button_normal_color;
+    original_color_ = wxColor(nc.red * 255.0f, nc.green * 255.0f, nc.blue * 255.0f);
     button_color_ = original_color_;
 
     pen = wxPen(button_color_, 1);
     brush = wxBrush(button_color_, wxBRUSHSTYLE_SOLID);
-    shadow_pen = wxPen(wxColor(0, 0, 0, 0), 1);
-    shadow_brush = wxBrush(wxColor(0, 0, 0, 127), wxBRUSHSTYLE_SOLID);
-    circle_pen = wxPen(wxColor(255, 255, 255, 0), 1);
-    circle_brush = wxBrush(wxColor(255, 255, 255, 127), wxBRUSHSTYLE_SOLID);
 
-    pressed_pen = wxPen(wxColor(220, 154, 132), 255);
-    pressed_brush = wxBrush(wxColor(220, 154, 132, 255), wxBRUSHSTYLE_SOLID);
+    const auto cc = tab_settings_.button_clicked_color;
+    pressed_pen = wxPen(wxColor(cc.red * 255.0f, cc.green * 255.0f, cc.blue * 255.0f), 255);
+    pressed_brush = wxBrush(wxColor(cc.red * 255.0f, cc.green * 255.0f, cc.blue * 255.0f, 255), wxBRUSHSTYLE_SOLID);
 
-    selected_pen = wxPen(wxColor(120, 154, 232), 255);
-    selected_brush = wxBrush(wxColor(120, 154, 232, 255), wxBRUSHSTYLE_SOLID);
+    const auto sc = tab_settings_.button_selected_color;
+    selected_pen = wxPen(wxColor(sc.red * 255.0f, sc.green * 255.0f, sc.blue * 255.0f), 255);
+    selected_brush = wxBrush(wxColor(sc.red * 255.0f, sc.green * 255.0f, sc.blue * 255.0f, 255), wxBRUSHSTYLE_SOLID);
 
     button_rect = wxRect(0, 0, button_size_.GetWidth(), button_size_.GetHeight());
     // shadow_rect = wxRect(kShadowMargin, kShadowMargin, button_size_.GetWidth(), button_size_.GetHeight());

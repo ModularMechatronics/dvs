@@ -22,6 +22,7 @@ uniform int global_illumination_active;
 
 uniform float alpha;
 
+uniform int use_clip_plane;
 uniform vec4 clip_plane0;
 uniform vec4 clip_plane1;
 uniform vec4 clip_plane2;
@@ -31,29 +32,32 @@ uniform vec4 clip_plane5;
 
 void main()
 {
-   if(dot(clip_plane0, coord_out) < 0.0)
+   if(use_clip_plane == 1)
    {
-      discard;
-   }
-   else if(dot(clip_plane1, coord_out) < 0.0)
-   {
-      discard;
-   }
-   else if(dot(clip_plane2, coord_out) < 0.0)
-   {
-      discard;
-   }
-   else if(dot(clip_plane3, coord_out) < 0.0)
-   {
-      discard;
-   }
-   else if(dot(clip_plane4, coord_out) < 0.0)
-   {
-      discard;
-   }
-   else if(dot(clip_plane5, coord_out) < 0.0)
-   {
-      discard;
+      if(dot(clip_plane0, coord_out) < 0.0)
+      {
+         discard;
+      }
+      else if(dot(clip_plane1, coord_out) < 0.0)
+      {
+         discard;
+      }
+      else if(dot(clip_plane2, coord_out) < 0.0)
+      {
+         discard;
+      }
+      else if(dot(clip_plane3, coord_out) < 0.0)
+      {
+         discard;
+      }
+      else if(dot(clip_plane4, coord_out) < 0.0)
+      {
+         discard;
+      }
+      else if(dot(clip_plane5, coord_out) < 0.0)
+      {
+         discard;
+      }
    }
 
    vec3 object_color;

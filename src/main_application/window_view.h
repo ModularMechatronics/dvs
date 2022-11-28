@@ -24,6 +24,63 @@
 #include "project_state/project_settings.h"
 #include "tab_buttons.h"
 
+class ZOrderQueue
+{
+private:
+    std::vector<std::string> elements_;
+    // [element{0}, element{1}, ..., element{n-1}]
+    // First element in vector (element{n-1}) is the
+    // element with the highest Z order (in front)
+
+    bool elementExistsInQueue(const std::string& element_name) const
+    {
+        const auto q = std::find(elements_.begin(), elements_.end(), element_name);
+
+        return q != elements_.end();
+    }
+
+public:
+    ZOrderQueue() {}
+
+    int getOrderOfElement(const std::string& element_name) const
+    {
+        if (elementExistsInQueue(element_name))
+        {
+            // 0 is "lowest"
+            // {n-1} is "at the top"
+            const auto q = find(elements_.begin(), elements_.end(), element_name);
+            const int index = q - elements_.begin();
+            return index;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    void raise(const std::string& element_name)
+    {
+        eraseElement(element_name);
+        elements_.push_back(element_name);
+    }
+
+    void lower(const std::string& element_name)
+    {
+        eraseElement(element_name);
+        elements_.insert(elements_.begin(), element_name);
+    }
+
+    void eraseElement(const std::string& element_name)
+    {
+        const auto q = std::find(elements_.begin(), elements_.end(), element_name);
+
+        if (q != elements_.end())
+        {
+            elements_.erase(q);
+        }
+    }
+};
+
 class WindowTab
 {
 private:
@@ -35,6 +92,12 @@ private:
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
     std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
     int current_element_idx_;
+    RGBTripletf background_color_;
+    RGBTripletf button_normal_color_;
+    RGBTripletf button_clicked_color_;
+    RGBTripletf button_selected_color_;
+    RGBTripletf button_text_color_;
+    ZOrderQueue z_order_queue_;
 
 public:
     WindowTab(wxFrame* parent_window,
@@ -51,14 +114,19 @@ public:
           notify_main_window_element_deleted_{notify_main_window_element_deleted}
     {
         parent_window_ = parent_window;
-        const float grid_size_ = 1.0f;
         current_element_idx_ = 0;
+
+        background_color_ = tab_settings.background_color;
+        button_normal_color_ = tab_settings.button_normal_color;
+        button_clicked_color_ = tab_settings.button_clicked_color;
+        button_selected_color_ = tab_settings.button_selected_color;
+        button_text_color_ = tab_settings.button_text_color;
 
         for (const auto& elem : tab_settings.elements)
         {
             GuiElement* const ge = new PlotPane(parent_window_,
                                                 elem,
-                                                grid_size_,
+                                                background_color_,
                                                 notify_main_window_key_pressed,
                                                 notify_main_window_key_released,
                                                 notify_parent_window_right_mouse_pressed,
@@ -68,6 +136,38 @@ public:
             gui_elements_.push_back(ge);
 
             current_element_idx_++;
+        }
+
+        initializeZOrder(tab_settings);
+    }
+
+    void initializeZOrder(const TabSettings& tab_settings)
+    {
+        struct ZOrderPair
+        {
+            int order;
+            std::string name;
+        };
+
+        std::vector<ZOrderPair> z_order;
+
+        for (const auto& elem : tab_settings.elements)
+        {
+            if (elem.z_order != -1)
+            {
+                z_order.push_back({elem.z_order, elem.name});
+            }
+        }
+
+        // Sort the list so that the element which is at the bottom (lowest
+        // z order number) ends up first in the list
+        std::sort(z_order.begin(), z_order.end(), [](const ZOrderPair& p0, const ZOrderPair& p1) -> bool {
+            return p0.order < p1.order;
+        });
+
+        for (size_t k = 0; k < z_order.size(); k++)
+        {
+            raiseElement(z_order[k].name);
         }
     }
 
@@ -89,8 +189,6 @@ public:
 
     void newElement()
     {
-        const float grid_size_ = 1.0f;
-
         ElementSettings elem_settings;
         elem_settings.x = 0.1;
         elem_settings.y = 0;
@@ -100,7 +198,7 @@ public:
 
         GuiElement* const ge = new PlotPane(parent_window_,
                                             elem_settings,
-                                            grid_size_,
+                                            background_color_,
                                             notify_main_window_key_pressed_,
                                             notify_main_window_key_released_,
                                             notify_parent_window_right_mouse_pressed_,
@@ -113,8 +211,6 @@ public:
 
     void newElement(const std::string& element_name)
     {
-        const float grid_size_ = 1.0f;
-
         ElementSettings elem_settings;
         elem_settings.x = 0.1;
         elem_settings.y = 0;
@@ -124,7 +220,7 @@ public:
 
         GuiElement* const ge = new PlotPane(parent_window_,
                                             elem_settings,
-                                            grid_size_,
+                                            background_color_,
                                             notify_main_window_key_pressed_,
                                             notify_main_window_key_released_,
                                             notify_parent_window_right_mouse_pressed_,
@@ -141,6 +237,7 @@ public:
         {
             ge->show();
         }
+        layoutZOrder();
     }
 
     void hide()
@@ -159,6 +256,11 @@ public:
         }
     }
 
+    RGBTripletf getBackgroundColor() const
+    {
+        return background_color_;
+    }
+
     std::string getName() const
     {
         return name_;
@@ -169,14 +271,24 @@ public:
         TabSettings ts;
 
         ts.name = name_;
+        ts.background_color = background_color_;
+        ts.button_normal_color = button_normal_color_;
+        ts.button_clicked_color = button_clicked_color_;
+        ts.button_selected_color = button_selected_color_;
+        ts.button_text_color = button_text_color_;
 
         for (const auto& ge : gui_elements_)
         {
-            ts.elements.push_back(ge->getElementSettings());
+            ElementSettings es = ge->getElementSettings();
+            const std::string element_name = ge->getName();
+            es.z_order = z_order_queue_.getOrderOfElement(element_name);
+            ts.elements.push_back(es);
         }
 
         return ts;
     }
+
+    void layoutZOrder() {}
 
     GuiElement* getGuiElement(const std::string& element_name) const
     {
@@ -221,6 +333,7 @@ public:
         if (gui_elements_.end() != q)
         {
             delete (*q);
+            z_order_queue_.eraseElement(element_name);
             gui_elements_.erase(q);
         }
     }
@@ -252,6 +365,44 @@ public:
         if (gui_elements_.end() != q)
         {
             (*q)->setName(new_name);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool raiseElement(const std::string& element_name)
+    {
+        auto q = std::find_if(
+            gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
+                return elem->getName() == element_name;
+            });
+
+        if (gui_elements_.end() != q)
+        {
+            (*q)->raise();
+            z_order_queue_.raise(element_name);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool lowerElement(const std::string& element_name)
+    {
+        auto q = std::find_if(
+            gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
+                return elem->getName() == element_name;
+            });
+
+        if (gui_elements_.end() != q)
+        {
+            (*q)->lower();
+            z_order_queue_.lower(element_name);
             return true;
         }
         else
@@ -300,7 +451,6 @@ private:
     std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
 
     std::function<void()> notify_main_window_new_window_;
-    float grid_size_;
     std::string name_;
     int current_unnamed_idx_;
     std::string name_of_selected_element_;
@@ -316,6 +466,8 @@ private:
     std::string last_clicked_item_;
 
     HelpPane help_pane_;
+
+    RGBTripletf dialog_color_;
 
 public:
     WindowView() = delete;
@@ -352,6 +504,9 @@ public:
 
     void editElementName(wxCommandEvent& WXUNUSED(event));
     void deleteElement(wxCommandEvent& WXUNUSED(event));
+
+    void raiseElement(wxCommandEvent& WXUNUSED(event));
+    void lowerElement(wxCommandEvent& WXUNUSED(event));
 
     void editTabName(wxCommandEvent& WXUNUSED(event));
     void deleteTab(wxCommandEvent& WXUNUSED(event));

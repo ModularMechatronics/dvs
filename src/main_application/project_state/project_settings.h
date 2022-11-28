@@ -17,24 +17,69 @@ inline void throwIfMissing(const nlohmann::json& j, const std::string& field_nam
     }
 }
 
+inline RGBTripletf jsonObjToColor(const nlohmann::json& j)
+{
+    return RGBTripletf{j["r"], j["g"], j["b"]};
+}
+
+inline nlohmann::json colorToJsonObj(const RGBTripletf& c)
+{
+    nlohmann::json j;
+    j["r"] = c.red;
+    j["g"] = c.green;
+    j["b"] = c.blue;
+    return j;
+}
+
 struct ElementSettings
 {
     float x;
     float y;
     float width;
     float height;
+
+    int z_order;
+
+    std::string name;
+
     RGBTripletf background_color;
     RGBTripletf plot_box_color;
     RGBTripletf grid_color;
     RGBTripletf axes_numbers_color;
     RGBTripletf axes_letters_color;
 
-    std::string name;
+    bool grid_on;
+    bool plot_box_on;
+    bool axes_numbers_on;
+    bool axes_letters_on;
+    bool clipping_on;
 
-    ElementSettings() = default;
-    ElementSettings(const float x_, const float y_, const float width_, const float height_, const std::string& name_)
-        : x(x_), y(y_), width(width_), height(height_), name(name_)
+    float pane_radius;
+
+    ElementSettings()
     {
+        x = 0.0f;
+        y = 0.0f;
+        width = 100.0f;
+        height = 100.0f;
+
+        z_order = -1;
+
+        pane_radius = 10.0f;
+
+        name = "<NO-NAME>";
+
+        background_color = RGBTripletf(164.0f / 255.0f, 217.0f / 255.0f, 200.0f / 255.0f);
+        plot_box_color = RGBTripletf(1.0f, 1.0f, 1.0f);
+        grid_color = RGBTripletf(0.7f, 0.7f, 0.7f);
+        axes_numbers_color = RGBTripletf(0.7f, 0.7f, 0.7f);
+        axes_letters_color = RGBTripletf(0.7f, 0.7f, 0.7f);
+
+        grid_on = true;
+        plot_box_on = true;
+        axes_numbers_on = true;
+        axes_letters_on = true;
+        clipping_on = true;
     }
 
     explicit ElementSettings(const nlohmann::json& j)
@@ -51,6 +96,25 @@ struct ElementSettings
 
         x = std::max(std::min(x, 0.9f), 0.0f);
         y = std::max(std::min(y, 0.9f), 0.0f);
+
+        background_color = (j.count("background_color") > 0)
+                               ? jsonObjToColor(j["background_color"])
+                               : RGBTripletf(164.0f / 255.0f, 217.0f / 255.0f, 200.0f / 255.0f);
+        plot_box_color =
+            (j.count("plot_box_color") > 0) ? jsonObjToColor(j["plot_box_color"]) : RGBTripletf(1.0f, 1.0f, 1.0f);
+        grid_color = (j.count("grid_color") > 0) ? jsonObjToColor(j["grid_color"]) : RGBTripletf(0.7f, 0.7f, 0.7f);
+        axes_numbers_color = (j.count("axes_numbers_color") > 0) ? jsonObjToColor(j["axes_numbers_color"])
+                                                                 : RGBTripletf(0.0f, 0.0f, 0.0f);
+        axes_letters_color = (j.count("axes_letters_color") > 0) ? jsonObjToColor(j["axes_letters_color"])
+                                                                 : RGBTripletf(0.0f, 0.0f, 0.0f);
+        grid_on = (j.count("grid_on") > 0) ? static_cast<bool>(j["grid_on"]) : true;
+        plot_box_on = (j.count("plot_box_on") > 0) ? static_cast<bool>(j["plot_box_on"]) : true;
+        axes_numbers_on = (j.count("axes_numbers_on") > 0) ? static_cast<bool>(j["axes_numbers_on"]) : true;
+        axes_letters_on = (j.count("axes_letters_on") > 0) ? static_cast<bool>(j["axes_letters_on"]) : true;
+        clipping_on = (j.count("clipping_on") > 0) ? static_cast<bool>(j["clipping_on"]) : true;
+        pane_radius = (j.count("pane_radius") > 0) ? static_cast<float>(j["pane_radius"]) : 10.0f;
+
+        z_order = (j.count("z_order") > 0) ? static_cast<int>(j["z_order"]) : -1;
     }
 
     nlohmann::json toJson() const
@@ -63,6 +127,20 @@ struct ElementSettings
         j["y"] = y;
         j["width"] = width;
         j["height"] = height;
+
+        j["z_order"] = z_order;
+
+        j["background_color"] = colorToJsonObj(background_color);
+        j["plot_box_color"] = colorToJsonObj(plot_box_color);
+        j["grid_color"] = colorToJsonObj(grid_color);
+        j["axes_numbers_color"] = colorToJsonObj(axes_numbers_color);
+        j["axes_letters_color"] = colorToJsonObj(axes_letters_color);
+        j["grid_on"] = grid_on;
+        j["plot_box_on"] = plot_box_on;
+        j["axes_numbers_on"] = axes_numbers_on;
+        j["axes_letters_on"] = axes_letters_on;
+        j["clipping_on"] = clipping_on;
+        j["pane_radius"] = pane_radius;
 
         return j;
     }
@@ -84,9 +162,20 @@ struct TabSettings
     std::vector<ElementSettings> elements;
     std::string name;
     RGBTripletf background_color;
-    RGBTripletf button_color;
+    RGBTripletf button_normal_color;
+    RGBTripletf button_clicked_color;
+    RGBTripletf button_selected_color;
+    RGBTripletf button_text_color;
 
-    TabSettings() = default;
+    TabSettings()
+    {
+        background_color = RGBTripletf(35.0f / 255.0f, 42.0f / 255.0f, 48.0f / 255.0f);
+        button_normal_color = RGBTripletf(174.0f / 255.0f, 227.0f / 255.0f, 209.0f / 255.0f);
+        button_clicked_color = RGBTripletf(174.0f / 255.0f, 227.0f / 255.0f, 209.0f / 255.0f);
+        button_selected_color = RGBTripletf(164.0f / 255.0f, 217.0f / 255.0f, 199.0f / 255.0f);
+        button_text_color = RGBTripletf(0.0f, 0.0f, 0.0f);
+    }
+
     TabSettings(const nlohmann::json& j)
     {
         name = j["name"];
@@ -95,6 +184,21 @@ struct TabSettings
         {
             elements.emplace_back(j["elements"][k]);
         }
+
+        background_color = j.count("background_color") > 0
+                               ? jsonObjToColor(j["background_color"])
+                               : RGBTripletf(35.0f / 255.0f, 42.0f / 255.0f, 48.0f / 255.0f);
+        button_normal_color = j.count("button_normal_color") > 0
+                                  ? jsonObjToColor(j["button_normal_color"])
+                                  : RGBTripletf(174.0f / 255.0f, 227.0f / 255.0f, 209.0f / 255.0f);
+        button_clicked_color = j.count("button_clicked_color") > 0
+                                   ? jsonObjToColor(j["button_clicked_color"])
+                                   : RGBTripletf(174.0f / 255.0f, 227.0f / 255.0f, 209.0f / 255.0f);
+        button_selected_color = j.count("button_selected_color") > 0
+                                    ? jsonObjToColor(j["button_selected_color"])
+                                    : RGBTripletf(164.0f / 255.0f, 217.0f / 255.0f, 199.0f / 255.0f);
+        button_text_color =
+            j.count("button_text_color") > 0 ? jsonObjToColor(j["button_text_color"]) : RGBTripletf(0.0f, 0.0f, 0.0f);
     }
 
     nlohmann::json toJson() const
@@ -110,6 +214,12 @@ struct TabSettings
         j["name"] = name;
         j["elements"] = json_elements;
 
+        j["background_color"] = colorToJsonObj(background_color);
+        j["button_normal_color"] = colorToJsonObj(button_normal_color);
+        j["button_clicked_color"] = colorToJsonObj(button_clicked_color);
+        j["button_selected_color"] = colorToJsonObj(button_selected_color);
+        j["button_text_color"] = colorToJsonObj(button_text_color);
+
         return j;
     }
 
@@ -123,7 +233,7 @@ struct TabSettings
     ElementSettings getElementWithName(const std::string& name) const
     {
         DVS_ASSERT(hasElementWithName(name));
-        ElementSettings res(0.0f, 0.0f, 0.0f, 0.0f, "");
+        ElementSettings res{};
 
         // TODO: Use find_if?
         for (const ElementSettings& e : elements)

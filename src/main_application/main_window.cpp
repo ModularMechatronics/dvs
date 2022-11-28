@@ -64,9 +64,6 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         save_manager_ = new SaveManager();
     }
 
-    const RGBTripletf color_vec{AxesSettings().tab_background_color};
-    SetBackgroundColour(wxColour(color_vec.red * 255.0f, color_vec.green * 255.0f, color_vec.blue * 255.0f));
-
     current_window_num_ = 0;
 
     setupWindows(save_manager_->getCurrentProjectSettings());

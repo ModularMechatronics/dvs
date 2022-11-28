@@ -19,7 +19,7 @@ TabButtons::TabButtons(wxFrame* parent,
     {
         tab_buttons_.push_back(new TabButton(
             parent,
-            window_settings_.tabs[k].name,
+            window_settings_.tabs[k],
             [this](std::string name) {
                 setSelection(name);
                 tab_changed_callback_(name);
@@ -97,9 +97,11 @@ std::string TabButtons::getNameOfSelectedTab() const
 
 void TabButtons::addNewTab(const std::string tab_name)
 {
+    TabSettings tab_settings;
+    tab_settings.name = tab_name;
     tab_buttons_.push_back(new TabButton(
         parent_,
-        tab_name,
+        tab_settings,
         [this](std::string name) {
             setSelection(name);
             tab_changed_callback_(name);

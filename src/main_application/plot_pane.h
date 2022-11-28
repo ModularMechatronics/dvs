@@ -79,7 +79,6 @@ private:
     Vec2f previous_mouse_pos_;
     wxPoint pos_at_press_;
     wxSize size_at_press_;
-    float grid_size_;
     float edit_size_margin_;
 
     PlotDataHandler* plot_data_handler_;
@@ -95,7 +94,7 @@ private:
 public:
     PlotPane(wxNotebookPage* parent,
              const ElementSettings& element_settings,
-             const float grid_size,
+             const RGBTripletf& tab_background_color,
              const std::function<void(const char key)>& notify_main_window_key_pressed,
              const std::function<void(const char key)>& notify_main_window_key_released,
              const std::function<void(const wxPoint pos, const std::string& elem_name)>&
@@ -112,6 +111,8 @@ public:
     void setMinXPos(const int min_x_pos) override;
     void setSize(const wxSize& new_size);
     void updateSizeFromParent(const wxSize& parent_size) override;
+    void raise() override;
+    void lower() override;
     void addData(std::unique_ptr<const ReceivedData> received_data,
                  const dvs::internal::CommunicationHeader& hdr) override;
     void show() override;

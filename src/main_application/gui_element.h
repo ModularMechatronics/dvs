@@ -46,6 +46,8 @@ public:
     virtual ~GuiElement() {}
 
     virtual void setMinXPos(const int min_x_pos) = 0;
+    virtual void raise() = 0;
+    virtual void lower() = 0;
 
     std::string getName() const
     {

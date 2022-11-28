@@ -80,6 +80,16 @@ wxGLContext* PlotPane::getContext()
 #endif
 }
 
+void PlotPane::raise()
+{
+    Raise();
+}
+
+void PlotPane::lower()
+{
+    Lower();
+}
+
 void PlotPane::initShaders()
 {
     const std::string v_path = "../main_application/axes/shaders/plot_box_shader.vs";
@@ -121,7 +131,7 @@ void PlotPane::initShaders()
 
 PlotPane::PlotPane(wxWindow* parent,
                    const ElementSettings& element_settings,
-                   const float grid_size,
+                   const RGBTripletf& tab_background_color,
                    const std::function<void(const char key)>& notify_main_window_key_pressed,
                    const std::function<void(const char key)>& notify_main_window_key_released,
                    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
@@ -137,7 +147,6 @@ PlotPane::PlotPane(wxWindow* parent,
       axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
     parent_size_ = parent->GetSize();
-    grid_size_ = grid_size;
     edit_size_margin_ = 20.0f;
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
@@ -152,7 +161,7 @@ PlotPane::PlotPane(wxWindow* parent,
     wxGLCanvas::SetCurrent(*m_context);
     initShaders();
 
-    axes_renderer_ = new AxesRenderer(shader_collection_);
+    axes_renderer_ = new AxesRenderer(shader_collection_, element_settings, tab_background_color);
     plot_data_handler_ = new PlotDataHandler(shader_collection_);
 
     hold_on_ = true;
@@ -831,7 +840,7 @@ void PlotPane::render(wxPaintEvent& evt)
 
     glEnable(GL_MULTISAMPLE);
 
-    const RGBTripletf color_vec{axes_settings_.plot_pane_background_color};
+    const RGBTripletf color_vec{element_settings_.background_color};
     glClearColor(color_vec.red, color_vec.green, color_vec.blue, 0.0f);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
