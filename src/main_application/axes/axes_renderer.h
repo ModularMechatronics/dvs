@@ -69,6 +69,7 @@ private:
     bool global_illumination_active_;
     Vec3d light_pos_;
     std::vector<LegendProperties> legend_properties_;
+    Vec3d scale_vector_;
 
     void renderBackground();
     void renderPlotBox();
@@ -107,6 +108,7 @@ public:
     void renderHelpPane();
     void activateGlobalIllumination(const Vec3d& light_pos);
     void resetGlobalIllumination();
+    void setPlotBoxScaleFactor(const Vec3d& scale_vector);
 };
 
 #endif  // MAIN_APPLICATION_AXES_AXES_RENDERER_H_

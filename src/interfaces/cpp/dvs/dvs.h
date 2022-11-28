@@ -729,6 +729,14 @@ inline void disableAutomaticAxesSetting()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void setPlotBoxScaleFactor(const Vec3<double>& scale_vector)
+{
+    internal::CommunicationHeader hdr{internal::Function::SET_PLOT_BOX_SCALE_FACTOR};
+    hdr.append(internal::CommunicationHeaderObjectType::VEC3, scale_vector);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 }  // namespace dvs
 
 #endif  // DVS_DVS_H_

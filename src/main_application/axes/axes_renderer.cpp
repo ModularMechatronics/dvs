@@ -74,9 +74,7 @@ AxesRenderer::AxesRenderer(const ShaderCollection shader_collection,
     scale_mat = glm::mat4(1.0f);
 
     window_scale_mat_ = glm::mat4(1.0f);
-    window_scale_mat_[0][0] = 2.7;
-    window_scale_mat_[1][1] = 2.7;
-    window_scale_mat_[2][2] = 2.7;
+    scale_vector_ = Vec3d(2.5, 2.5, 2.5);
 
     global_illumination_active_ = false;
 }
@@ -438,6 +436,11 @@ void AxesRenderer::renderPlotBox()
     plot_box_silhouette_.render(view_angles_.getAzimuth(), view_angles_.getElevation());
 }
 
+void AxesRenderer::setPlotBoxScaleFactor(const Vec3d& scale_vector)
+{
+    scale_vector_ = scale_vector;
+}
+
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const ViewAngles& view_angles,
                                 const GridVectors& gv,
@@ -482,9 +485,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 
     const float az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
     const float el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
-    const float f = 2.5;
 
-    window_scale_mat_[0][0] = f - az - el;
-    window_scale_mat_[1][1] = f - az - el;
-    window_scale_mat_[2][2] = f - az - el;
+    window_scale_mat_[0][0] = scale_vector_.x - az - el;
+    window_scale_mat_[1][1] = scale_vector_.y - az - el;
+    window_scale_mat_[2][2] = scale_vector_.z - az - el;
 }
