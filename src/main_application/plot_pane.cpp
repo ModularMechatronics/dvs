@@ -326,10 +326,10 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
     {
         axes_from_min_max_disabled_ = true;
     }
-    else if (fcn == Function::SET_PLOT_BOX_SCALE_FACTOR)
+    else if (fcn == Function::SET_AXES_BOX_SCALE_FACTOR)
     {
         const Vec3d scale_vec = hdr.get(CommunicationHeaderObjectType::VEC3).as<Vec3d>() * 3.0;
-        axes_renderer_->setPlotBoxScaleFactor(scale_vec);
+        axes_renderer_->setAxesBoxScaleFactor(scale_vec);
     }
     else
     {

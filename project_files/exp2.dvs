@@ -44,7 +44,7 @@
                             }
                         }
                     ],
-                    "name": "primary_view",
+                    "name": "Tab 0",
                     "background_color": {
                         "r": 0.6431372549,
                         "g": 0.8509803922,
@@ -105,11 +105,26 @@
                             }
                         }
                     ],
-                    "name": "secondary_view",
+                    "name": "Tab 1",
                     "background_color": {
-                        "r": 1.0,
-                        "g": 0.0,
-                        "b": 1.0
+                        "r": 0.6431372549,
+                        "g": 0.8509803922,
+                        "b": 0.7843137255
+                    },
+                    "button_normal_color": {
+                        "r": 0.5431372549,
+                        "g": 0.7509803922,
+                        "b": 0.6843137255
+                    },
+                    "button_clicked_color": {
+                        "r": 0.7431372549,
+                        "g": 0.9509803922,
+                        "b": 0.8843137255
+                    },
+                    "button_selected_color": {
+                        "r": 0.4431372549,
+                        "g": 0.6509803922,
+                        "b": 0.5843137255
                     }
                 }
             ],
@@ -136,7 +151,7 @@
                             }
                         }
                     ],
-                    "name": "primary_view",
+                    "name": "Tab 0",
                     "background_color": {
                         "r": 1.0,
                         "g": 1.0,
@@ -158,7 +173,7 @@
                             }
                         }
                     ],
-                    "name": "secondary_view",
+                    "name": "Tab 1",
                     "background_color": {
                         "r": 1.0,
                         "g": 0.0,

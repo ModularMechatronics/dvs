@@ -436,7 +436,7 @@ void AxesRenderer::renderPlotBox()
     plot_box_silhouette_.render(view_angles_.getAzimuth(), view_angles_.getElevation());
 }
 
-void AxesRenderer::setPlotBoxScaleFactor(const Vec3d& scale_vector)
+void AxesRenderer::setAxesBoxScaleFactor(const Vec3d& scale_vector)
 {
     scale_vector_ = scale_vector;
 }

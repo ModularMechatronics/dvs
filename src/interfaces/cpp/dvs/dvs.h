@@ -729,9 +729,9 @@ inline void disableAutomaticAxesSetting()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void setPlotBoxScaleFactor(const Vec3<double>& scale_vector)
+inline void setAxesBoxScaleFactor(const Vec3<double>& scale_vector)
 {
-    internal::CommunicationHeader hdr{internal::Function::SET_PLOT_BOX_SCALE_FACTOR};
+    internal::CommunicationHeader hdr{internal::Function::SET_AXES_BOX_SCALE_FACTOR};
     hdr.append(internal::CommunicationHeaderObjectType::VEC3, scale_vector);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
