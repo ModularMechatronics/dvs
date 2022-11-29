@@ -20,13 +20,13 @@ TabButtons::TabButtons(wxFrame* parent,
         tab_buttons_.push_back(new TabButton(
             parent,
             window_settings_.tabs[k],
+            wxPoint(0, k * 20),
+            wxSize(button_width_, button_height_),
+            tab_button_id_counter_,
             [this](std::string name) {
                 setSelection(name);
                 tab_changed_callback_(name);
             },
-            tab_button_id_counter_,
-            wxPoint(0, k * 20),
-            wxSize(button_width_, button_height_),
             notify_parent_window_right_mouse_pressed));
 
         tab_button_id_counter_++;
@@ -102,13 +102,13 @@ void TabButtons::addNewTab(const std::string tab_name)
     tab_buttons_.push_back(new TabButton(
         parent_,
         tab_settings,
+        wxPoint(0, tab_buttons_.size() * 20),
+        wxSize(button_width_, button_height_),
+        tab_button_id_counter_,
         [this](std::string name) {
             setSelection(name);
             tab_changed_callback_(name);
         },
-        tab_button_id_counter_,
-        wxPoint(0, tab_buttons_.size() * 20),
-        wxSize(button_width_, button_height_),
         notify_parent_window_right_mouse_pressed_));
 
     tab_button_id_counter_++;

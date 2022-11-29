@@ -237,7 +237,6 @@ public:
         {
             ge->show();
         }
-        layoutZOrder();
     }
 
     void hide()
@@ -287,8 +286,6 @@ public:
 
         return ts;
     }
-
-    void layoutZOrder() {}
 
     GuiElement* getGuiElement(const std::string& element_name) const
     {

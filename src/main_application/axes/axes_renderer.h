@@ -108,7 +108,7 @@ public:
     void renderHelpPane();
     void activateGlobalIllumination(const Vec3d& light_pos);
     void resetGlobalIllumination();
-    void setPlotBoxScaleFactor(const Vec3d& scale_vector);
+    void setAxesBoxScaleFactor(const Vec3d& scale_vector);
 };
 
 #endif  // MAIN_APPLICATION_AXES_AXES_RENDERER_H_

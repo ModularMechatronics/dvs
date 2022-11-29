@@ -121,7 +121,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::LINE_COLLECTION2) || (fcn == Function::LINE_COLLECTION3) ||
            (fcn == Function::PLOT_COLLECTION3) || (fcn == Function::GLOBAL_ILLUMINATION) ||
            (fcn == Function::REAL_TIME_PLOT) || (fcn == Function::HEADER_EXTENSION) ||
-           (fcn == Function::DISABLE_AXES_FROM_MIN_MAX) || (fcn == Function::SET_PLOT_BOX_SCALE_FACTOR);
+           (fcn == Function::DISABLE_AXES_FROM_MIN_MAX) || (fcn == Function::SET_AXES_BOX_SCALE_FACTOR);
 }
 
 bool MainWindow::currentGuiElementSet() const
