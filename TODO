@@ -13,9 +13,7 @@ Pre release:
 - Display element name in plot panes
 - ImageC4, that includes alpha channel
 - Add zoom/rotate/pan symbol in upper left corner of the plot pane which the mouse is hoovering over, and symbol for locked rotation/zoom/pan axis
-- Help pane that shows up with keyboard shortcuts when you hold 'H'
 - Add rendering of plot pane name
-- Use weak_ptr for current_gui_element_?
 - Investigate if main_window can be just a wxObject or something
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
@@ -26,8 +24,6 @@ Pre release:
 - Image view (same level as plot pane) which is zoomable and panable only
 - Delete gl buffers with "glDeleteBuffers"
 - Set color in fragment shader with uniform, instead of in vertex shader
-- Real time plot with option to add new samples
- * And extended functionality to add multiple slots in same function call
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Reducing number of axis numbers depending on rotation
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
@@ -55,7 +51,6 @@ Pre release:
 - Apply 'applyConverter' to all functions (like in Plot2D/Plot3D)
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Time date axis
-- Do something better/neater than "fillBufferWithData"?
 - Separate plot object vectors so that shader switching is minimized
 - Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed
@@ -65,13 +60,17 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Use weak_ptr for current_gui_element_?
 - Bar plot
+- Do something better/neater than "fillBufferWithData"?
 - Change to google logging
 - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
 - Don't always update on keypress?
 - What to do if two adjecent points are at the same pos for plot/plot3
 - Plot functions with VectorView and MatrixView
 - Replace old c type arrays with std::array
+- Real time plot with option to add new samples
+ * And extended functionality to add multiple slots in same function call
 - Change opengl types from float to double, to increase precision
   - https://stackoverflow.com/questions/28014864/why-do-different-variations-of-glvertexattribpointer-exist
   - https://stackoverflow.com/questions/62292163/opengl-pass-integer-array-with-gl-array-buffer

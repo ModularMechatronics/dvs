@@ -21,14 +21,17 @@
 class TabButtons
 {
 private:
-    std::function<void(std::string)> tab_changed_callback_;
-    std::vector<TabButton*> tab_buttons_;
-    wxSize window_size_;
-    int button_height_, button_width_;
-    WindowSettings window_settings_;
-    int tab_button_id_counter_;
     wxFrame* parent_;
+
+    std::function<void(std::string)> tab_changed_callback_;
     std::function<void(const wxPoint pos, const std::string& item_name)> notify_parent_window_right_mouse_pressed_;
+
+    std::vector<TabButton*> tab_buttons_;
+
+    int button_height_;
+    int button_width_;
+
+    int tab_button_id_counter_;
 
     void layoutButtons();
 
