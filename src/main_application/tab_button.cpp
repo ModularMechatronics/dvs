@@ -76,28 +76,34 @@ void TabButton::OnPaint(wxPaintEvent& WXUNUSED(event))
 
     const int text_height = dc.GetCharHeight();
 
-    dc.DrawRoundedRectangle(button_rect_, 5.0);
+    dc.DrawRectangle(button_rect_);
     dc.DrawText(button_label_, wxPoint(5, button_rect_.height / 2 - text_height / 2 - 3));
 }
 
 void TabButton::mouseEntered(wxMouseEvent& WXUNUSED(event))
 {
-    wxSetCursor(wxCursor(wxCURSOR_HAND));
+    if (!is_selected_)
+    {
+        wxSetCursor(wxCursor(wxCURSOR_HAND));
 
-    entered_timer_running_ = true;
-    entered_timer_.Start(kEnteredPeriod);
+        entered_timer_running_ = true;
+        entered_timer_.Start(kEnteredPeriod);
+    }
 }
 
 void TabButton::mouseExited(wxMouseEvent& WXUNUSED(event))
 {
-    wxSetCursor(wxCursor(wxCURSOR_ARROW));
-
     entered_timer_running_ = false;
 
-    entered_timer_.Stop();
-    while (entered_timer_.IsRunning())
+    wxSetCursor(wxCursor(wxCURSOR_ARROW));
+
+    if (entered_timer_.IsRunning())
     {
-        wxMilliSleep(1);
+        entered_timer_.Stop();
+        while (entered_timer_.IsRunning())
+        {
+            wxMilliSleep(1);
+        }
     }
 
     selected_color_ = selected_color_pair_.base_color;
@@ -106,26 +112,51 @@ void TabButton::mouseExited(wxMouseEvent& WXUNUSED(event))
     Refresh();
 }
 
-int TabButton::getId() const
-{
-    return id_;
-}
-
-void TabButton::setSelected()
-{
-    is_selected_ = true;
-    Refresh();
-}
-
-void TabButton::setDeselected()
-{
-    is_selected_ = false;
-    Refresh();
-}
-
 void TabButton::mouseRightPressed(wxMouseEvent& event)
 {
     notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), button_label_);
+}
+
+void TabButton::mouseLeftReleased(wxMouseEvent& event)
+{
+    button_pressed_ = false;
+    selected_color_ = selected_color_pair_.base_color;
+    unselected_color_ = unselected_color_pair_.base_color;
+    wxSetCursor(wxCursor(wxCURSOR_ARROW));
+    Refresh();
+}
+
+void TabButton::mouseLeftPressed(wxMouseEvent& event)
+{
+    if (!is_selected_)
+    {
+        button_pressed_ = true;
+        button_pressed_callback_(button_label_);
+        Refresh();
+    }
+}
+
+void TabButton::OnEnteredTimer(wxTimerEvent& WXUNUSED(event))
+{
+    if (!entered_timer_running_)
+    {
+        return;
+    }
+
+    if (num_timer_iterations_entered_ >= (kNumEnteredIterationsMax - 1))
+    {
+        entered_timer_running_ = false;
+        entered_timer_.Stop();
+        num_timer_iterations_entered_ = 0;
+    }
+    else
+    {
+        selected_color_ = selected_color_pair_(num_timer_iterations_entered_ * 6);
+        unselected_color_ = unselected_color_pair_(num_timer_iterations_entered_ * 6);
+        num_timer_iterations_entered_++;
+    }
+
+    Refresh();
 }
 
 std::string TabButton::getButtonLabel() const
@@ -153,38 +184,18 @@ void TabButton::hide()
     this->Hide();
 }
 
-void TabButton::mouseLeftReleased(wxMouseEvent& event)
+int TabButton::getId() const
 {
-    button_pressed_ = false;
-    Refresh();
+    return id_;
 }
 
-void TabButton::mouseLeftPressed(wxMouseEvent& event)
+void TabButton::setSelected()
 {
-    button_pressed_ = true;
-    Refresh();
-    button_pressed_callback_(button_label_);
+    is_selected_ = true;
 }
 
-void TabButton::OnEnteredTimer(wxTimerEvent& WXUNUSED(event))
+void TabButton::setDeselected()
 {
-    if (!entered_timer_running_)
-    {
-        return;
-    }
-
-    if (num_timer_iterations_entered_ >= (kNumEnteredIterationsMax - 1))
-    {
-        entered_timer_running_ = false;
-        entered_timer_.Stop();
-        num_timer_iterations_entered_ = 0;
-    }
-    else
-    {
-        selected_color_ = selected_color_pair_(num_timer_iterations_entered_ * 6);
-        unselected_color_ = unselected_color_pair_(num_timer_iterations_entered_ * 6);
-        num_timer_iterations_entered_++;
-    }
-
+    is_selected_ = false;
     Refresh();
 }
