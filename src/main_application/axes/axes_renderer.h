@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 
+#include "axes/axes_interactor.h"
 #include "axes/grid_numbers.h"
 #include "axes/legend_properties.h"
 #include "axes/legend_renderer.h"
@@ -70,12 +71,16 @@ private:
     Vec3d light_pos_;
     std::vector<LegendProperties> legend_properties_;
     Vec3d scale_vector_;
+    std::string name_;
+    MouseInteractionAxis current_mouse_interaction_axis_;
 
     void renderBackground();
     void renderPlotBox();
     void renderBoxGrid();
     void enableClipPlanes();
     void renderLegend();
+    void renderTitle();
+    void renderInteractionLetter();
     void setClipPlane(const GLuint program_id,
                       const std::string pln,
                       const Point3d& p0,
@@ -101,7 +106,9 @@ public:
                       const bool render_zoom_rect,
                       const bool render_legend,
                       const float legend_scale_factor,
-                      const std::vector<LegendProperties>& legend_properties);
+                      const std::vector<LegendProperties>& legend_properties,
+                      const std::string& name,
+                      const MouseInteractionAxis current_mouse_interaction_axis);
     void render();
     void plotBegin();
     void plotEnd();

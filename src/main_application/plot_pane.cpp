@@ -175,6 +175,7 @@ PlotPane::PlotPane(wxWindow* parent,
     glEnable(GL_PROGRAM_POINT_SIZE);
 
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+    current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
 }
 
 void PlotPane::updateSizeFromParent(const wxSize& parent_size)
@@ -427,6 +428,12 @@ void PlotPane::destroy()
     this->Destroy();
 }
 
+void PlotPane::setName(const std::string& new_name)
+{
+    element_settings_.name = new_name;
+    Refresh();
+}
+
 void PlotPane::mouseLeftPressed(wxMouseEvent& event)
 {
     wxCommandEvent evt(MY_EVENT, GetId());
@@ -633,37 +640,6 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
         {
             left_mouse_button_.updateOnMotion(current_point.x, current_point.y);
 
-            if (keyboard_state_.isPressed())
-            {
-                if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('2')))
-                {
-                    current_mouse_interaction_axis_ = MouseInteractionAxis::XY;
-                }
-                else if (wxGetKeyState(static_cast<wxKeyCode>('2')) && wxGetKeyState(static_cast<wxKeyCode>('3')))
-                {
-                    current_mouse_interaction_axis_ = MouseInteractionAxis::YZ;
-                }
-                else if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('3')))
-                {
-                    current_mouse_interaction_axis_ = MouseInteractionAxis::XZ;
-                }
-                else if (wxGetKeyState(static_cast<wxKeyCode>('1')))
-                {
-                    current_mouse_interaction_axis_ = MouseInteractionAxis::X;
-                }
-                else if (wxGetKeyState(static_cast<wxKeyCode>('2')))
-                {
-                    current_mouse_interaction_axis_ = MouseInteractionAxis::Y;
-                }
-                else if (wxGetKeyState(static_cast<wxKeyCode>('3')))
-                {
-                    current_mouse_interaction_axis_ = MouseInteractionAxis::Z;
-                }
-            }
-            else
-            {
-                current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
-            }
             axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
                                                     left_mouse_button_.getDeltaPos().x,
                                                     left_mouse_button_.getDeltaPos().y);
@@ -733,6 +709,31 @@ void PlotPane::keyPressed(const char key)
         keyboard_state_.keyGotPressed(key);
     }
 
+    if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('2')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::XY;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('2')) && wxGetKeyState(static_cast<wxKeyCode>('3')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::YZ;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('3')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::XZ;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('1')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::X;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('2')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::Y;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('3')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::Z;
+    }
+
     Refresh();
 }
 
@@ -797,9 +798,9 @@ int PlotPane::getHeight()
     return GetSize().y;
 }
 
-MouseInteractionType keyboardStateToMouseInteractionType(const KeyboardState& keyboard_state)
+MouseInteractionType getMouseInteractionType()
 {
-    if (wxGetKeyState(static_cast<wxKeyCode>('t')) || wxGetKeyState(static_cast<wxKeyCode>('T')))
+    if (wxGetKeyState(static_cast<wxKeyCode>('p')) || wxGetKeyState(static_cast<wxKeyCode>('P')))
     {
         return MouseInteractionType::PAN;
     }
@@ -851,17 +852,17 @@ void PlotPane::render(wxPaintEvent& evt)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // TODO: Move to keypressed? And deal with key hold...
-    if (keyboard_state_.keyIsPressed('p') || keyboard_state_.keyIsPressed('P'))
+    /*if (keyboard_state_.keyIsPressed('p') || keyboard_state_.keyIsPressed('P'))
     {
         perspective_projection_ = !perspective_projection_;
-    }
+    }*/
 
     if (viewShouldBeReset(keyboard_state_))
     {
         axes_interactor_.resetView();
     }
 
-    axes_interactor_.update(keyboardStateToMouseInteractionType(keyboard_state_), getWidth(), getHeight());
+    axes_interactor_.update(getMouseInteractionType(), getWidth(), getHeight());
 
     if (wxGetKeyState(static_cast<wxKeyCode>('y')) || wxGetKeyState(static_cast<wxKeyCode>('Y')))
     {
@@ -887,7 +888,9 @@ void PlotPane::render(wxPaintEvent& evt)
                                  axes_interactor_.shouldDrawZoomRect(),
                                  axes_interactor_.getShowLegend(),
                                  legend_scale_factor_,
-                                 plot_data_handler_->getLegendStrings());
+                                 plot_data_handler_->getLegendStrings(),
+                                 element_settings_.name,
+                                 current_mouse_interaction_axis_);
 
     axes_renderer_->render();
     glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?

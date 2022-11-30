@@ -65,6 +65,7 @@ AxesRenderer::AxesRenderer(const ShaderCollection shader_collection,
     persp_projection_mat = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
 
     use_perspective_proj_ = false;
+    current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
 
     projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
 
@@ -186,8 +187,87 @@ void AxesRenderer::setClipPlane(const GLuint program_id,
     glUniform4f(glGetUniformLocation(program_id, pln.c_str()), plane.a, plane.b, plane.c, plane.d);
 }
 
+void AxesRenderer::renderTitle()
+{
+    glUseProgram(shader_collection_.text_shader.programId());
+
+    const GLint text_color_uniform = glGetUniformLocation(shader_collection_.text_shader.programId(), "textColor");
+    glUniform3f(text_color_uniform, 0.0, 0.0, 0.0);
+
+    const float y_coord = 1.0f - 20.0f / height_;
+    text_renderer_.renderTextFromCenter(name_, 0.0, y_coord, 0.0005f, width_, height_);
+}
+
+void AxesRenderer::renderInteractionLetter()
+{
+    glUseProgram(shader_collection_.text_shader.programId());
+
+    const GLint text_color_uniform = glGetUniformLocation(shader_collection_.text_shader.programId(), "textColor");
+    glUniform3f(text_color_uniform, 0.0, 0.0, 0.0);
+
+    std::string interaction_string;
+    if (mouse_interaction_type_ == MouseInteractionType::PAN)
+    {
+        interaction_string = "Pan";
+    }
+    else if (mouse_interaction_type_ == MouseInteractionType::ZOOM)
+    {
+        interaction_string = "Zoom";
+    }
+    else if (mouse_interaction_type_ == MouseInteractionType::ROTATE)
+    {
+        interaction_string = "Rotate";
+        if (current_mouse_interaction_axis_ == MouseInteractionAxis::X)
+        {
+            interaction_string += " [azimuth]";
+        }
+        else if (current_mouse_interaction_axis_ == MouseInteractionAxis::Y)
+        {
+            interaction_string += " [elevation]";
+        }
+    }
+    else
+    {
+        interaction_string = "U";
+    }
+
+    if (mouse_interaction_type_ != MouseInteractionType::ROTATE)
+    {
+        if (current_mouse_interaction_axis_ == MouseInteractionAxis::X)
+        {
+            interaction_string += " [x]";
+        }
+        if (current_mouse_interaction_axis_ == MouseInteractionAxis::Y)
+        {
+            interaction_string += " [y]";
+        }
+        if (current_mouse_interaction_axis_ == MouseInteractionAxis::Z)
+        {
+            interaction_string += " [z]";
+        }
+        if (current_mouse_interaction_axis_ == MouseInteractionAxis::XY)
+        {
+            interaction_string += " [xy]";
+        }
+        if (current_mouse_interaction_axis_ == MouseInteractionAxis::XZ)
+        {
+            interaction_string += " [xz]";
+        }
+        if (current_mouse_interaction_axis_ == MouseInteractionAxis::YZ)
+        {
+            interaction_string += " [yz]";
+        }
+    }
+
+    const float y_coord = 1.0f - 25.0f / height_;
+    const float x_coord = -1.0f + 5.0f / width_;
+    text_renderer_.renderTextFromLeftCenter(interaction_string, x_coord, y_coord, 0.0003f, width_, height_);
+}
+
 void AxesRenderer::render()
 {
+    renderTitle();
+    renderInteractionLetter();
     glUseProgram(shader_collection_.plot_box_shader.programId());
     renderBackground();
     if (element_settings_.plot_box_on)
@@ -454,7 +534,9 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const bool render_zoom_rect,
                                 const bool render_legend,
                                 const float legend_scale_factor,
-                                const std::vector<LegendProperties>& legend_properties)
+                                const std::vector<LegendProperties>& legend_properties,
+                                const std::string& name,
+                                const MouseInteractionAxis current_mouse_interaction_axis)
 {
     axes_limits_ = axes_limits;
     view_angles_ = view_angles;
@@ -470,6 +552,8 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     render_legend_ = render_legend;
     legend_properties_ = legend_properties;
     legend_renderer_.setLegendScaleFactor(legend_scale_factor);
+    name_ = name;
+    current_mouse_interaction_axis_ = current_mouse_interaction_axis;
 
     rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * rotationMatrixX(-view_angles_.getSnappedElevation());
 

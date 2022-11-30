@@ -105,6 +105,8 @@ public:
     int getWidth();
     int getHeight();
 
+    void setName(const std::string& new_name) override;
+
     void render(wxPaintEvent& evt);
 
     void setElementPositionAndSize();
