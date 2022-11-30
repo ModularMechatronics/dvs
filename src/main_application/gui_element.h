@@ -54,7 +54,7 @@ public:
         return element_settings_.name;
     }
 
-    void setName(const std::string& new_name)
+    virtual void setName(const std::string& new_name)
     {
         element_settings_.name = new_name;
     }

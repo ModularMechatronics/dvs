@@ -10,10 +10,7 @@ Pre release:
  * Finalize MatrixFixed functions
  * Use MatrixFixed instead of Matrix where possible
  * Add VectorFixed
-- Display element name in plot panes
 - ImageC4, that includes alpha channel
-- Add zoom/rotate/pan symbol in upper left corner of the plot pane which the mouse is hoovering over, and symbol for locked rotation/zoom/pan axis
-- Add rendering of plot pane name
 - Investigate if main_window can be just a wxObject or something
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer

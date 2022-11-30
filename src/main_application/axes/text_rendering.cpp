@@ -91,7 +91,7 @@ void TextRenderer::renderTextFromLeftCenter(
 
         if ((text[k] == 'p') || (text[k] == 'q') || (text[k] == 'j') || (text[k] == 'y') || (text[k] == 'g'))
         {
-            ypos = ypos - 0.01f;
+            ypos = ypos - 2.0f / axes_height;
         }
 
         const float vertices[6][4] = {{xpos, ypos + h, 0.0f, 0.0f},
