@@ -25,6 +25,7 @@
 
 #include "dvs/math/image/image_c1.h"
 #include "dvs/math/image/image_c3.h"
+#include "dvs/math/image/image_c4.h"
 
 #include "dvs/math/pre_defs.h"
 // clang-format on

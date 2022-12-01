@@ -607,11 +607,53 @@ void testFastPlot3()
     fastPlot3(xf + 0.1f, yf, zf, properties::Color(21, 14, 55));
 }
 
+void testImShow4()
+{
+    const uint32_t num_rows = 800, num_cols = 800;
+    ImageC4<float> img4(num_rows, num_cols);
+    ImageC3<float> img3(num_rows, num_cols);
+
+    for (uint32_t r = 0; r < num_rows; r++)
+    {
+        for (uint32_t c = 0; c < num_cols; c++)
+        {
+            const float xr = 3.0f * (static_cast<float>(c) - 300.5f) / 800.0f;
+            const float yr = 3.0f * (static_cast<float>(r) - 400.5f) / 800.0f;
+            const float rr = std::sqrt(xr * xr + yr * yr);
+
+            const float xg = 2.0f * (static_cast<float>(c) - 500.5f) / 800.0f;
+            const float yg = 2.0f * (static_cast<float>(r) - 350.5f) / 800.0f;
+            const float rg = std::sqrt(xg * xg + yg * yg);
+
+            const float xb = 4.0f * (static_cast<float>(c) - 200.5f) / 800.0f;
+            const float yb = 4.0f * (static_cast<float>(r) - 600.5f) / 800.0f;
+            const float rb = std::sqrt(xb * xb + yb * yb);
+
+            img4(r, c, 0) = (std::sin(rb) / rr + 1.0f) * 0.5f;
+            img4(r, c, 1) = (std::sin(rb) / rg + 1.0f) * 0.5f;
+            img4(r, c, 2) = (std::sin(rb) / rb + 1.0f) * 0.5f;
+            img4(r, c, 3) = static_cast<float>(r + c) / 1600;
+
+            img3(r, c, 0) = (std::sin(rb) / rr + 1.0f) * 0.5f;
+            img3(r, c, 1) = (std::sin(rb) / rg + 1.0f) * 0.5f;
+            img3(r, c, 2) = (std::sin(rb) / rb + 1.0f) * 0.5f;
+        }
+    }
+    setCurrentElement("p_view_0");
+    clearView();
+    imShow(img4);
+
+    setCurrentElement("p_view_1");
+    clearView();
+    imShow(img3);
+}
+
 void testImShow()
 {
     const uint32_t num_rows = 800, num_cols = 800;
     ImageC3<float> img3(num_rows, num_cols);
     ImageC1<float> img1(num_rows, num_cols);
+    ImageC4<float> img4(num_rows, num_cols);
 
     ImageC1<uint8_t> img1_uint8(num_rows, num_cols);
     ImageC3<uint8_t> img3_uint8(num_rows, num_cols);
@@ -636,6 +678,11 @@ void testImShow()
             img3(r, c, 1) = (std::sin(rb) / rg + 1.0f) * 0.5f;
             img3(r, c, 2) = (std::sin(rb) / rb + 1.0f) * 0.5f;
 
+            img4(r, c, 0) = (std::sin(rb) / rr + 1.0f) * 0.5f;
+            img4(r, c, 1) = (std::sin(rb) / rg + 1.0f) * 0.5f;
+            img4(r, c, 2) = (std::sin(rb) / rb + 1.0f) * 0.5f;
+            img4(r, c, 3) = static_cast<float>(r + c) / 1600;
+
             img1(r, c) = (std::sin(rb) / rr + 1.0f) * 0.5f;
 
             img1_uint8(r, c) = static_cast<uint8_t>(100.0f * (std::sin(rb) + 1.0f) / rr);
@@ -648,7 +695,7 @@ void testImShow()
     setCurrentElement("p_view_0");
     clearView();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
-    imShow(img3);
+    imShow(img3, properties::Alpha(127));
 
     setCurrentElement("p_view_1");
     imShow(img1);
@@ -658,6 +705,10 @@ void testImShow()
 
     setCurrentElement("w1_p_view_0");
     imShow(img3_uint8);
+
+    setCurrentElement("w1_p_view_2");
+    clearView();
+    imShow(img4);
 }
 
 void testAxis()

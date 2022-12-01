@@ -1,9 +1,9 @@
 #version 330
 
-out vec3 color;
-// uniform vec4 ourColor;
+out vec4 color;
 in vec3 fragment_color;
 in vec4 coord_out;
+in float alpha_out;
 
 uniform int use_clip_plane;
 uniform vec4 clip_plane0;
@@ -42,7 +42,7 @@ void main()
          discard;
       }
    }
-   color = fragment_color;
+   color = vec4(fragment_color, alpha_out);
 
 		
 }

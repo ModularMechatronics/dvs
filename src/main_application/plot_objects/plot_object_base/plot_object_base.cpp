@@ -107,7 +107,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP);
 
     // Properties
-    alpha_ = props.getPropertyOrValue<Alpha>(100.0f) / 100.0f;
+    alpha_ = props.getPropertyOrValue<Alpha>(255.0f) / 255.0f;
     buffer_size_ = props.getPropertyOrValue<BufferSize>(kDefaultBufferSize);
     scatter_style_type_ = props.getPropertyOrValue<ScatterStyle>(ScatterStyleType::CIRCLE);
     line_width_ = props.getPropertyOrValue<LineWidth>(1.0f);
