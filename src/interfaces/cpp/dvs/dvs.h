@@ -439,6 +439,21 @@ template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const U
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
+template <typename T, typename... Us> void imShow(const ImageC4<T>& img, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(4));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(img.numRows() * img.numCols()));  // TODO: Needed?
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,
+               internal::Dimension2D(img.numRows(), img.numCols()));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
+}
+
 template <typename T, typename... Us>
 void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& indices, const Us&... settings)
 {

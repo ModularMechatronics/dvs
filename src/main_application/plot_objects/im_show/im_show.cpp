@@ -9,6 +9,7 @@ namespace
 struct OutputData
 {
     float* points_ptr;
+    float* alpha_ptr;
 };
 
 struct InputParams
@@ -106,25 +107,52 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
     glBufferData(
         GL_ARRAY_BUFFER, sizeof(float) * 6 * 6 * dims_.rows * dims_.cols, output_data.points_ptr, GL_STATIC_DRAW);
 
-    // glEnableVertexAttribArray(0);
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
+    // Coordinates
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // color attribute
+    // Color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    if (num_channels_ == 4)
+    {
+        // Alpha
+        glGenBuffers(1, &alpha_buffer_);
+        glBindBuffer(GL_ARRAY_BUFFER, alpha_buffer_);
+        glBufferData(
+            GL_ARRAY_BUFFER, sizeof(float) * 6 * 2 * dims_.rows * dims_.cols, output_data.alpha_ptr, GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
+        delete[] output_data.alpha_ptr;
+    }
 
     delete[] output_data.points_ptr;
 }
 
 void ImShow::render()
 {
+    glEnable(GL_BLEND);
     glUseProgram(shader_collection_.img_plot_shader.programId());
+
+    if (num_channels_ == 4)
+    {
+        glUniform1i(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "use_global_alpha"),
+                    static_cast<int>(0));
+    }
+    else
+    {
+        glUniform1i(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "use_global_alpha"),
+                    static_cast<int>(1));
+        glUniform1f(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "global_alpha"), alpha_);
+    }
+
     glBindVertexArray(vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, dims_.rows * dims_.cols * 6);
     glBindVertexArray(0);
     glUseProgram(shader_collection_.basic_plot_shader.programId());
+    glDisable(GL_BLEND);
 }
 
 ImShow::~ImShow() {}
@@ -135,7 +163,128 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 {
     OutputData output_data;
 
-    if (input_params.num_channels == 3)
+    if (input_params.num_channels == 4)
+    {
+        const ImageC4ConstView<T> img_c4{
+            reinterpret_cast<const T* const>(input_data), input_params.dims.rows, input_params.dims.cols};
+
+        output_data.points_ptr = new float[input_params.dims.rows * input_params.dims.cols * 6 * 6];
+        output_data.alpha_ptr = new float[input_params.dims.rows * input_params.dims.cols * 6 * 6];
+        size_t idx = 0;
+        size_t idx_alpha = 0;
+
+        for (size_t r = 0; r < input_params.dims.rows; r++)
+        {
+            for (size_t c = 0; c < input_params.dims.cols; c++)
+            {
+                const size_t idx0_x = idx;
+                const size_t idx0_y = idx + 1;
+                const size_t idx0_z = idx + 2;
+
+                const size_t idx0_r = idx + 3;
+                const size_t idx0_g = idx + 4;
+                const size_t idx0_b = idx + 5;
+
+                const size_t idx1_x = idx + 6;
+                const size_t idx1_y = idx + 7;
+                const size_t idx1_z = idx + 8;
+
+                const size_t idx1_r = idx + 9;
+                const size_t idx1_g = idx + 10;
+                const size_t idx1_b = idx + 11;
+
+                const size_t idx2_x = idx + 12;
+                const size_t idx2_y = idx + 13;
+                const size_t idx2_z = idx + 14;
+
+                const size_t idx2_r = idx + 15;
+                const size_t idx2_g = idx + 16;
+                const size_t idx2_b = idx + 17;
+
+                const size_t idx3_x = idx + 18;
+                const size_t idx3_y = idx + 19;
+                const size_t idx3_z = idx + 20;
+
+                const size_t idx3_r = idx + 21;
+                const size_t idx3_g = idx + 22;
+                const size_t idx3_b = idx + 23;
+
+                const size_t idx4_x = idx + 24;
+                const size_t idx4_y = idx + 25;
+                const size_t idx4_z = idx + 26;
+
+                const size_t idx4_r = idx + 27;
+                const size_t idx4_g = idx + 28;
+                const size_t idx4_b = idx + 29;
+
+                const size_t idx5_x = idx + 30;
+                const size_t idx5_y = idx + 31;
+                const size_t idx5_z = idx + 32;
+
+                const size_t idx5_r = idx + 33;
+                const size_t idx5_g = idx + 34;
+                const size_t idx5_b = idx + 35;
+                idx = idx + 36;
+
+                output_data.points_ptr[idx0_x] = c;
+                output_data.points_ptr[idx1_x] = c + 1;
+                output_data.points_ptr[idx2_x] = c;
+                output_data.points_ptr[idx3_x] = c + 1;
+                output_data.points_ptr[idx4_x] = c + 1;
+                output_data.points_ptr[idx5_x] = c;
+
+                output_data.points_ptr[idx0_y] = r;
+                output_data.points_ptr[idx1_y] = r;
+                output_data.points_ptr[idx2_y] = r + 1;
+                output_data.points_ptr[idx3_y] = r;
+                output_data.points_ptr[idx4_y] = r + 1;
+                output_data.points_ptr[idx5_y] = r + 1;
+
+                output_data.points_ptr[idx0_z] = 0.0f;
+                output_data.points_ptr[idx1_z] = 0.0f;
+                output_data.points_ptr[idx2_z] = 0.0f;
+                output_data.points_ptr[idx3_z] = 0.0f;
+                output_data.points_ptr[idx4_z] = 0.0f;
+                output_data.points_ptr[idx5_z] = 0.0f;
+
+                const float color_val_r = static_cast<float>(img_c4(r, c, 0)) * input_params.multiplier;
+                const float color_val_g = static_cast<float>(img_c4(r, c, 1)) * input_params.multiplier;
+                const float color_val_b = static_cast<float>(img_c4(r, c, 2)) * input_params.multiplier;
+                const float color_val_a = static_cast<float>(img_c4(r, c, 3)) * input_params.multiplier;
+
+                output_data.points_ptr[idx0_r] = color_val_r;
+                output_data.points_ptr[idx1_r] = color_val_r;
+                output_data.points_ptr[idx2_r] = color_val_r;
+                output_data.points_ptr[idx3_r] = color_val_r;
+                output_data.points_ptr[idx4_r] = color_val_r;
+                output_data.points_ptr[idx5_r] = color_val_r;
+
+                output_data.points_ptr[idx0_g] = color_val_g;
+                output_data.points_ptr[idx1_g] = color_val_g;
+                output_data.points_ptr[idx2_g] = color_val_g;
+                output_data.points_ptr[idx3_g] = color_val_g;
+                output_data.points_ptr[idx4_g] = color_val_g;
+                output_data.points_ptr[idx5_g] = color_val_g;
+
+                output_data.points_ptr[idx0_b] = color_val_b;
+                output_data.points_ptr[idx1_b] = color_val_b;
+                output_data.points_ptr[idx2_b] = color_val_b;
+                output_data.points_ptr[idx3_b] = color_val_b;
+                output_data.points_ptr[idx4_b] = color_val_b;
+                output_data.points_ptr[idx5_b] = color_val_b;
+
+                output_data.alpha_ptr[idx_alpha + 0] = color_val_a;
+                output_data.alpha_ptr[idx_alpha + 1] = color_val_a;
+                output_data.alpha_ptr[idx_alpha + 2] = color_val_a;
+                output_data.alpha_ptr[idx_alpha + 3] = color_val_a;
+                output_data.alpha_ptr[idx_alpha + 4] = color_val_a;
+                output_data.alpha_ptr[idx_alpha + 5] = color_val_a;
+
+                idx_alpha += 6;
+            }
+        }
+    }
+    else if (input_params.num_channels == 3)
     {
         const ImageC3ConstView<T> img_c3{
             reinterpret_cast<const T* const>(input_data), input_params.dims.rows, input_params.dims.cols};

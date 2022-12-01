@@ -16,13 +16,11 @@ private:
     RGBColorMap<float> color_map_;
     GLuint buffer_idx_;
     GLuint color_buffer_;
+    GLuint alpha_buffer_;
 
     uint8_t num_channels_;
 
     internal::Dimension2D dims_;
-    unsigned char* pixel_data_;
-    GLuint program_id_;
-    GLuint texture_id_;
     int width_;
     int height_;
     void findMinMax() override;
