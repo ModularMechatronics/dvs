@@ -59,7 +59,6 @@ struct ShaderCollection
 {
     Shader text_shader;
     Shader plot_box_shader;
-    Shader surf_shader;
     Shader scatter_shader;
     Shader basic_plot_shader;
     Shader plot_2d_shader;

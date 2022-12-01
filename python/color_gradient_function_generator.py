@@ -171,19 +171,18 @@ def print_colormap_function(colormap_name, colormap_breakpoints):
     fs.append(f"    float fraction_part = full_range_value - integer_part;")
 
     fs.append("")
-    fs.append("    float r, g, b;")
+    fs.append("    float r = 0.0, g = 0.0, b = 0.0;")
     fs.append("")
 
+    fs.append(f"    switch(int(integer_part))")
+    fs.append("    {")
     for idx, bp in enumerate(colormap_breakpoints[:-1]):
-        if idx == 0:
-            fs.append("    if(int(integer_part) == 0)")
-        else:
-            fs.append(f"    else if(int(integer_part) == {idx})")
+
+        fs.append(f"    case {idx}:")
         next_bp = colormap_breakpoints[idx + 1]
         r_same = bp[0] == next_bp[0]
         g_same = bp[1] == next_bp[1]
         b_same = bp[2] == next_bp[2]
-        fs.append("    {")
 
         if r_same:
             fs.append(f"        r = {bp[0]};")
@@ -200,7 +199,9 @@ def print_colormap_function(colormap_name, colormap_breakpoints):
         else:
             print_diff(bp[2], next_bp[2], fs, "b")
 
-        fs.append("    }")
+        fs.append("        break;")
+
+    fs.append("    }")
 
     fs.append("")
     fs.append("    return vec3(r, g, b);")

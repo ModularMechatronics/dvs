@@ -31,8 +31,6 @@ AxesRenderer::AxesRenderer(const ShaderCollection shader_collection,
         glUniform1i(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "use_clip_plane"), 1);
         shader_collection_.img_plot_shader.use();
         glUniform1i(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "use_clip_plane"), 1);
-        shader_collection_.surf_shader.use();
-        glUniform1i(glGetUniformLocation(shader_collection_.surf_shader.programId(), "use_clip_plane"), 1);
         shader_collection_.draw_mesh_shader.use();
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "use_clip_plane"), 1);
         shader_collection_.scatter_shader.use();
@@ -48,8 +46,6 @@ AxesRenderer::AxesRenderer(const ShaderCollection shader_collection,
         glUniform1i(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "use_clip_plane"), 0);
         shader_collection_.img_plot_shader.use();
         glUniform1i(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "use_clip_plane"), 0);
-        shader_collection_.surf_shader.use();
-        glUniform1i(glGetUniformLocation(shader_collection_.surf_shader.programId(), "use_clip_plane"), 0);
         shader_collection_.draw_mesh_shader.use();
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "use_clip_plane"), 0);
         shader_collection_.scatter_shader.use();
@@ -125,14 +121,6 @@ void AxesRenderer::enableClipPlanes()
         setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
         setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
         setClipPlane(shader_collection_.img_plot_shader.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
-
-        glUseProgram(shader_collection_.surf_shader.programId());
-        setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
-        setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane1", points_x1(0), points_x1(1), points_x1(2), false);
-        setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane2", points_y0(0), points_y0(1), points_y0(2), true);
-        setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane3", points_y1(0), points_y1(1), points_y1(2), false);
-        setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane4", points_z0(0), points_z0(1), points_z0(2), true);
-        setClipPlane(shader_collection_.surf_shader.programId(), "clip_plane5", points_z1(0), points_z1(1), points_z1(2), false);
 
         glUseProgram(shader_collection_.draw_mesh_shader.programId());
         setClipPlane(shader_collection_.draw_mesh_shader.programId(), "clip_plane0", points_x0(0), points_x0(1), points_x0(2), true);
@@ -376,12 +364,6 @@ void AxesRenderer::plotBegin()
     const glm::mat4 i_mvp = glm::inverse(mvp);
     glUseProgram(shader_collection_.basic_plot_shader.programId());
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
-
-    glUseProgram(shader_collection_.surf_shader.programId());
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.surf_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
                        &mvp[0][0]);
