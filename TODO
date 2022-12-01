@@ -3,9 +3,6 @@ Pre release:
 - Refactor/clean up window/tabs/plot elements system
 - Refactor from top down, from the app and down into the GUI
 - Remove need to always specify num_elements
-- Function "view" is the one that sets/creates the current element
-  view("ViewName"), view("ViewName", "FigureName"), where FigureName can be "main" to indicate the main window
-- Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - Add MatrixFixed and VectorFixed
  * Finalize MatrixFixed functions
  * Use MatrixFixed instead of Matrix where possible
@@ -13,7 +10,6 @@ Pre release:
 - Investigate if main_window can be just a wxObject or something
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
-- use switch()case for plot2d/plot3d shaders, and for colormap functions
 - Use T* data = reinterpret_cast<const T* const>(&(input_data[idx_10])); directly in converter functions, like in Plot2D's convert function
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Delete gl buffers with "glDeleteBuffers"
@@ -77,6 +73,7 @@ Post release:
   - This way, a property type could be added, so that the current element can be specified in the function call
 - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?
 - Logarithmic axes xyz
+- Check if "fillBuffer(&(data_blob[idx]), other_elements...);" can be used as "fillBuffer(&(data_blob[idx]), first_element, other_elements...);"
 - MatrixBase and VectorBase to have all operations, and own T* data, size, num_rows, num_cols
 - Unify some compatible shaders to one big shader with switch case
 - Edge and Facecolor transparent
