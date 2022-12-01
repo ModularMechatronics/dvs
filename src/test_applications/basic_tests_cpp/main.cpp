@@ -26,7 +26,6 @@ int main(int argc, char* argv[])
 {
     fcns = StringFunctionMap{{"scatter", testScatter},
                              {"scatter3", testScatter3},
-                             {"quiver", testQuiver},
                              {"plot", testPlot},
                              {"plot3", testPlot3},
                              {"fastPlot", testFastPlot},
@@ -40,10 +39,6 @@ int main(int argc, char* argv[])
                              {"imShow", testImShow},
                              {"axis", testAxis},
                              {"drawMesh", testDrawMesh},
-                             {"drawLine3D", testDrawLine3D},
-                             {"drawLine2D", testDrawLine2D},
-                             {"drawLineBetweenPoints", testDrawLineBetweenPoints},
-                             {"drawArrow", testDrawArrow},
                              {"stairs", testStairs},
                              {"legend", testLegend}};
 
