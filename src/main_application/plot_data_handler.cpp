@@ -176,31 +176,9 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
                 dynamic_cast<PlotObjectBase*>(new DrawMesh(std::move(received_data), new_header, shader_collection_)));
             break;
 
-        case Function::DRAW_LINE3D:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                new DrawLine3D(std::move(received_data), new_header, shader_collection_)));
-            break;
-
-        case Function::DRAW_ARROW:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new DrawArrow(std::move(received_data), new_header, shader_collection_)));
-            break;
-
         case Function::REAL_TIME_PLOT:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                 new ScrollingPlot2D(std::move(received_data), new_header, shader_collection_)));
-            break;
-
-        case Function::QUIVER:
-            plot_datas_.push_back(
-                dynamic_cast<PlotObjectBase*>(new Quiver(std::move(received_data), new_header, shader_collection_)));
-            break;
-
-        case Function::DRAW_LINE_BETWEEN_POINTS_3D:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                new DrawLine3D(std::move(received_data), new_header, shader_collection_)));
-            break;
-
             break;
         default:
             throw std::runtime_error("Invalid function!");
