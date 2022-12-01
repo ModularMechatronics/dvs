@@ -113,46 +113,40 @@ void main()
         should_flip = false;
     }
 
-    // 1st triangle
-    if(idx == 0)
+    switch(idx)
     {
+    // 1st triangle
+    case 0:
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 0;
-    }
-    else if (idx == 1)
-    {
+        break;
+    case 1:
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 0;
-    }
-    else if (idx == 2)
-    {
+        break;
+    case 2:
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 0;
-    }
+        break;
     // 2nd triangle
-    else if (idx == 3)
-    {
+    case 3:
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 1;
-    }
-    else if (idx == 4)
-    {
+        break;
+    case 4:
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
         triangle_id = 1;
-    }
-    else if (idx == 5)
-    {
+        break;
+    case 5:
         gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
         triangle_id = 1;
-    }
+        break;
     // 3rd triangle
-    else if (idx == 6)
-    {
+    case 6:
         gl_Position = vec4(p1_transformed.xy, p1_transformed.z, 1.0);
         triangle_id = 2;
-    }
-    else if (idx == 7)
-    {
+        break;
+    case 7:
         triangle_id = 2;
 
         if(should_flip)
@@ -164,9 +158,8 @@ void main()
             gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
         }
         
-    }
-    else if (idx == 8)
-    {
+        break;
+    case 8:
         triangle_id = 2;
         if(should_flip)
         {
@@ -177,10 +170,9 @@ void main()
             gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         }
 
-    }
+        break;
     // 4th triangle
-    else if (idx == 9)
-    {
+    case 9:
         triangle_id = 3;
         if(should_flip)
         {
@@ -191,9 +183,8 @@ void main()
             gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
         }
 
-    }
-    else if (idx == 10)
-    {
+        break;
+    case 10:
         triangle_id = 3;
         if(should_flip)
         {
@@ -204,9 +195,8 @@ void main()
             gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
         }
 
-    }
-    else if (idx == 11)
-    {
+        break;
+    case 11:
         triangle_id = 3;
         if(should_flip)
         {
@@ -214,6 +204,7 @@ void main()
         }
 
         gl_Position = vec4(p1_transformed.xy + intersection_point, p1_transformed.z, 1.0);
+        break;
     }
 
     vec4 op = inverse_model_view_proj_mat * gl_Position;
