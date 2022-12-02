@@ -33,7 +33,7 @@ OutputData convertDataScatter2DOuter(const uint8_t* const input_data,
 Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data,
                      const CommunicationHeader& hdr,
                      const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection), vertex_buffer2_{OGLPrimitiveType::POINTS}
 {
     if (type_ != Function::SCATTER2)
     {
@@ -43,24 +43,11 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data,
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
     OutputData output_data = convertDataScatter2DOuter(data_ptr_, data_type_, input_params);
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
-
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 2, output_data.points_ptr, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_, 2);
 
     if (has_color_)
     {
-        glGenBuffers(1, &color_buffer_);
-        glBindBuffer(GL_ARRAY_BUFFER, color_buffer_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_elements_ * 3, output_data.color_ptr, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        vertex_buffer2_.addBuffer(output_data.color_ptr, num_elements_, 3);
 
         delete[] output_data.color_ptr;
     }
@@ -106,9 +93,7 @@ void Scatter2D::findMinMax()
 void Scatter2D::render()
 {
     glUseProgram(shader_collection_.scatter_shader.programId());
-    glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_POINTS, 0, num_elements_);
-    glBindVertexArray(0);
+    vertex_buffer2_.render(num_elements_);
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
