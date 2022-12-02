@@ -19,8 +19,6 @@ private:
     float* normals_ptr_;
     float* mean_height_ptr_;
 
-    GLuint normals_vertex_buffer_, mean_height_vertex_buffer_;
-
     size_t num_elements_to_render_;
 
     uint32_t num_vertices_;

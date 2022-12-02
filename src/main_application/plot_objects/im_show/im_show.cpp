@@ -78,7 +78,8 @@ template <typename T> GLuint loadTexture(const int width, const int height, cons
 ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
                const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(
+          std::move(received_data), hdr, shader_collection)  // , vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::IM_SHOW)
     {
@@ -92,6 +93,8 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
 
     width_ = dims_.cols;
     height_ = dims_.rows;
+
+    // vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
 
     // const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_};
     const InputParams input_params{num_channels_, dims_, data_type_};

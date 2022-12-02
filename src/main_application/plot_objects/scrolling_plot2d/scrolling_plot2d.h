@@ -7,11 +7,13 @@
 #include "dvs/math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/vertex_buffer.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 
 class ScrollingPlot2D : public PlotObjectBase
 {
 private:
+    // VertexBuffer vertex_buffer2_;
     float* points_ptr_;
     float* dt_vec_;
 
