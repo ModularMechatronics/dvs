@@ -19,6 +19,7 @@ enum class CommunicationHeaderObjectType : uint16_t
     DATA_TYPE,
     NUM_CHANNELS,
     NUM_ELEMENTS,
+    HAS_COLOR,
     NUM_VERTICES,
     NUM_INDICES,
     NUM_OBJECTS,

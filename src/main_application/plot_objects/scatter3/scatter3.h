@@ -13,8 +13,6 @@
 class Scatter3D : public PlotObjectBase
 {
 private:
-    uint8_t* points_ptr_;
-
     void findMinMax() override;
 
 public:
