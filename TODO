@@ -31,6 +31,7 @@ Pre release:
  * Wave equation
  * Physics simulation (bouncy ball)
 - Make font smaller, fewer line points per axis
+- Rename "vertex_buffer2_" to "vertex_buffer_" when possible
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
