@@ -43,7 +43,7 @@ struct Converter
 Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
                const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection), vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::PLOT3)
     {
@@ -53,45 +53,13 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
-
     num_points_ = output_data.num_points;
 
-    // p0
-    glGenBuffers(1, &p0_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, output_data.p0, GL_STATIC_DRAW);
+    vertex_buffer2_.addBuffer(output_data.p0, num_points_, 3);
+    vertex_buffer2_.addBuffer(output_data.p1, num_points_, 3);
+    vertex_buffer2_.addBuffer(output_data.p2, num_points_, 3);
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // p1
-    glGenBuffers(1, &p1_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, output_data.p1, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // p2
-    glGenBuffers(1, &p2_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, output_data.p2, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // Idx
-    glGenBuffers(1, &idx_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points_, output_data.idx_data, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(3);
-    glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glVertexAttribIPointer(3, 1, GL_INT, 0, 0);
+    vertex_buffer2_.addBuffer(output_data.idx_data, num_points_, 1);
 
     delete[] output_data.p0;
     delete[] output_data.p1;
@@ -110,9 +78,7 @@ void Plot3D::render()
     shader_collection_.plot_3d_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "half_line_width"),
                 line_width_ / 1200.0f);
-    glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_TRIANGLES, 0, num_points_);
-    glBindVertexArray(0);
+    vertex_buffer2_.render(num_points_);
     shader_collection_.basic_plot_shader.use();
 }
 

@@ -8,18 +8,20 @@
 #include "main_application/misc/color_map.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/vertex_buffer.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 
 class Surf : public PlotObjectBase
 {
 private:
+    VertexBuffer vertex_buffer2_;
     Dimension2D dims_;
-    // RGBColorMap<float> color_map_;
-    GLuint normals_vertex_buffer_, mean_height_vertex_buffer_;
 
     float* points_ptr_;
     float* mean_height_ptr_;
     float* normals_ptr_;
+
+    size_t num_elements_to_render_;
 
     void findMinMax() override;
 

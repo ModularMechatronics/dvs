@@ -47,7 +47,7 @@ struct Converter
 Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
                const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection), vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::PLOT2)
     {
@@ -79,51 +79,12 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
         }
     }
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
+    vertex_buffer2_.addBuffer(output_data.p0, num_points_, 2);
+    vertex_buffer2_.addBuffer(output_data.p1, num_points_, 2);
+    vertex_buffer2_.addBuffer(output_data.p2, num_points_, 2);
 
-    // p0
-    glGenBuffers(1, &p0_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, p0_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, output_data.p0, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // p1
-    glGenBuffers(1, &p1_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, output_data.p1, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, p1_vertex_buffer_);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // p2
-    glGenBuffers(1, &p2_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, output_data.p2, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, p2_vertex_buffer_);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // Idx
-    glGenBuffers(1, &idx_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(int32_t) * num_points_, output_data.idx_data, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(3);
-    glBindBuffer(GL_ARRAY_BUFFER, idx_buffer_);
-    glVertexAttribIPointer(3, 1, GL_INT, 0, 0);
-
-    // length_along
-    glGenBuffers(1, &length_along_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, length_along_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_, output_data.length_along, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    vertex_buffer2_.addBuffer(output_data.idx_data, num_points_, 1);
+    vertex_buffer2_.addBuffer(output_data.length_along, num_points_, 1);
 
     delete[] output_data.p0;
     delete[] output_data.p1;
@@ -153,9 +114,9 @@ void Plot2D::render()
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "half_line_width"),
                 line_width_ / 600.0f);
     glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "use_dash"), 0);
-    glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_TRIANGLES, 0, num_points_);
-    glBindVertexArray(0);
+
+    vertex_buffer2_.render(num_points_);
+
     shader_collection_.basic_plot_shader.use();
 }
 

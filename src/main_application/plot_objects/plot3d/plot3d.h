@@ -8,14 +8,14 @@
 #include "main_application/plot_objects/utils.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/vertex_buffer.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 
 class Plot3D : public PlotObjectBase
 {
 public:
 private:
-    GLuint idx_buffer_;
-    GLuint p0_vertex_buffer_, p1_vertex_buffer_, p2_vertex_buffer_;
+    VertexBuffer vertex_buffer2_;
 
     size_t num_points_;
 

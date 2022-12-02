@@ -46,7 +46,7 @@ public:
 
     template <typename T> void addBuffer(const T* const data, const size_t num_elements, const uint8_t num_dimensions)
     {
-        static_assert(std::is_same<T, float>::value || std::is_same<T, int>::value,
+        static_assert(std::is_same<T, float>::value || std::is_same<T, int>::value || std::is_same<T, int32_t>::value,
                       "Only float and int supported for now!");
         vertex_buffers_.push_back(1);
         const int idx = static_cast<int>(vertex_buffers_.size()) - 1;
@@ -60,36 +60,14 @@ public:
         {
             glVertexAttribPointer(idx, num_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
         }
-        else if (std::is_same<T, int>::value)
+        else if (std::is_same<T, int>::value || std::is_same<T, int32_t>::value)
         {
             glVertexAttribIPointer(idx, num_dimensions, GL_INT, 0, 0);
         }
-    }
-
-    void addFloatBuffer(const void* const data, const size_t num_bytes, const uint8_t num_dimensions)
-    {
-        vertex_buffers_.push_back(1);
-        const int idx = static_cast<int>(vertex_buffers_.size()) - 1;
-
-        glGenBuffers(1, vertex_buffers_.data() + idx);
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffers_[idx]);
-        glBufferData(GL_ARRAY_BUFFER, num_bytes, data, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(idx);
-        glVertexAttribPointer(idx, num_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
-    }
-
-    void addIntBuffer(const uint8_t* const data, const size_t num_bytes, const uint8_t num_dimensions)
-    {
-        vertex_buffers_.push_back(1);
-        const int idx = static_cast<int>(vertex_buffers_.size()) - 1;
-
-        glGenBuffers(1, vertex_buffers_.data() + idx);
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffers_[idx]);
-        glBufferData(GL_ARRAY_BUFFER, num_bytes, data, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(idx);
-        glVertexAttribIPointer(idx, num_dimensions, GL_INT, 0, 0);
+        else
+        {
+            throw std::runtime_error("Shouldn't end up here!");
+        }
     }
 
     void render(const size_t num_elements) const
