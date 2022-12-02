@@ -22,7 +22,7 @@ OutputData convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
 DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
                    const CommunicationHeader& hdr,
                    const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection), vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
 {
     if ((type_ != Function::DRAW_MESH) && (type_ != Function::DRAW_MESH_SEPARATE_VECTORS))
     {
@@ -50,30 +50,15 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
 
     interpolate_colormap_ = true;
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_indices_ * 3 * 3, points_ptr_, GL_STATIC_DRAW);
+    num_elements_to_render_ = num_indices_ * 3;
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
+    vertex_buffer2_.addBuffer(normals_ptr_, num_elements_to_render_, 3);
+    vertex_buffer2_.addBuffer(mean_height_ptr_, num_elements_to_render_, 1);
 
-    glGenBuffers(1, &normals_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_indices_ * 3 * 3, normals_ptr_, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &mean_height_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, mean_height_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_indices_ * 3, mean_height_ptr_, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, mean_height_vertex_buffer_);
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    delete[] points_ptr_;
+    delete[] normals_ptr_;
+    delete[] mean_height_ptr_;
 }
 
 bool DrawMesh::affectsColormapMinMax() const
@@ -138,25 +123,19 @@ void DrawMesh::render()
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 
-    glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);
+    vertex_buffer2_.render(num_elements_to_render_);
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawArrays(GL_TRIANGLES, 0, num_elements_ * 3);
+    vertex_buffer2_.render(num_elements_to_render_);
 
-    glBindVertexArray(0);
     glDisable(GL_BLEND);
 
     shader_collection_.basic_plot_shader.use();
 }
 
-DrawMesh::~DrawMesh()
-{
-    delete[] points_ptr_;
-    delete[] normals_ptr_;
-}
+DrawMesh::~DrawMesh() {}
 
 template <typename T>
 OutputData convertVerticesData(uint8_t* input_data,

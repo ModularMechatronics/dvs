@@ -559,20 +559,6 @@ template <typename... Us> void setPlotProperties(const internal::PlotSlot slot, 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void setCurrentElement(const std::string& name,
-                              const ElementType element_type,
-                              const std::string& parent_name = "#DEFAULTNAME#",
-                              const ElementParent element_parent = ElementParent::TAB)
-{
-    internal::CommunicationHeader hdr{internal::Function::CREATE_NEW_ELEMENT};
-    hdr.append(internal::CommunicationHeaderObjectType::PARENT_NAME, properties::Name(parent_name.c_str()));
-    hdr.append(internal::CommunicationHeaderObjectType::GUI_ELEMENT_TYPE, element_type);
-    hdr.append(internal::CommunicationHeaderObjectType::PARENT_TYPE, element_parent);
-    hdr.append(internal::CommunicationHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
-
-    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
-}
-
 inline void setCurrentElement(const std::string& name)
 {
     internal::CommunicationHeader hdr{internal::Function::SET_CURRENT_ELEMENT};
@@ -661,7 +647,7 @@ inline void clearView()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void disableAutomaticAxesSetting()
+inline void disableAutomaticAxesAdjustment()
 {
     internal::CommunicationHeader hdr{internal::Function::DISABLE_AXES_FROM_MIN_MAX};
 
