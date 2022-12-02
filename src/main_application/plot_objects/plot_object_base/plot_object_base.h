@@ -33,6 +33,7 @@ protected:
     size_t num_data_bytes_;
     uint64_t num_bytes_for_one_vec_;
     uint8_t* data_ptr_;
+    bool has_color_;
 
     GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
 

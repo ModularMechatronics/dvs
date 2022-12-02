@@ -1,6 +1,7 @@
 #ifndef DVS_BASE_TYPES_H_
 #define DVS_BASE_TYPES_H_
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "dvs/enumerations.h"
@@ -19,6 +20,14 @@ struct Dimension2D
 };
 
 }  // namespace internal
+
+struct RGB888
+{
+    uint8_t red, green, blue;
+
+    RGB888() {}
+    RGB888(const uint8_t red_, const uint8_t green_, const uint8_t blue_) : red{red_}, green{green_}, blue{blue_} {}
+};
 
 }  // namespace dvs
 

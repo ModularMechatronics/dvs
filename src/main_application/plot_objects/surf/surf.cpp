@@ -5,12 +5,25 @@ struct OutputData
     float* points_ptr;
     float* normals_ptr;
     float* mean_height_ptr;
+    float* color_ptr;
+};
+
+struct InputParams
+{
+    Dimension2D dims;
+    size_t num_bytes_for_one_vec;
+    bool has_color;
+
+    InputParams() = default;
+    InputParams(const Dimension2D dims_, const size_t num_bytes_for_one_vec_, const bool has_color_)
+        : dims{dims_}, num_bytes_for_one_vec{num_bytes_for_one_vec_}, has_color{has_color_}
+    {
+    }
 };
 
 inline OutputData convertMatrixDataOuter(uint8_t* input_data,
                                          const DataType data_type,
-                                         const Dimension2D dims,
-                                         const size_t num_bytes_for_one_vec);
+                                         const InputParams& input_params);
 
 Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
            const CommunicationHeader& hdr,
@@ -24,7 +37,9 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
 
     dims_ = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
 
-    OutputData output_data = convertMatrixDataOuter(data_ptr_, data_type_, dims_, num_bytes_for_one_vec_);
+    const InputParams input_params{dims_, num_bytes_for_one_vec_, has_color_};
+    OutputData output_data = convertMatrixDataOuter(data_ptr_, data_type_, input_params);
+
     points_ptr_ = output_data.points_ptr;
     normals_ptr_ = output_data.normals_ptr;
     mean_height_ptr_ = output_data.mean_height_ptr;
@@ -60,6 +75,10 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
     findMinMax();
+
+    delete[] points_ptr_;
+    delete[] normals_ptr_;
+    delete[] mean_height_ptr_;
 }
 
 void Surf::findMinMax()
@@ -127,12 +146,7 @@ void Surf::render()
     shader_collection_.basic_plot_shader.use();
 }
 
-Surf::~Surf()
-{
-    delete[] points_ptr_;
-    delete[] normals_ptr_;
-    delete[] mean_height_ptr_;
-}
+Surf::~Surf() {}
 
 LegendProperties Surf::getLegendProperties() const
 {
@@ -154,14 +168,17 @@ LegendProperties Surf::getLegendProperties() const
     return lp;
 }
 
-template <typename T>
-OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const size_t num_bytes_for_one_vec)
+template <typename T> OutputData convertMatrixData(uint8_t* input_data, const InputParams& input_params)
 {
-    const MatrixView<T> x{reinterpret_cast<T*>(input_data), dims.rows, dims.cols},
-        y{reinterpret_cast<T*>(&(input_data[num_bytes_for_one_vec])), dims.rows, dims.cols},
-        z{reinterpret_cast<T*>(&(input_data[2 * num_bytes_for_one_vec])), dims.rows, dims.cols};
+    const MatrixView<T> x{reinterpret_cast<T*>(input_data), input_params.dims.rows, input_params.dims.cols},
+        y{reinterpret_cast<T*>(&(input_data[input_params.num_bytes_for_one_vec])),
+          input_params.dims.rows,
+          input_params.dims.cols},
+        z{reinterpret_cast<T*>(&(input_data[2 * input_params.num_bytes_for_one_vec])),
+          input_params.dims.rows,
+          input_params.dims.cols};
 
-    const size_t new_data_size = (dims.rows - 1) * (dims.cols - 1) * 6 * 3;
+    const size_t new_data_size = (input_params.dims.rows - 1) * (input_params.dims.cols - 1) * 6 * 3;
 
     OutputData output_data;
     output_data.points_ptr = new float[new_data_size];
@@ -169,9 +186,9 @@ OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const 
     output_data.mean_height_ptr = new float[new_data_size / 3];
 
     size_t idx = 0, mean_height_idx = 0;
-    for (size_t r = 0; r < (dims.rows - 1); r++)
+    for (size_t r = 0; r < (input_params.dims.rows - 1); r++)
     {
-        for (size_t c = 0; c < (dims.cols - 1); c++)
+        for (size_t c = 0; c < (input_params.dims.cols - 1); c++)
         {
             const size_t idx0_x = idx;
             const size_t idx0_y = idx + 1;
@@ -272,51 +289,48 @@ OutputData convertMatrixData(uint8_t* input_data, const Dimension2D dims, const 
     return output_data;
 }
 
-OutputData convertMatrixDataOuter(uint8_t* input_data,
-                                  const DataType data_type,
-                                  const Dimension2D dims,
-                                  const size_t num_bytes_for_one_vec)
+OutputData convertMatrixDataOuter(uint8_t* input_data, const DataType data_type, const InputParams& input_params)
 {
     OutputData output_data;
     if (data_type == DataType::FLOAT)
     {
-        output_data = convertMatrixData<float>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<float>(input_data, input_params);
     }
     else if (data_type == DataType::DOUBLE)
     {
-        output_data = convertMatrixData<double>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<double>(input_data, input_params);
     }
     else if (data_type == DataType::INT8)
     {
-        output_data = convertMatrixData<int8_t>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<int8_t>(input_data, input_params);
     }
     else if (data_type == DataType::INT16)
     {
-        output_data = convertMatrixData<int16_t>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<int16_t>(input_data, input_params);
     }
     else if (data_type == DataType::INT32)
     {
-        output_data = convertMatrixData<int32_t>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<int32_t>(input_data, input_params);
     }
     else if (data_type == DataType::INT64)
     {
-        output_data = convertMatrixData<int64_t>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<int64_t>(input_data, input_params);
     }
     else if (data_type == DataType::UINT8)
     {
-        output_data = convertMatrixData<uint8_t>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<uint8_t>(input_data, input_params);
     }
     else if (data_type == DataType::UINT16)
     {
-        output_data = convertMatrixData<uint16_t>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<uint16_t>(input_data, input_params);
     }
     else if (data_type == DataType::UINT32)
     {
-        output_data = convertMatrixData<uint32_t>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<uint32_t>(input_data, input_params);
     }
     else if (data_type == DataType::UINT64)
     {
-        output_data = convertMatrixData<uint64_t>(input_data, dims, num_bytes_for_one_vec);
+        output_data = convertMatrixData<uint64_t>(input_data, input_params);
     }
     else
     {

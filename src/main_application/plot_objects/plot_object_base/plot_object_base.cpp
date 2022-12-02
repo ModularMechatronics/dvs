@@ -86,6 +86,8 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
         slot_ = internal::PlotSlot::UNKNOWN;
     }
 
+    has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
+
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
     /*if((num_dimensions_ * num_bytes_for_one_vec_) != num_data_bytes_)

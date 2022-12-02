@@ -17,10 +17,28 @@ void testWithVectorView()
     const VectorView<double> xv = x.view();
     const VectorView<double> yv = y.view();
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     plot(x, y, properties::Color::Blue());
     scatter(xv, yv, properties::Color::Red());
+}
+
+void testWithColorVec()
+{
+    const size_t num_elements = 100;
+    const Vector<double> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
+    const Vector<double> y = dvs::sin(x);
+    Vector<RGB888> color(num_elements);
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const uint8_t k8 = k;
+        color(k) = RGB888{k8, static_cast<uint8_t>(255U - k8), static_cast<uint8_t>(127U + k8 * 2U)};
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    scatter(x, y, color, properties::PointSize(20));
 }
 
 }  // namespace scatter2

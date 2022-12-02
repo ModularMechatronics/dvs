@@ -37,10 +37,12 @@ int main(int argc, char* argv[])
     StringFunctionMap plot3_functions{{"view", plot3_ns::testWithVectorView}};
 
     // ######################### scatter #######################
-    StringFunctionMap scatter2_functions{{"view", scatter2::testWithVectorView}};
+    StringFunctionMap scatter2_functions{{"view", scatter2::testWithVectorView},
+                                         {"color_vec", scatter2::testWithColorVec}};
 
     // ######################### scatter3 ######################
-    StringFunctionMap scatter3_functions{{"view", scatter3_ns::testWithVectorView}};
+    StringFunctionMap scatter3_functions{{"view", scatter3_ns::testWithVectorView},
+                                         {"color_vec", scatter3_ns::testWithColorVec}};
 
     // ######################### surf ##########################
     StringFunctionMap surf_functions{{"view", surf_ns::testWithMatrixView}};
