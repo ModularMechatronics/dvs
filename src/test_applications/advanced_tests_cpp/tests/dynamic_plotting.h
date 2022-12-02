@@ -179,7 +179,7 @@ void test3DFunctionManualInteraction()
 
     setCurrentElement("p_view_0");
     clearView();
-    disableAutomaticAxesSetting();
+    disableAutomaticAxesAdjustment();
 
     double t = 0.0;
     const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0, 5.0, num_elements);
