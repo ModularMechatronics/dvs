@@ -28,7 +28,7 @@ inline OutputData convertMatrixDataOuter(uint8_t* input_data,
 Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
            const CommunicationHeader& hdr,
            const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, shader_collection), vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::SURF)
     {
@@ -44,35 +44,11 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     normals_ptr_ = output_data.normals_ptr;
     mean_height_ptr_ = output_data.mean_height_ptr;
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
+    num_elements_to_render_ = (dims_.rows - 1) * (dims_.cols - 1) * 6;
 
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(
-        GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), points_ptr_, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &normals_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
-    glBufferData(
-        GL_ARRAY_BUFFER, sizeof(float) * 3 * 6 * (dims_.rows - 1) * (dims_.cols - 1), normals_ptr_, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, normals_vertex_buffer_);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &mean_height_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, mean_height_vertex_buffer_);
-    glBufferData(
-        GL_ARRAY_BUFFER, sizeof(float) * (dims_.rows - 1) * (dims_.cols - 1) * 3 * 2, mean_height_ptr_, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, mean_height_vertex_buffer_);
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
+    vertex_buffer2_.addBuffer(normals_ptr_, num_elements_to_render_, 3);
+    vertex_buffer2_.addBuffer(mean_height_ptr_, num_elements_to_render_, 1);
 
     findMinMax();
 
@@ -132,15 +108,13 @@ void Surf::render()
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 
-    glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_TRIANGLES, 0, (dims_.rows - 1) * (dims_.cols - 1) * 6);
+    vertex_buffer2_.render(num_elements_to_render_);
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawArrays(GL_TRIANGLES, 0, (dims_.rows - 1) * (dims_.cols - 1) * 6);
+    vertex_buffer2_.render(num_elements_to_render_);
 
-    glBindVertexArray(0);
     glDisable(GL_BLEND);
 
     shader_collection_.basic_plot_shader.use();
