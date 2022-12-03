@@ -4,9 +4,11 @@ out vec4 color;
 in vec3 colormap_color;
 flat in vec3 flat_colormap_color;
 uniform int color_map_selection;
+uniform int has_color_vec;
 
 uniform vec3 edge_color;
 uniform vec3 face_color;
+flat in vec3 individual_color;
 in vec4 coord_out;
 in vec3 frag_pos;
 in vec3 frag_normal;
@@ -76,6 +78,10 @@ void main()
                object_color = flat_colormap_color;
             }
          }
+         else if(has_color_vec == int(1))
+         {
+            object_color = individual_color;
+         }
          else
          {
             object_color = face_color;
@@ -91,6 +97,10 @@ void main()
       if(has_face_color == int(0))
       {
          discard;
+      }
+      else if(has_color_vec == int(1))
+      {
+         object_color = individual_color;
       }
       else if(color_map_selection > 0)
       {

@@ -5,6 +5,7 @@ uniform mat4 rotation_mat;
 layout(location = 0) in vec3 in_vertex;
 layout(location = 1) in vec3 in_normal;
 layout(location = 2) in float mean_height;
+layout(location = 3) in vec3 in_color;
 uniform vec3 vertex_color;
 uniform float min_z;
 uniform float max_z;
@@ -12,6 +13,7 @@ uniform int color_map_selection;
 uniform int interpolate_colormap;
 
 flat out vec3 flat_colormap_color;
+flat out vec3 individual_color;
 out vec3 colormap_color;
 out vec3 frag_normal;
 out vec4 coord_out;
@@ -276,6 +278,8 @@ void main()
 {
     gl_Position = model_view_proj_mat * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
     coord_out = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
+
+    individual_color = in_color;
 
     if(color_map_selection > 0)
     {
