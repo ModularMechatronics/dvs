@@ -115,6 +115,16 @@ void PlotObjectBase::assignProperties(const Properties& props)
     line_width_ = props.getPropertyOrValue<LineWidth>(1.0f);
     point_size_ = props.getPropertyOrValue<PointSize>(10.0f);
 
+    if (props.hasProperty(PropertyType::DISTANCE_FROM))
+    {
+        distance_from_ = props.getProperty<DistanceFrom>();
+        has_distance_from_ = true;
+    }
+    else
+    {
+        has_distance_from_ = false;
+    }
+
     if (props.hasProperty(PropertyType::NAME))
     {
         name_ = props.getProperty<Name>();

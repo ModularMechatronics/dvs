@@ -165,7 +165,6 @@ void testScatter3()
     setCurrentElement("p_view_0");
     clearView();
 
-    axis({-128.0, -128.0, -128.0}, {128.0, 128.0, 128.0});
     plot3(x, y, z, properties::Color(255, 14, 255), properties::LineWidth(1));
     scatter3(x, y, z, properties::Color(12, 14, 55));
     scatter3(x, y, z + 1.0, properties::Color::Black(), properties::PointSize(11));
@@ -173,6 +172,44 @@ void testScatter3()
     scatter3(x, y, z + 3.0, properties::Color::Magenta(), properties::PointSize(13), properties::ScatterStyle::Disc());
     scatter3(x, y, z + 4.0, properties::Color::Blue(), properties::PointSize(14), properties::ScatterStyle::Plus());
     scatter3(x, y, z + 5.0, properties::Color::Red(), properties::PointSize(14), properties::ScatterStyle::Cross());
+
+    const size_t new_num_elements = 500;
+
+    x.resize(new_num_elements);
+    y.resize(new_num_elements);
+    z.resize(new_num_elements);
+
+    for (size_t k = 0; k < new_num_elements; k++)
+    {
+        const float r = static_cast<float>(rand() % 1001) / 1000.0f;
+        const float theta = M_PI * static_cast<float>(rand() % 1001) / 1000.0f;
+        const float phi = 2.0f * M_PI * static_cast<float>(rand() % 1001) / 1000.0f;
+
+        const float xf = r * std::sin(theta) * std::cos(phi);
+        const float yf = r * std::sin(theta) * std::sin(phi);
+        const float zf = r * std::cos(theta);
+
+        // const float xf = 2.0f * static_cast<float>(rand() % 1001) / 1000.0f - 1.0f;
+        // const float yf = 2.0f * static_cast<float>(rand() % 1001) / 1000.0f - 1.0f;
+        // const float zf = 2.0f * static_cast<float>(rand() % 1001) / 1000.0f - 1.0f;
+
+        x(k) = (xf < 0) ? -xf : xf;
+        y(k) = yf;
+        z(k) = zf;
+    }
+
+    setCurrentElement("p_view_1");
+    clearView();
+
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    scatter3(x,
+             y,
+             z,
+             properties::DistanceFrom::x(0.0, 1.0),
+             properties::ColorMap::Jet(),
+             properties::PointSize(13),
+             properties::ScatterStyle::Circle());
 }
 
 void testPlotCollection()

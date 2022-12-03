@@ -849,10 +849,10 @@ void PlotPane::render(wxPaintEvent& evt)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // TODO: Move to keypressed? And deal with key hold...
-    /*if (keyboard_state_.keyIsPressed('p') || keyboard_state_.keyIsPressed('P'))
+    if (wxGetKeyState(static_cast<wxKeyCode>('v')) || wxGetKeyState(static_cast<wxKeyCode>('V')))
     {
         perspective_projection_ = !perspective_projection_;
-    }*/
+    }
 
     if (viewShouldBeReset(keyboard_state_))
     {

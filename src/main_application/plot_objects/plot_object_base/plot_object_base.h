@@ -34,6 +34,8 @@ protected:
     uint64_t num_bytes_for_one_vec_;
     uint8_t* data_ptr_;
     bool has_color_;
+    bool has_distance_from_;
+    DistanceFrom distance_from_;
 
     GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
 

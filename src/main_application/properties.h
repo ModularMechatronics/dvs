@@ -49,6 +49,10 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::BUFFER_SIZE;
     }
+    else if (std::is_same<T, dvs::properties::DistanceFrom>::value)
+    {
+        return dvs::internal::PropertyType::DISTANCE_FROM;
+    }
     else
     {
         throw std::runtime_error("Invalid property template!");
