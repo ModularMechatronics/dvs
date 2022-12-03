@@ -53,6 +53,7 @@ enum class PropertyType : uint8_t
     LINE_WIDTH,
     ALPHA,
     NAME,
+    DISTANCE_FROM,
     LINE_STYLE,
     COLOR,
     EDGE_COLOR,
@@ -185,6 +186,17 @@ enum class ElementParent : uint8_t
     TAB,
     WINDOW,
     UNKNOWN
+};
+
+enum DistanceFromType : uint8_t
+{
+    X,
+    Y,
+    Z,
+    XY,
+    XZ,
+    YZ,
+    XYZ
 };
 
 }  // namespace dvs
