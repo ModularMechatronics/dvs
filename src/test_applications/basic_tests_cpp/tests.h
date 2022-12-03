@@ -7,12 +7,72 @@
 
 using namespace dvs;
 
+RGB888 colorMapJet(const float value)
+{
+    float _val = value;
+    if (_val < 0.0)
+    {
+        _val = 0.0;
+    }
+    else if (_val >= 1.0)
+    {
+        _val = 0.99999;
+    }
+
+    const float full_range_value = _val * 6.0;
+    const float integer_part = std::floor(full_range_value);
+    const float fraction_part = full_range_value - integer_part;
+
+    float r = 0.0, g = 0.0, b = 0.0;
+
+    switch (static_cast<int>(integer_part))
+    {
+        case 0:
+            r = 0.07450980392156863 + fraction_part * 0.11372549019607843;
+            g = fraction_part * 0.047058823529411764;
+            b = 0.51 + fraction_part * 0.48235294117647065;
+            break;
+        case 1:
+            r = 0.18823529411764706 + fraction_part * 0.0784313725490196;
+            g = 0.047058823529411764 + fraction_part * 0.8509803921568628;
+            b = 0.9923529411764707 - fraction_part * 0.03137254901960784;
+            break;
+        case 2:
+            r = 0.26666666666666666 + fraction_part * 0.3137254901960785;
+            g = 0.8980392156862745 + fraction_part * 0.10196078431372546;
+            b = 0.9609803921568628 - fraction_part * 0.5372549019607844;
+            break;
+        case 3:
+            r = 0.5803921568627451 + fraction_part * 0.3999999999999999;
+            g = 1.0 - fraction_part * 0.196078431372549;
+            b = 0.4237254901960784 - fraction_part * 0.2901960784313725;
+            break;
+        case 4:
+            r = 0.9803921568627451 - fraction_part * 0.0117647058823529;
+            g = 0.803921568627451 - fraction_part * 0.611764705882353;
+            b = 0.13352941176470587 - fraction_part * 0.05098039215686273;
+            break;
+        case 5:
+            r = 0.9686274509803922 - fraction_part * 0.47058823529411764;
+            g = 0.19215686274509805 - fraction_part * 0.19215686274509805;
+            b = 0.08254901960784314 - fraction_part * 0.06274509803921569;
+            break;
+    }
+
+    return RGB888(static_cast<uint8_t>(r * 255.0f), static_cast<uint8_t>(g * 255.0f), static_cast<uint8_t>(b * 255.0f));
+}
+
 void testSurf()
 {
-    const int num_rows = 20, num_cols = 25;
+    const int num_rows = 200, num_cols = 250;
     Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+    Matrix<RGB888> color(num_rows, num_cols);
 
     const double inc = 0.4;
+    const float nr = (num_rows - 100U);
+    const float nc = (num_cols - 100U);
+    const float mul = 1.0f / (std::sqrt(nr * nr + nc * nc));
+
     for (int r = 0; r < num_rows; r++)
     {
         for (int c = 0; c < num_cols; c++)
@@ -21,7 +81,10 @@ void testSurf()
             const double cd = static_cast<double>(c - 5) * inc * 2;
             x(r, c) = c;
             y(r, c) = r;
-            z(r, c) = 50.0 * std::sin(std::sqrt(rd * rd + cd * cd));
+            const float r_val = std::sqrt(rd * rd + cd * cd);
+            z(r, c) = 50.0 * std::sin(r_val * 0.05);
+
+            color(r, c) = colorMapJet(r_val * mul);
         }
     }
 
@@ -36,6 +99,10 @@ void testSurf()
     setCurrentElement("p_view_2");
     clearView();
     surf(x, y, z, properties::EdgeColor::None(), properties::ColorMap::Jet(), properties::INTERPOLATE_COLORMAP);
+
+    setCurrentElement("w1_p_view_0");
+    clearView();
+    surf(x, y, z, color, properties::EdgeColor::None(), properties::ColorMap::Jet());
 }
 
 void testScatter()
@@ -275,6 +342,7 @@ void testPlot()
 
     const size_t num_points = 7;
     Vector<float> xp(num_points), yp(num_points), zp(num_points);
+    Vector<RGB888> colorp(num_points);
 
     for (size_t k = 0; k < num_points; k++)
     {
@@ -298,10 +366,18 @@ void testPlot()
     yp(5) = 2.0;
     yp(6) = 2.0;
 
+    colorp(0) = RGB888{255, 0, 0};
+    colorp(1) = RGB888{255, 255, 0};
+    colorp(2) = RGB888{255, 0, 255};
+    colorp(3) = RGB888{0, 255, 0};
+    colorp(4) = RGB888{0, 255, 255};
+    colorp(5) = RGB888{0, 0, 0};
+    colorp(6) = RGB888{0, 0, 255};
+
     zp.fill(0.01f);
 
     axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    plot(xp, yp, properties::LineWidth(20), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
+    plot(xp, yp, colorp, properties::LineWidth(20), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
@@ -361,12 +437,15 @@ void testPlot()
     x.resize(num_elements * 10);
     y.resize(num_elements * 10);
     z.resize(num_elements * 10);
+    Vector<RGB888> color(num_elements * 10);
 
     for (size_t k = 0; k < (num_elements * 10); k++)
     {
         x(k) = 10.0f * cos(t) + 20.0f;
         y(k) = 10.0f * sin(t) + 20.0f + static_cast<float>(k) / 10.0f;
         z(k) = 0.01f;
+
+        color(k) = colorMapJet(static_cast<float>(k) / static_cast<float>(num_elements * 10U - 1U));
 
         t = t + 0.03;
     }
@@ -375,7 +454,12 @@ void testPlot()
     plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::LineWidth(1));
     plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
     plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
-    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
+    plot(x + 6.0f,
+         y,
+         color,
+         properties::Color(212, 14, 255),
+         properties::LineWidth(7),
+         properties::LineStyle::LongDashed());
 }
 
 void testFastPlot()

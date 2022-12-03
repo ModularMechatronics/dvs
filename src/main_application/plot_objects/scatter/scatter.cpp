@@ -3,7 +3,7 @@
 struct OutputData
 {
     float* points_ptr;
-    float* color_ptr;
+    float* color_data;
 };
 
 struct InputParams
@@ -47,9 +47,9 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data,
 
     if (has_color_)
     {
-        vertex_buffer2_.addBuffer(output_data.color_ptr, num_elements_, 3);
+        vertex_buffer2_.addBuffer(output_data.color_data, num_elements_, 3);
 
-        delete[] output_data.color_ptr;
+        delete[] output_data.color_data;
     }
 
     delete[] output_data.points_ptr;
@@ -120,15 +120,15 @@ template <typename T> OutputData convertDataScatter2D(const uint8_t* const input
     {
         const RGB888* const input_data_rgb =
             reinterpret_cast<const RGB888* const>(input_data_dt_x + 2U * input_params.num_elements);
-        output_data.color_ptr = new float[3 * input_params.num_elements];
+        output_data.color_data = new float[3 * input_params.num_elements];
 
         idx = 0;
 
         for (size_t k = 0; k < input_params.num_elements; k++)
         {
-            output_data.color_ptr[idx] = static_cast<float>(input_data_rgb[k].red) / 255.0f;
-            output_data.color_ptr[idx + 1] = static_cast<float>(input_data_rgb[k].green) / 255.0f;
-            output_data.color_ptr[idx + 2] = static_cast<float>(input_data_rgb[k].blue) / 255.0f;
+            output_data.color_data[idx] = static_cast<float>(input_data_rgb[k].red) / 255.0f;
+            output_data.color_data[idx + 1] = static_cast<float>(input_data_rgb[k].green) / 255.0f;
+            output_data.color_data[idx + 2] = static_cast<float>(input_data_rgb[k].blue) / 255.0f;
 
             idx += 3;
         }

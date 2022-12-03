@@ -5,7 +5,7 @@ struct OutputData
     float* points_ptr;
     float* normals_ptr;
     float* mean_height_ptr;
-    float* color_ptr;
+    float* color_data;
 };
 
 struct InputParams
@@ -50,6 +50,13 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     vertex_buffer2_.addBuffer(normals_ptr_, num_elements_to_render_, 3);
     vertex_buffer2_.addBuffer(mean_height_ptr_, num_elements_to_render_, 1);
 
+    if (has_color_)
+    {
+        vertex_buffer2_.addBuffer(output_data.color_data, num_elements_to_render_, 3);
+
+        delete[] output_data.color_data;
+    }
+
     findMinMax();
 
     delete[] points_ptr_;
@@ -93,17 +100,29 @@ void Surf::render()
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"),
                 static_cast<int>(has_face_color_));
 
-    if (color_map_set_)
+    if (has_color_)
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
-                    static_cast<int>(color_map_) + 1);
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), 1);
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"),
-                    static_cast<int>(interpolate_colormap_));
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_color_vec"),
+                    static_cast<int>(1));
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), 0);
     }
     else
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), 0);
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_color_vec"),
+                    static_cast<int>(0));
+        if (color_map_set_)
+        {
+            glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
+                        static_cast<int>(color_map_) + 1);
+            glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), 1);
+            glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"),
+                        static_cast<int>(interpolate_colormap_));
+        }
+        else
+        {
+            glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
+                        0);
+        }
     }
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
@@ -257,6 +276,49 @@ template <typename T> OutputData convertMatrixData(uint8_t* input_data, const In
             output_data.mean_height_ptr[mean_height_idx + 4] = z_m;
             output_data.mean_height_ptr[mean_height_idx + 5] = z_m;
             mean_height_idx += 6;
+        }
+    }
+
+    if (input_params.has_color)
+    {
+        const MatrixView<RGB888> colors{
+            reinterpret_cast<RGB888*>(&(input_data[3 * input_params.num_bytes_for_one_vec])),
+            input_params.dims.rows,
+            input_params.dims.cols};
+
+        output_data.color_data = new float[new_data_size];
+
+        size_t idx = 0;
+        for (size_t r = 0; r < (input_params.dims.rows - 1); r++)
+        {
+            for (size_t c = 0; c < (input_params.dims.cols - 1); c++)
+            {
+                output_data.color_data[idx] = static_cast<float>(colors(r, c).red) / 255.0f;
+                output_data.color_data[idx + 1] = static_cast<float>(colors(r, c).green) / 255.0f;
+                output_data.color_data[idx + 2] = static_cast<float>(colors(r, c).blue) / 255.0f;
+
+                output_data.color_data[idx + 3] = static_cast<float>(colors(r + 1, c).red) / 255.0f;
+                output_data.color_data[idx + 4] = static_cast<float>(colors(r + 1, c).green) / 255.0f;
+                output_data.color_data[idx + 5] = static_cast<float>(colors(r + 1, c).blue) / 255.0f;
+
+                output_data.color_data[idx + 6] = static_cast<float>(colors(r + 1, c + 1).red) / 255.0f;
+                output_data.color_data[idx + 7] = static_cast<float>(colors(r + 1, c + 1).green) / 255.0f;
+                output_data.color_data[idx + 8] = static_cast<float>(colors(r + 1, c + 1).blue) / 255.0f;
+
+                output_data.color_data[idx + 9] = static_cast<float>(colors(r, c).red) / 255.0f;
+                output_data.color_data[idx + 10] = static_cast<float>(colors(r, c).green) / 255.0f;
+                output_data.color_data[idx + 11] = static_cast<float>(colors(r, c).blue) / 255.0f;
+
+                output_data.color_data[idx + 12] = static_cast<float>(colors(r, c + 1).red) / 255.0f;
+                output_data.color_data[idx + 13] = static_cast<float>(colors(r, c + 1).green) / 255.0f;
+                output_data.color_data[idx + 14] = static_cast<float>(colors(r, c + 1).blue) / 255.0f;
+
+                output_data.color_data[idx + 15] = static_cast<float>(colors(r + 1, c + 1).red) / 255.0f;
+                output_data.color_data[idx + 16] = static_cast<float>(colors(r + 1, c + 1).green) / 255.0f;
+                output_data.color_data[idx + 17] = static_cast<float>(colors(r + 1, c + 1).blue) / 255.0f;
+
+                idx = idx + 18;
+            }
         }
     }
 

@@ -14,6 +14,7 @@ struct OutputData
     float* p2;
     float* length_along;
     int32_t* idx_data;
+    float* color_data;
     size_t num_points;
 };
 
@@ -22,12 +23,17 @@ struct InputParams
     size_t num_elements;
     size_t num_bytes_per_element;
     size_t num_bytes_for_one_vec;
+    bool has_color;
 
     InputParams() = default;
-    InputParams(const size_t num_elements_, const size_t num_bytes_per_element_, const size_t num_bytes_for_one_vec_)
+    InputParams(const size_t num_elements_,
+                const size_t num_bytes_per_element_,
+                const size_t num_bytes_for_one_vec_,
+                const bool has_color_)
         : num_elements{num_elements_},
           num_bytes_per_element{num_bytes_per_element_},
-          num_bytes_for_one_vec{num_bytes_for_one_vec_}
+          num_bytes_for_one_vec{num_bytes_for_one_vec_},
+          has_color{has_color_}
     {
     }
 };
@@ -54,7 +60,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_};
+    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
 
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
@@ -86,6 +92,13 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     vertex_buffer2_.addBuffer(output_data.idx_data, num_points_, 1);
     vertex_buffer2_.addBuffer(output_data.length_along, num_points_, 1);
 
+    if (has_color_)
+    {
+        vertex_buffer2_.addBuffer(output_data.color_data, num_points_, 3);
+
+        delete[] output_data.color_data;
+    }
+
     delete[] output_data.p0;
     delete[] output_data.p1;
     delete[] output_data.p2;
@@ -114,6 +127,17 @@ void Plot2D::render()
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "half_line_width"),
                 line_width_ / 600.0f);
     glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "use_dash"), 0);
+
+    if (has_color_)
+    {
+        glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "has_color_vec"),
+                    static_cast<int>(1));
+    }
+    else
+    {
+        glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "has_color_vec"),
+                    static_cast<int>(0));
+    }
 
     vertex_buffer2_.render(num_points_);
 
@@ -498,6 +522,124 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.length_along[length_along_idx + 5] = la;
 
     delete[] length_along_tmp;
+
+    if (input_params.has_color)
+    {
+        const RGB888* const input_data_rgb =
+            reinterpret_cast<const RGB888* const>(input_data_dt + 2U * input_params.num_elements);
+        output_data.color_data = new float[3 * num_points];
+
+        idx = 0;
+
+        for (size_t k = 1; k < input_params.num_elements - 1; k++)
+        {
+            const RGBTripletf color_k{static_cast<float>(input_data_rgb[k].red) / 255.0f,
+                                      static_cast<float>(input_data_rgb[k].green) / 255.0f,
+                                      static_cast<float>(input_data_rgb[k].blue) / 255.0f};
+
+            const RGBTripletf color_k_1{static_cast<float>(input_data_rgb[k - 1].red) / 255.0f,
+                                        static_cast<float>(input_data_rgb[k - 1].green) / 255.0f,
+                                        static_cast<float>(input_data_rgb[k - 1].blue) / 255.0f};
+            // v0
+            output_data.color_data[idx] = color_k_1.red;
+            output_data.color_data[idx + 1] = color_k_1.green;
+            output_data.color_data[idx + 2] = color_k_1.blue;
+
+            // v1
+            output_data.color_data[idx + 3] = color_k.red;
+            output_data.color_data[idx + 4] = color_k.green;
+            output_data.color_data[idx + 5] = color_k.blue;
+
+            // v2
+            output_data.color_data[idx + 6] = color_k.red;
+            output_data.color_data[idx + 7] = color_k.green;
+            output_data.color_data[idx + 8] = color_k.blue;
+
+            // v3
+            output_data.color_data[idx + 9] = color_k_1.red;
+            output_data.color_data[idx + 10] = color_k_1.green;
+            output_data.color_data[idx + 11] = color_k_1.blue;
+
+            // v4
+            output_data.color_data[idx + 12] = color_k.red;
+            output_data.color_data[idx + 13] = color_k.green;
+            output_data.color_data[idx + 14] = color_k.blue;
+
+            // v5
+            output_data.color_data[idx + 15] = color_k_1.red;
+            output_data.color_data[idx + 16] = color_k_1.green;
+            output_data.color_data[idx + 17] = color_k_1.blue;
+
+            // v6
+            output_data.color_data[idx + 18] = color_k.red;
+            output_data.color_data[idx + 19] = color_k.green;
+            output_data.color_data[idx + 20] = color_k.blue;
+
+            // v7
+            output_data.color_data[idx + 21] = color_k.red;
+            output_data.color_data[idx + 22] = color_k.green;
+            output_data.color_data[idx + 23] = color_k.blue;
+
+            // v8
+            output_data.color_data[idx + 24] = color_k.red;
+            output_data.color_data[idx + 25] = color_k.green;
+            output_data.color_data[idx + 26] = color_k.blue;
+
+            // v9
+            output_data.color_data[idx + 27] = color_k.red;
+            output_data.color_data[idx + 28] = color_k.green;
+            output_data.color_data[idx + 29] = color_k.blue;
+
+            // v10
+            output_data.color_data[idx + 30] = color_k.red;
+            output_data.color_data[idx + 31] = color_k.green;
+            output_data.color_data[idx + 32] = color_k.blue;
+
+            // v11
+            output_data.color_data[idx + 33] = color_k.red;
+            output_data.color_data[idx + 34] = color_k.green;
+            output_data.color_data[idx + 35] = color_k.blue;
+
+            idx += 36;
+        }
+
+        const RGBTripletf color_k{static_cast<float>(input_data_rgb[input_params.num_elements - 1].red) / 255.0f,
+                                  static_cast<float>(input_data_rgb[input_params.num_elements - 1].green) / 255.0f,
+                                  static_cast<float>(input_data_rgb[input_params.num_elements - 1].blue) / 255.0f};
+
+        const RGBTripletf color_k_1{static_cast<float>(input_data_rgb[input_params.num_elements - 2].red) / 255.0f,
+                                    static_cast<float>(input_data_rgb[input_params.num_elements - 2].green) / 255.0f,
+                                    static_cast<float>(input_data_rgb[input_params.num_elements - 2].blue) / 255.0f};
+        // v0
+        output_data.color_data[idx] = color_k_1.red;
+        output_data.color_data[idx + 1] = color_k_1.green;
+        output_data.color_data[idx + 2] = color_k_1.blue;
+
+        // v1
+        output_data.color_data[idx + 3] = color_k.red;
+        output_data.color_data[idx + 4] = color_k.green;
+        output_data.color_data[idx + 5] = color_k.blue;
+
+        // v2
+        output_data.color_data[idx + 6] = color_k.red;
+        output_data.color_data[idx + 7] = color_k.green;
+        output_data.color_data[idx + 8] = color_k.blue;
+
+        // v3
+        output_data.color_data[idx + 9] = color_k_1.red;
+        output_data.color_data[idx + 10] = color_k_1.green;
+        output_data.color_data[idx + 11] = color_k_1.blue;
+
+        // v4
+        output_data.color_data[idx + 12] = color_k.red;
+        output_data.color_data[idx + 13] = color_k.green;
+        output_data.color_data[idx + 14] = color_k.blue;
+
+        // v5
+        output_data.color_data[idx + 15] = color_k_1.red;
+        output_data.color_data[idx + 16] = color_k_1.green;
+        output_data.color_data[idx + 17] = color_k_1.blue;
+    }
 
     return output_data;
 }

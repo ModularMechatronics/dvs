@@ -7,8 +7,10 @@ layout(location = 1) in vec2 p1;
 layout(location = 2) in vec2 p2;
 layout(location = 3) in int idx;
 layout(location = 4) in float length_along;
+layout(location = 5) in vec3 in_color;
 uniform vec3 vertex_color;
 uniform float half_line_width;
+uniform int has_color_vec;
 
 out vec3 fragment_color;
 out vec4 coord_out;
@@ -212,7 +214,15 @@ void main()
 
     coord_out = vec4(op.x, op.y, op.z, 1.0);
 
-    fragment_color = vertex_color;
+    if(has_color_vec == int(1))
+    {
+        fragment_color = in_color;
+    }
+    else
+    {
+        fragment_color = vertex_color;
+    }
+
     fragment_pos     = gl_Position.xyz / gl_Position.w;
     theta = atan(vec_on_line_edge01.y, vec_on_line_edge01.x);
 
