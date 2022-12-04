@@ -430,12 +430,17 @@ class DistanceFrom : internal::PropertyBase
 {
 private:
     Vec3<double> pt_;
+    double min_dist_;
     double max_dist_;
     DistanceFromType dist_from_type_;
 
-    DistanceFrom(const Vec3<double>& pt, const double max_dist, const DistanceFromType dist_from_type)
+    DistanceFrom(const Vec3<double>& pt,
+                 const double min_dist,
+                 const double max_dist,
+                 const DistanceFromType dist_from_type)
         : internal::PropertyBase(internal::PropertyType::DISTANCE_FROM),
           pt_{pt},
+          min_dist_{min_dist},
           max_dist_{max_dist},
           dist_from_type_{dist_from_type}
     {
@@ -449,6 +454,11 @@ public:
         return pt_;
     }
 
+    double getMinDist() const
+    {
+        return min_dist_;
+    }
+
     double getMaxDist() const
     {
         return max_dist_;
@@ -459,39 +469,39 @@ public:
         return dist_from_type_;
     }
 
-        static DistanceFrom x(const double x_val, const double max_dist)
+    static DistanceFrom x(const double x_val, const double min_dist, const double max_dist)
     {
-        return DistanceFrom(Vec3<double>{x_val, 0.0, 0.0}, max_dist, DistanceFromType::X);
+        return DistanceFrom(Vec3<double>{x_val, 0.0, 0.0}, min_dist, max_dist, DistanceFromType::X);
     }
 
-    static DistanceFrom y(const double y_val, const double max_dist)
+    static DistanceFrom y(const double y_val, const double min_dist, const double max_dist)
     {
-        return DistanceFrom(Vec3<double>{0.0, y_val, 0.0}, max_dist, DistanceFromType::Y);
+        return DistanceFrom(Vec3<double>{0.0, y_val, 0.0}, min_dist, max_dist, DistanceFromType::Y);
     }
 
-    static DistanceFrom z(const double z_val, const double max_dist)
+    static DistanceFrom z(const double z_val, const double min_dist, const double max_dist)
     {
-        return DistanceFrom(Vec3<double>{0.0, 0.0, z_val}, max_dist, DistanceFromType::Z);
+        return DistanceFrom(Vec3<double>{0.0, 0.0, z_val}, min_dist, max_dist, DistanceFromType::Z);
     }
 
-    static DistanceFrom xy(const PointXY<double>& p, const double max_dist)
+    static DistanceFrom xy(const PointXY<double>& p, const double min_dist, const double max_dist)
     {
-        return DistanceFrom(Vec3<double>{p.x, p.y, 0.0}, max_dist, DistanceFromType::XY);
+        return DistanceFrom(Vec3<double>{p.x, p.y, 0.0}, min_dist, max_dist, DistanceFromType::XY);
     }
 
-    static DistanceFrom xz(const PointXZ<double>& p, const double max_dist)
+    static DistanceFrom xz(const PointXZ<double>& p, const double min_dist, const double max_dist)
     {
-        return DistanceFrom(Vec3<double>{p.x, 0.0, p.z}, max_dist, DistanceFromType::XZ);
+        return DistanceFrom(Vec3<double>{p.x, 0.0, p.z}, min_dist, max_dist, DistanceFromType::XZ);
     }
 
-    static DistanceFrom yz(const PointYZ<double>& p, const double max_dist)
+    static DistanceFrom yz(const PointYZ<double>& p, const double min_dist, const double max_dist)
     {
-        return DistanceFrom(Vec3<double>{0.0, p.y, p.z}, max_dist, DistanceFromType::YZ);
+        return DistanceFrom(Vec3<double>{0.0, p.y, p.z}, min_dist, max_dist, DistanceFromType::YZ);
     }
 
-    static DistanceFrom xyz(const Point3<double>& p, const double max_dist)
+    static DistanceFrom xyz(const Point3<double>& p, const double min_dist, const double max_dist)
     {
-        return DistanceFrom(p, max_dist, DistanceFromType::XYZ);
+        return DistanceFrom(p, min_dist, max_dist, DistanceFromType::XYZ);
     }
 };
 

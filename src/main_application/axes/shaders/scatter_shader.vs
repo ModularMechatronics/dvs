@@ -6,6 +6,7 @@ layout(location = 1) in vec3 in_color;
 uniform vec3 vertex_color;
 uniform vec3 distance_from_point;
 uniform float point_size;
+uniform float min_dist;
 uniform float max_dist;
 uniform int has_color_vec;
 uniform int distance_from_type;
@@ -312,29 +313,31 @@ void main()
             d = length(in_vertex - distance_from_point);
         }
 
+        float delta = max_dist - min_dist;
+
         if(color_map_selection == 1)
         {
-            fragment_color = calculateColormapJet(d / max_dist);
+            fragment_color = calculateColormapJet((d - min_dist) / delta);
         }
         else if(color_map_selection == 2)
         {
-            fragment_color = calculateColormapRainbow(d / max_dist);
+            fragment_color = calculateColormapRainbow((d - min_dist) / delta);
         }
         else if(color_map_selection == 3)
         {
-            fragment_color = calculateColormapMagma(d / max_dist);
+            fragment_color = calculateColormapMagma((d - min_dist) / delta);
         }
         else if(color_map_selection == 4)
         {
-            fragment_color = calculateColormapViridis(d / max_dist);
+            fragment_color = calculateColormapViridis((d - min_dist) / delta);
         }
         else if(color_map_selection == 5)
         {
-            fragment_color = calculateColormapRainbowPastel(d / max_dist);
+            fragment_color = calculateColormapRainbowPastel((d - min_dist) / delta);
         }
         else
         {
-            fragment_color = calculateColormapJet(d / max_dist);
+            fragment_color = calculateColormapJet((d - min_dist) / delta);
         }
     }
     else

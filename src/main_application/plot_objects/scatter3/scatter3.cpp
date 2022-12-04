@@ -74,6 +74,8 @@ void Scatter3D::modifyShader()
                     distance_from_.getPoint().x,
                     distance_from_.getPoint().y,
                     distance_from_.getPoint().z);
+        glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "min_dist"),
+                    distance_from_.getMinDist());
         glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "max_dist"),
                     distance_from_.getMaxDist());
         glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "has_distance_from"),
