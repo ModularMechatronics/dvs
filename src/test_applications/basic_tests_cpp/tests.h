@@ -158,12 +158,12 @@ void testScatter()
     setCurrentElement("p_view_1");
     clearView();
 
-    axis({-2.0, -2.0}, {2.0, 2.0});
+    axis({-1.0, -1.0}, {1.0, 1.0});
 
     scatter(x,
             y,
-            properties::DistanceFrom::xy({0.0, 0.0}, 1.0),
-            properties::ColorMap::Viridis(),
+            properties::DistanceFrom::xy({0.0, 0.0}, 0.0, 1.0),
+            properties::ColorMap::Rainbow(),
             properties::PointSize(13),
             properties::ScatterStyle::Circle());
 }
@@ -238,7 +238,7 @@ void testScatter3()
     scatter3(x,
              y,
              z,
-             properties::DistanceFrom::x(0.0, 1.0),
+             properties::DistanceFrom::x(0.0, 0.0, 1.0),
              properties::ColorMap::Jet(),
              properties::PointSize(13),
              properties::ScatterStyle::Circle());
