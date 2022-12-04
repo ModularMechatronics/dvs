@@ -134,6 +134,38 @@ void testScatter()
     scatter(x, y + 3.0, properties::Color::Magenta(), properties::PointSize(13), properties::ScatterStyle::Disc());
     scatter(x, y + 4.0, properties::Color::Blue(), properties::PointSize(14), properties::ScatterStyle::Plus());
     scatter(x, y + 5.0, properties::Color::Red(), properties::PointSize(14), properties::ScatterStyle::Cross());
+
+    const size_t new_num_elements = 500;
+
+    x.resize(new_num_elements);
+    y.resize(new_num_elements);
+
+    for (size_t k = 0; k < new_num_elements; k++)
+    {
+        const float r = static_cast<float>(rand() % 1001) / 1000.0f;
+        const float phi = 2.0f * M_PI * static_cast<float>(rand() % 1001) / 1000.0f;
+
+        const float xf = r * std::cos(phi);
+        const float yf = r * std::sin(phi);
+
+        // const float xf = 2.0f * static_cast<float>(rand() % 1001) / 1000.0f - 1.0f;
+        // const float yf = 2.0f * static_cast<float>(rand() % 1001) / 1000.0f - 1.0f;
+
+        x(k) = xf;
+        y(k) = yf;
+    }
+
+    setCurrentElement("p_view_1");
+    clearView();
+
+    axis({-2.0, -2.0}, {2.0, 2.0});
+
+    scatter(x,
+            y,
+            properties::DistanceFrom::xy({0.0, 0.0}, 1.0),
+            properties::ColorMap::Viridis(),
+            properties::PointSize(13),
+            properties::ScatterStyle::Circle());
 }
 
 void testScatter3()
