@@ -67,6 +67,23 @@ void Scatter2D::modifyShader()
         glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "has_color_vec"),
                     static_cast<int>(1));
     }
+    else if (has_distance_from_)
+    {
+        glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "distance_from_point"),
+                    distance_from_.getPoint().x,
+                    distance_from_.getPoint().y,
+                    distance_from_.getPoint().z);
+        glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "max_dist"),
+                    distance_from_.getMaxDist());
+        glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "has_distance_from"),
+                    static_cast<int>(1));
+        glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "distance_from_type"),
+                    static_cast<int>(distance_from_.getDistFromType()));
+        glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "has_color_vec"),
+                    static_cast<int>(0));
+        glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "color_map_selection"),
+                    static_cast<int>(color_map_) + 1);
+    }
     else
     {
         glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "has_color_vec"),
