@@ -18,8 +18,8 @@ template <typename T> struct RGBTriplet
     T green;
     T blue;
 
-    RGBTriplet() = default;
-    RGBTriplet(const T red_, const T green_, const T blue_) : red(red_), green(green_), blue(blue_) {}
+    constexpr RGBTriplet() = default;
+    constexpr RGBTriplet(const T red_, const T green_, const T blue_) : red(red_), green(green_), blue(blue_) {}
 
     RGBTriplet(const uint32_t hex_color_code)
     {
