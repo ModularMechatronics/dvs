@@ -79,11 +79,6 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
 
         const glm::mat4 view_mat = glm::lookAt(glm::vec3(0, -6.0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 
-        glm::mat4 model_mat_mod = view_mat * model_mat * window_scale_mat;
-
-        model_mat_mod[3][0] = 0.0;
-        model_mat_mod[3][1] = 0.0;
-        model_mat_mod[3][2] = 0.0;
         const Vec2f mouse_pos_at_release = mouse_pos;
         const Vec2f window_xy(current_window_width, current_window_height);
 

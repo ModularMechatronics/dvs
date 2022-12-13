@@ -81,6 +81,7 @@ private:
     void renderLegend();
     void renderTitle();
     void renderInteractionLetter();
+    void renderViewAngles();
     void setClipPlane(const GLuint program_id,
                       const std::string pln,
                       const Point3d& p0,

@@ -494,6 +494,51 @@ template <typename T, typename... Us> void imShow(const ImageC4<T>& img, const U
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
+template <typename T, typename... Us> void imShow(const ImageC1View<T>& img, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(img.numElements()));  // TODO: Needed?
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,
+               internal::Dimension2D(img.numRows(), img.numCols()));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
+}
+
+template <typename T, typename... Us> void imShow(const ImageC3View<T>& img, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(3));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(img.numRows() * img.numCols()));  // TODO: Needed?
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,
+               internal::Dimension2D(img.numRows(), img.numCols()));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
+}
+
+template <typename T, typename... Us> void imShow(const ImageC4View<T>& img, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(4));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(img.numRows() * img.numCols()));  // TODO: Needed?
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,
+               internal::Dimension2D(img.numRows(), img.numCols()));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
+}
+
 template <typename T, typename... Us>
 void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& indices, const Us&... settings)
 {
@@ -608,11 +653,11 @@ inline void flushElement()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void view(const float azimuth, const float elevation)
+inline void view(const float azimuth_deg, const float elevation_deg)
 {
     internal::CommunicationHeader hdr{internal::Function::VIEW};
-    hdr.append(internal::CommunicationHeaderObjectType::AZIMUTH, azimuth);
-    hdr.append(internal::CommunicationHeaderObjectType::ELEVATION, elevation);
+    hdr.append(internal::CommunicationHeaderObjectType::AZIMUTH, azimuth_deg);
+    hdr.append(internal::CommunicationHeaderObjectType::ELEVATION, elevation_deg);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
@@ -685,6 +730,47 @@ inline void setAxesBoxScaleFactor(const Vec3<double>& scale_vector)
 {
     internal::CommunicationHeader hdr{internal::Function::SET_AXES_BOX_SCALE_FACTOR};
     hdr.append(internal::CommunicationHeaderObjectType::VEC3, scale_vector);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void setTransform(const internal::PlotSlot slot,
+                         const Vec3<double>& scale,
+                         const Matrix<double>& rotation,
+                         const Vec3<double>& translation)
+{
+    DVS_ASSERT(rotation.numRows() == 3) << "Number of rows should be 3!";
+    DVS_ASSERT(rotation.numCols() == 3) << "Number of columns should be 3!";
+
+    MatrixFixed<double, 3, 3> r_mat;
+
+    for (size_t r = 0; r < 3; r++)
+    {
+        for (size_t c = 0; c < 3; c++)
+        {
+            r_mat(r, c) = rotation(r, c);
+        }
+    }
+
+    internal::CommunicationHeader hdr{internal::Function::SET_OBJECT_TRANSFORM};
+    hdr.append(internal::CommunicationHeaderObjectType::ROTATION_MATRIX, r_mat);
+    hdr.append(internal::CommunicationHeaderObjectType::TRANSLATION_VECTOR, translation);
+    hdr.append(internal::CommunicationHeaderObjectType::SCALE_VECTOR, scale);
+    hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void setTransform(const internal::PlotSlot slot,
+                         const Vec3<double>& scale,
+                         const MatrixFixed<double, 3, 3>& rotation,
+                         const Vec3<double>& translation)
+{
+    internal::CommunicationHeader hdr{internal::Function::SET_OBJECT_TRANSFORM};
+    hdr.append(internal::CommunicationHeaderObjectType::ROTATION_MATRIX, rotation);
+    hdr.append(internal::CommunicationHeaderObjectType::TRANSLATION_VECTOR, translation);
+    hdr.append(internal::CommunicationHeaderObjectType::SCALE_VECTOR, scale);
+    hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }

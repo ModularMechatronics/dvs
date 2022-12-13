@@ -252,10 +252,30 @@ void AxesRenderer::renderInteractionLetter()
     text_renderer_.renderTextFromLeftCenter(interaction_string, x_coord, y_coord, 0.0003f, width_, height_);
 }
 
+void AxesRenderer::renderViewAngles()
+{
+    glUseProgram(shader_collection_.text_shader.programId());
+
+    const GLint text_color_uniform = glGetUniformLocation(shader_collection_.text_shader.programId(), "textColor");
+    glUniform3f(text_color_uniform, 0.0, 0.0, 0.0);
+
+    const int az = static_cast<float>(view_angles_.getSnappedAzimuth() * 180.0f / M_PI);
+    const int el = static_cast<float>(view_angles_.getSnappedElevation() * 180.0f / M_PI);
+
+    const std::string view_angle_str = "[ " + std::to_string(az) + ", " + std::to_string(el) + " ]";
+    const float y_coord = -1.0f + 20.0f / height_;
+    const float x_coord = -1.0f + 10.0f / width_;
+    text_renderer_.renderTextFromLeftCenter(view_angle_str, x_coord, y_coord, 0.0003f, width_, height_);
+}
+
 void AxesRenderer::render()
 {
     renderTitle();
     renderInteractionLetter();
+    if (mouse_pressed_)
+    {
+        renderViewAngles();
+    }
     glUseProgram(shader_collection_.plot_box_shader.programId());
     renderBackground();
     if (element_settings_.plot_box_on)

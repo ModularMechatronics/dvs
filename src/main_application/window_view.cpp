@@ -58,7 +58,15 @@ WindowView::WindowView(wxFrame* main_window,
     }
     else
     {
-        element_x_offset_ = 70;
+        if (window_settings.tabs.size() == 1)
+        {
+            element_x_offset_ = 0;
+        }
+        else
+        {
+            element_x_offset_ = 70;
+        }
+
         for (size_t k = 0; k < window_settings.tabs.size(); k++)
         {
             tabs_.push_back(new WindowTab(
@@ -88,6 +96,7 @@ WindowView::WindowView(wxFrame* main_window,
             {
                 tab->hide();
             }
+            tab->setMinXPos(element_x_offset_);
         }
     }
 

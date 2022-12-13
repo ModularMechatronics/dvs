@@ -1,5 +1,5 @@
-#ifndef TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_PLOT2_H_
-#define TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_PLOT2_H_
+#ifndef DEMOS_TESTS_KLEIN_H_
+#define DEMOS_TESTS_KLEIN_H_
 
 #include "dvs/dvs.h"
 
@@ -278,4 +278,4 @@ void testAdvanced1()
 
 }  // namespace klein
 
-#endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_PLOT2_H_
+#endif  // DEMOS_TESTS_KLEIN_H_

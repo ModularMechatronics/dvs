@@ -32,7 +32,10 @@ int main(int argc, char* argv[])
     std::map<std::string, std::function<void()>> klein_functions{
         {"basic", klein::testBasic}, {"adv0", klein::testAdvanced0}, {"adv1", klein::testAdvanced1}};
 
+    std::map<std::string, std::function<void()>> car_functions{{"basic", car::testBasic}};
+
     fcns["klein"] = klein_functions;
+    fcns["car"] = car_functions;
 
     if (argc == 1)
     {

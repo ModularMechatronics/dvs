@@ -53,6 +53,14 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::DISTANCE_FROM;
     }
+    else if (std::is_same<T, dvs::properties::ZOffset>::value)
+    {
+        return dvs::internal::PropertyType::Z_OFFSET;
+    }
+    else if (std::is_same<T, dvs::properties::Transform>::value)
+    {
+        return dvs::internal::PropertyType::TRANSFORM;
+    }
     else
     {
         throw std::runtime_error("Invalid property template!");

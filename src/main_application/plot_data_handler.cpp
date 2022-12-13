@@ -33,6 +33,25 @@ bool PlotDataHandler::isUpdatable(const Function fcn) const
     return (fcn == Function::REAL_TIME_PLOT);
 }
 
+void PlotDataHandler::setTransform(const internal::PlotSlot slot,
+                                   const MatrixFixed<double, 3, 3>& rotation,
+                                   const Vec3<double>& translation,
+                                   const Vec3<double>& scale)
+{
+    const auto q = std::find_if(plot_datas_.begin(),
+                                plot_datas_.end(),
+                                [&slot](const PlotObjectBase* const pd) -> bool { return pd->getSlot() == slot; });
+
+    if (q != plot_datas_.end())
+    {
+        (*q)->setTransform(rotation, translation, scale);
+    }
+    else
+    {
+        throw std::runtime_error("Called setTransform for non existing slot " + std::to_string(static_cast<int>(slot)));
+    }
+}
+
 void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr)
 {
     // TODO: Break of Properties from hdr here or earlier, replace awaiting_headers_ with awaiting_properties_

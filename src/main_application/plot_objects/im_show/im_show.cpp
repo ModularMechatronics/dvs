@@ -16,11 +16,12 @@ struct InputParams
 {
     size_t num_channels;
     Dimension2D dims;
+    float z_offset;
     float multiplier;
 
     InputParams() {}
-    InputParams(const size_t num_channels_, const Dimension2D& dims_, const DataType dt)
-        : num_channels{num_channels_}, dims{dims_}
+    InputParams(const size_t num_channels_, const Dimension2D& dims_, const float z_offset_, const DataType dt)
+        : num_channels{num_channels_}, dims{dims_}, z_offset{z_offset_}
     {
         // Multiplier for FLOAT and DOUBLE is 1.0f, so that's left as the default case
         multiplier = 1.0f;
@@ -97,7 +98,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
     // vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
 
     // const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_};
-    const InputParams input_params{num_channels_, dims_, data_type_};
+    const InputParams input_params{num_channels_, dims_, z_offset_, data_type_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
     findMinMax();
@@ -138,6 +139,8 @@ void ImShow::render()
 {
     glEnable(GL_BLEND);
     glUseProgram(shader_collection_.img_plot_shader.programId());
+
+    preRender(shader_collection_.img_plot_shader);
 
     if (num_channels_ == 4)
     {
@@ -243,12 +246,12 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
                 output_data.points_ptr[idx4_y] = r + 1;
                 output_data.points_ptr[idx5_y] = r + 1;
 
-                output_data.points_ptr[idx0_z] = 0.0f;
-                output_data.points_ptr[idx1_z] = 0.0f;
-                output_data.points_ptr[idx2_z] = 0.0f;
-                output_data.points_ptr[idx3_z] = 0.0f;
-                output_data.points_ptr[idx4_z] = 0.0f;
-                output_data.points_ptr[idx5_z] = 0.0f;
+                output_data.points_ptr[idx0_z] = input_params.z_offset;
+                output_data.points_ptr[idx1_z] = input_params.z_offset;
+                output_data.points_ptr[idx2_z] = input_params.z_offset;
+                output_data.points_ptr[idx3_z] = input_params.z_offset;
+                output_data.points_ptr[idx4_z] = input_params.z_offset;
+                output_data.points_ptr[idx5_z] = input_params.z_offset;
 
                 const float color_val_r = static_cast<float>(img_c4(r, c, 0)) * input_params.multiplier;
                 const float color_val_g = static_cast<float>(img_c4(r, c, 1)) * input_params.multiplier;
@@ -362,12 +365,12 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
                 output_data.points_ptr[idx4_y] = r + 1;
                 output_data.points_ptr[idx5_y] = r + 1;
 
-                output_data.points_ptr[idx0_z] = 0.0f;
-                output_data.points_ptr[idx1_z] = 0.0f;
-                output_data.points_ptr[idx2_z] = 0.0f;
-                output_data.points_ptr[idx3_z] = 0.0f;
-                output_data.points_ptr[idx4_z] = 0.0f;
-                output_data.points_ptr[idx5_z] = 0.0f;
+                output_data.points_ptr[idx0_z] = input_params.z_offset;
+                output_data.points_ptr[idx1_z] = input_params.z_offset;
+                output_data.points_ptr[idx2_z] = input_params.z_offset;
+                output_data.points_ptr[idx3_z] = input_params.z_offset;
+                output_data.points_ptr[idx4_z] = input_params.z_offset;
+                output_data.points_ptr[idx5_z] = input_params.z_offset;
 
                 const float color_val_r = static_cast<float>(img_c3(r, c, 0)) * input_params.multiplier;
                 const float color_val_g = static_cast<float>(img_c3(r, c, 1)) * input_params.multiplier;
@@ -471,12 +474,12 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
                 output_data.points_ptr[idx4_y] = r + 1;
                 output_data.points_ptr[idx5_y] = r + 1;
 
-                output_data.points_ptr[idx0_z] = 0.0f;
-                output_data.points_ptr[idx1_z] = 0.0f;
-                output_data.points_ptr[idx2_z] = 0.0f;
-                output_data.points_ptr[idx3_z] = 0.0f;
-                output_data.points_ptr[idx4_z] = 0.0f;
-                output_data.points_ptr[idx5_z] = 0.0f;
+                output_data.points_ptr[idx0_z] = input_params.z_offset;
+                output_data.points_ptr[idx1_z] = input_params.z_offset;
+                output_data.points_ptr[idx2_z] = input_params.z_offset;
+                output_data.points_ptr[idx3_z] = input_params.z_offset;
+                output_data.points_ptr[idx4_z] = input_params.z_offset;
+                output_data.points_ptr[idx5_z] = input_params.z_offset;
 
                 const float color_val_r = static_cast<float>(img_c1(r, c)) * input_params.multiplier;
                 const float color_val_g = static_cast<float>(img_c1(r, c)) * input_params.multiplier;

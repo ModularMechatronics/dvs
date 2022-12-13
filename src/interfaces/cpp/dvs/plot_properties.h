@@ -69,6 +69,50 @@ public:
     Alpha(const uint8_t alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
 };
 
+struct ZOffset : internal::PropertyBase
+{
+public:
+    float data;
+
+    ZOffset() : internal::PropertyBase(internal::PropertyType::Z_OFFSET) {}
+    ZOffset(const float z_offset) : internal::PropertyBase(internal::PropertyType::Z_OFFSET), data(z_offset) {}
+};
+
+struct Transform : internal::PropertyBase
+{
+public:
+    Vec3<double> scale;
+    MatrixFixed<double, 3, 3> rotation;
+    Vec3<double> translation;
+
+    Transform() : internal::PropertyBase(internal::PropertyType::TRANSFORM) {}
+    Transform(const Vec3<double>& scale_, const MatrixFixed<double, 3, 3>& rotation_, const Vec3<double>& translation_)
+        : internal::PropertyBase(internal::PropertyType::TRANSFORM),
+          scale{scale_},
+          rotation{rotation_},
+          translation{translation_}
+    {
+    }
+
+    Transform(const Vec3<double>& scale_, const Matrix<double>& rotation_, const Vec3<double>& translation_)
+        : internal::PropertyBase(internal::PropertyType::TRANSFORM)
+    {
+        scale = scale_;
+        translation = translation_;
+
+        DVS_ASSERT(rotation_.numRows() == 3U) << "Expected 3 rows for rotation matrix, got " << rotation_.numRows();
+        DVS_ASSERT(rotation_.numCols() == 3U) << "Expected 3 cols for rotation matrix, got " << rotation_.numCols();
+
+        for (size_t r = 0; r < 3; r++)
+        {
+            for (size_t c = 0; c < 3; c++)
+            {
+                rotation(r, c) = rotation_(r, c);
+            }
+        }
+    }
+};
+
 struct Name : internal::PropertyBase
 {
 public:

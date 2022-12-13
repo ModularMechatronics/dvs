@@ -123,9 +123,13 @@ void Plot2D::findMinMax()
 
 void Plot2D::render()
 {
+    glEnable(GL_BLEND);
     shader_collection_.plot_2d_shader.use();
+    preRender(shader_collection_.plot_2d_shader);
+
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "half_line_width"),
                 line_width_ / 600.0f);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "z_offset"), z_offset_);
     glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "use_dash"), 0);
 
     if (has_color_)
@@ -142,6 +146,7 @@ void Plot2D::render()
     vertex_buffer2_.render(num_points_);
 
     shader_collection_.basic_plot_shader.use();
+    glDisable(GL_BLEND);
 }
 
 Plot2D::~Plot2D() {}

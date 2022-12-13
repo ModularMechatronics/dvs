@@ -43,6 +43,11 @@ public:
         return num_cols_;
     }
 
+    size_t numElements() const
+    {
+        return num_rows_ * num_cols_;
+    }
+
     size_t numBytes() const
     {
         return 4 * num_rows_ * num_cols_ * sizeof(T);
@@ -143,6 +148,7 @@ public:
     size_t numBytes() const;
     size_t numElements() const;
     void fillBufferWithData(uint8_t* const buffer) const;
+    void fill(const T fill_value, const size_t channel);
 
     T* data() const;
 };
@@ -200,6 +206,14 @@ template <typename T> size_t ImageC4<T>::numCols() const
 template <typename T> T* ImageC4<T>::data() const
 {
     return data_;
+}
+
+template <typename T> void ImageC4<T>::fill(const T fill_value, const size_t channel)
+{
+    for (size_t k = 0; k < (num_rows_ * num_cols_); k++)
+    {
+        data_[channel * num_element_per_channel_ + k] = fill_value;
+    }
 }
 
 template <typename T> T& ImageC4<T>::operator()(const size_t r, const size_t c, const size_t ch)

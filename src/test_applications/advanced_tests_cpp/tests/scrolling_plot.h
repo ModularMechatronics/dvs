@@ -15,12 +15,12 @@ void testBasic()
     float t = 0.0f;
     float dt = 0.01f;
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     view(180, -90);
     axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
 
-    setPlotProperties(properties::SLOT0, properties::Color::Red());
+    // setPlotProperties(properties::SLOT0, properties::Color::Red());
 
     for (size_t k = 0; k < num_its; k++)
     {

@@ -2,11 +2,6 @@ Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Refactor/clean up window/tabs/plot elements system
 - Refactor from top down, from the app and down into the GUI
-- Remove need to always specify num_elements
-- Add MatrixFixed and VectorFixed
- * Finalize MatrixFixed functions
- * Use MatrixFixed instead of Matrix where possible
- * Add VectorFixed
 - Investigate if main_window can be just a wxObject or something
 - Mark all properties classes constructors explicit (and noexcept?)
 - Refactor legend properties with colormap pointer
@@ -31,18 +26,15 @@ Pre release:
  * Wave equation
  * Physics simulation (bouncy ball)
 - Make font smaller, fewer line points per axis
+- Rename ImageC1/3/4 to RGB, RGBA, GrayAlpha or something...
 - Rename "vertex_buffer2_" to "vertex_buffer_" when possible
 - Remove interface function fastPlot, and just replace it with a property flag to plot/plot3
+- Add Transform plot property, so that the transform can be set directly
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
-- "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
-- Make proper test folder structure
-- Receive and push new data until there is new data available, and refresh only after last update
 - Apply 'applyConverter' to all functions (like in Plot2D/Plot3D)
 - LegendProperties to use reference_wrapper instead of pointer to colormap
-- Time date axis
-- Separate plot object vectors so that shader switching is minimized
 - Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
@@ -51,6 +43,17 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Merge plot2D/plot3Ds shaders (and possibly even C++ classes?)
+- Separate plot object vectors so that shader switching is minimized
+- Time date axis
+- "Arrow edge" size gets bigger with longer arrows, show shouldn't be the case
+- Make proper test folder structure
+- Receive and push new data until there is new data available, and refresh only after last update
+- Remove need to always specify num_elements
+- Add MatrixFixed and VectorFixed
+ * Finalize MatrixFixed functions
+ * Use MatrixFixed instead of Matrix where possible
+ * Add VectorFixed
 - Use weak_ptr for current_gui_element_?
 - Bar plot
 - Image view (same level as plot pane) which is zoomable and panable only
