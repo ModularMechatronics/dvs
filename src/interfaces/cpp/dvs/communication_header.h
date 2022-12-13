@@ -287,7 +287,7 @@ private:
     template <typename U> void extendInternal(const U& obj)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
-                          std::is_same<PropertyFlag, U>::value,
+                          std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value,
                       "Incorrect type!");
         DVS_ASSERT(sizeof(U) <= kCommunicationHeaderObjectDataSize) << "Object too big!";
 
@@ -296,6 +296,11 @@ private:
             const PropertyFlag f = *reinterpret_cast<const PropertyFlag* const>(&obj);
 
             flags_[static_cast<uint8_t>(f)] = 1;
+        }
+        else if (std::is_same<PlotSlot, U>::value)
+        {
+            const PlotSlot f = *reinterpret_cast<const PlotSlot* const>(&obj);
+            append(CommunicationHeaderObjectType::SLOT, f);
         }
         else
         {
@@ -314,7 +319,7 @@ private:
     template <typename U, typename... Us> void extendInternal(const U& obj, const Us&... other_objs)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
-                          std::is_same<PropertyFlag, U>::value,
+                          std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value,
                       "Incorrect type!");
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
@@ -323,6 +328,11 @@ private:
             const PropertyFlag f = *reinterpret_cast<const PropertyFlag* const>(&obj);
 
             flags_[static_cast<uint8_t>(f)] = 1;
+        }
+        else if (std::is_same<PlotSlot, U>::value)
+        {
+            const PlotSlot f = *reinterpret_cast<const PlotSlot* const>(&obj);
+            append(CommunicationHeaderObjectType::SLOT, f);
         }
         else
         {

@@ -92,6 +92,21 @@ const T& MatrixFixed<T, R, C>::operator()(const size_t r, const size_t c) const
     return data_[r * C + c];
 }
 
+template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> MatrixFixed<T, R, C>::transposed() const
+{
+    MatrixFixed<T, R, C> m_out;
+
+    for (size_t r = 0; r < R; r++)
+    {
+        for (size_t c = 0; c < C; c++)
+        {
+            m_out(c, r) = (*this)(r, c);
+        }
+    }
+
+    return m_out;
+}
+
 /*
 template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> operator*(const MatrixFixed<T, R, C>& m0, const
 MatrixFixed<T, R, C>& m1)

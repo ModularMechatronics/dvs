@@ -1,6 +1,8 @@
 #ifndef MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_
 #define MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <map>
 #include <memory>
 #include <string>
@@ -36,6 +38,13 @@ protected:
     bool has_color_;
     bool has_distance_from_;
     DistanceFrom distance_from_;
+    bool has_custom_transform_;
+
+    float z_offset_;
+
+    glm::mat4 custom_rotation_;
+    glm::mat4 custom_translation_;
+    glm::mat4 custom_scale_;
 
     GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
 
@@ -82,10 +91,15 @@ public:
                    const CommunicationHeader& hdr,
                    const ShaderCollection shader_collection);
     virtual void render() = 0;
+    void preRender(const Shader shader_to_use);
     virtual bool affectsColormapMinMax() const
     {
         return false;
     }
+
+    void setTransform(const MatrixFixed<double, 3, 3>& rotation,
+                      const Vec3<double>& translation,
+                      const Vec3<double>& scale);
 
     internal::PlotSlot getSlot() const
     {

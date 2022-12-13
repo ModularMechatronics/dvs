@@ -11,10 +11,10 @@ namespace dvs
 
 template <typename T, uint16_t R, uint16_t C> class MatrixFixed
 {
-protected:
+    // protected:
+public:
     T data_[R * C];
 
-public:
     MatrixFixed();
     template <typename Y> MatrixFixed(const MatrixFixed<Y, R, C>& m);
 
@@ -36,6 +36,8 @@ public:
     T max() const;
     T min() const;
     T sum() const;
+
+    MatrixFixed<T, R, C> transposed() const;
 };
 
 }  // namespace dvs

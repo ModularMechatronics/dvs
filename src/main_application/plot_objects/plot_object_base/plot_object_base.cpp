@@ -68,6 +68,8 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     }
     min_max_calculated_ = false;
     visualize_has_run_ = false;
+    has_custom_transform_ = false;
+    z_offset_ = 0.0f;
 
     type_ = hdr.getFunction();
     data_type_ = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
@@ -102,6 +104,52 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     data_ptr_ = received_data_->data();
 }
 
+void PlotObjectBase::preRender(const Shader shader_to_use)
+{
+    if (has_custom_transform_)
+    {
+        glUniform1i(glGetUniformLocation(shader_to_use.programId(), "has_custom_transform"), static_cast<int>(1));
+        glUniformMatrix4fv(glGetUniformLocation(shader_to_use.programId(), "custom_translation_mat"),
+                           1,
+                           GL_FALSE,
+                           &custom_translation_[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(shader_to_use.programId(), "custom_rotation_mat"),
+                           1,
+                           GL_FALSE,
+                           &custom_rotation_[0][0]);
+        glUniformMatrix4fv(
+            glGetUniformLocation(shader_to_use.programId(), "custom_scale_mat"), 1, GL_FALSE, &custom_scale_[0][0]);
+    }
+    else
+    {
+        glUniform1i(glGetUniformLocation(shader_to_use.programId(), "has_custom_transform"), static_cast<int>(0));
+    }
+}
+
+void PlotObjectBase::setTransform(const MatrixFixed<double, 3, 3>& rotation,
+                                  const Vec3<double>& translation,
+                                  const Vec3<double>& scale)
+{
+    has_custom_transform_ = true;
+
+    custom_scale_ = glm::mat4(1.0f);
+    custom_scale_[0][0] = scale.x;
+    custom_scale_[1][1] = scale.y;
+    custom_scale_[2][2] = scale.z;
+
+    custom_translation_ = glm::translate(glm::mat4(1.0f), glm::vec3(translation.x, translation.y, translation.z));
+
+    custom_rotation_ = glm::mat4(1.0f);
+
+    for (size_t r = 0; r < 3; r++)
+    {
+        for (size_t c = 0; c < 3; c++)
+        {
+            custom_rotation_[r][c] = rotation(r, c);
+        }
+    }
+}
+
 void PlotObjectBase::assignProperties(const Properties& props)
 {
     // Flags
@@ -114,6 +162,16 @@ void PlotObjectBase::assignProperties(const Properties& props)
     scatter_style_type_ = props.getPropertyOrValue<ScatterStyle>(ScatterStyleType::CIRCLE);
     line_width_ = props.getPropertyOrValue<LineWidth>(1.0f);
     point_size_ = props.getPropertyOrValue<PointSize>(10.0f);
+
+    z_offset_ = props.getPropertyOrValue<ZOffset>(0.0f);
+
+    if (props.hasProperty(PropertyType::TRANSFORM))
+    {
+        const Transform custom_transform = props.getProperty<Transform>();
+        has_custom_transform_ = true;
+
+        setTransform(custom_transform.rotation, custom_transform.translation, custom_transform.scale);
+    }
 
     if (props.hasProperty(PropertyType::DISTANCE_FROM))
     {

@@ -63,6 +63,11 @@ int main(int argc, char* argv[])
         {"basic", scrolling_plot::testBasic},
     };
 
+    // ######################### object_transform ##########################
+    StringFunctionMap object_transform_tests{
+        {"basic", object_transform::testBasic},
+    };
+
     fcns["plot"] = plot2_functions;
     fcns["plot3"] = plot3_functions;
     fcns["scatter"] = scatter2_functions;
@@ -70,6 +75,7 @@ int main(int argc, char* argv[])
     fcns["surf"] = surf_functions;
     fcns["dynamic_plotting"] = dynamic_plotting_functions;
     fcns["scrolling_plot"] = scrolling_plot_tests;
+    fcns["object_transform"] = object_transform_tests;
 
     if (argc == 1)
     {

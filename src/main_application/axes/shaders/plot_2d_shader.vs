@@ -10,7 +10,12 @@ layout(location = 4) in float length_along;
 layout(location = 5) in vec3 in_color;
 uniform vec3 vertex_color;
 uniform float half_line_width;
+uniform float z_offset;
 uniform int has_color_vec;
+uniform int has_custom_transform;
+uniform mat4 custom_translation_mat;
+uniform mat4 custom_rotation_mat;
+uniform mat4 custom_scale_mat;
 
 out vec3 fragment_color;
 out vec4 coord_out;
@@ -76,11 +81,24 @@ float evalLine(Line2D line, vec2 point)
 
 void main()
 {
-    bool should_flip = false;
+    vec4 p0_to_use, p1_to_use, p2_to_use;
 
-    vec4 p0_transformed = model_view_proj_mat * vec4(p0, 0.0, 1.0);
-    vec4 p1_transformed = model_view_proj_mat * vec4(p1, 0.0, 1.0);
-    vec4 p2_transformed = model_view_proj_mat * vec4(p2, 0.0, 1.0);
+    if(has_custom_transform == int(1))
+    {
+        p0_to_use = custom_translation_mat * custom_rotation_mat * custom_scale_mat * vec4(p0, z_offset, 1.0);
+        p1_to_use = custom_translation_mat * custom_rotation_mat * custom_scale_mat * vec4(p1, z_offset, 1.0);
+        p2_to_use = custom_translation_mat * custom_rotation_mat * custom_scale_mat * vec4(p2, z_offset, 1.0);
+    }
+    else
+    {
+        p0_to_use = vec4(p0, z_offset, 1.0);
+        p1_to_use = vec4(p1, z_offset, 1.0);
+        p2_to_use = vec4(p2, z_offset, 1.0);
+    }
+
+    vec4 p0_transformed = model_view_proj_mat * p0_to_use;
+    vec4 p1_transformed = model_view_proj_mat * p1_to_use;
+    vec4 p2_transformed = model_view_proj_mat * p2_to_use;
 
     // vec_along01 points from point p0 to point p1
     vec2 vec_along01 = normalize(p1_transformed.xy - p0_transformed.xy);
@@ -109,6 +127,8 @@ void main()
     // The sign of the z component of the cross product of
     // the two vectors depends on the mirroring of the view
     float which_side_vec_z = vec_along01.x * vec_along12.y - vec_along01.y * vec_along12.x;
+
+    bool should_flip = false;
 
     if(which_side_vec_z > 0.0)
     {

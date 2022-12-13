@@ -12,16 +12,19 @@ struct InputParams
     size_t num_bytes_per_element;
     size_t num_bytes_for_one_vec;
     bool has_color;
+    float z_offset;
 
     InputParams() = default;
     InputParams(const size_t num_elements_,
                 const size_t num_bytes_per_element_,
                 const size_t num_bytes_for_one_vec_,
-                const bool has_color_)
+                const bool has_color_,
+                float z_offset_)
         : num_elements{num_elements_},
           num_bytes_per_element{num_bytes_per_element_},
           num_bytes_for_one_vec{num_bytes_for_one_vec_},
-          has_color{has_color_}
+          has_color{has_color_},
+          z_offset{z_offset_}
     {
     }
 };
@@ -40,10 +43,11 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data,
         throw std::runtime_error("Invalid function type for Scatter2D!");
     }
 
-    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
+    const InputParams input_params{
+        num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_, z_offset_};
     OutputData output_data = convertDataScatter2DOuter(data_ptr_, data_type_, input_params);
 
-    vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_, 2);
+    vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_, 3);
 
     if (has_color_)
     {
@@ -121,7 +125,7 @@ Scatter2D::~Scatter2D() {}
 template <typename T> OutputData convertDataScatter2D(const uint8_t* const input_data, const InputParams input_params)
 {
     OutputData output_data;
-    output_data.points_ptr = new float[2 * input_params.num_elements];
+    output_data.points_ptr = new float[3 * input_params.num_elements];
 
     size_t idx = 0U;
 
@@ -132,7 +136,8 @@ template <typename T> OutputData convertDataScatter2D(const uint8_t* const input
     {
         output_data.points_ptr[idx] = input_data_dt_x[k];
         output_data.points_ptr[idx + 1] = input_data_dt_y[k];
-        idx += 2;
+        output_data.points_ptr[idx + 2] = input_params.z_offset;
+        idx += 3;
     }
 
     if (input_params.has_color)
