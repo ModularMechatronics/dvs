@@ -47,10 +47,30 @@ void PlotDataHandler::setTransform(const internal::PlotSlot slot,
     }
 }
 
+void PlotDataHandler::propertiesExtension(const CommunicationHeader& hdr)
+{
+    if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+    {
+        throw std::runtime_error("No slot provided for updatable function!");
+    }
+    const internal::PlotSlot slot = hdr.value<internal::PlotSlot>();
+    const Properties props(hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags());
+
+    const auto q = std::find_if(plot_datas_.begin(),
+                                plot_datas_.end(),
+                                [&slot](const PlotObjectBase* const pd) -> bool { return pd->getSlot() == slot; });
+    if (q == plot_datas_.end())
+    {
+        awaiting_properties_[static_cast<int>(slot)].appendAndOverwriteProperties(props);
+    }
+    else
+    {
+        (*q)->setProperties(props);
+    }
+}
+
 void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr)
 {
-    // TODO: Break of Properties from hdr here or earlier, replace awaiting_headers_ with awaiting_properties_
-    // and make Properties the structure that gets updated, and not the CommunicationHeader
     const Function fcn = hdr.getFunction();
 
     if (pending_clear_)
@@ -61,24 +81,7 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 
     if (fcn == internal::Function::PROPERTIES_EXTENSION)
     {
-        if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
-        {
-            throw std::runtime_error("No slot provided for updatable function!");
-        }
-        const internal::PlotSlot slot = hdr.value<internal::PlotSlot>();
-        const Properties props(hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags());
-
-        const auto q = std::find_if(plot_datas_.begin(),
-                                    plot_datas_.end(),
-                                    [&slot](const PlotObjectBase* const pd) -> bool { return pd->getSlot() == slot; });
-        if (q == plot_datas_.end())
-        {
-            awaiting_properties_[static_cast<int>(slot)].appendAndOverwriteProperties(props);
-        }
-        else
-        {
-            (*q)->setProperties(props);
-        }
+        propertiesExtension(hdr);
 
         return;
     }
@@ -100,8 +103,11 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 
         if (q != plot_datas_.end())
         {
-            props.appendAndOverwriteProperties(
-                Properties{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()});
+            const Properties new_properties{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()};
+            if (!new_properties.isEmpty())
+            {
+                props.appendAndOverwriteProperties(new_properties);
+            }
             (*q)->updateWithNewData(std::move(received_data), hdr, props);
             return;
         }

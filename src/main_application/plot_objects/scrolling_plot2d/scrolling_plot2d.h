@@ -16,6 +16,7 @@ private:
     // VertexBuffer vertex_buffer2_;
     float* points_ptr_;
     float* dt_vec_;
+    size_t previous_buffer_size_;
 
     void findMinMax() override;
 
