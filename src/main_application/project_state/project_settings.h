@@ -416,6 +416,11 @@ struct WindowSettings
             return false;
         }
 
+        if ((x != other.x) || (y != other.y) || (width != other.width) || (height != other.height))
+        {
+            return false;
+        }
+
         for (size_t k = 0; k < tabs.size(); k++)
         {
             if (other.hasTabWithName(tabs[k].name))

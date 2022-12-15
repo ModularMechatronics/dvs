@@ -35,6 +35,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     {
         wxLogError("Could not set icon.");
     }
+    this->SetPosition(wxPoint(0, 0));
 
     task_bar_->setOnMenuExitCallback([this]() -> void { this->Destroy(); });
     task_bar_->setOnMenuFileNew([this]() -> void { newProject(); });
