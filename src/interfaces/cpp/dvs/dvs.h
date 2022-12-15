@@ -449,7 +449,7 @@ void surf(const MatrixView<T>& x, const MatrixView<T>& y, const MatrixView<T>& z
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
-template <typename T, typename... Us> void imShow(const ImageC1<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageGray<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -464,7 +464,7 @@ template <typename T, typename... Us> void imShow(const ImageC1<T>& img, const U
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageRGB<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -479,7 +479,7 @@ template <typename T, typename... Us> void imShow(const ImageC3<T>& img, const U
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageC4<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageRGBA<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -494,7 +494,7 @@ template <typename T, typename... Us> void imShow(const ImageC4<T>& img, const U
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageC1View<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageGrayView<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -509,7 +509,7 @@ template <typename T, typename... Us> void imShow(const ImageC1View<T>& img, con
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageC3View<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageRGBView<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -524,7 +524,7 @@ template <typename T, typename... Us> void imShow(const ImageC3View<T>& img, con
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageC4View<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageRGBAView<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());

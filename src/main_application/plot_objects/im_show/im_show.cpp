@@ -172,7 +172,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     if (input_params.num_channels == 4)
     {
-        const ImageC4ConstView<T> img_c4{
+        const ImageRGBAConstView<T> img_c4{
             reinterpret_cast<const T* const>(input_data), input_params.dims.rows, input_params.dims.cols};
 
         output_data.points_ptr = new float[input_params.dims.rows * input_params.dims.cols * 6 * 6];
@@ -293,7 +293,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     }
     else if (input_params.num_channels == 3)
     {
-        const ImageC3ConstView<T> img_c3{
+        const ImageRGBConstView<T> img_c3{
             reinterpret_cast<const T* const>(input_data), input_params.dims.rows, input_params.dims.cols};
 
         output_data.points_ptr = new float[input_params.dims.rows * input_params.dims.cols * 6 * 6];
@@ -402,7 +402,7 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     }
     else if (input_params.num_channels == 1)
     {
-        const ImageC1ConstView<T> img_c1{
+        const ImageGrayConstView<T> img_c1{
             reinterpret_cast<const T* const>(input_data), input_params.dims.rows, input_params.dims.cols};
 
         output_data.points_ptr = new float[input_params.dims.rows * input_params.dims.cols * 6 * 6];

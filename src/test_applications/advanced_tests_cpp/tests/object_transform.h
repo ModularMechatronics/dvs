@@ -10,29 +10,6 @@ using namespace dvs;
 namespace object_transform
 {
 
-void placeCircleAt(ImageC4<float>& img, const float x, const float y, const float r, const float val, const int ch)
-{
-    const float r2 = r * r;
-
-    for (size_t r = 0; r < img.numRows(); r++)
-    {
-        const float rf = r;
-        const float dy = y - rf;
-
-        for (size_t c = 0; c < img.numRows(); c++)
-        {
-            const float cf = c;
-            const float dx = x - cf;
-
-            const float dist_squared = dx * dx + dy * dy;
-            if (dist_squared < r2)
-            {
-                img(r, c, ch) = val;
-            }
-        }
-    }
-}
-
 void testBasic()
 {
     const size_t num_elements = 5;
