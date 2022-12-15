@@ -58,9 +58,10 @@ int main(int argc, char* argv[])
         {"3d_manual_interaction", dynamic_plotting::test3DFunctionManualInteraction},
     };
 
-    // ######################### dynamic_plotting ##########################
-    StringFunctionMap scrolling_plot_tests{
-        {"basic", scrolling_plot::testBasic},
+    // ######################### updateable_plotting ##########################
+    StringFunctionMap updateable_plotting_tests{
+        {"basic_real_time", updateable_plotting::testRealTimePlotBasic},
+        {"basic_plot2", updateable_plotting::testPlot2Basic},
     };
 
     // ######################### object_transform ##########################
@@ -79,7 +80,7 @@ int main(int argc, char* argv[])
     fcns["scatter3"] = scatter3_functions;
     fcns["surf"] = surf_functions;
     fcns["dynamic_plotting"] = dynamic_plotting_functions;
-    fcns["scrolling_plot"] = scrolling_plot_tests;
+    fcns["updateable_plotting"] = updateable_plotting_tests;
     fcns["object_transform"] = object_transform_tests;
     fcns["append_properties"] = append_properties_tests;
 

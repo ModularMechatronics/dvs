@@ -103,11 +103,56 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     data_ptr_ = received_data_->data();
 }
 
+void PlotObjectBase::initialize(std::unique_ptr<const ReceivedData> received_data,
+                                const CommunicationHeader& hdr,
+                                const Properties& props)
+{
+    received_data_ = std::move(received_data);
+
+    const uint64_t num_data_bytes = received_data_->size();
+    if (num_data_bytes == 0)
+    {
+        throw std::runtime_error("No data bytes!");
+    }
+    min_max_calculated_ = false;
+    visualize_has_run_ = false;
+    has_custom_transform_ = false;
+    z_offset_ = 0.0f;
+
+    type_ = hdr.getFunction();
+    data_type_ = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
+
+    num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
+    num_elements_ = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
+    num_data_bytes_ = received_data_->size();
+    num_dimensions_ = getNumDimensionsFromFunction(type_);
+
+    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+    {
+        slot_ = hdr.get(CommunicationHeaderObjectType::SLOT).as<internal::PlotSlot>();
+    }
+    else
+    {
+        slot_ = internal::PlotSlot::UNKNOWN;
+    }
+
+    has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
+
+    num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
+
+    setProperties(props);
+
+    data_ptr_ = received_data_->data();
+}
+
 void PlotObjectBase::setProperties(const Properties& props)
 {
     // Flags
     is_persistent_ = props.hasFlag(PropertyFlag::PERSISTENT) || is_persistent_;
     interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP) || interpolate_colormap_;
+    is_updateable_ = props.hasFlag(PropertyFlag::UPDATABLE) || is_updateable_;
+
+    usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
     // Properties
     if (props.hasProperty(PropertyType::ALPHA))
@@ -267,6 +312,9 @@ void PlotObjectBase::assignProperties(const Properties& props)
     // Flags
     is_persistent_ = props.hasFlag(PropertyFlag::PERSISTENT);
     interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP);
+    is_updateable_ = props.hasFlag(PropertyFlag::UPDATABLE);
+
+    usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
     // Properties
     alpha_ = props.getPropertyOrValue<Alpha>(255.0f) / 255.0f;
@@ -389,6 +437,14 @@ void PlotObjectBase::updateWithNewData(std::unique_ptr<const ReceivedData> recei
     static_cast<void>(received_data);
     static_cast<void>(hdr);
     static_cast<void>(props);
+}
+
+void PlotObjectBase::throwIfNotUpdateable() const
+{
+    if (!is_updateable_)
+    {
+        throw std::runtime_error("Tried to update non updateable object!");
+    }
 }
 
 PlotObjectBase::~PlotObjectBase() {}

@@ -46,6 +46,13 @@ public:
 
     template <typename T> void addBuffer(const T* const data, const size_t num_elements, const uint8_t num_dimensions)
     {
+        // TODO: Remove this function once they all use the usage-based one?
+        addBuffer(data, num_elements, num_dimensions, GL_STATIC_DRAW);
+    }
+
+    template <typename T>
+    void addBuffer(const T* const data, const size_t num_elements, const uint8_t num_dimensions, const GLenum usage)
+    {
         static_assert(std::is_same<T, float>::value || std::is_same<T, int>::value || std::is_same<T, int32_t>::value,
                       "Only float and int supported for now!");
         vertex_buffers_.push_back(1);
@@ -53,7 +60,7 @@ public:
 
         glGenBuffers(1, vertex_buffers_.data() + idx);
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffers_[idx]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(T) * num_elements * num_dimensions, data, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(T) * num_elements * num_dimensions, data, usage);
 
         glEnableVertexAttribArray(idx);
         if (std::is_same<T, float>::value)
@@ -68,6 +75,19 @@ public:
         {
             throw std::runtime_error("Shouldn't end up here!");
         }
+    }
+
+    template <typename T>
+    void updateBufferData(const size_t buffer_idx,
+                          const T* const data,
+                          const size_t num_elements,
+                          const uint8_t num_dimensions)
+    {
+        static_assert(std::is_same<T, float>::value || std::is_same<T, int>::value || std::is_same<T, int32_t>::value,
+                      "Only float and int supported for now!");
+
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffers_[buffer_idx]);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(T) * num_elements * num_dimensions, data);
     }
 
     void render(const size_t num_elements) const

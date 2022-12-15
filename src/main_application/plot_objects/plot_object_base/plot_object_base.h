@@ -72,6 +72,8 @@ protected:
     float line_width_;
     float point_size_;
     bool is_persistent_;
+    bool is_updateable_;
+    GLenum usage_;
     bool interpolate_colormap_;
     bool min_max_calculated_;
     bool visualize_has_run_;
@@ -82,6 +84,11 @@ protected:
 
     void assignProperties(const Properties& props);
     virtual void findMinMax() = 0;
+
+    void initialize(std::unique_ptr<const ReceivedData> received_data,
+                    const CommunicationHeader& hdr,
+                    const Properties& props);
+    void throwIfNotUpdateable() const;
 
 public:
     size_t getNumDimensions() const;

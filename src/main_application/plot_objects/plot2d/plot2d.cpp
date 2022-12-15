@@ -61,7 +61,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     {
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
-
+    std::cout << "Creating new plot2" << std::endl;
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
 
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
@@ -87,12 +87,12 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
         }
     }
 
-    vertex_buffer2_.addBuffer(output_data.p0, num_points_, 2);
-    vertex_buffer2_.addBuffer(output_data.p1, num_points_, 2);
-    vertex_buffer2_.addBuffer(output_data.p2, num_points_, 2);
+    vertex_buffer2_.addBuffer(output_data.p0, num_points_, 2, usage_);
+    vertex_buffer2_.addBuffer(output_data.p1, num_points_, 2, usage_);
+    vertex_buffer2_.addBuffer(output_data.p2, num_points_, 2, usage_);
 
-    vertex_buffer2_.addBuffer(output_data.idx_data, num_points_, 1);
-    vertex_buffer2_.addBuffer(output_data.length_along, num_points_, 1);
+    vertex_buffer2_.addBuffer(output_data.idx_data, num_points_, 1, usage_);
+    vertex_buffer2_.addBuffer(output_data.length_along, num_points_, 1, usage_);
 
     if (has_color_)
     {
@@ -150,6 +150,33 @@ void Plot2D::render()
 
     shader_collection_.basic_plot_shader.use();
     glDisable(GL_BLEND);
+}
+
+void Plot2D::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+                               const CommunicationHeader& hdr,
+                               const Properties& props)
+{
+    throwIfNotUpdateable();
+
+    initialize(std::move(received_data), hdr, props);
+
+    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
+
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+
+    num_points_ = output_data.num_points;
+
+    vertex_buffer2_.updateBufferData(0, output_data.p0, num_points_, 2);
+    vertex_buffer2_.updateBufferData(1, output_data.p1, num_points_, 2);
+    vertex_buffer2_.updateBufferData(2, output_data.p2, num_points_, 2);
+    vertex_buffer2_.updateBufferData(3, output_data.idx_data, num_points_, 1);
+    vertex_buffer2_.updateBufferData(4, output_data.length_along, num_points_, 1);
+
+    delete[] output_data.p0;
+    delete[] output_data.p1;
+    delete[] output_data.p2;
+    delete[] output_data.length_along;
+    delete[] output_data.idx_data;
 }
 
 Plot2D::~Plot2D() {}
