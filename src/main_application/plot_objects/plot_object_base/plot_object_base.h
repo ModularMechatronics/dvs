@@ -89,6 +89,7 @@ public:
     PlotObjectBase();
     PlotObjectBase(std::unique_ptr<const ReceivedData> received_data,
                    const CommunicationHeader& hdr,
+                   const Properties& props,
                    const ShaderCollection shader_collection);
     virtual void render() = 0;
     void preRender(const Shader shader_to_use);
@@ -120,7 +121,9 @@ public:
         return lp;
     }
 
-    virtual void updateWithNewData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr);
+    virtual void updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+                                   const CommunicationHeader& hdr,
+                                   const Properties& props);
 
     Function getType() const
     {
@@ -138,6 +141,8 @@ public:
     }
 
     virtual void modifyShader();
+
+    void setProperties(const Properties& props);
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_

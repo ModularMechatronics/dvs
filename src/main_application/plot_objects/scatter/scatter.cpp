@@ -35,8 +35,9 @@ OutputData convertDataScatter2DOuter(const uint8_t* const input_data,
 
 Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data,
                      const CommunicationHeader& hdr,
+                     const Properties& props,
                      const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection), vertex_buffer2_{OGLPrimitiveType::POINTS}
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer2_{OGLPrimitiveType::POINTS}
 {
     if (type_ != Function::SCATTER2)
     {

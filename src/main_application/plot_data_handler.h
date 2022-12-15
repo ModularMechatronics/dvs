@@ -10,6 +10,7 @@
 #include "dvs/math/math.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "properties.h"
 #include "shader.h"
 
 using namespace dvs;
@@ -29,7 +30,7 @@ public:
     std::vector<PlotObjectBase*> plot_datas_;
     std::vector<PlotObjectBase*> old_plot_datas_;
 
-    // std::vector<CommunicationHeader> awaiting_headers_;
+    std::vector<Properties> awaiting_properties_;
     PlotDataHandler(const ShaderCollection shader_collection);
     ~PlotDataHandler();
     void clear();

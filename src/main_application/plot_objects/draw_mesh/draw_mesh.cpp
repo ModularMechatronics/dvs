@@ -21,8 +21,10 @@ OutputData convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
 
 DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
                    const CommunicationHeader& hdr,
+                   const Properties& props,
                    const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection), vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
+      vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
 {
     if ((type_ != Function::DRAW_MESH) && (type_ != Function::DRAW_MESH_SEPARATE_VECTORS))
     {

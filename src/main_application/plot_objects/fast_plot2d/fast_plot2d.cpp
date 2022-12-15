@@ -8,8 +8,9 @@ float* convertData2DOuterFastPlot2(const uint8_t* const input_data,
 
 FastPlot2D::FastPlot2D(std::unique_ptr<const ReceivedData> received_data,
                        const CommunicationHeader& hdr,
+                       const Properties& props,
                        const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection)
 {
     if (type_ != Function::FAST_PLOT2)
     {

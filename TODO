@@ -15,6 +15,7 @@ Pre release:
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
+- Rename "Slot" to "Id"?
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
 - Create demos application
 - Demos:

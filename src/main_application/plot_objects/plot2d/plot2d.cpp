@@ -52,8 +52,10 @@ struct Converter
 
 Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
+               const Properties& props,
                const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection), vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
+      vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::PLOT2)
     {
@@ -131,6 +133,7 @@ void Plot2D::render()
                 line_width_ / 600.0f);
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "z_offset"), z_offset_);
     glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "use_dash"), 0);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "alpha"), alpha_);
 
     if (has_color_)
     {

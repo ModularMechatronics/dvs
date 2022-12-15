@@ -25,11 +25,14 @@ public:
     ScrollingPlot2D();
     ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_data,
                     const CommunicationHeader& hdr,
+                    const Properties& props,
                     const ShaderCollection shader_collection);
     ~ScrollingPlot2D();
 
     LegendProperties getLegendProperties() const override;
-    void updateWithNewData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr) override;
+    void updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+                           const CommunicationHeader& hdr,
+                           const Properties& props) override;
 
     void render() override;
 };

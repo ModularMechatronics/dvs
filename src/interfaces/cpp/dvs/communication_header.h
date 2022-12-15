@@ -190,12 +190,17 @@ struct PropertyLookupTable
 
     PropertyLookupTable() : size{static_cast<uint8_t>(PropertyType::UNKNOWN) + 1}
     {
-        std::memset(data, static_cast<uint8_t>(255U), static_cast<uint8_t>(PropertyType::UNKNOWN) + 1);
+        this->clear();
     }
 
     void appendPropertyIndex(const PropertyType type, const uint8_t idx)
     {
         data[static_cast<uint8_t>(type)] = idx;
+    }
+
+    void clear()
+    {
+        std::memset(data, static_cast<uint8_t>(255U), static_cast<uint8_t>(PropertyType::UNKNOWN) + 1);
     }
 };
 

@@ -1,6 +1,7 @@
 #ifndef TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_TESTS_H_
 #define TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_TESTS_H_
 
+#include "tests/append_properties.h"
 #include "tests/dynamic_plotting.h"
 #include "tests/object_transform.h"
 #include "tests/plot2.h"

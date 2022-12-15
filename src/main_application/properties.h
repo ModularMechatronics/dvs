@@ -75,19 +75,21 @@ private:
     dvs::internal::CommunicationHeader::FlagsArray flags_;
 
 public:
-    Properties() = default;
+    Properties();
     Properties(const dvs::internal::CommunicationHeader::PropertiesArray& props,
                const dvs::internal::PropertyLookupTable& props_lut,
                const dvs::internal::CommunicationHeader::FlagsArray& flags);
     bool hasProperty(const dvs::internal::PropertyType tp) const;
     bool hasFlag(const dvs::internal::PropertyFlag f) const;
+    void appendAndOverwriteProperties(const Properties& other_props);
+
     template <typename T> T getProperty() const
     {
         const dvs::internal::PropertyType tp = templateToPropertyType<T>();
 
         const uint8_t idx = props_lut_.data[static_cast<uint8_t>(tp)];
 
-        if (idx == 255)
+        if (idx == 255U)
         {
             throw std::runtime_error("Property not present!");
         }
@@ -101,7 +103,7 @@ public:
 
         const uint8_t idx = props_lut_.data[static_cast<uint8_t>(tp)];
 
-        if (idx == 255)
+        if (idx == 255U)
         {
             return alternative_value;
         }
@@ -111,16 +113,25 @@ public:
         }
     }
 
-    /*bool isEmpty() const
+    bool isEmpty() const
     {
-        // for (size_t k = 0; k < props_lut_.size(); k++) {}
-        return objects_.usedSize() == 0;
+        if (props_.usedSize() > 0)
+        {
+            return false;
+        }
+
+        for (size_t k = 0; k < flags_.size(); k++)
+        {
+            if (flags_[k] == static_cast<uint8_t>(1U))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    void reset()
-    {
-        objects_.clear();
-    }*/
+    void clear();
 
     size_t numProperties() const
     {

@@ -58,6 +58,7 @@ PlotObjectBase::PlotObjectBase() {}
 
 PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data,
                                const CommunicationHeader& hdr,
+                               const Properties& props,
                                const ShaderCollection shader_collection)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
@@ -97,11 +98,122 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
         throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
     }*/
 
-    const Properties props(hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags());
-
     assignProperties(props);
 
     data_ptr_ = received_data_->data();
+}
+
+void PlotObjectBase::setProperties(const Properties& props)
+{
+    // Flags
+    is_persistent_ = props.hasFlag(PropertyFlag::PERSISTENT) || is_persistent_;
+    interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP) || interpolate_colormap_;
+
+    // Properties
+    if (props.hasProperty(PropertyType::ALPHA))
+    {
+        alpha_ = props.getProperty<Alpha>().data / 255.0f;
+    }
+
+    if (props.hasProperty(PropertyType::BUFFER_SIZE))
+    {
+        buffer_size_ = props.getProperty<BufferSize>().data;
+    }
+
+    if (props.hasProperty(PropertyType::SCATTER_STYLE))
+    {
+        scatter_style_type_ = props.getProperty<ScatterStyle>().data;
+    }
+
+    if (props.hasProperty(PropertyType::LINE_WIDTH))
+    {
+        line_width_ = props.getProperty<LineWidth>().data;
+    }
+
+    if (props.hasProperty(PropertyType::POINT_SIZE))
+    {
+        point_size_ = props.getProperty<PointSize>().data;
+    }
+
+    if (props.hasProperty(PropertyType::Z_OFFSET))
+    {
+        z_offset_ = props.getProperty<ZOffset>().data;
+    }
+
+    if (props.hasProperty(PropertyType::TRANSFORM))
+    {
+        const Transform custom_transform = props.getProperty<Transform>();
+        has_custom_transform_ = true;
+
+        setTransform(custom_transform.rotation, custom_transform.translation, custom_transform.scale);
+    }
+
+    if (props.hasProperty(PropertyType::DISTANCE_FROM))
+    {
+        distance_from_ = props.getProperty<DistanceFrom>();
+        has_distance_from_ = true;
+    }
+
+    if (props.hasProperty(PropertyType::NAME))
+    {
+        name_ = props.getProperty<Name>();
+        has_name_ = true;
+    }
+
+    if (props.hasProperty(PropertyType::COLOR))
+    {
+        const Color col = props.getProperty<Color>();
+        color_.red = static_cast<float>(col.red) / 255.0f;
+        color_.green = static_cast<float>(col.green) / 255.0f;
+        color_.blue = static_cast<float>(col.blue) / 255.0f;
+    }
+
+    if (props.hasProperty(PropertyType::COLOR_MAP))
+    {
+        color_map_ = props.getProperty<ColorMap>().data;
+        color_map_set_ = true;
+        edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
+    }
+
+    if (props.hasProperty(PropertyType::EDGE_COLOR))
+    {
+        const EdgeColor ec = props.getProperty<EdgeColor>();
+
+        if (ec.use_color)
+        {
+            edge_color_.red = static_cast<float>(ec.red) / 255.0f;
+            edge_color_.green = static_cast<float>(ec.green) / 255.0f;
+            edge_color_.blue = static_cast<float>(ec.blue) / 255.0f;
+            has_edge_color_ = true;
+        }
+        else
+        {
+            has_edge_color_ = false;
+        }
+    }
+
+    if (props.hasProperty(PropertyType::FACE_COLOR))
+    {
+        const FaceColor fc = props.getProperty<FaceColor>();
+
+        if (fc.use_color)
+        {
+            face_color_.red = static_cast<float>(fc.red) / 255.0f;
+            face_color_.green = static_cast<float>(fc.green) / 255.0f;
+            face_color_.blue = static_cast<float>(fc.blue) / 255.0f;
+            has_face_color_ = true;
+        }
+        else
+        {
+            has_face_color_ = false;
+        }
+    }
+
+    if (props.hasProperty(PropertyType::LINE_STYLE))
+    {
+        line_style_ = props.getProperty<LineStyle>();
+        is_dashed_ = 1;
+    }
 }
 
 void PlotObjectBase::preRender(const Shader shader_to_use)
@@ -271,10 +383,12 @@ void PlotObjectBase::assignProperties(const Properties& props)
 }
 
 void PlotObjectBase::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
-                                       const CommunicationHeader& hdr)
+                                       const CommunicationHeader& hdr,
+                                       const Properties& props)
 {
     static_cast<void>(received_data);
     static_cast<void>(hdr);
+    static_cast<void>(props);
 }
 
 PlotObjectBase::~PlotObjectBase() {}

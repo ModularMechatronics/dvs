@@ -20,7 +20,7 @@ void testBasic()
     view(180, -90);
     axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
 
-    // setPlotProperties(properties::SLOT0, properties::Color::Red());
+    // setProperties(properties::SLOT0, properties::Color::Red());
 
     for (size_t k = 0; k < num_its; k++)
     {
@@ -32,7 +32,7 @@ void testBasic()
         }
         else if (k == 120)
         {
-            setPlotProperties(properties::SLOT0, properties::Color::Red());
+            setProperties(properties::SLOT0, properties::Color::Red());
             realTimePlot(dt, y, properties::SLOT0);
         }
         else

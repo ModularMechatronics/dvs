@@ -26,9 +26,9 @@ public:
         return property_type_;
     };
 
-    void setPropertyType(const PropertyType attr_tp)
+    void setPropertyType(const PropertyType property_type)
     {
-        property_type_ = attr_tp;
+        property_type_ = property_type;
     }
 
     virtual ~PropertyBase() {}
