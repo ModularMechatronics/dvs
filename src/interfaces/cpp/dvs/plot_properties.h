@@ -12,14 +12,14 @@ namespace dvs
 {
 namespace internal
 {
-struct PropertyBase  // TODO: Should be class? Should all properties be classes?
+class PropertyBase
 {
 protected:
     PropertyType property_type_;
 
 public:
     PropertyBase() : property_type_(PropertyType::UNKNOWN) {}
-    PropertyBase(const PropertyType property_type) : property_type_(property_type) {}
+    explicit PropertyBase(const PropertyType property_type) : property_type_(property_type) {}
 
     PropertyType getPropertyType() const
     {
@@ -51,42 +51,42 @@ namespace properties
 {
 struct LineWidth : internal::PropertyBase
 {
-public:
     uint8_t data;
 
     LineWidth() : internal::PropertyBase(internal::PropertyType::LINE_WIDTH) {}
-    LineWidth(const uint8_t line_width) : internal::PropertyBase(internal::PropertyType::LINE_WIDTH), data(line_width)
+    explicit LineWidth(const uint8_t line_width)
+        : internal::PropertyBase(internal::PropertyType::LINE_WIDTH), data(line_width)
     {
     }
 };
 
 struct Alpha : internal::PropertyBase
 {
-public:
     uint8_t data;
 
     Alpha() : internal::PropertyBase(internal::PropertyType::ALPHA) {}
-    Alpha(const uint8_t alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
+    explicit Alpha(const uint8_t alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
 };
 
 struct ZOffset : internal::PropertyBase
 {
-public:
     float data;
 
     ZOffset() : internal::PropertyBase(internal::PropertyType::Z_OFFSET) {}
-    ZOffset(const float z_offset) : internal::PropertyBase(internal::PropertyType::Z_OFFSET), data(z_offset) {}
+    explicit ZOffset(const float z_offset) : internal::PropertyBase(internal::PropertyType::Z_OFFSET), data(z_offset) {}
 };
 
 struct Transform : internal::PropertyBase
 {
-public:
     Vec3<double> scale;
     MatrixFixed<double, 3, 3> rotation;
     Vec3<double> translation;
 
     Transform() : internal::PropertyBase(internal::PropertyType::TRANSFORM) {}
-    Transform(const Vec3<double>& scale_, const MatrixFixed<double, 3, 3>& rotation_, const Vec3<double>& translation_)
+
+    explicit Transform(const Vec3<double>& scale_,
+                       const MatrixFixed<double, 3, 3>& rotation_,
+                       const Vec3<double>& translation_)
         : internal::PropertyBase(internal::PropertyType::TRANSFORM),
           scale{scale_},
           rotation{rotation_},
@@ -94,7 +94,7 @@ public:
     {
     }
 
-    Transform(const Vec3<double>& scale_, const Matrix<double>& rotation_, const Vec3<double>& translation_)
+    explicit Transform(const Vec3<double>& scale_, const Matrix<double>& rotation_, const Vec3<double>& translation_)
         : internal::PropertyBase(internal::PropertyType::TRANSFORM)
     {
         scale = scale_;
@@ -115,7 +115,6 @@ public:
 
 struct Name : internal::PropertyBase
 {
-public:
     static constexpr size_t max_length = 100;
     char data[max_length + 1];  // +1 for null termination
     size_t length;
@@ -125,7 +124,8 @@ public:
         data[0] = '\0';
         length = 0;
     }
-    Name(const char* const name) : internal::PropertyBase(internal::PropertyType::NAME)
+
+    explicit Name(const char* const name) : internal::PropertyBase(internal::PropertyType::NAME)
     {
         DVS_ASSERT(name) << "Input name string is null!";
         const size_t idx = internal::safeStringLenCheck(name, max_length + 1);
@@ -143,7 +143,7 @@ inline bool operator==(const Name& n0, const Name& n1)
     return strcmp(n0.data, n1.data) == 0;
 }
 
-struct LineStyle : internal::PropertyBase
+class LineStyle : internal::PropertyBase
 {
 private:
     LineStyle(const internal::LineStyleType line_style_type)
@@ -181,40 +181,39 @@ struct ScatterStyle : internal::PropertyBase
     internal::ScatterStyleType data;
 
     ScatterStyle() : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE) {}
-    ScatterStyle(const internal::ScatterStyleType scatter_style_type)
+    explicit ScatterStyle(const internal::ScatterStyleType scatter_style_type)
         : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE), data{scatter_style_type}
     {
     }
 
     static ScatterStyle Cross()
     {
-        return {internal::ScatterStyleType::CROSS};
+        return ScatterStyle{internal::ScatterStyleType::CROSS};
     }
 
     static ScatterStyle Circle()
     {
-        return {internal::ScatterStyleType::CIRCLE};
+        return ScatterStyle{internal::ScatterStyleType::CIRCLE};
     }
 
     static ScatterStyle Disc()
     {
-        return {internal::ScatterStyleType::DISC};
+        return ScatterStyle{internal::ScatterStyleType::DISC};
     }
 
     static ScatterStyle Square()
     {
-        return {internal::ScatterStyleType::SQUARE};
+        return ScatterStyle{internal::ScatterStyleType::SQUARE};
     }
 
     static ScatterStyle Plus()
     {
-        return {internal::ScatterStyleType::PLUS};
+        return ScatterStyle{internal::ScatterStyleType::PLUS};
     }
 };
 
 struct Color : internal::PropertyBase
 {
-public:
     uint8_t red, green, blue;
 
     static Color Red()
@@ -264,7 +263,7 @@ public:
 
     Color() : internal::PropertyBase(internal::PropertyType::COLOR) {}
 
-    Color(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
+    explicit Color(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::COLOR), red(red_), green(green_), blue(blue_)
     {
     }
@@ -272,7 +271,6 @@ public:
 
 struct EdgeColor : internal::PropertyBase
 {
-public:
     uint8_t use_color;
     uint8_t red, green, blue;
 
@@ -328,7 +326,7 @@ public:
 
     EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{1U} {}
 
-    EdgeColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
+    explicit EdgeColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::EDGE_COLOR),
           use_color{1U},
           red(red_),
@@ -337,7 +335,7 @@ public:
     {
     }
 
-    EdgeColor(const uint8_t use_color_)
+    explicit EdgeColor(const uint8_t use_color_)
         : internal::PropertyBase(internal::PropertyType::EDGE_COLOR),
           use_color{use_color_},
           red(0U),
@@ -349,7 +347,6 @@ public:
 
 struct FaceColor : internal::PropertyBase
 {
-public:
     uint8_t use_color;
     uint8_t red, green, blue;
 
@@ -407,7 +404,7 @@ public:
     {
     }
 
-    FaceColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
+    explicit FaceColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::FACE_COLOR),
           use_color{1U},
           red(red_),
@@ -416,7 +413,7 @@ public:
     {
     }
 
-    FaceColor(const uint8_t use_color_)
+    explicit FaceColor(const uint8_t use_color_)
         : internal::PropertyBase(internal::PropertyType::FACE_COLOR),
           use_color{use_color_},
           red(0U),
@@ -428,7 +425,6 @@ public:
 
 struct ColorMap : internal::PropertyBase
 {
-public:
     internal::ColorMapType data;
 
     static ColorMap Jet()
@@ -457,15 +453,19 @@ public:
     }
 
     ColorMap() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(internal::ColorMapType::JET) {}
-    ColorMap(const internal::ColorMapType ct) : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(ct) {}
+    explicit ColorMap(const internal::ColorMapType ct)
+        : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(ct)
+    {
+    }
 };
 
 struct PointSize : internal::PropertyBase
 {
-public:
     uint8_t data;
+
     PointSize() : internal::PropertyBase(internal::PropertyType::POINT_SIZE) {}
-    PointSize(const uint8_t point_size) : internal::PropertyBase(internal::PropertyType::POINT_SIZE), data(point_size)
+    explicit PointSize(const uint8_t point_size)
+        : internal::PropertyBase(internal::PropertyType::POINT_SIZE), data(point_size)
     {
     }
 };
@@ -551,10 +551,10 @@ public:
 
 struct BufferSize : internal::PropertyBase
 {
-public:
     uint16_t data;
+
     BufferSize() : internal::PropertyBase(internal::PropertyType::BUFFER_SIZE) {}
-    BufferSize(const uint16_t buffer_size)
+    explicit BufferSize(const uint16_t buffer_size)
         : internal::PropertyBase(internal::PropertyType::BUFFER_SIZE), data(buffer_size)
     {
     }
