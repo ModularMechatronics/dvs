@@ -16,6 +16,7 @@ Pre release:
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
 - Rename "Slot" to "Id"?
+- Rename setProperties to something milder, since they are not overwritten, and rename assignProperties to overwriteProperties or something
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
 - Create demos application
 - Demos:

@@ -27,6 +27,7 @@ ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_da
     const size_t num_bytes = buffer_size_ * 2U * sizeof(float);
     std::memset(points_ptr_, 0, num_bytes);
     std::memset(dt_vec_, 0, num_bytes / 2U);
+    previous_buffer_size_ = buffer_size_;
 
     const OutputData output_data = convertDataScrollingPlotOuter(data_ptr_, data_type_);
 
@@ -67,6 +68,9 @@ ScrollingPlot2D::~ScrollingPlot2D()
 {
     delete[] points_ptr_;
     delete[] dt_vec_;
+
+    glDeleteBuffers(1, &vertex_buffer_);
+    glDeleteVertexArrays(1, &vertex_buffer_array_);
 }
 
 LegendProperties ScrollingPlot2D::getLegendProperties() const
@@ -82,48 +86,48 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
                                         const CommunicationHeader& hdr,
                                         const Properties& props)
 {
-    data_ptr_ = received_data->data();
-
     if (props.numProperties() > 0U)
     {
-        if (props.hasProperty(PropertyType::BUFFER_SIZE))
-        {
-            const BufferSize b = props.getProperty<BufferSize>();
-            if (buffer_size_ != b.data)
-            {
-                float* points_ptr_tmp = new float[b.data * 2U];
-                float* dt_vec_tmp = new float[b.data];
-
-                std::memcpy(points_ptr_tmp, points_ptr_, sizeof(float) * buffer_size_ * 2U);
-                std::memcpy(dt_vec_tmp, dt_vec_, sizeof(float) * buffer_size_);
-
-                delete[] points_ptr_;
-                delete[] dt_vec_;
-
-                points_ptr_ = points_ptr_tmp;
-                dt_vec_ = dt_vec_tmp;
-
-                const size_t num_bytes = b.data * 2U * sizeof(float);
-
-                glGenVertexArrays(1, &vertex_buffer_array_);
-                glBindVertexArray(vertex_buffer_array_);
-
-                glGenBuffers(1, &vertex_buffer_);
-                glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-                glBufferData(GL_ARRAY_BUFFER, num_bytes, points_ptr_, GL_DYNAMIC_DRAW);
-
-                glEnableVertexAttribArray(0);
-
-                glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-                buffer_size_ = b.data;
-
-                // TODO: Delete old GL buffer
-            }
-        }
-        assignProperties(props);
+        setProperties(props);
     }
 
+    if (previous_buffer_size_ != buffer_size_)
+    {
+        float* points_ptr_tmp = new float[buffer_size_ * 2U];
+        float* dt_vec_tmp = new float[buffer_size_];
+
+        const size_t num_bytes = buffer_size_ * 2U * sizeof(float);
+
+        std::memset(points_ptr_tmp, 0, num_bytes);
+        std::memset(dt_vec_tmp, 0, num_bytes / 2U);
+
+        std::memcpy(points_ptr_tmp, points_ptr_, sizeof(float) * buffer_size_ * 2U);
+        std::memcpy(dt_vec_tmp, dt_vec_, sizeof(float) * buffer_size_);
+
+        delete[] points_ptr_;
+        delete[] dt_vec_;
+
+        points_ptr_ = points_ptr_tmp;
+        dt_vec_ = dt_vec_tmp;
+
+        glDeleteBuffers(1, &vertex_buffer_);
+        glDeleteVertexArrays(1, &vertex_buffer_array_);
+
+        glGenVertexArrays(1, &vertex_buffer_array_);
+        glBindVertexArray(vertex_buffer_array_);
+
+        glGenBuffers(1, &vertex_buffer_);
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+        glBufferData(GL_ARRAY_BUFFER, num_bytes, points_ptr_, GL_DYNAMIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+        previous_buffer_size_ = buffer_size_;
+    }
+
+    data_ptr_ = received_data->data();
     const OutputData output_data = convertDataScrollingPlotOuter(data_ptr_, data_type_);
 
     num_elements_to_draw_ = (num_elements_to_draw_ + 1U) > buffer_size_ ? buffer_size_ : (num_elements_to_draw_ + 1U);

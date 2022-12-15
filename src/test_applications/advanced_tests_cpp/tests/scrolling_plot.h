@@ -20,12 +20,18 @@ void testBasic()
     view(180, -90);
     axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
 
-    // setProperties(properties::SLOT0, properties::Color::Red());
+    setProperties(properties::SLOT0, properties::Color::Blue());
 
     for (size_t k = 0; k < num_its; k++)
     {
         const float y = std::sin(t) + 0.1f * std::sin(t * 10.0f);
         t += dt;
+
+        if (k == 600)
+        {
+            setProperties(properties::SLOT0, properties::Color::Red());
+            setProperties(properties::SLOT0, properties::BufferSize(1000U));
+        }
         /*if (k < 120)
         {
             realTimePlot(dt, y, properties::SLOT0, properties::Color::Blue());
