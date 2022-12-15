@@ -622,9 +622,9 @@ void realTimePlot(const T dt, const T y, const internal::PlotSlot slot, const Us
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, data);
 }
 
-template <typename... Us> void setPlotProperties(const internal::PlotSlot slot, const Us&... settings)
+template <typename... Us> void setProperties(const internal::PlotSlot slot, const Us&... settings)
 {
-    internal::CommunicationHeader hdr{internal::Function::HEADER_EXTENSION};
+    internal::CommunicationHeader hdr{internal::Function::PROPERTIES_EXTENSION};
     hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
     hdr.extend(settings...);
 

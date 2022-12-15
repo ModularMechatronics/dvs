@@ -68,6 +68,11 @@ int main(int argc, char* argv[])
         {"basic", object_transform::testBasic},
     };
 
+    // ######################### object_transform ##########################
+    StringFunctionMap append_properties_tests{
+        {"basic", append_properties::testBasic},
+    };
+
     fcns["plot"] = plot2_functions;
     fcns["plot3"] = plot3_functions;
     fcns["scatter"] = scatter2_functions;
@@ -76,6 +81,7 @@ int main(int argc, char* argv[])
     fcns["dynamic_plotting"] = dynamic_plotting_functions;
     fcns["scrolling_plot"] = scrolling_plot_tests;
     fcns["object_transform"] = object_transform_tests;
+    fcns["append_properties"] = append_properties_tests;
 
     if (argc == 1)
     {

@@ -10,8 +10,9 @@ OutputData convertDataScrollingPlotOuter(const uint8_t* const input_data, const 
 
 ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_data,
                                  const CommunicationHeader& hdr,
+                                 const Properties& props,
                                  const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection)
 {
     if (type_ != Function::REAL_TIME_PLOT)
     {
@@ -78,11 +79,10 @@ LegendProperties ScrollingPlot2D::getLegendProperties() const
 }
 
 void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
-                                        const CommunicationHeader& hdr)
+                                        const CommunicationHeader& hdr,
+                                        const Properties& props)
 {
     data_ptr_ = received_data->data();
-
-    const Properties props(hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags());
 
     if (props.numProperties() > 0U)
     {

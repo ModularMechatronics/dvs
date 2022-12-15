@@ -8,8 +8,9 @@ uint8_t* convertData3DLineCollection3Outer(const uint8_t* const input_data,
 
 LineCollection3D::LineCollection3D(std::unique_ptr<const ReceivedData> received_data,
                                    const CommunicationHeader& hdr,
+                                   const Properties& props,
                                    const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection)
 {
     if (type_ != Function::LINE_COLLECTION3)
     {

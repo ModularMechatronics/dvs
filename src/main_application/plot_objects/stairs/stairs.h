@@ -22,6 +22,7 @@ public:
     Stairs();
     Stairs(std::unique_ptr<const ReceivedData> received_data,
            const CommunicationHeader& hdr,
+           const Properties& props,
            const ShaderCollection shader_collection);
     ~Stairs();
 

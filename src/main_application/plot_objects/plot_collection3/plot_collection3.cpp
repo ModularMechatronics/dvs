@@ -140,8 +140,9 @@ inline OutputData convertCollection3DDataOuter(uint8_t* input_data,
 
 PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_data,
                                    const CommunicationHeader& hdr,
+                                   const Properties& props,
                                    const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection)
 {
     if (type_ != Function::PLOT_COLLECTION3)
     {

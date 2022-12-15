@@ -13,6 +13,7 @@ flat in int triangle_id;
 uniform int use_dash;
 
 uniform float half_line_width;
+uniform float alpha;
 
 uniform int use_clip_plane;
 uniform vec4 clip_plane0;
@@ -57,8 +58,7 @@ void main()
       }
    }
 
-   color = vec4(fragment_color, 1.0);
-   // color = fragment_color;
+   color = vec4(fragment_color, alpha);
 
    if(triangle_id == 3)
    {
