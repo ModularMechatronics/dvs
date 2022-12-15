@@ -13,7 +13,7 @@ using namespace dvs;
 namespace car
 {
 
-ImageC4<uint8_t> readCarImage()
+ImageRGBA<uint8_t> readCarImage()
 {
     const std::string bin_path = "../demos/tests/car/car.bin";
     std::ifstream input(bin_path, std::ios::binary);
@@ -23,9 +23,9 @@ ImageC4<uint8_t> readCarImage()
     const size_t num_rows = 150;
     const size_t num_cols = 300;
 
-    ImageC1View<uint8_t> img_view{buffer.data(), num_rows, num_cols};
+    ImageGrayView<uint8_t> img_view{buffer.data(), num_rows, num_cols};
 
-    ImageC4<uint8_t> img_c4(num_rows, num_cols);
+    ImageRGBA<uint8_t> img_c4(num_rows, num_cols);
 
     for (size_t r = 0; r < num_rows; r++)
     {
@@ -82,9 +82,9 @@ std::tuple<Vector<float>, Vector<float>, Vector<float>> generatePath()
 
 void testBasic()
 {
-    const ImageC4<uint8_t> img = readCarImage();
-    ImageC1<uint8_t> road(1, 1);
-    ImageC1<uint8_t> line(1, 1);
+    const ImageRGBA<uint8_t> img = readCarImage();
+    ImageGray<uint8_t> road(1, 1);
+    ImageGray<uint8_t> line(1, 1);
 
     road(0, 0) = 127U;
     line(0, 0) = 200U;

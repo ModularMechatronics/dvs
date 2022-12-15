@@ -23,9 +23,9 @@
 
 #include "dvs/math/structures/index_triplet.h"
 
-#include "dvs/math/image/image_c1.h"
-#include "dvs/math/image/image_c3.h"
-#include "dvs/math/image/image_c4.h"
+#include "dvs/math/image/image_gray.h"
+#include "dvs/math/image/image_rgb.h"
+#include "dvs/math/image/image_rgba.h"
 
 #include "dvs/math/pre_defs.h"
 // clang-format on

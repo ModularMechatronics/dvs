@@ -763,8 +763,8 @@ void testFastPlot3()
 void testImShow4()
 {
     const uint32_t num_rows = 800, num_cols = 800;
-    ImageC4<float> img4(num_rows, num_cols);
-    ImageC3<float> img3(num_rows, num_cols);
+    ImageRGBA<float> img4(num_rows, num_cols);
+    ImageRGB<float> img3(num_rows, num_cols);
 
     for (uint32_t r = 0; r < num_rows; r++)
     {
@@ -804,12 +804,12 @@ void testImShow4()
 void testImShow()
 {
     const uint32_t num_rows = 800, num_cols = 800;
-    ImageC3<float> img3(num_rows, num_cols);
-    ImageC1<float> img1(num_rows, num_cols);
-    ImageC4<float> img4(num_rows, num_cols);
+    ImageRGB<float> img3(num_rows, num_cols);
+    ImageGray<float> img1(num_rows, num_cols);
+    ImageRGBA<float> img4(num_rows, num_cols);
 
-    ImageC1<uint8_t> img1_uint8(num_rows, num_cols);
-    ImageC3<uint8_t> img3_uint8(num_rows, num_cols);
+    ImageGray<uint8_t> img1_uint8(num_rows, num_cols);
+    ImageRGB<uint8_t> img3_uint8(num_rows, num_cols);
 
     for (uint32_t r = 0; r < num_rows; r++)
     {

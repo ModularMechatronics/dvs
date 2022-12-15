@@ -12,7 +12,7 @@
 namespace dvs
 {
 
-template <typename T> class ImageC1View
+template <typename T> class ImageGrayView
 {
 private:
     T* data_;
@@ -20,9 +20,9 @@ private:
     size_t num_cols_;
 
 public:
-    ImageC1View() : data_{nullptr}, num_rows_{0U}, num_cols_{0U} {}
+    ImageGrayView() : data_{nullptr}, num_rows_{0U}, num_cols_{0U} {}
 
-    ImageC1View(T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
+    ImageGrayView(T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
         : data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
     {
     }
@@ -69,7 +69,7 @@ public:
     }
 };
 
-template <typename T> class ImageC1ConstView
+template <typename T> class ImageGrayConstView
 {
 private:
     const T* data_;
@@ -77,9 +77,9 @@ private:
     size_t num_cols_;
 
 public:
-    ImageC1ConstView() : data_{nullptr}, num_rows_{0U}, num_cols_{0U} {}
+    ImageGrayConstView() : data_{nullptr}, num_rows_{0U}, num_cols_{0U} {}
 
-    ImageC1ConstView(const T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
+    ImageGrayConstView(const T* const data_ptr_in, const size_t num_rows, const size_t num_cols)
         : data_{data_ptr_in}, num_rows_{num_rows}, num_cols_{num_cols}
     {
     }
@@ -126,7 +126,7 @@ public:
     }
 };
 
-template <typename T> class ImageC1
+template <typename T> class ImageGray
 {
 private:
     T* data_;
@@ -134,9 +134,9 @@ private:
     size_t num_cols_;
 
 public:
-    ImageC1();
-    ImageC1(const size_t num_rows, const size_t num_cols);
-    ~ImageC1();
+    ImageGray();
+    ImageGray(const size_t num_rows, const size_t num_cols);
+    ~ImageGray();
 
     T& operator()(const size_t r, const size_t c);
     const T& operator()(const size_t r, const size_t c) const;
@@ -152,7 +152,7 @@ public:
     T* data() const;
 };
 
-template <typename T> ImageC1<T>::~ImageC1()
+template <typename T> ImageGray<T>::~ImageGray()
 {
     if (num_rows_ > 0U)
     {
@@ -160,9 +160,9 @@ template <typename T> ImageC1<T>::~ImageC1()
     }
 }
 
-template <typename T> ImageC1<T>::ImageC1() : data_{nullptr}, num_rows_{0}, num_cols_{0} {}
+template <typename T> ImageGray<T>::ImageGray() : data_{nullptr}, num_rows_{0}, num_cols_{0} {}
 
-template <typename T> ImageC1<T>::ImageC1(const size_t num_rows, const size_t num_cols)
+template <typename T> ImageGray<T>::ImageGray(const size_t num_rows, const size_t num_cols)
 {
     DVS_ASSERT(num_rows > 0U) << "Cannot initialize with number of rows to 0!";
     DVS_ASSERT(num_cols > 0U) << "Cannot initialize with number of columns to 0!";
@@ -171,19 +171,19 @@ template <typename T> ImageC1<T>::ImageC1(const size_t num_rows, const size_t nu
     num_cols_ = num_cols;
 }
 
-template <typename T> void ImageC1<T>::fillBufferWithData(uint8_t* const buffer) const
+template <typename T> void ImageGray<T>::fillBufferWithData(uint8_t* const buffer) const
 {
     const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
     const size_t num_bytes = num_rows_ * num_cols_ * sizeof(T);
     std::memcpy(buffer, internal_ptr, num_bytes);
 }
 
-template <typename T> size_t ImageC1<T>::numBytes() const
+template <typename T> size_t ImageGray<T>::numBytes() const
 {
     return num_rows_ * num_cols_ * sizeof(T);
 }
 
-template <typename T> void ImageC1<T>::resize(const size_t num_rows, const size_t num_cols)
+template <typename T> void ImageGray<T>::resize(const size_t num_rows, const size_t num_cols)
 {
     DVS_ASSERT(num_rows > 0U) << "Cannot initialize with number of rows to 0!";
     DVS_ASSERT(num_cols > 0U) << "Cannot initialize with number of columns to 0!";
@@ -198,27 +198,27 @@ template <typename T> void ImageC1<T>::resize(const size_t num_rows, const size_
     num_cols_ = num_cols;
 }
 
-template <typename T> size_t ImageC1<T>::numRows() const
+template <typename T> size_t ImageGray<T>::numRows() const
 {
     return num_rows_;
 }
 
-template <typename T> size_t ImageC1<T>::numCols() const
+template <typename T> size_t ImageGray<T>::numCols() const
 {
     return num_cols_;
 }
 
-template <typename T> size_t ImageC1<T>::numElements() const
+template <typename T> size_t ImageGray<T>::numElements() const
 {
     return num_rows_ * num_cols_;
 }
 
-template <typename T> T* ImageC1<T>::data() const
+template <typename T> T* ImageGray<T>::data() const
 {
     return data_;
 }
 
-template <typename T> T& ImageC1<T>::operator()(const size_t r, const size_t c)
+template <typename T> T& ImageGray<T>::operator()(const size_t r, const size_t c)
 {
     assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
     assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
@@ -226,7 +226,7 @@ template <typename T> T& ImageC1<T>::operator()(const size_t r, const size_t c)
     return data_[r * num_cols_ + c];
 }
 
-template <typename T> const T& ImageC1<T>::operator()(const size_t r, const size_t c) const
+template <typename T> const T& ImageGray<T>::operator()(const size_t r, const size_t c) const
 {
     assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
     assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
