@@ -30,9 +30,7 @@ WindowView::WindowView(wxFrame* main_window,
     callback_id_ = callback_id;
     dialog_color_ = RGBTripletf(0.5, 0.0, 0.0);
 
-    this->SetPosition(wxPoint(window_settings.x, window_settings.y));
     this->SetLabel(window_settings.name);
-    this->SetSize(wxSize(window_settings.width, window_settings.height));
     name_ = window_settings.name;
 
     if (window_settings.tabs.size() == 0)
@@ -153,7 +151,11 @@ WindowView::WindowView(wxFrame* main_window,
     Bind(wxEVT_RIGHT_DOWN, &WindowView::mouseRightPressedCallback, this);
 
     tab_buttons_.windowWasResized(this->GetSize());
+
     Show();
+
+    this->SetPosition(wxPoint(window_settings.x, window_settings.y));
+    this->SetSize(wxSize(window_settings.width, window_settings.height));
 }
 
 WindowView::~WindowView()
@@ -278,6 +280,8 @@ void WindowView::OnSize(wxSizeEvent& event)
 {
     wxFrame::OnSize(event);
     const wxSize new_size = event.GetSize();
+
+    std::cout << this->GetPosition().x << ", " << this->GetPosition().y << std::endl;
 
     tab_buttons_.windowWasResized(new_size);
 
