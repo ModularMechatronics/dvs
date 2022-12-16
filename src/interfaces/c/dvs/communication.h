@@ -52,4 +52,4 @@ void sendData(SocketStructure* sock_struct, const uint8_t* const data, const uin
     sendto(sock_struct->file_descr, data, num_bytes, 0, tx_addr_ptr, sizeof(sock_struct->tx_addr));
 }
 
-#endif // DVS_COMMUNICATION_H_
+#endif  // DVS_COMMUNICATION_H_

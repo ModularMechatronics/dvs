@@ -42,4 +42,4 @@ VectorF vector_cosF(const VectorF vec)
     return vec_out;
 }
 
-#endif // DVS_MATH_VECTOR_VECTOR_MATH_H_
+#endif  // DVS_MATH_VECTOR_VECTOR_MATH_H_

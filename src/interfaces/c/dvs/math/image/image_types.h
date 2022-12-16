@@ -225,4 +225,4 @@ typedef struct S_ImageC3U64
 
 } ImageC3U64;
 
-#endif // DVS_MATH_IMAGE_IMAGE_TYPES_H_
+#endif  // DVS_MATH_IMAGE_IMAGE_TYPES_H_

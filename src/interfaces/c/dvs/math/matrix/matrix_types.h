@@ -127,4 +127,4 @@ typedef struct S_MatrixPairD
     MatrixD m1;
 } MatrixPairD;
 
-#endif // DVS_MATH_MATRIX_MATRIX_TYPES_H_
+#endif  // DVS_MATH_MATRIX_MATRIX_TYPES_H_

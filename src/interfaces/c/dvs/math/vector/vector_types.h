@@ -105,4 +105,4 @@ typedef struct S_VectorU64
 
 } VectorU64;
 
-#endif // DVS_MATH_VECTOR_VECTOR_TYPES_H_
+#endif  // DVS_MATH_VECTOR_VECTOR_TYPES_H_

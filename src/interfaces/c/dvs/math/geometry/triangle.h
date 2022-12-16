@@ -85,4 +85,4 @@ IndexTripletArray createIndexTripletArray(const size_t num_elements)
     return array;
 }
 
-#endif // DVS_MATH_GEOMETRY_TRIANGLE_H_
+#endif  // DVS_MATH_GEOMETRY_TRIANGLE_H_

@@ -101,4 +101,4 @@ MatrixD matrix_elementWiseMultiplyD(const MatrixD m0, const MatrixD m1)
     return mat_out;
 }
 
-#endif // DVS_MATH_MATRIX_MATRIX_MATH_H_
+#endif  // DVS_MATH_MATRIX_MATRIX_MATH_H_

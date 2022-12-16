@@ -148,4 +148,4 @@ MatrixU64 toMatrixU64(const Matrix mat)
     return ret_mat;
 }
 
-#endif // DVS_MATH_MATRIX_MATRIX_INSTANTIATION_H_
+#endif  // DVS_MATH_MATRIX_MATRIX_INSTANTIATION_H_

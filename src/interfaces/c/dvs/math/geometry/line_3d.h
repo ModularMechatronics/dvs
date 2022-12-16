@@ -10,4 +10,4 @@ typedef struct S_Line3DD
 } Line3DD;
 
 
-#endif // DVS_MATH_GEOMETRY_LINE_3D_H_
+#endif  // DVS_MATH_GEOMETRY_LINE_3D_H_

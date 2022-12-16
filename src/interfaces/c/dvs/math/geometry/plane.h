@@ -10,4 +10,4 @@ typedef struct S_PlaneD
 } PlaneD;
 
 
-#endif // DVS_MATH_GEOMETRY_PLANE_H_
+#endif  // DVS_MATH_GEOMETRY_PLANE_H_

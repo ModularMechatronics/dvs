@@ -133,4 +133,4 @@ typedef enum S_ElementParent
 constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
 }*/
 
-#endif // DVS_ENUMERATIONS_H_
+#endif  // DVS_ENUMERATIONS_H_
