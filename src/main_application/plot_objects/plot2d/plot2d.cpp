@@ -61,7 +61,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
     {
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
-    std::cout << "Creating new plot2" << std::endl;
+
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
 
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);

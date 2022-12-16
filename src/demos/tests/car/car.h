@@ -13,7 +13,7 @@ using namespace dvs;
 namespace car
 {
 
-ImageRGBA<uint8_t> readCarImage()
+ImageGrayAlpha<uint8_t> readCarImage()
 {
     const std::string bin_path = "../demos/tests/car/car.bin";
     std::ifstream input(bin_path, std::ios::binary);
@@ -25,7 +25,7 @@ ImageRGBA<uint8_t> readCarImage()
 
     ImageGrayView<uint8_t> img_view{buffer.data(), num_rows, num_cols};
 
-    ImageRGBA<uint8_t> img_c4(num_rows, num_cols);
+    ImageGrayAlpha<uint8_t> img_ga(num_rows, num_cols);
 
     for (size_t r = 0; r < num_rows; r++)
     {
@@ -35,25 +35,23 @@ ImageRGBA<uint8_t> readCarImage()
 
             if (pixel_val == 255)
             {
-                img_c4(r, c, 3) = 0;
+                img_ga(r, c, 1) = 0;
             }
             else
             {
-                img_c4(r, c, 0) = pixel_val;
-                img_c4(r, c, 1) = pixel_val;
-                img_c4(r, c, 2) = pixel_val;
-                img_c4(r, c, 3) = 255;
+                img_ga(r, c, 0) = pixel_val;
+                img_ga(r, c, 1) = 255;
             }
         }
     }
 
-    return img_c4;
+    return img_ga;
 }
 
 std::tuple<Vector<float>, Vector<float>, Vector<float>> generatePath()
 {
-    float phi = 0.0f, v = 2.0f;
-    const size_t num_its = 100;
+    float phi = 0.0f, v = 0.2f;
+    const size_t num_its = 1000;
     srand(4);
 
     Vector<float> xv{num_its}, yv{num_its}, phiv{num_its};
@@ -70,8 +68,8 @@ std::tuple<Vector<float>, Vector<float>, Vector<float>> generatePath()
         yv(k) = yv(k - 1) + v * std::sin(phi);
         phiv(k) = phi;
 
-        float r0 = 100.0f * (static_cast<float>(rand() % 1001) / 1000.0f - 0.5f);
-        float r1 = 100.0f * (static_cast<float>(rand() % 1001) / 1000.0f - 0.5f);
+        float r0 = 10.0f * (static_cast<float>(rand() % 1001) / 1000.0f - 0.5f);
+        float r1 = 50.0f * (static_cast<float>(rand() % 1001) / 1000.0f - 0.5f);
 
         v = h_1 * v + h * r0;
         phi = h_1 * phi + h * r1;
@@ -82,7 +80,7 @@ std::tuple<Vector<float>, Vector<float>, Vector<float>> generatePath()
 
 void testBasic()
 {
-    const ImageRGBA<uint8_t> img = readCarImage();
+    const ImageGrayAlpha<uint8_t> img = readCarImage();
     ImageGray<uint8_t> road(1, 1);
     ImageGray<uint8_t> line(1, 1);
 
@@ -120,14 +118,13 @@ void testBasic()
     }
 
     plot(x, y, properties::Color(0, 255, 0), properties::LineWidth(5), properties::ZOffset(-0.15));
-    scatter(x, y, properties::Color(255, 0, 0), properties::ZOffset(-0.13));
     imShow(img,
            properties::SLOT0,
            properties::ZOffset(-0.05f),
            properties::Transform{
                scale, rotationMatrixZ<double>(M_PI), -rotationMatrixZ<double>(M_PI) * center_of_rotation});
 
-    for (size_t k = 0; k < x.size(); k++)
+    for (size_t k = 0; k < x.size(); k += 10)
     {
         const double ang = phi(k) - M_PI;
 

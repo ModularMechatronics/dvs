@@ -281,8 +281,6 @@ void WindowView::OnSize(wxSizeEvent& event)
     wxFrame::OnSize(event);
     const wxSize new_size = event.GetSize();
 
-    std::cout << this->GetPosition().x << ", " << this->GetPosition().y << std::endl;
-
     tab_buttons_.windowWasResized(new_size);
 
     for (const auto& tab : tabs_)
