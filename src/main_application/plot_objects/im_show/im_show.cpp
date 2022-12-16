@@ -58,24 +58,6 @@ void ImShow::findMinMax()
     max_vec.z = 1.0;
 }
 
-template <typename T> GLuint loadTexture(const int width, const int height, const T* data)
-{
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    return textureID;
-}
-
 ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
                const Properties& props,

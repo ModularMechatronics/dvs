@@ -4,6 +4,24 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+template <typename T> GLuint loadTexture(const int width, const int height, const T* data)
+{
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    return textureID;
+}
+
 static Vec3d findScale(const glm::mat4& pm)
 {
     // Currently unknown exactly how 'q' affects the results...
@@ -20,7 +38,7 @@ static Vec3d findScale(const glm::mat4& pm)
     const glm::vec4 pr0 = pm * points(0);
     // clang-format on
     std::pair<glm::vec4, glm::vec4> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
-                                  pmah = {points(0), pr0};
+                                    pmah = {points(0), pr0};
     for (const glm::vec4& p : points)
     {
         auto pqr = pm * p;
@@ -64,8 +82,24 @@ static Vec3d findScale(const glm::mat4& pm)
     const double pmiw_x = pmiw.first.x, pmiw_y = pmiw.first.y, pmiw_z = pmiw.first.z;
     const double pmih_x = pmih.first.x, pmih_y = pmih.first.y, pmih_z = pmih.first.z;
 
-    const double sx = (pmih_y*q03*q11 - pmiw_y*q01*q13 + h*pmih_y*q03*q31 - h*pmiw_y*q01*q33 + pmih_y*pmiw_z*q02*q11 - pmih_z*pmiw_y*q01*q12 + pmih_y*q11*q33*w - pmiw_y*q13*q31*w + h*pmih_y*pmiw_z*q02*q31 - h*pmih_z*pmiw_y*q01*q32 + h*pmih_y*q31*q33*w - h*pmiw_y*q31*q33*w + pmih_y*pmiw_z*q11*q32*w - pmih_z*pmiw_y*q12*q31*w + h*pmih_y*pmiw_z*q31*q32*w - h*pmih_z*pmiw_y*q31*q32*w)/(pmih_x*pmiw_y*q01*q10 - pmih_y*pmiw_x*q00*q11 + h*pmih_x*pmiw_y*q01*q30 - h*pmih_y*pmiw_x*q00*q31 + pmih_x*pmiw_y*q10*q31*w - pmih_y*pmiw_x*q11*q30*w + h*pmih_x*pmiw_y*q30*q31*w - h*pmih_y*pmiw_x*q30*q31*w);
-    const double sy = -(pmih_x*q03*q10 - pmiw_x*q00*q13 + h*pmih_x*q03*q30 - h*pmiw_x*q00*q33 + pmih_x*pmiw_z*q02*q10 - pmih_z*pmiw_x*q00*q12 + pmih_x*q10*q33*w - pmiw_x*q13*q30*w + h*pmih_x*pmiw_z*q02*q30 - h*pmih_z*pmiw_x*q00*q32 + h*pmih_x*q30*q33*w - h*pmiw_x*q30*q33*w + pmih_x*pmiw_z*q10*q32*w - pmih_z*pmiw_x*q12*q30*w + h*pmih_x*pmiw_z*q30*q32*w - h*pmih_z*pmiw_x*q30*q32*w)/(pmih_x*pmiw_y*q01*q10 - pmih_y*pmiw_x*q00*q11 + h*pmih_x*pmiw_y*q01*q30 - h*pmih_y*pmiw_x*q00*q31 + pmih_x*pmiw_y*q10*q31*w - pmih_y*pmiw_x*q11*q30*w + h*pmih_x*pmiw_y*q30*q31*w - h*pmih_y*pmiw_x*q30*q31*w);
+    const double sx =
+        (pmih_y * q03 * q11 - pmiw_y * q01 * q13 + h * pmih_y * q03 * q31 - h * pmiw_y * q01 * q33 +
+         pmih_y * pmiw_z * q02 * q11 - pmih_z * pmiw_y * q01 * q12 + pmih_y * q11 * q33 * w - pmiw_y * q13 * q31 * w +
+         h * pmih_y * pmiw_z * q02 * q31 - h * pmih_z * pmiw_y * q01 * q32 + h * pmih_y * q31 * q33 * w -
+         h * pmiw_y * q31 * q33 * w + pmih_y * pmiw_z * q11 * q32 * w - pmih_z * pmiw_y * q12 * q31 * w +
+         h * pmih_y * pmiw_z * q31 * q32 * w - h * pmih_z * pmiw_y * q31 * q32 * w) /
+        (pmih_x * pmiw_y * q01 * q10 - pmih_y * pmiw_x * q00 * q11 + h * pmih_x * pmiw_y * q01 * q30 -
+         h * pmih_y * pmiw_x * q00 * q31 + pmih_x * pmiw_y * q10 * q31 * w - pmih_y * pmiw_x * q11 * q30 * w +
+         h * pmih_x * pmiw_y * q30 * q31 * w - h * pmih_y * pmiw_x * q30 * q31 * w);
+    const double sy =
+        -(pmih_x * q03 * q10 - pmiw_x * q00 * q13 + h * pmih_x * q03 * q30 - h * pmiw_x * q00 * q33 +
+          pmih_x * pmiw_z * q02 * q10 - pmih_z * pmiw_x * q00 * q12 + pmih_x * q10 * q33 * w - pmiw_x * q13 * q30 * w +
+          h * pmih_x * pmiw_z * q02 * q30 - h * pmih_z * pmiw_x * q00 * q32 + h * pmih_x * q30 * q33 * w -
+          h * pmiw_x * q30 * q33 * w + pmih_x * pmiw_z * q10 * q32 * w - pmih_z * pmiw_x * q12 * q30 * w +
+          h * pmih_x * pmiw_z * q30 * q32 * w - h * pmih_z * pmiw_x * q30 * q32 * w) /
+        (pmih_x * pmiw_y * q01 * q10 - pmih_y * pmiw_x * q00 * q11 + h * pmih_x * pmiw_y * q01 * q30 -
+         h * pmih_y * pmiw_x * q00 * q31 + pmih_x * pmiw_y * q10 * q31 * w - pmih_y * pmiw_x * q11 * q30 * w +
+         h * pmih_x * pmiw_y * q30 * q31 * w - h * pmih_y * pmiw_x * q30 * q31 * w);
     const double sz = 1.0;
 
     // std::cout << Vec3d(sx, sy, sz) << std::endl;
@@ -75,8 +109,8 @@ static Vec3d findScale(const glm::mat4& pm)
 
 inline void sleepMS(const int ms)
 {
-    #include <stdlib.h>
-    #include <unistd.h>
+#include <stdlib.h>
+#include <unistd.h>
     usleep(ms * 1000);
 }
 
@@ -194,7 +228,7 @@ void drawDebugPoints(const AxesLimits& axes_limits,
     Point3d pr0 = R * points(0);
     // clang-format on
     std::pair<Point3d, Point3d> pmiw = {points(0), pr0}, pmaw = {points(0), pr0}, pmih = {points(0), pr0},
-                                  pmah = {points(0), pr0};
+                                pmah = {points(0), pr0};
     for (const Point3d p : points)
     {
         const auto pqr = R * p;

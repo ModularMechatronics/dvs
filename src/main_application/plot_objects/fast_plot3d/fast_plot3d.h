@@ -14,8 +14,7 @@
 class FastPlot3D : public PlotObjectBase
 {
 private:
-    // VertexBuffer vertex_buffer2_;
-    uint8_t* points_ptr_;
+    VertexBuffer vertex_buffer2_;
 
     void findMinMax() override;
 
