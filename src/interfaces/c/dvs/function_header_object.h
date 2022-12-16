@@ -23,4 +23,4 @@ FunctionHeaderObject getLastFuncHdrObj()
     return obj;
 }
 
-#endif // DVS_FUNCTION_HEADER_OBJECT_H_
+#endif  // DVS_FUNCTION_HEADER_OBJECT_H_

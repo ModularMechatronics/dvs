@@ -188,4 +188,4 @@ Vec3fArray createVec3fArray(const size_t num_elements)
 #define Point3dArray Vec3dArray
 #define Point3fArray Vec3fArray
 
-#endif // DVS_MATH_VECTOR_LOW_DIM_VEC3_H_
+#endif  // DVS_MATH_VECTOR_LOW_DIM_VEC3_H_

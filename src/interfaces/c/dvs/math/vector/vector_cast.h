@@ -996,4 +996,4 @@ VectorU32 castVectorU64ToVectorU32(const VectorU64 input)
     return output;
 }
 
-#endif // DVS_MATH_VECTOR_VECTOR_CAST_H_
+#endif  // DVS_MATH_VECTOR_VECTOR_CAST_H_

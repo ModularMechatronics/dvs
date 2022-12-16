@@ -14,4 +14,4 @@
 #include "dvs/math/geometry/line_3d.h"
 #include "dvs/math/geometry/plane.h"
 
-#endif // DVS_MATH_MATH_H_
+#endif  // DVS_MATH_MATH_H_

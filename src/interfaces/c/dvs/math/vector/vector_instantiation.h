@@ -157,4 +157,4 @@ VectorU64 toVectorU64(const Vector vec)
     return ret_vec;
 }
 
-#endif // DVS_MATH_VECTOR_VECTOR_INSTANTIATION_H_
+#endif  // DVS_MATH_VECTOR_VECTOR_INSTANTIATION_H_

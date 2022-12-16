@@ -16,4 +16,4 @@ typedef struct S_HLine2DD
     double c;
 } HLine2DD;
 
-#endif // DVS_MATH_GEOMETRY_LINE_2D_H_
+#endif  // DVS_MATH_GEOMETRY_LINE_2D_H_

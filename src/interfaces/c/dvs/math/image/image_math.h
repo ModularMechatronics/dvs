@@ -25,4 +25,4 @@
     }
 
 
-#endif // DVS_MATH_IMAGE_IMAGE_MATH_H_
+#endif  // DVS_MATH_IMAGE_IMAGE_MATH_H_

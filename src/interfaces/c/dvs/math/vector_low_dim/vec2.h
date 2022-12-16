@@ -40,4 +40,4 @@ typedef struct S_VecYZd
 #define PointXZd VecXZd
 #define PointYZd VecYZd
 
-#endif // DVS_MATH_VECTOR_LOW_DIM_VEC2_H_
+#endif  // DVS_MATH_VECTOR_LOW_DIM_VEC2_H_
