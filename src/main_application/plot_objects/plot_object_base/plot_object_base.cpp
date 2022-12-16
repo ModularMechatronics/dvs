@@ -68,7 +68,6 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
         throw std::runtime_error("No data bytes!");
     }
     min_max_calculated_ = false;
-    visualize_has_run_ = false;
     has_custom_transform_ = false;
     z_offset_ = 0.0f;
 
@@ -115,7 +114,6 @@ void PlotObjectBase::initialize(std::unique_ptr<const ReceivedData> received_dat
         throw std::runtime_error("No data bytes!");
     }
     min_max_calculated_ = false;
-    visualize_has_run_ = false;
     has_custom_transform_ = false;
     z_offset_ = 0.0f;
 

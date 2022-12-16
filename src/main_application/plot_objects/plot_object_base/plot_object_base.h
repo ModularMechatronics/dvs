@@ -76,7 +76,6 @@ protected:
     GLenum usage_;
     bool interpolate_colormap_;
     bool min_max_calculated_;
-    bool visualize_has_run_;
     bool has_name_;
     bool color_map_set_;
     ShaderCollection shader_collection_;
