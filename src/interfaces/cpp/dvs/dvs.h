@@ -464,6 +464,21 @@ template <typename T, typename... Us> void imShow(const ImageGray<T>& img, const
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
+template <typename T, typename... Us> void imShow(const ImageGrayAlpha<T>& img, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(2));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(img.numElements()));  // TODO: Needed?
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,
+               internal::Dimension2D(img.numRows(), img.numCols()));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
+}
+
 template <typename T, typename... Us> void imShow(const ImageRGB<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
@@ -499,6 +514,21 @@ template <typename T, typename... Us> void imShow(const ImageGrayView<T>& img, c
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(img.numElements()));  // TODO: Needed?
+    hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,
+               internal::Dimension2D(img.numRows(), img.numCols()));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
+}
+
+template <typename T, typename... Us> void imShow(const ImageGrayAlphaView<T>& img, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_CHANNELS, internal::toUInt8(2));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
                internal::toUInt32(img.numElements()));  // TODO: Needed?
     hdr.append(internal::CommunicationHeaderObjectType::DIMENSION_2D,

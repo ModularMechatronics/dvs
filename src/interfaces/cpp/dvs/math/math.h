@@ -24,6 +24,7 @@
 #include "dvs/math/structures/index_triplet.h"
 
 #include "dvs/math/image/image_gray.h"
+#include "dvs/math/image/image_gray_alpha.h"
 #include "dvs/math/image/image_rgb.h"
 #include "dvs/math/image/image_rgba.h"
 

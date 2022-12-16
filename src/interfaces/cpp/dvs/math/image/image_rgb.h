@@ -103,15 +103,6 @@ public:
         return 3 * num_rows_ * num_cols_ * sizeof(T);
     }
 
-    T& operator()(const size_t r, const size_t c, const size_t ch)
-    {
-        assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
-        assert((c < num_cols_) && "Column index is larger than num_cols_ - 1!");
-        assert((ch < 3) && "Channel index is larger than 2!");
-
-        return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
-    }
-
     const T& operator()(const size_t r, const size_t c, const size_t ch) const
     {
         assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
