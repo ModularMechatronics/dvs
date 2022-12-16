@@ -42,4 +42,4 @@ private:
     wxRect rect_;
 };
 
-#endif  // MAIN_APPLICATION_TAB_BUTTON_H_
+#endif  // MAIN_APPLICATION_HELP_PANE_H_

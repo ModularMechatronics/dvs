@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_IMAGE_IMAGE_C1_H_
-#define DVS_MATH_IMAGE_IMAGE_C1_H_
+#ifndef DVS_MATH_IMAGE_IMAGE_GRAY_H_
+#define DVS_MATH_IMAGE_IMAGE_GRAY_H_
 
 #include <assert.h>
 #include <stdint.h>
@@ -236,4 +236,4 @@ template <typename T> const T& ImageGray<T>::operator()(const size_t r, const si
 
 }  // namespace dvs
 
-#endif  // DVS_MATH_IMAGE_IMAGE_C1_H_
+#endif  // DVS_MATH_IMAGE_IMAGE_GRAY_H_
