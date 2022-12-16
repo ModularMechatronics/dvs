@@ -1,5 +1,5 @@
-#ifndef DVS_MATH_IMAGE_IMAGE_C4_H_
-#define DVS_MATH_IMAGE_IMAGE_C4_H_
+#ifndef DVS_MATH_IMAGE_IMAGE_RGBA_H_
+#define DVS_MATH_IMAGE_IMAGE_RGBA_H_
 
 #include <assert.h>
 #include <stdint.h>
@@ -237,4 +237,4 @@ template <typename T> const T& ImageRGBA<T>::operator()(const size_t r, const si
 
 }  // namespace dvs
 
-#endif  // DVS_MATH_IMAGE_IMAGE_C4_H_
+#endif  // DVS_MATH_IMAGE_IMAGE_RGBA_H_

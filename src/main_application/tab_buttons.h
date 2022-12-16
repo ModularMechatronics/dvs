@@ -1,5 +1,5 @@
-#ifndef MAIN_APPLICATION_TAB_CONTAINER_H_
-#define MAIN_APPLICATION_TAB_CONTAINER_H_
+#ifndef MAIN_APPLICATION_TAB_BUTTONS_H_
+#define MAIN_APPLICATION_TAB_BUTTONS_H_
 
 #include <unistd.h>
 #include <wx/button.h>
@@ -50,4 +50,4 @@ public:
     void changeButtonName(const std::string& old_label, const std::string& new_label);
 };
 
-#endif  // MAIN_APPLICATION_TAB_CONTAINER_H_
+#endif  // MAIN_APPLICATION_TAB_BUTTONS_H_

@@ -570,4 +570,4 @@ template <typename T> MatrixFixed<T, 2, 2> fixedRotationMatrix2D(const T angle)
 
 }  // namespace dvs
 
-#endif  // DVS_MATH_LIN_ALG_MATRIX_DYNAMIC_MATRIX_DYNAMIC_H_
+#endif  // DVS_MATH_LIN_ALG_MATRIX_FIXED_MATRIX_FIXED_H_
