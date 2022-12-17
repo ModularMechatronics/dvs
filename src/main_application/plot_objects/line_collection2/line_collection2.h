@@ -13,8 +13,7 @@
 class LineCollection2D : public PlotObjectBase
 {
 private:
-    // VertexBuffer vertex_buffer2_;
-    float* points_ptr_;
+    VertexBuffer vertex_buffer2_;
 
     void findMinMax() override;
 
