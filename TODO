@@ -43,6 +43,7 @@ Post release:
 - Merge plot2D/plot3Ds shaders (and possibly even C++ classes?)
 - Separate plot object vectors so that shader switching is minimized
 - Time date axis
+- Merge fastPlot and lineCollection, with switching of GLenum
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)
 - Mark all properties classes constructors noexcept?
 - Change void drawPlaneXY etc. interfaces to match between languages (C implementation is correct)

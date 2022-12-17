@@ -78,6 +78,7 @@ LegendProperties FastPlot2D::getLegendProperties() const
 
     return lp;
 }
+
 namespace
 {
 template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
