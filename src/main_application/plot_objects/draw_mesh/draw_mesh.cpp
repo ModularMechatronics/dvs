@@ -1,5 +1,9 @@
 #include "main_application/plot_objects/draw_mesh/draw_mesh.h"
 
+#include "outer_converter.h"
+
+namespace
+{
 struct OutputData
 {
     float* points_ptr;
@@ -7,17 +11,40 @@ struct OutputData
     float* mean_height_ptr;
 };
 
-OutputData convertVerticesDataOuter(uint8_t* input_data,
-                                    const DataType data_type,
-                                    const uint32_t num_vertices,
-                                    const uint32_t num_indices,
-                                    const uint32_t num_bytes_per_element);
+struct InputParams
+{
+    uint32_t num_vertices;
+    uint32_t num_indices;
+    uint32_t num_bytes_per_element;
 
-OutputData convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
-                                                   const DataType data_type,
-                                                   const uint32_t num_vertices,
-                                                   const uint32_t num_indices,
-                                                   const uint32_t num_bytes_per_element);
+    InputParams() = default;
+    InputParams(const uint32_t num_vertices_, const uint32_t num_indices_, const uint32_t num_bytes_per_element_)
+        : num_vertices{num_vertices_}, num_indices{num_indices_}, num_bytes_per_element{num_bytes_per_element_}
+    {
+    }
+};
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+OutputData convertDataSeparateVectors(const uint8_t* const input_data, const InputParams& input_params);
+
+struct Converter
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertData<T>(input_data, input_params);
+    }
+};
+
+struct ConverterSeparateVectors
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertDataSeparateVectors<T>(input_data, input_params);
+    }
+};
+
+}  // namespace
 
 DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
                    const CommunicationHeader& hdr,
@@ -35,32 +62,29 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
     num_indices_ = hdr.get(CommunicationHeaderObjectType::NUM_INDICES).as<uint32_t>();
     OutputData output_data;
 
+    const InputParams input_params(num_vertices_, num_indices_, num_bytes_per_element_);
+
     if (type_ == Function::DRAW_MESH)
     {
-        output_data =
-            convertVerticesDataOuter(data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
+        output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
     }
     else
     {
-        output_data = convertVerticesDataSeparateVectorsOuter(
-            data_ptr_, data_type_, num_vertices_, num_indices_, num_bytes_per_element_);
+        output_data = applyConverter<OutputData>(data_ptr_, data_type_, ConverterSeparateVectors{}, input_params);
     }
 
     points_ptr_ = output_data.points_ptr;
-    normals_ptr_ = output_data.normals_ptr;
-    mean_height_ptr_ = output_data.mean_height_ptr;
 
     interpolate_colormap_ = true;
 
     num_elements_to_render_ = num_indices_ * 3;
 
     vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
-    vertex_buffer2_.addBuffer(normals_ptr_, num_elements_to_render_, 3);
-    vertex_buffer2_.addBuffer(mean_height_ptr_, num_elements_to_render_, 1);
+    vertex_buffer2_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer2_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
 
-    delete[] points_ptr_;
-    delete[] normals_ptr_;
-    delete[] mean_height_ptr_;
+    delete[] output_data.normals_ptr;
+    delete[] output_data.mean_height_ptr;
 }
 
 bool DrawMesh::affectsColormapMinMax() const
@@ -137,26 +161,30 @@ void DrawMesh::render()
     shader_collection_.basic_plot_shader.use();
 }
 
-DrawMesh::~DrawMesh() {}
+DrawMesh::~DrawMesh()
+{
+    delete[] points_ptr_;
+}
 
-template <typename T>
-OutputData convertVerticesData(uint8_t* input_data,
-                               const uint32_t num_vertices,
-                               const uint32_t num_indices,
-                               const uint32_t num_bytes_per_element)
+namespace
+{
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     OutputData output_data;
-    output_data.points_ptr = new float[num_indices * 3 * 3];
-    output_data.normals_ptr = new float[num_indices * 3 * 3];
-    output_data.mean_height_ptr = new float[num_indices * 3];
+    output_data.points_ptr = new float[input_params.num_indices * 3 * 3];
+    output_data.normals_ptr = new float[input_params.num_indices * 3 * 3];
+    output_data.mean_height_ptr = new float[input_params.num_indices * 3];
 
-    VectorView<Point3<T>> vertices{reinterpret_cast<Point3<T>*>(input_data), num_vertices};
-    VectorView<IndexTriplet> indices{
-        reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
+    VectorConstView<Point3<T>> vertices{reinterpret_cast<const Point3<T>*>(input_data), input_params.num_vertices};
+    VectorConstView<IndexTriplet> indices{
+        reinterpret_cast<const IndexTriplet*>(
+            &(input_data[input_params.num_vertices * input_params.num_bytes_per_element * 3])),
+        input_params.num_indices};
 
     size_t idx = 0, height_idx = 0;
 
-    for (size_t k = 0; k < num_indices; k++)
+    for (size_t k = 0; k < input_params.num_indices; k++)
     {
         const Point3<T> p0 = vertices(indices(k).i0);
         const Point3<T> p1 = vertices(indices(k).i1);
@@ -203,27 +231,30 @@ OutputData convertVerticesData(uint8_t* input_data,
 }
 
 template <typename T>
-OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
-                                              const uint32_t num_vertices,
-                                              const uint32_t num_indices,
-                                              const uint32_t num_bytes_per_element)
+OutputData convertDataSeparateVectors(const uint8_t* const input_data, const InputParams& input_params)
 {
     OutputData output_data;
 
-    output_data.points_ptr = new float[num_indices * 3 * 3];
-    output_data.normals_ptr = new float[num_indices * 3 * 3];
-    output_data.mean_height_ptr = new float[num_indices * 3];
+    output_data.points_ptr = new float[input_params.num_indices * 3 * 3];
+    output_data.normals_ptr = new float[input_params.num_indices * 3 * 3];
+    output_data.mean_height_ptr = new float[input_params.num_indices * 3];
 
-    VectorView<T> x{reinterpret_cast<T*>(input_data), num_vertices};
-    VectorView<T> y{reinterpret_cast<T*>(&(input_data[num_vertices * num_bytes_per_element])), num_vertices};
-    VectorView<T> z{reinterpret_cast<T*>(&(input_data[num_vertices * num_bytes_per_element * 2])), num_vertices};
+    VectorConstView<T> x{reinterpret_cast<const T*>(input_data), input_params.num_vertices};
+    VectorConstView<T> y{
+        reinterpret_cast<const T*>(&(input_data[input_params.num_vertices * input_params.num_bytes_per_element])),
+        input_params.num_vertices};
+    VectorConstView<T> z{
+        reinterpret_cast<const T*>(&(input_data[input_params.num_vertices * input_params.num_bytes_per_element * 2])),
+        input_params.num_vertices};
 
-    VectorView<IndexTriplet> indices{
-        reinterpret_cast<IndexTriplet*>(&(input_data[num_vertices * num_bytes_per_element * 3])), num_indices};
+    VectorConstView<IndexTriplet> indices{
+        reinterpret_cast<const IndexTriplet*>(
+            &(input_data[input_params.num_vertices * input_params.num_bytes_per_element * 3])),
+        input_params.num_indices};
 
     size_t idx = 0, height_idx = 0;
 
-    for (size_t k = 0; k < num_indices; k++)
+    for (size_t k = 0; k < input_params.num_indices; k++)
     {
         const Point3<T> p0{x(indices(k).i0), y(indices(k).i0), z(indices(k).i0)};
         const Point3<T> p1{x(indices(k).i1), y(indices(k).i1), z(indices(k).i1)};
@@ -269,122 +300,4 @@ OutputData convertVerticesDataSeparateVectors(uint8_t* input_data,
     return output_data;
 }
 
-OutputData convertVerticesDataOuter(uint8_t* input_data,
-                                    const DataType data_type,
-                                    const uint32_t num_vertices,
-                                    const uint32_t num_indices,
-                                    const uint32_t num_bytes_per_element)
-{
-    OutputData output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data = convertVerticesData<float>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data = convertVerticesData<double>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data = convertVerticesData<int8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data = convertVerticesData<int16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data = convertVerticesData<int32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data = convertVerticesData<int64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data = convertVerticesData<uint8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data = convertVerticesData<uint16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data = convertVerticesData<uint32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data = convertVerticesData<uint64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
-    }
-
-    return output_data;
-}
-
-OutputData convertVerticesDataSeparateVectorsOuter(uint8_t* input_data,
-                                                   const DataType data_type,
-                                                   const uint32_t num_vertices,
-                                                   const uint32_t num_indices,
-                                                   const uint32_t num_bytes_per_element)
-{
-    OutputData output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<float>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<double>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<int8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<int16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<int32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<int64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<uint8_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<uint16_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<uint32_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data =
-            convertVerticesDataSeparateVectors<uint64_t>(input_data, num_vertices, num_indices, num_bytes_per_element);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
-    }
-
-    return output_data;
-}
+}  // namespace

@@ -83,7 +83,7 @@ public:
     {
     }
 
-    T* data() const
+    const T* data() const
     {
         return data_;
     }

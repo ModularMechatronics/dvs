@@ -115,6 +115,72 @@ public:
     }
 };
 
+template <typename T> class VectorConstView
+{
+private:
+    const T* data_;
+    size_t size_;
+
+public:
+    VectorConstView() : data_{nullptr}, size_{0U} {}
+
+    VectorConstView(const T* const data_ptr_in, const size_t size_in) : data_{data_ptr_in}, size_{size_in} {}
+
+    const T* data() const
+    {
+        return data_;
+    }
+
+    size_t size() const
+    {
+        return size_;
+    }
+
+    size_t numBytes() const
+    {
+        return size_ * sizeof(T);
+    }
+
+    size_t numElements() const
+    {
+        return size_;
+    }
+
+    void fillBufferWithData(uint8_t* const buffer) const
+    {
+        const uint8_t* const internal_ptr = reinterpret_cast<uint8_t*>(data_);
+        const size_t num_bytes = size_ * sizeof(T);
+
+        std::memcpy(buffer, internal_ptr, num_bytes);
+    }
+
+    const T& operator()(const size_t idx) const
+    {
+        assert(idx < size_);
+        return data_[idx];
+    }
+
+    std::pair<T, T> findMinMax() const
+    {
+        T min_value = data_[0], max_value = data_[0];
+
+        for (size_t k = 0; k < size_; k++)
+        {
+            const T val = data_[k];
+            if (val < min_value)
+            {
+                min_value = val;
+            }
+            if (val > max_value)
+            {
+                max_value = val;
+            }
+        }
+
+        return {min_value, max_value};
+    }
+};
+
 template <typename T> class Vector
 {
 protected:
@@ -147,6 +213,11 @@ public:
     VectorView<T> view() const
     {
         return VectorView{data_, size_};
+    }
+
+    VectorConstView<T> constView() const
+    {
+        return VectorConstView{data_, size_};
     }
 
     void fillBufferWithData(uint8_t* const buffer) const;

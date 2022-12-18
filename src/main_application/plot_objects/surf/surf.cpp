@@ -1,5 +1,9 @@
 #include "main_application/plot_objects/surf/surf.h"
 
+#include "outer_converter.h"
+
+namespace
+{
 struct OutputData
 {
     float* points_ptr;
@@ -21,6 +25,18 @@ struct InputParams
     }
 };
 
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+
+struct Converter
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertData<T>(input_data, input_params);
+    }
+};
+
+}  // namespace
+
 inline OutputData convertMatrixDataOuter(uint8_t* input_data,
                                          const DataType data_type,
                                          const InputParams& input_params);
@@ -40,17 +56,15 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     dims_ = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
 
     const InputParams input_params{dims_, num_bytes_for_one_vec_, has_color_};
-    OutputData output_data = convertMatrixDataOuter(data_ptr_, data_type_, input_params);
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
     points_ptr_ = output_data.points_ptr;
-    normals_ptr_ = output_data.normals_ptr;
-    mean_height_ptr_ = output_data.mean_height_ptr;
 
     num_elements_to_render_ = (dims_.rows - 1) * (dims_.cols - 1) * 6;
 
     vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
-    vertex_buffer2_.addBuffer(normals_ptr_, num_elements_to_render_, 3);
-    vertex_buffer2_.addBuffer(mean_height_ptr_, num_elements_to_render_, 1);
+    vertex_buffer2_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer2_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
 
     if (has_color_)
     {
@@ -61,9 +75,8 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
 
     findMinMax();
 
-    delete[] points_ptr_;
-    delete[] normals_ptr_;
-    delete[] mean_height_ptr_;
+    delete[] output_data.normals_ptr;
+    delete[] output_data.mean_height_ptr;
 }
 
 void Surf::findMinMax()
@@ -141,7 +154,10 @@ void Surf::render()
     shader_collection_.basic_plot_shader.use();
 }
 
-Surf::~Surf() {}
+Surf::~Surf()
+{
+    delete[] points_ptr_;
+}
 
 LegendProperties Surf::getLegendProperties() const
 {
@@ -163,13 +179,15 @@ LegendProperties Surf::getLegendProperties() const
     return lp;
 }
 
-template <typename T> OutputData convertMatrixData(uint8_t* input_data, const InputParams& input_params)
+namespace
 {
-    const MatrixView<T> x{reinterpret_cast<T*>(input_data), input_params.dims.rows, input_params.dims.cols},
-        y{reinterpret_cast<T*>(&(input_data[input_params.num_bytes_for_one_vec])),
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+{
+    const MatrixConstView<T> x{reinterpret_cast<const T*>(input_data), input_params.dims.rows, input_params.dims.cols},
+        y{reinterpret_cast<const T*>(&(input_data[input_params.num_bytes_for_one_vec])),
           input_params.dims.rows,
           input_params.dims.cols},
-        z{reinterpret_cast<T*>(&(input_data[2 * input_params.num_bytes_for_one_vec])),
+        z{reinterpret_cast<const T*>(&(input_data[2 * input_params.num_bytes_for_one_vec])),
           input_params.dims.rows,
           input_params.dims.cols};
 
@@ -283,8 +301,8 @@ template <typename T> OutputData convertMatrixData(uint8_t* input_data, const In
 
     if (input_params.has_color)
     {
-        const MatrixView<RGB888> colors{
-            reinterpret_cast<RGB888*>(&(input_data[3 * input_params.num_bytes_for_one_vec])),
+        const MatrixConstView<RGB888> colors{
+            reinterpret_cast<const RGB888*>(&(input_data[3 * input_params.num_bytes_for_one_vec])),
             input_params.dims.rows,
             input_params.dims.cols};
 
@@ -326,54 +344,4 @@ template <typename T> OutputData convertMatrixData(uint8_t* input_data, const In
 
     return output_data;
 }
-
-OutputData convertMatrixDataOuter(uint8_t* input_data, const DataType data_type, const InputParams& input_params)
-{
-    OutputData output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data = convertMatrixData<float>(input_data, input_params);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data = convertMatrixData<double>(input_data, input_params);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data = convertMatrixData<int8_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data = convertMatrixData<int16_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data = convertMatrixData<int32_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data = convertMatrixData<int64_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data = convertMatrixData<uint8_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data = convertMatrixData<uint16_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data = convertMatrixData<uint32_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data = convertMatrixData<uint64_t>(input_data, input_params);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
-    }
-
-    return output_data;
-}
+}  // namespace

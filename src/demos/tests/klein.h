@@ -205,9 +205,9 @@ void testAdvanced1()
 
     KleinParams klein_params{};
 
-    VectorView<float> vx(x.data(), nu * nv);
-    VectorView<float> vy(y.data(), nu * nv);
-    VectorView<float> vz(z.data(), nu * nv);
+    VectorConstView<float> vx(x.data(), nu * nv);
+    VectorConstView<float> vy(y.data(), nu * nv);
+    VectorConstView<float> vz(z.data(), nu * nv);
 
     indices.fill(IndexTriplet{0, 0, 0});
 
@@ -252,7 +252,7 @@ void testAdvanced1()
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Rainbow());
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Jet());
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Viridis());
-        drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Magma());
+        drawMesh(vx, vy, vz, indices.constView(), properties::EdgeColor::None(), properties::ColorMap::Magma());
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 255, 0), properties::FaceColor::None());
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::FaceColor(233, 116, 74));
 
