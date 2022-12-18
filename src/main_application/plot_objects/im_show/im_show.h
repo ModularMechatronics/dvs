@@ -14,9 +14,10 @@ class ImShow : public PlotObjectBase
 {
 private:
     RGBColorMap<float> color_map_;
-    GLuint buffer_idx_;
-    GLuint color_buffer_;
     GLuint alpha_buffer_;
+
+    GLuint image_vertex_buffer_array_;
+    GLuint image_vertex_buffer_;
 
     uint8_t num_channels_;
 

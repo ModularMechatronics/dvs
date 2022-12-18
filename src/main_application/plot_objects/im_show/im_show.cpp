@@ -80,17 +80,16 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
 
     // vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
 
-    // const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_};
     const InputParams input_params{num_channels_, dims_, z_offset_, data_type_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
     findMinMax();
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
+    glGenVertexArrays(1, &image_vertex_buffer_array_);
+    glBindVertexArray(image_vertex_buffer_array_);
 
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glGenBuffers(1, &image_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, image_vertex_buffer_);
     glBufferData(
         GL_ARRAY_BUFFER, sizeof(float) * 6 * 6 * dims_.rows * dims_.cols, output_data.points_ptr, GL_STATIC_DRAW);
 
@@ -137,7 +136,7 @@ void ImShow::render()
         glUniform1f(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "global_alpha"), alpha_);
     }
 
-    glBindVertexArray(vertex_buffer_array_);
+    glBindVertexArray(image_vertex_buffer_array_);
     glDrawArrays(GL_TRIANGLES, 0, dims_.rows * dims_.cols * 6);
     glBindVertexArray(0);
     glUseProgram(shader_collection_.basic_plot_shader.programId());

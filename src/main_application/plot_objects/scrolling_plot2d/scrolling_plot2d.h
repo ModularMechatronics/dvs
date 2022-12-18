@@ -17,6 +17,7 @@ private:
     float* points_ptr_;
     float* dt_vec_;
     size_t previous_buffer_size_;
+    GLuint sp_vertex_buffer_, sp_vertex_buffer_array_;
 
     void findMinMax() override;
 

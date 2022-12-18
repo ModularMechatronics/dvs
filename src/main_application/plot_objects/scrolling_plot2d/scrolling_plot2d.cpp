@@ -33,11 +33,11 @@ ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_da
 
     points_ptr_[1U] = output_data.x;
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
+    glGenVertexArrays(1, &sp_vertex_buffer_array_);
+    glBindVertexArray(sp_vertex_buffer_array_);
 
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glGenBuffers(1, &sp_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, sp_vertex_buffer_);
     glBufferData(GL_ARRAY_BUFFER, num_bytes, points_ptr_, GL_DYNAMIC_DRAW);
 
     glEnableVertexAttribArray(0);
@@ -59,7 +59,7 @@ void ScrollingPlot2D::findMinMax()
 void ScrollingPlot2D::render()
 {
     // preRender(shader_collection_.basic_plot_shader);
-    glBindVertexArray(vertex_buffer_array_);
+    glBindVertexArray(sp_vertex_buffer_array_);
     glDrawArrays(GL_LINE_STRIP, 0, num_elements_to_draw_);
     glBindVertexArray(0);
 }
@@ -69,8 +69,8 @@ ScrollingPlot2D::~ScrollingPlot2D()
     delete[] points_ptr_;
     delete[] dt_vec_;
 
-    glDeleteBuffers(1, &vertex_buffer_);
-    glDeleteVertexArrays(1, &vertex_buffer_array_);
+    glDeleteBuffers(1, &sp_vertex_buffer_);
+    glDeleteVertexArrays(1, &sp_vertex_buffer_array_);
 }
 
 LegendProperties ScrollingPlot2D::getLegendProperties() const
@@ -110,14 +110,14 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
         points_ptr_ = points_ptr_tmp;
         dt_vec_ = dt_vec_tmp;
 
-        glDeleteBuffers(1, &vertex_buffer_);
-        glDeleteVertexArrays(1, &vertex_buffer_array_);
+        glDeleteBuffers(1, &sp_vertex_buffer_);
+        glDeleteVertexArrays(1, &sp_vertex_buffer_array_);
 
-        glGenVertexArrays(1, &vertex_buffer_array_);
-        glBindVertexArray(vertex_buffer_array_);
+        glGenVertexArrays(1, &sp_vertex_buffer_array_);
+        glBindVertexArray(sp_vertex_buffer_array_);
 
-        glGenBuffers(1, &vertex_buffer_);
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+        glGenBuffers(1, &sp_vertex_buffer_);
+        glBindBuffer(GL_ARRAY_BUFFER, sp_vertex_buffer_);
         glBufferData(GL_ARRAY_BUFFER, num_bytes, points_ptr_, GL_DYNAMIC_DRAW);
 
         glEnableVertexAttribArray(0);
@@ -160,7 +160,7 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
 
     const size_t num_bytes_to_replace = buffer_size_ * 2U * sizeof(float);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, sp_vertex_buffer_);
     glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_to_replace, points_ptr_);
 }
 

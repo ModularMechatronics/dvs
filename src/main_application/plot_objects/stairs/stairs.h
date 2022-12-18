@@ -15,6 +15,7 @@ class Stairs : public PlotObjectBase
 private:
     // VertexBuffer vertex_buffer2_;
     uint8_t* points_ptr_;
+    GLuint stairs_vertex_buffer_, stairs_vertex_buffer_array_;
 
     void findMinMax() override;
 
