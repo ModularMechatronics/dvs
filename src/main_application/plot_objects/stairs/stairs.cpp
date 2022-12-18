@@ -20,11 +20,11 @@ Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data,
     points_ptr_ =
         convertStairsOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
+    glGenVertexArrays(1, &stairs_vertex_buffer_array_);
+    glBindVertexArray(stairs_vertex_buffer_array_);
 
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glGenBuffers(1, &stairs_vertex_buffer_);
+    glBindBuffer(GL_ARRAY_BUFFER, stairs_vertex_buffer_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (num_elements_ * 2 - 1) * 2, points_ptr_, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
@@ -49,7 +49,7 @@ void Stairs::findMinMax()
 
 void Stairs::render()
 {
-    glBindVertexArray(vertex_buffer_array_);
+    glBindVertexArray(stairs_vertex_buffer_array_);
     glDrawArrays(GL_LINE_STRIP, 0, num_elements_ * 2 - 1);
     glBindVertexArray(0);
 }

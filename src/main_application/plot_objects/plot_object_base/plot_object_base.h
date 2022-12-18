@@ -46,7 +46,7 @@ protected:
     glm::mat4 custom_translation_;
     glm::mat4 custom_scale_;
 
-    GLuint vertex_buffer_, vertex_buffer_array_, color_buffer_;
+    // VertexBuffer vertex_buffer_;
 
     Function type_;
     DataType data_type_;
