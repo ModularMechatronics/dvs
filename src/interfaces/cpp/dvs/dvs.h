@@ -28,7 +28,8 @@ void plot(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color, c
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, color);
 }
 
-template <typename T, typename... Us> void plot(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+template <typename T, typename... Us>
+void plot(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -49,7 +50,7 @@ template <typename T, typename... Us> void fastPlot(const Vector<T>& x, const Ve
 }
 
 template <typename T, typename... Us>
-void fastPlot(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+void fastPlot(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::FAST_PLOT2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -70,7 +71,7 @@ template <typename T, typename... Us> void lineCollection(const Vector<T>& x, co
 }
 
 template <typename T, typename... Us>
-void lineCollection(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+void lineCollection(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::LINE_COLLECTION2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -92,7 +93,10 @@ void lineCollection3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z,
 }
 
 template <typename T, typename... Us>
-void lineCollection3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
+void lineCollection3(const VectorConstView<T>& x,
+                     const VectorConstView<T>& y,
+                     const VectorConstView<T>& z,
+                     const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::LINE_COLLECTION3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -130,7 +134,9 @@ void plotCollection(const std::vector<Vector<T>>& x, const std::vector<Vector<T>
 }
 
 template <typename T, typename... Us>
-void plotCollection(const std::vector<VectorView<T>>& x, const std::vector<VectorView<T>>& y, const Us&... settings)
+void plotCollection(const std::vector<VectorConstView<T>>& x,
+                    const std::vector<VectorConstView<T>>& y,
+                    const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT_COLLECTION2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -143,8 +149,8 @@ void plotCollection(const std::vector<VectorView<T>>& x, const std::vector<Vecto
 
     for (size_t k = 0; k < x.size(); k++)
     {
-        const VectorView<T> x_view = x[k];
-        const VectorView<T> y_view = y[k];
+        const VectorConstView<T> x_view = x[k];
+        const VectorConstView<T> y_view = y[k];
         DVS_ASSERT(x_view.size() == y_view.size());
         vector_lengths(k) = x_view.size();
         num_elements += x_view.size();
@@ -192,9 +198,9 @@ void plotCollection3(const std::vector<Vector<T>>& x,
 }
 
 template <typename T, typename... Us>
-void plotCollection3(const std::vector<VectorView<T>>& x,
-                     const std::vector<VectorView<T>>& y,
-                     const std::vector<VectorView<T>>& z,
+void plotCollection3(const std::vector<VectorConstView<T>>& x,
+                     const std::vector<VectorConstView<T>>& y,
+                     const std::vector<VectorConstView<T>>& z,
                      const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT_COLLECTION3};
@@ -209,9 +215,9 @@ void plotCollection3(const std::vector<VectorView<T>>& x,
 
     for (size_t k = 0; k < x.size(); k++)
     {
-        const VectorView<T> x_view = x[k];
-        const VectorView<T> y_view = y[k];
-        const VectorView<T> z_view = z[k];
+        const VectorConstView<T> x_view = x[k];
+        const VectorConstView<T> y_view = y[k];
+        const VectorConstView<T> z_view = z[k];
         DVS_ASSERT(x_view.size() == y_view.size());
         DVS_ASSERT(x_view.size() == z_view.size());
         vector_lengths(k) = x_view.size();
@@ -237,7 +243,8 @@ template <typename T, typename... Us> void stairs(const Vector<T>& x, const Vect
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
-template <typename T, typename... Us> void stairs(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+template <typename T, typename... Us>
+void stairs(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::STAIRS};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -259,7 +266,7 @@ void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&
 }
 
 template <typename T, typename... Us>
-void plot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
+void plot3(const VectorConstView<T>& x, const VectorConstView<T>& y, const VectorConstView<T>& z, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -281,7 +288,10 @@ void fastPlot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const
 }
 
 template <typename T, typename... Us>
-void fastPlot3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
+void fastPlot3(const VectorConstView<T>& x,
+               const VectorConstView<T>& y,
+               const VectorConstView<T>& z,
+               const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::FAST_PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -301,7 +311,8 @@ template <typename T, typename... Us> void stem(const Vector<T>& x, const Vector
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
-template <typename T, typename... Us> void stem(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+template <typename T, typename... Us>
+void stem(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::STEM};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -334,7 +345,7 @@ void scatter(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color
 }
 
 template <typename T, typename... Us>
-void scatter(const VectorView<T>& x, const VectorView<T>& y, const Us&... settings)
+void scatter(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -370,7 +381,10 @@ void scatter3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const 
 }
 
 template <typename T, typename... Us>
-void scatter3(const VectorView<T>& x, const VectorView<T>& y, const VectorView<T>& z, const Us&... settings)
+void scatter3(const VectorConstView<T>& x,
+              const VectorConstView<T>& y,
+              const VectorConstView<T>& z,
+              const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -437,7 +451,7 @@ void surf(
 }
 
 template <typename T, typename... Us>
-void surf(const MatrixView<T>& x, const MatrixView<T>& y, const MatrixView<T>& z, const Us&... settings)
+void surf(const MatrixConstView<T>& x, const MatrixConstView<T>& y, const MatrixConstView<T>& z, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SURF};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -509,7 +523,7 @@ template <typename T, typename... Us> void imShow(const ImageRGBA<T>& img, const
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageGrayView<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageGrayConstView<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -524,7 +538,7 @@ template <typename T, typename... Us> void imShow(const ImageGrayView<T>& img, c
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageGrayAlphaView<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageGrayAlphaConstView<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -539,7 +553,7 @@ template <typename T, typename... Us> void imShow(const ImageGrayAlphaView<T>& i
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageRGBView<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageRGBConstView<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -554,7 +568,7 @@ template <typename T, typename... Us> void imShow(const ImageRGBView<T>& img, co
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, img);
 }
 
-template <typename T, typename... Us> void imShow(const ImageRGBAView<T>& img, const Us&... settings)
+template <typename T, typename... Us> void imShow(const ImageRGBAConstView<T>& img, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());

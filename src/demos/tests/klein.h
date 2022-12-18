@@ -136,9 +136,9 @@ void testBasic()
 
     KleinParams klein_params{};
 
-    VectorView<float> vx(x.data(), nu * nv);
-    VectorView<float> vy(y.data(), nu * nv);
-    VectorView<float> vz(z.data(), nu * nv);
+    VectorConstView<float> vx(x.data(), nu * nv);
+    VectorConstView<float> vy(y.data(), nu * nv);
+    VectorConstView<float> vz(z.data(), nu * nv);
 
     setCurrentElement("p_view_0");
     clearView();
@@ -163,9 +163,9 @@ void testAdvanced0()
 
     KleinParams klein_params{};
 
-    VectorView<float> vx(x.data(), nu * nv);
-    VectorView<float> vy(y.data(), nu * nv);
-    VectorView<float> vz(z.data(), nu * nv);
+    VectorConstView<float> vx(x.data(), nu * nv);
+    VectorConstView<float> vy(y.data(), nu * nv);
+    VectorConstView<float> vz(z.data(), nu * nv);
 
     setCurrentElement("p_view_0");
     clearView();
@@ -236,7 +236,6 @@ void testAdvanced1()
     float u_offset = 0.0f, v_offset = 0.0f;
 
     float t = 0.0f;
-    float azimuth = 10.0;
 
     float ax = 0.0f, ay = 0.0f, az = 0.0f;
 
