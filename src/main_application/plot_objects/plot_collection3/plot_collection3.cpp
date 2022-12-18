@@ -107,7 +107,7 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
                                    const CommunicationHeader& hdr,
                                    const Properties& props,
                                    const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer2_{OGLPrimitiveType::LINES}
 {
     if (type_ != Function::PLOT_COLLECTION3)
     {
@@ -135,16 +135,7 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
     min_vec = output_data.min_vec;
     max_vec = output_data.max_vec;
 
-    glGenVertexArrays(1, &vertex_buffer_array_);
-    glBindVertexArray(vertex_buffer_array_);
-
-    glGenBuffers(1, &vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, output_data.data_ptr, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    vertex_buffer2_.addBuffer(output_data.data_ptr, num_points_, 3);
 
     delete[] output_data.data_ptr;
 }
@@ -156,9 +147,7 @@ void PlotCollection3D::findMinMax()
 
 void PlotCollection3D::render()
 {
-    glBindVertexArray(vertex_buffer_array_);
-    glDrawArrays(GL_LINES, 0, num_points_);
-    glBindVertexArray(0);
+    vertex_buffer2_.render(num_points_);
 }
 
 PlotCollection3D::~PlotCollection3D() {}
