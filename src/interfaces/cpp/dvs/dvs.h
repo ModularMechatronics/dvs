@@ -585,6 +585,23 @@ void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& ind
 }
 
 template <typename T, typename... Us>
+void drawMesh(const VectorConstView<Point3<T>>& vertices,
+              const VectorConstView<IndexTriplet>& indices,
+              const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::DRAW_MESH};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(vertices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, vertices, indices);
+}
+
+template <typename T, typename... Us>
 void drawMesh(const Vector<T>& x,
               const Vector<T>& y,
               const Vector<T>& z,
@@ -604,10 +621,10 @@ void drawMesh(const Vector<T>& x,
 }
 
 template <typename T, typename... Us>
-void drawMesh(const VectorView<T>& x,
-              const VectorView<T>& y,
-              const VectorView<T>& z,
-              const VectorView<IndexTriplet>& indices,
+void drawMesh(const VectorConstView<T>& x,
+              const VectorConstView<T>& y,
+              const VectorConstView<T>& z,
+              const VectorConstView<IndexTriplet>& indices,
               const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::DRAW_MESH_SEPARATE_VECTORS};

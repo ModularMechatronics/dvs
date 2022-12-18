@@ -1,5 +1,9 @@
 #include "main_application/plot_objects/scatter3/scatter3.h"
 
+#include "outer_converter.h"
+
+namespace
+{
 struct OutputData
 {
     float* points_ptr;
@@ -26,9 +30,17 @@ struct InputParams
     }
 };
 
-OutputData convertScatterData3DOuter(const uint8_t* const input_data,
-                                     const DataType data_type,
-                                     const InputParams input_params);
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+
+struct Converter
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertData<T>(input_data, input_params);
+    }
+};
+
+}  // namespace
 
 Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data,
                      const CommunicationHeader& hdr,
@@ -42,7 +54,7 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data,
     }
 
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
-    OutputData output_data = convertScatterData3DOuter(data_ptr_, data_type_, input_params);
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
     vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_, 3);
 
@@ -111,7 +123,9 @@ void Scatter3D::render()
 
 Scatter3D::~Scatter3D() {}
 
-template <typename T> OutputData convertScatterData3D(const uint8_t* const input_data, const InputParams input_params)
+namespace
+{
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     OutputData output_data;
     output_data.points_ptr = new float[3 * input_params.num_elements];
@@ -151,55 +165,4 @@ template <typename T> OutputData convertScatterData3D(const uint8_t* const input
     return output_data;
 }
 
-OutputData convertScatterData3DOuter(const uint8_t* const input_data,
-                                     const DataType data_type,
-                                     const InputParams input_params)
-{
-    OutputData output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data = convertScatterData3D<float>(input_data, input_params);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data = convertScatterData3D<double>(input_data, input_params);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data = convertScatterData3D<int8_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data = convertScatterData3D<int16_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data = convertScatterData3D<int32_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data = convertScatterData3D<int64_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data = convertScatterData3D<uint8_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data = convertScatterData3D<uint16_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data = convertScatterData3D<uint32_t>(input_data, input_params);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data = convertScatterData3D<uint64_t>(input_data, input_params);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
-    }
-
-    return output_data;
-}
+}  // namespace

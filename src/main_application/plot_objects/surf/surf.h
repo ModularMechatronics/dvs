@@ -18,8 +18,6 @@ private:
     Dimension2D dims_;
 
     float* points_ptr_;
-    float* mean_height_ptr_;
-    float* normals_ptr_;
 
     size_t num_elements_to_render_;
 
