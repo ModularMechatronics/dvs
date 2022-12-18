@@ -14,8 +14,8 @@ void testWithVectorView()
     const Vector<double> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
     const Vector<double> y = dvs::sin(x);
 
-    const VectorView<double> xv = x.view();
-    const VectorView<double> yv = y.view();
+    const VectorConstView<double> xv = x.constView();
+    const VectorConstView<double> yv = y.constView();
 
     setCurrentElement("view_00");
     clearView();

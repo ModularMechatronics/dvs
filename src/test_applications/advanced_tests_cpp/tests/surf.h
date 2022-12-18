@@ -28,7 +28,7 @@ void testWithMatrixView()
 
     setCurrentElement("view_00");
     clearView();
-    surf(x.view(), y.view(), z.view(), properties::ColorMap::Jet());
+    surf(x.constView(), y.constView(), z.constView(), properties::ColorMap::Jet());
 }
 
 }  // namespace surf_ns

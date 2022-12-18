@@ -266,8 +266,8 @@ void testPlotCollection()
         t = t + 0.1;
     }
 
-    std::vector<VectorView<double>> pc_x = {x0.view(), x1.view(), x2.view()};
-    std::vector<VectorView<double>> pc_y = {y0.view(), y1.view(), y2.view()};
+    std::vector<VectorConstView<double>> pc_x = {x0.constView(), x1.constView(), x2.constView()};
+    std::vector<VectorConstView<double>> pc_y = {y0.constView(), y1.constView(), y2.constView()};
 
     setCurrentElement("p_view_0");
     clearView();
@@ -343,9 +343,9 @@ void testPlotCollection3()
         t = t + 0.1;
     }
 
-    std::vector<VectorView<double>> pc_x = {x0.view(), x1.view(), x2.view()};
-    std::vector<VectorView<double>> pc_y = {y0.view(), y1.view(), y2.view()};
-    std::vector<VectorView<double>> pc_z = {z0.view(), z1.view(), z2.view()};
+    std::vector<VectorConstView<double>> pc_x = {x0.constView(), x1.constView(), x2.constView()};
+    std::vector<VectorConstView<double>> pc_y = {y0.constView(), y1.constView(), y2.constView()};
+    std::vector<VectorConstView<double>> pc_z = {z0.constView(), z1.constView(), z2.constView()};
 
     setCurrentElement("p_view_0");
     clearView();

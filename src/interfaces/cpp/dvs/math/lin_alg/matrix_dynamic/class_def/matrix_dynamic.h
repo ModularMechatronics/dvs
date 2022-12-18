@@ -273,6 +273,11 @@ public:
         return MatrixView{data_, num_rows_, num_cols_};
     }
 
+    MatrixConstView<T> constView() const
+    {
+        return MatrixConstView{data_, num_rows_, num_cols_};
+    }
+
     void resize(const size_t num_rows, const size_t num_cols);
     size_t numRows() const;
     size_t numCols() const;

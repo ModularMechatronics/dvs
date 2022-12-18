@@ -15,9 +15,9 @@ void testWithVectorView()
     const Vector<double> y = dvs::sin(x);
     const Vector<double> z = dvs::cos(x);
 
-    const VectorView<double> xv = x.view();
-    const VectorView<double> yv = y.view();
-    const VectorView<double> zv = z.view();
+    const VectorConstView<double> xv = x.constView();
+    const VectorConstView<double> yv = y.constView();
+    const VectorConstView<double> zv = z.constView();
 
     setCurrentElement("view_00");
     clearView();
