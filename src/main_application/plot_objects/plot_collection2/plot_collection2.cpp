@@ -1,5 +1,9 @@
 #include "main_application/plot_objects/plot_collection2/plot_collection2.h"
 
+#include "outer_converter.h"
+
+namespace
+{
 struct OutputData
 {
     float* data_ptr;
@@ -7,20 +11,45 @@ struct OutputData
     Vec2d max_vec;
 };
 
-template <typename T>
-OutputData convertCollectionData(uint8_t* input_data,
-                                 const size_t num_objects,
-                                 const size_t num_bytes_per_element,
-                                 const size_t num_points,
-                                 const Vector<uint16_t>& vector_lengths)
+struct InputParams
 {
-    const size_t total_num_bytes = num_points * 2 * num_bytes_per_element;
-    const size_t num_bytes_per_collection = vector_lengths.sum() * num_bytes_per_element;
+    size_t num_objects;
+    size_t num_bytes_per_element;
+    size_t num_points;
+    Vector<uint16_t> vector_lengths;
 
-    const T* data_x = reinterpret_cast<T*>(input_data);
-    const T* data_y = reinterpret_cast<T*>(input_data + num_bytes_per_collection);
+    InputParams() = default;
+    InputParams(const size_t num_objects_,
+                const size_t num_bytes_per_element_,
+                const size_t num_points_,
+                const Vector<uint16_t>& vector_lengths_)
+        : num_objects{num_objects_},
+          num_bytes_per_element{num_bytes_per_element_},
+          num_points{num_points_},
+          vector_lengths{vector_lengths_}
+    {
+    }
+};
 
-    float* data_ptr = new float[total_num_bytes];
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+
+struct Converter
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertData<T>(input_data, input_params);
+    }
+};
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+{
+    const size_t total_num_bytes = input_params.num_points * 2 * input_params.num_bytes_per_element;
+    const size_t num_bytes_per_collection = input_params.vector_lengths.sum() * input_params.num_bytes_per_element;
+
+    const T* data_x = reinterpret_cast<const T*>(input_data);
+    const T* data_y = reinterpret_cast<const T*>(input_data + num_bytes_per_collection);
+
+    float* const data_ptr = new float[total_num_bytes];
 
     size_t idx_offset = 0;
     size_t idx = 0;
@@ -33,9 +62,9 @@ OutputData convertCollectionData(uint8_t* input_data,
     max_vec.x = data_x[0];
     max_vec.y = data_y[0];
 
-    for (size_t i = 0; i < num_objects; i++)
+    for (size_t i = 0; i < input_params.num_objects; i++)
     {
-        for (size_t k = 0; k < vector_lengths(i) - 1; k++)
+        for (size_t k = 0; k < input_params.vector_lengths(i) - 1; k++)
         {
             const T x_val = data_x[idx_offset + k];
             const T y_val = data_y[idx_offset + k];
@@ -54,7 +83,7 @@ OutputData convertCollectionData(uint8_t* input_data,
 
             idx += 4;
         }
-        idx_offset += vector_lengths(i);
+        idx_offset += input_params.vector_lengths(i);
     }
 
     OutputData output_data;
@@ -65,71 +94,7 @@ OutputData convertCollectionData(uint8_t* input_data,
     return output_data;
 }
 
-inline OutputData convertCollectionDataOuter(uint8_t* input_data,
-                                             const DataType data_type,
-                                             const size_t num_objects,
-                                             const size_t num_bytes_per_element,
-                                             const size_t num_points,
-                                             const Vector<uint16_t>& vector_lengths)
-{
-    OutputData output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data =
-            convertCollectionData<float>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data =
-            convertCollectionData<double>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data =
-            convertCollectionData<int8_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data =
-            convertCollectionData<int16_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data =
-            convertCollectionData<int32_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data =
-            convertCollectionData<int64_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data =
-            convertCollectionData<uint8_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data =
-            convertCollectionData<uint16_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data =
-            convertCollectionData<uint32_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data =
-            convertCollectionData<uint64_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
-    }
-
-    return output_data;
-}
+}  // namespace
 
 PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_data,
                                    const CommunicationHeader& hdr,
@@ -157,10 +122,9 @@ PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_
     // Advance pointer to account for first bytes where 'vector_lengths' are stored
     data_ptr_ += num_objects_ * sizeof(uint16_t);
 
-    OutputData output_data = convertCollectionDataOuter(
-        data_ptr_, data_type_, num_objects_, num_bytes_per_element_, num_points_, vector_lengths);
+    const InputParams input_params{num_objects_, num_bytes_per_element_, num_points_, vector_lengths};
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    points_ptr_ = output_data.data_ptr;
     min_vec = Vec3d(output_data.min_vec.x, output_data.min_vec.y, -1.0);
     max_vec = Vec3d(output_data.max_vec.x, output_data.max_vec.y, 1.0);
 
@@ -169,11 +133,13 @@ PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_
 
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, points_ptr_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 2, output_data.data_ptr, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    delete[] output_data.data_ptr;
 }
 
 void PlotCollection2D::findMinMax()

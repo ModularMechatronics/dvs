@@ -15,7 +15,6 @@ class PlotCollection2D : public PlotObjectBase
 {
 private:
     // VertexBuffer vertex_buffer2_;
-    float* points_ptr_;
 
     uint32_t num_points_;
     uint32_t num_objects_;
