@@ -1,5 +1,9 @@
 #include "main_application/plot_objects/plot_collection3/plot_collection3.h"
 
+#include "outer_converter.h"
+
+namespace
+{
 struct OutputData
 {
     float* data_ptr;
@@ -7,19 +11,44 @@ struct OutputData
     Vec3d max_vec;
 };
 
-template <typename T>
-OutputData convertCollection3DData(uint8_t* input_data,
-                                   const size_t num_objects,
-                                   const size_t num_bytes_per_element,
-                                   const size_t num_points,
-                                   const Vector<uint16_t>& vector_lengths)
+struct InputParams
 {
-    const size_t total_num_bytes = num_points * 3 * num_bytes_per_element;
-    const size_t num_bytes_per_collection = vector_lengths.sum() * num_bytes_per_element;
+    size_t num_objects;
+    size_t num_bytes_per_element;
+    size_t num_points;
+    Vector<uint16_t> vector_lengths;
 
-    const T* data_x = reinterpret_cast<T*>(input_data);
-    const T* data_y = reinterpret_cast<T*>(input_data + num_bytes_per_collection);
-    const T* data_z = reinterpret_cast<T*>(input_data + 2 * num_bytes_per_collection);
+    InputParams() = default;
+    InputParams(const size_t num_objects_,
+                const size_t num_bytes_per_element_,
+                const size_t num_points_,
+                const Vector<uint16_t>& vector_lengths_)
+        : num_objects{num_objects_},
+          num_bytes_per_element{num_bytes_per_element_},
+          num_points{num_points_},
+          vector_lengths{vector_lengths_}
+    {
+    }
+};
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+
+struct Converter
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertData<T>(input_data, input_params);
+    }
+};
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+{
+    const size_t total_num_bytes = input_params.num_points * 3 * input_params.num_bytes_per_element;
+    const size_t num_bytes_per_collection = input_params.vector_lengths.sum() * input_params.num_bytes_per_element;
+
+    const T* data_x = reinterpret_cast<const T*>(input_data);
+    const T* data_y = reinterpret_cast<const T*>(input_data + num_bytes_per_collection);
+    const T* data_z = reinterpret_cast<const T*>(input_data + 2 * num_bytes_per_collection);
 
     OutputData output_data;
     output_data.data_ptr = new float[total_num_bytes];
@@ -37,9 +66,9 @@ OutputData convertCollection3DData(uint8_t* input_data,
     max_vec.y = data_y[0];
     max_vec.z = data_z[0];
 
-    for (size_t i = 0; i < num_objects; i++)
+    for (size_t i = 0; i < input_params.num_objects; i++)
     {
-        for (size_t k = 0; k < vector_lengths(i) - 1; k++)
+        for (size_t k = 0; k < input_params.vector_lengths(i) - 1; k++)
         {
             const T x_val = data_x[idx_offset + k];
             const T y_val = data_y[idx_offset + k];
@@ -63,7 +92,7 @@ OutputData convertCollection3DData(uint8_t* input_data,
 
             idx += 6;
         }
-        idx_offset += vector_lengths(i);
+        idx_offset += input_params.vector_lengths(i);
     }
 
     output_data.min_vec = min_vec;
@@ -72,71 +101,7 @@ OutputData convertCollection3DData(uint8_t* input_data,
     return output_data;
 }
 
-inline OutputData convertCollection3DDataOuter(uint8_t* input_data,
-                                               const DataType data_type,
-                                               const size_t num_objects,
-                                               const size_t num_bytes_per_element,
-                                               const size_t num_points,
-                                               const Vector<uint16_t>& vector_lengths)
-{
-    OutputData output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data =
-            convertCollection3DData<float>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data =
-            convertCollection3DData<double>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data =
-            convertCollection3DData<int8_t>(input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data = convertCollection3DData<int16_t>(
-            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data = convertCollection3DData<int32_t>(
-            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data = convertCollection3DData<int64_t>(
-            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data = convertCollection3DData<uint8_t>(
-            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data = convertCollection3DData<uint16_t>(
-            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data = convertCollection3DData<uint32_t>(
-            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data = convertCollection3DData<uint64_t>(
-            input_data, num_objects, num_bytes_per_element, num_points, vector_lengths);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
-    }
-
-    return output_data;
-}
+}  // namespace
 
 PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_data,
                                    const CommunicationHeader& hdr,
@@ -164,10 +129,9 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
     // Advance pointer to account for first bytes where 'vector_lengths' are stored
     data_ptr_ += num_objects_ * sizeof(uint16_t);
 
-    OutputData output_data = convertCollection3DDataOuter(
-        data_ptr_, data_type_, num_objects_, num_bytes_per_element_, num_points_, vector_lengths);
+    const InputParams input_params{num_objects_, num_bytes_per_element_, num_points_, vector_lengths};
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    points_ptr_ = output_data.data_ptr;
     min_vec = output_data.min_vec;
     max_vec = output_data.max_vec;
 
@@ -176,11 +140,13 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
 
     glGenBuffers(1, &vertex_buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, points_ptr_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_points_ * 3, output_data.data_ptr, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    delete[] output_data.data_ptr;
 }
 
 void PlotCollection3D::findMinMax()
