@@ -17,8 +17,6 @@ private:
     VertexBuffer vertex_buffer2_;
     Dimension2D dims_;
 
-    float* points_ptr_;
-
     size_t num_elements_to_render_;
 
     void findMinMax() override;
@@ -33,6 +31,9 @@ public:
 
     LegendProperties getLegendProperties() const override;
     bool affectsColormapMinMax() const override;
+    void updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+                           const CommunicationHeader& hdr,
+                           const Properties& props) override;
 
     void render() override;
 };

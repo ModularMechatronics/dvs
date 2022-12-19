@@ -54,11 +54,9 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     const InputParams input_params{dims_, num_bytes_for_one_vec_, has_color_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    points_ptr_ = output_data.points_ptr;
-
     num_elements_to_render_ = (dims_.rows - 1) * (dims_.cols - 1) * 6;
 
-    vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
+    vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_to_render_, 3);
     vertex_buffer2_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
     vertex_buffer2_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
 
@@ -82,6 +80,38 @@ void Surf::findMinMax()
         std::tie<Vec3d, Vec3d>(min_vec, max_vec) =
             findMinMaxFromThreeMatrices(data_ptr_, dims_.rows, dims_.cols, num_bytes_for_one_vec_, data_type_);
     }
+}
+
+void Surf::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+                             const CommunicationHeader& hdr,
+                             const Properties& props)
+{
+    throwIfNotUpdateable();
+
+    initialize(std::move(received_data), hdr, props);
+
+    dims_ = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+
+    const InputParams input_params{dims_, num_bytes_for_one_vec_, has_color_};
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+
+    num_elements_to_render_ = (dims_.rows - 1) * (dims_.cols - 1) * 6;
+
+    vertex_buffer2_.updateBufferData(0, output_data.points_ptr, num_elements_to_render_, 3);
+    vertex_buffer2_.updateBufferData(1, output_data.normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer2_.updateBufferData(2, output_data.mean_height_ptr, num_elements_to_render_, 1);
+
+    if (has_color_)
+    {
+        vertex_buffer2_.updateBufferData(3, output_data.color_data, num_elements_to_render_, 3);
+
+        delete[] output_data.color_data;
+    }
+
+    findMinMax();
+
+    delete[] output_data.normals_ptr;
+    delete[] output_data.mean_height_ptr;
 }
 
 bool Surf::affectsColormapMinMax() const
@@ -150,10 +180,7 @@ void Surf::render()
     shader_collection_.basic_plot_shader.use();
 }
 
-Surf::~Surf()
-{
-    delete[] points_ptr_;
-}
+Surf::~Surf() {}
 
 LegendProperties Surf::getLegendProperties() const
 {
