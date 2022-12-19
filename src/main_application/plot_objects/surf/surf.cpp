@@ -37,10 +37,6 @@ struct Converter
 
 }  // namespace
 
-inline OutputData convertMatrixDataOuter(uint8_t* input_data,
-                                         const DataType data_type,
-                                         const InputParams& input_params);
-
 Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
            const CommunicationHeader& hdr,
            const Properties& props,
