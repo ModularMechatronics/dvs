@@ -13,9 +13,8 @@
 class Stem : public PlotObjectBase
 {
 private:
-    // VertexBuffer vertex_buffer2_;
-    float* lines_ptr_;
-    float* points_ptr_;
+    // VertexBuffer vertex_buffer_;
+    VertexBuffer vertex_buffer_lines_, vertex_buffer_points_;
     GLuint lines_vertex_buffer_, lines_vertex_buffer_array_, points_vertex_buffer_, points_vertex_buffer_array_;
 
     void findMinMax() override;

@@ -107,7 +107,7 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
                                    const CommunicationHeader& hdr,
                                    const Properties& props,
                                    const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer2_{OGLPrimitiveType::LINES}
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (type_ != Function::PLOT_COLLECTION3)
     {
@@ -135,7 +135,7 @@ PlotCollection3D::PlotCollection3D(std::unique_ptr<const ReceivedData> received_
     min_vec = output_data.min_vec;
     max_vec = output_data.max_vec;
 
-    vertex_buffer2_.addBuffer(output_data.data_ptr, num_points_, 3);
+    vertex_buffer_.addBuffer(output_data.data_ptr, num_points_, 3);
 
     delete[] output_data.data_ptr;
 }
@@ -147,7 +147,7 @@ void PlotCollection3D::findMinMax()
 
 void PlotCollection3D::render()
 {
-    vertex_buffer2_.render(num_points_);
+    vertex_buffer_.render(num_points_);
 }
 
 PlotCollection3D::~PlotCollection3D() {}

@@ -53,6 +53,7 @@ public:
     template <typename T>
     void addBuffer(const T* const data, const size_t num_elements, const uint8_t num_dimensions, const GLenum usage)
     {
+        glBindVertexArray(vertex_buffer_array_);
         static_assert(std::is_same<T, float>::value || std::is_same<T, int>::value || std::is_same<T, int32_t>::value,
                       "Only float and int supported for now!");
         vertex_buffers_.push_back(1);

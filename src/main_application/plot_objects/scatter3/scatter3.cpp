@@ -46,7 +46,7 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data,
                      const CommunicationHeader& hdr,
                      const Properties& props,
                      const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer2_{OGLPrimitiveType::POINTS}
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer_{OGLPrimitiveType::POINTS}
 {
     if (type_ != Function::SCATTER3)
     {
@@ -56,11 +56,11 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data,
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_, 3);
+    vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_, 3);
 
     if (has_color_)
     {
-        vertex_buffer2_.addBuffer(output_data.color_ptr, num_elements_, 3);
+        vertex_buffer_.addBuffer(output_data.color_ptr, num_elements_, 3);
 
         delete[] output_data.color_ptr;
     }
@@ -117,7 +117,7 @@ void Scatter3D::findMinMax()
 void Scatter3D::render()
 {
     glUseProgram(shader_collection_.scatter_shader.programId());
-    vertex_buffer2_.render(num_elements_);
+    vertex_buffer_.render(num_elements_);
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 

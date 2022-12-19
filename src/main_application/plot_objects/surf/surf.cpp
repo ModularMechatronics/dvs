@@ -42,7 +42,7 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
            const Properties& props,
            const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
-      vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
+      vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::SURF)
     {
@@ -56,13 +56,13 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
 
     num_elements_to_render_ = (dims_.rows - 1) * (dims_.cols - 1) * 6;
 
-    vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_to_render_, 3);
-    vertex_buffer2_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
-    vertex_buffer2_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
+    vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
 
     if (has_color_)
     {
-        vertex_buffer2_.addBuffer(output_data.color_data, num_elements_to_render_, 3);
+        vertex_buffer_.addBuffer(output_data.color_data, num_elements_to_render_, 3);
 
         delete[] output_data.color_data;
     }
@@ -97,13 +97,13 @@ void Surf::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
 
     num_elements_to_render_ = (dims_.rows - 1) * (dims_.cols - 1) * 6;
 
-    vertex_buffer2_.updateBufferData(0, output_data.points_ptr, num_elements_to_render_, 3);
-    vertex_buffer2_.updateBufferData(1, output_data.normals_ptr, num_elements_to_render_, 3);
-    vertex_buffer2_.updateBufferData(2, output_data.mean_height_ptr, num_elements_to_render_, 1);
+    vertex_buffer_.updateBufferData(0, output_data.points_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.updateBufferData(1, output_data.normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.updateBufferData(2, output_data.mean_height_ptr, num_elements_to_render_, 1);
 
     if (has_color_)
     {
-        vertex_buffer2_.updateBufferData(3, output_data.color_data, num_elements_to_render_, 3);
+        vertex_buffer_.updateBufferData(3, output_data.color_data, num_elements_to_render_, 3);
 
         delete[] output_data.color_data;
     }
@@ -168,12 +168,12 @@ void Surf::render()
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 
-    vertex_buffer2_.render(num_elements_to_render_);
+    vertex_buffer_.render(num_elements_to_render_);
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    vertex_buffer2_.render(num_elements_to_render_);
+    vertex_buffer_.render(num_elements_to_render_);
 
     glDisable(GL_BLEND);
 

@@ -32,7 +32,7 @@ LineCollection2D::LineCollection2D(std::unique_ptr<const ReceivedData> received_
                                    const CommunicationHeader& hdr,
                                    const Properties& props,
                                    const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer2_{OGLPrimitiveType::LINES}
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (type_ != Function::LINE_COLLECTION2)
     {
@@ -42,7 +42,7 @@ LineCollection2D::LineCollection2D(std::unique_ptr<const ReceivedData> received_
     const InputParams input_params{num_elements_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_, 2);
+    vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_, 2);
 
     delete[] output_data.points_ptr;
 }
@@ -64,7 +64,7 @@ void LineCollection2D::findMinMax()
 
 void LineCollection2D::render()
 {
-    vertex_buffer2_.render(num_elements_);
+    vertex_buffer_.render(num_elements_);
 }
 
 LineCollection2D::~LineCollection2D() {}

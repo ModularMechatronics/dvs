@@ -14,7 +14,7 @@
 class Surf : public PlotObjectBase
 {
 private:
-    VertexBuffer vertex_buffer2_;
+    VertexBuffer vertex_buffer_;
     Dimension2D dims_;
 
     size_t num_elements_to_render_;

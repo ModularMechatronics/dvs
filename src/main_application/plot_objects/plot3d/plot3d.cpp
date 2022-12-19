@@ -45,7 +45,7 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
                const Properties& props,
                const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
-      vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
+      vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::PLOT3)
     {
@@ -57,11 +57,11 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
 
     num_points_ = output_data.num_points;
 
-    vertex_buffer2_.addBuffer(output_data.p0, num_points_, 3);
-    vertex_buffer2_.addBuffer(output_data.p1, num_points_, 3);
-    vertex_buffer2_.addBuffer(output_data.p2, num_points_, 3);
+    vertex_buffer_.addBuffer(output_data.p0, num_points_, 3);
+    vertex_buffer_.addBuffer(output_data.p1, num_points_, 3);
+    vertex_buffer_.addBuffer(output_data.p2, num_points_, 3);
 
-    vertex_buffer2_.addBuffer(output_data.idx_data, num_points_, 1);
+    vertex_buffer_.addBuffer(output_data.idx_data, num_points_, 1);
 
     delete[] output_data.p0;
     delete[] output_data.p1;
@@ -80,7 +80,7 @@ void Plot3D::render()
     shader_collection_.plot_3d_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "half_line_width"),
                 line_width_ / 1200.0f);
-    vertex_buffer2_.render(num_points_);
+    vertex_buffer_.render(num_points_);
     shader_collection_.basic_plot_shader.use();
 }
 
