@@ -156,8 +156,19 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
     setBoxValues(x_min, x_max, z_min, z_max);
 
-    edge_vao_.renderAndUpdateData(legend_edge_vertices_.data(), sizeof(float) * 3 * num_vertices_edge_);
-    inner_vao_.renderAndUpdateData(legend_inner_vertices_.data(), sizeof(float) * 3 * num_vertices_inner_);
+    glUseProgram(shader_collection_.plot_box_shader.programId());
+
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0, 0.0, 0.0);
+
+    edge_vao_.updateBufferData(0, legend_edge_vertices_.data(), num_vertices_edge_, 3);
+    edge_vao_.render(num_vertices_edge_);
+
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"),
+                253.0f / 255.0f,
+                246.0f / 255.0f,
+                228.0f / 255.0f);
+    inner_vao_.updateBufferData(0, legend_inner_vertices_.data(), num_vertices_inner_, 3);
+    inner_vao_.render(num_vertices_inner_);
 
     float* const legend_shape_vertices = points_.data();
     float* const legend_shape_colors = colors_.data();
@@ -310,7 +321,9 @@ LegendRenderer::LegendRenderer(const TextRenderer& text_renderer, const ShaderCo
       points_(kMaxNumPoints * 3),
       colors_(kMaxNumPoints * 3),
       legend_inner_vertices_(18),
-      legend_edge_vertices_(15)
+      legend_edge_vertices_(15),
+      edge_vao_{OGLPrimitiveType::LINE_STRIP},
+      inner_vao_{OGLPrimitiveType::TRIANGLES}
 {
     scale_factor_ = 1.0f;
     num_vertices_edge_ = 5;
@@ -319,7 +332,7 @@ LegendRenderer::LegendRenderer(const TextRenderer& text_renderer, const ShaderCo
     legend_inner_vertices_.fill(0.0f);
     legend_edge_vertices_.fill(0.0f);
 
-    edge_vao_ = VAOObject(num_vertices_edge_, legend_edge_vertices_.data(), legend_color_edge, GL_LINE_STRIP);
-    inner_vao_ = VAOObject(num_vertices_inner_, legend_inner_vertices_.data(), legend_color_inner, GL_TRIANGLES);
+    edge_vao_.addBuffer(legend_edge_vertices_.data(), num_vertices_edge_, 3, GL_DYNAMIC_DRAW);
+    inner_vao_.addBuffer(legend_inner_vertices_.data(), num_vertices_inner_, 3, GL_DYNAMIC_DRAW);
     legend_shape_ = VAOObject2(kMaxNumPoints, points_.data(), colors_.data());
 }

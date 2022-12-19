@@ -8,9 +8,9 @@
 
 #include "axes/legend_properties.h"
 #include "axes/text_rendering.h"
-#include "axes/vao_object.h"
 #include "dvs/math/math.h"
 #include "opengl_low_level/opengl_header.h"
+#include "opengl_low_level/vertex_buffer.h"
 #include "shader.h"
 
 class VAOObject2
@@ -70,8 +70,8 @@ public:
 class LegendRenderer
 {
 private:
-    VAOObject edge_vao_;
-    VAOObject inner_vao_;
+    VertexBuffer edge_vao_;
+    VertexBuffer inner_vao_;
     size_t num_vertices_edge_;
     size_t num_vertices_inner_;
     float scale_factor_;
