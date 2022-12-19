@@ -1,7 +1,5 @@
 #include "main_application/plot_objects/stem/stem.h"
 
-#include <utility>
-
 #include "outer_converter.h"
 
 namespace
