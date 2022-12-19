@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 #include "dvs/logging.h"
-#include "opengl_low_level/data_structures.h"
+#include "misc/color_map.h"
 
 constexpr RGBTriplet<float> kElementBackgroundColorDefault{0.543f, 0.751f, 0.684f};
 constexpr RGBTriplet<float> kPlotBoxColorDefault{1.0f, 1.0f, 1.0f};

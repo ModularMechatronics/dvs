@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "dvs/math/math.h"
-#include "opengl_low_level/data_structures.h"
+#include "misc/color_map.h"
 #include "opengl_low_level/opengl_header.h"
 
 /*inline void setColor(const float r, const float g, const float b)

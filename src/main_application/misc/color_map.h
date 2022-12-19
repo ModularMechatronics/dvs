@@ -359,4 +359,6 @@ inline RGBColorMap<float>* getColorMapFromColorMapType(const dvs::internal::Colo
     }
 }
 
+using RGBTripletf = RGBTriplet<float>;
+
 #endif  // MAIN_APPLICATION_MISC_COLOR_MAP_H_
