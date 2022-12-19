@@ -8,12 +8,13 @@
 #include "main_application/misc/color_map.h"
 #include "opengl_low_level/data_structures.h"
 #include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/vertex_buffer.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 
 class ImShow : public PlotObjectBase
 {
 private:
-    RGBColorMap<float> color_map_;
+    VertexBuffer vertex_buffer_;
     GLuint alpha_buffer_;
 
     GLuint image_vertex_buffer_array_;
