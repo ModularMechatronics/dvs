@@ -13,7 +13,7 @@
 class Plot2D : public PlotObjectBase
 {
 private:
-    VertexBuffer vertex_buffer2_;
+    VertexBuffer vertex_buffer_;
     float gap_size_, dash_size_;
 
     size_t num_points_;

@@ -33,7 +33,7 @@ FastPlot2D::FastPlot2D(std::unique_ptr<const ReceivedData> received_data,
                        const Properties& props,
                        const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
-      vertex_buffer2_{OGLPrimitiveType::LINE_STRIP}
+      vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
     if (type_ != Function::FAST_PLOT2)
     {
@@ -43,7 +43,7 @@ FastPlot2D::FastPlot2D(std::unique_ptr<const ReceivedData> received_data,
     const InputParams input_params{num_elements_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    vertex_buffer2_.addBuffer(output_data.points_ptr, num_elements_, 2);
+    vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_, 2);
 
     delete[] output_data.points_ptr;
 }
@@ -65,7 +65,7 @@ void FastPlot2D::findMinMax()
 
 void FastPlot2D::render()
 {
-    vertex_buffer2_.render(num_elements_);
+    vertex_buffer_.render(num_elements_);
 }
 
 FastPlot2D::~FastPlot2D() {}

@@ -51,7 +51,7 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
                    const Properties& props,
                    const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
-      vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
+      vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     if ((type_ != Function::DRAW_MESH) && (type_ != Function::DRAW_MESH_SEPARATE_VECTORS))
     {
@@ -79,9 +79,9 @@ DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
 
     num_elements_to_render_ = num_indices_ * 3;
 
-    vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
-    vertex_buffer2_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
-    vertex_buffer2_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
+    vertex_buffer_.addBuffer(points_ptr_, num_elements_to_render_, 3);
+    vertex_buffer_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
 
     delete[] output_data.normals_ptr;
     delete[] output_data.mean_height_ptr;
@@ -149,12 +149,12 @@ void DrawMesh::render()
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 
-    vertex_buffer2_.render(num_elements_to_render_);
+    vertex_buffer_.render(num_elements_to_render_);
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    vertex_buffer2_.render(num_elements_to_render_);
+    vertex_buffer_.render(num_elements_to_render_);
 
     glDisable(GL_BLEND);
 

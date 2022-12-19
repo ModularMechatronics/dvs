@@ -15,7 +15,7 @@ class Plot3D : public PlotObjectBase
 {
 public:
 private:
-    VertexBuffer vertex_buffer2_;
+    VertexBuffer vertex_buffer_;
 
     size_t num_points_;
 

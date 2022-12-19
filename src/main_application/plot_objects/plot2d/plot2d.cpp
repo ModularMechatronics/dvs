@@ -55,7 +55,7 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
                const Properties& props,
                const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
-      vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
+      vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::PLOT2)
     {
@@ -87,16 +87,16 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
         }
     }
 
-    vertex_buffer2_.addBuffer(output_data.p0, num_points_, 2, usage_);
-    vertex_buffer2_.addBuffer(output_data.p1, num_points_, 2, usage_);
-    vertex_buffer2_.addBuffer(output_data.p2, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(output_data.p0, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(output_data.p1, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(output_data.p2, num_points_, 2, usage_);
 
-    vertex_buffer2_.addBuffer(output_data.idx_data, num_points_, 1, usage_);
-    vertex_buffer2_.addBuffer(output_data.length_along, num_points_, 1, usage_);
+    vertex_buffer_.addBuffer(output_data.idx_data, num_points_, 1, usage_);
+    vertex_buffer_.addBuffer(output_data.length_along, num_points_, 1, usage_);
 
     if (has_color_)
     {
-        vertex_buffer2_.addBuffer(output_data.color_data, num_points_, 3);
+        vertex_buffer_.addBuffer(output_data.color_data, num_points_, 3);
 
         delete[] output_data.color_data;
     }
@@ -146,7 +146,7 @@ void Plot2D::render()
                     static_cast<int>(0));
     }
 
-    vertex_buffer2_.render(num_points_);
+    vertex_buffer_.render(num_points_);
 
     shader_collection_.basic_plot_shader.use();
     glDisable(GL_BLEND);
@@ -166,11 +166,11 @@ void Plot2D::updateWithNewData(std::unique_ptr<const ReceivedData> received_data
 
     num_points_ = output_data.num_points;
 
-    vertex_buffer2_.updateBufferData(0, output_data.p0, num_points_, 2);
-    vertex_buffer2_.updateBufferData(1, output_data.p1, num_points_, 2);
-    vertex_buffer2_.updateBufferData(2, output_data.p2, num_points_, 2);
-    vertex_buffer2_.updateBufferData(3, output_data.idx_data, num_points_, 1);
-    vertex_buffer2_.updateBufferData(4, output_data.length_along, num_points_, 1);
+    vertex_buffer_.updateBufferData(0, output_data.p0, num_points_, 2);
+    vertex_buffer_.updateBufferData(1, output_data.p1, num_points_, 2);
+    vertex_buffer_.updateBufferData(2, output_data.p2, num_points_, 2);
+    vertex_buffer_.updateBufferData(3, output_data.idx_data, num_points_, 1);
+    vertex_buffer_.updateBufferData(4, output_data.length_along, num_points_, 1);
 
     delete[] output_data.p0;
     delete[] output_data.p1;

@@ -100,7 +100,7 @@ PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_
                                    const CommunicationHeader& hdr,
                                    const Properties& props,
                                    const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer2_{OGLPrimitiveType::LINES}
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (type_ != Function::PLOT_COLLECTION2)
     {
@@ -128,7 +128,7 @@ PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_
     min_vec = Vec3d(output_data.min_vec.x, output_data.min_vec.y, -1.0);
     max_vec = Vec3d(output_data.max_vec.x, output_data.max_vec.y, 1.0);
 
-    vertex_buffer2_.addBuffer(output_data.data_ptr, num_points_, 2);
+    vertex_buffer_.addBuffer(output_data.data_ptr, num_points_, 2);
 
     delete[] output_data.data_ptr;
 }
@@ -140,7 +140,7 @@ void PlotCollection2D::findMinMax()
 
 void PlotCollection2D::render()
 {
-    vertex_buffer2_.render(num_points_);
+    vertex_buffer_.render(num_points_);
 }
 
 PlotCollection2D::~PlotCollection2D() {}

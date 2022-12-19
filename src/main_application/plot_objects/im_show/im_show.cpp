@@ -63,7 +63,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
                const Properties& props,
                const ShaderCollection shader_collection)
     : PlotObjectBase(
-          std::move(received_data), hdr, props, shader_collection)  // , vertex_buffer2_{OGLPrimitiveType::TRIANGLES}
+          std::move(received_data), hdr, props, shader_collection)  // , vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::IM_SHOW)
     {
@@ -78,7 +78,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
     width_ = dims_.cols;
     height_ = dims_.rows;
 
-    // vertex_buffer2_.addBuffer(points_ptr_, num_elements_to_render_, 3);
+    // vertex_buffer_.addBuffer(points_ptr_, num_elements_to_render_, 3);
 
     const InputParams input_params{num_channels_, dims_, z_offset_, data_type_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);

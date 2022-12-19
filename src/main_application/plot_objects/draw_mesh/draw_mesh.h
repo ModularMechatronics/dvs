@@ -14,7 +14,7 @@
 class DrawMesh : public PlotObjectBase
 {
 private:
-    VertexBuffer vertex_buffer2_;
+    VertexBuffer vertex_buffer_;
     float* points_ptr_;
 
     size_t num_elements_to_render_;
