@@ -1,35 +1,52 @@
 #include "main_application/plot_objects/stairs/stairs.h"
 
-inline uint8_t* convertStairsOuter(const uint8_t* const input_data,
-                                   const DataType data_type,
-                                   const size_t num_elements,
-                                   const size_t num_bytes_per_element,
-                                   const size_t num_bytes_for_one_vec);
+#include "outer_converter.h"
+
+namespace
+{
+struct OutputData
+{
+    float* points_ptr;
+};
+
+struct InputParams
+{
+    size_t num_elements;
+
+    InputParams() = default;
+    InputParams(const size_t num_elements_) : num_elements{num_elements_} {}
+};
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+
+struct Converter
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertData<T>(input_data, input_params);
+    }
+};
+
+}  // namespace
 
 Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
                const Properties& props,
                const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
+      vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
     if (type_ != Function::STAIRS)
     {
         throw std::runtime_error("Invalid function type for Stairs!");
     }
 
-    points_ptr_ =
-        convertStairsOuter(data_ptr_, data_type_, num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_);
+    const InputParams input_params{num_elements_};
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    glGenVertexArrays(1, &stairs_vertex_buffer_array_);
-    glBindVertexArray(stairs_vertex_buffer_array_);
+    vertex_buffer_.addBuffer(output_data.points_ptr, (num_elements_ * 2 - 1), 2);
 
-    glGenBuffers(1, &stairs_vertex_buffer_);
-    glBindBuffer(GL_ARRAY_BUFFER, stairs_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (num_elements_ * 2 - 1) * 2, points_ptr_, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    delete[] output_data.points_ptr;
 }
 
 void Stairs::findMinMax()
@@ -49,153 +66,40 @@ void Stairs::findMinMax()
 
 void Stairs::render()
 {
-    glBindVertexArray(stairs_vertex_buffer_array_);
-    glDrawArrays(GL_LINE_STRIP, 0, num_elements_ * 2 - 1);
-    glBindVertexArray(0);
+    vertex_buffer_.render(num_elements_ * 2 - 1);
 }
 
-Stairs::~Stairs()
+Stairs::~Stairs() {}
+
+namespace
 {
-    delete[] points_ptr_;
-}
-
-template <typename T>
-uint8_t* convertStairs(const uint8_t* const input_data,
-                       const size_t num_elements,
-                       const size_t num_bytes_per_element,
-                       const size_t num_bytes_for_one_vec)
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
-    const size_t num_support_points = num_elements - 1;
+    const size_t num_support_points = input_params.num_elements - 1;
 
-    uint8_t* output_data = new uint8_t[sizeof(float) * 2 * (num_elements + num_support_points)];
+    OutputData output_data;
+    output_data.points_ptr = new float[2 * (input_params.num_elements + num_support_points)];
 
-    float f0, f0_1, f1;
-    uint8_t* const f0_data = reinterpret_cast<uint8_t*>(&f0);
-    uint8_t* const f0_1_data = reinterpret_cast<uint8_t*>(&f0_1);
-    uint8_t* const f1_data = reinterpret_cast<uint8_t*>(&f1);
-    T t0, t0_1, t1;
-    uint8_t* const t0_data = reinterpret_cast<uint8_t*>(&t0);
-    uint8_t* const t0_1_data = reinterpret_cast<uint8_t*>(&t0_1);
-    uint8_t* const t1_data = reinterpret_cast<uint8_t*>(&t1);
+    const T* const input_data_dt_x = reinterpret_cast<const T* const>(input_data);
+    const T* const input_data_dt_y = input_data_dt_x + input_params.num_elements;
 
-    size_t idx_x = 0;
-    size_t idx_y = sizeof(float);
+    size_t idx = 0;
 
-    for (size_t k = 0; k < (num_elements - 1); k++)
+    for (size_t k = 0; k < (input_params.num_elements - 1); k++)
     {
-        const size_t idx_0 = k * num_bytes_per_element;
-        const size_t idx_0_1 = (k + 1) * num_bytes_per_element;
-        const size_t idx_1 = num_bytes_for_one_vec + k * num_bytes_per_element;
-        const uint8_t* const tmp_ptr_0 = &(input_data[idx_0]);
-        const uint8_t* const tmp_ptr_0_1 = &(input_data[idx_0_1]);
-        const uint8_t* const tmp_ptr_1 = &(input_data[idx_1]);
+        output_data.points_ptr[idx] = input_data_dt_x[k];
+        output_data.points_ptr[idx + 1] = input_data_dt_y[k];
 
-        for (size_t i = 0; i < num_bytes_per_element; i++)
-        {
-            t0_data[i] = tmp_ptr_0[i];
-            t0_1_data[i] = tmp_ptr_0_1[i];
-            t1_data[i] = tmp_ptr_1[i];
-        }
+        output_data.points_ptr[idx + 2] = input_data_dt_x[k + 1];
+        output_data.points_ptr[idx + 3] = input_data_dt_y[k];
 
-        f0 = t0;
-        f0_1 = t0_1;
-        f1 = t1;
-
-        for (size_t i = 0; i < sizeof(float); i++)
-        {
-            output_data[idx_x + i] = f0_data[i];
-            output_data[idx_y + i] = f1_data[i];
-        }
-        idx_x += sizeof(float) * 2;
-        idx_y += sizeof(float) * 2;
-
-        for (size_t i = 0; i < sizeof(float); i++)
-        {
-            output_data[idx_x + i] = f0_1_data[i];
-            output_data[idx_y + i] = f1_data[i];
-        }
-        idx_x += sizeof(float) * 2;
-        idx_y += sizeof(float) * 2;
+        idx += 4;
     }
 
-    const size_t last_idx = num_elements - 1;
-
-    const size_t idx_0 = last_idx * num_bytes_per_element;
-    const size_t idx_1 = num_bytes_for_one_vec + last_idx * num_bytes_per_element;
-    const uint8_t* const tmp_ptr_0 = &(input_data[idx_0]);
-    const uint8_t* const tmp_ptr_1 = &(input_data[idx_1]);
-
-    for (size_t i = 0; i < num_bytes_per_element; i++)
-    {
-        t0_data[i] = tmp_ptr_0[i];
-        t1_data[i] = tmp_ptr_1[i];
-    }
-
-    f0 = t0;
-    f1 = t1;
-
-    for (size_t i = 0; i < sizeof(float); i++)
-    {
-        output_data[idx_x + i] = f0_data[i];
-        output_data[idx_y + i] = f1_data[i];
-    }
-    idx_x += sizeof(float) * 2;
-    idx_y += sizeof(float) * 2;
+    output_data.points_ptr[idx] = input_data_dt_x[input_params.num_elements - 1U];
+    output_data.points_ptr[idx + 1] = input_data_dt_y[input_params.num_elements - 1U];
 
     return output_data;
 }
 
-inline uint8_t* convertStairsOuter(const uint8_t* const input_data,
-                                   const DataType data_type,
-                                   const size_t num_elements,
-                                   const size_t num_bytes_per_element,
-                                   const size_t num_bytes_for_one_vec)
-{
-    uint8_t* output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data = convertStairs<float>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data = convertStairs<double>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data = convertStairs<int8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data = convertStairs<int16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data = convertStairs<int32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data = convertStairs<int64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data = convertStairs<uint8_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data = convertStairs<uint16_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data = convertStairs<uint32_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data = convertStairs<uint64_t>(input_data, num_elements, num_bytes_per_element, num_bytes_for_one_vec);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
-    }
-
-    return output_data;
-}
+}  // namespace
