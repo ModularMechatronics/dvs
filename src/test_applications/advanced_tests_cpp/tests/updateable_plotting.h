@@ -78,6 +78,52 @@ void testPlot2Basic()
     }
 }
 
+void testSurfBasic()
+{
+    const size_t num_elements = 100;
+
+    const auto mat_xy = dvs::meshGrid<double>(-1.0, 1.0, -1.0, 1.0, 100, 100);
+    const Matrix<double>& x_mat = mat_xy.first;
+    const Matrix<double>& y_mat = mat_xy.second;
+    Matrix<double> z_mat{100, 100};
+
+    setCurrentElement("p_view_0");
+    clearView();
+
+    double t = 0.0;
+    const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0, 5.0, num_elements);
+    view(10, 10);
+    float azimuth = 10.0;
+
+    for (size_t k = 0; k < 1000; k++)
+    {
+        const Vector<double> y = dvs::sin(x + t);
+        const Vector<double> z = dvs::cos(x + t);
+
+        for (size_t r = 0; r < x_mat.numRows(); r++)
+        {
+            for (size_t c = 0; c < x_mat.numCols(); c++)
+            {
+                const double x_val = x_mat(r, c);
+                const double y_val = y_mat(r, c);
+                const double r_val = std::sqrt(x_val * x_val + y_val * y_val);
+
+                const double phi = std::sin(t * 0.2) * 50.0;
+                z_mat(r, c) = std::sin(r_val * phi) / (r_val * phi);
+            }
+        }
+
+        surf(x_mat, y_mat, z_mat, properties::ColorMap::Jet(), properties::UPDATABLE, properties::SLOT0);
+        t += 0.1;
+
+        azimuth = azimuth > 180.0f ? -180.0f : azimuth + 1.0f;
+        axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+        view(azimuth, 10);
+
+        usleep(10000);
+    }
+}
+
 }  // namespace updateable_plotting
 
 #endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SCROLLING_PLOT_H_
