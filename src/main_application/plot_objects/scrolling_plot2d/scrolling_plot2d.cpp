@@ -1,12 +1,31 @@
 #include "main_application/plot_objects/scrolling_plot2d/scrolling_plot2d.h"
 
+#include "outer_converter.h"
+
+namespace
+{
 struct OutputData
 {
     float dt;
     float x;
 };
 
-OutputData convertDataScrollingPlotOuter(const uint8_t* const input_data, const DataType data_type);
+struct InputParams
+{
+    InputParams() = default;
+};
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+
+struct Converter
+{
+    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    {
+        return convertData<T>(input_data, input_params);
+    }
+};
+
+}  // namespace
 
 ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_data,
                                  const CommunicationHeader& hdr,
@@ -29,7 +48,8 @@ ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_da
     std::memset(dt_vec_, 0, num_bytes / 2U);
     previous_buffer_size_ = buffer_size_;
 
-    const OutputData output_data = convertDataScrollingPlotOuter(data_ptr_, data_type_);
+    const InputParams input_params{};
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
     points_ptr_[1U] = output_data.x;
 
@@ -86,6 +106,8 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
                                         const CommunicationHeader& hdr,
                                         const Properties& props)
 {
+    static_cast<void>(hdr);
+
     if (props.numProperties() > 0U)
     {
         setProperties(props);
@@ -128,7 +150,9 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
     }
 
     data_ptr_ = received_data->data();
-    const OutputData output_data = convertDataScrollingPlotOuter(data_ptr_, data_type_);
+
+    const InputParams input_params{};
+    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
     num_elements_to_draw_ = (num_elements_to_draw_ + 1U) > buffer_size_ ? buffer_size_ : (num_elements_to_draw_ + 1U);
     int idx = 0;
@@ -164,8 +188,13 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
     glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_to_replace, points_ptr_);
 }
 
-template <typename T> OutputData convertDataScrollingPlot(const uint8_t* const input_data)
+namespace
 {
+
+template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+{
+    static_cast<void>(input_params);
+
     T dt, x;
     uint8_t* dt_ptr = reinterpret_cast<uint8_t*>(&dt);
     uint8_t* x_ptr = reinterpret_cast<uint8_t*>(&x);
@@ -180,53 +209,4 @@ template <typename T> OutputData convertDataScrollingPlot(const uint8_t* const i
     return output_data;
 }
 
-OutputData convertDataScrollingPlotOuter(const uint8_t* const input_data, const DataType data_type)
-{
-    OutputData output_data;
-    if (data_type == DataType::FLOAT)
-    {
-        output_data = convertDataScrollingPlot<float>(input_data);
-    }
-    else if (data_type == DataType::DOUBLE)
-    {
-        output_data = convertDataScrollingPlot<double>(input_data);
-    }
-    else if (data_type == DataType::INT8)
-    {
-        output_data = convertDataScrollingPlot<int8_t>(input_data);
-    }
-    else if (data_type == DataType::INT16)
-    {
-        output_data = convertDataScrollingPlot<int16_t>(input_data);
-    }
-    else if (data_type == DataType::INT32)
-    {
-        output_data = convertDataScrollingPlot<int32_t>(input_data);
-    }
-    else if (data_type == DataType::INT64)
-    {
-        output_data = convertDataScrollingPlot<int64_t>(input_data);
-    }
-    else if (data_type == DataType::UINT8)
-    {
-        output_data = convertDataScrollingPlot<uint8_t>(input_data);
-    }
-    else if (data_type == DataType::UINT16)
-    {
-        output_data = convertDataScrollingPlot<uint16_t>(input_data);
-    }
-    else if (data_type == DataType::UINT32)
-    {
-        output_data = convertDataScrollingPlot<uint32_t>(input_data);
-    }
-    else if (data_type == DataType::UINT64)
-    {
-        output_data = convertDataScrollingPlot<uint64_t>(input_data);
-    }
-    else
-    {
-        throw std::runtime_error("Invalid data type!");
-    }
-
-    return output_data;
-}
+}  // namespace
