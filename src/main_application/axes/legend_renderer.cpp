@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "opengl_low_level/data_structures.h"
+#include "misc/color_map.h"
 
 constexpr int kMaxNumPoints{100};
 

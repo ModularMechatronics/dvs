@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "dvs/math/math.h"
-#include "opengl_low_level/data_structures.h"
+#include "misc/color_map.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "opengl_low_level/vertex_buffer.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"

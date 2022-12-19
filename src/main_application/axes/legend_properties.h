@@ -7,7 +7,6 @@
 #include "dvs/enumerations.h"
 #include "dvs/plot_properties.h"
 #include "misc/color_map.h"
-#include "opengl_low_level/data_structures.h"
 
 // TODO: This should be filled in plot_object_base and the individual object types
 

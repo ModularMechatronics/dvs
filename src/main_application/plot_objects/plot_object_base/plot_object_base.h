@@ -14,7 +14,7 @@
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "dvs/plot_properties.h"
-#include "opengl_low_level/data_structures.h"
+#include "misc/color_map.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "plot_objects/utils.h"
 #include "properties.h"

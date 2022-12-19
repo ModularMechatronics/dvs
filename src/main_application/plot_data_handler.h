@@ -8,7 +8,7 @@
 #include "communication/received_data.h"
 #include "dvs/dvs.h"
 #include "dvs/math/math.h"
-#include "opengl_low_level/data_structures.h"
+#include "misc/color_map.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "properties.h"
 #include "shader.h"
