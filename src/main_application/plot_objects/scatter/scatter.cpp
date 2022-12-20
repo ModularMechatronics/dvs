@@ -72,6 +72,17 @@ Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data,
     delete[] output_data.points_ptr;
 }
 
+LegendProperties Scatter2D::getLegendProperties() const
+{
+    LegendProperties lp{PlotObjectBase::getLegendProperties()};
+    lp.type = LegendType::DOT;
+    lp.color = color_;
+    lp.scatter_style_type = scatter_style_type_;
+    lp.point_size = point_size_;
+
+    return lp;
+}
+
 void Scatter2D::modifyShader()
 {
     PlotObjectBase::modifyShader();

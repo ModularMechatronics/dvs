@@ -26,6 +26,7 @@ public:
 
     void render() override;
     void modifyShader() override;
+    LegendProperties getLegendProperties() const override;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER_SCATTER_H_

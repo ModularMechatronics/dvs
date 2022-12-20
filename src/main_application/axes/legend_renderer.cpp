@@ -6,44 +6,6 @@
 
 constexpr int kMaxNumPoints{100};
 
-GLfloat legend_color_edge[] = {
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-};
-
-GLfloat legend_color_inner[] = {0.866666666f,
-                                0.827450f,
-                                0.7843137f,
-                                0.866666666f,
-                                0.827450f,
-                                0.7843137f,
-                                0.866666666f,
-                                0.827450f,
-                                0.7843137f,
-
-                                0.866666666f,
-                                0.827450f,
-                                0.7843137f,
-                                0.866666666f,
-                                0.827450f,
-                                0.7843137f,
-                                0.866666666f,
-                                0.827450f,
-                                0.7843137f};
-
 void LegendRenderer::setBoxValues(const float new_x_min,
                                   const float new_x_max,
                                   const float new_z_min,
@@ -91,6 +53,7 @@ void LegendRenderer::setColorAtIdx(const float r, const float g, const float b, 
 
 void LegendRenderer::renderColorMapLegend(const size_t num_segments,
                                           const RGBColorMap<float>* const color_map,
+                                          const RGBTripletf& edge_color,
                                           const float xc,
                                           const float yc,
                                           const float r,
@@ -116,6 +79,27 @@ void LegendRenderer::renderColorMapLegend(const size_t num_segments,
 
         setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
         setColorAtIdx(color.red, color.green, color.blue, idx);
+        idx += 3;
+    }
+
+    angle = 0.0f;
+    for (size_t k = 0; k < num_segments; k++)
+    {
+        setVertexAtIdx(xc, 0.0f, yc, idx);
+        setColorAtIdx(edge_color.red, edge_color.green, edge_color.blue, idx);
+        idx += 3;
+
+        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
+        setColorAtIdx(edge_color.red, edge_color.green, edge_color.blue, idx);
+        idx += 3;
+        angle += delta_phi;
+
+        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
+        setColorAtIdx(edge_color.red, edge_color.green, edge_color.blue, idx);
+        idx += 3;
+
+        setVertexAtIdx(xc, 0.0f, yc, idx);
+        setColorAtIdx(edge_color.red, edge_color.green, edge_color.blue, idx);
         idx += 3;
     }
 }
@@ -170,6 +154,8 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
     inner_vao_.updateBufferData(0, legend_inner_vertices_.data(), num_vertices_inner_, 3);
     inner_vao_.render(num_vertices_inner_);
 
+    glUseProgram(shader_collection_.legend_shader.programId());
+
     float* const legend_shape_vertices = points_.data();
     float* const legend_shape_colors = colors_.data();
 
@@ -181,6 +167,10 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
     {
         const float kf = k;
         const float z_center = z_max - scale_factor_ * (z_offset + legend_element_z_delta * kf);
+
+        glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "scatter_mode"),
+                    static_cast<int>(-1));
+
         if (legend_properties[k].type == LegendType::LINE)
         {
             const RGBTripletf col = legend_properties[k].color;
@@ -200,8 +190,29 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
             legend_shape_colors[4] = col.green;
             legend_shape_colors[5] = col.blue;
 
-            legend_shape_.renderAndUpdateData(
-                legend_shape_vertices, legend_shape_colors, 2, 2 * 3 * sizeof(float), GL_LINE_STRIP);
+            legend_shape_.updateBufferData(0, legend_shape_vertices, 2, 3);
+            legend_shape_.updateBufferData(1, legend_shape_colors, 2, 3);
+            legend_shape_.render(2, OGLPrimitiveType::LINE_STRIP);
+        }
+        else if (legend_properties[k].type == LegendType::DOT)
+        {
+            glUniform1f(glGetUniformLocation(shader_collection_.legend_shader.programId(), "point_size"),
+                        legend_properties[k].point_size);
+            glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "scatter_mode"),
+                        static_cast<int>(legend_properties[k].scatter_style_type));
+
+            const RGBTripletf col = legend_properties[k].color;
+            legend_shape_vertices[0] = x_center;
+            legend_shape_vertices[1] = 0.0f;
+            legend_shape_vertices[2] = z_center;
+
+            legend_shape_colors[0] = col.red;
+            legend_shape_colors[1] = col.green;
+            legend_shape_colors[2] = col.blue;
+
+            legend_shape_.updateBufferData(0, legend_shape_vertices, 1, 3);
+            legend_shape_.updateBufferData(1, legend_shape_colors, 1, 3);
+            legend_shape_.render(1, OGLPrimitiveType::POINTS);
         }
         else if (legend_properties[k].type == LegendType::POLYGON)
         {
@@ -209,13 +220,19 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
             {
                 const size_t num_segments = 6;
                 const float radius = scale_factor_ * 0.1;
-                renderColorMapLegend(
-                    num_segments, legend_properties[k].color_map, x_center, z_center, radius, axes_width, axes_height);
-                legend_shape_.renderAndUpdateData(legend_shape_vertices,
-                                                  legend_shape_colors,
-                                                  num_segments * 3,
-                                                  num_segments * 3 * 3 * sizeof(float),
-                                                  GL_TRIANGLES);
+                renderColorMapLegend(num_segments,
+                                     legend_properties[k].color_map,
+                                     legend_properties[k].edge_color,
+                                     x_center,
+                                     z_center,
+                                     radius,
+                                     axes_width,
+                                     axes_height);
+                legend_shape_.updateBufferData(0, legend_shape_vertices, num_segments * 7, 3);
+                legend_shape_.updateBufferData(1, legend_shape_colors, num_segments * 7, 3);
+                legend_shape_.render(num_segments * 3, OGLPrimitiveType::TRIANGLES);
+
+                legend_shape_.render(num_segments * 4, num_segments * 3, OGLPrimitiveType::LINE_STRIP);
             }
             else
             {
@@ -253,16 +270,18 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
                 legend_shape_colors[7] = face_color.green;
                 legend_shape_colors[8] = face_color.blue;
 
-                legend_shape_.renderAndUpdateData(
-                    legend_shape_vertices, legend_shape_colors, 3, 3 * 3 * sizeof(float), GL_TRIANGLES);
+                legend_shape_.updateBufferData(0, legend_shape_vertices, 3, 3);
+                legend_shape_.updateBufferData(1, legend_shape_colors, 3, 3);
+                legend_shape_.render(3, OGLPrimitiveType::TRIANGLES);
 
                 // Face 1
                 legend_shape_vertices[3] = x_center - dxc;
                 legend_shape_vertices[4] = 0.0f;
                 legend_shape_vertices[5] = z_center + dzc;
 
-                legend_shape_.renderAndUpdateData(
-                    legend_shape_vertices, legend_shape_colors, 3, 3 * 3 * sizeof(float), GL_TRIANGLES);
+                legend_shape_.updateBufferData(0, legend_shape_vertices, 3, 3);
+                legend_shape_.updateBufferData(1, legend_shape_colors, 3, 3);
+                legend_shape_.render(3, OGLPrimitiveType::TRIANGLES);
 
                 // Edge 0
                 legend_shape_colors[0] = edge_color.red;
@@ -281,16 +300,18 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
                 legend_shape_colors[10] = edge_color.green;
                 legend_shape_colors[11] = edge_color.blue;
 
-                legend_shape_.renderAndUpdateData(
-                    legend_shape_vertices, legend_shape_colors, 4, 4 * 3 * sizeof(float), GL_LINE_STRIP);
+                legend_shape_.updateBufferData(0, legend_shape_vertices, 4, 3);
+                legend_shape_.updateBufferData(1, legend_shape_colors, 4, 3);
+                legend_shape_.render(3, OGLPrimitiveType::LINE_STRIP);
 
                 // Edge 1
                 legend_shape_vertices[3] = x_center + dxc;
                 legend_shape_vertices[4] = 0.0f;
                 legend_shape_vertices[5] = z_center - dzc;
 
-                legend_shape_.renderAndUpdateData(
-                    legend_shape_vertices, legend_shape_colors, 4, 4 * 3 * sizeof(float), GL_LINE_STRIP);
+                legend_shape_.updateBufferData(0, legend_shape_vertices, 4, 3);
+                legend_shape_.updateBufferData(1, legend_shape_colors, 4, 3);
+                legend_shape_.render(3, OGLPrimitiveType::LINE_STRIP);
             }
         }
     }
@@ -323,7 +344,8 @@ LegendRenderer::LegendRenderer(const TextRenderer& text_renderer, const ShaderCo
       legend_inner_vertices_(18),
       legend_edge_vertices_(15),
       edge_vao_{OGLPrimitiveType::LINE_STRIP},
-      inner_vao_{OGLPrimitiveType::TRIANGLES}
+      inner_vao_{OGLPrimitiveType::TRIANGLES},
+      legend_shape_{OGLPrimitiveType::TRIANGLES}
 {
     scale_factor_ = 1.0f;
     num_vertices_edge_ = 5;
@@ -334,5 +356,6 @@ LegendRenderer::LegendRenderer(const TextRenderer& text_renderer, const ShaderCo
 
     edge_vao_.addBuffer(legend_edge_vertices_.data(), num_vertices_edge_, 3, GL_DYNAMIC_DRAW);
     inner_vao_.addBuffer(legend_inner_vertices_.data(), num_vertices_inner_, 3, GL_DYNAMIC_DRAW);
-    legend_shape_ = VAOObject2(kMaxNumPoints, points_.data(), colors_.data());
+    legend_shape_.addBuffer(points_.data(), kMaxNumPoints, 3, GL_DYNAMIC_DRAW);
+    legend_shape_.addBuffer(colors_.data(), kMaxNumPoints, 3, GL_DYNAMIC_DRAW);
 }
