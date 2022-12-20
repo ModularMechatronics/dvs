@@ -950,6 +950,17 @@ void testLegend()
     surf(
         x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
     showLegend();
+
+    setCurrentElement("p_view_2");
+    clearView();
+
+    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::Jet(), properties::Name("Jet"));
+    surf(x + 1.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::Rainbow(), properties::Name("Rainbow"));
+    surf(x + 2.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::Magma(), properties::Name("Magma"));
+    surf(x + 3.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::Viridis(), properties::Name("Viridis"));
+    surf(x + 4.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::Pastel(), properties::Name("Pastel"));
+
+    showLegend();
 }
 
 void testDrawMesh()
