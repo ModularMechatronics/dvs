@@ -5,6 +5,7 @@
 #include "misc/color_map.h"
 
 constexpr int kMaxNumPoints{100};
+constexpr float kYOffset{-5.1f};
 
 void LegendRenderer::setBoxValues(const float new_x_min,
                                   const float new_x_max,
@@ -60,7 +61,6 @@ void LegendRenderer::renderColorMapLegend(const size_t num_segments,
                                           const float axes_height)
 {
     const float delta_phi = static_cast<float>(M_PI) * 2.0f / static_cast<float>(num_segments);
-    float val = 0.0f;
     float angle = 0.0f;
     const float mul = 400.0f;  // Empirically found
     int idx = 0;
@@ -70,18 +70,16 @@ void LegendRenderer::renderColorMapLegend(const size_t num_segments,
         const float kf = k;
         const float a_val = kf / static_cast<float>(num_segments - 1U);
 
-        // const RGBTripletf color{color_map->getColor(angle / (2.0f * M_PI))};
-
-        setVertexAtIdx(xc, 0.0f, yc, idx);
+        setVertexAtIdx(xc, kYOffset, yc, idx);
         setColorAtIdx(a_val, 0.0f, 0.0f, idx);
         idx += 3;
 
-        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
+        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, kYOffset, r * sin(angle) * mul / axes_height + yc, idx);
         setColorAtIdx(a_val, 0.0f, 0.0f, idx);
         idx += 3;
         angle += delta_phi;
 
-        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
+        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, kYOffset, r * sin(angle) * mul / axes_height + yc, idx);
         setColorAtIdx(a_val, 0.0f, 0.0f, idx);
         idx += 3;
     }
@@ -89,20 +87,20 @@ void LegendRenderer::renderColorMapLegend(const size_t num_segments,
     angle = 0.0f;
     for (size_t k = 0; k < num_segments; k++)
     {
-        setVertexAtIdx(xc, 0.0f, yc, idx);
+        setVertexAtIdx(xc, kYOffset, yc, idx);
         setColorAtIdx(edge_color.red, edge_color.green, edge_color.blue, idx);
         idx += 3;
 
-        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
+        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, kYOffset, r * sin(angle) * mul / axes_height + yc, idx);
         setColorAtIdx(edge_color.red, edge_color.green, edge_color.blue, idx);
         idx += 3;
         angle += delta_phi;
 
-        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
+        setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, kYOffset, r * sin(angle) * mul / axes_height + yc, idx);
         setColorAtIdx(edge_color.red, edge_color.green, edge_color.blue, idx);
         idx += 3;
 
-        setVertexAtIdx(xc, 0.0f, yc, idx);
+        setVertexAtIdx(xc, kYOffset, yc, idx);
         setColorAtIdx(edge_color.red, edge_color.green, edge_color.blue, idx);
         idx += 3;
     }
@@ -180,11 +178,11 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
         {
             const RGBTripletf col = legend_properties[k].color;
             legend_shape_vertices[0] = x_center - scale_factor_ * legend_symbol_width / 2.0f;
-            legend_shape_vertices[1] = 0.0f;
+            legend_shape_vertices[1] = kYOffset;
             legend_shape_vertices[2] = z_center;
 
             legend_shape_vertices[3] = x_center + scale_factor_ * legend_symbol_width / 2.0;
-            legend_shape_vertices[4] = 0.0f;
+            legend_shape_vertices[4] = kYOffset;
             legend_shape_vertices[5] = z_center;
 
             legend_shape_colors[0] = col.red;
@@ -208,7 +206,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
             const RGBTripletf col = legend_properties[k].color;
             legend_shape_vertices[0] = x_center;
-            legend_shape_vertices[1] = 0.0f;
+            legend_shape_vertices[1] = kYOffset;
             legend_shape_vertices[2] = z_center;
 
             legend_shape_colors[0] = col.red;
@@ -247,19 +245,19 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
                 // Face 0
                 legend_shape_vertices[0] = x_center - dxc;
-                legend_shape_vertices[1] = 0.0f;
+                legend_shape_vertices[1] = kYOffset;
                 legend_shape_vertices[2] = z_center - dzc;
 
                 legend_shape_vertices[3] = x_center + dxc;
-                legend_shape_vertices[4] = 0.0f;
+                legend_shape_vertices[4] = kYOffset;
                 legend_shape_vertices[5] = z_center - dzc;
 
                 legend_shape_vertices[6] = x_center + dxc;
-                legend_shape_vertices[7] = 0.0f;
+                legend_shape_vertices[7] = kYOffset;
                 legend_shape_vertices[8] = z_center + dzc;
 
                 legend_shape_vertices[9] = x_center - dxc;
-                legend_shape_vertices[10] = 0.0f;
+                legend_shape_vertices[10] = kYOffset;
                 legend_shape_vertices[11] = z_center - dzc;
 
                 legend_shape_colors[0] = face_color.red;
@@ -280,7 +278,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
                 // Face 1
                 legend_shape_vertices[3] = x_center - dxc;
-                legend_shape_vertices[4] = 0.0f;
+                legend_shape_vertices[4] = kYOffset;
                 legend_shape_vertices[5] = z_center + dzc;
 
                 legend_shape_.updateBufferData(0, legend_shape_vertices, 3, 3);
@@ -310,7 +308,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
                 // Edge 1
                 legend_shape_vertices[3] = x_center + dxc;
-                legend_shape_vertices[4] = 0.0f;
+                legend_shape_vertices[4] = kYOffset;
                 legend_shape_vertices[5] = z_center - dzc;
 
                 legend_shape_.updateBufferData(0, legend_shape_vertices, 4, 3);
@@ -355,8 +353,8 @@ LegendRenderer::LegendRenderer(const TextRenderer& text_renderer, const ShaderCo
     num_vertices_edge_ = 5;
     num_vertices_inner_ = 6;
 
-    legend_inner_vertices_.fill(0.0f);
-    legend_edge_vertices_.fill(0.0f);
+    legend_inner_vertices_.fill(-5.0f);
+    legend_edge_vertices_.fill(-5.0f);
 
     edge_vao_.addBuffer(legend_edge_vertices_.data(), num_vertices_edge_, 3, GL_DYNAMIC_DRAW);
     inner_vao_.addBuffer(legend_inner_vertices_.data(), num_vertices_inner_, 3, GL_DYNAMIC_DRAW);

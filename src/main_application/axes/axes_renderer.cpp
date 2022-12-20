@@ -318,10 +318,6 @@ void AxesRenderer::render()
                     width_,
                     height_,
                     grid_vectors_);
-    if (render_legend_)
-    {
-        renderLegend();
-    }
 }
 
 void AxesRenderer::renderLegend()
@@ -452,6 +448,10 @@ void AxesRenderer::plotBegin()
 void AxesRenderer::plotEnd()
 {
     glUseProgram(0);
+    if (render_legend_)
+    {
+        renderLegend();
+    }
 }
 
 void AxesRenderer::activateGlobalIllumination(const Vec3d& light_pos)
