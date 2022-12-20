@@ -38,6 +38,7 @@ Pre release:
 - Solve all TODOs
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
+- Change VertexBuffer to take the primitive only to "render", and not to constructor
 
 Post release:
 - Merge plot2D/plot3Ds shaders (and possibly even C++ classes?)

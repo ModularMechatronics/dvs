@@ -326,11 +326,16 @@ void AxesRenderer::render()
 
 void AxesRenderer::renderLegend()
 {
+    // const glm::mat4 mvp = projection_mat * view_mat;
+    const glm::mat4 mvp = orth_projection_mat * view_mat;
+
+    glUseProgram(shader_collection_.legend_shader.programId());
+    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.legend_shader.programId(), "model_view_proj_mat"),
+                       1,
+                       GL_FALSE,
+                       &mvp[0][0]);
+
     glUseProgram(shader_collection_.plot_box_shader.programId());
-    const glm::mat4 model_mat_tmp = glm::mat4(1.0f);
-
-    const glm::mat4 mvp = projection_mat * view_mat * model_mat_tmp;
-
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,

@@ -924,8 +924,19 @@ void testLegend()
     plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
     plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
     surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
-    surf(
-        x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::Jet(), properties::Name("SURF_COLOR_MAP"));
+    surf(x,
+         y,
+         z + 1.0,
+         properties::EdgeColor(255, 255, 255),
+         properties::ColorMap::Jet(),
+         properties::Name("SURF_COLOR_MAP"));
+    scatter(x0, y0, properties::Color(255, 0, 0), properties::Name("Scatter"));
+    scatter(x1,
+            y1,
+            properties::Color(255, 0, 255),
+            properties::Name("Scatter"),
+            properties::PointSize(40),
+            properties::ScatterStyle::Cross());
     showLegend();
 
     setCurrentElement("p_view_1");

@@ -65,6 +65,7 @@ struct ShaderCollection
     Shader plot_3d_shader;
     Shader img_plot_shader;
     Shader draw_mesh_shader;
+    Shader legend_shader;
 };
 
 #endif  // MAIN_APPLICATION_SHADER_H_

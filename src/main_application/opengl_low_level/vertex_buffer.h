@@ -97,6 +97,20 @@ public:
         glDrawArrays(primitive_type_, 0, num_elements);
         glBindVertexArray(0);
     }
+
+    void render(const size_t num_elements, const OGLPrimitiveType primitive_type) const
+    {
+        glBindVertexArray(vertex_buffer_array_);
+        glDrawArrays(primitive_type, 0, num_elements);
+        glBindVertexArray(0);
+    }
+
+    void render(const size_t num_elements, const size_t offset, const OGLPrimitiveType primitive_type) const
+    {
+        glBindVertexArray(vertex_buffer_array_);
+        glDrawArrays(primitive_type, offset, num_elements);
+        glBindVertexArray(0);
+    }
 };
 
 #endif  // MAIN_APPLICATION_OPENGL_LOW_LEVEL_VERTEX_BUFFER_H_
