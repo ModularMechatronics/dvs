@@ -32,7 +32,6 @@ private:
     dvs::Vector<float> legend_inner_vertices_;
     dvs::Vector<float> legend_edge_vertices_;
     void renderColorMapLegend(const size_t num_segments,
-                              const RGBColorMap<float>* const color_map,
                               const RGBTripletf& edge_color,
                               const float xc,
                               const float yc,

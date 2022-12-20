@@ -52,7 +52,6 @@ void LegendRenderer::setColorAtIdx(const float r, const float g, const float b, 
 }
 
 void LegendRenderer::renderColorMapLegend(const size_t num_segments,
-                                          const RGBColorMap<float>* const color_map,
                                           const RGBTripletf& edge_color,
                                           const float xc,
                                           const float yc,
@@ -61,24 +60,29 @@ void LegendRenderer::renderColorMapLegend(const size_t num_segments,
                                           const float axes_height)
 {
     const float delta_phi = static_cast<float>(M_PI) * 2.0f / static_cast<float>(num_segments);
+    float val = 0.0f;
     float angle = 0.0f;
     const float mul = 400.0f;  // Empirically found
     int idx = 0;
 
     for (size_t k = 0; k < num_segments; k++)
     {
-        const RGBTripletf color{color_map->getColor(angle / (2.0f * M_PI))};
+        const float kf = k;
+        const float a_val = kf / static_cast<float>(num_segments - 1U);
+
+        // const RGBTripletf color{color_map->getColor(angle / (2.0f * M_PI))};
+
         setVertexAtIdx(xc, 0.0f, yc, idx);
-        setColorAtIdx(color.red, color.green, color.blue, idx);
+        setColorAtIdx(a_val, 0.0f, 0.0f, idx);
         idx += 3;
 
         setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
-        setColorAtIdx(color.red, color.green, color.blue, idx);
+        setColorAtIdx(a_val, 0.0f, 0.0f, idx);
         idx += 3;
         angle += delta_phi;
 
         setVertexAtIdx(r * cos(angle) * mul / axes_width + xc, 0.0f, r * sin(angle) * mul / axes_height + yc, idx);
-        setColorAtIdx(color.red, color.green, color.blue, idx);
+        setColorAtIdx(a_val, 0.0f, 0.0f, idx);
         idx += 3;
     }
 
@@ -170,7 +174,8 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
         glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "scatter_mode"),
                     static_cast<int>(-1));
-
+        glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "color_map_selection"),
+                    static_cast<int>(0));
         if (legend_properties[k].type == LegendType::LINE)
         {
             const RGBTripletf col = legend_properties[k].color;
@@ -218,19 +223,18 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
         {
             if (legend_properties[k].color_map_set)
             {
+                glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "color_map_selection"),
+                            static_cast<int>(legend_properties[k].color_map_type) + 1);
                 const size_t num_segments = 6;
                 const float radius = scale_factor_ * 0.1;
-                renderColorMapLegend(num_segments,
-                                     legend_properties[k].color_map,
-                                     legend_properties[k].edge_color,
-                                     x_center,
-                                     z_center,
-                                     radius,
-                                     axes_width,
-                                     axes_height);
+                renderColorMapLegend(
+                    num_segments, legend_properties[k].edge_color, x_center, z_center, radius, axes_width, axes_height);
                 legend_shape_.updateBufferData(0, legend_shape_vertices, num_segments * 7, 3);
                 legend_shape_.updateBufferData(1, legend_shape_colors, num_segments * 7, 3);
                 legend_shape_.render(num_segments * 3, OGLPrimitiveType::TRIANGLES);
+
+                glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "color_map_selection"),
+                            static_cast<int>(0));
 
                 legend_shape_.render(num_segments * 4, num_segments * 3, OGLPrimitiveType::LINE_STRIP);
             }

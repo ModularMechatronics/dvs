@@ -32,6 +32,7 @@ public:
              const ShaderCollection shader_collection);
     ~DrawMesh();
 
+    LegendProperties getLegendProperties() const override;
     bool affectsColormapMinMax() const override;
     void render() override;
 };

@@ -336,29 +336,6 @@ extern RGBColorMap<float> viridisf;
 extern RGBColorMap<float> jetf;
 }  // namespace color_maps
 
-inline RGBColorMap<float>* getColorMapFromColorMapType(const dvs::internal::ColorMapType cmt)
-{
-    switch (cmt)
-    {
-        case dvs::internal::ColorMapType::JET:
-            return &color_maps::jetf;
-            break;
-        case dvs::internal::ColorMapType::RAINBOW:
-            return &color_maps::rainbowf;
-            break;
-        case dvs::internal::ColorMapType::MAGMA:
-            return &color_maps::magmaf;
-            break;
-        case dvs::internal::ColorMapType::VIRIDIS:
-            return &color_maps::viridisf;
-            break;
-        default:
-            std::cout << "Invalid ColorMapType!" << std::endl;
-            exit(0);
-            return nullptr;
-    }
-}
-
 using RGBTripletf = RGBTriplet<float>;
 
 #endif  // MAIN_APPLICATION_MISC_COLOR_MAP_H_

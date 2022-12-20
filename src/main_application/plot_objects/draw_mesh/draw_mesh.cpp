@@ -161,6 +161,26 @@ void DrawMesh::render()
     shader_collection_.basic_plot_shader.use();
 }
 
+LegendProperties DrawMesh::getLegendProperties() const
+{
+    LegendProperties lp{PlotObjectBase::getLegendProperties()};
+    lp.type = LegendType::POLYGON;
+    lp.edge_color = edge_color_;
+
+    if (color_map_set_)
+    {
+        lp.color_map_set = true;
+        lp.color_map_type = color_map_;
+    }
+    else
+    {
+        lp.color_map_set = false;
+        lp.face_color = face_color_;
+    }
+
+    return lp;
+}
+
 DrawMesh::~DrawMesh()
 {
     delete[] points_ptr_;
