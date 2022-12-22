@@ -69,6 +69,7 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
 
     findMinMax();
 
+    delete[] output_data.points_ptr;
     delete[] output_data.normals_ptr;
     delete[] output_data.mean_height_ptr;
 }
@@ -110,6 +111,7 @@ void Surf::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
 
     findMinMax();
 
+    delete[] output_data.points_ptr;
     delete[] output_data.normals_ptr;
     delete[] output_data.mean_height_ptr;
 }

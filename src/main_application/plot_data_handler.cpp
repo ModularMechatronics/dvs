@@ -76,6 +76,12 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
     if (pending_clear_)
     {
         pending_clear_ = false;
+
+        for (size_t k = 0; k < old_plot_datas_.size(); k++)
+        {
+            delete old_plot_datas_[k];
+        }
+
         old_plot_datas_.clear();
     }
 
