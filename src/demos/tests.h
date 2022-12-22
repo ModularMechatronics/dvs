@@ -3,5 +3,6 @@
 
 #include "tests/car/car.h"
 #include "tests/klein.h"
+#include "tests/wave_equation.h"
 
 #endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_TESTS_H_
