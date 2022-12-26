@@ -424,7 +424,9 @@ SpringStructure::SpringStructure(const std::string& conn_file_name,
     for (size_t k = 0; k < intdata.size(); k++)
     {
         if (intdata[k][0] > max_length)
+        {
             max_length = intdata[k][0];
+        }
     }
 
     max_length = max_length + 1;
@@ -568,6 +570,8 @@ void testBasic()
 
     setCurrentElement("p_view_0");
     clearView();
+    waitForFlush();
+
     axis({-6.0, -6.0, -2.0}, {6.0, 6.0, 10.0});
 
     for (size_t k = 0; k < 1000; k++)
@@ -608,6 +612,8 @@ void testBasic()
 
         lineCollection3(xl, zl, yl);
         scatter3(x, z, y);
+
+        flushElement();
 
         softClearView();
 
