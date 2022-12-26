@@ -5,4 +5,4 @@ project(demos)
 include_directories(${REPO_DIR}/src/interfaces/cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(demos main.cpp)
+add_executable(demos main.cpp tests/spring/spring.cpp)
