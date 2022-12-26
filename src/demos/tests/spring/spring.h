@@ -38,21 +38,11 @@ public:
     int* conn;
     size_t N;
 
-    // Center point:
-    float Fc[3];  // Force to other points
-    float Lc;     // Length to center
-    float Kc;     // Spring constant
-    float Cc;     // Dampening constant center
-    float mc;     // Mass
-
     float Ca;  // Air resistance
-
-    float Ft;
 
     float vp[3];
     float v[3];
     float a[3];
-    float ac[3];
 
     int idx_0, idx_1, idx_2, cidx;
     int lim;
@@ -68,13 +58,11 @@ public:
 
     float r0, r1, r2;
     float vproj[3];
-    float vproj_center[3];
     int max_length;
 
     int* edge_conn;
     int* point_to_edge_index;
     int max_connections;
-    float xx, yy, zz;
 
     void update();
     void setVelocity(float dir[3], float amp);

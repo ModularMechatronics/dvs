@@ -135,7 +135,6 @@ void SpringStructure::update()
 
         for (int i = 0; i < lim; i++)
         {
-            // cidx = conn[i*N + k];
             cidx = conn[k * max_length + i + 1];
 
             v[0] = vp[0] - P[cidx];          // difference vector x
@@ -144,7 +143,6 @@ void SpringStructure::update()
             r0 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 
             R = sqrt(r0);
-            // R = Rs[point_to_edge_index[k*max_connections + i]];
 
             v[0] = v[0] / R;
             v[1] = v[1] / R;
@@ -240,8 +238,6 @@ void SpringStructure::update()
         idx_1 = N + k;
         idx_2 = 2 * N + k;
 
-        // if(k != (N-1)) {
-
         A[idx_0] = (A[idx_0] - Ca * V[idx_0] - C * Vp[idx_0]) / m;
         A[idx_1] = (A[idx_1] - Ca * V[idx_1] - C * Vp[idx_1]) / m;
         A[idx_2] = (A[idx_2] - Ca * V[idx_2] - C * Vp[idx_2]) / m;
@@ -256,7 +252,6 @@ void SpringStructure::update()
         P[idx_1] = P[idx_1] + h * V[idx_1];
         P[idx_2] = P[idx_2] + h * V[idx_2];
 
-        //}
         // Floor
         if (P[idx_1] < 0.0f)
         {
@@ -349,7 +344,9 @@ void SpringStructure::calculateEdges(int* conn)
                 std::vector<int> ce = ecg[j];
 
                 if (((ce[0] == k) && (ce[1] == conn_idx)) || ((ce[1] == k) && (ce[0] == conn_idx)))
+                {
                     e = false;
+                }
             }
 
             if (e)
@@ -361,7 +358,6 @@ void SpringStructure::calculateEdges(int* conn)
                 ecg.push_back(tv);
             }
         }
-        // p2e_idx.push_back(temp_edges);
     }
 
     edge_conn = (int*)malloc(sizeof(int) * 2 * ecg.size());
@@ -393,12 +389,9 @@ void SpringStructure::calculateEdges(int* conn)
     for (size_t k = 0; k < p2e_idx.size(); k++)
     {
         if (p2e_idx[k].size() > max_connections)
+        {
             max_connections = p2e_idx[k].size();
-
-        /*for(int i = 0; i < p2e_idx[k].size(); i++) {
-          cout << p2e_idx[k][i] << ":";
         }
-        cout << endl;*/
     }
 
     point_to_edge_index = (int*)malloc(sizeof(int) * N * max_connections);
@@ -410,10 +403,6 @@ void SpringStructure::calculateEdges(int* conn)
             point_to_edge_index[k * max_connections + i] = p2e_idx[k][i];
         }
     }
-
-    /*for(int k = 0; k < ecg.size(); k++) {
-      cout << edge_conn[k*2 + 0] << ":" << edge_conn[k*2 + 1] << endl;
-    }*/
 }
 
 SpringStructure::SpringStructure(const std::string& conn_file_name,
@@ -492,9 +481,6 @@ SpringStructure::SpringStructure(const std::string& conn_file_name,
     }
 
     this->g = 9.82 * 10.0f;
-    // P[0] = P[0] + 0.01f;
-    // P[N] = P[N] + 0.01f;
-    // P[2*N] = P[2*N] + 0.01f;
 
     this->friction_threshold = 0.1f;
     this->speed_threshold = 0.001f;
@@ -505,8 +491,6 @@ SpringStructure::SpringStructure(const std::string& conn_file_name,
     // From point index to edge index
     // 2:
     // From edge index to point index
-
-    // printConnectivityGraph(conn);
 
     this->Ls = (float*)malloc(sizeof(float) * (max_length - 1) * N);
 
