@@ -36,9 +36,12 @@ int main(int argc, char* argv[])
 
     std::map<std::string, std::function<void()>> wave_equation_functions{{"basic", wave_equation::testBasic}};
 
+    std::map<std::string, std::function<void()>> spring_structure_functions{{"basic", spring_structure::testBasic}};
+
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;
     fcns["wave_equation"] = wave_equation_functions;
+    fcns["spring_structure"] = spring_structure_functions;
 
     if (argc == 1)
     {
