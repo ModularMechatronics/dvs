@@ -16,3 +16,12 @@
 [submodule "src/externals/freetype"]
 	path = src/externals/freetype
 	url = git@github.com:freetype/freetype.git
+[submodule "src/externals/liquidfun"]
+	path = src/externals/liquidfun
+	url = git@github.com:google/liquidfun.git
+[submodule "src/src/externals/box2d"]
+	path = src/src/externals/box2d
+	url = git@github.com:erincatto/box2d.git
+[submodule "src/externals/box2d"]
+	path = src/externals/box2d
+	url = git@github.com:erincatto/box2d.git
