@@ -40,11 +40,17 @@ int main(int argc, char* argv[])
 
     std::map<std::string, std::function<void()>> sphere_functions{{"basic", sphere::testBasic}};
 
+    std::map<std::string, std::function<void()>> particles_functions{{"basic", particles::testBasic}};
+
+    std::map<std::string, std::function<void()>> fake_fem_functions{{"basic", fake_fem::testBasic}};
+
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;
     fcns["wave_equation"] = wave_equation_functions;
     fcns["spring_structure"] = spring_structure_functions;
     fcns["sphere"] = sphere_functions;
+    fcns["particles"] = particles_functions;
+    fcns["fake_fem"] = fake_fem_functions;
 
     if (argc == 1)
     {
