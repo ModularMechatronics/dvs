@@ -4,7 +4,7 @@
 #include "tests/car/car.h"
 #include "tests/fake_fem.h"
 #include "tests/klein.h"
-#include "tests/particles.h"
+#include "tests/particles/particles.h"
 #include "tests/sphere/sphere.h"
 #include "tests/spring/spring.h"
 #include "tests/wave_equation.h"

@@ -8,6 +8,7 @@
 #include <nlohmann/json.hpp>
 
 #include "dvs/dvs.h"
+#include "line2d.h"
 #include "misc/color_map.h"
 #include "rapidxml.hpp"
 
@@ -16,58 +17,209 @@ using namespace dvs;
 namespace particles
 {
 
-template <typename T> struct ParametricLine2D
+class Polygon
 {
-    // Point on line
-    Point2<T> p;
-
-    // Vector in line direction
-    Vec2<T> v;
-
-    ParametricLine2D(const Point2<T>& p_, const Vec2<T>& v_)
+private:
+    struct PointPair
     {
-        p = p_;
-        v = v_;
+        Point2d p0;
+        Point2d p1;
+    };
+
+    Vector<PointPair> point_pairs_;
+    Vec2d min_vec_;
+    Vec2d max_vec_;
+    Vec2d random_vec_;
+    Vec2d perp_random_vec_;
+
+    enum class IntersectionType
+    {
+        Intersects,
+        DoesNotIntersect,
+        Collinear
+    };
+
+public:
+    Polygon() {}
+
+    Polygon(const Vector<Point2d>& points)
+    {
+        point_pairs_.resize(points.size());
+
+        min_vec_ = points(0);
+        max_vec_ = points(0);
+
+        for (size_t k = 0; k < points.size(); k++)
+        {
+            min_vec_.x = std::min(min_vec_.x, points(k).x);
+            min_vec_.y = std::min(min_vec_.y, points(k).y);
+
+            max_vec_.x = std::max(max_vec_.x, points(k).x);
+            max_vec_.y = std::max(max_vec_.y, points(k).y);
+        }
+
+        random_vec_ = Vec2d{std::sqrt(2.0), std::sqrt(7.0)};
+        perp_random_vec_ = Vec2d{-random_vec_.y, random_vec_.x};
+
+        for (size_t k = 0; k < (points.size() - 1U); k++)
+        {
+            point_pairs_(k).p0 = points(k);
+            point_pairs_(k).p1 = points(k + 1);
+        }
+
+        point_pairs_(point_pairs_.size() - 1U).p0 = points(points.size() - 1U);
+        point_pairs_(point_pairs_.size() - 1U).p1 = points(0U);
+    }
+
+    void visualize() const
+    {
+        Vector<double> x{point_pairs_.size() + 1}, y{point_pairs_.size() + 1};
+
+        for (size_t k = 0; k < point_pairs_.size(); k++)
+        {
+            x(k) = point_pairs_(k).p0.x;
+            y(k) = point_pairs_(k).p0.y;
+        }
+        x(x.size() - 1U) = point_pairs_(0).p0.x;
+        y(y.size() - 1U) = point_pairs_(0).p0.y;
+
+        scatter(x, y);
+        plot(x, y);
+    }
+
+    bool pointIsInPolygon(const Point2d& pt) const
+    {
+        if ((pt.x < min_vec_.x) || (pt.x > max_vec_.x) || (pt.y < min_vec_.y) || (pt.y > max_vec_.x))
+        {
+            return false;
+        }
+
+        int num_crossings = 0;
+
+        const Point2d q0 = pt;
+        const Point2d q1 = pt + random_vec_;
+
+        for (size_t k = 0; k < point_pairs_.size(); k++)
+        {
+            const Point2d p0 = point_pairs_(k).p0;
+            const Point2d p1 = point_pairs_(k).p1;
+
+            /*const double x1 = q0.x;
+            const double y1 = q0.y;
+            const double x2 = q1.x;
+            const double y2 = q1.y;
+
+            const double x3 = p0.x;
+            const double y3 = p0.y;
+            const double x4 = p1.x;
+            const double y4 = p1.y;
+
+            const double t =
+                ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
+            if ((t >= 0.0) && (t <= 1.0))
+            {
+                num_crossings++;
+            }*/
+
+            const Point2d q0 = pt;
+            const Point2d q1 = pt + random_vec_;
+
+            IntersectionType intersection_type = areIntersecting(p0.x, p0.y, p1.x, p1.y, q0.x, q0.y, q1.x, q1.y);
+
+            if (intersection_type == IntersectionType::Collinear)
+            {
+                const Point2d q0 = pt;
+                const Point2d q1 = pt + perp_random_vec_;
+
+                intersection_type = areIntersecting(p0.x, p0.y, p1.x, p1.y, q0.x, q0.y, q1.x, q1.y);
+            }
+
+            if (intersection_type == IntersectionType::Intersects)
+            {
+                num_crossings++;
+            }
+        }
+
+        return (num_crossings % 2) == 1;
+    }
+
+    IntersectionType areIntersecting(const double v1x1,
+                                     const double v1y1,
+                                     const double v1x2,
+                                     const double v1y2,
+                                     const double v2x1,
+                                     const double v2y1,
+                                     const double v2x2,
+                                     const double v2y2) const
+    {
+        double d1, d2;
+        double a1, a2, b1, b2, c1, c2;
+
+        // Convert vector 1 to a line (line 1) of infinite length.
+        // We want the line in linear equation standard form: A*x + B*y + C = 0
+        // See: http://en.wikipedia.org/wiki/Linear_equation
+        a1 = v1y2 - v1y1;
+        b1 = v1x1 - v1x2;
+        c1 = (v1x2 * v1y1) - (v1x1 * v1y2);
+
+        // Every point (x,y), that solves the equation above, is on the line,
+        // every point that does not solve it, is not. The equation will have a
+        // positive result if it is on one side of the line and a negative one
+        // if is on the other side of it. We insert (x1,y1) and (x2,y2) of vector
+        // 2 into the equation above.
+        d1 = (a1 * v2x1) + (b1 * v2y1) + c1;
+        d2 = (a1 * v2x2) + (b1 * v2y2) + c1;
+
+        // If d1 and d2 both have the same sign, they are both on the same side
+        // of our line 1 and in that case no intersection is possible. Careful,
+        // 0 is a special case, that's why we don't test ">=" and "<=",
+        // but "<" and ">".
+        if ((d1 > 0.0) && (d2 > 0.0))
+        {
+            return IntersectionType::DoesNotIntersect;
+        }
+        if ((d1 < 0.0) && (d2 < 0.0))
+        {
+            return IntersectionType::DoesNotIntersect;
+        }
+
+        // The fact that vector 2 intersected the infinite line 1 above doesn't
+        // mean it also intersects the vector 1. Vector 1 is only a subset of that
+        // infinite line 1, so it may have intersected that line before the vector
+        // started or after it ended. To know for sure, we have to repeat the
+        // the same test the other way round. We start by calculating the
+        // infinite line 2 in linear equation standard form.
+        a2 = v2y2 - v2y1;
+        b2 = v2x1 - v2x2;
+        c2 = (v2x2 * v2y1) - (v2x1 * v2y2);
+
+        // Calculate d1 and d2 again, this time using points of vector 1.
+        d1 = (a2 * v1x1) + (b2 * v1y1) + c2;
+        d2 = (a2 * v1x2) + (b2 * v1y2) + c2;
+
+        // Again, if both have the same sign (and neither one is 0),
+        // no intersection is possible.
+        if ((d1 > 0) && (d2 > 0))
+        {
+            return IntersectionType::DoesNotIntersect;
+        }
+        if ((d1 < 0) && (d2 < 0))
+        {
+            return IntersectionType::DoesNotIntersect;
+        }
+
+        // If we get here, only two possibilities are left. Either the two
+        // vectors intersect in exactly one point or they are collinear, which
+        // means they intersect in any number of points from zero to infinite.
+        if (std::fabs((a1 * b2) - (a2 * b1)) < 1e-7)
+        {
+            return IntersectionType::Collinear;
+        }
+
+        // If they are not collinear, they must intersect in exactly one point.
+        return IntersectionType::Intersects;
     }
 };
-
-template <typename T> struct Line2D
-{
-    T a;
-    T b;
-    T c;
-
-    Line2D(const T a_, const T b_, const T c_) : a{a_}, b{b_}, c{c_} {}
-
-    Line2D(const ParametricLine2D<T>& pl)
-    {
-        a = -pl.v.y;
-        b = pl.v.x;
-        c = -(a * pl.p.x + b * pl.p.y);
-    }
-
-    Line2D() = default;
-
-    T eval(const Point2<T>& p) const
-    {
-        return a * p.x + b * p.y + c;
-    }
-
-    bool isOnNormalVectorSide(const Point2<T>& p) const
-    {
-        // Returns true if p is on the same side as the side that the normal
-        // vector of the line extends into (i.e. points towards)
-        return this->eval(p) > 0;
-    }
-};
-
-template <typename T> Line2D<T> homogeneousLineFromPoints(const Point2<T>& p0, const Point2<T>& p1)
-{
-    const Vec2<T> v = p1 - p0;
-    const ParametricLine2D<T> line_p(p0, v);
-
-    return Line2D<T>(line_p);
-}
 
 std::vector<size_t> findSubStringIndices(const std::string& str, const std::string& sub_str)
 {
@@ -152,9 +304,21 @@ Vector<b2Vec2> splitPointsString(const std::string& s)
 {
     const std::vector<std::string> coordinates_strings = splitString(s, " ");
 
-    Vector<b2Vec2> coordinates{coordinates_strings.size() - 1};
+    // Vector<b2Vec2> coordinates{coordinates_strings.size() - 1};
+    std::vector<b2Vec2> coords;
+    coords.reserve(coordinates_strings.size() - 1);
+    coords.push_back(b2Vec2());
 
-    size_t idx = 0;
+    const std::vector<std::string> q = splitString(coordinates_strings[0], ",");
+
+    const float mul = 1.0f / 200.0f;
+    const float add_x = -0.9f;
+    const float add_y = 6.0f;
+
+    coords[0].x = (std::stof(q[0])) * mul + add_x;
+    coords[0].y = (-std::stof(q[1])) * mul + add_y;
+
+    size_t idx = 1;
     for (size_t k = 0; k < coordinates_strings.size(); k++)
     {
         if (coordinates_strings[k] == "")
@@ -163,11 +327,20 @@ Vector<b2Vec2> splitPointsString(const std::string& s)
         }
         const std::vector<std::string> q = splitString(coordinates_strings[k], ",");
 
-        coordinates(idx).x = (std::stof(q[0])) / 300.0f + 1.1f - 2.0f;
-        coordinates(idx).y = (-std::stof(q[1])) / 300.0f + 4.0f;
+        const float x = (std::stof(q[0])) * mul + add_x;
+        const float y = (-std::stof(q[1])) * mul + add_y;
+
+        if ((x == coords[idx - 1U].x) && (y == coords[idx - 1U].y))
+        {
+            continue;
+        }
+
+        coords.push_back(b2Vec2(x, y));
 
         idx++;
     }
+
+    Vector<b2Vec2> coordinates{coords};
 
     return coordinates;
 }
@@ -257,7 +430,7 @@ private:
     struct PointsAndBB
     {
         Vector<b2Vec2> points;
-        Vector<Line2D<float>> lines;
+        Vector<ParametricLine2D<double>> lines;
         Vec2f min_vec;
         Vec2f max_vec;
 
@@ -279,27 +452,51 @@ private:
 
             for (size_t k = 0; k < points_.size() - 1U; k++)
             {
-                const Point2f p0{points(k).x, points(k).y};
-                const Point2f p1{points(k + 1U).x, points(k + 1U).y};
-                lines(k) = homogeneousLineFromPoints(p0, p1);
+                const Point2d p0{points(k).x, points(k).y};
+                const Point2d p1{points(k + 1U).x, points(k + 1U).y};
+                lines(k) = parametricLineFromPoints(p0, p1);
             }
 
-            const Point2f p0{points(points.size() - 1U).x, points(points.size() - 1U).y};
-            const Point2f p1{points(0U).x, points(0U).y};
-            lines(lines.size() - 1U) = homogeneousLineFromPoints(p0, p1);
+            const Point2d p0{points(points.size() - 1U).x, points(points.size() - 1U).y};
+            const Point2d p1{points(0U).x, points(0U).y};
+            lines(lines.size() - 1U) = parametricLineFromPoints(p0, p1);
         }
 
-        bool pointIsIn(const Point2f& pt) const
+        bool pointIsIn(const Point2d& pt) const
         {
+            const Point2d& random_point{10.0, 10.0};
+            const ParametricLine2D<double> candidate_line = parametricLineFromPoints(pt, random_point);
+            int num_crossings = 0;
+
             for (size_t k = 0; k < lines.size(); k++)
             {
-                if (!lines(k).isOnNormalVectorSide(pt))
+                const HomogeneousLine2D<double> hom_candidate = candidate_line;
+                const HomogeneousLine2D<double> home_line_k = lines(k);
+                const Point2d intersection_point = hom_candidate.lineIntersection(home_line_k);
+
+                const double tx = lines(k).tFromX(intersection_point.x);
+                const double ty = lines(k).tFromY(intersection_point.y);
+
+                double t = tx;
+
+                if (isnan(t))
                 {
-                    return false;
+                    t = ty;
+                }
+
+                if (isnan(t))
+                {
+                    int a = 0;
+                }
+                std::cout << tx << ", " << ty << std::endl;
+
+                if ((t >= -1.0) && (t <= 1.0))
+                {
+                    num_crossings++;
                 }
             }
 
-            return true;
+            return (num_crossings % 2) == 1;
         }
     };
 
@@ -320,7 +517,7 @@ private:
         const Vec2f max_vec = pts_bb.max_vec;
         for (size_t k = 0; k < num_particles; k++)
         {
-            const Vec2f pt{particles[k].x, particles[k].y};
+            const Vec2d pt{particles[k].x, particles[k].y};
 
             if ((pt.x < min_vec.x) || (pt.x > max_vec.x) || (pt.y < min_vec.y) || (pt.y > max_vec.y))
             {
@@ -330,31 +527,6 @@ private:
             {
                 output_color_(k) = col;
             }
-        }
-    }
-
-    void assignForLetter(const b2Vec2* const particles,
-                         const size_t num_particles,
-                         const PointsAndBB& pts_bb_inner,
-                         const PointsAndBB& pts_bb_outer,
-                         const RGB888& col)
-    {
-        const Vec2f min_vec = pts_bb_outer.min_vec;
-        const Vec2f max_vec = pts_bb_outer.max_vec;
-        for (size_t k = 0; k < num_particles; k++)
-        {
-            const Vec2f pt{particles[k].x, particles[k].y};
-
-            /*if ((pt.x < min_vec.x) || (pt.x > max_vec.x) || (pt.y < min_vec.y) || (pt.y > max_vec.y))
-            {
-                continue;
-            }
-            else */
-            if (pts_bb_outer.pointIsIn(pt))
-            {
-                output_color_(k) = col;
-            }
-            // else if (pts_bb_inner.pointIsIn(pt) && (!pts_bb_outer.pointIsIn(pt)))
         }
     }
 
@@ -390,7 +562,9 @@ public:
             output_color_(k) = RGB888{0, 0, 0};
         }
 
-        assignForLetter(particles, num_particles, p_inner_letter_, p_outer_letter_, RGB888{255, 0, 0});
+        assignForLetter(particles, num_particles, p_outer_letter_, RGB888{255, 0, 0});
+        // assignForLetter(particles, num_particles, p_inner_letter_, RGB888{0, 0, 0});
+        // assignForLetter(particles, num_particles, p_inner_letter_, p_outer_letter_, RGB888{255, 0, 0});
 
         /*assignForLetter(particles, num_particles, l_letter_, RGB888{255, 0, 0});
 
@@ -566,12 +740,12 @@ public:
     }
 };
 
-void testBasic()
+void testBasicTmp()
 {
     const size_t num_steps = 1;
     const size_t num_particles = 500;
-    const Vec2f min_bnd{-4.0f, -4.0f};
-    const Vec2f max_bnd{4.0f, 4.0f};
+    const Vec2f min_bnd{-4.0f, 0.0f};
+    const Vec2f max_bnd{4.0f, 8.0f};
 
     setCurrentElement("p_view_0");
     clearView();
@@ -595,6 +769,54 @@ void testBasic()
         usleep(50 * 1000);
         // softClearView();
     }
+}
+
+void testBasic()
+{
+    const size_t num_polygon_points = 10;
+    const size_t num_points = 1000;
+    double t = 0.0;
+    Vector<Point2d> polygon_points{num_polygon_points};
+    Vector<double> xr{num_points}, yr{num_points};
+    Vector<RGB888> colors{num_points};
+
+    const auto r_fun = []() -> double {
+        const double r = static_cast<double>(rand() % 1001) / 500.0 - 1.0;
+        return r;
+    };
+
+    for (size_t k = 0; k < num_points; k++)
+    {
+        xr(k) = r_fun() * 1.4;
+        yr(k) = r_fun() * 1.4;
+    }
+
+    for (size_t k = 0; k < num_polygon_points; k++)
+    {
+        polygon_points(k).x = std::cos(t);
+        polygon_points(k).y = std::sin(t);
+        t += 2.0 * M_PI / static_cast<double>(num_polygon_points);
+    }
+    Polygon polygon{polygon_points};
+
+    for (size_t k = 0; k < num_points; k++)
+    {
+        if (polygon.pointIsInPolygon({xr(k), yr(k)}))
+        {
+            colors(k) = RGB888(255, 0, 0);
+        }
+        else
+        {
+            colors(k) = RGB888(0, 0, 0);
+        }
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-1.0, -1.0}, {1.0, 1.0});
+
+    polygon.visualize();
+    scatter(xr, yr, colors, properties::PointSize(20));
 }
 
 }  // namespace particles
