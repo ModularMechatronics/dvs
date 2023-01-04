@@ -190,12 +190,6 @@ public:
     {
         boundaries_ = readSVG();
 
-        plotBoundaries(boundaries_[0], properties::Color::Red());
-        plotBoundaries(boundaries_[1], properties::Color::Green());
-        plotBoundaries(boundaries_[2], properties::Color::Blue());
-        plotBoundaries(boundaries_[3], properties::Color::Black());
-        plotBoundaries(boundaries_[4], properties::Color::Magenta());
-
         p_outer_letter_ = Polygon(boundaries_[0]);
         p_inner_letter_ = Polygon(boundaries_[1]);
         l_letter_ = Polygon(boundaries_[2]);
@@ -371,12 +365,7 @@ public:
         VectorConstView<float> x{x_pos_, num_particles};
         VectorConstView<float> y{y_pos_, num_particles};
 
-        auto const cm = color_maps::viridis;
-
-        for (size_t k = 0; k < 1; k++)
-        {
-            world_.Step(0.01f, 8, 3);
-        }
+        world_.Step(0.01f, 8, 3);
     }
 
     VectorConstView<float> getXView() const
@@ -401,8 +390,10 @@ public:
         std::ofstream myfile;
         myfile.open(file_path);
 
-        const VectorConstView<float> x{x_pos_, num_particles_};
-        const VectorConstView<float> y{y_pos_, num_particles_};
+        const b2Vec2* const particles = particle_system_->GetPositionBuffer();
+
+        const VectorConstView<float> x = getXView();
+        const VectorConstView<float> y = getYView();
 
         for (size_t k = 0; k < num_particles_; k++)
         {
@@ -423,7 +414,7 @@ Vector<Point2d> readSavedFile()
     return splitPointsString(text_data, 1.0, 0.0, 0.0, 1.0);
 }
 
-void testBasicShow()
+void testBasic()
 {
     const size_t num_steps = 700;
     const Vec2f min_bnd{-4.0f, 0.0f};
@@ -436,37 +427,75 @@ void testBasicShow()
 
     const Vector<Point2d> saved_points = readSavedFile();
 
-    PointAssigner pa{};
     ParticleSystem ps{min_bnd, max_bnd};
-
-    // const VectorConstView<float> x = ps.getXView();
-    // const VectorConstView<float> y = ps.getYView();
+    PointAssigner pa{};
 
     pa.assignColors(saved_points);
 
-    // scatterBoundaries(saved_points, properties::Color(255, 0, 0));
-
-    Vector<double> x{saved_points.size()}, y{saved_points.size()};
+    Vector<double> xs{saved_points.size()}, ys{saved_points.size()};
 
     for (size_t k = 0; k < saved_points.size(); k++)
     {
-        x(k) = saved_points(k).x;
-        y(k) = saved_points(k).y;
+        xs(k) = saved_points(k).x;
+        ys(k) = saved_points(k).y;
     }
 
-    scatter(x.constView(), y.constView(), pa.getColors());
+    const auto colors = pa.getColors();
 
-    /*for (size_t k = 0; k < num_steps; k++)
+    if (0)
     {
-        ps.update();
-        scatter(x, y, pa.getColors(), properties::ScatterStyle::Disc(), properties::PointSize(20));
-        flushElement();
-        usleep(50 * 1000);
-        softClearView();
-    }*/
+        scatter(xs.constView(), ys.constView(), colors, properties::ScatterStyle::Disc(), properties::PointSize(20));
+    }
+    else
+    {
+        for (size_t k = 0; k < num_steps; k++)
+        {
+            ps.update();
+
+            const VectorConstView<float> x = ps.getXView();
+            const VectorConstView<float> y = ps.getYView();
+
+            const VectorConstView<float> x_tmp = VectorConstView<float>{x.data(), 3};
+            const VectorConstView<float> y_tmp = VectorConstView<float>{y.data(), 3};
+            const VectorConstView<RGB888> colors_tmp = VectorConstView<RGB888>{colors.data(), 3};
+
+            const VectorConstView<double> xs_tmp = VectorConstView<double>{xs.data(), 3};
+            const VectorConstView<double> ys_tmp = VectorConstView<double>{ys.data(), 3};
+
+            // scatter(x_tmp, y_tmp, colors_tmp, properties::ScatterStyle::Disc(), properties::PointSize(20));
+            // scatter(xs_tmp, ys_tmp, colors_tmp, properties::ScatterStyle::Circle(), properties::PointSize(32));
+            // flushElement();
+            // softClearView();
+        }
+        std::cout << "Looking..." << std::endl;
+
+        float min_diff = 10000.0f;
+
+        for (size_t k = 0; k < ps.numPoints(); k++)
+        {
+            const float x_saved = xs(0);
+            const float y_saved = ys(0);
+
+            const float x_final = ps.getXView()(k);
+            const float y_final = ps.getYView()(k);
+
+            const float x_diff = x_saved - x_final;
+            const float y_diff = y_saved - y_final;
+
+            const float d = x_diff * x_diff + y_diff * y_diff;
+            std::cout << d << std::endl;
+            min_diff = std::min(min_diff, d);
+
+            if (d < 0.00001)
+            {
+                std::cout << "Match at: " << k << std::endl;
+            }
+        }
+        std::cout << "Min diff: " << min_diff << std::endl;
+    }
 }
 
-void testBasic()
+void testBasicSave()
 {
     const size_t num_steps = 700;
     const Vec2f min_bnd{-4.0f, 0.0f};
@@ -479,15 +508,14 @@ void testBasic()
 
     ParticleSystem ps{min_bnd, max_bnd};
 
-    const VectorConstView<float> x = ps.getXView();
-    const VectorConstView<float> y = ps.getYView();
-
     for (size_t k = 0; k < num_steps; k++)
     {
         ps.update();
+
+        const VectorConstView<float> x = ps.getXView();
+        const VectorConstView<float> y = ps.getYView();
         scatter(x, y, properties::Color::Red(), properties::ScatterStyle::Disc(), properties::PointSize(20));
         flushElement();
-        usleep(50 * 1000);
         softClearView();
     }
 
