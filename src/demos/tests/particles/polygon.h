@@ -22,15 +22,15 @@ class Polygon
 private:
     struct PointPair
     {
-        Point2d p0;
-        Point2d p1;
+        Point2f p0;
+        Point2f p1;
     };
 
     Vector<PointPair> point_pairs_;
-    Vec2d min_vec_;
-    Vec2d max_vec_;
-    Vec2d random_vec_;
-    Vec2d perp_random_vec_;
+    Vec2f min_vec_;
+    Vec2f max_vec_;
+    Vec2f random_vec_;
+    Vec2f perp_random_vec_;
 
     enum class IntersectionType
     {
@@ -39,17 +39,17 @@ private:
         Collinear
     };
 
-    IntersectionType areIntersecting(const double v1x1,
-                                     const double v1y1,
-                                     const double v1x2,
-                                     const double v1y2,
-                                     const double v2x1,
-                                     const double v2y1,
-                                     const double v2x2,
-                                     const double v2y2) const
+    IntersectionType areIntersecting(const float v1x1,
+                                     const float v1y1,
+                                     const float v1x2,
+                                     const float v1y2,
+                                     const float v2x1,
+                                     const float v2y1,
+                                     const float v2x2,
+                                     const float v2y2) const
     {
-        double d1, d2;
-        double a1, a2, b1, b2, c1, c2;
+        float d1, d2;
+        float a1, a2, b1, b2, c1, c2;
 
         // Convert vector 1 to a line (line 1) of infinite length.
         // We want the line in linear equation standard form: A*x + B*y + C = 0
@@ -119,7 +119,7 @@ private:
 public:
     Polygon() {}
 
-    Polygon(const Vector<Point2d>& points)
+    Polygon(const Vector<Point2f>& points)
     {
         point_pairs_.resize(points.size());
 
@@ -135,8 +135,8 @@ public:
             max_vec_.y = std::max(max_vec_.y, points(k).y);
         }
 
-        random_vec_ = Vec2d{std::sqrt(2.0), std::sqrt(7.0)};
-        perp_random_vec_ = Vec2d{-random_vec_.y, random_vec_.x};
+        random_vec_ = Vec2f(std::sqrt(2.0), std::sqrt(7.0));
+        perp_random_vec_ = Vec2f{-random_vec_.y, random_vec_.x};
 
         for (size_t k = 0; k < (points.size() - 1U); k++)
         {
@@ -148,19 +148,19 @@ public:
         point_pairs_(point_pairs_.size() - 1U).p1 = points(0U);
     }
 
-    Vec2d getMinVec() const
+    Vec2f getMinVec() const
     {
         return min_vec_;
     }
 
-    Vec2d getMaxVec() const
+    Vec2f getMaxVec() const
     {
         return max_vec_;
     }
 
     void visualize() const
     {
-        Vector<double> x{point_pairs_.size() + 1}, y{point_pairs_.size() + 1};
+        Vector<float> x{point_pairs_.size() + 1}, y{point_pairs_.size() + 1};
 
         for (size_t k = 0; k < point_pairs_.size(); k++)
         {
@@ -174,7 +174,7 @@ public:
         plot(x, y);
     }
 
-    bool pointIsInPolygon(const Point2d& pt) const
+    bool pointIsInPolygon(const Point2f& pt) const
     {
         if ((pt.x < min_vec_.x) || (pt.x > max_vec_.x) || (pt.y < min_vec_.y) || (pt.y > max_vec_.x))
         {
@@ -185,18 +185,18 @@ public:
 
         for (size_t k = 0; k < point_pairs_.size(); k++)
         {
-            const Point2d p0 = point_pairs_(k).p0;
-            const Point2d p1 = point_pairs_(k).p1;
+            const Point2f p0 = point_pairs_(k).p0;
+            const Point2f p1 = point_pairs_(k).p1;
 
-            const Point2d q0 = pt;
-            const Point2d q1 = pt + random_vec_;
+            const Point2f q0 = pt;
+            const Point2f q1 = pt + random_vec_;
 
             IntersectionType intersection_type = areIntersecting(p0.x, p0.y, p1.x, p1.y, q0.x, q0.y, q1.x, q1.y);
 
             if (intersection_type == IntersectionType::Collinear)
             {
-                const Point2d q0 = pt;
-                const Point2d q1 = pt + perp_random_vec_;
+                const Point2f q0 = pt;
+                const Point2f q1 = pt + perp_random_vec_;
 
                 intersection_type = areIntersecting(p0.x, p0.y, p1.x, p1.y, q0.x, q0.y, q1.x, q1.y);
             }

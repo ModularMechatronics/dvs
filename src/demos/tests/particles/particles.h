@@ -19,14 +19,14 @@ using namespace dvs;
 namespace particles
 {
 
-Vector<Point2d> splitPointsString(
-    const std::string& s, const double mul, const double add_x, const double add_y, const double sign_mul)
+Vector<Point2f> splitPointsString(
+    const std::string& s, const float mul, const float add_x, const float add_y, const float sign_mul)
 {
     const std::vector<std::string> coordinates_strings = splitString(s, " ");
 
-    std::vector<Point2d> coords;
+    std::vector<Point2f> coords;
     coords.reserve(coordinates_strings.size() - 1);
-    coords.push_back(Point2d());
+    coords.push_back(Point2f());
 
     const std::vector<std::string> q = splitString(coordinates_strings[0], ",");
 
@@ -42,29 +42,29 @@ Vector<Point2d> splitPointsString(
         }
         const std::vector<std::string> q = splitString(coordinates_strings[k], ",");
 
-        const double x = (std::stod(q[0])) * mul + add_x;
-        const double y = (sign_mul * std::stod(q[1])) * mul + add_y;
+        const float x = (std::stod(q[0])) * mul + add_x;
+        const float y = (sign_mul * std::stod(q[1])) * mul + add_y;
 
         if ((x == coords[idx - 1U].x) && (y == coords[idx - 1U].y))
         {
             continue;
         }
 
-        coords.push_back(Point2d{x, y});
+        coords.push_back(Point2f{x, y});
 
         idx++;
     }
 
-    Vector<Point2d> coordinates{coords};
+    Vector<Point2f> coordinates{coords};
 
     return coordinates;
 }
 
-Vector<Point2d> splitPointsString(const std::string& s)
+Vector<Point2f> splitPointsString(const std::string& s)
 {
-    const double mul = 1.0 / 130.0;
-    const double add_x = -2.6;
-    const double add_y = 0.5;
+    const float mul = 1.0 / 130.0;
+    const float add_x = -2.6;
+    const float add_y = 0.5;
 
     return splitPointsString(s, mul, add_x, add_y, -1.0);
 }
@@ -89,7 +89,7 @@ std::string readTextFile(const std::string& file_path)
     return text_data;
 }
 
-std::vector<Vector<Point2d>> readSVG()
+std::vector<Vector<Point2f>> readSVG()
 {
     std::string text_data = readTextFile("../demos/tests/vectorpaint.svg");
 
@@ -100,7 +100,7 @@ std::vector<Vector<Point2d>> readSVG()
 
     rapidxml::xml_node<>* node = doc.first_node("svg");
 
-    std::vector<Vector<Point2d>> boundaries;
+    std::vector<Vector<Point2f>> boundaries;
 
     for (rapidxml::xml_node<>* child = node->first_node(); child; child = child->next_sibling())
     {
@@ -126,9 +126,9 @@ std::vector<Vector<Point2d>> readSVG()
     return boundaries;
 }
 
-void plotBoundaries(const Vector<Point2d>& vertices, const properties::Color& c)
+void plotBoundaries(const Vector<Point2f>& vertices, const properties::Color& c)
 {
-    Vector<double> x{vertices.size()}, y{vertices.size()};
+    Vector<float> x{vertices.size()}, y{vertices.size()};
 
     for (size_t k = 0; k < vertices.size(); k++)
     {
@@ -139,9 +139,9 @@ void plotBoundaries(const Vector<Point2d>& vertices, const properties::Color& c)
     plot(x, y, c);
 }
 
-void scatterBoundaries(const Vector<Point2d>& vertices, const properties::Color& c)
+void scatterBoundaries(const Vector<Point2f>& vertices, const properties::Color& c)
 {
-    Vector<double> x{vertices.size()}, y{vertices.size()};
+    Vector<float> x{vertices.size()}, y{vertices.size()};
 
     for (size_t k = 0; k < vertices.size(); k++)
     {
@@ -155,7 +155,7 @@ void scatterBoundaries(const Vector<Point2d>& vertices, const properties::Color&
 class PointAssigner
 {
 private:
-    std::vector<Vector<Point2d>> boundaries_;
+    std::vector<Vector<Point2f>> boundaries_;
 
     Polygon p_outer_letter_;
     Polygon p_inner_letter_;
@@ -165,14 +165,14 @@ private:
 
     Vector<RGB888> output_color_;
 
-    void assignForLetter(const Vector<Point2d>& points, const Polygon& polygon, const RGB888& col)
+    void assignForLetter(const Vector<Point2f>& points, const Polygon& polygon, const RGB888& col)
     {
-        const Vec2d min_vec = polygon.getMinVec();
-        const Vec2d max_vec = polygon.getMaxVec();
+        const Vec2f min_vec = polygon.getMinVec();
+        const Vec2f max_vec = polygon.getMaxVec();
 
         for (size_t k = 0; k < points.size(); k++)
         {
-            const Vec2d pt{points(k).x, points(k).y};
+            const Vec2f pt{points(k).x, points(k).y};
 
             if ((pt.x < min_vec.x) || (pt.x > max_vec.x) || (pt.y < min_vec.y) || (pt.y > max_vec.y))
             {
@@ -202,7 +202,7 @@ public:
         return output_color_.constView();
     }
 
-    void assignColors(const Vector<Point2d>& points)
+    void assignColors(const Vector<Point2f>& points)
     {
         output_color_.resize(points.size());
 
@@ -237,6 +237,7 @@ private:
 
     Vector<b2Vec2> vertices_;
     b2Body* ground_;
+    b2ParticleGroup* group_;
 
     void placeTipAt(const float x, const float y)
     {
@@ -315,7 +316,7 @@ public:
         particleGroupDef.position.Set(0.0f, 4.1f);
         particleGroupDef.shape = &shape;
 
-        particle_system_->CreateParticleGroup(particleGroupDef);
+        group_ = particle_system_->CreateParticleGroup(particleGroupDef);
 
         num_particles_ = particle_system_->GetParticleCount();
 
@@ -362,9 +363,6 @@ public:
             color_(k) = RGB888{c.red, c.green, c.blue};
         }
 
-        VectorConstView<float> x{x_pos_, num_particles};
-        VectorConstView<float> y{y_pos_, num_particles};
-
         world_.Step(0.01f, 8, 3);
     }
 
@@ -407,7 +405,7 @@ public:
     }
 };
 
-Vector<Point2d> readSavedFile()
+Vector<Point2f> readSavedFile()
 {
     const std::string text_data = readTextFile("../demos/tests/points.txt");
 
@@ -425,14 +423,14 @@ void testBasic()
     waitForFlush();
     axis({-3.0, -2.1}, {3.0, 1.0});
 
-    const Vector<Point2d> saved_points = readSavedFile();
+    const Vector<Point2f> saved_points = readSavedFile();
 
     ParticleSystem ps{min_bnd, max_bnd};
     PointAssigner pa{};
 
     pa.assignColors(saved_points);
 
-    Vector<double> xs{saved_points.size()}, ys{saved_points.size()};
+    Vector<float> xs{saved_points.size()}, ys{saved_points.size()};
 
     for (size_t k = 0; k < saved_points.size(); k++)
     {
@@ -441,6 +439,15 @@ void testBasic()
     }
 
     const auto colors = pa.getColors();
+
+    const VectorConstView<float> x = ps.getXView();
+    const VectorConstView<float> y = ps.getYView();
+
+    std::cout << "Size x: " << x.size() << std::endl;
+    std::cout << "Size y: " << y.size() << std::endl;
+    std::cout << "Size colors: " << colors.size() << std::endl;
+
+    VectorConstView<RGB888> new_color_view{colors.data() + 1, colors.size() - 1U};
 
     if (0)
     {
@@ -455,34 +462,65 @@ void testBasic()
             const VectorConstView<float> x = ps.getXView();
             const VectorConstView<float> y = ps.getYView();
 
-            const VectorConstView<float> x_tmp = VectorConstView<float>{x.data(), 3};
-            const VectorConstView<float> y_tmp = VectorConstView<float>{y.data(), 3};
-            const VectorConstView<RGB888> colors_tmp = VectorConstView<RGB888>{colors.data(), 3};
-
-            const VectorConstView<double> xs_tmp = VectorConstView<double>{xs.data(), 3};
-            const VectorConstView<double> ys_tmp = VectorConstView<double>{ys.data(), 3};
-
-            // scatter(x_tmp, y_tmp, colors_tmp, properties::ScatterStyle::Disc(), properties::PointSize(20));
-            // scatter(xs_tmp, ys_tmp, colors_tmp, properties::ScatterStyle::Circle(), properties::PointSize(32));
-            // flushElement();
-            // softClearView();
+            scatter(x, y, new_color_view, properties::ScatterStyle::Disc(), properties::PointSize(20));
+            // scatter(
+            //     xs.constView(), ys.constView(), colors, properties::ScatterStyle::Circle(),
+            //     properties::PointSize(32));
+            flushElement();
+            softClearView();
         }
-        std::cout << "Looking..." << std::endl;
+
+        Vector<RGB888> new_colors{colors.size()};
+
+        const VectorConstView<float> x = ps.getXView();
+        const VectorConstView<float> y = ps.getYView();
+
+        /*for (size_t k = 0; k < ps.numPoints(); k++)
+        {
+            size_t idx = 0;
+            const size_t start_idx = k;
+
+            for (size_t i = start_idx; i < ps.numPoints(); i++)
+            {
+                new_colors(idx) = colors(i);
+                idx++;
+            }
+
+            for (size_t i = 0; i < start_idx; i++)
+            {
+                new_colors(idx) = colors(i);
+                idx++;
+            }
+
+            scatter(x, y, new_colors.constView(), properties::ScatterStyle::Disc(), properties::PointSize(20));
+            // scatter(
+            //     xs.constView(), ys.constView(), colors, properties::ScatterStyle::Circle(),
+            //     properties::PointSize(32));
+            flushElement();
+            softClearView();
+
+            std::cout << k << std::endl;
+        }*/
+
+        /*std::cout << "Looking..." << std::endl;
 
         float min_diff = 10000.0f;
 
+        const float x_saved = xs(0);
+        const float y_saved = ys(0);
+
+        const VectorConstView<float> x_view = ps.getXView();
+        const VectorConstView<float> y_view = ps.getYView();
+
         for (size_t k = 0; k < ps.numPoints(); k++)
         {
-            const float x_saved = xs(0);
-            const float y_saved = ys(0);
-
-            const float x_final = ps.getXView()(k);
-            const float y_final = ps.getYView()(k);
+            const float x_final = x_view(k);
+            const float y_final = y_view(k);
 
             const float x_diff = x_saved - x_final;
             const float y_diff = y_saved - y_final;
 
-            const float d = x_diff * x_diff + y_diff * y_diff;
+            const float d = std::sqrt(x_diff * x_diff + y_diff * y_diff);
             std::cout << d << std::endl;
             min_diff = std::min(min_diff, d);
 
@@ -491,7 +529,7 @@ void testBasic()
                 std::cout << "Match at: " << k << std::endl;
             }
         }
-        std::cout << "Min diff: " << min_diff << std::endl;
+        std::cout << "Min diff: " << min_diff << std::endl;*/
     }
 }
 
@@ -526,13 +564,13 @@ void testBasicTmp()
 {
     const size_t num_polygon_points = 4;
     const size_t num_points = 1000;
-    double t = 0.0;
-    Vector<Point2d> polygon_points{num_polygon_points};
-    Vector<double> xr{num_points}, yr{num_points};
+    float t = 0.0;
+    Vector<Point2f> polygon_points{num_polygon_points};
+    Vector<float> xr{num_points}, yr{num_points};
     Vector<RGB888> colors{num_points};
 
-    const auto r_fun = []() -> double {
-        const double r = static_cast<double>(rand() % 1001) / 500.0 - 1.0;
+    const auto r_fun = []() -> float {
+        const float r = static_cast<float>(rand() % 1001) / 500.0 - 1.0;
         return r;
     };
 
@@ -542,7 +580,7 @@ void testBasicTmp()
         yr(k) = r_fun() * 1.4;
     }
 
-    const std::vector<Vector<Point2d>> boundaries = readSVG();
+    const std::vector<Vector<Point2f>> boundaries = readSVG();
 
     polygon_points = boundaries[0];
 
