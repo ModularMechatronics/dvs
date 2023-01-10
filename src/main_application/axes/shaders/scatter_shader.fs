@@ -1,6 +1,6 @@
 #version 330
 
-out vec3 color;
+out vec4 color;
 in vec3 fragment_color;
 in vec4 coord_out;
 
@@ -44,6 +44,7 @@ void main()
         }
     }
 
+    float a = 1.0;
     // Default scatter_mode == 0 is square mode, which requires no modifications
 
     if(scatter_mode == 1) // Circle
@@ -62,6 +63,10 @@ void main()
         if (squared_dist > 1.0)
         {
             discard;
+        }
+        else if((squared_dist <= 1.0) && (squared_dist > 0.85))
+        {
+            a = 1.0 - squared_dist;
         }
     }
     else if(scatter_mode == 3) // Plus
@@ -91,7 +96,6 @@ void main()
         }
     }
 
-   color = fragment_color;
-
+    color = vec4(fragment_color, a);
 		
 }

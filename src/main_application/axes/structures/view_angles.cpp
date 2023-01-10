@@ -110,6 +110,44 @@ bool ViewAngles::isSnappedAlongZ() const
     return (std::abs(M_PI_2 - abs_el) < angle_limit_);
 }
 
+bool ViewAngles::isSnappedAlongPositiveX() const
+{
+    const float abs_az = std::abs(azimuth_);
+    const float abs_el = std::abs(elevation_);
+
+    return (std::abs(M_PI_2 - abs_az) < angle_limit_) && (abs_el < angle_limit_);
+    return false;
+}
+
+bool ViewAngles::isSnappedAlongNegativeX() const
+{
+    return false;
+}
+
+bool ViewAngles::isSnappedAlongPositiveY() const
+{
+    const float abs_az = std::abs(azimuth_);
+    const float abs_el = std::abs(elevation_);
+    return (abs_el < angle_limit_) && (abs_az < angle_limit_);
+}
+
+bool ViewAngles::isSnappedAlongNegativeY() const
+{
+    const float abs_az = std::abs(azimuth_);
+    const float abs_el = std::abs(elevation_);
+    return (abs_el < angle_limit_) && (std::abs(M_PI - abs_az) < angle_limit_);
+}
+
+bool ViewAngles::isSnappedAlongPositiveZ() const
+{
+    return false;
+}
+
+bool ViewAngles::isSnappedAlongNegativeZ() const
+{
+    return false;
+}
+
 SnappingAxis ViewAngles::getSnappingAxis() const
 {
     if (isSnappedAlongX())

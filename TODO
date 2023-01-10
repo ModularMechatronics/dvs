@@ -4,7 +4,6 @@ Pre release:
 - Refactor from top down, from the app and down into the GUI
 - Investigate if main_window can be just a wxObject or something
 - Refactor legend properties with colormap pointer
-- Use T* data = reinterpret_cast<const T* const>(&(input_data[idx_10])); directly in converter functions, like in Plot2D's convert function
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Delete gl buffers with "glDeleteBuffers"
 - Set color in fragment shader with uniform, instead of in vertex shader
@@ -16,34 +15,34 @@ Pre release:
 - Rename "Slot" to "Id"?
 - Rename setProperties to something milder, since they are not overwritten, and rename assignProperties to overwriteProperties or something
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
-- Create demos application
 - Demos:
- * Something for mathematicians (klein bottle, torus turning inside out)
  * Something for machine learning practitioners
  * Something with autonomous driving data
  * Something with drone simulation data
- * Somethin with robotics
- * Wave equation
+ * Something with robotics
  * Physics simulation (bouncy ball)
+ * Rotating cube as if one is rotating an IMU, with filtered and unfiltered version
+- Instancing for drawMesh
+- Make all properties constexpr?
 - Make font smaller, fewer line points per axis
-- Rename "vertex_buffer2_" to "vertex_buffer_" when possible
 - Remove interface function fastPlot, and just replace it with a property flag to plot/plot3
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
 - Refactor pipeline of how new plot objects are added
-- Apply 'applyConverter' to all functions (like in Plot2D/Plot3D)
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed
+- Don't execute pending clear on interaction (with mouse), it makes plots flashing when using waitForFlush, and drawing multiple things (probably)
 - Solve all TODOs
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
-- Change VertexBuffer to take the primitive only to "render", and not to constructor
 - plot_properties static functions without any input arguments should be static variables, eg. ColorMap::JET instead of ColorMap::Jet(), Color::RED instead of Color::Red()
+- Verify that setTransform works in with 3D transformations (not just in the xy plane)
 
 Post release:
 - Merge plot2D/plot3Ds shaders (and possibly even C++ classes?)
 - Separate plot object vectors so that shader switching is minimized
+- Change VertexBuffer to take the primitive only to "render", and not to constructor
 - Time date axis
 - Merge fastPlot and lineCollection, with switching of GLenum
 - Replace use of dynamic matrices/vector with MatrixFixed/VectorFixed with templated size, since most uses can be static (in dvs gui)

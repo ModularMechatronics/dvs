@@ -517,10 +517,10 @@ void AxesRenderer::renderPlotBox()
                 color_vec.green,
                 color_vec.blue);
 
-    plot_box_walls_.render(view_angles_.getAzimuth(), view_angles_.getElevation());
+    plot_box_walls_.render(axes_side_configuration_);
 
     glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0f, 0.0f, 0.0f);
-    plot_box_silhouette_.render(view_angles_.getAzimuth(), view_angles_.getElevation());
+    plot_box_silhouette_.render(view_angles_.getSnappedAzimuth(), view_angles_.getSnappedElevation());
 }
 
 void AxesRenderer::setAxesBoxScaleFactor(const Vec3d& scale_vector)
@@ -531,6 +531,7 @@ void AxesRenderer::setAxesBoxScaleFactor(const Vec3d& scale_vector)
 void AxesRenderer::updateStates(const AxesLimits& axes_limits,
                                 const ViewAngles& view_angles,
                                 const GridVectors& gv,
+                                const AxesSideConfiguration& axes_side_configuration,
                                 const bool use_perspective_proj,
                                 const float width,
                                 const float height,
@@ -561,6 +562,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     legend_renderer_.setLegendScaleFactor(legend_scale_factor);
     name_ = name;
     current_mouse_interaction_axis_ = current_mouse_interaction_axis;
+    axes_side_configuration_ = axes_side_configuration;
 
     rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * rotationMatrixX(-view_angles_.getSnappedElevation());
 
@@ -574,8 +576,20 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 
     projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
 
-    const float az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
-    const float el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
+    float az;
+    float el;
+
+    if (use_perspective_proj_)
+    {
+        // az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.9;
+        az = 1.0;
+        el = 0.0;  // std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 1.0) * 0.5;
+    }
+    else
+    {
+        az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
+        el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
+    }
 
     window_scale_mat_[0][0] = scale_vector_.x - az - el;
     window_scale_mat_[1][1] = scale_vector_.y - az - el;

@@ -9,6 +9,7 @@
 #include <wx/timer.h>
 #include <wx/wx.h>
 
+#include <atomic>
 #include <map>
 #include <mutex>
 #include <string>
@@ -32,10 +33,15 @@ class WindowView;
 class MainWindow : public wxFrame
 {
 private:
+    std::atomic<bool> is_rendering_;
     SaveManager* save_manager_;
     ConfigurationAgent* configuration_agent_;
+    std::mutex udp_mtx_;
+
+    std::thread* query_thread_;
 
     UdpServer* udp_server_;
+    UdpServer* query_udp_server_;
     wxTimer receive_timer_;
     wxTimer refresh_timer_;
 
@@ -75,6 +81,7 @@ private:
     void setupWindows(const ProjectSettings& project_settings);
     void fileModified();
     bool currentGuiElementSet() const;
+    void queryUdpThreadFunction();
 
 public:
     MainWindow();

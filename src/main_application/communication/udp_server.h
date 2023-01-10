@@ -43,10 +43,6 @@ private:
     std::unique_ptr<const ReceivedData> received_data_;
     std::queue<std::unique_ptr<const ReceivedData>> received_data_buffer_;
 
-    void sendAck();
-    void sendData(char data[256], const int num_bytes_to_send);
-    void receiveThreadFunction();
-
 public:
     UdpServer() = delete;
     UdpServer(const UdpServer& other) = delete;
@@ -54,8 +50,14 @@ public:
 
     UdpServer(const int port_num);
 
+    void receiveThreadFunction();
+    void receive();
+
     void start();
     std::unique_ptr<const ReceivedData> getReceivedData();
+    size_t numObjectsInReceiveBuffer() const;
+    void sendData(char data[256], const int num_bytes_to_send);
+    void sendAck();
 
     ~UdpServer();
 };

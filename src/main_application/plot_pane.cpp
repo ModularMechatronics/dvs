@@ -4,6 +4,7 @@
 #include <wx/glcanvas.h>
 
 #include "axes/axes.h"
+#include "axes/axes_side_configuration.h"
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "events.h"
@@ -888,9 +889,12 @@ void PlotPane::render(wxPaintEvent& evt)
 
     const Vec2f pane_size(GetSize().x, GetSize().y);
 
+    const AxesSideConfiguration axes_side_configuration{axes_interactor_.getViewAngles()};
+
     axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
                                  axes_interactor_.getViewAngles(),
                                  axes_interactor_.generateGridVectors(),
+                                 axes_side_configuration,
                                  perspective_projection_,
                                  getWidth(),
                                  getHeight(),

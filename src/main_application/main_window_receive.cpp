@@ -129,12 +129,64 @@ bool MainWindow::currentGuiElementSet() const
 {
     return current_gui_element_ != nullptr;
 }
+int i = 0;
+
+void MainWindow::queryUdpThreadFunction()
+{
+    std::cout << "Starting query server " << std::endl;
+    char send_data[256];
+
+    while (1)
+    {
+        std::cout << "Starting receive " << std::endl;
+        query_udp_server_->receive();
+        std::unique_ptr<const ReceivedData> received_data = query_udp_server_->getReceivedData();
+
+        std::cout << "Received data: " << i << std::endl;
+
+        if (received_data)
+        {
+            size_t num_objects_in_buf2;
+            {
+                const std::lock_guard<std::mutex> lg(udp_mtx_);
+                num_objects_in_buf2 = udp_server_->numObjectsInReceiveBuffer();
+            }
+
+            const size_t num_objects_in_buf = 82342;
+
+            std::cout << "Data had something! " << std::endl;
+            std::memcpy(send_data, &num_objects_in_buf, sizeof(size_t));
+
+            for (size_t k = 0; k < 50; k++)
+            {
+                usleep(1000 * 50);
+
+                query_udp_server_->sendData(send_data, sizeof(size_t));
+                query_udp_server_->sendData(send_data, sizeof(size_t));
+                query_udp_server_->sendData(send_data, sizeof(size_t));
+                query_udp_server_->sendData(send_data, sizeof(size_t));
+            }
+        }
+        else
+        {
+            std::cout << "Data contained nothing... " << std::endl;
+        }
+        i++;
+    }
+}
 
 void MainWindow::receiveData()
 {
-    std::unique_ptr<const ReceivedData> received_data = udp_server_->getReceivedData();
+    std::unique_ptr<const ReceivedData> received_data;
+
+    {
+        const std::lock_guard<std::mutex> lg(udp_mtx_);
+        received_data = udp_server_->getReceivedData();
+    }
+
     if (received_data)
     {
+        is_rendering_ = true;
         const CommunicationHeader& hdr = received_data->getCommunicationHeader();
 
         const Function fcn = hdr.getFunction();
@@ -190,5 +242,6 @@ void MainWindow::receiveData()
                     std::cout << "Got default" << std::endl;
             }
         }
+        is_rendering_ = false;
     }
 }

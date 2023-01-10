@@ -345,6 +345,21 @@ void scatter(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color
 }
 
 template <typename T, typename... Us>
+void scatter(const VectorConstView<T>& x,
+             const VectorConstView<T>& y,
+             const VectorConstView<RGB888>& color,
+             const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCATTER2};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, color);
+}
+
+template <typename T, typename... Us>
 void scatter(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER2};
@@ -683,6 +698,16 @@ void realTimePlot(const T dt, const T y, const internal::PlotSlot slot, const Us
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, data);
 }
 
+/*template <typename T, typename... Us> void drawCube(const Us&... settings)
+{
+    const Vector<T> x{VectorInitializer<T>{-1, 1, 1, -1, -1, 1, 1, -1}};
+    const Vector<T> y{VectorInitializer<T>{-1, -1, 1, 1, -1, -1, 1, 1}};
+    const Vector<T> z{VectorInitializer<T>{-1, -1, -1, -1, 1, 1, 1, 1}};
+    Vector<IndexTriplet> indices;
+
+    drawMesh(x, y, z, indices, settings...);
+}*/
+
 template <typename... Us> void setProperties(const internal::PlotSlot slot, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PROPERTIES_EXTENSION};
@@ -834,6 +859,21 @@ inline void setTransform(const internal::PlotSlot slot,
     hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline size_t numObjectsInReceiveBuffer()
+{
+    internal::CommunicationHeader hdr{internal::Function::IS_BUSY_RENDERING};
+
+    internal::sendHeaderOnly(internal::sendThroughQueryUdpInterface, hdr);
+
+    usleep(1000 * 40);
+
+    const size_t d = internal::receiveFromQueryUdpInterface();
+
+    std::cout << d << std::endl;
+
+    return 0;
 }
 
 }  // namespace dvs
