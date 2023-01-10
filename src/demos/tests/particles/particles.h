@@ -62,9 +62,9 @@ Vector<Point2f> splitPointsString(
 
 Vector<Point2f> splitPointsString(const std::string& s)
 {
-    const float mul = 1.0 / 130.0;
-    const float add_x = -2.6;
-    const float add_y = 0.5;
+    const float mul = 1.0 / 95.0;
+    const float add_x = -2.8;
+    const float add_y = 1.0;
 
     return splitPointsString(s, mul, add_x, add_y, -1.0);
 }
@@ -156,6 +156,7 @@ class PointAssigner
 {
 private:
     std::vector<Vector<Point2f>> boundaries_;
+    std::vector<Polygon> polygons_;
 
     Polygon p_outer_letter_;
     Polygon p_inner_letter_;
@@ -190,11 +191,16 @@ public:
     {
         boundaries_ = readSVG();
 
-        p_outer_letter_ = Polygon(boundaries_[0]);
+        for (size_t k = 0; k < boundaries_.size(); k++)
+        {
+            polygons_.emplace_back(boundaries_[k]);
+        }
+
+        /*p_outer_letter_ = Polygon(boundaries_[0]);
         p_inner_letter_ = Polygon(boundaries_[1]);
         l_letter_ = Polygon(boundaries_[2]);
         o_outer_letter_ = Polygon(boundaries_[3]);
-        o_inner_letter_ = Polygon(boundaries_[4]);
+        o_inner_letter_ = Polygon(boundaries_[4]);*/
     }
 
     VectorConstView<RGB888> getColors() const
@@ -211,11 +217,16 @@ public:
             output_color_(k) = RGB888{0, 0, 0};
         }
 
-        assignForLetter(points, p_outer_letter_, RGB888{255, 0, 0});
+        for (size_t k = 0; k < polygons_.size(); k++)
+        {
+            assignForLetter(points, polygons_[k], RGB888{255, 0, 0});
+        }
+
+        /*assignForLetter(points, p_outer_letter_, RGB888{255, 0, 0});
         assignForLetter(points, p_inner_letter_, RGB888{0, 0, 0});
         assignForLetter(points, l_letter_, RGB888{0, 255, 0});
         assignForLetter(points, o_outer_letter_, RGB888{0, 0, 255});
-        assignForLetter(points, o_inner_letter_, RGB888{0, 0, 0});
+        assignForLetter(points, o_inner_letter_, RGB888{0, 0, 0});*/
     }
 };
 
@@ -443,15 +454,11 @@ void testBasic()
     const VectorConstView<float> x = ps.getXView();
     const VectorConstView<float> y = ps.getYView();
 
-    std::cout << "Size x: " << x.size() << std::endl;
-    std::cout << "Size y: " << y.size() << std::endl;
-    std::cout << "Size colors: " << colors.size() << std::endl;
-
     VectorConstView<RGB888> new_color_view{colors.data() + 1, colors.size() - 1U};
 
     if (0)
     {
-        scatter(xs.constView(), ys.constView(), colors, properties::ScatterStyle::Disc(), properties::PointSize(20));
+        scatter(xs.constView(), ys.constView(), colors, properties::ScatterStyle::Disc(), properties::PointSize(15));
     }
     else
     {
@@ -463,73 +470,9 @@ void testBasic()
             const VectorConstView<float> y = ps.getYView();
 
             scatter(x, y, new_color_view, properties::ScatterStyle::Disc(), properties::PointSize(20));
-            // scatter(
-            //     xs.constView(), ys.constView(), colors, properties::ScatterStyle::Circle(),
-            //     properties::PointSize(32));
             flushElement();
             softClearView();
         }
-
-        Vector<RGB888> new_colors{colors.size()};
-
-        const VectorConstView<float> x = ps.getXView();
-        const VectorConstView<float> y = ps.getYView();
-
-        /*for (size_t k = 0; k < ps.numPoints(); k++)
-        {
-            size_t idx = 0;
-            const size_t start_idx = k;
-
-            for (size_t i = start_idx; i < ps.numPoints(); i++)
-            {
-                new_colors(idx) = colors(i);
-                idx++;
-            }
-
-            for (size_t i = 0; i < start_idx; i++)
-            {
-                new_colors(idx) = colors(i);
-                idx++;
-            }
-
-            scatter(x, y, new_colors.constView(), properties::ScatterStyle::Disc(), properties::PointSize(20));
-            // scatter(
-            //     xs.constView(), ys.constView(), colors, properties::ScatterStyle::Circle(),
-            //     properties::PointSize(32));
-            flushElement();
-            softClearView();
-
-            std::cout << k << std::endl;
-        }*/
-
-        /*std::cout << "Looking..." << std::endl;
-
-        float min_diff = 10000.0f;
-
-        const float x_saved = xs(0);
-        const float y_saved = ys(0);
-
-        const VectorConstView<float> x_view = ps.getXView();
-        const VectorConstView<float> y_view = ps.getYView();
-
-        for (size_t k = 0; k < ps.numPoints(); k++)
-        {
-            const float x_final = x_view(k);
-            const float y_final = y_view(k);
-
-            const float x_diff = x_saved - x_final;
-            const float y_diff = y_saved - y_final;
-
-            const float d = std::sqrt(x_diff * x_diff + y_diff * y_diff);
-            std::cout << d << std::endl;
-            min_diff = std::min(min_diff, d);
-
-            if (d < 0.00001)
-            {
-                std::cout << "Match at: " << k << std::endl;
-            }
-        }
-        std::cout << "Min diff: " << min_diff << std::endl;*/
     }
 }
 
