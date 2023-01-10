@@ -105,7 +105,7 @@ void PlotBoxSilhouette::setIndices(const size_t first_vertex_idx,
 
 void PlotBoxSilhouette::render(const float azimuth, const float elevation)
 {
-    const float xy_val = (elevation > 0.0f) ? -1.0f : 1.0f;
+    const float xy_val = (elevation >= 0.0f) ? -1.0f : 1.0f;
     setIndices(kXYFirstIdx, kXYLastIdx, kXYChangeDimension, xy_val);
 
     const float yz_val = (azimuth >= 0.0f) ? 1.0f : -1.0f;

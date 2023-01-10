@@ -4,7 +4,7 @@
 
 void PlotBoxGrid::fillXYGrid(const GridVectors& gv)
 {
-    const float z_val = elevation_ > 0.0f ? (-axes_scale_.z) : axes_scale_.z;
+    const float z_val = elevation_ >= 0.0f ? (-axes_scale_.z) : axes_scale_.z;
     for (size_t k = 0; k < gv.x.num_valid_values; k++)
     {
         grid_points_[idx_] = gv.x.data[k];

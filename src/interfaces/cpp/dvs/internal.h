@@ -69,6 +69,52 @@ inline void sendThroughUdpInterface(const UInt8ArrayView& input_array)
     }
 }
 
+inline void sendThroughQueryUdpInterface(const UInt8ArrayView& input_array)
+{
+    const uint8_t* const data_to_send = input_array.data();
+    const uint64_t total_num_bytes_to_send = input_array.size();
+
+    constexpr int kNumReceiveBytes = 10;
+    const UdpClient udp_client(kUdpQueryPortNum);
+    char received_data[kNumReceiveBytes];
+
+    if (total_num_bytes_to_send >= kMaxNumBytesForOneTransmission)
+    {
+        throw std::runtime_error("Tried to send too much data through query interface!");
+    }
+
+    udp_client.sendData(data_to_send, total_num_bytes_to_send);
+
+    std::cout << "Before receive" << std::endl;
+    const int num_received_bytes = udp_client.receiveData<kNumReceiveBytes>(received_data);
+    std::cout << "After receive" << std::endl;
+
+    if (!ackValid(received_data))
+    {
+        throw std::runtime_error("No valid ack received!");
+    }
+    else if (num_received_bytes != 5)
+    {
+        throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
+    }
+}
+
+inline size_t receiveFromQueryUdpInterface()
+{
+    constexpr int kNumReceiveBytes = 100;
+    const UdpClient udp_client(kUdpQueryPortNum);
+    char received_data[kNumReceiveBytes];
+    std::cout << "Before" << std::endl;
+    udp_client.receiveData<kNumReceiveBytes>(received_data);
+    std::cout << "After" << std::endl;
+
+    size_t received_size;
+
+    std::memcpy(&received_size, received_data, sizeof(size_t));
+
+    return received_size;
+}
+
 inline SendFunctionType getSendFunction()
 {
     return sendThroughUdpInterface;

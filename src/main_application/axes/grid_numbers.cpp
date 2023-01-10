@@ -185,9 +185,9 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                       const GridVectors& gv,
                       const GLint text_color_uniform)
 {
-    const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
+    const bool cond = (azimuth >= (M_PI / 2.0)) || (azimuth <= (-M_PI / 2.0));
     const double x = cond ? 1.05 : -1.05;
-    const double y = (azimuth > 0.0f) ? 1.05 : -1.05;
+    const double y = ((azimuth >= (M_PI / 2.0)) || (azimuth <= (-M_PI / 2.0))) ? 1.05 : -1.05;
 
     if (element_settings.axes_letters_on)
     {

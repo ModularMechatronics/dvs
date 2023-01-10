@@ -17,11 +17,13 @@
 using namespace dvs::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
-    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50))
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50)), is_rendering_{false}
 {
     static_cast<void>(cmdl_args);
     udp_server_ = new UdpServer(dvs::internal::kUdpPortNum);
     udp_server_->start();
+
+    // query_udp_server_ = new UdpServer(dvs::internal::kUdpQueryPortNum);
     current_gui_element_ = nullptr;
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
 
@@ -73,6 +75,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     receive_timer_.Start(10);
 
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
+
+    // query_thread_ = new std::thread(&MainWindow::queryUdpThreadFunction, this);
 }
 
 void MainWindow::elementWasDeleted(const GuiElement* const ge)

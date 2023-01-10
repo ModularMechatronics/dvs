@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "axes/axes_interactor.h"
+#include "axes/axes_side_configuration.h"
 #include "axes/grid_numbers.h"
 #include "axes/legend_properties.h"
 #include "axes/legend_renderer.h"
@@ -44,6 +45,7 @@ private:
     ElementSettings element_settings_;
     PlotPaneBackground plot_pane_background_;
     RGBTripletf tab_background_color_;
+    AxesSideConfiguration axes_side_configuration_;
 
     glm::mat4 orth_projection_mat;
     glm::mat4 persp_projection_mat;
@@ -97,6 +99,7 @@ public:
     void updateStates(const AxesLimits& axes_limits,
                       const ViewAngles& view_angles,
                       const GridVectors& gv,
+                      const AxesSideConfiguration& axes_side_configuration,
                       const bool use_perspective_proj,
                       const float width,
                       const float height,
