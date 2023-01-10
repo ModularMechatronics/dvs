@@ -12,8 +12,11 @@ cmake -B build -D FT_DISABLE_ZLIB=TRUE \
                  -D FT_DISABLE_BROTLI=TRUE \
                  -D CMAKE_BUILD_TYPE=Release
 
-#     cmake -B build -D FT_REQUIRE_ZLIB=TRUE \
-#                    -D FT_REQUIRE_BZIP2=TRUE \
-#                    -D FT_REQUIRE_PNG=TRUE \
-#                    -D FT_REQUIRE_HARFBUZZ=TRUE \
-#                    -D FT_REQUIRE_BROTLI=TRUE [...]
+cmake -B build -D FT_DISABLE_ZLIB=TRUE \
+               -D FT_DISABLE_BZIP2=TRUE \
+               -D FT_DISABLE_PNG=TRUE \
+               -D FT_DISABLE_HARFBUZZ=TRUE \
+               -D FT_DISABLE_BROTLI=TRUE \
+               -D CMAKE_BUILD_TYPE=Release
+cmake --build build
+
