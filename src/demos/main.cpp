@@ -29,20 +29,22 @@ void displayHelp()
 int main(int argc, char* argv[])
 {
     // ######################### klein #########################
-    std::map<std::string, std::function<void()>> klein_functions{
+    StringFunctionMap klein_functions{
         {"basic", klein::testBasic}, {"adv0", klein::testAdvanced0}, {"adv1", klein::testAdvanced1}};
 
-    std::map<std::string, std::function<void()>> car_functions{{"basic", car::testBasic}};
+    StringFunctionMap car_functions{{"basic", car::testBasic}};
 
-    std::map<std::string, std::function<void()>> wave_equation_functions{{"basic", wave_equation::testBasic}};
+    StringFunctionMap wave_equation_functions{{"basic", wave_equation::testBasic}};
 
-    std::map<std::string, std::function<void()>> spring_structure_functions{{"basic", spring_structure::testBasic}};
+    StringFunctionMap spring_structure_functions{{"basic", spring_structure::testBasic}};
 
-    std::map<std::string, std::function<void()>> sphere_functions{{"basic", sphere::testBasic}};
+    StringFunctionMap sphere_functions{{"basic", sphere::testBasic}};
 
-    std::map<std::string, std::function<void()>> particles_functions{{"basic", particles::testBasic}};
+    StringFunctionMap particles_functions{{"basic", particles::testBasic}};
 
-    std::map<std::string, std::function<void()>> fake_fem_functions{{"basic", fake_fem::testBasic}};
+    StringFunctionMap fake_fem_functions{{"basic", fake_fem::testBasic}};
+
+    StringFunctionMap imu_functions{{"basic", imu::testBasic}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;
@@ -51,6 +53,7 @@ int main(int argc, char* argv[])
     fcns["sphere"] = sphere_functions;
     fcns["particles"] = particles_functions;
     fcns["fake_fem"] = fake_fem_functions;
+    fcns["imu"] = imu_functions;
 
     if (argc == 1)
     {

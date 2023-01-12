@@ -3,6 +3,7 @@
 
 #include "tests/car/car.h"
 #include "tests/fake_fem.h"
+#include "tests/imu/imu.h"
 #include "tests/klein.h"
 #include "tests/particles/particles.h"
 #include "tests/sphere/sphere.h"

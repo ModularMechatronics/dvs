@@ -252,11 +252,6 @@ private:
 
     void placeTipAt(const float x, const float y)
     {
-        const float height = 1.2f;
-        const float width = 1.2f;
-        const float height2 = height2 / 2.0f;
-        const float width2 = width2 / 2.0f;
-
         b2PolygonShape shape;
         const Vector<b2Vec2> vertices{
             VectorInitializer{b2Vec2(x + -0.1, y + -0.2), b2Vec2(x + 0.0, y + 0.2), b2Vec2(x + 0.1, y + -0.2)}};
@@ -399,8 +394,6 @@ public:
         std::ofstream myfile;
         myfile.open(file_path);
 
-        const b2Vec2* const particles = particle_system_->GetPositionBuffer();
-
         const VectorConstView<float> x = getXView();
         const VectorConstView<float> y = getYView();
 
@@ -450,9 +443,6 @@ void testBasic()
     }
 
     const auto colors = pa.getColors();
-
-    const VectorConstView<float> x = ps.getXView();
-    const VectorConstView<float> y = ps.getYView();
 
     VectorConstView<RGB888> new_color_view{colors.data() + 1, colors.size() - 1U};
 
@@ -507,7 +497,7 @@ void testBasicTmp()
 {
     const size_t num_polygon_points = 4;
     const size_t num_points = 1000;
-    float t = 0.0;
+
     Vector<Point2f> polygon_points{num_polygon_points};
     Vector<float> xr{num_points}, yr{num_points};
     Vector<RGB888> colors{num_points};
