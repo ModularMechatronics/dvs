@@ -732,11 +732,59 @@ inline void waitForFlush()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void flushElement()
+inline void flushCurrentElement()
 {
     internal::CommunicationHeader hdr{internal::Function::FLUSH_ELEMENT};
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+namespace internal
+{
+
+inline void flushMultipleElementsInternal(std::vector<std::string>& extracted_elements, const std::string& elem)
+{
+    extracted_elements.push_back(elem);
+}
+
+template <typename... Us>
+void flushMultipleElementsInternal(std::vector<std::string>& extracted_elements,
+                                   const std::string& elem,
+                                   const Us&... elements)
+{
+    extracted_elements.push_back(elem);
+
+    internal::flushMultipleElementsInternal(extracted_elements, elements...);
+}
+
+}  // namespace internal
+
+template <typename... Us> void flushMultipleElements(const Us&... elements)
+{
+    internal::CommunicationHeader hdr{internal::Function::FLUSH_MULTIPLE_ELEMENTS};
+
+    std::vector<std::string> extracted_elements;
+
+    internal::flushMultipleElementsInternal(extracted_elements, elements...);
+
+    Vector<uint8_t> name_lengths{extracted_elements.size()};
+
+    std::vector<char> concatenated_names;
+
+    for (size_t k = 0; k < extracted_elements.size(); k++)
+    {
+        name_lengths(k) = static_cast<uint8_t>(extracted_elements[k].length());
+        for (size_t i = 0; i < extracted_elements[k].length(); i++)
+        {
+            concatenated_names.push_back(extracted_elements[k][i]);
+        }
+    }
+
+    Vector<char> concatenated_names_local = concatenated_names;
+
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_NAMES, internal::toUInt8(extracted_elements.size()));
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, name_lengths, concatenated_names_local);
 }
 
 inline void view(const float azimuth_deg, const float elevation_deg)

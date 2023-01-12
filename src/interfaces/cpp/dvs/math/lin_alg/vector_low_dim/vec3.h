@@ -131,6 +131,15 @@ template <typename T> Vec3<T> operator*(const Matrix<T>& m, const Vec3<T>& v)
     return res;
 }
 
+template <typename T> Vec3<T> operator*(const MatrixFixed<T, 3, 3>& m, const Vec3<T>& v)
+{
+    Vec3<T> res;
+    res.x = m(0, 0) * v.x + m(0, 1) * v.y + m(0, 2) * v.z;
+    res.y = m(1, 0) * v.x + m(1, 1) * v.y + m(1, 2) * v.z;
+    res.z = m(2, 0) * v.x + m(2, 1) * v.y + m(2, 2) * v.z;
+    return res;
+}
+
 template <typename T> Vec3<T> operator*(const Vec3<T>& v, const Matrix<T>& m)
 {
     DVS_ASSERT(m.numRows() == 3) << "Matrix dimension mismatch!";

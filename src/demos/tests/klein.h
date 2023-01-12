@@ -180,7 +180,7 @@ void testAdvanced0()
         scatter3(vx, vy, vz, properties::Color::Red());
         plot3(vx, vy, vz, properties::Color::Blue());
         // axis({-130.0, 0.0, -1.0}, {110.0, 4.0, 1.0});
-        flushElement();
+        flushCurrentElement();
 
         usleep(50000);
 

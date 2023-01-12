@@ -107,18 +107,17 @@ template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> MatrixFixed<T
     return m_out;
 }
 
-/*
-template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> operator*(const MatrixFixed<T, R, C>& m0, const
-MatrixFixed<T, R, C>& m1)
+template <typename T, uint16_t R0, uint16_t C0, uint16_t R1, uint16_t C1>
+MatrixFixed<T, R0, C1> operator*(const MatrixFixed<T, R0, C0>& m0, const MatrixFixed<T, R1, C1>& m1)
 {
-    DVS_ASSERT(m0.numCols() == m1.numRows());
-    MatrixFixed<T, R, C> res(m0.numRows(), m1.numCols());
+    static_assert(C0 == R1);
+    MatrixFixed<T, R0, C1> res;
 
     for (size_t r = 0; r < res.numRows(); r++)
     {
         for (size_t c = 0; c < res.numCols(); c++)
         {
-            T p = 0.0f;
+            T p = 0.0;
             for (size_t i = 0; i < m0.numCols(); i++)
             {
                 p = p + m0(r, i) * m1(i, c);
@@ -129,7 +128,7 @@ MatrixFixed<T, R, C>& m1)
     return res;
 }
 
-template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> operator+(const MatrixFixed<T, R, C>& m0, const
+/*template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> operator+(const MatrixFixed<T, R, C>& m0, const
 MatrixFixed<T, R, C>& m1)
 {
     DVS_ASSERT(m0.numCols() == m1.numCols());
@@ -566,6 +565,28 @@ template <typename T> MatrixFixed<T, 2, 2> fixedRotationMatrix2D(const T angle)
     rotation_matrix(1, 1) = ca;
 
     return rotation_matrix;
+}
+
+template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> fixedUnitMatrix()
+{
+    MatrixFixed<T, R, C> unit_mat;
+
+    for (size_t r = 0; r < R; r++)
+    {
+        for (size_t c = 0; c < C; c++)
+        {
+            if (r == c)
+            {
+                unit_mat(r, c) = 1.0;
+            }
+            else
+            {
+                unit_mat(r, c) = 0.0;
+            }
+        }
+    }
+
+    return unit_mat;
 }
 
 }  // namespace dvs

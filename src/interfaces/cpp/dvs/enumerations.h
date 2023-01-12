@@ -40,6 +40,7 @@ enum class CommunicationHeaderObjectType : uint16_t
     GUI_ELEMENT_TYPE,
     PROPERTY,
     SLOT,
+    NUM_NAMES,
     UNKNOWN
 };
 
@@ -97,6 +98,7 @@ enum class Function : uint8_t
     NEW_ELEMENT,
     WAIT_FOR_FLUSH,
     FLUSH_ELEMENT,
+    FLUSH_MULTIPLE_ELEMENTS,
     SCATTER2,
     SCATTER3,
     QUIVER,

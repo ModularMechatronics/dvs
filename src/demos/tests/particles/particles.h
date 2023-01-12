@@ -460,7 +460,7 @@ void testBasic()
             const VectorConstView<float> y = ps.getYView();
 
             scatter(x, y, new_color_view, properties::ScatterStyle::Disc(), properties::PointSize(20));
-            flushElement();
+            flushCurrentElement();
             softClearView();
         }
     }
@@ -486,7 +486,7 @@ void testBasicSave()
         const VectorConstView<float> x = ps.getXView();
         const VectorConstView<float> y = ps.getYView();
         scatter(x, y, properties::Color::Red(), properties::ScatterStyle::Disc(), properties::PointSize(20));
-        flushElement();
+        flushCurrentElement();
         softClearView();
     }
 
