@@ -436,7 +436,7 @@ void testBasic()
                  properties::PointSize(13),
                  properties::ScatterStyle::Circle());
 
-        flushElement();
+        flushCurrentElement();
 
         softClearView();
     }

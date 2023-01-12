@@ -175,6 +175,45 @@ void MainWindow::queryUdpThreadFunction()
     }
 }
 
+void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData> received_data,
+                                                 const internal::CommunicationHeader& hdr)
+{
+    const uint8_t num_names = hdr.get(CommunicationHeaderObjectType::NUM_NAMES).as<uint8_t>();
+
+    VectorConstView<uint8_t> name_lengths{received_data->data(), static_cast<size_t>(num_names)};
+
+    std::vector<std::string> names;
+
+    size_t idx = num_names;
+
+    for (size_t k = 0; k < num_names; k++)
+    {
+        names.push_back("");
+        std::string& current_elem = names.back();
+
+        const uint8_t current_element_length = name_lengths(k);
+
+        for (size_t i = 0; i < current_element_length; i++)
+        {
+            current_elem += received_data->data()[idx];
+            idx++;
+        }
+    }
+
+    for (size_t k = 0; k < names.size(); k++)
+    {
+        for (auto we : windows_)
+        {
+            GuiElement* ge = we->getGuiElement(names[k]);
+            if (ge != nullptr)
+            {
+                ge->refresh();
+                break;
+            }
+        }
+    }
+}
+
 void MainWindow::receiveData()
 {
     std::unique_ptr<const ReceivedData> received_data;
@@ -219,6 +258,10 @@ void MainWindow::receiveData()
                     {
                         current_gui_element_->refresh();
                     }
+                    break;
+
+                case Function::FLUSH_MULTIPLE_ELEMENTS:
+                    mainWindowFlushMultipleElements(std::move(received_data), hdr);
                     break;
 
                 case Function::CREATE_NEW_ELEMENT:

@@ -11,6 +11,10 @@ uniform float min_z;
 uniform float max_z;
 uniform int color_map_selection;
 uniform int interpolate_colormap;
+uniform int has_custom_transform;
+uniform mat4 custom_translation_mat;
+uniform mat4 custom_rotation_mat;
+uniform mat4 custom_scale_mat;
 
 flat out vec3 flat_colormap_color;
 flat out vec3 individual_color;
@@ -276,8 +280,14 @@ vec3 calculateColormapRainbowPastel(float value)
 
 void main()
 {
-    gl_Position = model_view_proj_mat * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
-    coord_out = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
+    vec3 vertex_to_use = in_vertex;
+    if(has_custom_transform == int(1))
+    {
+        vertex_to_use = (custom_translation_mat * custom_rotation_mat * custom_scale_mat * vec4(in_vertex, 1.0)).xyz;
+    }
+
+    gl_Position = model_view_proj_mat * vec4(vertex_to_use.x, vertex_to_use.y, vertex_to_use.z, 1.0);
+    coord_out = vec4(vertex_to_use.x, vertex_to_use.y, vertex_to_use.z, 1.0);
 
     individual_color = in_color;
 
@@ -289,7 +299,7 @@ void main()
 
         if(interpolate_colormap == int(1))
         {
-            height_val = in_vertex.z;
+            height_val = vertex_to_use.z;
         }
         else
         {
@@ -325,5 +335,5 @@ void main()
 
     vec4 frag_normal_tmp = rotation_mat * vec4(in_normal, 1.0);
     frag_normal = frag_normal_tmp.xyz;
-    frag_pos = in_vertex;
+    frag_pos = vertex_to_use;
 }

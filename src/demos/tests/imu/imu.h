@@ -31,7 +31,7 @@ properties::Transform operator*(const properties::Transform& t0, const propertie
     properties::Transform res;
 
     res.rotation = t1.rotation * scale_mat1 * t0.rotation * scale_mat0;
-    res.translation = t1.rotation * scale_mat1 * t0.translation;
+    res.translation = t1.rotation * scale_mat1 * t0.translation + t1.translation;
     res.scale = Vec3d{1.0, 1.0, 1.0};
 
     // Pt0 = R0 * S0 * p + t0
@@ -133,18 +133,18 @@ PointsAndIndices generateCube()
     }};
 
     pts_indices.indices = Vector<IndexTriplet>{VectorInitializer<IndexTriplet>{
-        {0, 1, 2},
-        {0, 3, 2},
-        {4, 5, 6},
+        {0, 1, 2}, // Upper xy
+        {0, 2, 3},
+        {4, 6, 5}, // Lower xy
         {4, 7, 6},
-        {0, 1, 4},
-        {1, 4, 5},
-        {2, 6, 3},
+        {0, 1, 4}, // Upper yz
+        {1, 5, 4},
+        {2, 6, 3}, // Lower yz
         {6, 7, 3},
-        {6, 2, 1},
-        {6, 1, 5},
-        {0, 3, 7},
+        {0, 7, 3}, // Upper xz
         {0, 4, 7},
+        {6, 2, 1}, // Lower xz
+        {6, 1, 5},
     }};
     // clang-format on
 
@@ -200,45 +200,58 @@ public:
 
         t_cube = properties::Transform{{2.0, 1.0, 0.5}, unit_mat, {0, 0, 0}};
 
+        const properties::FaceColor x_color{214, 28, 95};
+        const properties::FaceColor y_color{0, 168, 136};
+        const properties::FaceColor z_color{0, 152, 205};
+
+        const properties::FaceColor cube_color{242, 152, 124};
+
         drawMesh(cube_pts_indices.points,
                  cube_pts_indices.indices,
-                 properties::FaceColor(127, 127, 127),
+                 cube_color,
+                 properties::EdgeColor::None(),
                  properties::SLOT0,
                  t_cube);
 
         // X arrow
         drawMesh(cylinder_pts_indices.points,
                  cylinder_pts_indices.indices,
-                 properties::FaceColor::Red(),
+                 x_color,
+                 properties::EdgeColor::None(),
                  properties::SLOT1,
                  t_cyl_x);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
-                 properties::FaceColor::Red(),
+                 x_color,
+                 properties::EdgeColor::None(),
                  properties::SLOT2,
                  t_cone_x);
 
         // Y arrow
         drawMesh(cylinder_pts_indices.points,
                  cylinder_pts_indices.indices,
-                 properties::FaceColor::Green(),
+                 y_color,
+                 properties::EdgeColor::None(),
                  properties::SLOT3,
                  t_cyl_y);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
-                 properties::FaceColor::Green(),
+                 y_color,
+                 properties::EdgeColor::None(),
                  properties::SLOT4,
                  t_cone_y);
 
         // Z arrow
         drawMesh(cylinder_pts_indices.points,
                  cylinder_pts_indices.indices,
-                 properties::FaceColor::Blue(),
+                 z_color,
+                 properties::EdgeColor::None(),
                  properties::SLOT5,
                  t_cyl_z);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
-                 properties::FaceColor::Blue(),
+                 z_color,
+                 properties::EdgeColor::None(),
                  properties::SLOT6,
                  t_cone_z);
     }
@@ -299,8 +312,10 @@ void testBasic()
 
     setCurrentElement("raw");
     clearView();
+    waitForFlush();
     axis({-4.0, -4.0, -4.0}, {4.0, 4.0, 4.0});
     view(-38.0, 32.0);
+    globalIllumination({2.0, 2.0, 2.0});
 
     ImuVisualizer visualizer_raw{20U, properties::Transform{{1.0, 1.0, 1.0}, rotationMatrixZ<double>(0), {0, 0, 0}}};
 
@@ -309,6 +324,7 @@ void testBasic()
     waitForFlush();
     axis({-4.0, -4.0, -4.0}, {4.0, 4.0, 4.0});
     view(-38.0, 32.0);
+    globalIllumination({2.0, 2.0, 2.0});
 
     ImuVisualizer visualizer{20U, properties::Transform{{1.0, 1.0, 1.0}, rotationMatrixZ<double>(0), {0, 0, 0}}};
 
@@ -326,20 +342,25 @@ void testBasic()
         const double theta_raw_y = theta_y + f_noise() * 0.05;
         const double theta_raw_z = theta_z + f_noise() * 0.05;
 
+        const double t_x = f_noise() * 0.05;
+        const double t_y = f_noise() * 0.05;
+        const double t_z = f_noise() * 0.05;
+
         const auto r_mat =
             rotationMatrixZ<double>(theta_z) * rotationMatrixY<double>(theta_y) * rotationMatrixX<double>(theta_x);
         const auto r_mat_noise = rotationMatrixZ<double>(theta_raw_z) * rotationMatrixY<double>(theta_raw_y) *
                                  rotationMatrixX<double>(theta_raw_x);
         const properties::Transform tr{{1.0, 1.0, 1.0}, r_mat, {0, 0, 0}};
-        const properties::Transform tr_noise{{1.0, 1.0, 1.0}, r_mat_noise, {0, 0, 0}};
+        const properties::Transform tr_noise{{1.0, 1.0, 1.0}, r_mat_noise, {t_x, t_y, t_z}};
 
         setCurrentElement("filtered");
         visualizer.visualize(tr);
-        flushElement();
 
         setCurrentElement("raw");
         visualizer_raw.visualize(tr_noise);
-        t += 0.01;
+
+        flushMultipleElements("filtered", "raw");
+        t += 0.005;
     }
 }
 

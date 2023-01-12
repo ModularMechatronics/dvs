@@ -82,6 +82,8 @@ private:
     void fileModified();
     bool currentGuiElementSet() const;
     void queryUdpThreadFunction();
+    void mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData> received_data,
+                                         const internal::CommunicationHeader& hdr);
 
 public:
     MainWindow();

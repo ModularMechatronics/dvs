@@ -613,7 +613,7 @@ void testBasic()
         lineCollection3(xl, zl, yl);
         scatter3(x, z, y);
 
-        flushElement();
+        flushCurrentElement();
 
         softClearView();
 
