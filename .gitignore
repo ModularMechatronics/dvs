@@ -40,3 +40,4 @@ __pycache__
 build
 src/externals/glog/build
 .vscode
+leddar_dataset
