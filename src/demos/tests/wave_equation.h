@@ -161,9 +161,11 @@ void testBasic()
 
     setCurrentElement("p_view_0");
     clearView();
+    // globalIllumination({1.0, 1.0, 1.0});
 
     const double z_max = 0.05;
     axis({0.0, 0.0, -z_max}, {0.25 * 4.0, 0.25 * 4.0, z_max});
+    axis({0.0, 0.0, -z_max}, {0.25 * 0.4, 0.25 * 0.4, z_max});
     view(-14, 40);
 
     for (size_t k = 0; k < num_its; k++)
@@ -171,10 +173,15 @@ void testBasic()
         stepper.run();
         const MatrixConstView<float> z = stepper.getCurr();
 
-        surf(x.constView(), y.constView(), z, properties::FaceColor::None(), properties::EdgeColor::Black());
+        surf(x.constView(),
+             y.constView(),
+             z,
+             properties::ColorMap::Jet(),
+             properties::EdgeColor::None(),
+             properties::INTERPOLATE_COLORMAP);
+        std::cin.ignore();
         // usleep(50 * 1000);
         softClearView();
-        std::cout << k << std::endl;
     }
 }
 

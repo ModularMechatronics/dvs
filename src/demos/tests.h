@@ -1,6 +1,7 @@
 #ifndef DEMOS_TESTS_H_
 #define DEMOS_TESTS_H_
 
+#include "tests/ad_dataset/ad_dataset.h"
 #include "tests/car/car.h"
 #include "tests/fake_fem.h"
 #include "tests/imu/imu.h"
