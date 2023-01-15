@@ -18,12 +18,11 @@ namespace ad_dataset
 
 struct PointCollection
 {
-    Vector<float> x;
-    Vector<float> y;
-    Vector<float> z;
+    VectorConstView<float> x;
+    VectorConstView<float> y;
+    VectorConstView<float> z;
 
-    PointCollection() = delete;
-    PointCollection(const uint32_t size) : x{size}, y{size}, z{size} {}
+    // PointCollection() = default;
 };
 
 class DatasetReader

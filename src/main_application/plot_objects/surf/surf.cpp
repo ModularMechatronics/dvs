@@ -288,27 +288,27 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
             // Normals
             output_data.normals_ptr[idx0_x] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx1_x] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx2_x] = normalized_normal_vec.z;
+            output_data.normals_ptr[idx1_y] = normalized_normal_vec.y;
+            output_data.normals_ptr[idx2_z] = normalized_normal_vec.z;
 
             output_data.normals_ptr[idx3_x] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx4_x] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx5_x] = normalized_normal_vec.z;
+            output_data.normals_ptr[idx4_y] = normalized_normal_vec.y;
+            output_data.normals_ptr[idx5_z] = normalized_normal_vec.z;
 
             output_data.normals_ptr[idx0_y] = normalized_normal_vec.x;
             output_data.normals_ptr[idx1_y] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx2_y] = normalized_normal_vec.z;
+            output_data.normals_ptr[idx2_z] = normalized_normal_vec.z;
 
             output_data.normals_ptr[idx3_y] = normalized_normal_vec.x;
             output_data.normals_ptr[idx4_y] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx5_y] = normalized_normal_vec.z;
+            output_data.normals_ptr[idx5_z] = normalized_normal_vec.z;
 
             output_data.normals_ptr[idx0_z] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx1_z] = normalized_normal_vec.y;
+            output_data.normals_ptr[idx1_y] = normalized_normal_vec.y;
             output_data.normals_ptr[idx2_z] = normalized_normal_vec.z;
 
             output_data.normals_ptr[idx3_z] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx4_z] = normalized_normal_vec.y;
+            output_data.normals_ptr[idx4_y] = normalized_normal_vec.y;
             output_data.normals_ptr[idx5_z] = normalized_normal_vec.z;
 
             const float z_m = (z(r, c) + z(r + 1, c) + z(r, c + 1) + z(r + 1, c + 1)) * 0.25f;

@@ -20,4 +20,5 @@ add_executable(demos main.cpp
                      ${REPO_DIR}/src/main_application/misc/color_map.cpp)
 
 target_link_libraries(demos 
-        ${REPO_DIR}/src/externals/liquidfun/liquidfun/Box2D/Box2D/Release/libliquidfun.a)
+        ${REPO_DIR}/src/externals/liquidfun/liquidfun/Box2D/Box2D/Release/libliquidfun.a
+        -lncurses)
