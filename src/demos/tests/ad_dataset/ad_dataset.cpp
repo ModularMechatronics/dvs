@@ -8,7 +8,49 @@
 namespace ad_dataset
 {
 
-void DatasetReader::readBinaryFile(const std::string& bin_path)
+void DatasetReader::readCameraFile(const std::string& bin_path)
+{
+    std::ifstream input(bin_path, std::ios::binary);
+
+    img_raw_data_.push_back(std::vector<unsigned char>(std::istreambuf_iterator<char>(input), {}));
+
+    std::vector<unsigned char>& read_data = img_raw_data_.back();
+
+    uint32_t width, height;  // From python: Width = 720, height = 540
+
+    size_t idx = 0U;
+
+    std::memcpy(&width, read_data.data(), sizeof(uint32_t));
+    idx += sizeof(uint32_t);
+
+    std::memcpy(&height, read_data.data() + idx, sizeof(uint32_t));
+    idx += sizeof(uint32_t);
+
+    ImageGrayConstView<uint8_t> img_red{read_data.data() + idx, height, width};
+    idx += sizeof(uint8_t) * width * height;
+
+    ImageGrayConstView<uint8_t> img_green{read_data.data() + idx, height, width};
+    idx += sizeof(uint8_t) * width * height;
+
+    ImageGrayConstView<uint8_t> img_blue{read_data.data() + idx, height, width};
+    idx += sizeof(uint8_t) * width * height;
+
+    ImageRGB<uint8_t> img{height, width};
+
+    for (size_t r = 0; r < height; r++)
+    {
+        for (size_t c = 0; c < width; c++)
+        {
+            img(r, c, 0) = img_red(r, c);
+            img(r, c, 1) = img_green(r, c);
+            img(r, c, 2) = img_blue(r, c);
+        }
+    }
+
+    images_.push_back(std::move(img));
+}
+
+void DatasetReader::readLidarFile(const std::string& bin_path)
 {
     std::ifstream input(bin_path, std::ios::binary);
 
@@ -40,9 +82,8 @@ DatasetReader::DatasetReader(const std::string& dataset_root_path)
 {
     const std::string ds_path = dataset_root_path.back() == '/' ? dataset_root_path : dataset_root_path + "/";
 
+    // Lidar
     const std::string lidar_path = ds_path + "lidar/";
-
-    const std::string lidar_file = lidar_path + "00000189.bin";
 
     for (const auto& entry : std::filesystem::directory_iterator(lidar_path))
     {
@@ -53,7 +94,29 @@ DatasetReader::DatasetReader(const std::string& dataset_root_path)
 
     for (const std::string& lidar_file_path : lidar_file_paths_)
     {
-        readBinaryFile(lidar_file_path);
+        // readLidarFile(lidar_file_path);
+    }
+
+    // Camera
+    const std::string camera_path = ds_path + "img/";
+
+    for (const auto& entry : std::filesystem::directory_iterator(camera_path))
+    {
+        img_file_paths_.push_back(entry.path());
+    }
+
+    std::sort(img_file_paths_.begin(), img_file_paths_.end());
+
+    size_t idx = 0;
+    for (const std::string& img_file_path : img_file_paths_)
+    {
+        readCameraFile(img_file_path);
+
+        if (idx > 5)
+        {
+            break;
+        }
+        idx++;
     }
 
     std::cout << "Finished reading files!" << std::endl;
@@ -128,19 +191,24 @@ void testBasic()
 
     setCurrentElement("secondary");
     clearView();
-    waitForFlush();
-    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
-    view(-38.0, 32.0);
+    // waitForFlush();
+    // axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
+    // view(-38.0, 32.0);
 
     setCurrentElement("main");
     clearView();
-    waitForFlush();
-    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
-    view(-38.0, 32.0);
+    // waitForFlush();
+    // axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
+    // view(-38.0, 32.0);
 
-    for (size_t k = 0; k < dataset_reader.numLidarFiles(); k++)
+    for (size_t k = 0; k < dataset_reader.numImgFiles(); k++)
     {
-        const PointCollection& pc = dataset_reader.getPointCollection(k);
+        const ImageRGBConstView<uint8> img = dataset_reader.getImage(k);
+
+        setCurrentElement("main");
+        softClearView();
+        imShow(img);
+        /*const PointCollection& pc = dataset_reader.getPointCollection(k);
 
         setCurrentElement("main");
         softClearView();
@@ -162,7 +230,7 @@ void testBasic()
                  properties::PointSize(5),
                  properties::ScatterStyle::Disc());
 
-        flushMultipleElements("main", "secondary");
+        flushMultipleElements("main", "secondary");*/
     }
 }
 
