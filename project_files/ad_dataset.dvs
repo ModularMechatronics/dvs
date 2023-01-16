@@ -32,27 +32,33 @@
                                 "g": 0.0,
                                 "r": 0.0
                             },
+                            "axes_letters_on": false,
                             "axes_numbers_color": {
                                 "b": 0.0,
                                 "g": 0.0,
                                 "r": 0.0
                             },
+                            "axes_numbers_on": false,
+                            "background_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "clipping_on": false,
                             "grid_color": {
                                 "b": 0.699999988079071,
                                 "g": 0.699999988079071,
                                 "r": 0.699999988079071
                             },
+                            "grid_on": false,
                             "height": 1.0,
-                            "name": "main",
+                            "name": "point_cloud",
                             "pane_radius": 20.0,
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
-                            "width": 0.5631944537162781,
+                            "plot_box_on": false,
+                            "width": 0.9979166388511658,
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 0.0,
+                            "z_order": 0
                         },
                         {
                             "axes_letters_color": {
@@ -70,16 +76,73 @@
                                 "g": 0.699999988079071,
                                 "r": 0.699999988079071
                             },
-                            "height": 0.75,
-                            "name": "secondary",
+                            "height": 0.44516971707344055,
+                            "name": "center",
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "width": 0.425,
-                            "x": 0.57,
-                            "y": 0.0
+                            "width": 0.2597222328186035,
+                            "x": 0.0,
+                            "y": 0.5339195728302002,
+                            "z_order": 2
+                        },
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "height": 0.3851175010204315,
+                            "name": "left",
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "width": 0.23125000298023224,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z_order": 1
+                        },
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "height": 0.3994778096675873,
+                            "name": "right",
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "width": 0.28125,
+                            "x": 0.7131944298744202,
+                            "y": 0.0,
+                            "z_order": 3
                         }
                     ],
                     "name": "Tab 0"

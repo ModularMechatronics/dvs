@@ -26,19 +26,17 @@ struct PointCollection
 class DatasetReader
 {
 private:
-    std::vector<std::vector<unsigned char>> lidar_raw_data_;
-    std::vector<std::vector<unsigned char>> img_raw_data_;
-
-    std::vector<uint32_t> num_points_;
-
-    std::vector<std::string> lidar_file_paths_;
     std::vector<PointCollection> point_collections_;
+    std::vector<std::vector<unsigned char>> lidar_raw_data_;
 
-    std::vector<std::string> img_file_paths_;
-    std::vector<ImageRGB<uint8>> images_;
+    std::vector<ImageRGB<uint8>> images_front_;
+    std::vector<ImageRGB<uint8>> images_left_;
+    std::vector<ImageRGB<uint8>> images_right_;
 
     void readLidarFile(const std::string& bin_path);
-    void readCameraFile(const std::string& bin_path);
+
+    void readCamera(const std::string& folder_path, std::vector<ImageRGB<uint8>>& destination);
+    void readCameraFile(const std::string& bin_path, std::vector<ImageRGB<uint8>>& destination);
 
 public:
     DatasetReader() = delete;
@@ -49,9 +47,19 @@ public:
         return point_collections_[idx];
     }
 
-    ImageRGBConstView<uint8> getImage(const size_t idx)
+    ImageRGBConstView<uint8> getLeftImage(const size_t idx)
     {
-        return images_[idx].constView();
+        return images_left_[idx].constView();
+    }
+
+    ImageRGBConstView<uint8> getRightImage(const size_t idx)
+    {
+        return images_right_[idx].constView();
+    }
+
+    ImageRGBConstView<uint8> getFrontImage(const size_t idx)
+    {
+        return images_front_[idx].constView();
     }
 
     size_t numLidarFiles() const
@@ -61,7 +69,7 @@ public:
 
     size_t numImgFiles() const
     {
-        return img_raw_data_.size();
+        return images_front_.size();
     }
 };
 
