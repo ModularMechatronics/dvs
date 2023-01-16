@@ -103,6 +103,11 @@ public:
         return 3 * num_rows_ * num_cols_ * sizeof(T);
     }
 
+    size_t numElements() const
+    {
+        return 3 * num_rows_ * num_cols_;
+    }
+
     const T& operator()(const size_t r, const size_t c, const size_t ch) const
     {
         assert((r < num_rows_) && "Row index is larger than num_rows_ - 1!");
@@ -124,6 +129,8 @@ private:
 public:
     ImageRGB();
     ImageRGB(const size_t num_rows, const size_t num_cols);
+    ImageRGB(const ImageRGB<T>& other);
+    ImageRGB(ImageRGB<T>&& other);
     ~ImageRGB();
 
     T& operator()(const size_t r, const size_t c, const size_t ch);
@@ -134,6 +141,16 @@ public:
     size_t numBytes() const;
     size_t numElements() const;
     void fillBufferWithData(uint8_t* const buffer) const;
+
+    ImageRGBConstView<T> constView() const
+    {
+        return ImageRGBConstView<T>{data_, num_rows_, num_cols_};
+    }
+
+    ImageRGBView<T> view() const
+    {
+        return ImageRGBView<T>{data_, num_rows_, num_cols_};
+    }
 
     T* data() const;
 };
@@ -160,6 +177,32 @@ template <typename T> ImageRGB<T>::ImageRGB(const size_t num_rows, const size_t 
     num_rows_ = num_rows;
     num_cols_ = num_cols;
     num_element_per_channel_ = num_rows_ * num_cols_;
+}
+
+template <typename T> ImageRGB<T>::ImageRGB(const ImageRGB<T>& other)
+{
+    DVS_ASSERT(other.numRows() > 0U) << "Cannot initialize with number of rows to 0!";
+    DVS_ASSERT(other.numCols() > 0U) << "Cannot initialize with number of columns to 0!";
+
+    data_ = new T[other.numRows() * other.numCols() * 3];
+    num_rows_ = other.numRows();
+    num_cols_ = other.numCols();
+    num_element_per_channel_ = num_rows_ * num_cols_;
+
+    std::memcpy(data_, other.data_, num_element_per_channel_ * 3U);
+}
+
+template <typename T> ImageRGB<T>::ImageRGB(ImageRGB<T>&& other)
+{
+    data_ = other.data_;
+    num_rows_ = other.num_rows_;
+    num_cols_ = other.num_cols_;
+    num_element_per_channel_ = other.num_element_per_channel_;
+
+    other.data_ = nullptr;
+    other.num_rows_ = 0U;
+    other.num_cols_ = 0U;
+    other.num_element_per_channel_ = 0U;
 }
 
 template <typename T> void ImageRGB<T>::fillBufferWithData(uint8_t* const buffer) const
