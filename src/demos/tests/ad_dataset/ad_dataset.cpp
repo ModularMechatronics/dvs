@@ -8,31 +8,29 @@
 namespace ad_dataset
 {
 
-void DatasetReader::readCameraFile(const std::string& bin_path)
+void DatasetReader::readCameraFile(const std::string& bin_path, std::vector<ImageRGB<uint8>>& destination)
 {
     std::ifstream input(bin_path, std::ios::binary);
 
-    img_raw_data_.push_back(std::vector<unsigned char>(std::istreambuf_iterator<char>(input), {}));
-
-    std::vector<unsigned char>& read_data = img_raw_data_.back();
+    std::vector<unsigned char> img_raw_data(std::istreambuf_iterator<char>(input), {});
 
     uint32_t width, height;  // From python: Width = 720, height = 540
 
     size_t idx = 0U;
 
-    std::memcpy(&width, read_data.data(), sizeof(uint32_t));
+    std::memcpy(&width, img_raw_data.data(), sizeof(uint32_t));
     idx += sizeof(uint32_t);
 
-    std::memcpy(&height, read_data.data() + idx, sizeof(uint32_t));
+    std::memcpy(&height, img_raw_data.data() + idx, sizeof(uint32_t));
     idx += sizeof(uint32_t);
 
-    ImageGrayConstView<uint8_t> img_red{read_data.data() + idx, height, width};
+    ImageGrayConstView<uint8_t> img_red{img_raw_data.data() + idx, height, width};
     idx += sizeof(uint8_t) * width * height;
 
-    ImageGrayConstView<uint8_t> img_green{read_data.data() + idx, height, width};
+    ImageGrayConstView<uint8_t> img_green{img_raw_data.data() + idx, height, width};
     idx += sizeof(uint8_t) * width * height;
 
-    ImageGrayConstView<uint8_t> img_blue{read_data.data() + idx, height, width};
+    ImageGrayConstView<uint8_t> img_blue{img_raw_data.data() + idx, height, width};
     idx += sizeof(uint8_t) * width * height;
 
     ImageRGB<uint8_t> img{height, width};
@@ -47,7 +45,7 @@ void DatasetReader::readCameraFile(const std::string& bin_path)
         }
     }
 
-    images_.push_back(std::move(img));
+    destination.push_back(std::move(img));
 }
 
 void DatasetReader::readLidarFile(const std::string& bin_path)
@@ -55,27 +53,50 @@ void DatasetReader::readLidarFile(const std::string& bin_path)
     std::ifstream input(bin_path, std::ios::binary);
 
     lidar_raw_data_.push_back(std::vector<unsigned char>(std::istreambuf_iterator<char>(input), {}));
+    // lidar_raw_data_.push_back(std::vector<unsigned char>(std::istreambuf_iterator<char>(input), {}));
 
-    std::vector<unsigned char>& read_data = lidar_raw_data_.back();
+    std::vector<unsigned char>& read_lidar_data = lidar_raw_data_.back();
 
     uint32_t n_points;
-    std::memcpy(&n_points, read_data.data(), sizeof(uint32_t));
-
-    num_points_.push_back(n_points);
+    std::memcpy(&n_points, read_lidar_data.data(), sizeof(uint32_t));
 
     PointCollection pc;
 
-    const float* const x_ptr = reinterpret_cast<const float* const>(read_data.data() + sizeof(uint32_t));
+    const float* const x_ptr = reinterpret_cast<const float* const>(read_lidar_data.data() + sizeof(uint32_t));
     const float* const y_ptr =
-        reinterpret_cast<const float* const>(read_data.data() + sizeof(uint32_t) + sizeof(float) * n_points);
+        reinterpret_cast<const float* const>(read_lidar_data.data() + sizeof(uint32_t) + sizeof(float) * n_points);
     const float* const z_ptr =
-        reinterpret_cast<const float* const>(read_data.data() + sizeof(uint32_t) + 2 * sizeof(float) * n_points);
+        reinterpret_cast<const float* const>(read_lidar_data.data() + sizeof(uint32_t) + 2 * sizeof(float) * n_points);
 
     pc.x = VectorConstView<float>{x_ptr, n_points};
     pc.y = VectorConstView<float>{y_ptr, n_points};
     pc.z = VectorConstView<float>{z_ptr, n_points};
 
     point_collections_.push_back(pc);
+}
+
+void DatasetReader::readCamera(const std::string& folder_path, std::vector<ImageRGB<uint8>>& destination)
+{
+    std::vector<std::string> img_file_paths;
+
+    for (const auto& entry : std::filesystem::directory_iterator(folder_path))
+    {
+        img_file_paths.push_back(entry.path());
+    }
+
+    std::sort(img_file_paths.begin(), img_file_paths.end());
+
+    size_t idx = 0;
+    for (const std::string& img_file_path : img_file_paths)
+    {
+        readCameraFile(img_file_path, destination);
+
+        if (idx > 5)
+        {
+            break;
+        }
+        idx++;
+    }
 }
 
 DatasetReader::DatasetReader(const std::string& dataset_root_path)
@@ -85,32 +106,20 @@ DatasetReader::DatasetReader(const std::string& dataset_root_path)
     // Lidar
     const std::string lidar_path = ds_path + "lidar/";
 
+    std::vector<std::string> lidar_file_paths;
+
     for (const auto& entry : std::filesystem::directory_iterator(lidar_path))
     {
-        lidar_file_paths_.push_back(entry.path());
+        lidar_file_paths.push_back(entry.path());
     }
 
-    std::sort(lidar_file_paths_.begin(), lidar_file_paths_.end());
+    std::sort(lidar_file_paths.begin(), lidar_file_paths.end());
 
-    for (const std::string& lidar_file_path : lidar_file_paths_)
+    size_t idx = 0U;
+
+    for (const std::string& lidar_file_path : lidar_file_paths)
     {
-        // readLidarFile(lidar_file_path);
-    }
-
-    // Camera
-    const std::string camera_path = ds_path + "img/";
-
-    for (const auto& entry : std::filesystem::directory_iterator(camera_path))
-    {
-        img_file_paths_.push_back(entry.path());
-    }
-
-    std::sort(img_file_paths_.begin(), img_file_paths_.end());
-
-    size_t idx = 0;
-    for (const std::string& img_file_path : img_file_paths_)
-    {
-        readCameraFile(img_file_path);
+        readLidarFile(lidar_file_path);
 
         if (idx > 5)
         {
@@ -118,6 +127,11 @@ DatasetReader::DatasetReader(const std::string& dataset_root_path)
         }
         idx++;
     }
+
+    // Camera
+    readCamera(ds_path + "img_front/", images_front_);
+    readCamera(ds_path + "img_left/", images_left_);
+    readCamera(ds_path + "img_right/", images_right_);
 
     std::cout << "Finished reading files!" << std::endl;
 }
@@ -189,38 +203,36 @@ void testBasic()
 {
     DatasetReader dataset_reader{"/Users/danielpi/work/dvs/leddar_dataset/20200706_171559_part27_1170_1370/output"};
 
-    setCurrentElement("secondary");
+    setCurrentElement("point_cloud");
     clearView();
-    // waitForFlush();
-    // axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
-    // view(-38.0, 32.0);
+    waitForFlush();
+    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
+    view(-38.0, 32.0);
 
-    setCurrentElement("main");
+    setCurrentElement("center");
     clearView();
-    // waitForFlush();
-    // axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
-    // view(-38.0, 32.0);
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    waitForFlush();
+
+    setCurrentElement("right");
+    clearView();
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    waitForFlush();
+
+    setCurrentElement("left");
+    clearView();
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    waitForFlush();
 
     for (size_t k = 0; k < dataset_reader.numImgFiles(); k++)
     {
-        const ImageRGBConstView<uint8> img = dataset_reader.getImage(k);
+        const ImageRGBConstView<uint8> img_front = dataset_reader.getFrontImage(k);
+        const ImageRGBConstView<uint8> img_left = dataset_reader.getLeftImage(k);
+        const ImageRGBConstView<uint8> img_right = dataset_reader.getRightImage(k);
 
-        setCurrentElement("main");
-        softClearView();
-        imShow(img);
-        /*const PointCollection& pc = dataset_reader.getPointCollection(k);
+        const PointCollection& pc = dataset_reader.getPointCollection(k);
 
-        setCurrentElement("main");
-        softClearView();
-        scatter3(pc.x,
-                 pc.y,
-                 pc.z,
-                 properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
-                 properties::ColorMap::Viridis(),
-                 properties::PointSize(5),
-                 properties::ScatterStyle::Disc());
-
-        setCurrentElement("secondary");
+        setCurrentElement("point_cloud");
         softClearView();
         scatter3(pc.x,
                  pc.y,
@@ -230,7 +242,19 @@ void testBasic()
                  properties::PointSize(5),
                  properties::ScatterStyle::Disc());
 
-        flushMultipleElements("main", "secondary");*/
+        setCurrentElement("center");
+        softClearView();
+        imShow(img_front);
+
+        setCurrentElement("right");
+        softClearView();
+        imShow(img_right);
+
+        setCurrentElement("left");
+        softClearView();
+        imShow(img_left);
+
+        flushMultipleElements("point_cloud", "center", "left", "right");
     }
 }
 
