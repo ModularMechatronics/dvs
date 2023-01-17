@@ -31,6 +31,7 @@ Pre release:
 - See if one can use GL_LINES for surf to only fill squares, instead of each triangle
 - Change properties::Transform's scale vector to scale matrix
 - Change "rotation" property of properties::Transform to "orientation"?
+- Put element name in top left or right corner
 - Refactor pipeline of how new plot objects are added
 - LegendProperties to use reference_wrapper instead of pointer to colormap
 - Change name of application (to plotto or something)

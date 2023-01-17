@@ -7,6 +7,7 @@ namespace
 struct OutputData
 {
     float* points_ptr;
+    float* lines_ptr;
     float* normals_ptr;
     float* mean_height_ptr;
     float* color_data;
@@ -42,7 +43,8 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
            const Properties& props,
            const ShaderCollection shader_collection)
     : PlotObjectBase(std::move(received_data), hdr, props, shader_collection),
-      vertex_buffer_{OGLPrimitiveType::TRIANGLES}
+      vertex_buffer_{OGLPrimitiveType::TRIANGLES},
+      vertex_buffer_lines_{OGLPrimitiveType::LINES}
 {
     if (type_ != Function::SURF)
     {
@@ -54,7 +56,13 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
     const InputParams input_params{dims_, num_bytes_for_one_vec_, has_color_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    num_elements_to_render_ = (dims_.rows - 1) * (dims_.cols - 1) * 6;
+    num_elements_to_render_ = (dims_.rows - 1U) * (dims_.cols - 1U) * 6U;
+
+    const size_t num_lines =
+        (input_params.dims.rows - 1U) * input_params.dims.cols + input_params.dims.rows * (input_params.dims.cols - 1U);
+    num_lines_to_render_ = num_lines * 2U;
+
+    vertex_buffer_lines_.addBuffer(output_data.lines_ptr, num_lines_to_render_, 3);
 
     vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_to_render_, 3);
     vertex_buffer_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
@@ -69,6 +77,7 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
 
     findMinMax();
 
+    delete[] output_data.lines_ptr;
     delete[] output_data.points_ptr;
     delete[] output_data.normals_ptr;
     delete[] output_data.mean_height_ptr;
@@ -96,7 +105,13 @@ void Surf::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
     const InputParams input_params{dims_, num_bytes_for_one_vec_, has_color_};
     const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    num_elements_to_render_ = (dims_.rows - 1) * (dims_.cols - 1) * 6;
+    num_elements_to_render_ = (dims_.rows - 1U) * (dims_.cols - 1U) * 6U;
+
+    const size_t num_lines =
+        (input_params.dims.rows - 1U) * input_params.dims.cols + input_params.dims.rows * (input_params.dims.cols - 1U);
+    num_lines_to_render_ = num_lines * 2U;
+
+    vertex_buffer_lines_.addBuffer(output_data.lines_ptr, num_lines_to_render_, 3);
 
     vertex_buffer_.updateBufferData(0, output_data.points_ptr, num_elements_to_render_, 3);
     vertex_buffer_.updateBufferData(1, output_data.normals_ptr, num_elements_to_render_, 3);
@@ -111,6 +126,7 @@ void Surf::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
 
     findMinMax();
 
+    delete[] output_data.lines_ptr;
     delete[] output_data.points_ptr;
     delete[] output_data.normals_ptr;
     delete[] output_data.mean_height_ptr;
@@ -124,7 +140,6 @@ bool Surf::affectsColormapMinMax() const
 void Surf::render()
 {
     glEnable(GL_BLEND);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     shader_collection_.draw_mesh_shader.use();
     glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "edge_color"),
@@ -138,10 +153,6 @@ void Surf::render()
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "alpha"), alpha_);
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_edge_color"),
-                static_cast<int>(has_edge_color_));
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"),
-                static_cast<int>(has_face_color_));
 
     if (has_color_)
     {
@@ -157,7 +168,6 @@ void Surf::render()
         {
             glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
                         static_cast<int>(color_map_) + 1);
-            glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), 1);
             glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"),
                         static_cast<int>(interpolate_colormap_));
         }
@@ -168,14 +178,17 @@ void Surf::render()
         }
     }
 
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
+    if (has_edge_color_)
+    {
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
+        vertex_buffer_lines_.render(num_lines_to_render_);
+    }
 
-    vertex_buffer_.render(num_elements_to_render_);
-
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    vertex_buffer_.render(num_elements_to_render_);
+    if (has_face_color_)
+    {
+        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
+        vertex_buffer_.render(num_elements_to_render_);
+    }
 
     glDisable(GL_BLEND);
 
@@ -223,10 +236,16 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     output_data.normals_ptr = new float[new_data_size];
     output_data.mean_height_ptr = new float[new_data_size / 3];
 
-    size_t idx = 0, mean_height_idx = 0;
-    for (size_t r = 0; r < (input_params.dims.rows - 1); r++)
+    const size_t num_lines =
+        (input_params.dims.rows - 1U) * input_params.dims.cols + input_params.dims.rows * (input_params.dims.cols - 1U);
+    const size_t lines_data_size = num_lines * 2U * 3U;
+    output_data.lines_ptr = new float[lines_data_size];
+
+    size_t idx = 0U, mean_height_idx = 0U, idx_line = 0U;
+
+    for (size_t r = 0U; r < (input_params.dims.rows - 1U); r++)
     {
-        for (size_t c = 0; c < (input_params.dims.cols - 1); c++)
+        for (size_t c = 0U; c < (input_params.dims.cols - 1U); c++)
         {
             const size_t idx0_x = idx;
             const size_t idx0_y = idx + 1;
@@ -320,8 +339,57 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
             output_data.mean_height_ptr[mean_height_idx + 3] = z_m;
             output_data.mean_height_ptr[mean_height_idx + 4] = z_m;
             output_data.mean_height_ptr[mean_height_idx + 5] = z_m;
+
             mean_height_idx += 6;
+
+            output_data.lines_ptr[idx_line] = x(r, c);
+            output_data.lines_ptr[idx_line + 1] = y(r, c);
+            output_data.lines_ptr[idx_line + 2] = z(r, c);
+
+            output_data.lines_ptr[idx_line + 3] = x(r, c + 1);
+            output_data.lines_ptr[idx_line + 4] = y(r, c + 1);
+            output_data.lines_ptr[idx_line + 5] = z(r, c + 1);
+
+            output_data.lines_ptr[idx_line + 6] = x(r, c);
+            output_data.lines_ptr[idx_line + 7] = y(r, c);
+            output_data.lines_ptr[idx_line + 8] = z(r, c);
+
+            output_data.lines_ptr[idx_line + 9] = x(r + 1, c);
+            output_data.lines_ptr[idx_line + 10] = y(r + 1, c);
+            output_data.lines_ptr[idx_line + 11] = z(r + 1, c);
+
+            idx_line += 12;
         }
+    }
+
+    const size_t final_row_idx = input_params.dims.rows - 1U;
+
+    for (size_t c = 0U; c < (input_params.dims.cols - 1U); c++)
+    {
+        output_data.lines_ptr[idx_line] = x(final_row_idx, c);
+        output_data.lines_ptr[idx_line + 1] = y(final_row_idx, c);
+        output_data.lines_ptr[idx_line + 2] = z(final_row_idx, c);
+
+        output_data.lines_ptr[idx_line + 3] = x(final_row_idx, c + 1);
+        output_data.lines_ptr[idx_line + 4] = y(final_row_idx, c + 1);
+        output_data.lines_ptr[idx_line + 5] = z(final_row_idx, c + 1);
+
+        idx_line += 6;
+    }
+
+    const size_t final_col_idx = input_params.dims.cols - 1U;
+
+    for (size_t r = 0U; r < (input_params.dims.rows - 1U); r++)
+    {
+        output_data.lines_ptr[idx_line] = x(r, final_col_idx);
+        output_data.lines_ptr[idx_line + 1] = y(r, final_col_idx);
+        output_data.lines_ptr[idx_line + 2] = z(r, final_col_idx);
+
+        output_data.lines_ptr[idx_line + 3] = x(r + 1, final_col_idx);
+        output_data.lines_ptr[idx_line + 4] = y(r + 1, final_col_idx);
+        output_data.lines_ptr[idx_line + 5] = z(r + 1, final_col_idx);
+
+        idx_line += 6;
     }
 
     if (input_params.has_color)

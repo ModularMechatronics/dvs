@@ -1006,6 +1006,9 @@ void testDrawMesh()
 
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
     drawMesh(x, y, z, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 244));
+
+    drawMesh(x + 2.0, y, z, indices, properties::EdgeColor::None(), properties::FaceColor(255, 0, 244));
+    drawMesh(x + 2.0, y, z - 2.0, indices, properties::EdgeColor::Red(), properties::FaceColor::None());
 }
 
 #endif  // TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_
