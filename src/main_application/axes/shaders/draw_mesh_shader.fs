@@ -65,40 +65,11 @@ void main()
    vec3 object_color;
    if(is_edge == int(1))
    {
-      if(has_edge_color == int(0))
-      {
-         if(color_map_selection > 0)
-         {
-            if(interpolate_colormap == int(1))
-            {
-               object_color = colormap_color;
-            }
-            else
-            {
-               object_color = flat_colormap_color;
-            }
-         }
-         else if(has_color_vec == int(1))
-         {
-            object_color = individual_color;
-         }
-         else
-         {
-            object_color = face_color;
-         }
-      }
-      else
-      {
-         object_color = edge_color;
-      }
+      object_color = edge_color;
    }
    else
    {
-      if(has_face_color == int(0))
-      {
-         discard;
-      }
-      else if(has_color_vec == int(1))
+      if(has_color_vec == int(1))
       {
          object_color = individual_color;
       }

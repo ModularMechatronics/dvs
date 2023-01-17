@@ -239,7 +239,7 @@ void testAdvanced1()
 
     float ax = 0.0f, ay = 0.0f, az = 0.0f;
 
-    globalIllumination({ax, ay, 0});
+    globalIllumination({2, 2, 2});
 
     for (size_t k = 0; k < num_its; k++)
     {

@@ -89,6 +89,8 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     }
 
     has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
+    has_face_color_ = true;
+    has_edge_color_ = true;
 
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 

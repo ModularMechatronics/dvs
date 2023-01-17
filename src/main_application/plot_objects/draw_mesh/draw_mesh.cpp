@@ -115,7 +115,6 @@ void DrawMesh::findMinMax()
 void DrawMesh::render()
 {
     glEnable(GL_BLEND);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     shader_collection_.draw_mesh_shader.use();
 
@@ -132,16 +131,11 @@ void DrawMesh::render()
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "alpha"), alpha_);
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_edge_color"),
-                static_cast<int>(has_edge_color_));
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"),
-                static_cast<int>(has_face_color_));
 
     if (color_map_set_)
     {
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
                     static_cast<int>(color_map_) + 1);
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_face_color"), 1);
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "interpolate_colormap"),
                     static_cast<int>(interpolate_colormap_));
     }
@@ -152,12 +146,19 @@ void DrawMesh::render()
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
 
-    vertex_buffer_.render(num_elements_to_render_);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (has_edge_color_)
+    {
+        vertex_buffer_.render(num_elements_to_render_);
+    }
 
     glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    vertex_buffer_.render(num_elements_to_render_);
+    if (has_face_color_)
+    {
+        vertex_buffer_.render(num_elements_to_render_);
+    }
 
     glDisable(GL_BLEND);
 
