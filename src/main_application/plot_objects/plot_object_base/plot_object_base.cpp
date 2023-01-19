@@ -190,7 +190,13 @@ void PlotObjectBase::setProperties(const Properties& props)
         const Transform custom_transform = props.getProperty<Transform>();
         has_custom_transform_ = true;
 
-        setTransform(custom_transform.rotation, custom_transform.translation, custom_transform.scale);
+        MatrixFixed<double, 3, 3> scale_mat = unitMatrixFixed<double, 3, 3>();
+
+        scale_mat(0, 0) = custom_transform.scale.x;
+        scale_mat(1, 1) = custom_transform.scale.y;
+        scale_mat(2, 2) = custom_transform.scale.z;
+
+        setTransform(custom_transform.rotation, custom_transform.translation, scale_mat);
     }
 
     if (props.hasProperty(PropertyType::DISTANCE_FROM))
@@ -285,14 +291,11 @@ void PlotObjectBase::preRender(const Shader shader_to_use)
 
 void PlotObjectBase::setTransform(const MatrixFixed<double, 3, 3>& rotation,
                                   const Vec3<double>& translation,
-                                  const Vec3<double>& scale)
+                                  const MatrixFixed<double, 3, 3>& scale)
 {
     has_custom_transform_ = true;
 
     custom_scale_ = glm::mat4(1.0f);
-    custom_scale_[0][0] = scale.x;
-    custom_scale_[1][1] = scale.y;
-    custom_scale_[2][2] = scale.z;
 
     custom_translation_ = glm::translate(glm::mat4(1.0f), glm::vec3(translation.x, translation.y, translation.z));
 
@@ -303,6 +306,7 @@ void PlotObjectBase::setTransform(const MatrixFixed<double, 3, 3>& rotation,
         for (size_t c = 0; c < 3; c++)
         {
             custom_rotation_[r][c] = rotation(r, c);
+            custom_scale_[r][c] = scale(r, c);
         }
     }
 }
@@ -330,7 +334,13 @@ void PlotObjectBase::assignProperties(const Properties& props)
         const Transform custom_transform = props.getProperty<Transform>();
         has_custom_transform_ = true;
 
-        setTransform(custom_transform.rotation, custom_transform.translation, custom_transform.scale);
+        MatrixFixed<double, 3, 3> scale_mat = unitMatrixFixed<double, 3, 3>();
+
+        scale_mat(0, 0) = custom_transform.scale.x;
+        scale_mat(1, 1) = custom_transform.scale.y;
+        scale_mat(2, 2) = custom_transform.scale.z;
+
+        setTransform(custom_transform.rotation, custom_transform.translation, scale_mat);
     }
 
     if (props.hasProperty(PropertyType::DISTANCE_FROM))

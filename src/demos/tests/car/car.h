@@ -80,6 +80,10 @@ std::tuple<Vector<float>, Vector<float>, Vector<float>> generatePath()
 
 void testBasic()
 {
+    const std::string project_file_path = "../../project_files/car.dvs";
+
+    openProjectFile(project_file_path);
+
     const ImageGrayAlpha<uint8_t> img = readCarImage();
     ImageGray<uint8_t> road(1, 1);
     ImageGray<uint8_t> line(1, 1);

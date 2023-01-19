@@ -235,6 +235,10 @@ std::vector<std::pair<Vector<float>, Vector<float>>> generateCircles(const size_
 
 void testBasic()
 {
+    const std::string project_file_path = "../../project_files/ad_dataset.dvs";
+
+    openProjectFile(project_file_path);
+
     DatasetReader dataset_reader{"/Users/danielpi/work/dvs/leddar_dataset/20200706_171559_part27_1170_1370/output"};
 
     const std::vector<std::pair<Vector<float>, Vector<float>>> circle_points = generateCircles(5, 10.0f, 5.0f);

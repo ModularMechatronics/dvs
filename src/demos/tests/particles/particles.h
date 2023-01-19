@@ -418,6 +418,10 @@ Vector<Point2f> readSavedFile()
 
 void testBasic()
 {
+    const std::string project_file_path = "../../project_files/particles.dvs";
+
+    openProjectFile(project_file_path);
+
     const size_t num_steps = 700;
     const Vec2f min_bnd{-4.0f, 0.0f};
     const Vec2f max_bnd{4.0f, 8.0f};

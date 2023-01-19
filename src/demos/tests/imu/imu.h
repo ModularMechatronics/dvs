@@ -17,8 +17,8 @@ namespace imu
 
 properties::Transform operator*(const properties::Transform& t0, const properties::Transform& t1)
 {
-    MatrixFixed<double, 3, 3> scale_mat0 = fixedUnitMatrix<double, 3, 3>();
-    MatrixFixed<double, 3, 3> scale_mat1 = fixedUnitMatrix<double, 3, 3>();
+    MatrixFixed<double, 3, 3> scale_mat0 = unitMatrixFixed<double, 3, 3>();
+    MatrixFixed<double, 3, 3> scale_mat1 = unitMatrixFixed<double, 3, 3>();
 
     scale_mat0(0, 0) = t0.scale.x;
     scale_mat0(1, 1) = t0.scale.y;
@@ -309,6 +309,10 @@ void testBasic()
     const auto [xcube, ycube, zcube] = unzipVectors(cube_pts_indices.points);
     const auto [xcyl, ycyl, zcyl] = unzipVectors(cylinder_pts_indices.points);
     const auto [xcone, ycone, zcone] = unzipVectors(cone_pts_indices.points);
+
+    const std::string project_file_path = "../../project_files/imu.dvs";
+
+    openProjectFile(project_file_path);
 
     setCurrentElement("raw");
     clearView();

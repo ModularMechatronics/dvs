@@ -567,7 +567,7 @@ template <typename T> MatrixFixed<T, 2, 2> fixedRotationMatrix2D(const T angle)
     return rotation_matrix;
 }
 
-template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> fixedUnitMatrix()
+template <typename T, uint16_t R, uint16_t C> MatrixFixed<T, R, C> unitMatrixFixed()
 {
     MatrixFixed<T, R, C> unit_mat;
 
