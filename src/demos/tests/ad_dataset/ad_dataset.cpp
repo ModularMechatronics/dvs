@@ -199,9 +199,45 @@ void testScroll()
     }
 }
 
+std::vector<std::pair<Vector<float>, Vector<float>>> generateCircles(const size_t n_circles,
+                                                                     const float r0,
+                                                                     const float d)
+{
+    std::vector<std::pair<Vector<float>, Vector<float>>> res;
+
+    float r = r0;
+    const size_t n_points = 100;
+
+    for (size_t k = 0; k < n_circles; k++)
+    {
+        Vector<float> xp{n_points + 1}, yp{n_points + 1};
+
+        float t = 0;
+        const float dt = 2.0f * M_PI / static_cast<float>(n_points);
+
+        for (size_t i = 0; i < n_points; i++)
+        {
+            xp(i) = r * std::cos(t);
+            yp(i) = r * std::sin(t);
+            t += dt;
+        }
+
+        r += d;
+
+        xp(n_points) = xp(0);
+        yp(n_points) = yp(0);
+
+        res.push_back(std::make_pair(xp, yp));
+    }
+
+    return res;
+}
+
 void testBasic()
 {
     DatasetReader dataset_reader{"/Users/danielpi/work/dvs/leddar_dataset/20200706_171559_part27_1170_1370/output"};
+
+    const std::vector<std::pair<Vector<float>, Vector<float>>> circle_points = generateCircles(5, 10.0f, 5.0f);
 
     setCurrentElement("point_cloud");
     clearView();
@@ -241,6 +277,10 @@ void testBasic()
                  properties::ColorMap::Viridis(),
                  properties::PointSize(5),
                  properties::ScatterStyle::Disc());
+        for (const auto& circ_pts : circle_points)
+        {
+            fastPlot(circ_pts.first, circ_pts.second, properties::Color::White(), properties::LineWidth(1));
+        }
 
         setCurrentElement("center");
         softClearView();

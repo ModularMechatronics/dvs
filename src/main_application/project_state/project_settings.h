@@ -61,6 +61,12 @@ void assignIfNotDefault(nlohmann::json& j, const std::string& key, const T& val,
 
 struct ElementSettings
 {
+    enum class ProjectionType
+    {
+        PERSPECTIVE,
+        ORTHOGRAPHIC
+    };
+
     float x;
     float y;
     float width;
@@ -83,6 +89,7 @@ struct ElementSettings
     bool clipping_on;
 
     float pane_radius;
+    ProjectionType projection_type;
 
     ElementSettings()
     {
@@ -108,6 +115,8 @@ struct ElementSettings
         clipping_on = kClippingOnDefault;
 
         z_order = kZOrderDefault;
+
+        projection_type = ProjectionType::ORTHOGRAPHIC;
     }
 
     explicit ElementSettings(const nlohmann::json& j)
@@ -143,6 +152,27 @@ struct ElementSettings
         pane_radius = (j.count("pane_radius") > 0) ? static_cast<float>(j["pane_radius"]) : kPaneRadiusDefault;
 
         z_order = (j.count("z_order") > 0) ? static_cast<int>(j["z_order"]) : kZOrderDefault;
+
+        if (j.count("projection_type") > 0)
+        {
+            const std::string projection_type_str = j["projection_type"];
+            if (projection_type_str == "orthographic")
+            {
+                projection_type = ProjectionType::ORTHOGRAPHIC;
+            }
+            else if (projection_type_str == "perspective")
+            {
+                projection_type = ProjectionType::PERSPECTIVE;
+            }
+            else
+            {
+                throw std::runtime_error("Invalid option for \"projection_type\": \"" + projection_type_str + "\"");
+            }
+        }
+        else
+        {
+            projection_type = ProjectionType::ORTHOGRAPHIC;
+        }
     }
 
     nlohmann::json toJson() const

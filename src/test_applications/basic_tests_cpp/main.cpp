@@ -40,7 +40,8 @@ int main(int argc, char* argv[])
                              {"axis", testAxis},
                              {"drawMesh", testDrawMesh},
                              {"stairs", testStairs},
-                             {"legend", testLegend}};
+                             {"legend", testLegend},
+                             {"openProjectFile", testOpenProjectFile}};
 
     if (argc == 1)
     {

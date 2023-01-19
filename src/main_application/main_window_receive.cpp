@@ -214,6 +214,12 @@ void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedD
     }
 }
 
+void MainWindow::openFileFromClient(const internal::CommunicationHeader& hdr)
+{
+    const properties::Name file_path = hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>();
+    openExistingFile(file_path.data);
+}
+
 void MainWindow::receiveData()
 {
     std::unique_ptr<const ReceivedData> received_data;
@@ -268,6 +274,10 @@ void MainWindow::receiveData()
                     // createNewElement(hdr);
                     // TODO
                     std::cout << "Not implemented yet!" << std::endl;
+                    break;
+
+                case Function::OPEN_PROJECT_FILE:
+                    openFileFromClient(hdr);
                     break;
 
                 case Function::SHOW_LEGEND:

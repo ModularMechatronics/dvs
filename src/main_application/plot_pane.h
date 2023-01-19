@@ -125,6 +125,7 @@ public:
     void keyReleased(const char key) override;
     void showLegend(const bool show_legend) override;
     void waitForFlush() override;
+    void toggleProjectionType() override;
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
     void mouseRightPressed(wxMouseEvent& event);

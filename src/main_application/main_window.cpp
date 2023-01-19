@@ -123,6 +123,7 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         windows_.emplace_back(new WindowView(
             this,
             ws,
+            save_manager_->getCurrentFileName(),
             window_callback_id_,
             notification_from_gui_element_key_pressed_,
             notification_from_gui_element_key_released_,
@@ -160,6 +161,7 @@ void MainWindow::newWindow(wxCommandEvent& WXUNUSED(event))
     WindowView* window_element = new WindowView(
         this,
         window_settings,
+        save_manager_->getCurrentFileName(),
         window_callback_id_,
         notification_from_gui_element_key_pressed_,
         notification_from_gui_element_key_released_,
@@ -288,6 +290,31 @@ void MainWindow::openExistingFileCallback(wxCommandEvent& WXUNUSED(event))
     openExistingFile();
 }
 
+void MainWindow::openExistingFile(const std::string& file_path)
+{
+    if (save_manager_->getCurrentFilePath() == file_path)
+    {
+        return;
+    }
+
+    configuration_agent_->writeValue("last_opened_file", file_path);
+
+    save_manager_->openExistingFile(file_path);
+
+    for (auto we : windows_)
+    {
+        we->Destroy();
+    }
+    windows_.clear();
+
+    setupWindows(save_manager_->getCurrentProjectSettings());
+
+    // refresh_timer_.Start(10);
+
+    SendSizeEvent();
+    Refresh();
+}
+
 void MainWindow::openExistingFile()
 {
     if (!save_manager_->isSaved())
@@ -308,27 +335,7 @@ void MainWindow::openExistingFile()
         return;
     }
 
-    if (save_manager_->getCurrentFilePath() == std::string(openFileDialog.GetPath().mb_str()))
-    {
-        return;
-    }
-
-    configuration_agent_->writeValue("last_opened_file", std::string(openFileDialog.GetPath().mb_str()));
-
-    save_manager_->openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
-
-    for (auto we : windows_)
-    {
-        we->Destroy();
-    }
-    windows_.clear();
-
-    setupWindows(save_manager_->getCurrentProjectSettings());
-
-    // refresh_timer_.Start(10);
-
-    SendSizeEvent();
-    Refresh();
+    openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
 }
 
 void MainWindow::OnRefreshTimer(wxTimerEvent&)
