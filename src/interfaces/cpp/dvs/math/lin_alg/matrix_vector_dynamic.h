@@ -30,6 +30,17 @@ template <typename T> Matrix<T> Vec3<T>::toCrossProductMatrix() const
     return m;
 }
 
+template <typename T> Matrix<T> diagMatrix(const Vec3<T>& v)
+{
+    Matrix<T> res = unitMatrix<T>(3, 3);
+
+    res(0, 0) = v.x;
+    res(1, 1) = v.y;
+    res(2, 2) = v.z;
+
+    return res;
+}
+
 }  // namespace dvs
 
 #endif  // DVS_MATH_LIN_ALG_MATRIX_VECTOR_DYNAMIC_H_

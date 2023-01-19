@@ -137,7 +137,7 @@ void testBasic()
         const Vec3d center_of_rotation_r = r_mat * center_of_rotation;
         const Vec3d v_res = Vec3d{x(k), y(k), 0.0f} - center_of_rotation_r;
 
-        setTransform(properties::SLOT0, scale, r_mat, v_res);
+        setTransform(properties::SLOT0, diagMatrix<double>(scale), r_mat, v_res);
         usleep(50 * 1000);
     }
 }
