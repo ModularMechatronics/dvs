@@ -268,33 +268,35 @@ public:
 
         const auto t_cyl_z_transformed = t_cyl_z * new_transform;
         const auto t_cone_z_transformed = t_cone_z * new_transform;
-        setTransform(
-            properties::SLOT0, cube_transformed.scale, cube_transformed.rotation, cube_transformed.translation);
+        setTransform(properties::SLOT0,
+                     diagMatrixFixed<double>(cube_transformed.scale),
+                     cube_transformed.rotation,
+                     cube_transformed.translation);
 
         setTransform(properties::SLOT1,
-                     t_cyl_x_transformed.scale,
+                     diagMatrixFixed<double>(t_cyl_x_transformed.scale),
                      t_cyl_x_transformed.rotation,
                      t_cyl_x_transformed.translation);
         setTransform(properties::SLOT2,
-                     t_cone_x_transformed.scale,
+                     diagMatrixFixed<double>(t_cone_x_transformed.scale),
                      t_cone_x_transformed.rotation,
                      t_cone_x_transformed.translation);
 
         setTransform(properties::SLOT3,
-                     t_cyl_y_transformed.scale,
+                     diagMatrixFixed<double>(t_cyl_y_transformed.scale),
                      t_cyl_y_transformed.rotation,
                      t_cyl_y_transformed.translation);
         setTransform(properties::SLOT4,
-                     t_cone_y_transformed.scale,
+                     diagMatrixFixed<double>(t_cone_y_transformed.scale),
                      t_cone_y_transformed.rotation,
                      t_cone_y_transformed.translation);
 
         setTransform(properties::SLOT5,
-                     t_cyl_z_transformed.scale,
+                     diagMatrixFixed<double>(t_cyl_z_transformed.scale),
                      t_cyl_z_transformed.rotation,
                      t_cyl_z_transformed.translation);
         setTransform(properties::SLOT6,
-                     t_cone_z_transformed.scale,
+                     diagMatrixFixed<double>(t_cone_z_transformed.scale),
                      t_cone_z_transformed.rotation,
                      t_cone_z_transformed.translation);
     }

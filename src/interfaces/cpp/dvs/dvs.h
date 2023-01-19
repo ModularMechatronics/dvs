@@ -869,26 +869,24 @@ inline void setAxesBoxScaleFactor(const Vec3<double>& scale_vector)
 }
 
 inline void setTransform(const internal::PlotSlot slot,
-                         const Vec3<double>& scale,
+                         const Matrix<double>& scale,
                          const Matrix<double>& rotation,
                          const Vec3<double>& translation)
 {
     DVS_ASSERT(rotation.numRows() == 3) << "Number of rows should be 3!";
     DVS_ASSERT(rotation.numCols() == 3) << "Number of columns should be 3!";
 
-    MatrixFixed<double, 3, 3> scale_mat = unitMatrixFixed<double, 3, 3>();
+    DVS_ASSERT(scale.numRows() == 3) << "Number of rows should be 3!";
+    DVS_ASSERT(scale.numCols() == 3) << "Number of columns should be 3!";
 
-    scale_mat(0, 0) = scale.x;
-    scale_mat(1, 1) = scale.y;
-    scale_mat(2, 2) = scale.z;
-
-    MatrixFixed<double, 3, 3> r_mat;
+    MatrixFixed<double, 3, 3> r_mat, scale_mat;
 
     for (size_t r = 0; r < 3; r++)
     {
         for (size_t c = 0; c < 3; c++)
         {
             r_mat(r, c) = rotation(r, c);
+            scale_mat(r, c) = scale(r, c);
         }
     }
 
@@ -910,20 +908,14 @@ inline void openProjectFile(const std::string& file_path)
 }
 
 inline void setTransform(const internal::PlotSlot slot,
-                         const Vec3<double>& scale,
+                         const MatrixFixed<double, 3, 3>& scale,
                          const MatrixFixed<double, 3, 3>& rotation,
                          const Vec3<double>& translation)
 {
-    MatrixFixed<double, 3, 3> scale_mat = unitMatrixFixed<double, 3, 3>();
-
-    scale_mat(0, 0) = scale.x;
-    scale_mat(1, 1) = scale.y;
-    scale_mat(2, 2) = scale.z;
-
     internal::CommunicationHeader hdr{internal::Function::SET_OBJECT_TRANSFORM};
     hdr.append(internal::CommunicationHeaderObjectType::ROTATION_MATRIX, rotation);
     hdr.append(internal::CommunicationHeaderObjectType::TRANSLATION_VECTOR, translation);
-    hdr.append(internal::CommunicationHeaderObjectType::SCALE_MATRIX, scale_mat);
+    hdr.append(internal::CommunicationHeaderObjectType::SCALE_MATRIX, scale);
     hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
