@@ -78,13 +78,13 @@ struct ZOffset : internal::PropertyBase
 
 struct Transform : internal::PropertyBase
 {
-    Vec3<double> scale;
+    MatrixFixed<double, 3, 3> scale;
     MatrixFixed<double, 3, 3> rotation;
     Vec3<double> translation;
 
     Transform() : internal::PropertyBase(internal::PropertyType::TRANSFORM) {}
 
-    explicit Transform(const Vec3<double>& scale_,
+    explicit Transform(const MatrixFixed<double, 3, 3>& scale_,
                        const MatrixFixed<double, 3, 3>& rotation_,
                        const Vec3<double>& translation_)
         : internal::PropertyBase(internal::PropertyType::TRANSFORM),
@@ -94,20 +94,23 @@ struct Transform : internal::PropertyBase
     {
     }
 
-    explicit Transform(const Vec3<double>& scale_, const Matrix<double>& rotation_, const Vec3<double>& translation_)
+    explicit Transform(const Matrix<double>& scale_, const Matrix<double>& rotation_, const Vec3<double>& translation_)
         : internal::PropertyBase(internal::PropertyType::TRANSFORM)
     {
-        scale = scale_;
         translation = translation_;
 
         DVS_ASSERT(rotation_.numRows() == 3U) << "Expected 3 rows for rotation matrix, got " << rotation_.numRows();
         DVS_ASSERT(rotation_.numCols() == 3U) << "Expected 3 cols for rotation matrix, got " << rotation_.numCols();
+
+        DVS_ASSERT(scale_.numRows() == 3U) << "Expected 3 rows for scale matrix, got " << scale_.numRows();
+        DVS_ASSERT(scale_.numCols() == 3U) << "Expected 3 cols for scale matrix, got " << scale_.numCols();
 
         for (size_t r = 0; r < 3; r++)
         {
             for (size_t c = 0; c < 3; c++)
             {
                 rotation(r, c) = rotation_(r, c);
+                scale(r, c) = scale_(r, c);
             }
         }
     }

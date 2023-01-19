@@ -190,13 +190,7 @@ void PlotObjectBase::setProperties(const Properties& props)
         const Transform custom_transform = props.getProperty<Transform>();
         has_custom_transform_ = true;
 
-        MatrixFixed<double, 3, 3> scale_mat = unitMatrixFixed<double, 3, 3>();
-
-        scale_mat(0, 0) = custom_transform.scale.x;
-        scale_mat(1, 1) = custom_transform.scale.y;
-        scale_mat(2, 2) = custom_transform.scale.z;
-
-        setTransform(custom_transform.rotation, custom_transform.translation, scale_mat);
+        setTransform(custom_transform.rotation, custom_transform.translation, custom_transform.scale);
     }
 
     if (props.hasProperty(PropertyType::DISTANCE_FROM))
@@ -334,13 +328,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
         const Transform custom_transform = props.getProperty<Transform>();
         has_custom_transform_ = true;
 
-        MatrixFixed<double, 3, 3> scale_mat = unitMatrixFixed<double, 3, 3>();
-
-        scale_mat(0, 0) = custom_transform.scale.x;
-        scale_mat(1, 1) = custom_transform.scale.y;
-        scale_mat(2, 2) = custom_transform.scale.z;
-
-        setTransform(custom_transform.rotation, custom_transform.translation, scale_mat);
+        setTransform(custom_transform.rotation, custom_transform.translation, custom_transform.scale);
     }
 
     if (props.hasProperty(PropertyType::DISTANCE_FROM))

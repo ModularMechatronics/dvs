@@ -105,28 +105,35 @@ void testBasic()
 
     imShow(road,
            properties::ZOffset(-0.25f),
-           properties::Transform{{204, 40, 0}, rotationMatrixZ<double>(0), {-20, -20, -3}});
+           properties::Transform{diagMatrix<double>({204, 40, 0}), rotationMatrixZ<double>(0), {-20, -20, -3}});
 
     for (size_t k = 0; k < 17; k++)
     {
         const double kf = k;
-        imShow(line, properties::Transform{{3, 2, 0}, unitMatrix<double>(3, 3), {kf * 12.0 - 18.0, -1.0, -2}});
+        imShow(line,
+               properties::Transform{
+                   diagMatrix<double>({3, 2, 0}), unitMatrix<double>(3, 3), {kf * 12.0 - 18.0, -1.0, -2}});
     }
 
     for (size_t k = 0; k < 14; k++)
     {
         const double kf = k;
         const double dy = 17.0;
-        imShow(line, properties::Transform{{5, 2, 0}, unitMatrix<double>(3, 3), {kf * 15.0 - 19.0, -1.0 - dy, -2}});
-        imShow(line, properties::Transform{{5, 2, 0}, unitMatrix<double>(3, 3), {kf * 15.0 - 19.0, -1.0 + dy, -2}});
+        imShow(line,
+               properties::Transform{
+                   diagMatrix<double>({5, 2, 0}), unitMatrix<double>(3, 3), {kf * 15.0 - 19.0, -1.0 - dy, -2}});
+        imShow(line,
+               properties::Transform{
+                   diagMatrix<double>({5, 2, 0}), unitMatrix<double>(3, 3), {kf * 15.0 - 19.0, -1.0 + dy, -2}});
     }
 
     plot(x, y, properties::Color(0, 255, 0), properties::LineWidth(5), properties::ZOffset(-0.15));
     imShow(img,
            properties::SLOT0,
            properties::ZOffset(-0.05f),
-           properties::Transform{
-               scale, rotationMatrixZ<double>(M_PI), -rotationMatrixZ<double>(M_PI) * center_of_rotation});
+           properties::Transform{diagMatrix<double>(scale),
+                                 rotationMatrixZ<double>(M_PI),
+                                 -rotationMatrixZ<double>(M_PI) * center_of_rotation});
 
     for (size_t k = 0; k < x.size(); k += 10)
     {
