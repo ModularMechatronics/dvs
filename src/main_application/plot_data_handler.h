@@ -41,7 +41,7 @@ public:
     void setTransform(const internal::PlotSlot slot,
                       const MatrixFixed<double, 3, 3>& rotation,
                       const Vec3<double>& translation,
-                      const Vec3<double>& scale);
+                      const MatrixFixed<double, 3, 3>& scale);
     std::vector<LegendProperties> getLegendStrings() const;
 };
 

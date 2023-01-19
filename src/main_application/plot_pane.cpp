@@ -337,15 +337,17 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
     }
     else if (fcn == Function::SET_OBJECT_TRANSFORM)
     {
-        const Vec3d scale_vec = hdr.get(CommunicationHeaderObjectType::SCALE_VECTOR).as<Vec3d>();
         const Vec3d translation_vec = hdr.get(CommunicationHeaderObjectType::TRANSLATION_VECTOR).as<Vec3d>();
         const MatrixFixed<double, 3, 3> rotation_mat =
             hdr.get(CommunicationHeaderObjectType::ROTATION_MATRIX).as<MatrixFixed<double, 3, 3>>();
 
         const PlotSlot slot = hdr.get(CommunicationHeaderObjectType::SLOT).as<internal::PlotSlot>();
 
+        const Vec3d scale_vec = hdr.get(CommunicationHeaderObjectType::SCALE_VECTOR).as<Vec3d>();
+        const MatrixFixed<double, 3, 3> scale = diagMatrixFixed<double>(scale_vec);
+
         const MatrixFixed<double, 3, 3> inv_rotation_mat = rotation_mat.transposed();
-        plot_data_handler_->setTransform(slot, inv_rotation_mat, translation_vec, scale_vec);
+        plot_data_handler_->setTransform(slot, inv_rotation_mat, translation_vec, scale);
     }
     else
     {

@@ -8,6 +8,7 @@
 #include "dvs/math/lin_alg/matrix_dynamic/matrix_math_functions.h"
 #include "dvs/math/lin_alg/matrix_fixed/matrix_fixed.h"
 #include "dvs/math/lin_alg/matrix_vector_dynamic.h"
+#include "dvs/math/lin_alg/matrix_vector_fixed.h"
 #include "dvs/math/lin_alg/vector_dynamic/vector_dynamic.h"
 #include "dvs/math/lin_alg/vector_dynamic/vector_math_functions.h"
 #include "dvs/math/lin_alg/vector_low_dim/vec2.h"

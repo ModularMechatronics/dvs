@@ -31,7 +31,7 @@ void PlotDataHandler::clear()
 void PlotDataHandler::setTransform(const internal::PlotSlot slot,
                                    const MatrixFixed<double, 3, 3>& rotation,
                                    const Vec3<double>& translation,
-                                   const Vec3<double>& scale)
+                                   const MatrixFixed<double, 3, 3>& scale)
 {
     const auto q = std::find_if(plot_datas_.begin(),
                                 plot_datas_.end(),

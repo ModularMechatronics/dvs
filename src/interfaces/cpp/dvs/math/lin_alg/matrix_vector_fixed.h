@@ -14,7 +14,7 @@ namespace dvs
 
 template <typename T> MatrixFixed<T, 3, 3> diagMatrixFixed(const Vec3<T>& v)
 {
-    MatrixFixed<T, 3, 3> res;
+    MatrixFixed<T, 3, 3> res = unitMatrixFixed<T, 3, 3>();
 
     res(0, 0) = v.x;
     res(1, 1) = v.y;

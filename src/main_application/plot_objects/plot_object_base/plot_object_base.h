@@ -104,7 +104,7 @@ public:
 
     void setTransform(const MatrixFixed<double, 3, 3>& rotation,
                       const Vec3<double>& translation,
-                      const Vec3<double>& scale);
+                      const MatrixFixed<double, 3, 3>& scale);
 
     internal::PlotSlot getSlot() const
     {
