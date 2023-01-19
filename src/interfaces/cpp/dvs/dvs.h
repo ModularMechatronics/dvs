@@ -876,6 +876,12 @@ inline void setTransform(const internal::PlotSlot slot,
     DVS_ASSERT(rotation.numRows() == 3) << "Number of rows should be 3!";
     DVS_ASSERT(rotation.numCols() == 3) << "Number of columns should be 3!";
 
+    MatrixFixed<double, 3, 3> scale_mat = unitMatrixFixed<double, 3, 3>();
+
+    scale_mat(0, 0) = scale.x;
+    scale_mat(1, 1) = scale.y;
+    scale_mat(2, 2) = scale.z;
+
     MatrixFixed<double, 3, 3> r_mat;
 
     for (size_t r = 0; r < 3; r++)
@@ -889,7 +895,7 @@ inline void setTransform(const internal::PlotSlot slot,
     internal::CommunicationHeader hdr{internal::Function::SET_OBJECT_TRANSFORM};
     hdr.append(internal::CommunicationHeaderObjectType::ROTATION_MATRIX, r_mat);
     hdr.append(internal::CommunicationHeaderObjectType::TRANSLATION_VECTOR, translation);
-    hdr.append(internal::CommunicationHeaderObjectType::SCALE_VECTOR, scale);
+    hdr.append(internal::CommunicationHeaderObjectType::SCALE_MATRIX, scale_mat);
     hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
@@ -908,10 +914,16 @@ inline void setTransform(const internal::PlotSlot slot,
                          const MatrixFixed<double, 3, 3>& rotation,
                          const Vec3<double>& translation)
 {
+    MatrixFixed<double, 3, 3> scale_mat = unitMatrixFixed<double, 3, 3>();
+
+    scale_mat(0, 0) = scale.x;
+    scale_mat(1, 1) = scale.y;
+    scale_mat(2, 2) = scale.z;
+
     internal::CommunicationHeader hdr{internal::Function::SET_OBJECT_TRANSFORM};
     hdr.append(internal::CommunicationHeaderObjectType::ROTATION_MATRIX, rotation);
     hdr.append(internal::CommunicationHeaderObjectType::TRANSLATION_VECTOR, translation);
-    hdr.append(internal::CommunicationHeaderObjectType::SCALE_VECTOR, scale);
+    hdr.append(internal::CommunicationHeaderObjectType::SCALE_MATRIX, scale_mat);
     hdr.append(internal::CommunicationHeaderObjectType::SLOT, slot);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
