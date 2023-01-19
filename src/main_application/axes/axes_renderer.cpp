@@ -182,8 +182,9 @@ void AxesRenderer::renderTitle()
     const GLint text_color_uniform = glGetUniformLocation(shader_collection_.text_shader.programId(), "textColor");
     glUniform3f(text_color_uniform, 0.0, 0.0, 0.0);
 
+    const float x_coord = -1.0f + 5.0f / width_;
     const float y_coord = 1.0f - 20.0f / height_;
-    text_renderer_.renderTextFromCenter(name_, 0.0, y_coord, 0.0005f, width_, height_);
+    text_renderer_.renderTextFromLeftCenter(name_, x_coord, y_coord, 0.0005f, width_, height_);
 }
 
 void AxesRenderer::renderInteractionLetter()
@@ -247,8 +248,8 @@ void AxesRenderer::renderInteractionLetter()
         }
     }
 
-    const float y_coord = 1.0f - 25.0f / height_;
-    const float x_coord = -1.0f + 5.0f / width_;
+    const float y_coord = -1.0f + 17.0f / height_;
+    const float x_coord = -1.0f + 10.0f / width_;
     text_renderer_.renderTextFromLeftCenter(interaction_string, x_coord, y_coord, 0.0003f, width_, height_);
 }
 
@@ -264,7 +265,7 @@ void AxesRenderer::renderViewAngles()
 
     const std::string view_angle_str = "[ " + std::to_string(az) + ", " + std::to_string(el) + " ]";
     const float y_coord = -1.0f + 20.0f / height_;
-    const float x_coord = -1.0f + 10.0f / width_;
+    const float x_coord = 1.0f - 110.0f / width_;
     text_renderer_.renderTextFromLeftCenter(view_angle_str, x_coord, y_coord, 0.0003f, width_, height_);
 }
 
