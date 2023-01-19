@@ -29,7 +29,7 @@ enum class CommunicationHeaderObjectType : uint16_t
     ELEVATION,
     AXIS_MIN_MAX_VEC,
     VEC3,
-    SCALE_VECTOR,
+    SCALE_MATRIX,
     TRANSLATION_VECTOR,
     ROTATION_MATRIX,
     PROJECT_FILE_NAME,
