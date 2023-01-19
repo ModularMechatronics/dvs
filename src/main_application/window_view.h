@@ -335,6 +335,19 @@ public:
         }
     }
 
+    void toggleProjectionType(const std::string& element_name)
+    {
+        auto q = std::find_if(
+            gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
+                return elem->getName() == element_name;
+            });
+
+        if (gui_elements_.end() != q)
+        {
+            (*q)->toggleProjectionType();
+        }
+    }
+
     bool elementWithNameExists(const std::string& element_name)
     {
         auto q = std::find_if(
@@ -463,6 +476,7 @@ private:
     std::string last_clicked_item_;
 
     HelpPane help_pane_;
+    std::string project_name_;
 
     RGBTripletf dialog_color_;
 
@@ -470,6 +484,7 @@ public:
     WindowView() = delete;
     WindowView(wxFrame* main_window,
                const WindowSettings& window_settings,
+               const std::string& project_name,
                const int callback_id,
                const std::function<void(const char key)>& notify_main_window_key_pressed,
                const std::function<void(const char key)>& notify_main_window_key_released,
@@ -504,6 +519,8 @@ public:
 
     void raiseElement(wxCommandEvent& WXUNUSED(event));
     void lowerElement(wxCommandEvent& WXUNUSED(event));
+
+    void toggleProjectionType(wxCommandEvent& WXUNUSED(event));
 
     void editTabName(wxCommandEvent& WXUNUSED(event));
     void deleteTab(wxCommandEvent& WXUNUSED(event));

@@ -7,6 +7,7 @@
 
 WindowView::WindowView(wxFrame* main_window,
                        const WindowSettings& window_settings,
+                       const std::string& project_name,
                        const int callback_id,
                        const std::function<void(const char key)>& notify_main_window_key_pressed,
                        const std::function<void(const char key)>& notify_main_window_key_released,
@@ -25,12 +26,13 @@ WindowView::WindowView(wxFrame* main_window,
       notify_main_window_element_deleted_{notify_main_window_element_deleted},
       help_pane_{this, wxPoint(150, 150), wxSize(100, 100), this->GetSize()}
 {
+    project_name_ = project_name;
     main_window_ = main_window;
     current_tab_num_ = 0;
     callback_id_ = callback_id;
     dialog_color_ = RGBTripletf(0.5, 0.0, 0.0);
 
-    this->SetLabel(window_settings.name);
+    this->SetLabel(window_settings.name + " [" + project_name_ + "]");
     name_ = window_settings.name;
 
     if (window_settings.tabs.size() == 0)
@@ -112,6 +114,7 @@ WindowView::WindowView(wxFrame* main_window,
 
     popup_menu_element_->Append(dvs_ids::EDIT_ELEMENT_NAME, wxT("Edit element name"));
     popup_menu_element_->Append(dvs_ids::DELETE_ELEMENT, wxT("Delete element"));
+    popup_menu_element_->Append(dvs_ids::TOGGLE_PROJECTION_TYPE, wxT("Toggle projection type"));
     popup_menu_element_->Append(dvs_ids::RAISE_ELEMENT, wxT("Raise"));
     popup_menu_element_->Append(dvs_ids::LOWER_ELEMENT, wxT("Lower"));
     popup_menu_element_->AppendSeparator();
@@ -139,6 +142,8 @@ WindowView::WindowView(wxFrame* main_window,
     Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
+
+    Bind(wxEVT_MENU, &WindowView::toggleProjectionType, this, dvs_ids::TOGGLE_PROJECTION_TYPE);
     Bind(wxEVT_MENU, &WindowView::raiseElement, this, dvs_ids::RAISE_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::lowerElement, this, dvs_ids::LOWER_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
@@ -298,7 +303,7 @@ int WindowView::getCallbackId() const
 
 void WindowView::setName(const std::string& new_name)
 {
-    this->SetLabel(new_name);
+    this->SetLabel(new_name + " [" + project_name_ + "]");
     name_ = new_name;
 }
 
@@ -349,7 +354,7 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
     if (window_name.length() > 0)
     {
         name_ = window_name;
-        this->SetLabel(name_);
+        this->SetLabel(name_ + " [" + project_name_ + "]");
     }
 }
 
@@ -514,6 +519,14 @@ void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
     for (const auto& t : tabs_)
     {
         t->deleteElementIfItExists(last_clicked_item_);
+    }
+}
+
+void WindowView::toggleProjectionType(wxCommandEvent& WXUNUSED(event))
+{
+    for (const auto& t : tabs_)
+    {
+        t->toggleProjectionType(last_clicked_item_);
     }
 }
 

@@ -151,7 +151,8 @@ PlotPane::PlotPane(wxWindow* parent,
     edit_size_margin_ = 20.0f;
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
-    perspective_projection_ = false;
+    perspective_projection_ =
+        (element_settings.projection_type == ElementSettings::ProjectionType::PERSPECTIVE) ? true : false;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -426,6 +427,14 @@ bool PlotPane::is3DFunction(const Function fcn)
 void PlotPane::waitForFlush()
 {
     wait_for_flush_ = true;
+}
+
+void PlotPane::toggleProjectionType()
+{
+    perspective_projection_ = !perspective_projection_;
+    element_settings_.projection_type = perspective_projection_ ? ElementSettings::ProjectionType::PERSPECTIVE
+                                                                : ElementSettings::ProjectionType::ORTHOGRAPHIC;
+    Refresh();
 }
 
 void PlotPane::showLegend(const bool show_legend)

@@ -62,6 +62,19 @@ RGB888 colorMapJet(const float value)
     return RGB888(static_cast<uint8_t>(r * 255.0f), static_cast<uint8_t>(g * 255.0f), static_cast<uint8_t>(b * 255.0f));
 }
 
+void testOpenProjectFile()
+{
+    const std::string base_path = "/Users/danielpi/work/dvs/project_files/";
+    const std::vector<std::string> project_files = {
+        "ad_dataset.dvs", "car.dvs", "exp0.dvs", "exp1.dvs", "exp2.dvs", "imu.dvs", "legend.dvs", "particles.dvs"};
+
+    for (const auto& pf : project_files)
+    {
+        openProjectFile(base_path + pf);
+        usleep(1000 * 1000 * 3);
+    }
+}
+
 void testSurf()
 {
     const int num_rows = 200, num_cols = 250;

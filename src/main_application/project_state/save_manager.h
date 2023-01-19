@@ -19,7 +19,7 @@ private:
 public:
     SaveManager()
     {
-        file_path_ = "";
+        file_path_ = "Untitled";
         is_saved_ = false;
         path_is_set_ = false;
     }

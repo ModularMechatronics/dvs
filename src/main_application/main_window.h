@@ -77,6 +77,8 @@ private:
     void newProject();
     void saveProjectAs();
     void saveProjectAsCallback(wxCommandEvent& event);
+    void openExistingFile(const std::string& file_path);
+    void openFileFromClient(const internal::CommunicationHeader& hdr);
 
     void setupWindows(const ProjectSettings& project_settings);
     void fileModified();

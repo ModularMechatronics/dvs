@@ -895,6 +895,14 @@ inline void setTransform(const internal::PlotSlot slot,
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void openProjectFile(const std::string& file_path)
+{
+    internal::CommunicationHeader hdr{internal::Function::OPEN_PROJECT_FILE};
+    hdr.append(internal::CommunicationHeaderObjectType::PROJECT_FILE_NAME, properties::Name(file_path.c_str()));
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void setTransform(const internal::PlotSlot slot,
                          const Vec3<double>& scale,
                          const MatrixFixed<double, 3, 3>& rotation,

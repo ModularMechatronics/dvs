@@ -5,6 +5,12 @@
             "name": "Window 0",
             "tabs": [
                 {
+                    "background_color": 
+                    {
+                        "b": 0.1019607843,
+                        "g": 0.07843137255,
+                        "r": 0.08235294118
+                    },
                     "button_clicked_color": {
                         "b": 0.8199999928474426,
                         "g": 0.8899999856948853,
@@ -40,9 +46,9 @@
                             },
                             "axes_numbers_on": false,
                             "background_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
+                                "b": 0.1019607843,
+                                "g": 0.07843137255,
+                                "r": 0.08235294118
                             },
                             "clipping_on": false,
                             "grid_color": {
@@ -52,6 +58,7 @@
                             },
                             "grid_on": false,
                             "height": 1.0,
+                            "projection_type": "perspective",
                             "name": "point_cloud",
                             "pane_radius": 20.0,
                             "plot_box_on": false,
