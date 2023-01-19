@@ -17,22 +17,11 @@ namespace imu
 
 properties::Transform operator*(const properties::Transform& t0, const properties::Transform& t1)
 {
-    MatrixFixed<double, 3, 3> scale_mat0 = unitMatrixFixed<double, 3, 3>();
-    MatrixFixed<double, 3, 3> scale_mat1 = unitMatrixFixed<double, 3, 3>();
-
-    scale_mat0(0, 0) = t0.scale.x;
-    scale_mat0(1, 1) = t0.scale.y;
-    scale_mat0(2, 2) = t0.scale.z;
-
-    scale_mat1(0, 0) = t1.scale.x;
-    scale_mat1(1, 1) = t1.scale.y;
-    scale_mat1(2, 2) = t1.scale.z;
-
     properties::Transform res;
 
-    res.rotation = t1.rotation * scale_mat1 * t0.rotation * scale_mat0;
-    res.translation = t1.rotation * scale_mat1 * t0.translation + t1.translation;
-    res.scale = Vec3d{1.0, 1.0, 1.0};
+    res.rotation = t1.rotation * t1.scale * t0.rotation * t0.scale;
+    res.translation = t1.rotation * t1.scale * t0.translation + t1.translation;
+    res.scale = diagMatrixFixed<double>({1.0, 1.0, 1.0});
 
     // Pt0 = R0 * S0 * p + t0
     // Pt1 = (R1 * S1 * R0 * S0 * p) + (R1 * S1 * t0) + (t1)
@@ -189,16 +178,22 @@ public:
 
         const auto unit_mat = unitMatrix<double>(3, 3);
 
-        t_cyl_x = properties::Transform{{0.1, 0.1, 1.0}, rotationMatrixY<double>(M_PI / 2.0), {2.0, 0.0, 0.0}};
-        t_cone_x = properties::Transform{{0.15, 0.15, 1.0}, rotationMatrixY<double>(M_PI / 2.0), {3.0, 0.0, 0.0}};
+        t_cyl_x = properties::Transform{
+            diagMatrix<double>({0.1, 0.1, 1.0}), rotationMatrixY<double>(M_PI / 2.0), {2.0, 0.0, 0.0}};
+        t_cone_x = properties::Transform{
+            diagMatrix<double>({0.15, 0.15, 1.0}), rotationMatrixY<double>(M_PI / 2.0), {3.0, 0.0, 0.0}};
 
-        t_cyl_y = properties::Transform{{0.1, 0.1, 1.0}, rotationMatrixX<double>(M_PI / 2.0), {0.0, 1.0, 0.0}};
-        t_cone_y = properties::Transform{{0.15, 0.15, 1.0}, rotationMatrixX<double>(-M_PI / 2.0), {0.0, 2.0, 0}};
+        t_cyl_y = properties::Transform{
+            diagMatrix<double>({0.1, 0.1, 1.0}), rotationMatrixX<double>(M_PI / 2.0), {0.0, 1.0, 0.0}};
+        t_cone_y = properties::Transform{
+            diagMatrix<double>({0.15, 0.15, 1.0}), rotationMatrixX<double>(-M_PI / 2.0), {0.0, 2.0, 0}};
 
-        t_cyl_z = properties::Transform{{0.1, 0.1, 1.0}, rotationMatrixX<double>(0.0), {0.0, 0.0, 1.0}};
-        t_cone_z = properties::Transform{{0.15, 0.15, 1.0}, rotationMatrixX<double>(0.0), {0.0, 0.0, 2.0}};
+        t_cyl_z =
+            properties::Transform{diagMatrix<double>({0.1, 0.1, 1.0}), rotationMatrixX<double>(0.0), {0.0, 0.0, 1.0}};
+        t_cone_z =
+            properties::Transform{diagMatrix<double>({0.15, 0.15, 1.0}), rotationMatrixX<double>(0.0), {0.0, 0.0, 2.0}};
 
-        t_cube = properties::Transform{{2.0, 1.0, 0.5}, unit_mat, {0, 0, 0}};
+        t_cube = properties::Transform{diagMatrix<double>({2.0, 1.0, 0.5}), unit_mat, {0, 0, 0}};
 
         const properties::FaceColor x_color{214, 28, 95};
         const properties::FaceColor y_color{0, 168, 136};
@@ -268,35 +263,33 @@ public:
 
         const auto t_cyl_z_transformed = t_cyl_z * new_transform;
         const auto t_cone_z_transformed = t_cone_z * new_transform;
-        setTransform(properties::SLOT0,
-                     diagMatrixFixed<double>(cube_transformed.scale),
-                     cube_transformed.rotation,
-                     cube_transformed.translation);
+        setTransform(
+            properties::SLOT0, cube_transformed.scale, cube_transformed.rotation, cube_transformed.translation);
 
         setTransform(properties::SLOT1,
-                     diagMatrixFixed<double>(t_cyl_x_transformed.scale),
+                     t_cyl_x_transformed.scale,
                      t_cyl_x_transformed.rotation,
                      t_cyl_x_transformed.translation);
         setTransform(properties::SLOT2,
-                     diagMatrixFixed<double>(t_cone_x_transformed.scale),
+                     t_cone_x_transformed.scale,
                      t_cone_x_transformed.rotation,
                      t_cone_x_transformed.translation);
 
         setTransform(properties::SLOT3,
-                     diagMatrixFixed<double>(t_cyl_y_transformed.scale),
+                     t_cyl_y_transformed.scale,
                      t_cyl_y_transformed.rotation,
                      t_cyl_y_transformed.translation);
         setTransform(properties::SLOT4,
-                     diagMatrixFixed<double>(t_cone_y_transformed.scale),
+                     t_cone_y_transformed.scale,
                      t_cone_y_transformed.rotation,
                      t_cone_y_transformed.translation);
 
         setTransform(properties::SLOT5,
-                     diagMatrixFixed<double>(t_cyl_z_transformed.scale),
+                     t_cyl_z_transformed.scale,
                      t_cyl_z_transformed.rotation,
                      t_cyl_z_transformed.translation);
         setTransform(properties::SLOT6,
-                     diagMatrixFixed<double>(t_cone_z_transformed.scale),
+                     t_cone_z_transformed.scale,
                      t_cone_z_transformed.rotation,
                      t_cone_z_transformed.translation);
     }
@@ -323,7 +316,8 @@ void testBasic()
     view(-38.0, 32.0);
     globalIllumination({2.0, 2.0, 2.0});
 
-    ImuVisualizer visualizer_raw{20U, properties::Transform{{1.0, 1.0, 1.0}, rotationMatrixZ<double>(0), {0, 0, 0}}};
+    ImuVisualizer visualizer_raw{
+        20U, properties::Transform{diagMatrix<double>({1.0, 1.0, 1.0}), rotationMatrixZ<double>(0), {0, 0, 0}}};
 
     setCurrentElement("filtered");
     clearView();
@@ -332,7 +326,8 @@ void testBasic()
     view(-38.0, 32.0);
     globalIllumination({2.0, 2.0, 2.0});
 
-    ImuVisualizer visualizer{20U, properties::Transform{{1.0, 1.0, 1.0}, rotationMatrixZ<double>(0), {0, 0, 0}}};
+    ImuVisualizer visualizer{
+        20U, properties::Transform{diagMatrix<double>({1.0, 1.0, 1.0}), rotationMatrixZ<double>(0), {0, 0, 0}}};
 
     double t = 0.0;
 
@@ -356,8 +351,8 @@ void testBasic()
             rotationMatrixZ<double>(theta_z) * rotationMatrixY<double>(theta_y) * rotationMatrixX<double>(theta_x);
         const auto r_mat_noise = rotationMatrixZ<double>(theta_raw_z) * rotationMatrixY<double>(theta_raw_y) *
                                  rotationMatrixX<double>(theta_raw_x);
-        const properties::Transform tr{{1.0, 1.0, 1.0}, r_mat, {0, 0, 0}};
-        const properties::Transform tr_noise{{1.0, 1.0, 1.0}, r_mat_noise, {t_x, t_y, t_z}};
+        const properties::Transform tr{diagMatrix<double>({1.0, 1.0, 1.0}), r_mat, {0, 0, 0}};
+        const properties::Transform tr_noise{diagMatrix<double>({1.0, 1.0, 1.0}), r_mat_noise, {t_x, t_y, t_z}};
 
         setCurrentElement("filtered");
         visualizer.visualize(tr);
