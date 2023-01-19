@@ -463,7 +463,7 @@ void testPlot()
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
-    plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(0, 255, 0));
+    // plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(0, 255, 0));
 
     view(0, 90);
 
