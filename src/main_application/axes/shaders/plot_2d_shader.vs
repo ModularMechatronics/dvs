@@ -100,6 +100,10 @@ void main()
     vec4 p1_transformed = model_view_proj_mat * p1_to_use;
     vec4 p2_transformed = model_view_proj_mat * p2_to_use;
 
+    p0_transformed = p0_transformed / p0_transformed.w;
+    p1_transformed = p1_transformed / p1_transformed.w;
+    p2_transformed = p2_transformed / p2_transformed.w;
+
     // vec_along01 points from point p0 to point p1
     vec2 vec_along01 = normalize(p1_transformed.xy - p0_transformed.xy);
     // vec_along12 points from point p1 to point p2
@@ -143,33 +147,33 @@ void main()
     switch(idx)
     {
     case 0:
-        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
+        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, p1_transformed.w);
         triangle_id = 0;
         break;
     case 1:
-        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
+        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, p1_transformed.w);
         triangle_id = 0;
         break;
     case 2:
-        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
+        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, p1_transformed.w);
         triangle_id = 0;
         break;
     // 2nd triangle
     case 3:
-        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
+        gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, p1_transformed.w);
         triangle_id = 1;
         break;
     case 4:
-        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
+        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, p1_transformed.w);
         triangle_id = 1;
         break;
     case 5:
-        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
+        gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, p1_transformed.w);
         triangle_id = 1;
         break;
     // 3rd triangle
     case 6:
-        gl_Position = vec4(p1_transformed.xy, p1_transformed.z, 1.0);
+        gl_Position = vec4(p1_transformed.xy, p1_transformed.z, p1_transformed.w);
         triangle_id = 2;
         break;
     case 7:
@@ -177,22 +181,22 @@ void main()
 
         if(should_flip)
         {
-            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
+            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, p1_transformed.w);
         }
         else
         {
-            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
+            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, p1_transformed.w);
         }
         break;
     case 8:
         triangle_id = 2;
         if(should_flip)
         {
-            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
+            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, p1_transformed.w);
         }
         else
         {
-            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
+            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, p1_transformed.w);
         }
         break;
     // 4th triangle
@@ -200,22 +204,22 @@ void main()
         triangle_id = 3;
         if(should_flip)
         {
-            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, 1.0);
+            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge01, p1_transformed.z, p1_transformed.w);
         }
         else
         {
-            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, 1.0);
+            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge01, p1_transformed.z, p1_transformed.w);
         }
         break;
     case 10:
         triangle_id = 3;
         if(should_flip)
         {
-            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, 1.0);
+            gl_Position = vec4(p1_transformed.xy - vec_on_line_edge12, p1_transformed.z, p1_transformed.w);
         }
         else
         {
-            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, 1.0);
+            gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, p1_transformed.w);
         }
         break;
     case 11:
@@ -225,14 +229,14 @@ void main()
             intersection_point = -intersection_point;
         }
 
-        gl_Position = vec4(p1_transformed.xy + intersection_point, p1_transformed.z, 1.0);
+        gl_Position = vec4(p1_transformed.xy + intersection_point, p1_transformed.z, p1_transformed.w);
         break;
 
     }
 
     vec4 op = inverse_model_view_proj_mat * gl_Position;
 
-    coord_out = vec4(op.x, op.y, op.z, 1.0);
+    coord_out = vec4(op.x, op.y, op.z, op.w);
 
     if(has_color_vec == int(1))
     {
