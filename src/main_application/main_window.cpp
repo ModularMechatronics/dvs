@@ -67,12 +67,19 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         save_manager_ = new SaveManager();
     }
 
+    int visualization_period_ms = 10;
+    if (configuration_agent_->hasKey("visualization_period_ms"))
+    {
+        visualization_period_ms = configuration_agent_->readValue<int>("visualization_period_ms");
+        visualization_period_ms = std::max(1, std::min(100, visualization_period_ms));
+    }
+
     current_window_num_ = 0;
 
     setupWindows(save_manager_->getCurrentProjectSettings());
 
     receive_timer_.Bind(wxEVT_TIMER, &MainWindow::OnReceiveTimer, this);
-    receive_timer_.Start(10);
+    receive_timer_.Start(visualization_period_ms);
 
     refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
 
