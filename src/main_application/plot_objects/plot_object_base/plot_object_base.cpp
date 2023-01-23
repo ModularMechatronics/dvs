@@ -167,7 +167,7 @@ void PlotObjectBase::setProperties(const Properties& props)
 
     if (props.hasProperty(PropertyType::SCATTER_STYLE))
     {
-        scatter_style_type_ = props.getProperty<ScatterStyle>().data;
+        scatter_style_ = props.getProperty<ScatterStyleContainer>().data;
     }
 
     if (props.hasProperty(PropertyType::LINE_WIDTH))
@@ -317,7 +317,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     // Properties
     alpha_ = props.getPropertyOrValue<Alpha>(255.0f) / 255.0f;
     buffer_size_ = props.getPropertyOrValue<BufferSize>(kDefaultBufferSize);
-    scatter_style_type_ = props.getPropertyOrValue<ScatterStyle>(ScatterStyleType::CIRCLE);
+    scatter_style_ = props.getPropertyOrValue<ScatterStyleContainer>(ScatterStyle::CIRCLE);
     line_width_ = props.getPropertyOrValue<LineWidth>(1.0f);
     point_size_ = props.getPropertyOrValue<PointSize>(10.0f);
 

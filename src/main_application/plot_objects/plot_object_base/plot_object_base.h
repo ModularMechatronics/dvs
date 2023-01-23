@@ -65,7 +65,7 @@ protected:
     ColorMapType color_map_;
     LineStyle line_style_;
     int is_dashed_;
-    ScatterStyleType scatter_style_type_;
+    ScatterStyle scatter_style_;
     float alpha_;
     float line_width_;
     float point_size_;

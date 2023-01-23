@@ -28,7 +28,7 @@ struct LegendProperties
     bool color_map_set;
 
     float point_size;
-    dvs::internal::ScatterStyleType scatter_style_type;
+    dvs::properties::ScatterStyle scatter_style;
 
     dvs::properties::LineStyle line_style;
 };

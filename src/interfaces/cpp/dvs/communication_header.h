@@ -293,7 +293,8 @@ private:
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
                           std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
-                          std::is_same<ColorT, U>::value,
+                          std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
+                          std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value,
                       "Incorrect type!");
         DVS_ASSERT(sizeof(U) <= kCommunicationHeaderObjectDataSize) << "Object too big!";
 
@@ -314,6 +315,24 @@ private:
             const properties::Color c{ct};
             appendProperty(c);
         }
+        else if (std::is_same<EdgeColorT, U>::value)
+        {
+            const EdgeColorT ct = *reinterpret_cast<const EdgeColorT* const>(&obj);
+            const properties::EdgeColor c{ct};
+            appendProperty(c);
+        }
+        else if (std::is_same<FaceColorT, U>::value)
+        {
+            const FaceColorT ct = *reinterpret_cast<const FaceColorT* const>(&obj);
+            const properties::FaceColor c{ct};
+            appendProperty(c);
+        }
+        else if (std::is_same<properties::ScatterStyle, U>::value)
+        {
+            const properties::ScatterStyle sst = *reinterpret_cast<const properties::ScatterStyle* const>(&obj);
+            const ScatterStyleContainer ssc{sst};
+            appendProperty(ssc);
+        }
         else
         {
             appendProperty(obj);
@@ -324,7 +343,8 @@ private:
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
                           std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
-                          std::is_same<ColorT, U>::value,
+                          std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
+                          std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value,
                       "Incorrect type!");
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
@@ -344,6 +364,24 @@ private:
             const ColorT ct = *reinterpret_cast<const ColorT* const>(&obj);
             const properties::Color c{ct};
             appendProperty(c);
+        }
+        else if (std::is_same<EdgeColorT, U>::value)
+        {
+            const EdgeColorT ct = *reinterpret_cast<const EdgeColorT* const>(&obj);
+            const properties::EdgeColor c{ct};
+            appendProperty(c);
+        }
+        else if (std::is_same<FaceColorT, U>::value)
+        {
+            const FaceColorT ct = *reinterpret_cast<const FaceColorT* const>(&obj);
+            const properties::FaceColor c{ct};
+            appendProperty(c);
+        }
+        else if (std::is_same<properties::ScatterStyle, U>::value)
+        {
+            const properties::ScatterStyle sst = *reinterpret_cast<const properties::ScatterStyle* const>(&obj);
+            const ScatterStyleContainer ssc{sst};
+            appendProperty(ssc);
         }
         else
         {
