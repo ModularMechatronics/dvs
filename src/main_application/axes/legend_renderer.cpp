@@ -222,7 +222,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
             if (legend_properties[k].color_map_set)
             {
                 glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "color_map_selection"),
-                            static_cast<int>(legend_properties[k].color_map_type) + 1);
+                            static_cast<int>(legend_properties[k].color_map) + 1);
                 const size_t num_segments = 6;
                 const float radius = scale_factor_ * 0.1;
                 renderColorMapLegend(

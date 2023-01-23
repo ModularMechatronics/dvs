@@ -33,7 +33,7 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::FACE_COLOR;
     }
-    else if (std::is_same<T, dvs::properties::ColorMap>::value)
+    else if (std::is_same<T, dvs::internal::ColorMapContainer>::value)
     {
         return dvs::internal::PropertyType::COLOR_MAP;
     }

@@ -174,7 +174,7 @@ LegendProperties DrawMesh::getLegendProperties() const
     if (color_map_set_)
     {
         lp.color_map_set = true;
-        lp.color_map_type = color_map_;
+        lp.color_map = color_map_;
     }
     else
     {

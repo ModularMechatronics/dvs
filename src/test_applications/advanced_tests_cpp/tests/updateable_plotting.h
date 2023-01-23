@@ -144,7 +144,7 @@ void testSurfBasic()
             }
         }
 
-        surf(x_mat, y_mat, z_mat, properties::ColorMap::Jet(), properties::UPDATABLE, properties::SLOT0);
+        surf(x_mat, y_mat, z_mat, properties::ColorMap::JET, properties::UPDATABLE, properties::SLOT0);
         t += 0.1;
 
         azimuth = azimuth > 180.0f ? -180.0f : azimuth + 1.0f;

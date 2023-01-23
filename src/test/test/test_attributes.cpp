@@ -214,7 +214,7 @@ TEST_F(TestProperties, TestFaceColor)
 TEST_F(TestProperties, TestColorMap)
 {
     const internal::ColorMapType cm_type = ColorMapType::MAGMA;
-    const ColorMap cm0, cm1(cm_type), cm2 = ColorMap::magma();
+    const ColorMap cm0, cm1(cm_type), cm2 = ColorMap::MAGMA;
     ASSERT_EQ(cm0.getPropertyType(), PropertyType::COLOR_MAP);
     ASSERT_EQ(cm1.getPropertyType(), PropertyType::COLOR_MAP);
 

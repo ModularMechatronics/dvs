@@ -62,7 +62,7 @@ protected:
     bool has_edge_color_;
     bool has_face_color_;
 
-    ColorMapType color_map_;
+    ColorMap color_map_;
     LineStyle line_style_;
     int is_dashed_;
     ScatterStyle scatter_style_;

@@ -215,7 +215,7 @@ void PlotObjectBase::setProperties(const Properties& props)
 
     if (props.hasProperty(PropertyType::COLOR_MAP))
     {
-        color_map_ = props.getProperty<ColorMap>().data;
+        color_map_ = props.getProperty<ColorMapContainer>().data;
         color_map_set_ = true;
         edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
     }
@@ -365,7 +365,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
 
     if (props.hasProperty(PropertyType::COLOR_MAP))
     {
-        color_map_ = props.getProperty<ColorMap>().data;
+        color_map_ = props.getProperty<ColorMapContainer>().data;
         color_map_set_ = true;
         edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
     }

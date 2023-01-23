@@ -294,7 +294,8 @@ private:
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
                           std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
                           std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
-                          std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value,
+                          std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value ||
+                          std::is_same<properties::ColorMap, U>::value,
                       "Incorrect type!");
         DVS_ASSERT(sizeof(U) <= kCommunicationHeaderObjectDataSize) << "Object too big!";
 
@@ -333,6 +334,12 @@ private:
             const ScatterStyleContainer ssc{sst};
             appendProperty(ssc);
         }
+        else if (std::is_same<properties::ColorMap, U>::value)
+        {
+            const properties::ColorMap cm = *reinterpret_cast<const properties::ColorMap* const>(&obj);
+            const ColorMapContainer cmc{cm};
+            appendProperty(cmc);
+        }
         else
         {
             appendProperty(obj);
@@ -344,7 +351,8 @@ private:
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
                           std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
                           std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
-                          std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value,
+                          std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value ||
+                          std::is_same<properties::ColorMap, U>::value,
                       "Incorrect type!");
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
@@ -382,6 +390,12 @@ private:
             const properties::ScatterStyle sst = *reinterpret_cast<const properties::ScatterStyle* const>(&obj);
             const ScatterStyleContainer ssc{sst};
             appendProperty(ssc);
+        }
+        else if (std::is_same<properties::ColorMap, U>::value)
+        {
+            const properties::ColorMap cm = *reinterpret_cast<const properties::ColorMap* const>(&obj);
+            const ColorMapContainer cmc{cm};
+            appendProperty(cmc);
         }
         else
         {

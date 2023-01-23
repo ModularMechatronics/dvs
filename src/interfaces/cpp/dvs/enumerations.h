@@ -156,16 +156,6 @@ enum class DataStructure : uint8_t
     UNKNOWN
 };
 
-enum class ColorMapType : uint8_t
-{
-    JET,
-    RAINBOW,
-    MAGMA,
-    VIRIDIS,
-    PASTEL,
-    UNKNOWN
-};
-
 enum class ColorT : uint8_t
 {
     RED,

@@ -59,7 +59,7 @@ public:
         {
             DVS_LOG_ERROR() << "Tried calling ConfigurationAgent::readValue(" << key
                             << ") for invalid ConfigurationAgent!";
-            T data;
+            T data = 0;
             return data;
         }
     }
