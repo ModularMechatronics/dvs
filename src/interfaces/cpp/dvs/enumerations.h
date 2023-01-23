@@ -197,13 +197,6 @@ enum class EdgeColorT : uint8_t
     NONE
 };
 
-enum class LineStyleType : uint8_t
-{
-    DASHED,
-    DOTTED,
-    LONG_DASHED
-};
-
 }  // namespace internal
 
 enum class ElementType : uint8_t

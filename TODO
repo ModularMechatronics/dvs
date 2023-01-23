@@ -34,7 +34,6 @@ Pre release:
 - Solve all TODOs
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
-- plot_properties static functions without any input arguments should be static variables, eg. ColorMap::JET instead of ColorMap::Jet(), Color::RED instead of Color::Red()
 
 Post release:
 - Rename setProperties to something milder, since they are not overwritten, and rename assignProperties to overwriteProperties or something
