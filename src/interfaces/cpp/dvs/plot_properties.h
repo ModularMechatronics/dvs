@@ -219,56 +219,61 @@ struct Color : internal::PropertyBase
 {
     uint8_t red, green, blue;
 
-    static Color Red()
-    {
-        return Color(255, 0, 0);
-    }
-
-    static Color Green()
-    {
-        return Color(0, 255, 0);
-    }
-
-    static Color Blue()
-    {
-        return Color(0, 0, 255);
-    }
-
-    static Color Cyan()
-    {
-        return Color(0, 255, 255);
-    }
-
-    static Color Magenta()
-    {
-        return Color(255, 0, 255);
-    }
-
-    static Color Yellow()
-    {
-        return Color(255, 255, 0);
-    }
-
-    static Color Black()
-    {
-        return Color(0, 0, 0);
-    }
-
-    static Color White()
-    {
-        return Color(255, 255, 255);
-    }
-
-    static Color Gray()
-    {
-        return Color(127, 127, 127);
-    }
+    static constexpr internal::ColorT RED = internal::ColorT::RED;
+    static constexpr internal::ColorT GREEN = internal::ColorT::GREEN;
+    static constexpr internal::ColorT BLUE = internal::ColorT::BLUE;
+    static constexpr internal::ColorT CYAN = internal::ColorT::CYAN;
+    static constexpr internal::ColorT MAGENTA = internal::ColorT::MAGENTA;
+    static constexpr internal::ColorT YELLOW = internal::ColorT::YELLOW;
+    static constexpr internal::ColorT BLACK = internal::ColorT::BLACK;
+    static constexpr internal::ColorT WHITE = internal::ColorT::WHITE;
+    static constexpr internal::ColorT GRAY = internal::ColorT::GRAY;
 
     Color() : internal::PropertyBase(internal::PropertyType::COLOR) {}
 
     explicit Color(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::COLOR), red(red_), green(green_), blue(blue_)
     {
+    }
+
+    Color(const internal::ColorT color) : internal::PropertyBase(internal::PropertyType::COLOR)
+    {
+        Color c;
+
+        switch (color)
+        {
+            case internal::ColorT::RED:
+                c = Color(255, 0, 0);
+                break;
+            case internal::ColorT::GREEN:
+                c = Color(0, 255, 0);
+                break;
+            case internal::ColorT::BLUE:
+                c = Color(0, 0, 255);
+                break;
+            case internal::ColorT::CYAN:
+                c = Color(0, 255, 255);
+                break;
+            case internal::ColorT::MAGENTA:
+                c = Color(255, 0, 255);
+                break;
+            case internal::ColorT::YELLOW:
+                c = Color(255, 255, 0);
+                break;
+            case internal::ColorT::BLACK:
+                c = Color(0, 0, 0);
+                break;
+            case internal::ColorT::WHITE:
+                c = Color(255, 255, 255);
+                break;
+            case internal::ColorT::GRAY:
+                c = Color(127, 127, 127);
+                break;
+        }
+
+        red = c.red;
+        green = c.green;
+        blue = c.blue;
     }
 };
 

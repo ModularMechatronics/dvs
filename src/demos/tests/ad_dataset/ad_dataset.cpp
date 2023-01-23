@@ -283,7 +283,7 @@ void testBasic()
                  properties::ScatterStyle::Disc());
         for (const auto& circ_pts : circle_points)
         {
-            plot(circ_pts.first, circ_pts.second, properties::Color::White(), properties::LineWidth(3));
+            plot(circ_pts.first, circ_pts.second, properties::Color::WHITE, properties::LineWidth(3));
         }
 
         setCurrentElement("center");

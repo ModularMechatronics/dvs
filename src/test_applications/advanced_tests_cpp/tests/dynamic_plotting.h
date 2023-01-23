@@ -26,7 +26,7 @@ void test2DFunctionExpandingPlotObject()
 
         t += 0.1;
 
-        plot(x, y, properties::Color::Blue());
+        plot(x, y, properties::Color::BLUE);
         usleep(1000);
     }
 }
@@ -48,7 +48,7 @@ void test3DFunctionExpandingPlotObject()
 
         t += 0.1;
 
-        plot3(x, y, z, properties::Color::Blue());
+        plot3(x, y, z, properties::Color::BLUE);
         usleep(1000);
     }
 }
@@ -62,7 +62,7 @@ void test2DFunctionRotatingView()
 
     const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0, 5.0, num_elements);
     const Vector<double> y = dvs::sin(x);
-    plot(x, y, properties::Color::Blue(), properties::LineWidth(14));
+    plot(x, y, properties::Color::BLUE, properties::LineWidth(14));
 
     for (size_t k = 0; k < 100; k++)
     {
@@ -80,7 +80,7 @@ void test2DFunctionChangingAxes()
 
     const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0, 5.0, num_elements);
     const Vector<double> y = dvs::sin(x);
-    plot(x, y, properties::Color::Blue(), properties::LineWidth(14));
+    plot(x, y, properties::Color::BLUE, properties::LineWidth(14));
 
     const Vec2d min_vec(dvs::min(x), dvs::min(y));
     const Vec2d max_vec(dvs::max(x), dvs::max(y));
@@ -112,7 +112,7 @@ void test2DFunctionNewDataAndClear()
         const Vec2d min_vec(min_x, dvs::min(y));
         const Vec2d max_vec(max_x, dvs::max(y));
 
-        plot(x, y, properties::Color::Blue(), properties::LineWidth(14));
+        plot(x, y, properties::Color::BLUE, properties::LineWidth(14));
 
         axis({min_vec.x, -1.0}, {max_vec.x, 1.0});
         softClearView();

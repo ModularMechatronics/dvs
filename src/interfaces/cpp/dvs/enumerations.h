@@ -175,6 +175,19 @@ enum class ScatterStyleType : uint8_t
     CROSS
 };
 
+enum class ColorT : uint8_t
+{
+    RED,
+    GREEN,
+    BLUE,
+    CYAN,
+    MAGENTA,
+    YELLOW,
+    BLACK,
+    WHITE,
+    GRAY
+};
+
 enum class LineStyleType : uint8_t
 {
     DASHED,

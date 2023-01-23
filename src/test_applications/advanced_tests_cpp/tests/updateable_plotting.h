@@ -20,7 +20,7 @@ void testRealTimePlotBasic()
     view(180, -90);
     axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
 
-    setProperties(properties::SLOT0, properties::Color::Blue());
+    setProperties(properties::SLOT0, properties::Color::BLUE);
 
     for (size_t k = 0; k < num_its; k++)
     {
@@ -29,16 +29,16 @@ void testRealTimePlotBasic()
 
         if (k == 600)
         {
-            setProperties(properties::SLOT0, properties::Color::Red());
+            setProperties(properties::SLOT0, properties::Color::RED);
             setProperties(properties::SLOT0, properties::BufferSize(1000U));
         }
         /*if (k < 120)
         {
-            realTimePlot(dt, y, properties::SLOT0, properties::Color::Blue());
+            realTimePlot(dt, y, properties::SLOT0, properties::Color::BLUE);
         }
         else if (k == 120)
         {
-            setProperties(properties::SLOT0, properties::Color::Red());
+            setProperties(properties::SLOT0, properties::Color::RED);
             realTimePlot(dt, y, properties::SLOT0);
         }
         else
@@ -64,7 +64,7 @@ void testSynchronizedRealTimePlot()
     view(180, -90);
     axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
 
-    setProperties(properties::SLOT0, properties::Color::Blue());
+    setProperties(properties::SLOT0, properties::Color::BLUE);
 
     for (size_t k = 0; k < num_its; k++)
     {
@@ -73,7 +73,7 @@ void testSynchronizedRealTimePlot()
 
         if (k == 600)
         {
-            setProperties(properties::SLOT0, properties::Color::Red());
+            setProperties(properties::SLOT0, properties::Color::RED);
             setProperties(properties::SLOT0, properties::BufferSize(1000U));
         }
         realTimePlot(dt, y, properties::SLOT0);

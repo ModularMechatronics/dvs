@@ -19,8 +19,8 @@ void testWithVectorView()
 
     setCurrentElement("view_00");
     clearView();
-    scatter(x, y, properties::Color::Red());
-    plot(xv, yv, properties::Color::Blue());
+    scatter(x, y, properties::Color::RED);
+    plot(xv, yv, properties::Color::BLUE);
 }
 
 }  // namespace plot2

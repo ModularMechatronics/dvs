@@ -292,7 +292,8 @@ private:
     template <typename U> void extendInternal(const U& obj)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
-                          std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value,
+                          std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
+                          std::is_same<ColorT, U>::value,
                       "Incorrect type!");
         DVS_ASSERT(sizeof(U) <= kCommunicationHeaderObjectDataSize) << "Object too big!";
 
@@ -307,24 +308,23 @@ private:
             const PlotSlot f = *reinterpret_cast<const PlotSlot* const>(&obj);
             append(CommunicationHeaderObjectType::SLOT, f);
         }
+        else if (std::is_same<ColorT, U>::value)
+        {
+            const ColorT ct = *reinterpret_cast<const ColorT* const>(&obj);
+            const properties::Color c{ct};
+            appendProperty(c);
+        }
         else
         {
-            props_.pushBack(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
-            CommunicationHeaderObject& current_obj = props_.lastElement();
-
-            current_obj.size = sizeof(U);
-            fillBufferWithObjects(current_obj.data, obj);
-
-            const PropertyBase* const tmp_obj = reinterpret_cast<const PropertyBase* const>(&obj);
-            properties_lut_.appendPropertyIndex(tmp_obj->getPropertyType(), prop_idx_);
-            prop_idx_++;
+            appendProperty(obj);
         }
     }
 
     template <typename U, typename... Us> void extendInternal(const U& obj, const Us&... other_objs)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
-                          std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value,
+                          std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
+                          std::is_same<ColorT, U>::value,
                       "Incorrect type!");
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
@@ -339,20 +339,31 @@ private:
             const PlotSlot f = *reinterpret_cast<const PlotSlot* const>(&obj);
             append(CommunicationHeaderObjectType::SLOT, f);
         }
+        else if (std::is_same<ColorT, U>::value)
+        {
+            const ColorT ct = *reinterpret_cast<const ColorT* const>(&obj);
+            const properties::Color c{ct};
+            appendProperty(c);
+        }
         else
         {
-            props_.pushBack(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
-            CommunicationHeaderObject& current_obj = props_.lastElement();
-
-            current_obj.size = sizeof(U);
-            fillBufferWithObjects(current_obj.data, obj);
-
-            const PropertyBase* const tmp_obj = reinterpret_cast<const PropertyBase* const>(&obj);
-            properties_lut_.appendPropertyIndex(tmp_obj->getPropertyType(), prop_idx_);
-            prop_idx_++;
+            appendProperty(obj);
         }
 
         extendInternal(other_objs...);
+    }
+
+    template <typename U> void appendProperty(const U& prop)
+    {
+        props_.pushBack(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
+        CommunicationHeaderObject& current_obj = props_.lastElement();
+
+        current_obj.size = sizeof(U);
+        fillBufferWithObjects(current_obj.data, prop);
+
+        const PropertyBase* const tmp_obj = reinterpret_cast<const PropertyBase* const>(&prop);
+        properties_lut_.appendPropertyIndex(tmp_obj->getPropertyType(), prop_idx_);
+        prop_idx_++;
     }
 
     template <typename T> CommunicationHeaderObjectType templateToObjectType() const

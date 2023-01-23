@@ -142,11 +142,11 @@ void testScatter()
 
     plot(xf, yf, properties::Color(212, 14, 55));
     scatter(x, y, properties::Color(12, 14, 55));
-    scatter(x, y + 1.0, properties::Color::Black(), properties::PointSize(11));
-    scatter(x, y + 2.0, properties::Color::Cyan(), properties::PointSize(12), properties::ScatterStyle::Square());
-    scatter(x, y + 3.0, properties::Color::Magenta(), properties::PointSize(13), properties::ScatterStyle::Disc());
-    scatter(x, y + 4.0, properties::Color::Blue(), properties::PointSize(14), properties::ScatterStyle::Plus());
-    scatter(x, y + 5.0, properties::Color::Red(), properties::PointSize(14), properties::ScatterStyle::Cross());
+    scatter(x, y + 1.0, properties::Color::BLACK, properties::PointSize(11));
+    scatter(x, y + 2.0, properties::Color::CYAN, properties::PointSize(12), properties::ScatterStyle::Square());
+    scatter(x, y + 3.0, properties::Color::MAGENTA, properties::PointSize(13), properties::ScatterStyle::Disc());
+    scatter(x, y + 4.0, properties::Color::BLUE, properties::PointSize(14), properties::ScatterStyle::Plus());
+    scatter(x, y + 5.0, properties::Color::RED, properties::PointSize(14), properties::ScatterStyle::Cross());
 
     const size_t new_num_elements = 500;
 
@@ -212,11 +212,11 @@ void testScatter3()
 
     plot3(x, y, z, properties::Color(255, 14, 255), properties::LineWidth(1));
     scatter3(x, y, z, properties::Color(12, 14, 55));
-    scatter3(x, y, z + 1.0, properties::Color::Black(), properties::PointSize(11));
-    scatter3(x, y, z + 2.0, properties::Color::Cyan(), properties::PointSize(12), properties::ScatterStyle::Square());
-    scatter3(x, y, z + 3.0, properties::Color::Magenta(), properties::PointSize(13), properties::ScatterStyle::Disc());
-    scatter3(x, y, z + 4.0, properties::Color::Blue(), properties::PointSize(14), properties::ScatterStyle::Plus());
-    scatter3(x, y, z + 5.0, properties::Color::Red(), properties::PointSize(14), properties::ScatterStyle::Cross());
+    scatter3(x, y, z + 1.0, properties::Color::BLACK, properties::PointSize(11));
+    scatter3(x, y, z + 2.0, properties::Color::CYAN, properties::PointSize(12), properties::ScatterStyle::Square());
+    scatter3(x, y, z + 3.0, properties::Color::MAGENTA, properties::PointSize(13), properties::ScatterStyle::Disc());
+    scatter3(x, y, z + 4.0, properties::Color::BLUE, properties::PointSize(14), properties::ScatterStyle::Plus());
+    scatter3(x, y, z + 5.0, properties::Color::RED, properties::PointSize(14), properties::ScatterStyle::Cross());
 
     const size_t new_num_elements = 500;
 
@@ -511,7 +511,7 @@ void testPlot()
          properties::LineWidth(7),
          properties::LineStyle::LongDashed(),
          properties::PERSISTENT);
-    scatter3(x + 3.0f, y, z, properties::Color::Black(), properties::PointSize(14));
+    scatter3(x + 3.0f, y, z, properties::Color::BLACK, properties::PointSize(14));
 
     setCurrentElement("p_view_2");
     clearView();
@@ -660,7 +660,7 @@ void testStem()
     clearView();
 
     axis({0.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    stem(x, y, properties::Color::Red());
+    stem(x, y, properties::Color::RED);
 }
 
 void testStairs()

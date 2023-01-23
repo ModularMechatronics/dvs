@@ -21,8 +21,8 @@ void testWithVectorView()
 
     setCurrentElement("view_00");
     clearView();
-    scatter3(x, y, z, properties::Color::Red());
-    plot3(xv, yv, zv, properties::Color::Blue());
+    scatter3(x, y, z, properties::Color::RED);
+    plot3(xv, yv, zv, properties::Color::BLUE);
 }
 
 }  // namespace plot3_ns

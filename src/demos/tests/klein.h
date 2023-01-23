@@ -145,8 +145,8 @@ void testBasic()
 
     evalKlein(u_mat, v_mat, x, y, z, 0.0f, 0.0f, klein_params, unitMatrix<float>(3, 3));
 
-    scatter3(vx, vy, vz, properties::Color::Red());
-    plot3(vx, vy, vz, properties::Color::Blue());
+    scatter3(vx, vy, vz, properties::Color::RED);
+    plot3(vx, vy, vz, properties::Color::BLUE);
 }
 
 void testAdvanced0()
@@ -177,8 +177,8 @@ void testAdvanced0()
         evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params, unitMatrix<float>(3, 3));
         u_offset += 0.1;
 
-        scatter3(vx, vy, vz, properties::Color::Red());
-        plot3(vx, vy, vz, properties::Color::Blue());
+        scatter3(vx, vy, vz, properties::Color::RED);
+        plot3(vx, vy, vz, properties::Color::BLUE);
         // axis({-130.0, 0.0, -1.0}, {110.0, 4.0, 1.0});
         flushCurrentElement();
 
