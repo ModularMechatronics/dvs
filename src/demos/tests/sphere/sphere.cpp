@@ -434,7 +434,7 @@ void testBasic()
                  properties::DistanceFrom::xyz({0, 0, 2}, 0.0, 3.0),
                  properties::ColorMap::Rainbow(),
                  properties::PointSize(13),
-                 properties::ScatterStyle::Circle());
+                 properties::ScatterStyle::CIRCLE);
 
         flushCurrentElement();
 

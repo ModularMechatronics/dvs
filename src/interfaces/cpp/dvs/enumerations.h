@@ -166,15 +166,6 @@ enum class ColorMapType : uint8_t
     UNKNOWN
 };
 
-enum class ScatterStyleType : uint8_t
-{
-    SQUARE,
-    CIRCLE,
-    DISC,
-    PLUS,
-    CROSS
-};
-
 enum class ColorT : uint8_t
 {
     RED,
@@ -186,6 +177,34 @@ enum class ColorT : uint8_t
     BLACK,
     WHITE,
     GRAY
+};
+
+enum class FaceColorT : uint8_t
+{
+    RED,
+    GREEN,
+    BLUE,
+    CYAN,
+    MAGENTA,
+    YELLOW,
+    BLACK,
+    WHITE,
+    GRAY,
+    NONE
+};
+
+enum class EdgeColorT : uint8_t
+{
+    RED,
+    GREEN,
+    BLUE,
+    CYAN,
+    MAGENTA,
+    YELLOW,
+    BLACK,
+    WHITE,
+    GRAY,
+    NONE
 };
 
 enum class LineStyleType : uint8_t

@@ -37,7 +37,7 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::COLOR_MAP;
     }
-    else if (std::is_same<T, dvs::properties::ScatterStyle>::value)
+    else if (std::is_same<T, dvs::internal::ScatterStyleContainer>::value)
     {
         return dvs::internal::PropertyType::SCATTER_STYLE;
     }

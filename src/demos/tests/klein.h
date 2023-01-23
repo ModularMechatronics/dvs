@@ -246,14 +246,14 @@ void testAdvanced1()
         const Matrix<float> r_mat = rotationMatrixZ(az) * rotationMatrixY(ay) * rotationMatrixX(ax);
         // const Matrix<float> r_mat = unitMatrix<float>(3, 3);
         evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params, r_mat);
-        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::FaceColor(255, 0, 74));
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::FaceColor(255, 0, 74));
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 74));
-        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Rainbow());
-        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Jet());
-        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::ColorMap::Viridis());
-        drawMesh(vx, vy, vz, indices.constView(), properties::EdgeColor::None(), properties::ColorMap::Magma());
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::ColorMap::Rainbow());
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::ColorMap::Jet());
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::ColorMap::Viridis());
+        drawMesh(vx, vy, vz, indices.constView(), properties::EdgeColor::NONE, properties::ColorMap::Magma());
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 255, 0), properties::FaceColor::None());
-        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::None(), properties::FaceColor(233, 116, 74));
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::FaceColor(233, 116, 74));
 
         // ax += 0.05;
         // ay += 0.02;

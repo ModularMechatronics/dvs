@@ -177,7 +177,7 @@ void testBasic()
              y.constView(),
              z,
              properties::ColorMap::Jet(),
-             properties::EdgeColor::None(),
+             properties::EdgeColor::NONE,
              properties::INTERPOLATE_COLORMAP);
         std::cin.ignore();
         // usleep(50 * 1000);

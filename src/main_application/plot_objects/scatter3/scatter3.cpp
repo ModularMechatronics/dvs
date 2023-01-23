@@ -73,7 +73,7 @@ LegendProperties Scatter3D::getLegendProperties() const
     LegendProperties lp{PlotObjectBase::getLegendProperties()};
     lp.type = LegendType::DOT;
     lp.color = color_;
-    lp.scatter_style_type = scatter_style_type_;
+    lp.scatter_style = scatter_style_;
     lp.point_size = point_size_;
 
     return lp;
@@ -85,7 +85,7 @@ void Scatter3D::modifyShader()
     glUseProgram(shader_collection_.scatter_shader.programId());
     glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "point_size"), point_size_);
     glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"),
-                static_cast<int>(scatter_style_type_));
+                static_cast<int>(scatter_style_));
 
     if (has_color_)
     {

@@ -41,7 +41,7 @@ void testWithColorVec()
 
     setCurrentElement("p_view_0");
     clearView();
-    scatter3(x, y, z, color, properties::PointSize(20), properties::ScatterStyle::Disc());
+    scatter3(x, y, z, color, properties::PointSize(20), properties::ScatterStyle::DISC);
 }
 
 }  // namespace scatter3_ns

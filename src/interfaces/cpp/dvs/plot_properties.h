@@ -179,55 +179,18 @@ public:
     }
 };
 
-struct ScatterStyle : internal::PropertyBase
+enum class ScatterStyle : uint8_t
 {
-    internal::ScatterStyleType data;
-
-    ScatterStyle() : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE) {}
-    explicit ScatterStyle(const internal::ScatterStyleType scatter_style_type)
-        : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE), data{scatter_style_type}
-    {
-    }
-
-    static ScatterStyle Cross()
-    {
-        return ScatterStyle{internal::ScatterStyleType::CROSS};
-    }
-
-    static ScatterStyle Circle()
-    {
-        return ScatterStyle{internal::ScatterStyleType::CIRCLE};
-    }
-
-    static ScatterStyle Disc()
-    {
-        return ScatterStyle{internal::ScatterStyleType::DISC};
-    }
-
-    static ScatterStyle Square()
-    {
-        return ScatterStyle{internal::ScatterStyleType::SQUARE};
-    }
-
-    static ScatterStyle Plus()
-    {
-        return ScatterStyle{internal::ScatterStyleType::PLUS};
-    }
+    SQUARE,
+    CIRCLE,
+    DISC,
+    PLUS,
+    CROSS
 };
 
 struct Color : internal::PropertyBase
 {
     uint8_t red, green, blue;
-
-    static constexpr internal::ColorT RED = internal::ColorT::RED;
-    static constexpr internal::ColorT GREEN = internal::ColorT::GREEN;
-    static constexpr internal::ColorT BLUE = internal::ColorT::BLUE;
-    static constexpr internal::ColorT CYAN = internal::ColorT::CYAN;
-    static constexpr internal::ColorT MAGENTA = internal::ColorT::MAGENTA;
-    static constexpr internal::ColorT YELLOW = internal::ColorT::YELLOW;
-    static constexpr internal::ColorT BLACK = internal::ColorT::BLACK;
-    static constexpr internal::ColorT WHITE = internal::ColorT::WHITE;
-    static constexpr internal::ColorT GRAY = internal::ColorT::GRAY;
 
     Color() : internal::PropertyBase(internal::PropertyType::COLOR) {}
 
@@ -275,62 +238,22 @@ struct Color : internal::PropertyBase
         green = c.green;
         blue = c.blue;
     }
+
+    static constexpr internal::ColorT RED = internal::ColorT::RED;
+    static constexpr internal::ColorT GREEN = internal::ColorT::GREEN;
+    static constexpr internal::ColorT BLUE = internal::ColorT::BLUE;
+    static constexpr internal::ColorT CYAN = internal::ColorT::CYAN;
+    static constexpr internal::ColorT MAGENTA = internal::ColorT::MAGENTA;
+    static constexpr internal::ColorT YELLOW = internal::ColorT::YELLOW;
+    static constexpr internal::ColorT BLACK = internal::ColorT::BLACK;
+    static constexpr internal::ColorT WHITE = internal::ColorT::WHITE;
+    static constexpr internal::ColorT GRAY = internal::ColorT::GRAY;
 };
 
 struct EdgeColor : internal::PropertyBase
 {
     uint8_t use_color;
     uint8_t red, green, blue;
-
-    static EdgeColor Red()
-    {
-        return EdgeColor(255, 0, 0);
-    }
-
-    static EdgeColor Green()
-    {
-        return EdgeColor(0, 255, 0);
-    }
-
-    static EdgeColor Blue()
-    {
-        return EdgeColor(0, 0, 255);
-    }
-
-    static EdgeColor Cyan()
-    {
-        return EdgeColor(0, 255, 255);
-    }
-
-    static EdgeColor Magenta()
-    {
-        return EdgeColor(255, 0, 255);
-    }
-
-    static EdgeColor Yellow()
-    {
-        return EdgeColor(255, 255, 0);
-    }
-
-    static EdgeColor Black()
-    {
-        return EdgeColor(0, 0, 0);
-    }
-
-    static EdgeColor White()
-    {
-        return EdgeColor(255, 255, 255);
-    }
-
-    static EdgeColor Gray()
-    {
-        return EdgeColor(127, 127, 127);
-    }
-
-    static EdgeColor None()
-    {
-        return EdgeColor(0U);
-    }
 
     EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{1U} {}
 
@@ -351,62 +274,67 @@ struct EdgeColor : internal::PropertyBase
           blue(0U)
     {
     }
+
+    EdgeColor(const internal::EdgeColorT color)
+        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color(1U)
+    {
+        EdgeColor ec;
+
+        switch (color)
+        {
+            case internal::EdgeColorT::RED:
+                ec = EdgeColor(255, 0, 0);
+                break;
+            case internal::EdgeColorT::GREEN:
+                ec = EdgeColor(0, 255, 0);
+                break;
+            case internal::EdgeColorT::BLUE:
+                ec = EdgeColor(0, 0, 255);
+                break;
+            case internal::EdgeColorT::CYAN:
+                ec = EdgeColor(0, 255, 255);
+                break;
+            case internal::EdgeColorT::MAGENTA:
+                ec = EdgeColor(255, 0, 255);
+                break;
+            case internal::EdgeColorT::YELLOW:
+                ec = EdgeColor(255, 255, 0);
+                break;
+            case internal::EdgeColorT::BLACK:
+                ec = EdgeColor(0, 0, 0);
+                break;
+            case internal::EdgeColorT::WHITE:
+                ec = EdgeColor(255, 255, 255);
+                break;
+            case internal::EdgeColorT::GRAY:
+                ec = EdgeColor(127, 127, 127);
+                break;
+            case internal::EdgeColorT::NONE:
+                ec = EdgeColor(0U);
+                break;
+        }
+
+        red = ec.red;
+        green = ec.green;
+        blue = ec.blue;
+    }
+
+    static constexpr internal::EdgeColorT RED = internal::EdgeColorT::RED;
+    static constexpr internal::EdgeColorT GREEN = internal::EdgeColorT::GREEN;
+    static constexpr internal::EdgeColorT BLUE = internal::EdgeColorT::BLUE;
+    static constexpr internal::EdgeColorT CYAN = internal::EdgeColorT::CYAN;
+    static constexpr internal::EdgeColorT MAGENTA = internal::EdgeColorT::MAGENTA;
+    static constexpr internal::EdgeColorT YELLOW = internal::EdgeColorT::YELLOW;
+    static constexpr internal::EdgeColorT BLACK = internal::EdgeColorT::BLACK;
+    static constexpr internal::EdgeColorT WHITE = internal::EdgeColorT::WHITE;
+    static constexpr internal::EdgeColorT GRAY = internal::EdgeColorT::GRAY;
+    static constexpr internal::EdgeColorT NONE = internal::EdgeColorT::NONE;
 };
 
 struct FaceColor : internal::PropertyBase
 {
     uint8_t use_color;
     uint8_t red, green, blue;
-
-    static FaceColor Red()
-    {
-        return FaceColor(255, 0, 0);
-    }
-
-    static FaceColor Green()
-    {
-        return FaceColor(0, 255, 0);
-    }
-
-    static FaceColor Blue()
-    {
-        return FaceColor(0, 0, 255);
-    }
-
-    static FaceColor Cyan()
-    {
-        return FaceColor(0, 255, 255);
-    }
-
-    static FaceColor Magenta()
-    {
-        return FaceColor(255, 0, 255);
-    }
-
-    static FaceColor Yellow()
-    {
-        return FaceColor(255, 255, 0);
-    }
-
-    static FaceColor Black()
-    {
-        return FaceColor(0, 0, 0);
-    }
-
-    static FaceColor White()
-    {
-        return FaceColor(255, 255, 255);
-    }
-
-    static FaceColor Gray()
-    {
-        return FaceColor(127, 127, 127);
-    }
-
-    static FaceColor None()
-    {
-        return FaceColor(0U);
-    }
 
     FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{1U}, red(0), green(0), blue(0)
     {
@@ -429,6 +357,61 @@ struct FaceColor : internal::PropertyBase
           blue(0U)
     {
     }
+
+    FaceColor(const internal::FaceColorT color)
+        : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color(1U)
+    {
+        FaceColor fc;
+
+        switch (color)
+        {
+            case internal::FaceColorT::RED:
+                fc = FaceColor(255, 0, 0);
+                break;
+            case internal::FaceColorT::GREEN:
+                fc = FaceColor(0, 255, 0);
+                break;
+            case internal::FaceColorT::BLUE:
+                fc = FaceColor(0, 0, 255);
+                break;
+            case internal::FaceColorT::CYAN:
+                fc = FaceColor(0, 255, 255);
+                break;
+            case internal::FaceColorT::MAGENTA:
+                fc = FaceColor(255, 0, 255);
+                break;
+            case internal::FaceColorT::YELLOW:
+                fc = FaceColor(255, 255, 0);
+                break;
+            case internal::FaceColorT::BLACK:
+                fc = FaceColor(0, 0, 0);
+                break;
+            case internal::FaceColorT::WHITE:
+                fc = FaceColor(255, 255, 255);
+                break;
+            case internal::FaceColorT::GRAY:
+                fc = FaceColor(127, 127, 127);
+                break;
+            case internal::FaceColorT::NONE:
+                fc = FaceColor(0U);
+                break;
+        }
+
+        red = fc.red;
+        green = fc.green;
+        blue = fc.blue;
+    }
+
+    static constexpr internal::FaceColorT RED = internal::FaceColorT::RED;
+    static constexpr internal::FaceColorT GREEN = internal::FaceColorT::GREEN;
+    static constexpr internal::FaceColorT BLUE = internal::FaceColorT::BLUE;
+    static constexpr internal::FaceColorT CYAN = internal::FaceColorT::CYAN;
+    static constexpr internal::FaceColorT MAGENTA = internal::FaceColorT::MAGENTA;
+    static constexpr internal::FaceColorT YELLOW = internal::FaceColorT::YELLOW;
+    static constexpr internal::FaceColorT BLACK = internal::FaceColorT::BLACK;
+    static constexpr internal::FaceColorT WHITE = internal::FaceColorT::WHITE;
+    static constexpr internal::FaceColorT GRAY = internal::FaceColorT::GRAY;
+    static constexpr internal::FaceColorT NONE = internal::FaceColorT::NONE;
 };
 
 struct ColorMap : internal::PropertyBase
@@ -573,6 +556,51 @@ constexpr internal::PropertyFlag INTERPOLATE_COLORMAP = internal::PropertyFlag::
 constexpr internal::PropertyFlag UPDATABLE = internal::PropertyFlag::UPDATABLE;
 
 }  // namespace properties
+
+namespace internal
+{
+struct ScatterStyleContainer : internal::PropertyBase
+{
+    properties::ScatterStyle data;
+
+    ScatterStyleContainer() : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE) {}
+    explicit ScatterStyleContainer(const properties::ScatterStyle scatter_style_type)
+        : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE), data{scatter_style_type}
+    {
+    }
+
+    static constexpr properties::ScatterStyle CROSS = properties::ScatterStyle::CROSS;
+    static constexpr properties::ScatterStyle CIRCLE = properties::ScatterStyle::CIRCLE;
+    static constexpr properties::ScatterStyle DISC = properties::ScatterStyle::DISC;
+    static constexpr properties::ScatterStyle SQUARE = properties::ScatterStyle::SQUARE;
+    static constexpr properties::ScatterStyle PLUS = properties::ScatterStyle::PLUS;
+
+    static ScatterStyleContainer Cross()
+    {
+        return ScatterStyleContainer{properties::ScatterStyle::CROSS};
+    }
+
+    static ScatterStyleContainer Circle()
+    {
+        return ScatterStyleContainer{properties::ScatterStyle::CIRCLE};
+    }
+
+    static ScatterStyleContainer Disc()
+    {
+        return ScatterStyleContainer{properties::ScatterStyle::DISC};
+    }
+
+    static ScatterStyleContainer Square()
+    {
+        return ScatterStyleContainer{properties::ScatterStyle::SQUARE};
+    }
+
+    static ScatterStyleContainer Plus()
+    {
+        return ScatterStyleContainer{properties::ScatterStyle::PLUS};
+    }
+};
+}  // namespace internal
 
 }  // namespace dvs
 

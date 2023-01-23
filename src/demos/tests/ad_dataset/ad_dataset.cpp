@@ -168,7 +168,7 @@ void testScroll()
                  properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
                  properties::ColorMap::Viridis(),
                  properties::PointSize(5),
-                 properties::ScatterStyle::Disc());
+                 properties::ScatterStyle::DISC);
 
         setCurrentElement("secondary");
         softClearView();
@@ -178,7 +178,7 @@ void testScroll()
                  properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
                  properties::ColorMap::Viridis(),
                  properties::PointSize(5),
-                 properties::ScatterStyle::Disc());
+                 properties::ScatterStyle::DISC);
 
         flushMultipleElements("main", "secondary");
 
@@ -280,7 +280,7 @@ void testBasic()
                  properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
                  properties::ColorMap::Viridis(),
                  properties::PointSize(5),
-                 properties::ScatterStyle::Disc());
+                 properties::ScatterStyle::DISC);
         for (const auto& circ_pts : circle_points)
         {
             plot(circ_pts.first, circ_pts.second, properties::Color::WHITE, properties::LineWidth(3));

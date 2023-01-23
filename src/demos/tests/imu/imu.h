@@ -204,7 +204,7 @@ public:
         drawMesh(cube_pts_indices.points,
                  cube_pts_indices.indices,
                  cube_color,
-                 properties::EdgeColor::None(),
+                 properties::EdgeColor::NONE,
                  properties::SLOT0,
                  t_cube);
 
@@ -212,13 +212,13 @@ public:
         drawMesh(cylinder_pts_indices.points,
                  cylinder_pts_indices.indices,
                  x_color,
-                 properties::EdgeColor::None(),
+                 properties::EdgeColor::NONE,
                  properties::SLOT1,
                  t_cyl_x);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
                  x_color,
-                 properties::EdgeColor::None(),
+                 properties::EdgeColor::NONE,
                  properties::SLOT2,
                  t_cone_x);
 
@@ -226,13 +226,13 @@ public:
         drawMesh(cylinder_pts_indices.points,
                  cylinder_pts_indices.indices,
                  y_color,
-                 properties::EdgeColor::None(),
+                 properties::EdgeColor::NONE,
                  properties::SLOT3,
                  t_cyl_y);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
                  y_color,
-                 properties::EdgeColor::None(),
+                 properties::EdgeColor::NONE,
                  properties::SLOT4,
                  t_cone_y);
 
@@ -240,13 +240,13 @@ public:
         drawMesh(cylinder_pts_indices.points,
                  cylinder_pts_indices.indices,
                  z_color,
-                 properties::EdgeColor::None(),
+                 properties::EdgeColor::NONE,
                  properties::SLOT5,
                  t_cyl_z);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
                  z_color,
-                 properties::EdgeColor::None(),
+                 properties::EdgeColor::NONE,
                  properties::SLOT6,
                  t_cone_z);
     }

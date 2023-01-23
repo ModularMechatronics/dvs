@@ -202,7 +202,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
             glUniform1f(glGetUniformLocation(shader_collection_.legend_shader.programId(), "point_size"),
                         legend_properties[k].point_size);
             glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "scatter_mode"),
-                        static_cast<int>(legend_properties[k].scatter_style_type));
+                        static_cast<int>(legend_properties[k].scatter_style));
 
             const RGBTripletf col = legend_properties[k].color;
             legend_shape_vertices[0] = x_center;

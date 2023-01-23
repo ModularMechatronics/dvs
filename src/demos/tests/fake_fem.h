@@ -84,7 +84,7 @@ public:
 
             std::cout << new_point << std::endl;
 
-            scatter(x, y, properties::Color::RED, properties::ScatterStyle::Disc(), properties::PointSize(30));
+            scatter(x, y, properties::Color::RED, properties::ScatterStyle::DISC, properties::PointSize(30));
             usleep(500 * 1000);
             softClearView();
         }
@@ -130,7 +130,7 @@ void testBasic()
     axis(min_bnd, max_bnd);
     FakeFem ff{num_particles, p0, min_bnd, max_bnd};
 
-    // scatter(x, y, properties::Color::RED, properties::ScatterStyle::Disc(), properties::PointSize(30));
+    // scatter(x, y, properties::Color::RED, properties::ScatterStyle::DISC, properties::PointSize(30));
     // usleep(50 * 1000);
     // softClearView();
 }

@@ -107,15 +107,15 @@ void testSurf()
 
     setCurrentElement("p_view_1");
     clearView();
-    surf(x, y, z, properties::EdgeColor::None(), properties::ColorMap::Jet());
+    surf(x, y, z, properties::EdgeColor::NONE, properties::ColorMap::Jet());
 
     setCurrentElement("p_view_2");
     clearView();
-    surf(x, y, z, properties::EdgeColor::None(), properties::ColorMap::Jet(), properties::INTERPOLATE_COLORMAP);
+    surf(x, y, z, properties::EdgeColor::NONE, properties::ColorMap::Jet(), properties::INTERPOLATE_COLORMAP);
 
     setCurrentElement("w1_p_view_0");
     clearView();
-    surf(x, y, z, color, properties::EdgeColor::None(), properties::ColorMap::Jet());
+    surf(x, y, z, color, properties::EdgeColor::NONE, properties::ColorMap::Jet());
 }
 
 void testScatter()
@@ -143,10 +143,10 @@ void testScatter()
     plot(xf, yf, properties::Color(212, 14, 55));
     scatter(x, y, properties::Color(12, 14, 55));
     scatter(x, y + 1.0, properties::Color::BLACK, properties::PointSize(11));
-    scatter(x, y + 2.0, properties::Color::CYAN, properties::PointSize(12), properties::ScatterStyle::Square());
-    scatter(x, y + 3.0, properties::Color::MAGENTA, properties::PointSize(13), properties::ScatterStyle::Disc());
-    scatter(x, y + 4.0, properties::Color::BLUE, properties::PointSize(14), properties::ScatterStyle::Plus());
-    scatter(x, y + 5.0, properties::Color::RED, properties::PointSize(14), properties::ScatterStyle::Cross());
+    scatter(x, y + 2.0, properties::Color::CYAN, properties::PointSize(12), properties::ScatterStyle::SQUARE);
+    scatter(x, y + 3.0, properties::Color::MAGENTA, properties::PointSize(13), properties::ScatterStyle::DISC);
+    scatter(x, y + 4.0, properties::Color::BLUE, properties::PointSize(14), properties::ScatterStyle::PLUS);
+    scatter(x, y + 5.0, properties::Color::RED, properties::PointSize(14), properties::ScatterStyle::CROSS);
 
     const size_t new_num_elements = 500;
 
@@ -178,7 +178,7 @@ void testScatter()
             properties::DistanceFrom::xy({0.0, 0.0}, 0.0, 1.0),
             properties::ColorMap::Rainbow(),
             properties::PointSize(13),
-            properties::ScatterStyle::Circle());
+            properties::ScatterStyle::CIRCLE);
 }
 
 void testScatter3()
@@ -213,10 +213,10 @@ void testScatter3()
     plot3(x, y, z, properties::Color(255, 14, 255), properties::LineWidth(1));
     scatter3(x, y, z, properties::Color(12, 14, 55));
     scatter3(x, y, z + 1.0, properties::Color::BLACK, properties::PointSize(11));
-    scatter3(x, y, z + 2.0, properties::Color::CYAN, properties::PointSize(12), properties::ScatterStyle::Square());
-    scatter3(x, y, z + 3.0, properties::Color::MAGENTA, properties::PointSize(13), properties::ScatterStyle::Disc());
-    scatter3(x, y, z + 4.0, properties::Color::BLUE, properties::PointSize(14), properties::ScatterStyle::Plus());
-    scatter3(x, y, z + 5.0, properties::Color::RED, properties::PointSize(14), properties::ScatterStyle::Cross());
+    scatter3(x, y, z + 2.0, properties::Color::CYAN, properties::PointSize(12), properties::ScatterStyle::SQUARE);
+    scatter3(x, y, z + 3.0, properties::Color::MAGENTA, properties::PointSize(13), properties::ScatterStyle::DISC);
+    scatter3(x, y, z + 4.0, properties::Color::BLUE, properties::PointSize(14), properties::ScatterStyle::PLUS);
+    scatter3(x, y, z + 5.0, properties::Color::RED, properties::PointSize(14), properties::ScatterStyle::CROSS);
 
     const size_t new_num_elements = 500;
 
@@ -254,7 +254,7 @@ void testScatter3()
              properties::DistanceFrom::x(0.0, 0.0, 1.0),
              properties::ColorMap::Jet(),
              properties::PointSize(13),
-             properties::ScatterStyle::Circle());
+             properties::ScatterStyle::CIRCLE);
 }
 
 void testPlotCollection()
@@ -949,7 +949,7 @@ void testLegend()
             properties::Color(255, 0, 255),
             properties::Name("Scatter"),
             properties::PointSize(40),
-            properties::ScatterStyle::Cross());
+            properties::ScatterStyle::CROSS);
     showLegend();
 
     setCurrentElement("p_view_1");
@@ -1020,8 +1020,8 @@ void testDrawMesh()
     drawMesh(vertices, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(12, 244, 244));
     drawMesh(x, y, z, indices, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 244));
 
-    drawMesh(x + 2.0, y, z, indices, properties::EdgeColor::None(), properties::FaceColor(255, 0, 244));
-    drawMesh(x + 2.0, y, z - 2.0, indices, properties::EdgeColor::Red(), properties::FaceColor::None());
+    drawMesh(x + 2.0, y, z, indices, properties::EdgeColor::NONE, properties::FaceColor(255, 0, 244));
+    drawMesh(x + 2.0, y, z - 2.0, indices, properties::EdgeColor::RED, properties::FaceColor::NONE);
 }
 
 #endif  // TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_
