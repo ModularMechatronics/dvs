@@ -317,6 +317,7 @@ struct EdgeColor : internal::PropertyBase
         red = ec.red;
         green = ec.green;
         blue = ec.blue;
+        use_color = ec.use_color;
     }
 
     static constexpr internal::EdgeColorT RED = internal::EdgeColorT::RED;
@@ -400,6 +401,7 @@ struct FaceColor : internal::PropertyBase
         red = fc.red;
         green = fc.green;
         blue = fc.blue;
+        use_color = fc.use_color;
     }
 
     static constexpr internal::FaceColorT RED = internal::FaceColorT::RED;
@@ -414,40 +416,14 @@ struct FaceColor : internal::PropertyBase
     static constexpr internal::FaceColorT NONE = internal::FaceColorT::NONE;
 };
 
-struct ColorMap : internal::PropertyBase
+enum class ColorMap : uint8_t
 {
-    internal::ColorMapType data;
-
-    static ColorMap Jet()
-    {
-        return ColorMap(internal::ColorMapType::JET);
-    }
-
-    static ColorMap Rainbow()
-    {
-        return ColorMap(internal::ColorMapType::RAINBOW);
-    }
-
-    static ColorMap Magma()
-    {
-        return ColorMap(internal::ColorMapType::MAGMA);
-    }
-
-    static ColorMap Viridis()
-    {
-        return ColorMap(internal::ColorMapType::VIRIDIS);
-    }
-
-    static ColorMap Pastel()
-    {
-        return ColorMap(internal::ColorMapType::PASTEL);
-    }
-
-    ColorMap() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(internal::ColorMapType::JET) {}
-    explicit ColorMap(const internal::ColorMapType ct)
-        : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(ct)
-    {
-    }
+    JET,
+    RAINBOW,
+    MAGMA,
+    VIRIDIS,
+    PASTEL,
+    UNKNOWN
 };
 
 struct PointSize : internal::PropertyBase
@@ -574,32 +550,25 @@ struct ScatterStyleContainer : internal::PropertyBase
     static constexpr properties::ScatterStyle DISC = properties::ScatterStyle::DISC;
     static constexpr properties::ScatterStyle SQUARE = properties::ScatterStyle::SQUARE;
     static constexpr properties::ScatterStyle PLUS = properties::ScatterStyle::PLUS;
+};
 
-    static ScatterStyleContainer Cross()
-    {
-        return ScatterStyleContainer{properties::ScatterStyle::CROSS};
-    }
+struct ColorMapContainer : internal::PropertyBase
+{
+    properties::ColorMap data;
 
-    static ScatterStyleContainer Circle()
-    {
-        return ScatterStyleContainer{properties::ScatterStyle::CIRCLE};
-    }
+    static constexpr properties::ColorMap JET = properties::ColorMap::JET;
+    static constexpr properties::ColorMap RAINBOW = properties::ColorMap::RAINBOW;
+    static constexpr properties::ColorMap MAGMA = properties::ColorMap::MAGMA;
+    static constexpr properties::ColorMap VIRIDIS = properties::ColorMap::VIRIDIS;
+    static constexpr properties::ColorMap PASTEL = properties::ColorMap::PASTEL;
 
-    static ScatterStyleContainer Disc()
+    ColorMapContainer() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(properties::ColorMap::JET) {}
+    explicit ColorMapContainer(const properties::ColorMap ct)
+        : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(ct)
     {
-        return ScatterStyleContainer{properties::ScatterStyle::DISC};
-    }
-
-    static ScatterStyleContainer Square()
-    {
-        return ScatterStyleContainer{properties::ScatterStyle::SQUARE};
-    }
-
-    static ScatterStyleContainer Plus()
-    {
-        return ScatterStyleContainer{properties::ScatterStyle::PLUS};
     }
 };
+
 }  // namespace internal
 
 }  // namespace dvs

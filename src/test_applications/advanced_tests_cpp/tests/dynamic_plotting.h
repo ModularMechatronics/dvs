@@ -156,7 +156,7 @@ void test3DFunctionNewDataAndClear()
             }
         }
 
-        surf(x_mat, y_mat, z_mat, properties::ColorMap::Jet());
+        surf(x_mat, y_mat, z_mat, properties::ColorMap::JET);
         t += 0.1;
 
         azimuth = azimuth > 180.0f ? -180.0f : azimuth + 1.0f;
@@ -204,7 +204,7 @@ void test3DFunctionManualInteraction()
             }
         }
 
-        surf(x_mat, y_mat, z_mat, properties::ColorMap::Jet());
+        surf(x_mat, y_mat, z_mat, properties::ColorMap::JET);
         t += 0.1;
 
         azimuth = azimuth > 180.0f ? -180.0f : azimuth + 1.0f;

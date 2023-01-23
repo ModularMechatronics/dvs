@@ -166,7 +166,7 @@ void testScroll()
                  pc.y,
                  pc.z,
                  properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
-                 properties::ColorMap::Viridis(),
+                 properties::ColorMap::VIRIDIS,
                  properties::PointSize(5),
                  properties::ScatterStyle::DISC);
 
@@ -176,7 +176,7 @@ void testScroll()
                  pc.y,
                  pc.z,
                  properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
-                 properties::ColorMap::Viridis(),
+                 properties::ColorMap::VIRIDIS,
                  properties::PointSize(5),
                  properties::ScatterStyle::DISC);
 
@@ -278,7 +278,7 @@ void testBasic()
                  pc.y,
                  pc.z,
                  properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
-                 properties::ColorMap::Viridis(),
+                 properties::ColorMap::VIRIDIS,
                  properties::PointSize(5),
                  properties::ScatterStyle::DISC);
         for (const auto& circ_pts : circle_points)

@@ -432,7 +432,7 @@ void testBasic()
                  z,
                  y,
                  properties::DistanceFrom::xyz({0, 0, 2}, 0.0, 3.0),
-                 properties::ColorMap::Rainbow(),
+                 properties::ColorMap::RAINBOW,
                  properties::PointSize(13),
                  properties::ScatterStyle::CIRCLE);
 

@@ -176,7 +176,7 @@ void testBasic()
         surf(x.constView(),
              y.constView(),
              z,
-             properties::ColorMap::Jet(),
+             properties::ColorMap::JET,
              properties::EdgeColor::NONE,
              properties::INTERPOLATE_COLORMAP);
         std::cin.ignore();
