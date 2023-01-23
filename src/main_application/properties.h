@@ -17,7 +17,7 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::LINE_WIDTH;
     }
-    else if (std::is_same<T, dvs::properties::LineStyle>::value)
+    else if (std::is_same<T, dvs::internal::LineStyleContainer>::value)
     {
         return dvs::internal::PropertyType::LINE_STYLE;
     }

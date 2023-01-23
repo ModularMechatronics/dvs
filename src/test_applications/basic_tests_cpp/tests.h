@@ -459,11 +459,11 @@ void testPlot()
     zp.fill(0.01f);
 
     axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    plot(xp, yp, colorp, properties::LineWidth(20), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
+    plot(xp, yp, colorp, properties::LineWidth(20), properties::LineStyle::DASHED, properties::Color(200, 200, 200));
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
-    // plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(0, 255, 0));
+    // plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::DASHED, properties::Color(0, 255, 0));
 
     view(0, 90);
 
@@ -485,7 +485,7 @@ void testPlot()
     yp(5) = 2.0;
 
     axis({-0.5, 2.5, -1.0}, {0.5, 3.5, 1.0});
-    plot(xp, yp, properties::LineWidth(50), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
+    plot(xp, yp, properties::LineWidth(50), properties::LineStyle::DASHED, properties::Color(200, 200, 200));
     view(0, 90);
 
     setCurrentElement("p_view_1");
@@ -502,14 +502,14 @@ void testPlot()
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
     plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::LineWidth(1));
-    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
-    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
-    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LongDashed());
+    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::DASHED);
+    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::DOTTED);
+    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::LineWidth(7), properties::LineStyle::LONG_DASHED);
     plot(x + 6.0f,
          y,
          properties::Color(212, 14, 255),
          properties::LineWidth(7),
-         properties::LineStyle::LongDashed(),
+         properties::LineStyle::LONG_DASHED,
          properties::PERSISTENT);
     scatter3(x + 3.0f, y, z, properties::Color::BLACK, properties::PointSize(14));
 
@@ -534,14 +534,14 @@ void testPlot()
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
     plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::LineWidth(1));
-    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::Dashed());
-    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::Dotted());
+    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::DASHED);
+    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::DOTTED);
     plot(x + 6.0f,
          y,
          color,
          properties::Color(212, 14, 255),
          properties::LineWidth(7),
-         properties::LineStyle::LongDashed());
+         properties::LineStyle::LONG_DASHED);
 }
 
 void testFastPlot()
@@ -718,7 +718,7 @@ void testPlot3()
     zp.fill(0.01f);
 
     axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::Dashed(), properties::Color(200, 200, 200));
+    plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::DASHED, properties::Color(200, 200, 200));
     scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     const size_t num_elements = 30;

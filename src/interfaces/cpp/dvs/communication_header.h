@@ -295,7 +295,7 @@ private:
                           std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
                           std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
                           std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value ||
-                          std::is_same<properties::ColorMap, U>::value,
+                          std::is_same<properties::ColorMap, U>::value || std::is_same<properties::LineStyle, U>::value,
                       "Incorrect type!");
         DVS_ASSERT(sizeof(U) <= kCommunicationHeaderObjectDataSize) << "Object too big!";
 
@@ -340,6 +340,12 @@ private:
             const ColorMapContainer cmc{cm};
             appendProperty(cmc);
         }
+        else if (std::is_same<properties::LineStyle, U>::value)
+        {
+            const properties::LineStyle ls = *reinterpret_cast<const properties::LineStyle* const>(&obj);
+            const LineStyleContainer lsc{ls};
+            appendProperty(lsc);
+        }
         else
         {
             appendProperty(obj);
@@ -352,7 +358,7 @@ private:
                           std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
                           std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
                           std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value ||
-                          std::is_same<properties::ColorMap, U>::value,
+                          std::is_same<properties::ColorMap, U>::value || std::is_same<properties::LineStyle, U>::value,
                       "Incorrect type!");
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
@@ -396,6 +402,12 @@ private:
             const properties::ColorMap cm = *reinterpret_cast<const properties::ColorMap* const>(&obj);
             const ColorMapContainer cmc{cm};
             appendProperty(cmc);
+        }
+        else if (std::is_same<properties::LineStyle, U>::value)
+        {
+            const properties::LineStyle ls = *reinterpret_cast<const properties::LineStyle* const>(&obj);
+            const LineStyleContainer lsc{ls};
+            appendProperty(lsc);
         }
         else
         {

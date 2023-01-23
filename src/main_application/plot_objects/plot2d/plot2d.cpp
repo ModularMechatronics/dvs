@@ -70,17 +70,17 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
 
     if (is_dashed_)
     {
-        if (line_style_.data == internal::LineStyleType::DASHED)
+        if (line_style_ == properties::LineStyle::DASHED)
         {
             gap_size_ = 3.0f;
             dash_size_ = 3.0f;
         }
-        else if (line_style_.data == internal::LineStyleType::DOTTED)
+        else if (line_style_ == properties::LineStyle::DOTTED)
         {
             gap_size_ = 6.0f;
             dash_size_ = 3.0f;
         }
-        else if (line_style_.data == internal::LineStyleType::LONG_DASHED)
+        else if (line_style_ == properties::LineStyle::LONG_DASHED)
         {
             gap_size_ = 2.0f;
             dash_size_ = 6.0f;
