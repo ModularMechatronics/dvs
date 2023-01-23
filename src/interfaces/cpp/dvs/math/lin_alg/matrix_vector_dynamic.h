@@ -41,6 +41,64 @@ template <typename T> Matrix<T> diagMatrix(const Vec3<T>& v)
     return res;
 }
 
+template <typename T> std::tuple<Vector<T>, Vector<T>, Vector<T>> unzip(const VectorConstView<Vec3<T>>& v)
+{
+    Vector<T> x{v.size()}, y{v.size()}, z{v.size()};
+
+    for (size_t k = 0; k < x.size(); k++)
+    {
+        x(k) = v(k).x;
+        y(k) = v(k).y;
+        z(k) = v(k).z;
+    }
+
+    return {x, y, z};
+}
+
+template <typename T> std::tuple<Vector<T>, Vector<T>> unzip(const VectorConstView<Vec2<T>>& v)
+{
+    Vector<T> x{v.size()}, y{v.size()};
+
+    for (size_t k = 0; k < x.size(); k++)
+    {
+        x(k) = v(k).x;
+        y(k) = v(k).y;
+    }
+
+    return {x, y};
+}
+
+template <typename T>
+Vector<Vec3<T>> zip(const VectorConstView<T>& x, const VectorConstView<T>& y, const VectorConstView<T>& z)
+{
+    Vector<Vec3<T>> res{x.size()};
+    DVS_ASSERT(x.size() == y.size()) << "Size mismatch between x: " << x.size() << " and y: " << y.size();
+    DVS_ASSERT(x.size() == z.size()) << "Size mismatch between x: " << x.size() << " and z: " << z.size();
+
+    for (size_t k = 0; k < x.size(); k++)
+    {
+        res(k).x = x(k);
+        res(k).y = y(k);
+        res(k).z = z(k);
+    }
+
+    return res;
+}
+
+template <typename T> Vector<Vec2<T>> zip(const VectorConstView<T>& x, const VectorConstView<T>& y)
+{
+    Vector<Vec2<T>> res{x.size()};
+    DVS_ASSERT(x.size() == y.size()) << "Size mismatch between x: " << x.size() << " and y: " << y.size();
+
+    for (size_t k = 0; k < x.size(); k++)
+    {
+        res(k).x = x(k);
+        res(k).y = y(k);
+    }
+
+    return res;
+}
+
 }  // namespace dvs
 
 #endif  // DVS_MATH_LIN_ALG_MATRIX_VECTOR_DYNAMIC_H_

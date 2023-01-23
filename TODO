@@ -20,6 +20,8 @@ Pre release:
  * Something with robotics
 - Finalize demos
 - Make font smaller, fewer line points per axis
+- Don't clear "pending_soft_clear" on interaction (mouse/kbd) update, only when new data
+- Update data without the "update" timer if waitForFlush is active
 - Remove interface function fastPlot, and just replace it with a property flag to plot/plot3
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
