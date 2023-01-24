@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "dvs/plot_slots.h"
+#include "dvs/item_id.h"
 
 namespace dvs
 {
@@ -40,7 +40,7 @@ enum class CommunicationHeaderObjectType : uint16_t
     ELEMENT_NAME,
     GUI_ELEMENT_TYPE,
     PROPERTY,
-    SLOT,
+    ITEM_ID,
     NUM_NAMES,
     UNKNOWN
 };

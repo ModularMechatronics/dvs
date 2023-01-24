@@ -28,14 +28,14 @@ void PlotDataHandler::clear()
     pending_clear_ = false;
 }
 
-void PlotDataHandler::setTransform(const internal::PlotSlot slot,
+void PlotDataHandler::setTransform(const internal::ItemId id,
                                    const MatrixFixed<double, 3, 3>& rotation,
                                    const Vec3<double>& translation,
                                    const MatrixFixed<double, 3, 3>& scale)
 {
-    const auto q = std::find_if(plot_datas_.begin(),
-                                plot_datas_.end(),
-                                [&slot](const PlotObjectBase* const pd) -> bool { return pd->getSlot() == slot; });
+    const auto q = std::find_if(plot_datas_.begin(), plot_datas_.end(), [&id](const PlotObjectBase* const pd) -> bool {
+        return pd->getId() == id;
+    });
 
     if (q != plot_datas_.end())
     {
@@ -43,25 +43,25 @@ void PlotDataHandler::setTransform(const internal::PlotSlot slot,
     }
     else
     {
-        throw std::runtime_error("Called setTransform for non existing slot " + std::to_string(static_cast<int>(slot)));
+        throw std::runtime_error("Called setTransform for non existing id " + std::to_string(static_cast<int>(id)));
     }
 }
 
 void PlotDataHandler::propertiesExtension(const CommunicationHeader& hdr)
 {
-    if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+    if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
-        throw std::runtime_error("No slot provided for updatable function!");
+        throw std::runtime_error("No id provided for updatable function!");
     }
-    const internal::PlotSlot slot = hdr.value<internal::PlotSlot>();
+    const internal::ItemId id = hdr.value<internal::ItemId>();
     const Properties props(hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags());
 
-    const auto q = std::find_if(plot_datas_.begin(),
-                                plot_datas_.end(),
-                                [&slot](const PlotObjectBase* const pd) -> bool { return pd->getSlot() == slot; });
+    const auto q = std::find_if(plot_datas_.begin(), plot_datas_.end(), [&id](const PlotObjectBase* const pd) -> bool {
+        return pd->getId() == id;
+    });
     if (q == plot_datas_.end())
     {
-        awaiting_properties_[static_cast<int>(slot)].appendAndOverwriteProperties(props);
+        awaiting_properties_[static_cast<int>(id)].appendAndOverwriteProperties(props);
     }
     else
     {
@@ -94,17 +94,17 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 
     Properties props;
 
-    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
-        const internal::PlotSlot slot = hdr.value<internal::PlotSlot>();
+        const internal::ItemId id = hdr.value<internal::ItemId>();
 
         const auto q = std::find_if(plot_datas_.begin(),
                                     plot_datas_.end(),
-                                    [&slot](const PlotObjectBase* const pd) -> bool { return pd->getSlot() == slot; });
-        if (!awaiting_properties_[static_cast<int>(slot)].isEmpty())
+                                    [&id](const PlotObjectBase* const pd) -> bool { return pd->getId() == id; });
+        if (!awaiting_properties_[static_cast<int>(id)].isEmpty())
         {
-            props.appendAndOverwriteProperties(awaiting_properties_[static_cast<int>(slot)]);
-            awaiting_properties_[static_cast<int>(slot)].clear();
+            props.appendAndOverwriteProperties(awaiting_properties_[static_cast<int>(id)]);
+            awaiting_properties_[static_cast<int>(id)].clear();
         }
 
         if (q != plot_datas_.end())

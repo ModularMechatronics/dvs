@@ -77,7 +77,7 @@ protected:
     bool has_name_;
     bool color_map_set_;
     ShaderCollection shader_collection_;
-    internal::PlotSlot slot_;
+    internal::ItemId id_;
 
     void assignProperties(const Properties& props);
     virtual void findMinMax() = 0;
@@ -106,9 +106,9 @@ public:
                       const Vec3<double>& translation,
                       const MatrixFixed<double, 3, 3>& scale);
 
-    internal::PlotSlot getSlot() const
+    internal::ItemId getId() const
     {
-        return slot_;
+        return id_;
     }
 
     std::pair<Vec3d, Vec3d> getMinMaxVectors();

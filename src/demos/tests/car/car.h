@@ -129,7 +129,7 @@ void testBasic()
 
     plot(x, y, properties::Color(0, 255, 0), properties::LineWidth(5), properties::ZOffset(-0.15));
     imShow(img,
-           properties::SLOT0,
+           properties::ID0,
            properties::ZOffset(-0.05f),
            properties::Transform{diagMatrix<double>(scale),
                                  rotationMatrixZ<double>(M_PI),
@@ -144,7 +144,7 @@ void testBasic()
         const Vec3d center_of_rotation_r = r_mat * center_of_rotation;
         const Vec3d v_res = Vec3d{x(k), y(k), 0.0f} - center_of_rotation_r;
 
-        setTransform(properties::SLOT0, diagMatrix<double>(scale), r_mat, v_res);
+        setTransform(properties::ID0, diagMatrix<double>(scale), r_mat, v_res);
         usleep(50 * 1000);
     }
 }

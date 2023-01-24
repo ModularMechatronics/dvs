@@ -341,13 +341,13 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
         const MatrixFixed<double, 3, 3> rotation_mat =
             hdr.get(CommunicationHeaderObjectType::ROTATION_MATRIX).as<MatrixFixed<double, 3, 3>>();
 
-        const PlotSlot slot = hdr.get(CommunicationHeaderObjectType::SLOT).as<internal::PlotSlot>();
+        const ItemId id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
 
         const MatrixFixed<double, 3, 3> scale =
             hdr.get(CommunicationHeaderObjectType::SCALE_MATRIX).as<MatrixFixed<double, 3, 3>>();
 
         const MatrixFixed<double, 3, 3> inv_rotation_mat = rotation_mat.transposed();
-        plot_data_handler_->setTransform(slot, inv_rotation_mat, translation_vec, scale);
+        plot_data_handler_->setTransform(id, inv_rotation_mat, translation_vec, scale);
     }
     else
     {

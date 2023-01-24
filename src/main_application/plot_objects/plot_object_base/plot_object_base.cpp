@@ -79,13 +79,13 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     num_data_bytes_ = received_data_->size();
     num_dimensions_ = getNumDimensionsFromFunction(type_);
 
-    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
-        slot_ = hdr.get(CommunicationHeaderObjectType::SLOT).as<internal::PlotSlot>();
+        id_ = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
     }
     else
     {
-        slot_ = internal::PlotSlot::UNKNOWN;
+        id_ = internal::ItemId::UNKNOWN;
     }
 
     has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
@@ -127,13 +127,13 @@ void PlotObjectBase::initialize(std::unique_ptr<const ReceivedData> received_dat
     num_data_bytes_ = received_data_->size();
     num_dimensions_ = getNumDimensionsFromFunction(type_);
 
-    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::SLOT))
+    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
-        slot_ = hdr.get(CommunicationHeaderObjectType::SLOT).as<internal::PlotSlot>();
+        id_ = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
     }
     else
     {
-        slot_ = internal::PlotSlot::UNKNOWN;
+        id_ = internal::ItemId::UNKNOWN;
     }
 
     has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);

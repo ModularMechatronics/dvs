@@ -31,7 +31,7 @@ void testBasic()
     setCurrentElement("p_view_0");
     clearView();
     axis({-2.0, -2.0}, {2.0, 2.0});
-    plot(x, y, properties::SLOT0, properties::LineWidth(10.0f));
+    plot(x, y, properties::ID0, properties::LineWidth(10.0f));
 
     usleep(100 * 1000);
 
@@ -44,7 +44,7 @@ void testBasic()
     {
         scale.x += 0.01;
 
-        setTransform(properties::SLOT0, diagMatrix<double>(scale), r_mat, translation);
+        setTransform(properties::ID0, diagMatrix<double>(scale), r_mat, translation);
         usleep(50 * 1000);
     }
 
@@ -52,7 +52,7 @@ void testBasic()
     {
         translation.x += 0.01;
 
-        setTransform(properties::SLOT0, diagMatrix<double>(scale), r_mat, translation);
+        setTransform(properties::ID0, diagMatrix<double>(scale), r_mat, translation);
         usleep(50 * 1000);
     }
 
@@ -63,7 +63,7 @@ void testBasic()
         r_mat = rotationMatrixZ(angle);
         angle -= 0.01;
 
-        setTransform(properties::SLOT0, diagMatrix<double>(scale), r_mat, translation);
+        setTransform(properties::ID0, diagMatrix<double>(scale), r_mat, translation);
         usleep(50 * 1000);
     }
 
@@ -71,7 +71,7 @@ void testBasic()
     {
         scale.x += 0.01;
 
-        setTransform(properties::SLOT0, diagMatrix<double>(scale), r_mat, translation);
+        setTransform(properties::ID0, diagMatrix<double>(scale), r_mat, translation);
         usleep(50 * 1000);
     }
 
@@ -79,7 +79,7 @@ void testBasic()
     {
         translation.x += 0.01;
 
-        setTransform(properties::SLOT0, diagMatrix<double>(scale), r_mat, translation);
+        setTransform(properties::ID0, diagMatrix<double>(scale), r_mat, translation);
         usleep(50 * 1000);
     }
 
@@ -88,7 +88,7 @@ void testBasic()
         r_mat = rotationMatrixZ(angle);
         angle -= 0.01;
 
-        setTransform(properties::SLOT0, diagMatrix<double>(scale), r_mat, translation);
+        setTransform(properties::ID0, diagMatrix<double>(scale), r_mat, translation);
         usleep(50 * 1000);
     }
 }

@@ -205,7 +205,7 @@ public:
                  cube_pts_indices.indices,
                  cube_color,
                  properties::EdgeColor::NONE,
-                 properties::SLOT0,
+                 properties::ID0,
                  t_cube);
 
         // X arrow
@@ -213,13 +213,13 @@ public:
                  cylinder_pts_indices.indices,
                  x_color,
                  properties::EdgeColor::NONE,
-                 properties::SLOT1,
+                 properties::ID1,
                  t_cyl_x);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
                  x_color,
                  properties::EdgeColor::NONE,
-                 properties::SLOT2,
+                 properties::ID2,
                  t_cone_x);
 
         // Y arrow
@@ -227,13 +227,13 @@ public:
                  cylinder_pts_indices.indices,
                  y_color,
                  properties::EdgeColor::NONE,
-                 properties::SLOT3,
+                 properties::ID3,
                  t_cyl_y);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
                  y_color,
                  properties::EdgeColor::NONE,
-                 properties::SLOT4,
+                 properties::ID4,
                  t_cone_y);
 
         // Z arrow
@@ -241,13 +241,13 @@ public:
                  cylinder_pts_indices.indices,
                  z_color,
                  properties::EdgeColor::NONE,
-                 properties::SLOT5,
+                 properties::ID5,
                  t_cyl_z);
         drawMesh(cone_pts_indices.points,
                  cone_pts_indices.indices,
                  z_color,
                  properties::EdgeColor::NONE,
-                 properties::SLOT6,
+                 properties::ID6,
                  t_cone_z);
     }
 
@@ -264,31 +264,31 @@ public:
         const auto t_cyl_z_transformed = t_cyl_z * new_transform;
         const auto t_cone_z_transformed = t_cone_z * new_transform;
         setTransform(
-            properties::SLOT0, cube_transformed.scale, cube_transformed.rotation, cube_transformed.translation);
+            properties::ID0, cube_transformed.scale, cube_transformed.rotation, cube_transformed.translation);
 
-        setTransform(properties::SLOT1,
+        setTransform(properties::ID1,
                      t_cyl_x_transformed.scale,
                      t_cyl_x_transformed.rotation,
                      t_cyl_x_transformed.translation);
-        setTransform(properties::SLOT2,
+        setTransform(properties::ID2,
                      t_cone_x_transformed.scale,
                      t_cone_x_transformed.rotation,
                      t_cone_x_transformed.translation);
 
-        setTransform(properties::SLOT3,
+        setTransform(properties::ID3,
                      t_cyl_y_transformed.scale,
                      t_cyl_y_transformed.rotation,
                      t_cyl_y_transformed.translation);
-        setTransform(properties::SLOT4,
+        setTransform(properties::ID4,
                      t_cone_y_transformed.scale,
                      t_cone_y_transformed.rotation,
                      t_cone_y_transformed.translation);
 
-        setTransform(properties::SLOT5,
+        setTransform(properties::ID5,
                      t_cyl_z_transformed.scale,
                      t_cyl_z_transformed.rotation,
                      t_cyl_z_transformed.translation);
-        setTransform(properties::SLOT6,
+        setTransform(properties::ID6,
                      t_cone_z_transformed.scale,
                      t_cone_z_transformed.rotation,
                      t_cone_z_transformed.translation);
