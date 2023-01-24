@@ -38,7 +38,7 @@ public:
     void softClear();
     void addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr);
     void render() const;
-    void setTransform(const internal::PlotSlot slot,
+    void setTransform(const internal::ItemId id,
                       const MatrixFixed<double, 3, 3>& rotation,
                       const Vec3<double>& translation,
                       const MatrixFixed<double, 3, 3>& scale);

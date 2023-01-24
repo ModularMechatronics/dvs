@@ -20,12 +20,12 @@ void testBasic()
     setCurrentElement("p_view_0");
     clearView();
 
-    setProperties(properties::SLOT0, properties::Color::BLUE, properties::LineWidth(10));
-    setProperties(properties::SLOT0, properties::LineWidth(20));
-    plot(x, y, properties::SLOT0, properties::Alpha(127), properties::INTERPOLATE_COLORMAP);
+    setProperties(properties::ID0, properties::Color::BLUE, properties::LineWidth(10));
+    setProperties(properties::ID0, properties::LineWidth(20));
+    plot(x, y, properties::ID0, properties::Alpha(127), properties::INTERPOLATE_COLORMAP);
 
     usleep(1000 * 1000);
-    setProperties(properties::SLOT0, properties::Color::RED);
+    setProperties(properties::ID0, properties::Color::RED);
 }
 
 }  // namespace append_properties

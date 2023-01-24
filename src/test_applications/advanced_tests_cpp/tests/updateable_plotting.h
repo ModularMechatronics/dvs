@@ -20,7 +20,7 @@ void testRealTimePlotBasic()
     view(180, -90);
     axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
 
-    setProperties(properties::SLOT0, properties::Color::BLUE);
+    setProperties(properties::ID0, properties::Color::BLUE);
 
     for (size_t k = 0; k < num_its; k++)
     {
@@ -29,23 +29,23 @@ void testRealTimePlotBasic()
 
         if (k == 600)
         {
-            setProperties(properties::SLOT0, properties::Color::RED);
-            setProperties(properties::SLOT0, properties::BufferSize(1000U));
+            setProperties(properties::ID0, properties::Color::RED);
+            setProperties(properties::ID0, properties::BufferSize(1000U));
         }
         /*if (k < 120)
         {
-            realTimePlot(dt, y, properties::SLOT0, properties::Color::BLUE);
+            realTimePlot(dt, y, properties::ID0, properties::Color::BLUE);
         }
         else if (k == 120)
         {
-            setProperties(properties::SLOT0, properties::Color::RED);
-            realTimePlot(dt, y, properties::SLOT0);
+            setProperties(properties::ID0, properties::Color::RED);
+            realTimePlot(dt, y, properties::ID0);
         }
         else
         {
-            realTimePlot(dt, y, properties::SLOT0);
+            realTimePlot(dt, y, properties::ID0);
         }*/
-        realTimePlot(dt, y, properties::SLOT0);
+        realTimePlot(dt, y, properties::ID0);
         usleep(10000);
     }
 }
@@ -64,7 +64,7 @@ void testSynchronizedRealTimePlot()
     view(180, -90);
     axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
 
-    setProperties(properties::SLOT0, properties::Color::BLUE);
+    setProperties(properties::ID0, properties::Color::BLUE);
 
     for (size_t k = 0; k < num_its; k++)
     {
@@ -73,10 +73,10 @@ void testSynchronizedRealTimePlot()
 
         if (k == 600)
         {
-            setProperties(properties::SLOT0, properties::Color::RED);
-            setProperties(properties::SLOT0, properties::BufferSize(1000U));
+            setProperties(properties::ID0, properties::Color::RED);
+            setProperties(properties::ID0, properties::BufferSize(1000U));
         }
-        realTimePlot(dt, y, properties::SLOT0);
+        realTimePlot(dt, y, properties::ID0);
         usleep(10000);
     }*/
 }
@@ -93,7 +93,7 @@ void testPlot2Basic()
     clearView();
     axis({-1.0, -1.5f, -1.0}, {6.0, 1.5f, 1.0f});
 
-    setProperties(properties::SLOT0, properties::UPDATABLE);
+    setProperties(properties::ID0, properties::UPDATABLE);
     const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0, 5.0, num_elements);
 
     for (size_t k = 0; k < num_its; k++)
@@ -101,7 +101,7 @@ void testPlot2Basic()
         const Vector<double> xt = linspaceFromBoundariesAndCount<double>(0.0 + t, 5.0 + t, num_elements);
         const Vector<double> y = dvs::sin(xt);
 
-        plot(x, y, properties::SLOT0);
+        plot(x, y, properties::ID0);
 
         usleep(1000 * 50);
 
@@ -144,7 +144,7 @@ void testSurfBasic()
             }
         }
 
-        surf(x_mat, y_mat, z_mat, properties::ColorMap::JET, properties::UPDATABLE, properties::SLOT0);
+        surf(x_mat, y_mat, z_mat, properties::ColorMap::JET, properties::UPDATABLE, properties::ID0);
         t += 0.1;
 
         azimuth = azimuth > 180.0f ? -180.0f : azimuth + 1.0f;

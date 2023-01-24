@@ -292,7 +292,7 @@ private:
     template <typename U> void extendInternal(const U& obj)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
-                          std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
+                          std::is_same<PropertyFlag, U>::value || std::is_same<ItemId, U>::value ||
                           std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
                           std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value ||
                           std::is_same<properties::ColorMap, U>::value || std::is_same<properties::LineStyle, U>::value,
@@ -305,10 +305,10 @@ private:
 
             flags_[static_cast<uint8_t>(f)] = 1;
         }
-        else if (std::is_same<PlotSlot, U>::value)
+        else if (std::is_same<ItemId, U>::value)
         {
-            const PlotSlot f = *reinterpret_cast<const PlotSlot* const>(&obj);
-            append(CommunicationHeaderObjectType::SLOT, f);
+            const ItemId f = *reinterpret_cast<const ItemId* const>(&obj);
+            append(CommunicationHeaderObjectType::ITEM_ID, f);
         }
         else if (std::is_same<ColorT, U>::value)
         {
@@ -355,7 +355,7 @@ private:
     template <typename U, typename... Us> void extendInternal(const U& obj, const Us&... other_objs)
     {
         static_assert(std::is_base_of<PropertyBase, U>::value || std::is_same<PropertyType, U>::value ||
-                          std::is_same<PropertyFlag, U>::value || std::is_same<PlotSlot, U>::value ||
+                          std::is_same<PropertyFlag, U>::value || std::is_same<ItemId, U>::value ||
                           std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
                           std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value ||
                           std::is_same<properties::ColorMap, U>::value || std::is_same<properties::LineStyle, U>::value,
@@ -368,10 +368,10 @@ private:
 
             flags_[static_cast<uint8_t>(f)] = 1;
         }
-        else if (std::is_same<PlotSlot, U>::value)
+        else if (std::is_same<ItemId, U>::value)
         {
-            const PlotSlot f = *reinterpret_cast<const PlotSlot* const>(&obj);
-            append(CommunicationHeaderObjectType::SLOT, f);
+            const ItemId f = *reinterpret_cast<const ItemId* const>(&obj);
+            append(CommunicationHeaderObjectType::ITEM_ID, f);
         }
         else if (std::is_same<ColorT, U>::value)
         {
@@ -432,10 +432,10 @@ private:
 
     template <typename T> CommunicationHeaderObjectType templateToObjectType() const
     {
-        static_assert(std::is_same<T, internal::PlotSlot>::value, "Type not allowed for template to type deduction!");
-        if (std::is_same<T, internal::PlotSlot>::value)
+        static_assert(std::is_same<T, internal::ItemId>::value, "Type not allowed for template to type deduction!");
+        if (std::is_same<T, internal::ItemId>::value)
         {
-            return CommunicationHeaderObjectType::SLOT;
+            return CommunicationHeaderObjectType::ITEM_ID;
         }
         DVS_ASSERT(false);  // TODO: Ugly
     }
