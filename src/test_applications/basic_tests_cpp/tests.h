@@ -116,6 +116,14 @@ void testSurf()
     setCurrentElement("w1_p_view_0");
     clearView();
     surf(x, y, z, color, properties::EdgeColor::NONE, properties::ColorMap::JET);
+
+    setCurrentElement("p1");
+    clearView();
+    surf(x, y, z);
+    surf(x, y, z + 1.0);
+    surf(x, y, z + 2.0);
+    surf(x, y, z + 3.0);
+    surf(x, y, z + 4.0);
 }
 
 void testScatter()
@@ -179,6 +187,16 @@ void testScatter()
             properties::ColorMap::RAINBOW,
             properties::PointSize(13),
             properties::ScatterStyle::CIRCLE);
+
+    setCurrentElement("p1");
+    clearView();
+    axis({-4.0, -8.0, -3.3}, {8.0, 8.0, 6.6});
+    scatter(x, y);
+    scatter(x, y + 1.0, properties::PointSize(11));
+    scatter(x, y + 2.0, properties::PointSize(12), properties::ScatterStyle::SQUARE);
+    scatter(x, y + 3.0, properties::PointSize(13), properties::ScatterStyle::DISC);
+    scatter(x, y + 4.0, properties::PointSize(14), properties::ScatterStyle::PLUS);
+    scatter(x, y + 5.0, properties::PointSize(14), properties::ScatterStyle::CROSS);
 }
 
 void testScatter3()
@@ -533,15 +551,20 @@ void testPlot()
     }
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::LineWidth(1));
-    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::LineWidth(1), properties::LineStyle::DASHED);
-    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::LineWidth(4), properties::LineStyle::DOTTED);
-    plot(x + 6.0f,
-         y,
-         color,
-         properties::Color(212, 14, 255),
-         properties::LineWidth(7),
-         properties::LineStyle::LONG_DASHED);
+    plot(x + 3.0f, y, properties::LineWidth(3));
+    plot(x + 4.0f, y, properties::LineWidth(3));
+    plot(x + 5.0f, y, properties::LineWidth(3));
+    plot(x + 6.0f, y, color, properties::Color(212, 14, 255), properties::LineWidth(7));
+
+    setCurrentElement("w1_p_view_0");
+    clearView();
+
+    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
+    plot(x, y, properties::LineWidth(3));
+    plot(x + 1.0f, y, properties::LineWidth(3));
+    plot(x + 2.0f, y, properties::LineWidth(3));
+    plot(x + 3.0f, y, properties::LineWidth(3));
+    plot(x + 4.0f, y, properties::LineWidth(3));
 }
 
 void testFastPlot()

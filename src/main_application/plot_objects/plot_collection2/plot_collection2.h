@@ -26,7 +26,7 @@ public:
     PlotCollection2D(std::unique_ptr<const ReceivedData> received_data,
                      const CommunicationHeader& hdr,
                      const Properties& props,
-                     const ShaderCollection shader_collection);
+                     const ShaderCollection shader_collection, ColorPicker& color_picker);
     ~PlotCollection2D();
 
     void render() override;

@@ -59,7 +59,8 @@ PlotObjectBase::PlotObjectBase() {}
 PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data,
                                const CommunicationHeader& hdr,
                                const Properties& props,
-                               const ShaderCollection shader_collection)
+                               const ShaderCollection shader_collection,
+                               ColorPicker& color_picker)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
     const uint64_t num_data_bytes = received_data_->size();
@@ -99,7 +100,7 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
         throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
     }*/
 
-    assignProperties(props);
+    assignProperties(props, color_picker);
 
     data_ptr_ = received_data_->data();
 }
@@ -305,7 +306,7 @@ void PlotObjectBase::setTransform(const MatrixFixed<double, 3, 3>& rotation,
     }
 }
 
-void PlotObjectBase::assignProperties(const Properties& props)
+void PlotObjectBase::assignProperties(const Properties& props, ColorPicker& color_picker)
 {
     // Flags
     is_persistent_ = props.hasFlag(PropertyFlag::PERSISTENT);
@@ -360,7 +361,7 @@ void PlotObjectBase::assignProperties(const Properties& props)
     }
     else
     {
-        color_ = RGBTripletf(0.1, 0.2, 0.1);
+        color_ = color_picker.getNextColor();
     }
 
     if (props.hasProperty(PropertyType::COLOR_MAP))
@@ -414,12 +415,12 @@ void PlotObjectBase::assignProperties(const Properties& props)
     }
     else
     {
-        face_color_ = RGBTripletf(0.1f, 0.2f, 0.3f);
+        face_color_ = color_picker.getNextFaceColor();
     }
 
     if (props.hasProperty(PropertyType::LINE_STYLE))
     {
-        line_style_ = props.getProperty<LineStyle>();
+        line_style_ = props.getProperty<LineStyleContainer>().data;
         is_dashed_ = 1;
     }
     else

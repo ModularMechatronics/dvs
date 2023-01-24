@@ -22,7 +22,7 @@ public:
     LineCollection2D(std::unique_ptr<const ReceivedData> received_data,
                      const CommunicationHeader& hdr,
                      const Properties& props,
-                     const ShaderCollection shader_collection);
+                     const ShaderCollection shader_collection, ColorPicker& color_picker);
     ~LineCollection2D();
 
     LegendProperties getLegendProperties() const override;

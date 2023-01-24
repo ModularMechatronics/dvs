@@ -31,8 +31,8 @@ struct Converter
 LineCollection3D::LineCollection3D(std::unique_ptr<const ReceivedData> received_data,
                                    const CommunicationHeader& hdr,
                                    const Properties& props,
-                                   const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection), vertex_buffer_{OGLPrimitiveType::LINES}
+                                   const ShaderCollection shader_collection, ColorPicker& color_picker)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker), vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (type_ != Function::LINE_COLLECTION3)
     {

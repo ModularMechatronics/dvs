@@ -30,8 +30,8 @@ struct Converter
 ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_data,
                                  const CommunicationHeader& hdr,
                                  const Properties& props,
-                                 const ShaderCollection shader_collection)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection)
+                                 const ShaderCollection shader_collection, ColorPicker& color_picker)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker)
 {
     if (type_ != Function::REAL_TIME_PLOT)
     {
