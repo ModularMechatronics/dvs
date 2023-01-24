@@ -61,6 +61,7 @@ set(CPP_SOURCE_FILES main.cpp
                      help_pane.cpp
                      plot_data_handler.cpp
                      plot_pane.cpp
+                     color_picker.cpp
                      main_window.cpp
                      main_window_receive.cpp
 

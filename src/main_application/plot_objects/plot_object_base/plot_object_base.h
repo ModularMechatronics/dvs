@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "axes/legend_properties.h"
+#include "color_picker.h"
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
@@ -79,7 +80,7 @@ protected:
     ShaderCollection shader_collection_;
     internal::ItemId id_;
 
-    void assignProperties(const Properties& props);
+    void assignProperties(const Properties& props, ColorPicker& color_picker);
     virtual void findMinMax() = 0;
 
     void initialize(std::unique_ptr<const ReceivedData> received_data,
@@ -94,7 +95,8 @@ public:
     PlotObjectBase(std::unique_ptr<const ReceivedData> received_data,
                    const CommunicationHeader& hdr,
                    const Properties& props,
-                   const ShaderCollection shader_collection);
+                   const ShaderCollection shader_collection,
+                   ColorPicker& color_picker);
     virtual void render() = 0;
     void preRender(const Shader shader_to_use);
     virtual bool affectsColormapMinMax() const

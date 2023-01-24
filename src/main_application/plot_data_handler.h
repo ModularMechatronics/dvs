@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "axes/legend_properties.h"
+#include "color_picker.h"
 #include "communication/received_data.h"
 #include "dvs/dvs.h"
 #include "dvs/math/math.h"
@@ -25,6 +26,7 @@ private:
     ShaderCollection shader_collection_;
     bool isUpdatable(const Function fcn) const;
     void propertiesExtension(const CommunicationHeader& hdr);
+    ColorPicker color_picker_{};
 
 public:
     std::pair<Vec3d, Vec3d> getMinMaxVectors() const;
