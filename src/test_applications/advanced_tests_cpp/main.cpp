@@ -66,7 +66,8 @@ int main(int argc, char* argv[])
 
     // ######################### object_transform ##########################
     StringFunctionMap object_transform_tests{
-        {"basic", object_transform::testBasic},
+        {"basic_2d", object_transform::testBasic2D},
+        {"basic_3d", object_transform::testBasic3D},
     };
 
     // ######################### object_transform ##########################
