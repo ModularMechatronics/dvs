@@ -4,10 +4,10 @@
 
 std::array<RGBTripletf, 6> colors = {RGBTripletf{218.0f / 255.0f, 83.0f / 255.0f, 29.0f / 255.0f},
                                      RGBTripletf{0.0f / 255.0f, 114.0f / 255.0f, 187.0f / 255.0f},
-                                     RGBTripletf{155.0f / 255.0f, 218.0f / 255.0f, 29.0f / 255.0f},
-                                     RGBTripletf{218.0f / 255.0f, 155.0f / 255.0f, 29.0f / 255.0f},
-                                     RGBTripletf{218.0f / 255.0f, 29.0f / 255.0f, 155.0f / 255.0f},
-                                     RGBTripletf{29.0f / 255.0f, 218.0f / 255.0f, 186.0f / 255.0f}};
+                                     RGBTripletf{238.0f / 255.0f, 177.0f / 255.0f, 49.0f / 255.0f},
+                                     RGBTripletf{118.0f / 255.0f, 172.0f / 255.0f, 59.0f / 255.0f},
+                                     RGBTripletf{29.0f / 255.0f, 218.0f / 255.0f, 186.0f / 255.0f},
+                                     RGBTripletf{218.0f / 255.0f, 29.0f / 255.0f, 155.0f / 255.0f}};
 
 ColorPicker::ColorPicker()
 {
