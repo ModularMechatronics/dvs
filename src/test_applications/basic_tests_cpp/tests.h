@@ -560,11 +560,13 @@ void testPlot()
     clearView();
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    plot(x, y, properties::LineWidth(3));
-    plot(x + 1.0f, y, properties::LineWidth(3));
-    plot(x + 2.0f, y, properties::LineWidth(3));
-    plot(x + 3.0f, y, properties::LineWidth(3));
-    plot(x + 4.0f, y, properties::LineWidth(3));
+    plot(x, y, properties::LineWidth(7));
+    plot(x + 1.0f, y, properties::LineWidth(7));
+    plot(x + 2.0f, y, properties::LineWidth(7));
+    plot(x + 3.0f, y, properties::LineWidth(7));
+    plot(x + 4.0f, y, properties::LineWidth(7));
+    plot(x + 5.0f, y, properties::LineWidth(7));
+    plot(x + 6.0f, y, properties::LineWidth(7));
 }
 
 void testFastPlot()
