@@ -336,8 +336,6 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
 
 void PlotDataHandler::render()
 {
-    std::cout << "Num plot datas: " << plot_datas_.size() << std::endl;
-
     for (size_t k = 0; k < plot_datas_.size(); k++)
     {
         plot_datas_[k]->modifyShader();
