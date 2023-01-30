@@ -13,22 +13,6 @@
 class Plot2D : public PlotObjectBase
 {
 public:
-    struct ConvertedData : ConvertedDataBase
-    {
-        float* p0;
-        float* p1;
-        float* p2;
-        float* length_along;
-        int32_t* idx_data;
-        float* color_data;
-        size_t num_points;
-
-        ~ConvertedData() override
-        {
-            std::cout << "ConvertedData destructor!" << std::endl;
-        }
-    };
-
     Plot2D();
     Plot2D(const CommunicationHeader& hdr,
            std::unique_ptr<const ReceivedData>& received_data,
@@ -55,8 +39,6 @@ private:
     size_t num_points_;
 
     void findMinMax() override;
-
-    ConvertedData converted_data_;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT2D_PLOT2D_H_

@@ -27,13 +27,45 @@ struct InputParams
     }
 };
 
+struct ConvertedData : ConvertedDataBase
+{
+    float* p0;
+    float* p1;
+    float* p2;
+    float* length_along;
+    int32_t* idx_data;
+    float* color_data;
+    size_t num_points;
+
+    ConvertedData()
+    {
+        p0 = nullptr;
+        p1 = nullptr;
+        p2 = nullptr;
+        length_along = nullptr;
+        idx_data = nullptr;
+        color_data = nullptr;
+        num_points = 0U;
+    }
+
+    ~ConvertedData() override
+    {
+        delete[] p0;
+        delete[] p1;
+        delete[] p2;
+        delete[] length_along;
+        delete[] idx_data;
+        delete[] color_data;
+    }
+};
+
 template <typename T>
-Plot2D::ConvertedData convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    Plot2D::ConvertedData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -47,17 +79,16 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
                const Properties& props,
                const ShaderCollection shader_collection,
                ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker),
+      vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
-    std::cout << "Inside PLOT2D" << std::endl;
     std::unique_ptr<const ConvertedDataBase> converted_data_local = std::move(converted_data);
     if (type_ != Function::PLOT2)
     {
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    const Plot2D::ConvertedData* const converted_data_2d =
-        static_cast<const Plot2D::ConvertedData* const>(converted_data_local.get());
+    const ConvertedData* const converted_data_2d = static_cast<const ConvertedData* const>(converted_data_local.get());
 
     num_points_ = converted_data_2d->num_points;
 
@@ -80,9 +111,6 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
         }
     }
 
-    vertex_buffer_ = std::move(
-        VertexBuffer{OGLPrimitiveType::TRIANGLES});  // TODO: Move to initialization and remove VertexBuffer&& oeprator=
-
     vertex_buffer_.addBuffer(converted_data_2d->p0, num_points_, 2, usage_);
     vertex_buffer_.addBuffer(converted_data_2d->p1, num_points_, 2, usage_);
     vertex_buffer_.addBuffer(converted_data_2d->p2, num_points_, 2, usage_);
@@ -93,17 +121,7 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
     if (has_color_)
     {
         vertex_buffer_.addBuffer(converted_data_2d->color_data, num_points_, 3);
-
-        // delete[] converted_data_2d->color_data;
     }
-
-    /*delete[] converted_data_2d->p0;
-    delete[] converted_data_2d->p1;
-    delete[] converted_data_2d->p2;
-    delete[] converted_data_2d->length_along;
-    delete[] converted_data_2d->idx_data;*/
-
-    std::cout << "End of PLOT2D" << std::endl;
 }
 
 void Plot2D::findMinMax()
@@ -158,13 +176,10 @@ std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const PlotObject
                                    attributes.num_bytes_for_one_vec,
                                    attributes.has_color};
 
-    Plot2D::ConvertedData plot2d_raw_data =
-        applyConverter<Plot2D::ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params);
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base =
-        std::make_unique<const Plot2D::ConvertedData>(plot2d_raw_data);
-
-    return std::move(converted_data_base);
+    return converted_data_base;
 }
 
 void Plot2D::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
@@ -177,22 +192,16 @@ void Plot2D::updateWithNewData(std::unique_ptr<const ReceivedData> received_data
 
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
 
-    const Plot2D::ConvertedData converted_data =
-        applyConverter<Plot2D::ConvertedData>(data_ptr_, data_type_, Converter{}, input_params);
+    const std::unique_ptr<const ConvertedData> converted_data{
+        applyConverter<ConvertedData>(data_ptr_, data_type_, Converter{}, input_params)};
 
-    num_points_ = converted_data.num_points;
+    num_points_ = converted_data->num_points;
 
-    vertex_buffer_.updateBufferData(0, converted_data.p0, num_points_, 2);
-    vertex_buffer_.updateBufferData(1, converted_data.p1, num_points_, 2);
-    vertex_buffer_.updateBufferData(2, converted_data.p2, num_points_, 2);
-    vertex_buffer_.updateBufferData(3, converted_data.idx_data, num_points_, 1);
-    vertex_buffer_.updateBufferData(4, converted_data.length_along, num_points_, 1);
-
-    delete[] converted_data.p0;
-    delete[] converted_data.p1;
-    delete[] converted_data.p2;
-    delete[] converted_data.length_along;
-    delete[] converted_data.idx_data;
+    vertex_buffer_.updateBufferData(0, converted_data->p0, num_points_, 2);
+    vertex_buffer_.updateBufferData(1, converted_data->p1, num_points_, 2);
+    vertex_buffer_.updateBufferData(2, converted_data->p2, num_points_, 2);
+    vertex_buffer_.updateBufferData(3, converted_data->idx_data, num_points_, 1);
+    vertex_buffer_.updateBufferData(4, converted_data->length_along, num_points_, 1);
 }
 
 Plot2D::~Plot2D() {}
@@ -209,27 +218,27 @@ LegendProperties Plot2D::getLegendProperties() const
 namespace
 {
 template <typename T>
-Plot2D::ConvertedData convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t num_segments = input_params.num_elements - 1U;
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
     const size_t num_points = num_triangles * 3U;
 
-    Plot2D::ConvertedData converted_data;
-    converted_data.num_points = num_points;
-    converted_data.p0 = new float[2 * num_points];
-    converted_data.p1 = new float[2 * num_points];
-    converted_data.p2 = new float[2 * num_points];
-    converted_data.length_along = new float[num_points];
-    converted_data.idx_data = new int32_t[num_points];
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->num_points = num_points;
+    converted_data->p0 = new float[2 * num_points];
+    converted_data->p1 = new float[2 * num_points];
+    converted_data->p2 = new float[2 * num_points];
+    converted_data->length_along = new float[num_points];
+    converted_data->idx_data = new int32_t[num_points];
 
     float* length_along_tmp = new float[input_params.num_elements];
 
-    std::memset(converted_data.p0, 0, 2 * num_points * sizeof(float));
-    std::memset(converted_data.p1, 0, 2 * num_points * sizeof(float));
-    std::memset(converted_data.p2, 0, 2 * num_points * sizeof(float));
+    std::memset(converted_data->p0, 0, 2 * num_points * sizeof(float));
+    std::memset(converted_data->p1, 0, 2 * num_points * sizeof(float));
+    std::memset(converted_data->p2, 0, 2 * num_points * sizeof(float));
 
-    std::memset(converted_data.idx_data, 0, num_points * sizeof(int32_t));
+    std::memset(converted_data->idx_data, 0, num_points * sizeof(int32_t));
 
     struct Points
     {
@@ -340,156 +349,156 @@ Plot2D::ConvertedData convertData(const uint8_t* const input_data, const InputPa
         const Points& pt = pts[k];
 
         // 1st triangle
-        converted_data.p0[idx] = pt_1.p0.x;
-        converted_data.p0[idx + 1] = pt_1.p0.y;
+        converted_data->p0[idx] = pt_1.p0.x;
+        converted_data->p0[idx + 1] = pt_1.p0.y;
 
-        converted_data.p0[idx + 2] = pt.p0.x;
-        converted_data.p0[idx + 3] = pt.p0.y;
+        converted_data->p0[idx + 2] = pt.p0.x;
+        converted_data->p0[idx + 3] = pt.p0.y;
 
-        converted_data.p0[idx + 4] = pt.p0.x;
-        converted_data.p0[idx + 5] = pt.p0.y;
+        converted_data->p0[idx + 4] = pt.p0.x;
+        converted_data->p0[idx + 5] = pt.p0.y;
 
         // 2nd triangle
-        converted_data.p0[idx + 6] = pt_1.p0.x;
-        converted_data.p0[idx + 7] = pt_1.p0.y;
+        converted_data->p0[idx + 6] = pt_1.p0.x;
+        converted_data->p0[idx + 7] = pt_1.p0.y;
 
-        converted_data.p0[idx + 8] = pt.p0.x;
-        converted_data.p0[idx + 9] = pt.p0.y;
+        converted_data->p0[idx + 8] = pt.p0.x;
+        converted_data->p0[idx + 9] = pt.p0.y;
 
-        converted_data.p0[idx + 10] = pt_1.p0.x;
-        converted_data.p0[idx + 11] = pt_1.p0.y;
+        converted_data->p0[idx + 10] = pt_1.p0.x;
+        converted_data->p0[idx + 11] = pt_1.p0.y;
 
         // 3nd triangle
-        converted_data.p0[idx + 12] = pt.p0.x;
-        converted_data.p0[idx + 13] = pt.p0.y;
+        converted_data->p0[idx + 12] = pt.p0.x;
+        converted_data->p0[idx + 13] = pt.p0.y;
 
-        converted_data.p0[idx + 14] = pt.p0.x;
-        converted_data.p0[idx + 15] = pt.p0.y;
+        converted_data->p0[idx + 14] = pt.p0.x;
+        converted_data->p0[idx + 15] = pt.p0.y;
 
-        converted_data.p0[idx + 16] = pt.p0.x;
-        converted_data.p0[idx + 17] = pt.p0.y;
+        converted_data->p0[idx + 16] = pt.p0.x;
+        converted_data->p0[idx + 17] = pt.p0.y;
 
         // 4th triangle
-        converted_data.p0[idx + 18] = pt.p0.x;
-        converted_data.p0[idx + 19] = pt.p0.y;
+        converted_data->p0[idx + 18] = pt.p0.x;
+        converted_data->p0[idx + 19] = pt.p0.y;
 
-        converted_data.p0[idx + 20] = pt.p0.x;
-        converted_data.p0[idx + 21] = pt.p0.y;
+        converted_data->p0[idx + 20] = pt.p0.x;
+        converted_data->p0[idx + 21] = pt.p0.y;
 
-        converted_data.p0[idx + 22] = pt.p0.x;
-        converted_data.p0[idx + 23] = pt.p0.y;
+        converted_data->p0[idx + 22] = pt.p0.x;
+        converted_data->p0[idx + 23] = pt.p0.y;
 
         // 1st triangle
-        converted_data.p1[idx] = pt_1.p1.x;
-        converted_data.p1[idx + 1] = pt_1.p1.y;
+        converted_data->p1[idx] = pt_1.p1.x;
+        converted_data->p1[idx + 1] = pt_1.p1.y;
 
-        converted_data.p1[idx + 2] = pt.p1.x;
-        converted_data.p1[idx + 3] = pt.p1.y;
+        converted_data->p1[idx + 2] = pt.p1.x;
+        converted_data->p1[idx + 3] = pt.p1.y;
 
-        converted_data.p1[idx + 4] = pt.p1.x;
-        converted_data.p1[idx + 5] = pt.p1.y;
+        converted_data->p1[idx + 4] = pt.p1.x;
+        converted_data->p1[idx + 5] = pt.p1.y;
 
         // 2nd triangle
-        converted_data.p1[idx + 6] = pt_1.p1.x;
-        converted_data.p1[idx + 7] = pt_1.p1.y;
+        converted_data->p1[idx + 6] = pt_1.p1.x;
+        converted_data->p1[idx + 7] = pt_1.p1.y;
 
-        converted_data.p1[idx + 8] = pt.p1.x;
-        converted_data.p1[idx + 9] = pt.p1.y;
+        converted_data->p1[idx + 8] = pt.p1.x;
+        converted_data->p1[idx + 9] = pt.p1.y;
 
-        converted_data.p1[idx + 10] = pt_1.p1.x;
-        converted_data.p1[idx + 11] = pt_1.p1.y;
+        converted_data->p1[idx + 10] = pt_1.p1.x;
+        converted_data->p1[idx + 11] = pt_1.p1.y;
 
         // 3nd triangle
-        converted_data.p1[idx + 12] = pt.p1.x;
-        converted_data.p1[idx + 13] = pt.p1.y;
+        converted_data->p1[idx + 12] = pt.p1.x;
+        converted_data->p1[idx + 13] = pt.p1.y;
 
-        converted_data.p1[idx + 14] = pt.p1.x;
-        converted_data.p1[idx + 15] = pt.p1.y;
+        converted_data->p1[idx + 14] = pt.p1.x;
+        converted_data->p1[idx + 15] = pt.p1.y;
 
-        converted_data.p1[idx + 16] = pt.p1.x;
-        converted_data.p1[idx + 17] = pt.p1.y;
+        converted_data->p1[idx + 16] = pt.p1.x;
+        converted_data->p1[idx + 17] = pt.p1.y;
 
         // 4th triangle
-        converted_data.p1[idx + 18] = pt.p1.x;
-        converted_data.p1[idx + 19] = pt.p1.y;
+        converted_data->p1[idx + 18] = pt.p1.x;
+        converted_data->p1[idx + 19] = pt.p1.y;
 
-        converted_data.p1[idx + 20] = pt.p1.x;
-        converted_data.p1[idx + 21] = pt.p1.y;
+        converted_data->p1[idx + 20] = pt.p1.x;
+        converted_data->p1[idx + 21] = pt.p1.y;
 
-        converted_data.p1[idx + 22] = pt.p1.x;
-        converted_data.p1[idx + 23] = pt.p1.y;
+        converted_data->p1[idx + 22] = pt.p1.x;
+        converted_data->p1[idx + 23] = pt.p1.y;
 
         // 1st triangle
-        converted_data.p2[idx] = pt_1.p2.x;
-        converted_data.p2[idx + 1] = pt_1.p2.y;
+        converted_data->p2[idx] = pt_1.p2.x;
+        converted_data->p2[idx + 1] = pt_1.p2.y;
 
-        converted_data.p2[idx + 2] = pt.p2.x;
-        converted_data.p2[idx + 3] = pt.p2.y;
+        converted_data->p2[idx + 2] = pt.p2.x;
+        converted_data->p2[idx + 3] = pt.p2.y;
 
-        converted_data.p2[idx + 4] = pt.p2.x;
-        converted_data.p2[idx + 5] = pt.p2.y;
+        converted_data->p2[idx + 4] = pt.p2.x;
+        converted_data->p2[idx + 5] = pt.p2.y;
 
         // 2nd triangle
-        converted_data.p2[idx + 6] = pt_1.p2.x;
-        converted_data.p2[idx + 7] = pt_1.p2.y;
+        converted_data->p2[idx + 6] = pt_1.p2.x;
+        converted_data->p2[idx + 7] = pt_1.p2.y;
 
-        converted_data.p2[idx + 8] = pt.p2.x;
-        converted_data.p2[idx + 9] = pt.p2.y;
+        converted_data->p2[idx + 8] = pt.p2.x;
+        converted_data->p2[idx + 9] = pt.p2.y;
 
-        converted_data.p2[idx + 10] = pt_1.p2.x;
-        converted_data.p2[idx + 11] = pt_1.p2.y;
+        converted_data->p2[idx + 10] = pt_1.p2.x;
+        converted_data->p2[idx + 11] = pt_1.p2.y;
 
         // 3nd triangle
-        converted_data.p2[idx + 12] = pt.p2.x;
-        converted_data.p2[idx + 13] = pt.p2.y;
+        converted_data->p2[idx + 12] = pt.p2.x;
+        converted_data->p2[idx + 13] = pt.p2.y;
 
-        converted_data.p2[idx + 14] = pt.p2.x;
-        converted_data.p2[idx + 15] = pt.p2.y;
+        converted_data->p2[idx + 14] = pt.p2.x;
+        converted_data->p2[idx + 15] = pt.p2.y;
 
-        converted_data.p2[idx + 16] = pt.p2.x;
-        converted_data.p2[idx + 17] = pt.p2.y;
+        converted_data->p2[idx + 16] = pt.p2.x;
+        converted_data->p2[idx + 17] = pt.p2.y;
 
         // 4th triangle
-        converted_data.p2[idx + 18] = pt.p2.x;
-        converted_data.p2[idx + 19] = pt.p2.y;
+        converted_data->p2[idx + 18] = pt.p2.x;
+        converted_data->p2[idx + 19] = pt.p2.y;
 
-        converted_data.p2[idx + 20] = pt.p2.x;
-        converted_data.p2[idx + 21] = pt.p2.y;
+        converted_data->p2[idx + 20] = pt.p2.x;
+        converted_data->p2[idx + 21] = pt.p2.y;
 
-        converted_data.p2[idx + 22] = pt.p2.x;
-        converted_data.p2[idx + 23] = pt.p2.y;
+        converted_data->p2[idx + 22] = pt.p2.x;
+        converted_data->p2[idx + 23] = pt.p2.y;
 
         const float la_1 = length_along_tmp[k - 1];
         const float la = length_along_tmp[k];
 
-        converted_data.length_along[length_along_idx] = la_1;
-        converted_data.length_along[length_along_idx + 1] = la;
-        converted_data.length_along[length_along_idx + 2] = la;
+        converted_data->length_along[length_along_idx] = la_1;
+        converted_data->length_along[length_along_idx + 1] = la;
+        converted_data->length_along[length_along_idx + 2] = la;
 
-        converted_data.length_along[length_along_idx + 3] = la_1;
-        converted_data.length_along[length_along_idx + 4] = la_1;
-        converted_data.length_along[length_along_idx + 5] = la;
+        converted_data->length_along[length_along_idx + 3] = la_1;
+        converted_data->length_along[length_along_idx + 4] = la_1;
+        converted_data->length_along[length_along_idx + 5] = la;
 
-        converted_data.length_along[length_along_idx + 6] = la;
-        converted_data.length_along[length_along_idx + 7] = la;
-        converted_data.length_along[length_along_idx + 8] = la;
+        converted_data->length_along[length_along_idx + 6] = la;
+        converted_data->length_along[length_along_idx + 7] = la;
+        converted_data->length_along[length_along_idx + 8] = la;
 
-        converted_data.length_along[length_along_idx + 9] = la;
-        converted_data.length_along[length_along_idx + 10] = la;
-        converted_data.length_along[length_along_idx + 11] = la;
+        converted_data->length_along[length_along_idx + 9] = la;
+        converted_data->length_along[length_along_idx + 10] = la;
+        converted_data->length_along[length_along_idx + 11] = la;
 
-        converted_data.idx_data[idx_idx] = 0;
-        converted_data.idx_data[idx_idx + 1] = 1;
-        converted_data.idx_data[idx_idx + 2] = 2;
-        converted_data.idx_data[idx_idx + 3] = 3;
-        converted_data.idx_data[idx_idx + 4] = 4;
-        converted_data.idx_data[idx_idx + 5] = 5;
-        converted_data.idx_data[idx_idx + 6] = 6;
-        converted_data.idx_data[idx_idx + 7] = 7;
-        converted_data.idx_data[idx_idx + 8] = 8;
-        converted_data.idx_data[idx_idx + 9] = 9;
-        converted_data.idx_data[idx_idx + 10] = 10;
-        converted_data.idx_data[idx_idx + 11] = 11;
+        converted_data->idx_data[idx_idx] = 0;
+        converted_data->idx_data[idx_idx + 1] = 1;
+        converted_data->idx_data[idx_idx + 2] = 2;
+        converted_data->idx_data[idx_idx + 3] = 3;
+        converted_data->idx_data[idx_idx + 4] = 4;
+        converted_data->idx_data[idx_idx + 5] = 5;
+        converted_data->idx_data[idx_idx + 6] = 6;
+        converted_data->idx_data[idx_idx + 7] = 7;
+        converted_data->idx_data[idx_idx + 8] = 8;
+        converted_data->idx_data[idx_idx + 9] = 9;
+        converted_data->idx_data[idx_idx + 10] = 10;
+        converted_data->idx_data[idx_idx + 11] = 11;
 
         idx += 24;
         idx_idx += 12;
@@ -501,82 +510,82 @@ Plot2D::ConvertedData convertData(const uint8_t* const input_data, const InputPa
     const Points& pt = pts[input_params.num_elements - 1];
 
     // 1st triangle
-    converted_data.p0[idx] = pt_1.p0.x;
-    converted_data.p0[idx + 1] = pt_1.p0.y;
+    converted_data->p0[idx] = pt_1.p0.x;
+    converted_data->p0[idx + 1] = pt_1.p0.y;
 
-    converted_data.p0[idx + 2] = pt.p0.x;
-    converted_data.p0[idx + 3] = pt.p0.y;
+    converted_data->p0[idx + 2] = pt.p0.x;
+    converted_data->p0[idx + 3] = pt.p0.y;
 
-    converted_data.p0[idx + 4] = pt.p0.x;
-    converted_data.p0[idx + 5] = pt.p0.y;
+    converted_data->p0[idx + 4] = pt.p0.x;
+    converted_data->p0[idx + 5] = pt.p0.y;
 
     // 2nd triangle
-    converted_data.p0[idx + 6] = pt_1.p0.x;
-    converted_data.p0[idx + 7] = pt_1.p0.y;
+    converted_data->p0[idx + 6] = pt_1.p0.x;
+    converted_data->p0[idx + 7] = pt_1.p0.y;
 
-    converted_data.p0[idx + 8] = pt.p0.x;
-    converted_data.p0[idx + 9] = pt.p0.y;
+    converted_data->p0[idx + 8] = pt.p0.x;
+    converted_data->p0[idx + 9] = pt.p0.y;
 
-    converted_data.p0[idx + 10] = pt_1.p0.x;
-    converted_data.p0[idx + 11] = pt_1.p0.y;
+    converted_data->p0[idx + 10] = pt_1.p0.x;
+    converted_data->p0[idx + 11] = pt_1.p0.y;
 
     // 1st triangle
-    converted_data.p1[idx] = pt_1.p1.x;
-    converted_data.p1[idx + 1] = pt_1.p1.y;
+    converted_data->p1[idx] = pt_1.p1.x;
+    converted_data->p1[idx + 1] = pt_1.p1.y;
 
-    converted_data.p1[idx + 2] = pt.p1.x;
-    converted_data.p1[idx + 3] = pt.p1.y;
+    converted_data->p1[idx + 2] = pt.p1.x;
+    converted_data->p1[idx + 3] = pt.p1.y;
 
-    converted_data.p1[idx + 4] = pt.p1.x;
-    converted_data.p1[idx + 5] = pt.p1.y;
+    converted_data->p1[idx + 4] = pt.p1.x;
+    converted_data->p1[idx + 5] = pt.p1.y;
 
     // 2nd triangle
-    converted_data.p1[idx + 6] = pt_1.p1.x;
-    converted_data.p1[idx + 7] = pt_1.p1.y;
+    converted_data->p1[idx + 6] = pt_1.p1.x;
+    converted_data->p1[idx + 7] = pt_1.p1.y;
 
-    converted_data.p1[idx + 8] = pt.p1.x;
-    converted_data.p1[idx + 9] = pt.p1.y;
+    converted_data->p1[idx + 8] = pt.p1.x;
+    converted_data->p1[idx + 9] = pt.p1.y;
 
-    converted_data.p1[idx + 10] = pt_1.p1.x;
-    converted_data.p1[idx + 11] = pt_1.p1.y;
+    converted_data->p1[idx + 10] = pt_1.p1.x;
+    converted_data->p1[idx + 11] = pt_1.p1.y;
 
     // 1st triangle
-    converted_data.p2[idx] = pt_1.p2.x;
-    converted_data.p2[idx + 1] = pt_1.p2.y;
+    converted_data->p2[idx] = pt_1.p2.x;
+    converted_data->p2[idx + 1] = pt_1.p2.y;
 
-    converted_data.p2[idx + 2] = pt.p2.x;
-    converted_data.p2[idx + 3] = pt.p2.y;
+    converted_data->p2[idx + 2] = pt.p2.x;
+    converted_data->p2[idx + 3] = pt.p2.y;
 
-    converted_data.p2[idx + 4] = pt.p2.x;
-    converted_data.p2[idx + 5] = pt.p2.y;
+    converted_data->p2[idx + 4] = pt.p2.x;
+    converted_data->p2[idx + 5] = pt.p2.y;
 
     // 2nd triangle
-    converted_data.p2[idx + 6] = pt_1.p2.x;
-    converted_data.p2[idx + 7] = pt_1.p2.y;
+    converted_data->p2[idx + 6] = pt_1.p2.x;
+    converted_data->p2[idx + 7] = pt_1.p2.y;
 
-    converted_data.p2[idx + 8] = pt.p2.x;
-    converted_data.p2[idx + 9] = pt.p2.y;
+    converted_data->p2[idx + 8] = pt.p2.x;
+    converted_data->p2[idx + 9] = pt.p2.y;
 
-    converted_data.p2[idx + 10] = pt_1.p2.x;
-    converted_data.p2[idx + 11] = pt_1.p2.y;
+    converted_data->p2[idx + 10] = pt_1.p2.x;
+    converted_data->p2[idx + 11] = pt_1.p2.y;
 
-    converted_data.idx_data[idx_idx] = 0;
-    converted_data.idx_data[idx_idx + 1] = 1;
-    converted_data.idx_data[idx_idx + 2] = 2;
-    converted_data.idx_data[idx_idx + 3] = 3;
-    converted_data.idx_data[idx_idx + 4] = 4;
-    converted_data.idx_data[idx_idx + 5] = 5;
+    converted_data->idx_data[idx_idx] = 0;
+    converted_data->idx_data[idx_idx + 1] = 1;
+    converted_data->idx_data[idx_idx + 2] = 2;
+    converted_data->idx_data[idx_idx + 3] = 3;
+    converted_data->idx_data[idx_idx + 4] = 4;
+    converted_data->idx_data[idx_idx + 5] = 5;
 
     const float la_1 = length_along_tmp[input_params.num_elements - 2];
     const float la = length_along_tmp[input_params.num_elements - 1];
 
-    converted_data.length_along[length_along_idx] = la_1;
-    converted_data.length_along[length_along_idx + 1] = la;
-    converted_data.length_along[length_along_idx + 2] = la;
+    converted_data->length_along[length_along_idx] = la_1;
+    converted_data->length_along[length_along_idx + 1] = la;
+    converted_data->length_along[length_along_idx + 2] = la;
 
-    converted_data.length_along[length_along_idx + 3] = la_1;
-    converted_data.length_along[length_along_idx + 4] = la_1;
-    converted_data.length_along[length_along_idx + 5] = la;
+    converted_data->length_along[length_along_idx + 3] = la_1;
+    converted_data->length_along[length_along_idx + 4] = la_1;
+    converted_data->length_along[length_along_idx + 5] = la;
 
     delete[] length_along_tmp;
 
@@ -584,7 +593,7 @@ Plot2D::ConvertedData convertData(const uint8_t* const input_data, const InputPa
     {
         const RGB888* const input_data_rgb =
             reinterpret_cast<const RGB888* const>(input_data_dt + 2U * input_params.num_elements);
-        converted_data.color_data = new float[3 * num_points];
+        converted_data->color_data = new float[3 * num_points];
 
         idx = 0;
 
@@ -598,64 +607,64 @@ Plot2D::ConvertedData convertData(const uint8_t* const input_data, const InputPa
                                         static_cast<float>(input_data_rgb[k - 1].green) / 255.0f,
                                         static_cast<float>(input_data_rgb[k - 1].blue) / 255.0f};
             // v0
-            converted_data.color_data[idx] = color_k_1.red;
-            converted_data.color_data[idx + 1] = color_k_1.green;
-            converted_data.color_data[idx + 2] = color_k_1.blue;
+            converted_data->color_data[idx] = color_k_1.red;
+            converted_data->color_data[idx + 1] = color_k_1.green;
+            converted_data->color_data[idx + 2] = color_k_1.blue;
 
             // v1
-            converted_data.color_data[idx + 3] = color_k.red;
-            converted_data.color_data[idx + 4] = color_k.green;
-            converted_data.color_data[idx + 5] = color_k.blue;
+            converted_data->color_data[idx + 3] = color_k.red;
+            converted_data->color_data[idx + 4] = color_k.green;
+            converted_data->color_data[idx + 5] = color_k.blue;
 
             // v2
-            converted_data.color_data[idx + 6] = color_k.red;
-            converted_data.color_data[idx + 7] = color_k.green;
-            converted_data.color_data[idx + 8] = color_k.blue;
+            converted_data->color_data[idx + 6] = color_k.red;
+            converted_data->color_data[idx + 7] = color_k.green;
+            converted_data->color_data[idx + 8] = color_k.blue;
 
             // v3
-            converted_data.color_data[idx + 9] = color_k_1.red;
-            converted_data.color_data[idx + 10] = color_k_1.green;
-            converted_data.color_data[idx + 11] = color_k_1.blue;
+            converted_data->color_data[idx + 9] = color_k_1.red;
+            converted_data->color_data[idx + 10] = color_k_1.green;
+            converted_data->color_data[idx + 11] = color_k_1.blue;
 
             // v4
-            converted_data.color_data[idx + 12] = color_k.red;
-            converted_data.color_data[idx + 13] = color_k.green;
-            converted_data.color_data[idx + 14] = color_k.blue;
+            converted_data->color_data[idx + 12] = color_k.red;
+            converted_data->color_data[idx + 13] = color_k.green;
+            converted_data->color_data[idx + 14] = color_k.blue;
 
             // v5
-            converted_data.color_data[idx + 15] = color_k_1.red;
-            converted_data.color_data[idx + 16] = color_k_1.green;
-            converted_data.color_data[idx + 17] = color_k_1.blue;
+            converted_data->color_data[idx + 15] = color_k_1.red;
+            converted_data->color_data[idx + 16] = color_k_1.green;
+            converted_data->color_data[idx + 17] = color_k_1.blue;
 
             // v6
-            converted_data.color_data[idx + 18] = color_k.red;
-            converted_data.color_data[idx + 19] = color_k.green;
-            converted_data.color_data[idx + 20] = color_k.blue;
+            converted_data->color_data[idx + 18] = color_k.red;
+            converted_data->color_data[idx + 19] = color_k.green;
+            converted_data->color_data[idx + 20] = color_k.blue;
 
             // v7
-            converted_data.color_data[idx + 21] = color_k.red;
-            converted_data.color_data[idx + 22] = color_k.green;
-            converted_data.color_data[idx + 23] = color_k.blue;
+            converted_data->color_data[idx + 21] = color_k.red;
+            converted_data->color_data[idx + 22] = color_k.green;
+            converted_data->color_data[idx + 23] = color_k.blue;
 
             // v8
-            converted_data.color_data[idx + 24] = color_k.red;
-            converted_data.color_data[idx + 25] = color_k.green;
-            converted_data.color_data[idx + 26] = color_k.blue;
+            converted_data->color_data[idx + 24] = color_k.red;
+            converted_data->color_data[idx + 25] = color_k.green;
+            converted_data->color_data[idx + 26] = color_k.blue;
 
             // v9
-            converted_data.color_data[idx + 27] = color_k.red;
-            converted_data.color_data[idx + 28] = color_k.green;
-            converted_data.color_data[idx + 29] = color_k.blue;
+            converted_data->color_data[idx + 27] = color_k.red;
+            converted_data->color_data[idx + 28] = color_k.green;
+            converted_data->color_data[idx + 29] = color_k.blue;
 
             // v10
-            converted_data.color_data[idx + 30] = color_k.red;
-            converted_data.color_data[idx + 31] = color_k.green;
-            converted_data.color_data[idx + 32] = color_k.blue;
+            converted_data->color_data[idx + 30] = color_k.red;
+            converted_data->color_data[idx + 31] = color_k.green;
+            converted_data->color_data[idx + 32] = color_k.blue;
 
             // v11
-            converted_data.color_data[idx + 33] = color_k.red;
-            converted_data.color_data[idx + 34] = color_k.green;
-            converted_data.color_data[idx + 35] = color_k.blue;
+            converted_data->color_data[idx + 33] = color_k.red;
+            converted_data->color_data[idx + 34] = color_k.green;
+            converted_data->color_data[idx + 35] = color_k.blue;
 
             idx += 36;
         }
@@ -668,37 +677,37 @@ Plot2D::ConvertedData convertData(const uint8_t* const input_data, const InputPa
                                     static_cast<float>(input_data_rgb[input_params.num_elements - 2].green) / 255.0f,
                                     static_cast<float>(input_data_rgb[input_params.num_elements - 2].blue) / 255.0f};
         // v0
-        converted_data.color_data[idx] = color_k_1.red;
-        converted_data.color_data[idx + 1] = color_k_1.green;
-        converted_data.color_data[idx + 2] = color_k_1.blue;
+        converted_data->color_data[idx] = color_k_1.red;
+        converted_data->color_data[idx + 1] = color_k_1.green;
+        converted_data->color_data[idx + 2] = color_k_1.blue;
 
         // v1
-        converted_data.color_data[idx + 3] = color_k.red;
-        converted_data.color_data[idx + 4] = color_k.green;
-        converted_data.color_data[idx + 5] = color_k.blue;
+        converted_data->color_data[idx + 3] = color_k.red;
+        converted_data->color_data[idx + 4] = color_k.green;
+        converted_data->color_data[idx + 5] = color_k.blue;
 
         // v2
-        converted_data.color_data[idx + 6] = color_k.red;
-        converted_data.color_data[idx + 7] = color_k.green;
-        converted_data.color_data[idx + 8] = color_k.blue;
+        converted_data->color_data[idx + 6] = color_k.red;
+        converted_data->color_data[idx + 7] = color_k.green;
+        converted_data->color_data[idx + 8] = color_k.blue;
 
         // v3
-        converted_data.color_data[idx + 9] = color_k_1.red;
-        converted_data.color_data[idx + 10] = color_k_1.green;
-        converted_data.color_data[idx + 11] = color_k_1.blue;
+        converted_data->color_data[idx + 9] = color_k_1.red;
+        converted_data->color_data[idx + 10] = color_k_1.green;
+        converted_data->color_data[idx + 11] = color_k_1.blue;
 
         // v4
-        converted_data.color_data[idx + 12] = color_k.red;
-        converted_data.color_data[idx + 13] = color_k.green;
-        converted_data.color_data[idx + 14] = color_k.blue;
+        converted_data->color_data[idx + 12] = color_k.red;
+        converted_data->color_data[idx + 13] = color_k.green;
+        converted_data->color_data[idx + 14] = color_k.blue;
 
         // v5
-        converted_data.color_data[idx + 15] = color_k_1.red;
-        converted_data.color_data[idx + 16] = color_k_1.green;
-        converted_data.color_data[idx + 17] = color_k_1.blue;
+        converted_data->color_data[idx + 15] = color_k_1.red;
+        converted_data->color_data[idx + 16] = color_k_1.green;
+        converted_data->color_data[idx + 17] = color_k_1.blue;
     }
 
-    return converted_data;
+    return std::unique_ptr<ConvertedData>{converted_data};
 }
 
 }  // namespace
