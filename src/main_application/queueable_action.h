@@ -8,7 +8,7 @@
 class QueueableAction
 {
 public:
-    enum class Type
+    enum class Type  // TODO: Remove, and add internall:Function
     {
         RAW_PLOT_DATA_AND_HEADER,
         RECEIVED_DATA_WITH_HEADER,
@@ -18,20 +18,15 @@ public:
     QueueableAction() = delete;
 
     QueueableAction(const internal::CommunicationHeader& hdr, std::unique_ptr<const ReceivedData>& received_data)
-        : hdr_{hdr}, received_data_{std::move(received_data)}
+        : hdr_{hdr}, received_data_{std::move(received_data)}, converted_data_{nullptr}
     {
         type_ = QueueableAction::Type::RECEIVED_DATA_WITH_HEADER;
     }
 
-    QueueableAction(const internal::CommunicationHeader& hdr) : hdr_{hdr}
-    {
-        type_ = QueueableAction::Type::RECEIVED_DATA_HEADER_ONLY;
-    }
-
-    QueueableAction(ConvertedDataBase* converted_data,
-                    const internal::CommunicationHeader& hdr,
-                    std::unique_ptr<const ReceivedData>& received_data)
-        : hdr_{hdr}, received_data_{std::move(received_data)}, converted_data_{converted_data}
+    QueueableAction(const internal::CommunicationHeader& hdr,
+                    std::unique_ptr<const ReceivedData>& received_data,
+                    std::unique_ptr<const ConvertedDataBase>& converted_data)
+        : hdr_{hdr}, received_data_{std::move(received_data)}, converted_data_{std::move(converted_data)}
     {
         type_ = QueueableAction::Type::RAW_PLOT_DATA_AND_HEADER;
     }
@@ -46,14 +41,14 @@ public:
         return hdr_;
     }
 
-    ConvertedDataBase* getConvertedData() const
+    /*ConvertedDataBase* getConvertedData() const
     {
         return converted_data_;
-    }
+    }*/
 
     internal::CommunicationHeader hdr_;
     std::unique_ptr<const ReceivedData> received_data_;
-    ConvertedDataBase* converted_data_;
+    std::unique_ptr<const ConvertedDataBase> converted_data_;
     QueueableAction::Type type_;
 };
 
