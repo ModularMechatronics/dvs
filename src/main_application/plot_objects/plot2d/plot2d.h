@@ -22,12 +22,17 @@ public:
         int32_t* idx_data;
         float* color_data;
         size_t num_points;
+
+        ~ConvertedData() override
+        {
+            std::cout << "ConvertedData destructor!" << std::endl;
+        }
     };
 
     Plot2D();
-    Plot2D(std::unique_ptr<const ReceivedData> received_data,
-           const CommunicationHeader& hdr,
-           ConvertedDataBase* converted_data,
+    Plot2D(const CommunicationHeader& hdr,
+           std::unique_ptr<const ReceivedData>& received_data,
+           std::unique_ptr<const ConvertedDataBase>& converted_data,
            const Properties& props,
            const ShaderCollection shader_collection,
            ColorPicker& color_picker);
@@ -40,7 +45,8 @@ public:
 
     void render() override;
 
-    static ConvertedDataBase* convertRawData(const PlotObjectAttributes& attributes, const uint8_t* const data_ptr);
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const uint8_t* const data_ptr);
 
 private:
     VertexBuffer vertex_buffer_;

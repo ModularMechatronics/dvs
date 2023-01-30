@@ -70,9 +70,9 @@ void PlotDataHandler::propertiesExtension(const CommunicationHeader& hdr)
     }
 }
 
-void PlotDataHandler::addData_New(ConvertedDataBase* converted_data,
-                                  const CommunicationHeader& hdr,
-                                  std::unique_ptr<const ReceivedData> received_data)
+void PlotDataHandler::addData_New(const CommunicationHeader& hdr,
+                                  std::unique_ptr<const ReceivedData>& received_data,
+                                  std::unique_ptr<const ConvertedDataBase>& converted_data)
 {
     const Function fcn = hdr.getFunction();
 
@@ -114,7 +114,7 @@ void PlotDataHandler::addData_New(ConvertedDataBase* converted_data,
 
         case Function::PLOT2:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                new Plot2D(std::move(received_data), hdr, converted_data, props, shader_collection_, color_picker_)));
+                new Plot2D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
             break;
 
             /*case Function::PLOT3:

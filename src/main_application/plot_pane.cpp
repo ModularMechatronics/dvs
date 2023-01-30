@@ -896,9 +896,9 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
         QueueableAction* qa = pending_actions_.front();
 
         std::cout << "Updating plot pane: " << qa->getHeader().getFunction() << std::endl;
-        if (isPlotDataFunction(qa->getHeader().getFunction()))
+        if (isPlotDataFunction(qa->hdr_.getFunction()))
         {
-            plot_data_handler_->addData_New(qa->getConvertedData(), qa->getHeader(), std::move(qa->received_data_));
+            plot_data_handler_->addData_New(qa->hdr_, qa->received_data_, qa->converted_data_);
             std::cout << "Adding to plot data handler" << std::endl;
         }
         else {}

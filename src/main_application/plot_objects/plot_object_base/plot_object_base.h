@@ -30,6 +30,11 @@ bool isPlotDataFunction(const Function fcn);
 struct ConvertedDataBase
 {
     Function function;
+
+    virtual ~ConvertedDataBase()
+    {
+        std::cout << "ConvertedDataBase destructor!" << std::endl;
+    }
 };
 
 struct PlotObjectAttributes
@@ -143,10 +148,6 @@ public:
                    const Properties& props,
                    const ShaderCollection shader_collection,
                    ColorPicker& color_picker);
-    /*PlotObjectBase(const CommunicationHeader& hdr,
-                   const Properties& props,
-                   const ShaderCollection shader_collection,
-                   ColorPicker& color_picker);*/
     virtual void render() = 0;
     void preRender(const Shader shader_to_use);
     virtual bool affectsColormapMinMax() const

@@ -41,21 +41,25 @@ struct Converter
 
 }  // namespace
 
-Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
-               const CommunicationHeader& hdr,
-               ConvertedDataBase* converted_data,
+Plot2D::Plot2D(const CommunicationHeader& hdr,
+               std::unique_ptr<const ReceivedData>& received_data,
+               std::unique_ptr<const ConvertedDataBase>& converted_data,
                const Properties& props,
                const ShaderCollection shader_collection,
                ColorPicker& color_picker)
     : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker)
 {
+    std::cout << "Inside PLOT2D" << std::endl;
+    std::unique_ptr<const ConvertedDataBase> converted_data_local = std::move(converted_data);
     if (type_ != Function::PLOT2)
     {
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    const Plot2D::ConvertedData* const raw_data_2d = static_cast<Plot2D::ConvertedData*>(converted_data);
-    num_points_ = raw_data_2d->num_points;
+    const Plot2D::ConvertedData* const converted_data_2d =
+        static_cast<const Plot2D::ConvertedData* const>(converted_data_local.get());
+
+    num_points_ = converted_data_2d->num_points;
 
     if (is_dashed_)
     {
@@ -76,27 +80,30 @@ Plot2D::Plot2D(std::unique_ptr<const ReceivedData> received_data,
         }
     }
 
-    vertex_buffer_ = std::move(VertexBuffer{OGLPrimitiveType::TRIANGLES});
+    vertex_buffer_ = std::move(
+        VertexBuffer{OGLPrimitiveType::TRIANGLES});  // TODO: Move to initialization and remove VertexBuffer&& oeprator=
 
-    vertex_buffer_.addBuffer(raw_data_2d->p0, num_points_, 2, usage_);
-    vertex_buffer_.addBuffer(raw_data_2d->p1, num_points_, 2, usage_);
-    vertex_buffer_.addBuffer(raw_data_2d->p2, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(converted_data_2d->p0, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(converted_data_2d->p1, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(converted_data_2d->p2, num_points_, 2, usage_);
 
-    vertex_buffer_.addBuffer(raw_data_2d->idx_data, num_points_, 1, usage_);
-    vertex_buffer_.addBuffer(raw_data_2d->length_along, num_points_, 1, usage_);
+    vertex_buffer_.addBuffer(converted_data_2d->idx_data, num_points_, 1, usage_);
+    vertex_buffer_.addBuffer(converted_data_2d->length_along, num_points_, 1, usage_);
 
     if (has_color_)
     {
-        vertex_buffer_.addBuffer(raw_data_2d->color_data, num_points_, 3);
+        vertex_buffer_.addBuffer(converted_data_2d->color_data, num_points_, 3);
 
-        delete[] raw_data_2d->color_data;
+        // delete[] converted_data_2d->color_data;
     }
 
-    delete[] raw_data_2d->p0;
-    delete[] raw_data_2d->p1;
-    delete[] raw_data_2d->p2;
-    delete[] raw_data_2d->length_along;
-    delete[] raw_data_2d->idx_data;
+    /*delete[] converted_data_2d->p0;
+    delete[] converted_data_2d->p1;
+    delete[] converted_data_2d->p2;
+    delete[] converted_data_2d->length_along;
+    delete[] converted_data_2d->idx_data;*/
+
+    std::cout << "End of PLOT2D" << std::endl;
 }
 
 void Plot2D::findMinMax()
@@ -143,20 +150,21 @@ void Plot2D::render()
     glDisable(GL_BLEND);
 }
 
-ConvertedDataBase* Plot2D::convertRawData(const PlotObjectAttributes& attributes, const uint8_t* const data_ptr)
+std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const PlotObjectAttributes& attributes,
+                                                                const uint8_t* const data_ptr)
 {
     const InputParams input_params{attributes.num_elements,
                                    attributes.num_bytes_per_element,
                                    attributes.num_bytes_for_one_vec,
                                    attributes.has_color};
 
-    Plot2D::ConvertedData* plot2d_raw_data = new Plot2D::ConvertedData;
-    *plot2d_raw_data = applyConverter<Plot2D::ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params);
+    Plot2D::ConvertedData plot2d_raw_data =
+        applyConverter<Plot2D::ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params);
 
-    ConvertedDataBase* converted_data = plot2d_raw_data;
-    converted_data->function = attributes.function;
+    std::unique_ptr<const ConvertedDataBase> converted_data_base =
+        std::make_unique<const Plot2D::ConvertedData>(plot2d_raw_data);
 
-    return converted_data;
+    return std::move(converted_data_base);
 }
 
 void Plot2D::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,

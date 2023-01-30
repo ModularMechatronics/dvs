@@ -95,13 +95,14 @@ void MainWindow::OnReceiveTimer(wxTimerEvent&)
     }
 }
 
-ConvertedDataBase* initializePlotObject(const ReceivedData* const received_data, const CommunicationHeader& hdr)
+std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedData* const received_data,
+                                                               const CommunicationHeader& hdr)
 {
     const Function fcn = hdr.getFunction();
 
-    const Properties props{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()};
+    // const Properties props{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()};
 
-    ConvertedDataBase* converted_data;
+    std::unique_ptr<const ConvertedDataBase> converted_data;
 
     PlotObjectAttributes attributes{hdr};
 
@@ -191,7 +192,7 @@ ConvertedDataBase* initializePlotObject(const ReceivedData* const received_data,
             break;
     }
 
-    return converted_data;
+    return std::move(converted_data);
 }
 
 void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData> received_data,
@@ -201,7 +202,6 @@ void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData> received_d
 
     if (fcn == Function::SET_CURRENT_ELEMENT)
     {
-        std::cout << "Received set current element!" << std::endl;
         setCurrentElement_New(hdr);
     }
     else if (fcn == Function::FLUSH_MULTIPLE_ELEMENTS)
@@ -210,14 +210,13 @@ void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData> received_d
     }
     else if (isPlotDataFunction(fcn))
     {
-        std::cout << "Plot data function: " << fcn << std::endl;
-        ConvertedDataBase* converted_data = initializePlotObject(received_data.get(), hdr);
-        queued_actions_[current_element_name_].push(new QueueableAction(converted_data, hdr, received_data));
+        std::unique_ptr<const ConvertedDataBase> converted_data = convertPlotObjectData(received_data.get(), hdr);
+        queued_actions_[current_element_name_].push(new QueueableAction(hdr, received_data, converted_data));
     }
     else
     {
         std::cout << "Other function: " << fcn << std::endl;
-        queued_actions_[current_element_name_].push(new QueueableAction(hdr));
+        queued_actions_[current_element_name_].push(new QueueableAction(hdr, received_data));
     }
 }
 
@@ -464,7 +463,8 @@ void MainWindow::mainWindowFlushMultipleElements_New(std::unique_ptr<const Recei
 
     for (size_t k = 0; k < names.size(); k++)
     {
-        queued_actions_[names[k]].push(new QueueableAction(CommunicationHeader{Function::FLUSH_ELEMENT}));
+        queued_actions_[names[k]].push(
+            new QueueableAction(CommunicationHeader{Function::FLUSH_ELEMENT}, received_data));
     }
 }
 
