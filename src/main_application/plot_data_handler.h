@@ -12,6 +12,7 @@
 #include "misc/color_map.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "properties.h"
+#include "queueable_action.h"
 #include "shader.h"
 
 using namespace dvs;
@@ -22,7 +23,7 @@ class PlotObjectBase;
 class PlotDataHandler
 {
 private:
-    bool pending_clear_;
+    bool pending_soft_clear_;
     ShaderCollection shader_collection_;
     bool isUpdatable(const Function fcn) const;
     void propertiesExtension(const CommunicationHeader& hdr);
@@ -39,7 +40,10 @@ public:
     void clear();
     void softClear();
     void addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr);
-    void render() const;
+    void render();
+    void addData_New(ConvertedDataBase* converted_data,
+                     const CommunicationHeader& hdr,
+                     std::unique_ptr<const ReceivedData> received_data);
     void setTransform(const internal::ItemId id,
                       const MatrixFixed<double, 3, 3>& rotation,
                       const Vec3<double>& translation,

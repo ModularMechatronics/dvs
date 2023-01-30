@@ -6,12 +6,6 @@ using namespace dvs::internal;
 
 namespace
 {
-struct OutputData
-{
-    float* points_ptr;
-    float* color_ptr;
-    float* alpha_ptr;
-};
 
 struct InputParams
 {
@@ -37,11 +31,12 @@ struct InputParams
     }
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T> ImShow::OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    ImShow::OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -62,9 +57,11 @@ void ImShow::findMinMax()
 ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
                const CommunicationHeader& hdr,
                const Properties& props,
-               const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker),
-      vertex_buffer_{OGLPrimitiveType::TRIANGLES}
+               const ShaderCollection shader_collection,
+               ColorPicker& color_picker,
+               const bool initalize_gl)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker)
+
 {
     if (type_ != Function::IM_SHOW)
     {
@@ -80,22 +77,32 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
     height_ = dims_.rows;
 
     const InputParams input_params{num_channels_, dims_, z_offset_, data_type_};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    output_data_ = applyConverter<ImShow::OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
     findMinMax();
 
-    vertex_buffer_.addBuffer(output_data.points_ptr, 6 * dims_.rows * dims_.cols, 3);
-    vertex_buffer_.addBuffer(output_data.color_ptr, 6 * dims_.rows * dims_.cols, 3);
+    if (initalize_gl)
+    {
+        initializeGL();
+    }
+}
+
+void ImShow::initializeGL()
+{
+    vertex_buffer_ = std::move(VertexBuffer{OGLPrimitiveType::TRIANGLES});
+
+    vertex_buffer_.addBuffer(output_data_.points_ptr, 6 * dims_.rows * dims_.cols, 3);
+    vertex_buffer_.addBuffer(output_data_.color_ptr, 6 * dims_.rows * dims_.cols, 3);
 
     if ((num_channels_ == 4) || (num_channels_ == 2))
     {
-        vertex_buffer_.addBuffer(output_data.alpha_ptr, 6 * dims_.rows * dims_.cols, 1);
+        vertex_buffer_.addBuffer(output_data_.alpha_ptr, 6 * dims_.rows * dims_.cols, 1);
 
-        delete[] output_data.alpha_ptr;
+        delete[] output_data_.alpha_ptr;
     }
 
-    delete[] output_data.points_ptr;
-    delete[] output_data.color_ptr;
+    delete[] output_data_.points_ptr;
+    delete[] output_data_.color_ptr;
 }
 
 void ImShow::render()
@@ -129,9 +136,9 @@ ImShow::~ImShow() {}
 
 namespace
 {
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T> ImShow::OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
-    OutputData output_data;
+    ImShow::OutputData output_data;
 
     if (input_params.num_channels == 4)
     {

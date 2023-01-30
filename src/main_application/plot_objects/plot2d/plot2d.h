@@ -12,20 +12,25 @@
 
 class Plot2D : public PlotObjectBase
 {
-private:
-    VertexBuffer vertex_buffer_;
-    float gap_size_, dash_size_;
-
-    size_t num_points_;
-
-    void findMinMax() override;
-
 public:
+    struct ConvertedData : ConvertedDataBase
+    {
+        float* p0;
+        float* p1;
+        float* p2;
+        float* length_along;
+        int32_t* idx_data;
+        float* color_data;
+        size_t num_points;
+    };
+
     Plot2D();
     Plot2D(std::unique_ptr<const ReceivedData> received_data,
            const CommunicationHeader& hdr,
+           ConvertedDataBase* converted_data,
            const Properties& props,
-           const ShaderCollection shader_collection, ColorPicker& color_picker);
+           const ShaderCollection shader_collection,
+           ColorPicker& color_picker);
     ~Plot2D();
 
     LegendProperties getLegendProperties() const override;
@@ -34,6 +39,18 @@ public:
                            const Properties& props) override;
 
     void render() override;
+
+    static ConvertedDataBase* convertRawData(const PlotObjectAttributes& attributes, const uint8_t* const data_ptr);
+
+private:
+    VertexBuffer vertex_buffer_;
+    float gap_size_, dash_size_;
+
+    size_t num_points_;
+
+    void findMinMax() override;
+
+    ConvertedData converted_data_;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT2D_PLOT2D_H_

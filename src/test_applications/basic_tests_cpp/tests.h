@@ -434,6 +434,31 @@ void testPlotCollection3()
 
 void testPlot()
 {
+    const size_t num_elements = 5;
+
+    const Vector<float> x{VectorInitializer<float>{0, 1, 2}};
+    const Vector<float> y{VectorInitializer<float>{0, 1.1, 0}};
+
+    /*const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 2.0f, num_elements);
+    const Vector<float> y = dvs::sin(x);*/
+
+    setCurrentElement("p_view_0");
+    // clearView();
+    // waitForFlush();
+
+    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
+    plot(x, y, properties::LineWidth(7), properties::Name("p0"));
+    /*plot(x + 1.0f, y, properties::LineWidth(7), properties::Name("p1"));
+    plot(x + 2.0f, y, properties::LineWidth(7), properties::Name("p2"));
+    plot(x + 3.0f, y, properties::LineWidth(7), properties::Name("p3"));
+    plot(x + 4.0f, y, properties::LineWidth(7), properties::Name("p4"));
+    plot(x + 5.0f, y, properties::LineWidth(7), properties::Name("p5"));
+    plot(x + 6.0f, y, properties::LineWidth(7), properties::Name("p6"));*/
+    // flushCurrentElement();
+}
+
+void testPlot_TMP()
+{
     const size_t num_elements = 30;
     Vector<float> x(num_elements), y(num_elements), z(num_elements);
 
@@ -478,7 +503,7 @@ void testPlot()
 
     axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
     plot(xp, yp, colorp, properties::LineWidth(20), properties::LineStyle::DASHED, properties::Color(200, 200, 200));
-    scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
+    // scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
     // plot3(xp, yp, zp, properties::LineWidth(60), properties::LineStyle::DASHED, properties::Color(0, 255, 0));
@@ -529,7 +554,7 @@ void testPlot()
          properties::LineWidth(7),
          properties::LineStyle::LONG_DASHED,
          properties::PERSISTENT);
-    scatter3(x + 3.0f, y, z, properties::Color::BLACK, properties::PointSize(14));
+    // scatter3(x + 3.0f, y, z, properties::Color::BLACK, properties::PointSize(14));
 
     setCurrentElement("p_view_2");
     clearView();
@@ -558,6 +583,7 @@ void testPlot()
 
     setCurrentElement("w1_p_view_0");
     clearView();
+    // waitForFlush();
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
     plot(x, y, properties::LineWidth(7));
@@ -567,6 +593,7 @@ void testPlot()
     plot(x + 4.0f, y, properties::LineWidth(7));
     plot(x + 5.0f, y, properties::LineWidth(7));
     plot(x + 6.0f, y, properties::LineWidth(7));
+    // flushCurrentElement();
 }
 
 void testFastPlot()

@@ -13,21 +13,32 @@
 
 class Scatter3D : public PlotObjectBase
 {
-private:
-    VertexBuffer vertex_buffer_;
-    void findMinMax() override;
-
 public:
     Scatter3D();
     Scatter3D(std::unique_ptr<const ReceivedData> received_data,
               const CommunicationHeader& hdr,
               const Properties& props,
-              const ShaderCollection shader_collection, ColorPicker& color_picker);
+              const ShaderCollection shader_collection,
+              ColorPicker& color_picker,
+              const bool initalize_gl);
     ~Scatter3D();
 
     void render() override;
     void modifyShader() override;
     LegendProperties getLegendProperties() const override;
+    void initializeGL() override;
+
+    struct OutputData
+    {
+        float* points_ptr;
+        float* color_ptr;
+    };
+
+private:
+    VertexBuffer vertex_buffer_;
+    void findMinMax() override;
+
+    OutputData output_data_;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER3_SCATTER3_H_

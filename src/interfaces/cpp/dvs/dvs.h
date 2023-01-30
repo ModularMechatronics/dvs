@@ -832,13 +832,6 @@ inline void showLegend()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void holdOn()
-{
-    internal::CommunicationHeader hdr{internal::Function::HOLD_ON};
-
-    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
-}
-
 inline void softClearView()
 {
     internal::CommunicationHeader hdr{internal::Function::SOFT_CLEAR};

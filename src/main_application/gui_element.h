@@ -6,11 +6,13 @@
 
 #include <functional>
 #include <memory>
+#include <queue>
 
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "project_state/project_settings.h"
+#include "queueable_action.h"
 
 using namespace dvs;
 
@@ -65,8 +67,7 @@ public:
     }
 
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
-    virtual void addData(std::unique_ptr<const ReceivedData> received_data,
-                         const dvs::internal::CommunicationHeader& hdr) = 0;
+    virtual void pushQueue(std::queue<QueueableAction*>& new_queue) = 0;
     virtual void keyPressed(const char key) = 0;
     virtual void keyReleased(const char key) = 0;
     virtual void show() = 0;
@@ -75,12 +76,13 @@ public:
     virtual void refresh() = 0;
     virtual void waitForFlush() = 0;
     virtual void toggleProjectionType() = 0;
+    virtual void update() = 0;
 
-    virtual void showLegend(const bool show_legend)
+    /*virtual void showLegend(const bool show_legend)
     {
         static_cast<void>(show_legend);
         std::cout << "Not implemented!" << std::endl;
-    }
+    }*/
 };
 
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

@@ -514,6 +514,14 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
     }
 }
 
+void WindowView::updateAllElements()
+{
+    for (auto& t : tabs_)
+    {
+        t->updateAllElements();
+    }
+}
+
 void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
 {
     for (const auto& t : tabs_)

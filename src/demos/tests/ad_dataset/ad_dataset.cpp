@@ -237,7 +237,7 @@ void testBasic()
 {
     const std::string project_file_path = "../../project_files/ad_dataset.dvs";
 
-    openProjectFile(project_file_path);
+    // openProjectFile(project_file_path);
 
     DatasetReader dataset_reader{"/Users/danielpi/work/dvs/leddar_dataset/20200706_171559_part27_1170_1370/output"};
 
@@ -245,25 +245,26 @@ void testBasic()
 
     setCurrentElement("point_cloud");
     clearView();
-    waitForFlush();
-    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
-    view(-38.0, 32.0);
+    // waitForFlush();
+    // axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
+    // view(-38.0, 32.0);
 
     setCurrentElement("center");
     clearView();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
-    waitForFlush();
+    // waitForFlush();
 
     setCurrentElement("right");
     clearView();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
-    waitForFlush();
+    // waitForFlush();
 
     setCurrentElement("left");
     clearView();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
-    waitForFlush();
+    // waitForFlush();
 
+    // size_t k = 0;
     for (size_t k = 0; k < dataset_reader.numImgFiles(); k++)
     {
         const ImageRGBConstView<uint8> img_front = dataset_reader.getFrontImage(k);
@@ -298,7 +299,8 @@ void testBasic()
         softClearView();
         imShow(img_left);
 
-        flushMultipleElements("point_cloud", "center", "left", "right");
+        // flushMultipleElements("point_cloud", "center", "left", "right");
+        // usleep(1000 * 50);
     }
 }
 

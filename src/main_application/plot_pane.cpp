@@ -147,6 +147,8 @@ PlotPane::PlotPane(wxWindow* parent,
       m_context(getContext()),
       axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
+    new_data_available_ = false;
+    pending_clear_ = false;
     parent_size_ = parent->GetSize();
     edit_size_margin_ = 20.0f;
     minimum_x_pos_ = 70;
@@ -166,7 +168,6 @@ PlotPane::PlotPane(wxWindow* parent,
     axes_renderer_ = new AxesRenderer(shader_collection_, element_settings, tab_background_color);
     plot_data_handler_ = new PlotDataHandler(shader_collection_);
 
-    hold_on_ = true;
     axes_set_ = false;
     view_set_ = false;
     axes_from_min_max_disabled_ = false;
@@ -261,21 +262,12 @@ PlotPane::~PlotPane()
     delete m_context;
 }
 
-void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const dvs::internal::CommunicationHeader& hdr)
+/*void PlotPane::addDataAsync(std::unique_ptr<const ReceivedData> received_data,
+                            const dvs::internal::CommunicationHeader& hdr)
 {
     const Function fcn = hdr.getFunction();
 
-    wxGLCanvas::SetCurrent(*m_context);
-
-    if (fcn == Function::HOLD_ON)
-    {
-        hold_on_ = true;
-    }
-    else if (fcn == Function::HOLD_OFF)
-    {
-        hold_on_ = false;
-    }
-    else if (fcn == Function::AXES_2D)
+    if (fcn == Function::AXES_2D)
     {
         axes_set_ = true;
 
@@ -310,17 +302,28 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
     }
     else if (fcn == Function::CLEAR)
     {
+        pending_clear_ = true;
         axes_set_ = false;
-        hold_on_ = true;
         view_set_ = false;
         wait_for_flush_ = false;
         axes_from_min_max_disabled_ = false;
 
-        plot_data_handler_->clear();
         axes_interactor_.setViewAngles(0, M_PI);
         axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
         axes_renderer_->resetGlobalIllumination();
         axes_renderer_->setAxesBoxScaleFactor(Vec3d{2.5, 2.5, 2.5});
+    }
+    else if (fcn == Function::SHOW_LEGEND)
+    {
+        axes_interactor_.showLegend(true);
+    }
+    else if (fcn == Function::FLUSH_ELEMENT)
+    {
+        // queueFlush();
+    }
+    else if (fcn == Function::WAIT_FOR_FLUSH)
+    {
+        wait_for_flush_ = true;
     }
     else if (fcn == Function::SOFT_CLEAR)
     {
@@ -351,11 +354,7 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
     }
     else
     {
-        if (!hold_on_)
-        {
-            plot_data_handler_->clear();
-        }
-        plot_data_handler_->addData(std::move(received_data), hdr);
+        // plot_data_handler_->addDataAsync(std::move(received_data), hdr);
 
         // TODO: The fundamental design of this min/max needs to be changed.
         // For some types of plot data, it shouldn't be executed if axes is set,
@@ -404,7 +403,29 @@ void PlotPane::addData(std::unique_ptr<const ReceivedData> received_data, const 
         }
     }
 
-    if (!wait_for_flush_)
+    new_data_available_ = true;
+}*/
+
+/*void PlotPane::queueFlush()
+{
+    new_data_available_ = true;
+}*/
+
+void PlotPane::pushQueue(std::queue<QueueableAction*>& new_queue)
+{
+    const size_t queue_size = new_queue.size();
+    for (size_t k = 0; k < queue_size; k++)
+    {
+        pending_actions_.push(new_queue.front());
+        new_queue.pop();
+    }
+
+    std::cout << "Received " << queue_size << " new items" << std::endl;
+}
+
+void PlotPane::update()
+{
+    if (pending_actions_.size() > 0)
     {
         Refresh();
     }
@@ -439,14 +460,14 @@ void PlotPane::toggleProjectionType()
     Refresh();
 }
 
-void PlotPane::showLegend(const bool show_legend)
+/*void PlotPane::showLegend(const bool show_legend)
 {
     axes_interactor_.showLegend(show_legend);
     if (!wait_for_flush_)
     {
         Refresh();
     }
-}
+}*/
 
 void PlotPane::destroy()
 {
@@ -461,7 +482,7 @@ void PlotPane::setName(const std::string& new_name)
 
 void PlotPane::mouseLeftPressed(wxMouseEvent& event)
 {
-    wxCommandEvent evt(MY_EVENT, GetId());
+    wxCommandEvent evt(MY_EVENT, GetId());  // TODO: Used anymore?
     evt.SetEventObject(this);
     evt.SetString(element_settings_.name);
     ProcessWindowEvent(evt);
@@ -860,14 +881,36 @@ void PlotPane::refresh()
     Refresh();
 }
 
-void PlotPane::render(wxPaintEvent& evt)
+void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 {
-    (void)evt;
     if (!IsShown())
+    {
         return;
+    }
 
     wxGLCanvas::SetCurrent(*m_context);
-    wxPaintDC(this);
+    wxPaintDC(this);  // TODO: Can be removed?
+
+    while (pending_actions_.size() > 0)
+    {
+        QueueableAction* qa = pending_actions_.front();
+
+        std::cout << "Updating plot pane: " << qa->getHeader().getFunction() << std::endl;
+        if (isPlotDataFunction(qa->getHeader().getFunction()))
+        {
+            plot_data_handler_->addData_New(qa->getConvertedData(), qa->getHeader(), std::move(qa->received_data_));
+            std::cout << "Adding to plot data handler" << std::endl;
+        }
+        else {}
+
+        pending_actions_.pop();
+    }
+
+    /*if (pending_clear_)
+    {
+        pending_clear_ = false;
+        plot_data_handler_->clear();
+    }*/
 
     glEnable(GL_MULTISAMPLE);
 
@@ -875,12 +918,6 @@ void PlotPane::render(wxPaintEvent& evt)
     glClearColor(color_vec.red, color_vec.green, color_vec.blue, 0.0f);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // TODO: Move to keypressed? And deal with key hold...
-    if (wxGetKeyState(static_cast<wxKeyCode>('v')) || wxGetKeyState(static_cast<wxKeyCode>('V')))
-    {
-        perspective_projection_ = !perspective_projection_;
-    }
 
     if (viewShouldBeReset(keyboard_state_))
     {
