@@ -4,11 +4,6 @@
 
 namespace
 {
-struct OutputData
-{
-    float* points_ptr;
-    float* color_ptr;
-};
 
 struct InputParams
 {
@@ -30,11 +25,13 @@ struct InputParams
     }
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+Scatter3D::OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    Scatter3D::OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -45,8 +42,10 @@ struct Converter
 Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data,
                      const CommunicationHeader& hdr,
                      const Properties& props,
-                     const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker), vertex_buffer_{OGLPrimitiveType::POINTS}
+                     const ShaderCollection shader_collection,
+                     ColorPicker& color_picker,
+                     const bool initalize_gl)
+    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker)
 {
     if (type_ != Function::SCATTER3)
     {
@@ -54,18 +53,37 @@ Scatter3D::Scatter3D(std::unique_ptr<const ReceivedData> received_data,
     }
 
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    output_data_ = applyConverter<Scatter3D::OutputData>(data_ptr_, data_type_, Converter{}, input_params);
 
-    vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_, 3);
+    if (initalize_gl)
+    {
+        vertex_buffer_ = std::move(VertexBuffer{OGLPrimitiveType::POINTS});
+        vertex_buffer_.addBuffer(output_data_.points_ptr, num_elements_, 3);
+
+        if (has_color_)
+        {
+            vertex_buffer_.addBuffer(output_data_.color_ptr, num_elements_, 3);
+
+            delete[] output_data_.color_ptr;
+        }
+
+        delete[] output_data_.points_ptr;
+    }
+}
+
+void Scatter3D::initializeGL()
+{
+    vertex_buffer_ = std::move(VertexBuffer{OGLPrimitiveType::POINTS});
+    vertex_buffer_.addBuffer(output_data_.points_ptr, num_elements_, 3);
 
     if (has_color_)
     {
-        vertex_buffer_.addBuffer(output_data.color_ptr, num_elements_, 3);
+        vertex_buffer_.addBuffer(output_data_.color_ptr, num_elements_, 3);
 
-        delete[] output_data.color_ptr;
+        delete[] output_data_.color_ptr;
     }
 
-    delete[] output_data.points_ptr;
+    delete[] output_data_.points_ptr;
 }
 
 LegendProperties Scatter3D::getLegendProperties() const
@@ -136,9 +154,10 @@ Scatter3D::~Scatter3D() {}
 
 namespace
 {
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+Scatter3D::OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
-    OutputData output_data;
+    Scatter3D::OutputData output_data;
     output_data.points_ptr = new float[3 * input_params.num_elements];
 
     size_t idx = 0U;

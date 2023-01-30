@@ -21,7 +21,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 {
     static_cast<void>(cmdl_args);
     udp_server_ = new UdpServer(dvs::internal::kUdpPortNum);
-    udp_server_->start();
+    // udp_server_->start();
+    open_project_file_queued_ = false;
 
     // query_udp_server_ = new UdpServer(dvs::internal::kUdpQueryPortNum);
     current_gui_element_ = nullptr;
@@ -78,10 +79,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     setupWindows(save_manager_->getCurrentProjectSettings());
 
+    receive_thread_ = new std::thread(&MainWindow::receiveThreadFunction, this);
+
     receive_timer_.Bind(wxEVT_TIMER, &MainWindow::OnReceiveTimer, this);
     receive_timer_.Start(visualization_period_ms);
 
-    refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);
+    refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);  // TODO: Remove?
 
     // query_thread_ = new std::thread(&MainWindow::queryUdpThreadFunction, this);
 }
@@ -351,22 +354,6 @@ void MainWindow::OnRefreshTimer(wxTimerEvent&)
 
     SendSizeEvent();
     Refresh();
-}
-
-void MainWindow::OnReceiveTimer(wxTimerEvent&)
-{
-    try
-    {
-        receiveData();
-    }
-    catch (const std::runtime_error& e)
-    {
-        std::cerr << "Got runtime_error when receiving: " << e.what() << std::endl;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Got exception when receiving: " << e.what() << std::endl;
-    }
 }
 
 void MainWindow::notifyChildrenOnKeyPressed(const char key)

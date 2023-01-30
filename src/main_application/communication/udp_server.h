@@ -39,6 +39,7 @@ private:
     struct sockaddr_in my_addr_;
     char* receive_buffer_;
     std::mutex mtx_;
+    socklen_t client_len_;
 
     std::unique_ptr<const ReceivedData> received_data_;
     std::queue<std::unique_ptr<const ReceivedData>> received_data_buffer_;
@@ -52,6 +53,7 @@ public:
 
     void receiveThreadFunction();
     void receive();
+    std::unique_ptr<const ReceivedData> receiveAndGetData();
 
     void start();
     std::unique_ptr<const ReceivedData> getReceivedData();

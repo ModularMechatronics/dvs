@@ -28,6 +28,23 @@ private:
     OGLPrimitiveType primitive_type_;
 
 public:
+    VertexBuffer()
+    {
+        vertex_buffer_array_ = 0;
+    }
+
+    VertexBuffer& operator=(VertexBuffer&& other)
+    {
+        vertex_buffer_array_ = other.vertex_buffer_array_;
+        vertex_buffers_ = other.vertex_buffers_;
+        primitive_type_ = other.primitive_type_;
+
+        other.vertex_buffer_array_ = 0;
+        other.vertex_buffers_.clear();
+
+        return *this;
+    }
+
     VertexBuffer(const OGLPrimitiveType primitive_type) : primitive_type_{primitive_type}
     {
         glGenVertexArrays(1, &vertex_buffer_array_);
@@ -41,7 +58,10 @@ public:
             glDeleteBuffers(1, vertex_buffers_.data() + k);
         }
 
-        glDeleteVertexArrays(1, &vertex_buffer_array_);
+        if (vertex_buffer_array_ != 0)
+        {
+            glDeleteVertexArrays(1, &vertex_buffer_array_);
+        }
     }
 
     template <typename T> void addBuffer(const T* const data, const size_t num_elements, const uint8_t num_dimensions)

@@ -179,6 +179,14 @@ public:
         }
     }
 
+    void updateAllElements()
+    {
+        for (auto& ge : gui_elements_)
+        {
+            ge->update();
+        }
+    }
+
     void setMinXPos(const int min_x_pos)
     {
         for (auto const& ge : gui_elements_)
@@ -526,6 +534,8 @@ public:
     void deleteTab(wxCommandEvent& WXUNUSED(event));
 
     virtual void OnClose(wxCloseEvent& event);
+
+    void updateAllElements();
 
     std::vector<std::string> getElementNames() const;
 };

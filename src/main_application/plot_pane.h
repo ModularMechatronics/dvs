@@ -5,6 +5,8 @@
 #include <wx/notebook.h>
 #include <wx/wx.h>
 
+#include <atomic>
+
 #include "axes/axes.h"
 #include "communication/received_data.h"
 #include "communication/udp_server.h"
@@ -13,6 +15,7 @@
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data_handler.h"
+#include "queueable_action.h"
 
 struct Bound2D
 {
@@ -63,7 +66,6 @@ private:
     CursorSquareState cursor_state_at_press_;
 
     bool axes_from_min_max_disabled_;
-    bool hold_on_;
     bool axes_set_;
     bool view_set_;
 
@@ -90,6 +92,9 @@ private:
     void initShaders();
     MouseInteractionAxis current_mouse_interaction_axis_;
     float legend_scale_factor_ = 1.0f;
+    std::atomic<bool> new_data_available_;
+    std::atomic<bool> pending_clear_;
+    std::queue<QueueableAction*> pending_actions_;
 
 public:
     PlotPane(wxNotebookPage* parent,
@@ -106,6 +111,7 @@ public:
     int getHeight();
 
     void setName(const std::string& new_name) override;
+    void pushQueue(std::queue<QueueableAction*>& new_queue) override;
 
     void render(wxPaintEvent& evt);
 
@@ -115,17 +121,19 @@ public:
     void updateSizeFromParent(const wxSize& parent_size) override;
     void raise() override;
     void lower() override;
-    void addData(std::unique_ptr<const ReceivedData> received_data,
-                 const dvs::internal::CommunicationHeader& hdr) override;
+    // void addDataAsync(std::unique_ptr<const ReceivedData> received_data,
+    //                   const dvs::internal::CommunicationHeader& hdr) override;
     void show() override;
     void hide() override;
     void destroy() override;
     void refresh() override;
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
-    void showLegend(const bool show_legend) override;
+    // void showLegend(const bool show_legend) override;
     void waitForFlush() override;
     void toggleProjectionType() override;
+    void update() override;
+    // void queueFlush() override;
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
     void mouseRightPressed(wxMouseEvent& event);

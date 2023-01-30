@@ -1,5 +1,16 @@
 #include "main_application/plot_objects/plot_object_base/plot_object_base.h"
 
+bool isPlotDataFunction(const Function fcn)
+{
+    return (fcn == Function::STAIRS) || (fcn == Function::PLOT2) || (fcn == Function::PLOT3) ||
+           (fcn == Function::FAST_PLOT2) || (fcn == Function::LINE_COLLECTION2) ||
+           (fcn == Function::LINE_COLLECTION3) || (fcn == Function::FAST_PLOT3) || (fcn == Function::STEM) ||
+           (fcn == Function::SCATTER2) || (fcn == Function::SCATTER3) || (fcn == Function::SURF) ||
+           (fcn == Function::IM_SHOW) || (fcn == Function::PLOT_COLLECTION2) || (fcn == Function::PLOT_COLLECTION3) ||
+           (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_MESH) ||
+           (fcn == Function::REAL_TIME_PLOT);
+}
+
 void PlotObjectBase::modifyShader()
 {
     glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"),
@@ -63,21 +74,14 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
                                ColorPicker& color_picker)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
-    const uint64_t num_data_bytes = received_data_->size();
-    if (num_data_bytes == 0)
-    {
-        throw std::runtime_error("No data bytes!");
-    }
-    min_max_calculated_ = false;
-    has_custom_transform_ = false;
-    z_offset_ = 0.0f;
+    data_ptr_ = received_data_->data();
 
     type_ = hdr.getFunction();
     data_type_ = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
 
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
     num_elements_ = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
-    num_data_bytes_ = received_data_->size();
+
     num_dimensions_ = getNumDimensionsFromFunction(type_);
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
@@ -90,19 +94,16 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     }
 
     has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
+    num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
+
+    min_max_calculated_ = false;
+    has_custom_transform_ = false;
+    z_offset_ = 0.0f;
+
     has_face_color_ = true;
     has_edge_color_ = true;
 
-    num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
-
-    /*if((num_dimensions_ * num_bytes_for_one_vec_) != num_data_bytes_)
-    {
-        throw std::runtime_error("Expected number of bytes does not match the actual number of bytes!");
-    }*/
-
     assignProperties(props, color_picker);
-
-    data_ptr_ = received_data_->data();
 }
 
 void PlotObjectBase::initialize(std::unique_ptr<const ReceivedData> received_data,
@@ -110,12 +111,8 @@ void PlotObjectBase::initialize(std::unique_ptr<const ReceivedData> received_dat
                                 const Properties& props)
 {
     received_data_ = std::move(received_data);
+    data_ptr_ = received_data_->data();
 
-    const uint64_t num_data_bytes = received_data_->size();
-    if (num_data_bytes == 0)
-    {
-        throw std::runtime_error("No data bytes!");
-    }
     min_max_calculated_ = false;
     has_custom_transform_ = false;
     z_offset_ = 0.0f;
@@ -125,7 +122,7 @@ void PlotObjectBase::initialize(std::unique_ptr<const ReceivedData> received_dat
 
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
     num_elements_ = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
-    num_data_bytes_ = received_data_->size();
+
     num_dimensions_ = getNumDimensionsFromFunction(type_);
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
@@ -142,8 +139,6 @@ void PlotObjectBase::initialize(std::unique_ptr<const ReceivedData> received_dat
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
     setProperties(props);
-
-    data_ptr_ = received_data_->data();
 }
 
 void PlotObjectBase::setProperties(const Properties& props)

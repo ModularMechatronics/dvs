@@ -1,0 +1,11 @@
+
+
+class QueueableAction
+{
+};
+
+One queue for each gui element?
+
+Receive thread runs as fast as possible, receiving all objects
+
+Timer runs at 100Hz, picking up objects from the queue

@@ -25,6 +25,53 @@ using namespace dvs;
 using namespace dvs::internal;
 using namespace dvs::properties;
 
+bool isPlotDataFunction(const Function fcn);
+
+struct ConvertedDataBase
+{
+    Function function;
+};
+
+struct PlotObjectAttributes
+{
+    Function function;
+    DataType data_type;
+
+    size_t num_bytes_per_element;
+    size_t num_elements;
+    size_t num_dimensions;
+
+    ItemId id;
+
+    bool has_color;
+
+    uint64_t num_bytes_for_one_vec;
+
+    PlotObjectAttributes() = delete;
+    PlotObjectAttributes(const CommunicationHeader& hdr)
+    {
+        function = hdr.getFunction();
+        data_type = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
+
+        num_bytes_per_element = dataTypeToNumBytes(data_type);
+        num_elements = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
+
+        num_dimensions = getNumDimensionsFromFunction(function);
+
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
+        {
+            id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
+        }
+        else
+        {
+            id = internal::ItemId::UNKNOWN;
+        }
+
+        has_color = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
+        num_bytes_for_one_vec = num_bytes_per_element * num_elements;
+    }
+};
+
 class PlotObjectBase
 {
 protected:
@@ -33,7 +80,6 @@ protected:
     size_t num_dimensions_;
     size_t num_bytes_per_element_;
     uint32_t num_elements_;
-    size_t num_data_bytes_;
     uint64_t num_bytes_for_one_vec_;
     uint8_t* data_ptr_;
     bool has_color_;
@@ -97,11 +143,15 @@ public:
                    const Properties& props,
                    const ShaderCollection shader_collection,
                    ColorPicker& color_picker);
+    /*PlotObjectBase(const CommunicationHeader& hdr,
+                   const Properties& props,
+                   const ShaderCollection shader_collection,
+                   ColorPicker& color_picker);*/
     virtual void render() = 0;
     void preRender(const Shader shader_to_use);
     virtual bool affectsColormapMinMax() const
     {
-        return false;
+        return false;  // TODO: Should just return "color_map_set_"
     }
 
     void setTransform(const MatrixFixed<double, 3, 3>& rotation,

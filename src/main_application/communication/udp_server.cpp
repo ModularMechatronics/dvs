@@ -15,6 +15,7 @@ UdpServer::UdpServer(const int port_num) : port_num_(port_num)
     my_addr_.sin_family = AF_INET;
     my_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
     my_addr_.sin_port = htons(port_num_);
+    client_len_ = sizeof(client_addr_);
 
     if (bind(socket_file_descr_, (struct sockaddr*)&my_addr_, sizeof(my_addr_)) < 0)
     {
@@ -74,15 +75,13 @@ void UdpServer::sendAck()
 
 void UdpServer::receive()
 {
-    socklen_t client_len = sizeof(client_addr_);
-
     size_t num_received_bytes_total = 0;
     int num_received_bytes = recvfrom(socket_file_descr_,
                                       receive_buffer_,
                                       dvs::internal::kMaxNumBytesForOneTransmission,
                                       0,
                                       (struct sockaddr*)&client_addr_,
-                                      &client_len);
+                                      &client_len_);
 
     if (num_received_bytes < 0)
     {
@@ -110,7 +109,7 @@ void UdpServer::receive()
                                           dvs::internal::kMaxNumBytesForOneTransmission,
                                           0,
                                           (struct sockaddr*)&client_addr_,
-                                          &client_len);
+                                          &client_len_);
 
             num_received_bytes_total += num_received_bytes;
             sendAck();
@@ -133,10 +132,64 @@ void UdpServer::receive()
     }
 }
 
+std::unique_ptr<const ReceivedData> UdpServer::receiveAndGetData()
+{
+    size_t num_received_bytes_total = 0;
+    int num_received_bytes = recvfrom(socket_file_descr_,
+                                      receive_buffer_,
+                                      dvs::internal::kMaxNumBytesForOneTransmission,
+                                      0,
+                                      (struct sockaddr*)&client_addr_,
+                                      &client_len_);
+
+    if (num_received_bytes < 0)
+    {
+        throw std::runtime_error("recvfrom returned error!");
+    }
+
+    num_received_bytes_total += num_received_bytes;
+
+    uint64_t num_expected_bytes;
+    std::memcpy(&num_expected_bytes, receive_buffer_ + (sizeof(uint64_t) + 1), sizeof(uint64_t));
+
+    if (static_cast<size_t>(num_expected_bytes) >= dvs::internal::kUdpServerMaxBufferSize)
+    {
+        throw std::runtime_error("Too many bytes to receive! Client wants to send " +
+                                 std::to_string(num_expected_bytes) + " bytes");
+    }
+    sendAck();
+
+    if (num_expected_bytes > dvs::internal::kMaxNumBytesForOneTransmission)
+    {
+        while (num_received_bytes_total < num_expected_bytes)
+        {
+            num_received_bytes = recvfrom(socket_file_descr_,
+                                          receive_buffer_ + num_received_bytes_total,
+                                          dvs::internal::kMaxNumBytesForOneTransmission,
+                                          0,
+                                          (struct sockaddr*)&client_addr_,
+                                          &client_len_);
+
+            num_received_bytes_total += num_received_bytes;
+            sendAck();
+        }
+    }
+
+    const UInt8ArrayView array_view{reinterpret_cast<uint8_t*>(receive_buffer_), num_received_bytes_total};
+
+    uint64_t received_magic_num;
+    std::memcpy(&received_magic_num, array_view.data() + 1, sizeof(uint64_t));
+
+    if (received_magic_num != dvs::internal::kMagicNumber)
+    {
+        throw std::runtime_error("Invalid magic number received!");
+    }
+
+    return std::make_unique<const ReceivedData>(array_view);
+}
+
 void UdpServer::receiveThreadFunction()
 {
-    socklen_t client_len = sizeof(client_addr_);
-
     while (true)
     {
         size_t num_received_bytes_total = 0;
@@ -145,7 +198,7 @@ void UdpServer::receiveThreadFunction()
                                           dvs::internal::kMaxNumBytesForOneTransmission,
                                           0,
                                           (struct sockaddr*)&client_addr_,
-                                          &client_len);
+                                          &client_len_);
 
         if (num_received_bytes < 0)
         {
@@ -173,7 +226,7 @@ void UdpServer::receiveThreadFunction()
                                               dvs::internal::kMaxNumBytesForOneTransmission,
                                               0,
                                               (struct sockaddr*)&client_addr_,
-                                              &client_len);
+                                              &client_len_);
 
                 num_received_bytes_total += num_received_bytes;
                 sendAck();

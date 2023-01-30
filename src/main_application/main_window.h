@@ -12,6 +12,7 @@
 #include <atomic>
 #include <map>
 #include <mutex>
+#include <queue>
 #include <string>
 #include <thread>
 #include <tuple>
@@ -26,6 +27,7 @@
 #include "project_state/configuration_agent.h"
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
+#include "queueable_action.h"
 #include "tray_icon.h"
 
 class WindowView;
@@ -37,8 +39,18 @@ private:
     SaveManager* save_manager_;
     ConfigurationAgent* configuration_agent_;
     std::mutex udp_mtx_;
+    std::mutex reveive_mtx_;
 
     std::thread* query_thread_;
+    std::thread* receive_thread_;
+
+    std::queue<std::unique_ptr<const ReceivedData>> received_data_buffer_;
+
+    std::map<std::string, std::queue<QueueableAction*>> queued_actions_;
+
+    std::atomic<bool> open_project_file_queued_;
+    properties::Name queued_project_file_name_;
+    std::string current_element_name_;
 
     UdpServer* udp_server_;
     UdpServer* query_udp_server_;
@@ -60,6 +72,7 @@ private:
     void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
     void setCurrentElement(const internal::CommunicationHeader& hdr);
+    void setCurrentElement_New(const CommunicationHeader& hdr);
     void createNewElement(const internal::CommunicationHeader& hdr);
     void setWaitForFlush();
     void receiveData();
@@ -84,8 +97,12 @@ private:
     void fileModified();
     bool currentGuiElementSet() const;
     void queryUdpThreadFunction();
+    void receiveThreadFunction();
     void mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData> received_data,
                                          const internal::CommunicationHeader& hdr);
+    void mainWindowFlushMultipleElements_New(std::unique_ptr<const ReceivedData> received_data,
+                                             const internal::CommunicationHeader& hdr);
+    void addActionToQueue(std::unique_ptr<const ReceivedData> received_data, const internal::CommunicationHeader& hdr);
 
 public:
     MainWindow();
