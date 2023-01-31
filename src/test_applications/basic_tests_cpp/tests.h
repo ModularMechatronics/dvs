@@ -434,26 +434,23 @@ void testPlotCollection3()
 
 void testPlot()
 {
-    const size_t num_elements = 5;
+    const size_t num_elements = 50;
 
-    const Vector<float> x{VectorInitializer<float>{0, 1, 2}};
-    const Vector<float> y{VectorInitializer<float>{0, 1.1, 0}};
-
-    /*const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 2.0f, num_elements);
-    const Vector<float> y = dvs::sin(x);*/
+    const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 2.0f, num_elements);
+    const Vector<float> y = dvs::sin(x * 5.0f);
 
     setCurrentElement("p_view_0");
-    // clearView();
+    clearView();
     // waitForFlush();
 
-    axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
+    axis({0.0, -1.0, -1.0}, {2.0, 1.0, 1.0});
     plot(x, y, properties::LineWidth(7), properties::Name("p0"));
-    /*plot(x + 1.0f, y, properties::LineWidth(7), properties::Name("p1"));
-    plot(x + 2.0f, y, properties::LineWidth(7), properties::Name("p2"));
-    plot(x + 3.0f, y, properties::LineWidth(7), properties::Name("p3"));
-    plot(x + 4.0f, y, properties::LineWidth(7), properties::Name("p4"));
-    plot(x + 5.0f, y, properties::LineWidth(7), properties::Name("p5"));
-    plot(x + 6.0f, y, properties::LineWidth(7), properties::Name("p6"));*/
+    plot(x, y + 0.1f, properties::LineWidth(7), properties::Name("p1"));
+    plot(x, y + 0.2f, properties::LineWidth(7), properties::Name("p2"));
+    plot(x, y + 0.3f, properties::LineWidth(7), properties::Name("p3"));
+    plot(x, y + 0.4f, properties::LineWidth(7), properties::Name("p4"));
+    plot(x, y + 0.5f, properties::LineWidth(7), properties::Name("p5"));
+    plot(x, y + 0.6f, properties::LineWidth(7), properties::Name("p6"));
     // flushCurrentElement();
 }
 

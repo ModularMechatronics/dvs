@@ -262,10 +262,12 @@ PlotPane::~PlotPane()
     delete m_context;
 }
 
-/*void PlotPane::addDataAsync(std::unique_ptr<const ReceivedData> received_data,
-                            const dvs::internal::CommunicationHeader& hdr)
+void PlotPane::addSettingsData(const dvs::internal::CommunicationHeader& hdr,
+                               std::unique_ptr<const ReceivedData>& received_data)
 {
     const Function fcn = hdr.getFunction();
+
+    std::cout << "addSettingsData for " << fcn << std::endl;
 
     if (fcn == Function::AXES_2D)
     {
@@ -302,6 +304,7 @@ PlotPane::~PlotPane()
     }
     else if (fcn == Function::CLEAR)
     {
+        plot_data_handler_->clear();
         pending_clear_ = true;
         axes_set_ = false;
         view_set_ = false;
@@ -316,10 +319,6 @@ PlotPane::~PlotPane()
     else if (fcn == Function::SHOW_LEGEND)
     {
         axes_interactor_.showLegend(true);
-    }
-    else if (fcn == Function::FLUSH_ELEMENT)
-    {
-        // queueFlush();
     }
     else if (fcn == Function::WAIT_FOR_FLUSH)
     {
@@ -354,73 +353,21 @@ PlotPane::~PlotPane()
     }
     else
     {
-        // plot_data_handler_->addDataAsync(std::move(received_data), hdr);
-
-        // TODO: The fundamental design of this min/max needs to be changed.
-        // For some types of plot data, it shouldn't be executed if axes is set,
-        // but for some it should always be executed, for drawMesh for example,
-        // to correctly set the color map min max values
-        // And if it has already been executed once for a plot data, it shouldn't need
-        // to be executed again. Also, if there are multiple color map plot datas
-        // they should get their color map min max values from a global min/max of
-        // all the plot datas
-        // The whole getMinMaxVectors logic in plot_datas should probably also be redesigned
-        const std::pair<Vec3d, Vec3d> min_max = plot_data_handler_->getMinMaxVectors();
-
-        if ((!axes_set_) && (!axes_from_min_max_disabled_))
-        {
-            const Vec3d mean_vec = (min_max.second + min_max.first) / 2.0;
-
-            const Vec3d min_vec = (min_max.first - mean_vec) * 1.001 + mean_vec;
-            const Vec3d max_vec = (min_max.second - mean_vec) * 1.001 + mean_vec;
-
-            axes_interactor_.setAxesLimits(min_vec, max_vec);
-        }
-        if ((!view_set_) && (!axes_from_min_max_disabled_))
-        {
-            if (is3DFunction(fcn))
-            {
-                const float azimuth = -64.0f * M_PI / 180.0f;
-                const float elevation = 34.0f * M_PI / 180.0f;
-
-                axes_interactor_.setViewAngles(azimuth, elevation);
-            }
-            else if (isImageFunction(fcn))
-            {
-                const float azimuth = 0.0f * M_PI / 180.0f;
-                const float elevation = -90.0f * M_PI / 180.0f;
-
-                axes_interactor_.setViewAngles(azimuth, elevation);
-                view_set_ = true;  // Let imshow be dominant once used
-            }
-            else
-            {
-                const float azimuth = 0.0f * M_PI / 180.0f;
-                const float elevation = 90.0f * M_PI / 180.0f;
-
-                axes_interactor_.setViewAngles(azimuth, elevation);
-            }
-        }
+        // TODO: Throw exception
     }
 
     new_data_available_ = true;
-}*/
+}
 
-/*void PlotPane::queueFlush()
-{
-    new_data_available_ = true;
-}*/
-
-void PlotPane::pushQueue(std::queue<QueueableAction*>& new_queue)
+void PlotPane::pushQueue(std::queue<std::unique_ptr<QueueableAction>>& new_queue)
 {
     const size_t queue_size = new_queue.size();
+
     for (size_t k = 0; k < queue_size; k++)
     {
-        pending_actions_.push(new_queue.front());
+        pending_actions_.push(std::move(new_queue.front()));
         new_queue.pop();
     }
-
-    std::cout << "Received " << queue_size << " new items" << std::endl;
 }
 
 void PlotPane::update()
@@ -876,6 +823,61 @@ bool viewShouldBeReset(const KeyboardState& keyboard_state)
     }
 }
 
+void PlotPane::addPlotData(const CommunicationHeader& hdr,
+                           std::unique_ptr<const ReceivedData>& received_data,
+                           std::unique_ptr<const ConvertedDataBase>& converted_data)
+{
+    plot_data_handler_->addData_New(hdr, received_data, converted_data);
+
+    internal::Function fcn = hdr.getFunction();
+
+    // TODO: The fundamental design of this min/max needs to be changed.
+    // For some types of plot data, it shouldn't be executed if axes is set,
+    // but for some it should always be executed, for drawMesh for example,
+    // to correctly set the color map min max values
+    // And if it has already been executed once for a plot data, it shouldn't need
+    // to be executed again. Also, if there are multiple color map plot datas
+    // they should get their color map min max values from a global min/max of
+    // all the plot datas
+    // The whole getMinMaxVectors logic in plot_datas should probably also be redesigned
+    const std::pair<Vec3d, Vec3d> min_max = plot_data_handler_->getMinMaxVectors();
+
+    if ((!axes_set_) && (!axes_from_min_max_disabled_))
+    {
+        const Vec3d mean_vec = (min_max.second + min_max.first) / 2.0;
+
+        const Vec3d min_vec = (min_max.first - mean_vec) * 1.001 + mean_vec;
+        const Vec3d max_vec = (min_max.second - mean_vec) * 1.001 + mean_vec;
+
+        axes_interactor_.setAxesLimits(min_vec, max_vec);
+    }
+    if ((!view_set_) && (!axes_from_min_max_disabled_))
+    {
+        if (is3DFunction(fcn))
+        {
+            const float azimuth = -64.0f * M_PI / 180.0f;
+            const float elevation = 34.0f * M_PI / 180.0f;
+
+            axes_interactor_.setViewAngles(azimuth, elevation);
+        }
+        else if (isImageFunction(fcn))
+        {
+            const float azimuth = 0.0f * M_PI / 180.0f;
+            const float elevation = -90.0f * M_PI / 180.0f;
+
+            axes_interactor_.setViewAngles(azimuth, elevation);
+            view_set_ = true;  // Let imshow be dominant once used
+        }
+        else
+        {
+            const float azimuth = 0.0f * M_PI / 180.0f;
+            const float elevation = 90.0f * M_PI / 180.0f;
+
+            axes_interactor_.setViewAngles(azimuth, elevation);
+        }
+    }
+}
+
 void PlotPane::refresh()
 {
     Refresh();
@@ -893,15 +895,21 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
     while (pending_actions_.size() > 0)
     {
-        QueueableAction* qa = pending_actions_.front();
-
-        std::cout << "Updating plot pane: " << qa->getHeader().getFunction() << std::endl;
-        if (isPlotDataFunction(qa->hdr_.getFunction()))
+        const internal::Function fcn = pending_actions_.front()->getFunction();
+        if (isPlotDataFunction(fcn))
         {
-            plot_data_handler_->addData_New(qa->hdr_, qa->received_data_, qa->converted_data_);
-            std::cout << "Adding to plot data handler" << std::endl;
+            auto [hdr, received_data, converted_data] = pending_actions_.front()->moveAllData();
+            addPlotData(hdr, received_data, converted_data);
         }
-        else {}
+        else if (fcn == Function::FLUSH_ELEMENT)
+        {
+            // TODO: Do something
+        }
+        else
+        {
+            auto [hdr, received_data] = pending_actions_.front()->moveHeaderAndReceivedData();
+            addSettingsData(hdr, received_data);
+        }
 
         pending_actions_.pop();
     }

@@ -94,7 +94,11 @@ private:
     float legend_scale_factor_ = 1.0f;
     std::atomic<bool> new_data_available_;
     std::atomic<bool> pending_clear_;
-    std::queue<QueueableAction*> pending_actions_;
+    std::queue<std::unique_ptr<QueueableAction>> pending_actions_;
+
+    void addPlotData(const CommunicationHeader& hdr,
+                     std::unique_ptr<const ReceivedData>& received_data,
+                     std::unique_ptr<const ConvertedDataBase>& converted_data);
 
 public:
     PlotPane(wxNotebookPage* parent,
@@ -111,7 +115,7 @@ public:
     int getHeight();
 
     void setName(const std::string& new_name) override;
-    void pushQueue(std::queue<QueueableAction*>& new_queue) override;
+    void pushQueue(std::queue<std::unique_ptr<QueueableAction>>& new_queue) override;
 
     void render(wxPaintEvent& evt);
 
@@ -121,8 +125,8 @@ public:
     void updateSizeFromParent(const wxSize& parent_size) override;
     void raise() override;
     void lower() override;
-    // void addDataAsync(std::unique_ptr<const ReceivedData> received_data,
-    //                   const dvs::internal::CommunicationHeader& hdr) override;
+    void addSettingsData(const dvs::internal::CommunicationHeader& hdr,
+                         std::unique_ptr<const ReceivedData>& received_data) override;
     void show() override;
     void hide() override;
     void destroy() override;
@@ -133,7 +137,6 @@ public:
     void waitForFlush() override;
     void toggleProjectionType() override;
     void update() override;
-    // void queueFlush() override;
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
     void mouseRightPressed(wxMouseEvent& event);

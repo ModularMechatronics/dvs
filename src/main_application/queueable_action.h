@@ -1,6 +1,8 @@
 #ifndef QUEUEABLE_ACTION_H_
 #define QUEUEABLE_ACTION_H_
 
+#include <tuple>
+
 #include "dvs/communication_header.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 #include "plot_objects/plot_objects.h"
@@ -33,6 +35,24 @@ public:
     internal::CommunicationHeader getHeader() const
     {
         return hdr_;
+    }
+
+    internal::Function getFunction() const
+    {
+        return function;
+    }
+
+    std::tuple<internal::CommunicationHeader,
+               std::unique_ptr<const ReceivedData>,
+               std::unique_ptr<const ConvertedDataBase>>
+    moveAllData()
+    {
+        return {hdr_, std::move(received_data_), std::move(converted_data_)};
+    }
+
+    std::tuple<internal::CommunicationHeader, std::unique_ptr<const ReceivedData>> moveHeaderAndReceivedData()
+    {
+        return {hdr_, std::move(received_data_)};
     }
 
     internal::CommunicationHeader hdr_;
