@@ -10,6 +10,11 @@ class QueueableAction
 public:
     QueueableAction() = delete;
 
+    QueueableAction(const internal::CommunicationHeader& hdr)
+        : hdr_{hdr}, function{hdr.getFunction()}, received_data_{nullptr}, converted_data_{nullptr}
+    {
+    }
+
     QueueableAction(const internal::CommunicationHeader& hdr, std::unique_ptr<const ReceivedData>& received_data)
         : hdr_{hdr}, function{hdr.getFunction()}, received_data_{std::move(received_data)}, converted_data_{nullptr}
     {
