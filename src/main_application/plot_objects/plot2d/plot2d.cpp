@@ -256,11 +256,6 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
 
     const T* const input_data_dt = reinterpret_cast<const T* const>(input_data);
 
-    for (size_t k = 0; k < 6; k++)
-    {
-        std::cout << "Q: " << input_data_dt[k] << std::endl;
-    }
-
     length_along_tmp[0] = 0.0f;
 
     for (size_t k = 1; k < input_params.num_elements; k++)

@@ -204,16 +204,17 @@ void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData>& received_
     }
     else if (fcn == Function::FLUSH_MULTIPLE_ELEMENTS)
     {
-        mainWindowFlushMultipleElements_New(received_data, hdr);
+        mainWindowFlushMultipleElements(received_data, hdr);
     }
     else if (isPlotDataFunction(fcn))
     {
         std::unique_ptr<const ConvertedDataBase> converted_data = convertPlotObjectData(received_data.get(), hdr);
-        queued_actions_[current_element_name_].push(new QueueableAction(hdr, received_data, converted_data));
+        queued_actions_[current_element_name_].push(
+            std::make_unique<QueueableAction>(hdr, received_data, converted_data));
     }
     else
     {
-        queued_actions_[current_element_name_].push(new QueueableAction(hdr, received_data));
+        queued_actions_[current_element_name_].push(std::make_unique<QueueableAction>(hdr, received_data));
     }
 }
 
@@ -353,7 +354,7 @@ void MainWindow::queryUdpThreadFunction()
     }
 }
 
-void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData> received_data,
+void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData>& received_data,
                                                  const internal::CommunicationHeader& hdr)
 {
     const uint8_t num_names = hdr.get(CommunicationHeaderObjectType::NUM_NAMES).as<uint8_t>();
@@ -380,48 +381,7 @@ void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedD
 
     for (size_t k = 0; k < names.size(); k++)
     {
-        for (auto we : windows_)
-        {
-            GuiElement* ge = we->getGuiElement(names[k]);
-            if (ge != nullptr)
-            {
-                // ge->queueFlush();
-                break;
-            }
-        }
-    }
-}
-
-void MainWindow::mainWindowFlushMultipleElements_New(std::unique_ptr<const ReceivedData>& received_data,
-                                                     const internal::CommunicationHeader& hdr)
-{
-    const uint8_t num_names = hdr.get(CommunicationHeaderObjectType::NUM_NAMES).as<uint8_t>();
-
-    const VectorConstView<uint8_t> name_lengths{received_data->data(), static_cast<size_t>(num_names)};
-
-    std::vector<std::string> names;
-
-    size_t idx = num_names;
-
-    for (size_t k = 0; k < num_names; k++)
-    {
-        names.push_back("");
-        std::string& current_elem = names.back();
-
-        const uint8_t current_element_length = name_lengths(k);
-
-        for (size_t i = 0; i < current_element_length; i++)
-        {
-            current_elem += received_data->data()[idx];
-            idx++;
-        }
-    }
-
-    CommunicationHeader flush_header{Function::FLUSH_ELEMENT};
-
-    for (size_t k = 0; k < names.size(); k++)
-    {
-        queued_actions_[names[k]].push(new QueueableAction(CommunicationHeader{Function::FLUSH_ELEMENT}));
+        queued_actions_[names[k]].push(std::make_unique<QueueableAction>(CommunicationHeader{Function::FLUSH_ELEMENT}));
     }
 }
 

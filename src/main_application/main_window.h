@@ -46,7 +46,7 @@ private:
 
     std::queue<std::unique_ptr<const ReceivedData>> received_data_buffer_;
 
-    std::map<std::string, std::queue<QueueableAction*>> queued_actions_;
+    std::map<std::string, std::queue<std::unique_ptr<QueueableAction>>> queued_actions_;
 
     std::atomic<bool> open_project_file_queued_;
     properties::Name queued_project_file_name_;
@@ -98,10 +98,8 @@ private:
     bool currentGuiElementSet() const;
     void queryUdpThreadFunction();
     void receiveThreadFunction();
-    void mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData> received_data,
+    void mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData>& received_data,
                                          const internal::CommunicationHeader& hdr);
-    void mainWindowFlushMultipleElements_New(std::unique_ptr<const ReceivedData>& received_data,
-                                             const internal::CommunicationHeader& hdr);
     void addActionToQueue(std::unique_ptr<const ReceivedData>& received_data, const internal::CommunicationHeader& hdr);
 
 public:
