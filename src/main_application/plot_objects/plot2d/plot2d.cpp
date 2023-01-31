@@ -38,15 +38,20 @@ struct ConvertedData : ConvertedDataBase
     size_t num_points;
 
     ConvertedData()
+        : p0{nullptr},
+          p1{nullptr},
+          p2{nullptr},
+          length_along{nullptr},
+          idx_data{nullptr},
+          color_data{nullptr},
+          num_points{0U}
     {
-        p0 = nullptr;
-        p1 = nullptr;
-        p2 = nullptr;
-        length_along = nullptr;
-        idx_data = nullptr;
-        color_data = nullptr;
-        num_points = 0U;
     }
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
 
     ~ConvertedData() override
     {

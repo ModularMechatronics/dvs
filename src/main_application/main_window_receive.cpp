@@ -100,8 +100,6 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
 {
     const Function fcn = hdr.getFunction();
 
-    // const Properties props{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()};
-
     std::unique_ptr<const ConvertedDataBase> converted_data;
 
     PlotObjectAttributes attributes{hdr};
@@ -192,10 +190,10 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             break;
     }
 
-    return std::move(converted_data);
+    return converted_data;
 }
 
-void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData> received_data,
+void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData>& received_data,
                                   const internal::CommunicationHeader& hdr)
 {
     const Function fcn = hdr.getFunction();
@@ -246,47 +244,8 @@ void MainWindow::receiveThreadFunction()
             }
             else
             {
-                addActionToQueue(std::move(received_data), hdr);
+                addActionToQueue(received_data, hdr);
             }
-
-            /*if (isGuiElementFunction(fcn))
-            {
-                if (currentGuiElementSet())
-                {
-                    current_gui_element_->addDataAsync(std::move(received_data), hdr);
-                }
-                else
-                {
-                    std::cout << "No element set!" << std::endl;
-                }
-            }
-            else
-            {
-                switch (fcn)
-                {
-                    case Function::SET_CURRENT_ELEMENT:
-                        setCurrentElement(hdr);
-                        break;
-
-                    case Function::FLUSH_MULTIPLE_ELEMENTS:
-                        mainWindowFlushMultipleElements(std::move(received_data), hdr);
-                        break;
-
-                    case Function::CREATE_NEW_ELEMENT:
-                        // createNewElement(hdr);
-                        // TODO
-                        std::cout << "Not implemented yet!" << std::endl;
-                        break;
-
-                    case Function::OPEN_PROJECT_FILE:
-                        open_project_file_queued_ = true;
-                        queued_project_file_name_ =
-                            hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>();
-                        break;
-                    default:
-                        std::cout << "Got default" << std::endl;
-                }
-            }*/
         }
     }
 }

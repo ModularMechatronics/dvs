@@ -102,7 +102,7 @@ private:
                                          const internal::CommunicationHeader& hdr);
     void mainWindowFlushMultipleElements_New(std::unique_ptr<const ReceivedData> received_data,
                                              const internal::CommunicationHeader& hdr);
-    void addActionToQueue(std::unique_ptr<const ReceivedData> received_data, const internal::CommunicationHeader& hdr);
+    void addActionToQueue(std::unique_ptr<const ReceivedData>& received_data, const internal::CommunicationHeader& hdr);
 
 public:
     MainWindow();
