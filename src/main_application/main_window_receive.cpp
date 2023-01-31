@@ -204,7 +204,7 @@ void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData>& received_
     }
     else if (fcn == Function::FLUSH_MULTIPLE_ELEMENTS)
     {
-        mainWindowFlushMultipleElements_New(std::move(received_data), hdr);
+        mainWindowFlushMultipleElements_New(received_data, hdr);
     }
     else if (isPlotDataFunction(fcn))
     {
@@ -213,7 +213,6 @@ void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData>& received_
     }
     else
     {
-        std::cout << "Other function: " << fcn << std::endl;
         queued_actions_[current_element_name_].push(new QueueableAction(hdr, received_data));
     }
 }
@@ -393,7 +392,7 @@ void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedD
     }
 }
 
-void MainWindow::mainWindowFlushMultipleElements_New(std::unique_ptr<const ReceivedData> received_data,
+void MainWindow::mainWindowFlushMultipleElements_New(std::unique_ptr<const ReceivedData>& received_data,
                                                      const internal::CommunicationHeader& hdr)
 {
     const uint8_t num_names = hdr.get(CommunicationHeaderObjectType::NUM_NAMES).as<uint8_t>();
@@ -422,8 +421,7 @@ void MainWindow::mainWindowFlushMultipleElements_New(std::unique_ptr<const Recei
 
     for (size_t k = 0; k < names.size(); k++)
     {
-        queued_actions_[names[k]].push(
-            new QueueableAction(CommunicationHeader{Function::FLUSH_ELEMENT}, received_data));
+        queued_actions_[names[k]].push(new QueueableAction(CommunicationHeader{Function::FLUSH_ELEMENT}));
     }
 }
 
