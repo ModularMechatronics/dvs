@@ -45,18 +45,16 @@ void MainWindow::setCurrentElement_New(const CommunicationHeader& hdr)
 
 void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
 {
-    const CommunicationHeaderObject elem_obj = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME);
-    const properties::Name elem_name = elem_obj.as<properties::Name>();
-    const std::string element_name_str = elem_name.data;
+    const std::string element_name = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME).as<properties::Name>().data;
 
-    if (element_name_str.length() == 0)
+    if (element_name.length() == 0)
     {
         throw std::runtime_error("Name string had zero length!");
     }
 
     for (auto we : windows_)
     {
-        current_gui_element_ = we->getGuiElement(element_name_str);
+        current_gui_element_ = we->getGuiElement(element_name);
         if (current_gui_element_ != nullptr)
         {
             break;
