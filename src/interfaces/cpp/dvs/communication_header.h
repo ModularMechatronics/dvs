@@ -455,7 +455,16 @@ private:
 
 public:
     // TODO: Split into send and receive comm. header classes?
-    CommunicationHeader() = delete;
+    CommunicationHeader()
+        : objects_{},
+          props_{},
+          objects_lut_{},
+          properties_lut_{},
+          obj_idx_{0U},
+          prop_idx_{0U},
+          function_{Function::UNKNOWN}
+    {
+    }
 
     CommunicationHeader(const Function& fcn)
         : objects_{}, props_{}, objects_lut_{}, properties_lut_{}, obj_idx_{0U}, prop_idx_{0U}, function_{fcn}

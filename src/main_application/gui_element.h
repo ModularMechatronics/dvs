@@ -77,7 +77,7 @@ public:
     virtual void waitForFlush() = 0;
     virtual void toggleProjectionType() = 0;
     virtual void update() = 0;
-    virtual void addSettingsData(std::unique_ptr<const ReceivedData>& received_data) = 0;
+    virtual void addSettingsData(const ReceivedData& received_data) = 0;
 
     /*virtual void showLegend(const bool show_legend)
     {

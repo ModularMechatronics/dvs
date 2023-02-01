@@ -79,12 +79,12 @@ struct Converter
 }  // namespace
 
 Plot2D::Plot2D(const CommunicationHeader& hdr,
-               std::unique_ptr<const ReceivedData>& received_data,
+               ReceivedData& received_data,
                std::unique_ptr<const ConvertedDataBase>& converted_data,
                const Properties& props,
                const ShaderCollection shader_collection,
                ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     std::unique_ptr<const ConvertedDataBase> converted_data_local = std::move(converted_data);
@@ -187,13 +187,11 @@ std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const PlotObject
     return converted_data_base;
 }
 
-void Plot2D::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
-                               const CommunicationHeader& hdr,
-                               const Properties& props)
+void Plot2D::updateWithNewData(ReceivedData& received_data, const CommunicationHeader& hdr, const Properties& props)
 {
     throwIfNotUpdateable();
 
-    initialize(std::move(received_data), hdr, props);
+    postInitialize(received_data, hdr, props);
 
     const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
 

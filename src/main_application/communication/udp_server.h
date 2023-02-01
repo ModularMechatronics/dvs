@@ -53,7 +53,7 @@ public:
 
     void receiveThreadFunction();
     void receive();
-    std::unique_ptr<const ReceivedData> receiveAndGetData();
+    ReceivedData receiveAndGetData();
 
     void start();
     std::unique_ptr<const ReceivedData> getReceivedData();
