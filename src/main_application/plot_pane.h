@@ -96,6 +96,7 @@ private:
     std::atomic<bool> pending_clear_;
     std::queue<std::unique_ptr<QueueableAction>> pending_actions_;
 
+    void processActionQueue();
     void addPlotData(const CommunicationHeader& hdr,
                      std::unique_ptr<const ReceivedData>& received_data,
                      std::unique_ptr<const ConvertedDataBase>& converted_data);

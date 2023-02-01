@@ -353,7 +353,7 @@ void PlotPane::addSettingsData(const dvs::internal::CommunicationHeader& hdr,
     }
     else
     {
-        // TODO: Throw exception
+        throw std::runtime_error("Invalid function!");
     }
 
     new_data_available_ = true;
@@ -878,21 +878,8 @@ void PlotPane::addPlotData(const CommunicationHeader& hdr,
     }
 }
 
-void PlotPane::refresh()
+void PlotPane::processActionQueue()
 {
-    Refresh();
-}
-
-void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
-{
-    if (!IsShown())
-    {
-        return;
-    }
-
-    wxGLCanvas::SetCurrent(*m_context);
-    wxPaintDC(this);  // TODO: Can be removed?
-
     while (pending_actions_.size() > 0)
     {
         const internal::Function fcn = pending_actions_.front()->getFunction();
@@ -913,6 +900,24 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
         pending_actions_.pop();
     }
+}
+
+void PlotPane::refresh()
+{
+    Refresh();
+}
+
+void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
+{
+    if (!IsShown())
+    {
+        return;
+    }
+
+    wxGLCanvas::SetCurrent(*m_context);
+    wxPaintDC(this);  // TODO: Can be removed?
+
+    processActionQueue();
 
     /*if (pending_clear_)
     {

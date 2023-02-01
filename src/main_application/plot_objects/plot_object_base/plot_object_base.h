@@ -31,10 +31,7 @@ struct ConvertedDataBase
 {
     Function function;
 
-    virtual ~ConvertedDataBase()
-    {
-        std::cout << "ConvertedDataBase destructor!" << std::endl;
-    }
+    virtual ~ConvertedDataBase() {}
 };
 
 struct PlotObjectAttributes
