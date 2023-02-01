@@ -143,6 +143,12 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         current_window_num_++;
         task_bar_->addNewWindow(ws.name);
     }
+
+    for (auto we : windows_)
+    {
+        std::vector<GuiElement*> ges = we->getGuiElements();
+        gui_elements_.insert(gui_elements_.end(), ges.begin(), ges.end());
+    }
 }
 
 std::vector<std::string> MainWindow::getAllElementNames() const

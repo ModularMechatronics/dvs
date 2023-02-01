@@ -179,6 +179,11 @@ public:
         }
     }
 
+    std::vector<GuiElement*> getGuiElements() const
+    {
+        return gui_elements_;
+    }
+
     void updateAllElements()
     {
         for (auto& ge : gui_elements_)
@@ -536,6 +541,7 @@ public:
     virtual void OnClose(wxCloseEvent& event);
 
     void updateAllElements();
+    std::vector<GuiElement*> getGuiElements() const;
 
     std::vector<std::string> getElementNames() const;
 };

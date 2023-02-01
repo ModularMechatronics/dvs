@@ -76,6 +76,26 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
 {
     const Function fcn = hdr.getFunction();
 
+    if (pending_soft_clear_)
+    {
+        pending_soft_clear_ = false;
+        color_picker_.reset();
+
+        for (size_t k = 0; k < old_plot_datas_.size(); k++)
+        {
+            delete old_plot_datas_[k];
+        }
+
+        old_plot_datas_.clear();
+    }
+
+    if (fcn == internal::Function::PROPERTIES_EXTENSION)
+    {
+        propertiesExtension(hdr);
+
+        return;
+    }
+
     Properties props;
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))

@@ -95,9 +95,11 @@ private:
     std::atomic<bool> new_data_available_;
     std::atomic<bool> pending_clear_;
     std::queue<std::unique_ptr<QueueableAction>> pending_actions_;
+    std::queue<std::unique_ptr<QueueableAction>> flush_queue_;
 
     void processActionQueue();
     void addPlotData(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data);
+    void addPlotDataFlushed(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data);
 
 public:
     PlotPane(wxNotebookPage* parent,

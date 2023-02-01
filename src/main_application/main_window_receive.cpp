@@ -400,8 +400,6 @@ void MainWindow::receiveData()
         openExistingFile(queued_project_file_name_.data);
     }
 
-    std::vector<GuiElement*> gui_elements;
-
     {
         const std::lock_guard<std::mutex> lg(reveive_mtx_);
 
@@ -410,14 +408,13 @@ void MainWindow::receiveData()
             if (qa.second.size() > 0)
             {
                 const std::string element_name = qa.first;
+                // TODO: Use gui_elements_ map up here instead
 
                 for (auto we : windows_)
                 {
                     GuiElement* gui_element = we->getGuiElement(element_name);
                     if (gui_element != nullptr)
                     {
-                        gui_elements.push_back(gui_element);
-
                         gui_element->pushQueue(qa.second);
                         break;
                     }
@@ -426,89 +423,9 @@ void MainWindow::receiveData()
         }
     }
 
-    for (auto& ge : gui_elements)
+    // TODO: Replace gui_elements_ to be std::map<std::string, GuiElement*>
+    for (auto& ge : gui_elements_)
     {
         ge->update();
     }
-
-    /*std::unique_ptr<const ReceivedData> received_data;
-
-    {
-        const std::lock_guard<std::mutex> lg(reveive_mtx_);
-        if (received_data_buffer_.size() > 0)
-        {
-            received_data = std::move(received_data_buffer_.front());
-            received_data_buffer_.pop();
-        }
-    }
-
-    if (received_data)
-    {
-        is_rendering_ = true;
-        const CommunicationHeader& hdr = received_data->getCommunicationHeader();
-
-        const Function fcn = hdr.getFunction();
-        std::cout << "Received function: " << fcn << std::endl;
-
-        if (isGuiElementFunction(fcn))
-        {
-            if (currentGuiElementSet())
-            {
-                current_gui_element_->addData(std::move(received_data), hdr);
-            }
-            else
-            {
-                std::cout << "No element set!" << std::endl;
-            }
-        }
-        else
-        {
-            switch (fcn)
-            {
-                case Function::SET_CURRENT_ELEMENT:
-                    setCurrentElement(hdr);
-                    break;
-
-                case Function::WAIT_FOR_FLUSH:
-                    setWaitForFlush();
-                    break;
-
-                case Function::FLUSH_ELEMENT:
-                    if (currentGuiElementSet())
-                    {
-                        current_gui_element_->refresh();
-                    }
-                    break;
-
-                case Function::FLUSH_MULTIPLE_ELEMENTS:
-                    mainWindowFlushMultipleElements(std::move(received_data), hdr);
-                    break;
-
-                case Function::CREATE_NEW_ELEMENT:
-                    // createNewElement(hdr);
-                    // TODO
-                    std::cout << "Not implemented yet!" << std::endl;
-                    break;
-
-                case Function::OPEN_PROJECT_FILE:
-                    openFileFromClient(hdr);
-                    break;
-
-                case Function::SHOW_LEGEND:
-                    if (currentGuiElementSet())
-                    {
-                        current_gui_element_->showLegend(true);
-                    }
-                    else
-                    {
-                        std::cout << "No element set!" << std::endl;
-                    }
-
-                    break;
-                default:
-                    std::cout << "Got default" << std::endl;
-            }
-        }
-        is_rendering_ = false;
-    }*/
 }

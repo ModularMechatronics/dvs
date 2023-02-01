@@ -324,6 +324,10 @@ void PlotPane::addSettingsData(const ReceivedData& received_data)
     {
         wait_for_flush_ = true;
     }
+    else if (fcn == Function::FLUSH_ELEMENT)
+    {
+        // Do nothing...
+    }
     else if (fcn == Function::SOFT_CLEAR)
     {
         plot_data_handler_->softClear();
@@ -883,22 +887,79 @@ void PlotPane::processActionQueue()
     while (pending_actions_.size() > 0)
     {
         const internal::Function fcn = pending_actions_.front()->getFunction();
-        if (isPlotDataFunction(fcn))
+
+        if (wait_for_flush_)
         {
-            auto [received_data, converted_data] = pending_actions_.front()->moveAllData();
-            addPlotData(received_data, converted_data);
-        }
-        else if (fcn == Function::FLUSH_ELEMENT)
-        {
-            // TODO: Do something
+            if (fcn == Function::FLUSH_ELEMENT)
+            {
+                while (flush_queue_.size() > 0)
+                {
+                    const internal::Function inner_fcn = flush_queue_.front()->getFunction();
+
+                    if (isPlotDataFunction(inner_fcn))
+                    {
+                        auto [received_data, converted_data] = flush_queue_.front()->moveAllData();
+                        addPlotData(received_data, converted_data);
+                    }
+                    else
+                    {
+                        ReceivedData received_data = flush_queue_.front()->moveReceivedData();
+                        addSettingsData(received_data);
+                    }
+
+                    flush_queue_.pop();
+                }
+                pending_actions_.pop();
+                break;
+            }
+            else if (fcn == Function::CLEAR)
+            {
+                pending_actions_.pop();
+                // TODO: Move into function
+                plot_data_handler_->clear();
+                pending_clear_ = true;
+                axes_set_ = false;
+                view_set_ = false;
+                wait_for_flush_ = false;
+                axes_from_min_max_disabled_ = false;
+
+                axes_interactor_.setViewAngles(0, M_PI);
+                axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
+                axes_renderer_->resetGlobalIllumination();
+                axes_renderer_->setAxesBoxScaleFactor(Vec3d{2.5, 2.5, 2.5});
+                while (flush_queue_.size() > 0)
+                {
+                    flush_queue_.pop();
+                }
+            }
+            else
+            {
+                flush_queue_.push(std::move(pending_actions_.front()));
+                pending_actions_.pop();
+            }
         }
         else
         {
-            ReceivedData received_data = pending_actions_.front()->moveReceivedData();
-            addSettingsData(received_data);
-        }
+            if (isPlotDataFunction(fcn))
+            {
+                auto [received_data, converted_data] = pending_actions_.front()->moveAllData();
 
-        pending_actions_.pop();
+                addPlotData(received_data, converted_data);
+            }
+            else
+            {
+                ReceivedData received_data = pending_actions_.front()->moveReceivedData();
+                addSettingsData(received_data);
+            }
+
+            pending_actions_.pop();
+
+            if (fcn == Function::SOFT_CLEAR)
+            {
+                break;
+            }
+            else if ((fcn == Function::FLUSH_ELEMENT) && wait_for_flush_) {}
+        }
     }
 }
 
