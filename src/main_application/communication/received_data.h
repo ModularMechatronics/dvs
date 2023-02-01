@@ -8,6 +8,7 @@ class ReceivedData
 {
 private:
     dvs::internal::CommunicationHeader hdr_;
+    dvs::internal::Function function_;
     uint8_t* payload_data_;
     uint64_t num_data_bytes_;
 
@@ -23,6 +24,7 @@ public:
 
     uint8_t* data() const;
     uint64_t size() const;
+    dvs::internal::Function getFunction() const;
     const dvs::internal::CommunicationHeader& getCommunicationHeader() const;
 };
 

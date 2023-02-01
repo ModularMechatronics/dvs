@@ -262,9 +262,9 @@ PlotPane::~PlotPane()
     delete m_context;
 }
 
-void PlotPane::addSettingsData(const dvs::internal::CommunicationHeader& hdr,
-                               std::unique_ptr<const ReceivedData>& received_data)
+void PlotPane::addSettingsData(std::unique_ptr<const ReceivedData>& received_data)
 {
+    const dvs::internal::CommunicationHeader& hdr = received_data->getCommunicationHeader();
     const Function fcn = hdr.getFunction();
 
     std::cout << "addSettingsData for " << fcn << std::endl;
@@ -823,10 +823,11 @@ bool viewShouldBeReset(const KeyboardState& keyboard_state)
     }
 }
 
-void PlotPane::addPlotData(const CommunicationHeader& hdr,
-                           std::unique_ptr<const ReceivedData>& received_data,
+void PlotPane::addPlotData(std::unique_ptr<const ReceivedData>& received_data,
                            std::unique_ptr<const ConvertedDataBase>& converted_data)
 {
+    const CommunicationHeader& hdr = received_data->getCommunicationHeader();
+
     plot_data_handler_->addData_New(hdr, received_data, converted_data);
 
     internal::Function fcn = hdr.getFunction();
@@ -885,8 +886,8 @@ void PlotPane::processActionQueue()
         const internal::Function fcn = pending_actions_.front()->getFunction();
         if (isPlotDataFunction(fcn))
         {
-            auto [hdr, received_data, converted_data] = pending_actions_.front()->moveAllData();
-            addPlotData(hdr, received_data, converted_data);
+            auto [received_data, converted_data] = pending_actions_.front()->moveAllData();
+            addPlotData(received_data, converted_data);
         }
         else if (fcn == Function::FLUSH_ELEMENT)
         {
@@ -894,8 +895,8 @@ void PlotPane::processActionQueue()
         }
         else
         {
-            auto [hdr, received_data] = pending_actions_.front()->moveHeaderAndReceivedData();
-            addSettingsData(hdr, received_data);
+            std::unique_ptr<const ReceivedData> received_data = pending_actions_.front()->moveReceivedData();
+            addSettingsData(received_data);
         }
 
         pending_actions_.pop();
