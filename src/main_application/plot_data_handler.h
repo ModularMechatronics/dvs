@@ -39,11 +39,11 @@ public:
     ~PlotDataHandler();
     void clear();
     void softClear();
-    void addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr);
+    void addData_Old(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr);
     void render();
-    void addData_New(const CommunicationHeader& hdr,
-                     std::unique_ptr<const ReceivedData>& received_data,
-                     std::unique_ptr<const ConvertedDataBase>& converted_data);
+    void addData(const CommunicationHeader& hdr,
+                 ReceivedData& received_data,
+                 std::unique_ptr<const ConvertedDataBase>& converted_data);
     void setTransform(const internal::ItemId id,
                       const MatrixFixed<double, 3, 3>& rotation,
                       const Vec3<double>& translation,

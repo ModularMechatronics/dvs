@@ -13,11 +13,11 @@ private:
     uint64_t num_data_bytes_;
 
 public:
-    ReceivedData() = delete;
+    ReceivedData();
     ReceivedData(const ReceivedData& other) = delete;
-    ReceivedData(ReceivedData&& other) = delete;
-    ReceivedData operator=(const ReceivedData& other) = delete;
-    ReceivedData operator=(ReceivedData&& other) = delete;
+    ReceivedData(ReceivedData&& other);
+    ReceivedData& operator=(const ReceivedData& other) = delete;
+    ReceivedData& operator=(ReceivedData&& other);
 
     ReceivedData(const UInt8ArrayView array_view);
     ~ReceivedData();

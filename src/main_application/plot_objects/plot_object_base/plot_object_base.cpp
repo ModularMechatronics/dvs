@@ -67,14 +67,14 @@ size_t PlotObjectBase::getNumDimensions() const
 
 PlotObjectBase::PlotObjectBase() {}
 
-PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data,
+PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
                                const CommunicationHeader& hdr,
                                const Properties& props,
                                const ShaderCollection shader_collection,
                                ColorPicker& color_picker)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
-    data_ptr_ = received_data_->data();
+    data_ptr_ = received_data_.data();
 
     type_ = hdr.getFunction();
     data_type_ = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
@@ -106,12 +106,12 @@ PlotObjectBase::PlotObjectBase(std::unique_ptr<const ReceivedData> received_data
     assignProperties(props, color_picker);
 }
 
-void PlotObjectBase::initialize(std::unique_ptr<const ReceivedData> received_data,
-                                const CommunicationHeader& hdr,
-                                const Properties& props)
+void PlotObjectBase::postInitialize(ReceivedData& received_data,
+                                    const CommunicationHeader& hdr,
+                                    const Properties& props)
 {
     received_data_ = std::move(received_data);
-    data_ptr_ = received_data_->data();
+    data_ptr_ = received_data_.data();
 
     min_max_calculated_ = false;
     has_custom_transform_ = false;
@@ -424,7 +424,7 @@ void PlotObjectBase::assignProperties(const Properties& props, ColorPicker& colo
     }
 }
 
-void PlotObjectBase::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+void PlotObjectBase::updateWithNewData(ReceivedData& received_data,
                                        const CommunicationHeader& hdr,
                                        const Properties& props)
 {

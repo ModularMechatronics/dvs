@@ -71,7 +71,7 @@ private:
 
     void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
-    void setCurrentElement(const CommunicationHeader& hdr);
+    void setCurrentElement(const ReceivedData& received_data);
     void createNewElement(const internal::CommunicationHeader& hdr);
     void setWaitForFlush();
     void receiveData();
@@ -97,8 +97,8 @@ private:
     bool currentGuiElementSet() const;
     void queryUdpThreadFunction();
     void receiveThreadFunction();
-    void mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData>& received_data);
-    void addActionToQueue(std::unique_ptr<const ReceivedData>& received_data);
+    void mainWindowFlushMultipleElements(const ReceivedData& received_data);
+    void addActionToQueue(ReceivedData& received_data);
 
 public:
     MainWindow();

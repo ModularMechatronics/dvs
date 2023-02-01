@@ -15,7 +15,7 @@ class Plot2D : public PlotObjectBase
 public:
     Plot2D();
     Plot2D(const CommunicationHeader& hdr,
-           std::unique_ptr<const ReceivedData>& received_data,
+           ReceivedData& received_data,
            std::unique_ptr<const ConvertedDataBase>& converted_data,
            const Properties& props,
            const ShaderCollection shader_collection,
@@ -23,7 +23,7 @@ public:
     ~Plot2D();
 
     LegendProperties getLegendProperties() const override;
-    void updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+    void updateWithNewData(ReceivedData& received_data,
                            const CommunicationHeader& hdr,
                            const Properties& props) override;
 

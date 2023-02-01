@@ -78,7 +78,7 @@ class PlotObjectBase
 {
 protected:
     static constexpr size_t kDefaultBufferSize = 500U;
-    std::unique_ptr<const ReceivedData> received_data_;
+    ReceivedData received_data_;
     size_t num_dimensions_;
     size_t num_bytes_per_element_;
     uint32_t num_elements_;
@@ -131,16 +131,14 @@ protected:
     void assignProperties(const Properties& props, ColorPicker& color_picker);
     virtual void findMinMax() = 0;
 
-    void initialize(std::unique_ptr<const ReceivedData> received_data,
-                    const CommunicationHeader& hdr,
-                    const Properties& props);
+    void postInitialize(ReceivedData& received_data, const CommunicationHeader& hdr, const Properties& props);
     void throwIfNotUpdateable() const;
 
 public:
     size_t getNumDimensions() const;
     virtual ~PlotObjectBase();
     PlotObjectBase();
-    PlotObjectBase(std::unique_ptr<const ReceivedData> received_data,
+    PlotObjectBase(ReceivedData& received_data,
                    const CommunicationHeader& hdr,
                    const Properties& props,
                    const ShaderCollection shader_collection,
@@ -175,7 +173,7 @@ public:
         return lp;
     }
 
-    virtual void updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+    virtual void updateWithNewData(ReceivedData& received_data,
                                    const CommunicationHeader& hdr,
                                    const Properties& props);
 

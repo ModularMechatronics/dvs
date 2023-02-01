@@ -132,7 +132,7 @@ void UdpServer::receive()
     }
 }
 
-std::unique_ptr<const ReceivedData> UdpServer::receiveAndGetData()
+ReceivedData UdpServer::receiveAndGetData()
 {
     size_t num_received_bytes_total = 0;
     int num_received_bytes = recvfrom(socket_file_descr_,
@@ -185,7 +185,7 @@ std::unique_ptr<const ReceivedData> UdpServer::receiveAndGetData()
         throw std::runtime_error("Invalid magic number received!");
     }
 
-    return std::make_unique<const ReceivedData>(array_view);
+    return ReceivedData{array_view};
 }
 
 void UdpServer::receiveThreadFunction()

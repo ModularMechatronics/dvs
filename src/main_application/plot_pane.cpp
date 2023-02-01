@@ -262,9 +262,9 @@ PlotPane::~PlotPane()
     delete m_context;
 }
 
-void PlotPane::addSettingsData(std::unique_ptr<const ReceivedData>& received_data)
+void PlotPane::addSettingsData(const ReceivedData& received_data)
 {
-    const dvs::internal::CommunicationHeader& hdr = received_data->getCommunicationHeader();
+    const dvs::internal::CommunicationHeader& hdr = received_data.getCommunicationHeader();
     const Function fcn = hdr.getFunction();
 
     std::cout << "addSettingsData for " << fcn << std::endl;
@@ -823,12 +823,11 @@ bool viewShouldBeReset(const KeyboardState& keyboard_state)
     }
 }
 
-void PlotPane::addPlotData(std::unique_ptr<const ReceivedData>& received_data,
-                           std::unique_ptr<const ConvertedDataBase>& converted_data)
+void PlotPane::addPlotData(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data)
 {
-    const CommunicationHeader& hdr = received_data->getCommunicationHeader();
+    const CommunicationHeader& hdr = received_data.getCommunicationHeader();
 
-    plot_data_handler_->addData_New(hdr, received_data, converted_data);
+    plot_data_handler_->addData(hdr, received_data, converted_data);
 
     internal::Function fcn = hdr.getFunction();
 
@@ -895,7 +894,7 @@ void PlotPane::processActionQueue()
         }
         else
         {
-            std::unique_ptr<const ReceivedData> received_data = pending_actions_.front()->moveReceivedData();
+            ReceivedData received_data = pending_actions_.front()->moveReceivedData();
             addSettingsData(received_data);
         }
 

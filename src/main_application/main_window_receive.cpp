@@ -33,8 +33,10 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::FLUSH_ELEMENT) || (fcn == Function::WAIT_FOR_FLUSH);
 }
 
-void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
+void MainWindow::setCurrentElement(const ReceivedData& received_data)
 {
+    const CommunicationHeader& hdr = received_data.getCommunicationHeader();
+
     current_element_name_ = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME).as<properties::Name>().data;
 
     if (current_element_name_.length() == 0)
@@ -76,13 +78,13 @@ void MainWindow::OnReceiveTimer(wxTimerEvent&)
     }
 }
 
-std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(std::unique_ptr<const ReceivedData>& received_data)
+std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedData& received_data)
 {
-    const Function fcn = received_data->getFunction();
+    const Function fcn = received_data.getFunction();
 
     std::unique_ptr<const ConvertedDataBase> converted_data;
 
-    PlotObjectAttributes attributes{received_data->getCommunicationHeader()};
+    const PlotObjectAttributes attributes{received_data.getCommunicationHeader()};
 
     switch (fcn)
     {
@@ -92,7 +94,7 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(std::unique_ptr<c
                 break;*/
 
         case Function::PLOT2:
-            converted_data = Plot2D::convertRawData(attributes, received_data->data());
+            converted_data = Plot2D::convertRawData(attributes, received_data.data());
             break;
 
             /*case Function::PLOT3:
@@ -173,13 +175,13 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(std::unique_ptr<c
     return converted_data;
 }
 
-void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData>& received_data)
+void MainWindow::addActionToQueue(ReceivedData& received_data)
 {
-    const Function fcn = received_data->getFunction();
+    const Function fcn = received_data.getFunction();
 
     if (fcn == Function::SET_CURRENT_ELEMENT)
     {
-        setCurrentElement(received_data->getCommunicationHeader());
+        setCurrentElement(received_data);
     }
     else if (fcn == Function::FLUSH_MULTIPLE_ELEMENTS)
     {
@@ -200,9 +202,9 @@ void MainWindow::receiveThreadFunction()
 {
     while (1)
     {
-        std::unique_ptr<const ReceivedData> received_data = udp_server_->receiveAndGetData();
+        ReceivedData received_data = udp_server_->receiveAndGetData();
 
-        const Function fcn = received_data->getFunction();
+        const Function fcn = received_data.getFunction();
 
         {
             const std::lock_guard<std::mutex> lg(reveive_mtx_);
@@ -215,10 +217,10 @@ void MainWindow::receiveThreadFunction()
             }
             else if (fcn == Function::OPEN_PROJECT_FILE)
             {
-                const CommunicationHeader hdr = received_data->getCommunicationHeader();
-                open_project_file_queued_ = true;
+                const CommunicationHeader& hdr = received_data.getCommunicationHeader();
                 queued_project_file_name_ =
                     hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>();
+                open_project_file_queued_ = true;
             }
             else
             {
@@ -332,13 +334,13 @@ void MainWindow::queryUdpThreadFunction()
     }
 }
 
-void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData>& received_data)
+void MainWindow::mainWindowFlushMultipleElements(const ReceivedData& received_data)
 {
-    const internal::CommunicationHeader& hdr = received_data->getCommunicationHeader();
+    const internal::CommunicationHeader& hdr = received_data.getCommunicationHeader();
 
     const uint8_t num_names = hdr.get(CommunicationHeaderObjectType::NUM_NAMES).as<uint8_t>();
 
-    const VectorConstView<uint8_t> name_lengths{received_data->data(), static_cast<size_t>(num_names)};
+    const VectorConstView<uint8_t> name_lengths{received_data.data(), static_cast<size_t>(num_names)};
 
     std::vector<std::string> names;
 
@@ -353,7 +355,7 @@ void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedD
 
         for (size_t i = 0; i < current_element_length; i++)
         {
-            current_elem += received_data->data()[idx];
+            current_elem += received_data.data()[idx];
             idx++;
         }
     }
@@ -379,8 +381,7 @@ void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedD
 
     for (size_t k = 0; k < names.size(); k++)
     {
-        std::unique_ptr<const ReceivedData> fake_received_data =
-            std::unique_ptr<const ReceivedData>(new ReceivedData(array_view));
+        ReceivedData fake_received_data{array_view};
         queued_actions_[names[k]].push(std::make_unique<QueueableAction>(fake_received_data));
     }
 }

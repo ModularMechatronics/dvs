@@ -70,15 +70,15 @@ void PlotDataHandler::propertiesExtension(const CommunicationHeader& hdr)
     }
 }
 
-void PlotDataHandler::addData_New(const CommunicationHeader& hdr,
-                                  std::unique_ptr<const ReceivedData>& received_data,
-                                  std::unique_ptr<const ConvertedDataBase>& converted_data)
+void PlotDataHandler::addData(const CommunicationHeader& hdr,
+                              ReceivedData& received_data,
+                              std::unique_ptr<const ConvertedDataBase>& converted_data)
 {
     const Function fcn = hdr.getFunction();
 
     Properties props;
 
-    /*if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
+    if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
         const internal::ItemId id = hdr.value<internal::ItemId>();
 
@@ -98,10 +98,10 @@ void PlotDataHandler::addData_New(const CommunicationHeader& hdr,
             {
                 props.appendAndOverwriteProperties(new_properties);
             }
-            // (*q)->updateWithNewData(std::move(received_data), hdr, props);
+            (*q)->updateWithNewData(received_data, hdr, props);
             return;
         }
-    }*/
+    }
 
     props.appendAndOverwriteProperties(Properties{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()});
 
@@ -193,7 +193,7 @@ void PlotDataHandler::addData_New(const CommunicationHeader& hdr,
     }
 }
 
-void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr)
+void PlotDataHandler::addData_Old(std::unique_ptr<const ReceivedData> received_data, const CommunicationHeader& hdr)
 {
     const Function fcn = hdr.getFunction();
 
@@ -239,7 +239,7 @@ void PlotDataHandler::addData(std::unique_ptr<const ReceivedData> received_data,
             {
                 props.appendAndOverwriteProperties(new_properties);
             }
-            (*q)->updateWithNewData(std::move(received_data), hdr, props);
+            // (*q)->updateWithNewData(received_data, hdr, props);
             return;
         }
     }
