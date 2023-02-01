@@ -30,6 +30,7 @@ Pre release:
 - Don't refresh immideately on interaction in plot pane, queue it for the 10ms refresh
 - Remove GuiElement class as a parent class for PlotPane
 - Pass ShaderCollection by const& to all plot objects
+- Make queues of received data instead, and put ConvertedData as a member of received data?
 - Currently not possible to add new window when opening a new file ("New" under file menu), fix this
 - Refactor pipeline of how new plot objects are added
 - Change name of application (to plotto or something)

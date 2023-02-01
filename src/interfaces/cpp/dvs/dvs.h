@@ -719,6 +719,12 @@ template <typename... Us> void setProperties(const internal::ItemId id, const Us
 
 inline void setCurrentElement(const std::string& name)
 {
+    if (name.length() == 0)
+    {
+        DVS_LOG_ERROR() << "Cannot set element name with string length 0!";
+        return;
+    }
+
     internal::CommunicationHeader hdr{internal::Function::SET_CURRENT_ELEMENT};
     hdr.append(internal::CommunicationHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
 
