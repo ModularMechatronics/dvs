@@ -2,7 +2,8 @@
 
 #include "dvs/constants.h"
 
-ReceivedData::ReceivedData(const UInt8ArrayView received_array_view) : hdr_(received_array_view)
+ReceivedData::ReceivedData(const UInt8ArrayView received_array_view)
+    : hdr_(received_array_view), function_{hdr_.getFunction()}
 {
     const uint64_t transmission_data_offset = hdr_.numBytes() + dvs::internal::kHeaderDataStartOffset;
 
@@ -27,6 +28,11 @@ ReceivedData::ReceivedData(const UInt8ArrayView received_array_view) : hdr_(rece
 ReceivedData::~ReceivedData()
 {
     delete[] payload_data_;
+}
+
+dvs::internal::Function ReceivedData::getFunction() const
+{
+    return function_;
 }
 
 uint8_t* ReceivedData::data() const

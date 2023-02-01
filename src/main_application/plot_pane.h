@@ -97,8 +97,7 @@ private:
     std::queue<std::unique_ptr<QueueableAction>> pending_actions_;
 
     void processActionQueue();
-    void addPlotData(const CommunicationHeader& hdr,
-                     std::unique_ptr<const ReceivedData>& received_data,
+    void addPlotData(std::unique_ptr<const ReceivedData>& received_data,
                      std::unique_ptr<const ConvertedDataBase>& converted_data);
 
 public:
@@ -126,8 +125,7 @@ public:
     void updateSizeFromParent(const wxSize& parent_size) override;
     void raise() override;
     void lower() override;
-    void addSettingsData(const dvs::internal::CommunicationHeader& hdr,
-                         std::unique_ptr<const ReceivedData>& received_data) override;
+    void addSettingsData(std::unique_ptr<const ReceivedData>& received_data) override;
     void show() override;
     void hide() override;
     void destroy() override;

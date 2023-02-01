@@ -33,7 +33,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::FLUSH_ELEMENT) || (fcn == Function::WAIT_FOR_FLUSH);
 }
 
-void MainWindow::setCurrentElement_New(const CommunicationHeader& hdr)
+void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
 {
     current_element_name_ = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME).as<properties::Name>().data;
 
@@ -41,31 +41,13 @@ void MainWindow::setCurrentElement_New(const CommunicationHeader& hdr)
     {
         throw std::runtime_error("Name string had zero length!");
     }
-}
 
-void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
-{
-    const std::string element_name = hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME).as<properties::Name>().data;
-
-    if (element_name.length() == 0)
-    {
-        throw std::runtime_error("Name string had zero length!");
-    }
-
-    for (auto we : windows_)
-    {
-        current_gui_element_ = we->getGuiElement(element_name);
-        if (current_gui_element_ != nullptr)
-        {
-            break;
-        }
-    }
-
+    /*
     if (!currentGuiElementSet())
     {
         // TODO: Create new window with gui element or something
     }
-    /*if (gui_elements_.count(element_name_str) > 0)
+    if (gui_elements_.count(element_name_str) > 0)
     {
         current_gui_element_ = gui_elements_[element_name_str];
         // current_gui_element_set_ = true;
@@ -74,7 +56,8 @@ void MainWindow::setCurrentElement(const CommunicationHeader& hdr)
     {
         // TODO: Handle this
         // newNamedElement(element_name_str);
-    }*/
+    }
+    */
 }
 
 void MainWindow::OnReceiveTimer(wxTimerEvent&)
@@ -93,14 +76,13 @@ void MainWindow::OnReceiveTimer(wxTimerEvent&)
     }
 }
 
-std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedData* const received_data,
-                                                               const CommunicationHeader& hdr)
+std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(std::unique_ptr<const ReceivedData>& received_data)
 {
-    const Function fcn = hdr.getFunction();
+    const Function fcn = received_data->getFunction();
 
     std::unique_ptr<const ConvertedDataBase> converted_data;
 
-    PlotObjectAttributes attributes{hdr};
+    PlotObjectAttributes attributes{received_data->getCommunicationHeader()};
 
     switch (fcn)
     {
@@ -191,28 +173,26 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
     return converted_data;
 }
 
-void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData>& received_data,
-                                  const internal::CommunicationHeader& hdr)
+void MainWindow::addActionToQueue(std::unique_ptr<const ReceivedData>& received_data)
 {
-    const Function fcn = hdr.getFunction();
+    const Function fcn = received_data->getFunction();
 
     if (fcn == Function::SET_CURRENT_ELEMENT)
     {
-        setCurrentElement_New(hdr);
+        setCurrentElement(received_data->getCommunicationHeader());
     }
     else if (fcn == Function::FLUSH_MULTIPLE_ELEMENTS)
     {
-        mainWindowFlushMultipleElements(received_data, hdr);
+        mainWindowFlushMultipleElements(received_data);
     }
     else if (isPlotDataFunction(fcn))
     {
-        std::unique_ptr<const ConvertedDataBase> converted_data = convertPlotObjectData(received_data.get(), hdr);
-        queued_actions_[current_element_name_].push(
-            std::make_unique<QueueableAction>(hdr, received_data, converted_data));
+        std::unique_ptr<const ConvertedDataBase> converted_data = convertPlotObjectData(received_data);
+        queued_actions_[current_element_name_].push(std::make_unique<QueueableAction>(received_data, converted_data));
     }
     else
     {
-        queued_actions_[current_element_name_].push(std::make_unique<QueueableAction>(hdr, received_data));
+        queued_actions_[current_element_name_].push(std::make_unique<QueueableAction>(received_data));
     }
 }
 
@@ -221,9 +201,8 @@ void MainWindow::receiveThreadFunction()
     while (1)
     {
         std::unique_ptr<const ReceivedData> received_data = udp_server_->receiveAndGetData();
-        const CommunicationHeader hdr = received_data->getCommunicationHeader();
 
-        const Function fcn = hdr.getFunction();
+        const Function fcn = received_data->getFunction();
 
         {
             const std::lock_guard<std::mutex> lg(reveive_mtx_);
@@ -236,13 +215,14 @@ void MainWindow::receiveThreadFunction()
             }
             else if (fcn == Function::OPEN_PROJECT_FILE)
             {
+                const CommunicationHeader hdr = received_data->getCommunicationHeader();
                 open_project_file_queued_ = true;
                 queued_project_file_name_ =
                     hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>();
             }
             else
             {
-                addActionToQueue(received_data, hdr);
+                addActionToQueue(received_data);
             }
         }
     }
@@ -352,9 +332,10 @@ void MainWindow::queryUdpThreadFunction()
     }
 }
 
-void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData>& received_data,
-                                                 const internal::CommunicationHeader& hdr)
+void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedData>& received_data)
 {
+    const internal::CommunicationHeader& hdr = received_data->getCommunicationHeader();
+
     const uint8_t num_names = hdr.get(CommunicationHeaderObjectType::NUM_NAMES).as<uint8_t>();
 
     const VectorConstView<uint8_t> name_lengths{received_data->data(), static_cast<size_t>(num_names)};
@@ -377,9 +358,30 @@ void MainWindow::mainWindowFlushMultipleElements(std::unique_ptr<const ReceivedD
         }
     }
 
+    // Have to create a 'fake' header and 'fake' received data
+    internal::CommunicationHeader faked_hdr{internal::Function::FLUSH_ELEMENT};
+
+    const uint64_t num_bytes_hdr = faked_hdr.numBytes();
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_hdr + 1 + 2 * sizeof(uint64_t);
+
+    FillableUInt8Array fillable_array{num_bytes};
+
+    fillable_array.fillWithStaticType(isBigEndian());
+    fillable_array.fillWithStaticType(kMagicNumber);
+    fillable_array.fillWithStaticType(num_bytes);
+
+    faked_hdr.fillBufferWithData(fillable_array);
+
+    const UInt8ArrayView array_view{fillable_array.data(), fillable_array.size()};
+
     for (size_t k = 0; k < names.size(); k++)
     {
-        queued_actions_[names[k]].push(std::make_unique<QueueableAction>(CommunicationHeader{Function::FLUSH_ELEMENT}));
+        std::unique_ptr<const ReceivedData> fake_received_data =
+            std::unique_ptr<const ReceivedData>(new ReceivedData(array_view));
+        queued_actions_[names[k]].push(std::make_unique<QueueableAction>(fake_received_data));
     }
 }
 
