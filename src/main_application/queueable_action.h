@@ -13,12 +13,12 @@ public:
     QueueableAction() = delete;
 
     QueueableAction(const internal::CommunicationHeader& hdr)
-        : hdr_{hdr}, function{hdr.getFunction()}, received_data_{nullptr}, converted_data_{nullptr}
+        : hdr_{hdr}, function_{hdr.getFunction()}, received_data_{nullptr}, converted_data_{nullptr}
     {
     }
 
     QueueableAction(const internal::CommunicationHeader& hdr, std::unique_ptr<const ReceivedData>& received_data)
-        : hdr_{hdr}, function{hdr.getFunction()}, received_data_{std::move(received_data)}, converted_data_{nullptr}
+        : hdr_{hdr}, function_{hdr.getFunction()}, received_data_{std::move(received_data)}, converted_data_{nullptr}
     {
     }
 
@@ -26,7 +26,7 @@ public:
                     std::unique_ptr<const ReceivedData>& received_data,
                     std::unique_ptr<const ConvertedDataBase>& converted_data)
         : hdr_{hdr},
-          function{hdr.getFunction()},
+          function_{hdr.getFunction()},
           received_data_{std::move(received_data)},
           converted_data_{std::move(converted_data)}
     {
@@ -39,7 +39,7 @@ public:
 
     internal::Function getFunction() const
     {
-        return function;
+        return function_;
     }
 
     std::tuple<internal::CommunicationHeader,
@@ -55,8 +55,9 @@ public:
         return {hdr_, std::move(received_data_)};
     }
 
+private:
     internal::CommunicationHeader hdr_;
-    internal::Function function;
+    internal::Function function_;
     std::unique_ptr<const ReceivedData> received_data_;
     std::unique_ptr<const ConvertedDataBase> converted_data_;
 };
