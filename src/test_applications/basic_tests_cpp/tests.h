@@ -436,6 +436,40 @@ void testPlot()
 {
     const size_t num_elements = 50;
 
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({0.0, -1.0, -1.0}, {2.0, 1.0, 1.0});
+    waitForFlush();
+
+    float t = 0.0f;
+    const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 2.0f, num_elements);
+
+    float x0 = 1.0f;
+
+    for (size_t k = 0; k < 1000; k++)
+    {
+        const Vector<float> y = dvs::sin(x * 5.0f + t);
+        t += 0.1f;
+
+        softClearView();
+        plot(x + x0, y, properties::LineWidth(2));
+        usleep(1000 * 100);
+        plot(x + x0, y + 0.1f, properties::LineWidth(2));
+        usleep(1000 * 100);
+        plot(x + x0, y + 0.2f, properties::LineWidth(2));
+        usleep(1000 * 100);
+        plot(x + x0, y + 0.3f, properties::LineWidth(2));
+        usleep(1000 * 1000);
+        flushCurrentElement();
+        x0 += 0.1f;
+        std::cout << "Yes: " << k << ", " << x0 << std::endl;
+    }
+}
+
+void testPlot2()
+{
+    const size_t num_elements = 50;
+
     const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 2.0f, num_elements);
     const Vector<float> y = dvs::sin(x * 5.0f);
 

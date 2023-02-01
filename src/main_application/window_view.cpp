@@ -171,6 +171,19 @@ WindowView::~WindowView()
     }
 }
 
+std::vector<GuiElement*> WindowView::getGuiElements() const
+{
+    std::vector<GuiElement*> gui_elements;
+
+    for (const auto& tab : tabs_)
+    {
+        std::vector<GuiElement*> tab_gui_elements = tab->getGuiElements();
+        gui_elements.insert(gui_elements.end(), tab_gui_elements.begin(), tab_gui_elements.end());
+    }
+
+    return gui_elements;
+}
+
 GuiElement* WindowView::getGuiElement(const std::string& element_name) const
 {
     GuiElement* ge;
