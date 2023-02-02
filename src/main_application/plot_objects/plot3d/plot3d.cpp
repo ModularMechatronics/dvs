@@ -4,13 +4,29 @@
 
 namespace
 {
-struct OutputData
+
+struct ConvertedData : ConvertedDataBase
 {
     float* p0;
     float* p1;
     float* p2;
     int32_t* idx_data;
     size_t num_points;
+
+    ConvertedData() : p0{nullptr}, p1{nullptr}, p2{nullptr}, idx_data{nullptr}, num_points{} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] p0;
+        delete[] p1;
+        delete[] p2;
+        delete[] idx_data;
+    }
 };
 
 struct InputParams
@@ -28,11 +44,13 @@ struct InputParams
     }
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -40,11 +58,13 @@ struct Converter
 
 }  // namespace
 
-Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
-               const CommunicationHeader& hdr,
+Plot3D::Plot3D(const CommunicationHeader& hdr,
+               ReceivedData& received_data,
+               const std::unique_ptr<const ConvertedDataBase>& converted_data,
                const Properties& props,
-               const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker),
+               const ShaderCollection shader_collection,
+               ColorPicker& color_picker)
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     if (type_ != Function::PLOT3)
@@ -52,21 +72,15 @@ Plot3D::Plot3D(std::unique_ptr<const ReceivedData> received_data,
         throw std::runtime_error("Invalid function type for Plot3D!");
     }
 
-    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    num_points_ = output_data.num_points;
+    num_points_ = converted_data_local->num_points;
 
-    vertex_buffer_.addBuffer(output_data.p0, num_points_, 3);
-    vertex_buffer_.addBuffer(output_data.p1, num_points_, 3);
-    vertex_buffer_.addBuffer(output_data.p2, num_points_, 3);
+    vertex_buffer_.addBuffer(converted_data_local->p0, num_points_, 3);
+    vertex_buffer_.addBuffer(converted_data_local->p1, num_points_, 3);
+    vertex_buffer_.addBuffer(converted_data_local->p2, num_points_, 3);
 
-    vertex_buffer_.addBuffer(output_data.idx_data, num_points_, 1);
-
-    delete[] output_data.p0;
-    delete[] output_data.p1;
-    delete[] output_data.p2;
-    delete[] output_data.idx_data;
+    vertex_buffer_.addBuffer(converted_data_local->idx_data, num_points_, 1);
 }
 
 void Plot3D::findMinMax()
@@ -86,26 +100,39 @@ void Plot3D::render()
 
 Plot3D::~Plot3D() {}
 
+std::unique_ptr<const ConvertedDataBase> Plot3D::convertRawData(const PlotObjectAttributes& attributes,
+                                                                const uint8_t* const data_ptr)
+{
+    const InputParams input_params{
+        attributes.num_elements, attributes.num_bytes_per_element, attributes.num_bytes_for_one_vec};
+
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
+
+    return converted_data_base;
+}
+
 namespace
 {
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t num_segments = input_params.num_elements - 1U;
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
     const size_t num_points = num_triangles * 3U;
 
-    OutputData output_data;
-    output_data.num_points = num_points;
-    output_data.p0 = new float[3 * num_points];
-    output_data.p1 = new float[3 * num_points];
-    output_data.p2 = new float[3 * num_points];
-    output_data.idx_data = new int32_t[num_points];
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->num_points = num_points;
+    converted_data->p0 = new float[3 * num_points];
+    converted_data->p1 = new float[3 * num_points];
+    converted_data->p2 = new float[3 * num_points];
+    converted_data->idx_data = new int32_t[num_points];
 
-    std::memset(output_data.p0, 0, 3 * num_points * sizeof(float));
-    std::memset(output_data.p1, 0, 3 * num_points * sizeof(float));
-    std::memset(output_data.p2, 0, 3 * num_points * sizeof(float));
+    std::memset(converted_data->p0, 0, 3 * num_points * sizeof(float));
+    std::memset(converted_data->p1, 0, 3 * num_points * sizeof(float));
+    std::memset(converted_data->p2, 0, 3 * num_points * sizeof(float));
 
-    std::memset(output_data.idx_data, 0, num_points * sizeof(int32_t));
+    std::memset(converted_data->idx_data, 0, num_points * sizeof(int32_t));
 
     struct Points
     {
@@ -209,173 +236,173 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         const Points& pt = pts[k];
 
         // 1st triangle
-        output_data.p0[idx] = pt_1.p0.x;
-        output_data.p0[idx + 1] = pt_1.p0.y;
-        output_data.p0[idx + 2] = pt_1.p0.z;
+        converted_data->p0[idx] = pt_1.p0.x;
+        converted_data->p0[idx + 1] = pt_1.p0.y;
+        converted_data->p0[idx + 2] = pt_1.p0.z;
 
-        output_data.p0[idx + 3] = pt.p0.x;
-        output_data.p0[idx + 4] = pt.p0.y;
-        output_data.p0[idx + 5] = pt.p0.z;
+        converted_data->p0[idx + 3] = pt.p0.x;
+        converted_data->p0[idx + 4] = pt.p0.y;
+        converted_data->p0[idx + 5] = pt.p0.z;
 
-        output_data.p0[idx + 6] = pt.p0.x;
-        output_data.p0[idx + 7] = pt.p0.y;
-        output_data.p0[idx + 8] = pt.p0.z;
+        converted_data->p0[idx + 6] = pt.p0.x;
+        converted_data->p0[idx + 7] = pt.p0.y;
+        converted_data->p0[idx + 8] = pt.p0.z;
 
         // 2nd triangle
-        output_data.p0[idx + 9] = pt_1.p0.x;
-        output_data.p0[idx + 10] = pt_1.p0.y;
-        output_data.p0[idx + 11] = pt_1.p0.z;
+        converted_data->p0[idx + 9] = pt_1.p0.x;
+        converted_data->p0[idx + 10] = pt_1.p0.y;
+        converted_data->p0[idx + 11] = pt_1.p0.z;
 
-        output_data.p0[idx + 12] = pt.p0.x;
-        output_data.p0[idx + 13] = pt.p0.y;
-        output_data.p0[idx + 14] = pt.p0.z;
+        converted_data->p0[idx + 12] = pt.p0.x;
+        converted_data->p0[idx + 13] = pt.p0.y;
+        converted_data->p0[idx + 14] = pt.p0.z;
 
-        output_data.p0[idx + 15] = pt_1.p0.x;
-        output_data.p0[idx + 16] = pt_1.p0.y;
-        output_data.p0[idx + 17] = pt_1.p0.z;
+        converted_data->p0[idx + 15] = pt_1.p0.x;
+        converted_data->p0[idx + 16] = pt_1.p0.y;
+        converted_data->p0[idx + 17] = pt_1.p0.z;
 
         // 3nd triangle
-        output_data.p0[idx + 18] = pt.p0.x;
-        output_data.p0[idx + 19] = pt.p0.y;
-        output_data.p0[idx + 20] = pt.p0.z;
+        converted_data->p0[idx + 18] = pt.p0.x;
+        converted_data->p0[idx + 19] = pt.p0.y;
+        converted_data->p0[idx + 20] = pt.p0.z;
 
-        output_data.p0[idx + 21] = pt.p0.x;
-        output_data.p0[idx + 22] = pt.p0.y;
-        output_data.p0[idx + 23] = pt.p0.z;
+        converted_data->p0[idx + 21] = pt.p0.x;
+        converted_data->p0[idx + 22] = pt.p0.y;
+        converted_data->p0[idx + 23] = pt.p0.z;
 
-        output_data.p0[idx + 24] = pt.p0.x;
-        output_data.p0[idx + 25] = pt.p0.y;
-        output_data.p0[idx + 26] = pt.p0.z;
+        converted_data->p0[idx + 24] = pt.p0.x;
+        converted_data->p0[idx + 25] = pt.p0.y;
+        converted_data->p0[idx + 26] = pt.p0.z;
 
         // 4th triangle
-        output_data.p0[idx + 27] = pt.p0.x;
-        output_data.p0[idx + 28] = pt.p0.y;
-        output_data.p0[idx + 29] = pt.p0.z;
+        converted_data->p0[idx + 27] = pt.p0.x;
+        converted_data->p0[idx + 28] = pt.p0.y;
+        converted_data->p0[idx + 29] = pt.p0.z;
 
-        output_data.p0[idx + 30] = pt.p0.x;
-        output_data.p0[idx + 31] = pt.p0.y;
-        output_data.p0[idx + 32] = pt.p0.z;
+        converted_data->p0[idx + 30] = pt.p0.x;
+        converted_data->p0[idx + 31] = pt.p0.y;
+        converted_data->p0[idx + 32] = pt.p0.z;
 
-        output_data.p0[idx + 33] = pt.p0.x;
-        output_data.p0[idx + 34] = pt.p0.y;
-        output_data.p0[idx + 35] = pt.p0.z;
+        converted_data->p0[idx + 33] = pt.p0.x;
+        converted_data->p0[idx + 34] = pt.p0.y;
+        converted_data->p0[idx + 35] = pt.p0.z;
 
         // 1st triangle
-        output_data.p1[idx] = pt_1.p1.x;
-        output_data.p1[idx + 1] = pt_1.p1.y;
-        output_data.p1[idx + 2] = pt_1.p1.z;
+        converted_data->p1[idx] = pt_1.p1.x;
+        converted_data->p1[idx + 1] = pt_1.p1.y;
+        converted_data->p1[idx + 2] = pt_1.p1.z;
 
-        output_data.p1[idx + 3] = pt.p1.x;
-        output_data.p1[idx + 4] = pt.p1.y;
-        output_data.p1[idx + 5] = pt.p1.z;
+        converted_data->p1[idx + 3] = pt.p1.x;
+        converted_data->p1[idx + 4] = pt.p1.y;
+        converted_data->p1[idx + 5] = pt.p1.z;
 
-        output_data.p1[idx + 6] = pt.p1.x;
-        output_data.p1[idx + 7] = pt.p1.y;
-        output_data.p1[idx + 8] = pt.p1.z;
+        converted_data->p1[idx + 6] = pt.p1.x;
+        converted_data->p1[idx + 7] = pt.p1.y;
+        converted_data->p1[idx + 8] = pt.p1.z;
 
         // 2nd triangle
-        output_data.p1[idx + 9] = pt_1.p1.x;
-        output_data.p1[idx + 10] = pt_1.p1.y;
-        output_data.p1[idx + 11] = pt_1.p1.z;
+        converted_data->p1[idx + 9] = pt_1.p1.x;
+        converted_data->p1[idx + 10] = pt_1.p1.y;
+        converted_data->p1[idx + 11] = pt_1.p1.z;
 
-        output_data.p1[idx + 12] = pt.p1.x;
-        output_data.p1[idx + 13] = pt.p1.y;
-        output_data.p1[idx + 14] = pt.p1.z;
+        converted_data->p1[idx + 12] = pt.p1.x;
+        converted_data->p1[idx + 13] = pt.p1.y;
+        converted_data->p1[idx + 14] = pt.p1.z;
 
-        output_data.p1[idx + 15] = pt_1.p1.x;
-        output_data.p1[idx + 16] = pt_1.p1.y;
-        output_data.p1[idx + 17] = pt_1.p1.z;
+        converted_data->p1[idx + 15] = pt_1.p1.x;
+        converted_data->p1[idx + 16] = pt_1.p1.y;
+        converted_data->p1[idx + 17] = pt_1.p1.z;
 
         // 3nd triangle
-        output_data.p1[idx + 18] = pt.p1.x;
-        output_data.p1[idx + 19] = pt.p1.y;
-        output_data.p1[idx + 20] = pt.p1.z;
+        converted_data->p1[idx + 18] = pt.p1.x;
+        converted_data->p1[idx + 19] = pt.p1.y;
+        converted_data->p1[idx + 20] = pt.p1.z;
 
-        output_data.p1[idx + 21] = pt.p1.x;
-        output_data.p1[idx + 22] = pt.p1.y;
-        output_data.p1[idx + 23] = pt.p1.z;
+        converted_data->p1[idx + 21] = pt.p1.x;
+        converted_data->p1[idx + 22] = pt.p1.y;
+        converted_data->p1[idx + 23] = pt.p1.z;
 
-        output_data.p1[idx + 24] = pt.p1.x;
-        output_data.p1[idx + 25] = pt.p1.y;
-        output_data.p1[idx + 26] = pt.p1.z;
+        converted_data->p1[idx + 24] = pt.p1.x;
+        converted_data->p1[idx + 25] = pt.p1.y;
+        converted_data->p1[idx + 26] = pt.p1.z;
 
         // 4th triangle
-        output_data.p1[idx + 27] = pt.p1.x;
-        output_data.p1[idx + 28] = pt.p1.y;
-        output_data.p1[idx + 29] = pt.p1.z;
+        converted_data->p1[idx + 27] = pt.p1.x;
+        converted_data->p1[idx + 28] = pt.p1.y;
+        converted_data->p1[idx + 29] = pt.p1.z;
 
-        output_data.p1[idx + 30] = pt.p1.x;
-        output_data.p1[idx + 31] = pt.p1.y;
-        output_data.p1[idx + 32] = pt.p1.z;
+        converted_data->p1[idx + 30] = pt.p1.x;
+        converted_data->p1[idx + 31] = pt.p1.y;
+        converted_data->p1[idx + 32] = pt.p1.z;
 
-        output_data.p1[idx + 33] = pt.p1.x;
-        output_data.p1[idx + 34] = pt.p1.y;
-        output_data.p1[idx + 35] = pt.p1.z;
+        converted_data->p1[idx + 33] = pt.p1.x;
+        converted_data->p1[idx + 34] = pt.p1.y;
+        converted_data->p1[idx + 35] = pt.p1.z;
 
         // 1st triangle
-        output_data.p2[idx] = pt_1.p2.x;
-        output_data.p2[idx + 1] = pt_1.p2.y;
-        output_data.p2[idx + 2] = pt_1.p2.z;
+        converted_data->p2[idx] = pt_1.p2.x;
+        converted_data->p2[idx + 1] = pt_1.p2.y;
+        converted_data->p2[idx + 2] = pt_1.p2.z;
 
-        output_data.p2[idx + 3] = pt.p2.x;
-        output_data.p2[idx + 4] = pt.p2.y;
-        output_data.p2[idx + 5] = pt.p2.z;
+        converted_data->p2[idx + 3] = pt.p2.x;
+        converted_data->p2[idx + 4] = pt.p2.y;
+        converted_data->p2[idx + 5] = pt.p2.z;
 
-        output_data.p2[idx + 6] = pt.p2.x;
-        output_data.p2[idx + 7] = pt.p2.y;
-        output_data.p2[idx + 8] = pt.p2.z;
+        converted_data->p2[idx + 6] = pt.p2.x;
+        converted_data->p2[idx + 7] = pt.p2.y;
+        converted_data->p2[idx + 8] = pt.p2.z;
 
         // 2nd triangle
-        output_data.p2[idx + 9] = pt_1.p2.x;
-        output_data.p2[idx + 10] = pt_1.p2.y;
-        output_data.p2[idx + 11] = pt_1.p2.z;
+        converted_data->p2[idx + 9] = pt_1.p2.x;
+        converted_data->p2[idx + 10] = pt_1.p2.y;
+        converted_data->p2[idx + 11] = pt_1.p2.z;
 
-        output_data.p2[idx + 12] = pt.p2.x;
-        output_data.p2[idx + 13] = pt.p2.y;
-        output_data.p2[idx + 14] = pt.p2.z;
+        converted_data->p2[idx + 12] = pt.p2.x;
+        converted_data->p2[idx + 13] = pt.p2.y;
+        converted_data->p2[idx + 14] = pt.p2.z;
 
-        output_data.p2[idx + 15] = pt_1.p2.x;
-        output_data.p2[idx + 16] = pt_1.p2.y;
-        output_data.p2[idx + 17] = pt_1.p2.z;
+        converted_data->p2[idx + 15] = pt_1.p2.x;
+        converted_data->p2[idx + 16] = pt_1.p2.y;
+        converted_data->p2[idx + 17] = pt_1.p2.z;
 
         // 3nd triangle
-        output_data.p2[idx + 18] = pt.p2.x;
-        output_data.p2[idx + 19] = pt.p2.y;
-        output_data.p2[idx + 20] = pt.p2.z;
+        converted_data->p2[idx + 18] = pt.p2.x;
+        converted_data->p2[idx + 19] = pt.p2.y;
+        converted_data->p2[idx + 20] = pt.p2.z;
 
-        output_data.p2[idx + 21] = pt.p2.x;
-        output_data.p2[idx + 22] = pt.p2.y;
-        output_data.p2[idx + 23] = pt.p2.z;
+        converted_data->p2[idx + 21] = pt.p2.x;
+        converted_data->p2[idx + 22] = pt.p2.y;
+        converted_data->p2[idx + 23] = pt.p2.z;
 
-        output_data.p2[idx + 24] = pt.p2.x;
-        output_data.p2[idx + 25] = pt.p2.y;
-        output_data.p2[idx + 26] = pt.p2.z;
+        converted_data->p2[idx + 24] = pt.p2.x;
+        converted_data->p2[idx + 25] = pt.p2.y;
+        converted_data->p2[idx + 26] = pt.p2.z;
 
         // 4th triangle
-        output_data.p2[idx + 27] = pt.p2.x;
-        output_data.p2[idx + 28] = pt.p2.y;
-        output_data.p2[idx + 29] = pt.p2.z;
+        converted_data->p2[idx + 27] = pt.p2.x;
+        converted_data->p2[idx + 28] = pt.p2.y;
+        converted_data->p2[idx + 29] = pt.p2.z;
 
-        output_data.p2[idx + 30] = pt.p2.x;
-        output_data.p2[idx + 31] = pt.p2.y;
-        output_data.p2[idx + 32] = pt.p2.z;
+        converted_data->p2[idx + 30] = pt.p2.x;
+        converted_data->p2[idx + 31] = pt.p2.y;
+        converted_data->p2[idx + 32] = pt.p2.z;
 
-        output_data.p2[idx + 33] = pt.p2.x;
-        output_data.p2[idx + 34] = pt.p2.y;
-        output_data.p2[idx + 35] = pt.p2.z;
+        converted_data->p2[idx + 33] = pt.p2.x;
+        converted_data->p2[idx + 34] = pt.p2.y;
+        converted_data->p2[idx + 35] = pt.p2.z;
 
-        output_data.idx_data[idx_idx] = 0;
-        output_data.idx_data[idx_idx + 1] = 1;
-        output_data.idx_data[idx_idx + 2] = 2;
-        output_data.idx_data[idx_idx + 3] = 3;
-        output_data.idx_data[idx_idx + 4] = 4;
-        output_data.idx_data[idx_idx + 5] = 5;
-        output_data.idx_data[idx_idx + 6] = 6;
-        output_data.idx_data[idx_idx + 7] = 7;
-        output_data.idx_data[idx_idx + 8] = 8;
-        output_data.idx_data[idx_idx + 9] = 9;
-        output_data.idx_data[idx_idx + 10] = 10;
-        output_data.idx_data[idx_idx + 11] = 11;
+        converted_data->idx_data[idx_idx] = 0;
+        converted_data->idx_data[idx_idx + 1] = 1;
+        converted_data->idx_data[idx_idx + 2] = 2;
+        converted_data->idx_data[idx_idx + 3] = 3;
+        converted_data->idx_data[idx_idx + 4] = 4;
+        converted_data->idx_data[idx_idx + 5] = 5;
+        converted_data->idx_data[idx_idx + 6] = 6;
+        converted_data->idx_data[idx_idx + 7] = 7;
+        converted_data->idx_data[idx_idx + 8] = 8;
+        converted_data->idx_data[idx_idx + 9] = 9;
+        converted_data->idx_data[idx_idx + 10] = 10;
+        converted_data->idx_data[idx_idx + 11] = 11;
 
         idx += 36;
         idx_idx += 12;
@@ -385,85 +412,85 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     const Points& pt_1 = pts[input_params.num_elements - 2];
     const Points& pt = pts[input_params.num_elements - 1];
 
-    output_data.p0[idx] = pt_1.p0.x;
-    output_data.p0[idx + 1] = pt_1.p0.y;
-    output_data.p0[idx + 2] = pt_1.p0.z;
+    converted_data->p0[idx] = pt_1.p0.x;
+    converted_data->p0[idx + 1] = pt_1.p0.y;
+    converted_data->p0[idx + 2] = pt_1.p0.z;
 
-    output_data.p0[idx + 3] = pt.p0.x;
-    output_data.p0[idx + 4] = pt.p0.y;
-    output_data.p0[idx + 5] = pt.p0.z;
+    converted_data->p0[idx + 3] = pt.p0.x;
+    converted_data->p0[idx + 4] = pt.p0.y;
+    converted_data->p0[idx + 5] = pt.p0.z;
 
-    output_data.p0[idx + 6] = pt.p0.x;
-    output_data.p0[idx + 7] = pt.p0.y;
-    output_data.p0[idx + 8] = pt.p0.z;
+    converted_data->p0[idx + 6] = pt.p0.x;
+    converted_data->p0[idx + 7] = pt.p0.y;
+    converted_data->p0[idx + 8] = pt.p0.z;
 
-    output_data.p0[idx + 9] = pt_1.p0.x;
-    output_data.p0[idx + 10] = pt_1.p0.y;
-    output_data.p0[idx + 11] = pt_1.p0.z;
+    converted_data->p0[idx + 9] = pt_1.p0.x;
+    converted_data->p0[idx + 10] = pt_1.p0.y;
+    converted_data->p0[idx + 11] = pt_1.p0.z;
 
-    output_data.p0[idx + 12] = pt.p0.x;
-    output_data.p0[idx + 13] = pt.p0.y;
-    output_data.p0[idx + 14] = pt.p0.z;
+    converted_data->p0[idx + 12] = pt.p0.x;
+    converted_data->p0[idx + 13] = pt.p0.y;
+    converted_data->p0[idx + 14] = pt.p0.z;
 
-    output_data.p0[idx + 15] = pt_1.p0.x;
-    output_data.p0[idx + 16] = pt_1.p0.y;
-    output_data.p0[idx + 17] = pt_1.p0.z;
+    converted_data->p0[idx + 15] = pt_1.p0.x;
+    converted_data->p0[idx + 16] = pt_1.p0.y;
+    converted_data->p0[idx + 17] = pt_1.p0.z;
 
-    output_data.p1[idx] = pt_1.p1.x;
-    output_data.p1[idx + 1] = pt_1.p1.y;
-    output_data.p1[idx + 2] = pt_1.p1.z;
+    converted_data->p1[idx] = pt_1.p1.x;
+    converted_data->p1[idx + 1] = pt_1.p1.y;
+    converted_data->p1[idx + 2] = pt_1.p1.z;
 
-    output_data.p1[idx + 3] = pt.p1.x;
-    output_data.p1[idx + 4] = pt.p1.y;
-    output_data.p1[idx + 5] = pt.p1.z;
+    converted_data->p1[idx + 3] = pt.p1.x;
+    converted_data->p1[idx + 4] = pt.p1.y;
+    converted_data->p1[idx + 5] = pt.p1.z;
 
-    output_data.p1[idx + 6] = pt.p1.x;
-    output_data.p1[idx + 7] = pt.p1.y;
-    output_data.p1[idx + 8] = pt.p1.z;
+    converted_data->p1[idx + 6] = pt.p1.x;
+    converted_data->p1[idx + 7] = pt.p1.y;
+    converted_data->p1[idx + 8] = pt.p1.z;
 
-    output_data.p1[idx + 9] = pt_1.p1.x;
-    output_data.p1[idx + 10] = pt_1.p1.y;
-    output_data.p1[idx + 11] = pt_1.p1.z;
+    converted_data->p1[idx + 9] = pt_1.p1.x;
+    converted_data->p1[idx + 10] = pt_1.p1.y;
+    converted_data->p1[idx + 11] = pt_1.p1.z;
 
-    output_data.p1[idx + 12] = pt.p1.x;
-    output_data.p1[idx + 13] = pt.p1.y;
-    output_data.p1[idx + 14] = pt.p1.z;
+    converted_data->p1[idx + 12] = pt.p1.x;
+    converted_data->p1[idx + 13] = pt.p1.y;
+    converted_data->p1[idx + 14] = pt.p1.z;
 
-    output_data.p1[idx + 15] = pt_1.p1.x;
-    output_data.p1[idx + 16] = pt_1.p1.y;
-    output_data.p1[idx + 17] = pt_1.p1.z;
+    converted_data->p1[idx + 15] = pt_1.p1.x;
+    converted_data->p1[idx + 16] = pt_1.p1.y;
+    converted_data->p1[idx + 17] = pt_1.p1.z;
 
-    output_data.p2[idx] = pt_1.p2.x;
-    output_data.p2[idx + 1] = pt_1.p2.y;
-    output_data.p2[idx + 2] = pt_1.p2.z;
+    converted_data->p2[idx] = pt_1.p2.x;
+    converted_data->p2[idx + 1] = pt_1.p2.y;
+    converted_data->p2[idx + 2] = pt_1.p2.z;
 
-    output_data.p2[idx + 3] = pt.p2.x;
-    output_data.p2[idx + 4] = pt.p2.y;
-    output_data.p2[idx + 5] = pt.p2.z;
+    converted_data->p2[idx + 3] = pt.p2.x;
+    converted_data->p2[idx + 4] = pt.p2.y;
+    converted_data->p2[idx + 5] = pt.p2.z;
 
-    output_data.p2[idx + 6] = pt.p2.x;
-    output_data.p2[idx + 7] = pt.p2.y;
-    output_data.p2[idx + 8] = pt.p2.z;
+    converted_data->p2[idx + 6] = pt.p2.x;
+    converted_data->p2[idx + 7] = pt.p2.y;
+    converted_data->p2[idx + 8] = pt.p2.z;
 
-    output_data.p2[idx + 9] = pt_1.p2.x;
-    output_data.p2[idx + 10] = pt_1.p2.y;
-    output_data.p2[idx + 11] = pt_1.p2.z;
+    converted_data->p2[idx + 9] = pt_1.p2.x;
+    converted_data->p2[idx + 10] = pt_1.p2.y;
+    converted_data->p2[idx + 11] = pt_1.p2.z;
 
-    output_data.p2[idx + 12] = pt.p2.x;
-    output_data.p2[idx + 13] = pt.p2.y;
-    output_data.p2[idx + 14] = pt.p2.z;
+    converted_data->p2[idx + 12] = pt.p2.x;
+    converted_data->p2[idx + 13] = pt.p2.y;
+    converted_data->p2[idx + 14] = pt.p2.z;
 
-    output_data.p2[idx + 15] = pt_1.p2.x;
-    output_data.p2[idx + 16] = pt_1.p2.y;
-    output_data.p2[idx + 17] = pt_1.p2.z;
+    converted_data->p2[idx + 15] = pt_1.p2.x;
+    converted_data->p2[idx + 16] = pt_1.p2.y;
+    converted_data->p2[idx + 17] = pt_1.p2.z;
 
-    output_data.idx_data[idx_idx] = 0;
-    output_data.idx_data[idx_idx + 1] = 1;
-    output_data.idx_data[idx_idx + 2] = 2;
-    output_data.idx_data[idx_idx + 3] = 3;
-    output_data.idx_data[idx_idx + 4] = 4;
-    output_data.idx_data[idx_idx + 5] = 5;
+    converted_data->idx_data[idx_idx] = 0;
+    converted_data->idx_data[idx_idx + 1] = 1;
+    converted_data->idx_data[idx_idx + 2] = 2;
+    converted_data->idx_data[idx_idx + 3] = 3;
+    converted_data->idx_data[idx_idx + 4] = 4;
+    converted_data->idx_data[idx_idx + 5] = 5;
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>{converted_data};
 }
 }  // namespace

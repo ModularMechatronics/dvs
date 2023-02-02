@@ -5,7 +5,7 @@
 
 // #include "plot_objects/stairs/stairs.h"
 #include "plot_objects/plot2d/plot2d.h"
-// #include "plot_objects/plot3d/plot3d.h"
+#include "plot_objects/plot3d/plot3d.h"
 // #include "plot_objects/fast_plot2d/fast_plot2d.h"
 // #include "plot_objects/fast_plot3d/fast_plot3d.h"
 // #include "plot_objects/line_collection2/line_collection2.h"
@@ -14,7 +14,7 @@
 // #include "plot_objects/plot_collection2/plot_collection2.h"
 // #include "plot_objects/plot_collection3/plot_collection3.h"
 #include "plot_objects/scatter/scatter.h"
-// #include "plot_objects/scatter3/scatter3.h"
+#include "plot_objects/scatter3/scatter3.h"
 // #include "plot_objects/surf/surf.h"
 // #include "plot_objects/im_show/im_show.h"
 // #include "plot_objects/draw_mesh/draw_mesh.h"

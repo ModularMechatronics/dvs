@@ -97,12 +97,11 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             converted_data = Plot2D::convertRawData(attributes, received_data.data());
             break;
 
-            /*case Function::PLOT3:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Plot3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
+        case Function::PLOT3:
+            converted_data = Plot3D::convertRawData(attributes, received_data.data());
+            break;
 
-            case Function::FAST_PLOT2:
+            /*case Function::FAST_PLOT2:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new FastPlot2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;
@@ -131,12 +130,11 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             converted_data = Scatter2D::convertRawData(attributes, received_data.data());
             break;
 
-        /*case Function::SCATTER3:
-            plot_object = dynamic_cast<PlotObjectBase*>(
-                new Scatter3D(std::move(received_data), hdr, props, shader_collection_, color_picker_, false));
+        case Function::SCATTER3:
+            converted_data = Scatter3D::convertRawData(attributes, received_data.data());
             break;
 
-            case Function::SURF:
+            /*case Function::SURF:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new Surf(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;*/
