@@ -125,12 +125,11 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             case Function::STEM:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new Stem(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
-
-            case Function::SCATTER2:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Scatter2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;*/
+
+        case Function::SCATTER2:
+            converted_data = Scatter2D::convertRawData(attributes, received_data.data());
+            break;
 
         /*case Function::SCATTER3:
             plot_object = dynamic_cast<PlotObjectBase*>(

@@ -4,10 +4,23 @@
 
 namespace
 {
-struct OutputData
+struct ConvertedData : ConvertedDataBase
 {
     float* points_ptr;
     float* color_data;
+
+    ConvertedData() : points_ptr{nullptr}, color_data{nullptr} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] points_ptr;
+        delete[] color_data;
+    }
 };
 
 struct InputParams
@@ -33,11 +46,13 @@ struct InputParams
     }
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -45,31 +60,28 @@ struct Converter
 
 }  // namespace
 
-Scatter2D::Scatter2D(std::unique_ptr<const ReceivedData> received_data,
-                     const CommunicationHeader& hdr,
+Scatter2D::Scatter2D(const CommunicationHeader& hdr,
+                     ReceivedData& received_data,
+                     const std::unique_ptr<const ConvertedDataBase>& converted_data,
                      const Properties& props,
-                     const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker), vertex_buffer_{OGLPrimitiveType::POINTS}
+                     const ShaderCollection shader_collection,
+                     ColorPicker& color_picker)
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
+      vertex_buffer_{OGLPrimitiveType::POINTS}
 {
     if (type_ != Function::SCATTER2)
     {
         throw std::runtime_error("Invalid function type for Scatter2D!");
     }
 
-    const InputParams input_params{
-        num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_, z_offset_};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_, 3);
+    vertex_buffer_.addBuffer(converted_data_local->points_ptr, num_elements_, 3);
 
     if (has_color_)
     {
-        vertex_buffer_.addBuffer(output_data.color_data, num_elements_, 3);
-
-        delete[] output_data.color_data;
+        vertex_buffer_.addBuffer(converted_data_local->color_data, num_elements_, 3);
     }
-
-    delete[] output_data.points_ptr;
 }
 
 LegendProperties Scatter2D::getLegendProperties() const
@@ -137,6 +149,21 @@ void Scatter2D::findMinMax()
     max_vec.z = 1.0;
 }
 
+std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const uint8_t* const data_ptr)
+{
+    const InputParams input_params{attributes.num_elements,
+                                   attributes.num_bytes_per_element,
+                                   attributes.num_bytes_for_one_vec,
+                                   attributes.has_color,
+                                   0.0f};  // TODO: z_offset not present in PlotObjectAttributes
+
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
+
+    return converted_data_base;
+}
+
 void Scatter2D::render()
 {
     glEnable(GL_BLEND);
@@ -150,10 +177,11 @@ Scatter2D::~Scatter2D() {}
 
 namespace
 {
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
-    OutputData output_data;
-    output_data.points_ptr = new float[3 * input_params.num_elements];
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->points_ptr = new float[3 * input_params.num_elements];
 
     size_t idx = 0U;
 
@@ -162,9 +190,9 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     for (size_t k = 0; k < input_params.num_elements; k++)
     {
-        output_data.points_ptr[idx] = input_data_dt_x[k];
-        output_data.points_ptr[idx + 1] = input_data_dt_y[k];
-        output_data.points_ptr[idx + 2] = input_params.z_offset;
+        converted_data->points_ptr[idx] = input_data_dt_x[k];
+        converted_data->points_ptr[idx + 1] = input_data_dt_y[k];
+        converted_data->points_ptr[idx + 2] = input_params.z_offset;
         idx += 3;
     }
 
@@ -172,21 +200,21 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     {
         const RGB888* const input_data_rgb =
             reinterpret_cast<const RGB888* const>(input_data_dt_x + 2U * input_params.num_elements);
-        output_data.color_data = new float[3 * input_params.num_elements];
+        converted_data->color_data = new float[3 * input_params.num_elements];
 
         idx = 0;
 
         for (size_t k = 0; k < input_params.num_elements; k++)
         {
-            output_data.color_data[idx] = static_cast<float>(input_data_rgb[k].red) / 255.0f;
-            output_data.color_data[idx + 1] = static_cast<float>(input_data_rgb[k].green) / 255.0f;
-            output_data.color_data[idx + 2] = static_cast<float>(input_data_rgb[k].blue) / 255.0f;
+            converted_data->color_data[idx] = static_cast<float>(input_data_rgb[k].red) / 255.0f;
+            converted_data->color_data[idx + 1] = static_cast<float>(input_data_rgb[k].green) / 255.0f;
+            converted_data->color_data[idx + 2] = static_cast<float>(input_data_rgb[k].blue) / 255.0f;
 
             idx += 3;
         }
     }
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>{converted_data};
 }
 
 }  // namespace

@@ -41,7 +41,7 @@ set(CPP_SOURCE_FILES main.cpp
                      # plot_objects/line_collection2/line_collection2.cpp
                      # plot_objects/line_collection3/line_collection3.cpp
                      # plot_objects/stem/stem.cpp
-                     # plot_objects/scatter/scatter.cpp
+                     plot_objects/scatter/scatter.cpp
                      # plot_objects/scatter3/scatter3.cpp
                      # plot_objects/stairs/stairs.cpp
                      # plot_objects/surf/surf.cpp

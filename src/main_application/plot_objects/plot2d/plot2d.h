@@ -16,7 +16,7 @@ public:
     Plot2D();
     Plot2D(const CommunicationHeader& hdr,
            ReceivedData& received_data,
-           std::unique_ptr<const ConvertedDataBase>& converted_data,
+           const std::unique_ptr<const ConvertedDataBase>& converted_data,
            const Properties& props,
            const ShaderCollection shader_collection,
            ColorPicker& color_picker);
