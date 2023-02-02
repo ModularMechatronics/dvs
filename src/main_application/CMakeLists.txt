@@ -44,7 +44,7 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_objects/scatter/scatter.cpp
                      plot_objects/scatter3/scatter3.cpp
                      # plot_objects/stairs/stairs.cpp
-                     # plot_objects/surf/surf.cpp
+                     plot_objects/surf/surf.cpp
                      # plot_objects/scrolling_plot2d/scrolling_plot2d.cpp
 
                      globals.cpp

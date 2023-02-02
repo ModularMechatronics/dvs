@@ -34,7 +34,7 @@ Stem::Stem(std::unique_ptr<const ReceivedData> received_data,
            const CommunicationHeader& hdr,
            const Properties& props,
            const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_lines_{OGLPrimitiveType::LINES},
       vertex_buffer_points_{OGLPrimitiveType::POINTS}
 {

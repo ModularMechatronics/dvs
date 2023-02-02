@@ -49,6 +49,8 @@ struct PlotObjectAttributes
 
     uint64_t num_bytes_for_one_vec;
 
+    Dimension2D dims;
+
     PlotObjectAttributes() = delete;
     PlotObjectAttributes(const CommunicationHeader& hdr)
     {
@@ -71,6 +73,11 @@ struct PlotObjectAttributes
 
         has_color = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
         num_bytes_for_one_vec = num_bytes_per_element * num_elements;
+
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DIMENSION_2D))
+        {
+            dims = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+        }
     }
 };
 

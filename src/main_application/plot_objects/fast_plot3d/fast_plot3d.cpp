@@ -32,7 +32,7 @@ FastPlot3D::FastPlot3D(std::unique_ptr<const ReceivedData> received_data,
                        const CommunicationHeader& hdr,
                        const Properties& props,
                        const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
     if (type_ != Function::FAST_PLOT3)

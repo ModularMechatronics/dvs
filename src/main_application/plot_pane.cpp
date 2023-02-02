@@ -267,8 +267,6 @@ void PlotPane::addSettingsData(const ReceivedData& received_data)
     const dvs::internal::CommunicationHeader& hdr = received_data.getCommunicationHeader();
     const Function fcn = hdr.getFunction();
 
-    std::cout << "addSettingsData for " << fcn << std::endl;
-
     if (fcn == Function::AXES_2D)
     {
         axes_set_ = true;
