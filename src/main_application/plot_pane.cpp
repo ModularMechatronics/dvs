@@ -353,20 +353,20 @@ void PlotPane::addSettingsData(const ReceivedData& received_data)
     new_data_available_ = true;
 }
 
-void PlotPane::pushQueue(std::queue<std::unique_ptr<QueueableAction>>& new_queue)
+void PlotPane::pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue)
 {
     const size_t queue_size = new_queue.size();
 
     for (size_t k = 0; k < queue_size; k++)
     {
-        pending_actions_.push(std::move(new_queue.front()));
+        queued_data_.push(std::move(new_queue.front()));
         new_queue.pop();
     }
 }
 
 void PlotPane::update()
 {
-    if (!pending_actions_.empty())
+    if (!queued_data_.empty())
     {
         Refresh();
     }
@@ -889,9 +889,9 @@ void PlotPane::clearPane()
 
 void PlotPane::processActionQueue()
 {
-    while (!pending_actions_.empty())
+    while (!queued_data_.empty())
     {
-        const internal::Function fcn = pending_actions_.front()->getFunction();
+        const internal::Function fcn = queued_data_.front()->getFunction();
 
         if (wait_for_flush_)
         {
@@ -914,7 +914,7 @@ void PlotPane::processActionQueue()
 
                     flush_queue_.pop();
                 }
-                pending_actions_.pop();
+                queued_data_.pop();
                 break;
             }
             else if (fcn == Function::CLEAR)
@@ -924,29 +924,29 @@ void PlotPane::processActionQueue()
                 {
                     flush_queue_.pop();
                 }
-                pending_actions_.pop();
+                queued_data_.pop();
             }
             else
             {
-                flush_queue_.push(std::move(pending_actions_.front()));
-                pending_actions_.pop();
+                flush_queue_.push(std::move(queued_data_.front()));
+                queued_data_.pop();
             }
         }
         else
         {
             if (isPlotDataFunction(fcn))
             {
-                auto [received_data, converted_data] = pending_actions_.front()->moveAllData();
+                auto [received_data, converted_data] = queued_data_.front()->moveAllData();
 
                 addPlotData(received_data, converted_data);
             }
             else
             {
-                ReceivedData received_data = pending_actions_.front()->moveReceivedData();
+                ReceivedData received_data = queued_data_.front()->moveReceivedData();
                 addSettingsData(received_data);
             }
 
-            pending_actions_.pop();
+            queued_data_.pop();
 
             if (fcn == Function::SOFT_CLEAR)
             {

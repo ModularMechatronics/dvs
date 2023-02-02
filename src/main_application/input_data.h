@@ -1,5 +1,5 @@
-#ifndef QUEUEABLE_ACTION_H_
-#define QUEUEABLE_ACTION_H_
+#ifndef INPUT_DATA_H_
+#define INPUT_DATA_H_
 
 #include <tuple>
 
@@ -7,27 +7,22 @@
 #include "plot_objects/plot_object_base/plot_object_base.h"
 #include "plot_objects/plot_objects.h"
 
-class QueueableAction
+class InputData
 {
 public:
-    QueueableAction() = delete;
+    InputData() = delete;
 
-    QueueableAction(ReceivedData& received_data)
+    InputData(ReceivedData& received_data)
         : received_data_{std::move(received_data)}, function_{received_data_.getFunction()}, converted_data_{nullptr}
     {
     }
 
-    QueueableAction(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data)
+    InputData(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data)
         : received_data_{std::move(received_data)},
           function_{received_data_.getFunction()},
           converted_data_{std::move(converted_data)}
     {
     }
-
-    /*const internal::CommunicationHeader& getHeader() const
-    {
-        return received_data_->getCommunicationHeader();
-    }*/
 
     internal::Function getFunction() const
     {
@@ -50,4 +45,4 @@ private:
     std::unique_ptr<const ConvertedDataBase> converted_data_;
 };
 
-#endif
+#endif  // INPUT_DATA_H_

@@ -11,8 +11,8 @@
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
+#include "input_data.h"
 #include "project_state/project_settings.h"
-#include "queueable_action.h"
 
 using namespace dvs;
 
@@ -67,7 +67,7 @@ public:
     }
 
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
-    virtual void pushQueue(std::queue<std::unique_ptr<QueueableAction>>& new_queue) = 0;
+    virtual void pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue) = 0;
     virtual void keyPressed(const char key) = 0;
     virtual void keyReleased(const char key) = 0;
     virtual void show() = 0;

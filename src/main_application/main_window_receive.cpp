@@ -190,11 +190,11 @@ void MainWindow::addActionToQueue(ReceivedData& received_data)
     else if (isPlotDataFunction(fcn))
     {
         std::unique_ptr<const ConvertedDataBase> converted_data = convertPlotObjectData(received_data);
-        queued_actions_[current_element_name_].push(std::make_unique<QueueableAction>(received_data, converted_data));
+        queued_data_[current_element_name_].push(std::make_unique<InputData>(received_data, converted_data));
     }
     else
     {
-        queued_actions_[current_element_name_].push(std::make_unique<QueueableAction>(received_data));
+        queued_data_[current_element_name_].push(std::make_unique<InputData>(received_data));
     }
 }
 
@@ -382,7 +382,7 @@ void MainWindow::mainWindowFlushMultipleElements(const ReceivedData& received_da
     for (size_t k = 0; k < names.size(); k++)
     {
         ReceivedData fake_received_data{array_view};
-        queued_actions_[names[k]].push(std::make_unique<QueueableAction>(fake_received_data));
+        queued_data_[names[k]].push(std::make_unique<InputData>(fake_received_data));
     }
 }
 
@@ -403,7 +403,7 @@ void MainWindow::receiveData()
     {
         const std::lock_guard<std::mutex> lg(reveive_mtx_);
 
-        for (auto& qa : queued_actions_)
+        for (auto& qa : queued_data_)
         {
             if (!qa.second.empty())
             {
