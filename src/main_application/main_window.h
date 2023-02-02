@@ -43,7 +43,7 @@ private:
 
     std::thread* query_thread_;
     std::thread* receive_thread_;
-    std::vector<GuiElement*> gui_elements_;
+    std::map<std::string, GuiElement*> gui_elements_;
 
     std::queue<std::unique_ptr<const ReceivedData>> received_data_buffer_;
 

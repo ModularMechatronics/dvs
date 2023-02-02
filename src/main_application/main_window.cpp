@@ -147,7 +147,10 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
     for (auto we : windows_)
     {
         std::vector<GuiElement*> ges = we->getGuiElements();
-        gui_elements_.insert(gui_elements_.end(), ges.begin(), ges.end());
+        for (const auto& ge : ges)
+        {
+            gui_elements_[ge->getName()] = ge;
+        }
     }
 }
 
