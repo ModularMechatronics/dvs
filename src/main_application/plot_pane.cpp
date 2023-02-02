@@ -304,17 +304,7 @@ void PlotPane::addSettingsData(const ReceivedData& received_data)
     }
     else if (fcn == Function::CLEAR)
     {
-        plot_data_handler_->clear();
-        pending_clear_ = true;
-        axes_set_ = false;
-        view_set_ = false;
-        wait_for_flush_ = false;
-        axes_from_min_max_disabled_ = false;
-
-        axes_interactor_.setViewAngles(0, M_PI);
-        axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
-        axes_renderer_->resetGlobalIllumination();
-        axes_renderer_->setAxesBoxScaleFactor(Vec3d{2.5, 2.5, 2.5});
+        clearPane();
     }
     else if (fcn == Function::SHOW_LEGEND)
     {
@@ -376,7 +366,7 @@ void PlotPane::pushQueue(std::queue<std::unique_ptr<QueueableAction>>& new_queue
 
 void PlotPane::update()
 {
-    if (pending_actions_.size() > 0)
+    if (!pending_actions_.empty())
     {
         Refresh();
     }
@@ -882,9 +872,24 @@ void PlotPane::addPlotData(ReceivedData& received_data, std::unique_ptr<const Co
     }
 }
 
+void PlotPane::clearPane()
+{
+    plot_data_handler_->clear();
+    pending_clear_ = true;
+    axes_set_ = false;
+    view_set_ = false;
+    wait_for_flush_ = false;
+    axes_from_min_max_disabled_ = false;
+
+    axes_interactor_.setViewAngles(0, M_PI);
+    axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
+    axes_renderer_->resetGlobalIllumination();
+    axes_renderer_->setAxesBoxScaleFactor(Vec3d{2.5, 2.5, 2.5});
+}
+
 void PlotPane::processActionQueue()
 {
-    while (pending_actions_.size() > 0)
+    while (!pending_actions_.empty())
     {
         const internal::Function fcn = pending_actions_.front()->getFunction();
 
@@ -892,7 +897,7 @@ void PlotPane::processActionQueue()
         {
             if (fcn == Function::FLUSH_ELEMENT)
             {
-                while (flush_queue_.size() > 0)
+                while (!flush_queue_.empty())
                 {
                     const internal::Function inner_fcn = flush_queue_.front()->getFunction();
 
@@ -914,23 +919,12 @@ void PlotPane::processActionQueue()
             }
             else if (fcn == Function::CLEAR)
             {
-                pending_actions_.pop();
-                // TODO: Move into function
-                plot_data_handler_->clear();
-                pending_clear_ = true;
-                axes_set_ = false;
-                view_set_ = false;
-                wait_for_flush_ = false;
-                axes_from_min_max_disabled_ = false;
-
-                axes_interactor_.setViewAngles(0, M_PI);
-                axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
-                axes_renderer_->resetGlobalIllumination();
-                axes_renderer_->setAxesBoxScaleFactor(Vec3d{2.5, 2.5, 2.5});
-                while (flush_queue_.size() > 0)
+                clearPane();
+                while (!flush_queue_.empty())
                 {
                     flush_queue_.pop();
                 }
+                pending_actions_.pop();
             }
             else
             {

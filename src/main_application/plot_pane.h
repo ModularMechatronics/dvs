@@ -90,6 +90,7 @@ private:
     bool is3DFunction(const Function fcn);
     bool isImageFunction(const Function fcn);
     void initShaders();
+    void clearPane();
     MouseInteractionAxis current_mouse_interaction_axis_;
     float legend_scale_factor_ = 1.0f;
     std::atomic<bool> new_data_available_;
