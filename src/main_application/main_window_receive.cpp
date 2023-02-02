@@ -408,24 +408,15 @@ void MainWindow::receiveData()
             if (!qa.second.empty())
             {
                 const std::string element_name = qa.first;
-                // TODO: Use gui_elements_ map up here instead
 
-                for (auto we : windows_)
-                {
-                    GuiElement* gui_element = we->getGuiElement(element_name);
-                    if (gui_element != nullptr)
-                    {
-                        gui_element->pushQueue(qa.second);
-                        break;
-                    }
-                }
+                GuiElement* gui_element = gui_elements_[element_name];
+                gui_element->pushQueue(qa.second);
             }
         }
     }
 
-    // TODO: Replace gui_elements_ to be std::map<std::string, GuiElement*>
     for (auto& ge : gui_elements_)
     {
-        ge->update();
+        ge.second->update();
     }
 }
