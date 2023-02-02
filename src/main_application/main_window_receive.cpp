@@ -405,7 +405,7 @@ void MainWindow::receiveData()
 
         for (auto& qa : queued_actions_)
         {
-            if (qa.second.size() > 0)
+            if (!qa.second.empty())
             {
                 const std::string element_name = qa.first;
                 // TODO: Use gui_elements_ map up here instead
