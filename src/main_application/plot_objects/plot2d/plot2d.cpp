@@ -80,22 +80,21 @@ struct Converter
 
 Plot2D::Plot2D(const CommunicationHeader& hdr,
                ReceivedData& received_data,
-               std::unique_ptr<const ConvertedDataBase>& converted_data,
+               const std::unique_ptr<const ConvertedDataBase>& converted_data,
                const Properties& props,
                const ShaderCollection shader_collection,
                ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
-    std::unique_ptr<const ConvertedDataBase> converted_data_local = std::move(converted_data);
     if (type_ != Function::PLOT2)
     {
         throw std::runtime_error("Invalid function type for Plot2D!");
     }
 
-    const ConvertedData* const converted_data_2d = static_cast<const ConvertedData* const>(converted_data_local.get());
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    num_points_ = converted_data_2d->num_points;
+    num_points_ = converted_data_local->num_points;
 
     if (is_dashed_)
     {
@@ -116,16 +115,16 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
         }
     }
 
-    vertex_buffer_.addBuffer(converted_data_2d->p0, num_points_, 2, usage_);
-    vertex_buffer_.addBuffer(converted_data_2d->p1, num_points_, 2, usage_);
-    vertex_buffer_.addBuffer(converted_data_2d->p2, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(converted_data_local->p0, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(converted_data_local->p1, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(converted_data_local->p2, num_points_, 2, usage_);
 
-    vertex_buffer_.addBuffer(converted_data_2d->idx_data, num_points_, 1, usage_);
-    vertex_buffer_.addBuffer(converted_data_2d->length_along, num_points_, 1, usage_);
+    vertex_buffer_.addBuffer(converted_data_local->idx_data, num_points_, 1, usage_);
+    vertex_buffer_.addBuffer(converted_data_local->length_along, num_points_, 1, usage_);
 
     if (has_color_)
     {
-        vertex_buffer_.addBuffer(converted_data_2d->color_data, num_points_, 3);
+        vertex_buffer_.addBuffer(converted_data_local->color_data, num_points_, 3);
     }
 }
 
