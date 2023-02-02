@@ -177,10 +177,10 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                 new Scatter3D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
             break;
 
-            /*case Function::SURF:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Surf(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;*/
+        case Function::SURF:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new Surf(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
+            break;
 
         /*case Function::IM_SHOW:
             awaiting_plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(

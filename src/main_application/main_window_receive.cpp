@@ -134,10 +134,9 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             converted_data = Scatter3D::convertRawData(attributes, received_data.data());
             break;
 
-            /*case Function::SURF:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Surf(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;*/
+        case Function::SURF:
+            converted_data = Surf::convertRawData(attributes, received_data.data());
+            break;
 
         /*case Function::IM_SHOW:
             plot_object = dynamic_cast<PlotObjectBase*>(

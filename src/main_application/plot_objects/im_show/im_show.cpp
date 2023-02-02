@@ -60,7 +60,7 @@ ImShow::ImShow(std::unique_ptr<const ReceivedData> received_data,
                const ShaderCollection shader_collection,
                ColorPicker& color_picker,
                const bool initalize_gl)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker)
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker)
 
 {
     if (type_ != Function::IM_SHOW)

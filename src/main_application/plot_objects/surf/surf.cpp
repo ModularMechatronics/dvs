@@ -4,13 +4,32 @@
 
 namespace
 {
-struct OutputData
+struct ConvertedData : ConvertedDataBase
 {
     float* points_ptr;
     float* lines_ptr;
     float* normals_ptr;
     float* mean_height_ptr;
     float* color_data;
+
+    ConvertedData()
+        : points_ptr{nullptr}, lines_ptr{nullptr}, normals_ptr{nullptr}, mean_height_ptr{nullptr}, color_data{nullptr}
+    {
+    }
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] points_ptr;
+        delete[] lines_ptr;
+        delete[] normals_ptr;
+        delete[] mean_height_ptr;
+        delete[] color_data;
+    }
 };
 
 struct InputParams
@@ -26,11 +45,13 @@ struct InputParams
     }
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -38,11 +59,13 @@ struct Converter
 
 }  // namespace
 
-Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
-           const CommunicationHeader& hdr,
+Surf::Surf(const CommunicationHeader& hdr,
+           ReceivedData& received_data,
+           const std::unique_ptr<const ConvertedDataBase>& converted_data,
            const Properties& props,
-           const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(std::move(received_data), hdr, props, shader_collection, color_picker),
+           const ShaderCollection shader_collection,
+           ColorPicker& color_picker)
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES},
       vertex_buffer_lines_{OGLPrimitiveType::LINES}
 {
@@ -51,36 +74,27 @@ Surf::Surf(std::unique_ptr<const ReceivedData> received_data,
         throw std::runtime_error("Invalid function type for Surf!");
     }
 
-    dims_ = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    const InputParams input_params{dims_, num_bytes_for_one_vec_, has_color_};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    dims_ = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
 
     num_elements_to_render_ = (dims_.rows - 1U) * (dims_.cols - 1U) * 6U;
 
-    const size_t num_lines =
-        (input_params.dims.rows - 1U) * input_params.dims.cols + input_params.dims.rows * (input_params.dims.cols - 1U);
+    const size_t num_lines = (dims_.rows - 1U) * dims_.cols + dims_.rows * (dims_.cols - 1U);
     num_lines_to_render_ = num_lines * 2U;
 
-    vertex_buffer_lines_.addBuffer(output_data.lines_ptr, num_lines_to_render_, 3);
+    vertex_buffer_lines_.addBuffer(converted_data_local->lines_ptr, num_lines_to_render_, 3);
 
-    vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_to_render_, 3);
-    vertex_buffer_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
-    vertex_buffer_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
+    vertex_buffer_.addBuffer(converted_data_local->points_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.addBuffer(converted_data_local->normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.addBuffer(converted_data_local->mean_height_ptr, num_elements_to_render_, 1);
 
     if (has_color_)
     {
-        vertex_buffer_.addBuffer(output_data.color_data, num_elements_to_render_, 3);
-
-        delete[] output_data.color_data;
+        vertex_buffer_.addBuffer(converted_data_local->color_data, num_elements_to_render_, 3);
     }
 
     findMinMax();
-
-    delete[] output_data.lines_ptr;
-    delete[] output_data.points_ptr;
-    delete[] output_data.normals_ptr;
-    delete[] output_data.mean_height_ptr;
 }
 
 void Surf::findMinMax()
@@ -92,11 +106,9 @@ void Surf::findMinMax()
     }
 }
 
-void Surf::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
-                             const CommunicationHeader& hdr,
-                             const Properties& props)
+void Surf::updateWithNewData(ReceivedData& received_data, const CommunicationHeader& hdr, const Properties& props)
 {
-    throwIfNotUpdateable();
+    /*throwIfNotUpdateable();
 
     initialize(std::move(received_data), hdr, props);
 
@@ -111,25 +123,25 @@ void Surf::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
         (input_params.dims.rows - 1U) * input_params.dims.cols + input_params.dims.rows * (input_params.dims.cols - 1U);
     num_lines_to_render_ = num_lines * 2U;
 
-    vertex_buffer_lines_.addBuffer(output_data.lines_ptr, num_lines_to_render_, 3);
+    vertex_buffer_lines_.addBuffer(converted_data->lines_ptr, num_lines_to_render_, 3);
 
-    vertex_buffer_.updateBufferData(0, output_data.points_ptr, num_elements_to_render_, 3);
-    vertex_buffer_.updateBufferData(1, output_data.normals_ptr, num_elements_to_render_, 3);
-    vertex_buffer_.updateBufferData(2, output_data.mean_height_ptr, num_elements_to_render_, 1);
+    vertex_buffer_.updateBufferData(0, converted_data->points_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.updateBufferData(1, converted_data->normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.updateBufferData(2, converted_data->mean_height_ptr, num_elements_to_render_, 1);
 
     if (has_color_)
     {
-        vertex_buffer_.updateBufferData(3, output_data.color_data, num_elements_to_render_, 3);
+        vertex_buffer_.updateBufferData(3, converted_data->color_data, num_elements_to_render_, 3);
 
-        delete[] output_data.color_data;
+        delete[] converted_data->color_data;
     }
 
     findMinMax();
 
-    delete[] output_data.lines_ptr;
-    delete[] output_data.points_ptr;
-    delete[] output_data.normals_ptr;
-    delete[] output_data.mean_height_ptr;
+    delete[] converted_data->lines_ptr;
+    delete[] converted_data->points_ptr;
+    delete[] converted_data->normals_ptr;
+    delete[] converted_data->mean_height_ptr;*/
 }
 
 bool Surf::affectsColormapMinMax() const
@@ -197,6 +209,17 @@ void Surf::render()
 
 Surf::~Surf() {}
 
+std::unique_ptr<const ConvertedDataBase> Surf::convertRawData(const PlotObjectAttributes& attributes,
+                                                              const uint8_t* const data_ptr)
+{
+    const InputParams input_params{attributes.dims, attributes.num_bytes_for_one_vec, attributes.has_color};
+
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
+
+    return converted_data_base;
+}
+
 LegendProperties Surf::getLegendProperties() const
 {
     LegendProperties lp{PlotObjectBase::getLegendProperties()};
@@ -219,7 +242,8 @@ LegendProperties Surf::getLegendProperties() const
 
 namespace
 {
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const MatrixConstView<T> x{reinterpret_cast<const T*>(input_data), input_params.dims.rows, input_params.dims.cols},
         y{reinterpret_cast<const T*>(&(input_data[input_params.num_bytes_for_one_vec])),
@@ -231,15 +255,15 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     const size_t new_data_size = (input_params.dims.rows - 1) * (input_params.dims.cols - 1) * 6 * 3;
 
-    OutputData output_data;
-    output_data.points_ptr = new float[new_data_size];
-    output_data.normals_ptr = new float[new_data_size];
-    output_data.mean_height_ptr = new float[new_data_size / 3];
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->points_ptr = new float[new_data_size];
+    converted_data->normals_ptr = new float[new_data_size];
+    converted_data->mean_height_ptr = new float[new_data_size / 3];
 
     const size_t num_lines =
         (input_params.dims.rows - 1U) * input_params.dims.cols + input_params.dims.rows * (input_params.dims.cols - 1U);
     const size_t lines_data_size = num_lines * 2U * 3U;
-    output_data.lines_ptr = new float[lines_data_size];
+    converted_data->lines_ptr = new float[lines_data_size];
 
     size_t idx = 0U, mean_height_idx = 0U, idx_line = 0U;
 
@@ -281,82 +305,82 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
             const Vec3<T> normalized_normal_vec{normal_vec.normalized()};
 
             // Vertices
-            output_data.points_ptr[idx0_x] = x(r, c);
-            output_data.points_ptr[idx1_x] = x(r + 1, c);
-            output_data.points_ptr[idx2_x] = x(r + 1, c + 1);
+            converted_data->points_ptr[idx0_x] = x(r, c);
+            converted_data->points_ptr[idx1_x] = x(r + 1, c);
+            converted_data->points_ptr[idx2_x] = x(r + 1, c + 1);
 
-            output_data.points_ptr[idx3_x] = x(r, c);
-            output_data.points_ptr[idx4_x] = x(r, c + 1);
-            output_data.points_ptr[idx5_x] = x(r + 1, c + 1);
+            converted_data->points_ptr[idx3_x] = x(r, c);
+            converted_data->points_ptr[idx4_x] = x(r, c + 1);
+            converted_data->points_ptr[idx5_x] = x(r + 1, c + 1);
 
-            output_data.points_ptr[idx0_y] = y(r, c);
-            output_data.points_ptr[idx1_y] = y(r + 1, c);
-            output_data.points_ptr[idx2_y] = y(r + 1, c + 1);
+            converted_data->points_ptr[idx0_y] = y(r, c);
+            converted_data->points_ptr[idx1_y] = y(r + 1, c);
+            converted_data->points_ptr[idx2_y] = y(r + 1, c + 1);
 
-            output_data.points_ptr[idx3_y] = y(r, c);
-            output_data.points_ptr[idx4_y] = y(r, c + 1);
-            output_data.points_ptr[idx5_y] = y(r + 1, c + 1);
+            converted_data->points_ptr[idx3_y] = y(r, c);
+            converted_data->points_ptr[idx4_y] = y(r, c + 1);
+            converted_data->points_ptr[idx5_y] = y(r + 1, c + 1);
 
-            output_data.points_ptr[idx0_z] = z(r, c);
-            output_data.points_ptr[idx1_z] = z(r + 1, c);
-            output_data.points_ptr[idx2_z] = z(r + 1, c + 1);
+            converted_data->points_ptr[idx0_z] = z(r, c);
+            converted_data->points_ptr[idx1_z] = z(r + 1, c);
+            converted_data->points_ptr[idx2_z] = z(r + 1, c + 1);
 
-            output_data.points_ptr[idx3_z] = z(r, c);
-            output_data.points_ptr[idx4_z] = z(r, c + 1);
-            output_data.points_ptr[idx5_z] = z(r + 1, c + 1);
+            converted_data->points_ptr[idx3_z] = z(r, c);
+            converted_data->points_ptr[idx4_z] = z(r, c + 1);
+            converted_data->points_ptr[idx5_z] = z(r + 1, c + 1);
 
             // Normals
-            output_data.normals_ptr[idx0_x] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx1_y] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx2_z] = normalized_normal_vec.z;
+            converted_data->normals_ptr[idx0_x] = normalized_normal_vec.x;
+            converted_data->normals_ptr[idx1_y] = normalized_normal_vec.y;
+            converted_data->normals_ptr[idx2_z] = normalized_normal_vec.z;
 
-            output_data.normals_ptr[idx3_x] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx4_y] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx5_z] = normalized_normal_vec.z;
+            converted_data->normals_ptr[idx3_x] = normalized_normal_vec.x;
+            converted_data->normals_ptr[idx4_y] = normalized_normal_vec.y;
+            converted_data->normals_ptr[idx5_z] = normalized_normal_vec.z;
 
-            output_data.normals_ptr[idx0_y] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx1_y] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx2_z] = normalized_normal_vec.z;
+            converted_data->normals_ptr[idx0_y] = normalized_normal_vec.x;
+            converted_data->normals_ptr[idx1_y] = normalized_normal_vec.y;
+            converted_data->normals_ptr[idx2_z] = normalized_normal_vec.z;
 
-            output_data.normals_ptr[idx3_y] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx4_y] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx5_z] = normalized_normal_vec.z;
+            converted_data->normals_ptr[idx3_y] = normalized_normal_vec.x;
+            converted_data->normals_ptr[idx4_y] = normalized_normal_vec.y;
+            converted_data->normals_ptr[idx5_z] = normalized_normal_vec.z;
 
-            output_data.normals_ptr[idx0_z] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx1_y] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx2_z] = normalized_normal_vec.z;
+            converted_data->normals_ptr[idx0_z] = normalized_normal_vec.x;
+            converted_data->normals_ptr[idx1_y] = normalized_normal_vec.y;
+            converted_data->normals_ptr[idx2_z] = normalized_normal_vec.z;
 
-            output_data.normals_ptr[idx3_z] = normalized_normal_vec.x;
-            output_data.normals_ptr[idx4_y] = normalized_normal_vec.y;
-            output_data.normals_ptr[idx5_z] = normalized_normal_vec.z;
+            converted_data->normals_ptr[idx3_z] = normalized_normal_vec.x;
+            converted_data->normals_ptr[idx4_y] = normalized_normal_vec.y;
+            converted_data->normals_ptr[idx5_z] = normalized_normal_vec.z;
 
             const float z_m = (z(r, c) + z(r + 1, c) + z(r, c + 1) + z(r + 1, c + 1)) * 0.25f;
 
             // Mean height
-            output_data.mean_height_ptr[mean_height_idx] = z_m;
-            output_data.mean_height_ptr[mean_height_idx + 1] = z_m;
-            output_data.mean_height_ptr[mean_height_idx + 2] = z_m;
-            output_data.mean_height_ptr[mean_height_idx + 3] = z_m;
-            output_data.mean_height_ptr[mean_height_idx + 4] = z_m;
-            output_data.mean_height_ptr[mean_height_idx + 5] = z_m;
+            converted_data->mean_height_ptr[mean_height_idx] = z_m;
+            converted_data->mean_height_ptr[mean_height_idx + 1] = z_m;
+            converted_data->mean_height_ptr[mean_height_idx + 2] = z_m;
+            converted_data->mean_height_ptr[mean_height_idx + 3] = z_m;
+            converted_data->mean_height_ptr[mean_height_idx + 4] = z_m;
+            converted_data->mean_height_ptr[mean_height_idx + 5] = z_m;
 
             mean_height_idx += 6;
 
-            output_data.lines_ptr[idx_line] = x(r, c);
-            output_data.lines_ptr[idx_line + 1] = y(r, c);
-            output_data.lines_ptr[idx_line + 2] = z(r, c);
+            converted_data->lines_ptr[idx_line] = x(r, c);
+            converted_data->lines_ptr[idx_line + 1] = y(r, c);
+            converted_data->lines_ptr[idx_line + 2] = z(r, c);
 
-            output_data.lines_ptr[idx_line + 3] = x(r, c + 1);
-            output_data.lines_ptr[idx_line + 4] = y(r, c + 1);
-            output_data.lines_ptr[idx_line + 5] = z(r, c + 1);
+            converted_data->lines_ptr[idx_line + 3] = x(r, c + 1);
+            converted_data->lines_ptr[idx_line + 4] = y(r, c + 1);
+            converted_data->lines_ptr[idx_line + 5] = z(r, c + 1);
 
-            output_data.lines_ptr[idx_line + 6] = x(r, c);
-            output_data.lines_ptr[idx_line + 7] = y(r, c);
-            output_data.lines_ptr[idx_line + 8] = z(r, c);
+            converted_data->lines_ptr[idx_line + 6] = x(r, c);
+            converted_data->lines_ptr[idx_line + 7] = y(r, c);
+            converted_data->lines_ptr[idx_line + 8] = z(r, c);
 
-            output_data.lines_ptr[idx_line + 9] = x(r + 1, c);
-            output_data.lines_ptr[idx_line + 10] = y(r + 1, c);
-            output_data.lines_ptr[idx_line + 11] = z(r + 1, c);
+            converted_data->lines_ptr[idx_line + 9] = x(r + 1, c);
+            converted_data->lines_ptr[idx_line + 10] = y(r + 1, c);
+            converted_data->lines_ptr[idx_line + 11] = z(r + 1, c);
 
             idx_line += 12;
         }
@@ -366,13 +390,13 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     for (size_t c = 0U; c < (input_params.dims.cols - 1U); c++)
     {
-        output_data.lines_ptr[idx_line] = x(final_row_idx, c);
-        output_data.lines_ptr[idx_line + 1] = y(final_row_idx, c);
-        output_data.lines_ptr[idx_line + 2] = z(final_row_idx, c);
+        converted_data->lines_ptr[idx_line] = x(final_row_idx, c);
+        converted_data->lines_ptr[idx_line + 1] = y(final_row_idx, c);
+        converted_data->lines_ptr[idx_line + 2] = z(final_row_idx, c);
 
-        output_data.lines_ptr[idx_line + 3] = x(final_row_idx, c + 1);
-        output_data.lines_ptr[idx_line + 4] = y(final_row_idx, c + 1);
-        output_data.lines_ptr[idx_line + 5] = z(final_row_idx, c + 1);
+        converted_data->lines_ptr[idx_line + 3] = x(final_row_idx, c + 1);
+        converted_data->lines_ptr[idx_line + 4] = y(final_row_idx, c + 1);
+        converted_data->lines_ptr[idx_line + 5] = z(final_row_idx, c + 1);
 
         idx_line += 6;
     }
@@ -381,13 +405,13 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     for (size_t r = 0U; r < (input_params.dims.rows - 1U); r++)
     {
-        output_data.lines_ptr[idx_line] = x(r, final_col_idx);
-        output_data.lines_ptr[idx_line + 1] = y(r, final_col_idx);
-        output_data.lines_ptr[idx_line + 2] = z(r, final_col_idx);
+        converted_data->lines_ptr[idx_line] = x(r, final_col_idx);
+        converted_data->lines_ptr[idx_line + 1] = y(r, final_col_idx);
+        converted_data->lines_ptr[idx_line + 2] = z(r, final_col_idx);
 
-        output_data.lines_ptr[idx_line + 3] = x(r + 1, final_col_idx);
-        output_data.lines_ptr[idx_line + 4] = y(r + 1, final_col_idx);
-        output_data.lines_ptr[idx_line + 5] = z(r + 1, final_col_idx);
+        converted_data->lines_ptr[idx_line + 3] = x(r + 1, final_col_idx);
+        converted_data->lines_ptr[idx_line + 4] = y(r + 1, final_col_idx);
+        converted_data->lines_ptr[idx_line + 5] = z(r + 1, final_col_idx);
 
         idx_line += 6;
     }
@@ -399,42 +423,42 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
             input_params.dims.rows,
             input_params.dims.cols};
 
-        output_data.color_data = new float[new_data_size];
+        converted_data->color_data = new float[new_data_size];
 
         size_t idx = 0;
         for (size_t r = 0; r < (input_params.dims.rows - 1); r++)
         {
             for (size_t c = 0; c < (input_params.dims.cols - 1); c++)
             {
-                output_data.color_data[idx] = static_cast<float>(colors(r, c).red) / 255.0f;
-                output_data.color_data[idx + 1] = static_cast<float>(colors(r, c).green) / 255.0f;
-                output_data.color_data[idx + 2] = static_cast<float>(colors(r, c).blue) / 255.0f;
+                converted_data->color_data[idx] = static_cast<float>(colors(r, c).red) / 255.0f;
+                converted_data->color_data[idx + 1] = static_cast<float>(colors(r, c).green) / 255.0f;
+                converted_data->color_data[idx + 2] = static_cast<float>(colors(r, c).blue) / 255.0f;
 
-                output_data.color_data[idx + 3] = static_cast<float>(colors(r + 1, c).red) / 255.0f;
-                output_data.color_data[idx + 4] = static_cast<float>(colors(r + 1, c).green) / 255.0f;
-                output_data.color_data[idx + 5] = static_cast<float>(colors(r + 1, c).blue) / 255.0f;
+                converted_data->color_data[idx + 3] = static_cast<float>(colors(r + 1, c).red) / 255.0f;
+                converted_data->color_data[idx + 4] = static_cast<float>(colors(r + 1, c).green) / 255.0f;
+                converted_data->color_data[idx + 5] = static_cast<float>(colors(r + 1, c).blue) / 255.0f;
 
-                output_data.color_data[idx + 6] = static_cast<float>(colors(r + 1, c + 1).red) / 255.0f;
-                output_data.color_data[idx + 7] = static_cast<float>(colors(r + 1, c + 1).green) / 255.0f;
-                output_data.color_data[idx + 8] = static_cast<float>(colors(r + 1, c + 1).blue) / 255.0f;
+                converted_data->color_data[idx + 6] = static_cast<float>(colors(r + 1, c + 1).red) / 255.0f;
+                converted_data->color_data[idx + 7] = static_cast<float>(colors(r + 1, c + 1).green) / 255.0f;
+                converted_data->color_data[idx + 8] = static_cast<float>(colors(r + 1, c + 1).blue) / 255.0f;
 
-                output_data.color_data[idx + 9] = static_cast<float>(colors(r, c).red) / 255.0f;
-                output_data.color_data[idx + 10] = static_cast<float>(colors(r, c).green) / 255.0f;
-                output_data.color_data[idx + 11] = static_cast<float>(colors(r, c).blue) / 255.0f;
+                converted_data->color_data[idx + 9] = static_cast<float>(colors(r, c).red) / 255.0f;
+                converted_data->color_data[idx + 10] = static_cast<float>(colors(r, c).green) / 255.0f;
+                converted_data->color_data[idx + 11] = static_cast<float>(colors(r, c).blue) / 255.0f;
 
-                output_data.color_data[idx + 12] = static_cast<float>(colors(r, c + 1).red) / 255.0f;
-                output_data.color_data[idx + 13] = static_cast<float>(colors(r, c + 1).green) / 255.0f;
-                output_data.color_data[idx + 14] = static_cast<float>(colors(r, c + 1).blue) / 255.0f;
+                converted_data->color_data[idx + 12] = static_cast<float>(colors(r, c + 1).red) / 255.0f;
+                converted_data->color_data[idx + 13] = static_cast<float>(colors(r, c + 1).green) / 255.0f;
+                converted_data->color_data[idx + 14] = static_cast<float>(colors(r, c + 1).blue) / 255.0f;
 
-                output_data.color_data[idx + 15] = static_cast<float>(colors(r + 1, c + 1).red) / 255.0f;
-                output_data.color_data[idx + 16] = static_cast<float>(colors(r + 1, c + 1).green) / 255.0f;
-                output_data.color_data[idx + 17] = static_cast<float>(colors(r + 1, c + 1).blue) / 255.0f;
+                converted_data->color_data[idx + 15] = static_cast<float>(colors(r + 1, c + 1).red) / 255.0f;
+                converted_data->color_data[idx + 16] = static_cast<float>(colors(r + 1, c + 1).green) / 255.0f;
+                converted_data->color_data[idx + 17] = static_cast<float>(colors(r + 1, c + 1).blue) / 255.0f;
 
                 idx = idx + 18;
             }
         }
     }
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>{converted_data};
 }
 }  // namespace
