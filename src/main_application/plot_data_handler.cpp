@@ -137,12 +137,12 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                 new Plot2D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
             break;
 
-            /*case Function::PLOT3:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Plot3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
+        case Function::PLOT3:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new Plot3D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
+            break;
 
-            case Function::FAST_PLOT2:
+            /*case Function::FAST_PLOT2:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new FastPlot2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;
@@ -172,10 +172,10 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                 new Scatter2D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
             break;
 
-            /*case Function::SCATTER3:
-                awaiting_plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Scatter3D(std::move(received_data), hdr, props, shader_collection_, color_picker_, false)));
-                break;*/
+        case Function::SCATTER3:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new Scatter3D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
+            break;
 
             /*case Function::SURF:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(

@@ -12,10 +12,6 @@
 
 class Scatter2D : public PlotObjectBase
 {
-private:
-    VertexBuffer vertex_buffer_;
-    void findMinMax() override;
-
 public:
     Scatter2D();
     Scatter2D(const CommunicationHeader& hdr,
@@ -32,6 +28,10 @@ public:
 
     static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
                                                                    const uint8_t* const data_ptr);
+
+private:
+    VertexBuffer vertex_buffer_;
+    void findMinMax() override;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_SCATTER_SCATTER_H_
