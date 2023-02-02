@@ -27,7 +27,7 @@
 #include "project_state/configuration_agent.h"
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
-#include "queueable_action.h"
+#include "input_data.h"
 #include "tray_icon.h"
 
 class WindowView;
@@ -47,7 +47,7 @@ private:
 
     std::queue<std::unique_ptr<const ReceivedData>> received_data_buffer_;
 
-    std::map<std::string, std::queue<std::unique_ptr<QueueableAction>>> queued_actions_;
+    std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
 
     std::atomic<bool> open_project_file_queued_;
     properties::Name queued_project_file_name_;

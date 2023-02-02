@@ -12,10 +12,10 @@
 #include "communication/udp_server.h"
 #include "dvs/dvs.h"
 #include "gui_element.h"
+#include "input_data.h"
 #include "io_devices/io_devices.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data_handler.h"
-#include "queueable_action.h"
 
 struct Bound2D
 {
@@ -95,8 +95,8 @@ private:
     float legend_scale_factor_ = 1.0f;
     std::atomic<bool> new_data_available_;
     std::atomic<bool> pending_clear_;
-    std::queue<std::unique_ptr<QueueableAction>> pending_actions_;
-    std::queue<std::unique_ptr<QueueableAction>> flush_queue_;
+    std::queue<std::unique_ptr<InputData>> queued_data_;
+    std::queue<std::unique_ptr<InputData>> flush_queue_;
 
     void processActionQueue();
     void addPlotData(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data);
@@ -117,7 +117,7 @@ public:
     int getHeight();
 
     void setName(const std::string& new_name) override;
-    void pushQueue(std::queue<std::unique_ptr<QueueableAction>>& new_queue) override;
+    void pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue) override;
 
     void render(wxPaintEvent& evt);
 

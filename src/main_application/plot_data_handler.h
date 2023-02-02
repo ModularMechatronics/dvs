@@ -12,7 +12,7 @@
 #include "misc/color_map.h"
 #include "opengl_low_level/opengl_low_level.h"
 #include "properties.h"
-#include "queueable_action.h"
+#include "input_data.h"
 #include "shader.h"
 
 using namespace dvs;
