@@ -13,6 +13,21 @@
 
 class PlotCollection2D : public PlotObjectBase
 {
+public:
+    PlotCollection2D();
+    PlotCollection2D(const CommunicationHeader& hdr,
+                     ReceivedData& received_data,
+                     const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                     const Properties& props,
+                     const ShaderCollection shader_collection,
+                     ColorPicker& color_picker);
+    ~PlotCollection2D();
+
+    void render() override;
+
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const uint8_t* const data_ptr);
+
 private:
     VertexBuffer vertex_buffer_;
 
@@ -20,16 +35,6 @@ private:
     uint32_t num_objects_;
 
     void findMinMax() override;
-
-public:
-    PlotCollection2D();
-    PlotCollection2D(std::unique_ptr<const ReceivedData> received_data,
-                     const CommunicationHeader& hdr,
-                     const Properties& props,
-                     const ShaderCollection shader_collection, ColorPicker& color_picker);
-    ~PlotCollection2D();
-
-    void render() override;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_COLLECTION2_PLOT_COLLECTION2_H_

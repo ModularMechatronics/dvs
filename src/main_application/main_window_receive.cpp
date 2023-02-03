@@ -141,10 +141,9 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             converted_data = ImShow::convertRawData(attributes, received_data.data());
             break;
 
-            /*case Function::PLOT_COLLECTION2:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new PlotCollection2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;*/
+        case Function::PLOT_COLLECTION2:
+            converted_data = PlotCollection2D::convertRawData(attributes, received_data.data());
+            break;
 
         case Function::PLOT_COLLECTION3:
             converted_data = PlotCollection3D::convertRawData(attributes, received_data.data());

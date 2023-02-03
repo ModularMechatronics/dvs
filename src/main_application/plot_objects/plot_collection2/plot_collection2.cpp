@@ -4,11 +4,24 @@
 
 namespace
 {
-struct OutputData
+struct ConvertedData : ConvertedDataBase
 {
     float* data_ptr;
     Vec2d min_vec;
     Vec2d max_vec;
+    uint32_t num_points;
+
+    ConvertedData() : data_ptr{nullptr}, min_vec{-1.0, -1.0}, max_vec{1.0, 1.0}, num_points{0U} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] data_ptr;
+    }
 };
 
 struct InputParams
@@ -31,17 +44,20 @@ struct InputParams
     }
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t total_num_bytes = input_params.num_points * 2 * input_params.num_bytes_per_element;
     const size_t num_bytes_per_collection = input_params.vector_lengths.sum() * input_params.num_bytes_per_element;
@@ -86,51 +102,68 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         idx_offset += input_params.vector_lengths(i);
     }
 
-    OutputData output_data;
-    output_data.data_ptr = data_ptr;
-    output_data.min_vec = min_vec;
-    output_data.max_vec = max_vec;
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->data_ptr = data_ptr;
+    converted_data->min_vec = min_vec;
+    converted_data->max_vec = max_vec;
+    converted_data->num_points = input_params.num_points;
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>(converted_data);
 }
 
 }  // namespace
 
-PlotCollection2D::PlotCollection2D(std::unique_ptr<const ReceivedData> received_data,
-                                   const CommunicationHeader& hdr,
+PlotCollection2D::PlotCollection2D(const CommunicationHeader& hdr,
+                                   ReceivedData& received_data,
+                                   const std::unique_ptr<const ConvertedDataBase>& converted_data,
                                    const Properties& props,
-                                   const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker), vertex_buffer_{OGLPrimitiveType::LINES}
+                                   const ShaderCollection shader_collection,
+                                   ColorPicker& color_picker)
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
+      vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (type_ != Function::PLOT_COLLECTION2)
     {
         throw std::runtime_error("Invalid function type for PlotCollection2D!");
     }
 
-    num_points_ = 0;
-    num_objects_ = hdr.get(CommunicationHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    Vector<uint16_t> vector_lengths(num_objects_);
+    num_points_ = converted_data_local->num_points;
 
-    std::memcpy(vector_lengths.data(), data_ptr_, num_objects_ * sizeof(uint16_t));
+    min_vec = Vec3d{converted_data_local->min_vec.x, converted_data_local->min_vec.y, -1.0};
+    max_vec = Vec3d{converted_data_local->max_vec.x, converted_data_local->max_vec.y, 1.0};
 
-    for (size_t k = 0; k < num_objects_; k++)
+    vertex_buffer_.addBuffer(converted_data_local->data_ptr, num_points_, 2);
+}
+
+std::unique_ptr<const ConvertedDataBase> PlotCollection2D::convertRawData(const PlotObjectAttributes& attributes,
+                                                                          const uint8_t* const data_ptr)
+
+{
+    const uint8_t* data_ptr_local = data_ptr;
+
+    Vector<uint16_t> vector_lengths(attributes.num_objects);
+
+    std::memcpy(vector_lengths.data(), data_ptr, attributes.num_objects * sizeof(uint16_t));
+
+    uint32_t num_points = 0U;
+
+    for (size_t k = 0; k < attributes.num_objects; k++)
     {
-        num_points_ += (vector_lengths(k) - 1) * 2;
+        num_points += (vector_lengths(k) - 1) * 2;
     }
 
     // Advance pointer to account for first bytes where 'vector_lengths' are stored
-    data_ptr_ += num_objects_ * sizeof(uint16_t);
+    data_ptr_local += attributes.num_objects * sizeof(uint16_t);
 
-    const InputParams input_params{num_objects_, num_bytes_per_element_, num_points_, vector_lengths};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    const InputParams input_params{
+        attributes.num_objects, attributes.num_bytes_per_element, num_points, vector_lengths};
 
-    min_vec = Vec3d(output_data.min_vec.x, output_data.min_vec.y, -1.0);
-    max_vec = Vec3d(output_data.max_vec.x, output_data.max_vec.y, 1.0);
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr_local, attributes.data_type, Converter{}, input_params)};
 
-    vertex_buffer_.addBuffer(output_data.data_ptr, num_points_, 2);
-
-    delete[] output_data.data_ptr;
+    return converted_data_base;
 }
 
 void PlotCollection2D::findMinMax()
