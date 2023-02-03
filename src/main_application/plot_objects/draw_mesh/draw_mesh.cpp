@@ -4,11 +4,25 @@
 
 namespace
 {
-struct OutputData
+struct ConvertedData : ConvertedDataBase
 {
     float* points_ptr;
     float* normals_ptr;
     float* mean_height_ptr;
+
+    ConvertedData() : points_ptr{nullptr}, normals_ptr{nullptr}, mean_height_ptr{nullptr} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] points_ptr;
+        delete[] normals_ptr;
+        delete[] mean_height_ptr;
+    }
 };
 
 struct InputParams
@@ -24,13 +38,16 @@ struct InputParams
     }
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
 template <typename T>
-OutputData convertDataSeparateVectors(const uint8_t* const input_data, const InputParams& input_params);
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertDataSeparateVectors(const uint8_t* const input_data,
+                                                          const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -38,7 +55,8 @@ struct Converter
 
 struct ConverterSeparateVectors
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertDataSeparateVectors<T>(input_data, input_params);
     }
@@ -46,46 +64,34 @@ struct ConverterSeparateVectors
 
 }  // namespace
 
-DrawMesh::DrawMesh(std::unique_ptr<const ReceivedData> received_data,
-                   const CommunicationHeader& hdr,
+DrawMesh::DrawMesh(const CommunicationHeader& hdr,
+                   ReceivedData& received_data,
+                   std::unique_ptr<const ConvertedDataBase>& converted_data,
                    const Properties& props,
                    const ShaderCollection shader_collection,
                    ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
-      vertex_buffer_{OGLPrimitiveType::TRIANGLES}
+      vertex_buffer_{OGLPrimitiveType::TRIANGLES},
+      converted_data_{std::move(converted_data)}
 {
     if ((type_ != Function::DRAW_MESH) && (type_ != Function::DRAW_MESH_SEPARATE_VECTORS))
     {
         throw std::runtime_error("Invalid function type for DrawMesh!");
     }
 
-    num_vertices_ = hdr.get(CommunicationHeaderObjectType::NUM_VERTICES).as<uint32_t>();
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data_.get());
+
     num_indices_ = hdr.get(CommunicationHeaderObjectType::NUM_INDICES).as<uint32_t>();
-    OutputData output_data;
 
-    const InputParams input_params(num_vertices_, num_indices_, num_bytes_per_element_);
-
-    if (type_ == Function::DRAW_MESH)
-    {
-        output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
-    }
-    else
-    {
-        output_data = applyConverter<OutputData>(data_ptr_, data_type_, ConverterSeparateVectors{}, input_params);
-    }
-
-    points_ptr_ = output_data.points_ptr;
+    points_ptr_ = converted_data_local->points_ptr;
 
     interpolate_colormap_ = true;
 
     num_elements_to_render_ = num_indices_ * 3;
 
     vertex_buffer_.addBuffer(points_ptr_, num_elements_to_render_, 3);
-    vertex_buffer_.addBuffer(output_data.normals_ptr, num_elements_to_render_, 3);
-    vertex_buffer_.addBuffer(output_data.mean_height_ptr, num_elements_to_render_, 1);
-
-    delete[] output_data.normals_ptr;
-    delete[] output_data.mean_height_ptr;
+    vertex_buffer_.addBuffer(converted_data_local->normals_ptr, num_elements_to_render_, 3);
+    vertex_buffer_.addBuffer(converted_data_local->mean_height_ptr, num_elements_to_render_, 1);
 }
 
 bool DrawMesh::affectsColormapMinMax() const
@@ -186,20 +192,37 @@ LegendProperties DrawMesh::getLegendProperties() const
     return lp;
 }
 
-DrawMesh::~DrawMesh()
+DrawMesh::~DrawMesh() {}
+
+std::unique_ptr<const ConvertedDataBase> DrawMesh::convertRawData(const PlotObjectAttributes& attributes,
+                                                                  const uint8_t* const data_ptr)
 {
-    delete[] points_ptr_;
+    const InputParams input_params(attributes.num_vertices, attributes.num_indices, attributes.num_bytes_per_element);
+
+    if (attributes.function == Function::DRAW_MESH)
+    {
+        std::unique_ptr<const ConvertedDataBase> converted_data_base{
+            applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
+        return converted_data_base;
+    }
+    else
+    {
+        std::unique_ptr<const ConvertedDataBase> converted_data_base{
+            applyConverter<ConvertedData>(data_ptr, attributes.data_type, ConverterSeparateVectors{}, input_params)};
+        return converted_data_base;
+    }
 }
 
 namespace
 {
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
-    OutputData output_data;
-    output_data.points_ptr = new float[input_params.num_indices * 3 * 3];
-    output_data.normals_ptr = new float[input_params.num_indices * 3 * 3];
-    output_data.mean_height_ptr = new float[input_params.num_indices * 3];
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->points_ptr = new float[input_params.num_indices * 3 * 3];
+    converted_data->normals_ptr = new float[input_params.num_indices * 3 * 3];
+    converted_data->mean_height_ptr = new float[input_params.num_indices * 3];
 
     VectorConstView<Point3<T>> vertices{reinterpret_cast<const Point3<T>*>(input_data), input_params.num_vertices};
     VectorConstView<IndexTriplet> indices{
@@ -219,50 +242,51 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         const Vec3<T> normal_vec{plane.a, plane.b, plane.c};
         const Vec3<T> normalized_normal_vec{normal_vec.normalized()};
 
-        output_data.points_ptr[idx] = p0.x;
-        output_data.points_ptr[idx + 1] = p0.y;
-        output_data.points_ptr[idx + 2] = p0.z;
+        converted_data->points_ptr[idx] = p0.x;
+        converted_data->points_ptr[idx + 1] = p0.y;
+        converted_data->points_ptr[idx + 2] = p0.z;
 
-        output_data.points_ptr[idx + 3] = p1.x;
-        output_data.points_ptr[idx + 4] = p1.y;
-        output_data.points_ptr[idx + 5] = p1.z;
+        converted_data->points_ptr[idx + 3] = p1.x;
+        converted_data->points_ptr[idx + 4] = p1.y;
+        converted_data->points_ptr[idx + 5] = p1.z;
 
-        output_data.points_ptr[idx + 6] = p2.x;
-        output_data.points_ptr[idx + 7] = p2.y;
-        output_data.points_ptr[idx + 8] = p2.z;
+        converted_data->points_ptr[idx + 6] = p2.x;
+        converted_data->points_ptr[idx + 7] = p2.y;
+        converted_data->points_ptr[idx + 8] = p2.z;
 
-        output_data.normals_ptr[idx] = normalized_normal_vec.x;
-        output_data.normals_ptr[idx + 1] = normalized_normal_vec.y;
-        output_data.normals_ptr[idx + 2] = normalized_normal_vec.z;
+        converted_data->normals_ptr[idx] = normalized_normal_vec.x;
+        converted_data->normals_ptr[idx + 1] = normalized_normal_vec.y;
+        converted_data->normals_ptr[idx + 2] = normalized_normal_vec.z;
 
-        output_data.normals_ptr[idx + 3] = normalized_normal_vec.x;
-        output_data.normals_ptr[idx + 4] = normalized_normal_vec.y;
-        output_data.normals_ptr[idx + 5] = normalized_normal_vec.z;
+        converted_data->normals_ptr[idx + 3] = normalized_normal_vec.x;
+        converted_data->normals_ptr[idx + 4] = normalized_normal_vec.y;
+        converted_data->normals_ptr[idx + 5] = normalized_normal_vec.z;
 
-        output_data.normals_ptr[idx + 6] = normalized_normal_vec.x;
-        output_data.normals_ptr[idx + 7] = normalized_normal_vec.y;
-        output_data.normals_ptr[idx + 8] = normalized_normal_vec.z;
+        converted_data->normals_ptr[idx + 6] = normalized_normal_vec.x;
+        converted_data->normals_ptr[idx + 7] = normalized_normal_vec.y;
+        converted_data->normals_ptr[idx + 8] = normalized_normal_vec.z;
 
         const float z_m = (p0.z + p1.z + p2.z) * 0.33333333333f;
-        output_data.mean_height_ptr[height_idx] = z_m;
-        output_data.mean_height_ptr[height_idx + 1] = z_m;
-        output_data.mean_height_ptr[height_idx + 2] = z_m;
+        converted_data->mean_height_ptr[height_idx] = z_m;
+        converted_data->mean_height_ptr[height_idx + 1] = z_m;
+        converted_data->mean_height_ptr[height_idx + 2] = z_m;
 
         idx += 9;
         height_idx += 3;
     }
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>{converted_data};
 }
 
 template <typename T>
-OutputData convertDataSeparateVectors(const uint8_t* const input_data, const InputParams& input_params)
+std::unique_ptr<ConvertedData> convertDataSeparateVectors(const uint8_t* const input_data,
+                                                          const InputParams& input_params)
 {
-    OutputData output_data;
+    ConvertedData* converted_data = new ConvertedData;
 
-    output_data.points_ptr = new float[input_params.num_indices * 3 * 3];
-    output_data.normals_ptr = new float[input_params.num_indices * 3 * 3];
-    output_data.mean_height_ptr = new float[input_params.num_indices * 3];
+    converted_data->points_ptr = new float[input_params.num_indices * 3 * 3];
+    converted_data->normals_ptr = new float[input_params.num_indices * 3 * 3];
+    converted_data->mean_height_ptr = new float[input_params.num_indices * 3];
 
     VectorConstView<T> x{reinterpret_cast<const T*>(input_data), input_params.num_vertices};
     VectorConstView<T> y{
@@ -289,40 +313,40 @@ OutputData convertDataSeparateVectors(const uint8_t* const input_data, const Inp
         const Vec3<T> normal_vec{plane.a, plane.b, plane.c};
         const Vec3<T> normalized_normal_vec{normal_vec.normalized()};
 
-        output_data.points_ptr[idx] = p0.x;
-        output_data.points_ptr[idx + 1] = p0.y;
-        output_data.points_ptr[idx + 2] = p0.z;
+        converted_data->points_ptr[idx] = p0.x;
+        converted_data->points_ptr[idx + 1] = p0.y;
+        converted_data->points_ptr[idx + 2] = p0.z;
 
-        output_data.points_ptr[idx + 3] = p1.x;
-        output_data.points_ptr[idx + 4] = p1.y;
-        output_data.points_ptr[idx + 5] = p1.z;
+        converted_data->points_ptr[idx + 3] = p1.x;
+        converted_data->points_ptr[idx + 4] = p1.y;
+        converted_data->points_ptr[idx + 5] = p1.z;
 
-        output_data.points_ptr[idx + 6] = p2.x;
-        output_data.points_ptr[idx + 7] = p2.y;
-        output_data.points_ptr[idx + 8] = p2.z;
+        converted_data->points_ptr[idx + 6] = p2.x;
+        converted_data->points_ptr[idx + 7] = p2.y;
+        converted_data->points_ptr[idx + 8] = p2.z;
 
-        output_data.normals_ptr[idx] = normalized_normal_vec.x;
-        output_data.normals_ptr[idx + 1] = normalized_normal_vec.y;
-        output_data.normals_ptr[idx + 2] = normalized_normal_vec.z;
+        converted_data->normals_ptr[idx] = normalized_normal_vec.x;
+        converted_data->normals_ptr[idx + 1] = normalized_normal_vec.y;
+        converted_data->normals_ptr[idx + 2] = normalized_normal_vec.z;
 
-        output_data.normals_ptr[idx + 3] = normalized_normal_vec.x;
-        output_data.normals_ptr[idx + 4] = normalized_normal_vec.y;
-        output_data.normals_ptr[idx + 5] = normalized_normal_vec.z;
+        converted_data->normals_ptr[idx + 3] = normalized_normal_vec.x;
+        converted_data->normals_ptr[idx + 4] = normalized_normal_vec.y;
+        converted_data->normals_ptr[idx + 5] = normalized_normal_vec.z;
 
-        output_data.normals_ptr[idx + 6] = normalized_normal_vec.x;
-        output_data.normals_ptr[idx + 7] = normalized_normal_vec.y;
-        output_data.normals_ptr[idx + 8] = normalized_normal_vec.z;
+        converted_data->normals_ptr[idx + 6] = normalized_normal_vec.x;
+        converted_data->normals_ptr[idx + 7] = normalized_normal_vec.y;
+        converted_data->normals_ptr[idx + 8] = normalized_normal_vec.z;
 
         const float z_m = (p0.z + p1.z + p2.z) * 0.33333333333f;
-        output_data.mean_height_ptr[height_idx] = z_m;
-        output_data.mean_height_ptr[height_idx + 1] = z_m;
-        output_data.mean_height_ptr[height_idx + 2] = z_m;
+        converted_data->mean_height_ptr[height_idx] = z_m;
+        converted_data->mean_height_ptr[height_idx + 1] = z_m;
+        converted_data->mean_height_ptr[height_idx + 2] = z_m;
 
         idx += 9;
         height_idx += 3;
     }
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>{converted_data};
 }
 
 }  // namespace

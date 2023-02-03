@@ -13,21 +13,11 @@
 
 class DrawMesh : public PlotObjectBase
 {
-private:
-    VertexBuffer vertex_buffer_;
-    float* points_ptr_;
-
-    size_t num_elements_to_render_;
-
-    uint32_t num_vertices_;
-    uint32_t num_indices_;
-
-    void findMinMax() override;
-
 public:
     DrawMesh();
-    DrawMesh(std::unique_ptr<const ReceivedData> received_data,
-             const CommunicationHeader& hdr,
+    DrawMesh(const CommunicationHeader& hdr,
+             ReceivedData& received_data,
+             std::unique_ptr<const ConvertedDataBase>& converted_data,
              const Properties& props,
              const ShaderCollection shader_collection,
              ColorPicker& color_picker);
@@ -36,6 +26,20 @@ public:
     LegendProperties getLegendProperties() const override;
     bool affectsColormapMinMax() const override;
     void render() override;
+
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const uint8_t* const data_ptr);
+
+private:
+    VertexBuffer vertex_buffer_;
+    std::unique_ptr<const ConvertedDataBase> converted_data_;
+    float* points_ptr_;
+
+    size_t num_elements_to_render_;
+
+    uint32_t num_indices_;
+
+    void findMinMax() override;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_DRAW_MESH_DRAW_MESH_H_

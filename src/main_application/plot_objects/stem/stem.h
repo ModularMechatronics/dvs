@@ -12,25 +12,29 @@
 
 class Stem : public PlotObjectBase
 {
-private:
-    // VertexBuffer vertex_buffer_;
-    VertexBuffer vertex_buffer_lines_, vertex_buffer_points_;
-    GLuint lines_vertex_buffer_, lines_vertex_buffer_array_, points_vertex_buffer_, points_vertex_buffer_array_;
-
-    void findMinMax() override;
-
 public:
     Stem();
-    Stem(std::unique_ptr<const ReceivedData> received_data,
-         const CommunicationHeader& hdr,
+    Stem(const CommunicationHeader& hdr,
+         ReceivedData& received_data,
+         const std::unique_ptr<const ConvertedDataBase>& converted_data,
          const Properties& props,
-         const ShaderCollection shader_collection, ColorPicker& color_picker);
+         const ShaderCollection shader_collection,
+         ColorPicker& color_picker);
     ~Stem();
 
     LegendProperties getLegendProperties() const override;
 
     void render() override;
     void modifyShader() override;
+
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const uint8_t* const data_ptr);
+
+private:
+    VertexBuffer vertex_buffer_lines_, vertex_buffer_points_;
+    GLuint lines_vertex_buffer_, lines_vertex_buffer_array_, points_vertex_buffer_, points_vertex_buffer_array_;
+
+    void findMinMax() override;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_STEM_STEM_H_

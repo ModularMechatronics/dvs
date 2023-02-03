@@ -51,6 +51,9 @@ struct PlotObjectAttributes
 
     Dimension2D dims;
 
+    uint32_t num_vertices;
+    uint32_t num_indices;
+
     PlotObjectAttributes() = delete;
     PlotObjectAttributes(const CommunicationHeader& hdr)
     {
@@ -77,6 +80,16 @@ struct PlotObjectAttributes
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DIMENSION_2D))
         {
             dims = hdr.get(CommunicationHeaderObjectType::DIMENSION_2D).as<internal::Dimension2D>();
+        }
+
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_VERTICES))
+        {
+            num_vertices = hdr.get(CommunicationHeaderObjectType::NUM_VERTICES).as<uint32_t>();
+        }
+
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_INDICES))
+        {
+            num_indices = hdr.get(CommunicationHeaderObjectType::NUM_INDICES).as<uint32_t>();
         }
     }
 };

@@ -4,10 +4,23 @@
 
 namespace
 {
-struct OutputData
+struct ConvertedData : ConvertedDataBase
 {
     float* lines_data;
     float* points_data;
+
+    ConvertedData() : lines_data{nullptr}, points_data{nullptr} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] lines_data;
+        delete[] points_data;
+    }
 };
 
 struct InputParams
@@ -18,11 +31,13 @@ struct InputParams
     InputParams(const size_t num_elements_) : num_elements{num_elements_} {}
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -30,10 +45,12 @@ struct Converter
 
 }  // namespace
 
-Stem::Stem(std::unique_ptr<const ReceivedData> received_data,
-           const CommunicationHeader& hdr,
+Stem::Stem(const CommunicationHeader& hdr,
+           ReceivedData& received_data,
+           const std::unique_ptr<const ConvertedDataBase>& converted_data,
            const Properties& props,
-           const ShaderCollection shader_collection, ColorPicker& color_picker)
+           const ShaderCollection shader_collection,
+           ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_lines_{OGLPrimitiveType::LINES},
       vertex_buffer_points_{OGLPrimitiveType::POINTS}
@@ -43,14 +60,10 @@ Stem::Stem(std::unique_ptr<const ReceivedData> received_data,
         throw std::runtime_error("Invalid function type for Stem!");
     }
 
-    const InputParams input_params{num_elements_};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    vertex_buffer_lines_.addBuffer(output_data.lines_data, num_elements_ * 2, 2);
-    vertex_buffer_points_.addBuffer(output_data.points_data, num_elements_, 2);
-
-    delete[] output_data.points_data;
-    delete[] output_data.lines_data;
+    vertex_buffer_lines_.addBuffer(converted_data_local->lines_data, num_elements_ * 2, 2);
+    vertex_buffer_points_.addBuffer(converted_data_local->points_data, num_elements_, 2);
 }
 
 void Stem::findMinMax()
@@ -87,6 +100,17 @@ void Stem::modifyShader()
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
+std::unique_ptr<const ConvertedDataBase> Stem::convertRawData(const PlotObjectAttributes& attributes,
+                                                              const uint8_t* const data_ptr)
+{
+    const InputParams input_params{attributes.num_elements};
+
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
+
+    return converted_data_base;
+}
+
 Stem::~Stem() {}
 
 LegendProperties Stem::getLegendProperties() const
@@ -100,12 +124,13 @@ LegendProperties Stem::getLegendProperties() const
 
 namespace
 {
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
-    OutputData output_data;
+    ConvertedData* converted_data = new ConvertedData;
 
-    output_data.lines_data = new float[4 * input_params.num_elements];
-    output_data.points_data = new float[2 * input_params.num_elements];
+    converted_data->lines_data = new float[4 * input_params.num_elements];
+    converted_data->points_data = new float[2 * input_params.num_elements];
 
     size_t lines_idx = 0, points_idx = 0;
 
@@ -117,19 +142,19 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
         const T data_x = input_data_dt_x[k];
         const T data_y = input_data_dt_y[k];
 
-        output_data.lines_data[lines_idx] = data_x;
-        output_data.lines_data[lines_idx + 1] = 0.0f;
-        output_data.lines_data[lines_idx + 2] = data_x;
-        output_data.lines_data[lines_idx + 3] = data_y;
+        converted_data->lines_data[lines_idx] = data_x;
+        converted_data->lines_data[lines_idx + 1] = 0.0f;
+        converted_data->lines_data[lines_idx + 2] = data_x;
+        converted_data->lines_data[lines_idx + 3] = data_y;
 
-        output_data.points_data[points_idx] = data_x;
-        output_data.points_data[points_idx + 1] = data_y;
+        converted_data->points_data[points_idx] = data_x;
+        converted_data->points_data[points_idx + 1] = data_y;
 
         lines_idx += 4;
         points_idx += 2;
     }
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>{converted_data};
 }
 
 }  // namespace
