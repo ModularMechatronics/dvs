@@ -948,12 +948,12 @@ void testImShow()
     setCurrentElement("p_view_2");
     imShow(img1_uint8);
 
-    setCurrentElement("w1_p_view_0");
+    /*setCurrentElement("w1_p_view_0");
     imShow(img3_uint8);
 
     setCurrentElement("w1_p_view_2");
     clearView();
-    imShow(img4);
+    imShow(img4);*/
 }
 
 void testAxis()
