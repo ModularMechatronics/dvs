@@ -190,12 +190,12 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
             /*case Function::PLOT_COLLECTION2:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new PlotCollection2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
-
-            case Function::PLOT_COLLECTION3:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new PlotCollection3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;*/
+
+        case Function::PLOT_COLLECTION3:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new PlotCollection3D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
+            break;
 
         case Function::DRAW_MESH_SEPARATE_VECTORS:
         case Function::DRAW_MESH:

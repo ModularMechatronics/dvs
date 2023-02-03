@@ -33,7 +33,7 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_objects/draw_mesh/draw_mesh.cpp
                      plot_objects/im_show/im_show.cpp
                      # plot_objects/plot_collection2/plot_collection2.cpp
-                     # plot_objects/plot_collection3/plot_collection3.cpp
+                     plot_objects/plot_collection3/plot_collection3.cpp
                      plot_objects/plot2d/plot2d.cpp
                      plot_objects/plot3d/plot3d.cpp
                      # plot_objects/fast_plot2d/fast_plot2d.cpp
