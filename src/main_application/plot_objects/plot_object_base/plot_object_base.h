@@ -56,6 +56,8 @@ struct PlotObjectAttributes
 
     uint8_t num_channels;
 
+    uint32_t num_objects;
+
     PlotObjectAttributes() = delete;
     PlotObjectAttributes(const CommunicationHeader& hdr)
     {
@@ -97,6 +99,11 @@ struct PlotObjectAttributes
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_CHANNELS))
         {
             num_channels = hdr.get(CommunicationHeaderObjectType::NUM_CHANNELS).as<uint8_t>();
+        }
+
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_OBJECTS))
+        {
+            num_objects = hdr.get(CommunicationHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
         }
     }
 };

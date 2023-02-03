@@ -12,6 +12,20 @@ struct ConvertedData : ConvertedDataBase
     float* points_ptr;
     float* color_ptr;
     float* alpha_ptr;
+
+    ConvertedData() : points_ptr{nullptr}, color_ptr{nullptr}, alpha_ptr{nullptr} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] points_ptr;
+        delete[] color_ptr;
+        delete[] alpha_ptr;
+    }
 };
 
 struct InputParams
