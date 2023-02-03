@@ -33,6 +33,8 @@ private:
     std::vector<ImageRGB<uint8>> images_left_;
     std::vector<ImageRGB<uint8>> images_right_;
 
+    static constexpr int kMaxReadFrame = 15;
+
     void readLidarFile(const std::string& bin_path);
 
     void readCamera(const std::string& folder_path, std::vector<ImageRGB<uint8>>& destination);
