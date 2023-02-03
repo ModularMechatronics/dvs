@@ -160,12 +160,12 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
             case Function::FAST_PLOT3:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new FastPlot3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
-
-            case Function::STEM:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Stem(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;*/
+
+        case Function::STEM:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new Stem(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
+            break;
 
         case Function::SCATTER2:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
@@ -182,28 +182,28 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                 new Surf(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
             break;
 
-        /*case Function::IM_SHOW:
-            awaiting_plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                new ImShow(std::move(received_data), hdr, props, shader_collection_, color_picker_, false)));
-            break;*/
+            /*case Function::IM_SHOW:
+                awaiting_plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                    new ImShow(std::move(received_data), hdr, props, shader_collection_, color_picker_, false)));
+                break;*/
 
-        /*case Function::PLOT_COLLECTION2:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                new PlotCollection2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-            break;
+            /*case Function::PLOT_COLLECTION2:
+                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                    new PlotCollection2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
+                break;
 
-        case Function::PLOT_COLLECTION3:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                new PlotCollection3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-            break;
+            case Function::PLOT_COLLECTION3:
+                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                    new PlotCollection3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
+                break;*/
 
         case Function::DRAW_MESH_SEPARATE_VECTORS:
         case Function::DRAW_MESH:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                new DrawMesh(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
+                new DrawMesh(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
             break;
 
-        case Function::REAL_TIME_PLOT:
+        /*case Function::REAL_TIME_PLOT:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                 new ScrollingPlot2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
             break;*/
