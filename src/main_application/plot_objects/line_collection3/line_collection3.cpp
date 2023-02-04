@@ -4,9 +4,21 @@
 
 namespace
 {
-struct OutputData
+struct ConvertedData : ConvertedDataBase
 {
     float* points_ptr;
+
+    ConvertedData() : points_ptr{nullptr} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] points_ptr;
+    }
 };
 
 struct InputParams
@@ -17,34 +29,36 @@ struct InputParams
     InputParams(const size_t num_elements_) : num_elements{num_elements_} {}
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
 };
 }  // namespace
 
-LineCollection3D::LineCollection3D(std::unique_ptr<const ReceivedData> received_data,
-                                   const CommunicationHeader& hdr,
+LineCollection3D::LineCollection3D(const CommunicationHeader& hdr,
+                                   ReceivedData& received_data,
+                                   const std::unique_ptr<const ConvertedDataBase>& converted_data,
                                    const Properties& props,
-                                   const ShaderCollection shader_collection, ColorPicker& color_picker)
-    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker), vertex_buffer_{OGLPrimitiveType::LINES}
+                                   const ShaderCollection shader_collection,
+                                   ColorPicker& color_picker)
+    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
+      vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (type_ != Function::LINE_COLLECTION3)
     {
         throw std::runtime_error("Invalid function type for LineCollection3D!");
     }
 
-    const InputParams input_params{num_elements_};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    vertex_buffer_.addBuffer(output_data.points_ptr, num_elements_, 3);
-
-    delete[] output_data.points_ptr;
+    vertex_buffer_.addBuffer(converted_data_local->points_ptr, num_elements_, 3);
 }
 
 void LineCollection3D::findMinMax()
@@ -60,12 +74,24 @@ void LineCollection3D::render()
 
 LineCollection3D::~LineCollection3D() {}
 
+std::unique_ptr<const ConvertedDataBase> LineCollection3D::convertRawData(const PlotObjectAttributes& attributes,
+                                                                          const uint8_t* const data_ptr)
+{
+    const InputParams input_params{attributes.num_elements};
+
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
+
+    return converted_data_base;
+}
+
 namespace
 {
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
-    OutputData output_data;
-    output_data.points_ptr = new float[3 * input_params.num_elements];
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->points_ptr = new float[3 * input_params.num_elements];
 
     size_t idx = 0;
 
@@ -75,14 +101,14 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     for (size_t k = 0; k < input_params.num_elements; k++)
     {
-        output_data.points_ptr[idx] = x_data[k];
-        output_data.points_ptr[idx + 1] = y_data[k];
-        output_data.points_ptr[idx + 2] = z_data[k];
+        converted_data->points_ptr[idx] = x_data[k];
+        converted_data->points_ptr[idx + 1] = y_data[k];
+        converted_data->points_ptr[idx + 2] = z_data[k];
 
         idx += 3;
     }
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>(converted_data);
 }
 
 }  // namespace
