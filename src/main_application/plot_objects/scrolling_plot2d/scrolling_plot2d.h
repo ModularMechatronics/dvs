@@ -12,6 +12,27 @@
 
 class ScrollingPlot2D : public PlotObjectBase
 {
+public:
+    ScrollingPlot2D();
+    ScrollingPlot2D(const CommunicationHeader& hdr,
+                    ReceivedData& received_data,
+                    const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                    const Properties& props,
+                    const ShaderCollection shader_collection,
+                    ColorPicker& color_picker);
+    ~ScrollingPlot2D();
+
+    LegendProperties getLegendProperties() const override;
+    void updateWithNewData(ReceivedData& received_data,
+                           const CommunicationHeader& hdr,
+                           const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                           const Properties& props) override;
+
+    void render() override;
+
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const uint8_t* const data_ptr);
+
 private:
     // VertexBuffer vertex_buffer_;
     float* points_ptr_;
@@ -22,21 +43,6 @@ private:
     void findMinMax() override;
 
     size_t num_elements_to_draw_;
-
-public:
-    ScrollingPlot2D();
-    ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_data,
-                    const CommunicationHeader& hdr,
-                    const Properties& props,
-                    const ShaderCollection shader_collection, ColorPicker& color_picker);
-    ~ScrollingPlot2D();
-
-    LegendProperties getLegendProperties() const override;
-    void updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
-                           const CommunicationHeader& hdr,
-                           const Properties& props) override;
-
-    void render() override;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_SCROLLING_PLOT2D_SCROLLING_PLOT2D_H_

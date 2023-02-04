@@ -79,6 +79,8 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 2;
         case Function::PLOT_COLLECTION3:
             return 3;
+        case Function::PROPERTIES_EXTENSION:
+            return 1;
 
         default:
             std::cout << "You haven't defined number of dimensions in utils.h for Function type "

@@ -11,7 +11,7 @@
 
 using namespace dvs::internal;
 
-bool isGuiElementFunction(const Function fcn)
+/*bool isGuiElementFunction(const Function fcn)
 {
     return (fcn == Function::PLANE_XY) || (fcn == Function::PLANE_XZ) || (fcn == Function::PLANE_YZ) ||
            (fcn == Function::GRID_ON) || (fcn == Function::GRID_OFF) || (fcn == Function::PLOT2) ||
@@ -31,7 +31,7 @@ bool isGuiElementFunction(const Function fcn)
            (fcn == Function::DISABLE_AXES_FROM_MIN_MAX) || (fcn == Function::SET_AXES_BOX_SCALE_FACTOR) ||
            (fcn == Function::SET_OBJECT_TRANSFORM) || (fcn == Function::SHOW_LEGEND) ||
            (fcn == Function::FLUSH_ELEMENT) || (fcn == Function::WAIT_FOR_FLUSH);
-}
+}*/
 
 void MainWindow::setCurrentElement(const ReceivedData& received_data)
 {
@@ -154,10 +154,9 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             converted_data = DrawMesh::convertRawData(attributes, received_data.data());
             break;
 
-        /*case Function::REAL_TIME_PLOT:
-            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                new ScrollingPlot2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-            break;*/
+        case Function::REAL_TIME_PLOT:
+            converted_data = ScrollingPlot2D::convertRawData(attributes, received_data.data());
+            break;
         default:
             throw std::runtime_error("Invalid function!");
             break;

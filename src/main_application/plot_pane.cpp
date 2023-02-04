@@ -285,6 +285,10 @@ void PlotPane::addSettingsData(const ReceivedData& received_data)
         axes_interactor_.setAxesLimits(Vec3d(axes_bnd.first.x, axes_bnd.first.y, axes_bnd.first.z),
                                        Vec3d(axes_bnd.second.x, axes_bnd.second.y, axes_bnd.second.z));
     }
+    else if (fcn == Function::PROPERTIES_EXTENSION)
+    {
+        plot_data_handler_->propertiesExtension(hdr);
+    }
     else if (fcn == Function::GLOBAL_ILLUMINATION)
     {
         axes_renderer_->activateGlobalIllumination(hdr.get(CommunicationHeaderObjectType::VEC3).as<Vec3d>());
@@ -950,7 +954,6 @@ void PlotPane::processActionQueue()
             {
                 break;
             }
-            else if ((fcn == Function::FLUSH_ELEMENT) && wait_for_flush_) {}
         }
     }
 }

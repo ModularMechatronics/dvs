@@ -186,24 +186,24 @@ std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const PlotObject
     return converted_data_base;
 }
 
-void Plot2D::updateWithNewData(ReceivedData& received_data, const CommunicationHeader& hdr, const Properties& props)
+void Plot2D::updateWithNewData(ReceivedData& received_data,
+                               const CommunicationHeader& hdr,
+                               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                               const Properties& props)
 {
     throwIfNotUpdateable();
 
     postInitialize(received_data, hdr, props);
 
-    const InputParams input_params{num_elements_, num_bytes_per_element_, num_bytes_for_one_vec_, has_color_};
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    const std::unique_ptr<const ConvertedData> converted_data{
-        applyConverter<ConvertedData>(data_ptr_, data_type_, Converter{}, input_params)};
+    num_points_ = converted_data_local->num_points;
 
-    num_points_ = converted_data->num_points;
-
-    vertex_buffer_.updateBufferData(0, converted_data->p0, num_points_, 2);
-    vertex_buffer_.updateBufferData(1, converted_data->p1, num_points_, 2);
-    vertex_buffer_.updateBufferData(2, converted_data->p2, num_points_, 2);
-    vertex_buffer_.updateBufferData(3, converted_data->idx_data, num_points_, 1);
-    vertex_buffer_.updateBufferData(4, converted_data->length_along, num_points_, 1);
+    vertex_buffer_.updateBufferData(0, converted_data_local->p0, num_points_, 2);
+    vertex_buffer_.updateBufferData(1, converted_data_local->p1, num_points_, 2);
+    vertex_buffer_.updateBufferData(2, converted_data_local->p2, num_points_, 2);
+    vertex_buffer_.updateBufferData(3, converted_data_local->idx_data, num_points_, 1);
+    vertex_buffer_.updateBufferData(4, converted_data_local->length_along, num_points_, 1);
 }
 
 Plot2D::~Plot2D() {}
