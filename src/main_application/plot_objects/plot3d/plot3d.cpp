@@ -67,7 +67,7 @@ Plot3D::Plot3D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
-    if (type_ != Function::PLOT3)
+    if (function_ != Function::PLOT3)
     {
         throw std::runtime_error("Invalid function type for Plot3D!");
     }

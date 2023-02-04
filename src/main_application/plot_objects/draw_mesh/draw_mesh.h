@@ -24,7 +24,6 @@ public:
     ~DrawMesh();
 
     LegendProperties getLegendProperties() const override;
-    bool affectsColormapMinMax() const override;
     void render() override;
 
     static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,

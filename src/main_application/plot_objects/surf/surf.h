@@ -24,7 +24,6 @@ public:
     ~Surf();
 
     LegendProperties getLegendProperties() const override;
-    bool affectsColormapMinMax() const override;
     void updateWithNewData(ReceivedData& received_data,
                            const CommunicationHeader& hdr,
                            const std::unique_ptr<const ConvertedDataBase>& converted_data,

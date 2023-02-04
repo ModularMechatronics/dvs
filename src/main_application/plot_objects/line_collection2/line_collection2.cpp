@@ -51,7 +51,7 @@ LineCollection2D::LineCollection2D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINES}
 {
-    if (type_ != Function::LINE_COLLECTION2)
+    if (function_ != Function::LINE_COLLECTION2)
     {
         throw std::runtime_error("Invalid function type for LineCollection2D!");
     }

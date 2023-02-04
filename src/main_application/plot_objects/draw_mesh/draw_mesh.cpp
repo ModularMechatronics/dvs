@@ -74,7 +74,7 @@ DrawMesh::DrawMesh(const CommunicationHeader& hdr,
       vertex_buffer_{OGLPrimitiveType::TRIANGLES},
       converted_data_{std::move(converted_data)}
 {
-    if ((type_ != Function::DRAW_MESH) && (type_ != Function::DRAW_MESH_SEPARATE_VECTORS))
+    if ((function_ != Function::DRAW_MESH) && (function_ != Function::DRAW_MESH_SEPARATE_VECTORS))
     {
         throw std::runtime_error("Invalid function type for DrawMesh!");
     }
@@ -92,11 +92,6 @@ DrawMesh::DrawMesh(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(points_ptr_, num_elements_to_render_, 3);
     vertex_buffer_.addBuffer(converted_data_local->normals_ptr, num_elements_to_render_, 3);
     vertex_buffer_.addBuffer(converted_data_local->mean_height_ptr, num_elements_to_render_, 1);
-}
-
-bool DrawMesh::affectsColormapMinMax() const
-{
-    return color_map_set_;
 }
 
 void DrawMesh::findMinMax()

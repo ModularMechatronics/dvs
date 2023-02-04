@@ -51,7 +51,7 @@ FastPlot3D::FastPlot3D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
-    if (type_ != Function::FAST_PLOT3)
+    if (function_ != Function::FAST_PLOT3)
     {
         throw std::runtime_error("Invalid function type for FastPlot3D!");
     }

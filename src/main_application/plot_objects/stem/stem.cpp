@@ -55,7 +55,7 @@ Stem::Stem(const CommunicationHeader& hdr,
       vertex_buffer_lines_{OGLPrimitiveType::LINES},
       vertex_buffer_points_{OGLPrimitiveType::POINTS}
 {
-    if (type_ != Function::STEM)
+    if (function_ != Function::STEM)
     {
         throw std::runtime_error("Invalid function type for Stem!");
     }

@@ -51,7 +51,7 @@ LineCollection3D::LineCollection3D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINES}
 {
-    if (type_ != Function::LINE_COLLECTION3)
+    if (function_ != Function::LINE_COLLECTION3)
     {
         throw std::runtime_error("Invalid function type for LineCollection3D!");
     }

@@ -46,7 +46,7 @@ ScrollingPlot2D::ScrollingPlot2D(const CommunicationHeader& hdr,
                                  ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker)
 {
-    if (type_ != Function::REAL_TIME_PLOT)
+    if (function_ != Function::REAL_TIME_PLOT)
     {
         throw std::runtime_error("Invalid function type for ScrollingPlot2D!");
     }

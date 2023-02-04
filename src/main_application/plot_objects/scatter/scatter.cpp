@@ -69,7 +69,7 @@ Scatter2D::Scatter2D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::POINTS}
 {
-    if (type_ != Function::SCATTER2)
+    if (function_ != Function::SCATTER2)
     {
         throw std::runtime_error("Invalid function type for Scatter2D!");
     }

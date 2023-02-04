@@ -1,70 +1,5 @@
 #include "main_application/plot_objects/plot_object_base/plot_object_base.h"
 
-bool isPlotDataFunction(const Function fcn)
-{
-    return (fcn == Function::STAIRS) || (fcn == Function::PLOT2) || (fcn == Function::PLOT3) ||
-           (fcn == Function::FAST_PLOT2) || (fcn == Function::LINE_COLLECTION2) ||
-           (fcn == Function::LINE_COLLECTION3) || (fcn == Function::FAST_PLOT3) || (fcn == Function::STEM) ||
-           (fcn == Function::SCATTER2) || (fcn == Function::SCATTER3) || (fcn == Function::SURF) ||
-           (fcn == Function::IM_SHOW) || (fcn == Function::PLOT_COLLECTION2) || (fcn == Function::PLOT_COLLECTION3) ||
-           (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_MESH) ||
-           (fcn == Function::REAL_TIME_PLOT);
-}
-
-void PlotObjectBase::modifyShader()
-{
-    glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"),
-                color_.red,
-                color_.green,
-                color_.blue);
-    glUseProgram(shader_collection_.scatter_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "vertex_color"),
-                color_.red,
-                color_.green,
-                color_.blue);
-    glUseProgram(shader_collection_.plot_2d_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "vertex_color"),
-                color_.red,
-                color_.green,
-                color_.blue);
-    glUseProgram(shader_collection_.plot_3d_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "vertex_color"),
-                color_.red,
-                color_.green,
-                color_.blue);
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
-}
-
-bool PlotObjectBase::isPersistent() const
-{
-    return is_persistent_;
-}
-
-std::string PlotObjectBase::getName() const
-{
-    return name_.data;
-}
-
-std::string_view PlotObjectBase::getNameStringView() const
-{
-    return std::string_view(name_.data);
-}
-
-std::pair<Vec3d, Vec3d> PlotObjectBase::getMinMaxVectors()
-{
-    if (!min_max_calculated_)
-    {
-        min_max_calculated_ = true;
-        findMinMax();
-    }
-    return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
-}
-
-size_t PlotObjectBase::getNumDimensions() const
-{
-    return num_dimensions_;
-}
-
 PlotObjectBase::PlotObjectBase() {}
 
 PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
@@ -76,13 +11,13 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
 {
     data_ptr_ = received_data_.data();
 
-    type_ = hdr.getFunction();
+    function_ = hdr.getFunction();
     data_type_ = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
 
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
     num_elements_ = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
 
-    num_dimensions_ = getNumDimensionsFromFunction(type_);
+    num_dimensions_ = getNumDimensionsFromFunction(function_);
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
@@ -117,13 +52,13 @@ void PlotObjectBase::postInitialize(ReceivedData& received_data,
     has_custom_transform_ = false;
     z_offset_ = 0.0f;
 
-    type_ = hdr.getFunction();
+    function_ = hdr.getFunction();
     data_type_ = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
 
     num_bytes_per_element_ = dataTypeToNumBytes(data_type_);
     num_elements_ = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
 
-    num_dimensions_ = getNumDimensionsFromFunction(type_);
+    num_dimensions_ = getNumDimensionsFromFunction(function_);
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
@@ -277,6 +212,66 @@ void PlotObjectBase::preRender(const Shader shader_to_use)
     {
         glUniform1i(glGetUniformLocation(shader_to_use.programId(), "has_custom_transform"), static_cast<int>(0));
     }
+}
+
+bool isPlotDataFunction(const Function fcn)
+{
+    return (fcn == Function::STAIRS) || (fcn == Function::PLOT2) || (fcn == Function::PLOT3) ||
+           (fcn == Function::FAST_PLOT2) || (fcn == Function::LINE_COLLECTION2) ||
+           (fcn == Function::LINE_COLLECTION3) || (fcn == Function::FAST_PLOT3) || (fcn == Function::STEM) ||
+           (fcn == Function::SCATTER2) || (fcn == Function::SCATTER3) || (fcn == Function::SURF) ||
+           (fcn == Function::IM_SHOW) || (fcn == Function::PLOT_COLLECTION2) || (fcn == Function::PLOT_COLLECTION3) ||
+           (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_MESH) ||
+           (fcn == Function::REAL_TIME_PLOT);
+}
+
+void PlotObjectBase::modifyShader()
+{
+    glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"),
+                color_.red,
+                color_.green,
+                color_.blue);
+    glUseProgram(shader_collection_.scatter_shader.programId());
+    glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "vertex_color"),
+                color_.red,
+                color_.green,
+                color_.blue);
+    glUseProgram(shader_collection_.plot_2d_shader.programId());
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "vertex_color"),
+                color_.red,
+                color_.green,
+                color_.blue);
+    glUseProgram(shader_collection_.plot_3d_shader.programId());
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "vertex_color"),
+                color_.red,
+                color_.green,
+                color_.blue);
+    glUseProgram(shader_collection_.basic_plot_shader.programId());
+}
+
+bool PlotObjectBase::isPersistent() const
+{
+    return is_persistent_;
+}
+
+std::string PlotObjectBase::getName() const
+{
+    return name_.data;
+}
+
+std::pair<Vec3d, Vec3d> PlotObjectBase::getMinMaxVectors()
+{
+    if (!min_max_calculated_)
+    {
+        min_max_calculated_ = true;
+        findMinMax();
+    }
+    return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
+}
+
+size_t PlotObjectBase::getNumDimensions() const
+{
+    return num_dimensions_;
 }
 
 void PlotObjectBase::setTransform(const MatrixFixed<double, 3, 3>& rotation,
