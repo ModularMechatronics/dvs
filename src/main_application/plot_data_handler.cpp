@@ -89,27 +89,21 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
         old_plot_datas_.clear();
     }
 
-    /*if (fcn == internal::Function::PROPERTIES_EXTENSION)
-    {
-        propertiesExtension(hdr);
-
-        return;
-    }*/
-
     Properties props;
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
         const internal::ItemId id = hdr.value<internal::ItemId>();
 
-        const auto q = std::find_if(plot_datas_.begin(),
-                                    plot_datas_.end(),
-                                    [&id](const PlotObjectBase* const pd) -> bool { return pd->getId() == id; });
         if (!awaiting_properties_[static_cast<int>(id)].isEmpty())
         {
             props.appendAndOverwriteProperties(awaiting_properties_[static_cast<int>(id)]);
             awaiting_properties_[static_cast<int>(id)].clear();
         }
+
+        const auto q = std::find_if(plot_datas_.begin(),
+                                    plot_datas_.end(),
+                                    [&id](const PlotObjectBase* const pd) -> bool { return pd->getId() == id; });
 
         if (q != plot_datas_.end())
         {
