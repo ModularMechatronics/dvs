@@ -142,12 +142,18 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                 new Plot3D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
             break;
 
-            /*case Function::FAST_PLOT2:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new FastPlot2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
+        case Function::FAST_PLOT2:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new FastPlot2D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
+            break;
 
-            case Function::LINE_COLLECTION2:
+        case Function::FAST_PLOT3:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new FastPlot3D(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
+
+            break;
+
+            /*case Function::LINE_COLLECTION2:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new LineCollection2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;
@@ -155,11 +161,6 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
             case Function::LINE_COLLECTION3:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new LineCollection3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
-
-            case Function::FAST_PLOT3:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new FastPlot3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;*/
 
         case Function::STEM:

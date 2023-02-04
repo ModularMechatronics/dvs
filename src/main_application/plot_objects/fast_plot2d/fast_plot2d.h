@@ -12,22 +12,27 @@
 
 class FastPlot2D : public PlotObjectBase
 {
-private:
-    VertexBuffer vertex_buffer_;
-
-    void findMinMax() override;
-
 public:
     FastPlot2D();
-    FastPlot2D(std::unique_ptr<const ReceivedData> received_data,
-               const CommunicationHeader& hdr,
+    FastPlot2D(const CommunicationHeader& hdr,
+               ReceivedData& received_data,
+               const std::unique_ptr<const ConvertedDataBase>& converted_data,
                const Properties& props,
-               const ShaderCollection shader_collection, ColorPicker& color_picker);
+               const ShaderCollection shader_collection,
+               ColorPicker& color_picker);
     ~FastPlot2D();
 
     LegendProperties getLegendProperties() const override;
 
     void render() override;
+
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const uint8_t* const data_ptr);
+
+private:
+    VertexBuffer vertex_buffer_;
+
+    void findMinMax() override;
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_FAST_PLOT2D_FAST_PLOT2D_H_

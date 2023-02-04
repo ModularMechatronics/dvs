@@ -100,12 +100,15 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             converted_data = Plot3D::convertRawData(attributes, received_data.data());
             break;
 
-            /*case Function::FAST_PLOT2:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new FastPlot2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
+        case Function::FAST_PLOT2:
+            converted_data = FastPlot2D::convertRawData(attributes, received_data.data());
+            break;
 
-            case Function::LINE_COLLECTION2:
+        case Function::FAST_PLOT3:
+            converted_data = FastPlot3D::convertRawData(attributes, received_data.data());
+            break;
+
+            /*case Function::LINE_COLLECTION2:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new LineCollection2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;
@@ -113,11 +116,6 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             case Function::LINE_COLLECTION3:
                 plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
                     new LineCollection3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
-
-            case Function::FAST_PLOT3:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new FastPlot3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
                 break;*/
 
         case Function::STEM:
