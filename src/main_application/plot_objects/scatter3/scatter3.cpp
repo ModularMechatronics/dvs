@@ -67,7 +67,7 @@ Scatter3D::Scatter3D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::POINTS}
 {
-    if (type_ != Function::SCATTER3)
+    if (function_ != Function::SCATTER3)
     {
         throw std::runtime_error("Invalid function type for Scatter3D!");
     }

@@ -86,7 +86,7 @@ ImShow::ImShow(const CommunicationHeader& hdr,
       vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 
 {
-    if (type_ != Function::IM_SHOW)
+    if (function_ != Function::IM_SHOW)
     {
         throw std::runtime_error("Invalid function type for ImShow!");
     }

@@ -51,7 +51,7 @@ FastPlot2D::FastPlot2D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
-    if (type_ != Function::FAST_PLOT2)
+    if (function_ != Function::FAST_PLOT2)
     {
         throw std::runtime_error("Invalid function type for FastPlot2D!");
     }

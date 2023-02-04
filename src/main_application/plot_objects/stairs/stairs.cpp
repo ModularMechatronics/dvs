@@ -52,7 +52,7 @@ Stairs::Stairs(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
-    if (type_ != Function::STAIRS)
+    if (function_ != Function::STAIRS)
     {
         throw std::runtime_error("Invalid function type for Stairs!");
     }

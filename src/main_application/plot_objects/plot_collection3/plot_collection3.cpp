@@ -129,7 +129,7 @@ PlotCollection3D::PlotCollection3D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINES}
 {
-    if (type_ != Function::PLOT_COLLECTION3)
+    if (function_ != Function::PLOT_COLLECTION3)
     {
         throw std::runtime_error("Invalid function type for PlotCollection3D!");
     }

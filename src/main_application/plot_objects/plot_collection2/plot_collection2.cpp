@@ -122,7 +122,7 @@ PlotCollection2D::PlotCollection2D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINES}
 {
-    if (type_ != Function::PLOT_COLLECTION2)
+    if (function_ != Function::PLOT_COLLECTION2)
     {
         throw std::runtime_error("Invalid function type for PlotCollection2D!");
     }

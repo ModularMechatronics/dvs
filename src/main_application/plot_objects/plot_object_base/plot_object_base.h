@@ -130,11 +130,13 @@ protected:
     static constexpr size_t kDefaultBufferSize = 500U;
     ReceivedData received_data_;
 
+    uint8_t* data_ptr_;
+
     size_t num_dimensions_;
     size_t num_bytes_per_element_;
     uint32_t num_elements_;
     uint64_t num_bytes_for_one_vec_;
-    uint8_t* data_ptr_;
+
     bool has_color_;
     bool has_distance_from_;
     DistanceFrom distance_from_;
@@ -146,7 +148,7 @@ protected:
     glm::mat4 custom_translation_;
     glm::mat4 custom_scale_;
 
-    Function type_;
+    Function function_;
     DataType data_type_;
 
     Vec3d min_vec;
@@ -196,9 +198,9 @@ public:
                    ColorPicker& color_picker);
     virtual void render() = 0;
     void preRender(const Shader shader_to_use);
-    virtual bool affectsColormapMinMax() const
+    bool affectsColormapMinMax() const
     {
-        return false;  // TODO: Should just return "color_map_set_"
+        return color_map_set_;
     }
 
     void setTransform(const MatrixFixed<double, 3, 3>& rotation,
@@ -214,7 +216,6 @@ public:
 
     bool isPersistent() const;
     std::string getName() const;
-    std::string_view getNameStringView() const;
 
     virtual LegendProperties getLegendProperties() const
     {
@@ -228,16 +229,6 @@ public:
                                    const CommunicationHeader& hdr,
                                    const std::unique_ptr<const ConvertedDataBase>& converted_data,
                                    const Properties& props);
-
-    Function getType() const
-    {
-        return type_;
-    }
-
-    RGBTripletf getColor() const
-    {
-        return color_;
-    }
 
     bool hasName()
     {

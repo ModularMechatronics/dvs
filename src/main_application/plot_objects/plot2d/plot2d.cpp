@@ -87,7 +87,7 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
-    if (type_ != Function::PLOT2)
+    if (function_ != Function::PLOT2)
     {
         throw std::runtime_error("Invalid function type for Plot2D!");
     }

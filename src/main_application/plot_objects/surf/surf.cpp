@@ -69,7 +69,7 @@ Surf::Surf(const CommunicationHeader& hdr,
       vertex_buffer_{OGLPrimitiveType::TRIANGLES},
       vertex_buffer_lines_{OGLPrimitiveType::LINES}
 {
-    if (type_ != Function::SURF)
+    if (function_ != Function::SURF)
     {
         throw std::runtime_error("Invalid function type for Surf!");
     }
@@ -145,11 +145,6 @@ void Surf::updateWithNewData(ReceivedData& received_data,
     delete[] converted_data->points_ptr;
     delete[] converted_data->normals_ptr;
     delete[] converted_data->mean_height_ptr;*/
-}
-
-bool Surf::affectsColormapMinMax() const
-{
-    return color_map_set_;
 }
 
 void Surf::render()
