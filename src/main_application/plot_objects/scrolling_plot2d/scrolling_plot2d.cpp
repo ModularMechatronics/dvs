@@ -4,10 +4,19 @@
 
 namespace
 {
-struct OutputData
+struct ConvertedData : ConvertedDataBase
 {
     float dt;
     float x;
+
+    ConvertedData() : dt{0.0f}, x{0.0f} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override {}
 };
 
 struct InputParams
@@ -15,11 +24,13 @@ struct InputParams
     InputParams() = default;
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -27,16 +38,20 @@ struct Converter
 
 }  // namespace
 
-ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_data,
-                                 const CommunicationHeader& hdr,
+ScrollingPlot2D::ScrollingPlot2D(const CommunicationHeader& hdr,
+                                 ReceivedData& received_data,
+                                 const std::unique_ptr<const ConvertedDataBase>& converted_data,
                                  const Properties& props,
-                                 const ShaderCollection shader_collection, ColorPicker& color_picker)
+                                 const ShaderCollection shader_collection,
+                                 ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker)
 {
     if (type_ != Function::REAL_TIME_PLOT)
     {
         throw std::runtime_error("Invalid function type for ScrollingPlot2D!");
     }
+
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
     num_elements_to_draw_ = 1U;
 
@@ -48,10 +63,7 @@ ScrollingPlot2D::ScrollingPlot2D(std::unique_ptr<const ReceivedData> received_da
     std::memset(dt_vec_, 0, num_bytes / 2U);
     previous_buffer_size_ = buffer_size_;
 
-    const InputParams input_params{};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
-
-    points_ptr_[1U] = output_data.x;
+    points_ptr_[1U] = converted_data_local->x;
 
     glGenVertexArrays(1, &sp_vertex_buffer_array_);
     glBindVertexArray(sp_vertex_buffer_array_);
@@ -102,11 +114,25 @@ LegendProperties ScrollingPlot2D::getLegendProperties() const
     return lp;
 }
 
-void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> received_data,
+std::unique_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const PlotObjectAttributes& attributes,
+                                                                         const uint8_t* const data_ptr)
+{
+    const InputParams input_params{};
+
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
+
+    return converted_data_base;
+}
+
+void ScrollingPlot2D::updateWithNewData(ReceivedData& received_data,
                                         const CommunicationHeader& hdr,
+                                        const std::unique_ptr<const ConvertedDataBase>& converted_data,
                                         const Properties& props)
 {
     static_cast<void>(hdr);
+
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
     if (props.numProperties() > 0U)
     {
@@ -149,10 +175,7 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
         previous_buffer_size_ = buffer_size_;
     }
 
-    data_ptr_ = received_data->data();
-
-    const InputParams input_params{};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    data_ptr_ = received_data.data();
 
     num_elements_to_draw_ = (num_elements_to_draw_ + 1U) > buffer_size_ ? buffer_size_ : (num_elements_to_draw_ + 1U);
     int idx = 0;
@@ -171,7 +194,7 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
         idx += 1;
     }
 
-    dt_vec_[0U] = output_data.dt;
+    dt_vec_[0U] = converted_data_local->dt;
 
     idx = 0;
     for (size_t k = 0; k < buffer_size_; k++)
@@ -180,7 +203,7 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
         idx += 2;
     }
 
-    points_ptr_[1U] = output_data.x;
+    points_ptr_[1U] = converted_data_local->x;
 
     const size_t num_bytes_to_replace = buffer_size_ * 2U * sizeof(float);
 
@@ -191,7 +214,8 @@ void ScrollingPlot2D::updateWithNewData(std::unique_ptr<const ReceivedData> rece
 namespace
 {
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     static_cast<void>(input_params);
 
@@ -202,11 +226,11 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
     std::memcpy(dt_ptr, input_data, sizeof(T));
     std::memcpy(x_ptr, input_data + sizeof(T), sizeof(T));
 
-    OutputData output_data;
-    output_data.dt = dt;
-    output_data.x = x;
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->dt = dt;
+    converted_data->x = x;
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>(converted_data);
 }
 
 }  // namespace

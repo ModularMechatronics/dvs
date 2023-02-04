@@ -62,10 +62,17 @@ struct PlotObjectAttributes
     PlotObjectAttributes(const CommunicationHeader& hdr)
     {
         function = hdr.getFunction();
-        data_type = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
 
-        num_bytes_per_element = dataTypeToNumBytes(data_type);
-        num_elements = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DATA_TYPE))
+        {
+            data_type = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
+            num_bytes_per_element = dataTypeToNumBytes(data_type);
+        }
+
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_ELEMENTS))
+        {
+            num_elements = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
+        }
 
         num_dimensions = getNumDimensionsFromFunction(function);
 
@@ -209,6 +216,7 @@ public:
 
     virtual void updateWithNewData(ReceivedData& received_data,
                                    const CommunicationHeader& hdr,
+                                   const std::unique_ptr<const ConvertedDataBase>& converted_data,
                                    const Properties& props);
 
     Function getType() const
