@@ -676,7 +676,7 @@ public:
         return objects_;
     }
 
-    const PropertiesArray& getProperties() const
+    const PropertiesArray& getPropertiesObjects() const
     {
         return props_;
     }

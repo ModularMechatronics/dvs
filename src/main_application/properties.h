@@ -76,9 +76,7 @@ private:
 
 public:
     Properties();
-    Properties(const dvs::internal::CommunicationHeader::PropertiesArray& props,
-               const dvs::internal::PropertyLookupTable& props_lut,
-               const dvs::internal::CommunicationHeader::FlagsArray& flags);
+    Properties(const dvs::internal::CommunicationHeader& hdr);
     bool hasProperty(const dvs::internal::PropertyType tp) const;
     bool hasFlag(const dvs::internal::PropertyFlag f) const;
     void appendAndOverwriteProperties(const Properties& other_props);

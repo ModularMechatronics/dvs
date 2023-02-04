@@ -115,7 +115,7 @@ struct PlotObjectAttributes
             num_objects = hdr.get(CommunicationHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
         }
 
-        const Properties props{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()};
+        const Properties props{hdr};
 
         if (props.hasProperty(PropertyType::Z_OFFSET))
         {
@@ -129,6 +129,7 @@ class PlotObjectBase
 protected:
     static constexpr size_t kDefaultBufferSize = 500U;
     ReceivedData received_data_;
+
     size_t num_dimensions_;
     size_t num_bytes_per_element_;
     uint32_t num_elements_;

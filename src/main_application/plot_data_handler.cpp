@@ -55,7 +55,7 @@ void PlotDataHandler::propertiesExtension(const CommunicationHeader& hdr)
         throw std::runtime_error("No id provided for updatable function!");
     }
     const internal::ItemId id = hdr.value<internal::ItemId>();
-    const Properties props(hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags());
+    const Properties props(hdr);
 
     const auto q = std::find_if(plot_datas_.begin(), plot_datas_.end(), [&id](const PlotObjectBase* const pd) -> bool {
         return pd->getId() == id;
@@ -107,7 +107,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
 
         if (q != plot_datas_.end())
         {
-            const Properties new_properties{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()};
+            const Properties new_properties{hdr};
             if (!new_properties.isEmpty())
             {
                 props.appendAndOverwriteProperties(new_properties);
@@ -117,7 +117,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
         }
     }
 
-    props.appendAndOverwriteProperties(Properties{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()});
+    props.appendAndOverwriteProperties(Properties{hdr});
 
     switch (fcn)
     {
