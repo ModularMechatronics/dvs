@@ -11,10 +11,8 @@ Properties::Properties()
     this->clear();
 }
 
-Properties::Properties(const CommunicationHeader::PropertiesArray& props,
-                       const dvs::internal::PropertyLookupTable& props_lut,
-                       const CommunicationHeader::FlagsArray& flags)
-    : props_{props}, props_lut_{props_lut}, flags_{flags}
+Properties::Properties(const CommunicationHeader& hdr)
+    : props_{hdr.getPropertiesObjects()}, props_lut_{hdr.getPropertyLookupTable()}, flags_{hdr.getFlags()}
 {
 }
 
