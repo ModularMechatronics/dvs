@@ -108,15 +108,13 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
             converted_data = FastPlot3D::convertRawData(attributes, received_data.data());
             break;
 
-            /*case Function::LINE_COLLECTION2:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new LineCollection2D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;
+        case Function::LINE_COLLECTION2:
+            converted_data = LineCollection2D::convertRawData(attributes, received_data.data());
+            break;
 
-            case Function::LINE_COLLECTION3:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new LineCollection3D(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;*/
+        case Function::LINE_COLLECTION3:
+            converted_data = LineCollection3D::convertRawData(attributes, received_data.data());
+            break;
 
         case Function::STEM:
             converted_data = Stem::convertRawData(attributes, received_data.data());
