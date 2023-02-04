@@ -3,7 +3,7 @@
 
 // clang-format off
 
-// #include "plot_objects/stairs/stairs.h"
+#include "plot_objects/stairs/stairs.h"
 #include "plot_objects/plot2d/plot2d.h"
 #include "plot_objects/plot3d/plot3d.h"
 // #include "plot_objects/fast_plot2d/fast_plot2d.h"

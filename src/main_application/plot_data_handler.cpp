@@ -127,10 +127,10 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
 
     switch (fcn)
     {
-            /*case Function::STAIRS:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Stairs(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;*/
+        case Function::STAIRS:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
+                new Stairs(hdr, received_data, converted_data, props, shader_collection_, color_picker_)));
+            break;
 
         case Function::PLOT2:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
