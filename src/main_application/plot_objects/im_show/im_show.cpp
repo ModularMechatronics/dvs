@@ -144,10 +144,7 @@ ImShow::~ImShow() {}
 std::unique_ptr<const ConvertedDataBase> ImShow::convertRawData(const PlotObjectAttributes& attributes,
                                                                 const uint8_t* const data_ptr)
 {
-    const InputParams input_params{attributes.num_channels,
-                                   attributes.dims,
-                                   0.0f,  // TODO: z_offset not present in attributes
-                                   attributes.data_type};
+    const InputParams input_params{attributes.num_channels, attributes.dims, attributes.z_offset, attributes.data_type};
 
     std::unique_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};

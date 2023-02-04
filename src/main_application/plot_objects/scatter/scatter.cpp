@@ -156,7 +156,7 @@ std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const PlotObj
                                    attributes.num_bytes_per_element,
                                    attributes.num_bytes_for_one_vec,
                                    attributes.has_color,
-                                   0.0f};  // TODO: z_offset not present in PlotObjectAttributes
+                                   attributes.z_offset};
 
     std::unique_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};

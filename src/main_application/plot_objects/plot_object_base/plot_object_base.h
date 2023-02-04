@@ -58,6 +58,8 @@ struct PlotObjectAttributes
 
     uint32_t num_objects;
 
+    float z_offset;
+
     PlotObjectAttributes() = delete;
     PlotObjectAttributes(const CommunicationHeader& hdr)
     {
@@ -111,6 +113,13 @@ struct PlotObjectAttributes
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_OBJECTS))
         {
             num_objects = hdr.get(CommunicationHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
+        }
+
+        const Properties props{hdr.getProperties(), hdr.getPropertyLookupTable(), hdr.getFlags()};
+
+        if (props.hasProperty(PropertyType::Z_OFFSET))
+        {
+            z_offset = props.getProperty<ZOffset>().data;
         }
     }
 };
