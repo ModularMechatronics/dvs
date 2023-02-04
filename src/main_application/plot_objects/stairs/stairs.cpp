@@ -4,9 +4,21 @@
 
 namespace
 {
-struct OutputData
+struct ConvertedData : ConvertedDataBase
 {
     float* points_ptr;
+
+    ConvertedData() : points_ptr{nullptr} {}
+
+    ConvertedData(const ConvertedData& other) = delete;
+    ConvertedData& operator=(const ConvertedData& other) = delete;
+    ConvertedData(ConvertedData&& other) = delete;
+    ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    ~ConvertedData() override
+    {
+        delete[] points_ptr;
+    }
 };
 
 struct InputParams
@@ -17,11 +29,13 @@ struct InputParams
     InputParams(const size_t num_elements_) : num_elements{num_elements_} {}
 };
 
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params);
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
-    template <class T> OutputData convert(const uint8_t* const input_data, const InputParams& input_params) const
+    template <class T>
+    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -29,10 +43,12 @@ struct Converter
 
 }  // namespace
 
-Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data,
-               const CommunicationHeader& hdr,
+Stairs::Stairs(const CommunicationHeader& hdr,
+               ReceivedData& received_data,
+               const std::unique_ptr<const ConvertedDataBase>& converted_data,
                const Properties& props,
-               const ShaderCollection shader_collection, ColorPicker& color_picker)
+               const ShaderCollection shader_collection,
+               ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
@@ -41,12 +57,20 @@ Stairs::Stairs(std::unique_ptr<const ReceivedData> received_data,
         throw std::runtime_error("Invalid function type for Stairs!");
     }
 
-    const InputParams input_params{num_elements_};
-    const OutputData output_data = applyConverter<OutputData>(data_ptr_, data_type_, Converter{}, input_params);
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    vertex_buffer_.addBuffer(output_data.points_ptr, (num_elements_ * 2 - 1), 2);
+    vertex_buffer_.addBuffer(converted_data_local->points_ptr, (num_elements_ * 2 - 1), 2);
+}
 
-    delete[] output_data.points_ptr;
+std::unique_ptr<const ConvertedDataBase> Stairs::convertRawData(const PlotObjectAttributes& attributes,
+                                                                const uint8_t* const data_ptr)
+{
+    const InputParams input_params{attributes.num_elements};
+
+    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
+
+    return converted_data_base;
 }
 
 void Stairs::findMinMax()
@@ -73,12 +97,13 @@ Stairs::~Stairs() {}
 
 namespace
 {
-template <typename T> OutputData convertData(const uint8_t* const input_data, const InputParams& input_params)
+template <typename T>
+std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t num_support_points = input_params.num_elements - 1;
 
-    OutputData output_data;
-    output_data.points_ptr = new float[2 * (input_params.num_elements + num_support_points)];
+    ConvertedData* converted_data = new ConvertedData;
+    converted_data->points_ptr = new float[2 * (input_params.num_elements + num_support_points)];
 
     const T* const input_data_dt_x = reinterpret_cast<const T* const>(input_data);
     const T* const input_data_dt_y = input_data_dt_x + input_params.num_elements;
@@ -87,19 +112,19 @@ template <typename T> OutputData convertData(const uint8_t* const input_data, co
 
     for (size_t k = 0; k < (input_params.num_elements - 1); k++)
     {
-        output_data.points_ptr[idx] = input_data_dt_x[k];
-        output_data.points_ptr[idx + 1] = input_data_dt_y[k];
+        converted_data->points_ptr[idx] = input_data_dt_x[k];
+        converted_data->points_ptr[idx + 1] = input_data_dt_y[k];
 
-        output_data.points_ptr[idx + 2] = input_data_dt_x[k + 1];
-        output_data.points_ptr[idx + 3] = input_data_dt_y[k];
+        converted_data->points_ptr[idx + 2] = input_data_dt_x[k + 1];
+        converted_data->points_ptr[idx + 3] = input_data_dt_y[k];
 
         idx += 4;
     }
 
-    output_data.points_ptr[idx] = input_data_dt_x[input_params.num_elements - 1U];
-    output_data.points_ptr[idx + 1] = input_data_dt_y[input_params.num_elements - 1U];
+    converted_data->points_ptr[idx] = input_data_dt_x[input_params.num_elements - 1U];
+    converted_data->points_ptr[idx + 1] = input_data_dt_y[input_params.num_elements - 1U];
 
-    return output_data;
+    return std::unique_ptr<ConvertedData>(converted_data);
 }
 
 }  // namespace

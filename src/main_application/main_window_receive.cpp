@@ -88,10 +88,9 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
 
     switch (fcn)
     {
-            /*case Function::STAIRS:
-                plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(
-                    new Stairs(std::move(received_data), hdr, props, shader_collection_, color_picker_)));
-                break;*/
+        case Function::STAIRS:
+            converted_data = Stairs::convertRawData(attributes, received_data.data());
+            break;
 
         case Function::PLOT2:
             converted_data = Plot2D::convertRawData(attributes, received_data.data());
