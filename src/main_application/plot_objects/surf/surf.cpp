@@ -174,7 +174,7 @@ void Surf::render()
     {
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_color_vec"),
                     static_cast<int>(0));
-        if (color_map_set_)
+        if (has_color_map_)
         {
             glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
                         static_cast<int>(color_map_) + 1);
@@ -224,14 +224,14 @@ LegendProperties Surf::getLegendProperties() const
     lp.type = LegendType::POLYGON;
     lp.edge_color = edge_color_;
 
-    if (color_map_set_)
+    if (has_color_map_)
     {
-        lp.color_map_set = true;
+        lp.has_color_map = true;
         lp.color_map = color_map_;
     }
     else
     {
-        lp.color_map_set = false;
+        lp.has_color_map = false;
         lp.face_color = face_color_;
     }
 

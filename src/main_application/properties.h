@@ -135,11 +135,6 @@ public:
     {
         return props_.usedSize();
     }
-
-    /*size_t numFlags() const
-    {
-        return flags_.size();
-    }*/
 };
 
 #endif  // MAIN_APPLICATION_PROPERTIES_H_

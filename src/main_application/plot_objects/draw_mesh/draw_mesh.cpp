@@ -134,7 +134,7 @@ void DrawMesh::render()
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
     glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "alpha"), alpha_);
 
-    if (color_map_set_)
+    if (has_color_map_)
     {
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
                     static_cast<int>(color_map_) + 1);
@@ -173,14 +173,14 @@ LegendProperties DrawMesh::getLegendProperties() const
     lp.type = LegendType::POLYGON;
     lp.edge_color = edge_color_;
 
-    if (color_map_set_)
+    if (has_color_map_)
     {
-        lp.color_map_set = true;
+        lp.has_color_map = true;
         lp.color_map = color_map_;
     }
     else
     {
-        lp.color_map_set = false;
+        lp.has_color_map = false;
         lp.face_color = face_color_;
     }
 

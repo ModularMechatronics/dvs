@@ -136,7 +136,7 @@ void ScrollingPlot2D::updateWithNewData(ReceivedData& received_data,
 
     if (props.numProperties() > 0U)
     {
-        setProperties(props);
+        updateProperties(props);
     }
 
     if (previous_buffer_size_ != buffer_size_)

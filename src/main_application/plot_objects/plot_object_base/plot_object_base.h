@@ -25,7 +25,155 @@ using namespace dvs;
 using namespace dvs::internal;
 using namespace dvs::properties;
 
+static constexpr size_t kDefaultBufferSize = 500U;
+
 bool isPlotDataFunction(const Function fcn);
+
+struct PropertiesData
+{
+    PropertiesData() = default;
+    PropertiesData(const CommunicationHeader& hdr)
+    {
+        const Properties props{hdr};
+
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
+        {
+            id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
+        }
+        else
+        {
+            id = internal::ItemId::UNKNOWN;
+        }
+
+        // Flags
+        is_persistent = props.hasFlag(PropertyFlag::PERSISTENT);
+        interpolate_colormap = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP);
+        is_updateable = props.hasFlag(PropertyFlag::UPDATABLE);
+        dynamic_or_static_usage = is_updateable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+
+        // Properties
+        alpha = props.getPropertyOrValue<Alpha>(255.0f) / 255.0f;
+        buffer_size = props.getPropertyOrValue<BufferSize>(kDefaultBufferSize);
+        scatter_style = props.getPropertyOrValue<ScatterStyleContainer>(ScatterStyle::CIRCLE);
+        line_width = props.getPropertyOrValue<LineWidth>(1.0f);
+        point_size = props.getPropertyOrValue<PointSize>(10.0f);
+
+        z_offset = props.getPropertyOrValue<ZOffset>(0.0f);
+
+        if ((has_custom_transform = props.hasProperty(PropertyType::TRANSFORM)))
+        {
+            custom_transform = props.getProperty<Transform>();
+        }
+
+        if ((has_distance_from = props.hasProperty(PropertyType::DISTANCE_FROM)))
+        {
+            distance_from = props.getProperty<DistanceFrom>();
+        }
+
+        if ((has_name = props.hasProperty(PropertyType::NAME)))
+        {
+            name = props.getProperty<Name>().data;
+        }
+
+        if ((has_color = props.hasProperty(PropertyType::COLOR)))
+        {
+            const Color col = props.getProperty<Color>();
+            color.red = static_cast<float>(col.red) / 255.0f;
+            color.green = static_cast<float>(col.green) / 255.0f;
+            color.blue = static_cast<float>(col.blue) / 255.0f;
+        }
+
+        if ((has_color_map = props.hasProperty(PropertyType::COLOR_MAP)))
+        {
+            color_map = props.getProperty<ColorMapContainer>().data;
+            edge_color = RGBTripletf(0.0f, 0.0f, 0.0f);
+        }
+
+        if (props.hasProperty(PropertyType::EDGE_COLOR))
+        {
+            const EdgeColor ec = props.getProperty<EdgeColor>();
+
+            if (ec.use_color)
+            {
+                edge_color.red = static_cast<float>(ec.red) / 255.0f;
+                edge_color.green = static_cast<float>(ec.green) / 255.0f;
+                edge_color.blue = static_cast<float>(ec.blue) / 255.0f;
+                has_edge_color = true;
+            }
+            else
+            {
+                has_edge_color = false;
+            }
+        }
+        else
+        {
+            edge_color = RGBTripletf(0.0f, 0.0f, 0.0f);
+            has_edge_color = true;
+        }
+
+        if (props.hasProperty(PropertyType::FACE_COLOR))
+        {
+            const FaceColor fc = props.getProperty<FaceColor>();
+
+            if (fc.use_color)
+            {
+                face_color.red = static_cast<float>(fc.red) / 255.0f;
+                face_color.green = static_cast<float>(fc.green) / 255.0f;
+                face_color.blue = static_cast<float>(fc.blue) / 255.0f;
+                has_face_color = true;
+            }
+            else
+            {
+                has_face_color = false;
+            }
+        }
+
+        if ((has_line_style = props.hasProperty(PropertyType::LINE_STYLE)))
+        {
+            line_style = props.getProperty<LineStyleContainer>().data;
+        }
+    }
+
+    std::string name;
+    bool has_name;
+
+    RGBTripletf color;
+    bool has_color;
+
+    RGBTripletf edge_color;
+    RGBTripletf face_color;
+    size_t buffer_size;
+
+    bool has_distance_from;
+    DistanceFrom distance_from;
+
+    bool has_custom_transform;
+    Transform custom_transform;
+
+    float z_offset;
+
+    bool has_edge_color;
+    bool has_face_color;
+
+    ColorMap color_map;
+    bool has_color_map;
+
+    LineStyle line_style;
+    bool has_line_style;
+
+    ScatterStyle scatter_style;
+
+    float alpha;
+    float line_width;
+    float point_size;
+
+    bool is_persistent;
+    bool is_updateable;
+    GLenum dynamic_or_static_usage;
+    bool interpolate_colormap;
+
+    internal::ItemId id;
+};
 
 struct ConvertedDataBase
 {
@@ -36,6 +184,8 @@ struct ConvertedDataBase
 
 struct PlotObjectAttributes
 {
+    PropertiesData properties_data;
+
     Function function;
     DataType data_type;
 
@@ -61,10 +211,8 @@ struct PlotObjectAttributes
     float z_offset;
 
     PlotObjectAttributes() = delete;
-    PlotObjectAttributes(const CommunicationHeader& hdr)
+    PlotObjectAttributes(const CommunicationHeader& hdr) : properties_data{hdr}, function{hdr.getFunction()}
     {
-        function = hdr.getFunction();
-
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DATA_TYPE))
         {
             data_type = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
@@ -78,14 +226,7 @@ struct PlotObjectAttributes
 
         num_dimensions = getNumDimensionsFromFunction(function);
 
-        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
-        {
-            id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
-        }
-        else
-        {
-            id = internal::ItemId::UNKNOWN;
-        }
+        id = properties_data.id;
 
         has_color = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
         num_bytes_for_one_vec = num_bytes_per_element * num_elements;
@@ -115,19 +256,13 @@ struct PlotObjectAttributes
             num_objects = hdr.get(CommunicationHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
         }
 
-        const Properties props{hdr};
-
-        if (props.hasProperty(PropertyType::Z_OFFSET))
-        {
-            z_offset = props.getProperty<ZOffset>().data;
-        }
+        z_offset = properties_data.z_offset;
     }
 };
 
 class PlotObjectBase
 {
 protected:
-    static constexpr size_t kDefaultBufferSize = 500U;
     ReceivedData received_data_;
 
     uint8_t* data_ptr_;
@@ -137,48 +272,56 @@ protected:
     uint32_t num_elements_;
     uint64_t num_bytes_for_one_vec_;
 
-    bool has_color_;
-    bool has_distance_from_;
-    DistanceFrom distance_from_;
-    bool has_custom_transform_;
-
-    float z_offset_;
-
-    glm::mat4 custom_rotation_;
-    glm::mat4 custom_translation_;
-    glm::mat4 custom_scale_;
-
     Function function_;
     DataType data_type_;
 
     Vec3d min_vec;
     Vec3d max_vec;
+    bool min_max_calculated_;
+    ShaderCollection shader_collection_;
 
     // Properties
     Name name_;
+
     RGBTripletf color_;
+    bool has_color_;
+
     RGBTripletf edge_color_;
     RGBTripletf face_color_;
     size_t buffer_size_;
+
+    bool has_distance_from_;
+    DistanceFrom distance_from_;
+
+    bool has_custom_transform_;
+    glm::mat4 custom_rotation_;
+    glm::mat4 custom_translation_;
+    glm::mat4 custom_scale_;
+
+    float z_offset_;
 
     bool has_edge_color_;
     bool has_face_color_;
 
     ColorMap color_map_;
+    bool has_color_map_;
+
     LineStyle line_style_;
-    int is_dashed_;
+    bool has_line_style_;
+
     ScatterStyle scatter_style_;
+
     float alpha_;
     float line_width_;
     float point_size_;
+
     bool is_persistent_;
     bool is_updateable_;
-    GLenum usage_;
+    GLenum dynamic_or_static_usage_;
     bool interpolate_colormap_;
-    bool min_max_calculated_;
+
     bool has_name_;
-    bool color_map_set_;
-    ShaderCollection shader_collection_;
+
     internal::ItemId id_;
 
     void assignProperties(const Properties& props, ColorPicker& color_picker);
@@ -200,7 +343,7 @@ public:
     void preRender(const Shader shader_to_use);
     bool affectsColormapMinMax() const
     {
-        return color_map_set_;
+        return has_color_map_;
     }
 
     void setTransform(const MatrixFixed<double, 3, 3>& rotation,
@@ -237,7 +380,7 @@ public:
 
     virtual void modifyShader();
 
-    void setProperties(const Properties& props);
+    void updateProperties(const Properties& props);
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_

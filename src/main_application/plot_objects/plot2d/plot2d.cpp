@@ -96,7 +96,7 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
 
     num_points_ = converted_data_local->num_points;
 
-    if (is_dashed_)
+    if (has_line_style_)
     {
         if (line_style_ == properties::LineStyle::DASHED)
         {
@@ -115,12 +115,12 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
         }
     }
 
-    vertex_buffer_.addBuffer(converted_data_local->p0, num_points_, 2, usage_);
-    vertex_buffer_.addBuffer(converted_data_local->p1, num_points_, 2, usage_);
-    vertex_buffer_.addBuffer(converted_data_local->p2, num_points_, 2, usage_);
+    vertex_buffer_.addBuffer(converted_data_local->p0, num_points_, 2, dynamic_or_static_usage_);
+    vertex_buffer_.addBuffer(converted_data_local->p1, num_points_, 2, dynamic_or_static_usage_);
+    vertex_buffer_.addBuffer(converted_data_local->p2, num_points_, 2, dynamic_or_static_usage_);
 
-    vertex_buffer_.addBuffer(converted_data_local->idx_data, num_points_, 1, usage_);
-    vertex_buffer_.addBuffer(converted_data_local->length_along, num_points_, 1, usage_);
+    vertex_buffer_.addBuffer(converted_data_local->idx_data, num_points_, 1, dynamic_or_static_usage_);
+    vertex_buffer_.addBuffer(converted_data_local->length_along, num_points_, 1, dynamic_or_static_usage_);
 
     if (has_color_)
     {

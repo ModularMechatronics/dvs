@@ -25,7 +25,7 @@ struct LegendProperties
     RGBTripletf edge_color;
     RGBTripletf face_color;
     dvs::properties::ColorMap color_map;
-    bool color_map_set;
+    bool has_color_map;
 
     float point_size;
     dvs::properties::ScatterStyle scatter_style;
