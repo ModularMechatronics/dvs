@@ -66,7 +66,7 @@ void PlotDataHandler::propertiesExtension(const CommunicationHeader& hdr)
     }
     else
     {
-        (*q)->setProperties(props);
+        (*q)->updateProperties(props);
     }
 }
 

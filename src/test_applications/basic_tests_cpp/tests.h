@@ -432,7 +432,7 @@ void testPlotCollection3()
     plotCollection3(pcm_x, pcm_y, pcm_z, properties::Color(0, 0, 0));
 }
 
-void testPlot()
+void testPlot3_()
 {
     const size_t num_elements = 50;
 
@@ -484,7 +484,7 @@ void testPlot2()
     // flushCurrentElement();
 }
 
-void testPlot_TMP()
+void testPlot()
 {
     const size_t num_elements = 30;
     Vector<float> x(num_elements), y(num_elements), z(num_elements);

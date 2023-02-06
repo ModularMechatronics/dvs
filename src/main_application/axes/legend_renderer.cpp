@@ -219,7 +219,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
         }
         else if (legend_properties[k].type == LegendType::POLYGON)
         {
-            if (legend_properties[k].color_map_set)
+            if (legend_properties[k].has_color_map)
             {
                 glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "color_map_selection"),
                             static_cast<int>(legend_properties[k].color_map) + 1);

@@ -73,17 +73,17 @@ void PlotObjectBase::postInitialize(ReceivedData& received_data,
 
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
-    setProperties(props);
+    updateProperties(props);
 }
 
-void PlotObjectBase::setProperties(const Properties& props)
+void PlotObjectBase::updateProperties(const Properties& props)
 {
     // Flags
     is_persistent_ = props.hasFlag(PropertyFlag::PERSISTENT) || is_persistent_;
     interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP) || interpolate_colormap_;
     is_updateable_ = props.hasFlag(PropertyFlag::UPDATABLE) || is_updateable_;
 
-    usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+    dynamic_or_static_usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
     // Properties
     if (props.hasProperty(PropertyType::ALPHA))
@@ -147,7 +147,7 @@ void PlotObjectBase::setProperties(const Properties& props)
     if (props.hasProperty(PropertyType::COLOR_MAP))
     {
         color_map_ = props.getProperty<ColorMapContainer>().data;
-        color_map_set_ = true;
+        has_color_map_ = true;
         edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
     }
 
@@ -188,7 +188,7 @@ void PlotObjectBase::setProperties(const Properties& props)
     if (props.hasProperty(PropertyType::LINE_STYLE))
     {
         line_style_ = props.getProperty<LineStyle>();
-        is_dashed_ = 1;
+        has_line_style_ = true;
     }
 }
 
@@ -303,7 +303,7 @@ void PlotObjectBase::assignProperties(const Properties& props, ColorPicker& colo
     interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP);
     is_updateable_ = props.hasFlag(PropertyFlag::UPDATABLE);
 
-    usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+    dynamic_or_static_usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
     // Properties
     alpha_ = props.getPropertyOrValue<Alpha>(255.0f) / 255.0f;
@@ -357,12 +357,12 @@ void PlotObjectBase::assignProperties(const Properties& props, ColorPicker& colo
     if (props.hasProperty(PropertyType::COLOR_MAP))
     {
         color_map_ = props.getProperty<ColorMapContainer>().data;
-        color_map_set_ = true;
+        has_color_map_ = true;
         edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
     }
     else
     {
-        color_map_set_ = false;
+        has_color_map_ = false;
     }
 
     if (props.hasProperty(PropertyType::EDGE_COLOR))
@@ -411,11 +411,11 @@ void PlotObjectBase::assignProperties(const Properties& props, ColorPicker& colo
     if (props.hasProperty(PropertyType::LINE_STYLE))
     {
         line_style_ = props.getProperty<LineStyleContainer>().data;
-        is_dashed_ = 1;
+        has_line_style_ = true;
     }
     else
     {
-        is_dashed_ = 0;
+        has_line_style_ = false;
     }
 }
 
