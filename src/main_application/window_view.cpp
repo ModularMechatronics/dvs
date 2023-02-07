@@ -22,8 +22,8 @@ WindowView::WindowView(wxFrame* main_window,
                    }},
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
       notify_main_window_key_released_{notify_main_window_key_released},
-      get_all_element_names_{get_all_element_names},
       notify_main_window_element_deleted_{notify_main_window_element_deleted},
+      get_all_element_names_{get_all_element_names},
       help_pane_{this, wxPoint(150, 150), wxSize(100, 100), this->GetSize()}
 {
     project_name_ = project_name;
@@ -31,6 +31,10 @@ WindowView::WindowView(wxFrame* main_window,
     current_tab_num_ = 0;
     callback_id_ = callback_id;
     dialog_color_ = RGBTripletf(0.5, 0.0, 0.0);
+
+    notify_parent_window_right_mouse_pressed_ = [this](const wxPoint pos, const std::string& item_name) {
+        mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
+    };
 
     this->SetLabel(window_settings.name + " [" + project_name_ + "]");
     name_ = window_settings.name;
@@ -40,15 +44,12 @@ WindowView::WindowView(wxFrame* main_window,
         element_x_offset_ = 0;
         TabSettings tab_settings;
         tab_settings.name = "Tab " + std::to_string(current_tab_num_);
-        tabs_.push_back(new WindowTab(
-            this,
-            tab_settings,
-            notify_main_window_key_pressed,
-            notify_main_window_key_released,
-            [this](const wxPoint pos, const std::string& item_name) {
-                mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
-            },
-            notify_main_window_element_deleted_));
+        tabs_.push_back(new WindowTab(this,
+                                      tab_settings,
+                                      notify_main_window_key_pressed,
+                                      notify_main_window_key_released,
+                                      notify_parent_window_right_mouse_pressed_,
+                                      notify_main_window_element_deleted_));
         tab_buttons_.addNewTab(tab_settings.name);
         tab_buttons_.setSelection(tab_settings.name);
         SetBackgroundColour(wxColour(tab_settings.background_color.red * 255.0f,
@@ -69,15 +70,12 @@ WindowView::WindowView(wxFrame* main_window,
 
         for (size_t k = 0; k < window_settings.tabs.size(); k++)
         {
-            tabs_.push_back(new WindowTab(
-                this,
-                window_settings.tabs[k],
-                notify_main_window_key_pressed,
-                notify_main_window_key_released,
-                [this](const wxPoint pos, const std::string& item_name) {
-                    mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
-                },
-                notify_main_window_element_deleted_));
+            tabs_.push_back(new WindowTab(this,
+                                          window_settings.tabs[k],
+                                          notify_main_window_key_pressed,
+                                          notify_main_window_key_released,
+                                          notify_parent_window_right_mouse_pressed_,
+                                          notify_main_window_element_deleted_));
             current_tab_num_++;
         }
     }
@@ -378,15 +376,12 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
     current_tab_num_++;
     element_x_offset_ = 70;
 
-    tabs_.push_back(new WindowTab(
-        this,
-        tab_settings,
-        notify_main_window_key_pressed_,
-        notify_main_window_key_released_,
-        [this](const wxPoint pos, const std::string& item_name) {
-            mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
-        },
-        notify_main_window_element_deleted_));
+    tabs_.push_back(new WindowTab(this,
+                                  tab_settings,
+                                  notify_main_window_key_pressed_,
+                                  notify_main_window_key_released_,
+                                  notify_parent_window_right_mouse_pressed_,
+                                  notify_main_window_element_deleted_));
     tab_buttons_.addNewTab(tab_settings.name);
 
     for (const auto& t : tabs_)
