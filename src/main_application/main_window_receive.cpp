@@ -192,7 +192,7 @@ void MainWindow::receiveThreadFunction()
         const Function fcn = received_data.getFunction();
 
         {
-            const std::lock_guard<std::mutex> lg(reveive_mtx_);
+            const std::lock_guard<std::mutex> lg(receive_mtx_);
 
             if (fcn == Function::CREATE_NEW_ELEMENT)
             {
@@ -212,14 +212,6 @@ void MainWindow::receiveThreadFunction()
                 addActionToQueue(received_data);
             }
         }
-    }
-}
-
-void MainWindow::setWaitForFlush()
-{
-    if (currentGuiElementSet())
-    {
-        current_gui_element_->waitForFlush();
     }
 }
 
@@ -271,52 +263,6 @@ void MainWindow::createNewElement(const CommunicationHeader& hdr)
 
         newNamedElement(element_name_str);
     }*/
-}
-
-bool MainWindow::currentGuiElementSet() const
-{
-    return current_gui_element_ != nullptr;
-}
-
-void MainWindow::queryUdpThreadFunction()
-{
-    std::cout << "Starting query server " << std::endl;
-    char send_data[256];
-
-    while (1)
-    {
-        std::cout << "Starting receive " << std::endl;
-        query_udp_server_->receive();
-        std::unique_ptr<const ReceivedData> received_data = query_udp_server_->getReceivedData();
-
-        if (received_data)
-        {
-            size_t num_objects_in_buf2;
-            {
-                const std::lock_guard<std::mutex> lg(udp_mtx_);
-                num_objects_in_buf2 = udp_server_->numObjectsInReceiveBuffer();
-            }
-
-            const size_t num_objects_in_buf = 82342;
-
-            std::cout << "Data had something! " << std::endl;
-            std::memcpy(send_data, &num_objects_in_buf, sizeof(size_t));
-
-            for (size_t k = 0; k < 50; k++)
-            {
-                usleep(1000 * 50);
-
-                query_udp_server_->sendData(send_data, sizeof(size_t));
-                query_udp_server_->sendData(send_data, sizeof(size_t));
-                query_udp_server_->sendData(send_data, sizeof(size_t));
-                query_udp_server_->sendData(send_data, sizeof(size_t));
-            }
-        }
-        else
-        {
-            std::cout << "Data contained nothing... " << std::endl;
-        }
-    }
 }
 
 void MainWindow::mainWindowFlushMultipleElements(const ReceivedData& received_data)
@@ -386,7 +332,7 @@ void MainWindow::receiveData()
     }
 
     {
-        const std::lock_guard<std::mutex> lg(reveive_mtx_);
+        const std::lock_guard<std::mutex> lg(receive_mtx_);
 
         for (auto& qa : queued_data_)
         {
