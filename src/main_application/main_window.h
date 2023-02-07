@@ -35,13 +35,10 @@ class WindowView;
 class MainWindow : public wxFrame
 {
 private:
-    std::atomic<bool> is_rendering_;
     SaveManager* save_manager_;
     ConfigurationAgent* configuration_agent_;
-    std::mutex udp_mtx_;
-    std::mutex reveive_mtx_;
+    std::mutex receive_mtx_;
 
-    std::thread* query_thread_;
     std::thread* receive_thread_;
     std::map<std::string, GuiElement*> gui_elements_;
 
@@ -49,32 +46,27 @@ private:
 
     std::atomic<bool> open_project_file_queued_;
     properties::Name queued_project_file_name_;
+
     std::string current_element_name_;
 
     UdpServer* udp_server_;
-    UdpServer* query_udp_server_;
     wxTimer receive_timer_;
     wxTimer refresh_timer_;
 
     std::vector<WindowView*> windows_;
-
-    GuiElement* current_gui_element_;
     int current_window_num_;
+    CustomTaskBarIcon* task_bar_;
+    int window_callback_id_;
 
     std::function<void(const char key)> notification_from_gui_element_key_pressed_;
     std::function<void(const char key)> notification_from_gui_element_key_released_;
     std::function<std::vector<std::string>(void)> get_all_element_names_;
     std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
 
-    CustomTaskBarIcon* task_bar_;
-
-    int window_callback_id_;
-
     void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
     void setCurrentElement(const ReceivedData& received_data);
     void createNewElement(const internal::CommunicationHeader& hdr);
-    void setWaitForFlush();
     void receiveData();
 
     bool hasWindowWithName(const std::string& window_name);
@@ -96,7 +88,6 @@ private:
     void setupWindows(const ProjectSettings& project_settings);
     void fileModified();
     bool currentGuiElementSet() const;
-    void queryUdpThreadFunction();
     void receiveThreadFunction();
     void mainWindowFlushMultipleElements(const ReceivedData& received_data);
     void addActionToQueue(ReceivedData& received_data);

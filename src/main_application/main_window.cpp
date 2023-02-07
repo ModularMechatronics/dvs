@@ -17,15 +17,12 @@
 using namespace dvs::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
-    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50)), is_rendering_{false}
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50))
 {
     static_cast<void>(cmdl_args);
     udp_server_ = new UdpServer(dvs::internal::kUdpPortNum);
-    // udp_server_->start();
     open_project_file_queued_ = false;
 
-    // query_udp_server_ = new UdpServer(dvs::internal::kUdpQueryPortNum);
-    current_gui_element_ = nullptr;
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
 
     configuration_agent_ = new ConfigurationAgent();
@@ -87,17 +84,9 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     receive_timer_.Start(visualization_period_ms);
 
     // refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);  // TODO: Remove?
-
-    // query_thread_ = new std::thread(&MainWindow::queryUdpThreadFunction, this);
 }
 
-void MainWindow::elementWasDeleted(const GuiElement* const ge)
-{
-    if (ge == current_gui_element_)
-    {
-        current_gui_element_ = nullptr;
-    }
-}
+void MainWindow::elementWasDeleted(const GuiElement* const ge) {}
 
 void MainWindow::fileModified()
 {
