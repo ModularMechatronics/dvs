@@ -134,6 +134,8 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         task_bar_->addNewWindow(ws.name);
     }
 
+    gui_elements_.clear();
+
     for (auto we : windows_)
     {
         std::vector<GuiElement*> ges = we->getGuiElements();
@@ -225,7 +227,7 @@ void MainWindow::saveProjectAs()
 
 void MainWindow::saveProject()
 {
-    if (!save_manager_->pathIsSet())
+    if (!save_manager_->savePathIsSet())
     {
         saveProjectAs();
     }
@@ -261,8 +263,6 @@ void MainWindow::newProject()
             return;
         }
     }
-
-    // current_tab_name_ = "";
 
     save_manager_->reset();
 
