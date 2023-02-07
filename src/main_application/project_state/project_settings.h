@@ -72,8 +72,6 @@ struct ElementSettings
     float width;
     float height;
 
-    int z_order;
-
     std::string name;
 
     RGBTripletf background_color;
@@ -89,34 +87,30 @@ struct ElementSettings
     bool clipping_on;
 
     float pane_radius;
+    int z_order;
+
     ProjectionType projection_type;
 
     ElementSettings()
+        : x{0.0f},
+          y{0.0f},
+          width{100.0f},
+          height{100.0f},
+          name{"<NO-NAME>"},
+          background_color{kElementBackgroundColorDefault},
+          plot_box_color{kPlotBoxColorDefault},
+          grid_color{kGridColorDefault},
+          axes_numbers_color{kAxesNumbersColorDefault},
+          axes_letters_color{kAxesLettersColorDefault},
+          grid_on{kGridOnDefault},
+          plot_box_on{kPlotBoxOnDefault},
+          axes_numbers_on{kAxesNumbersOnDefault},
+          axes_letters_on{kAxesLettersOnDefault},
+          clipping_on{kClippingOnDefault},
+          pane_radius{kPaneRadiusDefault},
+          z_order{kZOrderDefault},
+          projection_type{ProjectionType::ORTHOGRAPHIC}
     {
-        x = 0.0f;
-        y = 0.0f;
-        width = 100.0f;
-        height = 100.0f;
-
-        pane_radius = kPaneRadiusDefault;
-
-        name = "<NO-NAME>";
-
-        background_color = kElementBackgroundColorDefault;
-        plot_box_color = kPlotBoxColorDefault;
-        grid_color = kGridColorDefault;
-        axes_numbers_color = kAxesNumbersColorDefault;
-        axes_letters_color = kAxesLettersColorDefault;
-
-        grid_on = kGridOnDefault;
-        plot_box_on = kPlotBoxOnDefault;
-        axes_numbers_on = kAxesNumbersOnDefault;
-        axes_letters_on = kAxesLettersOnDefault;
-        clipping_on = kClippingOnDefault;
-
-        z_order = kZOrderDefault;
-
-        projection_type = ProjectionType::ORTHOGRAPHIC;
     }
 
     explicit ElementSettings(const nlohmann::json& j)
@@ -225,7 +219,13 @@ struct ElementSettings
     bool operator==(const ElementSettings& other) const
     {
         return (x == other.x) && (y == other.y) && (width == other.width) && (height == other.height) &&
-               (name == other.name);
+               (name == other.name) && (background_color == other.background_color) &&
+               (plot_box_color == other.plot_box_color) && (grid_color == other.grid_color) &&
+               (axes_numbers_color == other.axes_numbers_color) && (axes_letters_color == other.axes_letters_color) &&
+               (grid_on == other.grid_on) && (plot_box_on == other.plot_box_on) &&
+               (axes_numbers_on == other.axes_numbers_on) && (axes_letters_on == other.axes_letters_on) &&
+               (clipping_on == other.clipping_on) && (pane_radius == other.pane_radius) && (z_order == other.z_order) &&
+               (projection_type == other.projection_type);
     }
 
     bool operator!=(const ElementSettings& other) const
@@ -236,21 +236,22 @@ struct ElementSettings
 
 struct TabSettings
 {
-    std::vector<ElementSettings> elements;
     std::string name;
     RGBTripletf background_color;
     RGBTripletf button_normal_color;
     RGBTripletf button_clicked_color;
     RGBTripletf button_selected_color;
     RGBTripletf button_text_color;
+    std::vector<ElementSettings> elements;
 
     TabSettings()
+        : name{""},
+          background_color{kTabBackgroundColorDefault},
+          button_normal_color{kButtonNormalColorDefault},
+          button_clicked_color{kButtonClickedColorDefault},
+          button_selected_color{kButtonSelectedColorDefault},
+          button_text_color{kButtonTextColorDefault}
     {
-        background_color = kTabBackgroundColorDefault;
-        button_normal_color = kButtonNormalColorDefault;
-        button_clicked_color = kButtonClickedColorDefault;
-        button_selected_color = kButtonSelectedColorDefault;
-        button_text_color = kButtonTextColorDefault;
     }
 
     TabSettings(const nlohmann::json& j)
@@ -325,23 +326,23 @@ struct TabSettings
     ElementSettings getElementWithName(const std::string& name) const
     {
         DVS_ASSERT(hasElementWithName(name));
-        ElementSettings res{};
 
-        // TODO: Use find_if?
-        for (const ElementSettings& e : elements)
-        {
-            if (e.name == name)
-            {
-                res = e;
-                break;
-            }
-        }
-        return res;
+        const auto q = std::find_if(
+            elements.begin(), elements.end(), [&name](const ElementSettings& e) -> bool { return e.name == name; });
+
+        return *q;
     }
 
     bool operator==(const TabSettings& other) const
     {
         if ((name != other.name) || (elements.size() != other.elements.size()))
+        {
+            return false;
+        }
+
+        if ((background_color != other.background_color) || (button_normal_color != other.button_normal_color) ||
+            (button_clicked_color != other.button_clicked_color) ||
+            (button_selected_color != other.button_selected_color) || (button_text_color != other.button_text_color))
         {
             return false;
         }
@@ -380,7 +381,8 @@ struct WindowSettings
     std::string name;
     std::vector<TabSettings> tabs;
 
-    WindowSettings() {}
+    WindowSettings() : x{0.0f}, y{0.0f}, width{0.0f}, height{0.0f}, name{""} {}
+
     WindowSettings(const nlohmann::json& j)
     {
         x = j["x"];

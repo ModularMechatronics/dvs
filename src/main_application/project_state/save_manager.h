@@ -14,22 +14,21 @@ private:
     ProjectSettings project_settings_;
 
     bool is_saved_;
-    bool path_is_set_;
+    bool save_path_is_set_;
 
 public:
     SaveManager()
     {
-        file_path_ = "Untitled";
-        is_saved_ = false;
-        path_is_set_ = false;
+        this->reset();
     }
 
     SaveManager(const std::string& file_path)
+        : file_path_{file_path}, project_settings_{file_path}, is_saved_{true}, save_path_is_set_{true}
     {
         file_path_ = file_path;
         project_settings_ = ProjectSettings(file_path);
         is_saved_ = true;
-        path_is_set_ = true;
+        save_path_is_set_ = true;
     }
 
     void setIsModified()
@@ -42,22 +41,22 @@ public:
         return is_saved_;
     }
 
-    bool pathIsSet() const
+    bool savePathIsSet() const
     {
-        return path_is_set_;
+        return save_path_is_set_;
     }
 
     void reset()
     {
-        path_is_set_ = false;
-        file_path_ = "";
+        save_path_is_set_ = false;
+        file_path_ = "Untitled";
         is_saved_ = true;
         project_settings_ = ProjectSettings();
     }
 
     std::string getCurrentFileName() const
     {
-        if (!path_is_set_)
+        if (!save_path_is_set_)
         {
             return "Untitled";
         }
@@ -98,7 +97,7 @@ public:
     {
         file_path_ = file_path;
         project_settings_ = ProjectSettings(file_path);
-        path_is_set_ = true;
+        save_path_is_set_ = true;
         is_saved_ = true;
     }
 
@@ -106,7 +105,7 @@ public:
     {
         file_path_ = file_path;
         project_settings_ = changed_project_settings;
-        path_is_set_ = true;
+        save_path_is_set_ = true;
 
         const nlohmann::json j_to_save = changed_project_settings.toJson();
 
