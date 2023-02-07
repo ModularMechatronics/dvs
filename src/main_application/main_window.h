@@ -23,11 +23,11 @@
 #include "communication/udp_server.h"
 #include "events.h"
 #include "gui_element.h"
+#include "input_data.h"
 #include "plot_pane.h"
 #include "project_state/configuration_agent.h"
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
-#include "input_data.h"
 #include "tray_icon.h"
 
 class WindowView;
@@ -44,8 +44,6 @@ private:
     std::thread* query_thread_;
     std::thread* receive_thread_;
     std::map<std::string, GuiElement*> gui_elements_;
-
-    std::queue<std::unique_ptr<const ReceivedData>> received_data_buffer_;
 
     std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
 
@@ -65,6 +63,8 @@ private:
 
     std::function<void(const char key)> notification_from_gui_element_key_pressed_;
     std::function<void(const char key)> notification_from_gui_element_key_released_;
+    std::function<std::vector<std::string>(void)> get_all_element_names_;
+    std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
 
     CustomTaskBarIcon* task_bar_;
 

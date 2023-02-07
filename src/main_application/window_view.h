@@ -470,14 +470,14 @@ private:
     void tabChanged(const std::string name);
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
-    std::function<std::vector<std::string>(void)> get_all_element_names_;
     std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
+    std::function<std::vector<std::string>(void)> get_all_element_names_;
+    HelpPane help_pane_;
+
+    std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
 
     std::function<void()> notify_main_window_new_window_;
     std::string name_;
-    int current_unnamed_idx_;
-    std::string name_of_selected_element_;
-    WindowSettings* settings_;
     wxFrame* main_window_;
 
     wxMenu* popup_menu_window_;
@@ -488,7 +488,6 @@ private:
 
     std::string last_clicked_item_;
 
-    HelpPane help_pane_;
     std::string project_name_;
 
     RGBTripletf dialog_color_;
