@@ -20,6 +20,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50))
 {
     static_cast<void>(cmdl_args);
+    window_initialization_in_progress_ = true;
     udp_server_ = new UdpServer(dvs::internal::kUdpPortNum);
     open_project_file_queued_ = false;
 
@@ -45,11 +46,19 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     task_bar_->setOnMenuSubWindow(
         [this](const std::string& window_name) -> void { toggleWindowVisibility(window_name); });
     task_bar_->setOnMenuPreferences([this]() -> void { preferences(); });
+    task_bar_->setOnMenuFileNewWindow([this]() -> void { this->newWindow(); });
 
     notification_from_gui_element_key_pressed_ = [this](const char key) { notifyChildrenOnKeyPressed(key); };
     notification_from_gui_element_key_released_ = [this](const char key) { notifyChildrenOnKeyReleased(key); };
     get_all_element_names_ = [this]() -> std::vector<std::string> { return getAllElementNames(); };
-    notify_main_window_element_deleted_ = [this](const GuiElement* const ge) -> void { elementWasDeleted(ge); };
+    notify_main_window_element_deleted_ = [this](const std::string& element_name) -> void {
+        elementDeleted(element_name);
+    };
+    notify_main_window_element_name_changed_ = [this](const std::string& old_name,
+                                                      const std::string& new_name) -> void {
+        elementNameChanged(old_name, new_name);
+    };
+    notify_main_window_about_modification_ = [this]() -> void { fileModified(); };
 
 #ifdef PLATFORM_LINUX_M
     int argc = 1;
@@ -84,13 +93,29 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     receive_timer_.Start(visualization_period_ms);
 
     // refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);  // TODO: Remove?
+    window_initialization_in_progress_ = false;
 }
 
-void MainWindow::elementWasDeleted(const GuiElement* const ge) {}
-
-void MainWindow::fileModified()
+void MainWindow::elementNameChanged(const std::string& old_name, const std::string& new_name)
 {
-    save_manager_->setIsModified();
+    for (auto& local_ge : gui_elements_)
+    {
+        if (local_ge.first == old_name)
+        {
+            GuiElement* ge = local_ge.second;
+            gui_elements_.erase(local_ge.first);
+            gui_elements_[new_name] = ge;
+            break;
+        }
+    }
+}
+
+void MainWindow::elementDeleted(const std::string& element_name)
+{
+    if (gui_elements_.count(element_name) > 0)
+    {
+        gui_elements_.erase(element_name);
+    }
 }
 
 bool MainWindow::hasWindowWithName(const std::string& window_name)
@@ -125,10 +150,13 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
                                              ws,
                                              save_manager_->getCurrentFileName(),
                                              window_callback_id_,
+                                             save_manager_->isSaved(),
                                              notification_from_gui_element_key_pressed_,
                                              notification_from_gui_element_key_released_,
                                              get_all_element_names_,
-                                             notify_main_window_element_deleted_));
+                                             notify_main_window_element_deleted_,
+                                             notify_main_window_element_name_changed_,
+                                             notify_main_window_about_modification_));
         window_callback_id_ += 1;
         current_window_num_++;
         task_bar_->addNewWindow(ws.name);
@@ -160,7 +188,12 @@ std::vector<std::string> MainWindow::getAllElementNames() const
     return element_names;
 }
 
-void MainWindow::newWindow(wxCommandEvent& WXUNUSED(event))
+void MainWindow::newWindowCallback(wxCommandEvent& WXUNUSED(event))
+{
+    newWindow();
+}
+
+void MainWindow::newWindow()
 {
     WindowSettings window_settings;
     window_settings.name = "Window " + std::to_string(current_window_num_);
@@ -173,10 +206,13 @@ void MainWindow::newWindow(wxCommandEvent& WXUNUSED(event))
                                                 window_settings,
                                                 save_manager_->getCurrentFileName(),
                                                 window_callback_id_,
+                                                save_manager_->isSaved(),
                                                 notification_from_gui_element_key_pressed_,
                                                 notification_from_gui_element_key_released_,
                                                 get_all_element_names_,
-                                                notify_main_window_element_deleted_);
+                                                notify_main_window_element_deleted_,
+                                                notify_main_window_element_name_changed_,
+                                                notify_main_window_about_modification_);
 
     task_bar_->addNewWindow(window_settings.name);
     current_window_num_++;
@@ -190,6 +226,28 @@ void MainWindow::newWindow(wxCommandEvent& WXUNUSED(event))
 MainWindow::~MainWindow()
 {
     delete configuration_agent_;
+}
+
+void MainWindow::setIsFileSavedForAllWindows(const bool file_saved)
+{
+    for (auto we : windows_)
+    {
+        we->setIsFileSavedForLabel(file_saved);
+    }
+}
+
+void MainWindow::fileModified()
+{
+    if (window_initialization_in_progress_)
+    {
+        return;
+    }
+    save_manager_->setIsModified();
+
+    // if (save_manager_->savePathIsSet())
+    // {
+    setIsFileSavedForAllWindows(false);
+    // }
 }
 
 void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
@@ -223,6 +281,12 @@ void MainWindow::saveProjectAs()
     }
 
     save_manager_->saveToNewFile(new_save_path, ps);
+
+    for (auto we : windows_)
+    {
+        we->setProjectName(save_manager_->getCurrentFileName());
+    }
+    setIsFileSavedForAllWindows(true);
 }
 
 void MainWindow::saveProject()
@@ -243,6 +307,7 @@ void MainWindow::saveProject()
         configuration_agent_->writeValue("last_opened_file", save_manager_->getCurrentFilePath());
 
         save_manager_->save(ps);
+        setIsFileSavedForAllWindows(true);
     }
 }
 
@@ -274,6 +339,9 @@ void MainWindow::newProject()
 
     setupWindows(save_manager_->getCurrentProjectSettings());
 
+    current_window_num_ = 0;
+    newWindow();
+
     SendSizeEvent();
     Refresh();
 }
@@ -300,6 +368,7 @@ void MainWindow::openExistingFileCallback(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::openExistingFile(const std::string& file_path)
 {
+    window_initialization_in_progress_ = true;
     if (save_manager_->getCurrentFilePath() == file_path)
     {
         return;
@@ -321,6 +390,7 @@ void MainWindow::openExistingFile(const std::string& file_path)
 
     SendSizeEvent();
     Refresh();
+    window_initialization_in_progress_ = false;
 }
 
 void MainWindow::openExistingFile()
@@ -378,6 +448,12 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
 
     if (q != windows_.end())
     {
+        const std::vector<GuiElement*> ges = (*q)->getGuiElements();
+        for (const auto& ge : ges)
+        {
+            gui_elements_.erase(ge->getName());
+        }
+
         task_bar_->removeWindow((*q)->getName());
         delete (*q);
         windows_.erase(q);

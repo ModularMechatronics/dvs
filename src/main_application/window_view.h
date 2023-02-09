@@ -90,7 +90,8 @@ private:
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
-    std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
+    std::function<void(const std::string&)> notify_main_window_element_deleted_;
+    std::function<void()> notify_main_window_about_modification_;
     int current_element_idx_;
     RGBTripletf background_color_;
     RGBTripletf button_normal_color_;
@@ -106,12 +107,14 @@ public:
               const std::function<void(const char key)>& notify_main_window_key_released,
               const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                   notify_parent_window_right_mouse_pressed,
-              const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted)
+              const std::function<void(const std::string&)>& notify_main_window_element_deleted,
+              const std::function<void()>& notify_main_window_about_modification)
         : name_{tab_settings.name},
           notify_main_window_key_pressed_{notify_main_window_key_pressed},
           notify_main_window_key_released_{notify_main_window_key_released},
           notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
-          notify_main_window_element_deleted_{notify_main_window_element_deleted}
+          notify_main_window_element_deleted_{notify_main_window_element_deleted},
+          notify_main_window_about_modification_{notify_main_window_about_modification}
     {
         parent_window_ = parent_window;
         current_element_idx_ = 0;
@@ -130,7 +133,7 @@ public:
                                                 notify_main_window_key_pressed,
                                                 notify_main_window_key_released,
                                                 notify_parent_window_right_mouse_pressed,
-                                                notify_main_window_element_deleted_);
+                                                notify_main_window_about_modification);
 
             ge->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_.push_back(ge);
@@ -173,8 +176,9 @@ public:
 
     ~WindowTab()
     {
-        for (auto const& ge : gui_elements_)
+        for (const auto& ge : gui_elements_)
         {
+            notify_main_window_element_deleted_(ge->getName());
             delete ge;
         }
     }
@@ -215,7 +219,7 @@ public:
                                             notify_main_window_key_pressed_,
                                             notify_main_window_key_released_,
                                             notify_parent_window_right_mouse_pressed_,
-                                            notify_main_window_element_deleted_);
+                                            notify_main_window_about_modification_);
 
         ge->updateSizeFromParent(parent_window_->GetSize());
         gui_elements_.push_back(ge);
@@ -237,7 +241,7 @@ public:
                                             notify_main_window_key_pressed_,
                                             notify_main_window_key_released_,
                                             notify_parent_window_right_mouse_pressed_,
-                                            notify_main_window_element_deleted_);
+                                            notify_main_window_about_modification_);
 
         ge->updateSizeFromParent(parent_window_->GetSize());
         gui_elements_.push_back(ge);
@@ -333,7 +337,7 @@ public:
         }
     }
 
-    void deleteElementIfItExists(const std::string& element_name)
+    bool deleteElementIfItExists(const std::string& element_name)
     {
         auto q = std::find_if(
             gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
@@ -345,6 +349,12 @@ public:
             delete (*q);
             z_order_queue_.eraseElement(element_name);
             gui_elements_.erase(q);
+            notify_main_window_element_deleted_(element_name);
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -470,8 +480,10 @@ private:
     void tabChanged(const std::string name);
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
-    std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
+    std::function<void(const std::string&)> notify_main_window_element_deleted_;
     std::function<std::vector<std::string>(void)> get_all_element_names_;
+    std::function<void(const std::string&, const std::string&)> notify_main_window_element_name_changed_;
+    std::function<void()> notify_main_window_about_modification_;
     HelpPane help_pane_;
 
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
@@ -492,16 +504,22 @@ private:
 
     RGBTripletf dialog_color_;
 
+    bool project_is_saved_;
+
 public:
     WindowView() = delete;
-    WindowView(wxFrame* main_window,
-               const WindowSettings& window_settings,
-               const std::string& project_name,
-               const int callback_id,
-               const std::function<void(const char key)>& notify_main_window_key_pressed,
-               const std::function<void(const char key)>& notify_main_window_key_released,
-               const std::function<std::vector<std::string>(void)>& get_all_element_names,
-               const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted);
+    WindowView(
+        wxFrame* main_window,
+        const WindowSettings& window_settings,
+        const std::string& project_name,
+        const int callback_id,
+        const bool project_is_saved,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released,
+        const std::function<std::vector<std::string>(void)>& get_all_element_names,
+        const std::function<void(const std::string&)>& notify_main_window_element_deleted,
+        const std::function<void(const std::string&, const std::string&)>& notify_main_window_element_name_changed,
+        const std::function<void()>& notify_main_window_about_modification);
     ~WindowView();
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);
@@ -509,9 +527,12 @@ public:
     void keyReleasedCallback(wxKeyEvent& evt);
 
     void setName(const std::string& new_name);
+    void updateLabel();
     WindowSettings getWindowSettings() const;
     std::string getName() const;
     void childModified(wxCommandEvent& event);
+    void setIsFileSavedForLabel(const bool is_saved);
+    void setProjectName(const std::string& project_name);
 
     GuiElement* getGuiElement(const std::string& element_name) const;
 
