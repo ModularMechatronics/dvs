@@ -22,6 +22,7 @@ enum
     PU_FILE_OPEN,
     PU_FILE_SAVE,
     PU_FILE_SAVE_AS,
+    PU_FILE_NEW_WINDOW,
     PU_FIRST_WINDOW_ID,
     PU_LAST_WINDOW_ID = PU_FIRST_WINDOW_ID + kMaxNumWindows - 1,
     PU_SUBMAIN
@@ -77,6 +78,7 @@ public:
     void setOnMenuFileSaveAs(std::function<void()>&& file_save_as_function);
     void setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function);
     void setOnMenuPreferences(std::function<void()>&& preferences_function);
+    void setOnMenuFileNewWindow(std::function<void()>&& new_window_function);
 
     void onMenuExit(wxCommandEvent&);
 
@@ -84,6 +86,7 @@ public:
     void onMenuFileOpen(wxCommandEvent&);
     void onMenuFileSave(wxCommandEvent&);
     void onMenuFileSaveAs(wxCommandEvent&);
+    void onMenuFileNewWindow(wxCommandEvent&);
     void onMenuPreferences(wxCommandEvent&);
 
     void onMenuSubWindow(wxCommandEvent& evt);
@@ -101,6 +104,7 @@ private:
     std::function<void()> file_save_function_;
     std::function<void()> file_save_as_function_;
     std::function<void(const std::string&)> submenu_function_;
+    std::function<void()> new_window_function_;
 
     std::vector<int> free_ids_;
     std::vector<int> taken_ids_;

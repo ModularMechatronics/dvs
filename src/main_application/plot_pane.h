@@ -110,8 +110,8 @@ public:
              const std::function<void(const char key)>& notify_main_window_key_released,
              const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                  notify_parent_window_right_mouse_pressed,
-             const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted);
-    ~PlotPane();
+             const std::function<void()>& notify_main_window_about_modification);
+    ~PlotPane() override;
 
     int getWidth();
     int getHeight();

@@ -45,7 +45,7 @@ private:
     std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
 
     std::atomic<bool> open_project_file_queued_;
-    properties::Name queued_project_file_name_;
+    std::string queued_project_file_name_;
 
     std::string current_element_name_;
 
@@ -58,10 +58,14 @@ private:
     CustomTaskBarIcon* task_bar_;
     int window_callback_id_;
 
+    bool window_initialization_in_progress_;
+
     std::function<void(const char key)> notification_from_gui_element_key_pressed_;
     std::function<void(const char key)> notification_from_gui_element_key_released_;
     std::function<std::vector<std::string>(void)> get_all_element_names_;
-    std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
+    std::function<void(const std::string&)> notify_main_window_element_deleted_;
+    std::function<void(const std::string&, const std::string&)> notify_main_window_element_name_changed_;
+    std::function<void()> notify_main_window_about_modification_;
 
     void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
@@ -83,7 +87,6 @@ private:
     void saveProjectAs();
     void saveProjectAsCallback(wxCommandEvent& event);
     void openExistingFile(const std::string& file_path);
-    void openFileFromClient(const internal::CommunicationHeader& hdr);
 
     void setupWindows(const ProjectSettings& project_settings);
     void fileModified();
@@ -91,6 +94,7 @@ private:
     void receiveThreadFunction();
     void mainWindowFlushMultipleElements(const ReceivedData& received_data);
     void addActionToQueue(ReceivedData& received_data);
+    void setIsFileSavedForAllWindows(const bool file_saved);
 
 public:
     MainWindow();
@@ -106,8 +110,11 @@ public:
     void openExistingFile(wxCommandEvent& event);
     void openExistingFileCallback(wxCommandEvent& WXUNUSED(event));
     void openExistingFile();
-    void newWindow(wxCommandEvent& WXUNUSED(event));
-    void elementWasDeleted(const GuiElement* const ge);
+    void newWindowCallback(wxCommandEvent& WXUNUSED(event));
+    void newWindow();
+
+    void elementDeleted(const std::string& element_name);
+    void elementNameChanged(const std::string& old_name, const std::string& new_name);
 
     void disableEditing();
 };

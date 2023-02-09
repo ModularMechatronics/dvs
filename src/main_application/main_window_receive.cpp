@@ -204,7 +204,7 @@ void MainWindow::receiveThreadFunction()
             {
                 const CommunicationHeader& hdr = received_data.getCommunicationHeader();
                 queued_project_file_name_ =
-                    hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>();
+                    hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>().data;
                 open_project_file_queued_ = true;
             }
             else
@@ -317,22 +317,16 @@ void MainWindow::mainWindowFlushMultipleElements(const ReceivedData& received_da
     }
 }
 
-void MainWindow::openFileFromClient(const internal::CommunicationHeader& hdr)
-{
-    const properties::Name file_path = hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>();
-    openExistingFile(file_path.data);
-}
-
 void MainWindow::receiveData()
 {
-    if (open_project_file_queued_)
-    {
-        open_project_file_queued_ = false;
-        openExistingFile(queued_project_file_name_.data);
-    }
-
     {
         const std::lock_guard<std::mutex> lg(receive_mtx_);
+
+        if (open_project_file_queued_)
+        {
+            open_project_file_queued_ = false;
+            openExistingFile(queued_project_file_name_);
+        }
 
         for (auto& qa : queued_data_)
         {

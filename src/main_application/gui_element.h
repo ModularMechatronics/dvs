@@ -23,7 +23,7 @@ protected:
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
-    std::function<void(const GuiElement* const)> notify_main_window_element_deleted_;
+    std::function<void()> notify_main_window_about_modification_;
 
     int minimum_x_pos_;
     int minimum_y_pos_;
@@ -36,12 +36,11 @@ public:
                const std::function<void(const char key)>& notify_main_window_key_released,
                const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                    notify_parent_window_right_mouse_pressed,
-               const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted)
+               const std::function<void()>& notify_main_window_about_modification)
         : element_settings_{element_settings},
           notify_main_window_key_pressed_{notify_main_window_key_pressed},
           notify_main_window_key_released_{notify_main_window_key_released},
-          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
-          notify_main_window_element_deleted_{notify_main_window_element_deleted}
+          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed}
     {
     }
 

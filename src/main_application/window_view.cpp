@@ -5,14 +5,18 @@
 #include "main_window.h"
 #include "plot_pane.h"
 
-WindowView::WindowView(wxFrame* main_window,
-                       const WindowSettings& window_settings,
-                       const std::string& project_name,
-                       const int callback_id,
-                       const std::function<void(const char key)>& notify_main_window_key_pressed,
-                       const std::function<void(const char key)>& notify_main_window_key_released,
-                       const std::function<std::vector<std::string>(void)>& get_all_element_names,
-                       const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted)
+WindowView::WindowView(
+    wxFrame* main_window,
+    const WindowSettings& window_settings,
+    const std::string& project_name,
+    const int callback_id,
+    const bool project_is_saved,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released,
+    const std::function<std::vector<std::string>(void)>& get_all_element_names,
+    const std::function<void(const std::string&)>& notify_main_window_element_deleted,
+    const std::function<void(const std::string&, const std::string&)>& notify_main_window_element_name_changed,
+    const std::function<void()>& notify_main_window_about_modification)
     : wxFrame(main_window, wxID_ANY, "Figure 1"),
       tab_buttons_{this,
                    window_settings,
@@ -24,6 +28,8 @@ WindowView::WindowView(wxFrame* main_window,
       notify_main_window_key_released_{notify_main_window_key_released},
       notify_main_window_element_deleted_{notify_main_window_element_deleted},
       get_all_element_names_{get_all_element_names},
+      notify_main_window_element_name_changed_{notify_main_window_element_name_changed},
+      notify_main_window_about_modification_{notify_main_window_about_modification},
       help_pane_{this, wxPoint(150, 150), wxSize(100, 100), this->GetSize()}
 {
     project_name_ = project_name;
@@ -31,13 +37,14 @@ WindowView::WindowView(wxFrame* main_window,
     current_tab_num_ = 0;
     callback_id_ = callback_id;
     dialog_color_ = RGBTripletf(0.5, 0.0, 0.0);
+    project_is_saved_ = project_is_saved;
 
     notify_parent_window_right_mouse_pressed_ = [this](const wxPoint pos, const std::string& item_name) {
         mouseRightPressed(pos, ClickSource::GUI_ELEMENT, item_name);
     };
 
-    this->SetLabel(window_settings.name + " [" + project_name_ + "]");
     name_ = window_settings.name;
+    updateLabel();
 
     if (window_settings.tabs.size() == 0)
     {
@@ -49,7 +56,8 @@ WindowView::WindowView(wxFrame* main_window,
                                       notify_main_window_key_pressed,
                                       notify_main_window_key_released,
                                       notify_parent_window_right_mouse_pressed_,
-                                      notify_main_window_element_deleted_));
+                                      notify_main_window_element_deleted_,
+                                      notify_main_window_about_modification_));
         tab_buttons_.addNewTab(tab_settings.name);
         tab_buttons_.setSelection(tab_settings.name);
         SetBackgroundColour(wxColour(tab_settings.background_color.red * 255.0f,
@@ -75,7 +83,8 @@ WindowView::WindowView(wxFrame* main_window,
                                           notify_main_window_key_pressed,
                                           notify_main_window_key_released,
                                           notify_parent_window_right_mouse_pressed_,
-                                          notify_main_window_element_deleted_));
+                                          notify_main_window_element_deleted_,
+                                          notify_main_window_about_modification_));
             current_tab_num_++;
         }
     }
@@ -135,7 +144,7 @@ WindowView::WindowView(wxFrame* main_window,
 
     Bind(wxEVT_MENU, &WindowView::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
-    Bind(wxEVT_MENU, &MainWindow::newWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
+    Bind(wxEVT_MENU, &MainWindow::newWindowCallback, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
     Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
     Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
@@ -167,6 +176,11 @@ WindowView::~WindowView()
     {
         delete tab;
     }
+}
+
+void WindowView::setProjectName(const std::string& project_name)
+{
+    project_name_ = project_name;
 }
 
 std::vector<GuiElement*> WindowView::getGuiElements() const
@@ -305,6 +319,8 @@ void WindowView::OnSize(wxSizeEvent& event)
     }
 
     help_pane_.updateParentSize(new_size);
+
+    notify_main_window_about_modification_();
 }
 
 int WindowView::getCallbackId() const
@@ -312,10 +328,20 @@ int WindowView::getCallbackId() const
     return callback_id_;
 }
 
+void WindowView::updateLabel()
+{
+    std::string save_string = "";
+    if (!project_is_saved_)
+    {
+        save_string = "*";
+    }
+    this->SetLabel(name_ + " [" + project_name_ + save_string + "]");
+}
+
 void WindowView::setName(const std::string& new_name)
 {
-    this->SetLabel(new_name + " [" + project_name_ + "]");
     name_ = new_name;
+    updateLabel();
 }
 
 void WindowView::OnClose(wxCloseEvent& WXUNUSED(event))
@@ -364,9 +390,14 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
 
     if (window_name.length() > 0)
     {
-        name_ = window_name;
-        this->SetLabel(name_ + " [" + project_name_ + "]");
+        setName(window_name);
     }
+}
+
+void WindowView::setIsFileSavedForLabel(const bool is_saved)
+{
+    project_is_saved_ = is_saved;
+    updateLabel();
 }
 
 void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
@@ -381,7 +412,8 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
                                   notify_main_window_key_pressed_,
                                   notify_main_window_key_released_,
                                   notify_parent_window_right_mouse_pressed_,
-                                  notify_main_window_element_deleted_));
+                                  notify_main_window_element_deleted_,
+                                  notify_main_window_about_modification_));
     tab_buttons_.addNewTab(tab_settings.name);
 
     for (const auto& t : tabs_)
@@ -516,9 +548,16 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
             }
         }
     }
+
+    bool name_changed = false;
     for (const auto& t : tabs_)
     {
-        t->changeNameOfElementIfElementExists(last_clicked_item_, new_name);
+        name_changed = name_changed || t->changeNameOfElementIfElementExists(last_clicked_item_, new_name);
+    }
+
+    if (name_changed)
+    {
+        notify_main_window_element_name_changed_(last_clicked_item_, new_name);
     }
 }
 
@@ -602,11 +641,6 @@ void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
     {
         delete (*q);
         tabs_.erase(q);
-        if (tabs_.size() == 1)
-        {
-            element_x_offset_ = 0;
-            tabs_[0]->setMinXPos(element_x_offset_);
-        }
     }
 
     tab_buttons_.deleteTabButton(last_clicked_item_);
@@ -625,5 +659,11 @@ void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
                 tab->hide();
             }
         }
+    }
+    else
+    {
+        element_x_offset_ = 0;
+        tabs_[0]->setMinXPos(element_x_offset_);
+        tabs_[0]->show();
     }
 }

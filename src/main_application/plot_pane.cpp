@@ -137,13 +137,13 @@ PlotPane::PlotPane(wxWindow* parent,
                    const std::function<void(const char key)>& notify_main_window_key_released,
                    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                        notify_parent_window_right_mouse_pressed,
-                   const std::function<void(const GuiElement* const)>& notify_main_window_element_deleted)
+                   const std::function<void()>& notify_main_window_about_modification)
     : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
       GuiElement(element_settings,
                  notify_main_window_key_pressed,
                  notify_main_window_key_released,
                  notify_parent_window_right_mouse_pressed,
-                 notify_main_window_element_deleted),
+                 notify_main_window_about_modification),
       m_context(getContext()),
       axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
@@ -184,18 +184,8 @@ PlotPane::PlotPane(wxWindow* parent,
 void PlotPane::updateSizeFromParent(const wxSize& parent_size)
 {
     parent_size_ = parent_size;
-    /*const float px = parent_size_.GetWidth();
-    const float py = parent_size_.GetHeight();
-
-    const float xpos = px * element_settings_.x;
-    const float ypos = py * element_settings_.y;
-
-    const float width = px * element_settings_.width;
-    const float height = py * element_settings_.height;*/
 
     setElementPositionAndSize();
-    // this->SetPosition(wxPoint(xpos, ypos));
-    // this->setSize(wxSize(width, height));
 }
 
 void PlotPane::setMinimumXPos(const int new_min_x_pos)
@@ -257,7 +247,6 @@ int* PlotPane::getArgsPtr()
 
 PlotPane::~PlotPane()
 {
-    notify_main_window_element_deleted_(this);
     delete plot_data_handler_;
     delete m_context;
 }
@@ -616,8 +605,8 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
 
                 element_settings_.width = static_cast<float>(new_size.GetWidth()) / (px * ratio_x);
                 element_settings_.height = static_cast<float>(new_size.GetHeight()) / (py * ratio_y);
-                element_settings_.x = static_cast<float>(new_position.x - minimum_x_pos_) / px;
-                element_settings_.y = static_cast<float>(new_position.y - minimum_y_pos_) / py;
+                element_settings_.x = static_cast<float>(new_position.x - minimum_x_pos_) / (px * ratio_x);
+                element_settings_.y = static_cast<float>(new_position.y - minimum_y_pos_) / (py * ratio_y);
 
                 Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);  // TODO: Needed?
                 notifyParentAboutModification();
@@ -762,8 +751,8 @@ void PlotPane::setElementPositionAndSize()
 
     new_size.SetWidth(element_settings_.width * px * ratio_x);
     new_size.SetHeight(element_settings_.height * py * ratio_y);
-    new_pos.x = minimum_x_pos_ + element_settings_.x * px;
-    new_pos.y = minimum_y_pos_ + element_settings_.y * py;
+    new_pos.x = minimum_x_pos_ + element_settings_.x * px * ratio_x;
+    new_pos.y = minimum_y_pos_ + element_settings_.y * py * ratio_y;
 
     SetPosition(new_pos);
     setSize(new_size);

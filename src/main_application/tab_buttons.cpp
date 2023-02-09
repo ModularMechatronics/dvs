@@ -56,12 +56,13 @@ void TabButtons::deleteTabButton(const std::string& button_name)
             }
         }
 
-        if ((!selected_button_exists) && (tab_buttons_.size() > 0))
+        if (!selected_button_exists)
         {
             tab_buttons_[0]->setSelected();
         }
         layoutButtons();
     }
+    else
     {
         throw std::runtime_error("Could not find button to delete!");
     }
