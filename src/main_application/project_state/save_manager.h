@@ -50,7 +50,7 @@ public:
     {
         save_path_is_set_ = false;
         file_path_ = "Untitled";
-        is_saved_ = false;
+        is_saved_ = true;
         project_settings_ = ProjectSettings();
     }
 

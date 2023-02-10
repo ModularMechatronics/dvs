@@ -53,6 +53,7 @@ WindowView::WindowView(
         tab_settings.name = "Tab " + std::to_string(current_tab_num_);
         tabs_.push_back(new WindowTab(this,
                                       tab_settings,
+                                      element_x_offset_,
                                       notify_main_window_key_pressed,
                                       notify_main_window_key_released,
                                       notify_parent_window_right_mouse_pressed_,
@@ -80,6 +81,7 @@ WindowView::WindowView(
         {
             tabs_.push_back(new WindowTab(this,
                                           window_settings.tabs[k],
+                                          element_x_offset_,
                                           notify_main_window_key_pressed,
                                           notify_main_window_key_released,
                                           notify_parent_window_right_mouse_pressed_,
@@ -160,6 +162,8 @@ WindowView::WindowView(
 
     Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
     Bind(wxEVT_SIZE, &WindowView::OnSize, this);
+    Bind(wxEVT_MOVE, &WindowView::OnMove, this);
+
     Bind(wxEVT_RIGHT_DOWN, &WindowView::mouseRightPressedCallback, this);
 
     tab_buttons_.windowWasResized(this->GetSize());
@@ -219,6 +223,7 @@ void WindowView::keyPressedCallback(wxKeyEvent& evt)
     {
         help_pane_.show();
     }
+    std::cout << "Key pressed" << std::endl;
 }
 
 void WindowView::keyReleasedCallback(wxKeyEvent& evt)
@@ -282,12 +287,6 @@ void WindowView::mouseRightPressedCallback(wxMouseEvent& event)
     mouseRightPressed(event.GetPosition(), ClickSource::THIS, "");
 }
 
-void WindowView::childModified(wxCommandEvent& WXUNUSED(event))
-{
-    // wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
-    // wxPostEvent(this->GetParent(), parent_event);
-}
-
 void WindowView::tabChanged(const std::string name)
 {
     for (const auto& tab : tabs_)
@@ -304,6 +303,11 @@ void WindowView::tabChanged(const std::string name)
             tab->hide();
         }
     }
+}
+
+void WindowView::OnMove(wxMoveEvent& event)
+{
+    notify_main_window_about_modification_();
 }
 
 void WindowView::OnSize(wxSizeEvent& event)
@@ -409,6 +413,7 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
 
     tabs_.push_back(new WindowTab(this,
                                   tab_settings,
+                                  element_x_offset_,
                                   notify_main_window_key_pressed_,
                                   notify_main_window_key_released_,
                                   notify_parent_window_right_mouse_pressed_,
@@ -420,6 +425,7 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
     {
         t->setMinXPos(element_x_offset_);
     }
+    notify_main_window_about_modification_();
 }
 
 void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
@@ -478,6 +484,7 @@ void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
         }
 
         (*q)->newElement(element_name);
+        notify_main_window_about_modification_();
     }
 }
 

@@ -86,7 +86,6 @@ private:
     PlotDataHandler* plot_data_handler_;
     ShaderCollection shader_collection_;
 
-    void notifyParentAboutModification();
     bool is3DFunction(const Function fcn);
     bool isImageFunction(const Function fcn);
     void initShaders();

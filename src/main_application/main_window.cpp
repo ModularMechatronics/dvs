@@ -162,8 +162,6 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         task_bar_->addNewWindow(ws.name);
     }
 
-    gui_elements_.clear();
-
     for (auto we : windows_)
     {
         std::vector<GuiElement*> ges = we->getGuiElements();
@@ -195,6 +193,7 @@ void MainWindow::newWindowCallback(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::newWindow()
 {
+    window_initialization_in_progress_ = true;
     WindowSettings window_settings;
     window_settings.name = "Window " + std::to_string(current_window_num_);
     window_settings.x = 30;
@@ -219,6 +218,8 @@ void MainWindow::newWindow()
     window_callback_id_ += 1;
 
     windows_.push_back(window_element);
+
+    window_initialization_in_progress_ = false;
 
     fileModified();
 }
@@ -257,13 +258,13 @@ void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::saveProjectAs()
 {
-    wxFileDialog openFileDialog(this, _("Choose file to save to"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_SAVE);
-    if (openFileDialog.ShowModal() == wxID_CANCEL)
+    wxFileDialog open_file_dialog(this, _("Choose file to save to"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_SAVE);
+    if (open_file_dialog.ShowModal() == wxID_CANCEL)
     {
         return;
     }
 
-    const std::string new_save_path = std::string(openFileDialog.GetPath().mb_str());
+    const std::string new_save_path = std::string(open_file_dialog.GetPath().mb_str());
 
     configuration_agent_->writeValue("last_opened_file", new_save_path);
 
@@ -297,6 +298,10 @@ void MainWindow::saveProject()
     }
     else
     {
+        if (save_manager_->isSaved())
+        {
+            return;
+        }
         ProjectSettings ps;
 
         for (const WindowView* we : windows_)
@@ -318,6 +323,7 @@ void MainWindow::newProjectCallback(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::newProject()
 {
+    window_initialization_in_progress_ = true;
     if (!save_manager_->isSaved())
     {
         if (wxMessageBox(_("Current content has not been saved! Proceed?"),
@@ -329,21 +335,26 @@ void MainWindow::newProject()
         }
     }
 
+    removeAllWindows();
+
     save_manager_->reset();
+
+    current_window_num_ = 0;
+    newWindow();
+
+    window_initialization_in_progress_ = false;
+}
+
+void MainWindow::removeAllWindows()
+{
+    gui_elements_.clear();
 
     for (auto we : windows_)
     {
         we->Destroy();
     }
+
     windows_.clear();
-
-    setupWindows(save_manager_->getCurrentProjectSettings());
-
-    current_window_num_ = 0;
-    newWindow();
-
-    SendSizeEvent();
-    Refresh();
 }
 
 void MainWindow::saveProjectCallback(wxCommandEvent& WXUNUSED(event))
@@ -374,22 +385,14 @@ void MainWindow::openExistingFile(const std::string& file_path)
         return;
     }
 
+    removeAllWindows();
+
     configuration_agent_->writeValue("last_opened_file", file_path);
 
     save_manager_->openExistingFile(file_path);
 
-    for (auto we : windows_)
-    {
-        we->Destroy();
-    }
-    windows_.clear();
-
     setupWindows(save_manager_->getCurrentProjectSettings());
 
-    // refresh_timer_.Start(10);
-
-    SendSizeEvent();
-    Refresh();
     window_initialization_in_progress_ = false;
 }
 
@@ -406,14 +409,14 @@ void MainWindow::openExistingFile()
         }
     }
 
-    wxFileDialog openFileDialog(
+    wxFileDialog open_file_dialog(
         this, _("Open dvs file"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-    if (openFileDialog.ShowModal() == wxID_CANCEL)
+    if (open_file_dialog.ShowModal() == wxID_CANCEL)
     {
         return;
     }
 
-    openExistingFile(std::string(openFileDialog.GetPath().mb_str()));
+    openExistingFile(std::string(open_file_dialog.GetPath().mb_str()));
 }
 
 void MainWindow::OnRefreshTimer(wxTimerEvent&)
@@ -429,6 +432,12 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
     for (auto& we : windows_)
     {
         we->notifyChildrenOnKeyPressed(key);
+    }
+
+    if ((wxGetKeyState(WXK_COMMAND) || wxGetKeyState(WXK_CONTROL)) &&
+        (wxGetKeyState(static_cast<wxKeyCode>('s')) || wxGetKeyState(static_cast<wxKeyCode>('S'))))
+    {
+        saveProject();
     }
 }
 
