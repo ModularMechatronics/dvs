@@ -47,6 +47,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::openExistingFileCallback, this, wxID_OPEN);
     Bind(wxEVT_MENU, &MainWindow::saveProjectAsCallback, this, wxID_SAVEAS);
+    Bind(wxEVT_MENU, &MainWindow::exitApplication, this, wxID_HELP_INDEX);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, this, wxID_HELP_CONTENTS);
 
     task_bar_->setOnMenuExitCallback([this]() -> void { this->Destroy(); });
@@ -98,6 +99,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     setupWindows(save_manager_->getCurrentProjectSettings());
 
+    for (auto we : windows_)
+    {
+        windows_menu_->Append(we->getCallbackId(), we->getName());
+        Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
+    }
+
     receive_thread_ = new std::thread(&MainWindow::receiveThreadFunction, this);
 
     receive_timer_.Bind(wxEVT_TIMER, &MainWindow::OnReceiveTimer, this);
@@ -105,6 +112,11 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     // refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);  // TODO: Remove?
     window_initialization_in_progress_ = false;
+}
+
+void MainWindow::exitApplication(wxCommandEvent& WXUNUSED(event))
+{
+    this->Destroy();
 }
 
 void MainWindow::elementNameChanged(const std::string& old_name, const std::string& new_name)
@@ -136,13 +148,15 @@ wxMenuBar* MainWindow::createMainMenuBar()
     // File Menu
     wxMenu* file_menu_ = new wxMenu();
     file_menu_->Append(wxID_NEW, _T("&New"));
+    file_menu_->AppendSeparator();
     file_menu_->Append(wxID_OPEN, _T("&Open..."));
+    file_menu_->AppendSeparator();
     file_menu_->Append(wxID_SAVE, _T("&Save"));
     file_menu_->Append(wxID_SAVEAS, _T("&Save As..."));
 
     file_menu_->AppendSeparator();
+    file_menu_->Append(wxID_HELP_INDEX, _T("Quit"));
 
-    file_menu_->Append(wxID_EXIT, _T("&Quit"));
     menu_bar_tmp->Append(file_menu_, _T("&File"));
 
     windows_menu_ = new wxMenu();
@@ -162,13 +176,31 @@ bool MainWindow::hasWindowWithName(const std::string& window_name)
     return q != windows_.end();
 }
 
+void MainWindow::toggleWindowVisibilityCallback(wxCommandEvent& event)
+{
+    for (auto we : windows_)
+    {
+        if (we->getCallbackId() == event.GetId())
+        {
+            if (!we->IsShown())
+            {
+                we->Show();
+                fileModified();
+            }
+            we->Raise();
+
+            break;
+        }
+    }
+}
+
 void MainWindow::toggleWindowVisibility(const std::string& window_name)
 {
     for (auto we : windows_)
     {
         if (we->getName() == window_name)
         {
-            if (!(we->IsVisible()))
+            if (!(we->IsShown()))
             {
                 we->Show();
             }
@@ -230,6 +262,15 @@ void MainWindow::newWindowCallback(wxCommandEvent& WXUNUSED(event))
 void MainWindow::newWindow()
 {
     window_initialization_in_progress_ = true;
+    newWindowWithoutFileModification();
+
+    window_initialization_in_progress_ = false;
+
+    fileModified();
+}
+
+void MainWindow::newWindowWithoutFileModification()
+{
     WindowSettings window_settings;
     window_settings.name = "Window " + std::to_string(current_window_num_);
     window_settings.x = 30;
@@ -249,15 +290,14 @@ void MainWindow::newWindow()
                                                 notify_main_window_element_name_changed_,
                                                 notify_main_window_about_modification_);
 
+    windows_menu_->Append(window_element->getCallbackId(), window_element->getName());
+    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, window_element->getCallbackId());
+
     task_bar_->addNewWindow(window_settings.name);
     current_window_num_++;
     window_callback_id_ += 1;
 
     windows_.push_back(window_element);
-
-    window_initialization_in_progress_ = false;
-
-    fileModified();
 }
 
 MainWindow::~MainWindow()
@@ -281,10 +321,7 @@ void MainWindow::fileModified()
     }
     save_manager_->setIsModified();
 
-    // if (save_manager_->savePathIsSet())
-    // {
     setIsFileSavedForAllWindows(false);
-    // }
 }
 
 void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
@@ -376,7 +413,7 @@ void MainWindow::newProject()
     save_manager_->reset();
 
     current_window_num_ = 0;
-    newWindow();
+    newWindowWithoutFileModification();
 
     window_initialization_in_progress_ = false;
 }
@@ -475,6 +512,11 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
     {
         saveProject();
     }
+    else if ((wxGetKeyState(WXK_COMMAND) || wxGetKeyState(WXK_CONTROL)) &&
+             (wxGetKeyState(static_cast<wxKeyCode>('q')) || wxGetKeyState(static_cast<wxKeyCode>('Q'))))
+    {
+        this->Destroy();
+    }
 }
 
 void MainWindow::notifyChildrenOnKeyReleased(const char key)
@@ -499,8 +541,14 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
             gui_elements_.erase(ge->getName());
         }
 
+        Unbind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, (*q)->getCallbackId());
+        const int menu_id = windows_menu_->FindItem((*q)->getName());
+        windows_menu_->Destroy(menu_id);
+
         task_bar_->removeWindow((*q)->getName());
         delete (*q);
         windows_.erase(q);
+
+        fileModified();
     }
 }

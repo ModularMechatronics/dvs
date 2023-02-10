@@ -101,6 +101,9 @@ private:
     wxMenuBar* menu_bar_;
     wxMenu* windows_menu_;
 
+    void toggleWindowVisibilityCallback(wxCommandEvent& event);
+    void exitApplication(wxCommandEvent& event);
+
 public:
     MainWindow();
     MainWindow(const std::vector<std::string>& cmdl_args);
@@ -117,6 +120,7 @@ public:
     void openExistingFile();
     void newWindowCallback(wxCommandEvent& WXUNUSED(event));
     void newWindow();
+    void newWindowWithoutFileModification();
 
     void elementDeleted(const std::string& element_name);
     void elementNameChanged(const std::string& old_name, const std::string& new_name);

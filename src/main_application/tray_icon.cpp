@@ -148,13 +148,12 @@ wxMenu* CustomTaskBarIcon::CreatePopupMenu()
     windows_submenu_ = new wxMenu;
 
     menu_->Append(PU_FILE_NEW, wxT("New"));
+    menu_->AppendSeparator();
     menu_->Append(PU_FILE_OPEN, wxT("Open..."));
+    menu_->AppendSeparator();
     menu_->Append(PU_FILE_SAVE, wxT("Save"));
     menu_->Append(PU_FILE_SAVE_AS, wxT("Save As..."));
 
-    menu_->AppendSeparator();
-
-    menu_->Append(PU_PREFERENCES, "Preferences");
     menu_->AppendSeparator();
 
     windows_submenu_->Append(PU_FILE_NEW_WINDOW, wxT("New window"));
@@ -169,12 +168,15 @@ wxMenu* CustomTaskBarIcon::CreatePopupMenu()
 
     menu_->Append(PU_SUBMAIN, wxT("Windows"), windows_submenu_);
 
+    // menu_->Append(PU_PREFERENCES, "Preferences");
+    // menu_->AppendSeparator();
+
 #ifdef __WXOSX__
     if (OSXIsStatusItem())
 #endif
     {
         menu_->AppendSeparator();
-        menu_->Append(PU_EXIT, wxT("E&xit"));
+        menu_->Append(PU_EXIT, wxT("&Exit"));
     }
     return menu_;
 }
