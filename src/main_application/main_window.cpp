@@ -38,6 +38,17 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     }
     this->SetPosition(wxPoint(0, 0));
 
+    menu_bar_ = createMainMenuBar();
+
+    SetMenuBar(menu_bar_);
+    wxMenuBar::MacSetCommonMenuBar(menu_bar_);
+
+    Bind(wxEVT_MENU, &MainWindow::newProjectCallback, this, wxID_NEW);
+    Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &MainWindow::openExistingFileCallback, this, wxID_OPEN);
+    Bind(wxEVT_MENU, &MainWindow::saveProjectAsCallback, this, wxID_SAVEAS);
+    Bind(wxEVT_MENU, &MainWindow::newWindowCallback, this, wxID_HELP_CONTENTS);
+
     task_bar_->setOnMenuExitCallback([this]() -> void { this->Destroy(); });
     task_bar_->setOnMenuFileNew([this]() -> void { newProject(); });
     task_bar_->setOnMenuFileOpen([this]() -> void { openExistingFile(); });
@@ -116,6 +127,31 @@ void MainWindow::elementDeleted(const std::string& element_name)
     {
         gui_elements_.erase(element_name);
     }
+}
+
+wxMenuBar* MainWindow::createMainMenuBar()
+{
+    wxMenuBar* menu_bar_tmp = new wxMenuBar();
+
+    // File Menu
+    wxMenu* file_menu_ = new wxMenu();
+    file_menu_->Append(wxID_NEW, _T("&New"));
+    file_menu_->Append(wxID_OPEN, _T("&Open..."));
+    file_menu_->Append(wxID_SAVE, _T("&Save"));
+    file_menu_->Append(wxID_SAVEAS, _T("&Save As..."));
+
+    file_menu_->AppendSeparator();
+
+    file_menu_->Append(wxID_EXIT, _T("&Quit"));
+    menu_bar_tmp->Append(file_menu_, _T("&File"));
+
+    windows_menu_ = new wxMenu();
+    windows_menu_->Append(wxID_HELP_CONTENTS, "New window");
+    windows_menu_->AppendSeparator();
+
+    menu_bar_tmp->Append(windows_menu_, _T("&Windows"));
+
+    return menu_bar_tmp;
 }
 
 bool MainWindow::hasWindowWithName(const std::string& window_name)
