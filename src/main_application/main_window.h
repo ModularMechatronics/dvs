@@ -96,6 +96,10 @@ private:
     void mainWindowFlushMultipleElements(const ReceivedData& received_data);
     void addActionToQueue(ReceivedData& received_data);
     void setIsFileSavedForAllWindows(const bool file_saved);
+    wxMenuBar* createMainMenuBar();
+
+    wxMenuBar* menu_bar_;
+    wxMenu* windows_menu_;
 
 public:
     MainWindow();
