@@ -350,6 +350,7 @@ void WindowView::setName(const std::string& new_name)
 
 void WindowView::OnClose(wxCloseEvent& WXUNUSED(event))
 {
+    notify_main_window_about_modification_();
     Hide();
 }
 
@@ -395,6 +396,7 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
     if (window_name.length() > 0)
     {
         setName(window_name);
+        notify_main_window_about_modification_();
     }
 }
 
@@ -578,9 +580,16 @@ void WindowView::updateAllElements()
 
 void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
 {
+    bool element_deleted = false;
+
     for (const auto& t : tabs_)
     {
-        t->deleteElementIfItExists(last_clicked_item_);
+        element_deleted = element_deleted || t->deleteElementIfItExists(last_clicked_item_);
+    }
+
+    if (element_deleted)
+    {
+        notify_main_window_about_modification_();
     }
 }
 
@@ -590,6 +599,8 @@ void WindowView::toggleProjectionType(wxCommandEvent& WXUNUSED(event))
     {
         t->toggleProjectionType(last_clicked_item_);
     }
+
+    notify_main_window_about_modification_();
 }
 
 void WindowView::raiseElement(wxCommandEvent& WXUNUSED(event))
@@ -598,6 +609,8 @@ void WindowView::raiseElement(wxCommandEvent& WXUNUSED(event))
     {
         t->raiseElement(last_clicked_item_);
     }
+
+    notify_main_window_about_modification_();
 }
 
 void WindowView::lowerElement(wxCommandEvent& WXUNUSED(event))
@@ -606,6 +619,8 @@ void WindowView::lowerElement(wxCommandEvent& WXUNUSED(event))
     {
         t->lowerElement(last_clicked_item_);
     }
+
+    notify_main_window_about_modification_();
 }
 
 void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
@@ -634,6 +649,7 @@ void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
     if (q != tabs_.end())
     {
         (*q)->setName(tab_name);
+        notify_main_window_about_modification_();
     }
     tab_buttons_.changeButtonName(last_clicked_item_, tab_name);
 }
@@ -673,4 +689,6 @@ void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
         tabs_[0]->setMinXPos(element_x_offset_);
         tabs_[0]->show();
     }
+
+    notify_main_window_about_modification_();
 }
