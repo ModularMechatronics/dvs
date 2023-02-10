@@ -99,10 +99,12 @@ private:
     RGBTripletf button_selected_color_;
     RGBTripletf button_text_color_;
     ZOrderQueue z_order_queue_;
+    int element_x_offset_;
 
 public:
     WindowTab(wxFrame* parent_window,
               const TabSettings& tab_settings,
+              const int element_x_offset,
               const std::function<void(const char key)>& notify_main_window_key_pressed,
               const std::function<void(const char key)>& notify_main_window_key_released,
               const std::function<void(const wxPoint pos, const std::string& elem_name)>&
@@ -118,6 +120,7 @@ public:
     {
         parent_window_ = parent_window;
         current_element_idx_ = 0;
+        element_x_offset_ = element_x_offset;
 
         background_color_ = tab_settings.background_color;
         button_normal_color_ = tab_settings.button_normal_color;
@@ -135,6 +138,7 @@ public:
                                                 notify_parent_window_right_mouse_pressed,
                                                 notify_main_window_about_modification);
 
+            ge->setMinXPos(element_x_offset_);
             ge->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_.push_back(ge);
 
@@ -198,6 +202,7 @@ public:
 
     void setMinXPos(const int min_x_pos)
     {
+        element_x_offset_ = min_x_pos;
         for (auto const& ge : gui_elements_)
         {
             ge->setMinXPos(min_x_pos);
@@ -220,7 +225,7 @@ public:
                                             notify_main_window_key_released_,
                                             notify_parent_window_right_mouse_pressed_,
                                             notify_main_window_about_modification_);
-
+        ge->setMinXPos(element_x_offset_);
         ge->updateSizeFromParent(parent_window_->GetSize());
         gui_elements_.push_back(ge);
         current_element_idx_++;
@@ -242,7 +247,7 @@ public:
                                             notify_main_window_key_released_,
                                             notify_parent_window_right_mouse_pressed_,
                                             notify_main_window_about_modification_);
-
+        ge->setMinXPos(element_x_offset_);
         ge->updateSizeFromParent(parent_window_->GetSize());
         gui_elements_.push_back(ge);
         current_element_idx_++;
@@ -523,6 +528,7 @@ public:
     ~WindowView();
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);
+    void OnMove(wxMoveEvent& event);
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
 
@@ -530,7 +536,6 @@ public:
     void updateLabel();
     WindowSettings getWindowSettings() const;
     std::string getName() const;
-    void childModified(wxCommandEvent& event);
     void setIsFileSavedForLabel(const bool is_saved);
     void setProjectName(const std::string& project_name);
 

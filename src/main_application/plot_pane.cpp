@@ -463,12 +463,6 @@ void PlotPane::mouseLeftWindow(wxMouseEvent& WXUNUSED(event))
     wxSetCursor(wxCursor(wxCURSOR_ARROW));
 }
 
-void PlotPane::notifyParentAboutModification()
-{
-    wxCommandEvent parent_event(GUI_ELEMENT_CHANGED_EVENT);
-    wxPostEvent(GetParent(), parent_event);
-}
-
 void PlotPane::mouseEntered(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
@@ -609,7 +603,7 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
                 element_settings_.y = static_cast<float>(new_position.y - minimum_y_pos_) / (py * ratio_y);
 
                 Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);  // TODO: Needed?
-                notifyParentAboutModification();
+                notify_main_window_about_modification_();
                 setElementPositionAndSize();
                 Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
             }

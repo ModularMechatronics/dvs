@@ -88,6 +88,7 @@ private:
     void saveProjectAsCallback(wxCommandEvent& event);
     void openExistingFile(const std::string& file_path);
 
+    void removeAllWindows();
     void setupWindows(const ProjectSettings& project_settings);
     void fileModified();
     bool currentGuiElementSet() const;

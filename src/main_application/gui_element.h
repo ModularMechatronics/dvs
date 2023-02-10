@@ -40,7 +40,8 @@ public:
         : element_settings_{element_settings},
           notify_main_window_key_pressed_{notify_main_window_key_pressed},
           notify_main_window_key_released_{notify_main_window_key_released},
-          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed}
+          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
+          notify_main_window_about_modification_{notify_main_window_about_modification}
     {
     }
 
