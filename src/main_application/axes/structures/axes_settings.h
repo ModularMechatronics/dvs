@@ -6,7 +6,7 @@
 #include <string>
 
 #include "dvs/math/math.h"
-#include "opengl_low_level/opengl_low_level.h"
+#include "misc/color_map.h"
 
 using namespace dvs;
 

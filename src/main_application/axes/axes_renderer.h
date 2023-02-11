@@ -23,7 +23,7 @@
 #include "axes/text_rendering.h"
 #include "axes/zoom_rect.h"
 #include "io_devices/mouse_state.h"
-#include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/opengl_header.h"
 #include "project_state/project_settings.h"
 #include "shader.h"
 

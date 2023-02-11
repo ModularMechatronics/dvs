@@ -3,7 +3,7 @@
 #include <cassert>
 
 #include "misc/misc.h"
-#include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/opengl_header.h"
 
 Vec3d gs;
 const float kTextScale = 1.0f / 8.0f;
