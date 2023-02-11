@@ -8,7 +8,7 @@
 
 #include "dvs/math/math.h"
 #include "misc/misc.h"
-#include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/opengl_header.h"
 #include "text_rendering.h"
 
 const float kTextScale{0.00035f};

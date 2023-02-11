@@ -10,7 +10,7 @@
 #include "axes/structures/coordinate_converter.h"
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
-#include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/opengl_header.h"
 
 class AxesPainter
 {

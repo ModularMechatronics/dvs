@@ -6,7 +6,7 @@
 #include <string_view>
 
 #include "dvs/math/math.h"
-#include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/opengl_header.h"
 
 class TextRenderer
 {

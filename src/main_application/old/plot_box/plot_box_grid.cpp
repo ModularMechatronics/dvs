@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/opengl_header.h"
 
 void drawXZGrid(const double y_coord,
                 const Vectord& x_values,

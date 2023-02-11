@@ -3,9 +3,9 @@
 #include "dvs/math/math.h"
 #include "dvs/utils.h"
 #include "misc/color_map.h"
-#include "opengl_low_level/opengl_low_level.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 #include "plot_objects/plot_objects.h"
+#include "shader.h"
 
 PlotDataHandler::PlotDataHandler(const ShaderCollection shader_collection)
     : pending_soft_clear_(false), shader_collection_{shader_collection}

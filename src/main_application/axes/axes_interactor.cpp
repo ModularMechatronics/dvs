@@ -12,7 +12,7 @@
 #include "axes/structures/grid_vectors.h"
 #include "dvs/math/math.h"
 #include "io_devices/io_devices.h"
-#include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/opengl_header.h"
 
 AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width)
 {

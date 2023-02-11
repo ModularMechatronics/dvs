@@ -9,7 +9,7 @@
 #include "dvs/math/math.h"
 #include "events.h"
 #include "io_devices/io_devices.h"
-#include "opengl_low_level/opengl_low_level.h"
+// #include "opengl_low_level/opengl_header.h"
 
 using namespace dvs::internal;
 

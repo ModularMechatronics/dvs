@@ -12,7 +12,7 @@
 #include "main_application/plot_objects/utils.h"
 #include "misc/color_map.h"
 #include "opengl_low_level/opengl_header.h"
-#include "opengl_low_level/opengl_low_level.h"
+#include "opengl_low_level/opengl_header.h"
 
 using namespace dvs::internal;
 using namespace dvs;
