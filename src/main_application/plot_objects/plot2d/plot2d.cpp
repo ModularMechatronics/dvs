@@ -96,7 +96,7 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
 
     num_points_ = converted_data_local->num_points;
 
-    if (has_line_style_)
+    /*if (has_line_style_)
     {
         if (line_style_ == properties::LineStyle::DASHED)
         {
@@ -113,7 +113,7 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
             gap_size_ = 2.0f;
             dash_size_ = 6.0f;
         }
-    }
+    }*/
 
     vertex_buffer_.addBuffer(converted_data_local->p0, num_points_, 2, dynamic_or_static_usage_);
     vertex_buffer_.addBuffer(converted_data_local->p1, num_points_, 2, dynamic_or_static_usage_);
