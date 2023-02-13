@@ -30,7 +30,7 @@ struct LegendProperties
     float point_size;
     dvs::properties::ScatterStyle scatter_style;
 
-    dvs::properties::LineStyle line_style;
+    // dvs::properties::LineStyle line_style;
 };
 
 #endif  // MAIN_APPLICATION_AXES_LEGEND_PROPERTIES_H_

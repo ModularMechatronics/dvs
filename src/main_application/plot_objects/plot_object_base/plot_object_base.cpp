@@ -185,11 +185,11 @@ void PlotObjectBase::updateProperties(const Properties& props)
         }
     }
 
-    if (props.hasProperty(PropertyType::LINE_STYLE))
+    /*if (props.hasProperty(PropertyType::LINE_STYLE))
     {
         line_style_ = props.getProperty<LineStyle>();
         has_line_style_ = true;
-    }
+    }*/
 }
 
 void PlotObjectBase::preRender(const Shader shader_to_use)
@@ -408,7 +408,7 @@ void PlotObjectBase::assignProperties(const Properties& props, ColorPicker& colo
         face_color_ = color_picker.getNextFaceColor();
     }
 
-    if (props.hasProperty(PropertyType::LINE_STYLE))
+    /*if (props.hasProperty(PropertyType::LINE_STYLE))
     {
         line_style_ = props.getProperty<LineStyleContainer>().data;
         has_line_style_ = true;
@@ -416,7 +416,7 @@ void PlotObjectBase::assignProperties(const Properties& props, ColorPicker& colo
     else
     {
         has_line_style_ = false;
-    }
+    }*/
 }
 
 void PlotObjectBase::updateWithNewData(ReceivedData& received_data,

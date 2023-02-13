@@ -50,12 +50,8 @@ void PlotDataHandler::setTransform(const internal::ItemId id,
 
 void PlotDataHandler::propertiesExtension(const CommunicationHeader& hdr)
 {
-    if (!hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
-    {
-        throw std::runtime_error("No id provided for updatable function!");
-    }
     const internal::ItemId id = hdr.value<internal::ItemId>();
-    const Properties props(hdr);
+    const Properties props{hdr};
 
     const auto q = std::find_if(plot_datas_.begin(), plot_datas_.end(), [&id](const PlotObjectBase* const pd) -> bool {
         return pd->getId() == id;
