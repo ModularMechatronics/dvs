@@ -46,10 +46,13 @@ struct Converter
 Stairs::Stairs(const CommunicationHeader& hdr,
                ReceivedData& received_data,
                const std::unique_ptr<const ConvertedDataBase>& converted_data,
-               const Properties& props,
+               
+               const PlotObjectAttributes& plot_object_attributes,
+               const PropertiesData& properties_data,
                const ShaderCollection shader_collection,
                ColorPicker& color_picker)
-    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
+    : PlotObjectBase(
+          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
     if (function_ != Function::STAIRS)
@@ -63,6 +66,7 @@ Stairs::Stairs(const CommunicationHeader& hdr,
 }
 
 std::unique_ptr<const ConvertedDataBase> Stairs::convertRawData(const PlotObjectAttributes& attributes,
+                                                                const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
 {
     const InputParams input_params{attributes.num_elements};

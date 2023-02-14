@@ -97,7 +97,8 @@ public:
 
         if (props.hasProperty(PropertyType::SCATTER_STYLE))
         {
-            scatter_style = props.getProperty<ScatterStyle>();
+            const ScatterStyleContainer ssc = props.getProperty<ScatterStyleContainer>();
+            scatter_style = ssc.data;
             has_properties_ = true;
         }
 
@@ -137,21 +138,18 @@ public:
         if (props.hasProperty(PropertyType::DISTANCE_FROM))
         {
             distance_from = props.getProperty<DistanceFrom>();
-            has_distance_from = true;
             has_properties_ = true;
         }
 
         if (props.hasProperty(PropertyType::TRANSFORM))
         {
             custom_transform = props.getProperty<Transform>();
-            has_custom_transform = true;
             has_properties_ = true;
         }
 
         if (props.hasProperty(PropertyType::COLOR_MAP))
         {
             color_map = props.getProperty<ColorMapContainer>().data;
-            has_color_map = true;
             has_properties_ = true;
         }
 
@@ -163,11 +161,9 @@ public:
                                      static_cast<float>(ec.green) / 255.0f,
                                      static_cast<float>(ec.blue) / 255.0f};
 
-            OptionalParameter<RGBTripletf> edge_color;
-            OptionalParameter<bool> no_edge_color{kDefaultNoEdges};
             if (!ec.use_color)
             {
-                no_edge_color = true;
+                no_edges = true;
             }
             has_properties_ = true;
         }
@@ -182,7 +178,7 @@ public:
 
             if (!fc.use_color)
             {
-                no_face_color = true;
+                no_faces = true;
             }
             has_properties_ = true;
         }
@@ -193,8 +189,7 @@ public:
     {
         if (!other.has_default_value)
         {
-            local.data = other.data;
-            local.has_default_value = false;
+            local = other.data;
             has_properties_ = true;
         }
     }
@@ -206,43 +201,13 @@ public:
         //
         overwritePropertyFromOtherIfPresent(alpha, props.alpha);
         overwritePropertyFromOtherIfPresent(buffer_size, props.buffer_size);
+        overwritePropertyFromOtherIfPresent(scatter_style, props.scatter_style);
+        overwritePropertyFromOtherIfPresent(line_width, props.line_width);
+        overwritePropertyFromOtherIfPresent(point_size, props.point_size);
+        overwritePropertyFromOtherIfPresent(z_offset, props.z_offset);
+        overwritePropertyFromOtherIfPresent(name, props.name);
 
         /*
-        if (props.hasProperty(PropertyType::BUFFER_SIZE))
-        {
-            buffer_size = props.getProperty<BufferSize>().data;
-            has_properties_ = true;
-        }
-
-        if (props.hasProperty(PropertyType::SCATTER_STYLE))
-        {
-            scatter_style = props.getProperty<ScatterStyle>();
-            has_properties_ = true;
-        }
-
-        if (props.hasProperty(PropertyType::LINE_WIDTH))
-        {
-            line_width = props.getProperty<LineWidth>().data;
-            has_properties_ = true;
-        }
-
-        if (props.hasProperty(PropertyType::POINT_SIZE))
-        {
-            point_size = props.getProperty<PointSize>().data;
-            has_properties_ = true;
-        }
-
-        if (props.hasProperty(PropertyType::Z_OFFSET))
-        {
-            z_offset = props.getProperty<ZOffset>().data;
-            has_properties_ = true;
-        }
-
-        if ((props.hasProperty(PropertyType::NAME)))
-        {
-            name = std::string(props.getProperty<Name>().data);
-            has_properties_ = true;
-        }
 
         if ((props.hasProperty(PropertyType::COLOR)))
         {
@@ -263,7 +228,6 @@ public:
         if (props.hasProperty(PropertyType::TRANSFORM))
         {
             custom_transform = props.getProperty<Transform>();
-            has_custom_transform = true;
             has_properties_ = true;
         }
 
@@ -283,10 +247,10 @@ public:
                                      static_cast<float>(ec.blue) / 255.0f};
 
             OptionalParameter<RGBTripletf> edge_color;
-            OptionalParameter<bool> no_edge_color{kDefaultNoEdges};
+            OptionalParameter<bool> no_edges{kDefaultNoEdges};
             if (!ec.use_color)
             {
-                no_edge_color = true;
+                no_edges = true;
             }
             has_properties_ = true;
         }
@@ -301,7 +265,7 @@ public:
 
             if (!fc.use_color)
             {
-                no_face_color = true;
+                no_faces = true;
             }
             has_properties_ = true;
         }
@@ -330,19 +294,16 @@ public:
     OptionalParameter<RGBTripletf> color;
 
     OptionalParameter<RGBTripletf> edge_color{kDefaultEdgeColor};
-    bool no_edge_color{kDefaultNoEdges};
+    bool no_edges{kDefaultNoEdges};
 
     OptionalParameter<RGBTripletf> face_color;
-    bool no_face_color{kDefaultNoFaces};
+    bool no_faces{kDefaultNoFaces};
 
-    ColorMap color_map;
-    OptionalParameter<bool> has_color_map;
+    OptionalParameter<ColorMap> color_map;
 
-    DistanceFrom distance_from;
-    OptionalParameter<bool> has_distance_from{kDefaultHasDistanceFrom};
+    OptionalParameter<DistanceFrom> distance_from;
 
-    Transform custom_transform;
-    OptionalParameter<bool> has_custom_transform{kDefaultCustomTransform};
+    OptionalParameter<Transform> custom_transform;
 
     bool is_persistent{kIsPersistent};
     bool is_updateable{kIsUpdateable};
@@ -385,7 +346,7 @@ struct PlotObjectAttributes
 
     float z_offset;
 
-    PlotObjectAttributes() = delete;
+    PlotObjectAttributes() {}
     PlotObjectAttributes(const CommunicationHeader& hdr) : properties_data{hdr}, function{hdr.getFunction()}
     {
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DATA_TYPE))
@@ -459,7 +420,7 @@ protected:
     ShaderCollection shader_collection_;
 
     // Properties
-    Name name_;
+    std::string name_;
 
     RGBTripletf color_;
     bool has_color_;
@@ -502,7 +463,7 @@ protected:
 
     internal::ItemId id_;
 
-    void assignProperties(const Properties& props, ColorPicker& color_picker);
+    void assignProperties(const PropertiesData& properties_data, ColorPicker& color_picker);
     virtual void findMinMax() = 0;
 
     void postInitialize(ReceivedData& received_data, const CommunicationHeader& hdr, const Properties& props);
@@ -511,10 +472,11 @@ protected:
 public:
     size_t getNumDimensions() const;
     virtual ~PlotObjectBase();
-    PlotObjectBase();
+    PlotObjectBase() = default;
     PlotObjectBase(ReceivedData& received_data,
                    const CommunicationHeader& hdr,
-                   const Properties& props,
+                   const PlotObjectAttributes& plot_object_attributes,
+                   const PropertiesData& properties_data,
                    const ShaderCollection shader_collection,
                    ColorPicker& color_picker);
     virtual void render() = 0;
@@ -541,7 +503,7 @@ public:
     virtual LegendProperties getLegendProperties() const
     {
         LegendProperties lp;
-        lp.name = name_.data;
+        lp.name = name_;
 
         return lp;
     }

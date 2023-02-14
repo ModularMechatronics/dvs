@@ -18,12 +18,15 @@ public:
     Plot3D(const CommunicationHeader& hdr,
            ReceivedData& received_data,
            const std::unique_ptr<const ConvertedDataBase>& converted_data,
-           const Properties& props,
+           
+           const PlotObjectAttributes& plot_object_attributes,
+           const PropertiesData& properties_data,
            const ShaderCollection shader_collection,
            ColorPicker& color_picker);
     ~Plot3D();
 
     static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr);
 
     void render() override;
