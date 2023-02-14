@@ -63,10 +63,13 @@ struct Converter
 Scatter2D::Scatter2D(const CommunicationHeader& hdr,
                      ReceivedData& received_data,
                      const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                     const Properties& props,
+                     
+                     const PlotObjectAttributes& plot_object_attributes,
+                     const PropertiesData& properties_data,
                      const ShaderCollection shader_collection,
                      ColorPicker& color_picker)
-    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
+    : PlotObjectBase(
+          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::POINTS}
 {
     if (function_ != Function::SCATTER2)
@@ -150,13 +153,14 @@ void Scatter2D::findMinMax()
 }
 
 std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const PlotObjectAttributes& attributes,
+                                                                   const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr)
 {
     const InputParams input_params{attributes.num_elements,
                                    attributes.num_bytes_per_element,
                                    attributes.num_bytes_for_one_vec,
                                    attributes.has_color,
-                                   attributes.z_offset};
+                                   properties_data.z_offset.data};
 
     std::unique_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};

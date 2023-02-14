@@ -67,10 +67,11 @@ struct ConverterSeparateVectors
 DrawMesh::DrawMesh(const CommunicationHeader& hdr,
                    ReceivedData& received_data,
                    std::unique_ptr<const ConvertedDataBase>& converted_data,
-                   const Properties& props,
+                   const PlotObjectAttributes& plot_object_attributes,
+                   const PropertiesData& properties_data,
                    const ShaderCollection shader_collection,
                    ColorPicker& color_picker)
-    : PlotObjectBase(received_data, hdr, props, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES},
       converted_data_{std::move(converted_data)}
 {
@@ -190,6 +191,7 @@ LegendProperties DrawMesh::getLegendProperties() const
 DrawMesh::~DrawMesh() {}
 
 std::unique_ptr<const ConvertedDataBase> DrawMesh::convertRawData(const PlotObjectAttributes& attributes,
+                                                                  const PropertiesData& properties_data,
                                                                   const uint8_t* const data_ptr)
 {
     const InputParams input_params(attributes.num_vertices, attributes.num_indices, attributes.num_bytes_per_element);

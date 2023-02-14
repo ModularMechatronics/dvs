@@ -801,11 +801,14 @@ bool viewShouldBeReset(const KeyboardState& keyboard_state)
     }
 }
 
-void PlotPane::addPlotData(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data)
+void PlotPane::addPlotData(ReceivedData& received_data,
+                           const PlotObjectAttributes& plot_object_attributes,
+                           const PropertiesData& properties_data,
+                           std::unique_ptr<const ConvertedDataBase>& converted_data)
 {
     const CommunicationHeader& hdr = received_data.getCommunicationHeader();
 
-    plot_data_handler_->addData(hdr, received_data, converted_data);
+    plot_data_handler_->addData(hdr, plot_object_attributes, properties_data, received_data, converted_data);
 
     internal::Function fcn = hdr.getFunction();
 
@@ -887,8 +890,9 @@ void PlotPane::processActionQueue()
 
                     if (isPlotDataFunction(inner_fcn))
                     {
-                        auto [received_data, converted_data] = flush_queue_.front()->moveAllData();
-                        addPlotData(received_data, converted_data);
+                        auto [received_data, plot_object_attributes, properties_data, converted_data] =
+                            flush_queue_.front()->moveAllData();
+                        addPlotData(received_data, plot_object_attributes, properties_data, converted_data);
                     }
                     else
                     {
@@ -920,9 +924,10 @@ void PlotPane::processActionQueue()
         {
             if (isPlotDataFunction(fcn))
             {
-                auto [received_data, converted_data] = queued_data_.front()->moveAllData();
+                auto [received_data, plot_object_attributes, properties_data, converted_data] =
+                    queued_data_.front()->moveAllData();
 
-                addPlotData(received_data, converted_data);
+                addPlotData(received_data, plot_object_attributes, properties_data, converted_data);
             }
             else
             {

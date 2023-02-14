@@ -39,6 +39,8 @@ public:
     void softClear();
     void render();
     void addData(const CommunicationHeader& hdr,
+                 const PlotObjectAttributes& plot_object_attributes,
+                 const PropertiesData& properties_data,
                  ReceivedData& received_data,
                  std::unique_ptr<const ConvertedDataBase>& converted_data);
     void setTransform(const internal::ItemId id,

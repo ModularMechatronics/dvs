@@ -98,8 +98,10 @@ private:
     std::queue<std::unique_ptr<InputData>> flush_queue_;
 
     void processActionQueue();
-    void addPlotData(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data);
-    void addPlotDataFlushed(ReceivedData& received_data, std::unique_ptr<const ConvertedDataBase>& converted_data);
+    void addPlotData(ReceivedData& received_data,
+                     const PlotObjectAttributes& plot_object_attributes,
+                     const PropertiesData& properties_data,
+                     std::unique_ptr<const ConvertedDataBase>& converted_data);
 
 public:
     PlotPane(wxNotebookPage* parent,

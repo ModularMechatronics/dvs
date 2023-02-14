@@ -19,6 +19,8 @@ Pre release:
  * Something with drone simulation data
  * Something with robotics
 - Finalize demos
+- Rename properties to attributes, and merge into normal header objects?
+ * Rename "normal" header objects to FunctionAttributes, and properties to UserAttributes?
 - Make font smaller, fewer line points per axis
 - Don't clear "pending_soft_clear" on interaction (mouse/kbd) update, only when new data
 - Don't execute pending clear on interaction (with mouse), it makes plots flashing when using waitForFlush, and drawing multiple things (probably)
