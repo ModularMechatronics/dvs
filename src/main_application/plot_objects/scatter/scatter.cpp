@@ -152,7 +152,7 @@ void Scatter2D::findMinMax()
     max_vec.z = 1.0;
 }
 
-std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                                    const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr)
 {

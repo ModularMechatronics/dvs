@@ -64,7 +64,7 @@ FastPlot2D::FastPlot2D(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(converted_data_local->points_ptr, num_elements_, 2);
 }
 
-std::unique_ptr<const ConvertedDataBase> FastPlot2D::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> FastPlot2D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                                     const PropertiesData& properties_data,
                                                                     const uint8_t* const data_ptr)
 {

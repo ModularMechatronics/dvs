@@ -103,7 +103,7 @@ void Stem::modifyShader()
     glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
-std::unique_ptr<const ConvertedDataBase> Stem::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> Stem::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                               const PropertiesData& properties_data,
                                                               const uint8_t* const data_ptr)
 {

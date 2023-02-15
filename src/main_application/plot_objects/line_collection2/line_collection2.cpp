@@ -95,7 +95,7 @@ LegendProperties LineCollection2D::getLegendProperties() const
     return lp;
 }
 
-std::unique_ptr<const ConvertedDataBase> LineCollection2D::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> LineCollection2D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                                           const PropertiesData& properties_data,
                                                                           const uint8_t* const data_ptr)
 {

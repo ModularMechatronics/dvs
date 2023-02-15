@@ -78,7 +78,8 @@ void MainWindow::OnReceiveTimer(wxTimerEvent&)
     }
 }
 
-std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedData& received_data,
+std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const CommunicationHeader& hdr,
+                                                               const ReceivedData& received_data,
                                                                const PlotObjectAttributes& attributes,
                                                                const PropertiesData& properties_data)
 {
@@ -89,68 +90,68 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const ReceivedDat
     switch (fcn)
     {
         case Function::STAIRS:
-            converted_data = Stairs::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = Stairs::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::PLOT2:
-            converted_data = Plot2D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = Plot2D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::PLOT3:
-            converted_data = Plot3D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = Plot3D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::FAST_PLOT2:
-            converted_data = FastPlot2D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = FastPlot2D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::FAST_PLOT3:
-            converted_data = FastPlot3D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = FastPlot3D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::LINE_COLLECTION2:
-            converted_data = LineCollection2D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = LineCollection2D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::LINE_COLLECTION3:
-            converted_data = LineCollection3D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = LineCollection3D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::STEM:
-            converted_data = Stem::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = Stem::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::SCATTER2:
-            converted_data = Scatter2D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = Scatter2D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::SCATTER3:
-            converted_data = Scatter3D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = Scatter3D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::SURF:
-            converted_data = Surf::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = Surf::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::IM_SHOW:
-            converted_data = ImShow::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = ImShow::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::PLOT_COLLECTION2:
-            converted_data = PlotCollection2D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = PlotCollection2D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::PLOT_COLLECTION3:
-            converted_data = PlotCollection3D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = PlotCollection3D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::DRAW_MESH_SEPARATE_VECTORS:
         case Function::DRAW_MESH:
-            converted_data = DrawMesh::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = DrawMesh::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
 
         case Function::REAL_TIME_PLOT:
-            converted_data = ScrollingPlot2D::convertRawData(attributes, properties_data, received_data.data());
+            converted_data = ScrollingPlot2D::convertRawData(hdr, attributes, properties_data, received_data.data());
             break;
         default:
             throw std::runtime_error("Invalid function!");
@@ -179,10 +180,18 @@ void MainWindow::addActionToQueue(ReceivedData& received_data)
         const PropertiesData properties_data{hdr};
 
         std::unique_ptr<const ConvertedDataBase> converted_data =
-            convertPlotObjectData(received_data, plot_object_attributes, properties_data);
+            convertPlotObjectData(hdr, received_data, plot_object_attributes, properties_data);
 
         queued_data_[current_element_name_].push(
             std::make_unique<InputData>(received_data, converted_data, plot_object_attributes, properties_data));
+    }
+    else if (fcn == Function::PROPERTIES_EXTENSION)
+    {
+        const CommunicationHeader& hdr{received_data.getCommunicationHeader()};
+        const PlotObjectAttributes plot_object_attributes{hdr};
+        const PropertiesData properties_data{hdr};
+        queued_data_[current_element_name_].push(
+            std::make_unique<InputData>(received_data, plot_object_attributes, properties_data));
     }
     else
     {

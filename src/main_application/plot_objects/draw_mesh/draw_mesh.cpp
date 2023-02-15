@@ -190,7 +190,8 @@ LegendProperties DrawMesh::getLegendProperties() const
 
 DrawMesh::~DrawMesh() {}
 
-std::unique_ptr<const ConvertedDataBase> DrawMesh::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> DrawMesh::convertRawData(const CommunicationHeader& hdr,
+                                                                  const PlotObjectAttributes& attributes,
                                                                   const PropertiesData& properties_data,
                                                                   const uint8_t* const data_ptr)
 {

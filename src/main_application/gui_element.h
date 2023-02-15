@@ -77,7 +77,9 @@ public:
     virtual void waitForFlush() = 0;
     virtual void toggleProjectionType() = 0;
     virtual void update() = 0;
-    virtual void addSettingsData(const ReceivedData& received_data) = 0;
+    virtual void addSettingsData(const ReceivedData& received_data,
+                                 const PlotObjectAttributes& plot_object_attributes,
+                                 const PropertiesData& properties_data) = 0;
 
     /*virtual void showLegend(const bool show_legend)
     {

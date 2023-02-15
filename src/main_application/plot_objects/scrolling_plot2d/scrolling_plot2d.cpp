@@ -41,13 +41,12 @@ struct Converter
 ScrollingPlot2D::ScrollingPlot2D(const CommunicationHeader& hdr,
                                  ReceivedData& received_data,
                                  const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                                 
+
                                  const PlotObjectAttributes& plot_object_attributes,
                                  const PropertiesData& properties_data,
                                  const ShaderCollection shader_collection,
                                  ColorPicker& color_picker)
-    : PlotObjectBase(
-          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker)
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker)
 {
     if (function_ != Function::REAL_TIME_PLOT)
     {
@@ -117,7 +116,7 @@ LegendProperties ScrollingPlot2D::getLegendProperties() const
     return lp;
 }
 
-std::unique_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                                          const PropertiesData& properties_data,
                                                                          const uint8_t* const data_ptr)
 {
@@ -132,15 +131,15 @@ std::unique_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const P
 void ScrollingPlot2D::updateWithNewData(ReceivedData& received_data,
                                         const CommunicationHeader& hdr,
                                         const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                                        const Properties& props)
+                                        const PropertiesData& properties_data)
 {
     static_cast<void>(hdr);
 
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    if (props.numProperties() > 0U)
+    if (properties_data.hasProperties())
     {
-        updateProperties(props);
+        updateProperties(properties_data);
     }
 
     if (previous_buffer_size_ != buffer_size_)

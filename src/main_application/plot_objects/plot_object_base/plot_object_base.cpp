@@ -42,7 +42,7 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
 
 void PlotObjectBase::postInitialize(ReceivedData& received_data,
                                     const CommunicationHeader& hdr,
-                                    const Properties& props)
+                                    const PropertiesData& properties_data)
 {
     received_data_ = std::move(received_data);
     data_ptr_ = received_data_.data();
@@ -72,115 +72,103 @@ void PlotObjectBase::postInitialize(ReceivedData& received_data,
 
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
-    updateProperties(props);
+    updateProperties(properties_data);
 }
 
-void PlotObjectBase::updateProperties(const Properties& props)
+void PlotObjectBase::updateProperties(const PropertiesData& properties_data)
 {
     // Flags
-    is_persistent_ = props.hasFlag(PropertyFlag::PERSISTENT) || is_persistent_;
-    interpolate_colormap_ = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP) || interpolate_colormap_;
-    is_updateable_ = props.hasFlag(PropertyFlag::UPDATABLE) || is_updateable_;
+    is_persistent_ = is_persistent_ || properties_data.is_persistent;
+    interpolate_colormap_ = interpolate_colormap_ || properties_data.interpolate_colormap;
+    is_updateable_ = is_updateable_ || properties_data.is_updateable;
 
     dynamic_or_static_usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
     // Properties
-    if (props.hasProperty(PropertyType::ALPHA))
+    if (!properties_data.alpha.has_default_value)
     {
-        alpha_ = props.getProperty<Alpha>().data / 255.0f;
+        alpha_ = properties_data.alpha.data;
     }
 
-    if (props.hasProperty(PropertyType::BUFFER_SIZE))
+    if (!properties_data.buffer_size.has_default_value)
     {
-        buffer_size_ = props.getProperty<BufferSize>().data;
+        buffer_size_ = properties_data.buffer_size.data;
     }
 
-    if (props.hasProperty(PropertyType::SCATTER_STYLE))
+    if (!properties_data.scatter_style.has_default_value)
     {
-        scatter_style_ = props.getProperty<ScatterStyleContainer>().data;
+        scatter_style_ = properties_data.scatter_style.data;
     }
 
-    if (props.hasProperty(PropertyType::LINE_WIDTH))
+    if (!properties_data.line_width.has_default_value)
     {
-        line_width_ = props.getProperty<LineWidth>().data;
+        line_width_ = properties_data.line_width.data;
     }
 
-    if (props.hasProperty(PropertyType::POINT_SIZE))
+    if (!properties_data.point_size.has_default_value)
     {
-        point_size_ = props.getProperty<PointSize>().data;
+        point_size_ = properties_data.point_size.data;
     }
 
-    if (props.hasProperty(PropertyType::Z_OFFSET))
+    if (!properties_data.z_offset.has_default_value)
     {
-        z_offset_ = props.getProperty<ZOffset>().data;
+        z_offset_ = properties_data.z_offset.data;
     }
 
-    if (props.hasProperty(PropertyType::TRANSFORM))
+    if (!properties_data.custom_transform.has_default_value)
     {
-        const Transform custom_transform = props.getProperty<Transform>();
         has_custom_transform_ = true;
-
-        setTransform(custom_transform.rotation, custom_transform.translation, custom_transform.scale);
+        setTransform(properties_data.custom_transform.data.rotation,
+                     properties_data.custom_transform.data.translation,
+                     properties_data.custom_transform.data.scale);
     }
 
-    if (props.hasProperty(PropertyType::DISTANCE_FROM))
+    if (!properties_data.distance_from.has_default_value)
     {
-        distance_from_ = props.getProperty<DistanceFrom>();
+        distance_from_ = properties_data.distance_from.data;
         has_distance_from_ = true;
     }
 
-    if (props.hasProperty(PropertyType::NAME))
+    if (!properties_data.name.has_default_value)
     {
-        name_ = props.getProperty<Name>().data;
+        name_ = properties_data.name.data;
         has_name_ = true;
     }
 
-    if (props.hasProperty(PropertyType::COLOR))
+    if (!properties_data.color.has_default_value)
     {
-        const Color col = props.getProperty<Color>();
-        color_.red = static_cast<float>(col.red) / 255.0f;
-        color_.green = static_cast<float>(col.green) / 255.0f;
-        color_.blue = static_cast<float>(col.blue) / 255.0f;
+        color_ = properties_data.color.data;
     }
 
-    if (props.hasProperty(PropertyType::COLOR_MAP))
+    if (!properties_data.color_map.has_default_value)
     {
-        color_map_ = props.getProperty<ColorMapContainer>().data;
+        color_map_ = properties_data.color_map.data;
         has_color_map_ = true;
-        edge_color_ = RGBTripletf(0.0f, 0.0f, 0.0f);
     }
 
-    if (props.hasProperty(PropertyType::EDGE_COLOR))
+    if (!properties_data.edge_color.has_default_value)
     {
-        const EdgeColor ec = props.getProperty<EdgeColor>();
-
-        if (ec.use_color)
-        {
-            edge_color_.red = static_cast<float>(ec.red) / 255.0f;
-            edge_color_.green = static_cast<float>(ec.green) / 255.0f;
-            edge_color_.blue = static_cast<float>(ec.blue) / 255.0f;
-            has_edge_color_ = true;
-        }
-        else
+        if (properties_data.no_edges)
         {
             has_edge_color_ = false;
         }
+        else
+        {
+            edge_color_ = properties_data.edge_color.data;
+            has_edge_color_ = true;
+        }
     }
 
-    if (props.hasProperty(PropertyType::FACE_COLOR))
+    if (!properties_data.face_color.has_default_value)
     {
-        const FaceColor fc = props.getProperty<FaceColor>();
-
-        if (fc.use_color)
+        if (properties_data.no_faces)
         {
-            face_color_.red = static_cast<float>(fc.red) / 255.0f;
-            face_color_.green = static_cast<float>(fc.green) / 255.0f;
-            face_color_.blue = static_cast<float>(fc.blue) / 255.0f;
-            has_face_color_ = true;
+            has_face_color_ = false;
         }
         else
         {
-            has_face_color_ = false;
+            face_color_ = properties_data.face_color.data;
+            has_face_color_ = true;
         }
     }
 }
@@ -394,11 +382,11 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
 void PlotObjectBase::updateWithNewData(ReceivedData& received_data,
                                        const CommunicationHeader& hdr,
                                        const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                                       const Properties& props)
+                                       const PropertiesData& properties_data)
 {
     static_cast<void>(received_data);
     static_cast<void>(hdr);
-    static_cast<void>(props);
+    static_cast<void>(properties_data);
 }
 
 void PlotObjectBase::throwIfNotUpdateable() const

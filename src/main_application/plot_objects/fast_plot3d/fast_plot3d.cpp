@@ -64,7 +64,7 @@ FastPlot3D::FastPlot3D(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(converted_data_local->points_ptr, num_elements_, 3);
 }
 
-std::unique_ptr<const ConvertedDataBase> FastPlot3D::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> FastPlot3D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                                     const PropertiesData& properties_data,
                                                                     const uint8_t* const data_ptr)
 {

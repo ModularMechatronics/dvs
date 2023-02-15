@@ -81,13 +81,12 @@ struct Converter
 Plot2D::Plot2D(const CommunicationHeader& hdr,
                ReceivedData& received_data,
                const std::unique_ptr<const ConvertedDataBase>& converted_data,
-               
+
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
                const ShaderCollection shader_collection,
                ColorPicker& color_picker)
-    : PlotObjectBase(
-          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     if (function_ != Function::PLOT2)
@@ -175,7 +174,7 @@ void Plot2D::render()
     glDisable(GL_BLEND);
 }
 
-std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                                 const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
 {
@@ -193,11 +192,11 @@ std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const PlotObject
 void Plot2D::updateWithNewData(ReceivedData& received_data,
                                const CommunicationHeader& hdr,
                                const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                               const Properties& props)
+                               const PropertiesData& properties_data)
 {
     throwIfNotUpdateable();
 
-    postInitialize(received_data, hdr, props);
+    postInitialize(received_data, hdr, properties_data);
 
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 

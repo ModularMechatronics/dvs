@@ -62,13 +62,12 @@ struct Converter
 Surf::Surf(const CommunicationHeader& hdr,
            ReceivedData& received_data,
            const std::unique_ptr<const ConvertedDataBase>& converted_data,
-           
+
            const PlotObjectAttributes& plot_object_attributes,
            const PropertiesData& properties_data,
            const ShaderCollection shader_collection,
            ColorPicker& color_picker)
-    : PlotObjectBase(
-          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES},
       vertex_buffer_lines_{OGLPrimitiveType::LINES}
 {
@@ -112,7 +111,7 @@ void Surf::findMinMax()
 void Surf::updateWithNewData(ReceivedData& received_data,
                              const CommunicationHeader& hdr,
                              const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                             const Properties& props)
+                             const PropertiesData& properties_data)
 {
     /*throwIfNotUpdateable();
 
@@ -210,7 +209,8 @@ void Surf::render()
 
 Surf::~Surf() {}
 
-std::unique_ptr<const ConvertedDataBase> Surf::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> Surf::convertRawData(const CommunicationHeader& hdr,
+                                                              const PlotObjectAttributes& attributes,
                                                               const PropertiesData& properties_data,
                                                               const uint8_t* const data_ptr)
 {
