@@ -33,6 +33,7 @@ public:
     std::vector<PlotObjectBase*> old_plot_datas_;
 
     std::vector<Properties> awaiting_properties_;
+    std::vector<PropertiesData> awaiting_properties_data_;
     PlotDataHandler(const ShaderCollection shader_collection);
     ~PlotDataHandler();
     void clear();
@@ -48,7 +49,7 @@ public:
                       const Vec3<double>& translation,
                       const MatrixFixed<double, 3, 3>& scale);
     std::vector<LegendProperties> getLegendStrings() const;
-    void propertiesExtension(const CommunicationHeader& hdr);
+    void propertiesExtension(const internal::ItemId id, const PropertiesData& properties_data);
 };
 
 #endif  // MAIN_APPLICATION_PLOT_DATA_HANDLER_H_

@@ -145,7 +145,8 @@ PlotCollection3D::PlotCollection3D(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(converted_data_local->data_ptr, num_points_, 3);
 }
 
-std::unique_ptr<const ConvertedDataBase> PlotCollection3D::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> PlotCollection3D::convertRawData(const CommunicationHeader& hdr,
+                                                                          const PlotObjectAttributes& attributes,
                                                                           const PropertiesData& properties_data,
                                                                           const uint8_t* const data_ptr)
 

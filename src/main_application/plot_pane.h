@@ -128,7 +128,9 @@ public:
     void updateSizeFromParent(const wxSize& parent_size) override;
     void raise() override;
     void lower() override;
-    void addSettingsData(const ReceivedData& received_data) override;
+    void addSettingsData(const ReceivedData& received_data,
+                         const PlotObjectAttributes& plot_object_attributes,
+                         const PropertiesData& properties_data) override;
     void show() override;
     void hide() override;
     void destroy() override;

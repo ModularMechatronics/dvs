@@ -28,16 +28,14 @@ using namespace dvs::properties;
 constexpr size_t kDefaultBufferSize = 500U;
 constexpr char* const kDefaultName = "";
 constexpr RGBTripletf kDefaultEdgeColor{0.0f, 0.0f, 0.0f};
-constexpr bool kDefaultHasDistanceFrom{false};
-constexpr bool kDefaultCustomTransform{false};
 constexpr float kDefaultZOffset{0.0f};
 constexpr ScatterStyle kDefaultScatterStyle{ScatterStyle::CIRCLE};
 constexpr float kDefaultAlpha{1.0f};
 constexpr float kDefaultLineWidth{1.0f};
 constexpr float kDefaultPointSize{10.0f};
-constexpr bool kIsPersistent{false};
-constexpr bool kIsUpdateable{false};
-constexpr bool kInterpolateColormap{false};
+constexpr bool kDefaultIsPersistent{false};
+constexpr bool kDefaultIsUpdateable{false};
+constexpr bool kDefaultInterpolateColormap{false};
 constexpr internal::ItemId kDefaultId{internal::ItemId::UNKNOWN};
 constexpr GLenum kDefaultDynamicOrStaticUsage{GL_STATIC_DRAW};
 constexpr bool kDefaultNoEdges{false};
@@ -47,9 +45,6 @@ bool isPlotDataFunction(const Function fcn);
 
 class PropertiesData
 {
-private:
-    bool has_properties_;
-
 public:
     template <typename T> struct OptionalParameter
     {
@@ -59,8 +54,11 @@ public:
         OptionalParameter() : has_default_value{true} {}
         OptionalParameter(const T& data_in) : has_default_value{true}, data{data_in} {}
 
-        OptionalParameter& operator=(const T& data_in)
+        OptionalParameter<T>& operator=(const T& data_in)
         {
+            static_assert(!std::is_same<OptionalParameter, T>::value,
+                          "Assert to guard that this operator is used correctly");
+
             has_default_value = false;
             data = data_in;
 
@@ -68,10 +66,26 @@ public:
         }
     };
 
+private:
+    bool has_properties_;
+
+    template <typename T>
+    void overwritePropertyFromOtherIfPresent(OptionalParameter<T>& local, const OptionalParameter<T> other)
+    {
+        if (!other.has_default_value)
+        {
+            local = other.data;
+            has_properties_ = true;
+        }
+    }
+
+public:
     PropertiesData() : has_properties_{false} {}
 
     PropertiesData(const CommunicationHeader& hdr) : has_properties_{false}
     {
+        // TODO: Should check which function it is, and return if it's
+        // not a function that requires PropertiesData
         const Properties props{hdr};
 
         // Flags
@@ -85,7 +99,7 @@ public:
         // Properties
         if (props.hasProperty(PropertyType::ALPHA))
         {
-            alpha = props.getProperty<Alpha>().data / 255.0f;
+            alpha = static_cast<float>(props.getProperty<Alpha>().data) / 255.0f;
             has_properties_ = true;
         }
 
@@ -184,21 +198,43 @@ public:
         }
     }
 
-    template <typename T>
-    void overwritePropertyFromOtherIfPresent(OptionalParameter<T>& local, const OptionalParameter<T> other)
+    void clear()
     {
-        if (!other.has_default_value)
-        {
-            local = other.data;
-            has_properties_ = true;
-        }
+        has_properties_ = false;
+
+        name = OptionalParameter<std::string>{kDefaultName};
+
+        scatter_style = OptionalParameter<ScatterStyle>{kDefaultScatterStyle};
+
+        z_offset = OptionalParameter<float>{kDefaultZOffset};
+        alpha = OptionalParameter<float>{kDefaultAlpha};
+        line_width = OptionalParameter<float>{kDefaultLineWidth};
+        point_size = OptionalParameter<float>{kDefaultPointSize};
+
+        buffer_size = OptionalParameter<uint16_t>{kDefaultBufferSize};
+
+        color = OptionalParameter<RGBTripletf>{};
+
+        edge_color = OptionalParameter<RGBTripletf>{kDefaultEdgeColor};
+        no_edges = kDefaultNoEdges;
+
+        face_color = OptionalParameter<RGBTripletf>{};
+        no_faces = kDefaultNoFaces;
+
+        color_map = OptionalParameter<ColorMap>{};
+
+        distance_from = OptionalParameter<DistanceFrom>{};
+
+        custom_transform = OptionalParameter<Transform>{};
+
+        is_persistent = kDefaultIsPersistent;
+        is_updateable = kDefaultIsUpdateable;
+        interpolate_colormap = kDefaultInterpolateColormap;
+        dynamic_or_static_usage = kDefaultDynamicOrStaticUsage;
     }
 
     void appendProperties(const PropertiesData& props)
     {
-        overwritePropertyFromOtherIfPresent(name, props.name);
-
-        //
         overwritePropertyFromOtherIfPresent(alpha, props.alpha);
         overwritePropertyFromOtherIfPresent(buffer_size, props.buffer_size);
         overwritePropertyFromOtherIfPresent(scatter_style, props.scatter_style);
@@ -206,77 +242,38 @@ public:
         overwritePropertyFromOtherIfPresent(point_size, props.point_size);
         overwritePropertyFromOtherIfPresent(z_offset, props.z_offset);
         overwritePropertyFromOtherIfPresent(name, props.name);
+        overwritePropertyFromOtherIfPresent(color, props.color);
+        overwritePropertyFromOtherIfPresent(distance_from, props.distance_from);
+        overwritePropertyFromOtherIfPresent(custom_transform, props.custom_transform);
+        overwritePropertyFromOtherIfPresent(color_map, props.color_map);
 
-        /*
-
-        if ((props.hasProperty(PropertyType::COLOR)))
+        if (!props.edge_color.has_default_value)
         {
-            const Color col = props.getProperty<Color>();
-            color = RGBTripletf{static_cast<float>(col.red) / 255.0f,
-                                static_cast<float>(col.green) / 255.0f,
-                                static_cast<float>(col.blue) / 255.0f};
+            edge_color = props.edge_color.data;
+            no_edges = props.no_edges;
+
             has_properties_ = true;
         }
 
-        if (props.hasProperty(PropertyType::DISTANCE_FROM))
+        if (!props.face_color.has_default_value)
         {
-            distance_from = props.getProperty<DistanceFrom>();
-            has_distance_from = true;
+            face_color = props.face_color.data;
+            no_faces = props.no_faces;
+
             has_properties_ = true;
         }
-
-        if (props.hasProperty(PropertyType::TRANSFORM))
-        {
-            custom_transform = props.getProperty<Transform>();
-            has_properties_ = true;
-        }
-
-        if (props.hasProperty(PropertyType::COLOR_MAP))
-        {
-            color_map = props.getProperty<ColorMapContainer>().data;
-            has_color_map = true;
-            has_properties_ = true;
-        }
-
-        if (props.hasProperty(PropertyType::EDGE_COLOR))
-        {
-            const EdgeColor ec = props.getProperty<EdgeColor>();
-
-            edge_color = RGBTripletf{static_cast<float>(ec.red) / 255.0f,
-                                     static_cast<float>(ec.green) / 255.0f,
-                                     static_cast<float>(ec.blue) / 255.0f};
-
-            OptionalParameter<RGBTripletf> edge_color;
-            OptionalParameter<bool> no_edges{kDefaultNoEdges};
-            if (!ec.use_color)
-            {
-                no_edges = true;
-            }
-            has_properties_ = true;
-        }
-
-        if (props.hasProperty(PropertyType::FACE_COLOR))
-        {
-            const FaceColor fc = props.getProperty<FaceColor>();
-
-            face_color = RGBTripletf{static_cast<float>(fc.red) / 255.0f,
-                                     static_cast<float>(fc.green) / 255.0f,
-                                     static_cast<float>(fc.blue) / 255.0f};
-
-            if (!fc.use_color)
-            {
-                no_faces = true;
-            }
-            has_properties_ = true;
-        }
-        */
-
-        //
 
         is_persistent = is_persistent || props.is_persistent;
         is_updateable = is_updateable || props.is_updateable;
         interpolate_colormap = interpolate_colormap || props.interpolate_colormap;
         dynamic_or_static_usage = is_updateable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+
+        has_properties_ = has_properties_ || is_persistent || interpolate_colormap || is_updateable;
+    }
+
+    bool hasProperties() const
+    {
+        return has_properties_;
     }
 
     // Properties
@@ -305,9 +302,9 @@ public:
 
     OptionalParameter<Transform> custom_transform;
 
-    bool is_persistent{kIsPersistent};
-    bool is_updateable{kIsUpdateable};
-    bool interpolate_colormap{kInterpolateColormap};
+    bool is_persistent{kDefaultIsPersistent};
+    bool is_updateable{kDefaultIsUpdateable};
+    bool interpolate_colormap{kDefaultInterpolateColormap};
     GLenum dynamic_or_static_usage{kDefaultDynamicOrStaticUsage};
 };
 
@@ -320,8 +317,6 @@ struct ConvertedDataBase
 
 struct PlotObjectAttributes
 {
-    PropertiesData properties_data;
-
     Function function;
     DataType data_type;
 
@@ -344,15 +339,16 @@ struct PlotObjectAttributes
 
     uint32_t num_objects;
 
-    float z_offset;
-
     PlotObjectAttributes() {}
-    PlotObjectAttributes(const CommunicationHeader& hdr) : properties_data{hdr}, function{hdr.getFunction()}
+    PlotObjectAttributes(const CommunicationHeader& hdr) : function{hdr.getFunction()}
     {
+        num_dimensions = getNumDimensionsFromFunction(function);
+
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DATA_TYPE))
         {
             data_type = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
             num_bytes_per_element = dataTypeToNumBytes(data_type);
+            num_bytes_for_one_vec = num_bytes_per_element * num_elements;
         }
 
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_ELEMENTS))
@@ -360,15 +356,12 @@ struct PlotObjectAttributes
             num_elements = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
         }
 
-        num_dimensions = getNumDimensionsFromFunction(function);
-
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
         {
             id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
         }
 
         has_color = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
-        num_bytes_for_one_vec = num_bytes_per_element * num_elements;
 
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DIMENSION_2D))
         {
@@ -394,8 +387,6 @@ struct PlotObjectAttributes
         {
             num_objects = hdr.get(CommunicationHeaderObjectType::NUM_OBJECTS).as<uint32_t>();
         }
-
-        z_offset = properties_data.z_offset.data;
     }
 };
 
@@ -466,7 +457,9 @@ protected:
     void assignProperties(const PropertiesData& properties_data, ColorPicker& color_picker);
     virtual void findMinMax() = 0;
 
-    void postInitialize(ReceivedData& received_data, const CommunicationHeader& hdr, const Properties& props);
+    void postInitialize(ReceivedData& received_data,
+                        const CommunicationHeader& hdr,
+                        const PropertiesData& properties_data);
     void throwIfNotUpdateable() const;
 
 public:
@@ -511,7 +504,7 @@ public:
     virtual void updateWithNewData(ReceivedData& received_data,
                                    const CommunicationHeader& hdr,
                                    const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                                   const Properties& props);
+                                   const PropertiesData& properties_data);
 
     bool hasName()
     {
@@ -520,7 +513,7 @@ public:
 
     virtual void modifyShader();
 
-    void updateProperties(const Properties& props);
+    void updateProperties(const PropertiesData& properties_data);
 };
 
 #endif  // MAIN_APPLICATION_PLOT_OBJECTS_PLOT_OBJECT_BASE_PLOT_OBJECT_BASE_H_

@@ -13,7 +13,22 @@ public:
     InputData() = delete;
 
     InputData(ReceivedData& received_data)
-        : received_data_{std::move(received_data)}, function_{received_data_.getFunction()}, converted_data_{nullptr}
+        : received_data_{std::move(received_data)},
+          function_{received_data_.getFunction()},
+          converted_data_{nullptr},
+          plot_object_attributes_{},
+          properties_data_{}
+    {
+    }
+
+    InputData(ReceivedData& received_data,
+              const PlotObjectAttributes& plot_object_attributes,
+              const PropertiesData& properties_data)
+        : received_data_{std::move(received_data)},
+          function_{received_data_.getFunction()},
+          converted_data_{nullptr},
+          plot_object_attributes_{plot_object_attributes},
+          properties_data_{properties_data}
     {
     }
 
@@ -40,9 +55,9 @@ public:
         return {std::move(received_data_), plot_object_attributes_, properties_data_, std::move(converted_data_)};
     }
 
-    ReceivedData&& moveReceivedData()
+    std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData> moveAllDataButConvertedData()
     {
-        return std::move(received_data_);
+        return {std::move(received_data_), plot_object_attributes_, properties_data_};
     }
 
 private:

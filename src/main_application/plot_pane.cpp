@@ -250,7 +250,9 @@ PlotPane::~PlotPane()
     delete m_context;
 }
 
-void PlotPane::addSettingsData(const ReceivedData& received_data)
+void PlotPane::addSettingsData(const ReceivedData& received_data,
+                               const PlotObjectAttributes& plot_object_attributes,
+                               const PropertiesData& properties_data)
 {
     const dvs::internal::CommunicationHeader& hdr = received_data.getCommunicationHeader();
     const Function fcn = hdr.getFunction();
@@ -275,7 +277,7 @@ void PlotPane::addSettingsData(const ReceivedData& received_data)
     }
     else if (fcn == Function::PROPERTIES_EXTENSION)
     {
-        plot_data_handler_->propertiesExtension(hdr);
+        plot_data_handler_->propertiesExtension(plot_object_attributes.id, properties_data);
     }
     else if (fcn == Function::GLOBAL_ILLUMINATION)
     {
@@ -896,8 +898,9 @@ void PlotPane::processActionQueue()
                     }
                     else
                     {
-                        ReceivedData received_data = flush_queue_.front()->moveReceivedData();
-                        addSettingsData(received_data);
+                        auto [received_data, plot_object_attributes, properties_data] =
+                            flush_queue_.front()->moveAllDataButConvertedData();
+                        addSettingsData(received_data, plot_object_attributes, properties_data);
                     }
 
                     flush_queue_.pop();
@@ -931,8 +934,9 @@ void PlotPane::processActionQueue()
             }
             else
             {
-                ReceivedData received_data = queued_data_.front()->moveReceivedData();
-                addSettingsData(received_data);
+                auto [received_data, plot_object_attributes, properties_data] =
+                    queued_data_.front()->moveAllDataButConvertedData();
+                addSettingsData(received_data, plot_object_attributes, properties_data);
             }
 
             queued_data_.pop();

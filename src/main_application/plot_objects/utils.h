@@ -12,7 +12,6 @@
 #include "main_application/plot_objects/utils.h"
 #include "misc/color_map.h"
 #include "opengl_low_level/opengl_header.h"
-#include "opengl_low_level/opengl_header.h"
 
 using namespace dvs::internal;
 using namespace dvs;
@@ -83,10 +82,7 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 1;
 
         default:
-            std::cout << "You haven't defined number of dimensions in utils.h for Function type "
-                      << static_cast<int>(fcn) << std::endl;
-            exit(-1);
-            return -1;
+            return 1;
     }
 }
 

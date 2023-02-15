@@ -28,11 +28,11 @@ public:
     void updateWithNewData(ReceivedData& received_data,
                            const CommunicationHeader& hdr,
                            const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                           const Properties& props) override;
+                           const PropertiesData& properties_data) override;
 
     void render() override;
 
-    static std::unique_ptr<const ConvertedDataBase> convertRawData(const PlotObjectAttributes& attributes,
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                                    const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr);
 

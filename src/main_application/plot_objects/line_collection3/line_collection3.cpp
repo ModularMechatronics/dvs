@@ -77,7 +77,7 @@ void LineCollection3D::render()
 
 LineCollection3D::~LineCollection3D() {}
 
-std::unique_ptr<const ConvertedDataBase> LineCollection3D::convertRawData(const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> LineCollection3D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
                                                                           const PropertiesData& properties_data,
                                                                           const uint8_t* const data_ptr)
 {
