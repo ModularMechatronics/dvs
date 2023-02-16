@@ -20,7 +20,7 @@ public:
              std::unique_ptr<const ConvertedDataBase>& converted_data,
              const PlotObjectAttributes& plot_object_attributes,
              const PropertiesData& properties_data,
-             const ShaderCollection shader_collection,
+             const ShaderCollection& shader_collection,
              ColorPicker& color_picker);
     ~DrawMesh();
 

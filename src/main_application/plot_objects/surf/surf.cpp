@@ -65,7 +65,7 @@ Surf::Surf(const CommunicationHeader& hdr,
 
            const PlotObjectAttributes& plot_object_attributes,
            const PropertiesData& properties_data,
-           const ShaderCollection shader_collection,
+           const ShaderCollection& shader_collection,
            ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES},

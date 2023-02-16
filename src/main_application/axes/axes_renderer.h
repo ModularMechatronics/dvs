@@ -92,7 +92,7 @@ private:
                       const bool invert) const;
 
 public:
-    AxesRenderer(const ShaderCollection shader_collection,
+    AxesRenderer(const ShaderCollection& shader_collection,
                  const ElementSettings& element_settings,
                  const RGBTripletf& tab_background_color);
 

@@ -344,16 +344,16 @@ struct PlotObjectAttributes
     {
         num_dimensions = getNumDimensionsFromFunction(function);
 
+        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_ELEMENTS))
+        {
+            num_elements = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
+        }
+
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DATA_TYPE))
         {
             data_type = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
             num_bytes_per_element = dataTypeToNumBytes(data_type);
             num_bytes_for_one_vec = num_bytes_per_element * num_elements;
-        }
-
-        if (hdr.hasObjectWithType(CommunicationHeaderObjectType::NUM_ELEMENTS))
-        {
-            num_elements = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
         }
 
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
@@ -470,7 +470,7 @@ public:
                    const CommunicationHeader& hdr,
                    const PlotObjectAttributes& plot_object_attributes,
                    const PropertiesData& properties_data,
-                   const ShaderCollection shader_collection,
+                   const ShaderCollection& shader_collection,
                    ColorPicker& color_picker);
     virtual void render() = 0;
     void preRender(const Shader shader_to_use);

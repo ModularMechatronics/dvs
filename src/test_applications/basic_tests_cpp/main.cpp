@@ -41,7 +41,8 @@ int main(int argc, char* argv[])
                              {"drawMesh", testDrawMesh},
                              {"stairs", testStairs},
                              {"legend", testLegend},
-                             {"openProjectFile", testOpenProjectFile}};
+                             {"openProjectFile", testOpenProjectFile},
+                             {"testSetProperties", testSetProperties}};
 
     if (argc == 1)
     {
@@ -64,7 +65,7 @@ int main(int argc, char* argv[])
             {
                 std::cout << "Running " << it->first << "..." << std::endl;
                 it->second();
-                std::cout << it->first << " ran successfully. Press any key to continue." << std::endl << std::endl;
+                std::cout << it->first << " ran successfully. Press enter to continue." << std::endl << std::endl;
                 std::cin.ignore();
             }
         }

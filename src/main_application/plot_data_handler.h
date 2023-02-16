@@ -34,7 +34,7 @@ public:
 
     std::vector<Properties> awaiting_properties_;
     std::vector<PropertiesData> awaiting_properties_data_;
-    PlotDataHandler(const ShaderCollection shader_collection);
+    PlotDataHandler(const ShaderCollection& shader_collection);
     ~PlotDataHandler();
     void clear();
     void softClear();
