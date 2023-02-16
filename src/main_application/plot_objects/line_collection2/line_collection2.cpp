@@ -45,13 +45,12 @@ struct Converter
 LineCollection2D::LineCollection2D(const CommunicationHeader& hdr,
                                    ReceivedData& received_data,
                                    const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                                   
+
                                    const PlotObjectAttributes& plot_object_attributes,
                                    const PropertiesData& properties_data,
                                    const ShaderCollection& shader_collection,
                                    ColorPicker& color_picker)
-    : PlotObjectBase(
-          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (function_ != Function::LINE_COLLECTION2)
@@ -95,7 +94,8 @@ LegendProperties LineCollection2D::getLegendProperties() const
     return lp;
 }
 
-std::unique_ptr<const ConvertedDataBase> LineCollection2D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> LineCollection2D::convertRawData(const CommunicationHeader& hdr,
+                                                                          const PlotObjectAttributes& attributes,
                                                                           const PropertiesData& properties_data,
                                                                           const uint8_t* const data_ptr)
 {

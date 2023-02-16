@@ -443,12 +443,6 @@ void testPlot()
     Vector<float> xp(num_points), yp(num_points), zp(num_points);
     Vector<RGB888> colorp(num_points);
 
-    for (size_t k = 0; k < num_points; k++)
-    {
-        xp(k) = static_cast<float>(k) * (5.0 / 25.0);
-        yp(k) = static_cast<float>(k) * (5.0 / 25.0);
-    }
-
     xp(0) = 0.0;
     xp(1) = 1.0;
     xp(2) = 2.2;
@@ -478,16 +472,15 @@ void testPlot()
     setCurrentElement("p_view_0");
     clearView();
 
-    // axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
+    axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
     plot(xp, yp, colorp, properties::LineWidth(20), properties::Color(200, 200, 200));
-    // scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
+    scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
-    // plot3(xp, yp, zp, properties::LineWidth(60), properties::Color(0, 255, 0));
+    plot3(xp, yp, zp, properties::LineWidth(60), properties::Color(0, 255, 0));
 
-    // view(0, 90);
+    view(0, 90);
 
-    return;
     setCurrentElement("p1");
     clearView();
 

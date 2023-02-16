@@ -37,8 +37,12 @@ struct AxesSideConfiguration
         yz_plane_x_value = ((azimuth >= 0.0f) || cond) ? 1.0f : -1.0f;
 
         if (view_angles.isSnappedAlongX()) {}
-        else if (view_angles.isSnappedAlongY()) {}
-        else if (view_angles.isSnappedAlongZ()) {}
+        else if (view_angles.isSnappedAlongY())
+        {
+        }
+        else if (view_angles.isSnappedAlongZ())
+        {
+        }
     }
 };
 

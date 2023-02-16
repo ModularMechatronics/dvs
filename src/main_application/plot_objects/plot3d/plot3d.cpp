@@ -61,13 +61,12 @@ struct Converter
 Plot3D::Plot3D(const CommunicationHeader& hdr,
                ReceivedData& received_data,
                const std::unique_ptr<const ConvertedDataBase>& converted_data,
-               
+
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
                const ShaderCollection& shader_collection,
                ColorPicker& color_picker)
-    : PlotObjectBase(
-          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES}
 {
     if (function_ != Function::PLOT3)
@@ -103,7 +102,8 @@ void Plot3D::render()
 
 Plot3D::~Plot3D() {}
 
-std::unique_ptr<const ConvertedDataBase> Plot3D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> Plot3D::convertRawData(const CommunicationHeader& hdr,
+                                                                const PlotObjectAttributes& attributes,
                                                                 const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
 {

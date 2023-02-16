@@ -174,7 +174,8 @@ void Plot2D::render()
     glDisable(GL_BLEND);
 }
 
-std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const CommunicationHeader& hdr,
+                                                                const PlotObjectAttributes& attributes,
                                                                 const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
 {

@@ -263,31 +263,24 @@ public:
 
         const auto t_cyl_z_transformed = t_cyl_z * new_transform;
         const auto t_cone_z_transformed = t_cone_z * new_transform;
-        setTransform(
-            properties::ID0, cube_transformed.scale, cube_transformed.rotation, cube_transformed.translation);
+        setTransform(properties::ID0, cube_transformed.scale, cube_transformed.rotation, cube_transformed.translation);
 
-        setTransform(properties::ID1,
-                     t_cyl_x_transformed.scale,
-                     t_cyl_x_transformed.rotation,
-                     t_cyl_x_transformed.translation);
+        setTransform(
+            properties::ID1, t_cyl_x_transformed.scale, t_cyl_x_transformed.rotation, t_cyl_x_transformed.translation);
         setTransform(properties::ID2,
                      t_cone_x_transformed.scale,
                      t_cone_x_transformed.rotation,
                      t_cone_x_transformed.translation);
 
-        setTransform(properties::ID3,
-                     t_cyl_y_transformed.scale,
-                     t_cyl_y_transformed.rotation,
-                     t_cyl_y_transformed.translation);
+        setTransform(
+            properties::ID3, t_cyl_y_transformed.scale, t_cyl_y_transformed.rotation, t_cyl_y_transformed.translation);
         setTransform(properties::ID4,
                      t_cone_y_transformed.scale,
                      t_cone_y_transformed.rotation,
                      t_cone_y_transformed.translation);
 
-        setTransform(properties::ID5,
-                     t_cyl_z_transformed.scale,
-                     t_cyl_z_transformed.rotation,
-                     t_cyl_z_transformed.translation);
+        setTransform(
+            properties::ID5, t_cyl_z_transformed.scale, t_cyl_z_transformed.rotation, t_cyl_z_transformed.translation);
         setTransform(properties::ID6,
                      t_cone_z_transformed.scale,
                      t_cone_z_transformed.rotation,

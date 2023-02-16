@@ -302,6 +302,10 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
                      properties_data.custom_transform.data.translation,
                      properties_data.custom_transform.data.scale);
     }
+    else
+    {
+        has_custom_transform_ = false;
+    }
 
     if (!properties_data.distance_from.has_default_value)
     {
