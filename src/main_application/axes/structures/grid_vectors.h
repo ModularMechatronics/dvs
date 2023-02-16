@@ -14,6 +14,7 @@ enum class MouseInteractionType
     PAN,
     ZOOM,
     UNCHANGED,
+    LATENT,
     UNKNOWN
 };
 

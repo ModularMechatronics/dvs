@@ -19,14 +19,10 @@ Pre release:
  * Something with robotics
 - Finalize demos
 - Make axes numbers fit better at the edges, fewer line points per axis?
-- Don't clear "pending_soft_clear" on interaction (mouse/kbd) update, only when new data
 - Remove interface function fastPlot, and just replace it with a property flag to plot/plot3
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
-- Make queues of received data instead, and put ConvertedData as a member of received data? Rename ReceivedData to InputData
 - Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
-- Currently not possible to add new window when opening a new file ("New" under file menu), fix this
-- Refactor pipeline of how new plot objects are added
 - Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
@@ -34,6 +30,7 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Make queues of received data instead, and put ConvertedData as a member of received data? Rename ReceivedData to InputData
 - Don't execute pending clear on interaction (with mouse), it makes plots flashing when using waitForFlush, and drawing multiple things (probably)
 - Set color in fragment shader with uniform, instead of in vertex shader
 - Investigate if main_window can be just a wxObject or something

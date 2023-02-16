@@ -43,6 +43,7 @@ private:
     double current_window_height;
 
     MouseInteractionType current_mouse_interaction_type_;
+    MouseInteractionType overridden_mouse_interaction_type_;
     bool mouse_pressed_;
     bool should_draw_zoom_rect_;
 
@@ -66,7 +67,13 @@ private:
 public:
     AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width);
 
-    void update(const MouseInteractionType interaction_type, const int window_width, const int window_height);
+    void update(const MouseInteractionType interaction_type,
+                const MouseInteractionType overridden_mouse_interaction_type,
+                const int window_width,
+                const int window_height);
+    void updateWindowSize(const int window_width, const int window_height);
+    void setOverriddenMouseInteractionType(const MouseInteractionType overridden_mouse_interaction_type);
+    void setMouseInteractionType(const MouseInteractionType interaction_type);
     void resetView();
     void setViewAngles(const double azimuth, const double elevation);
     void setAxesLimits(const Vec3d& min_vec, const Vec3d& max_vec);
