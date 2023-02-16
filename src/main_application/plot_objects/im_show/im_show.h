@@ -18,7 +18,7 @@ public:
     ImShow(const CommunicationHeader& hdr,
            ReceivedData& received_data,
            const std::unique_ptr<const ConvertedDataBase>& converted_data,
-           
+
            const PlotObjectAttributes& plot_object_attributes,
            const PropertiesData& properties_data,
            const ShaderCollection& shader_collection,
@@ -26,7 +26,8 @@ public:
     ~ImShow();
 
     void render() override;
-    static std::unique_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr,
+                                                                   const PlotObjectAttributes& attributes,
                                                                    const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr);
 

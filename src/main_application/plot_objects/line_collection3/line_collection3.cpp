@@ -45,13 +45,12 @@ struct Converter
 LineCollection3D::LineCollection3D(const CommunicationHeader& hdr,
                                    ReceivedData& received_data,
                                    const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                                   
+
                                    const PlotObjectAttributes& plot_object_attributes,
                                    const PropertiesData& properties_data,
                                    const ShaderCollection& shader_collection,
                                    ColorPicker& color_picker)
-    : PlotObjectBase(
-          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (function_ != Function::LINE_COLLECTION3)
@@ -77,7 +76,8 @@ void LineCollection3D::render()
 
 LineCollection3D::~LineCollection3D() {}
 
-std::unique_ptr<const ConvertedDataBase> LineCollection3D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> LineCollection3D::convertRawData(const CommunicationHeader& hdr,
+                                                                          const PlotObjectAttributes& attributes,
                                                                           const PropertiesData& properties_data,
                                                                           const uint8_t* const data_ptr)
 {

@@ -45,13 +45,12 @@ struct Converter
 FastPlot3D::FastPlot3D(const CommunicationHeader& hdr,
                        ReceivedData& received_data,
                        const std::unique_ptr<const ConvertedDataBase>& converted_data,
-                       
+
                        const PlotObjectAttributes& plot_object_attributes,
                        const PropertiesData& properties_data,
                        const ShaderCollection& shader_collection,
                        ColorPicker& color_picker)
-    : PlotObjectBase(
-          received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
     if (function_ != Function::FAST_PLOT3)
@@ -64,7 +63,8 @@ FastPlot3D::FastPlot3D(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(converted_data_local->points_ptr, num_elements_, 3);
 }
 
-std::unique_ptr<const ConvertedDataBase> FastPlot3D::convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
+std::unique_ptr<const ConvertedDataBase> FastPlot3D::convertRawData(const CommunicationHeader& hdr,
+                                                                    const PlotObjectAttributes& attributes,
                                                                     const PropertiesData& properties_data,
                                                                     const uint8_t* const data_ptr)
 {

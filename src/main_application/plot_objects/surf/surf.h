@@ -31,7 +31,8 @@ public:
                            const std::unique_ptr<const ConvertedDataBase>& converted_data,
                            const PropertiesData& properties_data) override;
 
-    static std::unique_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr, const PlotObjectAttributes& attributes,
+    static std::unique_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr,
+                                                                   const PlotObjectAttributes& attributes,
                                                                    const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr);
     void render() override;
