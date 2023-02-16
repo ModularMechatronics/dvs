@@ -7,7 +7,7 @@
 #include "plot_objects/plot_objects.h"
 #include "shader.h"
 
-PlotDataHandler::PlotDataHandler(const ShaderCollection shader_collection)
+PlotDataHandler::PlotDataHandler(const ShaderCollection& shader_collection)
     : pending_soft_clear_(false), shader_collection_{shader_collection}
 {
     awaiting_properties_.resize(UINT8_MAX);

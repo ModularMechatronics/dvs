@@ -10,7 +10,7 @@
 
 using namespace dvs;
 
-AxesRenderer::AxesRenderer(const ShaderCollection shader_collection,
+AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
                            const ElementSettings& element_settings,
                            const RGBTripletf& tab_background_color)
     : shader_collection_{shader_collection},

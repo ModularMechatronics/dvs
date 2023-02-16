@@ -424,6 +424,11 @@ void MainWindow::removeAllWindows()
 
     for (auto we : windows_)
     {
+        Unbind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
+        const int menu_id = windows_menu_->FindItem(we->getName());
+        windows_menu_->Destroy(menu_id);
+
+        we->deleteAllTabs();
         we->Destroy();
     }
 
@@ -465,6 +470,12 @@ void MainWindow::openExistingFile(const std::string& file_path)
     save_manager_->openExistingFile(file_path);
 
     setupWindows(save_manager_->getCurrentProjectSettings());
+
+    for (auto we : windows_)
+    {
+        windows_menu_->Append(we->getCallbackId(), we->getName());
+        Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
+    }
 
     window_initialization_in_progress_ = false;
 }

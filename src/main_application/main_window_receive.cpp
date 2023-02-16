@@ -350,8 +350,11 @@ void MainWindow::receiveData()
             {
                 const std::string element_name = qa.first;
 
-                GuiElement* gui_element = gui_elements_[element_name];
-                gui_element->pushQueue(qa.second);
+                if (gui_elements_.count(element_name) > 0U)
+                {
+                    GuiElement* gui_element = gui_elements_[element_name];
+                    gui_element->pushQueue(qa.second);
+                }
             }
         }
     }

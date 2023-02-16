@@ -182,6 +182,16 @@ WindowView::~WindowView()
     }
 }
 
+void WindowView::deleteAllTabs()
+{
+    for (const auto& tab : tabs_)
+    {
+        delete tab;
+    }
+
+    tabs_.clear();
+}
+
 void WindowView::setProjectName(const std::string& project_name)
 {
     project_name_ = project_name;

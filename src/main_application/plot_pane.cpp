@@ -872,6 +872,7 @@ void PlotPane::clearPane()
 
     axes_interactor_.setViewAngles(0, M_PI);
     axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
+    axes_interactor_.showLegend(false);
     axes_renderer_->resetGlobalIllumination();
     axes_renderer_->setAxesBoxScaleFactor(Vec3d{2.5, 2.5, 2.5});
 }

@@ -538,6 +538,7 @@ public:
     std::string getName() const;
     void setIsFileSavedForLabel(const bool is_saved);
     void setProjectName(const std::string& project_name);
+    void deleteAllTabs();
 
     GuiElement* getGuiElement(const std::string& element_name) const;
 

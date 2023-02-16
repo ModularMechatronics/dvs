@@ -4,7 +4,7 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
                                const CommunicationHeader& hdr,
                                const PlotObjectAttributes& plot_object_attributes,
                                const PropertiesData& properties_data,
-                               const ShaderCollection shader_collection,
+                               const ShaderCollection& shader_collection,
                                ColorPicker& color_picker)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
