@@ -31,6 +31,7 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
 
     axes_settings_ = axes_settings;
     current_mouse_interaction_type_ = MouseInteractionType::ROTATE;
+    overridden_mouse_interaction_type_ = MouseInteractionType::ROTATE;
 
     const size_t num_lines = axes_settings_.num_axes_ticks;
     inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
@@ -202,17 +203,38 @@ void AxesInteractor::showLegend(const bool show_legend)
     show_legend_ = show_legend;
 }
 
+void AxesInteractor::updateWindowSize(const int window_width, const int window_height)
+{
+    current_window_width = window_width;
+    current_window_height = window_height;
+}
+
+void AxesInteractor::setMouseInteractionType(const MouseInteractionType interaction_type)
+{
+    current_mouse_interaction_type_ = interaction_type;
+}
+
+void AxesInteractor::setOverriddenMouseInteractionType(const MouseInteractionType overridden_mouse_interaction_type)
+{
+    overridden_mouse_interaction_type_ = overridden_mouse_interaction_type;
+}
+
 void AxesInteractor::update(const MouseInteractionType interaction_type,
+                            const MouseInteractionType overridden_mouse_interaction_type,
                             const int window_width,
                             const int window_height)
 {
     current_window_width = window_width;
     current_window_height = window_height;
 
-    if (interaction_type != MouseInteractionType::UNCHANGED)
+    /*if (overridden_mouse_interaction_type != MouseInteractionType::UNCHANGED)
+    {
+        overridden_mouse_interaction_type_ = overridden_mouse_interaction_type;
+    }
+    else if (interaction_type != MouseInteractionType::UNCHANGED)
     {
         current_mouse_interaction_type_ = interaction_type;
-    }
+    }*/
 }
 
 void AxesInteractor::resetView()
@@ -228,7 +250,14 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
     const float dx_mod = 250.0f * static_cast<float>(dx) / current_window_width;
     const float dy_mod = 250.0f * static_cast<float>(dy) / current_window_height;
     should_draw_zoom_rect_ = false;
-    switch (current_mouse_interaction_type_)
+
+    const MouseInteractionType mit = (overridden_mouse_interaction_type_ != MouseInteractionType::UNCHANGED)
+                                         ? overridden_mouse_interaction_type_
+                                         : current_mouse_interaction_type_;
+
+    // const MouseInteractionType mit = current_mouse_interaction_type_;
+
+    switch (mit)
     {
         case MouseInteractionType::ROTATE:
             changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain, current_mouse_interaction_axis);

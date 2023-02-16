@@ -62,8 +62,12 @@ private:
     AxesInteractor axes_interactor_;
     AxesRenderer* axes_renderer_;
     MouseButtonState left_mouse_button_;
-    KeyboardState keyboard_state_;
+    MouseButtonState right_mouse_button_;
+    MouseButtonState middle_mouse_button_;
     CursorSquareState cursor_state_at_press_;
+
+    bool shift_pressed_at_mouse_press_;
+    bool control_pressed_at_mouse_press_;
 
     bool axes_from_min_max_disabled_;
     bool axes_set_;
@@ -82,6 +86,7 @@ private:
     wxPoint pos_at_press_;
     wxSize size_at_press_;
     float edit_size_margin_;
+    MouseInteractionType overridden_mouse_interaction_type_;
 
     PlotDataHandler* plot_data_handler_;
     ShaderCollection shader_collection_;
@@ -144,6 +149,9 @@ public:
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
     void mouseRightPressed(wxMouseEvent& event);
+    void mouseRightReleased(wxMouseEvent& event);
+    void mouseMiddlePressed(wxMouseEvent& event);
+    void mouseMiddleReleased(wxMouseEvent& event);
     void setMinimumXPos(const int new_min_x_pos);
 
     // Event callback function
