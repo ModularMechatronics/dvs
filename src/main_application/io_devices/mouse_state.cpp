@@ -8,17 +8,17 @@ MouseButtonState::MouseButtonState()
 {
     is_pressed_ = false;
 
-    curr_pos_.x = -1;
-    curr_pos_.y = -1;
+    curr_pos_.x = 0;
+    curr_pos_.y = 0;
 
-    prev_pos_.x = -1;
-    prev_pos_.y = -1;
+    prev_pos_.x = 0;
+    prev_pos_.y = 0;
 
     delta_pos_.x = 0;
     delta_pos_.y = 0;
 }
 
-Vec2i MouseButtonState::getCurrPos() const
+/*Vec2i MouseButtonState::getCurrPos() const
 {
     return curr_pos_;
 }
@@ -26,14 +26,14 @@ Vec2i MouseButtonState::getCurrPos() const
 Vec2i MouseButtonState::getPrevPos() const
 {
     return prev_pos_;
-}
+}*/
 
 Vec2i MouseButtonState::getDeltaPos() const
 {
     return delta_pos_;
 }
 
-void MouseButtonState::setIsPressed(const int x, const int y)
+/*void MouseButtonState::setIsPressed(const int x, const int y)
 {
     is_pressed_ = true;
     curr_pos_.x = x;
@@ -57,26 +57,38 @@ void MouseButtonState::setIsReleased()
 
     delta_pos_.x = 0;
     delta_pos_.y = 0;
+}*/
+
+void MouseButtonState::setCurrentPos(const int current_x, const int current_y)
+{
+    curr_pos_.x = current_x;
+    curr_pos_.y = current_y;
+
+    prev_pos_.x = current_x;
+    prev_pos_.y = current_y;
+
+    delta_pos_.x = 0;
+    delta_pos_.y = 0;
 }
 
 void MouseButtonState::updateOnMotion(const int x, const int y)
 {
-    if (is_pressed_)
-    {
-        prev_pos_.x = curr_pos_.x;
-        prev_pos_.y = curr_pos_.y;
+    // if (is_pressed_)
+    // {
+    prev_pos_.x = curr_pos_.x;
+    prev_pos_.y = curr_pos_.y;
 
-        curr_pos_.x = x;
-        curr_pos_.y = y;
+    curr_pos_.x = x;
+    curr_pos_.y = y;
 
-        delta_pos_ = curr_pos_ - prev_pos_;
-    }
+    delta_pos_ = curr_pos_ - prev_pos_;
+    // }
 }
 
-bool MouseButtonState::isPressed() const
+/*bool MouseButtonState::isPressed() const
 {
     return is_pressed_;
-}
+}*/
 
 void MouseButtonState::print() const
 {

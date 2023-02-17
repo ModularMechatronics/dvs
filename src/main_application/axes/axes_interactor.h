@@ -67,10 +67,6 @@ private:
 public:
     AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width);
 
-    void update(const MouseInteractionType interaction_type,
-                const MouseInteractionType overridden_mouse_interaction_type,
-                const int window_width,
-                const int window_height);
     void updateWindowSize(const int window_width, const int window_height);
     void setOverriddenMouseInteractionType(const MouseInteractionType overridden_mouse_interaction_type);
     void setMouseInteractionType(const MouseInteractionType interaction_type);

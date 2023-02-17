@@ -146,7 +146,6 @@ PlotPane::PlotPane(wxWindow* parent,
       m_context(getContext()),
       axes_interactor_(axes_settings_, getWidth(), getHeight())
 {
-    new_data_available_ = false;
     pending_clear_ = false;
     parent_size_ = parent->GetSize();
     edit_size_margin_ = 20.0f;
@@ -160,6 +159,7 @@ PlotPane::PlotPane(wxWindow* parent,
     wait_for_flush_ = false;
     shift_pressed_at_mouse_press_ = false;
     control_pressed_at_mouse_press_ = false;
+    left_mouse_pressed_ = false;
 
     bindCallbacks();
 
@@ -172,7 +172,6 @@ PlotPane::PlotPane(wxWindow* parent,
     axes_set_ = false;
     view_set_ = false;
     axes_from_min_max_disabled_ = false;
-    overridden_mouse_interaction_type_ = MouseInteractionType::UNCHANGED;
     axes_interactor_.setOverriddenMouseInteractionType(MouseInteractionType::UNCHANGED);
 
     Bind(wxEVT_RIGHT_DOWN, &PlotPane::mouseRightPressed, this);
@@ -344,8 +343,6 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     {
         throw std::runtime_error("Invalid function!");
     }
-
-    new_data_available_ = true;
 }
 
 void PlotPane::pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue)
@@ -443,7 +440,7 @@ void PlotPane::mouseLeftPressed(wxMouseEvent& event)
     pos_at_press_ = this->GetPosition();
     size_at_press_ = this->GetSize();
 
-    left_mouse_button_.setIsPressed(current_point.x, current_point.y);
+    left_mouse_button_.setCurrentPos(current_point.x, current_point.y);
     const wxSize size_now = this->GetSize();
     const Vec2f size_now_vec(size_now.x, size_now.y);
     axes_interactor_.registerMousePressed(mouse_pos_at_press_.elementWiseDivide(size_now_vec));
@@ -458,6 +455,8 @@ void PlotPane::mouseLeftPressed(wxMouseEvent& event)
         axes_interactor_.setOverriddenMouseInteractionType(MouseInteractionType::ROTATE);
     }
 
+    left_mouse_pressed_ = true;
+
     Refresh();
 }
 
@@ -467,9 +466,9 @@ void PlotPane::mouseLeftReleased(wxMouseEvent& event)
     const wxSize size_now = this->GetSize();
     const Vec2f size_now_vec(size_now.x, size_now.y);
     axes_interactor_.registerMouseReleased(Vec2f(mouse_pos.x, mouse_pos.y).elementWiseDivide(size_now_vec));
-    left_mouse_button_.setIsReleased();
 
     control_pressed_at_mouse_press_ = false;
+    left_mouse_pressed_ = false;
 
     if (shift_pressed_at_mouse_press_)
     {
@@ -484,7 +483,7 @@ void PlotPane::mouseMiddlePressed(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
 
-    middle_mouse_button_.setIsPressed(current_point.x, current_point.y);
+    middle_mouse_button_.setCurrentPos(current_point.x, current_point.y);
 
     if (wxGetKeyState(WXK_SHIFT))
     {
@@ -495,8 +494,6 @@ void PlotPane::mouseMiddlePressed(wxMouseEvent& event)
 
 void PlotPane::mouseMiddleReleased(wxMouseEvent& event)
 {
-    middle_mouse_button_.setIsReleased();
-
     if (shift_pressed_at_mouse_press_)
     {
         shift_pressed_at_mouse_press_ = false;
@@ -510,7 +507,7 @@ void PlotPane::mouseRightPressed(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
 
-    right_mouse_button_.setIsPressed(current_point.x, current_point.y);
+    right_mouse_button_.setCurrentPos(current_point.x, current_point.y);
 
     if (wxGetKeyState(WXK_SHIFT))
     {
@@ -525,10 +522,8 @@ void PlotPane::mouseRightPressed(wxMouseEvent& event)
 
 void PlotPane::mouseRightReleased(wxMouseEvent& event)
 {
-    if (right_mouse_button_.isPressed())
+    if (event.RightIsDown())
     {
-        right_mouse_button_.setIsReleased();
-
         if (shift_pressed_at_mouse_press_)
         {
             shift_pressed_at_mouse_press_ = false;
@@ -558,12 +553,8 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
 
     current_mouse_pos_ = Vec2f(current_pane_position.x + current_point.x, current_pane_position.y + current_point.y);
 
-    overridden_mouse_interaction_type_ = MouseInteractionType::UNCHANGED;
-
-    if (middle_mouse_button_.isPressed() && shift_pressed_at_mouse_press_)
+    if (event.MiddleIsDown() && shift_pressed_at_mouse_press_)
     {
-        overridden_mouse_interaction_type_ = MouseInteractionType::PAN;
-
         middle_mouse_button_.updateOnMotion(current_point.x, current_point.y);
 
         axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
@@ -572,17 +563,15 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
 
         Refresh();
     }
-    else if (right_mouse_button_.isPressed() && shift_pressed_at_mouse_press_)
+    else if (event.RightIsDown() && shift_pressed_at_mouse_press_)
     {
-        overridden_mouse_interaction_type_ = MouseInteractionType::ZOOM;
-
         right_mouse_button_.updateOnMotion(current_point.x, current_point.y);
 
         axes_interactor_.registerMouseDragInput(
             current_mouse_interaction_axis_, right_mouse_button_.getDeltaPos().x, right_mouse_button_.getDeltaPos().y);
         Refresh();
     }
-    else if (left_mouse_button_.isPressed())
+    else if (event.LeftIsDown())
     {
         if (control_pressed_at_mouse_press_)
         {
@@ -631,7 +620,7 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
                     new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y);
                     break;
                 default:
-                    std::cout << "Do nothing..." << std::endl;
+                    std::cout << "Invalid cursor state!" << std::endl;
             }
             if (new_size.GetWidth() < 50)
             {
@@ -715,10 +704,6 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
         }
         else
         {
-            if (shift_pressed_at_mouse_press_)
-            {
-                overridden_mouse_interaction_type_ = MouseInteractionType::ROTATE;
-            }
             left_mouse_button_.updateOnMotion(current_point.x, current_point.y);
 
             axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
@@ -828,6 +813,32 @@ void PlotPane::keyPressed(const char key)
 void PlotPane::keyReleased(const char key)
 {
     current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
+
+    if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('2')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::XY;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('2')) && wxGetKeyState(static_cast<wxKeyCode>('3')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::YZ;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('3')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::XZ;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('1')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::X;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('2')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::Y;
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('3')))
+    {
+        current_mouse_interaction_axis_ = MouseInteractionAxis::Z;
+    }
+
     Refresh();
 }
 
@@ -1095,7 +1106,6 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
         axes_interactor_.resetView();
     }
 
-    // axes_interactor_.update(getMouseInteractionType(), overridden_mouse_interaction_type_, getWidth(), getHeight());
     axes_interactor_.updateWindowSize(getWidth(), getHeight());
 
     if (wxGetKeyState(static_cast<wxKeyCode>('y')) || wxGetKeyState(static_cast<wxKeyCode>('Y')))
@@ -1121,7 +1131,7 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
                                  mouse_pos_at_press_.elementWiseDivide(pane_size),
                                  current_mouse_pos_.elementWiseDivide(pane_size),
                                  axes_interactor_.getMouseInteractionType(),
-                                 left_mouse_button_.isPressed(),
+                                 left_mouse_pressed_,
                                  axes_interactor_.shouldDrawZoomRect(),
                                  axes_interactor_.getShowLegend(),
                                  legend_scale_factor_,

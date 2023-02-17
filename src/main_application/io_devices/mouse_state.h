@@ -16,17 +16,18 @@ private:
 
 public:
     MouseButtonState();
-    void setIsPressed(const int x, const int y);
-    void setIsReleased();
+    // void setIsPressed(const int x, const int y);
+    // void setIsReleased();
 
     void updateOnMotion(const int x, const int y);
+    void setCurrentPos(const int current_x, const int current_y);
 
-    bool isPressed() const;
+    // bool isPressed() const;
 
     void print() const;
 
-    Vec2i getCurrPos() const;
-    Vec2i getPrevPos() const;
+    // Vec2i getCurrPos() const;
+    // Vec2i getPrevPos() const;
     Vec2i getDeltaPos() const;
 };
 
