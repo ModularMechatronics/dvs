@@ -3,7 +3,6 @@
 
 #include <wx/wx.h>
 
-wxDECLARE_EVENT(MY_EVENT, wxCommandEvent);
 wxDECLARE_EVENT(EDIT_EVENT, wxCommandEvent);
 wxDECLARE_EVENT(NO_ELEMENT_SELECTED, wxCommandEvent);
 wxDECLARE_EVENT(CHILD_WINDOW_IN_FOCUS_EVENT, wxCommandEvent);

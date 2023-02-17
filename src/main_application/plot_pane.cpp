@@ -12,7 +12,7 @@
 
 using namespace dvs::internal;
 
-CursorSquareState mouseState(const Bound2D bound, const Bound2D bound_margin, const Vec2f mouse_pos)
+CursorSquareState getCursorSquareState(const Bound2D bound, const Bound2D bound_margin, const Vec2f mouse_pos)
 {
     if ((bound.x_min <= mouse_pos.x) && (mouse_pos.x <= bound.x_max) && (bound.y_min <= mouse_pos.y) &&
         (mouse_pos.y <= bound.y_max))
@@ -415,12 +415,9 @@ void PlotPane::setName(const std::string& new_name)
 
 void PlotPane::mouseLeftPressed(wxMouseEvent& event)
 {
-    wxCommandEvent evt(MY_EVENT, GetId());  // TODO: Used anymore?
-    evt.SetEventObject(this);
-    evt.SetString(element_settings_.name);
-    ProcessWindowEvent(evt);
-
-    const wxPoint current_point = event.GetPosition();
+    const wxPoint current_mouse_position = event.GetPosition();
+    pos_at_press_ = this->GetPosition();
+    size_at_press_ = this->GetSize();
 
     Bound2D bnd;
     bnd.x_min = 0.0f;
@@ -434,16 +431,15 @@ void PlotPane::mouseLeftPressed(wxMouseEvent& event)
     bnd_margin.y_min = bnd.y_min + edit_size_margin_;
     bnd_margin.y_max = bnd.y_max - edit_size_margin_;
 
-    cursor_state_at_press_ = mouseState(bnd, bnd_margin, Vec2f(current_point.x, current_point.y));
+    cursor_state_at_press_ =
+        getCursorSquareState(bnd, bnd_margin, Vec2f(current_mouse_position.x, current_mouse_position.y));
 
-    mouse_pos_at_press_ = Vec2f(current_point.x, current_point.y);
-    pos_at_press_ = this->GetPosition();
-    size_at_press_ = this->GetSize();
+    mouse_pos_at_press_ = Vec2f(current_mouse_position.x, current_mouse_position.y);
 
-    left_mouse_button_.setCurrentPos(current_point.x, current_point.y);
-    const wxSize size_now = this->GetSize();
-    const Vec2f size_now_vec(size_now.x, size_now.y);
-    axes_interactor_.registerMousePressed(mouse_pos_at_press_.elementWiseDivide(size_now_vec));
+    mouse_state_.setCurrentPos(current_mouse_position.x, current_mouse_position.y);
+
+    axes_interactor_.registerMousePressed(
+        mouse_pos_at_press_.elementWiseDivide(Vec2f(size_at_press_.x, size_at_press_.y)));
 
     if (wxGetKeyState(WXK_CONTROL))
     {
@@ -483,7 +479,7 @@ void PlotPane::mouseMiddlePressed(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
 
-    middle_mouse_button_.setCurrentPos(current_point.x, current_point.y);
+    mouse_state_.setCurrentPos(current_point.x, current_point.y);
 
     if (wxGetKeyState(WXK_SHIFT))
     {
@@ -507,7 +503,7 @@ void PlotPane::mouseRightPressed(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
 
-    right_mouse_button_.setCurrentPos(current_point.x, current_point.y);
+    mouse_state_.setCurrentPos(current_point.x, current_point.y);
 
     if (wxGetKeyState(WXK_SHIFT))
     {
@@ -534,9 +530,12 @@ void PlotPane::mouseRightReleased(wxMouseEvent& event)
     }
 }
 
-void PlotPane::mouseLeftWindow(wxMouseEvent& WXUNUSED(event))
+void PlotPane::mouseLeftWindow(wxMouseEvent& event)
 {
-    wxSetCursor(wxCursor(wxCURSOR_ARROW));
+    // if (!(event.LeftIsDown() && control_pressed_at_mouse_press_))
+    {
+        wxSetCursor(wxCursor(wxCURSOR_ARROW));
+    }
 }
 
 void PlotPane::mouseEntered(wxMouseEvent& event)
@@ -546,169 +545,211 @@ void PlotPane::mouseEntered(wxMouseEvent& event)
     previous_mouse_pos_ = Vec2f(current_position.x + current_mouse_point.x, current_position.y + current_mouse_point.y);
 }
 
-void PlotPane::mouseMoved(wxMouseEvent& event)
+void PlotPane::adjustPaneSizeOnMouseMoved()
 {
-    const wxPoint current_point = event.GetPosition();
-    const wxPoint current_pane_position = this->GetPosition();
+    const Vec2f delta = current_mouse_pos_ - previous_mouse_pos_;
 
-    current_mouse_pos_ = Vec2f(current_pane_position.x + current_point.x, current_pane_position.y + current_point.y);
+    const Vec2f current_pos(this->GetPosition().x, this->GetPosition().y);
 
-    if (event.MiddleIsDown() && shift_pressed_at_mouse_press_)
+    const wxSize size_now = this->GetSize();
+
+    wxPoint new_position = this->GetPosition();
+    wxSize new_size = this->GetSize();
+
+    switch (cursor_state_at_press_)
     {
-        middle_mouse_button_.updateOnMotion(current_point.x, current_point.y);
-
-        axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
-                                                middle_mouse_button_.getDeltaPos().x,
-                                                middle_mouse_button_.getDeltaPos().y);
-
-        Refresh();
+        case CursorSquareState::LEFT:
+            new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
+            new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight());
+            break;
+        case CursorSquareState::RIGHT:
+            new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight());
+            break;
+        case CursorSquareState::TOP:
+            new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
+            new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() - delta.y);
+            break;
+        case CursorSquareState::BOTTOM:
+            new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() + delta.y);
+            break;
+        case CursorSquareState::INSIDE:
+            new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
+            new_size = size_at_press_;
+            break;
+        case CursorSquareState::BOTTOM_RIGHT:
+            new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight() + delta.y);
+            break;
+        case CursorSquareState::BOTTOM_LEFT:
+            new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
+            new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() + delta.y);
+            break;
+        case CursorSquareState::TOP_RIGHT:
+            new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
+            new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight() - delta.y);
+            break;
+        case CursorSquareState::TOP_LEFT:
+            new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
+            new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y);
+            break;
+        default:
+            std::cout << "Invalid cursor state!" << std::endl;
     }
-    else if (event.RightIsDown() && shift_pressed_at_mouse_press_)
+    if (new_size.GetWidth() < 50)
     {
-        right_mouse_button_.updateOnMotion(current_point.x, current_point.y);
-
-        axes_interactor_.registerMouseDragInput(
-            current_mouse_interaction_axis_, right_mouse_button_.getDeltaPos().x, right_mouse_button_.getDeltaPos().y);
-        Refresh();
+        new_size.SetWidth(50);
+        new_position.x = current_pos.x;
     }
-    else if (event.LeftIsDown())
+    if (new_size.GetHeight() < 50)
     {
-        if (control_pressed_at_mouse_press_)
+        new_size.SetHeight(50);
+        new_position.y = current_pos.y;
+    }
+
+    const float px = parent_size_.GetWidth();
+    const float py = parent_size_.GetHeight();
+
+    if (new_position.x < minimum_x_pos_)
+    {
+        if (cursor_state_at_press_ == CursorSquareState::INSIDE)
         {
-            const Vec2f delta = current_mouse_pos_ - previous_mouse_pos_;
-
-            const Vec2f current_pos(this->GetPosition().x, this->GetPosition().y);
-
-            const wxSize size_now = this->GetSize();
-
-            wxPoint new_position = this->GetPosition();
-            wxSize new_size = this->GetSize();
-
-            switch (cursor_state_at_press_)
-            {
-                case CursorSquareState::LEFT:
-                    new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
-                    new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight());
-                    break;
-                case CursorSquareState::RIGHT:
-                    new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight());
-                    break;
-                case CursorSquareState::TOP:
-                    new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
-                    new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() - delta.y);
-                    break;
-                case CursorSquareState::BOTTOM:
-                    new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() + delta.y);
-                    break;
-                case CursorSquareState::INSIDE:
-                    new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
-                    new_size = size_at_press_;
-                    break;
-                case CursorSquareState::BOTTOM_RIGHT:
-                    new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight() + delta.y);
-                    break;
-                case CursorSquareState::BOTTOM_LEFT:
-                    new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
-                    new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() + delta.y);
-                    break;
-                case CursorSquareState::TOP_RIGHT:
-                    new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
-                    new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight() - delta.y);
-                    break;
-                case CursorSquareState::TOP_LEFT:
-                    new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
-                    new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y);
-                    break;
-                default:
-                    std::cout << "Invalid cursor state!" << std::endl;
-            }
-            if (new_size.GetWidth() < 50)
-            {
-                new_size.SetWidth(50);
-                new_position.x = current_pos.x;
-            }
-            if (new_size.GetHeight() < 50)
-            {
-                new_size.SetHeight(50);
-                new_position.y = current_pos.y;
-            }
-
-            const float px = parent_size_.GetWidth();
-            const float py = parent_size_.GetHeight();
-
-            if (new_position.x < minimum_x_pos_)
-            {
-                if (cursor_state_at_press_ == CursorSquareState::INSIDE)
-                {
-                    new_position.x = current_pos.x;
-                }
-                else
-                {
-                    new_size.SetWidth(size_now.GetWidth());
-                    new_position.x = current_pos.x;
-                }
-            }
-            else if ((new_position.x + new_size.GetWidth()) > px)
-            {
-                if (cursor_state_at_press_ == CursorSquareState::INSIDE)
-                {
-                    new_position.x = current_pos.x;
-                }
-                else
-                {
-                    new_size.SetWidth(size_now.GetWidth());
-                }
-            }
-
-            if (new_position.y < minimum_y_pos_)
-            {
-                if (cursor_state_at_press_ == CursorSquareState::INSIDE)
-                {
-                    new_position.y = current_pos.y;
-                }
-                else
-                {
-                    new_size.SetHeight(size_now.GetHeight());
-                    new_position.y = current_pos.y;
-                }
-            }
-            else if ((new_position.y + new_size.GetHeight()) > py)
-            {
-                if (cursor_state_at_press_ == CursorSquareState::INSIDE)
-                {
-                    new_position.y = current_pos.y;
-                }
-                else
-                {
-                    new_size.SetHeight(size_now.GetHeight());
-                }
-            }
-
-            if ((this->GetPosition().x != new_position.x) || (this->GetPosition().y != new_position.y) ||
-                (new_size.GetWidth() != this->GetSize().GetWidth()) ||
-                (new_size.GetHeight() != this->GetSize().GetHeight()))
-            {
-                const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
-                const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
-
-                element_settings_.width = static_cast<float>(new_size.GetWidth()) / (px * ratio_x);
-                element_settings_.height = static_cast<float>(new_size.GetHeight()) / (py * ratio_y);
-                element_settings_.x = static_cast<float>(new_position.x - minimum_x_pos_) / (px * ratio_x);
-                element_settings_.y = static_cast<float>(new_position.y - minimum_y_pos_) / (py * ratio_y);
-
-                Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);  // TODO: Needed?
-                notify_main_window_about_modification_();
-                setElementPositionAndSize();
-                Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
-            }
+            new_position.x = current_pos.x;
         }
         else
         {
-            left_mouse_button_.updateOnMotion(current_point.x, current_point.y);
+            new_size.SetWidth(size_now.GetWidth());
+            new_position.x = current_pos.x;
+        }
+    }
+    else if ((new_position.x + new_size.GetWidth()) > px)
+    {
+        if (cursor_state_at_press_ == CursorSquareState::INSIDE)
+        {
+            new_position.x = current_pos.x;
+        }
+        else
+        {
+            new_size.SetWidth(size_now.GetWidth());
+        }
+    }
 
-            axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
-                                                    left_mouse_button_.getDeltaPos().x,
-                                                    left_mouse_button_.getDeltaPos().y);
+    if (new_position.y < minimum_y_pos_)
+    {
+        if (cursor_state_at_press_ == CursorSquareState::INSIDE)
+        {
+            new_position.y = current_pos.y;
+        }
+        else
+        {
+            new_size.SetHeight(size_now.GetHeight());
+            new_position.y = current_pos.y;
+        }
+    }
+    else if ((new_position.y + new_size.GetHeight()) > py)
+    {
+        if (cursor_state_at_press_ == CursorSquareState::INSIDE)
+        {
+            new_position.y = current_pos.y;
+        }
+        else
+        {
+            new_size.SetHeight(size_now.GetHeight());
+        }
+    }
+
+    if ((this->GetPosition().x != new_position.x) || (this->GetPosition().y != new_position.y) ||
+        (new_size.GetWidth() != this->GetSize().GetWidth()) || (new_size.GetHeight() != this->GetSize().GetHeight()))
+    {
+        const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+        const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
+
+        element_settings_.width = static_cast<float>(new_size.GetWidth()) / (px * ratio_x);
+        element_settings_.height = static_cast<float>(new_size.GetHeight()) / (py * ratio_y);
+        element_settings_.x = static_cast<float>(new_position.x - minimum_x_pos_) / (px * ratio_x);
+        element_settings_.y = static_cast<float>(new_position.y - minimum_y_pos_) / (py * ratio_y);
+
+        Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);  // TODO: Needed?
+        notify_main_window_about_modification_();
+        setElementPositionAndSize();
+        Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
+    }
+}
+
+void PlotPane::setCursorDependingOnMousePos(const wxPoint& current_mouse_position)
+{
+    Bound2D bnd;
+    bnd.x_min = 0.0f;
+    bnd.x_max = this->GetSize().GetWidth();
+    bnd.y_min = 0.0f;
+    bnd.y_max = this->GetSize().GetHeight();
+
+    Bound2D bnd_margin;
+    bnd_margin.x_min = bnd.x_min + edit_size_margin_;
+    bnd_margin.x_max = bnd.x_max - edit_size_margin_;
+    bnd_margin.y_min = bnd.y_min + edit_size_margin_;
+    bnd_margin.y_max = bnd.y_max - edit_size_margin_;
+    const CursorSquareState cms =
+        getCursorSquareState(bnd, bnd_margin, Vec2f(current_mouse_position.x, current_mouse_position.y));
+    switch (cms)
+    {
+        case CursorSquareState::LEFT:
+            wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
+            break;
+        case CursorSquareState::RIGHT:
+            wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
+            break;
+        case CursorSquareState::TOP:
+            wxSetCursor(wxCursor(wxCURSOR_SIZENS));
+            break;
+        case CursorSquareState::BOTTOM:
+            wxSetCursor(wxCursor(wxCURSOR_SIZENS));
+            break;
+        case CursorSquareState::BOTTOM_RIGHT:
+            wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
+            break;
+        case CursorSquareState::BOTTOM_LEFT:
+            wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
+            break;
+        case CursorSquareState::TOP_RIGHT:
+            wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
+            break;
+        case CursorSquareState::TOP_LEFT:
+            wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
+            break;
+        case CursorSquareState::INSIDE:
+            wxSetCursor(wxCursor(wxCURSOR_HAND));
+            break;
+        default:
+            wxSetCursor(wxCursor(wxCURSOR_HAND));
+    }
+}
+
+void PlotPane::mouseMoved(wxMouseEvent& event)
+{
+    const wxPoint current_mouse_position = event.GetPosition();
+    const wxPoint current_pane_position = this->GetPosition();
+
+    current_mouse_pos_ =
+        Vec2f(current_pane_position.x + current_mouse_position.x, current_pane_position.y + current_mouse_position.y);
+
+    if ((event.LeftIsDown() || event.MiddleIsDown() || event.RightIsDown()))
+    {
+        if (event.LeftIsDown() && control_pressed_at_mouse_press_)
+        {
+            adjustPaneSizeOnMouseMoved();
+        }
+        else if (shift_pressed_at_mouse_press_)
+        {
+            mouse_state_.updateOnMotion(current_mouse_position.x, current_mouse_position.y);
+
+            axes_interactor_.registerMouseDragInput(
+                current_mouse_interaction_axis_, mouse_state_.getDeltaPos().x, mouse_state_.getDeltaPos().y);
+        }
+        else if (event.LeftIsDown())
+        {
+            mouse_state_.updateOnMotion(current_mouse_position.x, current_mouse_position.y);
+
+            axes_interactor_.registerMouseDragInput(
+                current_mouse_interaction_axis_, mouse_state_.getDeltaPos().x, mouse_state_.getDeltaPos().y);
         }
 
         Refresh();
@@ -717,50 +758,7 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
     {
         if (wxGetKeyState(WXK_COMMAND))
         {
-            Bound2D bnd;
-            bnd.x_min = 0.0f;
-            bnd.x_max = this->GetSize().GetWidth();
-            bnd.y_min = 0.0f;
-            bnd.y_max = this->GetSize().GetHeight();
-
-            Bound2D bnd_margin;
-            bnd_margin.x_min = bnd.x_min + edit_size_margin_;
-            bnd_margin.x_max = bnd.x_max - edit_size_margin_;
-            bnd_margin.y_min = bnd.y_min + edit_size_margin_;
-            bnd_margin.y_max = bnd.y_max - edit_size_margin_;
-            const CursorSquareState cms = mouseState(bnd, bnd_margin, Vec2f(current_point.x, current_point.y));
-            switch (cms)
-            {
-                case CursorSquareState::LEFT:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
-                    break;
-                case CursorSquareState::RIGHT:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
-                    break;
-                case CursorSquareState::TOP:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZENS));
-                    break;
-                case CursorSquareState::BOTTOM:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZENS));
-                    break;
-                case CursorSquareState::BOTTOM_RIGHT:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
-                    break;
-                case CursorSquareState::BOTTOM_LEFT:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
-                    break;
-                case CursorSquareState::TOP_RIGHT:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
-                    break;
-                case CursorSquareState::TOP_LEFT:
-                    wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
-                    break;
-                case CursorSquareState::INSIDE:
-                    wxSetCursor(wxCursor(wxCURSOR_HAND));
-                    break;
-                default:
-                    wxSetCursor(wxCursor(wxCURSOR_HAND));
-            }
+            setCursorDependingOnMousePos(current_mouse_position);
         }
     }
 

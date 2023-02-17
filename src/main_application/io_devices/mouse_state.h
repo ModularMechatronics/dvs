@@ -5,7 +5,7 @@
 
 using namespace dvs;
 
-class MouseButtonState
+class MouseState
 {
 private:
     Vec2i curr_pos_;
@@ -15,19 +15,13 @@ private:
     bool is_pressed_;
 
 public:
-    MouseButtonState();
-    // void setIsPressed(const int x, const int y);
-    // void setIsReleased();
+    MouseState();
 
     void updateOnMotion(const int x, const int y);
     void setCurrentPos(const int current_x, const int current_y);
 
-    // bool isPressed() const;
-
     void print() const;
 
-    // Vec2i getCurrPos() const;
-    // Vec2i getPrevPos() const;
     Vec2i getDeltaPos() const;
 };
 

@@ -61,9 +61,7 @@ private:
     AxesSettings axes_settings_;
     AxesInteractor axes_interactor_;
     AxesRenderer* axes_renderer_;
-    MouseButtonState left_mouse_button_;
-    MouseButtonState right_mouse_button_;
-    MouseButtonState middle_mouse_button_;
+    MouseState mouse_state_;
     CursorSquareState cursor_state_at_press_;
 
     bool shift_pressed_at_mouse_press_;
@@ -100,6 +98,9 @@ private:
     std::atomic<bool> pending_clear_;
     std::queue<std::unique_ptr<InputData>> queued_data_;
     std::queue<std::unique_ptr<InputData>> flush_queue_;
+
+    void adjustPaneSizeOnMouseMoved();
+    void setCursorDependingOnMousePos(const wxPoint& current_mouse_position);
 
     void processActionQueue();
     void addPlotData(ReceivedData& received_data,
