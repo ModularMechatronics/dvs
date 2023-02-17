@@ -68,6 +68,7 @@ private:
 
     bool shift_pressed_at_mouse_press_;
     bool control_pressed_at_mouse_press_;
+    bool left_mouse_pressed_;
 
     bool axes_from_min_max_disabled_;
     bool axes_set_;
@@ -86,7 +87,6 @@ private:
     wxPoint pos_at_press_;
     wxSize size_at_press_;
     float edit_size_margin_;
-    MouseInteractionType overridden_mouse_interaction_type_;
 
     PlotDataHandler* plot_data_handler_;
     ShaderCollection shader_collection_;
@@ -97,7 +97,6 @@ private:
     void clearPane();
     MouseInteractionAxis current_mouse_interaction_axis_;
     float legend_scale_factor_ = 1.0f;
-    std::atomic<bool> new_data_available_;
     std::atomic<bool> pending_clear_;
     std::queue<std::unique_ptr<InputData>> queued_data_;
     std::queue<std::unique_ptr<InputData>> flush_queue_;
