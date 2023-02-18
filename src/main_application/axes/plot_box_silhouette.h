@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+#include "axes/axes_side_configuration.h"
 #include "opengl_low_level/opengl_header.h"
 
 class PlotBoxSilhouette
@@ -35,7 +36,7 @@ public:
     PlotBoxSilhouette();
     ~PlotBoxSilhouette();
 
-    void render(const float azimuth, const float elevation);
+    void render(const AxesSideConfiguration& axes_side_configuration, const float azimuth, const float elevation);
 };
 
 #endif  // MAIN_APPLICATION_AXES_PLOT_BOX_SILHOUETTE_H_

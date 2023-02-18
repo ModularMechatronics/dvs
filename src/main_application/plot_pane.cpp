@@ -8,7 +8,7 @@
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "events.h"
-#include "io_devices/io_devices.h"
+#include "mouse_state.h"
 
 using namespace dvs::internal;
 

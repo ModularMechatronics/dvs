@@ -6,6 +6,7 @@ Pre release:
 - Refactor shaders
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Delete gl buffers with "glDeleteBuffers"
+- Rename "projection type" to "projection mode"
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Create a default element when creating a new window?
 - Reducing number of axis numbers depending on rotation

@@ -48,12 +48,12 @@ public:
     bool isSnappedAlongY() const;
     bool isSnappedAlongZ() const;
 
-    bool isSnappedAlongPositiveX() const;
-    bool isSnappedAlongPositiveY() const;
-    bool isSnappedAlongPositiveZ() const;
-    bool isSnappedAlongNegativeX() const;
-    bool isSnappedAlongNegativeY() const;
-    bool isSnappedAlongNegativeZ() const;
+    bool isSnappedLookingAlongPositiveX() const;
+    bool isSnappedLookingAlongPositiveY() const;
+    bool isSnappedLookingAlongPositiveZ() const;
+    bool isSnappedLookingAlongNegativeX() const;
+    bool isSnappedLookingAlongNegativeY() const;
+    bool isSnappedLookingAlongNegativeZ() const;
 
     SnappingAxis getSnappingAxis() const;
 };
