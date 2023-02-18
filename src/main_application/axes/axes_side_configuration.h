@@ -10,7 +10,7 @@
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "dvs/math/math.h"
-#include "io_devices/io_devices.h"
+#include "mouse_state.h"
 
 using namespace dvs;
 
@@ -20,30 +20,10 @@ struct AxesSideConfiguration
     float xz_plane_y_value;
     float yz_plane_x_value;
 
+    bool is_snapped;
+
     AxesSideConfiguration() = default;
-    AxesSideConfiguration(const ViewAngles& view_angles)
-    {
-        const float azimuth = view_angles.getSnappedAzimuth();
-        const float elevation = view_angles.getSnappedElevation();
-
-        // XY
-        xy_plane_z_value = (elevation >= 0.0f) ? -1.0f : 1.0f;
-
-        // XZ
-        xz_plane_y_value = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
-
-        // YZ
-        const bool cond = static_cast<int>(azimuth * 180.0f / M_PI) == -180;
-        yz_plane_x_value = ((azimuth >= 0.0f) || cond) ? 1.0f : -1.0f;
-
-        if (view_angles.isSnappedAlongX()) {}
-        else if (view_angles.isSnappedAlongY())
-        {
-        }
-        else if (view_angles.isSnappedAlongZ())
-        {
-        }
-    }
+    AxesSideConfiguration(const ViewAngles& view_angles);
 };
 
 #endif  // MAIN_APPLICATION_AXES_AXES_SIDE_CONFIGURATION_H_

@@ -110,42 +110,60 @@ bool ViewAngles::isSnappedAlongZ() const
     return (std::abs(M_PI_2 - abs_el) < angle_limit_);
 }
 
-bool ViewAngles::isSnappedAlongPositiveX() const
+bool ViewAngles::isSnappedLookingAlongPositiveX() const
 {
-    const float abs_az = std::abs(azimuth_);
-    const float abs_el = std::abs(elevation_);
-
-    return (std::abs(M_PI_2 - abs_az) < angle_limit_) && (abs_el < angle_limit_);
-    return false;
+    if (azimuth_ < 0.0f)
+    {
+        return false;
+    }
+    else
+    {
+        return (std::abs(M_PI_2 - azimuth_) < angle_limit_) && (std::abs(elevation_) < angle_limit_);
+    }
 }
 
-bool ViewAngles::isSnappedAlongNegativeX() const
+bool ViewAngles::isSnappedLookingAlongNegativeX() const
 {
-    return false;
+    if (azimuth_ > 0.0f)
+    {
+        return false;
+    }
+    else
+    {
+        return ((std::abs(M_PI_2 + azimuth_)) < angle_limit_) && (std::abs(elevation_) < angle_limit_);
+    }
 }
 
-bool ViewAngles::isSnappedAlongPositiveY() const
+bool ViewAngles::isSnappedLookingAlongPositiveY() const
 {
     const float abs_az = std::abs(azimuth_);
     const float abs_el = std::abs(elevation_);
     return (abs_el < angle_limit_) && (abs_az < angle_limit_);
 }
 
-bool ViewAngles::isSnappedAlongNegativeY() const
+bool ViewAngles::isSnappedLookingAlongNegativeY() const
 {
     const float abs_az = std::abs(azimuth_);
     const float abs_el = std::abs(elevation_);
-    return (abs_el < angle_limit_) && (std::abs(M_PI - abs_az) < angle_limit_);
+    return (std::abs(M_PI - abs_az) < angle_limit_) && (abs_el < angle_limit_);
 }
 
-bool ViewAngles::isSnappedAlongPositiveZ() const
+bool ViewAngles::isSnappedLookingAlongPositiveZ() const
 {
-    return false;
+    const float abs_az = std::abs(azimuth_);
+    const bool b0 = std::abs(M_PI - abs_az) < angle_limit_;
+    const bool b1 = std::abs(M_PI_2 - abs_az) < angle_limit_;
+    const bool b2 = abs_az < angle_limit_;
+    return (std::abs(M_PI_2 + elevation_) < angle_limit_) && (b0 || b1 || b2);
 }
 
-bool ViewAngles::isSnappedAlongNegativeZ() const
+bool ViewAngles::isSnappedLookingAlongNegativeZ() const
 {
-    return false;
+    const float abs_az = std::abs(azimuth_);
+    const bool b0 = std::abs(M_PI - abs_az) < angle_limit_;
+    const bool b1 = std::abs(M_PI_2 - abs_az) < angle_limit_;
+    const bool b2 = abs_az < angle_limit_;
+    return (std::abs(M_PI_2 - elevation_) < angle_limit_) && (b0 || b1 || b2);
 }
 
 SnappingAxis ViewAngles::getSnappingAxis() const

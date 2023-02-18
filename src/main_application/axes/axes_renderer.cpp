@@ -366,7 +366,7 @@ void AxesRenderer::renderBoxGrid()
                        GL_FALSE,
                        &mvp[0][0]);
 
-    plot_box_grid_.render(grid_vectors_, axes_limits_, view_angles_);
+    plot_box_grid_.render(grid_vectors_, axes_limits_, view_angles_, axes_side_configuration_);
 }
 
 void AxesRenderer::plotBegin()
@@ -520,8 +520,9 @@ void AxesRenderer::renderPlotBox()
 
     plot_box_walls_.render(axes_side_configuration_);
 
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0f, 0.0f, 0.0f);
-    plot_box_silhouette_.render(view_angles_.getSnappedAzimuth(), view_angles_.getSnappedElevation());
+    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 1.0f, 0.0f, 0.0f);
+    plot_box_silhouette_.render(
+        axes_side_configuration_, view_angles_.getSnappedAzimuth(), view_angles_.getSnappedElevation());
 }
 
 void AxesRenderer::setAxesBoxScaleFactor(const Vec3d& scale_vector)

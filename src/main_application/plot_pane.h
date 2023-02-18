@@ -13,7 +13,7 @@
 #include "dvs/dvs.h"
 #include "gui_element.h"
 #include "input_data.h"
-#include "io_devices/io_devices.h"
+#include "mouse_state.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data_handler.h"
 

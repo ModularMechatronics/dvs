@@ -6,8 +6,7 @@ include_directories(${REPO_DIR}/src/main_application)
 include_directories(${REPO_DIR}/src/interfaces/cpp)
 
 set(CPP_SOURCE_FILES main.cpp
-                     io_devices/keyboard_state.cpp
-                     io_devices/mouse_state.cpp
+                     mouse_state.cpp
                      axes/axes_interactor.cpp
 
                      axes/axes_renderer.cpp
@@ -19,6 +18,8 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/plot_box_grid.cpp
                      axes/text_rendering.cpp
                      axes/legend_renderer.cpp
+
+                     axes/axes_side_configuration.cpp
 
                      shader.cpp
 

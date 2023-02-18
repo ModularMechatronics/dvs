@@ -1,4 +1,4 @@
-#include "io_devices/mouse_state.h"
+#include "mouse_state.h"
 
 #include <iostream>
 #include <string>

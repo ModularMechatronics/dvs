@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-void PlotBoxGrid::fillXYGrid(const GridVectors& gv)
+void PlotBoxGrid::fillXYGrid(const GridVectors& gv, const AxesSideConfiguration& axes_side_configuration)
 {
-    const float z_val = elevation_ >= 0.0f ? (-axes_scale_.z) : axes_scale_.z;
+    const float z_val = axes_side_configuration.xy_plane_z_value * axes_scale_.z;
+
     for (size_t k = 0; k < gv.x.num_valid_values; k++)
     {
         grid_points_[idx_] = gv.x.data[k];
@@ -36,10 +37,9 @@ void PlotBoxGrid::fillXYGrid(const GridVectors& gv)
     }
 }
 
-void PlotBoxGrid::fillXZGrid(const GridVectors& gv)
+void PlotBoxGrid::fillXZGrid(const GridVectors& gv, const AxesSideConfiguration& axes_side_configuration)
 {
-    const bool cond = ((-M_PI / 2.0f) <= azimuth_) && (azimuth_ <= (M_PI / 2.0f));
-    const float y_val = cond ? axes_scale_.y : (-axes_scale_.y);
+    const float y_val = axes_side_configuration.xz_plane_y_value * axes_scale_.y;
 
     for (size_t k = 0; k < gv.x.num_valid_values; k++)
     {
@@ -72,9 +72,9 @@ void PlotBoxGrid::fillXZGrid(const GridVectors& gv)
     }
 }
 
-void PlotBoxGrid::fillYZGrid(const GridVectors& gv)
+void PlotBoxGrid::fillYZGrid(const GridVectors& gv, const AxesSideConfiguration& axes_side_configuration)
 {
-    const float x_val = (azimuth_ >= 0.0f) ? axes_scale_.x : (-axes_scale_.x);
+    const float x_val = axes_side_configuration.yz_plane_x_value * axes_scale_.x;
 
     for (size_t k = 0; k < gv.y.num_valid_values; k++)
     {
@@ -107,7 +107,10 @@ void PlotBoxGrid::fillYZGrid(const GridVectors& gv)
     }
 }
 
-void PlotBoxGrid::render(const GridVectors& gv, const AxesLimits& axes_limits, const ViewAngles& view_angles)
+void PlotBoxGrid::render(const GridVectors& gv,
+                         const AxesLimits& axes_limits,
+                         const ViewAngles& view_angles,
+                         const AxesSideConfiguration& axes_side_configuration)
 {
     azimuth_ = view_angles.getSnappedAzimuth();
     elevation_ = view_angles.getSnappedElevation();
@@ -116,9 +119,9 @@ void PlotBoxGrid::render(const GridVectors& gv, const AxesLimits& axes_limits, c
 
     axes_scale_ = axes_limits.getAxesScale() / 2.0;
 
-    fillXYGrid(gv);
-    fillXZGrid(gv);
-    fillYZGrid(gv);
+    fillXYGrid(gv, axes_side_configuration);
+    fillXZGrid(gv, axes_side_configuration);
+    fillYZGrid(gv, axes_side_configuration);
 
     const size_t num_vertices_to_render = idx_ / 3;
 

@@ -103,16 +103,23 @@ void PlotBoxSilhouette::setIndices(const size_t first_vertex_idx,
     }
 }
 
-void PlotBoxSilhouette::render(const float azimuth, const float elevation)
+void PlotBoxSilhouette::render(const AxesSideConfiguration& axes_side_configuration,
+                               const float azimuth,
+                               const float elevation)
 {
+    // if (axes_side_configuration.is_snapped) {}
+    // else
+    // {
+
     const float xy_val = (elevation >= 0.0f) ? -1.0f : 1.0f;
-    setIndices(kXYFirstIdx, kXYLastIdx, kXYChangeDimension, xy_val);
+    setIndices(kXYFirstIdx, kXYLastIdx, kXYChangeDimension, axes_side_configuration.xy_plane_z_value);
 
     const float yz_val = (azimuth >= 0.0f) ? 1.0f : -1.0f;
-    setIndices(kYZFirstIdx, kYZLastIdx, kYZChangeDimension, yz_val);
+    setIndices(kYZFirstIdx, kYZLastIdx, kYZChangeDimension, axes_side_configuration.yz_plane_x_value);
 
     const float xz_val = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
-    setIndices(kXZFirstIdx, kXZLastIdx, kXZChangeDimension, xz_val);
+    setIndices(kXZFirstIdx, kXZLastIdx, kXZChangeDimension, axes_side_configuration.xz_plane_y_value);
+    // }
 
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
     glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_, data_array_);

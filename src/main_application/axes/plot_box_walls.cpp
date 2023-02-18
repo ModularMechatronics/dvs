@@ -30,15 +30,10 @@ void PlotBoxWalls::setIndices(const size_t first_vertex_idx,
 
 void PlotBoxWalls::render(const AxesSideConfiguration axes_side_configuration)
 {
-    // const float xy_val = (elevation >= 0.0f) ? -1.0f : 1.0f;
     setIndices(kXYFirstIdx, kXYLastIdx, kXYChangeDimension, axes_side_configuration.xy_plane_z_value);
 
-    // const bool cond = static_cast<int>(azimuth * 180.0f / M_PI) == -180;
-    // std::cout << (static_cast<int>(azimuth * 180.0f / M_PI) == -180) << std::endl;
-    // const float yz_val = ((azimuth >= 0.0f) || cond) ? 1.0f : -1.0f;
     setIndices(kYZFirstIdx, kYZLastIdx, kYZChangeDimension, axes_side_configuration.yz_plane_x_value);
 
-    // const float xz_val = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
     setIndices(kXZFirstIdx, kXZLastIdx, kXZChangeDimension, axes_side_configuration.xz_plane_y_value);
 
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
