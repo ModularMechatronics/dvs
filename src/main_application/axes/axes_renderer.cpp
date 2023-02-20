@@ -308,6 +308,28 @@ void AxesRenderer::render()
     {
         renderBoxGrid();
     }
+    if (element_settings_.plot_box_on)
+    {
+        // Render the silhouette after the box grid because of reasons...
+
+        scale_mat[0][0] = 1.0;
+        scale_mat[1][1] = 1.0;
+        scale_mat[2][2] = 1.0;
+        scale_mat[3][3] = 1.0;
+        const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
+
+        const RGBTripletf color_vec{element_settings_.grid_color};
+
+        glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
+                           1,
+                           GL_FALSE,
+                           &mvp[0][0]);
+        glUniform3f(
+            glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0f, 0.0f, 0.0f);
+        plot_box_silhouette_.render(
+            axes_side_configuration_, view_angles_.getSnappedAzimuth(), view_angles_.getSnappedElevation());
+    }
+
     drawGridNumbers(text_renderer_,
                     shader_collection_.text_shader,
                     axes_limits_,
@@ -318,7 +340,9 @@ void AxesRenderer::render()
                     projection_mat,
                     width_,
                     height_,
-                    grid_vectors_);
+                    grid_vectors_,
+                    axes_side_configuration_,
+                    use_perspective_proj_);
 }
 
 void AxesRenderer::renderLegend()
@@ -519,10 +543,6 @@ void AxesRenderer::renderPlotBox()
                 color_vec.blue);
 
     plot_box_walls_.render(axes_side_configuration_);
-
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 1.0f, 0.0f, 0.0f);
-    plot_box_silhouette_.render(
-        axes_side_configuration_, view_angles_.getSnappedAzimuth(), view_angles_.getSnappedElevation());
 }
 
 void AxesRenderer::setAxesBoxScaleFactor(const Vec3d& scale_vector)

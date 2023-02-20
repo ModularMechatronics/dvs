@@ -19,12 +19,22 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles)
     xz_plane_y_value = (((-M_PI / 2.0f) <= azimuth) && (azimuth <= (M_PI / 2.0f))) ? 1.0f : -1.0f;
 
     // YZ
-    const bool cond = static_cast<int>(azimuth * 180.0f / M_PI) == -180;
     yz_plane_x_value = (azimuth >= 0.0f) ? 1.0f : -1.0f;
+
+    z_axes_numbers_y_value = azimuth > 0.0f ? 1.0f : -1.0f;
+    if ((azimuth < M_PI_2) && (azimuth >= -M_PI_2))
+    {
+        z_axes_numbers_x_value = -1.0f;
+    }
+    else
+    {
+        z_axes_numbers_x_value = 1.0f;
+    }
 
     if (view_angles.isSnappedLookingAlongPositiveX())
     {
         xz_plane_y_value = 1.0f;
+        z_axes_numbers_x_value = -1.0f;
     }
     else if (view_angles.isSnappedLookingAlongNegativeX())
     {
@@ -36,6 +46,7 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles)
     }
     else if (view_angles.isSnappedLookingAlongNegativeY())
     {
+        z_axes_numbers_y_value = 1.0f;
         yz_plane_x_value = 1.0f;
     }
     if (view_angles.isSnappedLookingAlongPositiveZ())
@@ -47,9 +58,11 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles)
         else if (std::abs(M_PI_2 - azimuth) < angle_limit)  // 90 deg
         {
             xz_plane_y_value = 1.0f;
+            z_axes_numbers_x_value = -1.0f;
         }
         else if (std::abs(M_PI - azimuth_abs) < angle_limit)  // -+180 deg
         {
+            z_axes_numbers_y_value = 1.0f;
             yz_plane_x_value = 1.0f;
         }
         else if (std::abs(M_PI + azimuth_abs) < angle_limit)  // -90 deg
@@ -66,9 +79,11 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles)
         else if (std::abs(M_PI_2 - azimuth) < angle_limit)  // 90 deg
         {
             xz_plane_y_value = 1.0f;
+            z_axes_numbers_x_value = -1.0f;
         }
         else if (std::abs(M_PI - azimuth_abs) < angle_limit)  // -+180 deg
         {
+            z_axes_numbers_y_value = 1.0f;
             yz_plane_x_value = 1.0f;
         }
         else if (std::abs(M_PI + azimuth_abs) < angle_limit)  // -90 deg
@@ -77,7 +92,12 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles)
         }
     }
 
-    if (view_angles.isSnappedAlongX()) {}
-    else if (view_angles.isSnappedAlongY()) {}
-    else if (view_angles.isSnappedAlongZ()) {}
+    y_axes_numbers_x_value = yz_plane_x_value;
+    y_axes_numbers_z_value = xy_plane_z_value;
+
+    if (view_angles.isSnappedLookingAlongNegativeZ() && (azimuth_abs < angle_limit))
+    {
+        y_axes_numbers_x_value = 1.0f;
+        y_axes_numbers_z_value = 1.0f;
+    }
 }

@@ -73,12 +73,14 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
                       const SnappingAxis snapping_axis,
                       const Vec3d& axes_center,
                       const GridVectors& gv,
-                      const GLint text_color_uniform)
+                      const GLint text_color_uniform,
+                      const AxesSideConfiguration& axes_side_configuration)
 {
     const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
-    const double y = (elevation == M_PI / 2.0) ? -1.05 : (cond ? 1.05 : -1.05);
+    const double y = -axes_side_configuration.xz_plane_y_value * 1.05;
+
     const double z0 = elevation > 0.0 ? -1.05 : 1.05;
-    const double z = ((snapping_axis == SnappingAxis::X) || (snapping_axis == SnappingAxis::Y)) ? -1.05 : z0;
+    const double z = axes_side_configuration.xy_plane_z_value * 1.05;
 
     if (element_settings.axes_letters_on)
     {
@@ -127,11 +129,11 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
                       const SnappingAxis snapping_axis,
                       const Vec3d& axes_center,
                       const GridVectors& gv,
-                      const GLint text_color_uniform)
+                      const GLint text_color_uniform,
+                      const AxesSideConfiguration& axes_side_configuration)
 {
-    const double x = (elevation == M_PI / 2.0) ? -1.05 : (azimuth < 0.0 ? 1.05 : -1.05);
-    const double z0 = elevation > 0.0 ? -1.05 : 1.05;
-    const double z = ((snapping_axis == SnappingAxis::X) || (snapping_axis == SnappingAxis::Y)) ? -1.05 : z0;
+    const double x = -axes_side_configuration.y_axes_numbers_x_value * 1.05;
+    const double z = axes_side_configuration.y_axes_numbers_z_value * 1.05;
 
     const bool cond2 =
         ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
@@ -183,11 +185,11 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                       const float height,
                       const Vec3d& axes_center,
                       const GridVectors& gv,
-                      const GLint text_color_uniform)
+                      const GLint text_color_uniform,
+                      const AxesSideConfiguration& axes_side_configuration)
 {
-    const bool cond = (azimuth >= (M_PI / 2.0)) || (azimuth <= (-M_PI / 2.0));
-    const double x = cond ? 1.05 : -1.05;
-    const double y = ((azimuth >= (M_PI / 2.0)) || (azimuth <= (-M_PI / 2.0))) ? 1.05 : -1.05;
+    const double x = axes_side_configuration.z_axes_numbers_x_value * 1.05;
+    const double y = axes_side_configuration.z_axes_numbers_y_value * 1.05;
 
     if (element_settings.axes_letters_on)
     {
@@ -225,7 +227,9 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                      const glm::mat4& projection_mat,
                      const float width,
                      const float height,
-                     const GridVectors& gv)
+                     const GridVectors& gv,
+                     const AxesSideConfiguration& axes_side_configuration,
+                     const bool perspective_projection)
 {
     glUseProgram(text_shader.programId());
 
@@ -265,7 +269,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
     scale_mat[2][2] = 1.0 / scale.z;
     const glm::mat4 view_model_z = view_mat * model_mat_local * scale_mat;
 
-    if (!view_angles.isSnappedAlongX())
+    if ((!view_angles.isSnappedAlongX()) || perspective_projection)
     {
         drawXAxisNumbers(text_renderer,
                          element_settings,
@@ -279,9 +283,10 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_angles.getSnappingAxis(),
                          axes_center,
                          gv,
-                         text_color_uniform);
+                         text_color_uniform,
+                         axes_side_configuration);
     }
-    if (!view_angles.isSnappedAlongY())
+    if ((!view_angles.isSnappedAlongY()) || perspective_projection)
     {
         drawYAxisNumbers(text_renderer,
                          element_settings,
@@ -295,9 +300,10 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_angles.getSnappingAxis(),
                          axes_center,
                          gv,
-                         text_color_uniform);
+                         text_color_uniform,
+                         axes_side_configuration);
     }
-    if (!view_angles.isSnappedAlongZ())
+    if ((!view_angles.isSnappedAlongZ()) || perspective_projection)
     {
         drawZAxisNumbers(text_renderer,
                          element_settings,
@@ -310,7 +316,8 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          height,
                          axes_center,
                          gv,
-                         text_color_uniform);
+                         text_color_uniform,
+                         axes_side_configuration);
     }
 
     glUseProgram(0);

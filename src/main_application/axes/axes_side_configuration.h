@@ -20,6 +20,12 @@ struct AxesSideConfiguration
     float xz_plane_y_value;
     float yz_plane_x_value;
 
+    float z_axes_numbers_x_value;
+    float z_axes_numbers_y_value;
+
+    float y_axes_numbers_x_value;
+    float y_axes_numbers_z_value;
+
     bool is_snapped;
 
     AxesSideConfiguration() = default;

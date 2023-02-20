@@ -5,6 +5,7 @@
 
 #include <glm/mat4x4.hpp>
 
+#include "axes/axes_side_configuration.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
@@ -25,6 +26,8 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                      const glm::mat4& projection_mat,
                      const float width,
                      const float height,
-                     const GridVectors& gv);
+                     const GridVectors& gv,
+                     const AxesSideConfiguration& axes_side_configuration,
+                     const bool perspective_projection);
 
 #endif  // MAIN_APPLICATION_AXES_GRID_NUMBERS_H_
