@@ -318,8 +318,6 @@ void AxesRenderer::render()
         scale_mat[3][3] = 1.0;
         const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
 
-        const RGBTripletf color_vec{element_settings_.grid_color};
-
         glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
                            1,
                            GL_FALSE,
@@ -600,20 +598,26 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 
     float az;
     float el;
+    float s = 0.0f;
+
+    Vec3d scale_vector_to_use;
 
     if (use_perspective_proj_)
     {
-        // az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.9;
-        az = 1.0;
-        el = 0.0;  // std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 1.0) * 0.5;
+        az = 0.2;
+        el = 0.0;
+        s = az + el;
+        scale_vector_to_use = scale_vector_;
     }
     else
     {
+        scale_vector_to_use = scale_vector_;
         az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
         el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
+        s = std::sqrt(az * az + el * el);
     }
 
-    window_scale_mat_[0][0] = scale_vector_.x - az - el;
-    window_scale_mat_[1][1] = scale_vector_.y - az - el;
-    window_scale_mat_[2][2] = scale_vector_.z - az - el;
+    window_scale_mat_[0][0] = scale_vector_to_use.x - s;
+    window_scale_mat_[1][1] = scale_vector_to_use.y - s;
+    window_scale_mat_[2][2] = scale_vector_to_use.z - s;
 }

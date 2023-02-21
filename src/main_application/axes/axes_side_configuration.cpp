@@ -1,6 +1,6 @@
 #include "axes/axes_side_configuration.h"
 
-AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles)
+AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles, const bool perspective_projection)
 {
     const float azimuth = view_angles.getSnappedAzimuth();
     const float elevation = view_angles.getSnappedElevation();
@@ -95,9 +95,17 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles)
     y_axes_numbers_x_value = yz_plane_x_value;
     y_axes_numbers_z_value = xy_plane_z_value;
 
-    if (view_angles.isSnappedLookingAlongNegativeZ() && (azimuth_abs < angle_limit))
+    if (!perspective_projection)
     {
-        y_axes_numbers_x_value = 1.0f;
-        y_axes_numbers_z_value = 1.0f;
+        if (view_angles.isSnappedLookingAlongNegativeZ() && (azimuth_abs < angle_limit))
+        {
+            y_axes_numbers_x_value = 1.0f;
+            y_axes_numbers_z_value = 1.0f;
+        }
+        else if (view_angles.isSnappedLookingAlongPositiveZ() && (azimuth_abs < angle_limit))
+        {
+            y_axes_numbers_x_value = 1.0f;
+            y_axes_numbers_z_value = -1.0f;
+        }
     }
 }

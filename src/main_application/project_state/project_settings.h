@@ -213,6 +213,15 @@ struct ElementSettings
         assignIfNotDefault(j, "pane_radius", pane_radius, kPaneRadiusDefault);
         assignIfNotDefault(j, "z_order", z_order, kZOrderDefault);
 
+        if (projection_type == ProjectionType::ORTHOGRAPHIC)
+        {
+            j["projection_type"] = "orthographic";
+        }
+        else if (projection_type == ProjectionType::PERSPECTIVE)
+        {
+            j["projection_type"] = "perspective";
+        }
+
         return j;
     }
 

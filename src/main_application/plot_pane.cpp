@@ -1117,7 +1117,7 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
     const Vec2f pane_size(GetSize().x, GetSize().y);
 
-    const AxesSideConfiguration axes_side_configuration{axes_interactor_.getViewAngles()};
+    const AxesSideConfiguration axes_side_configuration{axes_interactor_.getViewAngles(), perspective_projection_};
 
     axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
                                  axes_interactor_.getViewAngles(),
