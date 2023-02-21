@@ -29,7 +29,7 @@ struct AxesSideConfiguration
     bool is_snapped;
 
     AxesSideConfiguration() = default;
-    AxesSideConfiguration(const ViewAngles& view_angles);
+    AxesSideConfiguration(const ViewAngles& view_angles, const bool perspective_projection);
 };
 
 #endif  // MAIN_APPLICATION_AXES_AXES_SIDE_CONFIGURATION_H_

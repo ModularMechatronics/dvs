@@ -73,6 +73,8 @@ private:
     Vec3d light_pos_;
     std::vector<LegendProperties> legend_properties_;
     Vec3d scale_vector_;
+    Vec3d orth_scale_vector_;
+    Vec3d persp_scale_vector_;
     std::string name_;
     MouseInteractionAxis current_mouse_interaction_axis_;
 

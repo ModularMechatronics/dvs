@@ -20,9 +20,10 @@ void drawXLetter(const TextRenderer& text_renderer,
                  const float width,
                  const float height,
                  const float y,
-                 const float z)
+                 const float z,
+                 const float z_value_multiplier)
 {
-    const glm::vec3 v(0.0f, y * 1.1, z * 1.1);
+    const glm::vec3 v(0.0f, y * 1.1, z * z_value_multiplier);
 
     const glm::vec3 v_projected = glm::project(v, view_model, projection, v_viewport);
 
@@ -36,9 +37,10 @@ void drawYLetter(const TextRenderer& text_renderer,
                  const float width,
                  const float height,
                  const float x,
-                 const float z)
+                 const float z,
+                 const float z_value_multiplier)
 {
-    const glm::vec3 v(x * 1.1, 0.0f, z * 1.1);
+    const glm::vec3 v(x * 1.1, 0.0f, z * z_value_multiplier);
 
     const glm::vec3 v_projected = glm::project(v, view_model, projection, v_viewport);
 
@@ -52,9 +54,11 @@ void drawZLetter(const TextRenderer& text_renderer,
                  const float width,
                  const float height,
                  const float x,
-                 const float y)
+                 const float y,
+                 const float x_val_multiplier,
+                 const float y_val_multiplier)
 {
-    const glm::vec3 v(x * 1.1, y * 1.1, 0.0f);
+    const glm::vec3 v(x * x_val_multiplier, y * y_val_multiplier, 0.0f);
 
     const glm::vec3 v_projected = glm::project(v, view_model, projection, v_viewport);
 
@@ -74,19 +78,22 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
                       const Vec3d& axes_center,
                       const GridVectors& gv,
                       const GLint text_color_uniform,
-                      const AxesSideConfiguration& axes_side_configuration)
+                      const AxesSideConfiguration& axes_side_configuration,
+                      const float distance_multiplier,
+                      const bool perspective_projection)
 {
     const bool cond = (azimuth > (M_PI / 2.0)) || (azimuth < (-M_PI / 2.0));
-    const double y = -axes_side_configuration.xz_plane_y_value * 1.05;
+    const float z_value_distance_multiplier = perspective_projection ? 1.0f : distance_multiplier;
 
-    const double z0 = elevation > 0.0 ? -1.05 : 1.05;
-    const double z = axes_side_configuration.xy_plane_z_value * 1.05;
+    const double y = -axes_side_configuration.xz_plane_y_value * distance_multiplier;
+    const double z = axes_side_configuration.xy_plane_z_value * z_value_distance_multiplier;
 
     if (element_settings.axes_letters_on)
     {
         const auto c = element_settings.axes_letters_color;
         glUniform3f(text_color_uniform, c.red, c.green, c.blue);
-        drawXLetter(text_renderer, view_model, v_viewport, projection, width, height, y, z);
+        drawXLetter(
+            text_renderer, view_model, v_viewport, projection, width, height, y, z, z_value_distance_multiplier);
     }
 
     if (!element_settings.axes_numbers_on)
@@ -130,10 +137,14 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
                       const Vec3d& axes_center,
                       const GridVectors& gv,
                       const GLint text_color_uniform,
-                      const AxesSideConfiguration& axes_side_configuration)
+                      const AxesSideConfiguration& axes_side_configuration,
+                      const float distance_multiplier,
+                      const bool perspective_projection)
 {
-    const double x = -axes_side_configuration.y_axes_numbers_x_value * 1.05;
-    const double z = axes_side_configuration.y_axes_numbers_z_value * 1.05;
+    const float z_value_distance_multiplier = perspective_projection ? 1.0f : distance_multiplier;
+
+    const double x = -axes_side_configuration.y_axes_numbers_x_value * distance_multiplier;
+    const double z = axes_side_configuration.y_axes_numbers_z_value * z_value_distance_multiplier;
 
     const bool cond2 =
         ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
@@ -142,7 +153,8 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
     {
         const auto c = element_settings.axes_letters_color;
         glUniform3f(text_color_uniform, c.red, c.green, c.blue);
-        drawYLetter(text_renderer, view_model, v_viewport, projection, width, height, x, z);
+        drawYLetter(
+            text_renderer, view_model, v_viewport, projection, width, height, x, z, z_value_distance_multiplier);
     }
 
     if (!element_settings.axes_numbers_on)
@@ -159,11 +171,11 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
 
         const glm::vec3 v_projected = glm::project(v3, view_model, projection, v_viewport);
         const std::string val = formatNumber(gv.y.data[k] + axes_center.y, 3);
-        if (elevation == M_PI / 2.0)
+        /*if (elevation == M_PI / 2.0)
         {
             text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
-        }
-        else if (cond2)
+        }*/
+        if (cond2)
         {
             text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }
@@ -186,16 +198,50 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                       const Vec3d& axes_center,
                       const GridVectors& gv,
                       const GLint text_color_uniform,
-                      const AxesSideConfiguration& axes_side_configuration)
+                      const AxesSideConfiguration& axes_side_configuration,
+                      const float distance_multiplier,
+                      const bool perspective_projection)
 {
-    const double x = axes_side_configuration.z_axes_numbers_x_value * 1.05;
-    const double y = axes_side_configuration.z_axes_numbers_y_value * 1.05;
+    float x_value_distance_multiplier = distance_multiplier;
+    float y_value_distance_multiplier = distance_multiplier;
+
+    if (perspective_projection)
+    {
+        if ((azimuth >= 0.0f) && (azimuth <= M_PI_2))
+        {
+            y_value_distance_multiplier = 1.0f;
+        }
+        else if ((azimuth >= M_PI_2) && (azimuth <= M_PI))
+        {
+            x_value_distance_multiplier = 1.0f;
+        }
+        else if ((azimuth >= (-M_PI_2)) && (azimuth <= 0.0f))
+        {
+            x_value_distance_multiplier = 1.0f;
+        }
+        else if ((azimuth >= (-M_PI)) && (azimuth <= (-M_PI_2)))
+        {
+            y_value_distance_multiplier = 1.0f;
+        }
+    }
+
+    const double x = axes_side_configuration.z_axes_numbers_x_value * x_value_distance_multiplier;
+    const double y = axes_side_configuration.z_axes_numbers_y_value * y_value_distance_multiplier;
 
     if (element_settings.axes_letters_on)
     {
         const auto c = element_settings.axes_letters_color;
         glUniform3f(text_color_uniform, c.red, c.green, c.blue);
-        drawZLetter(text_renderer, view_model, v_viewport, projection, width, height, x, y);
+        drawZLetter(text_renderer,
+                    view_model,
+                    v_viewport,
+                    projection,
+                    width,
+                    height,
+                    x,
+                    y,
+                    x_value_distance_multiplier,
+                    y_value_distance_multiplier);
     }
 
     if (!element_settings.axes_numbers_on)
@@ -243,14 +289,16 @@ void drawGridNumbers(const TextRenderer& text_renderer,
     // Scales
     const Vec3d scale = axes_limits.getAxesScale() / 2.0;
 
+    const float distance_multiplier = perspective_projection ? 1.1f : 1.05f;
+
     model_mat_local[3][0] = 0.0;
     model_mat_local[3][1] = 0.0;
     model_mat_local[3][2] = 0.0;
 
     const glm::vec4 v_viewport = glm::vec4(-1, -1, 2, 2);
 
-    const double az = view_angles.getSnappedAzimuth();
-    const double el = view_angles.getSnappedElevation();
+    const double azimuth = view_angles.getSnappedAzimuth();
+    const double elevation = view_angles.getSnappedElevation();
 
     glm::mat4 scale_mat = glm::mat4(1.0f);
 
@@ -276,15 +324,17 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_model_x,
                          v_viewport,
                          projection_mat,
-                         az,
-                         el,
+                         azimuth,
+                         elevation,
                          width,
                          height,
                          view_angles.getSnappingAxis(),
                          axes_center,
                          gv,
                          text_color_uniform,
-                         axes_side_configuration);
+                         axes_side_configuration,
+                         distance_multiplier,
+                         perspective_projection);
     }
     if ((!view_angles.isSnappedAlongY()) || perspective_projection)
     {
@@ -293,15 +343,17 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_model_y,
                          v_viewport,
                          projection_mat,
-                         az,
-                         el,
+                         azimuth,
+                         elevation,
                          width,
                          height,
                          view_angles.getSnappingAxis(),
                          axes_center,
                          gv,
                          text_color_uniform,
-                         axes_side_configuration);
+                         axes_side_configuration,
+                         distance_multiplier,
+                         perspective_projection);
     }
     if ((!view_angles.isSnappedAlongZ()) || perspective_projection)
     {
@@ -310,14 +362,16 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_model_z,
                          v_viewport,
                          projection_mat,
-                         az,
-                         el,
+                         azimuth,
+                         elevation,
                          width,
                          height,
                          axes_center,
                          gv,
                          text_color_uniform,
-                         axes_side_configuration);
+                         axes_side_configuration,
+                         distance_multiplier,
+                         perspective_projection);
     }
 
     glUseProgram(0);
