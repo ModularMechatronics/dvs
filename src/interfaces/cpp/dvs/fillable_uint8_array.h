@@ -8,14 +8,14 @@
 class UInt8ArrayView
 {
 private:
-    uint8_t* data_;
+    const uint8_t* const data_;
     size_t size_;
 
 public:
-    UInt8ArrayView() : data_{nullptr}, size_{0U} {}
-    UInt8ArrayView(uint8_t* data_in, const size_t size_in) : data_{data_in}, size_{size_in} {}
+    UInt8ArrayView() = delete;
+    UInt8ArrayView(const uint8_t* const data_in, const size_t size_in) : data_{data_in}, size_{size_in} {}
 
-    uint8_t* data() const
+    const uint8_t* data() const
     {
         return data_;
     }
