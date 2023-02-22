@@ -45,8 +45,9 @@ vec2 intersectionOfTwoLines(Line2D line0, Line2D line1)
 {
     vec2 p;
 
-    p.x = (line0.b * line1.c - line1.b * line0.c) / (line0.a * line1.b - line1.a * line0.b);
-    p.y = -(line0.a * line1.c - line1.a * line0.c) / (line0.a * line1.b - line1.a * line0.b);
+    float n0 = (line0.a * line1.b - line1.a * line0.b);
+    p.x = (line0.b * line1.c - line1.b * line0.c) / n0;
+    p.y = -(line0.a * line1.c - line1.a * line0.c) / n0;
 
     return p;
 }
@@ -76,9 +77,9 @@ void main()
     vec4 p1_transformed = model_view_proj_mat * vec4(p1, 1.0);
     vec4 p2_transformed = model_view_proj_mat * vec4(p2, 1.0);
 
-    p0_transformed = p0_transformed / p0_transformed.w;
-    p1_transformed = p1_transformed / p1_transformed.w;
-    p2_transformed = p2_transformed / p2_transformed.w;
+    p0_transformed = p0_transformed / abs(p0_transformed.w);
+    p1_transformed = p1_transformed / abs(p1_transformed.w);
+    p2_transformed = p2_transformed / abs(p2_transformed.w);
 
     // vec_along01 points from point p0 to point p1
     vec2 vec_along01 = normalize(p1_transformed.xy - p0_transformed.xy);

@@ -8,6 +8,7 @@ Pre release:
 - Delete gl buffers with "glDeleteBuffers"
 - Rename "projection type" to "projection mode"
 - Remove constexpr and constants from headers that doesn't need to be in the header
+- Finalize grid numbers placement when snapped
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Create a default element when creating a new window?
 - Reducing number of axis numbers depending on rotation
