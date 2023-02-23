@@ -74,7 +74,7 @@ inline void sendThroughUdpInterfaceNew(const UInt8ArrayView& input_array)
     using std::chrono::high_resolution_clock;
     using std::chrono::milliseconds;
 
-    const uint8_t* const data_to_send = input_array.data();
+    uint8_t* data_to_send = input_array.data();
     const uint64_t total_num_bytes_to_send = input_array.size();
 
     constexpr int kNumReceiveBytes = 10;
@@ -88,13 +88,26 @@ inline void sendThroughUdpInterfaceNew(const UInt8ArrayView& input_array)
 
         auto t1 = high_resolution_clock::now();
 
+        uint64_t sequence_number = 1U;
+
+        const size_t num_bytes_to_send = std::min(dvs::internal::kMaxNumBytesForOneTransmission,
+                                                  static_cast<size_t>(total_num_bytes_to_send) - num_sent_bytes);
+
+        udp_client.sendData(data_to_send + num_sent_bytes, num_bytes_to_send);
+        num_sent_bytes += num_bytes_to_send;
+
         while (num_sent_bytes < total_num_bytes_to_send)
         {
+            uint8_t* data_at_pos = data_to_send + num_sent_bytes;
+            std::memcpy(data_at_pos, &sequence_number, sizeof(uint64_t));
+
             const size_t num_bytes_to_send = std::min(dvs::internal::kMaxNumBytesForOneTransmission,
                                                       static_cast<size_t>(total_num_bytes_to_send) - num_sent_bytes);
 
             udp_client.sendData(data_to_send + num_sent_bytes, num_bytes_to_send);
             num_sent_bytes += num_bytes_to_send;
+            sequence_number++;
+
 #ifdef USE_ACK
             const int num_received_bytes = udp_client.receiveData<kNumReceiveBytes>(received_data);
 

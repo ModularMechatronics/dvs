@@ -7,7 +7,8 @@
 #include "sender.h"
 #include "udp_server.h"
 
-const size_t num_elements_global = 24U * 1000U * 1000U;
+// const size_t num_elements_global = 1U * 1000U * 1000U;
+const size_t num_elements_global = 7000U;
 const size_t total_num_bytes_global = num_elements_global * sizeof(float);
 
 void delayMs(const int ms)
@@ -46,17 +47,11 @@ uint8_t* createInputData(const size_t num_elements)
 void threadFunction()
 {
     delayMs(500);  // Wait before starting transmission
-    const uint8_t* const input_data = createInputData(num_elements_global);
+    uint8_t* input_data = createInputData(num_elements_global);
     const UInt8ArrayView array_view(input_data, total_num_bytes_global);
 
     sendThroughUdpInterfaceNew(array_view);
     DVS_LOG_INFO() << "Transmission finished!";
-
-    /*while (true)
-    {
-        DVS_LOG_DEBUG() << "From thread!";
-        delayMs(2300);
-    }*/
 }
 
 int main(int argc, char** argv)

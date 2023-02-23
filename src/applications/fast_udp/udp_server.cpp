@@ -5,9 +5,11 @@
 #include "common.h"
 #include "dvs/fillable_uint8_array.h"
 
+constexpr size_t kUdpServerMaxBufferSizeLocal = 100000000U;
+
 UdpServer::UdpServer(const int port_num) : port_num_(port_num)
 {
-    receive_buffer_ = new char[dvs::internal::kUdpServerMaxBufferSize];
+    receive_buffer_ = new char[kUdpServerMaxBufferSizeLocal];
 
     if ((socket_file_descr_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
@@ -71,12 +73,12 @@ void UdpServer::receiveAndGetData()
     uint64_t num_expected_bytes;
     std::memcpy(&num_expected_bytes, receive_buffer_ + (sizeof(uint64_t) + 1), sizeof(uint64_t));
 
-    if (static_cast<size_t>(num_expected_bytes) >= dvs::internal::kUdpServerMaxBufferSize)
+    if (static_cast<size_t>(num_expected_bytes) >= kUdpServerMaxBufferSizeLocal)
     {
         throw std::runtime_error("Too many bytes to receive! Client wants to send " +
                                  std::to_string(num_expected_bytes) + " bytes");
     }
-    sendAck();
+    // sendAck();
 
     if (num_expected_bytes > dvs::internal::kMaxNumBytesForOneTransmission)
     {
@@ -88,6 +90,7 @@ void UdpServer::receiveAndGetData()
         auto t1 = high_resolution_clock::now();
 
         int i = 0;
+        uint64_t prev_sequence_number = 0;
 
         while (num_received_bytes_total < num_expected_bytes)
         {
@@ -97,7 +100,15 @@ void UdpServer::receiveAndGetData()
                                           0,
                                           (struct sockaddr*)&client_addr_,
                                           &client_len_);
+            char* data_at_pos = receive_buffer_ + num_received_bytes_total;
+            uint64_t sequence_number;
+            std::memcpy(&sequence_number, data_at_pos, sizeof(uint64_t));
 
+            if ((sequence_number - prev_sequence_number) != 1)
+            {
+                std::cout << "sn: " << sequence_number << std::endl;
+            }
+            prev_sequence_number = sequence_number;
             num_received_bytes_total += num_received_bytes;
 #ifdef USE_ACK
             sendAck();
