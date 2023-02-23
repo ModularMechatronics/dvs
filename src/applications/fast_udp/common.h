@@ -6,7 +6,7 @@
 #include "dvs/constants.h"
 #include "dvs/fillable_uint8_array.h"
 
-#define USE_ACK 1
+// #define USE_ACK 1
 
 inline bool ackValid(const char data[256])
 {
