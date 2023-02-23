@@ -53,7 +53,7 @@ set(CPP_SOURCE_FILES main.cpp
                      project_state/configuration_agent.cpp
 
                      communication/received_data.cpp
-                     communication/udp_server.cpp
+                     communication/data_receiver.cpp
                      tray_icon.cpp
                      tab_button.cpp
                      window_view.cpp

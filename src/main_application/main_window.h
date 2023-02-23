@@ -19,8 +19,8 @@
 #include <utility>
 #include <vector>
 
+#include "communication/data_receiver.h"
 #include "communication/received_data.h"
-#include "communication/udp_server.h"
 #include "events.h"
 #include "gui_element.h"
 #include "input_data.h"
@@ -49,7 +49,7 @@ private:
 
     std::string current_element_name_;
 
-    UdpServer* udp_server_;
+    DataReceiver* data_receiver_;
     wxTimer receive_timer_;
     wxTimer refresh_timer_;
 

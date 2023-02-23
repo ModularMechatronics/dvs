@@ -920,6 +920,8 @@ inline void setTransform(const internal::ItemId id,
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+namespace not_ready
+{
 inline size_t numObjectsInReceiveBuffer()
 {
     internal::CommunicationHeader hdr{internal::Function::IS_BUSY_RENDERING};
@@ -934,6 +936,7 @@ inline size_t numObjectsInReceiveBuffer()
 
     return 0;
 }
+}  // namespace not_ready
 
 }  // namespace dvs
 

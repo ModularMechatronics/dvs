@@ -203,7 +203,7 @@ void MainWindow::receiveThreadFunction()
 {
     while (1)
     {
-        ReceivedData received_data = udp_server_->receiveAndGetData();
+        ReceivedData received_data = data_receiver_->receiveAndGetData();
 
         const Function fcn = received_data.getFunction();
 

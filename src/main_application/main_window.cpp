@@ -21,7 +21,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 {
     static_cast<void>(cmdl_args);
     window_initialization_in_progress_ = true;
-    udp_server_ = new UdpServer(dvs::internal::kUdpPortNum);
+    data_receiver_ = new DataReceiver(dvs::internal::kUdpPortNum);
     open_project_file_queued_ = false;
 
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;

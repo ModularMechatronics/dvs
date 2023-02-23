@@ -8,8 +8,8 @@
 #include <atomic>
 
 #include "axes/axes.h"
+#include "communication/data_receiver.h"
 #include "communication/received_data.h"
-#include "communication/udp_server.h"
 #include "dvs/dvs.h"
 #include "gui_element.h"
 #include "input_data.h"

@@ -50,37 +50,6 @@ void testRealTimePlotBasic()
     }
 }
 
-void testSynchronizedRealTimePlot()
-{
-    numObjectsInReceiveBuffer();
-    std::cout << "Here!" << std::endl;
-    /*const size_t num_its = 1500;
-
-    float t = 0.0f;
-    float dt = 0.01f;
-
-    setCurrentElement("p_view_0");
-    clearView();
-    view(180, -90);
-    axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
-
-    setProperties(properties::ID0, properties::Color::BLUE);
-
-    for (size_t k = 0; k < num_its; k++)
-    {
-        const float y = std::sin(t) + 0.1f * std::sin(t * 10.0f);
-        t += dt;
-
-        if (k == 600)
-        {
-            setProperties(properties::ID0, properties::Color::RED);
-            setProperties(properties::ID0, properties::BufferSize(1000U));
-        }
-        realTimePlot(dt, y, properties::ID0);
-        usleep(10000);
-    }*/
-}
-
 void testPlot2Basic()
 {
     const size_t num_its = 100;
