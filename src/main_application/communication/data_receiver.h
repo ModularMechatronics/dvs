@@ -26,30 +26,27 @@
 #include "communication/received_data.h"
 #include "dvs/constants.h"
 #include "dvs/dvs.h"
+#include "dvs/timing.h"
 
 class DataReceiver
 {
 private:
-    int port_num_;
-    int socket_file_descr_;
-    struct sockaddr_in client_addr_;
-    struct sockaddr_in my_addr_;
     char* receive_buffer_;
-    socklen_t client_len_;
+
+    // TCP
+    int tcp_sockfd_, tcp_connfd_;
+    socklen_t tcp_len_;
+    struct sockaddr_in tcp_servaddr_;
+    struct sockaddr_in tcp_cli_;
 
 public:
-    DataReceiver() = delete;
+    DataReceiver();
     DataReceiver(const DataReceiver& other) = delete;
     DataReceiver(DataReceiver&& other) = delete;
     DataReceiver& operator=(const DataReceiver& other) = delete;
     DataReceiver& operator=(DataReceiver&& other) = delete;
 
-    DataReceiver(const int port_num);
-
-    ReceivedData receiveAndGetData();
-
-    void sendData(char data[256], const int num_bytes_to_send);
-    void sendAck();
+    ReceivedData receiveAndGetDataFromTcp();
 
     ~DataReceiver();
 };

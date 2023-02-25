@@ -10,7 +10,7 @@ namespace internal
 
 constexpr uint64_t kMagicNumber = 0xdeadbeefcafebabe;
 constexpr size_t kMaxNumBytesForOneTransmission = 1380;
-constexpr uint64_t kUdpPortNum = 9752;
+constexpr uint64_t kTcpPortNum = 9755;
 constexpr uint64_t kUdpQueryPortNum = 9757;
 constexpr uint8_t kCommunicationHeaderObjectDataSize = UCHAR_MAX;
 constexpr uint8_t kMaxNumObjects = 10;

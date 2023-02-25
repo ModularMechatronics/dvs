@@ -17,11 +17,10 @@
 using namespace dvs::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
-    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50))
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50)), data_receiver_{}
 {
     static_cast<void>(cmdl_args);
     window_initialization_in_progress_ = true;
-    data_receiver_ = new DataReceiver(dvs::internal::kUdpPortNum);
     open_project_file_queued_ = false;
 
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
@@ -105,7 +104,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
         Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, we->getCallbackId());
     }
 
-    receive_thread_ = new std::thread(&MainWindow::receiveThreadFunction, this);
+    tcp_receive_thread_ = new std::thread(&MainWindow::tcpReceiveThreadFunction, this);
 
     receive_timer_.Bind(wxEVT_TIMER, &MainWindow::OnReceiveTimer, this);
     receive_timer_.Start(visualization_period_ms);

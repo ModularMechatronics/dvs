@@ -35,11 +35,12 @@ class WindowView;
 class MainWindow : public wxFrame
 {
 private:
+    DataReceiver data_receiver_;
     SaveManager* save_manager_;
     ConfigurationAgent* configuration_agent_;
     std::mutex receive_mtx_;
 
-    std::thread* receive_thread_;
+    std::thread* tcp_receive_thread_;
     std::map<std::string, GuiElement*> gui_elements_;
 
     std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
@@ -49,7 +50,6 @@ private:
 
     std::string current_element_name_;
 
-    DataReceiver* data_receiver_;
     wxTimer receive_timer_;
     wxTimer refresh_timer_;
 
@@ -92,7 +92,9 @@ private:
     void setupWindows(const ProjectSettings& project_settings);
     void fileModified();
     bool currentGuiElementSet() const;
-    void receiveThreadFunction();
+    void tcpReceiveThreadFunction();
+    void manageReceivedData(ReceivedData& received_data);
+
     void mainWindowFlushMultipleElements(const ReceivedData& received_data);
     void addActionToQueue(ReceivedData& received_data);
     void setIsFileSavedForAllWindows(const bool file_saved);

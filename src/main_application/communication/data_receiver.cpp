@@ -1,99 +1,69 @@
 #include "communication/data_receiver.h"
+
 #include "dvs/fillable_uint8_array.h"
 
-DataReceiver::DataReceiver(const int port_num) : port_num_(port_num)
+DataReceiver::DataReceiver()
 {
     receive_buffer_ = new char[dvs::internal::kUdpServerMaxBufferSize];
 
-    if ((socket_file_descr_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    // TCP
+    tcp_sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
+
+    // Set reuse address that's already in use (probably by exited dvs instance)
+    int true_val = 1;
+    setsockopt(tcp_sockfd_, SOL_SOCKET, SO_REUSEADDR, &true_val, sizeof(int));
+
+    bzero(&tcp_servaddr_, sizeof(tcp_servaddr_));
+
+    tcp_servaddr_.sin_family = AF_INET;
+    tcp_servaddr_.sin_addr.s_addr = htonl(INADDR_ANY);
+    tcp_servaddr_.sin_port = htons(dvs::internal::kTcpPortNum);
+
+    if ((bind(tcp_sockfd_, (struct sockaddr*)&tcp_servaddr_, sizeof(tcp_servaddr_))) != 0)
     {
-        throw std::runtime_error("Cannot create socket");
+        throw std::runtime_error("Socket bind failed...");
     }
 
-    memset((char*)&my_addr_, 0, sizeof(my_addr_));
-    my_addr_.sin_family = AF_INET;
-    my_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
-    my_addr_.sin_port = htons(port_num_);
-    client_len_ = sizeof(client_addr_);
+    tcp_len_ = sizeof(tcp_cli_);
 
-    if (bind(socket_file_descr_, (struct sockaddr*)&my_addr_, sizeof(my_addr_)) < 0)
+    if ((listen(tcp_sockfd_, 5)) != 0)
     {
-        throw std::runtime_error("Cannot bind");
-    }
-}
-
-void DataReceiver::sendData(char data[256], const int num_bytes_to_send)
-{
-    struct sockaddr* tx_addr_ptr = reinterpret_cast<struct sockaddr*>(&client_addr_);
-
-    if (socket_file_descr_ == -1)
-    {
-        throw std::runtime_error("Invalid socket!");
-    }
-    else if (sendto(socket_file_descr_, data, num_bytes_to_send, 0, tx_addr_ptr, sizeof(struct sockaddr_in)) < 0)
-    {
-        throw std::runtime_error("sendto failed!");
+        throw std::runtime_error("Socket listen failed...");
     }
 }
 
-void DataReceiver::sendAck()
+ReceivedData DataReceiver::receiveAndGetDataFromTcp()
 {
-    char data[5];
-    data[0] = 'a';
-    data[1] = 'c';
-    data[2] = 'k';
-    data[3] = '#';
-    data[4] = '\0';
-    sendData(data, 5);
-}
-
-ReceivedData DataReceiver::receiveAndGetData()
-{
-    size_t num_received_bytes_total = 0;
-    int num_received_bytes = recvfrom(socket_file_descr_,
-                                      receive_buffer_,
-                                      dvs::internal::kMaxNumBytesForOneTransmission,
-                                      0,
-                                      (struct sockaddr*)&client_addr_,
-                                      &client_len_);
-
-    if (num_received_bytes < 0)
+    tcp_connfd_ = accept(tcp_sockfd_, (struct sockaddr*)&tcp_cli_, &tcp_len_);
+    if (tcp_connfd_ < 0)
     {
-        throw std::runtime_error("recvfrom returned error!");
+        throw std::runtime_error("Server accept failed...");
     }
 
-    num_received_bytes_total += num_received_bytes;
+    read(tcp_connfd_, receive_buffer_, sizeof(uint64_t));
+    size_t num_expected_bytes;
 
-    uint64_t num_expected_bytes;
-    std::memcpy(&num_expected_bytes, receive_buffer_ + (sizeof(uint64_t) + 1), sizeof(uint64_t));
+    std::memcpy(&num_expected_bytes, receive_buffer_, sizeof(uint64_t));
 
-    if (static_cast<size_t>(num_expected_bytes) >= dvs::internal::kUdpServerMaxBufferSize)
+    size_t total_num_received_bytes = 0U;
+
+    while (true)
     {
-        throw std::runtime_error("Too many bytes to receive! Client wants to send " +
-                                 std::to_string(num_expected_bytes) + " bytes");
-    }
-    sendAck();
+        const ssize_t num_received_bytes =
+            read(tcp_connfd_, receive_buffer_ + total_num_received_bytes, num_expected_bytes);
 
-    if (num_expected_bytes > dvs::internal::kMaxNumBytesForOneTransmission)
-    {
-        while (num_received_bytes_total < num_expected_bytes)
+        total_num_received_bytes += num_received_bytes;
+
+        if (total_num_received_bytes >= num_expected_bytes)
         {
-            num_received_bytes = recvfrom(socket_file_descr_,
-                                          receive_buffer_ + num_received_bytes_total,
-                                          dvs::internal::kMaxNumBytesForOneTransmission,
-                                          0,
-                                          (struct sockaddr*)&client_addr_,
-                                          &client_len_);
-
-            num_received_bytes_total += num_received_bytes;
-            sendAck();
+            break;
         }
     }
 
-    const UInt8ArrayView array_view{reinterpret_cast<uint8_t*>(receive_buffer_), num_received_bytes_total};
+    const UInt8ArrayView array_view{reinterpret_cast<uint8_t*>(receive_buffer_), total_num_received_bytes};
 
     uint64_t received_magic_num;
-    std::memcpy(&received_magic_num, array_view.data() + 1, sizeof(uint64_t));
+    std::memcpy(&received_magic_num, array_view.data() + 1, sizeof(uint64_t));  // +1 because first byte is endianness
 
     if (received_magic_num != dvs::internal::kMagicNumber)
     {

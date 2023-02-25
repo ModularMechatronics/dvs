@@ -199,35 +199,40 @@ void MainWindow::addActionToQueue(ReceivedData& received_data)
     }
 }
 
-void MainWindow::receiveThreadFunction()
+void MainWindow::manageReceivedData(ReceivedData& received_data)
+{
+    const Function fcn = received_data.getFunction();
+
+    {
+        const std::lock_guard<std::mutex> lg(receive_mtx_);
+
+        if (fcn == Function::CREATE_NEW_ELEMENT)
+        {
+            // createNewElement(hdr);
+            // TODO
+            std::cout << "Not implemented yet!" << std::endl;
+        }
+        else if (fcn == Function::OPEN_PROJECT_FILE)
+        {
+            const CommunicationHeader& hdr = received_data.getCommunicationHeader();
+            queued_project_file_name_ =
+                hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>().data;
+            open_project_file_queued_ = true;
+        }
+        else
+        {
+            addActionToQueue(received_data);
+        }
+    }
+}
+
+void MainWindow::tcpReceiveThreadFunction()
 {
     while (1)
     {
-        ReceivedData received_data = data_receiver_->receiveAndGetData();
+        ReceivedData received_data = data_receiver_.receiveAndGetDataFromTcp();
 
-        const Function fcn = received_data.getFunction();
-
-        {
-            const std::lock_guard<std::mutex> lg(receive_mtx_);
-
-            if (fcn == Function::CREATE_NEW_ELEMENT)
-            {
-                // createNewElement(hdr);
-                // TODO
-                std::cout << "Not implemented yet!" << std::endl;
-            }
-            else if (fcn == Function::OPEN_PROJECT_FILE)
-            {
-                const CommunicationHeader& hdr = received_data.getCommunicationHeader();
-                queued_project_file_name_ =
-                    hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>().data;
-                open_project_file_queued_ = true;
-            }
-            else
-            {
-                addActionToQueue(received_data);
-            }
-        }
+        manageReceivedData(received_data);
     }
 }
 

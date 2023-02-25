@@ -9,6 +9,7 @@
 #include "dvs/communication_header.h"
 #include "dvs/constants.h"
 #include "dvs/fillable_uint8_array.h"
+#include "dvs/timing.h"
 #include "dvs/utils.h"
 #include "math/math.h"
 
@@ -19,54 +20,30 @@ namespace internal
 
 using SendFunctionType = std::function<void(const UInt8ArrayView& input_array)>;
 
-inline void sendThroughUdpInterface(const UInt8ArrayView& input_array)
+inline void sendThroughTcpInterface(const UInt8ArrayView& input_array)
 {
-    const uint8_t* const data_to_send = input_array.data();
-    const uint64_t total_num_bytes_to_send = input_array.size();
+    int tcp_sockfd;
+    struct sockaddr_in tcp_servaddr;
 
-    constexpr int kNumReceiveBytes = 10;
-    const UdpClient udp_client(kUdpPortNum);
-    char received_data[kNumReceiveBytes];
+    tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (total_num_bytes_to_send >= kMaxNumBytesForOneTransmission)
+    bzero(&tcp_servaddr, sizeof(tcp_servaddr));
+
+    tcp_servaddr.sin_family = AF_INET;
+    tcp_servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    tcp_servaddr.sin_port = htons(kTcpPortNum);
+
+    if (connect(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
     {
-        size_t num_sent_bytes = 0;
-
-        while (num_sent_bytes < total_num_bytes_to_send)
-        {
-            const size_t num_bytes_to_send =
-                std::min(kMaxNumBytesForOneTransmission, static_cast<size_t>(total_num_bytes_to_send) - num_sent_bytes);
-
-            udp_client.sendData(data_to_send + num_sent_bytes, num_bytes_to_send);
-            num_sent_bytes += num_bytes_to_send;
-
-            const int num_received_bytes = udp_client.receiveData<kNumReceiveBytes>(received_data);
-
-            if (!ackValid(received_data))
-            {
-                throw std::runtime_error("No valid ack received!");
-            }
-            else if (num_received_bytes != 5)
-            {
-                throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
-            }
-        }
+        DVS_LOG_INFO() << "Failed to connect!";
     }
-    else
-    {
-        udp_client.sendData(data_to_send, total_num_bytes_to_send);
 
-        const int num_received_bytes = udp_client.receiveData<kNumReceiveBytes>(received_data);
+    const uint64_t num_bytes_to_send = input_array.size();
 
-        if (!ackValid(received_data))
-        {
-            throw std::runtime_error("No valid ack received!");
-        }
-        else if (num_received_bytes != 5)
-        {
-            throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
-        }
-    }
+    write(tcp_sockfd, &num_bytes_to_send, sizeof(uint64_t));
+    write(tcp_sockfd, input_array.data(), input_array.size());
+
+    close(tcp_sockfd);
 }
 
 inline void sendThroughQueryUdpInterface(const UInt8ArrayView& input_array)
@@ -117,7 +94,7 @@ inline size_t receiveFromQueryUdpInterface()
 
 inline SendFunctionType getSendFunction()
 {
-    return sendThroughUdpInterface;
+    return sendThroughTcpInterface;
 }
 
 template <typename U> void countNumBytes(uint64_t& num_bytes, const U& data_to_be_sent)
