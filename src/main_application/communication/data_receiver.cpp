@@ -4,9 +4,6 @@
 
 DataReceiver::DataReceiver()
 {
-    receive_buffer_ = new char[dvs::internal::kUdpServerMaxBufferSize];
-
-    // TCP
     tcp_sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
 
     // Set reuse address that's already in use (probably by exited dvs instance)
@@ -40,19 +37,21 @@ ReceivedData DataReceiver::receiveAndGetDataFromTcp()
         throw std::runtime_error("Server accept failed...");
     }
 
-    read(tcp_connfd_, receive_buffer_, sizeof(uint64_t));
     size_t num_expected_bytes;
+    read(tcp_connfd_, &num_expected_bytes, sizeof(uint64_t));
 
-    std::memcpy(&num_expected_bytes, receive_buffer_, sizeof(uint64_t));
+    ReceivedData received_data{num_expected_bytes};
+    char* rec_buffer = reinterpret_cast<char*>(received_data.rawData());
 
     size_t total_num_received_bytes = 0U;
+    size_t num_bytes_left = num_expected_bytes;
 
     while (true)
     {
-        const ssize_t num_received_bytes =
-            read(tcp_connfd_, receive_buffer_ + total_num_received_bytes, num_expected_bytes);
+        const ssize_t num_received_bytes = read(tcp_connfd_, rec_buffer + total_num_received_bytes, num_bytes_left);
 
         total_num_received_bytes += num_received_bytes;
+        num_bytes_left -= static_cast<size_t>(num_received_bytes);
 
         if (total_num_received_bytes >= num_expected_bytes)
         {
@@ -60,17 +59,17 @@ ReceivedData DataReceiver::receiveAndGetDataFromTcp()
         }
     }
 
-    const UInt8ArrayView array_view{reinterpret_cast<uint8_t*>(receive_buffer_), total_num_received_bytes};
-
     uint64_t received_magic_num;
-    std::memcpy(&received_magic_num, array_view.data() + 1, sizeof(uint64_t));  // +1 because first byte is endianness
+    std::memcpy(&received_magic_num, rec_buffer + 1, sizeof(uint64_t));  // +1 because first byte is endianness
 
     if (received_magic_num != dvs::internal::kMagicNumber)
     {
         throw std::runtime_error("Invalid magic number received!");
     }
 
-    return ReceivedData{array_view};
+    received_data.parseHeader();
+
+    return received_data;
 }
 
 DataReceiver::~DataReceiver() {}

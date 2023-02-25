@@ -90,68 +90,73 @@ std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const Communicati
     switch (fcn)
     {
         case Function::STAIRS:
-            converted_data = Stairs::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = Stairs::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::PLOT2:
-            converted_data = Plot2D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = Plot2D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::PLOT3:
-            converted_data = Plot3D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = Plot3D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::FAST_PLOT2:
-            converted_data = FastPlot2D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = FastPlot2D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::FAST_PLOT3:
-            converted_data = FastPlot3D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = FastPlot3D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::LINE_COLLECTION2:
-            converted_data = LineCollection2D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data =
+                LineCollection2D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::LINE_COLLECTION3:
-            converted_data = LineCollection3D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data =
+                LineCollection3D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::STEM:
-            converted_data = Stem::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = Stem::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::SCATTER2:
-            converted_data = Scatter2D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = Scatter2D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::SCATTER3:
-            converted_data = Scatter3D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = Scatter3D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::SURF:
-            converted_data = Surf::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = Surf::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::IM_SHOW:
-            converted_data = ImShow::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = ImShow::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::PLOT_COLLECTION2:
-            converted_data = PlotCollection2D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data =
+                PlotCollection2D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::PLOT_COLLECTION3:
-            converted_data = PlotCollection3D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data =
+                PlotCollection3D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::DRAW_MESH_SEPARATE_VECTORS:
         case Function::DRAW_MESH:
-            converted_data = DrawMesh::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data = DrawMesh::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
 
         case Function::REAL_TIME_PLOT:
-            converted_data = ScrollingPlot2D::convertRawData(hdr, attributes, properties_data, received_data.data());
+            converted_data =
+                ScrollingPlot2D::convertRawData(hdr, attributes, properties_data, received_data.payloadData());
             break;
         default:
             throw std::runtime_error("Invalid function!");
@@ -292,7 +297,7 @@ void MainWindow::mainWindowFlushMultipleElements(const ReceivedData& received_da
 
     const uint8_t num_names = hdr.get(CommunicationHeaderObjectType::NUM_NAMES).as<uint8_t>();
 
-    const VectorConstView<uint8_t> name_lengths{received_data.data(), static_cast<size_t>(num_names)};
+    const VectorConstView<uint8_t> name_lengths{received_data.payloadData(), static_cast<size_t>(num_names)};
 
     std::vector<std::string> names;
 
@@ -307,7 +312,7 @@ void MainWindow::mainWindowFlushMultipleElements(const ReceivedData& received_da
 
         for (size_t i = 0; i < current_element_length; i++)
         {
-            current_elem += received_data.data()[idx];
+            current_elem += received_data.payloadData()[idx];
             idx++;
         }
     }

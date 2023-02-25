@@ -30,6 +30,14 @@ ReceivedData::ReceivedData(const UInt8ArrayView received_array_view)
     }
 }
 
+ReceivedData::ReceivedData(const size_t size_to_allocate)
+{
+    raw_data_ = new uint8_t[size_to_allocate];
+    total_num_bytes_ = size_to_allocate;
+    payload_data_ = nullptr;
+    num_data_bytes_ = 0U;
+}
+
 ReceivedData::ReceivedData(ReceivedData&& other)
     : hdr_{other.hdr_},
       function_{other.function_},
@@ -65,12 +73,41 @@ ReceivedData::~ReceivedData()
     delete[] payload_data_;
 }
 
+void ReceivedData::parseHeader()
+{
+    const UInt8ArrayView array_view{raw_data_, total_num_bytes_};
+    hdr_ = dvs::internal::CommunicationHeader{array_view};
+    function_ = hdr_.getFunction();
+    const uint64_t transmission_data_offset = hdr_.numBytes() + dvs::internal::kHeaderDataStartOffset;
+
+    if (transmission_data_offset > array_view.size())
+    {
+        throw std::runtime_error("transmission_data_offset can't be bigger than num_received_bytes");
+    }
+
+    num_data_bytes_ = array_view.size() - transmission_data_offset;
+
+    if (num_data_bytes_ == 0)
+    {
+        payload_data_ = nullptr;
+    }
+    else
+    {
+        payload_data_ = raw_data_ + transmission_data_offset;
+    }
+}
+
 dvs::internal::Function ReceivedData::getFunction() const
 {
     return function_;
 }
 
-uint8_t* ReceivedData::data() const
+uint8_t* ReceivedData::rawData() const
+{
+    return raw_data_;
+}
+
+uint8_t* ReceivedData::payloadData() const
 {
     return payload_data_;
 }

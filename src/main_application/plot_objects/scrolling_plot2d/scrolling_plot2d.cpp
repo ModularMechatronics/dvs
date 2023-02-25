@@ -179,7 +179,7 @@ void ScrollingPlot2D::updateWithNewData(ReceivedData& received_data,
         previous_buffer_size_ = buffer_size_;
     }
 
-    data_ptr_ = received_data.data();
+    data_ptr_ = received_data.payloadData();
 
     num_elements_to_draw_ = (num_elements_to_draw_ + 1U) > buffer_size_ ? buffer_size_ : (num_elements_to_draw_ + 1U);
     int idx = 0;

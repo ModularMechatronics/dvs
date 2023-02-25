@@ -16,7 +16,6 @@ constexpr uint8_t kCommunicationHeaderObjectDataSize = UCHAR_MAX;
 constexpr uint8_t kMaxNumObjects = 10;
 constexpr uint8_t kMaxNumProperties = 10;
 constexpr uint8_t kMaxNumFlags = 10;
-constexpr size_t kUdpServerMaxBufferSize = 100000000;
 constexpr size_t kHeaderDataStartOffset = 2 * sizeof(uint64_t) + 1;
 
 }  // namespace internal

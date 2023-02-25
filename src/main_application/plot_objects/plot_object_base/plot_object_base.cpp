@@ -8,7 +8,7 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
                                ColorPicker& color_picker)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
 {
-    data_ptr_ = received_data_.data();
+    data_ptr_ = received_data_.payloadData();
 
     function_ = hdr.getFunction();
     data_type_ = hdr.get(CommunicationHeaderObjectType::DATA_TYPE).as<DataType>();
@@ -45,7 +45,7 @@ void PlotObjectBase::postInitialize(ReceivedData& received_data,
                                     const PropertiesData& properties_data)
 {
     received_data_ = std::move(received_data);
-    data_ptr_ = received_data_.data();
+    data_ptr_ = received_data_.payloadData();
 
     min_max_calculated_ = false;
     has_custom_transform_ = false;

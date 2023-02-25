@@ -10,7 +10,9 @@ private:
     dvs::internal::CommunicationHeader hdr_;
     dvs::internal::Function function_;
     uint8_t* payload_data_;
+    uint8_t* raw_data_;
     uint64_t num_data_bytes_;
+    uint64_t total_num_bytes_;
 
 public:
     ReceivedData();
@@ -20,9 +22,13 @@ public:
     ReceivedData& operator=(ReceivedData&& other);
 
     ReceivedData(const UInt8ArrayView array_view);
+    ReceivedData(const size_t size_to_allocate);
     ~ReceivedData();
 
-    uint8_t* data() const;
+    void parseHeader();
+
+    uint8_t* payloadData() const;
+    uint8_t* rawData() const;
     uint64_t size() const;
     dvs::internal::Function getFunction() const;
     const dvs::internal::CommunicationHeader& getCommunicationHeader() const;

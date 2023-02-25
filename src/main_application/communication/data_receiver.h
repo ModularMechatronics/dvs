@@ -31,9 +31,6 @@
 class DataReceiver
 {
 private:
-    char* receive_buffer_;
-
-    // TCP
     int tcp_sockfd_, tcp_connfd_;
     socklen_t tcp_len_;
     struct sockaddr_in tcp_servaddr_;
