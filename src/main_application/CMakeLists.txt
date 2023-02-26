@@ -54,6 +54,8 @@ set(CPP_SOURCE_FILES main.cpp
 
                      communication/received_data.cpp
                      communication/data_receiver.cpp
+                     input_data.cpp
+
                      tray_icon.cpp
                      tab_button.cpp
                      window_view.cpp
