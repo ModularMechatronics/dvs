@@ -58,6 +58,7 @@ ReceivedData DataReceiver::receiveAndGetDataFromTcp()
             break;
         }
     }
+    close(tcp_connfd_);
 
     uint64_t received_magic_num;
     std::memcpy(&received_magic_num, rec_buffer + 1, sizeof(uint64_t));  // +1 because first byte is endianness

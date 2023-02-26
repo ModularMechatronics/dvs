@@ -237,6 +237,19 @@ void MainWindow::tcpReceiveThreadFunction()
     {
         ReceivedData received_data = data_receiver_.receiveAndGetDataFromTcp();
 
+        /*std::atomic<bool> received_data_has_been_moved = false;
+
+        std::thread local_thread([this, &received_data, &received_data_has_been_moved] {
+            // DVS_LOG_DEBUG() << "In thread!";
+            ReceivedData local_received_data{std::move(received_data)};
+            received_data_has_been_moved = true;
+            manageReceivedData(local_received_data);
+        });
+        local_thread.detach();
+
+        while (!received_data_has_been_moved)
+            ;*/
+
         manageReceivedData(received_data);
     }
 }
@@ -338,7 +351,10 @@ void MainWindow::mainWindowFlushMultipleElements(const ReceivedData& received_da
 
     for (size_t k = 0; k < names.size(); k++)
     {
-        ReceivedData fake_received_data{array_view};
+        ReceivedData fake_received_data{array_view.size()};
+        std::memcpy(fake_received_data.rawData(), array_view.data(), array_view.size());
+        fake_received_data.parseHeader();
+
         queued_data_[names[k]].push(std::make_unique<InputData>(fake_received_data));
     }
 }

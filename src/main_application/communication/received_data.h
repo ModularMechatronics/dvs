@@ -21,7 +21,6 @@ public:
     ReceivedData& operator=(const ReceivedData& other) = delete;
     ReceivedData& operator=(ReceivedData&& other);
 
-    ReceivedData(const UInt8ArrayView array_view);
     ReceivedData(const size_t size_to_allocate);
     ~ReceivedData();
 
