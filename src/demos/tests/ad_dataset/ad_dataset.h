@@ -33,12 +33,12 @@ private:
     std::vector<ImageRGB<uint8>> images_left_;
     std::vector<ImageRGB<uint8>> images_right_;
 
-    static constexpr int kMaxReadFrame = 15;
+    static constexpr int kMaxReadFrame = 197;
 
     void readLidarFile(const std::string& bin_path);
 
-    void readCamera(const std::string& folder_path, std::vector<ImageRGB<uint8>>& destination);
-    void readCameraFile(const std::string& bin_path, std::vector<ImageRGB<uint8>>& destination);
+    void readCamera(const std::string& folder_path, std::vector<ImageRGB<uint8_t>>& destination);
+    void readCameraFile(const std::string& bin_path, std::vector<ImageRGB<uint8_t>>& destination);
 
 public:
     DatasetReader() = delete;
@@ -73,6 +73,8 @@ public:
     {
         return images_front_.size();
     }
+
+    void saveToBigBlob(const std::string& file_name) const;
 };
 
 void testBasic();
