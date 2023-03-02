@@ -11,6 +11,8 @@ layout(location = 5) in vec3 in_color;
 uniform vec3 vertex_color;
 uniform float half_line_width;
 uniform float z_offset;
+uniform float axes_width;
+uniform float axes_height;
 uniform int has_color_vec;
 uniform int has_custom_transform;
 uniform mat4 custom_translation_mat;
@@ -114,6 +116,16 @@ void main()
     // line.
     vec2 vec_on_line_edge01 = rotate90Deg(vec_along01) * half_line_width;
     vec2 vec_on_line_edge12 = rotate90Deg(vec_along12) * half_line_width;
+
+    float mul_x, mul_y;
+
+    float fq = 400.0;
+
+    mul_x = fq / axes_width;
+    mul_y = fq / axes_height;
+
+    vec_on_line_edge01 = vec2(vec_on_line_edge01.x * mul_x, vec_on_line_edge01.y * mul_y);
+    vec_on_line_edge12 = vec2(vec_on_line_edge12.x * mul_x, vec_on_line_edge12.y * mul_y);
 
     // Form two points on the edge, two points per segment
     vec2 point0_on_edge01 = vec_on_line_edge01;

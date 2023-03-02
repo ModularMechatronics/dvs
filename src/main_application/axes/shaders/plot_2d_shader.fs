@@ -62,10 +62,20 @@ void main()
 
    if(triangle_id == 3)
    {
-      float dist = length(fragment_pos - p1_out);
-      if(dist > half_line_width)
+      float dx = fragment_pos.x - p1_out.x;
+      float dy = fragment_pos.y - p1_out.y;
+
+      float fq = 400.0;
+
+      float rx = half_line_width * fq / axes_width;
+      float ry = half_line_width * fq / axes_height;
+
+      float d = dx * dx / (rx * rx) + dy * dy / (ry * ry);
+
+      if(d > 1.0)
       {
-         discard;
+         color = vec4(1.0, 0.0, 0.0, 1.0);
+         // discard;
       }
    }
 
