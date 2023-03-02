@@ -50,6 +50,7 @@ enum class PropertyFlag : uint8_t
     PERSISTENT,
     INTERPOLATE_COLORMAP,
     UPDATABLE,
+    FAST_PLOT,
     UNKNOWN
 };
 

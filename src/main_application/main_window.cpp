@@ -14,6 +14,18 @@
 #include "filesystem.h"
 #include "window_view.h"
 
+namespace element_number_counter
+{
+int counter = 0;
+int getNextFreeElementNumber()
+{
+    int counter_tmp_val = counter;
+    counter++;
+
+    return counter_tmp_val;
+}
+}  // namespace element_number_counter
+
 using namespace dvs::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
@@ -297,6 +309,8 @@ void MainWindow::newWindowWithoutFileModification()
     window_callback_id_ += 1;
 
     windows_.push_back(window_element);
+
+    window_element->newElement();
 }
 
 MainWindow::~MainWindow()

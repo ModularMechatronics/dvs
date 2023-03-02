@@ -579,10 +579,10 @@ void testFastPlot()
     }
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    fastPlot(x + 3.0f, y, properties::Color(0, 255, 255));
-    fastPlot(x + 4.0f, y, properties::Color(212, 14, 55));
-    fastPlot(x + 5.0f, y, properties::Color(212, 255, 55));
-    fastPlot(x + 6.0f, y, properties::Color(212, 14, 255));
+    plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::FAST_PLOT);
+    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::FAST_PLOT);
+    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::FAST_PLOT);
+    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::FAST_PLOT);
 
     setCurrentElement("p_view_2");
     clearView();
@@ -599,10 +599,10 @@ void testFastPlot()
     }
 
     axis({0.0, 16.0, -1.0}, {50.0, 64.0, 1.0});
-    fastPlot(x + 3.0f, y, properties::Color(0, 255, 255));
-    fastPlot(x + 4.0f, y, properties::Color(212, 14, 55));
-    fastPlot(x + 5.0f, y, properties::Color(212, 255, 55));
-    fastPlot(x + 6.0f, y, properties::Color(212, 14, 255));
+    plot(x + 3.0f, y, properties::Color(0, 255, 255), properties::FAST_PLOT);
+    plot(x + 4.0f, y, properties::Color(212, 14, 55), properties::FAST_PLOT);
+    plot(x + 5.0f, y, properties::Color(212, 255, 55), properties::FAST_PLOT);
+    plot(x + 6.0f, y, properties::Color(212, 14, 255), properties::FAST_PLOT);
 }
 
 void testLineCollection()
@@ -785,8 +785,8 @@ void testFastPlot3()
     setCurrentElement("p_view_0");
     clearView();
 
-    fastPlot3(x, y, z, properties::Color(212, 14, 55));
-    fastPlot3(xf + 0.1f, yf, zf, properties::Color(21, 14, 55));
+    plot3(x, y, z, properties::Color(212, 14, 55), properties::FAST_PLOT);
+    plot3(xf + 0.1f, yf, zf, properties::Color(21, 14, 55), properties::FAST_PLOT);
 }
 
 void testImShow4()

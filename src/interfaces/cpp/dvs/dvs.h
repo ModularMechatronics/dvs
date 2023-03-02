@@ -13,6 +13,27 @@ template <typename T, typename... Us> void plot(const Vector<T>& x, const Vector
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
 
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    {
+        hdr.setFunction(internal::Function::FAST_PLOT2);
+    }
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+}
+
+template <typename T, typename... Us>
+void plot(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::PLOT2};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.extend(settings...);
+
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    {
+        hdr.setFunction(internal::Function::FAST_PLOT2);
+    }
+
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
@@ -25,39 +46,32 @@ void plot(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color, c
     hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
     hdr.extend(settings...);
 
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    {
+        DVS_LOG_WARNING() << "Property FAST_PLOT not available when using function \"plot\" with color vector!";
+    }
+
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, color);
 }
 
 template <typename T, typename... Us>
-void plot(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
+void plot(const VectorConstView<T>& x,
+          const VectorConstView<T>& y,
+          const VectorConstView<RGB888>& color,
+          const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
     hdr.extend(settings...);
 
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
-}
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    {
+        DVS_LOG_WARNING() << "Property FAST_PLOT not available when using function \"plot\" with color vector!";
+    }
 
-template <typename T, typename... Us> void fastPlot(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
-{
-    internal::CommunicationHeader hdr{internal::Function::FAST_PLOT2};
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
-}
-
-template <typename T, typename... Us>
-void fastPlot(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&... settings)
-{
-    internal::CommunicationHeader hdr{internal::Function::FAST_PLOT2};
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, color);
 }
 
 template <typename T, typename... Us> void lineCollection(const Vector<T>& x, const Vector<T>& y, const Us&... settings)
@@ -262,6 +276,11 @@ void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
 
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    {
+        hdr.setFunction(internal::Function::FAST_PLOT3);
+    }
+
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
@@ -273,30 +292,10 @@ void plot3(const VectorConstView<T>& x, const VectorConstView<T>& y, const Vecto
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
 
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
-}
-
-template <typename T, typename... Us>
-void fastPlot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Us&... settings)
-{
-    internal::CommunicationHeader hdr{internal::Function::FAST_PLOT3};
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
-    hdr.extend(settings...);
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
-}
-
-template <typename T, typename... Us>
-void fastPlot3(const VectorConstView<T>& x,
-               const VectorConstView<T>& y,
-               const VectorConstView<T>& z,
-               const Us&... settings)
-{
-    internal::CommunicationHeader hdr{internal::Function::FAST_PLOT3};
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
-    hdr.extend(settings...);
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    {
+        hdr.setFunction(internal::Function::FAST_PLOT3);
+    }
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }

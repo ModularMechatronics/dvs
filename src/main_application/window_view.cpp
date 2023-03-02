@@ -5,6 +5,11 @@
 #include "main_window.h"
 #include "plot_pane.h"
 
+namespace element_number_counter
+{
+int getNextFreeElementNumber();
+}
+
 WindowView::WindowView(
     wxFrame* main_window,
     const WindowSettings& window_settings,
@@ -148,7 +153,7 @@ WindowView::WindowView(
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
     Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
-    Bind(wxEVT_MENU, &WindowView::newElement, this, dvs_ids::NEW_ELEMENT);
+    Bind(wxEVT_MENU, &WindowView::newElementCallback, this, dvs_ids::NEW_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
 
@@ -440,7 +445,46 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
     notify_main_window_about_modification_();
 }
 
-void WindowView::newElement(wxCommandEvent& WXUNUSED(event))
+void WindowView::newElement()
+{
+    const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
+
+    auto q = std::find_if(tabs_.begin(), tabs_.end(), [&selected_tab](const WindowTab* const tb) -> bool {
+        return selected_tab == tb->getName();
+    });
+
+    if (q != tabs_.end())
+    {
+        std::string element_name;
+
+        while (true)
+        {
+            element_name = "element-" + std::to_string(element_number_counter::getNextFreeElementNumber());
+            const std::vector<std::string> all_element_names = get_all_element_names_();
+
+            auto q = std::find(all_element_names.begin(), all_element_names.end(), element_name);
+
+            const bool element_absent = q == all_element_names.end();
+
+            if (element_absent)
+            {
+                break;
+            }
+        }
+
+        ElementSettings element_settings;
+        element_settings.x = 0.0;
+        element_settings.y = 0.0;
+        element_settings.width = 1.0;
+        element_settings.height = 1.0;
+        element_settings.name = element_name;
+
+        (*q)->newElement(element_settings);
+        notify_main_window_about_modification_();
+    }
+}
+
+void WindowView::newElementCallback(wxCommandEvent& WXUNUSED(event))
 {
     const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
 

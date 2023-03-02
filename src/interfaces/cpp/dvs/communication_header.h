@@ -694,6 +694,16 @@ public:
     {
         return function_;
     }
+
+    bool hasPropertyFlag(const internal::PropertyFlag pf)
+    {
+        return flags_[static_cast<uint8_t>(pf)] == 1U;
+    }
+
+    void setFunction(const Function fcn)
+    {
+        function_ = fcn;
+    }
 };
 
 }  // namespace internal

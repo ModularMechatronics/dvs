@@ -1,14 +1,11 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
-- Refactor/clean up window/tabs/plot elements system
 - Refactor from top down, from the app and down into the GUI
 - Refactor legend properties
 - Refactor shaders
-- Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Delete gl buffers with "glDeleteBuffers"
 - Finalize grid numbers placement when snapped
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
-- Create a default element when creating a new window?
 - Reducing number of axis numbers depending on rotation
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
@@ -19,10 +16,8 @@ Pre release:
  * Something with drone simulation data
  * Something with robotics
 - Finalize demos
-- Increase kUdpServerMaxBufferSize to 500Mb instead of 100Mb?
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
-- Remove interface function fastPlot, and just replace it with a property flag to plot/plot3
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
 - Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
@@ -33,6 +28,7 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Refactor/clean up window/tabs/plot elements system
 - Remove constexpr and constants from headers that doesn't need to be in the header
 - Make queues of received data instead, and put ConvertedData as a member of received data? Rename ReceivedData to InputData
 - Don't execute pending clear on interaction (with mouse), it makes plots flashing when using waitForFlush, and drawing multiple things (probably)

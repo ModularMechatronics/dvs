@@ -233,15 +233,20 @@ public:
 
     void newElement(const std::string& element_name)
     {
-        ElementSettings elem_settings;
-        elem_settings.x = 0.1;
-        elem_settings.y = 0;
-        elem_settings.width = 0.4;
-        elem_settings.height = 0.4;
-        elem_settings.name = element_name;
+        ElementSettings element_settings;
+        element_settings.x = 0.0;
+        element_settings.y = 0.0;
+        element_settings.width = 0.4;
+        element_settings.height = 0.4;
+        element_settings.name = element_name;
 
+        newElement(element_settings);
+    }
+
+    void newElement(const ElementSettings& element_settings)
+    {
         GuiElement* const ge = new PlotPane(parent_window_,
-                                            elem_settings,
+                                            element_settings,
                                             background_color_,
                                             notify_main_window_key_pressed_,
                                             notify_main_window_key_released_,
@@ -551,7 +556,8 @@ public:
     void editWindowName(wxCommandEvent& WXUNUSED(event));
 
     void newTab(wxCommandEvent& WXUNUSED(event));
-    void newElement(wxCommandEvent& WXUNUSED(event));
+    void newElementCallback(wxCommandEvent& WXUNUSED(event));
+    void newElement();
 
     void editElementName(wxCommandEvent& WXUNUSED(event));
     void deleteElement(wxCommandEvent& WXUNUSED(event));
