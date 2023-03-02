@@ -75,7 +75,7 @@ public:
     virtual void destroy() = 0;
     virtual void refresh() = 0;
     virtual void waitForFlush() = 0;
-    virtual void toggleProjectionType() = 0;
+    virtual void toggleProjectionMode() = 0;
     virtual void update() = 0;
     virtual void addSettingsData(const ReceivedData& received_data,
                                  const PlotObjectAttributes& plot_object_attributes,

@@ -58,7 +58,7 @@
                             },
                             "grid_on": false,
                             "height": 1.0,
-                            "projection_type": "perspective",
+                            "projection_mode": "perspective",
                             "name": "point_cloud",
                             "pane_radius": 20.0,
                             "plot_box_on": false,

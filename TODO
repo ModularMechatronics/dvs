@@ -6,8 +6,6 @@ Pre release:
 - Refactor shaders
 - Add pan and zoom to scroll click and right click + Ctrl (left click without Ctrl will always be according to zoom/rotate/pan state, but left click + Ctrl will always be rotate)
 - Delete gl buffers with "glDeleteBuffers"
-- Rename "projection type" to "projection mode"
-- Remove constexpr and constants from headers that doesn't need to be in the header
 - Finalize grid numbers placement when snapped
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Create a default element when creating a new window?
@@ -35,6 +33,7 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Remove constexpr and constants from headers that doesn't need to be in the header
 - Make queues of received data instead, and put ConvertedData as a member of received data? Rename ReceivedData to InputData
 - Don't execute pending clear on interaction (with mouse), it makes plots flashing when using waitForFlush, and drawing multiple things (probably)
 - Set color in fragment shader with uniform, instead of in vertex shader

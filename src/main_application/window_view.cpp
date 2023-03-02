@@ -123,7 +123,7 @@ WindowView::WindowView(
 
     popup_menu_element_->Append(dvs_ids::EDIT_ELEMENT_NAME, wxT("Edit element name"));
     popup_menu_element_->Append(dvs_ids::DELETE_ELEMENT, wxT("Delete element"));
-    popup_menu_element_->Append(dvs_ids::TOGGLE_PROJECTION_TYPE, wxT("Toggle projection type"));
+    popup_menu_element_->Append(dvs_ids::TOGGLE_PROJECTION_MODE, wxT("Toggle projection mode"));
     popup_menu_element_->Append(dvs_ids::RAISE_ELEMENT, wxT("Raise"));
     popup_menu_element_->Append(dvs_ids::LOWER_ELEMENT, wxT("Lower"));
     popup_menu_element_->AppendSeparator();
@@ -152,7 +152,7 @@ WindowView::WindowView(
     Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
 
-    Bind(wxEVT_MENU, &WindowView::toggleProjectionType, this, dvs_ids::TOGGLE_PROJECTION_TYPE);
+    Bind(wxEVT_MENU, &WindowView::toggleProjectionMode, this, dvs_ids::TOGGLE_PROJECTION_MODE);
     Bind(wxEVT_MENU, &WindowView::raiseElement, this, dvs_ids::RAISE_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::lowerElement, this, dvs_ids::LOWER_ELEMENT);
     Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
@@ -603,11 +603,11 @@ void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void WindowView::toggleProjectionType(wxCommandEvent& WXUNUSED(event))
+void WindowView::toggleProjectionMode(wxCommandEvent& WXUNUSED(event))
 {
     for (const auto& t : tabs_)
     {
-        t->toggleProjectionType(last_clicked_item_);
+        t->toggleProjectionMode(last_clicked_item_);
     }
 
     notify_main_window_about_modification_();

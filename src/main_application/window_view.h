@@ -363,7 +363,7 @@ public:
         }
     }
 
-    void toggleProjectionType(const std::string& element_name)
+    void toggleProjectionMode(const std::string& element_name)
     {
         auto q = std::find_if(
             gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
@@ -372,7 +372,7 @@ public:
 
         if (gui_elements_.end() != q)
         {
-            (*q)->toggleProjectionType();
+            (*q)->toggleProjectionMode();
         }
     }
 
@@ -559,7 +559,7 @@ public:
     void raiseElement(wxCommandEvent& WXUNUSED(event));
     void lowerElement(wxCommandEvent& WXUNUSED(event));
 
-    void toggleProjectionType(wxCommandEvent& WXUNUSED(event));
+    void toggleProjectionMode(wxCommandEvent& WXUNUSED(event));
 
     void editTabName(wxCommandEvent& WXUNUSED(event));
     void deleteTab(wxCommandEvent& WXUNUSED(event));

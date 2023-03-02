@@ -152,7 +152,7 @@ PlotPane::PlotPane(wxWindow* parent,
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
     perspective_projection_ =
-        (element_settings.projection_type == ElementSettings::ProjectionType::PERSPECTIVE) ? true : false;
+        (element_settings.projection_mode == ElementSettings::ProjectionMode::PERSPECTIVE) ? true : false;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -385,11 +385,11 @@ void PlotPane::waitForFlush()
     wait_for_flush_ = true;
 }
 
-void PlotPane::toggleProjectionType()
+void PlotPane::toggleProjectionMode()
 {
     perspective_projection_ = !perspective_projection_;
-    element_settings_.projection_type = perspective_projection_ ? ElementSettings::ProjectionType::PERSPECTIVE
-                                                                : ElementSettings::ProjectionType::ORTHOGRAPHIC;
+    element_settings_.projection_mode = perspective_projection_ ? ElementSettings::ProjectionMode::PERSPECTIVE
+                                                                : ElementSettings::ProjectionMode::ORTHOGRAPHIC;
     Refresh();
 }
 

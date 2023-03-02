@@ -61,7 +61,7 @@ void assignIfNotDefault(nlohmann::json& j, const std::string& key, const T& val,
 
 struct ElementSettings
 {
-    enum class ProjectionType
+    enum class ProjectionMode
     {
         PERSPECTIVE,
         ORTHOGRAPHIC
@@ -89,7 +89,7 @@ struct ElementSettings
     float pane_radius;
     int z_order;
 
-    ProjectionType projection_type;
+    ProjectionMode projection_mode;
 
     ElementSettings()
         : x{0.0f},
@@ -109,7 +109,7 @@ struct ElementSettings
           clipping_on{kClippingOnDefault},
           pane_radius{kPaneRadiusDefault},
           z_order{kZOrderDefault},
-          projection_type{ProjectionType::ORTHOGRAPHIC}
+          projection_mode{ProjectionMode::ORTHOGRAPHIC}
     {
     }
 
@@ -147,25 +147,25 @@ struct ElementSettings
 
         z_order = (j.count("z_order") > 0) ? static_cast<int>(j["z_order"]) : kZOrderDefault;
 
-        if (j.count("projection_type") > 0)
+        if (j.count("projection_mode") > 0)
         {
-            const std::string projection_type_str = j["projection_type"];
+            const std::string projection_type_str = j["projection_mode"];
             if (projection_type_str == "orthographic")
             {
-                projection_type = ProjectionType::ORTHOGRAPHIC;
+                projection_mode = ProjectionMode::ORTHOGRAPHIC;
             }
             else if (projection_type_str == "perspective")
             {
-                projection_type = ProjectionType::PERSPECTIVE;
+                projection_mode = ProjectionMode::PERSPECTIVE;
             }
             else
             {
-                throw std::runtime_error("Invalid option for \"projection_type\": \"" + projection_type_str + "\"");
+                throw std::runtime_error("Invalid option for \"projection_mode\": \"" + projection_type_str + "\"");
             }
         }
         else
         {
-            projection_type = ProjectionType::ORTHOGRAPHIC;
+            projection_mode = ProjectionMode::ORTHOGRAPHIC;
         }
     }
 
@@ -213,13 +213,13 @@ struct ElementSettings
         assignIfNotDefault(j, "pane_radius", pane_radius, kPaneRadiusDefault);
         assignIfNotDefault(j, "z_order", z_order, kZOrderDefault);
 
-        if (projection_type == ProjectionType::ORTHOGRAPHIC)
+        if (projection_mode == ProjectionMode::ORTHOGRAPHIC)
         {
-            j["projection_type"] = "orthographic";
+            j["projection_mode"] = "orthographic";
         }
-        else if (projection_type == ProjectionType::PERSPECTIVE)
+        else if (projection_mode == ProjectionMode::PERSPECTIVE)
         {
-            j["projection_type"] = "perspective";
+            j["projection_mode"] = "perspective";
         }
 
         return j;
@@ -234,7 +234,7 @@ struct ElementSettings
                (grid_on == other.grid_on) && (plot_box_on == other.plot_box_on) &&
                (axes_numbers_on == other.axes_numbers_on) && (axes_letters_on == other.axes_letters_on) &&
                (clipping_on == other.clipping_on) && (pane_radius == other.pane_radius) && (z_order == other.z_order) &&
-               (projection_type == other.projection_type);
+               (projection_mode == other.projection_mode);
     }
 
     bool operator!=(const ElementSettings& other) const
