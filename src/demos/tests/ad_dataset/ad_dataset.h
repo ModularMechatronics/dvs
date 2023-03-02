@@ -21,6 +21,14 @@ struct PointCollection
     VectorConstView<float> x;
     VectorConstView<float> y;
     VectorConstView<float> z;
+
+    PointCollection() = default;
+    PointCollection(const VectorConstView<float>& x_,
+                    const VectorConstView<float>& y_,
+                    const VectorConstView<float>& z_)
+        : x{x_}, y{y_}, z{z_}
+    {
+    }
 };
 
 class DatasetReaderBase

@@ -41,24 +41,21 @@ void DatasetReaderFast::readFiles()
 
     for (size_t k = 0; k < num_frames_; k++)
     {
-        const ImageRGBConstView<uint8> img_front{file_raw_data_ + data_idx, img_height_, img_width_};
-        images_front_.push_back(img_front);
+        images_front_.emplace_back(file_raw_data_ + data_idx, img_height_, img_width_);
 
         data_idx += num_bytes_in_image;
     }
 
     for (size_t k = 0; k < num_frames_; k++)
     {
-        const ImageRGBConstView<uint8> img_left{file_raw_data_ + data_idx, img_height_, img_width_};
-        images_left_.push_back(img_left);
+        images_left_.emplace_back(file_raw_data_ + data_idx, img_height_, img_width_);
 
         data_idx += num_bytes_in_image;
     }
 
     for (size_t k = 0; k < num_frames_; k++)
     {
-        const ImageRGBConstView<uint8> img_right{file_raw_data_ + data_idx, img_height_, img_width_};
-        images_right_.push_back(img_right);
+        images_right_.emplace_back(file_raw_data_ + data_idx, img_height_, img_width_);
 
         data_idx += num_bytes_in_image;
     }
@@ -78,13 +75,10 @@ void DatasetReaderFast::readFiles()
         const VectorConstView<float> z{reinterpret_cast<const float* const>(file_raw_data_ + data_idx), num_pts};
         data_idx += num_pts * sizeof(float);
 
-        PointCollection pc;
-        pc.x = x;
-        pc.y = y;
-        pc.z = z;
-
-        point_collections_.push_back(pc);
+        point_collections_.emplace_back(x, y, z);
     }
+
+    assert(data_idx == total_num_bytes_);
 }
 
 PointCollection DatasetReaderFast::getPointCollection(const size_t idx)
@@ -433,7 +427,10 @@ void testBasic()
         imShow(img_left);
 
         flushMultipleElements("point_cloud", "center", "left", "right");
-        // usleep(1000 * 15);
+        if ((k % 10) == 0)
+        {
+            std::cout << "Iter: " << k << std::endl;
+        }
     }
 }
 
