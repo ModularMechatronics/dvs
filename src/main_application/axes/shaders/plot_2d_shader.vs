@@ -117,12 +117,10 @@ void main()
     vec2 vec_on_line_edge01 = rotate90Deg(vec_along01) * half_line_width;
     vec2 vec_on_line_edge12 = rotate90Deg(vec_along12) * half_line_width;
 
-    float mul_x, mul_y;
-
     float fq = 200.0;
 
-    mul_x = fq / axes_width;
-    mul_y = fq / axes_height;
+    float mul_x = fq / axes_width;
+    float mul_y = fq / axes_height;
 
     vec_on_line_edge01 = vec2(vec_on_line_edge01.x * mul_x, vec_on_line_edge01.y * mul_y);
     vec_on_line_edge12 = vec2(vec_on_line_edge12.x * mul_x, vec_on_line_edge12.y * mul_y);

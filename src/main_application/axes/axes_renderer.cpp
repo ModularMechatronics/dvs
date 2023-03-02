@@ -457,6 +457,8 @@ void AxesRenderer::plotBegin()
         1,
         GL_FALSE,
         &i_mvp[0][0]);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "axes_width"), width_);
+    glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "axes_height"), height_);
 
     glUseProgram(shader_collection_.basic_plot_shader.programId());
     enableClipPlanes();
