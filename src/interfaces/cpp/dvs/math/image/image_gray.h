@@ -42,6 +42,16 @@ public:
         return num_cols_;
     }
 
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
+    }
+
     size_t numBytes() const
     {
         return num_rows_ * num_cols_ * sizeof(T);
@@ -99,6 +109,16 @@ public:
         return num_cols_;
     }
 
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
+    }
+
     size_t numBytes() const
     {
         return num_rows_ * num_cols_ * sizeof(T);
@@ -142,6 +162,16 @@ public:
 
     size_t numElements() const;
     T* data() const;
+
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
+    }
 };
 
 template <typename T> ImageGray<T>::~ImageGray()

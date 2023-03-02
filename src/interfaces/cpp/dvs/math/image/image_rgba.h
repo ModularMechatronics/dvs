@@ -43,6 +43,16 @@ public:
         return num_cols_;
     }
 
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
+    }
+
     size_t numElements() const
     {
         return num_rows_ * num_cols_;
@@ -103,6 +113,16 @@ public:
         return num_cols_;
     }
 
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
+    }
+
     size_t numBytes() const
     {
         return 4 * num_rows_ * num_cols_ * sizeof(T);
@@ -142,6 +162,16 @@ public:
     void fill(const T fill_value, const size_t channel);
 
     T* data() const;
+
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
+    }
 };
 
 template <typename T> ImageRGBA<T>::~ImageRGBA()

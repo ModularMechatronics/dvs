@@ -43,6 +43,16 @@ public:
         return num_cols_;
     }
 
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
+    }
+
     size_t numBytes() const
     {
         return 3 * num_rows_ * num_cols_ * sizeof(T);
@@ -98,6 +108,16 @@ public:
         return num_cols_;
     }
 
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
+    }
+
     size_t numBytes() const
     {
         return 3 * num_rows_ * num_cols_ * sizeof(T);
@@ -150,6 +170,16 @@ public:
     ImageRGBView<T> view() const
     {
         return ImageRGBView<T>{data_, num_rows_, num_cols_};
+    }
+
+    size_t width() const
+    {
+        return num_cols_;
+    }
+
+    size_t height() const
+    {
+        return num_rows_;
     }
 
     T* data() const;
