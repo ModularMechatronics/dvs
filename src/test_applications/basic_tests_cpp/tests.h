@@ -498,7 +498,7 @@ void testPlot()
     yp(4) = 4.0;
     yp(5) = 2.0;
 
-    axis({-0.5, 2.5, -1.0}, {0.5, 3.5, 1.0});
+    axis({-2.0, -2.0, -1.0}, {6.0, 6.0, 1.0});
     plot(xp, yp, properties::LineWidth(50), properties::Color(200, 200, 200));
     view(0, 90);
 

@@ -65,7 +65,7 @@ void main()
       float dx = fragment_pos.x - p1_out.x;
       float dy = fragment_pos.y - p1_out.y;
 
-      float fq = 400.0;
+      float fq = 200.0;
 
       float rx = half_line_width * fq / axes_width;
       float ry = half_line_width * fq / axes_height;
@@ -74,8 +74,7 @@ void main()
 
       if(d > 1.0)
       {
-         color = vec4(1.0, 0.0, 0.0, 1.0);
-         // discard;
+         discard;
       }
    }
 

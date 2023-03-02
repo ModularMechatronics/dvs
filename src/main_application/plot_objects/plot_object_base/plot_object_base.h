@@ -31,7 +31,7 @@ constexpr RGBTripletf kDefaultEdgeColor{0.0f, 0.0f, 0.0f};
 constexpr float kDefaultZOffset{0.0f};
 constexpr ScatterStyle kDefaultScatterStyle{ScatterStyle::CIRCLE};
 constexpr float kDefaultAlpha{1.0f};
-constexpr float kDefaultLineWidth{1.0f};
+constexpr float kDefaultLineWidth{2.0f};
 constexpr float kDefaultPointSize{10.0f};
 constexpr bool kDefaultIsPersistent{false};
 constexpr bool kDefaultIsUpdateable{false};

@@ -119,7 +119,7 @@ void main()
 
     float mul_x, mul_y;
 
-    float fq = 400.0;
+    float fq = 200.0;
 
     mul_x = fq / axes_width;
     mul_y = fq / axes_height;
