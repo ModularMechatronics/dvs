@@ -1,6 +1,7 @@
 #include "ad_dataset.h"
 
 #include <curses.h>
+#include <dvs/timing.h>
 
 #include <algorithm>
 #include <filesystem>
@@ -8,6 +9,108 @@
 
 namespace ad_dataset
 {
+
+DatasetReaderFast::DatasetReaderFast(const std::string& dataset_file)
+{
+    auto t0 = dvs::timing::getTimeNow();
+    std::ifstream input_file(dataset_file, std::ios::binary);
+
+    input_file.read(reinterpret_cast<char*>(&total_num_bytes_), sizeof(size_t));
+    input_file.read(reinterpret_cast<char*>(&num_frames_), sizeof(size_t));
+
+    input_file.read(reinterpret_cast<char*>(&img_width_), sizeof(size_t));
+    input_file.read(reinterpret_cast<char*>(&img_height_), sizeof(size_t));
+
+    assert((total_num_bytes_ / (1024U * 1024U)) < 2000U);
+
+    file_raw_data_ = new uint8_t[total_num_bytes_];
+
+    input_file.read(reinterpret_cast<char*>(file_raw_data_), total_num_bytes_);
+
+    readFiles();
+    auto t1 = dvs::timing::getTimeNow();
+
+    std::cout << "Read in time: " << dvs::timing::timePointsToString(t0, t1) << std::endl;
+}
+
+void DatasetReaderFast::readFiles()
+{
+    size_t data_idx = 0U;
+
+    const size_t num_bytes_in_image = img_width_ * img_height_ * 3U * sizeof(uint8_t);
+
+    for (size_t k = 0; k < num_frames_; k++)
+    {
+        const ImageRGBConstView<uint8> img_front{file_raw_data_ + data_idx, img_height_, img_width_};
+        images_front_.push_back(img_front);
+
+        data_idx += num_bytes_in_image;
+    }
+
+    for (size_t k = 0; k < num_frames_; k++)
+    {
+        const ImageRGBConstView<uint8> img_left{file_raw_data_ + data_idx, img_height_, img_width_};
+        images_left_.push_back(img_left);
+
+        data_idx += num_bytes_in_image;
+    }
+
+    for (size_t k = 0; k < num_frames_; k++)
+    {
+        const ImageRGBConstView<uint8> img_right{file_raw_data_ + data_idx, img_height_, img_width_};
+        images_right_.push_back(img_right);
+
+        data_idx += num_bytes_in_image;
+    }
+
+    for (size_t k = 0; k < num_frames_; k++)
+    {
+        size_t num_pts;
+        std::memcpy(&num_pts, file_raw_data_ + data_idx, sizeof(size_t));
+        data_idx += sizeof(size_t);
+
+        const VectorConstView<float> x{reinterpret_cast<const float* const>(file_raw_data_ + data_idx), num_pts};
+        data_idx += num_pts * sizeof(float);
+
+        const VectorConstView<float> y{reinterpret_cast<const float* const>(file_raw_data_ + data_idx), num_pts};
+        data_idx += num_pts * sizeof(float);
+
+        const VectorConstView<float> z{reinterpret_cast<const float* const>(file_raw_data_ + data_idx), num_pts};
+        data_idx += num_pts * sizeof(float);
+
+        PointCollection pc;
+        pc.x = x;
+        pc.y = y;
+        pc.z = z;
+
+        point_collections_.push_back(pc);
+    }
+}
+
+PointCollection DatasetReaderFast::getPointCollection(const size_t idx)
+{
+    return point_collections_[idx];
+}
+
+ImageRGBConstView<uint8> DatasetReaderFast::getLeftImage(const size_t idx)
+{
+    return images_left_[idx];
+}
+
+ImageRGBConstView<uint8> DatasetReaderFast::getRightImage(const size_t idx)
+{
+    return images_right_[idx];
+}
+
+ImageRGBConstView<uint8> DatasetReaderFast::getFrontImage(const size_t idx)
+{
+    return images_front_[idx];
+}
+
+size_t DatasetReaderFast::numFrames() const
+{
+    return num_frames_;
+}
 
 void DatasetReader::readCameraFile(const std::string& bin_path, std::vector<ImageRGB<uint8_t>>& destination)
 {
@@ -100,17 +203,19 @@ void DatasetReader::readCamera(const std::string& folder_path, std::vector<Image
     }
 }
 
-void DatasetReader::saveToBigBlob(const std::string& file_name) const
+void DatasetReader::saveToBigBlob(const std::string& output_folder_path) const
 {
-    size_t total_num_bytes = 0U;
-
     assert(images_front_.size() == images_left_.size());
     assert(images_front_.size() == images_right_.size());
     assert(images_front_.size() == point_collections_.size());
 
+    size_t total_num_bytes = 0U;
+
     total_num_bytes += (images_front_[0].numBytes() * images_front_.size() * 3U);
 
-    for (size_t k = 0; k < images_front_.size(); k++)
+    total_num_bytes += point_collections_.size() * sizeof(size_t);  // For num points in each PC
+
+    for (size_t k = 0; k < point_collections_.size(); k++)
     {
         const PointCollection& pc = point_collections_[k];
         total_num_bytes += pc.x.numBytes();
@@ -118,12 +223,27 @@ void DatasetReader::saveToBigBlob(const std::string& file_name) const
         total_num_bytes += pc.z.numBytes();
     }
 
+    const std::string separator_str = output_folder_path.back() == '/' ? "" : "/";
+
+    const std::string file_name =
+        output_folder_path + separator_str + "all_data_" + std::to_string(images_front_.size()) + ".bin";
+
     std::ofstream bin_stream(file_name, std::ios::out | std::ios::binary);
 
+    // Total num bytes
     bin_stream.write(reinterpret_cast<const char*>(&total_num_bytes), sizeof(size_t));
 
+    // Total num frames
     const size_t num_files = images_front_.size();
     bin_stream.write(reinterpret_cast<const char*>(&num_files), sizeof(size_t));
+
+    // Image width
+    const size_t img_width = images_front_[0].numCols();
+    bin_stream.write(reinterpret_cast<const char*>(&img_width), sizeof(size_t));
+
+    // Image height
+    const size_t img_height = images_front_[0].numRows();
+    bin_stream.write(reinterpret_cast<const char*>(&img_height), sizeof(size_t));
 
     // Front image
     for (size_t k = 0; k < images_front_.size(); k++)
@@ -150,9 +270,9 @@ void DatasetReader::saveToBigBlob(const std::string& file_name) const
     for (size_t k = 0; k < images_front_.size(); k++)
     {
         const PointCollection& pc = point_collections_[k];
-        total_num_bytes += pc.x.numBytes();
-        total_num_bytes += pc.y.numBytes();
-        total_num_bytes += pc.z.numBytes();
+
+        const size_t num_pts = pc.x.size();
+        bin_stream.write(reinterpret_cast<const char*>(&num_pts), sizeof(size_t));
 
         bin_stream.write(reinterpret_cast<const char*>(pc.x.data()), pc.x.numBytes());
         bin_stream.write(reinterpret_cast<const char*>(pc.y.data()), pc.y.numBytes());
@@ -199,69 +319,6 @@ DatasetReader::DatasetReader(const std::string& dataset_root_path)
     std::cout << "Finished reading files!" << std::endl;
 }
 
-void testScroll()
-{
-    initscr();
-
-    DatasetReader dataset_reader{"/Users/danielpi/work/dvs/leddar_dataset/20200706_171559_part27_1170_1370/output"};
-
-    setCurrentElement("secondary");
-    clearView();
-    waitForFlush();
-    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
-    view(-38.0, 32.0);
-
-    setCurrentElement("main");
-    clearView();
-    waitForFlush();
-    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
-    view(-38.0, 32.0);
-
-    size_t idx = 0U;
-
-    while (true)
-    {
-        const PointCollection& pc = dataset_reader.getPointCollection(idx);
-
-        setCurrentElement("main");
-        softClearView();
-        scatter3(pc.x,
-                 pc.y,
-                 pc.z,
-                 properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
-                 properties::ColorMap::VIRIDIS,
-                 properties::PointSize(5),
-                 properties::ScatterStyle::DISC);
-
-        setCurrentElement("secondary");
-        softClearView();
-        scatter3(pc.x,
-                 pc.y,
-                 pc.z,
-                 properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
-                 properties::ColorMap::VIRIDIS,
-                 properties::PointSize(5),
-                 properties::ScatterStyle::DISC);
-
-        flushMultipleElements("main", "secondary");
-
-        char q = getch();
-
-        if (q == 'a')
-        {
-            idx = (idx == 0U) ? 0U : (idx - 1U);
-        }
-        else if (q == 'd')
-        {
-            idx = (idx == dataset_reader.numLidarFiles() - 1U) ? dataset_reader.numLidarFiles() - 1U : (idx + 1U);
-        }
-        else
-        {
-            break;
-        }
-    }
-}
-
 std::vector<std::pair<Vector<float>, Vector<float>>> generateCircles(const size_t n_circles,
                                                                      const float r0,
                                                                      const float d)
@@ -300,10 +357,21 @@ void testBasic()
 {
     const std::string project_file_path = "../../project_files/ad_dataset.dvs";
 
-    DatasetReader dataset_reader{"/Users/danielpi/work/dvs/leddar_dataset/20200706_171559_part27_1170_1370/output"};
+    DatasetReaderBase* dataset_reader;
+    const bool use_fast_reader = true;
 
-    // dataset_reader.saveToBigBlob(
-    //     "/Users/danielpi/work/dvs/leddar_dataset/20200706_171559_part27_1170_1370/output/all_data_197.bin");
+    if (use_fast_reader)
+    {
+        dataset_reader =
+            new DatasetReaderFast("../../leddar_dataset/20200706_171559_part27_1170_1370/output/all_data_102.bin");
+    }
+    else
+    {
+        dataset_reader = new DatasetReader("../../leddar_dataset/20200706_171559_part27_1170_1370/output");
+    }
+
+    // DatasetReader dataset_writer{"../../leddar_dataset/20200706_171559_part27_1170_1370/output"};
+    // dataset_writer.saveToBigBlob("../../leddar_dataset/20200706_171559_part27_1170_1370/output/");
 
     openProjectFile(project_file_path);
 
@@ -330,13 +398,13 @@ void testBasic()
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
     waitForFlush();
 
-    for (size_t k = 0; k < dataset_reader.numImgFiles(); k++)
+    for (size_t k = 0; k < dataset_reader->numFrames(); k++)
     {
-        const ImageRGBConstView<uint8_t> img_front = dataset_reader.getFrontImage(k);
-        const ImageRGBConstView<uint8_t> img_left = dataset_reader.getLeftImage(k);
-        const ImageRGBConstView<uint8_t> img_right = dataset_reader.getRightImage(k);
+        const ImageRGBConstView<uint8_t> img_front = dataset_reader->getFrontImage(k);
+        const ImageRGBConstView<uint8_t> img_left = dataset_reader->getLeftImage(k);
+        const ImageRGBConstView<uint8_t> img_right = dataset_reader->getRightImage(k);
 
-        const PointCollection& pc = dataset_reader.getPointCollection(k);
+        const PointCollection& pc = dataset_reader->getPointCollection(k);
 
         setCurrentElement("point_cloud");
         softClearView();
@@ -366,6 +434,69 @@ void testBasic()
 
         flushMultipleElements("point_cloud", "center", "left", "right");
         // usleep(1000 * 15);
+    }
+}
+
+void testScroll()
+{
+    initscr();
+
+    DatasetReader* dataset_reader = new DatasetReader("../../leddar_dataset/20200706_171559_part27_1170_1370/output");
+
+    setCurrentElement("secondary");
+    clearView();
+    waitForFlush();
+    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
+    view(-38.0, 32.0);
+
+    setCurrentElement("main");
+    clearView();
+    waitForFlush();
+    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
+    view(-38.0, 32.0);
+
+    size_t idx = 0U;
+
+    while (true)
+    {
+        const PointCollection& pc = dataset_reader->getPointCollection(idx);
+
+        setCurrentElement("main");
+        softClearView();
+        scatter3(pc.x,
+                 pc.y,
+                 pc.z,
+                 properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
+                 properties::ColorMap::VIRIDIS,
+                 properties::PointSize(5),
+                 properties::ScatterStyle::DISC);
+
+        setCurrentElement("secondary");
+        softClearView();
+        scatter3(pc.x,
+                 pc.y,
+                 pc.z,
+                 properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
+                 properties::ColorMap::VIRIDIS,
+                 properties::PointSize(5),
+                 properties::ScatterStyle::DISC);
+
+        flushMultipleElements("main", "secondary");
+
+        char q = getch();
+
+        if (q == 'a')
+        {
+            idx = (idx == 0U) ? 0U : (idx - 1U);
+        }
+        else if (q == 'd')
+        {
+            idx = (idx == dataset_reader->numLidarFiles() - 1U) ? dataset_reader->numLidarFiles() - 1U : (idx + 1U);
+        }
+        else
+        {
+            break;
+        }
     }
 }
 

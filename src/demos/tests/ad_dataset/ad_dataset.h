@@ -23,7 +23,48 @@ struct PointCollection
     VectorConstView<float> z;
 };
 
-class DatasetReader
+class DatasetReaderBase
+{
+private:
+public:
+    DatasetReaderBase() = default;
+
+    virtual PointCollection getPointCollection(const size_t idx) = 0;
+    virtual ImageRGBConstView<uint8> getLeftImage(const size_t idx) = 0;
+    virtual ImageRGBConstView<uint8> getRightImage(const size_t idx) = 0;
+    virtual ImageRGBConstView<uint8> getFrontImage(const size_t idx) = 0;
+    virtual size_t numFrames() const = 0;
+};
+
+class DatasetReaderFast : public DatasetReaderBase
+{
+private:
+    uint8_t* file_raw_data_;
+    size_t total_num_bytes_;
+    size_t num_frames_;
+    size_t img_width_;
+    size_t img_height_;
+
+    std::vector<PointCollection> point_collections_;
+
+    std::vector<ImageRGBConstView<uint8>> images_front_;
+    std::vector<ImageRGBConstView<uint8>> images_left_;
+    std::vector<ImageRGBConstView<uint8>> images_right_;
+
+    void readFiles();
+
+public:
+    DatasetReaderFast() = delete;
+    DatasetReaderFast(const std::string& dataset_file);
+
+    PointCollection getPointCollection(const size_t idx) override;
+    ImageRGBConstView<uint8> getLeftImage(const size_t idx) override;
+    ImageRGBConstView<uint8> getRightImage(const size_t idx) override;
+    ImageRGBConstView<uint8> getFrontImage(const size_t idx) override;
+    size_t numFrames() const override;
+};
+
+class DatasetReader : public DatasetReaderBase
 {
 private:
     std::vector<PointCollection> point_collections_;
@@ -33,7 +74,7 @@ private:
     std::vector<ImageRGB<uint8>> images_left_;
     std::vector<ImageRGB<uint8>> images_right_;
 
-    static constexpr int kMaxReadFrame = 197;
+    static constexpr int kMaxReadFrame = 5;
 
     void readLidarFile(const std::string& bin_path);
 
@@ -44,24 +85,29 @@ public:
     DatasetReader() = delete;
     DatasetReader(const std::string& dataset_root_path);
 
-    PointCollection getPointCollection(const size_t idx)
+    PointCollection getPointCollection(const size_t idx) override
     {
         return point_collections_[idx];
     }
 
-    ImageRGBConstView<uint8> getLeftImage(const size_t idx)
+    ImageRGBConstView<uint8> getLeftImage(const size_t idx) override
     {
         return images_left_[idx].constView();
     }
 
-    ImageRGBConstView<uint8> getRightImage(const size_t idx)
+    ImageRGBConstView<uint8> getRightImage(const size_t idx) override
     {
         return images_right_[idx].constView();
     }
 
-    ImageRGBConstView<uint8> getFrontImage(const size_t idx)
+    ImageRGBConstView<uint8> getFrontImage(const size_t idx) override
     {
         return images_front_[idx].constView();
+    }
+
+    size_t numFrames() const override
+    {
+        return point_collections_.size();
     }
 
     size_t numLidarFiles() const
@@ -74,7 +120,7 @@ public:
         return images_front_.size();
     }
 
-    void saveToBigBlob(const std::string& file_name) const;
+    void saveToBigBlob(const std::string& output_folder_path) const;
 };
 
 void testBasic();
