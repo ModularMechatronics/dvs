@@ -80,6 +80,7 @@ void LineCollection2D::findMinMax()
 
 void LineCollection2D::render()
 {
+    shader_collection_.basic_plot_shader.use();
     vertex_buffer_.render(num_elements_);
 }
 

@@ -166,7 +166,6 @@ void Plot2D::render()
 
     vertex_buffer_.render(num_points_);
 
-    shader_collection_.basic_plot_shader.use();
     glDisable(GL_BLEND);
 }
 

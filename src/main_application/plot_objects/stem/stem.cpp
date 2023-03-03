@@ -85,11 +85,11 @@ void Stem::findMinMax()
 
 void Stem::render()
 {
+    shader_collection_.basic_plot_shader.use();
     vertex_buffer_lines_.render(num_elements_ * 2);
 
-    glUseProgram(shader_collection_.scatter_shader.programId());
+    shader_collection_.scatter_shader.use();
     vertex_buffer_points_.render(num_elements_);
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
 void Stem::modifyShader()

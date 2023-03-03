@@ -164,8 +164,6 @@ void DrawMesh::render()
     }
 
     glDisable(GL_BLEND);
-
-    shader_collection_.basic_plot_shader.use();
 }
 
 LegendProperties DrawMesh::getLegendProperties() const

@@ -117,7 +117,7 @@ void ImShow::render()
 {
     glEnable(GL_BLEND);
 
-    glUseProgram(shader_collection_.img_plot_shader.programId());
+    shader_collection_.img_plot_shader.use();
 
     preRender(&shader_collection_.img_plot_shader);
 
@@ -134,8 +134,6 @@ void ImShow::render()
     }
 
     vertex_buffer_.render(dims_.rows * dims_.cols * 6);
-
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
 
     glDisable(GL_BLEND);
 }

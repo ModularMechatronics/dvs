@@ -177,6 +177,7 @@ void PlotCollection2D::findMinMax()
 
 void PlotCollection2D::render()
 {
+    shader_collection_.basic_plot_shader.use();
     vertex_buffer_.render(num_points_);
 }
 

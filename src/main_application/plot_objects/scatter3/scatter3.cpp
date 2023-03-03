@@ -158,9 +158,8 @@ void Scatter3D::findMinMax()
 
 void Scatter3D::render()
 {
-    glUseProgram(shader_collection_.scatter_shader.programId());
+    shader_collection_.scatter_shader.use();
     vertex_buffer_.render(num_elements_);
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
 }
 
 Scatter3D::~Scatter3D() {}

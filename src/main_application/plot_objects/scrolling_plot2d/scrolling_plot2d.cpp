@@ -93,6 +93,7 @@ void ScrollingPlot2D::findMinMax()
 void ScrollingPlot2D::render()
 {
     // preRender(&shader_collection_.basic_plot_shader);
+    shader_collection_.basic_plot_shader.use();
     glBindVertexArray(sp_vertex_buffer_array_);
     glDrawArrays(GL_LINE_STRIP, 0, num_elements_to_draw_);
     glBindVertexArray(0);

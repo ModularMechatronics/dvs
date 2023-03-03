@@ -203,8 +203,6 @@ void Surf::render()
     }
 
     glDisable(GL_BLEND);
-
-    shader_collection_.basic_plot_shader.use();
 }
 
 Surf::~Surf() {}

@@ -171,9 +171,8 @@ std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const Communi
 void Scatter2D::render()
 {
     glEnable(GL_BLEND);
-    glUseProgram(shader_collection_.scatter_shader.programId());
+    shader_collection_.scatter_shader.use();
     vertex_buffer_.render(num_elements_);
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
     glDisable(GL_BLEND);
 }
 
