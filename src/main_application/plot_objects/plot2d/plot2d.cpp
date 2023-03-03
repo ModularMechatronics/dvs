@@ -150,7 +150,7 @@ void Plot2D::render()
     shader_collection_.plot_2d_shader.use();
     preRender(&shader_collection_.plot_2d_shader);
 
-    glUniform1f(shader_collection_.plot_2d_shader.uniform_handles.half_line_width, line_width_ / 600.0f);
+    glUniform1f(shader_collection_.plot_2d_shader.uniform_handles.half_line_width, line_width_ / 3.0f);
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "z_offset"), z_offset_);
     glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "use_dash"), 0);
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "alpha"), alpha_);

@@ -20,6 +20,7 @@ Pre release:
 - Make axes numbers fit better at the edges, fewer line points per axis?
 - Make sure all dynamic data is released in plot objects
 - Release all textures, VBOs/VAOs in plot objects
+- glEnable(GL_BLEND); at the beginning end of every render call, move out?
 - Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
 - Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed

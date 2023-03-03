@@ -57,10 +57,8 @@ void main()
       float dx = vert_pos.x - p1_out.x;
       float dy = vert_pos.y - p1_out.y;
 
-      float fq = 200.0;
-
-      float rx = half_line_width * fq / axes_width;
-      float ry = half_line_width * fq / axes_height;
+      float rx = half_line_width / axes_width;
+      float ry = half_line_width / axes_height;
 
       float d = dx * dx / (rx * rx) + dy * dy / (ry * ry);
 
