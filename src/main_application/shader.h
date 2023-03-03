@@ -69,7 +69,6 @@ public:
     GLuint programId() const;
 
     void use() const;
-    void unUse() const;
 
     struct BaseUniformHandles
     {
@@ -152,6 +151,8 @@ public:
         Uniform face_color;
         Uniform edge_color;
         Uniform is_edge;
+        Uniform color_map_selection;
+        Uniform interpolate_colormap;
     };
 
     UniformHandles uniform_handles;

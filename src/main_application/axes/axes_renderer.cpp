@@ -186,7 +186,7 @@ void AxesRenderer::renderTitle()
 
 void AxesRenderer::renderInteractionLetter()
 {
-    glUseProgram(shader_collection_.text_shader.programId());
+    shader_collection_.text_shader.use();
 
     glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
 
@@ -251,7 +251,7 @@ void AxesRenderer::renderInteractionLetter()
 
 void AxesRenderer::renderViewAngles()
 {
-    glUseProgram(shader_collection_.text_shader.programId());
+    shader_collection_.text_shader.use();
 
     glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
 
@@ -272,7 +272,7 @@ void AxesRenderer::render()
     {
         renderViewAngles();
     }
-    glUseProgram(shader_collection_.plot_box_shader.programId());
+    shader_collection_.plot_box_shader.use();
     renderBackground();
     if (element_settings_.plot_box_on)
     {
@@ -343,13 +343,13 @@ void AxesRenderer::renderLegend()
     // const glm::mat4 mvp = projection_mat * view_mat;
     const glm::mat4 mvp = orth_projection_mat * view_mat;
 
-    glUseProgram(shader_collection_.legend_shader.programId());
+    shader_collection_.legend_shader.use();
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.legend_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
                        &mvp[0][0]);
 
-    glUseProgram(shader_collection_.plot_box_shader.programId());
+    shader_collection_.plot_box_shader.use();
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
@@ -401,13 +401,14 @@ void AxesRenderer::plotBegin()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_ * t_mat;
     const glm::mat4 i_mvp = glm::inverse(mvp);
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
+
+    shader_collection_.basic_plot_shader.use();
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
                        &mvp[0][0]);
 
-    glUseProgram(shader_collection_.draw_mesh_shader.programId());
+    shader_collection_.draw_mesh_shader.use();
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
@@ -423,13 +424,13 @@ void AxesRenderer::plotBegin()
                 light_pos_.y,
                 light_pos_.z);
 
-    glUseProgram(shader_collection_.scatter_shader.programId());
+    shader_collection_.scatter_shader.use();
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
                        &mvp[0][0]);
 
-    glUseProgram(shader_collection_.plot_2d_shader.programId());
+    shader_collection_.plot_2d_shader.use();
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
@@ -442,7 +443,7 @@ void AxesRenderer::plotBegin()
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "axes_width"), width_);
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "axes_height"), height_);
 
-    glUseProgram(shader_collection_.plot_3d_shader.programId());
+    shader_collection_.plot_3d_shader.use();
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
@@ -455,21 +456,20 @@ void AxesRenderer::plotBegin()
     glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "axes_width"), width_);
     glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "axes_height"), height_);
 
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
+    shader_collection_.basic_plot_shader.use();
     enableClipPlanes();
 
-    glUseProgram(shader_collection_.img_plot_shader.programId());
+    shader_collection_.img_plot_shader.use();
     glUniformMatrix4fv(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "model_view_proj_mat"),
                        1,
                        GL_FALSE,
                        &mvp[0][0]);
 
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
+    shader_collection_.basic_plot_shader.use();
 }
 
 void AxesRenderer::plotEnd()
 {
-    glUseProgram(0);
     if (render_legend_)
     {
         renderLegend();

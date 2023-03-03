@@ -142,7 +142,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
     setBoxValues(x_min, x_max, z_min, z_max);
 
-    glUseProgram(shader_collection_.plot_box_shader.programId());
+    shader_collection_.plot_box_shader.use();
 
     glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0, 0.0, 0.0);
 
@@ -156,7 +156,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
     inner_vao_.updateBufferData(0, legend_inner_vertices_.data(), num_vertices_inner_, 3);
     inner_vao_.render(num_vertices_inner_);
 
-    glUseProgram(shader_collection_.legend_shader.programId());
+    shader_collection_.legend_shader.use();
 
     float* const legend_shape_vertices = points_.data();
     float* const legend_shape_colors = colors_.data();

@@ -22,6 +22,7 @@ Pre release:
 - Release all textures, VBOs/VAOs in plot objects
 - glEnable(GL_BLEND); at the beginning end of every render call, move out?
 - Change implementation of imShow to use texture instead of current method
+- Move "modifyShader" stuff to "preRender"?
 - Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
 - Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed

@@ -100,7 +100,7 @@ LegendProperties Scatter2D::getLegendProperties() const
 void Scatter2D::modifyShader()
 {
     PlotObjectBase::modifyShader();
-    glUseProgram(shader_collection_.scatter_shader.programId());
+    shader_collection_.scatter_shader.use();
     glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "point_size"), point_size_);
     glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"),
                 static_cast<int>(scatter_style_));
@@ -130,7 +130,7 @@ void Scatter2D::modifyShader()
     {
         shader_collection_.scatter_shader.base_uniform_handles.has_color_vec.setInt(0);
     }
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
+    shader_collection_.basic_plot_shader.use();
 }
 
 void Scatter2D::findMinMax()

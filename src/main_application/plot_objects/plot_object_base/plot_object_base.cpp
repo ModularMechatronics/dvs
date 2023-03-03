@@ -203,6 +203,7 @@ bool isPlotDataFunction(const Function fcn)
 
 void PlotObjectBase::modifyShader()
 {
+    shader_collection_.basic_plot_shader.use();
     glUniform3f(
         shader_collection_.basic_plot_shader.base_uniform_handles.vertex_color, color_.red, color_.green, color_.blue);
     shader_collection_.scatter_shader.use();

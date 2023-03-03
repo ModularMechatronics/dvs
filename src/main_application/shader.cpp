@@ -43,6 +43,8 @@ void DrawMeshShader::setUniformHandles()
     uniform_handles.face_color = Uniform(program_id_, "face_color");
     uniform_handles.edge_color = Uniform(program_id_, "edge_color");
     uniform_handles.is_edge = Uniform(program_id_, "is_edge");
+    uniform_handles.color_map_selection = Uniform(program_id_, "color_map_selection");
+    uniform_handles.interpolate_colormap = Uniform(program_id_, "interpolate_colormap");
 }
 
 TextShader::TextShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
@@ -199,11 +201,6 @@ void ShaderBase::loadShadersFromSourceCode(const std::string& vertex_code, const
 void ShaderBase::use() const
 {
     glUseProgram(program_id_);
-}
-
-void ShaderBase::unUse() const
-{
-    glUseProgram(0);
 }
 
 GLuint ShaderBase::programId() const
