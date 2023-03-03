@@ -264,7 +264,7 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
 }
 
 void drawGridNumbers(const TextRenderer& text_renderer,
-                     const ShaderBase text_shader,
+                     const TextShader* const text_shader,
                      const AxesLimits& axes_limits,
                      const ViewAngles& view_angles,
                      const ElementSettings& element_settings,
@@ -277,11 +277,9 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                      const AxesSideConfiguration& axes_side_configuration,
                      const bool perspective_projection)
 {
-    glUseProgram(text_shader.programId());
+    text_shader->use();
 
     glm::mat4 model_mat_local = model_mat;
-
-    const GLint text_color_uniform = glGetUniformLocation(text_shader.programId(), "textColor");
 
     // AxesLimits
     const Vec3d axes_center = axes_limits.getAxesCenter();
@@ -331,7 +329,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_angles.getSnappingAxis(),
                          axes_center,
                          gv,
-                         text_color_uniform,
+                         text_shader->uniform_handles.text_color,
                          axes_side_configuration,
                          distance_multiplier,
                          perspective_projection);
@@ -350,7 +348,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_angles.getSnappingAxis(),
                          axes_center,
                          gv,
-                         text_color_uniform,
+                         text_shader->uniform_handles.text_color,
                          axes_side_configuration,
                          distance_multiplier,
                          perspective_projection);
@@ -368,11 +366,9 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          height,
                          axes_center,
                          gv,
-                         text_color_uniform,
+                         text_shader->uniform_handles.text_color,
                          axes_side_configuration,
                          distance_multiplier,
                          perspective_projection);
     }
-
-    glUseProgram(0);
 }

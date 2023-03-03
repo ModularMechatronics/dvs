@@ -17,7 +17,7 @@
 #include "shader.h"
 
 void drawGridNumbers(const TextRenderer& text_renderer,
-                     const ShaderBase text_shader,
+                     const TextShader* const text_shader,
                      const AxesLimits& axes_limits,
                      const ViewAngles& view_angles,
                      const ElementSettings& element_settings,

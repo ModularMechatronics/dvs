@@ -18,6 +18,30 @@ void Plot2DShader::setUniformHandles()
     uniform_handles.use_dash = glGetUniformLocation(program_id_, "use_dash");
 }
 
+Plot3DShader::Plot3DShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
+    : ShaderBase(vertex_shader, fragment_shader, src)
+{
+    setUniformHandles();
+}
+
+void Plot3DShader::setUniformHandles()
+{
+    uniform_handles.half_line_width = glGetUniformLocation(program_id_, "half_line_width");
+    uniform_handles.use_dash = glGetUniformLocation(program_id_, "use_dash");
+}
+
+TextShader::TextShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
+    : ShaderBase(vertex_shader, fragment_shader, src)
+{
+    setUniformHandles();
+}
+
+void TextShader::setUniformHandles()
+{
+    uniform_handles.text_sampler = glGetUniformLocation(program_id_, "text_sampler");
+    uniform_handles.text_color = glGetUniformLocation(program_id_, "text_color");
+}
+
 ShaderBase::ShaderBase(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
 {
     if (ShaderSource::FILE == src)

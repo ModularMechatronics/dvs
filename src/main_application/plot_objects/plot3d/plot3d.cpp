@@ -94,8 +94,7 @@ void Plot3D::findMinMax()
 void Plot3D::render()
 {
     shader_collection_.plot_3d_shader.use();
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "half_line_width"),
-                line_width_ / 3.0f);
+    glUniform1f(shader_collection_.plot_3d_shader.uniform_handles.half_line_width, line_width_ / 3.0f);
     vertex_buffer_.render(num_points_);
     shader_collection_.basic_plot_shader.use();
 }

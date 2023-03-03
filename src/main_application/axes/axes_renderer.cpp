@@ -19,11 +19,11 @@ AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
       tab_background_color_{tab_background_color},
       plot_pane_background_{element_settings_.pane_radius}
 {
-    glUseProgram(shader_collection_.text_shader.programId());
+    shader_collection_.text_shader.use();
 
     initFreetype();
 
-    glUniform1i(glGetUniformLocation(shader_collection_.text_shader.programId(), "text_sampler"), 0);
+    glUniform1i(shader_collection_.text_shader.uniform_handles.text_sampler, 0);
 
     if (element_settings_.clipping_on)
     {
@@ -175,10 +175,9 @@ void AxesRenderer::setClipPlane(const GLuint clip_plane_uniform_handle,
 
 void AxesRenderer::renderTitle()
 {
-    glUseProgram(shader_collection_.text_shader.programId());
+    shader_collection_.text_shader.use();
 
-    const GLint text_color_uniform = glGetUniformLocation(shader_collection_.text_shader.programId(), "textColor");
-    glUniform3f(text_color_uniform, 0.0, 0.0, 0.0);
+    glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
 
     const float x_coord = -1.0f + 5.0f / width_;
     const float y_coord = 1.0f - 20.0f / height_;
@@ -189,8 +188,7 @@ void AxesRenderer::renderInteractionLetter()
 {
     glUseProgram(shader_collection_.text_shader.programId());
 
-    const GLint text_color_uniform = glGetUniformLocation(shader_collection_.text_shader.programId(), "textColor");
-    glUniform3f(text_color_uniform, 0.0, 0.0, 0.0);
+    glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
 
     std::string interaction_string;
     if (mouse_interaction_type_ == MouseInteractionType::PAN)
@@ -255,8 +253,7 @@ void AxesRenderer::renderViewAngles()
 {
     glUseProgram(shader_collection_.text_shader.programId());
 
-    const GLint text_color_uniform = glGetUniformLocation(shader_collection_.text_shader.programId(), "textColor");
-    glUniform3f(text_color_uniform, 0.0, 0.0, 0.0);
+    glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
 
     const int az = static_cast<float>(view_angles_.getSnappedAzimuth() * 180.0f / M_PI);
     const int el = static_cast<float>(view_angles_.getSnappedElevation() * 180.0f / M_PI);
@@ -327,7 +324,7 @@ void AxesRenderer::render()
     }
 
     drawGridNumbers(text_renderer_,
-                    shader_collection_.text_shader,
+                    &shader_collection_.text_shader,
                     axes_limits_,
                     view_angles_,
                     element_settings_,

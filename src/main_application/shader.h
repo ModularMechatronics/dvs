@@ -77,14 +77,50 @@ public:
     UniformHandles uniform_handles;
 };
 
+class Plot3DShader : public ShaderBase
+{
+private:
+    void setUniformHandles();
+
+public:
+    Plot3DShader() = default;
+    Plot3DShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src);
+
+    struct UniformHandles
+    {
+        GLint half_line_width;
+        GLint use_dash;
+    };
+
+    UniformHandles uniform_handles;
+};
+
+class TextShader : public ShaderBase
+{
+private:
+    void setUniformHandles();
+
+public:
+    TextShader() = default;
+    TextShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src);
+
+    struct UniformHandles
+    {
+        GLint text_sampler;
+        GLint text_color;
+    };
+
+    UniformHandles uniform_handles;
+};
+
 struct ShaderCollection
 {
-    ShaderBase text_shader;
+    TextShader text_shader;
     ShaderBase plot_box_shader;
     ShaderBase scatter_shader;
     ShaderBase basic_plot_shader;
     Plot2DShader plot_2d_shader;
-    ShaderBase plot_3d_shader;
+    Plot3DShader plot_3d_shader;
     ShaderBase img_plot_shader;
     ShaderBase draw_mesh_shader;
     ShaderBase legend_shader;

@@ -6,7 +6,7 @@ in vec4 coord_out;
 flat in vec3 p1_out;
 in vec3 vert_pos;
 flat in int triangle_id;
-
+uniform int use_dash;
 uniform float half_line_width;
 
 uniform int use_clip_plane;
