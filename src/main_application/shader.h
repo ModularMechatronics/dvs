@@ -1,6 +1,7 @@
 #ifndef MAIN_APPLICATION_SHADER_H_
 #define MAIN_APPLICATION_SHADER_H_
 
+#include <stdexcept>
 #include <string>
 
 #include "opengl_low_level/opengl_header.h"
@@ -9,6 +10,29 @@ enum class ShaderSource
 {
     FILE,
     CODE
+};
+
+class Uniform
+{
+private:
+    GLint handle_;
+
+public:
+    Uniform() : handle_{-1} {}
+    Uniform(const GLuint program_id, const std::string& uniform_name)
+    {
+        handle_ = glGetUniformLocation(program_id, uniform_name.c_str());
+    }
+
+    void setFloat(const float val) const
+    {
+        glUniform1f(handle_, val);
+    }
+
+    void setInt(const int val) const
+    {
+        glUniform1i(handle_, val);
+    }
 };
 
 class ShaderBase
@@ -33,13 +57,13 @@ public:
     struct BaseUniformHandles
     {
         // Custom transform
-        GLint has_custom_transform;
+        Uniform has_custom_transform;
         GLint custom_translation_mat;
         GLint custom_rotation_mat;
         GLint custom_scale_mat;
 
         // Clip planes
-        GLint use_clip_plane;
+        Uniform use_clip_plane;
 
         GLint clip_plane0;
         GLint clip_plane1;
@@ -50,9 +74,9 @@ public:
 
         // Misc
         GLint vertex_color;
-        GLint has_color_vec;
+        Uniform has_color_vec;
 
-        GLint alpha;
+        Uniform alpha;
     };
 
     BaseUniformHandles base_uniform_handles;
@@ -69,9 +93,9 @@ public:
 
     struct UniformHandles
     {
-        GLint half_line_width;
-        GLint z_offset;
-        GLint use_dash;
+        Uniform half_line_width;
+        Uniform z_offset;
+        Uniform use_dash;
     };
 
     UniformHandles uniform_handles;
@@ -88,8 +112,8 @@ public:
 
     struct UniformHandles
     {
-        GLint half_line_width;
-        GLint use_dash;
+        Uniform half_line_width;
+        Uniform use_dash;
     };
 
     UniformHandles uniform_handles;

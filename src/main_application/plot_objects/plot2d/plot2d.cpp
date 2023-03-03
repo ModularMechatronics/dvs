@@ -150,18 +150,18 @@ void Plot2D::render()
     shader_collection_.plot_2d_shader.use();
     preRender(&shader_collection_.plot_2d_shader);
 
-    glUniform1f(shader_collection_.plot_2d_shader.uniform_handles.half_line_width, line_width_ / 3.0f);
-    glUniform1f(shader_collection_.plot_2d_shader.uniform_handles.z_offset, z_offset_);
-    glUniform1i(shader_collection_.plot_2d_shader.uniform_handles.use_dash, 0);
-    glUniform1f(shader_collection_.plot_2d_shader.base_uniform_handles.alpha, alpha_);
+    shader_collection_.plot_2d_shader.uniform_handles.half_line_width.setFloat(line_width_ / 3.0f);
+    shader_collection_.plot_2d_shader.uniform_handles.z_offset.setFloat(z_offset_);
+    shader_collection_.plot_2d_shader.uniform_handles.use_dash.setInt(0);
+    shader_collection_.plot_2d_shader.base_uniform_handles.alpha.setFloat(alpha_);
 
     if (has_color_)
     {
-        glUniform1i(shader_collection_.plot_2d_shader.base_uniform_handles.has_color_vec, static_cast<int>(1));
+        shader_collection_.plot_2d_shader.base_uniform_handles.has_color_vec.setInt(1);
     }
     else
     {
-        glUniform1i(shader_collection_.plot_2d_shader.base_uniform_handles.has_color_vec, static_cast<int>(0));
+        shader_collection_.plot_2d_shader.base_uniform_handles.has_color_vec.setInt(0);
     }
 
     vertex_buffer_.render(num_points_);

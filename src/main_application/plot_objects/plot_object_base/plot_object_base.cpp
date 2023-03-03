@@ -177,7 +177,7 @@ void PlotObjectBase::preRender(const ShaderBase* const shader_to_use)
 {
     if (has_custom_transform_)
     {
-        glUniform1i(shader_to_use->base_uniform_handles.has_custom_transform, static_cast<int>(1));
+        shader_to_use->base_uniform_handles.has_custom_transform.setInt(1);
         glUniformMatrix4fv(
             shader_to_use->base_uniform_handles.custom_translation_mat, 1, GL_FALSE, &custom_translation_[0][0]);
         glUniformMatrix4fv(
@@ -186,7 +186,7 @@ void PlotObjectBase::preRender(const ShaderBase* const shader_to_use)
     }
     else
     {
-        glUniform1i(shader_to_use->base_uniform_handles.has_custom_transform, static_cast<int>(0));
+        shader_to_use->base_uniform_handles.has_custom_transform.setInt(0);
     }
 }
 

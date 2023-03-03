@@ -28,32 +28,32 @@ AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
     if (element_settings_.clipping_on)
     {
         shader_collection_.basic_plot_shader.use();
-        glUniform1i(shader_collection_.basic_plot_shader.base_uniform_handles.use_clip_plane, 1);
+        shader_collection_.basic_plot_shader.base_uniform_handles.use_clip_plane.setInt(1);
         shader_collection_.img_plot_shader.use();
-        glUniform1i(shader_collection_.img_plot_shader.base_uniform_handles.use_clip_plane, 1);
+        shader_collection_.img_plot_shader.base_uniform_handles.use_clip_plane.setInt(1);
         shader_collection_.draw_mesh_shader.use();
-        glUniform1i(shader_collection_.draw_mesh_shader.base_uniform_handles.use_clip_plane, 1);
+        shader_collection_.draw_mesh_shader.base_uniform_handles.use_clip_plane.setInt(1);
         shader_collection_.scatter_shader.use();
-        glUniform1i(shader_collection_.scatter_shader.base_uniform_handles.use_clip_plane, 1);
+        shader_collection_.scatter_shader.base_uniform_handles.use_clip_plane.setInt(1);
         shader_collection_.plot_2d_shader.use();
-        glUniform1i(shader_collection_.plot_2d_shader.base_uniform_handles.use_clip_plane, 1);
+        shader_collection_.plot_2d_shader.base_uniform_handles.use_clip_plane.setInt(1);
         shader_collection_.plot_3d_shader.use();
-        glUniform1i(shader_collection_.plot_3d_shader.base_uniform_handles.use_clip_plane, 1);
+        shader_collection_.plot_3d_shader.base_uniform_handles.use_clip_plane.setInt(1);
     }
     else
     {
         shader_collection_.basic_plot_shader.use();
-        glUniform1i(shader_collection_.basic_plot_shader.base_uniform_handles.use_clip_plane, 0);
+        shader_collection_.basic_plot_shader.base_uniform_handles.use_clip_plane.setInt(0);
         shader_collection_.img_plot_shader.use();
-        glUniform1i(shader_collection_.img_plot_shader.base_uniform_handles.use_clip_plane, 0);
+        shader_collection_.img_plot_shader.base_uniform_handles.use_clip_plane.setInt(0);
         shader_collection_.draw_mesh_shader.use();
-        glUniform1i(shader_collection_.draw_mesh_shader.base_uniform_handles.use_clip_plane, 0);
+        shader_collection_.draw_mesh_shader.base_uniform_handles.use_clip_plane.setInt(0);
         shader_collection_.scatter_shader.use();
-        glUniform1i(shader_collection_.scatter_shader.base_uniform_handles.use_clip_plane, 0);
+        shader_collection_.scatter_shader.base_uniform_handles.use_clip_plane.setInt(0);
         shader_collection_.plot_2d_shader.use();
-        glUniform1i(shader_collection_.plot_2d_shader.base_uniform_handles.use_clip_plane, 0);
+        shader_collection_.plot_2d_shader.base_uniform_handles.use_clip_plane.setInt(0);
         shader_collection_.plot_3d_shader.use();
-        glUniform1i(shader_collection_.plot_3d_shader.base_uniform_handles.use_clip_plane, 0);
+        shader_collection_.plot_3d_shader.base_uniform_handles.use_clip_plane.setInt(0);
     }
 
     const float sw = 3.0f;
