@@ -154,28 +154,20 @@ void Surf::render()
     glEnable(GL_BLEND);
 
     shader_collection_.draw_mesh_shader.use();
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "edge_color"),
-                edge_color_.red,
-                edge_color_.green,
-                edge_color_.blue);
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "face_color"),
-                face_color_.red,
-                face_color_.green,
-                face_color_.blue);
-    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "min_z"), min_vec.z);
-    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "max_z"), max_vec.z);
-    glUniform1f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "alpha"), alpha_);
+    shader_collection_.draw_mesh_shader.uniform_handles.edge_color.setColor(edge_color_);
+    shader_collection_.draw_mesh_shader.uniform_handles.face_color.setColor(face_color_);
+    shader_collection_.draw_mesh_shader.base_uniform_handles.min_z.setFloat(min_vec.z);
+    shader_collection_.draw_mesh_shader.base_uniform_handles.max_z.setFloat(max_vec.z);
+    shader_collection_.draw_mesh_shader.base_uniform_handles.alpha.setFloat(alpha_);
 
     if (has_color_)
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_color_vec"),
-                    static_cast<int>(1));
+        shader_collection_.draw_mesh_shader.base_uniform_handles.has_color_vec.setInt(1);
         glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"), 0);
     }
     else
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "has_color_vec"),
-                    static_cast<int>(0));
+        shader_collection_.draw_mesh_shader.base_uniform_handles.has_color_vec.setInt(0);
         if (has_color_map_)
         {
             glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "color_map_selection"),
@@ -192,13 +184,13 @@ void Surf::render()
 
     if (has_edge_color_)
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 1);
+        shader_collection_.draw_mesh_shader.uniform_handles.is_edge.setInt(1);
         vertex_buffer_lines_.render(num_lines_to_render_);
     }
 
     if (has_face_color_)
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "is_edge"), 0);
+        shader_collection_.draw_mesh_shader.uniform_handles.is_edge.setInt(0);
         vertex_buffer_.render(num_elements_to_render_);
     }
 

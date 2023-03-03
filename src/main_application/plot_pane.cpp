@@ -124,7 +124,7 @@ void PlotPane::initShaders()
     const std::string v_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.vs";
     const std::string f_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.fs";
     shader_collection_.draw_mesh_shader =
-        ShaderBase(v_path_draw_mesh_shader, f_path_draw_mesh_shader, ShaderSource::FILE);
+        DrawMeshShader(v_path_draw_mesh_shader, f_path_draw_mesh_shader, ShaderSource::FILE);
 
     const std::string v_path_legend_shader = "../main_application/axes/shaders/legend_shader.vs";
     const std::string f_path_legend_shader = "../main_application/axes/shaders/legend_shader.fs";

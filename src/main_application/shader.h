@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "dvs/dvs.h"
+#include "misc/color_map.h"
 #include "opengl_low_level/opengl_header.h"
 
 enum class ShaderSource
@@ -32,6 +34,21 @@ public:
     void setInt(const int val) const
     {
         glUniform1i(handle_, val);
+    }
+
+    void setColor(const RGBTripletf& col)
+    {
+        glUniform3f(handle_, col.red, col.green, col.blue);
+    }
+
+    void setVec(const dvs::Vec3f& v)
+    {
+        glUniform3f(handle_, v.x, v.y, v.z);
+    }
+
+    void setVec(const float x, const float y, const float z)
+    {
+        glUniform3f(handle_, x, y, z);
     }
 };
 
@@ -77,6 +94,8 @@ public:
         Uniform has_color_vec;
 
         Uniform alpha;
+        Uniform min_z;
+        Uniform max_z;
     };
 
     BaseUniformHandles base_uniform_handles;
@@ -119,6 +138,25 @@ public:
     UniformHandles uniform_handles;
 };
 
+class DrawMeshShader : public ShaderBase
+{
+private:
+    void setUniformHandles();
+
+public:
+    DrawMeshShader() = default;
+    DrawMeshShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src);
+
+    struct UniformHandles
+    {
+        Uniform face_color;
+        Uniform edge_color;
+        Uniform is_edge;
+    };
+
+    UniformHandles uniform_handles;
+};
+
 class TextShader : public ShaderBase
 {
 private:
@@ -146,7 +184,7 @@ struct ShaderCollection
     Plot2DShader plot_2d_shader;
     Plot3DShader plot_3d_shader;
     ShaderBase img_plot_shader;
-    ShaderBase draw_mesh_shader;
+    DrawMeshShader draw_mesh_shader;
     ShaderBase legend_shader;
 };
 

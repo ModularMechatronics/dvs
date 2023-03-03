@@ -30,6 +30,21 @@ void Plot3DShader::setUniformHandles()
     uniform_handles.use_dash = Uniform(program_id_, "use_dash");
 }
 
+DrawMeshShader::DrawMeshShader(const std::string& vertex_shader,
+                               const std::string& fragment_shader,
+                               const ShaderSource src)
+    : ShaderBase(vertex_shader, fragment_shader, src)
+{
+    setUniformHandles();
+}
+
+void DrawMeshShader::setUniformHandles()
+{
+    uniform_handles.face_color = Uniform(program_id_, "face_color");
+    uniform_handles.edge_color = Uniform(program_id_, "edge_color");
+    uniform_handles.is_edge = Uniform(program_id_, "is_edge");
+}
+
 TextShader::TextShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
     : ShaderBase(vertex_shader, fragment_shader, src)
 {
@@ -79,6 +94,9 @@ void ShaderBase::setBaseUniformHandles()
     base_uniform_handles.vertex_color = glGetUniformLocation(program_id_, "vertex_color");
     base_uniform_handles.has_color_vec = Uniform(program_id_, "has_color_vec");
     base_uniform_handles.alpha = Uniform(program_id_, "alpha");
+
+    base_uniform_handles.min_z = Uniform(program_id_, "min_z");
+    base_uniform_handles.max_z = Uniform(program_id_, "max_z");
 }
 
 void ShaderBase::loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path)
