@@ -49,8 +49,6 @@ mat4 rotationMatrixZ(float az)
 
 void main()
 {
-    // float pi_2 = 1.57079632679489661923132169163975144209858469968;
-
     gl_Position = model_view_proj_mat * vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
     coord_out = vec4(in_vertex.x, in_vertex.y, in_vertex.z, 1.0);
     

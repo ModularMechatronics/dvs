@@ -473,7 +473,7 @@ public:
                    const ShaderCollection& shader_collection,
                    ColorPicker& color_picker);
     virtual void render() = 0;
-    void preRender(const Shader shader_to_use);
+    void preRender(const ShaderBase* const shader_to_use);
     bool affectsColormapMinMax() const
     {
         return has_color_map_;

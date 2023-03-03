@@ -149,7 +149,7 @@ void Plot2D::render()
 {
     glEnable(GL_BLEND);
     shader_collection_.plot_2d_shader.use();
-    preRender(shader_collection_.plot_2d_shader);
+    preRender(&shader_collection_.plot_2d_shader);
 
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "half_line_width"),
                 line_width_ / 600.0f);

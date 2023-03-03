@@ -121,7 +121,7 @@ void DrawMesh::render()
 
     shader_collection_.draw_mesh_shader.use();
 
-    preRender(shader_collection_.draw_mesh_shader);
+    preRender(&shader_collection_.draw_mesh_shader);
 
     glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "edge_color"),
                 edge_color_.red,

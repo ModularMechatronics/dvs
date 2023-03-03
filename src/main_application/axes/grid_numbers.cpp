@@ -264,7 +264,7 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
 }
 
 void drawGridNumbers(const TextRenderer& text_renderer,
-                     const Shader text_shader,
+                     const ShaderBase text_shader,
                      const AxesLimits& axes_limits,
                      const ViewAngles& view_angles,
                      const ElementSettings& element_settings,

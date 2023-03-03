@@ -119,7 +119,7 @@ void ImShow::render()
 
     glUseProgram(shader_collection_.img_plot_shader.programId());
 
-    preRender(shader_collection_.img_plot_shader);
+    preRender(&shader_collection_.img_plot_shader);
 
     if ((num_channels_ == 4) || (num_channels_ == 2))
     {

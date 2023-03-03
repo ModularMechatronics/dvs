@@ -173,25 +173,19 @@ void PlotObjectBase::updateProperties(const PropertiesData& properties_data)
     }
 }
 
-void PlotObjectBase::preRender(const Shader shader_to_use)
+void PlotObjectBase::preRender(const ShaderBase* const shader_to_use)
 {
     if (has_custom_transform_)
     {
-        glUniform1i(glGetUniformLocation(shader_to_use.programId(), "has_custom_transform"), static_cast<int>(1));
-        glUniformMatrix4fv(glGetUniformLocation(shader_to_use.programId(), "custom_translation_mat"),
-                           1,
-                           GL_FALSE,
-                           &custom_translation_[0][0]);
-        glUniformMatrix4fv(glGetUniformLocation(shader_to_use.programId(), "custom_rotation_mat"),
-                           1,
-                           GL_FALSE,
-                           &custom_rotation_[0][0]);
+        glUniform1i(shader_to_use->uniform_handles.has_custom_transform, static_cast<int>(1));
         glUniformMatrix4fv(
-            glGetUniformLocation(shader_to_use.programId(), "custom_scale_mat"), 1, GL_FALSE, &custom_scale_[0][0]);
+            shader_to_use->uniform_handles.custom_translation_mat, 1, GL_FALSE, &custom_translation_[0][0]);
+        glUniformMatrix4fv(shader_to_use->uniform_handles.custom_rotation_mat, 1, GL_FALSE, &custom_rotation_[0][0]);
+        glUniformMatrix4fv(shader_to_use->uniform_handles.custom_scale_mat, 1, GL_FALSE, &custom_scale_[0][0]);
     }
     else
     {
-        glUniform1i(glGetUniformLocation(shader_to_use.programId(), "has_custom_transform"), static_cast<int>(0));
+        glUniform1i(shader_to_use->uniform_handles.has_custom_transform, static_cast<int>(0));
     }
 }
 

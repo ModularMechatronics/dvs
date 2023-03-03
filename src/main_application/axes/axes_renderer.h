@@ -86,8 +86,7 @@ private:
     void renderTitle();
     void renderInteractionLetter();
     void renderViewAngles();
-    void setClipPlane(const GLuint program_id,
-                      const std::string pln,
+    void setClipPlane(const GLuint clip_plane_uniform_handle,
                       const Point3d& p0,
                       const Point3d& p1,
                       const Point3d& p2,

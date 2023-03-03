@@ -5,7 +5,7 @@
 #include <sstream>
 #include <vector>
 
-Shader::Shader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
+ShaderBase::ShaderBase(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
 {
     if (ShaderSource::FILE == src)
     {
@@ -19,23 +19,41 @@ Shader::Shader(const std::string& vertex_shader, const std::string& fragment_sha
     {
         throw std::runtime_error("Invalid option for shader source!");
     }
-    // std::cout << "Program id: " << program_id_ << std::endl;
+
+    setUniformHandles();
 }
 
-Shader Shader::createFromFiles(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
+void ShaderBase::setUniformHandles()
 {
-    return Shader(vertex_shader_path, fragment_shader_path, ShaderSource::FILE);
+    uniform_handles.has_custom_transform = glGetUniformLocation(program_id_, "has_custom_transform");
+    uniform_handles.custom_translation_mat = glGetUniformLocation(program_id_, "custom_translation_mat");
+    uniform_handles.custom_rotation_mat = glGetUniformLocation(program_id_, "custom_rotation_mat");
+    uniform_handles.custom_scale_mat = glGetUniformLocation(program_id_, "custom_scale_mat");
+
+    uniform_handles.use_clip_plane = glGetUniformLocation(program_id_, "use_clip_plane");
+
+    uniform_handles.clip_plane0 = glGetUniformLocation(program_id_, "clip_plane0");
+    uniform_handles.clip_plane1 = glGetUniformLocation(program_id_, "clip_plane1");
+    uniform_handles.clip_plane2 = glGetUniformLocation(program_id_, "clip_plane2");
+    uniform_handles.clip_plane3 = glGetUniformLocation(program_id_, "clip_plane3");
+    uniform_handles.clip_plane4 = glGetUniformLocation(program_id_, "clip_plane4");
+    uniform_handles.clip_plane5 = glGetUniformLocation(program_id_, "clip_plane5");
 }
 
-Shader Shader::createFromCode(const char* const vertex_code, const char* const fragment_code)
+ShaderBase ShaderBase::createFromFiles(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
 {
-    return Shader(vertex_code, fragment_code, ShaderSource::CODE);
+    return ShaderBase(vertex_shader_path, fragment_shader_path, ShaderSource::FILE);
 }
 
-void Shader::loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path)
+ShaderBase ShaderBase::createFromCode(const char* const vertex_code, const char* const fragment_code)
+{
+    return ShaderBase(vertex_code, fragment_code, ShaderSource::CODE);
+}
+
+void ShaderBase::loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path)
 {
     std::string vertex_code, fragment_code;
-    // Read the Vertex Shader code from the file
+    // Read the Vertex ShaderBase code from the file
     std::ifstream VertexShaderStream(vertex_path, std::ios::in);
     if (VertexShaderStream.is_open())
     {
@@ -49,7 +67,7 @@ void Shader::loadShaderFromFiles(const std::string& vertex_path, const std::stri
         throw std::runtime_error("Not able to open " + vertex_path);
     }
 
-    // Read the Fragment Shader code from the file
+    // Read the Fragment ShaderBase code from the file
     std::ifstream FragmentShaderStream(fragment_path, std::ios::in);
     if (FragmentShaderStream.is_open())
     {
@@ -66,7 +84,7 @@ void Shader::loadShaderFromFiles(const std::string& vertex_path, const std::stri
     loadShadersFromSourceCode(vertex_code, fragment_code);
 }
 
-void Shader::loadShadersFromSourceCode(const std::string& vertex_code, const std::string& fragment_code)
+void ShaderBase::loadShadersFromSourceCode(const std::string& vertex_code, const std::string& fragment_code)
 {
     GLint Result = GL_FALSE;
     int InfoLogLength;
@@ -74,12 +92,12 @@ void Shader::loadShadersFromSourceCode(const std::string& vertex_code, const std
     GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
     GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
-    // Compile Vertex Shader
+    // Compile Vertex ShaderBase
     char const* VertexSourcePointer = vertex_code.c_str();
     glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
     glCompileShader(VertexShaderID);
 
-    // Check Vertex Shader
+    // Check Vertex ShaderBase
     glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
     glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if (InfoLogLength > 0)
@@ -90,12 +108,12 @@ void Shader::loadShadersFromSourceCode(const std::string& vertex_code, const std
         printf("%s\n", &VertexShaderErrorMessage[0]);
     }
 
-    // Compile Fragment Shader
+    // Compile Fragment ShaderBase
     char const* FragmentSourcePointer = fragment_code.c_str();
     glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
     glCompileShader(FragmentShaderID);
 
-    // Check Fragment Shader
+    // Check Fragment ShaderBase
     glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
     glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if (InfoLogLength > 0)
@@ -129,17 +147,17 @@ void Shader::loadShadersFromSourceCode(const std::string& vertex_code, const std
     glDeleteShader(FragmentShaderID);
 }
 
-void Shader::use() const
+void ShaderBase::use() const
 {
     glUseProgram(program_id_);
 }
 
-void Shader::unUse() const
+void ShaderBase::unUse() const
 {
     glUseProgram(0);
 }
 
-GLuint Shader::programId() const
+GLuint ShaderBase::programId() const
 {
     return program_id_;
 }

@@ -5,29 +5,7 @@
 
 #include "opengl_low_level/opengl_header.h"
 
-namespace shaders
-{
-// clang-format off
-constexpr char* kBasicVertexCode = 
-"#version 150 \n"
-"layout(location = 0) in vec3 vertexPosition_modelspace;\n"
-"void main(){\n"
-"    gl_Position.xyz = vertexPosition_modelspace;\n"
-"    gl_Position.w = 1.0;\n"
-"}\n";
-
-constexpr char* kBasicFragmentCode = 
-"#version 150 \n"
-"in vec3 fragmentColor;\n"
-"out vec3 color;\n"
-"void main(){\n"
-"	color = vec3(1, 0, 0);\n"
-"}\n";
-
-// clang-format on
-}  // namespace shaders
-
-class Shader
+class ShaderBase
 {
     enum class ShaderSource
     {
@@ -35,37 +13,60 @@ class Shader
         CODE
     };
 
-private:
+protected:
     GLuint program_id_;
 
     void loadShadersFromSourceCode(const std::string& vertex_code, const std::string& fragment_code);
     void loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path);
 
-    Shader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src);
+    ShaderBase(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src);
+
+    void setUniformHandles();
 
 public:
-    Shader() = default;
+    ShaderBase() = default;
 
-    static Shader createFromFiles(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
-    static Shader createFromCode(const char* const vertex_code, const char* const fragment_code);
+    static ShaderBase createFromFiles(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
+    static ShaderBase createFromCode(const char* const vertex_code, const char* const fragment_code);
 
     GLuint programId() const;
 
     void use() const;
     void unUse() const;
+
+    struct UniformHandles
+    {
+        // Custom transform
+        GLint has_custom_transform;
+        GLint custom_translation_mat;
+        GLint custom_rotation_mat;
+        GLint custom_scale_mat;
+
+        // Clip planes
+        GLint use_clip_plane;
+
+        GLint clip_plane0;
+        GLint clip_plane1;
+        GLint clip_plane2;
+        GLint clip_plane3;
+        GLint clip_plane4;
+        GLint clip_plane5;
+    };
+
+    UniformHandles uniform_handles;
 };
 
 struct ShaderCollection
 {
-    Shader text_shader;
-    Shader plot_box_shader;
-    Shader scatter_shader;
-    Shader basic_plot_shader;
-    Shader plot_2d_shader;
-    Shader plot_3d_shader;
-    Shader img_plot_shader;
-    Shader draw_mesh_shader;
-    Shader legend_shader;
+    ShaderBase text_shader;
+    ShaderBase plot_box_shader;
+    ShaderBase scatter_shader;
+    ShaderBase basic_plot_shader;
+    ShaderBase plot_2d_shader;
+    ShaderBase plot_3d_shader;
+    ShaderBase img_plot_shader;
+    ShaderBase draw_mesh_shader;
+    ShaderBase legend_shader;
 };
 
 #endif  // MAIN_APPLICATION_SHADER_H_
