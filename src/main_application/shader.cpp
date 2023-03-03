@@ -14,6 +14,8 @@ Plot2DShader::Plot2DShader(const std::string& vertex_shader, const std::string& 
 void Plot2DShader::setUniformHandles()
 {
     uniform_handles.half_line_width = glGetUniformLocation(program_id_, "half_line_width");
+    uniform_handles.z_offset = glGetUniformLocation(program_id_, "z_offset");
+    uniform_handles.use_dash = glGetUniformLocation(program_id_, "use_dash");
 }
 
 ShaderBase::ShaderBase(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
@@ -51,6 +53,8 @@ void ShaderBase::setBaseUniformHandles()
     base_uniform_handles.clip_plane5 = glGetUniformLocation(program_id_, "clip_plane5");
 
     base_uniform_handles.vertex_color = glGetUniformLocation(program_id_, "vertex_color");
+    base_uniform_handles.has_color_vec = glGetUniformLocation(program_id_, "has_color_vec");
+    base_uniform_handles.alpha = glGetUniformLocation(program_id_, "alpha");
 }
 
 void ShaderBase::loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path)

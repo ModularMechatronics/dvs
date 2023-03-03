@@ -50,6 +50,9 @@ public:
 
         // Misc
         GLint vertex_color;
+        GLint has_color_vec;
+
+        GLint alpha;
     };
 
     BaseUniformHandles base_uniform_handles;
@@ -67,6 +70,8 @@ public:
     struct UniformHandles
     {
         GLint half_line_width;
+        GLint z_offset;
+        GLint use_dash;
     };
 
     UniformHandles uniform_handles;
