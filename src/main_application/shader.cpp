@@ -5,6 +5,17 @@
 #include <sstream>
 #include <vector>
 
+Plot2DShader::Plot2DShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
+    : ShaderBase(vertex_shader, fragment_shader, src)
+{
+    setUniformHandles();
+}
+
+void Plot2DShader::setUniformHandles()
+{
+    uniform_handles.half_line_width = glGetUniformLocation(program_id_, "half_line_width");
+}
+
 ShaderBase::ShaderBase(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
 {
     if (ShaderSource::FILE == src)
@@ -20,34 +31,26 @@ ShaderBase::ShaderBase(const std::string& vertex_shader, const std::string& frag
         throw std::runtime_error("Invalid option for shader source!");
     }
 
-    setUniformHandles();
+    setBaseUniformHandles();
 }
 
-void ShaderBase::setUniformHandles()
+void ShaderBase::setBaseUniformHandles()
 {
-    uniform_handles.has_custom_transform = glGetUniformLocation(program_id_, "has_custom_transform");
-    uniform_handles.custom_translation_mat = glGetUniformLocation(program_id_, "custom_translation_mat");
-    uniform_handles.custom_rotation_mat = glGetUniformLocation(program_id_, "custom_rotation_mat");
-    uniform_handles.custom_scale_mat = glGetUniformLocation(program_id_, "custom_scale_mat");
+    base_uniform_handles.has_custom_transform = glGetUniformLocation(program_id_, "has_custom_transform");
+    base_uniform_handles.custom_translation_mat = glGetUniformLocation(program_id_, "custom_translation_mat");
+    base_uniform_handles.custom_rotation_mat = glGetUniformLocation(program_id_, "custom_rotation_mat");
+    base_uniform_handles.custom_scale_mat = glGetUniformLocation(program_id_, "custom_scale_mat");
 
-    uniform_handles.use_clip_plane = glGetUniformLocation(program_id_, "use_clip_plane");
+    base_uniform_handles.use_clip_plane = glGetUniformLocation(program_id_, "use_clip_plane");
 
-    uniform_handles.clip_plane0 = glGetUniformLocation(program_id_, "clip_plane0");
-    uniform_handles.clip_plane1 = glGetUniformLocation(program_id_, "clip_plane1");
-    uniform_handles.clip_plane2 = glGetUniformLocation(program_id_, "clip_plane2");
-    uniform_handles.clip_plane3 = glGetUniformLocation(program_id_, "clip_plane3");
-    uniform_handles.clip_plane4 = glGetUniformLocation(program_id_, "clip_plane4");
-    uniform_handles.clip_plane5 = glGetUniformLocation(program_id_, "clip_plane5");
-}
+    base_uniform_handles.clip_plane0 = glGetUniformLocation(program_id_, "clip_plane0");
+    base_uniform_handles.clip_plane1 = glGetUniformLocation(program_id_, "clip_plane1");
+    base_uniform_handles.clip_plane2 = glGetUniformLocation(program_id_, "clip_plane2");
+    base_uniform_handles.clip_plane3 = glGetUniformLocation(program_id_, "clip_plane3");
+    base_uniform_handles.clip_plane4 = glGetUniformLocation(program_id_, "clip_plane4");
+    base_uniform_handles.clip_plane5 = glGetUniformLocation(program_id_, "clip_plane5");
 
-ShaderBase ShaderBase::createFromFiles(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
-{
-    return ShaderBase(vertex_shader_path, fragment_shader_path, ShaderSource::FILE);
-}
-
-ShaderBase ShaderBase::createFromCode(const char* const vertex_code, const char* const fragment_code)
-{
-    return ShaderBase(vertex_code, fragment_code, ShaderSource::CODE);
+    base_uniform_handles.vertex_color = glGetUniformLocation(program_id_, "vertex_color");
 }
 
 void ShaderBase::loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path)

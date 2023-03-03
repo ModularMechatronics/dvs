@@ -81,7 +81,6 @@ struct Converter
 Plot2D::Plot2D(const CommunicationHeader& hdr,
                ReceivedData& received_data,
                const std::unique_ptr<const ConvertedDataBase>& converted_data,
-
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
                const ShaderCollection& shader_collection,
@@ -151,8 +150,7 @@ void Plot2D::render()
     shader_collection_.plot_2d_shader.use();
     preRender(&shader_collection_.plot_2d_shader);
 
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "half_line_width"),
-                line_width_ / 600.0f);
+    glUniform1f(shader_collection_.plot_2d_shader.uniform_handles.half_line_width, line_width_ / 600.0f);
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "z_offset"), z_offset_);
     glUniform1i(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "use_dash"), 0);
     glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "alpha"), alpha_);

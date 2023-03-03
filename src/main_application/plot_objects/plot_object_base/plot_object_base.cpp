@@ -177,15 +177,16 @@ void PlotObjectBase::preRender(const ShaderBase* const shader_to_use)
 {
     if (has_custom_transform_)
     {
-        glUniform1i(shader_to_use->uniform_handles.has_custom_transform, static_cast<int>(1));
+        glUniform1i(shader_to_use->base_uniform_handles.has_custom_transform, static_cast<int>(1));
         glUniformMatrix4fv(
-            shader_to_use->uniform_handles.custom_translation_mat, 1, GL_FALSE, &custom_translation_[0][0]);
-        glUniformMatrix4fv(shader_to_use->uniform_handles.custom_rotation_mat, 1, GL_FALSE, &custom_rotation_[0][0]);
-        glUniformMatrix4fv(shader_to_use->uniform_handles.custom_scale_mat, 1, GL_FALSE, &custom_scale_[0][0]);
+            shader_to_use->base_uniform_handles.custom_translation_mat, 1, GL_FALSE, &custom_translation_[0][0]);
+        glUniformMatrix4fv(
+            shader_to_use->base_uniform_handles.custom_rotation_mat, 1, GL_FALSE, &custom_rotation_[0][0]);
+        glUniformMatrix4fv(shader_to_use->base_uniform_handles.custom_scale_mat, 1, GL_FALSE, &custom_scale_[0][0]);
     }
     else
     {
-        glUniform1i(shader_to_use->uniform_handles.has_custom_transform, static_cast<int>(0));
+        glUniform1i(shader_to_use->base_uniform_handles.has_custom_transform, static_cast<int>(0));
     }
 }
 
@@ -202,26 +203,18 @@ bool isPlotDataFunction(const Function fcn)
 
 void PlotObjectBase::modifyShader()
 {
-    glUniform3f(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "vertex_color"),
-                color_.red,
-                color_.green,
-                color_.blue);
-    glUseProgram(shader_collection_.scatter_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "vertex_color"),
-                color_.red,
-                color_.green,
-                color_.blue);
-    glUseProgram(shader_collection_.plot_2d_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "vertex_color"),
-                color_.red,
-                color_.green,
-                color_.blue);
-    glUseProgram(shader_collection_.plot_3d_shader.programId());
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "vertex_color"),
-                color_.red,
-                color_.green,
-                color_.blue);
-    glUseProgram(shader_collection_.basic_plot_shader.programId());
+    glUniform3f(
+        shader_collection_.basic_plot_shader.base_uniform_handles.vertex_color, color_.red, color_.green, color_.blue);
+    shader_collection_.scatter_shader.use();
+    glUniform3f(
+        shader_collection_.scatter_shader.base_uniform_handles.vertex_color, color_.red, color_.green, color_.blue);
+    shader_collection_.plot_2d_shader.use();
+    glUniform3f(
+        shader_collection_.plot_2d_shader.base_uniform_handles.vertex_color, color_.red, color_.green, color_.blue);
+    shader_collection_.plot_3d_shader.use();
+    glUniform3f(
+        shader_collection_.plot_3d_shader.base_uniform_handles.vertex_color, color_.red, color_.green, color_.blue);
+    shader_collection_.basic_plot_shader.use();
 }
 
 bool PlotObjectBase::isPersistent() const

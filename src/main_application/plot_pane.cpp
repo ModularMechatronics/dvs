@@ -94,40 +94,41 @@ void PlotPane::initShaders()
 {
     const std::string v_path = "../main_application/axes/shaders/plot_box_shader.vs";
     const std::string f_path = "../main_application/axes/shaders/plot_box_shader.fs";
-    shader_collection_.plot_box_shader = ShaderBase::createFromFiles(v_path, f_path);
+    shader_collection_.plot_box_shader = ShaderBase(v_path, f_path, ShaderSource::FILE);
 
     const std::string v_path_text = "../main_application/axes/shaders/text.vs";
     const std::string f_path_text = "../main_application/axes/shaders/text.fs";
-    shader_collection_.text_shader = ShaderBase::createFromFiles(v_path_text, f_path_text);
+    shader_collection_.text_shader = ShaderBase(v_path_text, f_path_text, ShaderSource::FILE);
 
     const std::string v_path_basic_plot_shader = "../main_application/axes/shaders/basic_plot_shader.vs";
     const std::string f_path_basic_plot_shader = "../main_application/axes/shaders/basic_plot_shader.fs";
     shader_collection_.basic_plot_shader =
-        ShaderBase::createFromFiles(v_path_basic_plot_shader, f_path_basic_plot_shader);
+        ShaderBase(v_path_basic_plot_shader, f_path_basic_plot_shader, ShaderSource::FILE);
 
     const std::string v_path_plot_2d_shader = "../main_application/axes/shaders/plot_2d_shader.vs";
     const std::string f_path_plot_2d_shader = "../main_application/axes/shaders/plot_2d_shader.fs";
-    shader_collection_.plot_2d_shader = ShaderBase::createFromFiles(v_path_plot_2d_shader, f_path_plot_2d_shader);
+    shader_collection_.plot_2d_shader = Plot2DShader(v_path_plot_2d_shader, f_path_plot_2d_shader, ShaderSource::FILE);
 
     const std::string v_path_plot_3d_shader = "../main_application/axes/shaders/plot_3d_shader.vs";
     const std::string f_path_plot_3d_shader = "../main_application/axes/shaders/plot_3d_shader.fs";
-    shader_collection_.plot_3d_shader = ShaderBase::createFromFiles(v_path_plot_3d_shader, f_path_plot_3d_shader);
+    shader_collection_.plot_3d_shader = ShaderBase(v_path_plot_3d_shader, f_path_plot_3d_shader, ShaderSource::FILE);
 
     const std::string v_path_img_plot_shader = "../main_application/axes/shaders/img.vs";
     const std::string f_path_img_plot_shader = "../main_application/axes/shaders/img.fs";
-    shader_collection_.img_plot_shader = ShaderBase::createFromFiles(v_path_img_plot_shader, f_path_img_plot_shader);
+    shader_collection_.img_plot_shader = ShaderBase(v_path_img_plot_shader, f_path_img_plot_shader, ShaderSource::FILE);
 
     const std::string v_path_scatter_shader = "../main_application/axes/shaders/scatter_shader.vs";
     const std::string f_path_scatter_shader = "../main_application/axes/shaders/scatter_shader.fs";
-    shader_collection_.scatter_shader = ShaderBase::createFromFiles(v_path_scatter_shader, f_path_scatter_shader);
+    shader_collection_.scatter_shader = ShaderBase(v_path_scatter_shader, f_path_scatter_shader, ShaderSource::FILE);
 
     const std::string v_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.vs";
     const std::string f_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.fs";
-    shader_collection_.draw_mesh_shader = ShaderBase::createFromFiles(v_path_draw_mesh_shader, f_path_draw_mesh_shader);
+    shader_collection_.draw_mesh_shader =
+        ShaderBase(v_path_draw_mesh_shader, f_path_draw_mesh_shader, ShaderSource::FILE);
 
     const std::string v_path_legend_shader = "../main_application/axes/shaders/legend_shader.vs";
     const std::string f_path_legend_shader = "../main_application/axes/shaders/legend_shader.fs";
-    shader_collection_.legend_shader = ShaderBase::createFromFiles(v_path_legend_shader, f_path_legend_shader);
+    shader_collection_.legend_shader = ShaderBase(v_path_legend_shader, f_path_legend_shader, ShaderSource::FILE);
 }
 
 PlotPane::PlotPane(wxWindow* parent,
