@@ -16,12 +16,12 @@ inline std::chrono::high_resolution_clock::time_point getTimeNow()
     return std::chrono::high_resolution_clock::now();
 }
 
-inline std::string timePointsToString(const std::chrono::high_resolution_clock::time_point& t0,
-                                      const std::chrono::high_resolution_clock::time_point& t1)
+inline double timePointsToString(const std::chrono::high_resolution_clock::time_point& t0,
+                                 const std::chrono::high_resolution_clock::time_point& t1)
 {
     std::chrono::duration<double, std::milli> ms_double = t1 - t0;
 
-    return std::to_string(ms_double.count());
+    return ms_double.count();
 }
 
 }  // namespace timing

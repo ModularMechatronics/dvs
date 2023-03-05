@@ -440,13 +440,13 @@ void testScroll()
 
     DatasetReader* dataset_reader = new DatasetReader("../../leddar_dataset/20200706_171559_part27_1170_1370/output");
 
-    setCurrentElement("secondary");
+    setCurrentElement("point_cloud");
     clearView();
     waitForFlush();
     axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
     view(-38.0, 32.0);
 
-    setCurrentElement("main");
+    setCurrentElement("right");
     clearView();
     waitForFlush();
     axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
@@ -488,7 +488,7 @@ void testScroll()
         }
         else if (q == 'd')
         {
-            idx = (idx == dataset_reader->numLidarFiles() - 1U) ? dataset_reader->numLidarFiles() - 1U : (idx + 1U);
+            idx = (idx == (dataset_reader->numLidarFiles() - 1U)) ? (dataset_reader->numLidarFiles() - 1U) : (idx + 1U);
         }
         else
         {

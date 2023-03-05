@@ -255,8 +255,8 @@ void AxesRenderer::renderViewAngles()
 
     glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
 
-    const int az = static_cast<float>(view_angles_.getSnappedAzimuth() * 180.0f / M_PI);
-    const int el = static_cast<float>(view_angles_.getSnappedElevation() * 180.0f / M_PI);
+    const int az = static_cast<int>(view_angles_.getSnappedAzimuth() * 180.0 / M_PI);
+    const int el = static_cast<int>(view_angles_.getSnappedElevation() * 180.0 / M_PI);
 
     const std::string view_angle_str = "[ " + std::to_string(az) + ", " + std::to_string(el) + " ]";
     const float y_coord = -1.0f + 20.0f / height_;

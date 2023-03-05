@@ -132,6 +132,7 @@ public:
 };
 
 void testBasic();
+void testScroll();
 
 }  // namespace ad_dataset
 
