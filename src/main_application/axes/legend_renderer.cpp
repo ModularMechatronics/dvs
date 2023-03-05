@@ -144,15 +144,13 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
 
     shader_collection_.plot_box_shader.use();
 
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0, 0.0, 0.0);
+    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor({0.0f, 0.0f, 0.0f});
 
     edge_vao_.updateBufferData(0, legend_edge_vertices_.data(), num_vertices_edge_, 3);
     edge_vao_.render(num_vertices_edge_);
 
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"),
-                253.0f / 255.0f,
-                246.0f / 255.0f,
-                228.0f / 255.0f);
+    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(
+        {253.0f / 255.0f, 246.0f / 255.0f, 228.0f / 255.0f});
     inner_vao_.updateBufferData(0, legend_inner_vertices_.data(), num_vertices_inner_, 3);
     inner_vao_.render(num_vertices_inner_);
 
@@ -170,10 +168,8 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
         const float kf = k;
         const float z_center = z_max - scale_factor_ * (z_offset + legend_element_z_delta * kf);
 
-        glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "scatter_mode"),
-                    static_cast<int>(-1));
-        glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "color_map_selection"),
-                    static_cast<int>(0));
+        shader_collection_.legend_shader.base_uniform_handles.scatter_mode.setInt(-1);
+        shader_collection_.legend_shader.base_uniform_handles.color_map_selection.setInt(0);
         if (legend_properties[k].type == LegendType::LINE)
         {
             const RGBTripletf col = legend_properties[k].color;
@@ -199,10 +195,9 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
         }
         else if (legend_properties[k].type == LegendType::DOT)
         {
-            glUniform1f(glGetUniformLocation(shader_collection_.legend_shader.programId(), "point_size"),
-                        legend_properties[k].point_size);
-            glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "scatter_mode"),
-                        static_cast<int>(legend_properties[k].scatter_style));
+            shader_collection_.legend_shader.base_uniform_handles.point_size.setFloat(legend_properties[k].point_size);
+            shader_collection_.legend_shader.base_uniform_handles.scatter_mode.setInt(
+                static_cast<int>(legend_properties[k].scatter_style));
 
             const RGBTripletf col = legend_properties[k].color;
             legend_shape_vertices[0] = x_center;
@@ -221,8 +216,8 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
         {
             if (legend_properties[k].has_color_map)
             {
-                glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "color_map_selection"),
-                            static_cast<int>(legend_properties[k].color_map) + 1);
+                shader_collection_.legend_shader.base_uniform_handles.color_map_selection.setInt(
+                    static_cast<int>(legend_properties[k].color_map) + 1);
                 const size_t num_segments = 6;
                 const float radius = scale_factor_ * 0.1;
                 renderColorMapLegend(
@@ -231,8 +226,7 @@ void LegendRenderer::render(const std::vector<LegendProperties>& legend_properti
                 legend_shape_.updateBufferData(1, legend_shape_colors, num_segments * 7, 3);
                 legend_shape_.render(num_segments * 3, OGLPrimitiveType::TRIANGLES);
 
-                glUniform1i(glGetUniformLocation(shader_collection_.legend_shader.programId(), "color_map_selection"),
-                            static_cast<int>(0));
+                shader_collection_.legend_shader.base_uniform_handles.color_map_selection.setInt(0);
 
                 legend_shape_.render(num_segments * 4, num_segments * 3, OGLPrimitiveType::LINE_STRIP);
             }

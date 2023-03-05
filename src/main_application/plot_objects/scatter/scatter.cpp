@@ -101,30 +101,23 @@ void Scatter2D::modifyShader()
 {
     PlotObjectBase::modifyShader();
     shader_collection_.scatter_shader.use();
-    glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "point_size"), point_size_);
-    glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"),
-                static_cast<int>(scatter_style_));
+    shader_collection_.scatter_shader.base_uniform_handles.point_size.setFloat(point_size_);
+    shader_collection_.scatter_shader.base_uniform_handles.scatter_mode.setInt(static_cast<int>(scatter_style_));
     if (has_color_)
     {
         shader_collection_.scatter_shader.base_uniform_handles.has_color_vec.setInt(1);
     }
     else if (has_distance_from_)
     {
-        glUniform3f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "distance_from_point"),
-                    distance_from_.getPoint().x,
-                    distance_from_.getPoint().y,
-                    distance_from_.getPoint().z);
-        glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "min_dist"),
-                    distance_from_.getMinDist());
-        glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "max_dist"),
-                    distance_from_.getMaxDist());
-        glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "has_distance_from"),
-                    static_cast<int>(1));
-        glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "distance_from_type"),
-                    static_cast<int>(distance_from_.getDistFromType()));
+        shader_collection_.scatter_shader.uniform_handles.distance_from_point.setVec(distance_from_.getPoint());
+        shader_collection_.scatter_shader.uniform_handles.min_dist.setFloat(distance_from_.getMinDist());
+        shader_collection_.scatter_shader.uniform_handles.max_dist.setFloat(distance_from_.getMaxDist());
+        shader_collection_.scatter_shader.uniform_handles.has_distance_from.setInt(1);
+        shader_collection_.scatter_shader.uniform_handles.distance_from_type.setInt(
+            static_cast<int>(distance_from_.getDistFromType()));
+        shader_collection_.scatter_shader.base_uniform_handles.color_map_selection.setInt(static_cast<int>(color_map_) +
+                                                                                          1);
         shader_collection_.scatter_shader.base_uniform_handles.has_color_vec.setInt(0);
-        glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "color_map_selection"),
-                    static_cast<int>(color_map_) + 1);
     }
     else
     {

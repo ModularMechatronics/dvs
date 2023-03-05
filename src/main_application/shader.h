@@ -1,6 +1,7 @@
 #ifndef MAIN_APPLICATION_SHADER_H_
 #define MAIN_APPLICATION_SHADER_H_
 
+#include <glm/glm.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -46,9 +47,20 @@ public:
         glUniform3f(handle_, v.x, v.y, v.z);
     }
 
+    void setVec(const dvs::Vec3d& v)
+    {
+        dvs::Vec3d vf{v.x, v.y, v.z};
+        glUniform3f(handle_, vf.x, vf.y, vf.z);
+    }
+
     void setVec(const float x, const float y, const float z)
     {
         glUniform3f(handle_, x, y, z);
+    }
+
+    void setMat4x4(const glm::mat4& mat)
+    {
+        glUniformMatrix4fv(handle_, 1, GL_FALSE, &(mat[0][0]));
     }
 };
 
@@ -89,12 +101,22 @@ public:
         GLint clip_plane5;
 
         // Misc
-        GLint vertex_color;
+        Uniform vertex_color;
         Uniform has_color_vec;
 
         Uniform alpha;
         Uniform min_z;
         Uniform max_z;
+
+        Uniform model_view_proj_mat;
+
+        Uniform axes_width;
+        Uniform axes_height;
+
+        Uniform color_map_selection;
+
+        Uniform scatter_mode;
+        Uniform point_size;
     };
 
     BaseUniformHandles base_uniform_handles;
@@ -114,6 +136,8 @@ public:
         Uniform half_line_width;
         Uniform z_offset;
         Uniform use_dash;
+
+        Uniform inverse_model_view_proj_mat;
     };
 
     UniformHandles uniform_handles;
@@ -132,6 +156,8 @@ public:
     {
         Uniform half_line_width;
         Uniform use_dash;
+
+        Uniform inverse_model_view_proj_mat;
     };
 
     UniformHandles uniform_handles;
@@ -151,8 +177,50 @@ public:
         Uniform face_color;
         Uniform edge_color;
         Uniform is_edge;
-        Uniform color_map_selection;
         Uniform interpolate_colormap;
+        Uniform global_illumination_active;
+        Uniform light_pos;
+        Uniform rotation_mat;
+    };
+
+    UniformHandles uniform_handles;
+};
+
+class ImShowShader : public ShaderBase
+{
+private:
+    void setUniformHandles();
+
+public:
+    ImShowShader() = default;
+    ImShowShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src);
+
+    struct UniformHandles
+    {
+        Uniform use_global_alpha;
+        Uniform global_alpha;
+    };
+
+    UniformHandles uniform_handles;
+};
+
+class ScatterShader : public ShaderBase
+{
+private:
+    void setUniformHandles();
+
+public:
+    ScatterShader() = default;
+    ScatterShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src);
+
+    struct UniformHandles
+    {
+        Uniform distance_from_point;
+        Uniform min_dist;
+        Uniform max_dist;
+        Uniform has_distance_from;
+        Uniform distance_from_type;
+        Uniform color_map_selection;
     };
 
     UniformHandles uniform_handles;
@@ -180,11 +248,11 @@ struct ShaderCollection
 {
     TextShader text_shader;
     ShaderBase plot_box_shader;
-    ShaderBase scatter_shader;
+    ScatterShader scatter_shader;
     ShaderBase basic_plot_shader;
     Plot2DShader plot_2d_shader;
     Plot3DShader plot_3d_shader;
-    ShaderBase img_plot_shader;
+    ImShowShader img_plot_shader;
     DrawMeshShader draw_mesh_shader;
     ShaderBase legend_shader;
 };

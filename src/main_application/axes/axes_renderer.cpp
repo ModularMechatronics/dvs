@@ -286,10 +286,7 @@ void AxesRenderer::render()
 
         const glm::mat4 mvp = projection_mat * view_mat * model_mat * window_scale_mat_;
 
-        glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
-                           1,
-                           GL_FALSE,
-                           &mvp[0][0]);
+        shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
         zoom_rect_.render(mouse_pos_at_press_,
                           current_mouse_pos_,
@@ -313,12 +310,8 @@ void AxesRenderer::render()
         scale_mat[3][3] = 1.0;
         const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
 
-        glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
-                           1,
-                           GL_FALSE,
-                           &mvp[0][0]);
-        glUniform3f(
-            glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"), 0.0f, 0.0f, 0.0f);
+        shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
+        shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor({0.0f, 0.0f, 0.0f});
         plot_box_silhouette_.render(
             axes_side_configuration_, view_angles_.getSnappedAzimuth(), view_angles_.getSnappedElevation());
     }
@@ -344,16 +337,10 @@ void AxesRenderer::renderLegend()
     const glm::mat4 mvp = orth_projection_mat * view_mat;
 
     shader_collection_.legend_shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.legend_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
+    shader_collection_.legend_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
     shader_collection_.plot_box_shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
+    shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
     legend_renderer_.render(legend_properties_, width_, height_);
 }
 
@@ -372,16 +359,8 @@ void AxesRenderer::renderBoxGrid()
 
     const glm::mat4 mvp = projection_mat * view_mat * model_mat * scale_mat * window_scale_mat_;
 
-    const RGBTripletf color_vec{element_settings_.grid_color};
-
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"),
-                color_vec.red,
-                color_vec.green,
-                color_vec.blue);
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
+    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(element_settings_.grid_color);
+    shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
     plot_box_grid_.render(grid_vectors_, axes_limits_, view_angles_, axes_side_configuration_);
 }
@@ -403,67 +382,37 @@ void AxesRenderer::plotBegin()
     const glm::mat4 i_mvp = glm::inverse(mvp);
 
     shader_collection_.basic_plot_shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.basic_plot_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
+    shader_collection_.basic_plot_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
     shader_collection_.draw_mesh_shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "rotation_mat"),
-                       1,
-                       GL_FALSE,
-                       &model_mat[0][0]);
-    glUniform1i(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "global_illumination_active"),
-                static_cast<int>(global_illumination_active_));
-    glUniform3f(glGetUniformLocation(shader_collection_.draw_mesh_shader.programId(), "light_pos"),
-                light_pos_.x,
-                light_pos_.y,
-                light_pos_.z);
+    shader_collection_.draw_mesh_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
+
+    shader_collection_.draw_mesh_shader.uniform_handles.rotation_mat.setMat4x4(model_mat);
+    shader_collection_.draw_mesh_shader.uniform_handles.global_illumination_active.setInt(global_illumination_active_);
+    shader_collection_.draw_mesh_shader.uniform_handles.light_pos.setVec(light_pos_);
 
     shader_collection_.scatter_shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
+    shader_collection_.scatter_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
     shader_collection_.plot_2d_shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
-    glUniformMatrix4fv(
-        glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "inverse_model_view_proj_mat"),
-        1,
-        GL_FALSE,
-        &i_mvp[0][0]);
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "axes_width"), width_);
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_2d_shader.programId(), "axes_height"), height_);
+    shader_collection_.plot_2d_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
+
+    shader_collection_.plot_2d_shader.uniform_handles.inverse_model_view_proj_mat.setMat4x4(i_mvp);
+    shader_collection_.plot_2d_shader.base_uniform_handles.axes_width.setFloat(width_);
+    shader_collection_.plot_2d_shader.base_uniform_handles.axes_height.setFloat(height_);
 
     shader_collection_.plot_3d_shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
-    glUniformMatrix4fv(
-        glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "inverse_model_view_proj_mat"),
-        1,
-        GL_FALSE,
-        &i_mvp[0][0]);
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "axes_width"), width_);
-    glUniform1f(glGetUniformLocation(shader_collection_.plot_3d_shader.programId(), "axes_height"), height_);
+
+    shader_collection_.plot_3d_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
+    shader_collection_.plot_3d_shader.uniform_handles.inverse_model_view_proj_mat.setMat4x4(i_mvp);
+    shader_collection_.plot_3d_shader.base_uniform_handles.axes_width.setFloat(width_);
+    shader_collection_.plot_3d_shader.base_uniform_handles.axes_height.setFloat(height_);
 
     shader_collection_.basic_plot_shader.use();
     enableClipPlanes();
 
     shader_collection_.img_plot_shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
+    shader_collection_.img_plot_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
     shader_collection_.basic_plot_shader.use();
 }
@@ -501,17 +450,11 @@ void AxesRenderer::renderBackground()
     const glm::mat4 rotation_mat = glm::rotate(static_cast<float>(M_PI / 2.0), glm::vec3(1.0, 0.0, 0.0));
     const glm::mat4 mvp = projection_mat * view_mat * rotation_mat;
 
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
+    shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
     const RGBTripletf color_vec{tab_background_color_};
 
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"),
-                color_vec.red,
-                color_vec.green,
-                color_vec.blue);
+    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(tab_background_color_);
     plot_pane_background_.render(width_, height_);
 }
 
@@ -530,14 +473,8 @@ void AxesRenderer::renderPlotBox()
 
     const RGBTripletf color_vec{element_settings_.plot_box_color};
 
-    glUniformMatrix4fv(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "model_view_proj_mat"),
-                       1,
-                       GL_FALSE,
-                       &mvp[0][0]);
-    glUniform3f(glGetUniformLocation(shader_collection_.plot_box_shader.programId(), "vertex_color"),
-                color_vec.red,
-                color_vec.green,
-                color_vec.blue);
+    shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
+    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(element_settings_.plot_box_color);
 
     plot_box_walls_.render(axes_side_configuration_);
 }

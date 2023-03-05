@@ -96,9 +96,8 @@ void Stem::modifyShader()
 {
     PlotObjectBase::modifyShader();
     shader_collection_.scatter_shader.use();
-    glUniform1f(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "point_size"), 10);
-    glUniform1i(glGetUniformLocation(shader_collection_.scatter_shader.programId(), "scatter_mode"),
-                static_cast<int>(2));
+    shader_collection_.scatter_shader.base_uniform_handles.point_size.setFloat(10.0f);
+    shader_collection_.scatter_shader.base_uniform_handles.scatter_mode.setInt(2);
 }
 
 std::unique_ptr<const ConvertedDataBase> Stem::convertRawData(const CommunicationHeader& hdr,

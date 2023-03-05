@@ -123,14 +123,12 @@ void ImShow::render()
 
     if ((num_channels_ == 4) || (num_channels_ == 2))
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "use_global_alpha"),
-                    static_cast<int>(0));
+        shader_collection_.img_plot_shader.uniform_handles.use_global_alpha.setInt(0);
     }
     else
     {
-        glUniform1i(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "use_global_alpha"),
-                    static_cast<int>(1));
-        glUniform1f(glGetUniformLocation(shader_collection_.img_plot_shader.programId(), "global_alpha"), alpha_);
+        shader_collection_.img_plot_shader.uniform_handles.use_global_alpha.setInt(1);
+        shader_collection_.img_plot_shader.uniform_handles.global_alpha.setFloat(alpha_);
     }
 
     vertex_buffer_.render(dims_.rows * dims_.cols * 6);

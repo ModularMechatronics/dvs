@@ -16,6 +16,7 @@ void Plot2DShader::setUniformHandles()
     uniform_handles.half_line_width = Uniform(program_id_, "half_line_width");
     uniform_handles.z_offset = Uniform(program_id_, "z_offset");
     uniform_handles.use_dash = Uniform(program_id_, "use_dash");
+    uniform_handles.inverse_model_view_proj_mat = Uniform(program_id_, "inverse_model_view_proj_mat");
 }
 
 Plot3DShader::Plot3DShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
@@ -28,6 +29,37 @@ void Plot3DShader::setUniformHandles()
 {
     uniform_handles.half_line_width = Uniform(program_id_, "half_line_width");
     uniform_handles.use_dash = Uniform(program_id_, "use_dash");
+    uniform_handles.inverse_model_view_proj_mat = Uniform(program_id_, "inverse_model_view_proj_mat");
+}
+
+ImShowShader::ImShowShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
+    : ShaderBase(vertex_shader, fragment_shader, src)
+{
+    setUniformHandles();
+}
+
+void ImShowShader::setUniformHandles()
+{
+    uniform_handles.use_global_alpha = Uniform(program_id_, "use_global_alpha");
+    uniform_handles.global_alpha = Uniform(program_id_, "global_alpha");
+}
+
+ScatterShader::ScatterShader(const std::string& vertex_shader,
+                             const std::string& fragment_shader,
+                             const ShaderSource src)
+    : ShaderBase(vertex_shader, fragment_shader, src)
+{
+    setUniformHandles();
+}
+
+void ScatterShader::setUniformHandles()
+{
+    uniform_handles.distance_from_point = Uniform(program_id_, "distance_from_point");
+    uniform_handles.min_dist = Uniform(program_id_, "min_dist");
+    uniform_handles.max_dist = Uniform(program_id_, "max_dist");
+    uniform_handles.has_distance_from = Uniform(program_id_, "has_distance_from");
+    uniform_handles.distance_from_type = Uniform(program_id_, "distance_from_type");
+    uniform_handles.color_map_selection = Uniform(program_id_, "color_map_selection");
 }
 
 DrawMeshShader::DrawMeshShader(const std::string& vertex_shader,
@@ -43,8 +75,10 @@ void DrawMeshShader::setUniformHandles()
     uniform_handles.face_color = Uniform(program_id_, "face_color");
     uniform_handles.edge_color = Uniform(program_id_, "edge_color");
     uniform_handles.is_edge = Uniform(program_id_, "is_edge");
-    uniform_handles.color_map_selection = Uniform(program_id_, "color_map_selection");
     uniform_handles.interpolate_colormap = Uniform(program_id_, "interpolate_colormap");
+    uniform_handles.global_illumination_active = Uniform(program_id_, "global_illumination_active");
+    uniform_handles.light_pos = Uniform(program_id_, "light_pos");
+    uniform_handles.rotation_mat = Uniform(program_id_, "rotation_mat");
 }
 
 TextShader::TextShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
@@ -93,12 +127,22 @@ void ShaderBase::setBaseUniformHandles()
     base_uniform_handles.clip_plane4 = glGetUniformLocation(program_id_, "clip_plane4");
     base_uniform_handles.clip_plane5 = glGetUniformLocation(program_id_, "clip_plane5");
 
-    base_uniform_handles.vertex_color = glGetUniformLocation(program_id_, "vertex_color");
+    base_uniform_handles.vertex_color = Uniform(program_id_, "vertex_color");
     base_uniform_handles.has_color_vec = Uniform(program_id_, "has_color_vec");
     base_uniform_handles.alpha = Uniform(program_id_, "alpha");
 
     base_uniform_handles.min_z = Uniform(program_id_, "min_z");
     base_uniform_handles.max_z = Uniform(program_id_, "max_z");
+
+    base_uniform_handles.model_view_proj_mat = Uniform(program_id_, "model_view_proj_mat");
+
+    base_uniform_handles.axes_width = Uniform(program_id_, "axes_width");
+    base_uniform_handles.axes_height = Uniform(program_id_, "axes_height");
+
+    base_uniform_handles.color_map_selection = Uniform(program_id_, "color_map_selection");
+
+    base_uniform_handles.scatter_mode = Uniform(program_id_, "scatter_mode");
+    base_uniform_handles.point_size = Uniform(program_id_, "point_size");
 }
 
 void ShaderBase::loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path)

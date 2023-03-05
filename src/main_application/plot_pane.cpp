@@ -115,11 +115,12 @@ void PlotPane::initShaders()
 
     const std::string v_path_img_plot_shader = "../main_application/axes/shaders/img.vs";
     const std::string f_path_img_plot_shader = "../main_application/axes/shaders/img.fs";
-    shader_collection_.img_plot_shader = ShaderBase(v_path_img_plot_shader, f_path_img_plot_shader, ShaderSource::FILE);
+    shader_collection_.img_plot_shader =
+        ImShowShader(v_path_img_plot_shader, f_path_img_plot_shader, ShaderSource::FILE);
 
     const std::string v_path_scatter_shader = "../main_application/axes/shaders/scatter_shader.vs";
     const std::string f_path_scatter_shader = "../main_application/axes/shaders/scatter_shader.fs";
-    shader_collection_.scatter_shader = ShaderBase(v_path_scatter_shader, f_path_scatter_shader, ShaderSource::FILE);
+    shader_collection_.scatter_shader = ScatterShader(v_path_scatter_shader, f_path_scatter_shader, ShaderSource::FILE);
 
     const std::string v_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.vs";
     const std::string f_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.fs";

@@ -131,14 +131,14 @@ void DrawMesh::render()
 
     if (has_color_map_)
     {
-        shader_collection_.draw_mesh_shader.uniform_handles.color_map_selection.setInt(static_cast<int>(color_map_) +
-                                                                                       1);
+        shader_collection_.draw_mesh_shader.base_uniform_handles.color_map_selection.setInt(
+            static_cast<int>(color_map_) + 1);
         shader_collection_.draw_mesh_shader.uniform_handles.interpolate_colormap.setInt(
             static_cast<int>(interpolate_colormap_));
     }
     else
     {
-        shader_collection_.draw_mesh_shader.uniform_handles.color_map_selection.setInt(0);
+        shader_collection_.draw_mesh_shader.base_uniform_handles.color_map_selection.setInt(0);
     }
 
     shader_collection_.draw_mesh_shader.uniform_handles.is_edge.setInt(1);
