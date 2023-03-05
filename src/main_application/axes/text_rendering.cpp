@@ -84,14 +84,18 @@ void TextRenderer::renderTextFromLeftCenter(
         const Character& ch = characters[text[k]];
 
         const float xpos = x + ch.bearing.x * scale;
-        float ypos = y - (ch.size.y - ch.bearing.y) * scale;
+        float ypos = y;
 
         const float w = ch.size.x * scale * sx;
         const float h = ch.size.y * scale * sy;
 
-        if ((text[k] == 'p') || (text[k] == 'q') || (text[k] == 'j') || (text[k] == 'y') || (text[k] == 'g'))
+        if ((text[k] == 'j') || (text[k] == 'y') || (text[k] == 'g'))
         {
-            ypos = ypos - 2.0f / axes_height;
+            ypos = ypos - 15000.0f * scale / axes_height;
+        }
+        else if ((text[k] == 'p') || (text[k] == 'q'))
+        {
+            ypos = ypos - 14000.0f * scale / axes_height;
         }
 
         const float vertices[6][4] = {{xpos, ypos + h, 0.0f, 0.0f},
