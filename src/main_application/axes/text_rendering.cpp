@@ -83,13 +83,18 @@ void TextRenderer::renderTextFromLeftCenter(
     {
         const Character& ch = characters[text[k]];
 
-        const float xpos = x + ch.bearing.x * scale;
+        float xpos = x + ch.bearing.x * scale;
         float ypos = y;
 
         const float w = ch.size.x * scale * sx;
         const float h = ch.size.y * scale * sy;
 
-        if ((text[k] == 'j') || (text[k] == 'y') || (text[k] == 'g'))
+        if (text[k] == '-')
+        {
+            ypos = ypos + 18.0f * 1000.0f * scale / axes_height;
+            xpos = xpos - 3.0f * 1000.0f * scale / axes_height;
+        }
+        else if ((text[k] == 'j') || (text[k] == 'y') || (text[k] == 'g'))
         {
             ypos = ypos - 15000.0f * scale / axes_height;
         }
