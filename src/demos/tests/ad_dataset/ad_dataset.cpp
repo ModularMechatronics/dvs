@@ -30,7 +30,7 @@ DatasetReaderFast::DatasetReaderFast(const std::string& dataset_file)
     readFiles();
     auto t1 = dvs::timing::getTimeNow();
 
-    std::cout << "Read in time: " << dvs::timing::timePointsToString(t0, t1) << std::endl;
+    std::cout << "Read in time: " << dvs::timing::timePointsToMsDouble(t0, t1) << std::endl;
 }
 
 void DatasetReaderFast::readFiles()
@@ -357,7 +357,7 @@ void testBasic()
     if (use_fast_reader)
     {
         dataset_reader =
-            new DatasetReaderFast("../../leddar_dataset/20200706_171559_part27_1170_1370/output/all_data_102.bin");
+            new DatasetReaderFast("../../leddar_dataset/20200706_171559_part27_1170_1370/output/all_data_199.bin");
     }
     else
     {

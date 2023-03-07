@@ -32,9 +32,11 @@ public:
                                                                    const uint8_t* const data_ptr);
 
 private:
-    VertexBuffer vertex_buffer_;
-
     uint8_t num_channels_;
+    unsigned int texture_handle_;
+    unsigned int vertex_buffer_object_, vertex_array_object_, extended_buffer_object_;
+    Vector<float> vertices_;
+    Vector<unsigned int> indices_;
 
     internal::Dimension2D dims_;
     int width_;
