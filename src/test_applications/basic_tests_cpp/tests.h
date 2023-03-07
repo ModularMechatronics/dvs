@@ -835,7 +835,7 @@ void testImShow()
     const uint32_t num_rows = 800, num_cols = 800;
     ImageRGB<float> img3(num_rows, num_cols);
     ImageGray<float> img1(num_rows, num_cols);
-    ImageRGBA<float> img4(num_rows, num_cols);
+    ImageRGBA<double> img4(num_rows, num_cols);
 
     ImageGray<uint8_t> img1_uint8(num_rows, num_cols);
     ImageRGB<uint8_t> img3_uint8(num_rows, num_cols);

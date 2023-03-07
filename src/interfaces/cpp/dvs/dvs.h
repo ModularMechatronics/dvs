@@ -479,8 +479,8 @@ void surf(const MatrixConstView<T>& x, const MatrixConstView<T>& y, const Matrix
 
 template <typename T, typename... Us> void imShow(const ImageGray<T>& img, const Us&... settings)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value,
-                  "Only float and uint8_t supported for imShow!");
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value || std::is_same<T, double>::value,
+                  "Only float, double and uint8_t supported for imShow!");
 
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -497,8 +497,8 @@ template <typename T, typename... Us> void imShow(const ImageGray<T>& img, const
 
 template <typename T, typename... Us> void imShow(const ImageGrayAlpha<T>& img, const Us&... settings)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value,
-                  "Only float and uint8_t supported for imShow!");
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value || std::is_same<T, double>::value,
+                  "Only float, double and uint8_t supported for imShow!");
 
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -515,8 +515,8 @@ template <typename T, typename... Us> void imShow(const ImageGrayAlpha<T>& img, 
 
 template <typename T, typename... Us> void imShow(const ImageRGB<T>& img, const Us&... settings)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value,
-                  "Only float and uint8_t supported for imShow!");
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value || std::is_same<T, double>::value,
+                  "Only float, double and uint8_t supported for imShow!");
 
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -533,8 +533,8 @@ template <typename T, typename... Us> void imShow(const ImageRGB<T>& img, const 
 
 template <typename T, typename... Us> void imShow(const ImageRGBA<T>& img, const Us&... settings)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value,
-                  "Only float and uint8_t supported for imShow!");
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value || std::is_same<T, double>::value,
+                  "Only float, double and uint8_t supported for imShow!");
 
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -551,8 +551,8 @@ template <typename T, typename... Us> void imShow(const ImageRGBA<T>& img, const
 
 template <typename T, typename... Us> void imShow(const ImageGrayConstView<T>& img, const Us&... settings)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value,
-                  "Only float and uint8_t supported for imShow!");
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value || std::is_same<T, double>::value,
+                  "Only float, double and uint8_t supported for imShow!");
 
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -569,8 +569,8 @@ template <typename T, typename... Us> void imShow(const ImageGrayConstView<T>& i
 
 template <typename T, typename... Us> void imShow(const ImageGrayAlphaConstView<T>& img, const Us&... settings)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value,
-                  "Only float and uint8_t supported for imShow!");
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value || std::is_same<T, double>::value,
+                  "Only float, double and uint8_t supported for imShow!");
 
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -587,8 +587,8 @@ template <typename T, typename... Us> void imShow(const ImageGrayAlphaConstView<
 
 template <typename T, typename... Us> void imShow(const ImageRGBConstView<T>& img, const Us&... settings)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value,
-                  "Only float and uint8_t supported for imShow!");
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value || std::is_same<T, double>::value,
+                  "Only float, double and uint8_t supported for imShow!");
 
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -605,8 +605,8 @@ template <typename T, typename... Us> void imShow(const ImageRGBConstView<T>& im
 
 template <typename T, typename... Us> void imShow(const ImageRGBAConstView<T>& img, const Us&... settings)
 {
-    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value,
-                  "Only float and uint8_t supported for imShow!");
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint8_t>::value || std::is_same<T, double>::value,
+                  "Only float, double and uint8_t supported for imShow!");
 
     internal::CommunicationHeader hdr{internal::Function::IM_SHOW};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());

@@ -29,6 +29,7 @@ struct InputParams
     size_t num_channels;
     Dimension2D dims;
     float z_offset;
+    DataType data_type;
     float multiplier;
     size_t num_bytes_per_element;
 
@@ -36,20 +37,24 @@ struct InputParams
     InputParams(const size_t num_channels_,
                 const Dimension2D& dims_,
                 const float z_offset_,
-                const DataType dt,
+                const DataType data_type_,
                 const size_t num_bytes_per_element_)
-        : num_channels{num_channels_}, dims{dims_}, z_offset{z_offset_}, num_bytes_per_element{num_bytes_per_element_}
+        : num_channels{num_channels_},
+          dims{dims_},
+          z_offset{z_offset_},
+          data_type{data_type_},
+          num_bytes_per_element{num_bytes_per_element_}
     {
         // Multiplier for FLOAT and DOUBLE is 1.0f, so that's left as the default case
         multiplier = 1.0f;
-        multiplier = (dt == DataType::INT8) ? (1.0f / 127.0f) : multiplier;
-        multiplier = (dt == DataType::INT16) ? (1.0f / 32767.0f) : multiplier;
-        multiplier = (dt == DataType::INT32) ? (1.0f / 2147483647.0f) : multiplier;
-        multiplier = (dt == DataType::INT64) ? (1.0f / 9223372036854775807.0f) : multiplier;
-        multiplier = (dt == DataType::UINT8) ? (1.0f / 255.0f) : multiplier;
-        multiplier = (dt == DataType::UINT16) ? (1.0f / 65535.0f) : multiplier;
-        multiplier = (dt == DataType::UINT32) ? (1.0f / 4294967295.0f) : multiplier;
-        multiplier = (dt == DataType::UINT64) ? (1.0f / 18446744073709551615.0f) : multiplier;
+        multiplier = (data_type_ == DataType::INT8) ? (1.0f / 127.0f) : multiplier;
+        multiplier = (data_type_ == DataType::INT16) ? (1.0f / 32767.0f) : multiplier;
+        multiplier = (data_type_ == DataType::INT32) ? (1.0f / 2147483647.0f) : multiplier;
+        multiplier = (data_type_ == DataType::INT64) ? (1.0f / 9223372036854775807.0f) : multiplier;
+        multiplier = (data_type_ == DataType::UINT8) ? (1.0f / 255.0f) : multiplier;
+        multiplier = (data_type_ == DataType::UINT16) ? (1.0f / 65535.0f) : multiplier;
+        multiplier = (data_type_ == DataType::UINT32) ? (1.0f / 4294967295.0f) : multiplier;
+        multiplier = (data_type_ == DataType::UINT64) ? (1.0f / 18446744073709551615.0f) : multiplier;
     }
 };
 
@@ -147,7 +152,7 @@ ImShow::ImShow(const CommunicationHeader& hdr,
 
     GLenum gl_data_type;
 
-    if (plot_object_attributes.data_type == DataType::FLOAT)
+    if ((plot_object_attributes.data_type == DataType::FLOAT) || (plot_object_attributes.data_type == DataType::DOUBLE))
     {
         gl_data_type = GL_FLOAT;
     }
@@ -247,127 +252,183 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
 {
     ConvertedData* converted_data = new ConvertedData;
 
-    if (input_params.num_channels == 4)
+    const size_t num_elements_per_channel = input_params.dims.cols * input_params.dims.rows;
+    const size_t num_elements_per_channel_2 = num_elements_per_channel * 2U;
+    const size_t num_elements_per_channel_3 = num_elements_per_channel * 3U;
+    const size_t num_cols = input_params.dims.cols;
+
+    const size_t num_bytes_for_one_channel =
+        input_params.dims.rows * input_params.dims.cols * input_params.num_bytes_per_element;
+
+    const size_t num_output_channels = ((input_params.num_channels == 4) || (input_params.num_channels == 2)) ? 4 : 3;
+
+    converted_data->image_data = new uint8_t[num_bytes_for_one_channel * num_output_channels];
+
+    size_t idx = 0;
+
+    if (input_params.data_type == DataType::DOUBLE)
     {
-        converted_data->image_data =
-            new uint8_t[input_params.dims.rows * input_params.dims.cols * 4 * input_params.num_bytes_per_element];
+        const double* const data_ptr = reinterpret_cast<const double* const>(input_data);
+        float* new_data_ptr = reinterpret_cast<float*>(converted_data->image_data);
 
-        const T* const data_ptr = reinterpret_cast<const T* const>(input_data);
-        T* new_data_ptr = reinterpret_cast<T*>(converted_data->image_data);
-
-        const size_t num_elements_per_channel = input_params.dims.cols * input_params.dims.rows;
-        const size_t num_elements_per_channel_2 = num_elements_per_channel * 2U;
-        const size_t num_elements_per_channel_3 = num_elements_per_channel * 3U;
-        const size_t num_cols = input_params.dims.cols;
-
-        size_t idx = 0;
-
-        for (size_t r = 0; r < input_params.dims.rows; r++)
+        if (input_params.num_channels == 4)
         {
-            const size_t outer_idx_r = r * num_cols;
-            const size_t outer_idx_g = outer_idx_r + num_elements_per_channel;
-            const size_t outer_idx_b = outer_idx_r + num_elements_per_channel_2;
-            const size_t outer_idx_a = outer_idx_r + num_elements_per_channel_3;
-
-            for (size_t c = 0; c < input_params.dims.cols; c++)
+            for (size_t r = 0; r < input_params.dims.rows; r++)
             {
-                new_data_ptr[idx] = data_ptr[outer_idx_r + c];
-                new_data_ptr[idx + 1] = data_ptr[outer_idx_g + c];
-                new_data_ptr[idx + 2] = data_ptr[outer_idx_b + c];
-                new_data_ptr[idx + 3] = data_ptr[outer_idx_a + c];
+                const size_t outer_idx_r = r * num_cols;
+                const size_t outer_idx_g = outer_idx_r + num_elements_per_channel;
+                const size_t outer_idx_b = outer_idx_r + num_elements_per_channel_2;
+                const size_t outer_idx_a = outer_idx_r + num_elements_per_channel_3;
 
-                idx += 4;
+                for (size_t c = 0; c < input_params.dims.cols; c++)
+                {
+                    new_data_ptr[idx] = data_ptr[outer_idx_r + c];
+                    new_data_ptr[idx + 1] = data_ptr[outer_idx_g + c];
+                    new_data_ptr[idx + 2] = data_ptr[outer_idx_b + c];
+                    new_data_ptr[idx + 3] = data_ptr[outer_idx_a + c];
+
+                    idx += 4;
+                }
             }
         }
-    }
-    else if (input_params.num_channels == 2)
-    {
-        converted_data->image_data =
-            new uint8_t[input_params.dims.rows * input_params.dims.cols * 4 * input_params.num_bytes_per_element];
-
-        const T* const data_ptr = reinterpret_cast<const T* const>(input_data);
-        T* new_data_ptr = reinterpret_cast<T*>(converted_data->image_data);
-
-        const size_t num_elements_per_channel = input_params.dims.cols * input_params.dims.rows;
-        const size_t num_cols = input_params.dims.cols;
-
-        size_t idx = 0;
-
-        for (size_t r = 0; r < input_params.dims.rows; r++)
+        else if (input_params.num_channels == 2)
         {
-            const size_t outer_idx_gray = r * num_cols;
-            const size_t outer_idx_alpha = outer_idx_gray + num_elements_per_channel;
-            for (size_t c = 0; c < input_params.dims.cols; c++)
+            for (size_t r = 0; r < input_params.dims.rows; r++)
             {
-                const T gray_pxl_data = data_ptr[outer_idx_gray + c];
-                new_data_ptr[idx] = gray_pxl_data;
-                new_data_ptr[idx + 1] = gray_pxl_data;
-                new_data_ptr[idx + 2] = gray_pxl_data;
-                new_data_ptr[idx + 3] = data_ptr[outer_idx_alpha + c];
+                const size_t outer_idx_gray = r * num_cols;
+                const size_t outer_idx_alpha = outer_idx_gray + num_elements_per_channel;
+                for (size_t c = 0; c < input_params.dims.cols; c++)
+                {
+                    const T gray_pxl_data = data_ptr[outer_idx_gray + c];
+                    new_data_ptr[idx] = gray_pxl_data;
+                    new_data_ptr[idx + 1] = gray_pxl_data;
+                    new_data_ptr[idx + 2] = gray_pxl_data;
+                    new_data_ptr[idx + 3] = data_ptr[outer_idx_alpha + c];
 
-                idx += 4;
+                    idx += 4;
+                }
             }
         }
-    }
-    else if (input_params.num_channels == 3)
-    {
-        converted_data->image_data =
-            new uint8_t[input_params.dims.rows * input_params.dims.cols * 3 * input_params.num_bytes_per_element];
-
-        const T* const data_ptr = reinterpret_cast<const T* const>(input_data);
-        T* new_data_ptr = reinterpret_cast<T*>(converted_data->image_data);
-
-        const size_t num_elements_per_channel = input_params.dims.cols * input_params.dims.rows;
-        const size_t num_elements_per_channel_2 = num_elements_per_channel * 2U;
-        const size_t num_cols = input_params.dims.cols;
-
-        size_t idx = 0;
-
-        for (size_t r = 0; r < input_params.dims.rows; r++)
+        else if (input_params.num_channels == 3)
         {
-            const size_t outer_idx_r = r * num_cols;
-            const size_t outer_idx_g = outer_idx_r + num_elements_per_channel;
-            const size_t outer_idx_b = outer_idx_r + num_elements_per_channel_2;
-            for (size_t c = 0; c < input_params.dims.cols; c++)
+            for (size_t r = 0; r < input_params.dims.rows; r++)
             {
-                new_data_ptr[idx] = data_ptr[outer_idx_r + c];
-                new_data_ptr[idx + 1] = data_ptr[outer_idx_g + c];
-                new_data_ptr[idx + 2] = data_ptr[outer_idx_b + c];
+                const size_t outer_idx_r = r * num_cols;
+                const size_t outer_idx_g = outer_idx_r + num_elements_per_channel;
+                const size_t outer_idx_b = outer_idx_r + num_elements_per_channel_2;
+                for (size_t c = 0; c < input_params.dims.cols; c++)
+                {
+                    new_data_ptr[idx] = data_ptr[outer_idx_r + c];
+                    new_data_ptr[idx + 1] = data_ptr[outer_idx_g + c];
+                    new_data_ptr[idx + 2] = data_ptr[outer_idx_b + c];
 
-                idx += 3;
+                    idx += 3;
+                }
             }
         }
-    }
-    else if (input_params.num_channels == 1)
-    {
-        converted_data->image_data =
-            new uint8_t[input_params.dims.rows * input_params.dims.cols * 3 * input_params.num_bytes_per_element];
-
-        const T* const data_ptr = reinterpret_cast<const T* const>(input_data);
-        T* new_data_ptr = reinterpret_cast<T*>(converted_data->image_data);
-
-        const size_t num_cols = input_params.dims.cols;
-
-        size_t idx = 0;
-
-        for (size_t r = 0; r < input_params.dims.rows; r++)
+        else if (input_params.num_channels == 1)
         {
-            const size_t outer_idx = r * num_cols;
-            for (size_t c = 0; c < input_params.dims.cols; c++)
+            for (size_t r = 0; r < input_params.dims.rows; r++)
             {
-                const T pxl_data = data_ptr[outer_idx + c];
+                const size_t outer_idx = r * num_cols;
+                for (size_t c = 0; c < input_params.dims.cols; c++)
+                {
+                    const T pxl_data = data_ptr[outer_idx + c];
 
-                new_data_ptr[idx] = pxl_data;
-                new_data_ptr[idx + 1] = pxl_data;
-                new_data_ptr[idx + 2] = pxl_data;
+                    new_data_ptr[idx] = pxl_data;
+                    new_data_ptr[idx + 1] = pxl_data;
+                    new_data_ptr[idx + 2] = pxl_data;
 
-                idx += 3;
+                    idx += 3;
+                }
             }
+        }
+        else
+        {
+            std::cout << "Invalid number of channels: " << input_params.num_channels << std::endl;
         }
     }
     else
     {
-        std::cout << "Invalid number of channels: " << input_params.num_channels << std::endl;
+        const T* const data_ptr = reinterpret_cast<const T* const>(input_data);
+        T* new_data_ptr = reinterpret_cast<T*>(converted_data->image_data);
+
+        if (input_params.num_channels == 4)
+        {
+            for (size_t r = 0; r < input_params.dims.rows; r++)
+            {
+                const size_t outer_idx_r = r * num_cols;
+                const size_t outer_idx_g = outer_idx_r + num_elements_per_channel;
+                const size_t outer_idx_b = outer_idx_r + num_elements_per_channel_2;
+                const size_t outer_idx_a = outer_idx_r + num_elements_per_channel_3;
+
+                for (size_t c = 0; c < input_params.dims.cols; c++)
+                {
+                    new_data_ptr[idx] = data_ptr[outer_idx_r + c];
+                    new_data_ptr[idx + 1] = data_ptr[outer_idx_g + c];
+                    new_data_ptr[idx + 2] = data_ptr[outer_idx_b + c];
+                    new_data_ptr[idx + 3] = data_ptr[outer_idx_a + c];
+
+                    idx += 4;
+                }
+            }
+        }
+        else if (input_params.num_channels == 2)
+        {
+            for (size_t r = 0; r < input_params.dims.rows; r++)
+            {
+                const size_t outer_idx_gray = r * num_cols;
+                const size_t outer_idx_alpha = outer_idx_gray + num_elements_per_channel;
+                for (size_t c = 0; c < input_params.dims.cols; c++)
+                {
+                    const T gray_pxl_data = data_ptr[outer_idx_gray + c];
+                    new_data_ptr[idx] = gray_pxl_data;
+                    new_data_ptr[idx + 1] = gray_pxl_data;
+                    new_data_ptr[idx + 2] = gray_pxl_data;
+                    new_data_ptr[idx + 3] = data_ptr[outer_idx_alpha + c];
+
+                    idx += 4;
+                }
+            }
+        }
+        else if (input_params.num_channels == 3)
+        {
+            for (size_t r = 0; r < input_params.dims.rows; r++)
+            {
+                const size_t outer_idx_r = r * num_cols;
+                const size_t outer_idx_g = outer_idx_r + num_elements_per_channel;
+                const size_t outer_idx_b = outer_idx_r + num_elements_per_channel_2;
+                for (size_t c = 0; c < input_params.dims.cols; c++)
+                {
+                    new_data_ptr[idx] = data_ptr[outer_idx_r + c];
+                    new_data_ptr[idx + 1] = data_ptr[outer_idx_g + c];
+                    new_data_ptr[idx + 2] = data_ptr[outer_idx_b + c];
+
+                    idx += 3;
+                }
+            }
+        }
+        else if (input_params.num_channels == 1)
+        {
+            for (size_t r = 0; r < input_params.dims.rows; r++)
+            {
+                const size_t outer_idx = r * num_cols;
+                for (size_t c = 0; c < input_params.dims.cols; c++)
+                {
+                    const T pxl_data = data_ptr[outer_idx + c];
+
+                    new_data_ptr[idx] = pxl_data;
+                    new_data_ptr[idx + 1] = pxl_data;
+                    new_data_ptr[idx + 2] = pxl_data;
+
+                    idx += 3;
+                }
+            }
+        }
+        else
+        {
+            std::cout << "Invalid number of channels: " << input_params.num_channels << std::endl;
+        }
     }
 
     return std::unique_ptr<ConvertedData>(converted_data);
