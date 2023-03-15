@@ -62,7 +62,7 @@ void testPlot2Basic()
     clearView();
     axis({-1.0, -1.5f, -1.0}, {6.0, 1.5f, 1.0f});
 
-    setProperties(properties::ID0, properties::UPDATABLE);
+    setProperties(properties::ID0, properties::not_ready::UPDATABLE);
     const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0, 5.0, num_elements);
 
     for (size_t k = 0; k < num_its; k++)
@@ -113,7 +113,7 @@ void testSurfBasic()
             }
         }
 
-        surf(x_mat, y_mat, z_mat, properties::ColorMap::JET, properties::UPDATABLE, properties::ID0);
+        surf(x_mat, y_mat, z_mat, properties::ColorMap::JET, properties::not_ready::UPDATABLE, properties::ID0);
         t += 0.1;
 
         azimuth = azimuth > 180.0f ? -180.0f : azimuth + 1.0f;

@@ -3,7 +3,6 @@ Pre release:
 - Refactor from top down, from the app and down into the GUI
 - Refactor legend properties
 - Finalize grid numbers placement when snapped
-- Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
@@ -22,6 +21,7 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Reducing number of axis numbers depending on rotation
 - Move "modifyShader" stuff to "preRender"?
 - Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
