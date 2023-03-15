@@ -33,6 +33,8 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     current_mouse_interaction_type_ = MouseInteractionType::ROTATE;
     overridden_mouse_interaction_type_ = MouseInteractionType::UNCHANGED;
 
+    is_image_view_ = false;
+
     const size_t num_lines = axes_settings_.num_axes_ticks;
     inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
            static_cast<double>(num_lines - 1);
@@ -240,7 +242,11 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
     switch (mit)
     {
         case MouseInteractionType::ROTATE:
-            changeRotation(dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain, current_mouse_interaction_axis);
+            if (!is_image_view_)
+            {
+                changeRotation(
+                    dx_mod * rotation_mouse_gain, dy_mod * rotation_mouse_gain, current_mouse_interaction_axis);
+            }
             break;
         case MouseInteractionType::ZOOM:
             // if (SnappingAxis::None == view_angles_.getSnappingAxis()) // TODO: Add back

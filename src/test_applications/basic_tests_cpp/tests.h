@@ -877,6 +877,7 @@ void testImShow()
     setCurrentElement("p_view_0");
     clearView();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    setCurrentElementToImageView();
     imShow(img3, properties::Alpha(127));
 
     setCurrentElement("p_view_1");

@@ -762,6 +762,13 @@ inline void deletePlotObject(const internal::ItemId id)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void setCurrentElementToImageView()
+{
+    internal::CommunicationHeader hdr{internal::Function::CURRENT_ELEMENT_AS_IMAGE_VIEW};
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void waitForFlush()
 {
     internal::CommunicationHeader hdr{internal::Function::WAIT_FOR_FLUSH};

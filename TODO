@@ -4,7 +4,6 @@ Pre release:
 - Refactor legend properties
 - Finalize grid numbers placement when snapped
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
-- Reducing number of axis numbers depending on rotation
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
@@ -16,9 +15,6 @@ Pre release:
 - Finalize demos
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
-- Move "modifyShader" stuff to "preRender"?
-- Setting "setAsImageView" or something that disables rotation and fixes view, so one can only pan and zoom
-- Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
 - Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
@@ -26,6 +22,9 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Reducing number of axis numbers depending on rotation
+- Move "modifyShader" stuff to "preRender"?
+- Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
 - Make sure all dynamic data is released in plot objects
 - Delete gl buffers with "glDeleteBuffers"
 - Release all textures, VBOs/VAOs in plot objects

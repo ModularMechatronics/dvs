@@ -46,6 +46,7 @@ private:
     MouseInteractionType overridden_mouse_interaction_type_;
     bool mouse_pressed_;
     bool should_draw_zoom_rect_;
+    bool is_image_view_;
 
     ViewAngles view_angles_;
     ViewAngles default_view_angles_;
@@ -77,6 +78,16 @@ public:
     bool shouldDrawZoomRect() const
     {
         return should_draw_zoom_rect_;
+    }
+
+    void setIsImageView(const bool val)
+    {
+        is_image_view_ = val;
+
+        if (is_image_view_)
+        {
+            view_angles_.setAngles(0.0, -90.0 * M_PI / 180.0);
+        }
     }
 
     void registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis, const int dx, const int dy);

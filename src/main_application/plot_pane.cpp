@@ -284,6 +284,10 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     {
         plot_data_handler_->propertiesExtension(plot_object_attributes.id, properties_data);
     }
+    else if (fcn == Function::CURRENT_ELEMENT_AS_IMAGE_VIEW)
+    {
+        axes_interactor_.setIsImageView(true);
+    }
     else if (fcn == Function::DELETE_PLOT_OBJECT)
     {
         const ItemId id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
@@ -997,6 +1001,7 @@ void PlotPane::clearPane()
     wait_for_flush_ = false;
     axes_from_min_max_disabled_ = false;
 
+    axes_interactor_.setIsImageView(false);
     axes_interactor_.setViewAngles(0, M_PI);
     axes_interactor_.setAxesLimits(Vec3d(-1.0, -1.0, -1.0), Vec3d(1.0, 1.0, 1.0));
     axes_interactor_.showLegend(false);
