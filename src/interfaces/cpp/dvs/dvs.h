@@ -754,6 +754,14 @@ inline void setCurrentElement(const std::string& name)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void deletePlotObject(const internal::ItemId id)
+{
+    internal::CommunicationHeader hdr{internal::Function::DELETE_PLOT_OBJECT};
+    hdr.append(internal::CommunicationHeaderObjectType::ITEM_ID, id);
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void waitForFlush()
 {
     internal::CommunicationHeader hdr{internal::Function::WAIT_FOR_FLUSH};

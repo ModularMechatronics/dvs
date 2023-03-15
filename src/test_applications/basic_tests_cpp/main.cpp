@@ -42,7 +42,8 @@ int main(int argc, char* argv[])
                              {"stairs", testStairs},
                              {"legend", testLegend},
                              {"openProjectFile", testOpenProjectFile},
-                             {"testSetProperties", testSetProperties}};
+                             {"testSetProperties", testSetProperties},
+                             {"deletePlotObject", testDeleteObject}};
 
     if (argc == 1)
     {

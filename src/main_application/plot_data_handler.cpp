@@ -64,6 +64,19 @@ void PlotDataHandler::propertiesExtension(const internal::ItemId id, const Prope
     }
 }
 
+void PlotDataHandler::deletePlotObject(const ItemId id)
+{
+    const auto q = std::find_if(plot_datas_.begin(), plot_datas_.end(), [&id](const PlotObjectBase* const pd) -> bool {
+        return pd->getId() == id;
+    });
+
+    if (q != plot_datas_.end())
+    {
+        delete (*q);
+        plot_datas_.erase(q);
+    }
+}
+
 void PlotDataHandler::addData(const CommunicationHeader& hdr,
                               const PlotObjectAttributes& plot_object_attributes,
                               const PropertiesData& properties_data,

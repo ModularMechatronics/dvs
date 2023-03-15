@@ -1067,4 +1067,36 @@ void testSetProperties()
     std::cout << "Setting properties of plot to be YELLOW and LineWidth(3)" << std::endl;
 }
 
+void testDeleteObject()
+{
+    const int num_rows = 200, num_cols = 250;
+    Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+
+    const double inc = 0.4;
+
+    for (int r = 0; r < num_rows; r++)
+    {
+        for (int c = 0; c < num_cols; c++)
+        {
+            const double rd = static_cast<double>(r - 5) * inc;
+            const double cd = static_cast<double>(c - 5) * inc * 2;
+            x(r, c) = c;
+            y(r, c) = r;
+            const float r_val = std::sqrt(rd * rd + cd * cd);
+            z(r, c) = 50.0 * std::sin(r_val * 0.05);
+        }
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    surf(x, y, z, properties::FaceColor::BLUE);
+    surf(x, y, z + 1.0, properties::FaceColor::YELLOW, properties::ID7);
+
+    std::cout << "Press enter to continue delete yellow surf object..." << std::endl;
+
+    std::cin.ignore();
+
+    deletePlotObject(properties::ID7);
+}
+
 #endif  // TEST_APPLICATIONS_BASIC_TESTS_CPP_TESTS_H_

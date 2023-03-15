@@ -284,6 +284,11 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     {
         plot_data_handler_->propertiesExtension(plot_object_attributes.id, properties_data);
     }
+    else if (fcn == Function::DELETE_PLOT_OBJECT)
+    {
+        const ItemId id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
+        plot_data_handler_->deletePlotObject(id);
+    }
     else if (fcn == Function::GLOBAL_ILLUMINATION)
     {
         axes_renderer_->activateGlobalIllumination(hdr.get(CommunicationHeaderObjectType::VEC3).as<Vec3d>());

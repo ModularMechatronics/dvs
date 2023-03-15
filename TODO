@@ -2,8 +2,6 @@ Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Refactor from top down, from the app and down into the GUI
 - Refactor legend properties
-- Refactor shaders
-- Delete gl buffers with "glDeleteBuffers"
 - Finalize grid numbers placement when snapped
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Reducing number of axis numbers depending on rotation
@@ -24,7 +22,6 @@ Pre release:
 - Change implementation of imShow to use texture instead of current method
 - Move "modifyShader" stuff to "preRender"?
 - Setting "setAsImageView" or something that disables rotation and fixes view, so one can only pan and zoom
-- deletePlotObject(ID id) that deletes object with specific ID
 - Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
 - Change name of application (to plotto or something)
 - Zoom with rect only if certain button is pressed
@@ -33,6 +30,7 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Delete gl buffers with "glDeleteBuffers"
 - Refactor/clean up window/tabs/plot elements system
 - Remove constexpr and constants from headers that doesn't need to be in the header
 - Make queues of received data instead, and put ConvertedData as a member of received data? Rename ReceivedData to InputData
