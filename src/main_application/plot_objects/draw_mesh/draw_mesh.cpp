@@ -117,8 +117,6 @@ void DrawMesh::findMinMax()
 
 void DrawMesh::render()
 {
-    glEnable(GL_BLEND);
-
     shader_collection_.draw_mesh_shader.use();
 
     preRender(&shader_collection_.draw_mesh_shader);
@@ -156,8 +154,6 @@ void DrawMesh::render()
     {
         vertex_buffer_.render(num_elements_to_render_);
     }
-
-    glDisable(GL_BLEND);
 }
 
 LegendProperties DrawMesh::getLegendProperties() const

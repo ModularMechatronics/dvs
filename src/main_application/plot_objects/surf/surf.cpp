@@ -151,8 +151,6 @@ void Surf::updateWithNewData(ReceivedData& received_data,
 
 void Surf::render()
 {
-    glEnable(GL_BLEND);
-
     shader_collection_.draw_mesh_shader.use();
     shader_collection_.draw_mesh_shader.uniform_handles.edge_color.setColor(edge_color_);
     shader_collection_.draw_mesh_shader.uniform_handles.face_color.setColor(face_color_);
@@ -192,8 +190,6 @@ void Surf::render()
         shader_collection_.draw_mesh_shader.uniform_handles.is_edge.setInt(0);
         vertex_buffer_.render(num_elements_to_render_);
     }
-
-    glDisable(GL_BLEND);
 }
 
 Surf::~Surf() {}

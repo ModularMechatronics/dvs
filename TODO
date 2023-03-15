@@ -16,10 +16,6 @@ Pre release:
 - Finalize demos
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
-- Make sure all dynamic data is released in plot objects
-- Release all textures, VBOs/VAOs in plot objects
-- glEnable(GL_BLEND); at the beginning end of every render call, move out?
-- Change implementation of imShow to use texture instead of current method
 - Move "modifyShader" stuff to "preRender"?
 - Setting "setAsImageView" or something that disables rotation and fixes view, so one can only pan and zoom
 - Remove passing the hdr to all PlotObjects, it can be easily retreived from ReceivedData
@@ -30,7 +26,9 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Make sure all dynamic data is released in plot objects
 - Delete gl buffers with "glDeleteBuffers"
+- Release all textures, VBOs/VAOs in plot objects
 - Refactor/clean up window/tabs/plot elements system
 - Remove constexpr and constants from headers that doesn't need to be in the header
 - Make queues of received data instead, and put ConvertedData as a member of received data? Rename ReceivedData to InputData

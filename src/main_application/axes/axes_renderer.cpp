@@ -367,6 +367,8 @@ void AxesRenderer::renderBoxGrid()
 
 void AxesRenderer::plotBegin()
 {
+    glEnable(GL_BLEND);
+
     const Vec3d axes_center = axes_limits_.getAxesCenter();
 
     const Vec3d scale = axes_limits_.getAxesScale() / 2.0;
@@ -419,6 +421,8 @@ void AxesRenderer::plotBegin()
 
 void AxesRenderer::plotEnd()
 {
+    glDisable(GL_BLEND);
+
     if (render_legend_)
     {
         renderLegend();

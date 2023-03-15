@@ -160,10 +160,8 @@ std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const Communi
 
 void Scatter2D::render()
 {
-    glEnable(GL_BLEND);
     shader_collection_.scatter_shader.use();
     vertex_buffer_.render(num_elements_);
-    glDisable(GL_BLEND);
 }
 
 Scatter2D::~Scatter2D() {}

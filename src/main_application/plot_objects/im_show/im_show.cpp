@@ -197,8 +197,6 @@ ImShow::ImShow(const CommunicationHeader& hdr,
 
 void ImShow::render()
 {
-    glEnable(GL_BLEND);
-
     shader_collection_.img_plot_shader.use();
 
     preRender(&shader_collection_.img_plot_shader);
@@ -217,8 +215,6 @@ void ImShow::render()
 
     glBindVertexArray(vertex_array_object_);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    glDisable(GL_BLEND);
 }
 
 ImShow::~ImShow()

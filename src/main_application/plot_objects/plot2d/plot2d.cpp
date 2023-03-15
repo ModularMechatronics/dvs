@@ -146,7 +146,6 @@ void Plot2D::findMinMax()
 
 void Plot2D::render()
 {
-    glEnable(GL_BLEND);
     shader_collection_.plot_2d_shader.use();
     preRender(&shader_collection_.plot_2d_shader);
 
@@ -165,8 +164,6 @@ void Plot2D::render()
     }
 
     vertex_buffer_.render(num_points_);
-
-    glDisable(GL_BLEND);
 }
 
 std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const CommunicationHeader& hdr,
