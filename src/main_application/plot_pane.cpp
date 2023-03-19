@@ -159,6 +159,8 @@ PlotPane::PlotPane(wxWindow* parent,
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
+    Show();
+
     wait_for_flush_ = false;
     shift_pressed_at_mouse_press_ = false;
     control_pressed_at_mouse_press_ = false;

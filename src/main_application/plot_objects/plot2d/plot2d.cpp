@@ -461,6 +461,8 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         converted_data->p2[idx + 22] = pt.p2.x;
         converted_data->p2[idx + 23] = pt.p2.y;
 
+        /*
+        // TODO: Currently broken, fix
         const float la_1 = length_along_tmp[k - 1];
         const float la = length_along_tmp[k];
 
@@ -479,6 +481,7 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         converted_data->length_along[length_along_idx + 9] = la;
         converted_data->length_along[length_along_idx + 10] = la;
         converted_data->length_along[length_along_idx + 11] = la;
+        */
 
         converted_data->idx_data[idx_idx] = 0;
         converted_data->idx_data[idx_idx + 1] = 1;
@@ -569,6 +572,8 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
     converted_data->idx_data[idx_idx + 4] = 4;
     converted_data->idx_data[idx_idx + 5] = 5;
 
+    /*
+    // TODO: Currently broken, fix
     const float la_1 = length_along_tmp[input_params.num_elements - 2];
     const float la = length_along_tmp[input_params.num_elements - 1];
 
@@ -579,6 +584,7 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
     converted_data->length_along[length_along_idx + 3] = la_1;
     converted_data->length_along[length_along_idx + 4] = la_1;
     converted_data->length_along[length_along_idx + 5] = la;
+    */
 
     delete[] length_along_tmp;
 

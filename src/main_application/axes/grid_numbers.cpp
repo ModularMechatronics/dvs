@@ -113,14 +113,15 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
 
         const glm::vec3 v_projected = glm::project(v3, view_model, projection, v_viewport);
         const std::string val = formatNumber(gv.x.data[k] + axes_center.x, 3);
-        if (cond2)
+        text_renderer.renderTextFromCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
+        /*if (cond2)
         {
             text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }
         else
         {
             text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
-        }
+        }*/
     }
 }
 
@@ -129,6 +130,7 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
                       const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
+                      const ViewAngles& view_angles,
                       const double azimuth,
                       const double elevation,
                       const float width,
@@ -175,13 +177,21 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
         {
             text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }*/
-        if (cond2)
+        // if (view_an)
+        if (view_angles.isSnappedLookingAlongNegativeY())
         {
             text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }
         else
         {
-            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
+            if (cond2)
+            {
+                text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
+            }
+            else
+            {
+                text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
+            }
         }
     }
 }
@@ -191,6 +201,7 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                       const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
+                      const ViewAngles& view_angles,
                       const double azimuth,
                       const double elevation,
                       const float width,
@@ -259,7 +270,14 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
         const glm::vec3 v_projected = glm::project(v3, view_model, projection, v_viewport);
         const std::string val = formatNumber(gv.z.data[k] + axes_center.z, 3);
 
-        text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
+        if (view_angles.isSnappedLookingAlongNegativeY())
+        {
+            text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
+        }
+        else
+        {
+            text_renderer.renderTextFromRightCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
+        }
     }
 }
 
@@ -341,6 +359,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_model_y,
                          v_viewport,
                          projection_mat,
+                         view_angles,
                          azimuth,
                          elevation,
                          width,
@@ -360,6 +379,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                          view_model_z,
                          v_viewport,
                          projection_mat,
+                         view_angles,
                          azimuth,
                          elevation,
                          width,

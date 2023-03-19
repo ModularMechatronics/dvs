@@ -51,6 +51,8 @@ WindowView::WindowView(
     name_ = window_settings.name;
     updateLabel();
 
+    Show();
+
     if (window_settings.tabs.size() == 0)
     {
         element_x_offset_ = 0;
@@ -172,8 +174,6 @@ WindowView::WindowView(
     Bind(wxEVT_RIGHT_DOWN, &WindowView::mouseRightPressedCallback, this);
 
     tab_buttons_.windowWasResized(this->GetSize());
-
-    Show();
 
     this->SetPosition(wxPoint(window_settings.x, window_settings.y));
     this->SetSize(wxSize(window_settings.width, window_settings.height));

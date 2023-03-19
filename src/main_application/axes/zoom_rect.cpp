@@ -73,7 +73,7 @@ void ZoomRect::render(const Vec2f mouse_pos_at_press,
     const glm::vec3 mouse_pos_at_press_unprojected =
         glm::unProject(mouse_pos_at_press_projected, view_model, projection_mat, v_viewport);
 
-    if (SnappingAxis::X == snapping_axis)
+    if (SnappingAxis::SA_X == snapping_axis)
     {
         const float x_start = mouse_pos_at_press_unprojected.y;
         const float y_start = mouse_pos_at_press_unprojected.z;
@@ -101,7 +101,7 @@ void ZoomRect::render(const Vec2f mouse_pos_at_press,
         rect_vertices[13] = x_start;
         rect_vertices[14] = y_start;
     }
-    else if (SnappingAxis::Y == snapping_axis)
+    else if (SnappingAxis::SA_Y == snapping_axis)
     {
         const float x_start = mouse_pos_at_press_unprojected.x;
         const float y_start = mouse_pos_at_press_unprojected.z;
@@ -129,7 +129,7 @@ void ZoomRect::render(const Vec2f mouse_pos_at_press,
         rect_vertices[13] = 0.0;
         rect_vertices[14] = y_start;
     }
-    else if (SnappingAxis::Z == snapping_axis)
+    else if (SnappingAxis::SA_Z == snapping_axis)
     {
         const float x_start = mouse_pos_at_press_unprojected.x;
         const float y_start = mouse_pos_at_press_unprojected.y;

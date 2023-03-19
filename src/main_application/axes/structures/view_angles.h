@@ -7,10 +7,10 @@ using namespace dvs;
 
 enum class SnappingAxis
 {
-    None,
-    X,
-    Y,
-    Z
+    SA_None,
+    SA_X,
+    SA_Y,
+    SA_Z
 };
 
 class ViewAngles

@@ -170,19 +170,19 @@ SnappingAxis ViewAngles::getSnappingAxis() const
 {
     if (isSnappedAlongX())
     {
-        return SnappingAxis::X;
+        return SnappingAxis::SA_X;
     }
     else if (isSnappedAlongY())
     {
-        return SnappingAxis::Y;
+        return SnappingAxis::SA_Y;
     }
     else if (isSnappedAlongZ())
     {
-        return SnappingAxis::Z;
+        return SnappingAxis::SA_Z;
     }
     else
     {
-        return SnappingAxis::None;
+        return SnappingAxis::SA_None;
     }
 }
 

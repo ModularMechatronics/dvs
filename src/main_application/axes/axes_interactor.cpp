@@ -111,7 +111,7 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
         const Vec3f min_vec = axes_center - scale_vec_div_2;
         const Vec3f max_vec = axes_center + scale_vec_div_2;
 
-        if (SnappingAxis::X == snapping_axis)
+        if (SnappingAxis::SA_X == snapping_axis)
         {
             const float x_start = mouse_pos_at_press_unprojected.y / 2.0f + 0.5f;
             const float y_start = mouse_pos_at_press_unprojected.z / 2.0f + 0.5f;
@@ -135,7 +135,7 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
             axes_limits_.setMin(Vec3f(min_vec.x, new_y_min, new_z_min));
             axes_limits_.setMax(Vec3f(max_vec.x, new_y_max, new_z_max));
         }
-        else if (SnappingAxis::Y == snapping_axis)
+        else if (SnappingAxis::SA_Y == snapping_axis)
         {
             // Normalize to be in the interval [0.0, 1.0]
             const float x_start = mouse_pos_at_press_unprojected.x / 2.0f + 0.5f;
@@ -160,7 +160,7 @@ void AxesInteractor::registerMouseReleased(const Vec2f& mouse_pos)
             axes_limits_.setMin(Vec3f(new_x_min, min_vec.y, new_z_min));
             axes_limits_.setMax(Vec3f(new_x_max, max_vec.y, new_z_max));
         }
-        else if (SnappingAxis::Z == snapping_axis)
+        else if (SnappingAxis::SA_Z == snapping_axis)
         {
             const float x_start = mouse_pos_at_press_unprojected.x / 2.0f + 0.5f;
             const float y_start = mouse_pos_at_press_unprojected.y / 2.0f + 0.5f;
@@ -249,7 +249,7 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
             }
             break;
         case MouseInteractionType::ZOOM:
-            // if (SnappingAxis::None == view_angles_.getSnappingAxis()) // TODO: Add back
+            // if (SnappingAxis::SA_None == view_angles_.getSnappingAxis()) // TODO: Add back
             {
                 changeZoom(dy_mod * zoom_mouse_gain, current_mouse_interaction_axis);
             }
@@ -305,7 +305,7 @@ void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
     const SnappingAxis snapping_axis = view_angles_.getSnappingAxis();
     Vec3d sa(1.0, 1.0, 1.0);
 
-    if (SnappingAxis::None == snapping_axis)  // TODO: Add back
+    if (SnappingAxis::SA_None == snapping_axis)  // TODO: Add back
     {
         if (mia == MouseInteractionAxis::X)
         {
@@ -337,15 +337,15 @@ void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
     }
     else
     {
-        if (snapping_axis == SnappingAxis::X)
+        if (snapping_axis == SnappingAxis::SA_X)
         {
             sa.x = 0.0;
         }
-        else if (snapping_axis == SnappingAxis::Y)
+        else if (snapping_axis == SnappingAxis::SA_Y)
         {
             sa.y = 0.0;
         }
-        else if (snapping_axis == SnappingAxis::Z)
+        else if (snapping_axis == SnappingAxis::SA_Z)
         {
             sa.z = 0.0;
         }
