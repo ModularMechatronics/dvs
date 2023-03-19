@@ -66,6 +66,31 @@ CursorSquareState getCursorSquareState(const Bound2D bound, const Bound2D bound_
     }
 }
 
+wxGLAttributes PlotPane::getGLAttributes() const
+{
+    wxGLAttributes attrs;
+    attrs.PlatformDefaults().RGBA().DoubleBuffer().Depth(16).Samplers(4).SampleBuffers(1).EndList();
+
+    if (!wxGLCanvas::IsDisplaySupported(attrs))
+    {
+        attrs.Reset();
+        attrs.PlatformDefaults().RGBA().DoubleBuffer().Depth(16).EndList();
+
+        if (!wxGLCanvas::IsDisplaySupported(attrs))
+        {
+            attrs.Reset();
+            attrs.PlatformDefaults().Defaults().EndList();
+
+            if (!wxGLCanvas::IsDisplaySupported(attrs))
+            {
+                throw std::runtime_error("Unable to set acceptable wxGLAttributes!");
+            }
+        }
+    }
+
+    return attrs;
+}
+
 wxGLContext* PlotPane::getContext()
 {
 #ifdef PLATFORM_APPLE_M
@@ -90,46 +115,27 @@ void PlotPane::lower()
     Lower();
 }
 
+template <typename T> T createShader(const std::string& base_path, const std::string& shader_name)
+{
+    const std::string v_path = base_path + shader_name + ".vs";
+    const std::string f_path = base_path + shader_name + ".fs";
+
+    return T{v_path, f_path, ShaderSource::FILE};
+}
+
 void PlotPane::initShaders()
 {
-    const std::string v_path = "../main_application/axes/shaders/plot_box_shader.vs";
-    const std::string f_path = "../main_application/axes/shaders/plot_box_shader.fs";
-    shader_collection_.plot_box_shader = ShaderBase(v_path, f_path, ShaderSource::FILE);
+    const std::string base_path{"../main_application/axes/shaders/"};
 
-    const std::string v_path_text = "../main_application/axes/shaders/text.vs";
-    const std::string f_path_text = "../main_application/axes/shaders/text.fs";
-    shader_collection_.text_shader = TextShader(v_path_text, f_path_text, ShaderSource::FILE);
-
-    const std::string v_path_basic_plot_shader = "../main_application/axes/shaders/basic_plot_shader.vs";
-    const std::string f_path_basic_plot_shader = "../main_application/axes/shaders/basic_plot_shader.fs";
-    shader_collection_.basic_plot_shader =
-        ShaderBase(v_path_basic_plot_shader, f_path_basic_plot_shader, ShaderSource::FILE);
-
-    const std::string v_path_plot_2d_shader = "../main_application/axes/shaders/plot_2d_shader.vs";
-    const std::string f_path_plot_2d_shader = "../main_application/axes/shaders/plot_2d_shader.fs";
-    shader_collection_.plot_2d_shader = Plot2DShader(v_path_plot_2d_shader, f_path_plot_2d_shader, ShaderSource::FILE);
-
-    const std::string v_path_plot_3d_shader = "../main_application/axes/shaders/plot_3d_shader.vs";
-    const std::string f_path_plot_3d_shader = "../main_application/axes/shaders/plot_3d_shader.fs";
-    shader_collection_.plot_3d_shader = Plot3DShader(v_path_plot_3d_shader, f_path_plot_3d_shader, ShaderSource::FILE);
-
-    const std::string v_path_img_plot_shader = "../main_application/axes/shaders/img.vs";
-    const std::string f_path_img_plot_shader = "../main_application/axes/shaders/img.fs";
-    shader_collection_.img_plot_shader =
-        ImShowShader(v_path_img_plot_shader, f_path_img_plot_shader, ShaderSource::FILE);
-
-    const std::string v_path_scatter_shader = "../main_application/axes/shaders/scatter_shader.vs";
-    const std::string f_path_scatter_shader = "../main_application/axes/shaders/scatter_shader.fs";
-    shader_collection_.scatter_shader = ScatterShader(v_path_scatter_shader, f_path_scatter_shader, ShaderSource::FILE);
-
-    const std::string v_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.vs";
-    const std::string f_path_draw_mesh_shader = "../main_application/axes/shaders/draw_mesh_shader.fs";
-    shader_collection_.draw_mesh_shader =
-        DrawMeshShader(v_path_draw_mesh_shader, f_path_draw_mesh_shader, ShaderSource::FILE);
-
-    const std::string v_path_legend_shader = "../main_application/axes/shaders/legend_shader.vs";
-    const std::string f_path_legend_shader = "../main_application/axes/shaders/legend_shader.fs";
-    shader_collection_.legend_shader = ShaderBase(v_path_legend_shader, f_path_legend_shader, ShaderSource::FILE);
+    shader_collection_.plot_box_shader = createShader<ShaderBase>(base_path, "plot_box_shader");
+    shader_collection_.text_shader = createShader<TextShader>(base_path, "text");
+    shader_collection_.basic_plot_shader = createShader<ShaderBase>(base_path, "basic_plot_shader");
+    shader_collection_.plot_2d_shader = createShader<Plot2DShader>(base_path, "plot_2d_shader");
+    shader_collection_.plot_3d_shader = createShader<Plot3DShader>(base_path, "plot_3d_shader");
+    shader_collection_.img_plot_shader = createShader<ImShowShader>(base_path, "img");
+    shader_collection_.scatter_shader = createShader<ScatterShader>(base_path, "scatter_shader");
+    shader_collection_.draw_mesh_shader = createShader<DrawMeshShader>(base_path, "draw_mesh_shader");
+    shader_collection_.legend_shader = createShader<ShaderBase>(base_path, "legend_shader");
 }
 
 PlotPane::PlotPane(wxWindow* parent,
@@ -140,7 +146,7 @@ PlotPane::PlotPane(wxWindow* parent,
                    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                        notify_parent_window_right_mouse_pressed,
                    const std::function<void()>& notify_main_window_about_modification)
-    : wxGLCanvas(parent, wxID_ANY, getArgsPtr(), wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE),
+    : wxGLCanvas(parent, getGLAttributes()),
       GuiElement(element_settings,
                  notify_main_window_key_pressed,
                  notify_main_window_key_released,
@@ -234,21 +240,6 @@ void PlotPane::bindCallbacks()
     Bind(wxEVT_KEY_UP, &PlotPane::keyReleasedCallback, this);
     Bind(wxEVT_PAINT, &PlotPane::render, this);
     Bind(wxEVT_LEAVE_WINDOW, &PlotPane::mouseLeftWindow, this);
-}
-
-int* PlotPane::getArgsPtr()
-{
-    args[0] = WX_GL_RGBA;
-    args[1] = WX_GL_DOUBLEBUFFER;
-    args[2] = WX_GL_DEPTH_SIZE;
-    args[3] = 16;
-    args[4] = WX_GL_SAMPLES;
-    args[5] = 4;
-    args[6] = WX_GL_SAMPLE_BUFFERS;
-    args[7] = 1;
-    args[8] = 0;
-
-    return args;
 }
 
 PlotPane::~PlotPane()

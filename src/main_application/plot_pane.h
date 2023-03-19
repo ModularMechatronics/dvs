@@ -77,7 +77,6 @@ private:
     bool perspective_projection_;
     bool wait_for_flush_;
 
-    int* getArgsPtr();
     wxSize parent_size_;
     Vec2f mouse_pos_at_press_;
     Vec2f current_mouse_pos_;
@@ -107,6 +106,8 @@ private:
                      const PlotObjectAttributes& plot_object_attributes,
                      const PropertiesData& properties_data,
                      std::unique_ptr<const ConvertedDataBase>& converted_data);
+
+    wxGLAttributes getGLAttributes() const;
 
 public:
     PlotPane(wxNotebookPage* parent,
