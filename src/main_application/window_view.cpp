@@ -21,6 +21,7 @@ WindowView::WindowView(
     const std::function<std::vector<std::string>(void)>& get_all_element_names,
     const std::function<void(const std::string&)>& notify_main_window_element_deleted,
     const std::function<void(const std::string&, const std::string&)>& notify_main_window_element_name_changed,
+    const std::function<void(const std::string&, const std::string&)>& notify_main_window_name_changed,
     const std::function<void()>& notify_main_window_about_modification)
     : wxFrame(main_window, wxID_ANY, "Figure 1"),
       tab_buttons_{this,
@@ -34,6 +35,7 @@ WindowView::WindowView(
       notify_main_window_element_deleted_{notify_main_window_element_deleted},
       get_all_element_names_{get_all_element_names},
       notify_main_window_element_name_changed_{notify_main_window_element_name_changed},
+      notify_main_window_name_changed_{notify_main_window_name_changed},
       notify_main_window_about_modification_{notify_main_window_about_modification},
       help_pane_{this, wxPoint(150, 150), wxSize(100, 100), this->GetSize()}
 {
@@ -359,6 +361,7 @@ void WindowView::updateLabel()
 
 void WindowView::setName(const std::string& new_name)
 {
+    notify_main_window_name_changed_(name_, new_name);
     name_ = new_name;
     updateLabel();
 }

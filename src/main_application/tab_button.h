@@ -13,6 +13,8 @@
 
 #include "project_state/project_settings.h"
 
+wxColor RGBTripletfToWxColour(const RGBTripletf& c);
+
 struct ColorPair
 {
     wxColour base_color;

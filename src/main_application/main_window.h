@@ -7,6 +7,7 @@
 #include <wx/notebook.h>
 #include <wx/textctrl.h>
 #include <wx/timer.h>
+#include <wx/window.h>
 #include <wx/wx.h>
 
 #include <atomic>
@@ -28,7 +29,9 @@
 #include "project_state/configuration_agent.h"
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
+#include "tab_button.h"
 #include "tray_icon.h"
+#include "window_button.h"
 
 class WindowView;
 
@@ -65,6 +68,7 @@ private:
     std::function<std::vector<std::string>(void)> get_all_element_names_;
     std::function<void(const std::string&)> notify_main_window_element_deleted_;
     std::function<void(const std::string&, const std::string&)> notify_main_window_element_name_changed_;
+    std::function<void(const std::string&, const std::string&)> notify_main_window_name_changed_;
     std::function<void()> notify_main_window_about_modification_;
 
     void OnReceiveTimer(wxTimerEvent&);
@@ -73,9 +77,23 @@ private:
     void createNewElement(const internal::CommunicationHeader& hdr);
     void receiveData();
 
+    void mouseLeftPressed(wxMouseEvent& event);
+
+    void mouseLeftReleased(wxMouseEvent& event);
+    void mouseMoved(wxMouseEvent& event);
+
+    bool mouse_left_pressed_;
+    wxPoint mouse_pos_at_press_;
+    int first_window_button_offset_;
+
+    std::vector<WindowButton*> window_buttons_;
+    WindowButton* new_window_button_;
+
     bool hasWindowWithName(const std::string& window_name);
     void preferencesCallback(wxCommandEvent& event);
     void preferences();
+
+    void windowNameChanged(const std::string& old_name, const std::string& new_name);
 
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);

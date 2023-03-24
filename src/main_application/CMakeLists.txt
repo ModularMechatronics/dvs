@@ -58,6 +58,7 @@ set(CPP_SOURCE_FILES main.cpp
 
                      tray_icon.cpp
                      tab_button.cpp
+                     window_button.cpp
                      window_view.cpp
                      events.cpp
                      tab_buttons.cpp

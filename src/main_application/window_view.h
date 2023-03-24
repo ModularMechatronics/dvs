@@ -493,6 +493,7 @@ private:
     std::function<void(const std::string&)> notify_main_window_element_deleted_;
     std::function<std::vector<std::string>(void)> get_all_element_names_;
     std::function<void(const std::string&, const std::string&)> notify_main_window_element_name_changed_;
+    std::function<void(const std::string&, const std::string&)> notify_main_window_name_changed_;
     std::function<void()> notify_main_window_about_modification_;
     HelpPane help_pane_;
 
@@ -529,6 +530,7 @@ public:
         const std::function<std::vector<std::string>(void)>& get_all_element_names,
         const std::function<void(const std::string&)>& notify_main_window_element_deleted,
         const std::function<void(const std::string&, const std::string&)>& notify_main_window_element_name_changed,
+        const std::function<void(const std::string&, const std::string&)>& notify_main_window_name_changed,
         const std::function<void()>& notify_main_window_about_modification);
     ~WindowView();
     int getCallbackId() const;

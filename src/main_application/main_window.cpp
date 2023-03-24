@@ -29,8 +29,12 @@ int getNextFreeElementNumber()
 using namespace dvs::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
-    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(50, 50)), data_receiver_{}
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 130), wxSize(kMainWindowWidth, 150), wxNO_BORDER), data_receiver_{}
 {
+    Show();
+
+    first_window_button_offset_ = kNewWindowButtonHeight + kNewWindowButtonOffset + kMainWindowTopMargin;
+
     static_cast<void>(cmdl_args);
     window_initialization_in_progress_ = true;
     open_project_file_queued_ = false;
@@ -47,7 +51,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     {
         wxLogError("Could not set icon.");
     }
-    this->SetPosition(wxPoint(0, 0));
+    this->SetPosition(wxPoint(10, 130));
 
     menu_bar_ = createMainMenuBar();
 
@@ -80,6 +84,9 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     notify_main_window_element_name_changed_ = [this](const std::string& old_name,
                                                       const std::string& new_name) -> void {
         elementNameChanged(old_name, new_name);
+    };
+    notify_main_window_name_changed_ = [this](const std::string& old_name, const std::string& new_name) -> void {
+        windowNameChanged(old_name, new_name);
     };
     notify_main_window_about_modification_ = [this]() -> void { fileModified(); };
 
@@ -123,11 +130,55 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     // refresh_timer_.Bind(wxEVT_TIMER, &MainWindow::OnRefreshTimer, this);  // TODO: Remove?
     window_initialization_in_progress_ = false;
+
+    TabSettings tab_settings;
+    tab_settings.name = "New window";
+
+    new_window_button_ = new WindowButton(this,
+                                          tab_settings,
+                                          wxPoint(0, kMainWindowTopMargin),
+                                          wxSize(kMainWindowWidth, kNewWindowButtonHeight),
+                                          0,
+                                          [this](const std::string& f) -> void { newWindow(); });
+
+    mouse_left_pressed_ = false;
+
+    Bind(wxEVT_LEFT_DOWN, &MainWindow::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &MainWindow::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &MainWindow::mouseMoved, this);
 }
 
 void MainWindow::exitApplication(wxCommandEvent& WXUNUSED(event))
 {
     this->Destroy();
+}
+
+void MainWindow::mouseMoved(wxMouseEvent& event)
+{
+    if (mouse_left_pressed_)
+    {
+        const wxPoint current_mouse_position = event.GetPosition();
+        const wxPoint delta_pos = current_mouse_position - mouse_pos_at_press_;
+
+        const wxPoint current_position = this->GetPosition();
+        this->SetPosition(current_position + delta_pos);
+    }
+}
+
+void MainWindow::mouseLeftReleased(wxMouseEvent& event)
+{
+    mouse_left_pressed_ = false;
+}
+
+void MainWindow::mouseLeftPressed(wxMouseEvent& event)
+{
+    const wxPoint current_mouse_position = event.GetPosition();
+
+    if (current_mouse_position.y < kMainWindowTopMargin)
+    {
+        mouse_left_pressed_ = true;
+        mouse_pos_at_press_ = current_mouse_position;
+    }
 }
 
 void MainWindow::elementNameChanged(const std::string& old_name, const std::string& new_name)
@@ -235,12 +286,15 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
                                              get_all_element_names_,
                                              notify_main_window_element_deleted_,
                                              notify_main_window_element_name_changed_,
+                                             notify_main_window_name_changed_,
                                              notify_main_window_about_modification_));
         window_callback_id_ += 1;
         current_window_num_++;
         task_bar_->addNewWindow(ws.name);
     }
 
+    int pos_y = first_window_button_offset_;
+    this->SetSize(wxSize(kMainWindowWidth, kMainWindowButtonHeight * windows_.size() + first_window_button_offset_));
     for (auto we : windows_)
     {
         std::vector<GuiElement*> ges = we->getGuiElements();
@@ -248,6 +302,18 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         {
             gui_elements_[ge->getName()] = ge;
         }
+
+        TabSettings tab_settings;
+        tab_settings.name = we->getName();
+
+        window_buttons_.push_back(
+            new WindowButton(this,
+                             tab_settings,
+                             wxPoint(0, pos_y),
+                             wxSize(kMainWindowWidth, kMainWindowButtonHeight),
+                             0,
+                             [this](const std::string& f) -> void { toggleWindowVisibility(f); }));
+        pos_y += kMainWindowButtonHeight;
     }
 }
 
@@ -299,6 +365,7 @@ void MainWindow::newWindowWithoutFileModification()
                                                 get_all_element_names_,
                                                 notify_main_window_element_deleted_,
                                                 notify_main_window_element_name_changed_,
+                                                notify_main_window_name_changed_,
                                                 notify_main_window_about_modification_);
 
     windows_menu_->Append(window_element->getCallbackId(), window_element->getName());
@@ -310,7 +377,27 @@ void MainWindow::newWindowWithoutFileModification()
 
     windows_.push_back(window_element);
 
+    int pos_y = first_window_button_offset_ + kMainWindowButtonHeight * (windows_.size() - 1);
+    this->SetSize(wxSize(kMainWindowWidth, kMainWindowButtonHeight * windows_.size() + first_window_button_offset_));
+
+    TabSettings tab_settings;
+    tab_settings.name = window_element->getName();
+
+    window_buttons_.push_back(new WindowButton(this,
+                                               tab_settings,
+                                               wxPoint(0, pos_y),
+                                               wxSize(kMainWindowWidth, kMainWindowButtonHeight),
+                                               0,
+                                               [this](const std::string& f) -> void { toggleWindowVisibility(f); }));
+
     window_element->newElement();
+}
+
+void MainWindow::windowNameChanged(const std::string& old_name, const std::string& new_name)
+{
+    (*std::find_if(window_buttons_.begin(), window_buttons_.end(), [old_name](const WindowButton* const wb) -> bool {
+        return wb->getButtonLabel() == old_name;
+    }))->setButtonLabel(new_name);
 }
 
 MainWindow::~MainWindow()
@@ -565,6 +652,8 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
             gui_elements_.erase(ge->getName());
         }
 
+        const std::string deleted_window_name = (*q)->getName();
+
         Unbind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, (*q)->getCallbackId());
         const int menu_id = windows_menu_->FindItem((*q)->getName());
         windows_menu_->Destroy(menu_id);
@@ -572,6 +661,27 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
         task_bar_->removeWindow((*q)->getName());
         delete (*q);
         windows_.erase(q);
+
+        auto qb = std::find_if(window_buttons_.begin(),
+                               window_buttons_.end(),
+                               [&deleted_window_name](const WindowButton* const w) -> bool {
+                                   return w->getButtonLabel() == deleted_window_name;
+                               });
+
+        if (qb != window_buttons_.end())
+        {
+            delete (*qb);
+            window_buttons_.erase(qb);
+        }
+
+        int pos_y = first_window_button_offset_;
+        this->SetSize(
+            wxSize(kMainWindowWidth, kMainWindowButtonHeight * windows_.size() + first_window_button_offset_));
+        for (auto wb : window_buttons_)
+        {
+            wb->SetPosition(wxPoint(0, pos_y));
+            pos_y += kMainWindowButtonHeight;
+        }
 
         fileModified();
     }
