@@ -27,8 +27,6 @@ public:
     int getId() const;
     std::string getButtonLabel() const;
     void setButtonLabel(const std::string& new_label);
-    void show();
-    void hide();
 
 private:
     void OnPaint(wxPaintEvent& event);

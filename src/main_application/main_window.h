@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "close_button.h"
 #include "communication/data_receiver.h"
 #include "communication/received_data.h"
 #include "events.h"
@@ -47,6 +48,11 @@ private:
     std::map<std::string, GuiElement*> gui_elements_;
 
     std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
+
+    CloseButton* close_button_;
+    CloseButton* minimize_button_;
+
+    bool shutdown_in_progress_;
 
     std::atomic<bool> open_project_file_queued_;
     std::string queued_project_file_name_;
@@ -97,6 +103,8 @@ private:
 
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
+
+    void destroy();
 
     void saveProject();
     void saveProjectCallback(wxCommandEvent& event);

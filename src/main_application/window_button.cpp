@@ -136,15 +136,6 @@ void WindowButton::setButtonLabel(const std::string& new_label)
     Refresh();
 }
 
-void WindowButton::show()
-{
-    this->Show();
-}
-void WindowButton::hide()
-{
-    this->Hide();
-}
-
 int WindowButton::getId() const
 {
     return id_;

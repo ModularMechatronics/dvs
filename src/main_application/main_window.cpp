@@ -33,7 +33,12 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 {
     Show();
 
-    first_window_button_offset_ = kNewWindowButtonHeight + kNewWindowButtonOffset + kMainWindowTopMargin;
+    shutdown_in_progress_ = false;
+
+    first_window_button_offset_ =
+        kNewWindowButtonHeight + kNewWindowButtonPreOffset + kNewWindowButtonPostOffset + kMainWindowTopMargin;
+
+    SetBackgroundColour(RGBTripletfToWxColour(kMainWindowBackgroundColor));
 
     static_cast<void>(cmdl_args);
     window_initialization_in_progress_ = true;
@@ -65,7 +70,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(wxEVT_MENU, &MainWindow::exitApplication, this, wxID_HELP_INDEX);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, this, wxID_HELP_CONTENTS);
 
-    task_bar_->setOnMenuExitCallback([this]() -> void { this->Destroy(); });
+    task_bar_->setOnMenuExitCallback([this]() -> void { this->destroy(); });
     task_bar_->setOnMenuFileNew([this]() -> void { newProject(); });
     task_bar_->setOnMenuFileOpen([this]() -> void { openExistingFile(); });
     task_bar_->setOnMenuFileSave([this]() -> void { saveProject(); });
@@ -136,13 +141,45 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     new_window_button_ = new WindowButton(this,
                                           tab_settings,
-                                          wxPoint(0, kMainWindowTopMargin),
+                                          wxPoint(0, kMainWindowTopMargin + kNewWindowButtonPreOffset),
                                           wxSize(kMainWindowWidth, kNewWindowButtonHeight),
                                           0,
                                           [this](const std::string& f) -> void { newWindow(); });
 
     mouse_left_pressed_ = false;
 
+    close_button_ = new CloseButton(
+        this,
+        wxPoint(0, 0),
+        wxSize(25, 25),
+        RGBTripletfToWxColour(kMainWindowBackgroundColor),
+        [this]() -> void { this->destroy(); },
+        [](wxPaintDC& dc, const int button_size) -> void {
+            const int diff = 7;
+            const wxPoint p00{diff, diff};
+            const wxPoint p01{button_size - diff, button_size - diff};
+
+            dc.DrawLine(p00, p01);
+
+            const wxPoint p10{diff, button_size - diff};
+            const wxPoint p11{button_size - diff, diff};
+
+            dc.DrawLine(p10, p11);
+        });
+    minimize_button_ = new CloseButton(
+        this,
+        wxPoint(25, 0),
+        wxSize(25, 25),
+        RGBTripletfToWxColour(kMainWindowBackgroundColor),
+        [this]() -> void { this->Iconize(); },
+        [](wxPaintDC& dc, const int button_size) -> void {
+            const int diff = 7;
+            const int y_offset = 7;
+            const wxPoint p00{diff, button_size - y_offset};
+            const wxPoint p01{button_size - diff, button_size - y_offset};
+
+            dc.DrawLine(p00, p01);
+        });
     Bind(wxEVT_LEFT_DOWN, &MainWindow::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &MainWindow::mouseLeftReleased, this);
     Bind(wxEVT_MOTION, &MainWindow::mouseMoved, this);
@@ -150,7 +187,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
 void MainWindow::exitApplication(wxCommandEvent& WXUNUSED(event))
 {
-    this->Destroy();
+    this->destroy();
 }
 
 void MainWindow::mouseMoved(wxMouseEvent& event)
@@ -197,9 +234,12 @@ void MainWindow::elementNameChanged(const std::string& old_name, const std::stri
 
 void MainWindow::elementDeleted(const std::string& element_name)
 {
-    if (gui_elements_.count(element_name) > 0)
+    if (!shutdown_in_progress_)
     {
-        gui_elements_.erase(element_name);
+        if (gui_elements_.count(element_name) > 0)
+        {
+            gui_elements_.erase(element_name);
+        }
     }
 }
 
@@ -626,7 +666,7 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
     else if ((wxGetKeyState(WXK_COMMAND) || wxGetKeyState(WXK_CONTROL)) &&
              (wxGetKeyState(static_cast<wxKeyCode>('q')) || wxGetKeyState(static_cast<wxKeyCode>('Q'))))
     {
-        this->Destroy();
+        this->destroy();
     }
 }
 
@@ -685,4 +725,10 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
 
         fileModified();
     }
+}
+
+void MainWindow::destroy()
+{
+    shutdown_in_progress_ = true;
+    this->Destroy();
 }

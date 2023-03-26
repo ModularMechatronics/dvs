@@ -22,6 +22,7 @@ constexpr bool kClippingOnDefault{true};
 constexpr float kPaneRadiusDefault{10.0f};
 constexpr int kZOrderDefault{-1};
 
+constexpr RGBTriplet<float> kMainWindowBackgroundColor{0.643f, 0.851f, 0.784f};
 constexpr RGBTriplet<float> kTabBackgroundColorDefault{0.643f, 0.851f, 0.784f};
 constexpr RGBTriplet<float> kButtonNormalColorDefault{0.682f, 0.890f, 0.820f};
 constexpr RGBTriplet<float> kButtonClickedColorDefault{0.682f, 0.890f, 0.820f};
