@@ -34,6 +34,7 @@ constexpr float kDefaultAlpha{1.0f};
 constexpr float kDefaultLineWidth{2.0f};
 constexpr float kDefaultPointSize{10.0f};
 constexpr bool kDefaultIsPersistent{false};
+constexpr bool kDefaultIsAppendable{false};
 constexpr bool kDefaultIsUpdateable{false};
 constexpr bool kDefaultInterpolateColormap{false};
 constexpr internal::ItemId kDefaultId{internal::ItemId::UNKNOWN};
@@ -92,9 +93,10 @@ public:
         is_persistent = props.hasFlag(PropertyFlag::PERSISTENT);
         interpolate_colormap = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP);
         is_updateable = props.hasFlag(PropertyFlag::UPDATABLE);
-        dynamic_or_static_usage = is_updateable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+        is_appendable = props.hasFlag(PropertyFlag::APPENDABLE);
+        dynamic_or_static_usage = (is_updateable || is_appendable) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
-        has_properties_ = has_properties_ || is_persistent || interpolate_colormap || is_updateable;
+        has_properties_ = has_properties_ || is_persistent || interpolate_colormap || is_updateable || is_appendable;
 
         // Properties
         if (props.hasProperty(PropertyType::ALPHA))
@@ -229,6 +231,7 @@ public:
 
         is_persistent = kDefaultIsPersistent;
         is_updateable = kDefaultIsUpdateable;
+        is_appendable = kDefaultIsAppendable;
         interpolate_colormap = kDefaultInterpolateColormap;
         dynamic_or_static_usage = kDefaultDynamicOrStaticUsage;
     }
@@ -265,8 +268,9 @@ public:
 
         is_persistent = is_persistent || props.is_persistent;
         is_updateable = is_updateable || props.is_updateable;
+        is_appendable = is_appendable || props.is_appendable;
         interpolate_colormap = interpolate_colormap || props.interpolate_colormap;
-        dynamic_or_static_usage = is_updateable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+        dynamic_or_static_usage = (is_updateable || is_appendable) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
         has_properties_ = has_properties_ || is_persistent || interpolate_colormap || is_updateable;
     }
@@ -304,6 +308,7 @@ public:
 
     bool is_persistent{kDefaultIsPersistent};
     bool is_updateable{kDefaultIsUpdateable};
+    bool is_appendable{kDefaultIsAppendable};
     bool interpolate_colormap{kDefaultInterpolateColormap};
     GLenum dynamic_or_static_usage{kDefaultDynamicOrStaticUsage};
 };
@@ -401,6 +406,7 @@ protected:
     size_t num_bytes_per_element_;
     uint32_t num_elements_;
     uint64_t num_bytes_for_one_vec_;
+    size_t num_added_elements_;
 
     Function function_;
     DataType data_type_;
@@ -449,6 +455,7 @@ protected:
     bool is_updateable_;
     GLenum dynamic_or_static_usage_;
     bool interpolate_colormap_;
+    bool is_appendable_;
 
     bool has_name_;
 
@@ -478,6 +485,14 @@ public:
     {
         return has_color_map_;
     }
+
+    virtual void appendNewData(ReceivedData& received_data,
+                               const CommunicationHeader& hdr,
+                               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                               const PropertiesData& properties_data);
+
+    bool isAppendable() const;
+    bool isUpdateable() const;
 
     void setTransform(const MatrixFixed<double, 3, 3>& rotation,
                       const Vec3<double>& translation,

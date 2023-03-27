@@ -63,7 +63,6 @@ struct Converter
 Scatter2D::Scatter2D(const CommunicationHeader& hdr,
                      ReceivedData& received_data,
                      const std::unique_ptr<const ConvertedDataBase>& converted_data,
-
                      const PlotObjectAttributes& plot_object_attributes,
                      const PropertiesData& properties_data,
                      const ShaderCollection& shader_collection,
@@ -78,12 +77,59 @@ Scatter2D::Scatter2D(const CommunicationHeader& hdr,
 
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    vertex_buffer_.addBuffer(converted_data_local->points_ptr, num_elements_, 3);
+    num_added_elements_ = 0;
+
+    if (properties_data.is_appendable)
+    {
+        vertex_buffer_.addExpandableBuffer<float>(properties_data.buffer_size.data, 3);
+
+        vertex_buffer_.updateBufferData(0U, converted_data_local->points_ptr, num_elements_, 3U, num_added_elements_);
+
+        if (has_color_)
+        {
+            vertex_buffer_.addExpandableBuffer<float>(properties_data.buffer_size.data, 3);
+            vertex_buffer_.updateBufferData(
+                1U, converted_data_local->color_data, num_elements_, 3U, num_added_elements_);
+        }
+
+        num_added_elements_ += num_elements_;
+    }
+    else
+    {
+        vertex_buffer_.addBuffer(converted_data_local->points_ptr, num_elements_, 3);
+
+        num_added_elements_ = num_elements_;
+
+        if (has_color_)
+        {
+            vertex_buffer_.addBuffer(converted_data_local->color_data, num_elements_, 3);
+        }
+    }
+}
+
+void Scatter2D::appendNewData(ReceivedData& received_data,
+                              const CommunicationHeader& hdr,
+                              const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                              const PropertiesData& properties_data)
+{
+    const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
+
+    num_elements_ = hdr.get(CommunicationHeaderObjectType::NUM_ELEMENTS).as<uint32_t>();
+
+    if ((num_added_elements_ + num_elements_) > buffer_size_)
+    {
+        DVS_LOG_ERROR() << "Buffer overflow!";
+        return;
+    }
+
+    vertex_buffer_.updateBufferData(0U, converted_data_local->points_ptr, num_elements_, 3U, num_added_elements_);
 
     if (has_color_)
     {
-        vertex_buffer_.addBuffer(converted_data_local->color_data, num_elements_, 3);
+        vertex_buffer_.updateBufferData(1U, converted_data_local->color_data, num_elements_, 3U, num_added_elements_);
     }
+
+    num_added_elements_ += num_elements_;
 }
 
 LegendProperties Scatter2D::getLegendProperties() const
@@ -161,7 +207,7 @@ std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const Communi
 void Scatter2D::render()
 {
     shader_collection_.scatter_shader.use();
-    vertex_buffer_.render(num_elements_);
+    vertex_buffer_.render(num_added_elements_);
 }
 
 Scatter2D::~Scatter2D() {}

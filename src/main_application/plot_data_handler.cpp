@@ -117,7 +117,16 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
         if (q != plot_datas_.end())
         {
             props_data.appendProperties(properties_data);
-            (*q)->updateWithNewData(received_data, hdr, converted_data, props_data);
+
+            if ((*q)->isAppendable())
+            {
+                (*q)->appendNewData(received_data, hdr, converted_data, props_data);
+            }
+            else if ((*q)->isUpdateable())
+            {
+                (*q)->updateWithNewData(received_data, hdr, converted_data, props_data);
+            }
+
             return;
         }
     }

@@ -81,6 +81,7 @@ void PlotObjectBase::updateProperties(const PropertiesData& properties_data)
     is_persistent_ = is_persistent_ || properties_data.is_persistent;
     interpolate_colormap_ = interpolate_colormap_ || properties_data.interpolate_colormap;
     is_updateable_ = is_updateable_ || properties_data.is_updateable;
+    is_appendable_ = is_appendable_ || properties_data.is_appendable;
 
     dynamic_or_static_usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
@@ -267,6 +268,7 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
     is_persistent_ = properties_data.is_persistent;
     interpolate_colormap_ = properties_data.interpolate_colormap;
     is_updateable_ = properties_data.is_updateable;
+    is_appendable_ = properties_data.is_appendable;
 
     dynamic_or_static_usage_ = properties_data.dynamic_or_static_usage;
 
@@ -383,6 +385,24 @@ void PlotObjectBase::throwIfNotUpdateable() const
     {
         throw std::runtime_error("Tried to update non updateable object!");
     }
+}
+
+void PlotObjectBase::appendNewData(ReceivedData& received_data,
+                                   const CommunicationHeader& hdr,
+                                   const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                                   const PropertiesData& properties_data)
+{
+    std::cout << "appendNewData not implemented for this object!" << std::endl;
+}
+
+bool PlotObjectBase::isUpdateable() const
+{
+    return is_updateable_;
+}
+
+bool PlotObjectBase::isAppendable() const
+{
+    return is_appendable_;
 }
 
 PlotObjectBase::~PlotObjectBase() {}

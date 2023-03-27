@@ -86,6 +86,50 @@ public:
         }
     }
 
+    template <typename T> void addExpandableBuffer(const size_t total_num_elements, const uint8_t num_dimensions)
+    {
+        glBindVertexArray(vertex_buffer_array_);
+        static_assert(std::is_same<T, float>::value || std::is_same<T, int>::value || std::is_same<T, int32_t>::value,
+                      "Only float and int supported for now!");
+        vertex_buffers_.push_back(1);
+        const int idx = static_cast<int>(vertex_buffers_.size()) - 1;
+
+        glGenBuffers(1, vertex_buffers_.data() + idx);
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffers_[idx]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(T) * total_num_elements * num_dimensions, NULL, GL_DYNAMIC_DRAW);
+
+        glEnableVertexAttribArray(idx);
+        if (std::is_same<T, float>::value)
+        {
+            glVertexAttribPointer(idx, num_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
+        }
+        else if (std::is_same<T, int>::value || std::is_same<T, int32_t>::value)
+        {
+            glVertexAttribIPointer(idx, num_dimensions, GL_INT, 0, 0);
+        }
+        else
+        {
+            throw std::runtime_error("Shouldn't end up here!");
+        }
+    }
+
+    template <typename T>
+    void updateBufferData(const size_t buffer_idx,
+                          const T* const data,
+                          const size_t num_elements,
+                          const uint8_t num_dimensions,
+                          const size_t offset_in_elements)
+    {
+        static_assert(std::is_same<T, float>::value || std::is_same<T, int>::value || std::is_same<T, int32_t>::value,
+                      "Only float and int supported for now!");
+
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffers_[buffer_idx]);
+        glBufferSubData(GL_ARRAY_BUFFER,
+                        sizeof(T) * offset_in_elements * num_dimensions,
+                        sizeof(T) * num_elements * num_dimensions,
+                        data);
+    }
+
     template <typename T>
     void updateBufferData(const size_t buffer_idx,
                           const T* const data,
