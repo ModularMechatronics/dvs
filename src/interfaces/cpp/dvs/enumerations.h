@@ -48,6 +48,7 @@ enum class CommunicationHeaderObjectType : uint16_t
 enum class PropertyFlag : uint8_t
 {
     PERSISTENT,
+    APPENDABLE,
     INTERPOLATE_COLORMAP,
     UPDATABLE,
     FAST_PLOT,

@@ -124,6 +124,153 @@ void testSurfBasic()
     }
 }
 
+void testScatter2DAppendable()
+{
+    const size_t num_elements = 100;
+
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-4.0, -4.0}, {4.0, 4.0});
+
+    double t = 0.0;
+    const size_t num_its = 3;
+
+    const size_t num_new_points = 20;
+
+    Vector<double> x{num_new_points}, y{num_new_points};
+    Vector<RGB888> colorp(num_new_points);
+    double y_offset = 0.0;
+
+    setProperties(properties::ID0,
+                  properties::APPENDABLE,
+                  properties::BufferSize(60),
+                  properties::Color::BLUE,
+                  properties::ScatterStyle::CIRCLE,
+                  properties::PointSize(20));
+
+    for (size_t k = 0; k < num_its; k++)
+    {
+        t = 0.0;
+        for (size_t i = 0; i < num_new_points; i++)
+        {
+            x(i) = t;
+            y(i) = std::sin(t) + y_offset;
+
+            colorp((i + k * 3) % num_new_points).red = i * 25;
+            colorp((i + k * 3) % num_new_points).green = 255 - i * 25;
+            colorp((i + k * 3) % num_new_points).blue = 255 + i * 25;
+
+            t += 0.1;
+        }
+        y_offset += 0.1;
+
+        scatter(x, y, colorp, properties::ID0);
+
+        scatter(x, y, properties::Color::RED, properties::ScatterStyle::CROSS, properties::PointSize(10));
+
+        usleep(10000);
+    }
+}
+
+void testScatter3DAppendable()
+{
+    const size_t num_elements = 100;
+
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-4.0, -4.0}, {4.0, 4.0});
+
+    double t = 0.0;
+    const size_t num_its = 3;
+
+    const size_t num_new_points = 20;
+
+    Vector<double> x{num_new_points}, y{num_new_points}, z{num_new_points};
+    Vector<RGB888> colorp(num_new_points);
+    double y_offset = 0.0;
+
+    setProperties(properties::ID0,
+                  properties::APPENDABLE,
+                  properties::BufferSize(60),
+                  properties::Color::BLUE,
+                  properties::ScatterStyle::CIRCLE,
+                  properties::PointSize(20));
+
+    for (size_t k = 0; k < num_its; k++)
+    {
+        t = 0.0;
+        for (size_t i = 0; i < num_new_points; i++)
+        {
+            x(i) = t;
+            y(i) = std::sin(t) + y_offset;
+            z(i) = std::cos(t);
+
+            colorp((i + k * 3) % num_new_points).red = i * 25;
+            colorp((i + k * 3) % num_new_points).green = 255 - i * 25;
+            colorp((i + k * 3) % num_new_points).blue = 255 + i * 25;
+
+            t += 0.1;
+        }
+        y_offset += 0.1;
+
+        scatter3(x, y, z, colorp, properties::ID0);
+
+        scatter3(x, y, z, properties::Color::RED, properties::ScatterStyle::CROSS, properties::PointSize(10));
+
+        usleep(10000);
+    }
+}
+
+void testFastPlot2Appendable()
+{
+    const size_t num_elements = 100;
+
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-4.0, -4.0}, {4.0, 4.0});
+
+    double t = 0.0;
+    const size_t num_its = 3;
+
+    const size_t num_new_points = 20;
+
+    Vector<double> x{num_new_points}, y{num_new_points};
+    Vector<RGB888> colorp(num_new_points);
+    double y_offset = 0.0;
+
+    setProperties(properties::ID0, properties::APPENDABLE, properties::BufferSize(60), properties::Color::BLUE);
+
+    setProperties(properties::ID1,
+                  properties::APPENDABLE,
+                  properties::BufferSize(60),
+                  properties::Color::BLUE,
+                  properties::ScatterStyle::CIRCLE,
+                  properties::PointSize(20));
+
+    for (size_t k = 0; k < num_its; k++)
+    {
+        for (size_t i = 0; i < num_new_points; i++)
+        {
+            x(i) = t;
+            y(i) = std::sin(t) + y_offset;
+
+            colorp((i + k * 3) % num_new_points).red = i * 25;
+            colorp((i + k * 3) % num_new_points).green = 255 - i * 25;
+            colorp((i + k * 3) % num_new_points).blue = 255 + i * 25;
+
+            t += 0.1;
+        }
+        y_offset += 0.1;
+
+        plot(x, y, properties::ID0);
+        scatter(x, y, colorp, properties::ID1);
+
+        scatter(x, y, properties::Color::RED, properties::ScatterStyle::CROSS, properties::PointSize(10));
+
+        usleep(10000);
+    }
+}
+
 }  // namespace updateable_plotting
 
 #endif  // TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SCROLLING_PLOT_H_

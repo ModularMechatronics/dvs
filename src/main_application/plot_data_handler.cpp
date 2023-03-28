@@ -83,8 +83,6 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                               ReceivedData& received_data,
                               std::unique_ptr<const ConvertedDataBase>& converted_data)
 {
-    const Function fcn = hdr.getFunction();
-
     if (pending_soft_clear_)
     {
         pending_soft_clear_ = false;
@@ -133,7 +131,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
 
     props_data.appendProperties(properties_data);
 
-    switch (fcn)
+    switch (hdr.getFunction())
     {
         case Function::STAIRS:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new Stairs(hdr,

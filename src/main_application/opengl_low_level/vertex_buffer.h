@@ -52,6 +52,22 @@ public:
         }
     }
 
+    void reset()
+    {
+        for (size_t k = 0; k < vertex_buffers_.size(); k++)
+        {
+            glDeleteBuffers(1, vertex_buffers_.data() + k);
+        }
+
+        if (vertex_buffer_array_ != 0)
+        {
+            glDeleteVertexArrays(1, &vertex_buffer_array_);
+        }
+
+        vertex_buffers_.clear();
+        vertex_buffer_array_ = 0;
+    }
+
     template <typename T> void addBuffer(const T* const data, const size_t num_elements, const uint8_t num_dimensions)
     {
         // TODO: Remove this function once they all use the usage-based one?

@@ -59,9 +59,13 @@ int main(int argc, char* argv[])
     };
 
     // ######################### updateable_plotting ##########################
-    StringFunctionMap updateable_plotting_tests{{"basic_real_time", updateable_plotting::testRealTimePlotBasic},
-                                                {"basic_plot2", updateable_plotting::testPlot2Basic},
-                                                {"basic_surf", updateable_plotting::testSurfBasic}};
+    StringFunctionMap updateable_plotting_tests{
+        {"basic_real_time", updateable_plotting::testRealTimePlotBasic},
+        {"basic_plot2", updateable_plotting::testPlot2Basic},
+        {"basic_surf", updateable_plotting::testSurfBasic},
+        {"scatter2d_appendable", updateable_plotting::testScatter2DAppendable},
+        {"scatter3d_appendable", updateable_plotting::testScatter3DAppendable},
+        {"fast_plot2d_appendable", updateable_plotting::testFastPlot2Appendable}};
 
     // ######################### object_transform ##########################
     StringFunctionMap object_transform_tests{

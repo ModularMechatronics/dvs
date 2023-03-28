@@ -32,6 +32,10 @@ public:
                                                                    const PlotObjectAttributes& attributes,
                                                                    const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr);
+    void appendNewData(ReceivedData& received_data,
+                       const CommunicationHeader& hdr,
+                       const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                       const PropertiesData& properties_data) override;
 
 private:
     VertexBuffer vertex_buffer_;
