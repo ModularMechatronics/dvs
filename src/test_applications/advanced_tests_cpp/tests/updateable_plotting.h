@@ -223,8 +223,6 @@ void testScatter3DAppendable()
 
 void testFastPlot2Appendable()
 {
-    const size_t num_elements = 100;
-
     setCurrentElement("p_view_0");
     clearView();
     axis({-4.0, -4.0}, {4.0, 4.0});
@@ -238,10 +236,9 @@ void testFastPlot2Appendable()
     Vector<RGB888> colorp(num_new_points);
     double y_offset = 0.0;
 
-    setProperties(properties::ID0, properties::APPENDABLE, properties::BufferSize(60), properties::Color::BLUE);
+    setProperties(properties::ID0, properties::BufferSize(60), properties::Color::BLUE);
 
     setProperties(properties::ID1,
-                  properties::APPENDABLE,
                   properties::BufferSize(60),
                   properties::Color::BLUE,
                   properties::ScatterStyle::CIRCLE,
@@ -262,12 +259,43 @@ void testFastPlot2Appendable()
         }
         y_offset += 0.1;
 
-        plot(x, y, properties::ID0);
-        scatter(x, y, colorp, properties::ID1);
+        plot(x, y, properties::ID0, properties::APPENDABLE);
+        scatter(x, y, colorp, properties::ID1, properties::APPENDABLE);
 
         scatter(x, y, properties::Color::RED, properties::ScatterStyle::CROSS, properties::PointSize(10));
+    }
+}
 
-        usleep(10000);
+void testAppendableOnePointOnly()
+{
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-4.0, -4.0}, {4.0, 4.0});
+
+    double t = 0.0;
+
+    const size_t num_new_points = 20;
+
+    Vector<double> x{1}, y{1};
+
+    setProperties(properties::ID0, properties::BufferSize(60), properties::Color::BLUE);
+
+    setProperties(properties::ID1,
+                  properties::BufferSize(60),
+                  properties::Color::BLUE,
+                  properties::ScatterStyle::CIRCLE,
+                  properties::PointSize(20));
+
+    for (size_t i = 0; i < num_new_points; i++)
+    {
+        x(0) = t;
+        y(0) = std::sin(t);
+
+        plot(x, y, properties::ID0, properties::APPENDABLE);
+        scatter(x, y, properties::ID1, properties::APPENDABLE);
+        usleep(100 * 1000);
+
+        t += 0.1;
     }
 }
 

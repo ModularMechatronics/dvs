@@ -65,7 +65,8 @@ int main(int argc, char* argv[])
         {"basic_surf", updateable_plotting::testSurfBasic},
         {"scatter2d_appendable", updateable_plotting::testScatter2DAppendable},
         {"scatter3d_appendable", updateable_plotting::testScatter3DAppendable},
-        {"fast_plot2d_appendable", updateable_plotting::testFastPlot2Appendable}};
+        {"fast_plot2d_appendable", updateable_plotting::testFastPlot2Appendable},
+        {"appendable_one_point_only", updateable_plotting::testAppendableOnePointOnly}};
 
     // ######################### object_transform ##########################
     StringFunctionMap object_transform_tests{

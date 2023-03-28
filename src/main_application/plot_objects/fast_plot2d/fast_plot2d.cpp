@@ -128,7 +128,6 @@ void FastPlot2D::findMinMax()
 
 void FastPlot2D::render()
 {
-    DVS_LOG_DEBUG() << "Rendering: " << num_added_elements_;
     shader_collection_.basic_plot_shader.use();
     vertex_buffer_.render(num_added_elements_);
 }

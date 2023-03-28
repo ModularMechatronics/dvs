@@ -13,7 +13,8 @@ template <typename T, typename... Us> void plot(const Vector<T>& x, const Vector
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
 
-    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT) ||
+        hdr.hasPropertyFlag(internal::PropertyFlag::APPENDABLE))
     {
         hdr.setFunction(internal::Function::FAST_PLOT2);
     }
@@ -29,7 +30,8 @@ void plot(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&...
     hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
     hdr.extend(settings...);
 
-    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT) ||
+        hdr.hasPropertyFlag(internal::PropertyFlag::APPENDABLE))
     {
         hdr.setFunction(internal::Function::FAST_PLOT2);
     }
@@ -736,6 +738,20 @@ template <typename... Us> void setProperties(const internal::ItemId id, const Us
     internal::CommunicationHeader hdr{internal::Function::PROPERTIES_EXTENSION};
     hdr.append(internal::CommunicationHeaderObjectType::ITEM_ID, id);
     hdr.extend(settings...);
+
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::APPENDABLE))
+    {
+        DVS_LOG_WARNING() << "Flag APPENDABLE is not allowed for setProperties()! Set in function call instead, e.g. "
+                             "scatter(x, y, properties::APPENDABLE).";
+        return;
+    }
+
+    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
+    {
+        DVS_LOG_WARNING() << "Flag FAST_PLOT is not allowed for setProperties()! Set in function call instead, e.g. "
+                             "plot(x, y, properties::APPENDABLE).";
+        return;
+    }
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
