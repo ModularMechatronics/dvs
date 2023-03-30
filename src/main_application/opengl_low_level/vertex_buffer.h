@@ -39,6 +39,12 @@ public:
         glBindVertexArray(vertex_buffer_array_);
     }
 
+    void init()
+    {
+        glGenVertexArrays(1, &vertex_buffer_array_);
+        glBindVertexArray(vertex_buffer_array_);
+    }
+
     ~VertexBuffer()
     {
         for (size_t k = 0; k < vertex_buffers_.size(); k++)
@@ -52,7 +58,7 @@ public:
         }
     }
 
-    void reset()
+    void clear()
     {
         for (size_t k = 0; k < vertex_buffers_.size(); k++)
         {
@@ -157,6 +163,12 @@ public:
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffers_[buffer_idx]);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(T) * num_elements * num_dimensions, data);
+    }
+
+    void getBufferData(const size_t buffer_idx, float* out_data, const size_t num_elements, const size_t num_dimensions)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffers_[buffer_idx]);
+        glGetBufferSubData(GL_ARRAY_BUFFER, 0, num_elements * sizeof(float) * num_dimensions, out_data);
     }
 
     void render(const size_t num_elements) const

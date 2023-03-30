@@ -118,8 +118,29 @@ void Scatter2D::appendNewData(ReceivedData& received_data,
 
     if ((num_added_elements_ + num_elements_) > buffer_size_)
     {
-        DVS_LOG_ERROR() << "Buffer overflow!";
-        return;
+        buffer_size_ = buffer_size_ * 2U;
+
+        float* const points_ptr = new float[num_added_elements_ * 3];
+        float* const color_ptr = new float[num_added_elements_ * 3];
+
+        vertex_buffer_.getBufferData(0U, points_ptr, num_added_elements_, 3U);
+        vertex_buffer_.getBufferData(1U, color_ptr, num_added_elements_, 3U);
+
+        vertex_buffer_.clear();
+        vertex_buffer_.init();
+
+        vertex_buffer_.addExpandableBuffer<float>(buffer_size_, 3);
+
+        vertex_buffer_.updateBufferData(0U, points_ptr, num_added_elements_, 3U, 0U);
+
+        if (has_color_)
+        {
+            vertex_buffer_.addExpandableBuffer<float>(buffer_size_, 3);
+            vertex_buffer_.updateBufferData(1U, color_ptr, num_added_elements_, 3U, 0U);
+        }
+
+        delete[] points_ptr;
+        delete[] color_ptr;
     }
 
     vertex_buffer_.updateBufferData(0U, converted_data_local->points_ptr, num_elements_, 3U, num_added_elements_);

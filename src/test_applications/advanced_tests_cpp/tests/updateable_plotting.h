@@ -133,7 +133,7 @@ void testScatter2DAppendable()
     axis({-4.0, -4.0}, {4.0, 4.0});
 
     double t = 0.0;
-    const size_t num_its = 3;
+    const size_t num_its = 17;
 
     const size_t num_new_points = 20;
 
@@ -142,8 +142,7 @@ void testScatter2DAppendable()
     double y_offset = 0.0;
 
     setProperties(properties::ID0,
-                  properties::APPENDABLE,
-                  properties::BufferSize(60),
+                  properties::BufferSize(59),
                   properties::Color::BLUE,
                   properties::ScatterStyle::CIRCLE,
                   properties::PointSize(20));
@@ -164,7 +163,7 @@ void testScatter2DAppendable()
         }
         y_offset += 0.1;
 
-        scatter(x, y, colorp, properties::ID0);
+        scatter(x, y, colorp, properties::ID0, properties::APPENDABLE);
 
         scatter(x, y, properties::Color::RED, properties::ScatterStyle::CROSS, properties::PointSize(10));
 
@@ -190,7 +189,6 @@ void testScatter3DAppendable()
     double y_offset = 0.0;
 
     setProperties(properties::ID0,
-                  properties::APPENDABLE,
                   properties::BufferSize(60),
                   properties::Color::BLUE,
                   properties::ScatterStyle::CIRCLE,
@@ -213,7 +211,7 @@ void testScatter3DAppendable()
         }
         y_offset += 0.1;
 
-        scatter3(x, y, z, colorp, properties::ID0);
+        scatter3(x, y, z, colorp, properties::ID0, properties::APPENDABLE);
 
         scatter3(x, y, z, properties::Color::RED, properties::ScatterStyle::CROSS, properties::PointSize(10));
 
