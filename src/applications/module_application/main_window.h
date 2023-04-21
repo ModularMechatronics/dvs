@@ -22,7 +22,15 @@ class MainWindow : public wxFrame
 private:
     void OnSize(wxSizeEvent& event);
 
-    void guiElementCallbackHandler(wxCommandEvent& event);
+    void buttonCallback(wxCommandEvent& evt);
+    void sliderCallback(wxCommandEvent& evt);
+    void radioButtonCallback(wxCommandEvent& evt);
+    void checkBoxCallback(wxCommandEvent& evt);
+    void comboBoxCallback(wxCommandEvent& evt);
+    void listBoxCallback(wxCommandEvent& evt);
+    void textCtrlCallback(wxCommandEvent& evt);
+    void textCtrlEnterCallback(wxCommandEvent& evt);
+
     void sliderHandler(wxCommandEvent& event);
 
 public:

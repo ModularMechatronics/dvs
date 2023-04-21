@@ -1,0 +1,18 @@
+Generic visualization tool which one can visualize data on the fly by simply dropping
+a binary file/path/log config files into the application, which then gets decoded by a customer written decoder
+and plotter module which decodes the raw binary data, and then plots it using the
+different available plotting functions. There should be support for simple gui elements
+like buttons, sliders, combobox, etc...
+
+Things to plot:
+ * Sets of signals
+ * Playback/scrubbing of realtime signal
+ * Playback/scrubbing of video/point cloud frames
+
+Using a configuration file (for the layout of the windows and plots and buttons) and a
+customer written data converter/decoder that gets loaded dynamically at startup (specified in the 
+configuration file).
+
+https://stackoverflow.com/questions/274753/how-to-make-weak-linking-work-with-gcc/3749780#3749780
+
+Real time data visualization capabilities through module

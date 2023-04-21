@@ -9,128 +9,215 @@
 #include <iostream>
 #include <stdexcept>
 
-wxButton* btn;
-wxSlider* slider;
-wxRadioButton* radio;
-wxCheckBox* checkbox;
-wxComboBox* combo;
-wxListBox* list;
-wxTextCtrl* text;
-
-void MainWindow::guiElementCallbackHandler(wxCommandEvent& event)
+void MainWindow::buttonCallback(wxCommandEvent& event)
 {
-    std::cout << "Event: " << event.GetId() << std::endl;
-
-    const int id = event.GetId();
-
-    if (id == btn->GetId())
-    {
-        std::cout << "btn: " << event.GetEventType() << std::endl;
-    }
-    if (id == slider->GetId())
-    {
-        std::cout << "slider: " << event.GetEventType() << std::endl;
-    }
-    if (id == radio->GetId())
-    {
-        const bool is_checked = event.IsChecked();
-        std::cout << "radio: " << is_checked << std::endl;
-    }
-    if (id == checkbox->GetId())
-    {
-        const bool is_checked = event.IsChecked();
-        std::cout << "checkbox: " << is_checked << std::endl;
-    }
-    if (id == combo->GetId())
-    {
-        std::cout << "combo!" << std::endl;
-    }
-    if (id == list->GetId())
-    {
-        wxString t = event.GetString();
-
-        std::cout << "list: " << t << ", idx: " << event.GetInt() << std::endl;
-    }
-    if (id == text->GetId())
-    {
-        wxString t = event.GetString();
-
-        std::cout << "text: " << t << std::endl;
-    }
-
-    const wxEventType evt_type = event.GetEventType();
-
-    if (evt_type == wxEVT_BUTTON)
-    {
-        std::cout << "wxEVT_BUTTON" << std::endl;
-    }
-    else if (evt_type == wxEVT_SLIDER)
-    {
-        std::cout << "wxEVT_SLIDER" << std::endl;
-    }
-    else if (evt_type == wxEVT_RADIOBUTTON)
-    {
-        std::cout << "wxEVT_RADIOBUTTON" << std::endl;
-    }
-    else if (evt_type == wxEVT_CHECKBOX)
-    {
-        std::cout << "wxEVT_CHECKBOX" << std::endl;
-    }
-    else if (evt_type == wxEVT_LISTBOX)
-    {
-        std::cout << "wxEVT_LISTBOX" << std::endl;
-    }
-    else if (evt_type == wxEVT_COMBOBOX)
-    {
-        std::cout << "wxEVT_COMBOBOX" << std::endl;
-    }
-    else if (evt_type == wxEVT_TEXT)
-    {
-        std::cout << "wxEVT_TEXT" << std::endl;
-    }
-    else
-    {
-        std::cout << "Unknown event type: " << evt_type << std::endl;
-    }
+    std::cout << "buttonCallback" << std::endl;
 }
 
-void MainWindow::sliderHandler(wxCommandEvent& event)
+void MainWindow::sliderCallback(wxCommandEvent& event)
 {
-    std::cout << "Scroll Event: " << event.GetId() << std::endl;
+    std::cout << "sliderCallback" << std::endl;
 }
+
+void MainWindow::radioButtonCallback(wxCommandEvent& event)
+{
+    const bool is_checked = event.IsChecked();
+    std::cout << "radioButtonCallback" << std::endl;
+}
+
+void MainWindow::checkBoxCallback(wxCommandEvent& event)
+{
+    const bool is_checked = event.IsChecked();
+    std::cout << "checkBoxCallback" << std::endl;
+}
+
+void MainWindow::comboBoxCallback(wxCommandEvent& event)
+{
+    std::cout << "comboBoxCallback" << std::endl;
+}
+
+void MainWindow::listBoxCallback(wxCommandEvent& event)
+{
+    std::cout << "listBoxCallback" << std::endl;
+}
+
+void MainWindow::textCtrlCallback(wxCommandEvent& event)
+{
+    wxString t = event.GetString();
+    std::cout << "textCtrlCallback: " << t << std::endl;
+}
+
+void MainWindow::textCtrlEnterCallback(wxCommandEvent& event)
+{
+    wxString t = event.GetString();
+    std::cout << "textCtrlEnterCallback: " << t << std::endl;
+}
+
+template <class C> class MovableElement : public C
+{
+public:
+    /*static MovableElement* createSlider(wxFrame* parent,
+                                        const wxWindowID id,
+                                        const int init_value,
+                                        const int min_value,
+                                        const int max_value,
+                                        const wxPoint& pos,
+                                        const wxSize& size)
+    {
+        return new MovableElement(parent, id, init_value, min_value, max_value, pos, size);
+    }
+
+    static MovableElement* createButton(wxFrame* parent,
+                                        const wxWindowID id,
+                                        const std::string& label,
+                                        const wxPoint& pos,
+                                        const wxSize& size)
+    {
+        return new MovableElement(parent, id, label, pos, size);
+    }*/
+
+    // Slider
+    MovableElement(wxFrame* parent,
+                   const wxWindowID id,
+                   const int init_value,
+                   const int min_value,
+                   const int max_value,
+                   const wxPoint& pos,
+                   const wxSize& size)
+        : C(parent, id, init_value, min_value, max_value, pos, size)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    // Button, Checkbox, RadioButton, ComboBox
+    MovableElement(
+        wxFrame* parent, const wxWindowID id, const std::string& label, const wxPoint& pos, const wxSize& size)
+        : C(parent, id, label, pos, size)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    // ListBox
+    MovableElement(wxFrame* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size)
+        : C(parent, id, pos, size)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    // EditableText
+    MovableElement(wxFrame* parent,
+                   const wxWindowID id,
+                   const std::string& initial_text,
+                   const wxPoint& pos,
+                   const wxSize& size,
+                   const long style)
+        : C(parent, id, initial_text, pos, size, style)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    void mouseLeftPressed(wxMouseEvent& event)
+    {
+        if (wxGetKeyState(WXK_CONTROL))
+        {
+            control_pressed_at_mouse_down = true;
+            pos_at_press_ = this->GetPosition();
+            mouse_pos_at_press_ = event.GetPosition() + pos_at_press_;
+            previous_mouse_pos_ = event.GetPosition() + pos_at_press_;
+        }
+        else
+        {
+            event.Skip();
+        }
+    }
+
+    void mouseLeftReleased(wxMouseEvent& event)
+    {
+        if (control_pressed_at_mouse_down)
+        {
+            control_pressed_at_mouse_down = false;
+        }
+        else
+        {
+            event.Skip();
+        }
+    }
+
+    void mouseMovedOverItem(wxMouseEvent& event)
+    {
+        if (control_pressed_at_mouse_down && event.LeftIsDown())
+        {
+            const wxPoint current_mouse_position_local = event.GetPosition();
+            const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
+            const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
+            this->SetPosition(this->GetPosition() + delta);
+
+            previous_mouse_pos_ = current_mouse_position_global;
+        }
+        else
+        {
+            event.Skip();
+        }
+    }
+
+private:
+    bool control_pressed_at_mouse_down;
+    wxPoint pos_at_press_;
+    wxPoint mouse_pos_at_press_;
+    wxPoint previous_mouse_pos_;
+};
 
 MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "", wxPoint(200, 30), wxSize(700, 700))
 {
-    //
-    btn = new wxButton(this, wxID_ANY, "Test", wxPoint(10, 0), wxSize(100, 100));
-    slider = new wxSlider(this, wxID_ANY, 13, 0, 100, wxPoint(10, 100), wxSize(100, 30));
-    radio = new wxRadioButton(this, wxID_ANY, "Test", wxPoint(10, 200), wxSize(100, 30));
-    checkbox = new wxCheckBox(this, wxID_ANY, "Test", wxPoint(10, 300), wxSize(100, 30));
-    combo = new wxComboBox(this, wxID_ANY, "Test", wxPoint(10, 400), wxSize(100, 30));
-    list = new wxListBox(this, wxID_ANY, wxPoint(10, 500), wxSize(100, 30));
-    text = new wxTextCtrl(this, wxID_ANY, "Test", wxPoint(10, 600), wxSize(100, 30));
+    MovableElement<wxButton>* me_btn =
+        new MovableElement<wxButton>(this, wxID_ANY, "Test", wxPoint(200, 0), wxSize(100, 100));
+    MovableElement<wxSlider>* me_slider =
+        new MovableElement<wxSlider>(this, wxID_ANY, 13, 0, 100, wxPoint(200, 100), wxSize(100, 30));
+    MovableElement<wxRadioButton>* me_radiobutton =
+        new MovableElement<wxRadioButton>(this, wxID_ANY, "Test", wxPoint(200, 200), wxSize(100, 30));
+    MovableElement<wxCheckBox>* me_checkbox =
+        new MovableElement<wxCheckBox>(this, wxID_ANY, "Test", wxPoint(200, 300), wxSize(100, 30));
+    MovableElement<wxComboBox>* me_combo_box =
+        new MovableElement<wxComboBox>(this, wxID_ANY, "Test", wxPoint(200, 400), wxSize(100, 30));
+    MovableElement<wxListBox>* me_list_box =
+        new MovableElement<wxListBox>(this, wxID_ANY, wxPoint(200, 500), wxSize(100, 30));
+    MovableElement<wxTextCtrl>* me_text_ctrl =
+        new MovableElement<wxTextCtrl>(this, wxID_ANY, "Test", wxPoint(200, 600), wxSize(100, 30), wxTE_PROCESS_ENTER);
 
     wxArrayString arr;
     arr.Add("Test1");
     arr.Add("Test2");
     arr.Add("Test3");
-    list->InsertItems(arr, 0);
+    me_list_box->InsertItems(arr, 0);
 
-    combo->Append("combo Test1");
-    combo->Append("combo Test2");
-    combo->Append("combo Test3");
+    me_combo_box->Append("combo Test1");
+    me_combo_box->Append("combo Test2");
+    me_combo_box->Append("combo Test3");
 
-    Bind(wxEVT_BUTTON, &MainWindow::guiElementCallbackHandler, this, btn->GetId());
-    Bind(wxEVT_SLIDER, &MainWindow::guiElementCallbackHandler, this, slider->GetId());
-    Bind(wxEVT_RADIOBUTTON, &MainWindow::guiElementCallbackHandler, this, radio->GetId());
-    Bind(wxEVT_CHECKBOX, &MainWindow::guiElementCallbackHandler, this, checkbox->GetId());
-    Bind(wxEVT_LISTBOX, &MainWindow::guiElementCallbackHandler, this, list->GetId());
-    Bind(wxEVT_COMBOBOX, &MainWindow::guiElementCallbackHandler, this, combo->GetId());
-    Bind(wxEVT_TEXT, &MainWindow::guiElementCallbackHandler, this, text->GetId());
-    // Bind(wxEVT_TEXT_ENTER, &MainWindow::guiElementCallbackHandler, this, text->GetId());
-
-    // std::cout << "btn id: " << btn->GetId() << std::endl;
-    // std::cout << "slider id: " << slider->GetId() << std::endl;
+    Bind(wxEVT_BUTTON, &MainWindow::buttonCallback, this, me_btn->GetId());
+    Bind(wxEVT_SLIDER, &MainWindow::sliderCallback, this, me_slider->GetId());
+    Bind(wxEVT_RADIOBUTTON, &MainWindow::radioButtonCallback, this, me_radiobutton->GetId());
+    Bind(wxEVT_CHECKBOX, &MainWindow::checkBoxCallback, this, me_checkbox->GetId());
+    Bind(wxEVT_LISTBOX, &MainWindow::listBoxCallback, this, me_list_box->GetId());
+    Bind(wxEVT_COMBOBOX, &MainWindow::comboBoxCallback, this, me_combo_box->GetId());
+    Bind(wxEVT_TEXT, &MainWindow::textCtrlCallback, this, me_text_ctrl->GetId());
+    Bind(wxEVT_TEXT_ENTER, &MainWindow::textCtrlEnterCallback, this, me_text_ctrl->GetId());
 
     /*
 A button is clicked

@@ -68,9 +68,8 @@ struct EditableTextData
 {
     std::string text_data;
     bool enter_pressed;
-    bool tab_pressed;
 
-    EditableTextData() : text_data{""}, enter_pressed{false}, tab_pressed{false} {}
+    EditableTextData() : text_data{""}, enter_pressed{false} {}
 };
 
 struct SliderData
