@@ -1,0 +1,114 @@
+{
+    "windows": [
+        {
+            "name": "Window 0",
+            "x": 161.0,
+            "y": 23.0,
+            "width": 781.0,
+            "height": 796.0,
+            "tabs": [
+                {
+                    "elements": [
+                        {
+                            "handle_string": "button0",
+                            "attributes": {
+                                "label": "Button2"
+                            },
+                            "type": "BUTTON",
+                            "height": 0.2,
+                            "width": 0.2,
+                            "x": 0.05,
+                            "y": 0.05
+                        },
+                        {
+                            "handle_string": "slider0",
+                            "type": "SLIDER",
+                            "attributes": {
+                                "min": 0,
+                                "max": 100,
+                                "step": 1,
+                                "init_value": 0,
+                                "style": "horizontal"
+                            },
+                            "height": 0.5979112386703491,
+                            "width": 0.5229358077049255,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "check_box0",
+                            "attributes": {
+                                "label": "Check BoxButton"
+                            },
+                            "type": "CHECK_BOX",
+                            "height": 0.5979112386703491,
+                            "width": 0.5229358077049255,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "editable_text0",
+                            "attributes": {
+                                "init_value": "Editable Text"
+                            },
+                            "type": "EDITABLE_TEXT",
+                            "height": 0.5979112386703491,
+                            "width": 0.5229358077049255,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "drop_down_menu0",
+                            "type": "DROP_DOWN_MENU",
+                            "attributes": {
+                                "init_value": "Drop down menu"
+                            },
+                            "height": 0.5979112386703491,
+                            "width": 0.5229358077049255,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "list_box0",
+                            "type": "LIST_BOX",
+                            "attributes": {
+                                "init_value": [
+                                    "v0",
+                                    "v1",
+                                    "v2"
+                                ]
+                            },
+                            "height": 0.5979112386703491,
+                            "width": 0.5229358077049255,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "radio_button0",
+                            "type": "RADIO_BUTTON",
+                            "attributes": {
+                                "label": "Radio Button"
+                            },
+                            "height": 0.5979112386703491,
+                            "width": 0.5229358077049255,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "text_label0",
+                            "type": "TEXT_LABEL",
+                            "attributes": {
+                                "label": "Text Label"
+                            },
+                            "height": 0.5979112386703491,
+                            "width": 0.5229358077049255,
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    ],
+                    "name": "primary_view"
+                }
+            ]
+        }
+    ]
+}

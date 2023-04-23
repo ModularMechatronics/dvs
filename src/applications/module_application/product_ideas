@@ -16,3 +16,5 @@ configuration file).
 https://stackoverflow.com/questions/274753/how-to-make-weak-linking-work-with-gcc/3749780#3749780
 
 Real time data visualization capabilities through module
+
+Demo applications available for download/demo with hardcoded modules that read in demo data
