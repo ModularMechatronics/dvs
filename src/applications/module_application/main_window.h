@@ -62,13 +62,13 @@ struct ElementAttributes
     float y;
     float width;
     float height;
-    ElementAttributes() : handle_string(""), x(0.0f), y(0.0f), width(0.0f), height(0.0f) {}
+    ElementAttributes() : handle_string(""), x{0.0f}, y{0.0f}, width{0.0f}, height{0.0f} {}
     ElementAttributes(const nlohmann::json& j_data)
-        : handle_string(j_data["handle_string"]),
-          x(j_data["x"]),
-          y(j_data["y"]),
-          width(j_data["width"]),
-          height(j_data["height"])
+        : handle_string{j_data["handle_string"]},
+          x{j_data["x"]},
+          y{j_data["y"]},
+          width{j_data["width"]},
+          height{j_data["height"]}
     {
     }
 };
@@ -76,8 +76,114 @@ struct ElementAttributes
 struct ButtonAttributes : public ElementAttributes
 {
     std::string label;
-    ButtonAttributes() : ElementAttributes(), label("") {}
-    ButtonAttributes(const nlohmann::json& j_data) : ElementAttributes(j_data), label(j_data["attributes"]["label"]) {}
+    ButtonAttributes() : ElementAttributes{}, label{""} {}
+    ButtonAttributes(const nlohmann::json& j_data) : ElementAttributes{j_data}, label{j_data["attributes"]["label"]} {}
+};
+
+struct CheckBoxAttributes : public ElementAttributes
+{
+    std::string label;
+    CheckBoxAttributes() : ElementAttributes{}, label{""} {}
+    CheckBoxAttributes(const nlohmann::json& j_data) : ElementAttributes{j_data}, label{j_data["attributes"]["label"]}
+    {
+    }
+};
+
+struct EditableTextAttributes : public ElementAttributes
+{
+    std::string init_value;
+    EditableTextAttributes() : ElementAttributes{}, init_value{""} {}
+    EditableTextAttributes(const nlohmann::json& j_data)
+        : ElementAttributes{j_data}, init_value{j_data["attributes"]["init_value"]}
+    {
+    }
+};
+
+struct DropDownMenuAttributes : public ElementAttributes
+{
+    std::string init_value;
+    DropDownMenuAttributes() : ElementAttributes{}, init_value{} {}
+    DropDownMenuAttributes(const nlohmann::json& j_data)
+        : ElementAttributes{j_data}, init_value{j_data["attributes"]["init_value"]}
+    {
+    }
+};
+
+struct ListBoxAttributes : public ElementAttributes
+{
+    ListBoxAttributes() : ElementAttributes{} {}
+    ListBoxAttributes(const nlohmann::json& j_data) : ElementAttributes{j_data} {}
+};
+
+struct RadioButtonAttributes : public ElementAttributes
+{
+    std::string label;
+    RadioButtonAttributes() : ElementAttributes{}, label{""} {}
+    RadioButtonAttributes(const nlohmann::json& j_data)
+        : ElementAttributes{j_data}, label{j_data["attributes"]["label"]}
+    {
+    }
+};
+
+struct StaticTextAttributes : public ElementAttributes
+{
+    std::string label;
+    StaticTextAttributes() : ElementAttributes{}, label{""} {}
+    StaticTextAttributes(const nlohmann::json& j_data) : ElementAttributes{j_data}, label{j_data["attributes"]["label"]}
+    {
+    }
+};
+
+template <typename T> T getOptionalValue(const nlohmann::json& j_data, const std::string& key, const T& default_value)
+{
+    if (j_data.contains(key))
+    {
+        return j_data[key];
+    }
+    else
+    {
+        return default_value;
+    }
+}
+
+struct SliderAttributes : public ElementAttributes
+{
+    int min_value;
+    int max_value;
+    int init_value;
+    int step_size;
+    bool is_horizontal;
+    SliderAttributes()
+        : ElementAttributes(), min_value{0}, max_value{100}, init_value{0}, step_size{1}, is_horizontal{true}
+    {
+    }
+
+    SliderAttributes(const nlohmann::json& j_data) : ElementAttributes(j_data)
+    {
+        if (j_data.contains("attributes"))
+        {
+            min_value = getOptionalValue(j_data["attributes"], "min", 0);
+            max_value = getOptionalValue(j_data["attributes"], "max", 100);
+            init_value = getOptionalValue(j_data["attributes"], "init_value", 0);
+            step_size = getOptionalValue(j_data["attributes"], "step_size", 1);
+            if (j_data["attributes"].contains("style"))
+            {
+                is_horizontal = j_data["attributes"]["style"] == "horizontal";
+            }
+            else
+            {
+                is_horizontal = true;
+            }
+        }
+        else
+        {
+            min_value = 0;
+            max_value = 100;
+            init_value = 0;
+            step_size = 1;
+            is_horizontal = true;
+        }
+    }
 };
 
 class MainWindow : public wxFrame
@@ -95,6 +201,14 @@ private:
     void textCtrlEnterCallback(wxCommandEvent& evt);
 
     GuiElement* setupButton(const ButtonAttributes& element_data);
+    GuiElement* setupSlider(const SliderAttributes& slider_attributes);
+    GuiElement* setupCheckBox(const CheckBoxAttributes& check_box_attributes);
+    GuiElement* setupEditableText(const EditableTextAttributes& editable_text_attributes);
+    GuiElement* setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes);
+    GuiElement* setupListBox(const ListBoxAttributes& list_box_attributes);
+    GuiElement* setupRadioButton(const RadioButtonAttributes& radio_button_attributes);
+    GuiElement* setupStaticText(const StaticTextAttributes& static_text_attributes);
+
     void createGuiElements(const std::string& path_to_layout_file);
 
     void sliderHandler(wxCommandEvent& event);

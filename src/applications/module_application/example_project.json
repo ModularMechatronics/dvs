@@ -26,14 +26,14 @@
                             "attributes": {
                                 "min": 0,
                                 "max": 100,
-                                "step": 1,
+                                "step_size": 1,
                                 "init_value": 0,
                                 "style": "horizontal"
                             },
-                            "height": 0.5979112386703491,
-                            "width": 0.5229358077049255,
+                            "height": 0.1,
+                            "width": 0.3,
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 0.1
                         },
                         {
                             "handle_string": "check_box0",
@@ -41,10 +41,10 @@
                                 "label": "Check BoxButton"
                             },
                             "type": "CHECK_BOX",
-                            "height": 0.5979112386703491,
-                            "width": 0.5229358077049255,
+                            "height": 0.1,
+                            "width": 0.3,
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 0.2
                         },
                         {
                             "handle_string": "editable_text0",
@@ -52,10 +52,10 @@
                                 "init_value": "Editable Text"
                             },
                             "type": "EDITABLE_TEXT",
-                            "height": 0.5979112386703491,
-                            "width": 0.5229358077049255,
+                            "height": 0.1,
+                            "width": 0.3,
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 0.3
                         },
                         {
                             "handle_string": "drop_down_menu0",
@@ -63,25 +63,18 @@
                             "attributes": {
                                 "init_value": "Drop down menu"
                             },
-                            "height": 0.5979112386703491,
-                            "width": 0.5229358077049255,
+                            "height": 0.1,
+                            "width": 0.3,
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 0.4
                         },
                         {
                             "handle_string": "list_box0",
                             "type": "LIST_BOX",
-                            "attributes": {
-                                "init_value": [
-                                    "v0",
-                                    "v1",
-                                    "v2"
-                                ]
-                            },
-                            "height": 0.5979112386703491,
-                            "width": 0.5229358077049255,
+                            "height": 0.1,
+                            "width": 0.3,
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 0.5
                         },
                         {
                             "handle_string": "radio_button0",
@@ -89,10 +82,10 @@
                             "attributes": {
                                 "label": "Radio Button"
                             },
-                            "height": 0.5979112386703491,
-                            "width": 0.5229358077049255,
+                            "height": 0.1,
+                            "width": 0.3,
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 0.6
                         },
                         {
                             "handle_string": "text_label0",
@@ -100,10 +93,10 @@
                             "attributes": {
                                 "label": "Text Label"
                             },
-                            "height": 0.5979112386703491,
-                            "width": 0.5229358077049255,
-                            "x": 0.0,
-                            "y": 0.0
+                            "height": 0.1,
+                            "width": 0.3,
+                            "x": 0.5,
+                            "y": 0.7
                         }
                     ],
                     "name": "primary_view"
