@@ -247,7 +247,7 @@ private:
 };
 class GuiElement;
 
-using GuiElementCallback = std::function<void(const GuiElementEventData&, const GuiElement* const)>;
+using GuiElementCallback = std::function<void(const GuiElement* const, const GuiElementEventData&)>;
 
 class GuiElement
 {
@@ -267,7 +267,7 @@ public:
 
         if (callback_function_)
         {
-            callback_function_(event_data, this);
+            callback_function_(this, event_data);
         }
         else
         {

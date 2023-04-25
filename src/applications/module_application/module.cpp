@@ -7,14 +7,14 @@ Or the handle_string?
 
 void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks)
 {
-    callbacks["button0"] = [](const GuiElementEventData& gui_element_event_data,
-                              const GuiElement* const source_gui_element) -> void {
+    callbacks["button0"] = [](const GuiElement* const source_gui_element,
+                              const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         static_cast<void>(gui_element_event_data);
     };
 
-    callbacks["slider0"] = [](const GuiElementEventData& gui_element_event_data,
-                              const GuiElement* const source_gui_element) -> void {
+    callbacks["slider0"] = [](const GuiElement* const source_gui_element,
+                              const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         const SliderData slider_data = gui_element_event_data.getSliderData();
 
@@ -25,14 +25,14 @@ void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks)
         // Slider* source_gui_element->as<Slider>();
     };
 
-    callbacks["check_box0"] = [](const GuiElementEventData& gui_element_event_data,
-                                 const GuiElement* const source_gui_element) -> void {
+    callbacks["check_box0"] = [](const GuiElement* const source_gui_element,
+                                 const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         static_cast<void>(gui_element_event_data);
     };
 
-    callbacks["editable_text0"] = [](const GuiElementEventData& gui_element_event_data,
-                                     const GuiElement* const source_gui_element) -> void {
+    callbacks["editable_text0"] = [](const GuiElement* const source_gui_element,
+                                     const GuiElementEventData& gui_element_event_data) -> void {
         static_cast<void>(gui_element_event_data);
 
         const EditableTextData editable_text_data = gui_element_event_data.getEditableTextData();
@@ -40,26 +40,26 @@ void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks)
                   << " with text data: " << editable_text_data.text_data << std::endl;
     };
 
-    callbacks["drop_down_menu0"] = [](const GuiElementEventData& gui_element_event_data,
-                                      const GuiElement* const source_gui_element) -> void {
+    callbacks["drop_down_menu0"] = [](const GuiElement* const source_gui_element,
+                                      const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         static_cast<void>(gui_element_event_data);
     };
 
-    callbacks["list_box0"] = [](const GuiElementEventData& gui_element_event_data,
-                                const GuiElement* const source_gui_element) -> void {
+    callbacks["list_box0"] = [](const GuiElement* const source_gui_element,
+                                const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         static_cast<void>(gui_element_event_data);
     };
 
-    callbacks["radio_button0x"] = [](const GuiElementEventData& gui_element_event_data,
-                                     const GuiElement* const source_gui_element) -> void {
+    callbacks["radio_button0x"] = [](const GuiElement* const source_gui_element,
+                                     const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         static_cast<void>(gui_element_event_data);
     };
 
-    callbacks["text_label0"] = [](const GuiElementEventData& gui_element_event_data,
-                                  const GuiElement* const source_gui_element) -> void {
+    callbacks["text_label0"] = [](const GuiElement* const source_gui_element,
+                                  const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         static_cast<void>(gui_element_event_data);
     };
