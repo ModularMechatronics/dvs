@@ -200,4 +200,140 @@ public:
     ~MainWindow();
 };
 
+template <class C> class MovableElement : public C, public GuiElement
+{
+public:
+    // Slider
+    MovableElement(wxFrame* parent,
+                   const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
+                   const wxWindowID id,
+                   const int init_value,
+                   const int min_value,
+                   const int max_value,
+                   const wxPoint& pos,
+                   const wxSize& size,
+                   const long style)
+        : C(parent, id, init_value, min_value, max_value, pos, size, style),
+          GuiElement(handle_string, elem_callback, gui_element_type)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    // Button, Checkbox, RadioButton, ComboBox
+    MovableElement(wxFrame* parent,
+                   const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
+                   const wxWindowID id,
+                   const std::string& label,
+                   const wxPoint& pos,
+                   const wxSize& size)
+        : C(parent, id, label, pos, size), GuiElement(handle_string, elem_callback, gui_element_type)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    // ListBox
+    MovableElement(wxFrame* parent,
+                   const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
+                   const wxWindowID id,
+                   const wxPoint& pos,
+                   const wxSize& size)
+        : C(parent, id, pos, size), GuiElement(handle_string, elem_callback, gui_element_type)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    // EditableText
+    MovableElement(wxFrame* parent,
+                   const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
+                   const wxWindowID id,
+                   const std::string& initial_text,
+                   const wxPoint& pos,
+                   const wxSize& size,
+                   const long style)
+        : C(parent, id, initial_text, pos, size, style), GuiElement(handle_string, elem_callback, gui_element_type)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    void mouseLeftPressed(wxMouseEvent& event)
+    {
+        if (wxGetKeyState(WXK_CONTROL))
+        {
+            control_pressed_at_mouse_down = true;
+
+            const wxPoint pos_at_press = this->GetPosition();
+
+            mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
+            previous_mouse_pos_ = mouse_pos_at_press_;
+        }
+        else
+        {
+            event.Skip();
+        }
+    }
+
+    void mouseLeftReleased(wxMouseEvent& event)
+    {
+        if (control_pressed_at_mouse_down)
+        {
+            control_pressed_at_mouse_down = false;
+        }
+        else
+        {
+            event.Skip();
+        }
+    }
+
+    void mouseMovedOverItem(wxMouseEvent& event)
+    {
+        if (control_pressed_at_mouse_down && event.LeftIsDown())
+        {
+            const wxPoint current_mouse_position_local = event.GetPosition();
+            const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
+            const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
+            this->SetPosition(this->GetPosition() + delta);
+
+            previous_mouse_pos_ = current_mouse_position_global;
+        }
+        else
+        {
+            event.Skip();
+        }
+    }
+
+    long getId() const override
+    {
+        return this->GetId();
+    }
+
+private:
+    bool control_pressed_at_mouse_down;
+    wxPoint mouse_pos_at_press_;
+    wxPoint previous_mouse_pos_;
+};
+
 #endif  // MODULE_APPLICATION_MAIN_WINDOW_H_
