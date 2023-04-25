@@ -20,41 +20,6 @@
 
 #include "module_api.h"
 
-class GuiElement
-{
-public:
-    GuiElement(const std::string& handle_string) : callback_function_{nullptr}, handle_string_{handle_string} {}
-    virtual ~GuiElement() = default;
-
-    virtual long getId() const = 0;
-
-    void callback(const GuiElementEventData& event_data)
-    {
-        if (callback_function_)
-        {
-            callback_function_(event_data);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "No callback function set for GuiElement with handle string: " << getHandleString();
-        }
-    }
-
-    std::string getHandleString() const
-    {
-        return handle_string_;
-    }
-
-protected:
-    GuiElementCallback callback_function_;
-    std::string handle_string_;
-
-    float x_;
-    float y_;
-    float width_;
-    float height_;
-};
-
 struct ElementAttributes
 {
     std::string handle_string;
@@ -120,6 +85,16 @@ struct RadioButtonAttributes : public ElementAttributes
     std::string label;
     RadioButtonAttributes() : ElementAttributes{}, label{""} {}
     RadioButtonAttributes(const nlohmann::json& j_data)
+        : ElementAttributes{j_data}, label{j_data["attributes"]["label"]}
+    {
+    }
+};
+
+struct RadioButtonGroupAttributes : public ElementAttributes
+{
+    std::string label;
+    RadioButtonGroupAttributes() : ElementAttributes{}, label{""} {}
+    RadioButtonGroupAttributes(const nlohmann::json& j_data)
         : ElementAttributes{j_data}, label{j_data["attributes"]["label"]}
     {
     }
@@ -200,14 +175,18 @@ private:
     void textCtrlCallback(wxCommandEvent& evt);
     void textCtrlEnterCallback(wxCommandEvent& evt);
 
-    GuiElement* setupButton(const ButtonAttributes& element_data);
-    GuiElement* setupSlider(const SliderAttributes& slider_attributes);
-    GuiElement* setupCheckBox(const CheckBoxAttributes& check_box_attributes);
-    GuiElement* setupEditableText(const EditableTextAttributes& editable_text_attributes);
-    GuiElement* setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes);
-    GuiElement* setupListBox(const ListBoxAttributes& list_box_attributes);
-    GuiElement* setupRadioButton(const RadioButtonAttributes& radio_button_attributes);
-    GuiElement* setupStaticText(const StaticTextAttributes& static_text_attributes);
+    GuiElement* setupButton(const ButtonAttributes& element_data, const GuiElementCallback& elem_callback);
+    GuiElement* setupSlider(const SliderAttributes& slider_attributes, const GuiElementCallback& elem_callback);
+    GuiElement* setupCheckBox(const CheckBoxAttributes& check_box_attributes, const GuiElementCallback& elem_callback);
+    GuiElement* setupEditableText(const EditableTextAttributes& editable_text_attributes,
+                                  const GuiElementCallback& elem_callback);
+    GuiElement* setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes,
+                                  const GuiElementCallback& elem_callback);
+    GuiElement* setupListBox(const ListBoxAttributes& list_box_attributes, const GuiElementCallback& elem_callback);
+    GuiElement* setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
+                                 const GuiElementCallback& elem_callback);
+    GuiElement* setupStaticText(const StaticTextAttributes& static_text_attributes,
+                                const GuiElementCallback& elem_callback);
 
     void createGuiElements(const std::string& path_to_layout_file);
 

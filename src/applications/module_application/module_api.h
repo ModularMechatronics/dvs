@@ -85,10 +85,10 @@ class GuiElementEventData
 public:
     GuiElementEventData(const VectorConstView<std::uint8_t>& gui_element_event_data_raw,
                         const GuiElementType& gui_element_type,
-                        const std::string& origin_element_name)
+                        const std::string& origin_element_handle_string)
         : gui_element_event_data_raw_{gui_element_event_data_raw},
           gui_element_type_{gui_element_type},
-          origin_element_name_{origin_element_name}
+          origin_element_handle_string_{origin_element_handle_string}
     {
     }
 
@@ -171,23 +171,26 @@ public:
             logErrorForWrongType(__func__);
             return EditableTextData{};
         }
-        // TODO: Does string have to be null terminated?
 
-        // TODO: Only 256 number of characters allowed, maybe use uint16_t instead of uint8_t
+        std::uint16_t num_characters;
+
+        std::memcpy(&(num_characters), gui_element_event_data_raw_.data() + 1U, sizeof(std::uint16_t));
+
         EditableTextData editable_text_data;
-        if (gui_element_event_data_raw_.size() == 2U)
+        if (num_characters == 0U)
         {
             editable_text_data.text_data = "";
         }
         else
         {
-            editable_text_data.text_data =
-                std::string(reinterpret_cast<const char*>(gui_element_event_data_raw_.data() + 2),
-                            gui_element_event_data_raw_.size() - 2U);
+            editable_text_data.text_data.resize(num_characters);
+            for (std::size_t k = 0; k < num_characters; k++)
+            {
+                editable_text_data.text_data[k] = gui_element_event_data_raw_(k + sizeof(std::uint16_t) + 1U);
+            }
         }
 
         editable_text_data.enter_pressed = gui_element_event_data_raw_(0) == 1;
-        editable_text_data.text_data = gui_element_event_data_raw_(1) == 1;
 
         return editable_text_data;
     }
@@ -201,11 +204,8 @@ public:
         }
 
         SliderData slider_data;
-        const SliderData* const input_slider_data =
-            reinterpret_cast<const SliderData* const>(gui_element_event_data_raw_.data());
-        slider_data.value = input_slider_data->value;
-        slider_data.min_value = input_slider_data->min_value;
-        slider_data.max_value = input_slider_data->max_value;
+
+        std::memcpy(&slider_data, gui_element_event_data_raw_.data(), sizeof(SliderData));
 
         return slider_data;
     }
@@ -235,18 +235,66 @@ public:
 private:
     VectorConstView<std::uint8_t> gui_element_event_data_raw_;
     GuiElementType gui_element_type_;
-    std::string origin_element_name_;
+    std::string origin_element_handle_string_;
 
     void logErrorForWrongType(const std::string& function_name) const
     {
         DVS_LOG_ERROR() << "GuiElementEventData::" << function_name
-                        << "() called on a data originating from the gui element \"" << origin_element_name_
+                        << "() called on a data originating from the gui element \"" << origin_element_handle_string_
                         << "\", which is a " << guiElementTypeToString(gui_element_type_)
                         << "! Returning empty object.";
     }
 };
+class GuiElement;
 
-using GuiElementCallback = std::function<void(const GuiElementEventData&)>;
+using GuiElementCallback = std::function<void(const GuiElementEventData&, const GuiElement* const)>;
+
+class GuiElement
+{
+public:
+    GuiElement(const std::string& handle_string, const GuiElementCallback& elem_callback, const GuiElementType type)
+        : type_{type}, callback_function_{elem_callback}, handle_string_{handle_string}
+    {
+    }
+
+    virtual ~GuiElement() = default;
+
+    virtual long getId() const = 0;
+
+    void callback(const VectorConstView<std::uint8_t>& event_raw_data)
+    {
+        const GuiElementEventData event_data{event_raw_data, type_, handle_string_};
+
+        if (callback_function_)
+        {
+            callback_function_(event_data, this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "No callback function set for GuiElement with handle string: " << getHandleString();
+        }
+    }
+
+    GuiElementType getType() const
+    {
+        return type_;
+    }
+
+    std::string getHandleString() const
+    {
+        return handle_string_;
+    }
+
+protected:
+    GuiElementType type_;
+    GuiElementCallback callback_function_;
+    std::string handle_string_;
+
+    float x_;
+    float y_;
+    float width_;
+    float height_;
+};
 
 class LoadedDataBase
 {

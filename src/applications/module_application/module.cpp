@@ -1,6 +1,6 @@
 #include "module_api.h"
 
-void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
+/*void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
                        std::shared_ptr<LoadedDataBase>& loaded_data)
 {
     callbacks["button0"] = [](const GuiElementEventData& gui_element_event_data) {
@@ -39,4 +39,4 @@ void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
 
         // Do something
     };
-}
+}*/

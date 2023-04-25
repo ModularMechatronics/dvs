@@ -9,12 +9,72 @@
 #include <iostream>
 #include <stdexcept>
 
+void registerCallbacksPrototype(std::map<std::string, GuiElementCallback>& callbacks)
+{
+    callbacks["button0"] = [](const GuiElementEventData& gui_element_event_data,
+                              const GuiElement* const origin_gui_element) -> void {
+        std::cout << "User callback from " << origin_gui_element->getHandleString() << std::endl;
+        static_cast<void>(gui_element_event_data);
+    };
+
+    callbacks["slider0"] = [](const GuiElementEventData& gui_element_event_data,
+                              const GuiElement* const origin_gui_element) -> void {
+        std::cout << "User callback from " << origin_gui_element->getHandleString() << std::endl;
+        const SliderData slider_data = gui_element_event_data.getSliderData();
+
+        std::cout << "Slider min: " << slider_data.min_value << std::endl;
+        std::cout << "Slider max: " << slider_data.max_value << std::endl;
+        std::cout << "Slider data: " << slider_data.value << std::endl;
+    };
+
+    callbacks["check_box0"] = [](const GuiElementEventData& gui_element_event_data,
+                                 const GuiElement* const origin_gui_element) -> void {
+        std::cout << "User callback from " << origin_gui_element->getHandleString() << std::endl;
+        static_cast<void>(gui_element_event_data);
+    };
+
+    callbacks["editable_text0"] = [](const GuiElementEventData& gui_element_event_data,
+                                     const GuiElement* const origin_gui_element) -> void {
+        static_cast<void>(gui_element_event_data);
+
+        const EditableTextData editable_text_data = gui_element_event_data.getEditableTextData();
+        std::cout << "User callback from " << origin_gui_element->getHandleString()
+                  << " with text data: " << editable_text_data.text_data << std::endl;
+    };
+
+    callbacks["drop_down_menu0"] = [](const GuiElementEventData& gui_element_event_data,
+                                      const GuiElement* const origin_gui_element) -> void {
+        std::cout << "User callback from " << origin_gui_element->getHandleString() << std::endl;
+        static_cast<void>(gui_element_event_data);
+    };
+
+    callbacks["list_box0"] = [](const GuiElementEventData& gui_element_event_data,
+                                const GuiElement* const origin_gui_element) -> void {
+        std::cout << "User callback from " << origin_gui_element->getHandleString() << std::endl;
+        static_cast<void>(gui_element_event_data);
+    };
+
+    callbacks["radio_button0x"] = [](const GuiElementEventData& gui_element_event_data,
+                                     const GuiElement* const origin_gui_element) -> void {
+        std::cout << "User callback from " << origin_gui_element->getHandleString() << std::endl;
+        static_cast<void>(gui_element_event_data);
+    };
+
+    callbacks["text_label0"] = [](const GuiElementEventData& gui_element_event_data,
+                                  const GuiElement* const origin_gui_element) -> void {
+        std::cout << "User callback from " << origin_gui_element->getHandleString() << std::endl;
+        static_cast<void>(gui_element_event_data);
+    };
+}
+
 template <class C> class MovableElement : public C, public GuiElement
 {
 public:
     // Slider
     MovableElement(wxFrame* parent,
                    const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
                    const wxWindowID id,
                    const int init_value,
                    const int min_value,
@@ -22,7 +82,8 @@ public:
                    const wxPoint& pos,
                    const wxSize& size,
                    const long style)
-        : C(parent, id, init_value, min_value, max_value, pos, size, style), GuiElement(handle_string)
+        : C(parent, id, init_value, min_value, max_value, pos, size, style),
+          GuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
 
@@ -34,11 +95,13 @@ public:
     // Button, Checkbox, RadioButton, ComboBox
     MovableElement(wxFrame* parent,
                    const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
                    const wxWindowID id,
                    const std::string& label,
                    const wxPoint& pos,
                    const wxSize& size)
-        : C(parent, id, label, pos, size), GuiElement(handle_string)
+        : C(parent, id, label, pos, size), GuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
 
@@ -48,9 +111,14 @@ public:
     }
 
     // ListBox
-    MovableElement(
-        wxFrame* parent, const std::string& handle_string, const wxWindowID id, const wxPoint& pos, const wxSize& size)
-        : C(parent, id, pos, size), GuiElement(handle_string)
+    MovableElement(wxFrame* parent,
+                   const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
+                   const wxWindowID id,
+                   const wxPoint& pos,
+                   const wxSize& size)
+        : C(parent, id, pos, size), GuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
 
@@ -62,12 +130,14 @@ public:
     // EditableText
     MovableElement(wxFrame* parent,
                    const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
                    const wxWindowID id,
                    const std::string& initial_text,
                    const wxPoint& pos,
                    const wxSize& size,
                    const long style)
-        : C(parent, id, initial_text, pos, size, style), GuiElement(handle_string)
+        : C(parent, id, initial_text, pos, size, style), GuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
 
@@ -145,68 +215,87 @@ std::tuple<wxPoint, wxSize> getPosAndSizeInPixelCoords(const wxSize current_wind
     return std::make_tuple(wxPoint(x_pos_in_pixels, y_pos_in_pixels), wxSize(width_in_pixels, height_in_pixels));
 }
 
-GuiElement* MainWindow::setupButton(const ButtonAttributes& button_attributes)
+GuiElement* MainWindow::setupButton(const ButtonAttributes& button_attributes, const GuiElementCallback& elem_callback)
 {
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &button_attributes);
 
-    const std::string handle_string = button_attributes.handle_string;
-    const std::string button_label = button_attributes.label;
-
-    MovableElement<wxButton>* btn =
-        new MovableElement<wxButton>(this, handle_string, wxID_ANY, button_label, elem_pos, elem_size);
+    MovableElement<wxButton>* btn = new MovableElement<wxButton>(this,
+                                                                 button_attributes.handle_string,
+                                                                 elem_callback,
+                                                                 GuiElementType::Button,
+                                                                 wxID_ANY,
+                                                                 button_attributes.label,
+                                                                 elem_pos,
+                                                                 elem_size);
 
     return static_cast<GuiElement*>(btn);
 }
 
-GuiElement* MainWindow::setupCheckBox(const CheckBoxAttributes& check_box_attributes)
+GuiElement* MainWindow::setupCheckBox(const CheckBoxAttributes& check_box_attributes,
+                                      const GuiElementCallback& elem_callback)
 {
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &check_box_attributes);
 
-    const std::string handle_string = check_box_attributes.handle_string;
-    const std::string check_box_label = check_box_attributes.label;
-
-    MovableElement<wxCheckBox>* cb =
-        new MovableElement<wxCheckBox>(this, handle_string, wxID_ANY, check_box_label, elem_pos, elem_size);
+    MovableElement<wxCheckBox>* cb = new MovableElement<wxCheckBox>(this,
+                                                                    check_box_attributes.handle_string,
+                                                                    elem_callback,
+                                                                    GuiElementType::CheckBox,
+                                                                    wxID_ANY,
+                                                                    check_box_attributes.label,
+                                                                    elem_pos,
+                                                                    elem_size);
 
     return static_cast<GuiElement*>(cb);
 }
 
-GuiElement* MainWindow::setupSlider(const SliderAttributes& slider_attributes)
+GuiElement* MainWindow::setupSlider(const SliderAttributes& slider_attributes, const GuiElementCallback& elem_callback)
 {
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &slider_attributes);
 
-    const std::string handle_string = slider_attributes.handle_string;
-    const int min_value = slider_attributes.min_value;
-    const int max_value = slider_attributes.max_value;
-    const int initial_value = slider_attributes.init_value;
+    const long style = slider_attributes.is_horizontal ? wxSL_HORIZONTAL : wxSL_VERTICAL;
 
-    long style = slider_attributes.is_horizontal ? wxSL_HORIZONTAL : wxSL_VERTICAL;
-
-    MovableElement<wxSlider>* slider = new MovableElement<wxSlider>(
-        this, handle_string, wxID_ANY, initial_value, min_value, max_value, elem_pos, elem_size, style);
+    MovableElement<wxSlider>* slider = new MovableElement<wxSlider>(this,
+                                                                    slider_attributes.handle_string,
+                                                                    elem_callback,
+                                                                    GuiElementType::Slider,
+                                                                    wxID_ANY,
+                                                                    slider_attributes.init_value,
+                                                                    slider_attributes.min_value,
+                                                                    slider_attributes.max_value,
+                                                                    elem_pos,
+                                                                    elem_size,
+                                                                    style);
 
     return static_cast<GuiElement*>(slider);
 }
 
-GuiElement* MainWindow::setupEditableText(const EditableTextAttributes& editable_text_attributes)
+GuiElement* MainWindow::setupEditableText(const EditableTextAttributes& editable_text_attributes,
+                                          const GuiElementCallback& elem_callback)
 {
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &editable_text_attributes);
 
-    const std::string handle_string = editable_text_attributes.handle_string;
-    const std::string init_value = editable_text_attributes.init_value;
-
-    MovableElement<wxTextCtrl>* editable_text = new MovableElement<wxTextCtrl>(
-        this, handle_string, wxID_ANY, init_value, elem_pos, elem_size, wxTE_PROCESS_ENTER);
+    MovableElement<wxTextCtrl>* editable_text = new MovableElement<wxTextCtrl>(this,
+                                                                               editable_text_attributes.handle_string,
+                                                                               elem_callback,
+                                                                               GuiElementType::EditableText,
+                                                                               wxID_ANY,
+                                                                               editable_text_attributes.init_value,
+                                                                               elem_pos,
+                                                                               elem_size,
+                                                                               wxTE_PROCESS_ENTER);
 
     return static_cast<GuiElement*>(editable_text);
 }
 
-GuiElement* MainWindow::setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes)
+GuiElement* MainWindow::setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes,
+                                          const GuiElementCallback& elem_callback)
 {
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &drop_down_menu_attributes);
 
     MovableElement<wxComboBox>* drop_down_menu = new MovableElement<wxComboBox>(this,
                                                                                 drop_down_menu_attributes.handle_string,
+                                                                                elem_callback,
+                                                                                GuiElementType::DropDownMenu,
                                                                                 wxID_ANY,
                                                                                 drop_down_menu_attributes.init_value,
                                                                                 elem_pos,
@@ -215,32 +304,48 @@ GuiElement* MainWindow::setupDropDownMenu(const DropDownMenuAttributes& drop_dow
     return static_cast<GuiElement*>(drop_down_menu);
 }
 
-GuiElement* MainWindow::setupListBox(const ListBoxAttributes& list_box_attributes)
+GuiElement* MainWindow::setupListBox(const ListBoxAttributes& list_box_attributes,
+                                     const GuiElementCallback& elem_callback)
 {
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &list_box_attributes);
 
-    MovableElement<wxListBox>* list_box =
-        new MovableElement<wxListBox>(this, list_box_attributes.handle_string, wxID_ANY, elem_pos, elem_size);
+    MovableElement<wxListBox>* list_box = new MovableElement<wxListBox>(
+        this, list_box_attributes.handle_string, elem_callback, GuiElementType::ListBox, wxID_ANY, elem_pos, elem_size);
 
-    return static_cast<GuiElement*>(list_box);
+    return list_box;
 }
 
-GuiElement* MainWindow::setupStaticText(const StaticTextAttributes& static_text_attributes)
+GuiElement* MainWindow::setupStaticText(const StaticTextAttributes& static_text_attributes,
+                                        const GuiElementCallback& elem_callback)
 {
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &static_text_attributes);
 
-    MovableElement<wxStaticText>* static_text = new MovableElement<wxStaticText>(
-        this, static_text_attributes.handle_string, wxID_ANY, static_text_attributes.label, elem_pos, elem_size);
+    MovableElement<wxStaticText>* static_text = new MovableElement<wxStaticText>(this,
+                                                                                 static_text_attributes.handle_string,
+                                                                                 elem_callback,
+                                                                                 GuiElementType::TextLabel,
+                                                                                 wxID_ANY,
+                                                                                 static_text_attributes.label,
+                                                                                 elem_pos,
+                                                                                 elem_size);
 
     return static_cast<GuiElement*>(static_text);
 }
 
-GuiElement* MainWindow::setupRadioButton(const RadioButtonAttributes& radio_button_attributes)
+GuiElement* MainWindow::setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
+                                         const GuiElementCallback& elem_callback)
 {
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &radio_button_attributes);
 
-    MovableElement<wxRadioButton>* radio_button = new MovableElement<wxRadioButton>(
-        this, radio_button_attributes.handle_string, wxID_ANY, radio_button_attributes.label, elem_pos, elem_size);
+    MovableElement<wxRadioButton>* radio_button =
+        new MovableElement<wxRadioButton>(this,
+                                          radio_button_attributes.handle_string,
+                                          elem_callback,
+                                          GuiElementType::RadioButton,
+                                          wxID_ANY,
+                                          radio_button_attributes.label,
+                                          elem_pos,
+                                          elem_size);
 
     return static_cast<GuiElement*>(radio_button);
 }
@@ -250,6 +355,12 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
     std::ifstream input_file(path_to_layout_file);
     nlohmann::json json_data;
     input_file >> json_data;
+
+    // TODO: No validation is possible to make sure that the assigned functions in "registerCallbacksPrototype" are
+    // available from the json layout definition
+
+    std::map<std::string, GuiElementCallback> callbacks;
+    registerCallbacksPrototype(callbacks);
 
     for (size_t k = 0; k < json_data["windows"].size(); k++)
     {
@@ -264,74 +375,65 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
                 const nlohmann::json& elem = tb["elements"][j];
                 const std::string element_type = elem["type"];
 
+                const std::string handle_string = elem["handle_string"];
+
+                const GuiElementCallback& elem_callback = callbacks[handle_string];
+
                 GuiElement* gui_element{nullptr};
-
-                /*
-                Bind(wxEVT_BUTTON, &MainWindow::buttonCallback, this, me_btn->GetId());
-                Bind(wxEVT_SLIDER, &MainWindow::sliderCallback, this, me_slider->GetId());
-                Bind(wxEVT_RADIOBUTTON, &MainWindow::radioButtonCallback, this, me_radiobutton->GetId());
-                Bind(wxEVT_CHECKBOX, &MainWindow::checkBoxCallback, this, me_checkbox->GetId());
-                Bind(wxEVT_LISTBOX, &MainWindow::listBoxCallback, this, me_list_box->GetId());
-                Bind(wxEVT_COMBOBOX, &MainWindow::comboBoxCallback, this, me_combo_box->GetId());
-                Bind(wxEVT_TEXT, &MainWindow::textCtrlCallback, this, me_text_ctrl->GetId());
-                Bind(wxEVT_TEXT_ENTER, &MainWindow::textCtrlEnterCallback, this, me_text_ctrl->GetId());*/
-
-                // GuiElement* setupButton(const ButtonAttributes& element_data);
-                // GuiElement* setupSlider(const SliderAttributes& slider_attributes);
-                // GuiElement* setupCheckBox(const CheckBoxAttributes& check_box_attributes);
-                // GuiElement* setupEditableText(const EditableTextAttributes& editable_text_attributes);
-                // GuiElement* setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes);
-                // GuiElement* setupListBox(const ListBoxAttributes& list_box_attributes);
-                // GuiElement* setupRadioButton(const RadioButtonAttributes& radio_button_attributes);
-                // GuiElement* setupStaticText(const StaticTextAttributes& static_text_attributes);
 
                 if ("BUTTON" == element_type)
                 {
-                    gui_element = setupButton(ButtonAttributes{elem});
+                    gui_element = setupButton(ButtonAttributes{elem}, elem_callback);
                     gui_elements_[gui_element->getId()] = gui_element;
                     Bind(wxEVT_BUTTON, &MainWindow::buttonCallback, this, gui_element->getId());
                 }
                 else if ("SLIDER" == element_type)
                 {
-                    gui_element = setupSlider(SliderAttributes{elem});
+                    gui_element = setupSlider(SliderAttributes{elem}, elem_callback);
                     gui_elements_[gui_element->getId()] = gui_element;
                     Bind(wxEVT_SLIDER, &MainWindow::sliderCallback, this, gui_element->getId());
                 }
                 else if ("CHECK_BOX" == element_type)
                 {
-                    gui_element = setupCheckBox(CheckBoxAttributes{elem});
+                    gui_element = setupCheckBox(CheckBoxAttributes{elem}, elem_callback);
                     gui_elements_[gui_element->getId()] = gui_element;
                     Bind(wxEVT_CHECKBOX, &MainWindow::checkBoxCallback, this, gui_element->getId());
                 }
                 else if ("EDITABLE_TEXT" == element_type)
                 {
-                    gui_element = setupEditableText(EditableTextAttributes{elem});
+                    gui_element = setupEditableText(EditableTextAttributes{elem}, elem_callback);
                     gui_elements_[gui_element->getId()] = gui_element;
                     Bind(wxEVT_TEXT, &MainWindow::textCtrlCallback, this, gui_element->getId());
                     Bind(wxEVT_TEXT_ENTER, &MainWindow::textCtrlEnterCallback, this, gui_element->getId());
                 }
                 else if ("DROP_DOWN_MENU" == element_type)
                 {
-                    gui_element = setupDropDownMenu(DropDownMenuAttributes{elem});
+                    gui_element = setupDropDownMenu(DropDownMenuAttributes{elem}, elem_callback);
                     gui_elements_[gui_element->getId()] = gui_element;
                     Bind(wxEVT_COMBOBOX, &MainWindow::comboBoxCallback, this, gui_element->getId());
                 }
                 else if ("LIST_BOX" == element_type)
                 {
-                    gui_element = setupListBox(ListBoxAttributes{elem});
+                    gui_element = setupListBox(ListBoxAttributes{elem}, elem_callback);
                     gui_elements_[gui_element->getId()] = gui_element;
                     Bind(wxEVT_LISTBOX, &MainWindow::listBoxCallback, this, gui_element->getId());
                 }
                 else if ("RADIO_BUTTON" == element_type)
                 {
-                    gui_element = setupRadioButton(RadioButtonAttributes{elem});
+                    gui_element = setupRadioButton(RadioButtonAttributes{elem}, elem_callback);
                     gui_elements_[gui_element->getId()] = gui_element;
                     Bind(wxEVT_RADIOBUTTON, &MainWindow::radioButtonCallback, this, gui_element->getId());
                 }
                 else if ("TEXT_LABEL" == element_type)
                 {
-                    gui_element = setupStaticText(StaticTextAttributes{elem});
+                    gui_element = setupStaticText(StaticTextAttributes{elem}, elem_callback);
                     gui_elements_[gui_element->getId()] = gui_element;
+                }
+                else if ("RADIO_BUTTON_GROUP" == element_type)
+                {
+                    // gui_element = setupRadioButtonGroup(RadioButtonGroupAttributes{elem});
+                    // gui_elements_[gui_element->getId()] = gui_element;
+                    // Bind(wxEVT_RADIOBUTTON, &MainWindow::radioButtonCallback, this, gui_element->getId());
                 }
                 else
                 {
@@ -341,8 +443,6 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
         }
     }
 }
-
-// void registerCallbacksPrototype(std::map<std::string, GuiElementCallback>& callbacks) {}
 
 /*
 Gui layout gets setup first, and then after data is loaded, callbacks are registered.
@@ -357,15 +457,31 @@ functions are fired the id is available in the event object.
 
 // std::map<std::string, GuiElementCallback>& callbacks
 
+/*
+
+enum class GuiElementType
+{
+    Button,
+    Slider,
+    CheckBox,
+    EditableText,
+    DropDownMenu,
+    ListBox,
+    RadioButton,
+    TextLabel
+};
+
+*/
+
 void MainWindow::buttonCallback(wxCommandEvent& event)
 {
     const long id = event.GetId();
 
     if (gui_elements_.count(id) > 0)
     {
-        std::cout << "There was a gui element with id: " << id
-                  << " and handle string: " << gui_elements_[id]->getHandleString() << std::endl;
-        // gui_elements_[id]->callback();
+        const VectorConstView<std::uint8_t> event_raw_data{nullptr, 0U};
+
+        gui_elements_[id]->callback(event_raw_data);
     }
     else
     {
@@ -375,61 +491,148 @@ void MainWindow::buttonCallback(wxCommandEvent& event)
 
 void MainWindow::sliderCallback(wxCommandEvent& event)
 {
-    std::cout << "sliderCallback" << std::endl;
+    const long id = event.GetId();
+
+    if (gui_elements_.count(id) > 0)
+    {
+        SliderData slider_data;
+
+        const MovableElement<wxSlider>* const sldr =
+            static_cast<const MovableElement<wxSlider>* const>(gui_elements_[id]);
+
+        slider_data.max_value = sldr->GetMax();
+        slider_data.min_value = sldr->GetMin();
+        slider_data.value = event.GetInt();
+
+        gui_elements_[id]->callback(
+            VectorConstView<std::uint8_t>{reinterpret_cast<std::uint8_t*>(&slider_data), sizeof(SliderData)});
+    }
+    else
+    {
+        std::cout << "There was no gui element with id: " << id << std::endl;
+    }
 }
 
 void MainWindow::radioButtonCallback(wxCommandEvent& event)
 {
+    const long id = event.GetId();
+
     const bool is_checked = event.IsChecked();
-    std::cout << "radioButtonCallback" << std::endl;
+    if (gui_elements_.count(id) > 0)
+    {
+        const bool is_checked = event.IsChecked();
+
+        std::array<std::uint8_t, 1> event_raw_data;
+        event_raw_data[0] = is_checked ? 1U : 0U;
+
+        gui_elements_[id]->callback(VectorConstView<std::uint8_t>{event_raw_data.data(), 1U});
+    }
+    else
+    {
+        std::cout << "There was no gui element with id: " << id << std::endl;
+    }
 }
 
 void MainWindow::checkBoxCallback(wxCommandEvent& event)
 {
-    const bool is_checked = event.IsChecked();
-    std::cout << "checkBoxCallback" << std::endl;
+    const long id = event.GetId();
+
+    if (gui_elements_.count(id) > 0)
+    {
+        const bool is_checked = event.IsChecked();
+
+        std::array<std::uint8_t, 1> event_raw_data;
+        event_raw_data[0] = is_checked ? 1U : 0U;
+
+        gui_elements_[id]->callback(VectorConstView<std::uint8_t>{event_raw_data.data(), 1U});
+    }
+    else
+    {
+        std::cout << "There was no gui element with id: " << id << std::endl;
+    }
 }
 
 void MainWindow::comboBoxCallback(wxCommandEvent& event)
 {
-    std::cout << "comboBoxCallback" << std::endl;
+    const long id = event.GetId();
+
+    if (gui_elements_.count(id) > 0)
+    {
+        const VectorConstView<std::uint8_t> event_raw_data{nullptr, 0U};
+
+        gui_elements_[id]->callback(event_raw_data);
+    }
+    else
+    {
+        std::cout << "There was no gui element with id: " << id << std::endl;
+    }
 }
 
 void MainWindow::listBoxCallback(wxCommandEvent& event)
 {
-    std::cout << "listBoxCallback" << std::endl;
+    const long id = event.GetId();
+
+    if (gui_elements_.count(id) > 0)
+    {
+        const VectorConstView<std::uint8_t> event_raw_data{nullptr, 0U};
+
+        gui_elements_[id]->callback(event_raw_data);
+    }
+    else
+    {
+        std::cout << "There was no gui element with id: " << id << std::endl;
+    }
 }
 
 void MainWindow::textCtrlCallback(wxCommandEvent& event)
 {
-    wxString t = event.GetString();
-    std::cout << "textCtrlCallback: " << t << std::endl;
+    const long id = event.GetId();
+
+    if (gui_elements_.count(id) > 0)
+    {
+        const wxString t = event.GetString();
+
+        std::vector<std::uint8_t> event_raw_data;
+
+        event_raw_data.resize(t.length() + sizeof(std::uint16_t) + 1U);
+
+        event_raw_data[0] = 0U;  // Enter is not pressed
+
+        std::uint16_t num_characters{static_cast<std::uint16_t>(t.length())};
+
+        std::memcpy(event_raw_data.data() + 1U, &num_characters, sizeof(std::uint16_t));
+
+        for (size_t k = 0; k < t.length(); ++k)
+        {
+            event_raw_data[k + sizeof(std::uint16_t) + 1U] = t[k];
+        }
+
+        gui_elements_[id]->callback(VectorConstView<std::uint8_t>{event_raw_data.data(), event_raw_data.size()});
+    }
+    else
+    {
+        std::cout << "There was no gui element with id: " << id << std::endl;
+    }
 }
 
 void MainWindow::textCtrlEnterCallback(wxCommandEvent& event)
 {
+    const long id = event.GetId();
     wxString t = event.GetString();
-    std::cout << "textCtrlEnterCallback: " << t << std::endl;
+    if (gui_elements_.count(id) > 0)
+    {
+        const VectorConstView<std::uint8_t> event_raw_data{nullptr, 0U};
+
+        gui_elements_[id]->callback(event_raw_data);
+    }
+    else
+    {
+        std::cout << "There was no gui element with id: " << id << std::endl;
+    }
 }
 
 MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "", wxPoint(200, 30), wxSize(700, 700))
 {
-    // MovableElement<wxButton>* me_btn =
-    //     new MovableElement<wxButton>(this, wxID_ANY, "Test", wxPoint(200, 0), wxSize(100, 100));
-    /*MovableElement<wxSlider>* me_slider =
-        new MovableElement<wxSlider>(this, wxID_ANY, 13, 0, 100, wxPoint(200, 100), wxSize(100, 30), wxSL_HORIZONTAL);
-    MovableElement<wxRadioButton>* me_radiobutton =
-        new MovableElement<wxRadioButton>(this, wxID_ANY, "Test", wxPoint(200, 200), wxSize(100, 30));
-    MovableElement<wxCheckBox>* me_checkbox =
-        new MovableElement<wxCheckBox>(this, wxID_ANY, "Test", wxPoint(200, 300), wxSize(100, 30));
-    MovableElement<wxComboBox>* me_combo_box =
-        new MovableElement<wxComboBox>(this, wxID_ANY, "Test", wxPoint(200, 400), wxSize(100, 30));
-    MovableElement<wxListBox>* me_list_box =
-        new MovableElement<wxListBox>(this, wxID_ANY, wxPoint(200, 500), wxSize(100, 30));
-    MovableElement<wxTextCtrl>* me_text_ctrl =
-        new MovableElement<wxTextCtrl>(this, wxID_ANY, "Test", wxPoint(200, 600), wxSize(100, 30),
-    wxTE_PROCESS_ENTER);*/
-
     createGuiElements("/Users/danielpi/work/dvs/src/applications/module_application/example_project.json");
 
     /*wxArrayString arr;
@@ -440,16 +643,7 @@ MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "", wxPoint(200, 30), wxSize(
 
     me_combo_box->Append("combo Test1");
     me_combo_box->Append("combo Test2");
-    me_combo_box->Append("combo Test3");
-
-    Bind(wxEVT_BUTTON, &MainWindow::buttonCallback, this, me_btn->GetId());
-    Bind(wxEVT_SLIDER, &MainWindow::sliderCallback, this, me_slider->GetId());
-    Bind(wxEVT_RADIOBUTTON, &MainWindow::radioButtonCallback, this, me_radiobutton->GetId());
-    Bind(wxEVT_CHECKBOX, &MainWindow::checkBoxCallback, this, me_checkbox->GetId());
-    Bind(wxEVT_LISTBOX, &MainWindow::listBoxCallback, this, me_list_box->GetId());
-    Bind(wxEVT_COMBOBOX, &MainWindow::comboBoxCallback, this, me_combo_box->GetId());
-    Bind(wxEVT_TEXT, &MainWindow::textCtrlCallback, this, me_text_ctrl->GetId());
-    Bind(wxEVT_TEXT_ENTER, &MainWindow::textCtrlEnterCallback, this, me_text_ctrl->GetId());*/
+    me_combo_box->Append("combo Test3");*/
 
     /*
 A button is clicked
