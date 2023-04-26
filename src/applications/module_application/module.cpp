@@ -57,10 +57,4 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         static_cast<void>(gui_element_event_data);
     };
-
-    callbacks["text_label0"] = [](const GuiElement* const source_gui_element,
-                                  const GuiElementEventData& gui_element_event_data) -> void {
-        std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
-        static_cast<void>(gui_element_event_data);
-    };
 }

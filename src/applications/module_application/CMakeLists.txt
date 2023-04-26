@@ -12,6 +12,7 @@ project(module-app)
 set(CPP_SOURCE_FILES main.cpp
                      # module.cpp
                      main_window.cpp
+                     dynamic_module.cpp
                      gui_elements_callbacks.cpp)
 
 add_executable(module-app ${CPP_SOURCE_FILES})

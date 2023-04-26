@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 
+#include "dynamic_module.h"
 #include "module_api.h"
 
 struct ElementAttributes
@@ -164,6 +165,9 @@ struct SliderAttributes : public ElementAttributes
 class MainWindow : public wxFrame
 {
 private:
+    DynamicModule dynamic_module_;
+    std::map<long, GuiElement*> gui_elements_;
+
     void OnSize(wxSizeEvent& event);
 
     void buttonCallback(wxCommandEvent& evt);
@@ -175,24 +179,21 @@ private:
     void textCtrlCallback(wxCommandEvent& evt);
     void textCtrlEnterCallback(wxCommandEvent& evt);
 
-    GuiElement* setupButton(const ButtonAttributes& element_data, const GuiElementCallback& elem_callback);
-    GuiElement* setupSlider(const SliderAttributes& slider_attributes, const GuiElementCallback& elem_callback);
-    GuiElement* setupCheckBox(const CheckBoxAttributes& check_box_attributes, const GuiElementCallback& elem_callback);
-    GuiElement* setupEditableText(const EditableTextAttributes& editable_text_attributes,
-                                  const GuiElementCallback& elem_callback);
-    GuiElement* setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes,
-                                  const GuiElementCallback& elem_callback);
-    GuiElement* setupListBox(const ListBoxAttributes& list_box_attributes, const GuiElementCallback& elem_callback);
-    GuiElement* setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
-                                 const GuiElementCallback& elem_callback);
-    GuiElement* setupStaticText(const StaticTextAttributes& static_text_attributes,
-                                const GuiElementCallback& elem_callback);
+    void setupButton(const ButtonAttributes& element_data, const GuiElementCallback& elem_callback);
+    void setupSlider(const SliderAttributes& slider_attributes, const GuiElementCallback& elem_callback);
+    void setupCheckBox(const CheckBoxAttributes& check_box_attributes, const GuiElementCallback& elem_callback);
+    void setupEditableText(const EditableTextAttributes& editable_text_attributes,
+                           const GuiElementCallback& elem_callback);
+    void setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes,
+                           const GuiElementCallback& elem_callback);
+    void setupListBox(const ListBoxAttributes& list_box_attributes, const GuiElementCallback& elem_callback);
+    void setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
+                          const GuiElementCallback& elem_callback);
+    void setupStaticText(const StaticTextAttributes& static_text_attributes, const GuiElementCallback& elem_callback);
 
     void createGuiElements(const std::string& path_to_layout_file);
 
     void sliderHandler(wxCommandEvent& event);
-
-    std::map<long, GuiElement*> gui_elements_;
 
 public:
     MainWindow();
