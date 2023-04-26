@@ -5,7 +5,7 @@ Put id in gui_element_event_data, and be able to retrieve it from there?.
 Or the handle_string?
 */
 
-void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks)
+extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks)
 {
     callbacks["button0"] = [](const GuiElement* const source_gui_element,
                               const GuiElementEventData& gui_element_event_data) -> void {

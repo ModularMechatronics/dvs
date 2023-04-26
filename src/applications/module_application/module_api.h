@@ -309,4 +309,60 @@ public:
     LoadedDataDerived(const std::string& path_to_file) {}
 };
 
+/*class IGuiElement
+{
+protected:
+    long id_;
+
+public:
+    IGuiElement() = default;
+
+    void getHandleString() const
+    {
+        return gethandleString(id_);
+    }
+
+    long getId() const
+    {
+        return id_;
+    }
+};
+
+class Slider : public
+{
+private:
+public:
+    Slider(const long id) {}
+
+    int getValue() const
+    {
+        return getValueFromSlider(id_);
+    }
+
+    int getMin() const
+    {
+        return getMinFromSlider(id_);
+    }
+
+    int getMax() const
+    {
+        return getMaxFromSlider(id_);
+    }
+
+    void setValue(const int new_value)
+    {
+        setSliderValue(id_, new_value);
+    }
+
+    void setMin(const int new_min)
+    {
+        setSliderMin(id_, new_min);
+    }
+
+    void setMax(const int new_max)
+    {
+        setSliderMax(id_, new_max);
+    }
+};*/
+
 #endif  // MODULE_API_H

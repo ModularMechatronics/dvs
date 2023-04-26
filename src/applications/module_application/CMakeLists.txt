@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 
-project(module-app)
-
 include_directories(${REPO_DIR}/src/interfaces/cpp)
 
+
+project(module-lib)
+
+add_library(module-lib SHARED module.cpp)
+
+project(module-app)
+
 set(CPP_SOURCE_FILES main.cpp
-                     module.cpp
+                     # module.cpp
                      main_window.cpp
                      gui_elements_callbacks.cpp)
 

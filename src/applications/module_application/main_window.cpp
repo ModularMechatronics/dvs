@@ -1,5 +1,7 @@
 #include "main_window.h"
 
+#include <dlfcn.h>
+#include <errno.h>
 #include <mach-o/dyld.h>
 #include <unistd.h>
 #include <wx/wfstream.h>
@@ -8,8 +10,6 @@
 #include <csignal>
 #include <iostream>
 #include <stdexcept>
-
-extern void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks);
 
 std::tuple<wxPoint, wxSize> getPosAndSizeInPixelCoords(const wxSize current_window_size,
                                                        const ElementAttributes* const element_attributes)
@@ -158,6 +158,46 @@ GuiElement* MainWindow::setupRadioButton(const RadioButtonAttributes& radio_butt
     return static_cast<GuiElement*>(radio_button);
 }
 
+// typedef int (*some_func)(void);
+// typedef void (*simpleFunctionType)(const std::string& msg);
+// typedef void (*simpleFunctionType)(const char* const message);
+
+typedef void (*registerCallbacksFunctionType)(std::map<std::string, GuiElementCallback>& callbacks);
+
+registerCallbacksFunctionType loadModule(const std::string& path_to_module)
+{
+    void* lib_ptr = dlopen(path_to_module.c_str(), RTLD_NOW);  // RTLD_GLOBAL, RTLD_NOW
+
+    if ((!lib_ptr) || (lib_ptr == NULL) || (lib_ptr == 0) || (lib_ptr == nullptr))
+    {
+        DVS_LOG_ERROR() << "Library not loaded!";
+    }
+
+    char* error_str = dlerror();
+
+    if (error_str != NULL)
+    {
+        DVS_LOG_ERROR() << "Error: " << error_str;
+    }
+    else
+    {
+        std::cout << "Module loaded successfully!" << std::endl;
+    }
+
+    registerCallbacksFunctionType register_callbacks_function =
+        reinterpret_cast<registerCallbacksFunctionType>(dlsym(lib_ptr, "registerCallbacks"));
+
+    if ((!register_callbacks_function) || (register_callbacks_function == NULL) || (register_callbacks_function == 0) ||
+        (register_callbacks_function == nullptr))
+    {
+        DVS_LOG_ERROR() << "Function not loaded!";
+    }
+
+    // dlclose(lib_ptr);
+
+    return register_callbacks_function;
+}
+
 void MainWindow::createGuiElements(const std::string& path_to_layout_file)
 {
     std::ifstream input_file(path_to_layout_file);
@@ -167,8 +207,12 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
     // TODO: No validation is possible to make sure that the assigned functions in "registerCallbacks" are
     // available from the json layout definition
 
+    registerCallbacksFunctionType register_callbacks_function =
+        loadModule("/Users/danielpi/work/dvs/src/build/applications/module_application/libmodule-lib.dylib");
+
     std::map<std::string, GuiElementCallback> callbacks;
-    registerCallbacks(callbacks);
+
+    register_callbacks_function(callbacks);
 
     for (size_t k = 0; k < json_data["windows"].size(); k++)
     {
