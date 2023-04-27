@@ -51,17 +51,17 @@ inline std::string guiElementTypeToString(const GuiElementType& gui_element_type
 struct DropDownMenuData
 {
     std::string selected_item;
-    std::int32_t selected_item_index;
+    std::int16_t selected_item_index;
 
     DropDownMenuData() : selected_item{""}, selected_item_index{-1} {}
 };
 
 struct ListBoxData
 {
-    std::vector<std::string> selected_items;
-    std::vector<std::int32_t> selected_item_index;
+    std::string selected_item;
+    std::int32_t selected_item_index;
 
-    ListBoxData() : selected_items{}, selected_item_index{} {}
+    ListBoxData() : selected_item{}, selected_item_index{} {}
 };
 
 struct EditableTextData
@@ -92,17 +92,6 @@ public:
     {
     }
 
-    bool getEnterPressed() const
-    {
-        if (gui_element_type_ != GuiElementType::EditableText)
-        {
-            logErrorForWrongType(__func__);
-            return false;
-        }
-
-        return gui_element_event_data_raw_(0) == 1;
-    }
-
     DropDownMenuData getDropDownMenuData() const
     {
         if (gui_element_type_ != GuiElementType::DropDownMenu)
@@ -113,13 +102,27 @@ public:
 
         DropDownMenuData drop_down_menu_data;
 
-        std::memcpy(&(drop_down_menu_data.selected_item_index),
-                    gui_element_event_data_raw_.data(),
-                    sizeof(drop_down_menu_data.selected_item_index));
+        std::memcpy(
+            &(drop_down_menu_data.selected_item_index), gui_element_event_data_raw_.data(), sizeof(std::int16_t));
 
-        drop_down_menu_data.selected_item =
-            std::string(reinterpret_cast<const char*>(gui_element_event_data_raw_.data() + sizeof(std::int32_t)),
-                        gui_element_event_data_raw_.size() - sizeof(std::int32_t));
+        std::uint16_t num_characters;
+
+        std::memcpy(
+            &(num_characters), gui_element_event_data_raw_.data() + sizeof(std::int16_t), sizeof(std::uint16_t));
+
+        if (num_characters == 0U)
+        {
+            drop_down_menu_data.selected_item = "";
+        }
+        else
+        {
+            drop_down_menu_data.selected_item.resize(num_characters);
+            for (std::size_t k = 0; k < num_characters; k++)
+            {
+                drop_down_menu_data.selected_item[k] =
+                    gui_element_event_data_raw_(k + sizeof(std::uint16_t) + sizeof(std::int16_t));
+            }
+        }
 
         return drop_down_menu_data;
     }
@@ -134,31 +137,25 @@ public:
 
         ListBoxData list_box_data;
 
-        std::uint32_t num_selected_items;
+        std::memcpy(&(list_box_data.selected_item_index), gui_element_event_data_raw_.data(), sizeof(std::int16_t));
 
-        std::memcpy(&(num_selected_items), gui_element_event_data_raw_.data(), sizeof(num_selected_items));
+        std::uint16_t num_characters;
 
-        const std::uint8_t* data_ptr = gui_element_event_data_raw_.data() + sizeof(num_selected_items);
+        std::memcpy(
+            &(num_characters), gui_element_event_data_raw_.data() + sizeof(std::int16_t), sizeof(std::uint16_t));
 
-        for (std::size_t k = 0; k < num_selected_items; k++)
+        if (num_characters == 0U)
         {
-            // Copy the item index
-            std::int32_t selected_item_index;
-            std::memcpy(&(selected_item_index), data_ptr, sizeof(selected_item_index));
-            data_ptr += sizeof(selected_item_index);
-
-            // Copy the number of characters for the selected item string
-            std::uint32_t selected_item_size;
-            std::memcpy(&(selected_item_size), data_ptr, sizeof(selected_item_size));
-            data_ptr += sizeof(selected_item_size);
-
-            // Copy the selected item string
-            std::string selected_item(static_cast<std::size_t>(selected_item_size), 'a');
-            std::memcpy(selected_item.data(), data_ptr, selected_item_size);
-            data_ptr += selected_item_size;
-
-            list_box_data.selected_item_index.push_back(selected_item_index);
-            list_box_data.selected_items.push_back(selected_item);
+            list_box_data.selected_item = "";
+        }
+        else
+        {
+            list_box_data.selected_item.resize(num_characters);
+            for (std::size_t k = 0; k < num_characters; k++)
+            {
+                list_box_data.selected_item[k] =
+                    gui_element_event_data_raw_(k + sizeof(std::uint16_t) + sizeof(std::int16_t));
+            }
         }
 
         return list_box_data;
@@ -260,6 +257,7 @@ public:
     virtual ~GuiElement() = default;
 
     virtual long getId() const = 0;
+    virtual long getId2() const = 0;
 
     void callback(const VectorConstView<std::uint8_t>& event_raw_data)
     {

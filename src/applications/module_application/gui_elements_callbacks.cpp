@@ -94,9 +94,28 @@ void MainWindow::comboBoxCallback(wxCommandEvent& event)
 
     if (gui_elements_.count(id) > 0)
     {
-        const VectorConstView<std::uint8_t> event_raw_data{nullptr, 0U};
+        const wxString t = event.GetString();
 
-        gui_elements_[id]->callback(event_raw_data);
+        std::vector<std::uint8_t> event_raw_data;
+
+        event_raw_data.resize(t.length() + sizeof(std::uint16_t) + sizeof(std::int16_t));
+
+        // Selected index
+        std::int16_t selected_idx{static_cast<std::int16_t>(event.GetInt())};
+        std::memcpy(event_raw_data.data(), &selected_idx, sizeof(std::uint16_t));
+
+        // Number of characters
+        std::uint16_t num_characters{static_cast<std::uint16_t>(t.length())};
+
+        std::memcpy(event_raw_data.data() + sizeof(std::uint16_t), &num_characters, sizeof(std::uint16_t));
+
+        // Characters
+        for (size_t k = 0; k < t.length(); ++k)
+        {
+            event_raw_data[k + sizeof(std::uint16_t) + sizeof(std::int16_t)] = t[k];
+        }
+
+        gui_elements_[id]->callback(VectorConstView<std::uint8_t>{event_raw_data.data(), event_raw_data.size()});
     }
     else
     {
@@ -110,9 +129,28 @@ void MainWindow::listBoxCallback(wxCommandEvent& event)
 
     if (gui_elements_.count(id) > 0)
     {
-        const VectorConstView<std::uint8_t> event_raw_data{nullptr, 0U};
+        const wxString t = event.GetString();
 
-        gui_elements_[id]->callback(event_raw_data);
+        std::vector<std::uint8_t> event_raw_data;
+
+        event_raw_data.resize(t.length() + sizeof(std::uint16_t) + sizeof(std::int16_t));
+
+        // Selected index
+        std::int16_t selected_idx{static_cast<std::int16_t>(event.GetInt())};
+        std::memcpy(event_raw_data.data(), &selected_idx, sizeof(std::uint16_t));
+
+        // Number of characters
+        std::uint16_t num_characters{static_cast<std::uint16_t>(t.length())};
+
+        std::memcpy(event_raw_data.data() + sizeof(std::uint16_t), &num_characters, sizeof(std::uint16_t));
+
+        // Characters
+        for (size_t k = 0; k < t.length(); ++k)
+        {
+            event_raw_data[k + sizeof(std::uint16_t) + sizeof(std::int16_t)] = t[k];
+        }
+
+        gui_elements_[id]->callback(VectorConstView<std::uint8_t>{event_raw_data.data(), event_raw_data.size()});
     }
     else
     {
