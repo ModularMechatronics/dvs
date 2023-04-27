@@ -53,11 +53,12 @@ void DynamicModule::unloadModule()
     dlclose(lib_ptr_);
 }
 
-void DynamicModule::registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks)
+void DynamicModule::registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
+                                      const std::function<GuiElement*(const std::string&)>& gui_element_getter)
 {
     if (register_callbacks_function_ != nullptr)
     {
-        register_callbacks_function_(callbacks);
+        register_callbacks_function_(callbacks, gui_element_getter);
     }
     else
     {

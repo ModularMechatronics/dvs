@@ -5,12 +5,14 @@
 #include <errno.h>
 #include <mach-o/dyld.h>
 
+#include <functional>
 #include <map>
 #include <string>
 
 #include "module_api.h"
 
-typedef void (*registerCallbacksFunctionType)(std::map<std::string, GuiElementCallback>& callbacks);
+typedef void (*registerCallbacksFunctionType)(std::map<std::string, GuiElementCallback>& callbacks,
+                                              const std::function<GuiElement*(const std::string&)>& gui_element_getter);
 
 class DynamicModule
 {
@@ -21,7 +23,8 @@ public:
 
     ~DynamicModule();
 
-    void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks);
+    void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
+                           const std::function<GuiElement*(const std::string&)>& gui_element_getter);
     void unloadModule();
 
 private:

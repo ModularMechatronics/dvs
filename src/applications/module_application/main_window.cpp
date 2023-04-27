@@ -166,9 +166,26 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
     // TODO: No validation is possible to make sure that the assigned functions in "registerCallbacks" are
     // available from the json layout definition
 
+    get_gui_element_function_ = [this](const std::string& handle_string) -> GuiElement* {
+        auto q = std::find_if(gui_elements_.begin(), gui_elements_.end(), [&handle_string](const auto& elem) -> bool {
+            return elem.second->getHandleString() == handle_string;
+        });
+
+        if (q == gui_elements_.end())
+        {
+            DVS_LOG_ERROR() << "Could not find gui element with handle string: " << handle_string
+                            << ", returning nullptr.";
+            return nullptr;
+        }
+        else
+        {
+            return q->second;
+        }
+    };
+
     std::map<std::string, GuiElementCallback> callbacks;
 
-    dynamic_module_.registerCallbacks(callbacks);
+    dynamic_module_.registerCallbacks(callbacks, get_gui_element_function_);
 
     for (size_t k = 0; k < json_data["windows"].size(); k++)
     {

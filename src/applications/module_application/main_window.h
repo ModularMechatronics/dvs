@@ -167,6 +167,7 @@ class MainWindow : public wxFrame
 private:
     DynamicModule dynamic_module_;
     std::map<long, GuiElement*> gui_elements_;
+    std::function<GuiElement*(const std::string&)> get_gui_element_function_;
 
     void OnSize(wxSizeEvent& event);
 

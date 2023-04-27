@@ -5,7 +5,8 @@ Put id in gui_element_event_data, and be able to retrieve it from there?.
 Or the handle_string?
 */
 
-extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks)
+extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
+                                  const std::function<GuiElement*(const std::string&)>& gui_element_getter)
 {
     callbacks["button0"] = [](GuiElement* const source_gui_element,
                               const GuiElementEventData& gui_element_event_data) -> void {
@@ -18,12 +19,11 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         const SliderData slider_data = gui_element_event_data.getSliderData();
 
-        Slider* const source_slider = source_gui_element->asSlider();
-
         std::cout << "Slider min: " << slider_data.min_value << std::endl;
         std::cout << "Slider max: " << slider_data.max_value << std::endl;
         std::cout << "Slider data: " << slider_data.value << std::endl;
 
+        /*Slider* const source_slider = source_gui_element->asSlider();
         std::cout << "Slider source value: " << source_slider->getValue() << std::endl;
         if (source_slider->getValue() == 57)
         {
@@ -32,12 +32,26 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         else if (source_slider->getValue() == 32)
         {
             source_slider->setMax(100);
-        }
+        }*/
     };
 
-    callbacks["check_box0"] = [](GuiElement* const source_gui_element,
-                                 const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["check_box0"] = [&gui_element_getter](GuiElement* const source_gui_element,
+                                                    const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
+        const bool is_checked = gui_element_event_data.getCheckBoxData();
+        std::cout << "Is checked: " << is_checked << std::endl;
+
+        Slider* const slider = gui_element_getter("slider0")->asSlider();
+
+        if (is_checked)
+        {
+            slider->setMax(32);
+        }
+        else
+        {
+            slider->setMax(57);
+        }
+
         static_cast<void>(gui_element_event_data);
     };
 
