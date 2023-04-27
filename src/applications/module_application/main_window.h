@@ -331,6 +331,18 @@ public:
         return this->GetId();
     }
 
+    long getValue() const override
+    {
+        const wxSlider* const slider = dynamic_cast<const wxSlider* const>(this);
+        return slider->GetValue();
+    }
+
+    void setMax(const int new_max) override
+    {
+        wxSlider* const slider = dynamic_cast<wxSlider* const>(this);
+        slider->SetMax(new_max);
+    }
+
 private:
     bool control_pressed_at_mouse_down;
     wxPoint mouse_pos_at_press_;

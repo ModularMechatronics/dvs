@@ -244,9 +244,40 @@ private:
 };
 class GuiElement;
 
-using GuiElementCallback = std::function<void(const GuiElement* const, const GuiElementEventData&)>;
+using GuiElementCallback = std::function<void(GuiElement* const, const GuiElementEventData&)>;
 
-class GuiElement
+class Slider
+{
+private:
+public:
+    Slider() {}
+
+    virtual long getValue() const = 0;
+
+    /*int getMin() const
+    {
+        return getMinFromSlider(id_);
+    }
+
+    int getMax() const
+    {
+        return getMaxFromSlider(id_);
+    }
+
+    void setValue(const int new_value)
+    {
+        setSliderValue(id_, new_value);
+    }
+
+    void setMin(const int new_min)
+    {
+        setSliderMin(id_, new_min);
+    }*/
+
+    virtual void setMax(const int new_max) = 0;
+};
+
+class GuiElement : public Slider
 {
 public:
     GuiElement(const std::string& handle_string, const GuiElementCallback& elem_callback, const GuiElementType type)
@@ -257,7 +288,6 @@ public:
     virtual ~GuiElement() = default;
 
     virtual long getId() const = 0;
-    virtual long getId2() const = 0;
 
     void callback(const VectorConstView<std::uint8_t>& event_raw_data)
     {
@@ -281,6 +311,20 @@ public:
     std::string getHandleString() const
     {
         return handle_string_;
+    }
+
+    Slider* asSlider()
+    {
+        if (type_ == GuiElementType::Slider)
+        {
+            return static_cast<Slider*>(this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
+                            << " is not a slider! Returning nullptr.";
+            return nullptr;
+        }
     }
 
 protected:
@@ -325,42 +369,6 @@ public:
         return id_;
     }
 };
-
-class Slider : public
-{
-private:
-public:
-    Slider(const long id) {}
-
-    int getValue() const
-    {
-        return getValueFromSlider(id_);
-    }
-
-    int getMin() const
-    {
-        return getMinFromSlider(id_);
-    }
-
-    int getMax() const
-    {
-        return getMaxFromSlider(id_);
-    }
-
-    void setValue(const int new_value)
-    {
-        setSliderValue(id_, new_value);
-    }
-
-    void setMin(const int new_min)
-    {
-        setSliderMin(id_, new_min);
-    }
-
-    void setMax(const int new_max)
-    {
-        setSliderMax(id_, new_max);
-    }
-};*/
+*/
 
 #endif  // MODULE_API_H
