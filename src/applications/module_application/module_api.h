@@ -246,6 +246,40 @@ class GuiElement;
 
 using GuiElementCallback = std::function<void(GuiElement* const, const GuiElementEventData&)>;
 
+namespace api_internal
+{
+class Control
+{
+private:
+public:
+    Control() = default;
+    virtual void setLabel(const std::string& new_label) = 0;
+    virtual void setEnabled() = 0;
+    virtual void setDisabled() = 0;
+};
+}  // namespace api_internal
+
+class Button : public api_internal::Control
+{
+private:
+public:
+    Button() {}
+};
+
+class CheckBox : public api_internal::Control
+{
+private:
+public:
+    CheckBox() {}
+};
+
+class RadioButton : public api_internal::Control
+{
+private:
+public:
+    RadioButton() {}
+};
+
 class Slider
 {
 private:
@@ -277,7 +311,7 @@ public:
     virtual void setMax(const int new_max) = 0;
 };
 
-class GuiElement : public Slider
+class GuiElement : public Slider, public Button, public CheckBox, public RadioButton
 {
 public:
     GuiElement(const std::string& handle_string, const GuiElementCallback& elem_callback, const GuiElementType type)
@@ -323,6 +357,48 @@ public:
         {
             DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
                             << " is not a slider! Returning nullptr.";
+            return nullptr;
+        }
+    }
+
+    Button* asButton()
+    {
+        if (type_ == GuiElementType::Button)
+        {
+            return static_cast<Button*>(this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
+                            << " is not a button! Returning nullptr.";
+            return nullptr;
+        }
+    }
+
+    CheckBox* asCheckBox()
+    {
+        if (type_ == GuiElementType::CheckBox)
+        {
+            return static_cast<CheckBox*>(this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
+                            << " is not a checkbox! Returning nullptr.";
+            return nullptr;
+        }
+    }
+
+    RadioButton* asRadioButton()
+    {
+        if (type_ == GuiElementType::RadioButton)
+        {
+            return static_cast<RadioButton*>(this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
+                            << " is not a radiobutton! Returning nullptr.";
             return nullptr;
         }
     }

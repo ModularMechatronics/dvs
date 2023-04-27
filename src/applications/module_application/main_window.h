@@ -332,6 +332,7 @@ public:
         return this->GetId();
     }
 
+    // Slider
     long getValue() const override
     {
         const wxSlider* const slider = dynamic_cast<const wxSlider* const>(this);
@@ -342,6 +343,25 @@ public:
     {
         wxSlider* const slider = dynamic_cast<wxSlider* const>(this);
         slider->SetMax(new_max);
+    }
+
+    // Button, Checkbox, RadioButton
+    void setLabel(const std::string& new_label) override
+    {
+        wxControl* const contr = dynamic_cast<wxControl* const>(this);
+        contr->SetLabel(new_label);
+    }
+
+    void setEnabled() override
+    {
+        wxControl* const contr = dynamic_cast<wxControl* const>(this);
+        contr->Enable(true);
+    }
+
+    void setDisabled() override
+    {
+        wxControl* const contr = dynamic_cast<wxControl* const>(this);
+        contr->Enable(false);
     }
 
 private:

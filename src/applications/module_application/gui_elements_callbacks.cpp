@@ -176,7 +176,7 @@ void MainWindow::textCtrlCallback(wxCommandEvent& event)
 
         std::memcpy(event_raw_data.data() + 1U, &num_characters, sizeof(std::uint16_t));
 
-        for (size_t k = 0; k < t.length(); ++k)
+        for (size_t k = 0; k < t.length(); k++)
         {
             event_raw_data[k + sizeof(std::uint16_t) + 1U] = t[k];
         }
@@ -192,12 +192,27 @@ void MainWindow::textCtrlCallback(wxCommandEvent& event)
 void MainWindow::textCtrlEnterCallback(wxCommandEvent& event)
 {
     const long id = event.GetId();
-    wxString t = event.GetString();
+
     if (gui_elements_.count(id) > 0)
     {
-        const VectorConstView<std::uint8_t> event_raw_data{nullptr, 0U};
+        const wxString t = event.GetString();
 
-        gui_elements_[id]->callback(event_raw_data);
+        std::vector<std::uint8_t> event_raw_data;
+
+        event_raw_data.resize(t.length() + sizeof(std::uint16_t) + 1U);
+
+        event_raw_data[0] = 1U;  // Enter is pressed
+
+        std::uint16_t num_characters{static_cast<std::uint16_t>(t.length())};
+
+        std::memcpy(event_raw_data.data() + 1U, &num_characters, sizeof(std::uint16_t));
+
+        for (size_t k = 0; k < t.length(); k++)
+        {
+            event_raw_data[k + sizeof(std::uint16_t) + 1U] = t[k];
+        }
+
+        gui_elements_[id]->callback(VectorConstView<std::uint8_t>{event_raw_data.data(), event_raw_data.size()});
     }
     else
     {

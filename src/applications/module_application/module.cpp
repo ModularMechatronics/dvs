@@ -14,8 +14,8 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         static_cast<void>(gui_element_event_data);
     };
 
-    callbacks["slider0"] = [](GuiElement* const source_gui_element,
-                              const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["slider0"] = [&gui_element_getter](GuiElement* const source_gui_element,
+                                                 const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         const SliderData slider_data = gui_element_event_data.getSliderData();
 
@@ -23,7 +23,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "Slider max: " << slider_data.max_value << std::endl;
         std::cout << "Slider data: " << slider_data.value << std::endl;
 
-        /*Slider* const source_slider = source_gui_element->asSlider();
+        Slider* const source_slider = source_gui_element->asSlider();
         std::cout << "Slider source value: " << source_slider->getValue() << std::endl;
         if (source_slider->getValue() == 57)
         {
@@ -32,7 +32,22 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         else if (source_slider->getValue() == 32)
         {
             source_slider->setMax(100);
-        }*/
+        }
+
+        if (source_slider->getValue() < 50)
+        {
+            Button* const button = gui_element_getter("button0")->asButton();
+            CheckBox* const check_box = gui_element_getter("check_box0")->asCheckBox();
+            button->setLabel("Not that much");
+            check_box->setLabel("Not that much");
+        }
+        else
+        {
+            Button* const button = gui_element_getter("button0")->asButton();
+            CheckBox* const check_box = gui_element_getter("check_box0")->asCheckBox();
+            button->setLabel("A lot!!!!");
+            check_box->setLabel("A lot!!!!");
+        }
     };
 
     callbacks["check_box0"] = [&gui_element_getter](GuiElement* const source_gui_element,
@@ -42,17 +57,18 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "Is checked: " << is_checked << std::endl;
 
         Slider* const slider = gui_element_getter("slider0")->asSlider();
+        RadioButton* const rb = gui_element_getter("radio_button0x")->asRadioButton();
 
         if (is_checked)
         {
             slider->setMax(32);
+            rb->setEnabled();
         }
         else
         {
             slider->setMax(57);
+            rb->setDisabled();
         }
-
-        static_cast<void>(gui_element_event_data);
     };
 
     callbacks["editable_text0"] = [](GuiElement* const source_gui_element,
@@ -76,7 +92,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
     callbacks["list_box0"] = [](GuiElement* const source_gui_element,
                                 const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
-        static_cast<void>(gui_element_event_data);
+
         const ListBoxData lbd = gui_element_event_data.getListBoxData();
         std::cout << "Selected item index: " << lbd.selected_item_index << std::endl;
         std::cout << "Selected item: " << lbd.selected_item << std::endl;
@@ -85,6 +101,9 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
     callbacks["radio_button0x"] = [](GuiElement* const source_gui_element,
                                      const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
-        static_cast<void>(gui_element_event_data);
+
+        std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
+        const bool is_checked = gui_element_event_data.getCheckBoxData();
+        std::cout << "Is checked: " << is_checked << std::endl;
     };
 }
