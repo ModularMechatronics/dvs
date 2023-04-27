@@ -191,8 +191,6 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
                     elem_callback = callbacks[handle_string];
                 }
 
-                GuiElement* gui_element{nullptr};
-
                 if ("BUTTON" == element_type)
                 {
                     setupButton(ButtonAttributes{elem}, elem_callback);
@@ -278,19 +276,37 @@ MainWindow::MainWindow()
     : wxFrame(NULL, wxID_ANY, "", wxPoint(200, 30), wxSize(700, 700)),
       dynamic_module_{"/Users/danielpi/work/dvs/src/build/applications/module_application/libmodule-lib.dylib"}
 {
-    // registerCallbacksFunctionType register_callbacks_function =
-    //     loadModule("/Users/danielpi/work/dvs/src/build/applications/module_application/libmodule-lib.dylib");
     createGuiElements("/Users/danielpi/work/dvs/src/applications/module_application/example_project.json");
 
-    /*wxArrayString arr;
-    arr.Add("Test1");
-    arr.Add("Test2");
-    arr.Add("Test3");
-    me_list_box->InsertItems(arr, 0);
+    {
+        auto q = std::find_if(gui_elements_.begin(), gui_elements_.end(), [](auto& elem) {
+            return elem.second->getHandleString() == "drop_down_menu0";
+        });
 
-    me_combo_box->Append("combo Test1");
-    me_combo_box->Append("combo Test2");
-    me_combo_box->Append("combo Test3");*/
+        if (q != gui_elements_.end())
+        {
+            MovableElement<wxComboBox>* drop_down = static_cast<MovableElement<wxComboBox>*>(q->second);
+            drop_down->Append("combo Test1");
+            drop_down->Append("combo Test2");
+            drop_down->Append("combo Test3");
+        }
+    }
+
+    {
+        auto q = std::find_if(gui_elements_.begin(), gui_elements_.end(), [](auto& elem) {
+            return elem.second->getHandleString() == "list_box0";
+        });
+
+        if (q != gui_elements_.end())
+        {
+            MovableElement<wxListBox>* list_box = static_cast<MovableElement<wxListBox>*>(q->second);
+            wxArrayString arr;
+            arr.Add("Test1");
+            arr.Add("Test2");
+            arr.Add("Test3");
+            list_box->InsertItems(arr, 0);
+        }
+    }
 
     /*
 A button is clicked
