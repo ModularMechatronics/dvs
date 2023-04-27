@@ -30,7 +30,7 @@ std::map<GLchar, Character> characters;
 
 bool is_initialized = false;
 
-const char* const kFontPath = "../resources/fonts/Roboto-Regular.ttf";
+const char* const kFontPath = "/Users/danielpi/work/dvs/src/resources/fonts/Roboto-Regular.ttf";
 
 constexpr float kTextScaleParameter = 1000.0f;
 

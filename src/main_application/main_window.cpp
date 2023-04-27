@@ -50,7 +50,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     task_bar_ = new CustomTaskBarIcon();
     wxIcon* icon = new wxIcon();
-    icon->LoadFile("../resources/images/apple.ico", wxBITMAP_TYPE_ICO, 32, 32);
+    icon->LoadFile("/Users/danielpi/work/dvs/src/resources/images/apple.ico", wxBITMAP_TYPE_ICO, 32, 32);
 
     if (!task_bar_->SetIcon(*icon, "wxTaskBarIcon Sample\n"))
     {

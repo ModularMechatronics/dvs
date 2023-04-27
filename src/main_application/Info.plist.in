@@ -1,0 +1,16 @@
+<?xml version=”1.0″ encoding=”UTF-8″?>
+<!DOCTYPE plist PUBLIC “-//Apple//DTD PLIST 1.0//EN” “http://www.apple.com/DTDs/PropertyList-1.0.dtd”>
+<plist version=”1.0″>
+<dict>
+<key>Name</key>
+<string>Newt Masterson</string>
+<key>Age</key>
+<integer>43</integer>
+<key>Children</key>
+<array>
+<string>Ellen</string>
+<string>Luna</string>
+<string>Norma</string>
+</array>
+</dict>
+</plist>

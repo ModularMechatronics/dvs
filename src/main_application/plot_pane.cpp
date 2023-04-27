@@ -125,7 +125,7 @@ template <typename T> T createShader(const std::string& base_path, const std::st
 
 void PlotPane::initShaders()
 {
-    const std::string base_path{"../main_application/axes/shaders/"};
+    const std::string base_path{"/Users/danielpi/work/dvs/src/main_application/axes/shaders/"};
 
     shader_collection_.plot_box_shader = createShader<ShaderBase>(base_path, "plot_box_shader");
     shader_collection_.text_shader = createShader<TextShader>(base_path, "text");

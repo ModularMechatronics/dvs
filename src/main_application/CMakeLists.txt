@@ -79,3 +79,11 @@ target_link_libraries(dvs ${wxWidgets_LIBRARIES}
                           ${GLUT_LIBRARY}
                           ${PLATFORM_LIBRARIES}
                           /Users/danielpi/work/dvs/src/externals/freetype/build/libfreetype.a)
+
+set_target_properties(dvs PROPERTIES
+                          MACOSX_BUNDLE TRUE
+                          MACOSX_BUNDLE_GUI_IDENTIFIER org.myorg.myapp
+                          MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist.in")
+
+set_target_properties(dvs PROPERTIES
+                          XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon")

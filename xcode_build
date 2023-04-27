@@ -1,0 +1,12 @@
+
+xcrun -find c++
+xcrun -find cc
+
+make
+
+
+cmake -G Xcode \
+    -DCMAKE_BUILD_TYPE=Debug \
+    -DCMAKE_C_COMPILER="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++" \
+    -DCMAKE_CXX_COMPILER="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc" \
+    ..
