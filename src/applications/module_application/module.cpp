@@ -101,8 +101,6 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
     callbacks["radio_button0x"] = [](GuiElement* const source_gui_element,
                                      const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
-
-        std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
         const bool is_checked = gui_element_event_data.getCheckBoxData();
         std::cout << "Is checked: " << is_checked << std::endl;
     };
