@@ -332,26 +332,7 @@ public:
         return this->GetId();
     }
 
-    // Slider
-    long getValue() const override
-    {
-        const wxSlider* const slider = dynamic_cast<const wxSlider* const>(this);
-        return slider->GetValue();
-    }
-
-    void setMax(const int new_max) override
-    {
-        wxSlider* const slider = dynamic_cast<wxSlider* const>(this);
-        slider->SetMax(new_max);
-    }
-
-    // Button, Checkbox, RadioButton
-    void setLabel(const std::string& new_label) override
-    {
-        wxControl* const contr = dynamic_cast<wxControl* const>(this);
-        contr->SetLabel(new_label);
-    }
-
+    // General
     void setEnabled() override
     {
         wxControl* const contr = dynamic_cast<wxControl* const>(this);
@@ -362,6 +343,121 @@ public:
     {
         wxControl* const contr = dynamic_cast<wxControl* const>(this);
         contr->Enable(false);
+    }
+
+    void setPosition(const std::int16_t x, const std::int16_t y) override
+    {
+        this->SetPosition(wxPoint(x, y));
+    }
+
+    void setSize(const std::int16_t width, const std::int16_t height) override
+    {
+        this->SetSize(wxSize(width, height));
+    }
+
+    // Slider
+    std::int32_t getValue() const override
+    {
+        const wxSlider* const slider = dynamic_cast<const wxSlider* const>(this);
+        return slider->GetValue();
+    }
+
+    void setMax(const std::int32_t new_max) override
+    {
+        wxSlider* const slider = dynamic_cast<wxSlider* const>(this);
+        slider->SetMax(new_max);
+    }
+
+    void setMin(const std::int32_t new_min) override
+    {
+        wxSlider* const slider = dynamic_cast<wxSlider* const>(this);
+        slider->SetMin(new_min);
+    }
+
+    void setValue(const std::int32_t new_value) override
+    {
+        wxSlider* const slider = dynamic_cast<wxSlider* const>(this);
+        slider->SetValue(new_value);
+    }
+
+    // Button, Checkbox, RadioButton, TextLabel
+    void setLabel(const std::string& new_label) override
+    {
+        wxControl* const contr = dynamic_cast<wxControl* const>(this);
+        contr->SetLabel(new_label);
+    }
+
+    std::string getLabel(void) override
+    {
+        const wxControl* const contr = dynamic_cast<const wxControl* const>(this);
+        return contr->GetLabel().ToStdString();
+    }
+
+    // EditableText
+    void setText(const std::string& new_text) override
+    {
+        wxTextCtrl* const text_ctrl = dynamic_cast<wxTextCtrl* const>(this);
+        text_ctrl->SetValue(new_text);
+    }
+
+    std::string getText() const override
+    {
+        const wxTextCtrl* const text_ctrl = dynamic_cast<const wxTextCtrl* const>(this);
+        return text_ctrl->GetValue().ToStdString();
+    }
+
+    // DropDownMenu, ListBox
+    void addItem(const std::string& item_text) override
+    {
+        wxItemContainer* const elem = dynamic_cast<wxItemContainer* const>(this);
+        elem->Append(item_text);
+    }
+
+    void removeItem(const std::string& item_text) override
+    {
+        wxItemContainer* const elem = dynamic_cast<wxItemContainer* const>(this);
+        const int idx = elem->FindString(item_text, true);
+        if (idx != wxNOT_FOUND)
+        {
+            elem->Delete(idx);
+        }
+    }
+
+    void clearItems() override
+    {
+        wxItemContainer* const elem = dynamic_cast<wxItemContainer* const>(this);
+        elem->Clear();
+    }
+
+    bool selectItem(const std::string& item_text) override
+    {
+        wxItemContainer* const elem = dynamic_cast<wxItemContainer* const>(this);
+        return elem->SetStringSelection(item_text);
+    }
+
+    bool selectItem(const std::int32_t item_idx)
+    {
+        wxItemContainer* const elem = dynamic_cast<wxItemContainer* const>(this);
+        elem->Select(item_idx);
+        return false;
+    }
+
+    std::string getSelectedItem() const override
+    {
+        const wxItemContainer* const elem = dynamic_cast<const wxItemContainer* const>(this);
+        return elem->GetStringSelection().ToStdString();
+    }
+
+    std::int32_t getNumItems() const override
+    {
+        const wxItemContainer* const elem = dynamic_cast<const wxItemContainer* const>(this);
+        return elem->GetCount();
+    }
+
+    std::int32_t getSelectedItemIndex() const override
+    {
+        const wxItemContainer* const elem = dynamic_cast<const wxItemContainer* const>(this);
+        return elem->GetSelection();
     }
 
 private:

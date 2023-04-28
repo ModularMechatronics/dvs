@@ -19,7 +19,9 @@ enum class GuiElementType
     DropDownMenu,
     ListBox,
     RadioButton,
-    TextLabel
+    RadioButtonGroup,
+    TextLabel,
+    StaticBox
 };
 
 inline std::string guiElementTypeToString(const GuiElementType& gui_element_type)
@@ -248,70 +250,118 @@ using GuiElementCallback = std::function<void(GuiElement* const, const GuiElemen
 
 namespace api_internal
 {
+class GuiElementBase
+{
+private:
+public:
+    GuiElementBase() = default;
+
+    virtual void setEnabled() = 0;
+    virtual void setDisabled() = 0;
+
+    virtual void setPosition(const std::int16_t x, const std::int16_t y) = 0;
+    virtual void setSize(const std::int16_t width, const std::int16_t height) = 0;
+};
+
 class Control
 {
 private:
 public:
     Control() = default;
     virtual void setLabel(const std::string& new_label) = 0;
-    virtual void setEnabled() = 0;
-    virtual void setDisabled() = 0;
+    virtual std::string getLabel(void) = 0;
 };
+
+class ListCommon
+{
+private:
+public:
+    ListCommon() = default;
+
+    virtual void addItem(const std::string& item_text) = 0;
+    virtual void removeItem(const std::string& item_text) = 0;
+    virtual void clearItems() = 0;
+    virtual bool selectItem(const std::string& item_text) = 0;
+    virtual bool selectItem(const std::int32_t item_idx) = 0;
+    virtual std::string getSelectedItem() const = 0;
+    virtual std::int32_t getNumItems() const = 0;
+    virtual std::int32_t getSelectedItemIndex() const = 0;
+};
+
 }  // namespace api_internal
 
-class Button : public api_internal::Control
+class Button : public api_internal::Control, public api_internal::GuiElementBase
 {
 private:
 public:
     Button() {}
 };
 
-class CheckBox : public api_internal::Control
+class CheckBox : public api_internal::Control, public api_internal::GuiElementBase
 {
 private:
 public:
     CheckBox() {}
 };
 
-class RadioButton : public api_internal::Control
+class RadioButton : public api_internal::Control, public api_internal::GuiElementBase
 {
 private:
 public:
     RadioButton() {}
 };
 
-class Slider
+class DropDownMenu : public api_internal::GuiElementBase, public api_internal::ListCommon
+{
+private:
+public:
+    DropDownMenu() {}
+};
+
+class ListBox : public api_internal::GuiElementBase, public api_internal::ListCommon
+{
+private:
+public:
+    ListBox() {}
+};
+
+class EditableText : public api_internal::GuiElementBase
+{
+private:
+public:
+    EditableText() {}
+
+    virtual void setText(const std::string& new_text) = 0;
+    virtual std::string getText() const = 0;
+};
+
+class Slider : public api_internal::GuiElementBase
 {
 private:
 public:
     Slider() {}
 
-    virtual long getValue() const = 0;
-
-    /*int getMin() const
-    {
-        return getMinFromSlider(id_);
-    }
-
-    int getMax() const
-    {
-        return getMaxFromSlider(id_);
-    }
-
-    void setValue(const int new_value)
-    {
-        setSliderValue(id_, new_value);
-    }
-
-    void setMin(const int new_min)
-    {
-        setSliderMin(id_, new_min);
-    }*/
-
-    virtual void setMax(const int new_max) = 0;
+    virtual std::int32_t getValue() const = 0;
+    virtual void setValue(const std::int32_t new_value) = 0;
+    virtual void setMin(const std::int32_t new_min) = 0;
+    virtual void setMax(const std::int32_t new_max) = 0;
 };
 
-class GuiElement : public Slider, public Button, public CheckBox, public RadioButton
+class TextLabel : public api_internal::Control, public api_internal::GuiElementBase
+{
+private:
+public:
+    TextLabel() {}
+};
+
+class GuiElement : public Slider,
+                   public Button,
+                   public CheckBox,
+                   public RadioButton,
+                   public EditableText,
+                   public DropDownMenu,
+                   public ListBox,
+                   public TextLabel
 {
 public:
     GuiElement(const std::string& handle_string, const GuiElementCallback& elem_callback, const GuiElementType type)
@@ -399,6 +449,62 @@ public:
         {
             DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
                             << " is not a radiobutton! Returning nullptr.";
+            return nullptr;
+        }
+    }
+
+    EditableText* asEditableText()
+    {
+        if (type_ == GuiElementType::EditableText)
+        {
+            return static_cast<EditableText*>(this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
+                            << " is not an editable text! Returning nullptr.";
+            return nullptr;
+        }
+    }
+
+    DropDownMenu* asDropDownMenu()
+    {
+        if (type_ == GuiElementType::DropDownMenu)
+        {
+            return static_cast<DropDownMenu*>(this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
+                            << " is not a drop down menu! Returning nullptr.";
+            return nullptr;
+        }
+    }
+
+    ListBox* asListBox()
+    {
+        if (type_ == GuiElementType::ListBox)
+        {
+            return static_cast<ListBox*>(this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
+                            << " is not a list box! Returning nullptr.";
+            return nullptr;
+        }
+    }
+
+    TextLabel* asTextLabel()
+    {
+        if (type_ == GuiElementType::TextLabel)
+        {
+            return static_cast<TextLabel*>(this);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
+                            << " is not a text label! Returning nullptr.";
             return nullptr;
         }
     }

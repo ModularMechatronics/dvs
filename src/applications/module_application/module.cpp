@@ -1,16 +1,32 @@
 #include "module_api.h"
 
-/*
-Put id in gui_element_event_data, and be able to retrieve it from there?.
-Or the handle_string?
-*/
+std::int32_t selected_idx = 0;
 
 extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
                                   const std::function<GuiElement*(const std::string&)>& gui_element_getter)
 {
-    callbacks["button0"] = [](GuiElement* const source_gui_element,
-                              const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["button0"] = [&gui_element_getter](GuiElement* const source_gui_element,
+                                                 const GuiElementEventData& gui_element_event_data) -> void {
         std::cout << "User callback from " << source_gui_element->getHandleString() << std::endl;
+
+        DropDownMenu* const ddm = gui_element_getter("drop_down_menu0")->asDropDownMenu();
+        ListBox* const lb = gui_element_getter("list_box0")->asListBox();
+        ddm->addItem("New item");
+        // ddm->removeItem("combo Test1");
+
+        lb->addItem("New item lb");
+        std::cout << "Selected item: " << lb->getSelectedItem() << std::endl;
+        std::cout << "Selected index: " << lb->getSelectedItemIndex() << std::endl;
+
+        // lb->removeItem("Test1");
+        // lb->selectItem(selected_idx);
+        // lb->selectItem(selected_idx);
+
+        selected_idx++;
+
+        // lb->clearItems();
+        // ddm->clearItems();
+
         static_cast<void>(gui_element_event_data);
     };
 
@@ -24,6 +40,18 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "Slider data: " << slider_data.value << std::endl;
 
         Slider* const source_slider = source_gui_element->asSlider();
+
+        Button* const button = gui_element_getter("button0")->asButton();
+        button->setPosition(slider_data.value, 0);
+
+        EditableText* const et = gui_element_getter("editable_text0")->asEditableText();
+        et->setSize(slider_data.value + 100, 40);
+
+        et->setText(std::to_string(slider_data.value));
+
+        TextLabel* const tl = gui_element_getter("text_label0")->asTextLabel();
+        tl->setLabel(std::to_string(slider_data.value));
+
         std::cout << "Slider source value: " << source_slider->getValue() << std::endl;
         if (source_slider->getValue() == 57)
         {
@@ -36,14 +64,12 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
 
         if (source_slider->getValue() < 50)
         {
-            Button* const button = gui_element_getter("button0")->asButton();
             CheckBox* const check_box = gui_element_getter("check_box0")->asCheckBox();
             button->setLabel("Not that much");
             check_box->setLabel("Not that much");
         }
         else
         {
-            Button* const button = gui_element_getter("button0")->asButton();
             CheckBox* const check_box = gui_element_getter("check_box0")->asCheckBox();
             button->setLabel("A lot!!!!");
             check_box->setLabel("A lot!!!!");
