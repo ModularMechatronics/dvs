@@ -272,6 +272,16 @@ public:
     virtual std::string getLabel(void) = 0;
 };
 
+class CheckableItem
+{
+private:
+public:
+    CheckableItem() = default;
+    virtual bool isChecked() const = 0;
+    virtual void setChecked() = 0;
+    virtual void setUnChecked() = 0;
+};
+
 class ListCommon
 {
 private:
@@ -297,14 +307,16 @@ public:
     Button() {}
 };
 
-class CheckBox : public api_internal::Control, public api_internal::GuiElementBase
+class CheckBox : public api_internal::Control, public api_internal::CheckableItem, public api_internal::GuiElementBase
 {
 private:
 public:
     CheckBox() {}
 };
 
-class RadioButton : public api_internal::Control, public api_internal::GuiElementBase
+class RadioButton : public api_internal::Control,
+                    public api_internal::CheckableItem,
+                    public api_internal::GuiElementBase
 {
 private:
 public:
@@ -333,6 +345,7 @@ public:
 
     virtual void setText(const std::string& new_text) = 0;
     virtual std::string getText() const = 0;
+    virtual bool enterPressed() const = 0;
 };
 
 class Slider : public api_internal::GuiElementBase
@@ -342,6 +355,9 @@ public:
     Slider() {}
 
     virtual std::int32_t getValue() const = 0;
+    virtual std::int32_t getMin(const std::int32_t new_min) const = 0;
+    virtual std::int32_t getMax(const std::int32_t new_max) const = 0;
+
     virtual void setValue(const std::int32_t new_value) = 0;
     virtual void setMin(const std::int32_t new_min) = 0;
     virtual void setMax(const std::int32_t new_max) = 0;
