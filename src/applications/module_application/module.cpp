@@ -10,8 +10,7 @@ void printUserCallbackString(GuiElement* const source_gui_element)
 extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
                                   const std::function<GuiElement*(const std::string&)>& gui_element_getter)
 {
-    callbacks["button0"] = [&gui_element_getter](GuiElement* const source_gui_element,
-                                                 const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["button0"] = [&gui_element_getter](GuiElement* const source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
         Button* const button = source_gui_element->asButton();
 
@@ -32,12 +31,9 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
 
         // lb->clearItems();
         // ddm->clearItems();
-
-        static_cast<void>(gui_element_event_data);
     };
 
-    callbacks["slider0"] = [&gui_element_getter](GuiElement* const source_gui_element,
-                                                 const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["slider0"] = [&gui_element_getter](GuiElement* const source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
 
         Slider* const source_slider = source_gui_element->asSlider();
@@ -78,8 +74,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         }
     };
 
-    callbacks["check_box0"] = [&gui_element_getter](GuiElement* const source_gui_element,
-                                                    const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["check_box0"] = [&gui_element_getter](GuiElement* const source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
         CheckBox* cb = source_gui_element->asCheckBox();
         const bool is_checked = cb->isChecked();
@@ -100,13 +95,11 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         }
     };
 
-    callbacks["editable_text0"] = [](GuiElement* const source_gui_element,
-                                     const GuiElementEventData& gui_element_event_data) -> void {
-        static_cast<void>(gui_element_event_data);
+    callbacks["editable_text0"] = [](GuiElement* const source_gui_element) -> void {
+        printUserCallbackString(source_gui_element);
         EditableText* et = source_gui_element->asEditableText();
 
         const std::string editable_text_data = et->getText();
-        printUserCallbackString(source_gui_element);
         std::cout << "Text data: " << editable_text_data << std::endl;
 
         const bool enter_pressed = et->enterPressed();
@@ -120,10 +113,8 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         }
     };
 
-    callbacks["drop_down_menu0"] = [](GuiElement* const source_gui_element,
-                                      const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["drop_down_menu0"] = [](GuiElement* const source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
-        static_cast<void>(gui_element_event_data);
 
         DropDownMenu* ddm = source_gui_element->asDropDownMenu();
 
@@ -131,8 +122,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "Selected item: " << ddm->getSelectedItem() << std::endl;
     };
 
-    callbacks["list_box0"] = [](GuiElement* const source_gui_element,
-                                const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["list_box0"] = [](GuiElement* const source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
 
         ListBox* lb = source_gui_element->asListBox();
@@ -141,8 +131,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "Selected item: " << lb->getSelectedItem() << std::endl;
     };
 
-    callbacks["radio_button0x"] = [](GuiElement* const source_gui_element,
-                                     const GuiElementEventData& gui_element_event_data) -> void {
+    callbacks["radio_button0x"] = [](GuiElement* const source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
         RadioButton* rb = source_gui_element->asRadioButton();
         const bool is_checked = rb->isChecked();

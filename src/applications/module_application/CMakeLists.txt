@@ -12,8 +12,7 @@ project(module-app)
 set(CPP_SOURCE_FILES main.cpp
                      # module.cpp
                      main_window.cpp
-                     dynamic_module.cpp
-                     gui_elements_callbacks.cpp)
+                     dynamic_module.cpp)
 
 add_executable(module-app ${CPP_SOURCE_FILES})
 target_link_libraries(module-app ${wxWidgets_LIBRARIES}
