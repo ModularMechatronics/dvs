@@ -21,7 +21,8 @@ enum class GuiElementType
     RadioButton,
     RadioButtonGroup,
     TextLabel,
-    StaticBox
+    StaticBox,
+    Unknown
 };
 
 inline std::string guiElementTypeToString(const GuiElementType& gui_element_type)
@@ -64,6 +65,8 @@ public:
         : type_{type}, callback_function_{elem_callback}, handle_string_{handle_string}
     {
     }
+
+    InternalGuiElement() = delete;
 
     virtual ~InternalGuiElement() = default;
 
@@ -125,45 +128,93 @@ namespace api_internal
 class GuiElementBase
 {
 public:
-    GuiElementBase() : internal_element_{nullptr} {}
-    GuiElementBase(InternalGuiElement* const internal_element) : internal_element_{internal_element} {}
+    GuiElementBase() : gui_element_{nullptr} {}
+    GuiElementBase(InternalGuiElement* const internal_element) : gui_element_{internal_element} {}
 
     GuiElementType getType() const
     {
-        return internal_element_->getType();
+        if (printErrorIfNotInitialized("GuiElement", __func__))
+        {
+            return gui_element_->getType();
+        }
+        else
+        {
+            return GuiElementType::Unknown;
+        }
     }
 
     long getId() const
     {
-        return internal_element_->getId();
+        if (printErrorIfNotInitialized("GuiElement", __func__))
+        {
+            return gui_element_->getId();
+        }
+        else
+        {
+            return -1;
+        }
     }
 
     std::string getHandleString() const
     {
-        return internal_element_->getHandleString();
+        if (printErrorIfNotInitialized("GuiElement", __func__))
+        {
+            return gui_element_->getHandleString();
+        }
+        else
+        {
+            return "";
+        }
     }
 
     void setEnabled() const
     {
-        internal_element_->setEnabled();
+        if (printErrorIfNotInitialized("GuiElement", __func__))
+        {
+            gui_element_->setEnabled();
+        }
     }
+
     void setDisabled() const
     {
-        internal_element_->setDisabled();
+        if (printErrorIfNotInitialized("GuiElement", __func__))
+        {
+            gui_element_->setDisabled();
+        }
     }
 
     void setPosition(const std::int16_t x, const std::int16_t y) const
     {
-        internal_element_->setPosition(x, y);
+        if (printErrorIfNotInitialized("GuiElement", __func__))
+        {
+            gui_element_->setPosition(x, y);
+        }
     }
 
     void setSize(const std::int16_t width, const std::int16_t height) const
     {
-        internal_element_->setSize(width, height);
+        if (printErrorIfNotInitialized("GuiElement", __func__))
+        {
+            gui_element_->setSize(width, height);
+        }
     }
 
 protected:
-    InternalGuiElement* internal_element_;
+    InternalGuiElement* gui_element_;
+    bool printErrorIfNotInitialized(const std::string& class_name, const std::string& function_name) const
+    {
+        if (gui_element_ == nullptr)
+        {
+            DVS_LOG_ERROR() << "Internal gui element pointer is nullptr for \e[1m\033[36m" << class_name
+                            << "\033[0m\e[0m in function \e[1m\033[36m" << function_name
+                            << "\033[0m!\e[0m Did you attempt to use a non existent element?";
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 };
 
 class Control : public GuiElementBase
@@ -175,12 +226,22 @@ public:
 
     void setLabel(const std::string& new_label) const
     {
-        internal_element_->setLabel(new_label);
+        if (printErrorIfNotInitialized("Control", __func__))
+        {
+            gui_element_->setLabel(new_label);
+        }
     }
 
     std::string getLabel() const
     {
-        return internal_element_->getLabel();
+        if (printErrorIfNotInitialized("Control", __func__))
+        {
+            return gui_element_->getLabel();
+        }
+        else
+        {
+            return "";
+        }
     }
 };
 
@@ -193,42 +254,78 @@ public:
 
     void addItem(const std::string& item_text) const
     {
-        internal_element_->addItem(item_text);
+        if (printErrorIfNotInitialized("ListCommon", __func__))
+        {
+            gui_element_->addItem(item_text);
+        }
     }
 
     void removeItem(const std::string& item_text) const
     {
-        internal_element_->removeItem(item_text);
+        if (printErrorIfNotInitialized("ListCommon", __func__))
+        {
+            gui_element_->removeItem(item_text);
+        }
     }
 
     void clearItems() const
     {
-        internal_element_->clearItems();
+        if (printErrorIfNotInitialized("ListCommon", __func__))
+        {
+            gui_element_->clearItems();
+        }
     }
 
     void selectItem(const std::string& item_text) const
     {
-        internal_element_->selectItem(item_text);
+        if (printErrorIfNotInitialized("ListCommon", __func__))
+        {
+            gui_element_->selectItem(item_text);
+        }
     }
 
     void selectItem(const std::int32_t item_idx) const
     {
-        internal_element_->selectItem(item_idx);
+        if (printErrorIfNotInitialized("ListCommon", __func__))
+        {
+            gui_element_->selectItem(item_idx);
+        }
     }
 
     std::string getSelectedItem() const
     {
-        return internal_element_->getSelectedItem();
+        if (printErrorIfNotInitialized("ListCommon", __func__))
+        {
+            return gui_element_->getSelectedItem();
+        }
+        else
+        {
+            return "";
+        }
     }
 
     std::int32_t getNumItems() const
     {
-        return internal_element_->getNumItems();
+        if (printErrorIfNotInitialized("ListCommon", __func__))
+        {
+            return gui_element_->getNumItems();
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     std::int32_t getSelectedItemIndex() const
     {
-        return internal_element_->getSelectedItemIndex();
+        if (printErrorIfNotInitialized("ListCommon", __func__))
+        {
+            return gui_element_->getSelectedItemIndex();
+        }
+        else
+        {
+            return -1;
+        }
     }
 };
 
@@ -255,17 +352,30 @@ public:
 
     bool isChecked() const
     {
-        return internal_element_->isChecked();
+        if (printErrorIfNotInitialized("CheckBox", __func__))
+        {
+            return gui_element_->isChecked();
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void setChecked() const
     {
-        internal_element_->setChecked();
+        if (printErrorIfNotInitialized("CheckBox", __func__))
+        {
+            gui_element_->setChecked();
+        }
     }
 
     void setUnChecked() const
     {
-        internal_element_->setUnChecked();
+        if (printErrorIfNotInitialized("CheckBox", __func__))
+        {
+            gui_element_->setUnChecked();
+        }
     }
 };
 
@@ -280,17 +390,30 @@ public:
 
     bool isChecked() const
     {
-        return internal_element_->isChecked();
+        if (printErrorIfNotInitialized("RadioButton", __func__))
+        {
+            return gui_element_->isChecked();
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void setChecked() const
     {
-        internal_element_->setChecked();
+        if (printErrorIfNotInitialized("RadioButton", __func__))
+        {
+            gui_element_->setChecked();
+        }
     }
 
     void setUnChecked() const
     {
-        internal_element_->setUnChecked();
+        if (printErrorIfNotInitialized("RadioButton", __func__))
+        {
+            gui_element_->setUnChecked();
+        }
     }
 };
 
@@ -330,16 +453,33 @@ public:
 
     void setText(const std::string& new_text) const
     {
-        return internal_element_->setText(new_text);
+        if (printErrorIfNotInitialized("EditableText", __func__))
+        {
+            return gui_element_->setText(new_text);
+        }
     }
     std::string getText() const
     {
-        return internal_element_->getText();
+        if (printErrorIfNotInitialized("EditableText", __func__))
+        {
+            return gui_element_->getText();
+        }
+        else
+        {
+            return "";
+        }
     }
 
     bool enterPressed() const
     {
-        return internal_element_->enterPressed();
+        if (printErrorIfNotInitialized("EditableText", __func__))
+        {
+            return gui_element_->enterPressed();
+        }
+        else
+        {
+            return false;
+        }
     }
 };
 
@@ -364,26 +504,61 @@ public:
 
     std::int32_t getValue() const
     {
-        if (internal_element_)
+        if (printErrorIfNotInitialized("Slider", __func__))
         {
-            return internal_element_->getValue();
+            return gui_element_->getValue();
         }
         else
         {
-            DVS_LOG_ERROR() << "internal_element is nullptr for Slider! Returning -1.";
             return -1;
+        }
+    }
+
+    std::int32_t getMin() const
+    {
+        if (printErrorIfNotInitialized("Slider", __func__))
+        {
+            return gui_element_->getMin();
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    std::int32_t getMax() const
+    {
+        if (printErrorIfNotInitialized("Slider", __func__))
+        {
+            return gui_element_->getMax();
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    void setValue(const std::int32_t new_value) const
+    {
+        if (printErrorIfNotInitialized("Slider", __func__))
+        {
+            gui_element_->setValue(new_value);
+        }
+    }
+
+    void setMin(const std::int32_t new_min) const
+    {
+        if (printErrorIfNotInitialized("Slider", __func__))
+        {
+            gui_element_->setMin(new_min);
         }
     }
 
     void setMax(const std::int32_t new_max) const
     {
-        if (internal_element_)
+        if (printErrorIfNotInitialized("Slider", __func__))
         {
-            internal_element_->setMax(new_max);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "internal_element is nullptr for Slider!";
+            gui_element_->setMax(new_max);
         }
     }
 };
@@ -399,13 +574,13 @@ public:
 
     Slider asSlider() const
     {
-        if (internal_element_->getType() == GuiElementType::Slider)
+        if (gui_element_->getType() == GuiElementType::Slider)
         {
-            return Slider{internal_element_};
+            return Slider{gui_element_};
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a slider! Returning empty object.";
             return Slider{};
         }
@@ -413,13 +588,13 @@ public:
 
     Button asButton() const
     {
-        if (internal_element_->getType() == GuiElementType::Button)
+        if (gui_element_->getType() == GuiElementType::Button)
         {
-            return Button{internal_element_};
+            return Button{gui_element_};
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a button! Returning empty object.";
             return Button{};
         }
@@ -427,13 +602,13 @@ public:
 
     CheckBox asCheckBox() const
     {
-        if (internal_element_->getType() == GuiElementType::CheckBox)
+        if (gui_element_->getType() == GuiElementType::CheckBox)
         {
-            return CheckBox{internal_element_};
+            return CheckBox{gui_element_};
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a checkbox! Returning empty object.";
             return CheckBox{};
         }
@@ -441,13 +616,13 @@ public:
 
     RadioButton asRadioButton() const
     {
-        if (internal_element_->getType() == GuiElementType::RadioButton)
+        if (gui_element_->getType() == GuiElementType::RadioButton)
         {
-            return RadioButton{internal_element_};
+            return RadioButton{gui_element_};
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a radiobutton! Returning empty object.";
             return RadioButton{};
         }
@@ -455,13 +630,13 @@ public:
 
     DropDownMenu asDropDownMenu() const
     {
-        if (internal_element_->getType() == GuiElementType::DropDownMenu)
+        if (gui_element_->getType() == GuiElementType::DropDownMenu)
         {
-            return DropDownMenu{internal_element_};
+            return DropDownMenu{gui_element_};
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a dropdownmenu! Returning empty object.";
             return DropDownMenu{};
         }
@@ -469,13 +644,13 @@ public:
 
     ListBox asListBox() const
     {
-        if (internal_element_->getType() == GuiElementType::ListBox)
+        if (gui_element_->getType() == GuiElementType::ListBox)
         {
-            return ListBox{internal_element_};
+            return ListBox{gui_element_};
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a listbox! Returning empty object.";
             return ListBox{};
         }
@@ -483,13 +658,13 @@ public:
 
     EditableText asEditableText() const
     {
-        if (internal_element_->getType() == GuiElementType::EditableText)
+        if (gui_element_->getType() == GuiElementType::EditableText)
         {
-            return EditableText{internal_element_};
+            return EditableText{gui_element_};
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not an editabletext! Returning empty object.";
             return EditableText{};
         }
@@ -497,13 +672,13 @@ public:
 
     TextLabel asTextLabel() const
     {
-        if (internal_element_->getType() == GuiElementType::TextLabel)
+        if (gui_element_->getType() == GuiElementType::TextLabel)
         {
-            return TextLabel{internal_element_};
+            return TextLabel{gui_element_};
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a textlabel! Returning empty object.";
             return TextLabel{};
         }

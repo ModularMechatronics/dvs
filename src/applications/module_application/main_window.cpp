@@ -304,7 +304,7 @@ enum class GuiElementType
 */
 
 MainWindow::MainWindow()
-    : wxFrame(NULL, wxID_ANY, "", wxPoint(200, 30), wxSize(700, 700)),
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(400, 30), wxSize(700, 700)),
       dynamic_module_{"/Users/danielpi/work/dvs/src/build/applications/module_application/libmodule-lib.dylib"}
 {
     createGuiElements("/Users/danielpi/work/dvs/src/applications/module_application/example_project.json");

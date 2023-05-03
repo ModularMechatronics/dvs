@@ -1,10 +1,4 @@
-*Add wxStaticBox that can contain other GUI elements *Add radio button group *Change all the module api gui
-classes(Button, Slider, etc.) to just contain a shared pointer to its corresponding element,
-    and the input to the callbacks is then just some interface class GuiElement auto callback =
-        [&gui_element_getter](GuiElement& source_gui_element) {
-            Slider slider = source_gui_element.asSlider();
-            int val = slider.getValue() slider.setMax(...);
-        } So no pointers are needed
-        * Rename CheckBox to Checkbox(lower case 'b' on box),
-                                                                                     and corresponding snake cases
-                                                                                     if there are any
+ * Add wxStaticBox that can contain other GUI elements
+ * Add radio button group
+    * Rename CheckBox to Checkbox(lower case 'b' on box), and corresponding snake cases if there are any
+ * Rename DropDownMenu to DropdownMenu? (and corresponding snake cases)
