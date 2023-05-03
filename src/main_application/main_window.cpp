@@ -83,8 +83,8 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     notification_from_gui_element_key_pressed_ = [this](const char key) { notifyChildrenOnKeyPressed(key); };
     notification_from_gui_element_key_released_ = [this](const char key) { notifyChildrenOnKeyReleased(key); };
     get_all_element_names_ = [this]() -> std::vector<std::string> { return getAllElementNames(); };
-    notify_main_window_element_deleted_ = [this](const std::string& element_name) -> void {
-        elementDeleted(element_name);
+    notify_main_window_element_deleted_ = [this](const std::string& element_handle_string) -> void {
+        elementDeleted(element_handle_string);
     };
     notify_main_window_element_name_changed_ = [this](const std::string& old_name,
                                                       const std::string& new_name) -> void {
@@ -232,13 +232,13 @@ void MainWindow::elementNameChanged(const std::string& old_name, const std::stri
     }
 }
 
-void MainWindow::elementDeleted(const std::string& element_name)
+void MainWindow::elementDeleted(const std::string& element_handle_string)
 {
     if (!shutdown_in_progress_)
     {
-        if (gui_elements_.count(element_name) > 0)
+        if (gui_elements_.count(element_handle_string) > 0)
         {
-            gui_elements_.erase(element_name);
+            gui_elements_.erase(element_handle_string);
         }
     }
 }
@@ -340,7 +340,7 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         std::vector<GuiElement*> ges = we->getGuiElements();
         for (const auto& ge : ges)
         {
-            gui_elements_[ge->getName()] = ge;
+            gui_elements_[ge->getHandleString()] = ge;
         }
 
         TabSettings tab_settings;
@@ -689,7 +689,7 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
         const std::vector<GuiElement*> ges = (*q)->getGuiElements();
         for (const auto& ge : ges)
         {
-            gui_elements_.erase(ge->getName());
+            gui_elements_.erase(ge->getHandleString());
         }
 
         const std::string deleted_window_name = (*q)->getName();

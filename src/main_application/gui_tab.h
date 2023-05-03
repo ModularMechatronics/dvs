@@ -32,15 +32,15 @@ private:
     // First element in vector (element{n-1}) is the
     // element with the highest Z order (in front)
 
-    bool elementExistsInQueue(const std::string& element_name) const;
+    bool elementExistsInQueue(const std::string& element_handle_string) const;
 
 public:
     ZOrderQueue() = default;
 
-    int getOrderOfElement(const std::string& element_name) const;
-    void raise(const std::string& element_name);
-    void lower(const std::string& element_name);
-    void eraseElement(const std::string& element_name);
+    int getOrderOfElement(const std::string& element_handle_string) const;
+    void raise(const std::string& element_handle_string);
+    void lower(const std::string& element_handle_string);
+    void eraseElement(const std::string& element_handle_string);
 };
 
 class WindowTab
@@ -79,7 +79,7 @@ public:
     void updateAllElements();
     void setMinXPos(const int min_x_pos);
     void newElement();
-    void newElement(const std::string& element_name);
+    void newElement(const std::string& element_handle_string);
     void newElement(const ElementSettings& element_settings);
     void show();
     void hide();
@@ -87,15 +87,15 @@ public:
     RGBTripletf getBackgroundColor() const;
     std::string getName() const;
     TabSettings getTabSettings() const;
-    GuiElement* getGuiElement(const std::string& element_name) const;
+    GuiElement* getGuiElement(const std::string& element_handle_string) const;
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
-    bool deleteElementIfItExists(const std::string& element_name);
-    void toggleProjectionMode(const std::string& element_name);
-    bool elementWithNameExists(const std::string& element_name);
-    bool changeNameOfElementIfElementExists(const std::string& element_name, const std::string& new_name);
-    bool raiseElement(const std::string& element_name);
-    bool lowerElement(const std::string& element_name);
+    bool deleteElementIfItExists(const std::string& element_handle_string);
+    void toggleProjectionMode(const std::string& element_handle_string);
+    bool elementWithNameExists(const std::string& element_handle_string);
+    bool changeNameOfElementIfElementExists(const std::string& element_handle_string, const std::string& new_name);
+    bool raiseElement(const std::string& element_handle_string);
+    bool lowerElement(const std::string& element_handle_string);
     std::vector<std::string> getElementNames() const;
     void setName(const std::string& new_name);
 };

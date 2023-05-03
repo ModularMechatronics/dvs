@@ -216,12 +216,12 @@ std::vector<GuiElement*> GuiWindow::getGuiElements() const
     return gui_elements;
 }
 
-GuiElement* GuiWindow::getGuiElement(const std::string& element_name) const
+GuiElement* GuiWindow::getGuiElement(const std::string& element_handle_string) const
 {
     GuiElement* ge;
     for (const auto& tab : tabs_)
     {
-        ge = tab->getGuiElement(element_name);
+        ge = tab->getGuiElement(element_handle_string);
         if (ge != nullptr)
         {
             return ge;
@@ -457,14 +457,14 @@ void GuiWindow::newElement()
 
     if (q != tabs_.end())
     {
-        std::string element_name;
+        std::string element_handle_string;
 
         while (true)
         {
-            element_name = "element-" + std::to_string(element_number_counter::getNextFreeElementNumber());
+            element_handle_string = "element-" + std::to_string(element_number_counter::getNextFreeElementNumber());
             const std::vector<std::string> all_element_names = get_all_element_names_();
 
-            auto q = std::find(all_element_names.begin(), all_element_names.end(), element_name);
+            auto q = std::find(all_element_names.begin(), all_element_names.end(), element_handle_string);
 
             const bool element_absent = q == all_element_names.end();
 
@@ -479,8 +479,8 @@ void GuiWindow::newElement()
         element_settings.y = 0.0;
         element_settings.width = 1.0;
         element_settings.height = 1.0;
-        element_settings.handle_string = element_name;
-        element_settings.title = element_name;
+        element_settings.handle_string = element_handle_string;
+        element_settings.title = element_handle_string;
 
         (*q)->newElement(element_settings);
         notify_main_window_about_modification_();
@@ -502,7 +502,7 @@ void GuiWindow::newElementCallback(wxCommandEvent& WXUNUSED(event))
 
         name_dialog.SetBackgroundColour(
             wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
-        std::string element_name;
+        std::string element_handle_string;
 
         while (true)
         {
@@ -511,9 +511,9 @@ void GuiWindow::newElementCallback(wxCommandEvent& WXUNUSED(event))
                 return;
             }
 
-            element_name = name_dialog.GetValue().mb_str();
+            element_handle_string = name_dialog.GetValue().mb_str();
 
-            if (element_name.length() == 0)
+            if (element_handle_string.length() == 0)
             {
                 wxMessageDialog dlg(&name_dialog, "Can't have an empty element name!", "Invalid name!");
                 dlg.SetBackgroundColour(
@@ -524,14 +524,14 @@ void GuiWindow::newElementCallback(wxCommandEvent& WXUNUSED(event))
 
             const std::vector<std::string> all_element_names = get_all_element_names_();
 
-            auto q = std::find(all_element_names.begin(), all_element_names.end(), element_name);
+            auto q = std::find(all_element_names.begin(), all_element_names.end(), element_handle_string);
 
             const bool element_exists = q != all_element_names.end();
 
             if (element_exists)
             {
                 wxMessageDialog dlg(
-                    &name_dialog, "Choose a unique name", "Element name \"" + element_name + "\" exists!");
+                    &name_dialog, "Choose a unique name", "Element name \"" + element_handle_string + "\" exists!");
                 dlg.SetBackgroundColour(
                     wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
                 dlg.ShowModal();
@@ -542,7 +542,7 @@ void GuiWindow::newElementCallback(wxCommandEvent& WXUNUSED(event))
             }
         }
 
-        (*q)->newElement(element_name);
+        (*q)->newElement(element_handle_string);
         notify_main_window_about_modification_();
     }
 }

@@ -35,14 +35,14 @@ TabView::TabView(wxNotebookPage* parent,
     this->Show();
 }
 
-void TabView::newElement(const std::string& element_name)
+void TabView::newElement(const std::string& element_handle_string)
 {
     ElementSettings elem;
     elem.x = 0;
     elem.y = 0;
     elem.width = 0.3;
     elem.height = 0.3;
-    elem.name = element_name;
+    elem.name = element_handle_string;
 
     GuiElement* const ge = new PlotPane(dynamic_cast<wxNotebookPage*>(this),
                                         elem,

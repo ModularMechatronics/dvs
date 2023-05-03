@@ -100,7 +100,7 @@ public:
     void setProjectName(const std::string& project_name);
     void deleteAllTabs();
 
-    GuiElement* getGuiElement(const std::string& element_name) const;
+    GuiElement* getGuiElement(const std::string& element_handle_string) const;
 
     void mouseRightPressed(const wxPoint pos, const ClickSource source, const std::string& item_name);
 

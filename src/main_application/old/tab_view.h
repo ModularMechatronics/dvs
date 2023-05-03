@@ -42,7 +42,7 @@ public:
             const std::function<void(const char key)>& notify_main_window_key_pressed,
             const std::function<void(const char key)>& notify_main_window_key_released);
 
-    void newElement(const std::string& element_name);
+    void newElement(const std::string& element_handle_string);
     void newElement() override;
 };
 

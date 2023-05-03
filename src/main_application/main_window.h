@@ -150,7 +150,7 @@ public:
     void newWindow();
     void newWindowWithoutFileModification();
 
-    void elementDeleted(const std::string& element_name);
+    void elementDeleted(const std::string& element_handle_string);
     void elementNameChanged(const std::string& old_name, const std::string& new_name);
 
     void disableEditing();

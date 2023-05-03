@@ -51,7 +51,7 @@ public:
     virtual void raise() = 0;
     virtual void lower() = 0;
 
-    std::string getName() const
+    std::string getHandleString() const
     {
         return element_settings_.handle_string;
     }

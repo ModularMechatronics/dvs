@@ -4,20 +4,20 @@
 // ########################## ZOrderQueue ##########################
 // #################################################################
 
-bool ZOrderQueue::elementExistsInQueue(const std::string& element_name) const
+bool ZOrderQueue::elementExistsInQueue(const std::string& element_handle_string) const
 {
-    const auto q = std::find(elements_.begin(), elements_.end(), element_name);
+    const auto q = std::find(elements_.begin(), elements_.end(), element_handle_string);
 
     return q != elements_.end();
 }
 
-int ZOrderQueue::getOrderOfElement(const std::string& element_name) const
+int ZOrderQueue::getOrderOfElement(const std::string& element_handle_string) const
 {
-    if (elementExistsInQueue(element_name))
+    if (elementExistsInQueue(element_handle_string))
     {
         // 0 is "lowest"
         // {n-1} is "at the top"
-        const auto q = find(elements_.begin(), elements_.end(), element_name);
+        const auto q = find(elements_.begin(), elements_.end(), element_handle_string);
         const int index = q - elements_.begin();
         return index;
     }
@@ -27,21 +27,21 @@ int ZOrderQueue::getOrderOfElement(const std::string& element_name) const
     }
 }
 
-void ZOrderQueue::raise(const std::string& element_name)
+void ZOrderQueue::raise(const std::string& element_handle_string)
 {
-    eraseElement(element_name);
-    elements_.push_back(element_name);
+    eraseElement(element_handle_string);
+    elements_.push_back(element_handle_string);
 }
 
-void ZOrderQueue::lower(const std::string& element_name)
+void ZOrderQueue::lower(const std::string& element_handle_string)
 {
-    eraseElement(element_name);
-    elements_.insert(elements_.begin(), element_name);
+    eraseElement(element_handle_string);
+    elements_.insert(elements_.begin(), element_handle_string);
 }
 
-void ZOrderQueue::eraseElement(const std::string& element_name)
+void ZOrderQueue::eraseElement(const std::string& element_handle_string)
 {
-    const auto q = std::find(elements_.begin(), elements_.end(), element_name);
+    const auto q = std::find(elements_.begin(), elements_.end(), element_handle_string);
 
     if (q != elements_.end())
     {
@@ -132,7 +132,7 @@ WindowTab::~WindowTab()
 {
     for (const auto& ge : gui_elements_)
     {
-        notify_main_window_element_deleted_(ge->getName());
+        notify_main_window_element_deleted_(ge->getHandleString());
         delete ge;
     }
 }
@@ -182,15 +182,15 @@ void WindowTab::newElement()
     current_element_idx_++;
 }
 
-void WindowTab::newElement(const std::string& element_name)
+void WindowTab::newElement(const std::string& element_handle_string)
 {
     ElementSettings element_settings;
     element_settings.x = 0.0;
     element_settings.y = 0.0;
     element_settings.width = 0.4;
     element_settings.height = 0.4;
-    element_settings.handle_string = element_name;
-    element_settings.title = element_name;
+    element_settings.handle_string = element_handle_string;
+    element_settings.title = element_handle_string;
 
     newElement(element_settings);
 }
@@ -258,19 +258,19 @@ TabSettings WindowTab::getTabSettings() const
     for (const auto& ge : gui_elements_)
     {
         ElementSettings es = ge->getElementSettings();
-        const std::string element_name = ge->getName();
-        es.z_order = z_order_queue_.getOrderOfElement(element_name);
+        const std::string element_handle_string = ge->getHandleString();
+        es.z_order = z_order_queue_.getOrderOfElement(element_handle_string);
         ts.elements.push_back(es);
     }
 
     return ts;
 }
 
-GuiElement* WindowTab::getGuiElement(const std::string& element_name) const
+GuiElement* WindowTab::getGuiElement(const std::string& element_handle_string) const
 {
     auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
-            return elem->getName() == element_name;
+        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+            return elem->getHandleString() == element_handle_string;
         });
 
     if (gui_elements_.end() != q)
@@ -299,19 +299,19 @@ void WindowTab::notifyChildrenOnKeyReleased(const char key)
     }
 }
 
-bool WindowTab::deleteElementIfItExists(const std::string& element_name)
+bool WindowTab::deleteElementIfItExists(const std::string& element_handle_string)
 {
     auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
-            return elem->getName() == element_name;
+        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+            return elem->getHandleString() == element_handle_string;
         });
 
     if (gui_elements_.end() != q)
     {
         delete (*q);
-        z_order_queue_.eraseElement(element_name);
+        z_order_queue_.eraseElement(element_handle_string);
         gui_elements_.erase(q);
-        notify_main_window_element_deleted_(element_name);
+        notify_main_window_element_deleted_(element_handle_string);
         return true;
     }
     else
@@ -320,11 +320,11 @@ bool WindowTab::deleteElementIfItExists(const std::string& element_name)
     }
 }
 
-void WindowTab::toggleProjectionMode(const std::string& element_name)
+void WindowTab::toggleProjectionMode(const std::string& element_handle_string)
 {
     auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
-            return elem->getName() == element_name;
+        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+            return elem->getHandleString() == element_handle_string;
         });
 
     if (gui_elements_.end() != q)
@@ -333,11 +333,11 @@ void WindowTab::toggleProjectionMode(const std::string& element_name)
     }
 }
 
-bool WindowTab::elementWithNameExists(const std::string& element_name)
+bool WindowTab::elementWithNameExists(const std::string& element_handle_string)
 {
     auto q = std::find_if(
-        gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const& elem) -> bool {
-            return elem->getName() == element_name;
+        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const& elem) -> bool {
+            return elem->getHandleString() == element_handle_string;
         });
 
     if (gui_elements_.end() != q)
@@ -350,11 +350,11 @@ bool WindowTab::elementWithNameExists(const std::string& element_name)
     }
 }
 
-bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_name, const std::string& new_name)
+bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_handle_string, const std::string& new_name)
 {
     auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
-            return elem->getName() == element_name;
+        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+            return elem->getHandleString() == element_handle_string;
         });
 
     if (gui_elements_.end() != q)
@@ -368,17 +368,17 @@ bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_na
     }
 }
 
-bool WindowTab::raiseElement(const std::string& element_name)
+bool WindowTab::raiseElement(const std::string& element_handle_string)
 {
     auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
-            return elem->getName() == element_name;
+        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+            return elem->getHandleString() == element_handle_string;
         });
 
     if (gui_elements_.end() != q)
     {
         (*q)->raise();
-        z_order_queue_.raise(element_name);
+        z_order_queue_.raise(element_handle_string);
         return true;
     }
     else
@@ -387,17 +387,17 @@ bool WindowTab::raiseElement(const std::string& element_name)
     }
 }
 
-bool WindowTab::lowerElement(const std::string& element_name)
+bool WindowTab::lowerElement(const std::string& element_handle_string)
 {
     auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_name](const GuiElement* const elem) -> bool {
-            return elem->getName() == element_name;
+        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+            return elem->getHandleString() == element_handle_string;
         });
 
     if (gui_elements_.end() != q)
     {
         (*q)->lower();
-        z_order_queue_.lower(element_name);
+        z_order_queue_.lower(element_handle_string);
         return true;
     }
     else
@@ -412,7 +412,7 @@ std::vector<std::string> WindowTab::getElementNames() const
 
     for (const auto& ge : gui_elements_)
     {
-        element_names.push_back(ge->getName());
+        element_names.push_back(ge->getHandleString());
     }
 
     return element_names;
