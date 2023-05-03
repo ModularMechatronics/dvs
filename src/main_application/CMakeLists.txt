@@ -60,7 +60,8 @@ set(CPP_SOURCE_FILES main.cpp
                      tab_button.cpp
                      close_button.cpp
                      window_button.cpp
-                     window_view.cpp
+                     gui_window.cpp
+                     gui_tab.cpp
                      events.cpp
                      tab_buttons.cpp
                      help_pane.cpp

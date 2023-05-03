@@ -1,7 +1,6 @@
-#include "window_view.h"
-
 #include "events.h"
 #include "globals.h"
+#include "gui_window.h"
 #include "main_window.h"
 #include "plot_pane.h"
 
@@ -10,7 +9,7 @@ namespace element_number_counter
 int getNextFreeElementNumber();
 }
 
-WindowView::WindowView(
+GuiWindow::GuiWindow(
     wxFrame* main_window,
     const WindowSettings& window_settings,
     const std::string& project_name,
@@ -153,27 +152,27 @@ WindowView::WindowView(
     popup_menu_tab_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
     popup_menu_tab_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
 
-    Bind(wxEVT_MENU, &WindowView::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
+    Bind(wxEVT_MENU, &GuiWindow::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
-    Bind(wxEVT_MENU, &WindowView::newTab, this, dvs_ids::NEW_TAB);
-    Bind(wxEVT_MENU, &WindowView::newElementCallback, this, dvs_ids::NEW_ELEMENT);
-    Bind(wxEVT_MENU, &WindowView::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
-    Bind(wxEVT_MENU, &WindowView::deleteElement, this, dvs_ids::DELETE_ELEMENT);
+    Bind(wxEVT_MENU, &GuiWindow::newTab, this, dvs_ids::NEW_TAB);
+    Bind(wxEVT_MENU, &GuiWindow::newElementCallback, this, dvs_ids::NEW_ELEMENT);
+    Bind(wxEVT_MENU, &GuiWindow::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
+    Bind(wxEVT_MENU, &GuiWindow::deleteElement, this, dvs_ids::DELETE_ELEMENT);
 
-    Bind(wxEVT_MENU, &WindowView::toggleProjectionMode, this, dvs_ids::TOGGLE_PROJECTION_MODE);
-    Bind(wxEVT_MENU, &WindowView::raiseElement, this, dvs_ids::RAISE_ELEMENT);
-    Bind(wxEVT_MENU, &WindowView::lowerElement, this, dvs_ids::LOWER_ELEMENT);
-    Bind(wxEVT_MENU, &WindowView::editTabName, this, dvs_ids::EDIT_TAB_NAME);
-    Bind(wxEVT_MENU, &WindowView::deleteTab, this, dvs_ids::DELETE_TAB);
-    Bind(wxEVT_KEY_DOWN, &WindowView::keyPressedCallback, this);
-    Bind(wxEVT_KEY_UP, &WindowView::keyReleasedCallback, this);
+    Bind(wxEVT_MENU, &GuiWindow::toggleProjectionMode, this, dvs_ids::TOGGLE_PROJECTION_MODE);
+    Bind(wxEVT_MENU, &GuiWindow::raiseElement, this, dvs_ids::RAISE_ELEMENT);
+    Bind(wxEVT_MENU, &GuiWindow::lowerElement, this, dvs_ids::LOWER_ELEMENT);
+    Bind(wxEVT_MENU, &GuiWindow::editTabName, this, dvs_ids::EDIT_TAB_NAME);
+    Bind(wxEVT_MENU, &GuiWindow::deleteTab, this, dvs_ids::DELETE_TAB);
+    Bind(wxEVT_KEY_DOWN, &GuiWindow::keyPressedCallback, this);
+    Bind(wxEVT_KEY_UP, &GuiWindow::keyReleasedCallback, this);
 
-    Bind(wxEVT_CLOSE_WINDOW, &WindowView::OnClose, this);
-    Bind(wxEVT_SIZE, &WindowView::OnSize, this);
-    Bind(wxEVT_MOVE, &WindowView::OnMove, this);
+    Bind(wxEVT_CLOSE_WINDOW, &GuiWindow::OnClose, this);
+    Bind(wxEVT_SIZE, &GuiWindow::OnSize, this);
+    Bind(wxEVT_MOVE, &GuiWindow::OnMove, this);
 
-    Bind(wxEVT_RIGHT_DOWN, &WindowView::mouseRightPressedCallback, this);
+    Bind(wxEVT_RIGHT_DOWN, &GuiWindow::mouseRightPressedCallback, this);
 
     tab_buttons_.windowWasResized(this->GetSize());
 
@@ -181,7 +180,7 @@ WindowView::WindowView(
     this->SetSize(wxSize(window_settings.width, window_settings.height));
 }
 
-WindowView::~WindowView()
+GuiWindow::~GuiWindow()
 {
     for (const auto& tab : tabs_)
     {
@@ -189,7 +188,7 @@ WindowView::~WindowView()
     }
 }
 
-void WindowView::deleteAllTabs()
+void GuiWindow::deleteAllTabs()
 {
     for (const auto& tab : tabs_)
     {
@@ -199,12 +198,12 @@ void WindowView::deleteAllTabs()
     tabs_.clear();
 }
 
-void WindowView::setProjectName(const std::string& project_name)
+void GuiWindow::setProjectName(const std::string& project_name)
 {
     project_name_ = project_name;
 }
 
-std::vector<GuiElement*> WindowView::getGuiElements() const
+std::vector<GuiElement*> GuiWindow::getGuiElements() const
 {
     std::vector<GuiElement*> gui_elements;
 
@@ -217,7 +216,7 @@ std::vector<GuiElement*> WindowView::getGuiElements() const
     return gui_elements;
 }
 
-GuiElement* WindowView::getGuiElement(const std::string& element_name) const
+GuiElement* GuiWindow::getGuiElement(const std::string& element_name) const
 {
     GuiElement* ge;
     for (const auto& tab : tabs_)
@@ -232,7 +231,7 @@ GuiElement* WindowView::getGuiElement(const std::string& element_name) const
     return nullptr;
 }
 
-void WindowView::keyPressedCallback(wxKeyEvent& evt)
+void GuiWindow::keyPressedCallback(wxKeyEvent& evt)
 {
     // TODO: This callback doesn't work
     const int key = evt.GetUnicodeKey();
@@ -243,7 +242,7 @@ void WindowView::keyPressedCallback(wxKeyEvent& evt)
     std::cout << "Key pressed" << std::endl;
 }
 
-void WindowView::keyReleasedCallback(wxKeyEvent& evt)
+void GuiWindow::keyReleasedCallback(wxKeyEvent& evt)
 {
     // TODO: This callback doesn't work
     const int key = evt.GetUnicodeKey();
@@ -253,7 +252,7 @@ void WindowView::keyReleasedCallback(wxKeyEvent& evt)
     }
 }
 
-void WindowView::notifyChildrenOnKeyPressed(const char key)
+void GuiWindow::notifyChildrenOnKeyPressed(const char key)
 {
     if (key == 'H')
     {
@@ -266,7 +265,7 @@ void WindowView::notifyChildrenOnKeyPressed(const char key)
     }
 }
 
-void WindowView::notifyChildrenOnKeyReleased(const char key)
+void GuiWindow::notifyChildrenOnKeyReleased(const char key)
 {
     if (key == 'H')
     {
@@ -279,7 +278,7 @@ void WindowView::notifyChildrenOnKeyReleased(const char key)
     }
 }
 
-void WindowView::mouseRightPressed(const wxPoint pos, const ClickSource source, const std::string& item_name)
+void GuiWindow::mouseRightPressed(const wxPoint pos, const ClickSource source, const std::string& item_name)
 {
     last_clicked_item_ = item_name;
 
@@ -299,12 +298,12 @@ void WindowView::mouseRightPressed(const wxPoint pos, const ClickSource source, 
     }
 }
 
-void WindowView::mouseRightPressedCallback(wxMouseEvent& event)
+void GuiWindow::mouseRightPressedCallback(wxMouseEvent& event)
 {
     mouseRightPressed(event.GetPosition(), ClickSource::THIS, "");
 }
 
-void WindowView::tabChanged(const std::string name)
+void GuiWindow::tabChanged(const std::string name)
 {
     for (const auto& tab : tabs_)
     {
@@ -322,12 +321,12 @@ void WindowView::tabChanged(const std::string name)
     }
 }
 
-void WindowView::OnMove(wxMoveEvent& event)
+void GuiWindow::OnMove(wxMoveEvent& event)
 {
     notify_main_window_about_modification_();
 }
 
-void WindowView::OnSize(wxSizeEvent& event)
+void GuiWindow::OnSize(wxSizeEvent& event)
 {
     wxFrame::OnSize(event);
     const wxSize new_size = event.GetSize();
@@ -344,12 +343,12 @@ void WindowView::OnSize(wxSizeEvent& event)
     notify_main_window_about_modification_();
 }
 
-int WindowView::getCallbackId() const
+int GuiWindow::getCallbackId() const
 {
     return callback_id_;
 }
 
-void WindowView::updateLabel()
+void GuiWindow::updateLabel()
 {
     std::string save_string = "";
     if (!project_is_saved_)
@@ -359,20 +358,20 @@ void WindowView::updateLabel()
     this->SetLabel(name_ + " [" + project_name_ + save_string + "]");
 }
 
-void WindowView::setName(const std::string& new_name)
+void GuiWindow::setName(const std::string& new_name)
 {
     notify_main_window_name_changed_(name_, new_name);
     name_ = new_name;
     updateLabel();
 }
 
-void WindowView::OnClose(wxCloseEvent& WXUNUSED(event))
+void GuiWindow::OnClose(wxCloseEvent& WXUNUSED(event))
 {
     notify_main_window_about_modification_();
     Hide();
 }
 
-WindowSettings WindowView::getWindowSettings() const
+WindowSettings GuiWindow::getWindowSettings() const
 {
     WindowSettings ws;
     const wxPoint pos = GetPosition();
@@ -392,12 +391,12 @@ WindowSettings WindowView::getWindowSettings() const
     return ws;
 }
 
-std::string WindowView::getName() const
+std::string GuiWindow::getName() const
 {
     return name_;
 }
 
-void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::editWindowName(wxCommandEvent& WXUNUSED(event))
 {
     wxTextEntryDialog name_dialog(this, "Enter the name for the window", "Enter window name", name_);
 
@@ -418,13 +417,13 @@ void WindowView::editWindowName(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void WindowView::setIsFileSavedForLabel(const bool is_saved)
+void GuiWindow::setIsFileSavedForLabel(const bool is_saved)
 {
     project_is_saved_ = is_saved;
     updateLabel();
 }
 
-void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::newTab(wxCommandEvent& WXUNUSED(event))
 {
     TabSettings tab_settings;
     tab_settings.name = "Tab " + std::to_string(current_tab_num_);
@@ -448,7 +447,7 @@ void WindowView::newTab(wxCommandEvent& WXUNUSED(event))
     notify_main_window_about_modification_();
 }
 
-void WindowView::newElement()
+void GuiWindow::newElement()
 {
     const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
 
@@ -487,7 +486,7 @@ void WindowView::newElement()
     }
 }
 
-void WindowView::newElementCallback(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::newElementCallback(wxCommandEvent& WXUNUSED(event))
 {
     const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
 
@@ -547,7 +546,7 @@ void WindowView::newElementCallback(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-std::vector<std::string> WindowView::getElementNames() const
+std::vector<std::string> GuiWindow::getElementNames() const
 {
     std::vector<std::string> element_names;
     for (const auto& t : tabs_)
@@ -560,7 +559,7 @@ std::vector<std::string> WindowView::getElementNames() const
     return element_names;
 }
 
-void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::editElementName(wxCommandEvent& WXUNUSED(event))
 {
     wxTextEntryDialog name_dialog(this, "Enter the new name for the element", "Edit element name", last_clicked_item_);
 
@@ -627,7 +626,7 @@ void WindowView::editElementName(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void WindowView::updateAllElements()
+void GuiWindow::updateAllElements()
 {
     for (auto& t : tabs_)
     {
@@ -635,7 +634,7 @@ void WindowView::updateAllElements()
     }
 }
 
-void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::deleteElement(wxCommandEvent& WXUNUSED(event))
 {
     bool element_deleted = false;
 
@@ -650,7 +649,7 @@ void WindowView::deleteElement(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void WindowView::toggleProjectionMode(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::toggleProjectionMode(wxCommandEvent& WXUNUSED(event))
 {
     for (const auto& t : tabs_)
     {
@@ -660,7 +659,7 @@ void WindowView::toggleProjectionMode(wxCommandEvent& WXUNUSED(event))
     notify_main_window_about_modification_();
 }
 
-void WindowView::raiseElement(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::raiseElement(wxCommandEvent& WXUNUSED(event))
 {
     for (const auto& t : tabs_)
     {
@@ -670,7 +669,7 @@ void WindowView::raiseElement(wxCommandEvent& WXUNUSED(event))
     notify_main_window_about_modification_();
 }
 
-void WindowView::lowerElement(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::lowerElement(wxCommandEvent& WXUNUSED(event))
 {
     for (const auto& t : tabs_)
     {
@@ -680,7 +679,7 @@ void WindowView::lowerElement(wxCommandEvent& WXUNUSED(event))
     notify_main_window_about_modification_();
 }
 
-void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::editTabName(wxCommandEvent& WXUNUSED(event))
 {
     wxTextEntryDialog name_dialog(this, "Enter the new name for tab", "Enter tab name", last_clicked_item_);
 
@@ -711,7 +710,7 @@ void WindowView::editTabName(wxCommandEvent& WXUNUSED(event))
     tab_buttons_.changeButtonName(last_clicked_item_, tab_name);
 }
 
-void WindowView::deleteTab(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
 {
     auto q = std::find_if(tabs_.begin(), tabs_.end(), [this](const WindowTab* const tb) -> bool {
         return last_clicked_item_ == tb->getName();

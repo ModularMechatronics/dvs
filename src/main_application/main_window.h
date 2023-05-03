@@ -34,7 +34,7 @@
 #include "tray_icon.h"
 #include "window_button.h"
 
-class WindowView;
+class GuiWindow;
 
 class MainWindow : public wxFrame
 {
@@ -62,7 +62,7 @@ private:
     wxTimer receive_timer_;
     wxTimer refresh_timer_;
 
-    std::vector<WindowView*> windows_;
+    std::vector<GuiWindow*> windows_;
     int current_window_num_;
     CustomTaskBarIcon* task_bar_;
     int window_callback_id_;

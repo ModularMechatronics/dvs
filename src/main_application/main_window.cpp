@@ -12,7 +12,7 @@
 #include "dvs/math/math.h"
 #include "events.h"
 #include "filesystem.h"
-#include "window_view.h"
+#include "gui_window.h"
 
 namespace element_number_counter
 {
@@ -272,7 +272,7 @@ wxMenuBar* MainWindow::createMainMenuBar()
 
 bool MainWindow::hasWindowWithName(const std::string& window_name)
 {
-    auto q = std::find_if(windows_.begin(), windows_.end(), [&window_name](const WindowView* const w) -> bool {
+    auto q = std::find_if(windows_.begin(), windows_.end(), [&window_name](const GuiWindow* const w) -> bool {
         return window_name == w->getName();
     });
     return q != windows_.end();
@@ -316,18 +316,18 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
 {
     for (const WindowSettings& ws : project_settings.getWindows())
     {
-        windows_.emplace_back(new WindowView(this,
-                                             ws,
-                                             save_manager_->getCurrentFileName(),
-                                             window_callback_id_,
-                                             save_manager_->isSaved(),
-                                             notification_from_gui_element_key_pressed_,
-                                             notification_from_gui_element_key_released_,
-                                             get_all_element_names_,
-                                             notify_main_window_element_deleted_,
-                                             notify_main_window_element_name_changed_,
-                                             notify_main_window_name_changed_,
-                                             notify_main_window_about_modification_));
+        windows_.emplace_back(new GuiWindow(this,
+                                            ws,
+                                            save_manager_->getCurrentFileName(),
+                                            window_callback_id_,
+                                            save_manager_->isSaved(),
+                                            notification_from_gui_element_key_pressed_,
+                                            notification_from_gui_element_key_released_,
+                                            get_all_element_names_,
+                                            notify_main_window_element_deleted_,
+                                            notify_main_window_element_name_changed_,
+                                            notify_main_window_name_changed_,
+                                            notify_main_window_about_modification_));
         window_callback_id_ += 1;
         current_window_num_++;
         task_bar_->addNewWindow(ws.name);
@@ -395,33 +395,33 @@ void MainWindow::newWindowWithoutFileModification()
     window_settings.width = 600;
     window_settings.height = 628;
 
-    WindowView* window_element = new WindowView(this,
-                                                window_settings,
-                                                save_manager_->getCurrentFileName(),
-                                                window_callback_id_,
-                                                save_manager_->isSaved(),
-                                                notification_from_gui_element_key_pressed_,
-                                                notification_from_gui_element_key_released_,
-                                                get_all_element_names_,
-                                                notify_main_window_element_deleted_,
-                                                notify_main_window_element_name_changed_,
-                                                notify_main_window_name_changed_,
-                                                notify_main_window_about_modification_);
+    GuiWindow* gui_window = new GuiWindow(this,
+                                          window_settings,
+                                          save_manager_->getCurrentFileName(),
+                                          window_callback_id_,
+                                          save_manager_->isSaved(),
+                                          notification_from_gui_element_key_pressed_,
+                                          notification_from_gui_element_key_released_,
+                                          get_all_element_names_,
+                                          notify_main_window_element_deleted_,
+                                          notify_main_window_element_name_changed_,
+                                          notify_main_window_name_changed_,
+                                          notify_main_window_about_modification_);
 
-    windows_menu_->Append(window_element->getCallbackId(), window_element->getName());
-    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, window_element->getCallbackId());
+    windows_menu_->Append(gui_window->getCallbackId(), gui_window->getName());
+    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, gui_window->getCallbackId());
 
     task_bar_->addNewWindow(window_settings.name);
     current_window_num_++;
     window_callback_id_ += 1;
 
-    windows_.push_back(window_element);
+    windows_.push_back(gui_window);
 
     int pos_y = first_window_button_offset_ + kMainWindowButtonHeight * (windows_.size() - 1);
     this->SetSize(wxSize(kMainWindowWidth, kMainWindowButtonHeight * windows_.size() + first_window_button_offset_));
 
     TabSettings tab_settings;
-    tab_settings.name = window_element->getName();
+    tab_settings.name = gui_window->getName();
 
     window_buttons_.push_back(new WindowButton(this,
                                                tab_settings,
@@ -430,7 +430,7 @@ void MainWindow::newWindowWithoutFileModification()
                                                0,
                                                [this](const std::string& f) -> void { toggleWindowVisibility(f); }));
 
-    window_element->newElement();
+    gui_window->newElement();
 }
 
 void MainWindow::windowNameChanged(const std::string& old_name, const std::string& new_name)
@@ -489,9 +489,9 @@ void MainWindow::saveProjectAs()
 
     ProjectSettings ps;
 
-    for (const WindowView* we : windows_)
+    for (const GuiWindow* gw : windows_)
     {
-        ps.pushBackWindowSettings(we->getWindowSettings());
+        ps.pushBackWindowSettings(gw->getWindowSettings());
     }
 
     save_manager_->saveToNewFile(new_save_path, ps);
@@ -517,9 +517,9 @@ void MainWindow::saveProject()
         }
         ProjectSettings ps;
 
-        for (const WindowView* we : windows_)
+        for (const GuiWindow* gw : windows_)
         {
-            ps.pushBackWindowSettings(we->getWindowSettings());
+            ps.pushBackWindowSettings(gw->getWindowSettings());
         }
 
         configuration_agent_->writeValue("last_opened_file", save_manager_->getCurrentFilePath());
@@ -680,8 +680,8 @@ void MainWindow::notifyChildrenOnKeyReleased(const char key)
 
 void MainWindow::deleteWindow(wxCommandEvent& event)
 {
-    auto q = std::find_if(windows_.begin(), windows_.end(), [&event](const WindowView* const w) -> bool {
-        return w->getCallbackId() == (event.GetId() - 1);
+    auto q = std::find_if(windows_.begin(), windows_.end(), [&event](const GuiWindow* const gw) -> bool {
+        return gw->getCallbackId() == (event.GetId() - 1);
     });
 
     if (q != windows_.end())
