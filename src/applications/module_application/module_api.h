@@ -237,17 +237,21 @@ public:
 class Button : public api_internal::Control
 {
 private:
+    friend class GuiElement;
+    Button(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+
 public:
     Button() : api_internal::Control{} {}
-    Button(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
 };
 
 class CheckBox : public api_internal::Control
 {
 private:
+    friend class GuiElement;
+    CheckBox(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+
 public:
     CheckBox() : api_internal::Control{} {}
-    CheckBox(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
 
     bool isChecked() const
     {
@@ -268,9 +272,11 @@ public:
 class RadioButton : public api_internal::Control
 {
 private:
+    friend class GuiElement;
+    RadioButton(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+
 public:
     RadioButton() : api_internal::Control{} {}
-    RadioButton(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
 
     bool isChecked() const
     {
@@ -291,30 +297,36 @@ public:
 class DropDownMenu : public api_internal::ListCommon
 {
 private:
-public:
-    DropDownMenu() : api_internal::ListCommon{} {}
+    friend class GuiElement;
     DropDownMenu(api_internal::InternalGuiElement* const internal_element) : api_internal::ListCommon{internal_element}
     {
     }
+
+public:
+    DropDownMenu() : api_internal::ListCommon{} {}
 };
 
 class ListBox : public api_internal::ListCommon
 {
 private:
+    friend class GuiElement;
+    ListBox(api_internal::InternalGuiElement* const internal_element) : api_internal::ListCommon{internal_element} {}
+
 public:
     ListBox() : api_internal::ListCommon{} {}
-    ListBox(api_internal::InternalGuiElement* const internal_element) : api_internal::ListCommon{internal_element} {}
 };
 
 class EditableText : public api_internal::GuiElementBase
 {
 private:
-public:
-    EditableText() : api_internal::GuiElementBase{} {}
+    friend class GuiElement;
     EditableText(api_internal::InternalGuiElement* const internal_element)
         : api_internal::GuiElementBase{internal_element}
     {
     }
+
+public:
+    EditableText() : api_internal::GuiElementBase{} {}
 
     void setText(const std::string& new_text) const
     {
@@ -334,17 +346,21 @@ public:
 class TextLabel : public api_internal::Control
 {
 private:
+    friend class GuiElement;
+    TextLabel(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+
 public:
     TextLabel() : api_internal::Control{} {}
-    TextLabel(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
 };
 
 class Slider : public api_internal::GuiElementBase
 {
 private:
+    friend class GuiElement;
+    Slider(api_internal::InternalGuiElement* const internal_element) : api_internal::GuiElementBase{internal_element} {}
+
 public:
     Slider() : api_internal::GuiElementBase{} {}
-    Slider(api_internal::InternalGuiElement* const internal_element) : api_internal::GuiElementBase{internal_element} {}
 
     std::int32_t getValue() const
     {
