@@ -54,7 +54,7 @@ void DynamicModule::unloadModule()
 }
 
 void DynamicModule::registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
-                                      const std::function<GuiElement*(const std::string&)>& gui_element_getter)
+                                      const std::function<GuiElement(const std::string&)>& gui_element_getter)
 {
     if (register_callbacks_function_ != nullptr)
     {

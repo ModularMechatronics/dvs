@@ -1,5 +1,18 @@
 
 
+/*class LoadedDataBase
+{
+public:
+    LoadedDataBase() = default;
+};
+
+class LoadedDataDerived : public LoadedDataBase
+{
+public:
+    LoadedDataDerived() = default;
+    LoadedDataDerived(const std::string& path_to_file) {}
+};*/
+
 std::vector<std::string> items = getDropDownMenuItems("DropDownMenu0");
 std::vector<std::string> items = getListBoxItems("listbox0");
 

@@ -47,7 +47,7 @@ void MainWindow::setupButton(const ButtonAttributes& button_attributes, const Gu
                                                                  elem_pos,
                                                                  elem_size);
 
-    gui_elements_[btn->getId()] = static_cast<GuiElement*>(btn);
+    gui_elements_[btn->getId()] = static_cast<api_internal::InternalGuiElement*>(btn);
     Bind(wxEVT_BUTTON, &MainWindow::guiElementCallback, this, btn->getId());
 }
 
@@ -64,7 +64,7 @@ void MainWindow::setupCheckBox(const CheckBoxAttributes& check_box_attributes, c
                                                                     elem_pos,
                                                                     elem_size);
 
-    gui_elements_[cb->getId()] = static_cast<GuiElement*>(cb);
+    gui_elements_[cb->getId()] = static_cast<api_internal::InternalGuiElement*>(cb);
     Bind(wxEVT_CHECKBOX, &MainWindow::guiElementCallback, this, cb->getId());
 }
 
@@ -86,7 +86,7 @@ void MainWindow::setupSlider(const SliderAttributes& slider_attributes, const Gu
                                                                     elem_size,
                                                                     style);
 
-    gui_elements_[slider->getId()] = static_cast<GuiElement*>(slider);
+    gui_elements_[slider->getId()] = static_cast<api_internal::InternalGuiElement*>(slider);
     Bind(wxEVT_SLIDER, &MainWindow::guiElementCallback, this, slider->getId());
 }
 
@@ -104,7 +104,7 @@ void MainWindow::setupEditableText(const EditableTextAttributes& editable_text_a
                                                                                elem_pos,
                                                                                elem_size,
                                                                                wxTE_PROCESS_ENTER);
-    gui_elements_[editable_text->getId()] = static_cast<GuiElement*>(editable_text);
+    gui_elements_[editable_text->getId()] = static_cast<api_internal::InternalGuiElement*>(editable_text);
     Bind(wxEVT_TEXT, &MainWindow::guiElementCallback, this, editable_text->getId());
     Bind(wxEVT_TEXT_ENTER, &MainWindow::guiElementCallback, this, editable_text->getId());
 }
@@ -122,7 +122,7 @@ void MainWindow::setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_
                                                                                 drop_down_menu_attributes.init_value,
                                                                                 elem_pos,
                                                                                 elem_size);
-    gui_elements_[drop_down_menu->getId()] = static_cast<GuiElement*>(drop_down_menu);
+    gui_elements_[drop_down_menu->getId()] = static_cast<api_internal::InternalGuiElement*>(drop_down_menu);
     Bind(wxEVT_COMBOBOX, &MainWindow::guiElementCallback, this, drop_down_menu->getId());
     return;
 }
@@ -133,7 +133,7 @@ void MainWindow::setupListBox(const ListBoxAttributes& list_box_attributes, cons
 
     MovableElement<wxListBox>* list_box = new MovableElement<wxListBox>(
         this, list_box_attributes.handle_string, elem_callback, GuiElementType::ListBox, wxID_ANY, elem_pos, elem_size);
-    gui_elements_[list_box->getId()] = static_cast<GuiElement*>(list_box);
+    gui_elements_[list_box->getId()] = static_cast<api_internal::InternalGuiElement*>(list_box);
     Bind(wxEVT_LISTBOX, &MainWindow::guiElementCallback, this, list_box->getId());
 }
 
@@ -150,7 +150,7 @@ void MainWindow::setupStaticText(const StaticTextAttributes& static_text_attribu
                                                                                  static_text_attributes.label,
                                                                                  elem_pos,
                                                                                  elem_size);
-    gui_elements_[static_text->getId()] = static_cast<GuiElement*>(static_text);
+    gui_elements_[static_text->getId()] = static_cast<api_internal::InternalGuiElement*>(static_text);
 }
 
 void MainWindow::setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
@@ -167,7 +167,7 @@ void MainWindow::setupRadioButton(const RadioButtonAttributes& radio_button_attr
                                           radio_button_attributes.label,
                                           elem_pos,
                                           elem_size);
-    gui_elements_[radio_button->getId()] = static_cast<GuiElement*>(radio_button);
+    gui_elements_[radio_button->getId()] = static_cast<api_internal::InternalGuiElement*>(radio_button);
     Bind(wxEVT_RADIOBUTTON, &MainWindow::guiElementCallback, this, radio_button->getId());
 }
 
@@ -180,7 +180,7 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
     // TODO: No validation is possible to make sure that the assigned functions in "registerCallbacks" are
     // available from the json layout definition
 
-    get_gui_element_function_ = [this](const std::string& handle_string) -> GuiElement* {
+    get_gui_element_function_ = [this](const std::string& handle_string) -> GuiElement {
         auto q = std::find_if(gui_elements_.begin(), gui_elements_.end(), [&handle_string](const auto& elem) -> bool {
             return elem.second->getHandleString() == handle_string;
         });
@@ -188,12 +188,12 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
         if (q == gui_elements_.end())
         {
             DVS_LOG_ERROR() << "Could not find gui element with handle string: " << handle_string
-                            << ", returning nullptr.";
-            return nullptr;
+                            << ", returning emptry object.";
+            return GuiElement{};
         }
         else
         {
-            return q->second;
+            return GuiElement{q->second};
         }
     };
 

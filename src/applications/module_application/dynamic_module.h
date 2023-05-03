@@ -12,19 +12,17 @@
 #include "module_api.h"
 
 typedef void (*registerCallbacksFunctionType)(std::map<std::string, GuiElementCallback>& callbacks,
-                                              const std::function<GuiElement*(const std::string&)>& gui_element_getter);
+                                              const std::function<GuiElement(const std::string&)>& gui_element_getter);
 
 class DynamicModule
 {
 public:
     DynamicModule() = delete;
-
     DynamicModule(const std::string& path_to_module_library);
-
     ~DynamicModule();
 
     void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
-                           const std::function<GuiElement*(const std::string&)>& gui_element_getter);
+                           const std::function<GuiElement(const std::string&)>& gui_element_getter);
     void unloadModule();
 
 private:

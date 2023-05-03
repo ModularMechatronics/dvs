@@ -166,8 +166,8 @@ class MainWindow : public wxFrame
 {
 private:
     DynamicModule dynamic_module_;
-    std::map<long, GuiElement*> gui_elements_;
-    std::function<GuiElement*(const std::string&)> get_gui_element_function_;
+    std::map<long, api_internal::InternalGuiElement*> gui_elements_;
+    std::function<GuiElement(const std::string&)> get_gui_element_function_;
 
     void OnSize(wxSizeEvent& event);
 
@@ -195,7 +195,7 @@ public:
     ~MainWindow();
 };
 
-template <class C> class MovableElement : public C, public GuiElement
+template <class C> class MovableElement : public C, public api_internal::InternalGuiElement
 {
 public:
     // Slider
@@ -211,7 +211,7 @@ public:
                    const wxSize& size,
                    const long style)
         : C(parent, id, init_value, min_value, max_value, pos, size, style),
-          GuiElement(handle_string, elem_callback, gui_element_type)
+          api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
 
@@ -229,7 +229,8 @@ public:
                    const std::string& label,
                    const wxPoint& pos,
                    const wxSize& size)
-        : C(parent, id, label, pos, size), GuiElement(handle_string, elem_callback, gui_element_type)
+        : C(parent, id, label, pos, size),
+          api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
 
@@ -246,7 +247,7 @@ public:
                    const wxWindowID id,
                    const wxPoint& pos,
                    const wxSize& size)
-        : C(parent, id, pos, size), GuiElement(handle_string, elem_callback, gui_element_type)
+        : C(parent, id, pos, size), api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
 
@@ -265,7 +266,8 @@ public:
                    const wxPoint& pos,
                    const wxSize& size,
                    const long style)
-        : C(parent, id, initial_text, pos, size, style), GuiElement(handle_string, elem_callback, gui_element_type)
+        : C(parent, id, initial_text, pos, size, style),
+          api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
 
@@ -355,13 +357,13 @@ public:
         return slider->GetValue();
     }
 
-    std::int32_t getMin(const std::int32_t new_min) const override
+    std::int32_t getMin() const override
     {
         const wxSlider* const slider = dynamic_cast<const wxSlider* const>(this);
         return slider->GetMin();
     }
 
-    std::int32_t getMax(const std::int32_t new_max) const override
+    std::int32_t getMax() const override
     {
         const wxSlider* const slider = dynamic_cast<const wxSlider* const>(this);
         return slider->GetMax();
@@ -495,17 +497,16 @@ public:
         elem->Clear();
     }
 
-    bool selectItem(const std::string& item_text) override
+    void selectItem(const std::string& item_text) override
     {
         wxItemContainer* const elem = dynamic_cast<wxItemContainer* const>(this);
-        return elem->SetStringSelection(item_text);
+        elem->SetStringSelection(item_text);
     }
 
-    bool selectItem(const std::int32_t item_idx)
+    void selectItem(const std::int32_t item_idx) override
     {
         wxItemContainer* const elem = dynamic_cast<wxItemContainer* const>(this);
         elem->Select(item_idx);
-        return false;
     }
 
     std::string getSelectedItem() const override

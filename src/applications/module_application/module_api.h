@@ -50,162 +50,52 @@ inline std::string guiElementTypeToString(const GuiElementType& gui_element_type
     }
 }
 
-namespace api_internal
-{
-class GuiElementBase
-{
-private:
-public:
-    GuiElementBase() = default;
-
-    virtual void setEnabled() = 0;
-    virtual void setDisabled() = 0;
-
-    virtual void setPosition(const std::int16_t x, const std::int16_t y) = 0;
-    virtual void setSize(const std::int16_t width, const std::int16_t height) = 0;
-};
-
-class Control
-{
-private:
-public:
-    Control() = default;
-    virtual void setLabel(const std::string& new_label) = 0;
-    virtual std::string getLabel(void) = 0;
-};
-
-class CheckableItem
-{
-private:
-public:
-    CheckableItem() = default;
-    virtual bool isChecked() const = 0;
-    virtual void setChecked() = 0;
-    virtual void setUnChecked() = 0;
-};
-
-class ListCommon
-{
-private:
-public:
-    ListCommon() = default;
-
-    virtual void addItem(const std::string& item_text) = 0;
-    virtual void removeItem(const std::string& item_text) = 0;
-    virtual void clearItems() = 0;
-    virtual bool selectItem(const std::string& item_text) = 0;
-    virtual bool selectItem(const std::int32_t item_idx) = 0;
-    virtual std::string getSelectedItem() const = 0;
-    virtual std::int32_t getNumItems() const = 0;
-    virtual std::int32_t getSelectedItemIndex() const = 0;
-};
-
-}  // namespace api_internal
-
-class Button : public api_internal::Control, public api_internal::GuiElementBase
-{
-private:
-public:
-    Button() {}
-};
-
-class CheckBox : public api_internal::Control, public api_internal::CheckableItem, public api_internal::GuiElementBase
-{
-private:
-public:
-    CheckBox() {}
-};
-
-class RadioButton : public api_internal::Control,
-                    public api_internal::CheckableItem,
-                    public api_internal::GuiElementBase
-{
-private:
-public:
-    RadioButton() {}
-};
-
-class DropDownMenu : public api_internal::GuiElementBase, public api_internal::ListCommon
-{
-private:
-public:
-    DropDownMenu() {}
-};
-
-class ListBox : public api_internal::GuiElementBase, public api_internal::ListCommon
-{
-private:
-public:
-    ListBox() {}
-};
-
-class EditableText : public api_internal::GuiElementBase
-{
-private:
-public:
-    EditableText() {}
-
-    virtual void setText(const std::string& new_text) = 0;
-    virtual std::string getText() const = 0;
-    virtual bool enterPressed() const = 0;
-};
-
-class Slider : public api_internal::GuiElementBase
-{
-private:
-public:
-    Slider() {}
-
-    virtual std::int32_t getValue() const = 0;
-    virtual std::int32_t getMin(const std::int32_t new_min) const = 0;
-    virtual std::int32_t getMax(const std::int32_t new_max) const = 0;
-
-    virtual void setValue(const std::int32_t new_value) = 0;
-    virtual void setMin(const std::int32_t new_min) = 0;
-    virtual void setMax(const std::int32_t new_max) = 0;
-};
-
-class TextLabel : public api_internal::Control, public api_internal::GuiElementBase
-{
-private:
-public:
-    TextLabel() {}
-};
-
 class GuiElement;
 
-using GuiElementCallback = std::function<void(GuiElement* const)>;
-
-class GuiElement : public Slider,
-                   public Button,
-                   public CheckBox,
-                   public RadioButton,
-                   public EditableText,
-                   public DropDownMenu,
-                   public ListBox,
-                   public TextLabel
+using GuiElementCallback = std::function<void(const GuiElement&)>;
+namespace api_internal
+{
+class InternalGuiElement
 {
 public:
-    GuiElement(const std::string& handle_string, const GuiElementCallback& elem_callback, const GuiElementType type)
+    InternalGuiElement(const std::string& handle_string,
+                       const GuiElementCallback& elem_callback,
+                       const GuiElementType type)
         : type_{type}, callback_function_{elem_callback}, handle_string_{handle_string}
     {
     }
 
-    virtual ~GuiElement() = default;
+    virtual ~InternalGuiElement() = default;
 
+    virtual void setEnabled() = 0;
+    virtual void setDisabled() = 0;
+    virtual void setPosition(const std::int16_t x, const std::int16_t y) = 0;
+    virtual void setSize(const std::int16_t width, const std::int16_t height) = 0;
+    virtual void setLabel(const std::string& new_label) = 0;
+    virtual std::string getLabel(void) = 0;
+    virtual bool isChecked() const = 0;
+    virtual void setChecked() = 0;
+    virtual void setUnChecked() = 0;
+    virtual void addItem(const std::string& item_text) = 0;
+    virtual void removeItem(const std::string& item_text) = 0;
+    virtual void clearItems() = 0;
+    virtual void selectItem(const std::string& item_text) = 0;
+    virtual void selectItem(const std::int32_t item_idx) = 0;
+    virtual std::string getSelectedItem() const = 0;
+    virtual std::int32_t getNumItems() const = 0;
+    virtual std::int32_t getSelectedItemIndex() const = 0;
+    virtual void setText(const std::string& new_text) = 0;
+    virtual std::string getText() const = 0;
+    virtual bool enterPressed() const = 0;
+    virtual std::int32_t getValue() const = 0;
+    virtual std::int32_t getMin() const = 0;
+    virtual std::int32_t getMax() const = 0;
+    virtual void setValue(const std::int32_t new_value) = 0;
+    virtual void setMin(const std::int32_t new_min) = 0;
+    virtual void setMax(const std::int32_t new_max) = 0;
     virtual long getId() const = 0;
 
-    void callback()
-    {
-        if (callback_function_)
-        {
-            callback_function_(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "No callback function set for GuiElement with handle string: " << getHandleString();
-        }
-    }
+    void callback();
 
     GuiElementType getType() const
     {
@@ -215,118 +105,6 @@ public:
     std::string getHandleString() const
     {
         return handle_string_;
-    }
-
-    Slider* asSlider()
-    {
-        if (type_ == GuiElementType::Slider)
-        {
-            return static_cast<Slider*>(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
-                            << " is not a slider! Returning nullptr.";
-            return nullptr;
-        }
-    }
-
-    Button* asButton()
-    {
-        if (type_ == GuiElementType::Button)
-        {
-            return static_cast<Button*>(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
-                            << " is not a button! Returning nullptr.";
-            return nullptr;
-        }
-    }
-
-    CheckBox* asCheckBox()
-    {
-        if (type_ == GuiElementType::CheckBox)
-        {
-            return static_cast<CheckBox*>(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
-                            << " is not a checkbox! Returning nullptr.";
-            return nullptr;
-        }
-    }
-
-    RadioButton* asRadioButton()
-    {
-        if (type_ == GuiElementType::RadioButton)
-        {
-            return static_cast<RadioButton*>(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
-                            << " is not a radiobutton! Returning nullptr.";
-            return nullptr;
-        }
-    }
-
-    EditableText* asEditableText()
-    {
-        if (type_ == GuiElementType::EditableText)
-        {
-            return static_cast<EditableText*>(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
-                            << " is not an editable text! Returning nullptr.";
-            return nullptr;
-        }
-    }
-
-    DropDownMenu* asDropDownMenu()
-    {
-        if (type_ == GuiElementType::DropDownMenu)
-        {
-            return static_cast<DropDownMenu*>(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
-                            << " is not a drop down menu! Returning nullptr.";
-            return nullptr;
-        }
-    }
-
-    ListBox* asListBox()
-    {
-        if (type_ == GuiElementType::ListBox)
-        {
-            return static_cast<ListBox*>(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
-                            << " is not a list box! Returning nullptr.";
-            return nullptr;
-        }
-    }
-
-    TextLabel* asTextLabel()
-    {
-        if (type_ == GuiElementType::TextLabel)
-        {
-            return static_cast<TextLabel*>(this);
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << getHandleString()
-                            << " is not a text label! Returning nullptr.";
-            return nullptr;
-        }
     }
 
 protected:
@@ -339,38 +117,398 @@ protected:
     float width_;
     float height_;
 };
+}  // namespace api_internal
 
-class LoadedDataBase
+namespace api_internal
+{
+
+class GuiElementBase
 {
 public:
-    LoadedDataBase() = default;
-};
+    GuiElementBase() : internal_element_{nullptr} {}
+    GuiElementBase(InternalGuiElement* const internal_element) : internal_element_{internal_element} {}
 
-class LoadedDataDerived : public LoadedDataBase
-{
-public:
-    LoadedDataDerived() = default;
-    LoadedDataDerived(const std::string& path_to_file) {}
-};
-
-/*class IGuiElement
-{
-protected:
-    long id_;
-
-public:
-    IGuiElement() = default;
-
-    void getHandleString() const
+    GuiElementType getType() const
     {
-        return gethandleString(id_);
+        return internal_element_->getType();
     }
 
     long getId() const
     {
-        return id_;
+        return internal_element_->getId();
+    }
+
+    std::string getHandleString() const
+    {
+        return internal_element_->getHandleString();
+    }
+
+    void setEnabled() const
+    {
+        internal_element_->setEnabled();
+    }
+    void setDisabled() const
+    {
+        internal_element_->setDisabled();
+    }
+
+    void setPosition(const std::int16_t x, const std::int16_t y) const
+    {
+        internal_element_->setPosition(x, y);
+    }
+
+    void setSize(const std::int16_t width, const std::int16_t height) const
+    {
+        internal_element_->setSize(width, height);
+    }
+
+protected:
+    InternalGuiElement* internal_element_;
+};
+
+class Control : public GuiElementBase
+{
+private:
+public:
+    Control() : GuiElementBase{} {}
+    Control(InternalGuiElement* const internal_element) : GuiElementBase{internal_element} {}
+
+    void setLabel(const std::string& new_label) const
+    {
+        internal_element_->setLabel(new_label);
+    }
+
+    std::string getLabel() const
+    {
+        return internal_element_->getLabel();
     }
 };
-*/
+
+class ListCommon : public GuiElementBase
+{
+private:
+public:
+    ListCommon() : GuiElementBase{} {}
+    ListCommon(InternalGuiElement* const internal_element) : GuiElementBase{internal_element} {}
+
+    void addItem(const std::string& item_text) const
+    {
+        internal_element_->addItem(item_text);
+    }
+
+    void removeItem(const std::string& item_text) const
+    {
+        internal_element_->removeItem(item_text);
+    }
+
+    void clearItems() const
+    {
+        internal_element_->clearItems();
+    }
+
+    void selectItem(const std::string& item_text) const
+    {
+        internal_element_->selectItem(item_text);
+    }
+
+    void selectItem(const std::int32_t item_idx) const
+    {
+        internal_element_->selectItem(item_idx);
+    }
+
+    std::string getSelectedItem() const
+    {
+        return internal_element_->getSelectedItem();
+    }
+
+    std::int32_t getNumItems() const
+    {
+        return internal_element_->getNumItems();
+    }
+
+    std::int32_t getSelectedItemIndex() const
+    {
+        return internal_element_->getSelectedItemIndex();
+    }
+};
+
+}  // namespace api_internal
+
+class Button : public api_internal::Control
+{
+private:
+public:
+    Button() : api_internal::Control{} {}
+    Button(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+};
+
+class CheckBox : public api_internal::Control
+{
+private:
+public:
+    CheckBox() : api_internal::Control{} {}
+    CheckBox(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+
+    bool isChecked() const
+    {
+        return internal_element_->isChecked();
+    }
+
+    void setChecked() const
+    {
+        internal_element_->setChecked();
+    }
+
+    void setUnChecked() const
+    {
+        internal_element_->setUnChecked();
+    }
+};
+
+class RadioButton : public api_internal::Control
+{
+private:
+public:
+    RadioButton() : api_internal::Control{} {}
+    RadioButton(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+
+    bool isChecked() const
+    {
+        return internal_element_->isChecked();
+    }
+
+    void setChecked() const
+    {
+        internal_element_->setChecked();
+    }
+
+    void setUnChecked() const
+    {
+        internal_element_->setUnChecked();
+    }
+};
+
+class DropDownMenu : public api_internal::ListCommon
+{
+private:
+public:
+    DropDownMenu() : api_internal::ListCommon{} {}
+    DropDownMenu(api_internal::InternalGuiElement* const internal_element) : api_internal::ListCommon{internal_element}
+    {
+    }
+};
+
+class ListBox : public api_internal::ListCommon
+{
+private:
+public:
+    ListBox() : api_internal::ListCommon{} {}
+    ListBox(api_internal::InternalGuiElement* const internal_element) : api_internal::ListCommon{internal_element} {}
+};
+
+class EditableText : public api_internal::GuiElementBase
+{
+private:
+public:
+    EditableText() : api_internal::GuiElementBase{} {}
+    EditableText(api_internal::InternalGuiElement* const internal_element)
+        : api_internal::GuiElementBase{internal_element}
+    {
+    }
+
+    void setText(const std::string& new_text) const
+    {
+        return internal_element_->setText(new_text);
+    }
+    std::string getText() const
+    {
+        return internal_element_->getText();
+    }
+
+    bool enterPressed() const
+    {
+        return internal_element_->enterPressed();
+    }
+};
+
+class TextLabel : public api_internal::Control
+{
+private:
+public:
+    TextLabel() : api_internal::Control{} {}
+    TextLabel(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+};
+
+class Slider : public api_internal::GuiElementBase
+{
+private:
+public:
+    Slider() : api_internal::GuiElementBase{} {}
+    Slider(api_internal::InternalGuiElement* const internal_element) : api_internal::GuiElementBase{internal_element} {}
+
+    std::int32_t getValue() const
+    {
+        if (internal_element_)
+        {
+            return internal_element_->getValue();
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "internal_element is nullptr for Slider! Returning -1.";
+            return -1;
+        }
+    }
+
+    void setMax(const std::int32_t new_max) const
+    {
+        if (internal_element_)
+        {
+            internal_element_->setMax(new_max);
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "internal_element is nullptr for Slider!";
+        }
+    }
+};
+
+class GuiElement : public api_internal::GuiElementBase
+{
+public:
+    GuiElement() : api_internal::GuiElementBase{} {}
+    GuiElement(api_internal::InternalGuiElement* const internal_element)
+        : api_internal::GuiElementBase{internal_element}
+    {
+    }
+
+    Slider asSlider() const
+    {
+        if (internal_element_->getType() == GuiElementType::Slider)
+        {
+            return Slider{internal_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+                            << " is not a slider! Returning empty object.";
+            return Slider{};
+        }
+    }
+
+    Button asButton() const
+    {
+        if (internal_element_->getType() == GuiElementType::Button)
+        {
+            return Button{internal_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+                            << " is not a button! Returning empty object.";
+            return Button{};
+        }
+    }
+
+    CheckBox asCheckBox() const
+    {
+        if (internal_element_->getType() == GuiElementType::CheckBox)
+        {
+            return CheckBox{internal_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+                            << " is not a checkbox! Returning empty object.";
+            return CheckBox{};
+        }
+    }
+
+    RadioButton asRadioButton() const
+    {
+        if (internal_element_->getType() == GuiElementType::RadioButton)
+        {
+            return RadioButton{internal_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+                            << " is not a radiobutton! Returning empty object.";
+            return RadioButton{};
+        }
+    }
+
+    DropDownMenu asDropDownMenu() const
+    {
+        if (internal_element_->getType() == GuiElementType::DropDownMenu)
+        {
+            return DropDownMenu{internal_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+                            << " is not a dropdownmenu! Returning empty object.";
+            return DropDownMenu{};
+        }
+    }
+
+    ListBox asListBox() const
+    {
+        if (internal_element_->getType() == GuiElementType::ListBox)
+        {
+            return ListBox{internal_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+                            << " is not a listbox! Returning empty object.";
+            return ListBox{};
+        }
+    }
+
+    EditableText asEditableText() const
+    {
+        if (internal_element_->getType() == GuiElementType::EditableText)
+        {
+            return EditableText{internal_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+                            << " is not an editabletext! Returning empty object.";
+            return EditableText{};
+        }
+    }
+
+    TextLabel asTextLabel() const
+    {
+        if (internal_element_->getType() == GuiElementType::TextLabel)
+        {
+            return TextLabel{internal_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << internal_element_->getHandleString()
+                            << " is not a textlabel! Returning empty object.";
+            return TextLabel{};
+        }
+    }
+
+private:
+};
+
+namespace api_internal
+{
+inline void InternalGuiElement::callback()
+{
+    if (callback_function_)
+    {
+        callback_function_(GuiElement{this});
+    }
+    else
+    {
+        DVS_LOG_ERROR() << "No callback function set for GuiElement with handle string: " << getHandleString();
+    }
+}
+}  // namespace api_internal
 
 #endif  // MODULE_API_H
