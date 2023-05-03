@@ -22,6 +22,7 @@ enum class GuiElementType
     RadioButtonGroup,
     TextLabel,
     StaticBox,
+    PlotPane,
     Unknown
 };
 

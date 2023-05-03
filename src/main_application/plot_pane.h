@@ -123,7 +123,7 @@ public:
     int getWidth();
     int getHeight();
 
-    void setName(const std::string& new_name) override;
+    void setHandleString(const std::string& new_name) override;
     void pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue) override;
 
     void render(wxPaintEvent& evt);
@@ -136,7 +136,7 @@ public:
     void lower() override;
     void addSettingsData(const ReceivedData& received_data,
                          const PlotObjectAttributes& plot_object_attributes,
-                         const PropertiesData& properties_data) override;
+                         const PropertiesData& properties_data);
     void show() override;
     void hide() override;
     void destroy() override;

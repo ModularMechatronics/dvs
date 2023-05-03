@@ -77,6 +77,7 @@
                 {
                     "elements": [
                         {
+                            "type": "PLOT_PANE",
                             "height": 0.5,
                             "handle_string": "w1_p_view_0",
                             "width": 1,
@@ -84,6 +85,7 @@
                             "y": 0
                         },
                         {
+                            "type": "PLOT_PANE",
                             "height": 0.4987834692001343,
                             "handle_string": "w1_p_view_2",
                             "width": 1.0,
@@ -96,6 +98,7 @@
                 {
                     "elements": [
                         {
+                            "type": "PLOT_PANE",
                             "height": 0.6882216930389404,
                             "handle_string": "w1_p_view_1",
                             "width": 0.9967426657676697,

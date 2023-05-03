@@ -9,6 +9,22 @@
 #include "dvs/logging.h"
 #include "misc/color_map.h"
 
+enum class GuiElementType : std::uint8_t
+{
+    Button,
+    Slider,
+    CheckBox,
+    EditableText,
+    DropDownMenu,
+    ListBox,
+    RadioButton,
+    RadioButtonGroup,
+    TextLabel,
+    StaticBox,
+    PlotPane,
+    Unknown
+};
+
 constexpr RGBTriplet<float> kElementBackgroundColorDefault{0.543f, 0.751f, 0.684f};
 constexpr RGBTriplet<float> kPlotBoxColorDefault{1.0f, 1.0f, 1.0f};
 constexpr RGBTriplet<float> kGridColorDefault{0.7f, 0.7f, 0.7f};
@@ -60,20 +76,76 @@ void assignIfNotDefault(nlohmann::json& j, const std::string& key, const T& val,
     }
 }
 
+/*
+{
+    "attributes": {
+        "label": "Button2"
+    },
+    "type": "BUTTON",
+},
+{
+    "type": "SLIDER",
+    "attributes": {
+        "min": 0,
+        "max": 100,
+        "step_size": 1,
+        "init_value": 0,
+        "style": "horizontal"
+    },
+},
+{
+    "attributes": {
+        "label": "Check BoxButton"
+    },
+    "type": "CHECK_BOX",
+},
+{
+    "attributes": {
+        "init_value": "Editable Text"
+    },
+    "type": "EDITABLE_TEXT",
+},
+{
+    "type": "DROP_DOWN_MENU",
+    "attributes": {
+        "init_value": "Drop down menu"
+    },
+},
+{
+    "handle_string": "list_box0",
+    "type": "LIST_BOX",
+},
+{
+    "type": "RADIO_BUTTON",
+    "attributes": {
+        "label": "Radio Button"
+    },
+},
+{
+    "type": "TEXT_LABEL",
+    "attributes": {
+        "label": "Text Label"
+    },
+}
+*/
+
 struct ElementSettings
 {
-    enum class ProjectionMode
-    {
-        PERSPECTIVE,
-        ORTHOGRAPHIC
-    };
-
+    // Base attributes
     float x;
     float y;
     float width;
     float height;
 
     std::string handle_string;
+
+    int z_order;
+
+    GuiElementType type;
+
+    std::string label;
+
+    // Plot pane settings
     std::string title;
 
     RGBTripletf background_color;
@@ -89,9 +161,68 @@ struct ElementSettings
     bool clipping_on;
 
     float pane_radius;
-    int z_order;
 
+    enum class ProjectionMode
+    {
+        PERSPECTIVE,
+        ORTHOGRAPHIC
+    };
+    
     ProjectionMode projection_mode;
+
+    GuiElementType parseType(const nlohmann::json& j)
+    {
+        const std::string type_string = j["type"];
+
+        if (type_string == "BUTTON")
+        {
+            return GuiElementType::Button;
+        }
+        else if (type_string == "SLIDER")
+        {
+            return GuiElementType::Slider;
+        }
+        else if (type_string == "CHECKBOX")
+        {
+            return GuiElementType::CheckBox;
+        }
+        else if (type_string == "EDITABLE_TEXT")
+        {
+            return GuiElementType::EditableText;
+        }
+        else if (type_string == "DROPDOWN_MENU")
+        {
+            return GuiElementType::DropDownMenu;
+        }
+        else if (type_string == "LISTBOX")
+        {
+            return GuiElementType::ListBox;
+        }
+        else if (type_string == "RADIO_BUTTON")
+        {
+            return GuiElementType::RadioButton;
+        }
+        else if (type_string == "RADIO_BUTTON_GROUP")
+        {
+            return GuiElementType::RadioButtonGroup;
+        }
+        else if (type_string == "TEXT_LABEL")
+        {
+            return GuiElementType::TextLabel;
+        }
+        else if (type_string == "STATIC_BOX")
+        {
+            return GuiElementType::StaticBox;
+        }
+        else if (type_string == "PLOT_PANE")
+        {
+            return GuiElementType::PlotPane;
+        }
+        else
+        {
+            return GuiElementType::Unknown;
+        }
+    }
 
     ElementSettings()
         : x{0.0f},
@@ -99,6 +230,9 @@ struct ElementSettings
           width{100.0f},
           height{100.0f},
           handle_string{"<NO-NAME>"},
+          z_order{kZOrderDefault},
+          type{GuiElementType::Unknown},
+          label{"<NO-NAME>"},
           title{"<NO-NAME>"},
           background_color{kElementBackgroundColorDefault},
           plot_box_color{kPlotBoxColorDefault},
@@ -111,22 +245,13 @@ struct ElementSettings
           axes_letters_on{kAxesLettersOnDefault},
           clipping_on{kClippingOnDefault},
           pane_radius{kPaneRadiusDefault},
-          z_order{kZOrderDefault},
           projection_mode{ProjectionMode::ORTHOGRAPHIC}
     {
     }
 
-    explicit ElementSettings(const nlohmann::json& j)
+    void parseBaseAttributes(const nlohmann::json& j)
     {
         handle_string = j["handle_string"];
-        if(j.count("title") > 0)
-        {
-            title = j["title"];
-        }
-        else
-        {
-            title = handle_string;
-        }
 
         x = j["x"];
         y = j["y"];
@@ -139,6 +264,13 @@ struct ElementSettings
         x = std::max(std::min(x, 0.9f), 0.0f);
         y = std::max(std::min(y, 0.9f), 0.0f);
 
+        z_order = (j.count("z_order") > 0) ? static_cast<int>(j["z_order"]) : kZOrderDefault;
+
+        type = parseType(j);
+    }
+
+    void parsePlotPaneAttributes(const nlohmann::json& j)
+    {
         background_color =
             (j.count("background_color") > 0) ? jsonObjToColor(j["background_color"]) : kElementBackgroundColorDefault;
         plot_box_color = (j.count("plot_box_color") > 0) ? jsonObjToColor(j["plot_box_color"]) : kPlotBoxColorDefault;
@@ -155,8 +287,6 @@ struct ElementSettings
             (j.count("axes_letters_on") > 0) ? static_cast<bool>(j["axes_letters_on"]) : kAxesLettersOnDefault;
         clipping_on = (j.count("clipping_on") > 0) ? static_cast<bool>(j["clipping_on"]) : kClippingOnDefault;
         pane_radius = (j.count("pane_radius") > 0) ? static_cast<float>(j["pane_radius"]) : kPaneRadiusDefault;
-
-        z_order = (j.count("z_order") > 0) ? static_cast<int>(j["z_order"]) : kZOrderDefault;
 
         if (j.count("projection_mode") > 0)
         {
@@ -177,6 +307,22 @@ struct ElementSettings
         else
         {
             projection_mode = ProjectionMode::ORTHOGRAPHIC;
+        }
+
+    }
+
+    explicit ElementSettings(const nlohmann::json& j)
+    {
+        parseBaseAttributes(j);
+        parsePlotPaneAttributes(j);
+
+        if(j.count("title") > 0)
+        {
+            title = j["title"];
+        }
+        else
+        {
+            title = handle_string;
         }
     }
 

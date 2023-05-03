@@ -32,6 +32,7 @@
                     },
                     "elements": [
                         {
+                            "type": "PLOT_PANE",
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,
@@ -72,6 +73,7 @@
                             "z_order": 0
                         },
                         {
+                            "type": "PLOT_PANE",
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,
@@ -101,6 +103,7 @@
                             "z_order": 2
                         },
                         {
+                            "type": "PLOT_PANE",
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,
@@ -130,6 +133,7 @@
                             "z_order": 1
                         },
                         {
+                            "type": "PLOT_PANE",
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,

@@ -56,10 +56,9 @@ public:
         return element_settings_.handle_string;
     }
 
-    virtual void setName(const std::string& new_name)
+    virtual void setHandleString(const std::string& new_name)
     {
         element_settings_.handle_string = new_name;
-        element_settings_.title = new_name;
     }
 
     ElementSettings getElementSettings() const
@@ -78,9 +77,6 @@ public:
     virtual void waitForFlush() = 0;
     virtual void toggleProjectionMode() = 0;
     virtual void update() = 0;
-    virtual void addSettingsData(const ReceivedData& received_data,
-                                 const PlotObjectAttributes& plot_object_attributes,
-                                 const PropertiesData& properties_data) = 0;
 
     /*virtual void showLegend(const bool show_legend)
     {

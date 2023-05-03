@@ -7,6 +7,7 @@
                 {
                     "elements": [
                         {
+                            "type": "PLOT_PANE",
                             "height": 0.997389018535614,
                             "handle_string": "p_view_0",
                             "width": 0.543795645236969,
@@ -14,6 +15,7 @@
                             "y": 0.0
                         },
                         {
+                            "type": "PLOT_PANE",
                             "height": 0.7245430946350098,
                             "handle_string": "p1",
                             "width": 0.45036497712135315,

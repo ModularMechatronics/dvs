@@ -203,16 +203,6 @@ enum class EdgeColorT : uint8_t
 
 }  // namespace internal
 
-enum class ElementType : uint8_t
-{
-    PLOT,
-    IMAGE,
-    WORLD_3D,
-    BUTTON,
-    TEXT_FIELD,
-    UNKNOWN
-};
-
 enum class ElementParent : uint8_t
 {
     TAB,

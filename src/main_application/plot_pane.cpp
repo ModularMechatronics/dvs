@@ -412,10 +412,9 @@ void PlotPane::destroy()
     this->Destroy();
 }
 
-void PlotPane::setName(const std::string& new_name)
+void PlotPane::setHandleString(const std::string& new_name)
 {
     element_settings_.handle_string = new_name;
-    element_settings_.title = new_name;
     Refresh();
 }
 

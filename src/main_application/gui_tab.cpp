@@ -359,7 +359,7 @@ bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_ha
 
     if (gui_elements_.end() != q)
     {
-        (*q)->setName(new_name);
+        (*q)->setHandleString(new_name);
         return true;
     }
     else
