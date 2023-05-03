@@ -53,12 +53,13 @@ public:
 
     std::string getName() const
     {
-        return element_settings_.name;
+        return element_settings_.handle_string;
     }
 
     virtual void setName(const std::string& new_name)
     {
-        element_settings_.name = new_name;
+        element_settings_.handle_string = new_name;
+        element_settings_.title = new_name;
     }
 
     ElementSettings getElementSettings() const

@@ -15,6 +15,7 @@ Pre release:
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
 - Change name of application (to plotto or something)
+- Add all keybindings to the help pane
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments

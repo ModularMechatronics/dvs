@@ -43,7 +43,7 @@
                                 "r": 0.699999988079071
                             },
                             "height": 1.0,
-                            "name": "filtered",
+                            "handle_string": "filtered",
                             "pane_radius": 20.0,
                             "plot_box_color": {
                                 "b": 1.0,
@@ -71,7 +71,7 @@
                                 "r": 0.699999988079071
                             },
                             "height": 0.75,
-                            "name": "raw",
+                            "handle_string": "raw",
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,

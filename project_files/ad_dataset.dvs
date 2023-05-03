@@ -57,7 +57,7 @@
                             },
                             "grid_on": false,
                             "height": 1.0,
-                            "name": "point_cloud",
+                            "handle_string": "point_cloud",
                             "pane_radius": 20.0,
                             "plot_box_color": {
                                 "b": 1.0,
@@ -88,7 +88,7 @@
                                 "r": 0.699999988079071
                             },
                             "height": 0.44908615946769714,
-                            "name": "center",
+                            "handle_string": "center",
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,
@@ -117,7 +117,7 @@
                                 "r": 0.699999988079071
                             },
                             "height": 0.44999998807907104,
-                            "name": "left",
+                            "handle_string": "left",
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,
@@ -146,7 +146,7 @@
                                 "r": 0.699999988079071
                             },
                             "height": 0.44908615946769714,
-                            "name": "right",
+                            "handle_string": "right",
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,

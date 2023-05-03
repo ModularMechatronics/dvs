@@ -103,7 +103,7 @@ void WindowTab::initializeZOrder(const TabSettings& tab_settings)
     struct ZOrderPair
     {
         int order;
-        std::string name;
+        std::string handle_string;
     };
 
     std::vector<ZOrderPair> z_order;
@@ -112,7 +112,7 @@ void WindowTab::initializeZOrder(const TabSettings& tab_settings)
     {
         if (elem.z_order != -1)
         {
-            z_order.push_back({elem.z_order, elem.name});
+            z_order.push_back({elem.z_order, elem.handle_string});
         }
     }
 
@@ -124,7 +124,7 @@ void WindowTab::initializeZOrder(const TabSettings& tab_settings)
 
     for (size_t k = 0; k < z_order.size(); k++)
     {
-        raiseElement(z_order[k].name);
+        raiseElement(z_order[k].handle_string);
     }
 }
 
@@ -166,7 +166,8 @@ void WindowTab::newElement()
     elem_settings.y = 0;
     elem_settings.width = 0.4;
     elem_settings.height = 0.4;
-    elem_settings.name = "element-" + std::to_string(current_element_idx_);
+    elem_settings.handle_string = "element-" + std::to_string(current_element_idx_);
+    elem_settings.title = elem_settings.handle_string;
 
     GuiElement* const ge = new PlotPane(parent_window_,
                                         elem_settings,
@@ -188,7 +189,8 @@ void WindowTab::newElement(const std::string& element_name)
     element_settings.y = 0.0;
     element_settings.width = 0.4;
     element_settings.height = 0.4;
-    element_settings.name = element_name;
+    element_settings.handle_string = element_name;
+    element_settings.title = element_name;
 
     newElement(element_settings);
 }

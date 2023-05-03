@@ -479,7 +479,8 @@ void GuiWindow::newElement()
         element_settings.y = 0.0;
         element_settings.width = 1.0;
         element_settings.height = 1.0;
-        element_settings.name = element_name;
+        element_settings.handle_string = element_name;
+        element_settings.title = element_name;
 
         (*q)->newElement(element_settings);
         notify_main_window_about_modification_();

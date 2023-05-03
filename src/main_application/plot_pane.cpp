@@ -414,7 +414,8 @@ void PlotPane::destroy()
 
 void PlotPane::setName(const std::string& new_name)
 {
-    element_settings_.name = new_name;
+    element_settings_.handle_string = new_name;
+    element_settings_.title = new_name;
     Refresh();
 }
 
@@ -517,7 +518,7 @@ void PlotPane::mouseRightPressed(wxMouseEvent& event)
     }
     else
     {
-        notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), element_settings_.name);
+        notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), element_settings_.handle_string);
     }
 }
 
@@ -1140,7 +1141,7 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
                                  axes_interactor_.getShowLegend(),
                                  legend_scale_factor_,
                                  plot_data_handler_->getLegendStrings(),
-                                 element_settings_.name,
+                                 element_settings_.handle_string,
                                  current_mouse_interaction_axis_);
 
     axes_renderer_->render();

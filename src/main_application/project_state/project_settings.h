@@ -73,7 +73,8 @@ struct ElementSettings
     float width;
     float height;
 
-    std::string name;
+    std::string handle_string;
+    std::string title;
 
     RGBTripletf background_color;
     RGBTripletf plot_box_color;
@@ -97,7 +98,8 @@ struct ElementSettings
           y{0.0f},
           width{100.0f},
           height{100.0f},
-          name{"<NO-NAME>"},
+          handle_string{"<NO-NAME>"},
+          title{"<NO-NAME>"},
           background_color{kElementBackgroundColorDefault},
           plot_box_color{kPlotBoxColorDefault},
           grid_color{kGridColorDefault},
@@ -116,7 +118,15 @@ struct ElementSettings
 
     explicit ElementSettings(const nlohmann::json& j)
     {
-        name = j["name"];
+        handle_string = j["handle_string"];
+        if(j.count("title") > 0)
+        {
+            title = j["title"];
+        }
+        else
+        {
+            title = handle_string;
+        }
 
         x = j["x"];
         y = j["y"];
@@ -174,7 +184,11 @@ struct ElementSettings
     {
         nlohmann::json j;
 
-        j["name"] = name;
+        j["handle_string"] = handle_string;
+        if(title != handle_string)
+        {
+            j["title"] = title;
+        }
 
         j["x"] = x;
         j["y"] = y;
@@ -229,7 +243,7 @@ struct ElementSettings
     bool operator==(const ElementSettings& other) const
     {
         return (x == other.x) && (y == other.y) && (width == other.width) && (height == other.height) &&
-               (name == other.name) && (background_color == other.background_color) &&
+               (handle_string == other.handle_string) && (title == other.title) && (background_color == other.background_color) &&
                (plot_box_color == other.plot_box_color) && (grid_color == other.grid_color) &&
                (axes_numbers_color == other.axes_numbers_color) && (axes_letters_color == other.axes_letters_color) &&
                (grid_on == other.grid_on) && (plot_box_on == other.plot_box_on) &&
@@ -326,19 +340,19 @@ struct TabSettings
         return j;
     }
 
-    bool hasElementWithName(const std::string& name) const
+    bool hasElementWithHandleString(const std::string& handle_string) const
     {
         return std::find_if(elements.begin(), elements.end(), [&](const ElementSettings& es) -> bool {
-                   return es.name == name;
+                   return es.handle_string == handle_string;
                }) != elements.end();
     }
 
-    ElementSettings getElementWithName(const std::string& name) const
+    ElementSettings getElementWithHandleString(const std::string& handle_string) const
     {
-        DVS_ASSERT(hasElementWithName(name));
+        DVS_ASSERT(hasElementWithHandleString(handle_string));
 
         const auto q = std::find_if(
-            elements.begin(), elements.end(), [&name](const ElementSettings& e) -> bool { return e.name == name; });
+            elements.begin(), elements.end(), [&handle_string](const ElementSettings& e) -> bool { return e.handle_string == handle_string; });
 
         return *q;
     }
@@ -359,9 +373,9 @@ struct TabSettings
 
         for (size_t k = 0; k < elements.size(); k++)
         {
-            if (other.hasElementWithName(elements[k].name))
+            if (other.hasElementWithHandleString(elements[k].handle_string))
             {
-                const ElementSettings other_element = other.getElementWithName(elements[k].name);
+                const ElementSettings other_element = other.getElementWithHandleString(elements[k].handle_string);
                 if (other_element != elements[k])
                 {
                     return false;
