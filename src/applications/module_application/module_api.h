@@ -18,7 +18,6 @@ enum class GuiElementType
     EditableText,
     DropDownMenu,
     ListBox,
-    RadioButton,
     RadioButtonGroup,
     TextLabel,
     StaticBox,
@@ -42,8 +41,8 @@ inline std::string guiElementTypeToString(const GuiElementType& gui_element_type
             return "DropDownMenu";
         case GuiElementType::ListBox:
             return "ListBox";
-        case GuiElementType::RadioButton:
-            return "RadioButton";
+        case GuiElementType::RadioButtonGroup:
+            return "RadioButtonGroup";
         case GuiElementType::TextLabel:
             return "TextLabel";
         default:
@@ -382,44 +381,6 @@ public:
     }
 };
 
-class RadioButton : public api_internal::Control
-{
-private:
-    friend class GuiElement;
-    RadioButton(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
-
-public:
-    RadioButton() : api_internal::Control{} {}
-
-    bool isChecked() const
-    {
-        if (printErrorIfNotInitialized("RadioButton", __func__))
-        {
-            return gui_element_->isChecked();
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    void setChecked() const
-    {
-        if (printErrorIfNotInitialized("RadioButton", __func__))
-        {
-            gui_element_->setChecked();
-        }
-    }
-
-    void setUnChecked() const
-    {
-        if (printErrorIfNotInitialized("RadioButton", __func__))
-        {
-            gui_element_->setUnChecked();
-        }
-    }
-};
-
 class RadioButtonGroup : public api_internal::Control
 {
 private:
@@ -648,20 +609,6 @@ public:
             DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a checkbox! Returning empty object.";
             return CheckBox{};
-        }
-    }
-
-    RadioButton asRadioButton() const
-    {
-        if (gui_element_->getType() == GuiElementType::RadioButton)
-        {
-            return RadioButton{gui_element_};
-        }
-        else
-        {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
-                            << " is not a radiobutton! Returning empty object.";
-            return RadioButton{};
         }
     }
 

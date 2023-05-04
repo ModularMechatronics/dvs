@@ -17,7 +17,6 @@ enum class GuiElementType : std::uint8_t
     EditableText,
     DropDownMenu,
     ListBox,
-    RadioButton,
     RadioButtonGroup,
     TextLabel,
     StaticBox,
@@ -197,10 +196,6 @@ struct ElementSettings
         else if (type_string == "LISTBOX")
         {
             return GuiElementType::ListBox;
-        }
-        else if (type_string == "RADIO_BUTTON")
-        {
-            return GuiElementType::RadioButton;
         }
         else if (type_string == "RADIO_BUTTON_GROUP")
         {

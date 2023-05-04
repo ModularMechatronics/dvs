@@ -83,11 +83,10 @@ struct ListBoxAttributes : public ElementAttributes
 
 struct RadioButtonAttributes
 {
-    std::string handle_string;
     std::string label;
-    RadioButtonAttributes() : handle_string{""}, label{""} {}
+    RadioButtonAttributes() : label{""} {}
     RadioButtonAttributes(const nlohmann::json& j_data)
-        : handle_string{j_data["handle_string"]}, label{j_data["label"]}
+        : label{j_data["label"]}
     {
     }
 };
@@ -188,8 +187,6 @@ private:
     void setupDropDownMenu(const DropDownMenuAttributes& drop_down_menu_attributes,
                            const GuiElementCallback& elem_callback);
     void setupListBox(const ListBoxAttributes& list_box_attributes, const GuiElementCallback& elem_callback);
-    void setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
-                          const GuiElementCallback& elem_callback);
     void setupRadioButtonGroup(const RadioButtonGroupAttributes& radio_button_attributes,
                           const GuiElementCallback& elem_callback);
     void setupStaticText(const StaticTextAttributes& static_text_attributes, const GuiElementCallback& elem_callback);
@@ -229,7 +226,7 @@ public:
         this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
     }
 
-    // Button, Checkbox, RadioButton, ComboBox
+    // Button, Checkbox, ComboBox
     MovableElement(wxFrame* parent,
                    const std::string& handle_string,
                    const GuiElementCallback& elem_callback,
@@ -419,62 +416,26 @@ public:
         slider->SetValue(new_value);
     }
 
-    // RadioButton, CheckBox
+    // CheckBox
     bool isChecked() const override
     {
-        if (type_ == GuiElementType::RadioButton)
-        {
-            const wxRadioButton* const radio_button = dynamic_cast<const wxRadioButton* const>(this);
-            return radio_button->GetValue();
-        }
-        else if (type_ == GuiElementType::CheckBox)
-        {
-            const wxCheckBox* const check_box = dynamic_cast<const wxCheckBox* const>(this);
-            return check_box->IsChecked();
-        }
-        else
-        {
-            throw std::runtime_error("GuiElement::isChecked() called on non RadioButton or Checkbox element");
-        }
+        const wxCheckBox* const check_box = dynamic_cast<const wxCheckBox* const>(this);
+        return check_box->IsChecked();
     }
 
     void setChecked() override
     {
-        if (type_ == GuiElementType::RadioButton)
-        {
-            wxRadioButton* const radio_button = dynamic_cast<wxRadioButton* const>(this);
-            radio_button->SetValue(true);
-        }
-        else if (type_ == GuiElementType::CheckBox)
-        {
-            wxCheckBox* const check_box = dynamic_cast<wxCheckBox* const>(this);
-            check_box->SetValue(true);
-        }
-        else
-        {
-            throw std::runtime_error("GuiElement::setChecked() called on non RadioButton or Checkbox element");
-        }
+        wxCheckBox* const check_box = dynamic_cast<wxCheckBox* const>(this);
+        check_box->SetValue(true);
     }
 
     void setUnChecked() override
     {
-        if (type_ == GuiElementType::RadioButton)
-        {
-            wxRadioButton* const radio_button = dynamic_cast<wxRadioButton* const>(this);
-            radio_button->SetValue(false);
-        }
-        else if (type_ == GuiElementType::CheckBox)
-        {
-            wxCheckBox* const check_box = dynamic_cast<wxCheckBox* const>(this);
-            check_box->SetValue(false);
-        }
-        else
-        {
-            throw std::runtime_error("GuiElement::setUnChecked() called on non RadioButton or Checkbox element");
-        }
+        wxCheckBox* const check_box = dynamic_cast<wxCheckBox* const>(this);
+        check_box->SetValue(false);
     }
 
-    // Button, Checkbox, RadioButton, TextLabel
+    // Button, Checkbox, TextLabel
     void setLabel(const std::string& new_label) override
     {
         wxControl* const contr = dynamic_cast<wxControl* const>(this);

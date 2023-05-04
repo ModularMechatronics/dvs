@@ -90,17 +90,17 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "Is checked: " << is_checked << std::endl;
 
         const Slider slider = gui_element_getter("slider0").asSlider();
-        const RadioButton rb = gui_element_getter("radio_button0x").asRadioButton();
+        const RadioButtonGroup rbg = gui_element_getter("radio_button_group0").asRadioButtonGroup();
 
         if (is_checked)
         {
             slider.setMax(32);
-            rb.setEnabled();
+            rbg.setEnabled();
         }
         else
         {
             slider.setMax(57);
-            rb.setDisabled();
+            rbg.setDisabled();
         }
     };
 
@@ -138,13 +138,6 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
 
         std::cout << "Selected item index: " << lb.getSelectedItemIndex() << std::endl;
         std::cout << "Selected item: " << lb.getSelectedItem() << std::endl;
-    };
-
-    callbacks["radio_button0x"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
-        printUserCallbackString(source_gui_element);
-        const RadioButton rb = source_gui_element.asRadioButton();
-        const bool is_checked = rb.isChecked();
-        std::cout << "Is checked: " << is_checked << std::endl;
     };
 
     callbacks["radio_button_group0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {

@@ -153,26 +153,6 @@ void MainWindow::setupStaticText(const StaticTextAttributes& static_text_attribu
     gui_elements_[static_text->getId()] = static_cast<api_internal::InternalGuiElement*>(static_text);
 }
 
-void MainWindow::setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
-                                  const GuiElementCallback& elem_callback)
-{
-    // auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &radio_button_attributes);
-    const wxPoint elem_pos{200, 200};
-    const wxSize elem_size{50, 50};
-
-    MovableElement<wxRadioButton>* radio_button =
-        new MovableElement<wxRadioButton>(this,
-                                          radio_button_attributes.handle_string,
-                                          elem_callback,
-                                          GuiElementType::RadioButton,
-                                          wxID_ANY,
-                                          radio_button_attributes.label,
-                                          elem_pos,
-                                          elem_size);
-    gui_elements_[radio_button->getId()] = static_cast<api_internal::InternalGuiElement*>(radio_button);
-    Bind(wxEVT_RADIOBUTTON, &MainWindow::guiElementCallback, this, radio_button->getId());
-}
-
 void MainWindow::setupRadioButtonGroup(const RadioButtonGroupAttributes& radio_button_group_attributes,
                                        const GuiElementCallback& elem_callback)
 {
@@ -279,10 +259,6 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
                 {
                     setupListBox(ListBoxAttributes{elem}, elem_callback);
                 }
-                else if ("RADIO_BUTTON" == element_type)
-                {
-                    setupRadioButton(RadioButtonAttributes{elem}, elem_callback);
-                }
                 else if ("TEXT_LABEL" == element_type)
                 {
                     if (elem_callback != nullptr)
@@ -328,7 +304,6 @@ enum class GuiElementType
     EditableText,
     DropDownMenu,
     ListBox,
-    RadioButton,
     TextLabel
 };
 

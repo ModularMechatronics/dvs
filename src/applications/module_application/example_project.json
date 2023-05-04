@@ -77,30 +77,18 @@
                             "y": 0.5
                         },
                         {
-                            "handle_string": "radio_button0x",
-                            "type": "RADIO_BUTTON",
-                            "label": "Radio Button",
-                            "height": 0.1,
-                            "width": 0.2,
-                            "x": 0.0,
-                            "y": 0.6
-                        },
-                        {
                             "handle_string": "radio_button_group0",
                             "type": "RADIO_BUTTON_GROUP",
                             "attributes": {
                                 "label": "Radio Button Group",
                                 "elements": [
                                     {
-                                        "handle_string": "radio_button0",
                                         "label": "Option 0"
                                     },
                                     {
-                                        "handle_string": "radio_button1",
                                         "label": "Option 1"
                                     },
                                     {
-                                        "handle_string": "radio_button2",
                                         "label": "Option 2"
                                     }
                                 ]
