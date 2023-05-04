@@ -81,12 +81,13 @@ struct ListBoxAttributes : public ElementAttributes
     ListBoxAttributes(const nlohmann::json& j_data) : ElementAttributes{j_data} {}
 };
 
-struct RadioButtonAttributes : public ElementAttributes
+struct RadioButtonAttributes
 {
+    std::string handle_string;
     std::string label;
-    RadioButtonAttributes() : ElementAttributes{}, label{""} {}
+    RadioButtonAttributes() : handle_string{""}, label{""} {}
     RadioButtonAttributes(const nlohmann::json& j_data)
-        : ElementAttributes{j_data}, label{j_data["attributes"]["label"]}
+        : handle_string{j_data["handle_string"]}, label{j_data["label"]}
     {
     }
 };
@@ -94,10 +95,16 @@ struct RadioButtonAttributes : public ElementAttributes
 struct RadioButtonGroupAttributes : public ElementAttributes
 {
     std::string label;
+    std::vector<RadioButtonAttributes> radio_buttons;
     RadioButtonGroupAttributes() : ElementAttributes{}, label{""} {}
     RadioButtonGroupAttributes(const nlohmann::json& j_data)
         : ElementAttributes{j_data}, label{j_data["attributes"]["label"]}
     {
+        for(const auto& radio_button : j_data["attributes"]["elements"])
+        {
+            radio_buttons.push_back(RadioButtonAttributes{radio_button});
+        }
+
     }
 };
 
@@ -183,6 +190,8 @@ private:
     void setupListBox(const ListBoxAttributes& list_box_attributes, const GuiElementCallback& elem_callback);
     void setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
                           const GuiElementCallback& elem_callback);
+    void setupRadioButtonGroup(const RadioButtonGroupAttributes& radio_button_attributes,
+                          const GuiElementCallback& elem_callback);
     void setupStaticText(const StaticTextAttributes& static_text_attributes, const GuiElementCallback& elem_callback);
 
     void createGuiElements(const std::string& path_to_layout_file);
@@ -267,6 +276,29 @@ public:
                    const wxSize& size,
                    const long style)
         : C(parent, id, initial_text, pos, size, style),
+          api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
+    {
+        control_pressed_at_mouse_down = false;
+
+        this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
+        this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
+        this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
+    }
+
+    // RadioButtonGroup
+    MovableElement(wxFrame* parent,
+                   const std::string& handle_string,
+                   const GuiElementCallback& elem_callback,
+                   const GuiElementType gui_element_type,
+                   const wxWindowID id,
+                   const std::string& initial_text,
+                   const wxPoint& pos,
+                   const wxSize& size,
+                   const wxArrayString& radio_buttons_to_add,
+                   const int n,
+                   const long style
+                   )
+        : C(parent, id, initial_text, pos, size, radio_buttons_to_add, n, style),
           api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
         control_pressed_at_mouse_down = false;
@@ -453,6 +485,19 @@ public:
     {
         const wxControl* const contr = dynamic_cast<const wxControl* const>(this);
         return contr->GetLabel().ToStdString();
+    }
+
+    // RadioButtonGroup
+    std::int16_t getSelectionIndex() const override
+    {
+        const wxRadioBox* const radio_box = dynamic_cast<const wxRadioBox* const>(this);
+        return radio_box->GetSelection();
+    }
+
+    std::string getSelectionString() const override
+    {
+        const wxRadioBox* const radio_box = dynamic_cast<const wxRadioBox* const>(this);
+        return radio_box->GetStringSelection().ToStdString();
     }
 
     // EditableText

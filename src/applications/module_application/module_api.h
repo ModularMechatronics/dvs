@@ -98,6 +98,8 @@ public:
     virtual void setMin(const std::int32_t new_min) = 0;
     virtual void setMax(const std::int32_t new_max) = 0;
     virtual long getId() const = 0;
+    virtual std::int16_t getSelectionIndex() const = 0;
+    virtual std::string getSelectionString() const = 0;
 
     void callback();
 
@@ -418,6 +420,40 @@ public:
     }
 };
 
+class RadioButtonGroup : public api_internal::Control
+{
+private:
+    friend class GuiElement;
+    RadioButtonGroup(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+
+public:
+    RadioButtonGroup() : api_internal::Control{} {}
+
+    std::int16_t getSelectionIndex() const
+    {
+        if (printErrorIfNotInitialized("RadioButtonGroup", __func__))
+        {
+            return gui_element_->getSelectionIndex();
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    std::string getSelectionString() const
+    {
+        if (printErrorIfNotInitialized("RadioButtonGroup", __func__))
+        {
+            return gui_element_->getSelectionString();
+        }
+        else
+        {
+            return "";
+        }
+    }
+};
+
 class DropDownMenu : public api_internal::ListCommon
 {
 private:
@@ -626,6 +662,20 @@ public:
             DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a radiobutton! Returning empty object.";
             return RadioButton{};
+        }
+    }
+
+    RadioButtonGroup asRadioButtonGroup() const
+    {
+        if (gui_element_->getType() == GuiElementType::RadioButtonGroup)
+        {
+            return RadioButtonGroup{gui_element_};
+        }
+        else
+        {
+            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+                            << " is not a radiobuttongroup! Returning empty object.";
+            return RadioButtonGroup{};
         }
     }
 

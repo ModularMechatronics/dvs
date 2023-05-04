@@ -156,7 +156,9 @@ void MainWindow::setupStaticText(const StaticTextAttributes& static_text_attribu
 void MainWindow::setupRadioButton(const RadioButtonAttributes& radio_button_attributes,
                                   const GuiElementCallback& elem_callback)
 {
-    auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &radio_button_attributes);
+    // auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &radio_button_attributes);
+    const wxPoint elem_pos{200, 200};
+    const wxSize elem_size{50, 50};
 
     MovableElement<wxRadioButton>* radio_button =
         new MovableElement<wxRadioButton>(this,
@@ -169,6 +171,37 @@ void MainWindow::setupRadioButton(const RadioButtonAttributes& radio_button_attr
                                           elem_size);
     gui_elements_[radio_button->getId()] = static_cast<api_internal::InternalGuiElement*>(radio_button);
     Bind(wxEVT_RADIOBUTTON, &MainWindow::guiElementCallback, this, radio_button->getId());
+}
+
+void MainWindow::setupRadioButtonGroup(const RadioButtonGroupAttributes& radio_button_group_attributes,
+                                       const GuiElementCallback& elem_callback)
+{
+    auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(this->GetSize(), &radio_button_group_attributes);
+
+    // wxArrayString *selection = new wxArrayString;
+    wxArrayString radio_buttons_to_add{};
+
+    for(const auto& radio_button_attribute : radio_button_group_attributes.radio_buttons)
+    {
+        radio_buttons_to_add.Add(radio_button_attribute.label);
+    }
+
+    MovableElement<wxRadioBox>* radio_box =
+        new MovableElement<wxRadioBox>(
+            this,
+            radio_button_group_attributes.handle_string,
+            elem_callback,
+            GuiElementType::RadioButtonGroup,
+            wxID_ANY,
+            radio_button_group_attributes.label,
+            elem_pos,
+            elem_size,
+            radio_buttons_to_add,
+            1,
+            wxRA_SPECIFY_COLS);
+
+    gui_elements_[radio_box->getId()] = static_cast<api_internal::InternalGuiElement*>(radio_box);
+    Bind(wxEVT_RADIOBOX, &MainWindow::guiElementCallback, this, radio_box->getId());
 }
 
 void MainWindow::createGuiElements(const std::string& path_to_layout_file)
@@ -261,9 +294,7 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
                 }
                 else if ("RADIO_BUTTON_GROUP" == element_type)
                 {
-                    // setupRadioButtonGroup(RadioButtonGroupAttributes{elem});
-                    // gui_elements_[gui_element->getId()] = gui_element;
-                    // Bind(wxEVT_RADIOBUTTON, &MainWindow::radioButtonCallback, this, gui_element->getId());
+                    setupRadioButtonGroup(RadioButtonGroupAttributes{elem}, elem_callback);
                 }
                 else
                 {

@@ -146,4 +146,10 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         const bool is_checked = rb.isChecked();
         std::cout << "Is checked: " << is_checked << std::endl;
     };
+
+    callbacks["radio_button_group0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
+        printUserCallbackString(source_gui_element);
+        const RadioButtonGroup rbg = source_gui_element.asRadioButtonGroup();
+        std::cout << "Idx: " << rbg.getSelectionIndex() << ", "  << rbg.getSelectionString() <<std::endl;
+    };
 }
