@@ -201,7 +201,7 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
         if (q == gui_elements_.end())
         {
             DVS_LOG_ERROR() << "Could not find gui element with handle string: " << handle_string
-                            << ", returning emptry object.";
+                            << ", returning empty object.";
             return GuiElement{};
         }
         else
@@ -210,9 +210,32 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
         }
     };
 
-    std::map<std::string, GuiElementCallback> callbacks;
+    get_timer_function_ = [this](const std::string& handle_string) -> Timer {
+        auto q = std::find_if(timers_.begin(), timers_.end(), [&handle_string](const auto& elem) -> bool {
+            return elem.second->getHandleString() == handle_string;
+        });
 
-    dynamic_module_.registerCallbacks(callbacks, get_gui_element_function_);
+        if (q == timers_.end())
+        {
+            DVS_LOG_ERROR() << "Could not find timer with handle string: " << handle_string << ", returning empty object.";
+            return Timer{};
+        }
+        else
+        {
+            return Timer{q->second};
+        }
+    };
+
+    std::map<std::string, GuiElementCallback> gui_element_callbacks;
+    std::map<std::string, TimerCallback> timer_callbacks;
+
+    dynamic_module_.registerCallbacks(gui_element_callbacks, timer_callbacks, get_gui_element_function_, get_timer_function_);
+
+
+    for (const auto& elem : timer_callbacks)
+    {
+        timers_[elem.first] = new TimerImplementation(elem.first, elem.second);
+    }
 
     for (size_t k = 0; k < json_data["windows"].size(); k++)
     {
@@ -230,9 +253,9 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
                 const std::string handle_string = elem["handle_string"];
 
                 GuiElementCallback elem_callback{nullptr};
-                if (callbacks.find(handle_string) != callbacks.end())
+                if (gui_element_callbacks.find(handle_string) != gui_element_callbacks.end())
                 {
-                    elem_callback = callbacks[handle_string];
+                    elem_callback = gui_element_callbacks[handle_string];
                 }
 
                 if ("BUTTON" == element_type)

@@ -168,12 +168,115 @@ struct SliderAttributes : public ElementAttributes
     }
 };
 
+class TimerImplementation : public api_internal::InternalTimer
+{
+private:
+    std::function<void(const Timer&)> callback_;
+    wxTimer* timer_;
+    mutable bool is_running_;
+    mutable bool run_fixed_number_of_times_;
+    mutable std::int32_t num_iterations_left_to_run_;
+
+    void timerCallback(wxTimerEvent& event)
+    {
+        callback_(Timer{this});
+        if(run_fixed_number_of_times_)
+        {
+            num_iterations_left_to_run_--;
+            if(num_iterations_left_to_run_ == 0)
+            {
+                run_fixed_number_of_times_ = false;
+                iteration_number_ = 0;
+                timer_->Stop();
+            }
+        }
+
+        iteration_number_++;
+    }
+
+public:
+    TimerImplementation() : api_internal::InternalTimer{}, callback_{nullptr}, timer_{nullptr}, is_running_{false}, run_fixed_number_of_times_{false}, num_iterations_left_to_run_{0} {}
+    TimerImplementation(
+        const std::string& handle_string,
+        const std::function<void(const Timer&)>& callback) :
+            api_internal::InternalTimer{handle_string},
+            callback_{callback},
+            timer_{nullptr},
+            is_running_{false}, 
+            run_fixed_number_of_times_{false},
+            num_iterations_left_to_run_{0}
+    {
+        timer_ = new wxTimer();
+        timer_->Bind(wxEVT_TIMER, &TimerImplementation::timerCallback, this);
+    }
+
+    ~TimerImplementation()
+    {
+        delete timer_;
+    }
+
+    void stop() const override
+    {
+        timer_->Stop();
+        is_running_ = false;
+        iteration_number_ = 0;
+        num_iterations_left_to_run_ = 0;
+        run_fixed_number_of_times_ = false;
+    }
+
+    void start(const std::int32_t period) const override
+    {
+        if(is_running_)
+        {
+            DVS_LOG_WARNING() << "Timer is already running. Ignoring start() call.";
+        }
+        else
+        {
+            is_running_ = true;
+            timer_->Start(period);
+        }
+        
+    }
+
+    void runOnce(const std::int32_t period) const override
+    {
+        if(is_running_)
+        {
+            DVS_LOG_WARNING() << "Timer is already running. Ignoring runOnce() call.";
+        }
+        else
+        {
+            is_running_ = true;
+            runNTimesWithPeriod(1, period);
+        }
+    }
+
+    void runNTimesWithPeriod(const std::int32_t n_times, const std::int32_t period) const override
+    {
+        if(is_running_)
+        {
+            DVS_LOG_WARNING() << "Timer is already running. Ignoring runOnce() call.";
+        }
+        else
+        {
+            is_running_ = true;
+            run_fixed_number_of_times_ = true;
+            num_iterations_left_to_run_ = n_times;
+            timer_->Start(period);
+        }
+    }
+
+};
+
+
 class MainWindow : public wxFrame
 {
 private:
     DynamicModule dynamic_module_;
     std::map<long, api_internal::InternalGuiElement*> gui_elements_;
     std::function<GuiElement(const std::string&)> get_gui_element_function_;
+    std::function<Timer(const std::string&)> get_timer_function_;
+    std::map<std::string, TimerImplementation*> timers_;
 
     void OnSize(wxSizeEvent& event);
 

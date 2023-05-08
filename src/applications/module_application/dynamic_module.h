@@ -11,8 +11,10 @@
 
 #include "module_api.h"
 
-typedef void (*registerCallbacksFunctionType)(std::map<std::string, GuiElementCallback>& callbacks,
-                                              const std::function<GuiElement(const std::string&)>& gui_element_getter);
+typedef void (*registerCallbacksFunctionType)(std::map<std::string, GuiElementCallback>& gui_element_callbacks,
+                                              std::map<std::string, TimerCallback>& timer_callbacks,
+                                              const std::function<GuiElement(const std::string&)>& gui_element_getter,
+                                              const std::function<Timer(const std::string&)>& timer_getter);
 
 class DynamicModule
 {
@@ -21,8 +23,10 @@ public:
     DynamicModule(const std::string& path_to_module_library);
     ~DynamicModule();
 
-    void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
-                           const std::function<GuiElement(const std::string&)>& gui_element_getter);
+    void registerCallbacks(std::map<std::string, GuiElementCallback>& gui_element_callbacks,
+                           std::map<std::string, TimerCallback>& timer_callbacks,
+                           const std::function<GuiElement(const std::string&)>& gui_element_getter,
+                           const std::function<Timer(const std::string&)>& timer_getter);
     void unloadModule();
 
 private:

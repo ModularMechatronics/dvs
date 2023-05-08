@@ -1,16 +1,38 @@
 #include "module_api.h"
 
-std::int32_t selected_idx = 0;
-
 void printUserCallbackString(const GuiElement& source_gui_element)
 {
     std::cout << "User callback from " << source_gui_element.getHandleString() << std::endl;
 }
 
-extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& callbacks,
-                                  const std::function<GuiElement(const std::string&)>& gui_element_getter)
+struct TimerCallbackS
 {
-    callbacks["button0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
+    std::int32_t timer_id;
+    std::function<void(std::int32_t)> callback;
+};
+
+extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& gui_element_callbacks,
+                                  std::map<std::string, TimerCallback>& timer_callbacks,
+                                  const std::function<GuiElement(const std::string&)>& gui_element_getter,
+                                  const std::function<Timer(const std::string&)>& timer_getter)
+{
+
+    timer_callbacks["timer0"] = [](const Timer& source_timer) -> void {
+        std::cout << "Timer callback from FAST timer: " <<  source_timer.getIterationNumber() << std::endl;
+    };
+
+    timer_callbacks["timer1"] = [&timer_getter](const Timer& source_timer) -> void {
+        const Timer timer0 = timer_getter("timer0");
+        std::cout << "Timer callback from SLOW timer. timer0 progress: " << timer0.getIterationNumber() << std::endl;
+    };
+
+    gui_element_callbacks["button1"] = [&gui_element_getter, &timer_getter](const GuiElement& source_gui_element) -> void {
+        // Stop timer
+        timer_getter("timer0").stop();
+        // timer_getter("timer1").stop();
+    };
+
+    gui_element_callbacks["button0"] = [&gui_element_getter, &timer_getter](const GuiElement& source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
         const Button source_button = source_gui_element.asButton();
         const DropDownMenu ddm = gui_element_getter("drop_down_menu0").asDropDownMenu();
@@ -18,21 +40,11 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         ddm.addItem("New item");
         lb.addItem("New item lb");
 
-        // ddm->removeItem("combo Test1");
-        std::cout << "Selected item: " << lb.getSelectedItem() << std::endl;
-        std::cout << "Selected index: " << lb.getSelectedItemIndex() << std::endl;
-
-        // lb->removeItem("Test1");
-        // lb->selectItem(selected_idx);
-        // lb->selectItem(selected_idx);
-
-        selected_idx++;
-
-        // lb->clearItems();
-        // ddm->clearItems();
+        timer_getter("timer0").start(100);
+        timer_getter("timer1").start(500);
     };
 
-    callbacks["slider0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
+    gui_element_callbacks["slider0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
         Slider source_slider = source_gui_element.asSlider();
         const std::int32_t slider_value = source_slider.getValue();
@@ -82,7 +94,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         }
     };
 
-    callbacks["check_box0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
+    gui_element_callbacks["check_box0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
 
         const CheckBox cb = source_gui_element.asCheckBox();
@@ -104,7 +116,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         }
     };
 
-    callbacks["editable_text0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
+    gui_element_callbacks["editable_text0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
         const EditableText et = source_gui_element.asEditableText();
 
@@ -122,7 +134,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         }
     };
 
-    callbacks["drop_down_menu0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
+    gui_element_callbacks["drop_down_menu0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
 
         const DropDownMenu ddm = source_gui_element.asDropDownMenu();
@@ -131,7 +143,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "Selected item: " << ddm.getSelectedItem() << std::endl;
     };
 
-    callbacks["list_box0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
+    gui_element_callbacks["list_box0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
 
         const ListBox lb = source_gui_element.asListBox();
@@ -140,7 +152,7 @@ extern "C" void registerCallbacks(std::map<std::string, GuiElementCallback>& cal
         std::cout << "Selected item: " << lb.getSelectedItem() << std::endl;
     };
 
-    callbacks["radio_button_group0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
+    gui_element_callbacks["radio_button_group0"] = [&gui_element_getter](const GuiElement& source_gui_element) -> void {
         printUserCallbackString(source_gui_element);
         const RadioButtonGroup rbg = source_gui_element.asRadioButtonGroup();
         std::cout << "Idx: " << rbg.getSelectionIndex() << ", "  << rbg.getSelectionString() <<std::endl;

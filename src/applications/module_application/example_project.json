@@ -12,12 +12,23 @@
                         {
                             "handle_string": "button0",
                             "attributes": {
-                                "label": "Button2"
+                                "label": "Start timer"
                             },
                             "type": "BUTTON",
                             "height": 0.2,
                             "width": 0.2,
                             "x": 0.05,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "button1",
+                            "attributes": {
+                                "label": "Stop timer"
+                            },
+                            "type": "BUTTON",
+                            "height": 0.2,
+                            "width": 0.2,
+                            "x": 0.4,
                             "y": 0.0
                         },
                         {

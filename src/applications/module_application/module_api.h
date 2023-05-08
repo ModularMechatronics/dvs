@@ -52,8 +52,120 @@ inline std::string guiElementTypeToString(const GuiElementType& gui_element_type
 }
 
 class GuiElement;
+class Timer;
 
 using GuiElementCallback = std::function<void(const GuiElement&)>;
+using TimerCallback = std::function<void(const Timer&)>;
+
+namespace api_internal
+{
+class InternalTimer
+{
+public:
+    InternalTimer() : iteration_number_{0}, handle_string_{""}
+    {
+
+    }
+
+    InternalTimer(const std::string& handle_string) : iteration_number_{0}, handle_string_{handle_string}
+    {
+
+    }
+
+    virtual void stop() const = 0;
+    virtual void start(const std::int32_t period) const = 0;
+    virtual void runOnce(const std::int32_t period) const = 0;
+    virtual void runNTimesWithPeriod(const std::int32_t n_times, const std::int32_t period) const = 0;
+
+    std::int64_t getIterationNumber() const
+    {
+        return iteration_number_;
+    }
+
+    std::string getHandleString() const
+    {
+        return handle_string_;
+    }
+
+protected:
+    mutable std::int64_t iteration_number_ = 0;
+    std::string handle_string_;
+
+};
+}
+
+
+class Timer
+{
+public:
+    Timer() : internal_timer_{nullptr} {}
+    Timer(api_internal::InternalTimer* const internal_timer)
+        : internal_timer_{internal_timer}
+    {
+    }
+    
+    void stop() const
+    {
+        if(printErrorIfNotInitialized(__func__))
+        {
+            internal_timer_->stop();
+        }
+    }
+
+    void start(const std::int32_t period) const
+    {
+        if(printErrorIfNotInitialized(__func__))
+        {
+            internal_timer_->start(period);
+        }
+    }
+
+    void runOnce(const std::int32_t period) const
+    {
+        if(printErrorIfNotInitialized(__func__))
+        {
+            internal_timer_->runOnce(period);
+        }
+    }
+
+    void runNTimesWithPeriod(const std::int32_t n_times, const std::int32_t period) const
+    {
+        if(printErrorIfNotInitialized(__func__))
+        {
+            internal_timer_->runNTimesWithPeriod(n_times, period);
+        }
+    }
+    
+    std::int64_t getIterationNumber() const
+    {
+        if(printErrorIfNotInitialized(__func__))
+        {
+            return internal_timer_->getIterationNumber();
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+private:
+    api_internal::InternalTimer* internal_timer_;
+
+    bool printErrorIfNotInitialized(const std::string& function_name) const
+    {
+        if (internal_timer_ == nullptr)
+        {
+            DVS_LOG_ERROR() << "Internal timer pointer is nullptr in function \e[1m\033[36m" << function_name
+                            << "\033[0m!\e[0m Did you attempt to use a non existent element?";
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+};
+
 namespace api_internal
 {
 class InternalGuiElement
@@ -122,10 +234,6 @@ protected:
     float width_;
     float height_;
 };
-}  // namespace api_internal
-
-namespace api_internal
-{
 
 class GuiElementBase
 {
