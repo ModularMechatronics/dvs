@@ -378,6 +378,8 @@ struct ElementSettings
             j["projection_mode"] = "perspective";
         }
 
+        j["type"] = "PLOT_PANE";
+
         return j;
     }
 

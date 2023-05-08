@@ -48,6 +48,8 @@ int main(int argc, char* argv[])
 
     StringFunctionMap ad_dataset_functions{{"basic", ad_dataset::testBasic}};
 
+    StringFunctionMap joints_functions{{"basic", joints::testBasic}};
+
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;
     fcns["wave_equation"] = wave_equation_functions;
@@ -57,6 +59,8 @@ int main(int argc, char* argv[])
     fcns["fake_fem"] = fake_fem_functions;
     fcns["imu"] = imu_functions;
     fcns["ad_dataset"] = ad_dataset_functions;
+    fcns["joints"] = joints_functions;
+    
 
     if (argc == 1)
     {

@@ -11,6 +11,7 @@ Pre release:
  * Something for machine learning practitioners
  * Something with drone simulation data
  * Something with robotics
+ * Joint simulation
 - Finalize demos
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
@@ -22,6 +23,11 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 
 Post release:
+- Get user mouse input from plot back to user application
+- Drawing annotations in image (2D/3D bounding boxes, semantic pixel labeling)
+- New application that loads dynamic library (like the newer app) that plots real time data (like main_application),
+  not using TCP IPC, but just sending the data within the application, so that one can design their own real time
+  data viewer application gui
 - Make all plot objects updatable with a flag "UPDATABLE", so that new data can be submitted to the same object without new allocation
 - Reducing number of axis numbers depending on rotation
 - Move "modifyShader" stuff to "preRender"?
