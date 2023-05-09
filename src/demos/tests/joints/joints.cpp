@@ -35,11 +35,10 @@ void testBasic()
 
     axis({-2.0, -2.0, -10.0}, {2.0, 2.0, 10.0});
 
-    imShow(shape_images.getCircle(), properties::ID0);
+    const auto img_view = shape_images.getCircle();
+    imShow(img_view, properties::ID0);
 
     double phi = 0.0;
-
-    const auto img_view = shape_images.getCircle();
 
     const Vec3d scale_vec{2.0 / static_cast<double>(img_view.width()), 2.0 / static_cast<double>(img_view.width()), 1.0};
 
