@@ -20,9 +20,8 @@ public:
 class ShapeImages
 {
 private:
-    void readShapeImage(const std::string bin_path, ImageRGBA<uint8_t>& output_img)
+    void readShapeImage(const std::string bin_path, ImageRGBA<std::uint8_t>& output_img)
     {
-        
         std::ifstream input(bin_path, std::ios::binary);
 
         std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
@@ -96,13 +95,7 @@ private:
     ImageRGBA<uint8_t> star_;
 
 public:
-    ShapeImages() : circle_{},
-        damper_{},
-        pentagon_{},
-        rounded_square_{},
-        spring_{},
-        square_{},
-        star_{}
+    ShapeImages()
     {
         const std::string bin_path = "../demos/tests/joints/images/";
 
@@ -149,8 +142,6 @@ public:
     {
         return star_.constView();
     }
-
-    
 };
 
 void testBasic();
