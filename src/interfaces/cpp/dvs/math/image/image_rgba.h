@@ -113,6 +113,11 @@ public:
         return num_cols_;
     }
 
+    size_t numElements() const
+    {
+        return 4 * num_rows_ * num_cols_;
+    }
+
     size_t width() const
     {
         return num_cols_;
@@ -161,6 +166,11 @@ public:
     void fillBufferWithData(uint8_t* const buffer) const;
     void fill(const T fill_value, const size_t channel);
 
+    ImageRGBAConstView<T> constView() const
+    {
+        return ImageRGBAConstView<T>{data_, num_rows_, num_cols_};
+    }
+
     T* data() const;
 
     size_t width() const
@@ -172,6 +182,8 @@ public:
     {
         return num_rows_;
     }
+
+    void resize(const size_t num_rows, const size_t num_cols);
 };
 
 template <typename T> ImageRGBA<T>::~ImageRGBA()
@@ -196,6 +208,22 @@ template <typename T> ImageRGBA<T>::ImageRGBA(const size_t num_rows, const size_
     num_rows_ = num_rows;
     num_cols_ = num_cols;
     num_element_per_channel_ = num_rows_ * num_cols_;
+}
+
+template <typename T> void ImageRGBA<T>::resize(const size_t num_rows, const size_t num_cols)
+{
+    DVS_ASSERT(num_rows > 0U) << "Cannot initialize with number of rows to 0!";
+    DVS_ASSERT(num_cols > 0U) << "Cannot initialize with number of columns to 0!";
+
+    if((num_rows != num_rows_) || (num_cols != num_cols_))
+    {
+        delete[] data_;
+
+        data_ = new T[num_rows * num_cols * 4];
+        num_rows_ = num_rows;
+        num_cols_ = num_cols;
+        num_element_per_channel_ = num_rows_ * num_cols_;
+    }
 }
 
 template <typename T> void ImageRGBA<T>::fillBufferWithData(uint8_t* const buffer) const
