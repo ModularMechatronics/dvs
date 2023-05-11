@@ -35,12 +35,44 @@ void testBasic()
 
     axis({-2.0, -2.0, -10.0}, {2.0, 2.0, 10.0});
 
-    const auto img_view = shape_images.getCircle();
+    const auto img_view = shape_images.getDamper();
     imShow(img_view, properties::ID0);
 
     double phi = 0.0;
 
     const Vec3d scale_vec{2.0 / static_cast<double>(img_view.width()), 2.0 / static_cast<double>(img_view.width()), 1.0};
+
+    const properties::Transform transform = getTransform(img_view, scale_vec, 0.0, 0.0, 0.0);
+    setProperties(properties::ID0, transform);
+
+    // Pentagon
+    const std::vector<Point2d> pentagon_points = {
+        Point2d{-0.984375, 0.21875},
+        Point2d{0, 0.9375},
+        Point2d{0.984375, 0.2},
+        Point2d{0.609375, -0.9375},
+        Point2d{0.609375, -0.9375}
+    };
+
+    // Circle
+    const Point2d circle_center{0.0, 0.0};
+    const double circle_radius{1.0};
+
+    // Damper
+    const Point2d damper_left_point{-1.0, 0.0};
+    const Point2d damper_right_point{1.0, 0.0};
+
+    // Rounded square
+    const Point2d rounded_square_center{0.0, 0.0};
+    const double rounded_square_side_length{2.0};
+
+    // Square
+    const Point2d square_center{0.0, 0.0};
+    const double square_side_length{2.0};
+
+    // Spring
+    const Point2d spring_left_point{-0.917969, 0.0};
+    const Point2d spring_right_point{0.917969, 0.0};
 
     for(size_t k = 0; k < 100; ++k)
     {

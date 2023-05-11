@@ -25,6 +25,9 @@ if __name__ == "__main__":
         img_height = image_to_use.shape[0]
 
         new_img = np.transpose(image_to_use, (2, 0, 1))
+        new_img[0] = np.flipud(new_img[0])
+        new_img[1] = np.flipud(new_img[1])
+        new_img[2] = np.flipud(new_img[2])
 
         with open("src/demos/tests/joints/images/" + nm + ".bin", "wb") as new_file:
 

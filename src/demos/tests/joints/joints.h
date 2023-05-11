@@ -92,7 +92,6 @@ private:
     ImageRGBA<uint8_t> rounded_square_;
     ImageRGBA<uint8_t> spring_;
     ImageRGBA<uint8_t> square_;
-    ImageRGBA<uint8_t> star_;
 
 public:
     ShapeImages()
@@ -105,7 +104,6 @@ public:
         readShapeImage(bin_path + "rounded_square.bin", rounded_square_);
         readShapeImage(bin_path + "spring.bin", spring_);
         readShapeImage(bin_path + "square.bin", square_);
-        readShapeImage(bin_path + "star.bin", star_);
     }
 
     ImageRGBAConstView<uint8_t> getCircle()
@@ -138,10 +136,6 @@ public:
         return square_.constView();
     }
 
-    ImageRGBAConstView<uint8_t> getStar()
-    {
-        return star_.constView();
-    }
 };
 
 void testBasic();
