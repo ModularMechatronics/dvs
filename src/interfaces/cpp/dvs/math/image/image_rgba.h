@@ -154,6 +154,8 @@ private:
 public:
     ImageRGBA();
     ImageRGBA(const size_t num_rows, const size_t num_cols);
+    ImageRGBA(const ImageRGBA<T>& other_image);
+    ImageRGBA<T>& operator=(const ImageRGBA<T>& other_image);
     ~ImageRGBA();
 
     T& operator()(const size_t r, const size_t c, const size_t ch);
@@ -184,6 +186,9 @@ public:
     }
 
     void resize(const size_t num_rows, const size_t num_cols);
+
+    void remapChannels(const std::array<std::uint8_t, 3U>& map_values);
+    void fill(const T r, const T g, const T b, const T a);
 };
 
 template <typename T> ImageRGBA<T>::~ImageRGBA()
@@ -210,12 +215,63 @@ template <typename T> ImageRGBA<T>::ImageRGBA(const size_t num_rows, const size_
     num_element_per_channel_ = num_rows_ * num_cols_;
 }
 
+template <typename T> ImageRGBA<T>::ImageRGBA(const ImageRGBA<T>& other_image)
+{
+    if ((other_image.num_rows_ > 0U) && (other_image.num_cols_ > 0U))
+    {
+        data_ = new T[other_image.num_rows_ * other_image.num_cols_ * 4];
+        num_rows_ = other_image.num_rows_;
+        num_cols_ = other_image.num_cols_;
+        num_element_per_channel_ = num_rows_ * num_cols_;
+
+        std::memcpy(data_, other_image.data_, num_rows_ * num_cols_ * 4 * sizeof(T));
+        // std::copy(other_image.data_, other_image.data_ + num_rows_ * num_cols_ * 4, data_);
+    }
+    else
+    {
+        data_ = nullptr;
+        num_rows_ = 0U;
+        num_cols_ = 0U;
+        num_element_per_channel_ = 0U;
+    }
+}
+
+template <typename T> ImageRGBA<T>& ImageRGBA<T>::operator=(const ImageRGBA<T>& other_image)
+{
+    if (this != &other_image)
+    {
+        if ((other_image.num_rows_ > 0U) && (other_image.num_cols_ > 0U))
+        {
+            if ((num_rows_ != other_image.num_rows_) || (num_cols_ != other_image.num_cols_))
+            {
+                delete[] data_;
+                data_ = new T[other_image.num_rows_ * other_image.num_cols_ * 4];
+                num_rows_ = other_image.num_rows_;
+                num_cols_ = other_image.num_cols_;
+                num_element_per_channel_ = other_image.num_element_per_channel_;
+            }
+
+            std::memcpy(data_, other_image.data_, num_rows_ * num_cols_ * 4 * sizeof(T));
+        }
+        else
+        {
+            delete[] data_;
+            data_ = nullptr;
+            num_rows_ = 0U;
+            num_cols_ = 0U;
+            num_element_per_channel_ = 0U;
+        }
+    }
+
+    return *this;
+}
+
 template <typename T> void ImageRGBA<T>::resize(const size_t num_rows, const size_t num_cols)
 {
     DVS_ASSERT(num_rows > 0U) << "Cannot initialize with number of rows to 0!";
     DVS_ASSERT(num_cols > 0U) << "Cannot initialize with number of columns to 0!";
 
-    if((num_rows != num_rows_) || (num_cols != num_cols_))
+    if ((num_rows != num_rows_) || (num_cols != num_cols_))
     {
         delete[] data_;
 
@@ -282,6 +338,40 @@ template <typename T> const T& ImageRGBA<T>::operator()(const size_t r, const si
     assert((ch < 4) && "Channel index is larger than 3!");
 
     return data_[ch * num_element_per_channel_ + r * num_cols_ + c];
+}
+
+template <typename T> void ImageRGBA<T>::remapChannels(const std::array<std::uint8_t, 3U>& map_values)
+{
+    ImageRGBA<T> tmp_image = *this;
+
+    assert(map_values[0] < 3);
+    assert(map_values[1] < 3);
+    assert(map_values[2] < 3);
+
+    for (size_t r = 0; r < num_rows_; r++)
+    {
+        for (size_t c = 0; c < num_cols_; c++)
+        {
+            for (size_t ch = 0; ch < 3; ch++)
+            {
+                (*this)(r, c, ch) = tmp_image(r, c, map_values[ch]);
+            }
+        }
+    }
+}
+
+template <typename T> void ImageRGBA<T>::fill(const T r, const T g, const T b, const T a)
+{
+    for (size_t row = 0; row < num_rows_; row++)
+    {
+        for (size_t c = 0; c < num_cols_; c++)
+        {
+            (*this)(row, c, 0) = r;
+            (*this)(row, c, 1) = g;
+            (*this)(row, c, 2) = b;
+            (*this)(row, c, 3) = a;
+        }
+    }
 }
 
 }  // namespace dvs

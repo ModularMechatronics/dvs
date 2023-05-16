@@ -1,18 +1,46 @@
 #ifndef DEMOS_TESTS_JOINTS_JOINTS_H_
 #define DEMOS_TESTS_JOINTS_JOINTS_H_
 
-#include "dvs/dvs.h"
-
 #include <Box2D/Box2D.h>
+
+#include "dvs/dvs.h"
 // #include <box2d/b2_prismatic_joint.h>
 // src/externals/box2d/include/box2d/b2_prismatic_joint.h
 
 using namespace dvs;
 
+struct Shape
+{
+    float x_pos;
+    float y_pos;
+    float width;
+    float height;
+
+    Shape() = default;
+    Shape(const float x_pos_, const float y_pos_, const float width_, const float height_)
+        : x_pos(x_pos_), y_pos(y_pos_), width(width_), height(height_)
+    {
+    }
+
+    float getXScale() const
+    {
+        return width / 2.0;
+    }
+
+    float getYScale() const
+    {
+        return height / 2.0;
+    }
+};
+
 namespace joints
 {
 
-inline properties::Transform getTransform(const ImageRGBAConstView<uint8_t>& img, const Vec3d& scale_vec, const double phi, const double x_offset, const double y_offset)
+inline properties::Transform getTransform(const ImageRGBAConstView<uint8_t>& img,
+                                          const Vec3d& scale_vec,
+                                          const double phi,
+                                          const double x_offset,
+                                          const double y_offset)
 {
     const double image_width = img.width();
     const double image_height = img.height();
@@ -21,11 +49,11 @@ inline properties::Transform getTransform(const ImageRGBAConstView<uint8_t>& img
     const Vec3d center_of_rotation = Vec3d{image_width / 2.0, image_height / 2.0, 0.0}.elementWiseMultiply(scale_vec);
 
     const Matrix<double> rot_mat = rotationMatrixZ<double>(phi);
-    const Vec3<double> translation_vec = -rotationMatrixZ<double>(-phi) * center_of_rotation + Vec3d{x_offset, y_offset, 0.0};
+    const Vec3<double> translation_vec =
+        -rotationMatrixZ<double>(-phi) * center_of_rotation + Vec3d{x_offset, y_offset, 0.0};
 
     return properties::Transform{scale_mat, rot_mat, translation_vec};
 }
-
 
 inline void readShapeImage(const std::string bin_path, ImageRGBA<std::uint8_t>& output_img)
 {
@@ -54,7 +82,7 @@ inline void readShapeImage(const std::string bin_path, ImageRGBA<std::uint8_t>& 
                 const std::uint8_t pixel_val = img_raw_ptr[ch * num_element_per_channel + r * num_cols + c];
 
                 size_t mapped_ch = 0;
-                switch(ch)
+                switch (ch)
                 {
                     case 0:
                         mapped_ch = 2;
@@ -78,10 +106,9 @@ inline void readShapeImage(const std::string bin_path, ImageRGBA<std::uint8_t>& 
         for (size_t c = 0; c < num_cols; c++)
         {
             // If white, set alpha to 0
-            const bool cond = (output_img(r, c, 0) == 255) &&
-                (output_img(r, c, 1) == 255) &&
-                (output_img(r, c, 2) == 255);
-            if(cond)
+            const bool cond =
+                (output_img(r, c, 0) == 255) && (output_img(r, c, 1) == 255) && (output_img(r, c, 2) == 255);
+            if (cond)
             {
                 output_img(r, c, 3) = 0;
             }
@@ -106,6 +133,14 @@ private:
     float timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
+
+    ImageRGBA<uint8_t> circle_;
+    ImageRGBA<uint8_t> damper_;
+    ImageRGBA<uint8_t> pentagon_;
+    ImageRGBA<uint8_t> rounded_square_;
+    ImageRGBA<uint8_t> spring_;
+    ImageRGBA<uint8_t> square_;
+    ImageRGBA<uint8_t> square_borderless_;
 
     b2Body* createStaticCollisionlessBody(const Vec2d& position, const Vec2d& size)
     {
@@ -158,9 +193,30 @@ private:
         return body;
     }
 
+    static constexpr dvs::internal::ItemId kLaunchSquareId = properties::ID0;
+    static constexpr dvs::internal::ItemId kSpinningSquareId = properties::ID1;
+
+    void loadImages()
+    {
+        const std::string bin_path = "../demos/tests/joints/images/";
+
+        readShapeImage(bin_path + "circle.bin", circle_);
+        readShapeImage(bin_path + "damper.bin", damper_);
+        readShapeImage(bin_path + "pentagon.bin", pentagon_);
+        readShapeImage(bin_path + "rounded_square.bin", rounded_square_);
+        readShapeImage(bin_path + "spring.bin", spring_);
+        readShapeImage(bin_path + "square.bin", square_);
+
+        square_.remapChannels({2, 1, 0});
+
+        square_borderless_ = square_;
+        square_borderless_.fill(square_(40, 40, 0), square_(40, 40, 1), square_(40, 40, 2), 255);
+    }
+
 public:
     Joints() : gravity_{0.0f, -10.0f}, world_{gravity_}, ground_body_{nullptr}, ground_box_{}
     {
+        loadImages();
 
         b2Body* wall_body = createStaticCollisionlessBody({0.0, -10.0}, {50.0, 50.0});
 
@@ -174,18 +230,14 @@ public:
 
         joint_def0.Initialize(wall_body, dynamic_body_, b2Vec2{-1.0, 1.0}, b2Vec2{-4.0, 4.0});
         joint_def0.length = 2.0f;
- 
-        // joint_def0.bodyA = wall_body;
-        // joint_def0.bodyB = dynamic_body_;
+
         joint_def0.collideConnected = false;
         joint_def0.frequencyHz = 10.0f;
         joint_def0.dampingRatio = 0.1f;
 
         joint_def1.Initialize(wall_body, dynamic_body_, b2Vec2{1.0, 1.0}, b2Vec2{4.0, 4.0});
         joint_def1.length = 2.0f;
- 
-        // joint_def1.bodyA = wall_body;
-        // joint_def1.bodyB = dynamic_body_;
+
         joint_def1.collideConnected = false;
         joint_def1.frequencyHz = 10.0f;
         joint_def1.dampingRatio = 0.1f;
@@ -195,93 +247,44 @@ public:
 
         // Prism joint
         b2PrismaticJointDef joint_def2;
-        joint_def2.Initialize (wall_body, dynamic_body_, b2Vec2{0.0, 0.0}, b2Vec2{0.0, 1.0});
+        joint_def2.Initialize(wall_body, dynamic_body_, b2Vec2{0.0, 0.0}, b2Vec2{0.0, 1.0});
         b2Joint* joint2 = world_.CreateJoint(&joint_def2);
+
+        imShow(square_, kLaunchSquareId);
+        imShow(square_borderless_, kSpinningSquareId);
     }
-    ~Joints(){}
 
-    void step(const ImageRGBAConstView<uint8_t>& square_img_view)
+    ~Joints() {}
+
+    void step()
     {
-        const Vec3d scale_vec0{2.0 / static_cast<double>(square_img_view.width()), 2.0 / static_cast<double>(square_img_view.width()), 1.0};
+        const Vec3d scale_vec0{
+            2.0 / static_cast<double>(square_.width()), 2.0 / static_cast<double>(square_.width()), 1.0};
 
-        const Vec3d scale_vec1{2.0 / static_cast<double>(square_img_view.width()), 20.0 * 2.0 / static_cast<double>(square_img_view.width()), 1.0};
+        const Vec3d scale_vec1{
+            2.0 / static_cast<double>(square_.width()), 20.0 * 2.0 / static_cast<double>(square_.width()), 1.0};
 
         world_.Step(timeStep, velocityIterations, positionIterations);
         spinner_body_->SetTransform(spinner_body_->GetPosition(), spinner_body_->GetAngle() + 0.01f);
-        const b2Vec2 position = dynamic_body_->GetPosition();
-        float angle = dynamic_body_->GetAngle();
 
-        const properties::Transform transform0 = getTransform(square_img_view, scale_vec0, angle, position.x, position.y);
-        setProperties(properties::ID0, transform0);
+        const properties::Transform transform0 = getTransform(square_.constView(),
+                                                              scale_vec0,
+                                                              -dynamic_body_->GetAngle(),
+                                                              dynamic_body_->GetPosition().x,
+                                                              dynamic_body_->GetPosition().y);
+        setProperties(kLaunchSquareId, transform0);
 
-        const properties::Transform transform1 = getTransform(square_img_view, scale_vec1, -spinner_body_->GetAngle(), spinner_body_->GetPosition().x, spinner_body_->GetPosition().y);
-        setProperties(properties::ID1, transform1);
-
+        const properties::Transform transform1 = getTransform(square_.constView(),
+                                                              scale_vec1,
+                                                              -spinner_body_->GetAngle(),
+                                                              spinner_body_->GetPosition().x,
+                                                              spinner_body_->GetPosition().y);
+        setProperties(kSpinningSquareId, transform1);
     }
-};
-
-class ShapeImages
-{
-private:
-
-    ImageRGBA<uint8_t> circle_;
-    ImageRGBA<uint8_t> damper_;
-    ImageRGBA<uint8_t> pentagon_;
-    ImageRGBA<uint8_t> rounded_square_;
-    ImageRGBA<uint8_t> spring_;
-    ImageRGBA<uint8_t> square_;
-
-public:
-    ShapeImages()
-    {
-        const std::string bin_path = "../demos/tests/joints/images/";
-
-        readShapeImage(bin_path + "circle.bin", circle_);
-        readShapeImage(bin_path + "damper.bin", damper_);
-        readShapeImage(bin_path + "pentagon.bin", pentagon_);
-        readShapeImage(bin_path + "rounded_square.bin", rounded_square_);
-        readShapeImage(bin_path + "spring.bin", spring_);
-        readShapeImage(bin_path + "square.bin", square_);
-    }
-
-    ImageRGBAConstView<uint8_t> getCircle()
-    {
-        return circle_.constView();
-    }
-
-    ImageRGBAConstView<uint8_t> getDamper()
-    {
-        return damper_.constView();
-    }
-
-    ImageRGBAConstView<uint8_t> getPentagon()
-    {
-        return pentagon_.constView();
-    }
-
-    ImageRGBAConstView<uint8_t> getRoundedSquare()
-    {
-        return rounded_square_.constView();
-    }
-
-    ImageRGBAConstView<uint8_t> getSpring()
-    {
-        return spring_.constView();
-    }
-
-    ImageRGBAConstView<uint8_t> getSquare()
-    {
-        return square_.constView();
-    }
-
 };
 
 void testBasic();
 
+}  // namespace joints
 
-
-}
-
-
-
-#endif // DEMOS_TESTS_JOINTS_JOINTS_H_
+#endif  // DEMOS_TESTS_JOINTS_JOINTS_H_

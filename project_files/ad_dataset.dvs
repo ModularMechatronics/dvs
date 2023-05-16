@@ -32,7 +32,6 @@
                     },
                     "elements": [
                         {
-                            "type": "PLOT_PANE",
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,
@@ -57,8 +56,8 @@
                                 "r": 0.699999988079071
                             },
                             "grid_on": false,
-                            "height": 1.0,
                             "handle_string": "point_cloud",
+                            "height": 1.0,
                             "pane_radius": 20.0,
                             "plot_box_color": {
                                 "b": 1.0,
@@ -67,13 +66,13 @@
                             },
                             "plot_box_on": false,
                             "projection_mode": "perspective",
+                            "type": "PLOT_PANE",
                             "width": 1.0,
                             "x": 0.0,
                             "y": 0.0,
                             "z_order": 0
                         },
                         {
-                            "type": "PLOT_PANE",
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,
@@ -89,21 +88,21 @@
                                 "g": 0.699999988079071,
                                 "r": 0.699999988079071
                             },
-                            "height": 0.44908615946769714,
                             "handle_string": "center",
+                            "height": 0.3333333333,
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,
                                 "r": 1.0
                             },
                             "projection_mode": "orthographic",
-                            "width": 0.25,
-                            "x": 0.0,
-                            "y": 0.5509138107299805,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.3333333333,
+                            "y": 0.0,
                             "z_order": 2
                         },
                         {
-                            "type": "PLOT_PANE",
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,
@@ -119,21 +118,21 @@
                                 "g": 0.699999988079071,
                                 "r": 0.699999988079071
                             },
-                            "height": 0.44999998807907104,
                             "handle_string": "left",
+                            "height": 0.3333333333,
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,
                                 "r": 1.0
                             },
                             "projection_mode": "orthographic",
-                            "width": 0.25,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
                             "x": 0.0,
                             "y": 0.0,
                             "z_order": 1
                         },
                         {
-                            "type": "PLOT_PANE",
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,
@@ -149,16 +148,17 @@
                                 "g": 0.699999988079071,
                                 "r": 0.699999988079071
                             },
-                            "height": 0.44908615946769714,
                             "handle_string": "right",
+                            "height": 0.3333333333,
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,
                                 "r": 1.0
                             },
                             "projection_mode": "orthographic",
-                            "width": 0.25,
-                            "x": 0.75,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.6666666666666,
                             "y": 0.0,
                             "z_order": 3
                         }
@@ -166,7 +166,7 @@
                     "name": "Tab 0"
                 }
             ],
-            "width": 1440.0,
+            "width": 864.0,
             "x": 0.0,
             "y": 23.0
         }

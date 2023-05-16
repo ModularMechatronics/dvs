@@ -7,9 +7,6 @@ namespace joints
 
 void testBasic()
 {
-    Joints joints{};
-    ShapeImages shape_images{};
-
     const std::string project_file_path = "../../project_files/joints.dvs";
 
     openProjectFile(project_file_path);
@@ -20,20 +17,11 @@ void testBasic()
     view(0, 90);
     axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
 
-    const auto img_view = shape_images.getSquare();
-    imShow(img_view, properties::ID0);
-    imShow(img_view, properties::ID1);
-
-    const Vec3d scale_vec{2.0 / static_cast<double>(img_view.width()), 2.0 / static_cast<double>(img_view.width()), 1.0};
-
-    const properties::Transform transform = getTransform(img_view, scale_vec, 0.0, 0.0, 0.0);
-    setProperties(properties::ID0, transform);
+    Joints joints{};
 
     for(size_t k = 0; k < 1000; k++)
     {
-        joints.step(img_view);
-        // const properties::Transform transform = getTransform(img_view, scale_vec, ret.second, ret.first.x, ret.first.y);
-        // setProperties(properties::ID0, transform);
+        joints.step();
         usleep(1000 * 10);
     }
     
@@ -41,7 +29,7 @@ void testBasic()
 
 void testBasic2()
 {
-    const std::string project_file_path = "../../project_files/joints.dvs";
+    /*const std::string project_file_path = "../../project_files/joints.dvs";
 
     openProjectFile(project_file_path);
 
@@ -103,7 +91,7 @@ void testBasic2()
 
         usleep(1000 * 100);
         phi += 0.1;
-    }
+    }*/
 }
 
 }
