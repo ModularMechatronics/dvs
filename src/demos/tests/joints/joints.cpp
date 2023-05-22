@@ -1,11 +1,47 @@
 #include "tests/joints/joints.h"
 
-
 namespace joints
 {
 
-
 void testBasic()
+{
+    const std::string project_file_path = "../../project_files/joints.dvs";
+
+    // const ImageRGBA<std::uint8_t> circle = createCircle(100, 255, 0, 0);
+    // const ImageRGBA<std::uint8_t> rectangle = createRectangle(100, 200, 255, 255, 0);
+
+    openProjectFile(project_file_path);
+
+    setCurrentElement("p_view_0");
+    clearView();
+
+    view(0, 90);
+    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
+
+    Joints joints{};
+
+    for (size_t k = 0; k < 1000; k++)
+    {
+        joints.step();
+        usleep(1000 * 10);
+    }
+    // imShow(rectangle);
+    /*imShow(circle, properties::ID3);
+    imShow(circle, properties::ID2);
+    imShow(circle, properties::ID1);
+    imShow(circle, properties::ID0);
+
+    using Tr = properties::Transform;
+
+    setProperties(properties::ID1,
+                  Tr{diagMatrix<double>(Vec3d{1.0, 1.0, 1.0}), unitMatrix<double>(3, 3), {100.0, 0.0, 0.0}});
+    setProperties(properties::ID2,
+                  Tr{diagMatrix<double>(Vec3d{1.0, 1.0, 1.0}), unitMatrix<double>(3, 3), {200.0, 0.0, 0.0}});
+    setProperties(properties::ID3,
+                  Tr{diagMatrix<double>(Vec3d{1.0, 1.0, 1.0}), unitMatrix<double>(3, 3), {300.0, 0.0, 0.0}});*/
+}
+
+void testBasic2()
 {
     const std::string project_file_path = "../../project_files/joints.dvs";
 
@@ -19,15 +55,14 @@ void testBasic()
 
     Joints joints{};
 
-    for(size_t k = 0; k < 1000; k++)
+    for (size_t k = 0; k < 1000; k++)
     {
         joints.step();
         usleep(1000 * 10);
     }
-    
 }
 
-void testBasic2()
+void testBasic3()
 {
     /*const std::string project_file_path = "../../project_files/joints.dvs";
 
@@ -49,7 +84,8 @@ void testBasic2()
 
     double phi = 0.0;
 
-    const Vec3d scale_vec{2.0 / static_cast<double>(img_view.width()), 2.0 / static_cast<double>(img_view.width()), 1.0};
+    const Vec3d scale_vec{2.0 / static_cast<double>(img_view.width()), 2.0 /
+    static_cast<double>(img_view.width()), 1.0};
 
     const properties::Transform transform = getTransform(img_view, scale_vec, 0.0, 0.0, 0.0);
     setProperties(properties::ID0, transform);
@@ -94,4 +130,4 @@ void testBasic2()
     }*/
 }
 
-}
+}  // namespace joints
