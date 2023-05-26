@@ -14,31 +14,21 @@ void testBasic()
 
     setCurrentElement("p_view_0");
     clearView();
+    waitForFlush();
 
     view(0, 90);
-    axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
+    axis({-16.0, -32.0, -20.0}, {40.0, 24.0, 20.0});
 
     Joints joints{};
 
     for (size_t k = 0; k < 1000; k++)
     {
         joints.step();
-        usleep(1000 * 10);
+        flushCurrentElement();
+        usleep(1000 * 1);
+        deletePlotObject(properties::ID250);
+        deletePlotObject(properties::ID249);
     }
-    // imShow(rectangle);
-    /*imShow(circle, properties::ID3);
-    imShow(circle, properties::ID2);
-    imShow(circle, properties::ID1);
-    imShow(circle, properties::ID0);
-
-    using Tr = properties::Transform;
-
-    setProperties(properties::ID1,
-                  Tr{diagMatrix<double>(Vec3d{1.0, 1.0, 1.0}), unitMatrix<double>(3, 3), {100.0, 0.0, 0.0}});
-    setProperties(properties::ID2,
-                  Tr{diagMatrix<double>(Vec3d{1.0, 1.0, 1.0}), unitMatrix<double>(3, 3), {200.0, 0.0, 0.0}});
-    setProperties(properties::ID3,
-                  Tr{diagMatrix<double>(Vec3d{1.0, 1.0, 1.0}), unitMatrix<double>(3, 3), {300.0, 0.0, 0.0}});*/
 }
 
 void testBasic2()

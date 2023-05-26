@@ -749,7 +749,7 @@ template <typename... Us> void setProperties(const internal::ItemId id, const Us
     if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
     {
         DVS_LOG_WARNING() << "Flag FAST_PLOT is not allowed for setProperties()! Set in function call instead, e.g. "
-                             "plot(x, y, properties::APPENDABLE).";
+                             "plot(x, y, properties::FAST_PLOT).";
         return;
     }
 

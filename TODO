@@ -23,6 +23,7 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
 - Change all reinterpret_cast to static_cast<whatever>(static_cast<void*>())
+- "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
 
 Post release:
 - Get user mouse input from plot back to user application

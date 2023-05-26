@@ -5,9 +5,9 @@
 #include <stdexcept>
 
 #include "dvs/math/math.h"
+#include "gui_window.h"
 #include "main_window.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
-#include "gui_window.h"
 
 using namespace dvs::internal;
 

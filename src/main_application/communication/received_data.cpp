@@ -5,9 +5,10 @@
 ReceivedData::ReceivedData()
     : hdr_{},
       function_{dvs::internal::Function::UNKNOWN},
-      raw_data_{nullptr},
       payload_data_{nullptr},
-      num_data_bytes_{0U}
+      raw_data_{nullptr},
+      num_data_bytes_{0U},
+      total_num_bytes_{0U}
 {
 }
 

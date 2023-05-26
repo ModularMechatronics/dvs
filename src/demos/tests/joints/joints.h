@@ -5,6 +5,7 @@
 
 #include <array>
 
+#include "debug_value_reader.h"
 #include "dvs/dvs.h"
 // #include <box2d/b2_prismatic_joint.h>
 // src/externals/box2d/include/box2d/b2_prismatic_joint.h
@@ -152,7 +153,13 @@ struct Shape
     float scale_factor = 100.0f;
 
     Shape() = default;
-    Shape(b2Body* body_handle_, const float width_, const float height_, const internal::ItemId& id_)
+    Shape(b2Body* body_handle_,
+          const float width_,
+          const float height_,
+          const internal::ItemId& id_,
+          const std::uint8_t red,
+          const std::uint8_t green,
+          const std::uint8_t blue)
         : width{width_}, height{height_}, body_handle{body_handle_}, id{id_}
     {
         b2Vec2 pos = body_handle_->GetPosition();
@@ -160,7 +167,7 @@ struct Shape
         y_pos = pos.y;
 
         angle = body_handle_->GetAngle();
-        shape_img = createRectangle(width * scale_factor, height * scale_factor, 255, 0, 0);
+        shape_img = createRectangle(width * scale_factor, height * scale_factor, red, green, blue);
         imShow(shape_img, id);
     }
 
@@ -176,13 +183,17 @@ struct Shape
 };
 
 inline properties::Transform getTransform(const ImageRGBAConstView<uint8_t>& img,
-                                          const Vec3d& scale_vec,
+                                          const Vec3d& size,
                                           const double phi,
                                           const double x_offset,
                                           const double y_offset)
 {
     const double image_width = img.width();
     const double image_height = img.height();
+
+    const double max_dim_size = std::max(size.x, size.y);
+    const double max_dim_img = std::max(img.width(), img.height());
+    const Vec3d scale_vec{max_dim_size / max_dim_img, max_dim_size / max_dim_img, 1.0};
 
     const auto scale_mat = diagMatrix<double>(scale_vec);
     const Vec3d center_of_rotation = Vec3d{image_width / 2.0, image_height / 2.0, 0.0}.elementWiseMultiply(scale_vec);
@@ -284,14 +295,7 @@ private:
     ImageRGBA<uint8_t> square_;
     ImageRGBA<uint8_t> square_borderless_;
 
-    std::array<Shape, kNumSquares> squares_;
-
     internal::ItemId id_counter_;
-    Shape shape_;
-    std::vector<Shape> shapes_;
-    Shape funnel_left_;
-
-    static constexpr size_t kNumShapes{10U};
 
     b2Body* createStaticCollisionlessBody(const Vec2d& position, const Vec2d& size)
     {
@@ -335,7 +339,7 @@ private:
 
         body->CreateFixture(&body_shape, 0.0f);
 
-        const Shape shp(body, size.x, size.y, id_counter_);
+        const Shape shp(body, size.x, size.y, id_counter_, 0, 255, 0);
         id_counter_ = static_cast<internal::ItemId>(static_cast<int>(id_counter_) + 1);
         return shp;
     }
@@ -355,37 +359,14 @@ private:
 
         b2FixtureDef fixture_def;
         fixture_def.shape = &dynamic_box;
-        fixture_def.density = 1.0f;
-        fixture_def.friction = 0.0f;
+        fixture_def.density = debug_value_reader::readFloat("density");
+        fixture_def.friction = debug_value_reader::readFloat("friction");
 
         body->CreateFixture(&fixture_def);
 
-        const Shape shp(body, size.x, size.y, id_counter_);
+        const Shape shp(body, size.x, size.y, id_counter_, 255, 0, 0);
         id_counter_ = static_cast<internal::ItemId>(static_cast<int>(id_counter_) + 1);
         return shp;
-    }
-
-    b2Body* createDynamicBoxBody(const Vec2d& position, const Vec2d& size, const double angle)
-    {
-        // Creating the dynamic body
-        b2BodyDef body_def;
-        body_def.type = b2_dynamicBody;
-        body_def.position.Set(0.0f, 4.0f);
-        body_def.angle = 0.1;
-
-        b2Body* body = world_.CreateBody(&body_def);
-
-        b2PolygonShape dynamic_box;
-        dynamic_box.SetAsBox(1.0f, 1.0f);
-
-        b2FixtureDef fixture_def;
-        fixture_def.shape = &dynamic_box;
-        fixture_def.density = 1.0f;
-        fixture_def.friction = 0.0f;
-
-        body->CreateFixture(&fixture_def);
-
-        return body;
     }
 
     static constexpr dvs::internal::ItemId kLaunchSquareId = properties::ID0;
@@ -408,35 +389,87 @@ private:
         square_borderless_.fill(square_(40, 40, 0), square_(40, 40, 1), square_(40, 40, 2), 255);
     }
 
+    float t = 0.0f;
+    std::vector<Shape> shapes_;
+    Shape funnel_left_;
+    Shape funnel_right_;
+    Shape pusher_;
+    Shape flipper_;
+
+    // Pusher
+    float pusher_p;
+    float pusher_d;
+
+    float pusher_frequency;
+    float pusher_amplitude;
+    float pusher_x;
+    float pusher_y;
+
+    // Flipper
+    float flipper_p;
+    float flipper_d;
+
+    float flipper_frequency;
+    float flipper_amplitude;
+    float flipper_offset;
+
+    static constexpr size_t kNumShapes{20U};
+
 public:
     Joints() : gravity_{0.0f, -10.0f}, world_{gravity_}, ground_body_{nullptr}, ground_box_{}
     {
         loadImages();
         id_counter_ = static_cast<internal::ItemId>(0);
 
-        // b2Body* wall_body = createStaticCollisionlessBody({0.0, -10.0}, {50.0, 50.0});
+        b2Body* wall_body = createStaticCollisionlessBody({0.0, 0.0}, {50.0, 50.0});
 
-        ground_body_ = createStaticBody({0.0, -10.0}, {50.0, 1.0}, -0.1);
-        ground_body_ = createStaticBody({0.0, -10.0}, {50.0, 1.0}, 0.1);
+        createStaticBody({0.0, -10.0}, {6.0, 1.0}, 0.0);
 
-        funnel_left_ = createStaticBoxShape(Vec2d{0.0, -1.0}, Vec2d{8.0, 1.0}, -0.2f);
+        funnel_left_ = createStaticBoxShape(Vec2d{-4.0, -1.0}, Vec2d{12.0, 1.0}, (120.0) * M_PI / 180.0);
+        funnel_right_ = createStaticBoxShape(Vec2d{4.0, -1.0}, Vec2d{12.0, 1.0}, (-120.0) * M_PI / 180.0);
 
-        // spinner_body_ = createStaticBody({8.0, 0.0}, {1.0, 20.0}, 0.0);
-        // dynamic_body_ = createDynamicBoxBody({0.0, 4.0}, {1.0, 1.0}, 0.0);
+        pusher_x = debug_value_reader::readFloat("pusher_x");
+        pusher_y = debug_value_reader::readFloat("pusher_y");
+        const double pusher_width = debug_value_reader::readDouble("pusher_width");
+        const double pusher_height = debug_value_reader::readDouble("pusher_height");
 
-        // shape_ = createDynamicBoxShape(Vec2d{1.0, 4.0}, Vec2d{1.0, 1.0}, 0.0f);
-        // createStaticBoxShape
+        pusher_frequency = debug_value_reader::readFloat("pusher_frequency");
+        pusher_amplitude = debug_value_reader::readFloat("pusher_amp");
+        pusher_p = debug_value_reader::readFloat("pusher_p");
+        pusher_d = debug_value_reader::readFloat("pusher_d");
+        // float pusher_p;
+        // float pusher_d;
+
+        pusher_ = createDynamicBoxShape(Vec2d{pusher_x, pusher_y}, Vec2d{pusher_width, pusher_height}, 0.0);
+
+        flipper_p = debug_value_reader::readFloat("flipper_p");
+        flipper_d = debug_value_reader::readFloat("flipper_d");
+
+        float x_pos = -6.0f;
+        float y_pos = 6.0f;
 
         for (size_t k = 0; k < kNumShapes; k++)
         {
-            const float y_pos = k < kNumShapes / 2 ? 2.0f : 6.0f;
-            const float x_pos = k < kNumShapes / 2 ? k * 3 : (k - kNumShapes / 2) * 3;
+            // Between -6 and 6
+            x_pos += 1.2;
+            if (x_pos > 6.0)
+            {
+                x_pos = -6.0;
+                y_pos += 1.2;
+            }
+
             const float rot = static_cast<float>(rand() & 1001) / 1000.0f - 0.5f;
             shapes_.emplace_back(createDynamicBoxShape(Vec2d{x_pos, y_pos}, Vec2d{1.0, 1.0}, rot));
-            // imShow(shapes_[k].shape_img, shapes_[k].id);
         }
 
-        // imShow(funnel_left_.shape_img, funnel_left_.id);
+        flipper_offset = debug_value_reader::readDouble("flipper_offset");
+        flipper_ = createDynamicBoxShape(
+            Vec2d{debug_value_reader::readDouble("flipper_x"), debug_value_reader::readDouble("flipper_y")},
+            Vec2d{debug_value_reader::readDouble("flipper_width"), debug_value_reader::readDouble("flipper_height")},
+            flipper_offset);
+
+        flipper_frequency = debug_value_reader::readDouble("flipper_frequency");
+        flipper_amplitude = debug_value_reader::readDouble("flipper_amplitude");
 
         // Spring joint
         /*b2DistanceJointDef joint_def0, joint_def1;
@@ -463,27 +496,27 @@ public:
         joint_def2.Initialize(wall_body, dynamic_body_, b2Vec2{0.0, 0.0}, b2Vec2{0.0, 1.0});
         b2Joint* joint2 = world_.CreateJoint(&joint_def2);*/
 
-        // imShow(square_borderless_, kSpinningSquareId);
+        b2RevoluteJointDef joint_def0;
+        joint_def0.bodyA = wall_body;
+        joint_def0.bodyB = flipper_.body_handle;
+        joint_def0.localAnchorA =
+            b2Vec2{debug_value_reader::readFloat("flipper_x"), debug_value_reader::readFloat("flipper_y")};
+        joint_def0.localAnchorB = b2Vec2{0.0, 0.0};
+        joint_def0.enableLimit = false;
+
+        b2Joint* joint0 = world_.CreateJoint(&joint_def0);
     }
 
     ~Joints() {}
 
     void step()
     {
-        // const Vec3d scale_vec1{
-        //     2.0 / static_cast<double>(square_.width()), 20.0 * 2.0 / static_cast<double>(square_.width()), 1.0};
-
         world_.Step(timeStep, velocityIterations, positionIterations);
-        // spinner_body_->SetTransform(spinner_body_->GetPosition(), spinner_body_->GetAngle() + 0.01f);
 
         for (size_t k = 0; k < kNumShapes; k++)
         {
-            const Vec3d scale_vec{1.0 / static_cast<double>(shapes_[k].shape_img.width()),
-                                  1.0 / static_cast<double>(shapes_[k].shape_img.width()),
-                                  1.0};
-
             const properties::Transform transform = getTransform(shapes_[k].shape_img.constView(),
-                                                                 scale_vec,
+                                                                 {shapes_[k].width, shapes_[k].height, 1.0},
                                                                  -shapes_[k].body_handle->GetAngle(),
                                                                  shapes_[k].body_handle->GetPosition().x,
                                                                  shapes_[k].body_handle->GetPosition().y);
@@ -491,26 +524,85 @@ public:
         }
 
         {
-            const Vec3d scale_vec{8.0 / static_cast<double>(funnel_left_.shape_img.width()),
-                                  8.0 / static_cast<double>(funnel_left_.shape_img.width()),
-                                  1.0};
             const properties::Transform transform = getTransform(funnel_left_.shape_img.constView(),
-                                                                 scale_vec,
+                                                                 {funnel_left_.width, funnel_left_.height, 1.0},
                                                                  -funnel_left_.body_handle->GetAngle(),
                                                                  funnel_left_.body_handle->GetPosition().x,
                                                                  funnel_left_.body_handle->GetPosition().y);
             setProperties(funnel_left_.id, transform);
         }
 
-        // funnel_left_.body_handle->SetTransform(funnel_left_.body_handle->GetPosition(),
-        //                                        funnel_left_.body_handle->GetAngle() + 0.01f);
+        {
+            const properties::Transform transform = getTransform(funnel_right_.shape_img.constView(),
+                                                                 {funnel_right_.width, funnel_right_.height, 1.0},
+                                                                 -funnel_right_.body_handle->GetAngle(),
+                                                                 funnel_right_.body_handle->GetPosition().x,
+                                                                 funnel_right_.body_handle->GetPosition().y);
+            setProperties(funnel_right_.id, transform);
+        }
 
-        /*const properties::Transform transform1 = getTransform(square_.constView(),
-                                                              scale_vec1,
-                                                              -spinner_body_->GetAngle(),
-                                                              spinner_body_->GetPosition().x,
-                                                              spinner_body_->GetPosition().y);
-        setProperties(kSpinningSquareId, transform1);*/
+        {
+            const properties::Transform transform = getTransform(pusher_.shape_img.constView(),
+                                                                 {pusher_.width, pusher_.height, 1.0},
+                                                                 -pusher_.body_handle->GetAngle(),
+                                                                 pusher_.body_handle->GetPosition().x,
+                                                                 pusher_.body_handle->GetPosition().y);
+            setProperties(pusher_.id, transform);
+        }
+
+        {
+            const properties::Transform transform = getTransform(flipper_.shape_img.constView(),
+                                                                 {flipper_.width, flipper_.height, 1.0},
+                                                                 -flipper_.body_handle->GetAngle(),
+                                                                 flipper_.body_handle->GetPosition().x,
+                                                                 flipper_.body_handle->GetPosition().y);
+            setProperties(flipper_.id, transform);
+        }
+
+        const double phi_left = std::cos(t * 2.0) * 0.08f;
+        const double phi_right = std::sin(t * 2.0) * 0.08f;
+        funnel_left_.body_handle->SetTransform(funnel_left_.body_handle->GetPosition(),
+                                               (120.0) * M_PI / 180.0 + phi_left);
+        funnel_right_.body_handle->SetTransform(funnel_right_.body_handle->GetPosition(),
+                                                (-120.0) * M_PI / 180.0 + phi_right);
+
+        // Pusher
+        const float pusher_reference_pos = std::sin(t * pusher_frequency) * pusher_amplitude + pusher_x;
+        const float pusher_pos_error = pusher_reference_pos - pusher_.body_handle->GetPosition().x;
+        const float pusher_vel = pusher_.body_handle->GetLinearVelocity().x;
+
+        const float u_pusher = pusher_pos_error * pusher_p + pusher_vel * pusher_d;
+
+        pusher_.body_handle->ApplyForce(b2Vec2(u_pusher, 0.0f), pusher_.body_handle->GetPosition(), true);
+
+        // Flipper
+        const double flipper_reference_angle = std::cos(t * flipper_frequency) * flipper_amplitude + flipper_offset;
+
+        const float flipper_ang_error = flipper_reference_angle - flipper_.body_handle->GetAngle();
+        const float flipper_ang_vel = flipper_.body_handle->GetAngularVelocity();
+        const float u = flipper_ang_error * flipper_p + flipper_ang_vel * flipper_d;
+
+        flipper_.body_handle->ApplyTorque(u, true);
+
+        Vector<float> x0(2), y0(2);
+        Vector<float> x1(2), y1(2);
+        x0(0) = debug_value_reader::readDouble("flipper_x");
+        y0(0) = debug_value_reader::readDouble("flipper_y");
+
+        x0(1) = x0(0) + 8.0 * std::cos(flipper_reference_angle);
+        y0(1) = y0(0) + 8.0 * std::sin(flipper_reference_angle);
+
+        plot(x0, y0, properties::Color::RED, properties::ID250);
+
+        x1(0) = pusher_reference_pos;
+        y1(0) = -16.0;
+
+        x1(1) = pusher_reference_pos;
+        y1(1) = -8.0;
+
+        plot(x1, y1, properties::Color::RED, properties::ID249);
+
+        t += 0.05f;
     }
 };
 
