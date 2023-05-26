@@ -756,6 +756,31 @@ template <typename... Us> void setProperties(const internal::ItemId id, const Us
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+template <typename... Us> void setProperties(const std::vector<PropertySet>& property_sets)
+{
+    internal::CommunicationHeader hdr{internal::Function::PROPERTIES_EXTENSION_MULTIPLE};
+
+    std::size_t total_size{0U};
+    for (size_t k = 0; k < property_sets.size(); k++)
+    {
+        total_size += property_sets[k].getTotaltSize();
+    }
+
+    // +1 for number of property sets
+    Vector<std::uint8_t> data_vec(total_size + 1U);
+    data_vec(0) = static_cast<std::uint8_t>(property_sets.size());
+
+    std::size_t idx{1U};
+    for (size_t k = 0; k < property_sets.size(); k++)
+    {
+        property_sets[k].fillBuffer(data_vec.data() + idx);
+
+        idx += property_sets[k].getTotaltSize();
+    }
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, data_vec);
+}
+
 inline void setCurrentElement(const std::string& name)
 {
     if (name.length() == 0)

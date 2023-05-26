@@ -198,6 +198,14 @@ void MainWindow::addActionToQueue(ReceivedData& received_data)
         queued_data_[current_element_name_].push(
             std::make_unique<InputData>(received_data, plot_object_attributes, properties_data));
     }
+    else if (fcn == Function::PROPERTIES_EXTENSION_MULTIPLE)
+    {
+        const CommunicationHeader& hdr{received_data.getCommunicationHeader()};
+        const PlotObjectAttributes plot_object_attributes{hdr};
+        const PropertiesData properties_data{hdr};
+        queued_data_[current_element_name_].push(
+            std::make_unique<InputData>(received_data, plot_object_attributes, properties_data));
+    }
     else
     {
         queued_data_[current_element_name_].push(std::make_unique<InputData>(received_data));

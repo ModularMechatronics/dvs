@@ -80,6 +80,8 @@ inline size_t getNumDimensionsFromFunction(const Function fcn)
             return 3;
         case Function::PROPERTIES_EXTENSION:
             return 1;
+        case Function::PROPERTIES_EXTENSION_MULTIPLE:
+            return 1;
 
         default:
             return 1;

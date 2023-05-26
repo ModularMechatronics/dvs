@@ -49,6 +49,60 @@ void PlotDataHandler::setTransform(const internal::ItemId id,
     }
 }
 
+void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_data)
+{
+    const std::size_t num_property_sets{received_data.payloadData()[0]};
+
+    std::vector<PropertiesData> props;
+    props.resize(num_property_sets);
+
+    const std::uint8_t* const prop_data{received_data.payloadData() + 1U};
+
+    std::size_t idx{0U};
+
+    for (size_t k = 0; k < num_property_sets; k++)
+    {
+        CommunicationHeader hdr{internal::Function::PROPERTIES_EXTENSION_MULTIPLE};
+        // For each property set
+        // Num properties in prop set
+        const std::size_t num_props{prop_data[idx]};
+        idx += 1U;
+
+        const internal::ItemId id{static_cast<internal::ItemId>(prop_data[idx])};
+        idx += 1U;
+
+        hdr.append(CommunicationHeaderObjectType::ITEM_ID, id);
+
+        for (size_t i = 0; i < num_props; i++)
+        {
+            CommunicationHeaderObject obj;
+            obj.type = CommunicationHeaderObjectType::PROPERTY;
+            obj.size = prop_data[idx];
+
+            idx += 1U;
+            std::memcpy(obj.data, prop_data + idx, obj.size);
+
+            idx += obj.size;
+
+            hdr.appendPropertyFromRawObject(obj);
+        }
+
+        const PropertiesData prop_data{hdr};
+
+        const auto q = std::find_if(plot_datas_.begin(),
+                                    plot_datas_.end(),
+                                    [&id](const PlotObjectBase* const pd) -> bool { return pd->getId() == id; });
+        if (q == plot_datas_.end())
+        {
+            awaiting_properties_data_[static_cast<int>(id)].appendProperties(prop_data);
+        }
+        else
+        {
+            (*q)->updateProperties(prop_data);
+        }
+    }
+}
+
 void PlotDataHandler::propertiesExtension(const internal::ItemId id, const PropertiesData& properties_data)
 {
     const auto q = std::find_if(plot_datas_.begin(), plot_datas_.end(), [&id](const PlotObjectBase* const pd) -> bool {

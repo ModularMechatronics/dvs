@@ -277,6 +277,10 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     {
         plot_data_handler_->propertiesExtension(plot_object_attributes.id, properties_data);
     }
+    else if (fcn == Function::PROPERTIES_EXTENSION_MULTIPLE)
+    {
+        plot_data_handler_->propertiesExtensionMultiple(received_data);
+    }
     else if (fcn == Function::CURRENT_ELEMENT_AS_IMAGE_VIEW)
     {
         axes_interactor_.setIsImageView(true);
@@ -517,7 +521,8 @@ void PlotPane::mouseRightPressed(wxMouseEvent& event)
     }
     else
     {
-        notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(), element_settings_.handle_string);
+        notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(),
+                                                  element_settings_.handle_string);
     }
 }
 

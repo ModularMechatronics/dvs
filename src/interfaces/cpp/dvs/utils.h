@@ -22,6 +22,7 @@ template <typename U> void fillBufferWithObjectsInternal(size_t idx, uint8_t* co
 {
     const uint8_t* const obj_ptr = reinterpret_cast<const uint8_t* const>(&obj);
 
+    // TODO: Use memcpy
     for (size_t k = 0; k < sizeof(U); k++)
     {
         buffer[idx] = obj_ptr[k];
@@ -34,6 +35,7 @@ void fillBufferWithObjectsInternal(size_t idx, uint8_t* const buffer, const U& o
 {
     const uint8_t* const obj_ptr = reinterpret_cast<const uint8_t* const>(&obj);
 
+    // TODO: Use memcpy
     for (size_t k = 0; k < sizeof(U); k++)
     {
         buffer[idx] = obj_ptr[k];
@@ -52,6 +54,7 @@ template <typename U> void fillObjectsFromBufferInternal(size_t idx, const uint8
 {
     uint8_t* const obj_ptr = reinterpret_cast<uint8_t* const>(&obj);
 
+    // TODO: Use memcpy
     for (size_t k = 0; k < sizeof(U); k++)
     {
         obj_ptr[k] = buffer[idx];

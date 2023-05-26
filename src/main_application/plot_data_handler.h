@@ -50,6 +50,7 @@ public:
                       const MatrixFixed<double, 3, 3>& scale);
     std::vector<LegendProperties> getLegendStrings() const;
     void propertiesExtension(const internal::ItemId id, const PropertiesData& properties_data);
+    void propertiesExtensionMultiple(const ReceivedData& received_data);
     void deletePlotObject(const ItemId id);
 };
 

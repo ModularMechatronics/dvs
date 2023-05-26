@@ -9,6 +9,7 @@
 #include "dvs/communication_header.h"
 #include "dvs/constants.h"
 #include "dvs/fillable_uint8_array.h"
+#include "dvs/property_set.h"
 #include "dvs/timing.h"
 #include "dvs/utils.h"
 #include "math/math.h"

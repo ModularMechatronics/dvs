@@ -512,6 +512,7 @@ public:
     void step()
     {
         world_.Step(timeStep, velocityIterations, positionIterations);
+        std::vector<PropertySet> props;
 
         for (size_t k = 0; k < kNumShapes; k++)
         {
@@ -520,7 +521,7 @@ public:
                                                                  -shapes_[k].body_handle->GetAngle(),
                                                                  shapes_[k].body_handle->GetPosition().x,
                                                                  shapes_[k].body_handle->GetPosition().y);
-            setProperties(shapes_[k].id, transform);
+            props.emplace_back(shapes_[k].id, transform);
         }
 
         {
@@ -529,7 +530,7 @@ public:
                                                                  -funnel_left_.body_handle->GetAngle(),
                                                                  funnel_left_.body_handle->GetPosition().x,
                                                                  funnel_left_.body_handle->GetPosition().y);
-            setProperties(funnel_left_.id, transform);
+            props.emplace_back(funnel_left_.id, transform);
         }
 
         {
@@ -538,7 +539,7 @@ public:
                                                                  -funnel_right_.body_handle->GetAngle(),
                                                                  funnel_right_.body_handle->GetPosition().x,
                                                                  funnel_right_.body_handle->GetPosition().y);
-            setProperties(funnel_right_.id, transform);
+            props.emplace_back(funnel_right_.id, transform);
         }
 
         {
@@ -547,7 +548,7 @@ public:
                                                                  -pusher_.body_handle->GetAngle(),
                                                                  pusher_.body_handle->GetPosition().x,
                                                                  pusher_.body_handle->GetPosition().y);
-            setProperties(pusher_.id, transform);
+            props.emplace_back(pusher_.id, transform);
         }
 
         {
@@ -556,8 +557,10 @@ public:
                                                                  -flipper_.body_handle->GetAngle(),
                                                                  flipper_.body_handle->GetPosition().x,
                                                                  flipper_.body_handle->GetPosition().y);
-            setProperties(flipper_.id, transform);
+            props.emplace_back(flipper_.id, transform);
         }
+
+        setProperties(props);
 
         const double phi_left = std::cos(t * 2.0) * 0.08f;
         const double phi_right = std::sin(t * 2.0) * 0.08f;

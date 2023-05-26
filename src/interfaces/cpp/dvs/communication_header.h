@@ -627,6 +627,16 @@ public:
         return get(type).as<T>();
     }
 
+    void appendPropertyFromRawObject(const CommunicationHeaderObject& object)
+    {
+        props_.pushBack(object);
+        CommunicationHeaderObject& current_obj = props_.lastElement();
+
+        const PropertyBase* const tmp_obj = reinterpret_cast<const PropertyBase* const>(object.data);
+        properties_lut_.appendPropertyIndex(tmp_obj->getPropertyType(), prop_idx_);
+        prop_idx_++;
+    }
+
     template <typename U> void append(const CommunicationHeaderObjectType& object_type, const U& data)
     {
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
