@@ -137,6 +137,29 @@ inline ImageRGBA<std::uint8_t> createCircle(const size_t radius,
     return circle;
 }
 
+inline properties::Transform getTransformExt(const ImageRGBAConstView<uint8_t>& img,
+                                             const Vec3d& size,
+                                             const double phi,
+                                             const double x_offset,
+                                             const double y_offset)
+{
+    const double image_width = img.width();
+    const double image_height = img.height();
+
+    const double max_dim_size = std::max(size.x, size.y);
+    const double max_dim_img = std::max(img.width(), img.height());
+    const Vec3d scale_vec{max_dim_size / max_dim_img, max_dim_size / max_dim_img, 1.0};
+
+    const auto scale_mat = diagMatrix<double>(scale_vec);
+    const Vec3d center_of_rotation = Vec3d{image_width / 2.0, image_height / 2.0, 0.0}.elementWiseMultiply(scale_vec);
+
+    const Matrix<double> rot_mat = rotationMatrixZ<double>(phi);
+    const Vec3<double> translation_vec =
+        -rotationMatrixZ<double>(-phi) * center_of_rotation + Vec3d{x_offset, y_offset, 0.0};
+
+    return properties::Transform{scale_mat, rot_mat, translation_vec};
+}
+
 struct Shape
 {
     float x_pos;
@@ -180,95 +203,17 @@ struct Shape
     {
         return height / 2.0;
     }
+
+    properties::Transform getTransform() const
+    {
+        const properties::Transform transform = getTransformExt(shape_img.constView(),
+                                                                {width, height, 1.0},
+                                                                -body_handle->GetAngle(),
+                                                                body_handle->GetPosition().x,
+                                                                body_handle->GetPosition().y);
+        return transform;
+    }
 };
-
-inline properties::Transform getTransform(const ImageRGBAConstView<uint8_t>& img,
-                                          const Vec3d& size,
-                                          const double phi,
-                                          const double x_offset,
-                                          const double y_offset)
-{
-    const double image_width = img.width();
-    const double image_height = img.height();
-
-    const double max_dim_size = std::max(size.x, size.y);
-    const double max_dim_img = std::max(img.width(), img.height());
-    const Vec3d scale_vec{max_dim_size / max_dim_img, max_dim_size / max_dim_img, 1.0};
-
-    const auto scale_mat = diagMatrix<double>(scale_vec);
-    const Vec3d center_of_rotation = Vec3d{image_width / 2.0, image_height / 2.0, 0.0}.elementWiseMultiply(scale_vec);
-
-    const Matrix<double> rot_mat = rotationMatrixZ<double>(phi);
-    const Vec3<double> translation_vec =
-        -rotationMatrixZ<double>(-phi) * center_of_rotation + Vec3d{x_offset, y_offset, 0.0};
-
-    return properties::Transform{scale_mat, rot_mat, translation_vec};
-}
-
-inline void readShapeImage(const std::string bin_path, ImageRGBA<std::uint8_t>& output_img)
-{
-    std::ifstream input(bin_path, std::ios::binary);
-
-    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
-
-    std::uint16_t num_rows, num_cols;
-    buffer.data();
-
-    std::memcpy(&num_cols, buffer.data(), sizeof(std::uint16_t));
-    std::memcpy(&num_rows, buffer.data() + sizeof(std::uint16_t), sizeof(std::uint16_t));
-
-    const std::uint8_t* const img_raw_ptr = buffer.data() + 2 * sizeof(std::uint16_t);
-
-    output_img.resize(num_rows, num_cols);
-
-    const size_t num_element_per_channel = num_rows * num_cols;
-
-    for (size_t ch = 0; ch < 3; ch++)
-    {
-        for (size_t r = 0; r < num_rows; r++)
-        {
-            for (size_t c = 0; c < num_cols; c++)
-            {
-                const std::uint8_t pixel_val = img_raw_ptr[ch * num_element_per_channel + r * num_cols + c];
-
-                size_t mapped_ch = 0;
-                switch (ch)
-                {
-                    case 0:
-                        mapped_ch = 2;
-                        break;
-                    case 1:
-                        mapped_ch = 1;
-                        break;
-                    case 2:
-                        mapped_ch = 0;
-                        break;
-                    default:
-                        mapped_ch = 0;
-                }
-                output_img(r, c, mapped_ch) = pixel_val;
-            }
-        }
-    }
-
-    for (size_t r = 0; r < num_rows; r++)
-    {
-        for (size_t c = 0; c < num_cols; c++)
-        {
-            // If white, set alpha to 0
-            const bool cond =
-                (output_img(r, c, 0) == 255) && (output_img(r, c, 1) == 255) && (output_img(r, c, 2) == 255);
-            if (cond)
-            {
-                output_img(r, c, 3) = 0;
-            }
-            else
-            {
-                output_img(r, c, 3) = 255;
-            }
-        }
-    }
-}
 
 class Joints
 {
@@ -286,14 +231,6 @@ private:
     float timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
-
-    ImageRGBA<uint8_t> circle_;
-    ImageRGBA<uint8_t> damper_;
-    ImageRGBA<uint8_t> pentagon_;
-    ImageRGBA<uint8_t> rounded_square_;
-    ImageRGBA<uint8_t> spring_;
-    ImageRGBA<uint8_t> square_;
-    ImageRGBA<uint8_t> square_borderless_;
 
     internal::ItemId id_counter_;
 
@@ -372,23 +309,6 @@ private:
     static constexpr dvs::internal::ItemId kLaunchSquareId = properties::ID0;
     static constexpr dvs::internal::ItemId kSpinningSquareId = properties::ID1;
 
-    void loadImages()
-    {
-        const std::string bin_path = "../demos/tests/joints/images/";
-
-        readShapeImage(bin_path + "circle.bin", circle_);
-        readShapeImage(bin_path + "damper.bin", damper_);
-        readShapeImage(bin_path + "pentagon.bin", pentagon_);
-        readShapeImage(bin_path + "rounded_square.bin", rounded_square_);
-        readShapeImage(bin_path + "spring.bin", spring_);
-        readShapeImage(bin_path + "square.bin", square_);
-
-        square_.remapChannels({2, 1, 0});
-
-        square_borderless_ = square_;
-        square_borderless_.fill(square_(40, 40, 0), square_(40, 40, 1), square_(40, 40, 2), 255);
-    }
-
     float t = 0.0f;
     std::vector<Shape> shapes_;
     Shape funnel_left_;
@@ -418,7 +338,6 @@ private:
 public:
     Joints() : gravity_{0.0f, -10.0f}, world_{gravity_}, ground_body_{nullptr}, ground_box_{}
     {
-        loadImages();
         id_counter_ = static_cast<internal::ItemId>(0);
 
         b2Body* wall_body = createStaticCollisionlessBody({0.0, 0.0}, {50.0, 50.0});
@@ -516,47 +435,27 @@ public:
 
         for (size_t k = 0; k < kNumShapes; k++)
         {
-            const properties::Transform transform = getTransform(shapes_[k].shape_img.constView(),
-                                                                 {shapes_[k].width, shapes_[k].height, 1.0},
-                                                                 -shapes_[k].body_handle->GetAngle(),
-                                                                 shapes_[k].body_handle->GetPosition().x,
-                                                                 shapes_[k].body_handle->GetPosition().y);
+            const properties::Transform transform = shapes_[k].getTransform();
             props.emplace_back(shapes_[k].id, transform);
         }
 
         {
-            const properties::Transform transform = getTransform(funnel_left_.shape_img.constView(),
-                                                                 {funnel_left_.width, funnel_left_.height, 1.0},
-                                                                 -funnel_left_.body_handle->GetAngle(),
-                                                                 funnel_left_.body_handle->GetPosition().x,
-                                                                 funnel_left_.body_handle->GetPosition().y);
+            const properties::Transform transform = funnel_left_.getTransform();
             props.emplace_back(funnel_left_.id, transform);
         }
 
         {
-            const properties::Transform transform = getTransform(funnel_right_.shape_img.constView(),
-                                                                 {funnel_right_.width, funnel_right_.height, 1.0},
-                                                                 -funnel_right_.body_handle->GetAngle(),
-                                                                 funnel_right_.body_handle->GetPosition().x,
-                                                                 funnel_right_.body_handle->GetPosition().y);
+            const properties::Transform transform = funnel_right_.getTransform();
             props.emplace_back(funnel_right_.id, transform);
         }
 
         {
-            const properties::Transform transform = getTransform(pusher_.shape_img.constView(),
-                                                                 {pusher_.width, pusher_.height, 1.0},
-                                                                 -pusher_.body_handle->GetAngle(),
-                                                                 pusher_.body_handle->GetPosition().x,
-                                                                 pusher_.body_handle->GetPosition().y);
+            const properties::Transform transform = pusher_.getTransform();
             props.emplace_back(pusher_.id, transform);
         }
 
         {
-            const properties::Transform transform = getTransform(flipper_.shape_img.constView(),
-                                                                 {flipper_.width, flipper_.height, 1.0},
-                                                                 -flipper_.body_handle->GetAngle(),
-                                                                 flipper_.body_handle->GetPosition().x,
-                                                                 flipper_.body_handle->GetPosition().y);
+            const properties::Transform transform = flipper_.getTransform();
             props.emplace_back(flipper_.id, transform);
         }
 
