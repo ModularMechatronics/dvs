@@ -24,6 +24,10 @@ Pre release:
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
 - Change all reinterpret_cast to static_cast<whatever>(static_cast<void*>())
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
+- For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
+  to populate it or property from the variadic templ. args
+- Data cursor, cursor to click on data to get xyz value
+- Consolidate system test (test-applications, both c and c++) to one system test application
 
 Post release:
 - Get user mouse input from plot back to user application

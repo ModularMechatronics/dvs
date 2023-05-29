@@ -23,8 +23,8 @@ void testBasic()
         joints.step();
         flushCurrentElement();
         usleep(1000 * 10);
-        deletePlotObject(properties::ID250);
-        deletePlotObject(properties::ID249);
+        // deletePlotObject(properties::ID250);
+        // deletePlotObject(properties::ID249);
     }
 }
 

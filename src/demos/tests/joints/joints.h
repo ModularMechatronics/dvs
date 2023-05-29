@@ -15,6 +15,55 @@ using namespace dvs;
 namespace joints
 {
 
+inline Vec3d calculateColormapRainbow(double value)
+{
+    if (value < 0.0)
+    {
+        value = 0.0;
+    }
+    else if (value >= 1.0)
+    {
+        value = 0.99999;
+    }
+
+    double full_range_value = value * 5.0;
+    double integer_part = floor(full_range_value);
+    double fraction_part = full_range_value - integer_part;
+
+    double r = 0.0, g = 0.0, b = 0.0;
+
+    switch (static_cast<int>(integer_part))
+    {
+        case 0:
+            r = 1.0 - fraction_part;
+            g = 1.0;
+            b = 0.0;
+            break;
+        case 1:
+            r = 0.0;
+            g = 1.0;
+            b = fraction_part;
+            break;
+        case 2:
+            r = 0.0;
+            g = 1.0 - fraction_part;
+            b = 1.0;
+            break;
+        case 3:
+            r = fraction_part;
+            g = 0.0;
+            b = 1.0;
+            break;
+        case 4:
+            r = 1.0;
+            g = 0.0;
+            b = 1.0 - fraction_part;
+            break;
+    }
+
+    return Vec3d(r, g, b);
+}
+
 inline ImageRGBA<std::uint8_t> createRectangle(
     const size_t width, const size_t height, const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue)
 {
@@ -281,7 +330,7 @@ private:
         return shp;
     }
 
-    Shape createDynamicBoxShape(const Vec2d& position, const Vec2d& size, const double angle)
+    Shape createDynamicBoxShape(const Vec2d& position, const Vec2d& size, const double angle, const Vec3d& color)
     {
         // Creating the dynamic body
         b2BodyDef body_def;
@@ -301,7 +350,11 @@ private:
 
         body->CreateFixture(&fixture_def);
 
-        const Shape shp(body, size.x, size.y, id_counter_, 255, 0, 0);
+        const std::uint8_t red = static_cast<std::uint8_t>(color.x * 255.0);
+        const std::uint8_t green = static_cast<std::uint8_t>(color.y * 255.0);
+        const std::uint8_t blue = static_cast<std::uint8_t>(color.z * 255.0);
+
+        const Shape shp(body, size.x, size.y, id_counter_, red, green, blue);
         id_counter_ = static_cast<internal::ItemId>(static_cast<int>(id_counter_) + 1);
         return shp;
     }
@@ -315,6 +368,13 @@ private:
     Shape funnel_right_;
     Shape pusher_;
     Shape flipper_;
+
+    // Pendulum
+    Shape pend_base_;
+    Shape pend_second_;
+    Shape pend_horizontal_;
+    Shape pend_right_;
+    Shape pend_left_;
 
     // Pusher
     float pusher_p;
@@ -333,7 +393,7 @@ private:
     float flipper_amplitude;
     float flipper_offset;
 
-    static constexpr size_t kNumShapes{20U};
+    static constexpr size_t kNumShapes{100U};
 
 public:
     Joints() : gravity_{0.0f, -10.0f}, world_{gravity_}, ground_body_{nullptr}, ground_box_{}
@@ -359,7 +419,8 @@ public:
         // float pusher_p;
         // float pusher_d;
 
-        pusher_ = createDynamicBoxShape(Vec2d{pusher_x, pusher_y}, Vec2d{pusher_width, pusher_height}, 0.0);
+        pusher_ = createDynamicBoxShape(
+            Vec2d{pusher_x, pusher_y}, Vec2d{pusher_width, pusher_height}, 0.0, Vec3d{1.0, 0.5, 0.0});
 
         flipper_p = debug_value_reader::readFloat("flipper_p");
         flipper_d = debug_value_reader::readFloat("flipper_d");
@@ -377,18 +438,75 @@ public:
                 y_pos += 1.2;
             }
 
+            const Vec3d col = calculateColormapRainbow(static_cast<double>(k) / static_cast<double>(kNumShapes - 1U));
+
             const float rot = static_cast<float>(rand() & 1001) / 1000.0f - 0.5f;
-            shapes_.emplace_back(createDynamicBoxShape(Vec2d{x_pos, y_pos}, Vec2d{1.0, 1.0}, rot));
+            shapes_.emplace_back(createDynamicBoxShape(Vec2d{x_pos, y_pos}, Vec2d{1.0, 1.0}, rot, col));
         }
 
         flipper_offset = debug_value_reader::readDouble("flipper_offset");
         flipper_ = createDynamicBoxShape(
             Vec2d{debug_value_reader::readDouble("flipper_x"), debug_value_reader::readDouble("flipper_y")},
             Vec2d{debug_value_reader::readDouble("flipper_width"), debug_value_reader::readDouble("flipper_height")},
-            flipper_offset);
+            flipper_offset,
+            Vec3d{0.0, 0.7, 0.1});
 
         flipper_frequency = debug_value_reader::readDouble("flipper_frequency");
         flipper_amplitude = debug_value_reader::readDouble("flipper_amplitude");
+
+        // Pendulum
+
+        float pendulum_width = 1.0f;
+        float pendulum_height = 8.0f;
+
+        pend_base_ = createDynamicBoxShape(
+            Vec2d{debug_value_reader::readDouble("pend_base_x"), debug_value_reader::readDouble("pend_base_y")},
+            Vec2d{pendulum_width, pendulum_height},
+            0.0,
+            Vec3d{0.0, 1.0, 1.0});
+
+        pend_second_ = createDynamicBoxShape(Vec2d{debug_value_reader::readDouble("pend_base_x"),
+                                                   debug_value_reader::readDouble("pend_base_y") + pendulum_height},
+                                             Vec2d{pendulum_width, pendulum_height},
+                                             0.0,
+                                             Vec3d{0.0, 0.0, 1.0});
+
+        pend_horizontal_ =
+            createDynamicBoxShape(Vec2d{debug_value_reader::readDouble("pend_base_x"),
+                                        debug_value_reader::readDouble("pend_base_y") + pendulum_height * 2.0f},
+                                  Vec2d{pendulum_height, pendulum_width},
+                                  0.0,
+                                  Vec3d{0.3, 0.5, 0.9});
+
+        b2RevoluteJointDef joint_def0;
+        joint_def0.bodyA = wall_body;
+        joint_def0.bodyB = pend_base_.body_handle;
+        joint_def0.localAnchorA = b2Vec2{debug_value_reader::readFloat("pend_base_x"),
+                                         debug_value_reader::readFloat("pend_base_y") - pendulum_height / 2.0f};
+        joint_def0.localAnchorB = b2Vec2{0.0, -pendulum_height / 2.0f};
+        joint_def0.enableLimit = false;
+
+        b2Joint* joint0 = world_.CreateJoint(&joint_def0);
+
+        b2RevoluteJointDef joint_def1;
+        joint_def1.bodyA = pend_base_.body_handle;
+        joint_def1.bodyB = pend_second_.body_handle;
+        joint_def1.collideConnected = false;
+        joint_def1.localAnchorA = b2Vec2{0.0f, pendulum_height / 2.0f};
+        joint_def1.localAnchorB = b2Vec2{0.0, -pendulum_height / 2.0f};
+        joint_def1.enableLimit = false;
+
+        b2Joint* joint1 = world_.CreateJoint(&joint_def1);
+
+        b2RevoluteJointDef joint_def2;
+        joint_def2.bodyA = pend_second_.body_handle;
+        joint_def2.bodyB = pend_horizontal_.body_handle;
+        joint_def2.collideConnected = false;
+        joint_def2.localAnchorA = b2Vec2{0.0f, pendulum_height / 2.0f};
+        joint_def2.localAnchorB = b2Vec2{0.0f, 0.0f};
+        joint_def2.enableLimit = false;
+
+        b2Joint* joint2 = world_.CreateJoint(&joint_def2);
 
         // Spring joint
         /*b2DistanceJointDef joint_def0, joint_def1;
@@ -415,15 +533,15 @@ public:
         joint_def2.Initialize(wall_body, dynamic_body_, b2Vec2{0.0, 0.0}, b2Vec2{0.0, 1.0});
         b2Joint* joint2 = world_.CreateJoint(&joint_def2);*/
 
-        b2RevoluteJointDef joint_def0;
-        joint_def0.bodyA = wall_body;
-        joint_def0.bodyB = flipper_.body_handle;
-        joint_def0.localAnchorA =
+        b2RevoluteJointDef joint_def_flipper;
+        joint_def_flipper.bodyA = wall_body;
+        joint_def_flipper.bodyB = flipper_.body_handle;
+        joint_def_flipper.localAnchorA =
             b2Vec2{debug_value_reader::readFloat("flipper_x"), debug_value_reader::readFloat("flipper_y")};
-        joint_def0.localAnchorB = b2Vec2{0.0, 0.0};
-        joint_def0.enableLimit = false;
+        joint_def_flipper.localAnchorB = b2Vec2{0.0, 0.0};
+        joint_def_flipper.enableLimit = false;
 
-        b2Joint* joint0 = world_.CreateJoint(&joint_def0);
+        b2Joint* joint_flipper = world_.CreateJoint(&joint_def_flipper);
     }
 
     ~Joints() {}
@@ -439,25 +557,18 @@ public:
             props.emplace_back(shapes_[k].id, transform);
         }
 
-        {
-            const properties::Transform transform = funnel_left_.getTransform();
-            props.emplace_back(funnel_left_.id, transform);
-        }
+        props.emplace_back(funnel_left_.id, funnel_left_.getTransform());
 
-        {
-            const properties::Transform transform = funnel_right_.getTransform();
-            props.emplace_back(funnel_right_.id, transform);
-        }
+        props.emplace_back(funnel_right_.id, funnel_right_.getTransform());
 
-        {
-            const properties::Transform transform = pusher_.getTransform();
-            props.emplace_back(pusher_.id, transform);
-        }
+        props.emplace_back(pusher_.id, pusher_.getTransform());
 
-        {
-            const properties::Transform transform = flipper_.getTransform();
-            props.emplace_back(flipper_.id, transform);
-        }
+        props.emplace_back(flipper_.id, flipper_.getTransform());
+
+        props.emplace_back(pend_base_.id, pend_base_.getTransform());
+
+        props.emplace_back(pend_second_.id, pend_second_.getTransform());
+        props.emplace_back(pend_horizontal_.id, pend_horizontal_.getTransform());
 
         setProperties(props);
 
@@ -486,6 +597,8 @@ public:
 
         flipper_.body_handle->ApplyTorque(u, true);
 
+        // Pendulum
+
         Vector<float> x0(2), y0(2);
         Vector<float> x1(2), y1(2);
         x0(0) = debug_value_reader::readDouble("flipper_x");
@@ -494,7 +607,7 @@ public:
         x0(1) = x0(0) + 8.0 * std::cos(flipper_reference_angle);
         y0(1) = y0(0) + 8.0 * std::sin(flipper_reference_angle);
 
-        plot(x0, y0, properties::Color::RED, properties::ID250);
+        // plot(x0, y0, properties::Color::RED, properties::ID250);
 
         x1(0) = pusher_reference_pos;
         y1(0) = -16.0;
@@ -502,7 +615,7 @@ public:
         x1(1) = pusher_reference_pos;
         y1(1) = -8.0;
 
-        plot(x1, y1, properties::Color::RED, properties::ID249);
+        // plot(x1, y1, properties::Color::RED, properties::ID249);
 
         t += 0.05f;
     }
