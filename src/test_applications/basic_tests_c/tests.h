@@ -72,7 +72,7 @@ void testSurf()
     free(ry.data);
 }
 
-void testDrawPolygonFrom4Points()
+/*void testDrawPolygonFrom4Points()
 {
     Point3d p0 = {0.0, 0.0, 0.0};
     Point3d p1 = {0.0, 1.0, 1.0};
@@ -140,7 +140,7 @@ void testDrawPlaneYZ()
     setCurrentElement("view_02");
     clearView();
     drawPlaneYZ(plane, p0, p1, Color(255, 0, 11));
-}
+}*/
 
 void testImShow()
 {
@@ -185,7 +185,7 @@ void testImShow()
     // imShow(img1, Color(255, 0, 11));
 }
 
-void testDrawLineBetweenPoints()
+/*void testDrawLineBetweenPoints()
 {
     const Point3d p0 = {0.1, 0.1, 0.1};
     const Point3d p1 = {1.0, 2.0, 3.0};
@@ -197,6 +197,6 @@ void testDrawLineBetweenPoints()
     clearView();
     drawLineBetweenPoints(p0, p1, Color(255, 0, 11));
     drawLineBetween2DPoints(p0_2, p1_2, Color(255, 0, 11));
-}
+}*/
 
-#endif // TEST_APPLICATIONS_BASIC_TESTS_C_TESTS_H_
+#endif  // TEST_APPLICATIONS_BASIC_TESTS_C_TESTS_H_

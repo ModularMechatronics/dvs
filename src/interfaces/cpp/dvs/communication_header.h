@@ -630,7 +630,6 @@ public:
     void appendPropertyFromRawObject(const CommunicationHeaderObject& object)
     {
         props_.pushBack(object);
-        CommunicationHeaderObject& current_obj = props_.lastElement();
 
         const PropertyBase* const tmp_obj = reinterpret_cast<const PropertyBase* const>(object.data);
         properties_lut_.appendPropertyIndex(tmp_obj->getPropertyType(), prop_idx_);
