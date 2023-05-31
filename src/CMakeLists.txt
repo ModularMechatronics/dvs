@@ -72,10 +72,7 @@ find_package(GLUT REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
 # Adding subdirectories
-add_subdirectory(test_applications/basic_tests_cpp)
-add_subdirectory(test_applications/basic_tests_c)
-add_subdirectory(test_applications/advanced_tests_cpp)
-add_subdirectory(test_applications/real_time_gui)
+add_subdirectory(applications/real_time_gui)
 add_subdirectory(system_test)
 add_subdirectory(demos)
 # add_subdirectory(test)
