@@ -52,6 +52,8 @@ int main(int argc, char* argv[])
         }
         else if (arg == "all")
         {
+            std::cout << "Running all tests..." << std::endl << std::endl;
+
             for (const auto& lang : tests_)
             {
                 for (const auto& test_category : lang.second)
@@ -92,12 +94,51 @@ int main(int argc, char* argv[])
                 {
                     tests_[lang][test_category][test_name]();
                 }
+                else if (test_name == "all")
+                {
+                    std::cout << "Running all tests for language \033[32m" << lang
+                              << "\033[0m in test category \033[33m" << test_category << "\033[0m..." << std::endl
+                              << std::endl;
+
+                    for (const auto& test_category : tests_[lang])
+                    {
+                        for (const auto& test_name : test_category.second)
+                        {
+                            std::string test_name_full = "\033[32m" + lang + "\033[0m::\033[33m" + test_category.first +
+                                                         "\033[0m::\033[35m" + test_name.first + "\033[0m";
+                            std::cout << "Running " << test_name_full << "..." << std::endl;
+                            test_name.second();
+                            std::cout << test_name_full << " ran successfully. Press enter to continue." << std::endl
+                                      << std::endl;
+                            std::cin.ignore();
+                        }
+                    }
+                }
                 else
                 {
                     std::cout << "\033[31mERROR: No matching test name for provided third argument: \033[0m"
                               << test_name << std::endl
                               << std::endl;
                     displayHelp();
+                }
+            }
+            else if (test_category == "all")
+            {
+                std::cout << "Running all tests for language \033[32m" << lang << "\033[0m..." << std::endl
+                          << std::endl;
+
+                for (const auto& test_category : tests_[lang])
+                {
+                    for (const auto& test_name : test_category.second)
+                    {
+                        std::string test_name_full = "\033[32m" + lang + "\033[0m::\033[33m" + test_category.first +
+                                                     "\033[0m::\033[35m" + test_name.first + "\033[0m";
+                        std::cout << "Running " << test_name_full << "..." << std::endl;
+                        test_name.second();
+                        std::cout << test_name_full << " ran successfully. Press enter to continue." << std::endl
+                                  << std::endl;
+                        std::cin.ignore();
+                    }
                 }
             }
             else
