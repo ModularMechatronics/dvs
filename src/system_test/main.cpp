@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "advanced_cpp/tests.h"
-#include "basic_c/tests.hpp"
+#include "basic_c/tests.h"
 #include "basic_cpp/tests.h"
 #include "dvs/dvs.h"
 #include "utils.h"

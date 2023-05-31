@@ -16,4 +16,19 @@ void testImShow();
 }
 #endif
 
+#ifdef __cplusplus
+namespace basic_c
+{
+inline void addTests()
+{
+    addTest("c", "basic", "plot", testPlot);
+    addTest("c", "basic", "plot3", testPlot3);
+    addTest("c", "basic", "scatter", testScatter);
+    addTest("c", "basic", "scatter3", testScatter3);
+    addTest("c", "basic", "surf", testSurf);
+    addTest("c", "basic", "imShow", testImShow);
+}
+}  // namespace basic_c
+#endif
+
 #endif  // SYSTEM_TEST_BASIC_C_TESTS_H
