@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "advanced_cpp/tests.h"
+#include "basic_c/tests.hpp"
 #include "basic_cpp/tests.h"
 #include "dvs/dvs.h"
 #include "utils.h"
@@ -36,6 +37,7 @@ int main(int argc, char* argv[])
 {
     basic_cpp::addTests();
     advanced_cpp::addTests();
+    basic_c::addTests();
 
     if (argc == 1)
     {
