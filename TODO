@@ -30,6 +30,7 @@ Pre release:
 - Consolidate system test (test-applications, both c and c++) to one system test application
 
 Post release:
+- Pro version of dvs including buttons?
 - Get user mouse input from plot back to user application
 - Drawing annotations in image (2D/3D bounding boxes, semantic pixel labeling)
 - New application that loads dynamic library (like the newer app) that plots real time data (like main_application),

@@ -29,6 +29,11 @@
                     "elements": [
                         {
                             "type": "PLOT_PANE",
+                            "axes_letters_on": false,
+                            "axes_numbers_on": false,
+                            "grid_on": false,
+                            "plot_box_on": false,
+                            "clipping_on": false,
                             "axes_letters_color": {
                                 "b": 0.0,
                                 "g": 0.0,
@@ -44,7 +49,7 @@
                                 "g": 0.699999988079071,
                                 "r": 0.699999988079071
                             },
-                            "handle_string": "p_view_0",
+                            "handle_string": "_",
                             "height": 1.0,
                             "pane_radius": 20.0,
                             "plot_box_color": {

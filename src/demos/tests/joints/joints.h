@@ -272,14 +272,13 @@ public:
 private:
     b2Vec2 gravity_{};
     b2World world_;
-    b2Body* ground_body_{};
     b2PolygonShape ground_box_{};
     b2Body* dynamic_body_;
     b2Body* spinner_body_;
 
-    float timeStep = 1.0f / 60.0f;
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
+    float time_step = 1.0f / 60.0f;
+    int32 velocity_iterations = 6;
+    int32 position_iterations = 2;
 
     internal::ItemId id_counter_;
 
@@ -366,6 +365,7 @@ private:
     std::vector<Shape> shapes_;
     Shape funnel_left_;
     Shape funnel_right_;
+    Shape ground_body_;
     Shape pusher_;
     Shape flipper_;
 
@@ -393,16 +393,18 @@ private:
     float flipper_amplitude;
     float flipper_offset;
 
-    static constexpr size_t kNumShapes{100U};
+    static constexpr size_t kNumShapes{80U};
 
 public:
-    Joints() : gravity_{0.0f, -10.0f}, world_{gravity_}, ground_body_{nullptr}, ground_box_{}
+    Joints() : gravity_{0.0f, -10.0f}, world_{gravity_}, ground_box_{}
     {
         id_counter_ = static_cast<internal::ItemId>(0);
 
         b2Body* wall_body = createStaticCollisionlessBody({0.0, 0.0}, {50.0, 50.0});
 
-        createStaticBody({0.0, -10.0}, {6.0, 1.0}, 0.0);
+        // createStaticBody({0.0, -10.0}, {6.0, 1.0}, 0.0);
+
+        ground_body_ = createStaticBoxShape(Vec2d{0.0, -10.0}, Vec2d{12.0, 2.0}, 0.0);
 
         funnel_left_ = createStaticBoxShape(Vec2d{-4.0, -1.0}, Vec2d{12.0, 1.0}, (120.0) * M_PI / 180.0);
         funnel_right_ = createStaticBoxShape(Vec2d{4.0, -1.0}, Vec2d{12.0, 1.0}, (-120.0) * M_PI / 180.0);
@@ -474,7 +476,7 @@ public:
         pend_horizontal_ =
             createDynamicBoxShape(Vec2d{debug_value_reader::readDouble("pend_base_x"),
                                         debug_value_reader::readDouble("pend_base_y") + pendulum_height * 2.0f},
-                                  Vec2d{pendulum_height, pendulum_width},
+                                  Vec2d{pendulum_width, pendulum_height * 0.8},
                                   0.0,
                                   Vec3d{0.3, 0.5, 0.9});
 
@@ -503,35 +505,10 @@ public:
         joint_def2.bodyB = pend_horizontal_.body_handle;
         joint_def2.collideConnected = false;
         joint_def2.localAnchorA = b2Vec2{0.0f, pendulum_height / 2.0f};
-        joint_def2.localAnchorB = b2Vec2{0.0f, 0.0f};
+        joint_def2.localAnchorB = b2Vec2{0.0f, -0.8f * pendulum_height / 2.0f};
         joint_def2.enableLimit = false;
 
         b2Joint* joint2 = world_.CreateJoint(&joint_def2);
-
-        // Spring joint
-        /*b2DistanceJointDef joint_def0, joint_def1;
-
-        joint_def0.Initialize(wall_body, dynamic_body_, b2Vec2{-1.0, 1.0}, b2Vec2{-4.0, 4.0});
-        joint_def0.length = 2.0f;
-
-        joint_def0.collideConnected = false;
-        joint_def0.frequencyHz = 10.0f;
-        joint_def0.dampingRatio = 0.1f;
-
-        joint_def1.Initialize(wall_body, dynamic_body_, b2Vec2{1.0, 1.0}, b2Vec2{4.0, 4.0});
-        joint_def1.length = 2.0f;
-
-        joint_def1.collideConnected = false;
-        joint_def1.frequencyHz = 10.0f;
-        joint_def1.dampingRatio = 0.1f;
-
-        b2Joint* joint0 = world_.CreateJoint(&joint_def0);
-        b2Joint* joint1 = world_.CreateJoint(&joint_def1);
-
-        // Prism joint
-        b2PrismaticJointDef joint_def2;
-        joint_def2.Initialize(wall_body, dynamic_body_, b2Vec2{0.0, 0.0}, b2Vec2{0.0, 1.0});
-        b2Joint* joint2 = world_.CreateJoint(&joint_def2);*/
 
         b2RevoluteJointDef joint_def_flipper;
         joint_def_flipper.bodyA = wall_body;
@@ -546,13 +523,107 @@ public:
 
     ~Joints() {}
 
-    void step()
+    Vec2d base_zoom_half_range{20.0, 20.0};
+    Vec2d base_zoom_center{12.0, -8.0};
+    double z_min = -1.0;
+    double z_max = 1.0;
+    double current_zoom_factor = 1.0;
+    Vec2d current_pos;
+    Vec2d current_range;
+
+    bool angle_reached = false;
+
+    float angle_offset = 0.0f;
+    float current_angle;
+
+    void setAxes(const size_t iteration)
     {
-        world_.Step(timeStep, velocityIterations, positionIterations);
+        if (iteration == 0)
+        {
+            current_pos.x = base_zoom_center.x;
+            current_pos.y = base_zoom_center.y;
+            current_range.x = base_zoom_half_range.x * current_zoom_factor;
+            current_range.y = base_zoom_half_range.y * current_zoom_factor;
+        }
+        else if (angle_reached)
+        {
+            const Vec2d current_reference = base_zoom_center;
+            const double zoom_factor_reference = 1.0;
+            const double reference_angle = 0.0;
+
+            const double h = 0.01;
+            const double h1 = (1.0 - h);
+
+            current_pos.x = current_pos.x * h1 + current_reference.x * h;
+            current_pos.y = current_pos.y * h1 + current_reference.y * h;
+            current_zoom_factor = current_zoom_factor * h1 + zoom_factor_reference * h;
+
+            current_angle = current_angle * h1 + reference_angle * h;
+
+            current_range.x = base_zoom_half_range.x * current_zoom_factor;
+            current_range.y = base_zoom_half_range.y * current_zoom_factor;
+            view(current_angle * 180.0 / M_PI, 90.0);
+        }
+        else if (iteration < 150) {}
+        else if (iteration < 600)
+        {
+            const auto p = shapes_[16].body_handle->GetPosition();
+            const Vec2d current_reference(p.x, p.y);
+            const double zoom_factor_reference = 0.5;
+
+            const double h = 0.05;
+            const double h1 = (1.0 - h);
+
+            current_pos.x = current_pos.x * h1 + current_reference.x * h;
+            current_pos.y = current_pos.y * h1 + current_reference.y * h;
+            current_zoom_factor = current_zoom_factor * h1 + zoom_factor_reference * h;
+
+            current_range.x = base_zoom_half_range.x * current_zoom_factor;
+            current_range.y = base_zoom_half_range.y * current_zoom_factor;
+        }
+        else
+        {
+            const auto p = pend_horizontal_.body_handle->GetPosition();
+            const auto ang = pend_horizontal_.body_handle->GetAngle();
+
+            if (ang < (-M_PI))
+            {
+                angle_reached = true;
+                current_angle = ang;
+            }
+
+            view(((angle_offset + -ang) * 180.0 / M_PI), 90.0);
+
+            const Vec2d current_reference(p.x, p.y);
+            const double zoom_factor_reference = 0.8;
+
+            const double h = 0.2;
+            const double h1 = (1.0 - h);
+
+            current_pos.x = current_pos.x * h1 + current_reference.x * h;
+            current_pos.y = current_pos.y * h1 + current_reference.y * h;
+            current_zoom_factor = current_zoom_factor * h1 + zoom_factor_reference * h;
+
+            current_range.x = base_zoom_half_range.x * current_zoom_factor;
+            current_range.y = base_zoom_half_range.y * current_zoom_factor;
+        }
+
+        axis({current_pos.x - current_range.x, current_pos.y - current_range.y, z_min},
+             {current_pos.x + current_range.x, current_pos.y + current_range.y, z_max});
+    }
+
+    void step(const size_t iteration)
+    {
+        setAxes(iteration);
+
+        world_.Step(time_step, velocity_iterations, position_iterations);
+
         std::vector<PropertySet> props;
 
         for (size_t k = 0; k < kNumShapes; k++)
         {
+            const auto p = shapes_[k].body_handle->GetPosition();
+
             const properties::Transform transform = shapes_[k].getTransform();
             props.emplace_back(shapes_[k].id, transform);
         }
@@ -569,6 +640,8 @@ public:
 
         props.emplace_back(pend_second_.id, pend_second_.getTransform());
         props.emplace_back(pend_horizontal_.id, pend_horizontal_.getTransform());
+
+        props.emplace_back(ground_body_.id, ground_body_.getTransform());
 
         setProperties(props);
 
@@ -598,24 +671,6 @@ public:
         flipper_.body_handle->ApplyTorque(u, true);
 
         // Pendulum
-
-        Vector<float> x0(2), y0(2);
-        Vector<float> x1(2), y1(2);
-        x0(0) = debug_value_reader::readDouble("flipper_x");
-        y0(0) = debug_value_reader::readDouble("flipper_y");
-
-        x0(1) = x0(0) + 8.0 * std::cos(flipper_reference_angle);
-        y0(1) = y0(0) + 8.0 * std::sin(flipper_reference_angle);
-
-        // plot(x0, y0, properties::Color::RED, properties::ID250);
-
-        x1(0) = pusher_reference_pos;
-        y1(0) = -16.0;
-
-        x1(1) = pusher_reference_pos;
-        y1(1) = -8.0;
-
-        // plot(x1, y1, properties::Color::RED, properties::ID249);
 
         t += 0.05f;
     }
