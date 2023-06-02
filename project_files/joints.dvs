@@ -26,9 +26,24 @@
                         "g": 0.0,
                         "r": 0.0
                     },
+                    "background_color0": {
+                        "r": 0.6471,
+                        "g": 0.9804,
+                        "b": 0.9137
+                    },
+                    "background_color": {
+                        "r": 0.4471,
+                        "g": 0.9804,
+                        "b": 0.9137
+                    },
                     "elements": [
                         {
                             "type": "PLOT_PANE",
+                            "background_color": {
+                                "r": 0.4471,
+                                "g": 0.9804,
+                                "b": 0.9137
+                            },
                             "axes_letters_on": false,
                             "axes_numbers_on": false,
                             "grid_on": false,

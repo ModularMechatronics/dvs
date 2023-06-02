@@ -64,13 +64,186 @@ inline Vec3d calculateColormapRainbow(double value)
     return Vec3d(r, g, b);
 }
 
+inline Vec3d calculateColormapPastel(double value)
+{
+    if (value < 0.0)
+    {
+        value = 0.0;
+    }
+    else if (value >= 1.0)
+    {
+        value = 0.99999;
+    }
+
+    double full_range_value = value * 5.0;
+    double integer_part = floor(full_range_value);
+    double fraction_part = full_range_value - integer_part;
+
+    double r = 0.0, g = 0.0, b = 0.0;
+
+    switch (static_cast<int>(integer_part))
+    {
+        case 0:
+            r = 1.0;
+            g = 0.6039215686274509 + fraction_part * 0.11372549019607847;
+            b = 0.6352941176470588 + fraction_part * 0.06274509803921569;
+            break;
+        case 1:
+            r = 1.0;
+            g = 0.7176470588235294 + fraction_part * 0.13725490196078427;
+            b = 0.6980392156862745 + fraction_part * 0.06274509803921569;
+            break;
+        case 2:
+            r = 1.0 - fraction_part * 0.11372549019607847;
+            g = 0.8549019607843137 + fraction_part * 0.0862745098039216;
+            b = 0.7607843137254902 + fraction_part * 0.04313725490196085;
+            break;
+        case 3:
+            r = 0.8862745098039215 - fraction_part * 0.180392156862745;
+            g = 0.9411764705882353 - fraction_part * 0.02352941176470591;
+            b = 0.803921568627451 + fraction_part * 0.04313725490196074;
+            break;
+        case 4:
+            r = 0.7058823529411765 + fraction_part * 0.07450980392156858;
+            g = 0.9176470588235294 - fraction_part * 0.1098039215686274;
+            b = 0.8470588235294118 + fraction_part * 0.06666666666666665;
+            break;
+    }
+
+    return Vec3d(r, g, b);
+}
+
+inline Vec3d calculateColormapPastel2(double value)
+{
+    if (value < 0.0)
+    {
+        value = 0.0;
+    }
+    else if (value >= 1.0)
+    {
+        value = 0.99999;
+    }
+
+    double full_range_value = value * 20.0;
+    double integer_part = floor(full_range_value);
+    double fraction_part = full_range_value - integer_part;
+
+    double r = 0.0, g = 0.0, b = 0.0;
+
+    switch (static_cast<int>(integer_part))
+    {
+        case 0:
+            r = 0.6471 - fraction_part * 0.10980000000000001;
+            g = 0.7804 - fraction_part * 0.050999999999999934;
+            b = 0.9137 - fraction_part * 0.04699999999999993;
+            break;
+        case 1:
+            r = 0.5373 - fraction_part * 0.13340000000000002;
+            g = 0.7294 - fraction_part * 0.12550000000000006;
+            b = 0.8667 - fraction_part * 0.20000000000000007;
+            break;
+        case 2:
+            r = 0.4039 + fraction_part * 0.25490000000000007;
+            g = 0.6039 + fraction_part * 0.251;
+            b = 0.6667 + fraction_part * 0.15290000000000004;
+            break;
+        case 3:
+            r = 0.6588 - fraction_part * 0.09800000000000009;
+            g = 0.8549 - fraction_part * 0.04310000000000003;
+            b = 0.8196 - fraction_part * 0.1059;
+            break;
+        case 4:
+            r = 0.5608 - fraction_part * 0.031399999999999983;
+            g = 0.8118 - fraction_part * 0.07850000000000001;
+            b = 0.7137 - fraction_part * 0.04700000000000004;
+            break;
+        case 5:
+            r = 0.5294 + fraction_part * 0.2118;
+            g = 0.7333 + fraction_part * 0.13340000000000007;
+            b = 0.6667 + fraction_part * 0.023500000000000076;
+            break;
+        case 6:
+            r = 0.7412 - fraction_part * 0.0039000000000000146;
+            g = 0.8667 - fraction_part * 0.0706;
+            b = 0.6902 + fraction_part * 0.015699999999999936;
+            break;
+        case 7:
+            r = 0.7373 + fraction_part * 0.23920000000000008;
+            g = 0.7961 + fraction_part * 0.14900000000000002;
+            b = 0.7059 - fraction_part * 0.1412;
+            break;
+        case 8:
+            r = 0.9765 - fraction_part * 0.41180000000000005;
+            g = 0.9451 - fraction_part * 0.031400000000000095;
+            b = 0.5647 + fraction_part * 0.007800000000000029;
+            break;
+        case 9:
+            r = 0.5647 + fraction_part * 0.38040000000000007;
+            g = 0.9137 + fraction_part * 0.015700000000000047;
+            b = 0.5725 - fraction_part * 0.0039000000000000146;
+            break;
+        case 10:
+            r = 0.9451 + fraction_part * 0.011799999999999922;
+            g = 0.9294 + fraction_part * 0.015700000000000047;
+            b = 0.5686 + fraction_part * 0.13339999999999996;
+            break;
+        case 11:
+            r = 0.9569 - fraction_part * 0.15689999999999993;
+            g = 0.9451 - fraction_part * 0.27060000000000006;
+            b = 0.702 - fraction_part * 0.13339999999999996;
+            break;
+        case 12:
+            r = 0.8 + fraction_part * 0.1842999999999999;
+            g = 0.6745 + fraction_part * 0.19610000000000005;
+            b = 0.5686 + fraction_part * 0.30200000000000005;
+            break;
+        case 13:
+            r = 0.9843 - fraction_part * 0.007799999999999918;
+            g = 0.8706 - fraction_part * 0.1726000000000001;
+            b = 0.8706 - fraction_part * 0.13330000000000009;
+            break;
+        case 14:
+            r = 0.9765 - fraction_part * 0.011800000000000033;
+            g = 0.698 - fraction_part * 0.11369999999999991;
+            b = 0.7373 - fraction_part * 0.1412;
+            break;
+        case 15:
+            r = 0.9647 + fraction_part * 0.015700000000000047;
+            g = 0.5843 + fraction_part * 0.06279999999999997;
+            b = 0.5961 - fraction_part * 0.06669999999999998;
+            break;
+        case 16:
+            r = 0.9804 - fraction_part * 0.04310000000000003;
+            g = 0.6471 + fraction_part * 0.007800000000000029;
+            b = 0.5294 + fraction_part * 0.06279999999999997;
+            break;
+        case 17:
+            r = 0.9373 + fraction_part * 0.06269999999999998;
+            g = 0.6549 + fraction_part * 0.08629999999999993;
+            b = 0.5922 - fraction_part * 0.09019999999999995;
+            break;
+        case 18:
+            r = 1.0 - fraction_part * 0.19610000000000005;
+            g = 0.7412 - fraction_part * 0.03920000000000001;
+            b = 0.502 + fraction_part * 0.3294;
+            break;
+        case 19:
+            r = 0.8039 - fraction_part * 0.10189999999999999;
+            g = 0.702 + fraction_part * 0.0039000000000000146;
+            b = 0.8314 + fraction_part * 0.01959999999999995;
+            break;
+    }
+
+    return Vec3d(r, g, b);
+}
+
 inline ImageRGBA<std::uint8_t> createRectangle(
     const size_t width, const size_t height, const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue)
 {
     ImageRGBA<std::uint8_t> rectangle{height, width};
 
     rectangle.fill(red, green, blue, 255);
-    const size_t black_border_width = 5;
+    const size_t black_border_width = 0;
 
     for (size_t r = 0; r < height; r++)
     {
@@ -310,7 +483,7 @@ private:
         return body;
     }
 
-    Shape createStaticBoxShape(const Vec2d& position, const Vec2d& size, const double angle)
+    Shape createStaticBoxShape(const Vec2d& position, const Vec2d& size, const double angle, const Vec3d& color)
     {
         b2BodyDef body_def;
         body_def.type = b2_staticBody;
@@ -322,9 +495,13 @@ private:
 
         b2Body* body = world_.CreateBody(&body_def);
 
+        const std::uint8_t red = static_cast<std::uint8_t>(color.x * 255.0);
+        const std::uint8_t green = static_cast<std::uint8_t>(color.y * 255.0);
+        const std::uint8_t blue = static_cast<std::uint8_t>(color.z * 255.0);
+
         body->CreateFixture(&body_shape, 0.0f);
 
-        const Shape shp(body, size.x, size.y, id_counter_, 0, 255, 0);
+        const Shape shp(body, size.x, size.y, id_counter_, red, green, blue);
         id_counter_ = static_cast<internal::ItemId>(static_cast<int>(id_counter_) + 1);
         return shp;
     }
@@ -404,10 +581,12 @@ public:
 
         // createStaticBody({0.0, -10.0}, {6.0, 1.0}, 0.0);
 
-        ground_body_ = createStaticBoxShape(Vec2d{0.0, -10.0}, Vec2d{12.0, 2.0}, 0.0);
+        ground_body_ = createStaticBoxShape(Vec2d{0.0, -10.0}, Vec2d{12.0, 2.0}, 0.0, calculateColormapPastel2(0.0));
 
-        funnel_left_ = createStaticBoxShape(Vec2d{-4.0, -1.0}, Vec2d{12.0, 1.0}, (120.0) * M_PI / 180.0);
-        funnel_right_ = createStaticBoxShape(Vec2d{4.0, -1.0}, Vec2d{12.0, 1.0}, (-120.0) * M_PI / 180.0);
+        funnel_left_ = createStaticBoxShape(
+            Vec2d{-4.0, -1.0}, Vec2d{12.0, 1.0}, (120.0) * M_PI / 180.0, calculateColormapPastel2(0.7));
+        funnel_right_ = createStaticBoxShape(
+            Vec2d{4.0, -1.0}, Vec2d{12.0, 1.0}, (-120.0) * M_PI / 180.0, calculateColormapPastel2(0.8));
 
         pusher_x = debug_value_reader::readFloat("pusher_x");
         pusher_y = debug_value_reader::readFloat("pusher_y");
@@ -422,7 +601,7 @@ public:
         // float pusher_d;
 
         pusher_ = createDynamicBoxShape(
-            Vec2d{pusher_x, pusher_y}, Vec2d{pusher_width, pusher_height}, 0.0, Vec3d{1.0, 0.5, 0.0});
+            Vec2d{pusher_x, pusher_y}, Vec2d{pusher_width, pusher_height}, 0.0, calculateColormapPastel2(0.2));
 
         flipper_p = debug_value_reader::readFloat("flipper_p");
         flipper_d = debug_value_reader::readFloat("flipper_d");
@@ -440,7 +619,7 @@ public:
                 y_pos += 1.2;
             }
 
-            const Vec3d col = calculateColormapRainbow(static_cast<double>(k) / static_cast<double>(kNumShapes - 1U));
+            const Vec3d col = calculateColormapPastel2(static_cast<double>(k) / static_cast<double>(kNumShapes - 1U));
 
             const float rot = static_cast<float>(rand() & 1001) / 1000.0f - 0.5f;
             shapes_.emplace_back(createDynamicBoxShape(Vec2d{x_pos, y_pos}, Vec2d{1.0, 1.0}, rot, col));
@@ -451,7 +630,7 @@ public:
             Vec2d{debug_value_reader::readDouble("flipper_x"), debug_value_reader::readDouble("flipper_y")},
             Vec2d{debug_value_reader::readDouble("flipper_width"), debug_value_reader::readDouble("flipper_height")},
             flipper_offset,
-            Vec3d{0.0, 0.7, 0.1});
+            calculateColormapPastel2(0.1));
 
         flipper_frequency = debug_value_reader::readDouble("flipper_frequency");
         flipper_amplitude = debug_value_reader::readDouble("flipper_amplitude");
@@ -465,20 +644,20 @@ public:
             Vec2d{debug_value_reader::readDouble("pend_base_x"), debug_value_reader::readDouble("pend_base_y")},
             Vec2d{pendulum_width, pendulum_height},
             0.0,
-            Vec3d{0.0, 1.0, 1.0});
+            calculateColormapPastel2(0.2));
 
         pend_second_ = createDynamicBoxShape(Vec2d{debug_value_reader::readDouble("pend_base_x"),
                                                    debug_value_reader::readDouble("pend_base_y") + pendulum_height},
                                              Vec2d{pendulum_width, pendulum_height},
                                              0.0,
-                                             Vec3d{0.0, 0.0, 1.0});
+                                             calculateColormapPastel2(0.5));
 
         pend_horizontal_ =
             createDynamicBoxShape(Vec2d{debug_value_reader::readDouble("pend_base_x"),
                                         debug_value_reader::readDouble("pend_base_y") + pendulum_height * 2.0f},
                                   Vec2d{pendulum_width, pendulum_height * 0.8},
                                   0.0,
-                                  Vec3d{0.3, 0.5, 0.9});
+                                  calculateColormapPastel2(0.7));
 
         b2RevoluteJointDef joint_def0;
         joint_def0.bodyA = wall_body;
@@ -538,8 +717,10 @@ public:
 
     void setAxes(const size_t iteration)
     {
+        const float elevation = 90.0f;
         if (iteration == 0)
         {
+            view(0, elevation);
             current_pos.x = base_zoom_center.x;
             current_pos.y = base_zoom_center.y;
             current_range.x = base_zoom_half_range.x * current_zoom_factor;
@@ -592,7 +773,7 @@ public:
                 current_angle = ang;
             }
 
-            view(((angle_offset + -ang) * 180.0 / M_PI), 90.0);
+            view(((angle_offset + -ang) * 180.0 / M_PI), elevation);
 
             const Vec2d current_reference(p.x, p.y);
             const double zoom_factor_reference = 0.8;

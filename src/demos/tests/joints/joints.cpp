@@ -5,7 +5,7 @@ namespace joints
 
 void drawGrid()
 {
-    const float grid_step = 0.5;
+    const float grid_step = 2.5;
     const float grid_size = 200.0;
 
     std::vector<float> x_vec, y_vec;
@@ -63,7 +63,7 @@ void drawGrid()
 
     Vector<float> x{x_vec}, y{y_vec};
 
-    plot(x, y, properties::ID250, properties::Color::BLACK, properties::ZOffset(-1.0f), properties::LineWidth(1.0f));
+    plot(x, y, properties::Color(180, 180, 180), properties::ZOffset(-1.0f), properties::LineWidth(1.0f));
 }
 
 void testBasic()
@@ -77,8 +77,6 @@ void testBasic()
     waitForFlush();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
     drawGrid();
-
-    view(0, 90);
 
     Joints joints{};
 

@@ -65,6 +65,30 @@ rainbow_pastel = [
         [199.0 / 255.0, 206.0 / 255.0, 233.0 / 255.0],
     ]
 
+rainbow_pastel2 = [
+        [0.6471, 0.7804, 0.9137],
+        [0.5373, 0.7294, 0.8667],
+        [0.4039, 0.6039, 0.6667],
+        [0.6588, 0.8549, 0.8196],
+        [0.5608, 0.8118, 0.7137],
+        [0.5294, 0.7333, 0.6667],
+        [0.7412, 0.8667, 0.6902],
+        [0.7373, 0.7961, 0.7059],
+        [0.9765, 0.9451, 0.5647],
+        [0.5647, 0.9137, 0.5725],
+        [0.9451, 0.9294, 0.5686],
+        [0.9569, 0.9451, 0.7020],
+        [0.8000, 0.6745, 0.5686],
+        [0.9843, 0.8706, 0.8706],
+        [0.9765, 0.6980, 0.7373],
+        [0.9647, 0.5843, 0.5961],
+        [0.9804, 0.6471, 0.5294],
+        [0.9373, 0.6549, 0.5922],
+        [1.0000, 0.7412, 0.5020],
+        [0.8039, 0.7020, 0.8314],
+        [0.7020, 0.7059, 0.8510],   
+    ]
+
 function_body = ["    if(value < 0.0)",
 "    {",
 "        value = 0.0;",
@@ -211,7 +235,7 @@ def print_colormap_function(colormap_name, colormap_breakpoints):
         print(l)
 
 if __name__ == "__main__":
-    colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet, "RainbowPastel": rainbow_pastel}
+    colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet, "RainbowPastel": rainbow_pastel, "RainbowPastel2": rainbow_pastel2}
 
     for colormap_name, colormap_breakpoints in colormaps.items():
         print_colormap_function(colormap_name, colormap_breakpoints)
