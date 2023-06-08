@@ -11,7 +11,6 @@ Pre release:
  * Something for machine learning practitioners
  * Something with drone simulation data
  * Something with robotics
- * Joint simulation
 - Finalize demos
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
@@ -23,14 +22,20 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
 - Change all reinterpret_cast to static_cast<whatever>(static_cast<void*>())
-- "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
 - For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
   to populate it or property from the variadic templ. args
 - Data cursor, cursor to click on data to get xyz value
-- Consolidate system test (test-applications, both c and c++) to one system test application
+- Make it possible to disable "skewing" of view; when the plot pane is not square, the view gets distorted. Should
+  be possible to just invert the ratio of the width/height as a 2D scaling using the rotation matrix, and applying that
+  ratio to the scale matrix
+- Function that starts the application if it's not running
+- Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
+- Drop shadow and bevel of plot pane
 
 Post release:
+- "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
 - Pro version of dvs including buttons?
+- "Hole" in background canvas for grouping elements, should have a title
 - Get user mouse input from plot back to user application
 - Drawing annotations in image (2D/3D bounding boxes, semantic pixel labeling)
 - New application that loads dynamic library (like the newer app) that plots real time data (like main_application),

@@ -2,6 +2,7 @@
 #define SYSTEM_TEST_ADVANCED_CPP_TESTS_H
 
 #include "advanced_cpp/append_properties.h"
+#include "advanced_cpp/axes_proportions.h"
 #include "advanced_cpp/dynamic_plotting.h"
 #include "advanced_cpp/object_transform.h"
 #include "advanced_cpp/plot2.h"
@@ -26,6 +27,7 @@ void addTests()
     updateable_plotting::addTests();
     object_transform::addTests();
     append_properties::addTests();
+    axes_proportions::addTests();
 }
 
 }  // namespace advanced_cpp

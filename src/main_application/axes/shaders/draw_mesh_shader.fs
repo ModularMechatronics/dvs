@@ -97,11 +97,21 @@ void main()
       vec3 ambient = ambient_strength * light_color;
 
       vec3 light_dir = normalize(light_pos - frag_pos);
-      float diff = max(dot(frag_normal, light_dir), 0.0);
+      vec3 norm = normalize(frag_normal);
+      float diff = max(dot(norm, light_dir), 0.0);
 
       vec3 diffuse = diff * light_color;
 
-      color = vec4((diffuse + ambient) * object_color, 1.0);
+      vec3 view_pos = vec3(3.0, 3.0, 3.0);
+      float specular_strength = 0.5;
+
+      vec3 view_dir = normalize(view_pos - frag_pos);
+      vec3 reflect_dir = reflect(-light_dir, norm);
+
+      float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 2);
+      vec3 specular = specular_strength * spec * light_color;  
+
+      color = vec4((ambient + diffuse + specular) * object_color, 1.0);
       color.r = min(color.r, 1.0);
       color.g = min(color.g, 1.0);
       color.b = min(color.b, 1.0);
