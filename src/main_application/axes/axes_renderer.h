@@ -60,6 +60,7 @@ private:
     float width_, height_;
     Vec3d scale_for_window_;
     bool axes_square_;
+    bool scale_on_rotation_;
 
     GridVectors grid_vectors_;
     bool use_perspective_proj_;
@@ -122,6 +123,8 @@ public:
     void activateGlobalIllumination(const Vec3d& light_pos);
     void resetGlobalIllumination();
     void setAxesBoxScaleFactor(const Vec3d& scale_vector);
+    void setScaleOnRotation(const bool scale_on_rotation);
+    void setAxesSquare(const bool axes_square);
 };
 
 #endif  // MAIN_APPLICATION_AXES_AXES_RENDERER_H_

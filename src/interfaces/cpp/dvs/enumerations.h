@@ -134,6 +134,8 @@ enum class Function : uint8_t
     SOFT_CLEAR,
     STAIRS,
     SHOW_LEGEND,
+    DISABLE_SCALE_ON_ROTATION,
+    AXES_SQUARE,
     UNKNOWN
 };
 

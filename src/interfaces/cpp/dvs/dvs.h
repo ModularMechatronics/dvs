@@ -938,6 +938,20 @@ inline void disableAutomaticAxesAdjustment()
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void disableScaleOnRotation()
+{
+    internal::CommunicationHeader hdr{internal::Function::DISABLE_SCALE_ON_ROTATION};
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void axesSquare()
+{
+    internal::CommunicationHeader hdr{internal::Function::AXES_SQUARE};
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void setAxesBoxScaleFactor(const Vec3<double>& scale_vector)
 {
     internal::CommunicationHeader hdr{internal::Function::SET_AXES_BOX_SCALE_FACTOR};

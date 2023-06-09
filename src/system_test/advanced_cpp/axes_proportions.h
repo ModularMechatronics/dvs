@@ -58,17 +58,18 @@ void testBasic()
     setCurrentElement("p_view_0");
     clearView();
     globalIllumination({2, 2, 2});
-    drawMesh(x, y, z, indices);
+    disableScaleOnRotation();
+    axesSquare();
 
     setCurrentElement("p_view_1");
     clearView();
     globalIllumination({2, 2, 2});
-    drawMesh(x, y, z, indices);
+    disableScaleOnRotation();
 
     setCurrentElement("p_view_2");
     clearView();
     globalIllumination({2, 2, 2});
-    drawMesh(x, y, z, indices);
+    axesSquare();
 }
 
 void addTests()

@@ -321,6 +321,14 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     {
         // Do nothing...
     }
+    else if (fcn == Function::AXES_SQUARE)
+    {
+        axes_renderer_->setAxesSquare(true);
+    }
+    else if (fcn == Function::DISABLE_SCALE_ON_ROTATION)
+    {
+        axes_renderer_->setScaleOnRotation(false);
+    }
     else if (fcn == Function::SOFT_CLEAR)
     {
         plot_data_handler_->softClear();
@@ -1005,6 +1013,8 @@ void PlotPane::clearPane()
     axes_interactor_.showLegend(false);
     axes_renderer_->resetGlobalIllumination();
     axes_renderer_->setAxesBoxScaleFactor(Vec3d{2.5, 2.5, 2.5});
+    axes_renderer_->setScaleOnRotation(true);
+    axes_renderer_->setAxesSquare(false);
 }
 
 void PlotPane::processActionQueue()
