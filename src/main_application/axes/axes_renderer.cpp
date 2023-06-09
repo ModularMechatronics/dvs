@@ -548,88 +548,33 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 
     projection_mat = use_perspective_proj_ ? persp_projection_mat : orth_projection_mat;
 
-    float az;
-    float el;
-    float s = 0.0f;
+    float s = 0.2f;
 
-    Vec3d scale_vector_to_use;
+    if (scale_on_rotation_ && (!use_perspective_proj_))
+    {
+        const float az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
+        const float el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
+        s = std::sqrt(az * az + el * el);
+    }
 
-    scale_vector_to_use = scale_vector_;
+    window_scale_mat_ = glm::mat4(1.0f);
+
+    window_scale_mat_[0][0] = scale_vector_.x - s;
+    window_scale_mat_[1][1] = scale_vector_.y - s;
+    window_scale_mat_[2][2] = scale_vector_.z - s;
 
     if (axes_square_)
     {
-        glm::mat4 scale_mat_new = glm::mat4(1.0f);
+        glm::mat4 scale_mat_square = glm::mat4(1.0f);
 
         const float scale_factor = std::min(width_, height_) * 0.003f;
 
-        scale_mat_new[0][0] = scale_factor * 300.0f / width_;
-        scale_mat_new[1][1] = scale_factor;
-        scale_mat_new[2][2] = scale_factor * 300.0f / height_;
+        scale_mat_square[0][0] = scale_factor * 300.0f / width_;
+        scale_mat_square[1][1] = scale_factor;
+        scale_mat_square[2][2] = scale_factor * 300.0f / height_;
 
-        scale_mat_new = glm::transpose(model_mat) * scale_mat_new * model_mat;
+        scale_mat_square = glm::transpose(model_mat) * scale_mat_square * model_mat;
 
-        window_scale_mat_ = glm::mat4(1.0f);
-
-        if (scale_on_rotation_)
-        {
-            if (use_perspective_proj_)
-            {
-                s = 0.2;
-            }
-            else
-            {
-                az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
-                el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
-                s = std::sqrt(az * az + el * el);
-            }
-        }
-        else
-        {
-            if (use_perspective_proj_)
-            {
-                s = 0.2;
-            }
-            else
-            {
-                s = 0.4f;
-            }
-        }
-
-        window_scale_mat_[0][0] = scale_vector_to_use.x - s;
-        window_scale_mat_[1][1] = scale_vector_to_use.y - s;
-        window_scale_mat_[2][2] = scale_vector_to_use.z - s;
-
-        window_scale_mat_ = scale_mat_new * window_scale_mat_;
-    }
-    else
-    {
-        if (scale_on_rotation_)
-        {
-            if (use_perspective_proj_)
-            {
-                s = 0.2;
-            }
-            else
-            {
-                az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
-                el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
-                s = std::sqrt(az * az + el * el);
-            }
-        }
-        else
-        {
-            if (use_perspective_proj_)
-            {
-                s = 0.2f;
-            }
-            else
-            {
-                s = 0.6f;
-            }
-        }
-
-        window_scale_mat_[0][0] = scale_vector_to_use.x - s;
-        window_scale_mat_[1][1] = scale_vector_to_use.y - s;
-        window_scale_mat_[2][2] = scale_vector_to_use.z - s;
+        window_scale_mat_ = scale_mat_square * window_scale_mat_;
     }
 }
