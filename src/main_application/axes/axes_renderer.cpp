@@ -20,6 +20,7 @@ AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
       plot_pane_background_{element_settings_.pane_radius}
 {
     shader_collection_.text_shader.use();
+    axes_square_ = false;
 
     initFreetype();
 
@@ -542,22 +543,47 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
 
     Vec3d scale_vector_to_use;
 
-    if (use_perspective_proj_)
+    axes_square_ = true;
+
+    if (axes_square_)
     {
-        az = 0.2;
-        el = 0.0;
-        s = az + el;
         scale_vector_to_use = scale_vector_;
+
+        glm::mat4 scale_mat_new = glm::mat4(1.0f);
+
+        scale_mat_new[0][0] = 300.0f / width_;
+        scale_mat_new[1][1] = 1.0f;
+        scale_mat_new[2][2] = 300.0f / height_;
+
+        scale_mat_new = glm::transpose(model_mat) * scale_mat_new * model_mat;
+
+        window_scale_mat_ = glm::mat4(1.0f);
+
+        window_scale_mat_[0][0] = scale_vector_to_use.x;
+        window_scale_mat_[1][1] = scale_vector_to_use.y;
+        window_scale_mat_[2][2] = scale_vector_to_use.z;
+
+        window_scale_mat_ = scale_mat_new * window_scale_mat_;
     }
     else
     {
-        scale_vector_to_use = scale_vector_;
-        az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
-        el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
-        s = std::sqrt(az * az + el * el);
-    }
+        if (use_perspective_proj_)
+        {
+            az = 0.2;
+            el = 0.0;
+            s = az + el;
+            scale_vector_to_use = scale_vector_;
+        }
+        else
+        {
+            scale_vector_to_use = scale_vector_;
+            az = std::pow(std::fabs(std::sin(view_angles_.getSnappedAzimuth() * 2.0f)), 0.6) * 0.7;
+            el = std::pow(std::fabs(std::sin(view_angles_.getSnappedElevation() * 2.0f)), 0.7) * 0.5;
+            s = std::sqrt(az * az + el * el);
+        }
 
-    window_scale_mat_[0][0] = scale_vector_to_use.x - s;
-    window_scale_mat_[1][1] = scale_vector_to_use.y - s;
-    window_scale_mat_[2][2] = scale_vector_to_use.z - s;
+        window_scale_mat_[0][0] = scale_vector_to_use.x - s;
+        window_scale_mat_[1][1] = scale_vector_to_use.y - s;
+        window_scale_mat_[2][2] = scale_vector_to_use.z - s;
+    }
 }

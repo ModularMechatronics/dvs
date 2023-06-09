@@ -57,9 +57,17 @@ void testBasic()
 
     setCurrentElement("p_view_0");
     clearView();
-
     globalIllumination({2, 2, 2});
+    drawMesh(x, y, z, indices);
 
+    setCurrentElement("p_view_1");
+    clearView();
+    globalIllumination({2, 2, 2});
+    drawMesh(x, y, z, indices);
+
+    setCurrentElement("p_view_2");
+    clearView();
+    globalIllumination({2, 2, 2});
     drawMesh(x, y, z, indices);
 }
 

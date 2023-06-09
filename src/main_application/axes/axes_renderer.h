@@ -59,6 +59,7 @@ private:
 
     float width_, height_;
     Vec3d scale_for_window_;
+    bool axes_square_;
 
     GridVectors grid_vectors_;
     bool use_perspective_proj_;
