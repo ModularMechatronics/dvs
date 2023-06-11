@@ -376,6 +376,7 @@ void testBasic()
     waitForFlush();
     axis({-20.0, -20.0, -20.0}, {20.0, 20.0, 20.0});
     view(-38.0, 32.0);
+    axesSquare();
 
     setCurrentElement("center");
     clearView();

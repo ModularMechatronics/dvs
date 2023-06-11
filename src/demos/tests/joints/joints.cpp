@@ -75,6 +75,8 @@ void testBasic()
     setCurrentElement("_");
     clearView();
     waitForFlush();
+    axesSquare();
+    disableScaleOnRotation();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
     drawGrid();
 

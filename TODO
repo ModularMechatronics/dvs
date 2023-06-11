@@ -25,12 +25,9 @@ Pre release:
 - For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
   to populate it or property from the variadic templ. args
 - Data cursor, cursor to click on data to get xyz value
-- Make it possible to disable "skewing" of view; when the plot pane is not square, the view gets distorted. Should
-  be possible to just invert the ratio of the width/height as a 2D scaling using the rotation matrix, and applying that
-  ratio to the scale matrix
-- Function that starts the application if it's not running
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Drop shadow and bevel of plot pane
+- Fix case for plot/plot3 when two adjacent points are equal
 
 Post release:
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.

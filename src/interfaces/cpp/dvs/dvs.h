@@ -1,6 +1,8 @@
 #ifndef DVS_DVS_H_
 #define DVS_DVS_H_
 
+#include <stdlib.h>
+
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
 
@@ -1011,6 +1013,43 @@ inline void setTransform(const internal::ItemId id,
     hdr.append(internal::CommunicationHeaderObjectType::ITEM_ID, id);
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void spawn()
+{
+    char path[1035];
+
+    FILE* const fp = popen("ps -ef | grep dvs", "r");
+    if (fp == NULL)
+    {
+        std::cout << "Failed to run command" << std::endl;
+        return;
+    }
+
+    std::vector<std::string> lines;
+    while (fgets(path, sizeof(path), fp) != NULL)
+    {
+        lines.push_back(path);
+        printf("%s", path);
+    }
+
+    bool dvs_running = false;
+
+    for (const std::string line : lines)
+    {
+        if ((line.length() > 0U) && (line.find("grep") == std::string::npos))
+        {
+            dvs_running = true;
+        }
+    }
+
+    pclose(fp);
+
+    if (!dvs_running)
+    {
+        std::cout << "Starting DVS" << std::endl;
+        system("./main_application/dvs &");
+    }
 }
 
 namespace not_ready

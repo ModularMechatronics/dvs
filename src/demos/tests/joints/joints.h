@@ -767,16 +767,6 @@ public:
             const auto p = pend_horizontal_.body_handle->GetPosition();
             const auto ang = pend_horizontal_.body_handle->GetAngle();
 
-            /*const double r00 = std::cos(ang);
-            const double r01 = -std::sin(ang);
-
-            const double r10 = std::sin(ang);
-            const double r11 = std::cos(ang);
-
-            const Vec2d rotated_factor{r00 * 1.0 / 1.92 + r01 * 1.0, r10 * 1.0 / 1.92 + r11 * 1.0};
-            const Vec2d rotated_zoom = rotated_factor.elementWiseMultiply(base_zoom_half_range);
-            base_zoom_half_range.y = base_zoom_half_range.x / 1.92;*/
-
             if (ang < (-M_PI))
             {
                 angle_reached = true;
