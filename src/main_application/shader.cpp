@@ -143,6 +143,8 @@ void ShaderBase::setBaseUniformHandles()
 
     base_uniform_handles.scatter_mode = Uniform(program_id_, "scatter_mode");
     base_uniform_handles.point_size = Uniform(program_id_, "point_size");
+
+    base_uniform_handles.radius = Uniform(program_id_, "radius");
 }
 
 void ShaderBase::loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path)

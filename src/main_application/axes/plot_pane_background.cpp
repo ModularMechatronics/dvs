@@ -5,96 +5,46 @@
 
 void PlotPaneBackground::render(const float pane_width, const float pane_height)
 {
-    const float rx = radius_ / pane_width;
-    const float ry = radius_ / pane_height;
+    const float rx = 3.0f * radius_ / pane_width;
+    const float ry = 3.0f * radius_ / pane_height;
 
-    constexpr float kVal = 3.0f;
+    std::vector<float> offsets_x = {-1.0f, 1.0f, 1.0f, -1.0f};
+    std::vector<float> offsets_y = {1.0f, 1.0f, -1.0f, -1.0f};
 
-    const float dtheta = (M_PI / 2.0f) / static_cast<float>(num_corner_segments_);
-    float theta = 0.0f;
-    size_t idx = 0;
+    size_t idx = 0U;
 
-    // Upper left corner
-    for (size_t k = 0; k < num_corner_segments_; k++)
+    const float z_val = 3.0f;
+
+    for (size_t k = 0; k < 4; k++)
     {
-        const float cx = -kVal + rx;
-        const float cy = kVal - ry;
+        const float ox = offsets_x[k] * 3.0f - offsets_x[k] * rx;
+        const float oy = offsets_y[k] * 3.0f - offsets_y[k] * ry;
 
-        data_array_[idx] = -kVal;
-        data_array_[idx + 1] = kVal;
+        data_array_[idx + 0] = -rx + ox;
+        data_array_[idx + 1] = -ry + oy;
+        data_array_[idx + 2] = z_val;
 
-        data_array_[idx + 2] = cx - rx * std::cos(theta);
-        data_array_[idx + 3] = cy + ry * std::sin(theta);
+        data_array_[idx + 3] = rx + ox;
+        data_array_[idx + 4] = -ry + oy;
+        data_array_[idx + 5] = z_val;
 
-        data_array_[idx + 4] = cx - rx * std::cos(theta + dtheta);
-        data_array_[idx + 5] = cy + ry * std::sin(theta + dtheta);
+        data_array_[idx + 6] = -rx + ox;
+        data_array_[idx + 7] = ry + oy;
+        data_array_[idx + 8] = z_val;
 
-        theta += dtheta;
+        data_array_[idx + 9] = -rx + ox;
+        data_array_[idx + 10] = ry + oy;
+        data_array_[idx + 11] = z_val;
 
-        idx += 6U;
-    }
+        data_array_[idx + 12] = rx + ox;
+        data_array_[idx + 13] = ry + oy;
+        data_array_[idx + 14] = z_val;
 
-    theta = 0.0f;
-    // Upper right corner
-    for (size_t k = 0; k < num_corner_segments_; k++)
-    {
-        const float cx = kVal - rx;
-        const float cy = kVal - ry;
+        data_array_[idx + 15] = rx + ox;
+        data_array_[idx + 16] = -ry + oy;
+        data_array_[idx + 17] = z_val;
 
-        data_array_[idx] = kVal;
-        data_array_[idx + 1] = kVal;
-
-        data_array_[idx + 2] = cx + rx * std::cos(theta);
-        data_array_[idx + 3] = cy + ry * std::sin(theta);
-
-        data_array_[idx + 4] = cx + rx * std::cos(theta + dtheta);
-        data_array_[idx + 5] = cy + ry * std::sin(theta + dtheta);
-
-        theta += dtheta;
-
-        idx += 6U;
-    }
-
-    theta = 0.0f;
-    // Lower right corner
-    for (size_t k = 0; k < num_corner_segments_; k++)
-    {
-        const float cx = kVal - rx;
-        const float cy = -kVal + ry;
-
-        data_array_[idx] = kVal;
-        data_array_[idx + 1] = -kVal;
-
-        data_array_[idx + 2] = cx + rx * std::cos(theta);
-        data_array_[idx + 3] = cy - ry * std::sin(theta);
-
-        data_array_[idx + 4] = cx + rx * std::cos(theta + dtheta);
-        data_array_[idx + 5] = cy - ry * std::sin(theta + dtheta);
-
-        theta += dtheta;
-
-        idx += 6U;
-    }
-
-    theta = 0.0f;
-    // Lower left corner
-    for (size_t k = 0; k < num_corner_segments_; k++)
-    {
-        const float cx = -kVal + rx;
-        const float cy = -kVal + ry;
-
-        data_array_[idx] = -kVal;
-        data_array_[idx + 1] = -kVal;
-
-        data_array_[idx + 2] = cx - rx * std::cos(theta);
-        data_array_[idx + 3] = cy - ry * std::sin(theta);
-
-        data_array_[idx + 4] = cx - rx * std::cos(theta + dtheta);
-        data_array_[idx + 5] = cy - ry * std::sin(theta + dtheta);
-
-        theta += dtheta;
-
-        idx += 6U;
+        idx += 18U;
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
@@ -107,11 +57,11 @@ void PlotPaneBackground::render(const float pane_width, const float pane_height)
 PlotPaneBackground::PlotPaneBackground(const float radius)
 {
     radius_ = radius;
-    num_corner_segments_ = 10U;
-    num_corner_vertices_ = num_corner_segments_ * 3U;
-    num_vertices_ = num_corner_vertices_ * 4U;
-    num_bytes_ = sizeof(float) * num_vertices_ * 2U;
-    data_array_ = new float[num_vertices_ * 2];
+    const size_t num_rectangles = 4U;
+    const size_t num_triangles = num_rectangles * 2U;
+    num_vertices_ = num_triangles * 3U;
+    num_bytes_ = sizeof(float) * num_vertices_ * 3U;
+    data_array_ = new float[num_vertices_ * 3U];
 
     std::memset(data_array_, 0, num_bytes_);
 
@@ -124,7 +74,7 @@ PlotPaneBackground::PlotPaneBackground(const float radius)
 
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 PlotPaneBackground::~PlotPaneBackground()

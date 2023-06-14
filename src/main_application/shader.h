@@ -117,6 +117,8 @@ public:
 
         Uniform scatter_mode;
         Uniform point_size;
+
+        Uniform radius;
     };
 
     BaseUniformHandles base_uniform_handles;
@@ -248,6 +250,7 @@ struct ShaderCollection
 {
     TextShader text_shader;
     ShaderBase plot_box_shader;
+    ShaderBase background_shader;
     ScatterShader scatter_shader;
     ShaderBase basic_plot_shader;
     Plot2DShader plot_2d_shader;
