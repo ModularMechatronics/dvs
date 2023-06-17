@@ -110,7 +110,7 @@ private:
     wxGLAttributes getGLAttributes() const;
 
 public:
-    PlotPane(wxNotebookPage* parent,
+    PlotPane(wxNotebookPage* parent,  // TODO: wxNotebookPage is obsolete, should be wxWindow/wxFrame?
              const ElementSettings& element_settings,
              const RGBTripletf& tab_background_color,
              const std::function<void(const char key)>& notify_main_window_key_pressed,

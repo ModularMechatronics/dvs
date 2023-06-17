@@ -250,7 +250,7 @@ struct ShaderCollection
 {
     TextShader text_shader;
     ShaderBase plot_box_shader;
-    ShaderBase background_shader;
+    ShaderBase pane_background_shader;
     ScatterShader scatter_shader;
     ShaderBase basic_plot_shader;
     Plot2DShader plot_2d_shader;

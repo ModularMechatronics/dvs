@@ -1104,6 +1104,283 @@ void testDeleteObject()
     deletePlotObject(properties::ID7);
 }
 
+struct Rect
+{
+    std::int32_t top_left_x;
+    std::int32_t top_left_y;
+    std::int32_t width;
+    std::int32_t height;
+};
+
+void renderRects(ImageRGB<std::uint8_t>& img, const std::vector<Rect>& rects)
+{
+    for (std::size_t r = 0; r < img.numRows(); r++)
+    {
+        for (std::size_t c = 0; c < img.numCols(); c++)
+        {
+            img(r, c, 0) = (255.0f * 0.543f);
+            img(r, c, 1) = (255.0f * 0.751f);
+            img(r, c, 2) = (255.0f * 0.684f);
+        }
+    }
+
+    const std::int32_t margin = 20;
+    const std::int32_t radius = 5;
+
+    const float margin_f = margin;
+    const float radius_f = radius;
+    const float margin_and_radius = margin_f + radius_f;
+
+    for (const auto& rect : rects)
+    {
+        const std::int32_t min_row = std::max(0, rect.top_left_y - margin);
+        const std::int32_t max_row =
+            std::min(static_cast<std::int32_t>(img.numRows()) - 1, rect.top_left_y + rect.height + margin);
+
+        const std::int32_t min_col = std::max(0, rect.top_left_x - margin);
+        const std::int32_t max_col =
+            std::min(static_cast<std::int32_t>(img.numCols()) - 1, rect.top_left_x + rect.width + margin);
+
+        const float rect_width_f = rect.width;
+        const float rect_height_f = rect.height;
+        const float rect_top_left_x_f = rect.top_left_x;
+        const float rect_top_left_y_f = rect.top_left_y;
+
+        const auto shadow_mapping = [](const float d) -> float { return d * 2.0f; };
+
+        const Vec2<std::int32_t> top_left_corner(rect.top_left_x, rect.top_left_y);
+        const Vec2<std::int32_t> top_right_corner(rect.top_left_x + rect.width, rect.top_left_y);
+        const Vec2<std::int32_t> bottom_left_corner(rect.top_left_x, rect.top_left_y + rect.height);
+        const Vec2<std::int32_t> bottom_right_corner(rect.top_left_x + rect.width, rect.top_left_y + rect.height);
+
+        const Vec2<float> top_left_corner_f(rect.top_left_x, rect.top_left_y);
+        const Vec2<float> top_right_corner_f(rect.top_left_x + rect.width, rect.top_left_y);
+        const Vec2<float> bottom_left_corner_f(rect.top_left_x, rect.top_left_y + rect.height);
+        const Vec2<float> bottom_right_corner_f(rect.top_left_x + rect.width, rect.top_left_y + rect.height);
+
+        const Vec2<std::int32_t> top_left_inner_corner(rect.top_left_x + radius, rect.top_left_y + radius);
+        const Vec2<std::int32_t> top_right_inner_corner(rect.top_left_x + rect.width - radius,
+                                                        rect.top_left_y + radius);
+        const Vec2<std::int32_t> bottom_left_inner_corner(rect.top_left_x + radius,
+                                                          rect.top_left_y + rect.height - radius);
+        const Vec2<std::int32_t> bottom_right_inner_corner(rect.top_left_x + rect.width - radius,
+                                                           rect.top_left_y + rect.height - radius);
+
+        const Vec2<float> top_left_inner_corner_f(rect.top_left_x + radius, rect.top_left_y + radius);
+        const Vec2<float> top_right_inner_corner_f(rect.top_left_x + rect.width - radius, rect.top_left_y + radius);
+        const Vec2<float> bottom_left_inner_corner_f(rect.top_left_x + radius, rect.top_left_y + rect.height - radius);
+        const Vec2<float> bottom_right_inner_corner_f(rect.top_left_x + rect.width - radius,
+                                                      rect.top_left_y + rect.height - radius);
+
+        for (std::int32_t r = min_row; r <= max_row; r++)
+        {
+            const float rf = r;
+
+            for (std::int32_t c = min_col; c < max_col; c++)
+            {
+                const float cf = c;
+                if (r < rect.top_left_y)
+                {
+                    if (c < rect.top_left_x)
+                    {
+                        // Top left corner
+                        const float x_diff = cf - top_left_inner_corner_f.x;
+                        const float y_diff = rf - top_left_inner_corner_f.y;
+                        const float d = (std::sqrt(x_diff * x_diff + y_diff * y_diff) - radius_f) / margin_f;
+                        const float sm = shadow_mapping(d);
+
+                        if (sm <= 1.0f)
+                        {
+                            img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                            img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                            img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                        }
+                    }
+                    else if (c <= (rect.top_left_x + rect.width))
+                    {
+                        // Top center side
+                        const float d = static_cast<float>(std::abs(r - rect.top_left_y)) / margin_f;
+                        const float sm = shadow_mapping(d);
+                        img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                        img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                        img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                    }
+                    else
+                    {
+                        // Top right corner
+                        const float x_diff = cf - (rect_top_left_x_f + rect_width_f);
+                        const float y_diff = rf - rect_top_left_y_f;
+                        const float d = std::sqrt(x_diff * x_diff + y_diff * y_diff) / margin_f;
+                        const float sm = shadow_mapping(d);
+
+                        if (sm <= 1.0f)
+                        {
+                            img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                            img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                            img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                        }
+                    }
+                }
+                else if (r <= (rect.top_left_y + rect.height))
+                {
+                    if (c < rect.top_left_x)
+                    {
+                        // Left side
+
+                        if (r < top_left_inner_corner.y)
+                        {
+                            const float x_diff = cf - top_left_inner_corner_f.x;
+                            const float y_diff = rf - top_left_inner_corner_f.y;
+                            const float d = (std::sqrt(x_diff * x_diff + y_diff * y_diff) - radius_f) / margin_f;
+                            const float sm = shadow_mapping(d);
+
+                            if (sm <= 1.0f)
+                            {
+                                img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                                img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                                img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                            }
+                        }
+                        else
+                        {
+                            const float d = static_cast<float>(std::abs(c - top_left_corner.x)) / margin;
+                            const float sm = shadow_mapping(d);
+                            img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                            img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                            img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                        }
+                    }
+                    else if (c <= (rect.top_left_x + rect.width))
+                    {
+                        // Inside
+
+                        if ((c <= top_left_inner_corner.x) && (r <= top_left_inner_corner.y))
+                        {
+                            const float x_diff = cf - top_left_inner_corner_f.x;
+                            const float y_diff = rf - top_left_inner_corner_f.y;
+                            // const float d = (std::sqrt(x_diff * x_diff + y_diff * y_diff) - radius_f) / margin_f;
+                            const float d = std::sqrt(x_diff * x_diff + y_diff * y_diff);
+                            const float sm = shadow_mapping((d - radius_f) / margin_f);
+
+                            if (d >= radius_f)
+                            {
+                                img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                                img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                                img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                            }
+                        }
+
+                        /*if ((c < (rect.top_left_x + radius)) && (r < (rect.top_left_y + radius)))
+                        {
+                            // Top left corner
+                            const float x_diff = cf - (rect_top_left_x_f + radius_f);
+                            const float y_diff = rf - (rect_top_left_y_f + radius_f);
+                            const float d = std::sqrt(x_diff * x_diff + y_diff * y_diff) / radius_f;
+
+                            if (d > 1.0f)
+                            {
+                                const float sm = shadow_mapping(d);
+
+                                img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                                img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                                img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                            }
+                        }
+                        else
+                        {
+                            img(r, c, 0) = 127;
+                            img(r, c, 1) = 0;
+                            img(r, c, 2) = 0;
+                        }*/
+                    }
+                    else
+                    {
+                        // Right side
+                        const float d = static_cast<float>(std::abs(c - (rect.top_left_x + rect.width))) / margin_f;
+                        const float sm = shadow_mapping(d);
+                        img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                        img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                        img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                    }
+                }
+                else
+                {
+                    if (c < rect.top_left_x)
+                    {
+                        // Bottom left corner
+                        const float x_diff = cf - rect_top_left_x_f;
+                        const float y_diff = rf - (rect_top_left_y_f + rect_height_f);
+                        const float d = std::sqrt(x_diff * x_diff + y_diff * y_diff) / margin_f;
+                        const float sm = shadow_mapping(d);
+
+                        if (sm <= 1.0f)
+                        {
+                            img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                            img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                            img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                        }
+                    }
+                    else if (c <= (rect.top_left_x + rect.width))
+                    {
+                        // Bottom center side
+                        const float d = static_cast<float>(std::abs(r - (rect.top_left_y + rect.height))) / margin_f;
+                        const float sm = shadow_mapping(d);
+                        img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                        img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                        img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                    }
+                    else
+                    {
+                        // Bottom right corner
+                        const float x_diff = cf - (rect_top_left_x_f + rect_width_f);
+                        const float y_diff = rf - (rect_top_left_y_f + rect_height_f);
+                        const float d = std::sqrt(x_diff * x_diff + y_diff * y_diff) / margin_f;
+                        const float sm = shadow_mapping(d);
+
+                        if (sm <= 1.0f)
+                        {
+                            img(r, c, 0) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 0)) * sm);
+                            img(r, c, 1) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 1)) * sm);
+                            img(r, c, 2) = static_cast<std::uint8_t>(static_cast<float>(img(r, c, 2)) * sm);
+                        }
+                    }
+                }
+
+                /*if ((c == (rect.top_left_x)) || (c == (rect.top_left_x + rect.width)))
+                {
+                    img(r, c, 0) = 255U;
+                    img(r, c, 1) = 255U;
+                    img(r, c, 2) = 255U;
+                }*/
+            }
+        }
+    }
+}
+
+void testBackground()
+{
+    std::vector<Rect> rects;
+
+    rects.push_back({50, 60, 30, 40});
+
+    rects.push_back({110, 70, 20, 30});
+
+    const int num_rows = 200, num_cols = 250;
+    Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+
+    const double inc = 0.4;
+
+    ImageRGB<std::uint8_t> img(num_rows, num_cols);
+
+    renderRects(img, rects);
+
+    setCurrentElement("p_view_0");
+    clearView();
+    imShow(img);
+    // setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    // axesSquare();
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1124,8 +1401,9 @@ void addTests()
     addTest("cpp", "basic", "stairs", testStairs);
     addTest("cpp", "basic", "legend", testLegend);
     addTest("cpp", "basic", "openProjectFile", testOpenProjectFile);
-    addTest("cpp", "basic", "testSetProperties", testSetProperties);
+    addTest("cpp", "basic", "setProperties", testSetProperties);
     addTest("cpp", "basic", "deletePlotObject", testDeleteObject);
+    addTest("cpp", "basic", "background", testBackground);
 }
 
 }  // namespace basic_cpp

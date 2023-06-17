@@ -128,6 +128,7 @@ void PlotPane::initShaders()
     const std::string base_path{"../main_application/axes/shaders/"};
 
     shader_collection_.plot_box_shader = createShader<ShaderBase>(base_path, "plot_box_shader");
+    shader_collection_.pane_background_shader = createShader<ShaderBase>(base_path, "pane_background");
     shader_collection_.text_shader = createShader<TextShader>(base_path, "text");
     shader_collection_.basic_plot_shader = createShader<ShaderBase>(base_path, "basic_plot_shader");
     shader_collection_.plot_2d_shader = createShader<Plot2DShader>(base_path, "plot_2d_shader");

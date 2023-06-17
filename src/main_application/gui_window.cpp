@@ -1,6 +1,7 @@
+#include "gui_window.h"
+
 #include "events.h"
 #include "globals.h"
-#include "gui_window.h"
 #include "main_window.h"
 #include "plot_pane.h"
 

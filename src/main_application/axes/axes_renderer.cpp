@@ -274,8 +274,9 @@ void AxesRenderer::render()
     {
         renderViewAngles();
     }
+    // shader_collection_.pane_background_shader.use();
+    // renderBackground();
     shader_collection_.plot_box_shader.use();
-    renderBackground();
     if (element_settings_.plot_box_on)
     {
         renderPlotBox();
@@ -429,6 +430,7 @@ void AxesRenderer::plotEnd()
     {
         renderLegend();
     }
+    renderBackground();
 }
 
 void AxesRenderer::activateGlobalIllumination(const Vec3d& light_pos)
@@ -444,6 +446,11 @@ void AxesRenderer::resetGlobalIllumination()
 
 void AxesRenderer::renderBackground()
 {
+    shader_collection_.pane_background_shader.use();
+    shader_collection_.pane_background_shader.base_uniform_handles.axes_width.setFloat(width_);
+    shader_collection_.pane_background_shader.base_uniform_handles.axes_height.setFloat(height_);
+    shader_collection_.pane_background_shader.base_uniform_handles.radius.setFloat(element_settings_.pane_radius);
+
     model_mat[3][0] = 0.0;
     model_mat[3][1] = 0.0;
     model_mat[3][2] = 0.0;
@@ -454,13 +461,11 @@ void AxesRenderer::renderBackground()
     scale_mat[3][3] = 1.0;
 
     const glm::mat4 rotation_mat = glm::rotate(static_cast<float>(M_PI / 2.0), glm::vec3(1.0, 0.0, 0.0));
-    const glm::mat4 mvp = projection_mat * view_mat * rotation_mat;
+    const glm::mat4 mvp = orth_projection_mat * view_mat * rotation_mat;
 
-    shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
+    shader_collection_.pane_background_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
-    const RGBTripletf color_vec{tab_background_color_};
-
-    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(tab_background_color_);
+    shader_collection_.pane_background_shader.base_uniform_handles.vertex_color.setColor(tab_background_color_);
     plot_pane_background_.render(width_, height_);
 }
 
