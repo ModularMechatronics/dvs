@@ -14,8 +14,9 @@ namespace axes_proportions
 void testBasic()
 {
     openProjectFile("../../project_files/exp0.dvs");
-    Vector<double> x{VectorInitializer<double>{-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0}};
-    Vector<double> y{VectorInitializer<double>{-1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0}};
+    const double xp = 1000.0, yp = 1000.0;
+    Vector<double> x{VectorInitializer<double>{-xp, xp, xp, -xp, -xp, xp, xp, -xp}};
+    Vector<double> y{VectorInitializer<double>{-yp, -yp, yp, yp, -yp, -yp, yp, yp}};
     Vector<double> z{VectorInitializer<double>{-1.0, -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0}};
 
     /*
@@ -60,16 +61,21 @@ void testBasic()
     globalIllumination({2, 2, 2});
     disableScaleOnRotation();
     axesSquare();
+    drawMesh(x, y, z, indices);
 
     setCurrentElement("p_view_1");
     clearView();
     globalIllumination({2, 2, 2});
     disableScaleOnRotation();
+    drawMesh(x, y, z, indices);
 
-    setCurrentElement("p_view_2");
+    setCurrentElement("p1");
     clearView();
     globalIllumination({2, 2, 2});
+    axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+    drawMesh(x, y, z, indices);
     axesSquare();
+
 }
 
 void addTests()

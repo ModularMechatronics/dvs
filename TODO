@@ -28,6 +28,8 @@ Pre release:
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Drop shadow and bevel of plot pane
 - Fix case for plot/plot3 when two adjacent points are equal
+- pane shadow
+- 3d boxes simulation
 
 Post release:
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
