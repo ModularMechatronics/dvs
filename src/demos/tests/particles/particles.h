@@ -230,6 +230,111 @@ public:
     }
 };
 
+class PointAssignerImg
+{
+private:
+    ImageRGBA<std::uint8_t> img_;
+
+    Vector<RGB888> output_color_;
+
+    void readShapeImage(const std::string bin_path, ImageRGBA<std::uint8_t>& output_img)
+    {
+        std::ifstream input(bin_path, std::ios::binary);
+
+        std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+        std::uint16_t num_rows, num_cols;
+
+        std::memcpy(&num_cols, buffer.data(), sizeof(std::uint16_t));
+        std::memcpy(&num_rows, buffer.data() + sizeof(std::uint16_t), sizeof(std::uint16_t));
+
+        const std::uint8_t* const img_raw_ptr = buffer.data() + 2 * sizeof(std::uint16_t);
+
+        output_img.resize(num_rows, num_cols);
+
+        const size_t num_element_per_channel = num_rows * num_cols;
+
+        for (size_t ch = 0; ch < 3; ch++)
+        {
+            for (size_t r = 0; r < num_rows; r++)
+            {
+                for (size_t c = 0; c < num_cols; c++)
+                {
+                    const std::uint8_t pixel_val = img_raw_ptr[ch * num_element_per_channel + r * num_cols + c];
+                    output_img(r, c, ch) = pixel_val;
+                }
+            }
+        }
+
+        for (size_t r = 0; r < num_rows; r++)
+        {
+            for (size_t c = 0; c < num_cols; c++)
+            {
+                output_img(r, c, 3) = 255;
+            }
+        }
+    }
+
+public:
+    PointAssignerImg()
+    {
+        readShapeImage("/Users/danielpi/work/dvs/src/demos/tests/particles/img.bin", img_);
+    }
+
+    VectorConstView<RGB888> getColors() const
+    {
+        return output_color_.constView();
+    }
+
+    ImageRGBA<std::uint8_t> getImage() const
+    {
+        return img_;
+    }
+
+    void assignColors(const Vector<Point2f>& points, const Vec2d min_bnd, const Vec2d max_bnd)
+    {
+        output_color_.resize(points.size());
+
+        for (size_t k = 0; k < points.size(); k++)
+        {
+            output_color_(k) = RGB888(0, 0, 0);
+        }
+
+        const double x_scale = img_.numCols() / (max_bnd.x - min_bnd.x);
+        const double y_scale = img_.numRows() / (max_bnd.y - min_bnd.y);
+
+        const size_t num_rows_minus_one = img_.numRows() - 1;
+        const size_t num_cols_minus_one = img_.numCols() - 1;
+
+        for (size_t k = 0; k < points.size(); k++)
+        {
+            const Vec2d pt{points(k).x, points(k).y};
+
+            if ((pt.x <= min_bnd.x) || (pt.x >= max_bnd.x) || (pt.y <= min_bnd.y) || (pt.y >= max_bnd.y))
+            {
+                continue;
+            }
+
+            const size_t r = std::round((pt.y - min_bnd.y) * y_scale);
+            const size_t c = std::round((pt.x - min_bnd.x) * x_scale);
+
+            if ((r >= img_.numRows()) || (c >= img_.numCols()))
+            {
+                continue;
+            }
+
+            output_color_(k) = RGB888{img_(num_rows_minus_one - r, c, 2),
+                                      img_(num_rows_minus_one - r, c, 1),
+                                      img_(num_rows_minus_one - r, c, 0)};
+        }
+    }
+};
+
+const size_t num_steps = 1200;
+const Vec2f min_bnd{-4.0f, 0.0f};
+const Vec2f max_bnd{4.0f, 26.0f};
+const float radius = 0.025f;
+
 class ParticleSystem
 {
 private:
@@ -266,10 +371,10 @@ public:
     {
         b2ParticleSystemDef particleSystemDef;
 
-        particleSystemDef.radius = 0.035f;
-        particleSystemDef.dampingStrength = 0.2;
-        particleSystemDef.gravityScale = 1.0;
-        particleSystemDef.density = 1.0;
+        particleSystemDef.radius = radius;
+        particleSystemDef.dampingStrength = 0.03;
+        particleSystemDef.gravityScale = 0.05;
+        particleSystemDef.density = 0.001;
 
         particle_system_ = world_.CreateParticleSystem(&particleSystemDef);
 
@@ -358,7 +463,7 @@ public:
             x_pos_[k] = particles[k].x;
             y_pos_[k] = particles[k].y;
 
-            const float vx = velocities[k].x;
+            /*const float vx = velocities[k].x;
             const float vy = velocities[k].y;
 
             const float v = std::sqrt(vx * vx + vy * vy);
@@ -366,7 +471,7 @@ public:
 
             auto const c = color_maps::jet(theta);
 
-            color_(k) = RGB888{c.red, c.green, c.blue};
+            color_(k) = RGB888{c.red, c.green, c.blue};*/
         }
 
         world_.Step(0.01f, 8, 3);
@@ -416,15 +521,81 @@ Vector<Point2f> readSavedFile()
     return splitPointsString(text_data, 1.0, 0.0, 0.0, 1.0);
 }
 
+void saveToFile();
+void runTest();
+
 void testBasic()
+{
+    bool save_to_file = false;
+    if (save_to_file)
+    {
+        saveToFile();
+    }
+    else
+    {
+        runTest();
+    }
+}
+
+void runTest()
 {
     const std::string project_file_path = "../../project_files/particles.dvs";
 
     openProjectFile(project_file_path);
 
-    const size_t num_steps = 700;
-    const Vec2f min_bnd{-4.0f, 0.0f};
-    const Vec2f max_bnd{4.0f, 8.0f};
+    setCurrentElement("p_view_0");
+    clearView();
+    waitForFlush();
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    // axis({-3.0, -2.1}, {3.0, 1.0});
+    axis({-2.0, -2.0}, {2.0, 2.0});
+
+    const Vector<Point2f> saved_points = readSavedFile();
+
+    ParticleSystem ps{min_bnd, max_bnd};
+    PointAssignerImg point_assigner{};
+    const auto img = point_assigner.getImage();
+
+    point_assigner.assignColors(saved_points, Vec2d{-2.01, -2.0}, Vec2d{2.01, 0.8});
+
+    Vector<float> xs{saved_points.size()}, ys{saved_points.size()};
+
+    for (size_t k = 0; k < saved_points.size(); k++)
+    {
+        xs(k) = saved_points(k).x;
+        ys(k) = saved_points(k).y;
+    }
+
+    const auto colors = point_assigner.getColors();
+
+    VectorConstView<RGB888> new_color_view{colors.data() + 1, colors.size() - 1U};
+
+    if (0)
+    {
+        scatter(xs.constView(), ys.constView(), colors, properties::ScatterStyle::DISC, properties::PointSize(5));
+        flushCurrentElement();
+    }
+    else
+    {
+        for (size_t k = 0; k < num_steps; k++)
+        {
+            ps.update();
+
+            const VectorConstView<float> x = ps.getXView();
+            const VectorConstView<float> y = ps.getYView();
+
+            scatter(x, y, new_color_view, properties::ScatterStyle::DISC, properties::PointSize(17));
+            flushCurrentElement();
+            softClearView();
+        }
+    }
+}
+
+void testBasicOld()
+{
+    const std::string project_file_path = "../../project_files/particles.dvs";
+
+    openProjectFile(project_file_path);
 
     setCurrentElement("p_view_0");
     clearView();
@@ -470,12 +641,8 @@ void testBasic()
     }
 }
 
-void testBasicSave()
+void saveToFile()
 {
-    const size_t num_steps = 700;
-    const Vec2f min_bnd{-4.0f, 0.0f};
-    const Vec2f max_bnd{4.0f, 8.0f};
-
     setCurrentElement("p_view_0");
     clearView();
     waitForFlush();
@@ -486,13 +653,13 @@ void testBasicSave()
     for (size_t k = 0; k < num_steps; k++)
     {
         ps.update();
-
-        const VectorConstView<float> x = ps.getXView();
-        const VectorConstView<float> y = ps.getYView();
-        scatter(x, y, properties::Color::RED, properties::ScatterStyle::DISC, properties::PointSize(20));
-        flushCurrentElement();
-        softClearView();
     }
+
+    const VectorConstView<float> x = ps.getXView();
+    const VectorConstView<float> y = ps.getYView();
+    scatter(x, y, properties::Color::RED, properties::ScatterStyle::DISC, properties::PointSize(20));
+    flushCurrentElement();
+    softClearView();
 
     ps.savePointsToFile();
 }

@@ -14,7 +14,7 @@ namespace axes_proportions
 void testBasic()
 {
     openProjectFile("../../project_files/exp0.dvs");
-    const double xp = 1000.0, yp = 1000.0;
+    const double xp = 1.0, yp = 2.0;
     Vector<double> x{VectorInitializer<double>{-xp, xp, xp, -xp, -xp, xp, xp, -xp}};
     Vector<double> y{VectorInitializer<double>{-yp, -yp, yp, yp, -yp, -yp, yp, yp}};
     Vector<double> z{VectorInitializer<double>{-1.0, -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0}};

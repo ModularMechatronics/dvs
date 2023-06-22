@@ -30,6 +30,8 @@ Pre release:
 - Fix case for plot/plot3 when two adjacent points are equal
 - pane shadow
 - 3d boxes simulation
+- Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
+- If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 
 Post release:
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.

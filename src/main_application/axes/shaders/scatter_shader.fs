@@ -64,10 +64,10 @@ void main()
         {
             discard;
         }
-        else if((squared_dist <= 1.0) && (squared_dist > 0.85))
-        {
-            a = 1.0 - squared_dist;
-        }
+        // else if((squared_dist <= 1.0) && (squared_dist > 0.85))
+        // {
+        //     a = 1.0 - squared_dist;
+        // }
     }
     else if(scatter_mode == 3) // Plus
     {
