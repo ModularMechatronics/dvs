@@ -25,3 +25,6 @@
 [submodule "src/externals/box2d"]
 	path = src/externals/box2d
 	url = git@github.com:erincatto/box2d.git
+[submodule "src/externals/reactphysics3d"]
+	path = src/externals/reactphysics3d
+	url = https://github.com/DanielChappuis/reactphysics3d.git

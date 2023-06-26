@@ -2,6 +2,7 @@
 #define DEMOS_TESTS_H_
 
 #include "tests/ad_dataset/ad_dataset.h"
+#include "tests/boxes/boxes.h"
 #include "tests/car/car.h"
 #include "tests/fake_fem.h"
 #include "tests/hexagon_rods.h"

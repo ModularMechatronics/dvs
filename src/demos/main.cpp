@@ -60,6 +60,7 @@ int main(int argc, char* argv[])
     fcns["imu"] = imu_functions;
     fcns["ad_dataset"] = ad_dataset_functions;
     fcns["joints"] = joints_functions;
+    fcns["boxes"] = StringFunctionMap{{"basic", boxes::testBasic}};
     fcns["hexagon"] = StringFunctionMap{{"basic", hexagon_rods::testBasic}};
     ;
 

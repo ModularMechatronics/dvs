@@ -12,6 +12,7 @@ Pre release:
  * Something with drone simulation data
  * Something with robotics
 - Finalize demos
+- Remove ItemId from internal namespace
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
 - Change name of application (to plotto or something)
