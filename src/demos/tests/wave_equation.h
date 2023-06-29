@@ -144,8 +144,29 @@ public:
     }
 };
 
+float getMax(const MatrixConstView<float>& m)
+{
+    float min_val = std::fabs(m(0, 0));
+
+    for (size_t r = 0; r < m.numRows(); r++)
+    {
+        for (size_t c = 0; c < m.numCols(); c++)
+        {
+            if (std::fabs(m(r, c)) > min_val)
+            {
+                min_val = std::fabs(m(r, c));
+            }
+        }
+    }
+
+    return min_val;
+}
+
 void testBasic()
 {
+    const std::string project_file_path = "../../project_files/particle_field.dvs";
+    openProjectFile(project_file_path);
+
     const size_t num_rows = 200, num_cols = 200, num_its = 1000;
     const float c = 2.0f, dx = 0.005f, dy = 0.005f, dt = 0.000001f;
 
@@ -164,22 +185,48 @@ void testBasic()
     // globalIllumination({1.0, 1.0, 1.0});
 
     const double z_max = 0.05;
-    axis({0.0, 0.0, -z_max}, {0.25 * 4.0, 0.25 * 4.0, z_max});
-    axis({0.0, 0.0, -z_max}, {0.25 * 0.4, 0.25 * 0.4, z_max});
+    axis({0.0, 0.0, -z_max}, {1.0, 1.0, z_max});
     view(-14, 40);
+
+    const VectorConstView<float> x_vec(x.data(), x.numElements()), y_vec(y.data(), y.numElements());
 
     for (size_t k = 0; k < num_its; k++)
     {
         stepper.run();
         const MatrixConstView<float> z = stepper.getCurr();
+        const VectorConstView<float> z_vec(z.data(), z.numElements());
 
-        surf(x.constView(),
-             y.constView(),
-             z,
-             properties::ColorMap::JET,
-             properties::EdgeColor::NONE,
-             properties::INTERPOLATE_COLORMAP);
-        std::cin.ignore();
+        const float z_max = getMax(z);
+
+        if(k < 100)
+        {
+            /*surf(x.constView(),
+                    y.constView(),
+                    z,
+                    properties::ColorMap::JET,
+                    properties::EdgeColor::NONE);*/
+        }
+        else if(k < 200)
+        {
+            surf(x.constView(),
+                y.constView(),
+                z,
+                properties::FaceColor::NONE,
+                properties::EdgeColor::BLACK);
+        }
+        else
+        {
+            scatter3(
+                x_vec,
+                y_vec,
+                z_vec,
+                properties::ScatterStyle::DISC,
+                properties::PointSize(5.0f),
+                properties::DistanceFrom::z(0.0f, 0.0f, z_max));
+        }
+
+        
+        // std::cin.ignore();
         // usleep(50 * 1000);
         softClearView();
     }

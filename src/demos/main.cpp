@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
     fcns["joints"] = joints_functions;
     fcns["boxes"] = StringFunctionMap{{"basic", boxes::testBasic}};
     fcns["hexagon"] = StringFunctionMap{{"basic", hexagon_rods::testBasic}};
-    ;
+    fcns["particle_field"] = StringFunctionMap{{"basic", particle_field::testBasic}};
 
     if (argc == 1)
     {

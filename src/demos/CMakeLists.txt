@@ -20,6 +20,7 @@ add_executable(demos main.cpp
                      tests/sphere/sphere_subdivision/subdivisor.cpp
                      tests/joints/joints.cpp
                      tests/boxes/boxes.cpp
+                     tests/particle_field/particle_field.cpp
                      tests/ad_dataset/ad_dataset.cpp
                      ${REPO_DIR}/src/main_application/misc/color_map.cpp)
 
