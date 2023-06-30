@@ -50,6 +50,13 @@ int main(int argc, char* argv[])
 
     StringFunctionMap joints_functions{{"basic", joints::testBasic}};
 
+    StringFunctionMap small_functions{{"basic", small::testBasic},
+                                      {"lorenz", small::testLorenz},
+                                      {"bump", small::testBump},
+                                      {"scatter_color_map", small::testScatterColorMap},
+                                      {"scatter_samples", small::testScatterSamples}
+                                      };
+
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;
     fcns["wave_equation"] = wave_equation_functions;
@@ -63,6 +70,7 @@ int main(int argc, char* argv[])
     fcns["boxes"] = StringFunctionMap{{"basic", boxes::testBasic}};
     fcns["hexagon"] = StringFunctionMap{{"basic", hexagon_rods::testBasic}};
     fcns["particle_field"] = StringFunctionMap{{"basic", particle_field::testBasic}};
+    fcns["small"] = small_functions;
 
     if (argc == 1)
     {

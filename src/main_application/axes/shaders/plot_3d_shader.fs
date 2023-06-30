@@ -1,6 +1,6 @@
 #version 330
 
-out vec3 color;
+out vec4 color;
 in vec3 fragment_color;
 in vec4 coord_out;
 flat in vec3 p1_out;
@@ -68,7 +68,7 @@ void main()
       }
    }
 
-   color = fragment_color;
+   color = vec4(fragment_color, 1.0);
 
    /* TODO: Finish to enable dashed line
    vec3 vec_to_fragment;

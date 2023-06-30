@@ -111,7 +111,8 @@ void main()
       float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 2);
       vec3 specular = specular_strength * spec * light_color;  
 
-      color = vec4((ambient + diffuse + specular) * object_color, 1.0);
+      // color = vec4((ambient + diffuse + specular) * object_color, 1.0);
+      color = vec4((ambient + specular) * object_color, 1.0);
       color.r = min(color.r, 1.0);
       color.g = min(color.g, 1.0);
       color.b = min(color.b, 1.0);

@@ -60,7 +60,7 @@ void main()
 
    color = vec4(fragment_color, alpha);
 
-   if(triangle_id == 3)
+   /*if(triangle_id == 3)
    {
       float dx = fragment_pos.x - p1_out.x;
       float dy = fragment_pos.y - p1_out.y;
@@ -114,6 +114,6 @@ void main()
       {
          discard;
       }
-   }
+   }*/
 
 }

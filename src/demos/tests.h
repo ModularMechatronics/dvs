@@ -7,6 +7,7 @@
 #include "tests/fake_fem.h"
 #include "tests/hexagon_rods.h"
 #include "tests/particle_field/particle_field.h"
+#include "tests/small.h"
 #include "tests/imu/imu.h"
 #include "tests/joints/joints.h"
 #include "tests/klein.h"

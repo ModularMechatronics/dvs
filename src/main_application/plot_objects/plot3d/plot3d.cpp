@@ -11,9 +11,10 @@ struct ConvertedData : ConvertedDataBase
     float* p1;
     float* p2;
     int32_t* idx_data;
+    float* color_data;
     size_t num_points;
 
-    ConvertedData() : p0{nullptr}, p1{nullptr}, p2{nullptr}, idx_data{nullptr}, num_points{} {}
+    ConvertedData() : p0{nullptr}, p1{nullptr}, p2{nullptr}, idx_data{nullptr}, color_data{nullptr}, num_points{} {}
 
     ConvertedData(const ConvertedData& other) = delete;
     ConvertedData& operator=(const ConvertedData& other) = delete;
@@ -26,6 +27,7 @@ struct ConvertedData : ConvertedDataBase
         delete[] p1;
         delete[] p2;
         delete[] idx_data;
+        delete[] color_data;
     }
 };
 
@@ -34,12 +36,17 @@ struct InputParams
     size_t num_elements;
     size_t num_bytes_per_element;
     size_t num_bytes_for_one_vec;
+    bool has_color;
 
     InputParams() = default;
-    InputParams(const size_t num_elements_, const size_t num_bytes_per_element_, const size_t num_bytes_for_one_vec_)
+    InputParams(const size_t num_elements_,
+                const size_t num_bytes_per_element_,
+                const size_t num_bytes_for_one_vec_,
+                const bool has_color_)
         : num_elements{num_elements_},
           num_bytes_per_element{num_bytes_per_element_},
-          num_bytes_for_one_vec{num_bytes_for_one_vec_}
+          num_bytes_for_one_vec{num_bytes_for_one_vec_},
+          has_color{has_color_}
     {
     }
 };
@@ -61,7 +68,6 @@ struct Converter
 Plot3D::Plot3D(const CommunicationHeader& hdr,
                ReceivedData& received_data,
                const std::unique_ptr<const ConvertedDataBase>& converted_data,
-
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
                const ShaderCollection& shader_collection,
@@ -83,6 +89,11 @@ Plot3D::Plot3D(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(converted_data_local->p2, num_points_, 3);
 
     vertex_buffer_.addBuffer(converted_data_local->idx_data, num_points_, 1);
+
+    if (has_color_)
+    {
+        vertex_buffer_.addBuffer(converted_data_local->color_data, num_points_, 3);
+    }
 }
 
 void Plot3D::findMinMax()
@@ -95,6 +106,17 @@ void Plot3D::render()
 {
     shader_collection_.plot_3d_shader.use();
     shader_collection_.plot_3d_shader.uniform_handles.half_line_width.setFloat(line_width_ / 3.0f);
+    shader_collection_.plot_3d_shader.base_uniform_handles.alpha.setFloat(alpha_);
+
+    if (has_color_)
+    {
+        shader_collection_.plot_3d_shader.base_uniform_handles.has_color_vec.setInt(1);
+    }
+    else
+    {
+        shader_collection_.plot_3d_shader.base_uniform_handles.has_color_vec.setInt(0);
+    }
+
     vertex_buffer_.render(num_points_);
 }
 
@@ -105,8 +127,10 @@ std::unique_ptr<const ConvertedDataBase> Plot3D::convertRawData(const Communicat
                                                                 const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
 {
-    const InputParams input_params{
-        attributes.num_elements, attributes.num_bytes_per_element, attributes.num_bytes_for_one_vec};
+    const InputParams input_params{attributes.num_elements,
+                                   attributes.num_bytes_per_element,
+                                   attributes.num_bytes_for_one_vec,
+                                   attributes.has_color};
 
     std::unique_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
@@ -492,6 +516,124 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
     converted_data->idx_data[idx_idx + 3] = 3;
     converted_data->idx_data[idx_idx + 4] = 4;
     converted_data->idx_data[idx_idx + 5] = 5;
+
+    if (input_params.has_color)
+    {
+        const RGB888* const input_data_rgb =
+            reinterpret_cast<const RGB888* const>(input_data_dt + 3U * input_params.num_elements);
+        converted_data->color_data = new float[3 * num_points];
+
+        idx = 0;
+
+        for (size_t k = 1; k < input_params.num_elements - 1; k++)
+        {
+            const RGBTripletf color_k{static_cast<float>(input_data_rgb[k].red) / 255.0f,
+                                      static_cast<float>(input_data_rgb[k].green) / 255.0f,
+                                      static_cast<float>(input_data_rgb[k].blue) / 255.0f};
+
+            const RGBTripletf color_k_1{static_cast<float>(input_data_rgb[k - 1].red) / 255.0f,
+                                        static_cast<float>(input_data_rgb[k - 1].green) / 255.0f,
+                                        static_cast<float>(input_data_rgb[k - 1].blue) / 255.0f};
+            // v0
+            converted_data->color_data[idx] = color_k_1.red;
+            converted_data->color_data[idx + 1] = color_k_1.green;
+            converted_data->color_data[idx + 2] = color_k_1.blue;
+
+            // v1
+            converted_data->color_data[idx + 3] = color_k.red;
+            converted_data->color_data[idx + 4] = color_k.green;
+            converted_data->color_data[idx + 5] = color_k.blue;
+
+            // v2
+            converted_data->color_data[idx + 6] = color_k.red;
+            converted_data->color_data[idx + 7] = color_k.green;
+            converted_data->color_data[idx + 8] = color_k.blue;
+
+            // v3
+            converted_data->color_data[idx + 9] = color_k_1.red;
+            converted_data->color_data[idx + 10] = color_k_1.green;
+            converted_data->color_data[idx + 11] = color_k_1.blue;
+
+            // v4
+            converted_data->color_data[idx + 12] = color_k.red;
+            converted_data->color_data[idx + 13] = color_k.green;
+            converted_data->color_data[idx + 14] = color_k.blue;
+
+            // v5
+            converted_data->color_data[idx + 15] = color_k_1.red;
+            converted_data->color_data[idx + 16] = color_k_1.green;
+            converted_data->color_data[idx + 17] = color_k_1.blue;
+
+            // v6
+            converted_data->color_data[idx + 18] = color_k.red;
+            converted_data->color_data[idx + 19] = color_k.green;
+            converted_data->color_data[idx + 20] = color_k.blue;
+
+            // v7
+            converted_data->color_data[idx + 21] = color_k.red;
+            converted_data->color_data[idx + 22] = color_k.green;
+            converted_data->color_data[idx + 23] = color_k.blue;
+
+            // v8
+            converted_data->color_data[idx + 24] = color_k.red;
+            converted_data->color_data[idx + 25] = color_k.green;
+            converted_data->color_data[idx + 26] = color_k.blue;
+
+            // v9
+            converted_data->color_data[idx + 27] = color_k.red;
+            converted_data->color_data[idx + 28] = color_k.green;
+            converted_data->color_data[idx + 29] = color_k.blue;
+
+            // v10
+            converted_data->color_data[idx + 30] = color_k.red;
+            converted_data->color_data[idx + 31] = color_k.green;
+            converted_data->color_data[idx + 32] = color_k.blue;
+
+            // v11
+            converted_data->color_data[idx + 33] = color_k.red;
+            converted_data->color_data[idx + 34] = color_k.green;
+            converted_data->color_data[idx + 35] = color_k.blue;
+
+            idx += 36;
+        }
+
+        const RGBTripletf color_k{static_cast<float>(input_data_rgb[input_params.num_elements - 1].red) / 255.0f,
+                                  static_cast<float>(input_data_rgb[input_params.num_elements - 1].green) / 255.0f,
+                                  static_cast<float>(input_data_rgb[input_params.num_elements - 1].blue) / 255.0f};
+
+        const RGBTripletf color_k_1{static_cast<float>(input_data_rgb[input_params.num_elements - 2].red) / 255.0f,
+                                    static_cast<float>(input_data_rgb[input_params.num_elements - 2].green) / 255.0f,
+                                    static_cast<float>(input_data_rgb[input_params.num_elements - 2].blue) / 255.0f};
+        // v0
+        converted_data->color_data[idx] = color_k_1.red;
+        converted_data->color_data[idx + 1] = color_k_1.green;
+        converted_data->color_data[idx + 2] = color_k_1.blue;
+
+        // v1
+        converted_data->color_data[idx + 3] = color_k.red;
+        converted_data->color_data[idx + 4] = color_k.green;
+        converted_data->color_data[idx + 5] = color_k.blue;
+
+        // v2
+        converted_data->color_data[idx + 6] = color_k.red;
+        converted_data->color_data[idx + 7] = color_k.green;
+        converted_data->color_data[idx + 8] = color_k.blue;
+
+        // v3
+        converted_data->color_data[idx + 9] = color_k_1.red;
+        converted_data->color_data[idx + 10] = color_k_1.green;
+        converted_data->color_data[idx + 11] = color_k_1.blue;
+
+        // v4
+        converted_data->color_data[idx + 12] = color_k.red;
+        converted_data->color_data[idx + 13] = color_k.green;
+        converted_data->color_data[idx + 14] = color_k.blue;
+
+        // v5
+        converted_data->color_data[idx + 15] = color_k_1.red;
+        converted_data->color_data[idx + 16] = color_k_1.green;
+        converted_data->color_data[idx + 17] = color_k_1.blue;
+    }
 
     return std::unique_ptr<ConvertedData>{converted_data};
 }

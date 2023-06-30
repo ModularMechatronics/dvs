@@ -14,6 +14,7 @@ Pre release:
 - Finalize demos
 - Remove ItemId from internal namespace
 - Grid lines when invalid/inf axes limits
+
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
 - Change name of application (to plotto or something)
@@ -31,9 +32,10 @@ Pre release:
 - Drop shadow and bevel of plot pane
 - Fix case for plot/plot3 when two adjacent points are equal
 - pane shadow
-- 3d boxes simulation
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
+- Contour plotting function
+- Bar plot
 
 Post release:
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
@@ -78,7 +80,6 @@ Post release:
  * Use MatrixFixed instead of Matrix where possible
  * Add VectorFixed
 - Use weak_ptr for current_gui_element_?
-- Bar plot
 - Image view (same level as plot pane) which is zoomable and panable only
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
 - Do something better/neater than "fillBufferWithData"?
@@ -96,7 +97,6 @@ Post release:
 - Fix showing correct plot walls when in perspective mode
 - Default layout templates with simple names and ex 2x2 plots, 3x3 plots etc
 - Create data structure to store properties in, instead of having to specify everything in function call to "plot" etc. i.e. "plot(x, y, props)"
-- Contour plotting function
 - setCurrentElement doesn''t send any information to dvs, only sets internal variable on client side which is sent with the next command
   - This way, a property type could be added, so that the current element can be specified in the function call
 - Create another class called something like HeaderPayload, that separates values (angle, axis bounds etc) from flags?

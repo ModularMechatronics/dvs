@@ -6,9 +6,11 @@ layout(location = 0) in vec3 p0;
 layout(location = 1) in vec3 p1;
 layout(location = 2) in vec3 p2;
 layout(location = 3) in int idx;
+layout(location = 4) in vec3 in_color;
 uniform vec3 vertex_color;
 uniform float half_line_width;
 uniform float axes_width;
+uniform int has_color_vec;
 uniform float axes_height;
 
 out vec3 fragment_color;
@@ -223,7 +225,14 @@ void main()
     vec4 op = inverse_model_view_proj_mat * gl_Position;
 
     coord_out = vec4(op.x, op.y, op.z, op.w);
-    fragment_color = vertex_color;
+    if(has_color_vec == int(1))
+    {
+        fragment_color = in_color;
+    }
+    else
+    {
+        fragment_color = vertex_color;
+    }
     vert_pos     = gl_Position.xyz / gl_Position.w;
     p1_out = p1_transformed.xyz;
 }
