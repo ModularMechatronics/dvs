@@ -332,6 +332,7 @@ struct PlotObjectAttributes
     ItemId id;
 
     bool has_color;
+    bool has_point_sizes;
 
     uint64_t num_bytes_for_one_vec;
 
@@ -367,6 +368,7 @@ struct PlotObjectAttributes
         }
 
         has_color = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
+        has_point_sizes = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_POINT_SIZES);
 
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::DIMENSION_2D))
         {
@@ -421,6 +423,7 @@ protected:
 
     RGBTripletf color_;
     bool has_color_;
+    bool has_point_sizes_;
 
     RGBTripletf edge_color_;
     RGBTripletf face_color_;

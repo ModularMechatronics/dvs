@@ -8,8 +8,9 @@ struct ConvertedData : ConvertedDataBase
 {
     float* points_ptr;
     float* color_data;
+    float* point_sizes_data;
 
-    ConvertedData() : points_ptr{nullptr}, color_data{nullptr} {}
+    ConvertedData() : points_ptr{nullptr}, color_data{nullptr}, point_sizes_data{nullptr} {}
 
     ConvertedData(const ConvertedData& other) = delete;
     ConvertedData& operator=(const ConvertedData& other) = delete;
@@ -20,6 +21,7 @@ struct ConvertedData : ConvertedDataBase
     {
         delete[] points_ptr;
         delete[] color_data;
+        delete[] point_sizes_data;
     }
 };
 
@@ -29,6 +31,7 @@ struct InputParams
     size_t num_bytes_per_element;
     size_t num_bytes_for_one_vec;
     bool has_color;
+    bool has_point_sizes;
     float z_offset;
 
     InputParams() = default;
@@ -36,11 +39,13 @@ struct InputParams
                 const size_t num_bytes_per_element_,
                 const size_t num_bytes_for_one_vec_,
                 const bool has_color_,
+                const bool has_points_sizes_,
                 float z_offset_)
         : num_elements{num_elements_},
           num_bytes_per_element{num_bytes_per_element_},
           num_bytes_for_one_vec{num_bytes_for_one_vec_},
           has_color{has_color_},
+          has_point_sizes{has_points_sizes_},
           z_offset{z_offset_}
     {
     }
@@ -103,6 +108,11 @@ Scatter2D::Scatter2D(const CommunicationHeader& hdr,
         if (has_color_)
         {
             vertex_buffer_.addBuffer(converted_data_local->color_data, num_elements_, 3);
+        }
+
+        if (has_point_sizes_)
+        {
+            vertex_buffer_.addBuffer(converted_data_local->point_sizes_data, num_elements_, 1, GL_STATIC_DRAW, 2);
         }
     }
 }
@@ -170,6 +180,15 @@ void Scatter2D::modifyShader()
     shader_collection_.scatter_shader.use();
     shader_collection_.scatter_shader.base_uniform_handles.point_size.setFloat(point_size_);
     shader_collection_.scatter_shader.base_uniform_handles.scatter_mode.setInt(static_cast<int>(scatter_style_));
+    if (has_point_sizes_)
+    {
+        shader_collection_.scatter_shader.base_uniform_handles.has_point_sizes_vec.setInt(1);
+    }
+    else
+    {
+        shader_collection_.scatter_shader.base_uniform_handles.has_point_sizes_vec.setInt(0);
+    }
+
     if (has_color_)
     {
         shader_collection_.scatter_shader.base_uniform_handles.has_color_vec.setInt(1);
@@ -217,6 +236,7 @@ std::unique_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const Communi
                                    attributes.num_bytes_per_element,
                                    attributes.num_bytes_for_one_vec,
                                    attributes.has_color,
+                                   attributes.has_point_sizes,
                                    properties_data.z_offset.data};
 
     std::unique_ptr<const ConvertedDataBase> converted_data_base{
@@ -256,8 +276,16 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
 
     if (input_params.has_color)
     {
-        const RGB888* const input_data_rgb =
-            reinterpret_cast<const RGB888* const>(input_data_dt_x + 2U * input_params.num_elements);
+        const RGB888* input_data_rgb;
+
+        if (input_params.has_point_sizes)
+        {
+            input_data_rgb = reinterpret_cast<const RGB888* const>(input_data_dt_x + 3U * input_params.num_elements);
+        }
+        else
+        {
+            input_data_rgb = reinterpret_cast<const RGB888* const>(input_data_dt_x + 2U * input_params.num_elements);
+        }
         converted_data->color_data = new float[3 * input_params.num_elements];
 
         idx = 0;
@@ -269,6 +297,19 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
             converted_data->color_data[idx + 2] = static_cast<float>(input_data_rgb[k].blue) / 255.0f;
 
             idx += 3;
+        }
+    }
+
+    if (input_params.has_point_sizes)
+    {
+        const T* input_data_point_sizes;
+
+        input_data_point_sizes = reinterpret_cast<const T*>(input_data_dt_x + 2U * input_params.num_elements);
+        converted_data->point_sizes_data = new float[input_params.num_elements];
+
+        for (size_t k = 0; k < input_params.num_elements; k++)
+        {
+            converted_data->point_sizes_data[k] = input_data_point_sizes[k];
         }
     }
 

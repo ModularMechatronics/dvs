@@ -103,6 +103,7 @@ public:
         // Misc
         Uniform vertex_color;
         Uniform has_color_vec;
+        Uniform has_point_sizes_vec;
 
         Uniform alpha;
         Uniform min_z;

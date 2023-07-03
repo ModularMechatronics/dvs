@@ -129,6 +129,7 @@ void ShaderBase::setBaseUniformHandles()
 
     base_uniform_handles.vertex_color = Uniform(program_id_, "vertex_color");
     base_uniform_handles.has_color_vec = Uniform(program_id_, "has_color_vec");
+    base_uniform_handles.has_point_sizes_vec = Uniform(program_id_, "has_point_sizes_vec");
     base_uniform_handles.alpha = Uniform(program_id_, "alpha");
 
     base_uniform_handles.min_z = Uniform(program_id_, "min_z");

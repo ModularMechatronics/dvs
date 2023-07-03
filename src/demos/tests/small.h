@@ -250,9 +250,7 @@ void testScatterColorMap()
             const float rand_val_y = static_cast<float>(rand() % 1001) / 1000.0f - 0.5f;
 
             x(r, c) = static_cast<float>(c) / nc + rand_val_x * 0.01f;
-            ;
             y(r, c) = static_cast<float>(r) / nr + rand_val_y * 0.01f;
-            ;
         }
     }
 
@@ -493,6 +491,40 @@ void testScatterCluster()
 
         scatter3(x, y, z, colors[i], properties::ScatterStyle::DISC);
     }
+}
+
+void testScatterVaryingSize()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_elements = 200;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements);
+    Vector<double> point_sizes(num_elements);
+    Vector<RGB888> colorp(num_elements);
+
+    double t = 0.0;
+    double r = 1.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = r * std::cos(t);
+        y(k) = r * std::sin(t);
+        z(k) = r;
+        point_sizes(k) = static_cast<double>(k) * 0.1 + 5.0;
+        colorp(k) = calculateColormapJet(std::sin(t) * 0.5 + 0.5);
+        t += 0.1;
+        r += 0.01;
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    scatter(x, y, colorp, point_sizes, properties::ScatterStyle::DISC);
+    scatter3(x, y, z, colorp, point_sizes, properties::ScatterStyle::DISC);
+    // scatter(x, y, point_sizes, properties::ScatterStyle::DISC);
+    plot(x, y, properties::ScatterStyle::DISC);
 }
 
 }  // namespace small

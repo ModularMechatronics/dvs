@@ -3,12 +3,14 @@
 uniform mat4 model_view_proj_mat;
 layout(location = 0) in vec3 in_vertex;
 layout(location = 1) in vec3 in_color;
+layout(location = 2) in float in_point_sizes;
 uniform vec3 vertex_color;
 uniform vec3 distance_from_point;
 uniform float point_size;
 uniform float min_dist;
 uniform float max_dist;
 uniform int has_color_vec;
+uniform int has_point_sizes_vec;
 uniform int distance_from_type;
 uniform int color_map_selection;
 uniform int has_distance_from;
@@ -344,6 +346,14 @@ void main()
     {
         fragment_color = vertex_color;
     }
-    
-    gl_PointSize = point_size;
+
+    if(has_point_sizes_vec == int(1))
+    {
+        // gl_PointSize = point_size * in_point_sizes;
+        gl_PointSize = in_point_sizes;
+    }
+    else
+    {
+        gl_PointSize = point_size;
+    }
 }

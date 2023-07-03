@@ -324,7 +324,8 @@ void plot(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color, c
 }*/
 
 template <typename T, typename... Us>
-void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<RGB888>& color, const Us&... settings)
+void plot3(
+    const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<RGB888>& color, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -341,7 +342,11 @@ void plot3(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vec
 }
 
 template <typename T, typename... Us>
-void plot3(const VectorConstView<T>& x, const VectorConstView<T>& y, const VectorConstView<T>& z, const VectorConstView<RGB888>& color, const Us&... settings)
+void plot3(const VectorConstView<T>& x,
+           const VectorConstView<T>& y,
+           const VectorConstView<T>& z,
+           const VectorConstView<RGB888>& color,
+           const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -389,6 +394,18 @@ template <typename T, typename... Us> void scatter(const Vector<T>& x, const Vec
 }
 
 template <typename T, typename... Us>
+void scatter(const Vector<T>& x, const Vector<T>& y, const Vector<T>& point_sizes, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCATTER2};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_POINT_SIZES, internal::toUInt8(1));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, point_sizes);
+}
+
+template <typename T, typename... Us>
 void scatter(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER2};
@@ -398,6 +415,40 @@ void scatter(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, color);
+}
+
+template <typename T, typename... Us>
+void scatter(const Vector<T>& x,
+             const Vector<T>& y,
+             const Vector<T>& point_sizes,
+             const Vector<RGB888>& color,
+             const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCATTER2};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_POINT_SIZES, internal::toUInt8(1));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, point_sizes, color);
+}
+
+template <typename T, typename... Us>
+void scatter(const Vector<T>& x,
+             const Vector<T>& y,
+             const Vector<RGB888>& color,
+             const Vector<T>& point_sizes,
+             const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCATTER2};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_POINT_SIZES, internal::toUInt8(1));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, point_sizes, color);
 }
 
 template <typename T, typename... Us>
@@ -476,6 +527,55 @@ void scatter3(
     hdr.extend(settings...);
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, color);
+}
+
+template <typename T, typename... Us>
+void scatter3(const Vector<T>& x,
+              const Vector<T>& y,
+              const Vector<T>& z,
+              const Vector<RGB888>& color,
+              const Vector<T>& point_sizes,
+              const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCATTER3};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_POINT_SIZES, internal::toUInt8(1));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, point_sizes, color);
+}
+
+template <typename T, typename... Us>
+void scatter3(const Vector<T>& x,
+              const Vector<T>& y,
+              const Vector<T>& z,
+              const Vector<T>& point_sizes,
+              const Vector<RGB888>& color,
+              const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCATTER3};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_POINT_SIZES, internal::toUInt8(1));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, point_sizes, color);
+}
+
+template <typename T, typename... Us>
+void scatter3(
+    const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<T>& point_sizes, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCATTER3};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_POINT_SIZES, internal::toUInt8(1));
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, point_sizes);
 }
 
 template <typename T, typename... Us> void drawPoint(const Point3<T>& p, const Us&... settings)

@@ -28,6 +28,7 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
     }
 
     has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
+    has_point_sizes_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_POINT_SIZES);
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
     min_max_calculated_ = false;
@@ -69,6 +70,7 @@ void PlotObjectBase::postInitialize(ReceivedData& received_data,
     }
 
     has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
+    has_point_sizes_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_POINT_SIZES);
 
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
