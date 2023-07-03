@@ -1,6 +1,8 @@
 #ifndef DEMOS_SMALL_H
 #define DEMOS_SMALL_H
 
+#include <random>
+
 namespace small
 {
 
@@ -440,6 +442,57 @@ void testStocks()
     plot(x, y0, properties::LineWidth(3.0f));
     // plot(x, y1);
     // plot(x, y2);
+}
+
+void testScatterCluster()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_elements = 1000, num_cluester = 6;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements);
+
+    const auto r_func = []() -> double { return static_cast<double>(rand() % 1001) / 1000.0; };
+
+    setCurrentElement("p_view_0");
+    clearView();
+
+    std::vector<properties::Color> colors{properties::Color{218, 83, 29},
+                                          properties::Color{0, 114, 187},
+                                          properties::Color{238, 177, 49},
+                                          properties::Color{118, 172, 59},
+                                          properties::Color{29, 218, 186},
+                                          properties::Color{218, 29, 155}};
+
+    // random device class instance, source of 'true' randomness for initializing random seed
+    std::random_device rd;
+
+    // Mersenne twister PRNG, initialized with seed from previous random device instance
+    std::mt19937 gen(rd());
+
+    for (size_t i = 0; i < num_cluester; i++)
+    {
+        const double x_center = r_func() * 10.0;
+        const double y_center = r_func() * 10.0;
+        const double z_center = r_func() * 10.0;
+
+        const double x_std = (r_func() + 1.0) * 1.0;
+        const double y_std = (r_func() + 1.0) * 1.0;
+        const double z_std = (r_func() + 1.0) * 1.0;
+
+        std::normal_distribution<double> dx{x_center, x_std};
+        std::normal_distribution<double> dy{y_center, y_std};
+        std::normal_distribution<double> dz{z_center, z_std};
+
+        for (size_t k = 1; k < num_elements; k++)
+        {
+            x(k) = dx(gen);
+            y(k) = dy(gen);
+            z(k) = dz(gen);
+        }
+
+        scatter3(x, y, z, colors[i], properties::ScatterStyle::DISC);
+    }
 }
 
 }  // namespace small

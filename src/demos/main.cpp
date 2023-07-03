@@ -56,7 +56,8 @@ int main(int argc, char* argv[])
                                       {"scatter_color_map", small::testScatterColorMap},
                                       {"scatter_samples", small::testScatterSamples},
                                       {"fake_contour", small::testFakeContour},
-                                      {"stocks", small::testStocks}};
+                                      {"stocks", small::testStocks},
+                                      {"scatter_cluster", small::testScatterCluster}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;
