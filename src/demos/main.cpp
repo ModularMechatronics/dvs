@@ -54,8 +54,9 @@ int main(int argc, char* argv[])
                                       {"lorenz", small::testLorenz},
                                       {"bump", small::testBump},
                                       {"scatter_color_map", small::testScatterColorMap},
-                                      {"scatter_samples", small::testScatterSamples}
-                                      };
+                                      {"scatter_samples", small::testScatterSamples},
+                                      {"fake_contour", small::testFakeContour},
+                                      {"stocks", small::testStocks}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

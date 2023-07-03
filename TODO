@@ -36,6 +36,8 @@ Pre release:
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Contour plotting function
 - Bar plot
+- Time date axes
+- Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 
 Post release:
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.

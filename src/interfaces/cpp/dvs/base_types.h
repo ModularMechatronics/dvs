@@ -29,6 +29,16 @@ struct RGB888
     RGB888(const uint8_t red_, const uint8_t green_, const uint8_t blue_) : red{red_}, green{green_}, blue{blue_} {}
 };
 
+inline bool operator==(const RGB888& lhs, const RGB888& rhs)
+{
+    return (lhs.red == rhs.red) && (lhs.green == rhs.green) && (lhs.blue == rhs.blue);
+}
+
+inline bool operator!=(const RGB888& lhs, const RGB888& rhs)
+{
+    return !(lhs == rhs);
+}
+
 }  // namespace dvs
 
 #endif  // DVS_BASE_TYPES_H_
