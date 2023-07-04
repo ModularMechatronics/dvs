@@ -370,6 +370,24 @@ void testFakeContour()
     Vec2<std::int64_t> start_index{0, 0};
     Vec2<std::int64_t> next_index{0, 0};
 
+    for (std::int32_t r = 1; r < (num_rows - 1U); r++)
+    {
+        for (std::int32_t c = 1; c < (num_cols - 1U); c++)
+        {
+            const RGB888 col{img(r, c, 0), img(r, c, 1), img(r, c, 2)};
+            const RGB888 col_left{img(r, c - 1, 0), img(r, c - 1, 1), img(r, c - 1, 2)};
+            const RGB888 col_right{img(r, c + 1, 0), img(r, c + 1, 1), img(r, c + 1, 2)};
+            const RGB888 col_up{img(r - 1, c, 0), img(r - 1, c, 1), img(r - 1, c, 2)};
+            const RGB888 col_down{img(r + 1, c, 0), img(r + 1, c, 1), img(r + 1, c, 2)};
+            if (((col == col_left) && (col == col_right) && (col == col_up) && (col == col_down)))
+            {
+                img2(r, c, 0) = 0;
+                img2(r, c, 1) = 0;
+                img2(r, c, 2) = 0;
+            }
+        }
+    }
+
     while (false)
     {
         // Paint the edge pixel black
@@ -399,9 +417,10 @@ void testFakeContour()
 
     setCurrentElement("p_view_0");
     clearView();
-    surf(x, y, z, properties::EdgeColor::BLACK, properties::ColorMap::VIRIDIS);
+    // surf(x, y, z, properties::EdgeColor::BLACK, properties::ColorMap::VIRIDIS);
 
-    imShow(img);
+    imShow(img, properties::ZOffset(-0.05f));
+    imShow(img2);
 }
 
 void testStocks()
