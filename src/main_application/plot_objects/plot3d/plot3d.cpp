@@ -10,22 +10,66 @@ struct ConvertedData : ConvertedDataBase
     float* p0;
     float* p1;
     float* p2;
+    float* px;
+    float* py;
+    float* pz;
     int32_t* idx_data;
     float* color_data;
     size_t num_points;
+    size_t num_elements;
 
-    ConvertedData() : p0{nullptr}, p1{nullptr}, p2{nullptr}, idx_data{nullptr}, color_data{nullptr}, num_points{} {}
+    ConvertedData()
+        : p0{nullptr},
+          p1{nullptr},
+          p2{nullptr},
+          px{nullptr},
+          py{nullptr},
+          pz{nullptr},
+          idx_data{nullptr},
+          color_data{nullptr},
+          num_points{}
+    {
+    }
 
     ConvertedData(const ConvertedData& other) = delete;
     ConvertedData& operator=(const ConvertedData& other) = delete;
     ConvertedData(ConvertedData&& other) = delete;
     ConvertedData& operator=(ConvertedData&& other) = delete;
 
+    std::pair<dvs::Vec3<double>, double> getClosestPoint(const Line3D<double>& line) const override
+    {
+        double min_dist = std::numeric_limits<double>::max();
+
+        std::int64_t min_dist_point_index = -1;
+
+        for (std::int64_t k = 0; k < num_elements; k++)
+        {
+            const Vec3d current_point(px[k], py[k], pz[k]);
+            const Point3d closest_point = line.closestPointOnLineFromPoint(current_point);
+            const Vec3d dist_vec = current_point - closest_point;
+            const double current_dist = dist_vec.norm();
+
+            if (current_dist < min_dist)
+            {
+                min_dist = current_dist;
+                min_dist_point_index = k;
+            }
+        }
+
+        const Vec3d min_dist_point(px[min_dist_point_index], py[min_dist_point_index], pz[min_dist_point_index]);
+        std::cout << "Closest point from plot: " << min_dist_point << std::endl;
+
+        return {min_dist_point, min_dist};
+    }
+
     ~ConvertedData() override
     {
         delete[] p0;
         delete[] p1;
         delete[] p2;
+        delete[] px;
+        delete[] py;
+        delete[] pz;
         delete[] idx_data;
         delete[] color_data;
     }
@@ -52,12 +96,12 @@ struct InputParams
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -67,7 +111,7 @@ struct Converter
 
 Plot3D::Plot3D(const CommunicationHeader& hdr,
                ReceivedData& received_data,
-               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+               const std::shared_ptr<const ConvertedDataBase>& converted_data,
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
                const ShaderCollection& shader_collection,
@@ -122,7 +166,7 @@ void Plot3D::render()
 
 Plot3D::~Plot3D() {}
 
-std::unique_ptr<const ConvertedDataBase> Plot3D::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> Plot3D::convertRawData(const CommunicationHeader& hdr,
                                                                 const PlotObjectAttributes& attributes,
                                                                 const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
@@ -132,7 +176,7 @@ std::unique_ptr<const ConvertedDataBase> Plot3D::convertRawData(const Communicat
                                    attributes.num_bytes_for_one_vec,
                                    attributes.has_color};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;
@@ -141,7 +185,7 @@ std::unique_ptr<const ConvertedDataBase> Plot3D::convertRawData(const Communicat
 namespace
 {
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t num_segments = input_params.num_elements - 1U;
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
@@ -149,9 +193,14 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
 
     ConvertedData* converted_data = new ConvertedData;
     converted_data->num_points = num_points;
+    converted_data->num_elements = input_params.num_elements;
     converted_data->p0 = new float[3 * num_points];
     converted_data->p1 = new float[3 * num_points];
     converted_data->p2 = new float[3 * num_points];
+
+    converted_data->px = new float[input_params.num_elements];
+    converted_data->py = new float[input_params.num_elements];
+    converted_data->pz = new float[input_params.num_elements];
     converted_data->idx_data = new int32_t[num_points];
 
     std::memset(converted_data->p0, 0, 3 * num_points * sizeof(float));
@@ -185,6 +234,10 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         const T vy = p2y - p1y;
         const T vz = p2z - p1z;
 
+        converted_data->px[0] = p1x;
+        converted_data->py[0] = p1y;
+        converted_data->pz[0] = p1z;
+
         pts[0].p0.x = p1x - vx;
         pts[0].p0.y = p1y - vy;
         pts[0].p0.y = p1z - vz;
@@ -211,6 +264,10 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         const T vx = p1x - p0x;
         const T vy = p1y - p0y;
         const T vz = p1z - p0z;
+
+        converted_data->px[input_params.num_elements - 1U] = p1x;
+        converted_data->py[input_params.num_elements - 1U] = p1y;
+        converted_data->pz[input_params.num_elements - 1U] = p1z;
 
         pts[input_params.num_elements - 1].p0.x = p0x;
         pts[input_params.num_elements - 1].p0.y = p0y;
@@ -239,6 +296,10 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         const T p2x = input_data_dt[k + 1];
         const T p2y = input_data_dt[input_params.num_elements + k + 1];
         const T p2z = input_data_dt[2 * input_params.num_elements + k + 1];
+
+        converted_data->px[k] = p1x;
+        converted_data->py[k] = p1y;
+        converted_data->pz[k] = p1z;
 
         pts[k].p0.x = p0x;
         pts[k].p0.y = p0y;
@@ -635,6 +696,6 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         converted_data->color_data[idx + 17] = color_k_1.blue;
     }
 
-    return std::unique_ptr<ConvertedData>{converted_data};
+    return std::shared_ptr<const ConvertedData>{converted_data};
 }
 }  // namespace

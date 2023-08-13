@@ -16,6 +16,7 @@
 #include "axes/plot_box_silhouette.h"
 #include "axes/plot_box_walls.h"
 #include "axes/plot_pane_background.h"
+#include "axes/point_selection_box.h"
 #include "axes/structures/axes_limits.h"
 #include "axes/structures/axes_settings.h"
 #include "axes/structures/grid_vectors.h"
@@ -33,6 +34,7 @@ private:
     TextRenderer text_renderer_;
     ShaderCollection shader_collection_;
     LegendRenderer legend_renderer_;
+    PointSelectionBox point_selection_box_;
 
     ViewAngles view_angles_;
     AxesLimits axes_limits_;
@@ -47,12 +49,12 @@ private:
     RGBTripletf tab_background_color_;
     AxesSideConfiguration axes_side_configuration_;
 
-    glm::mat4 orth_projection_mat;
-    glm::mat4 persp_projection_mat;
-    glm::mat4 projection_mat;
-    glm::mat4 view_mat;
-    glm::mat4 model_mat;
-    glm::mat4 scale_mat;
+    glm::mat4 orth_projection_mat_;
+    glm::mat4 persp_projection_mat_;
+    glm::mat4 projection_mat_;
+    glm::mat4 view_mat_;
+    glm::mat4 model_mat_;
+    glm::mat4 scale_mat_;
     glm::mat4 window_scale_mat_;
 
     Matrix<double> rot_mat;
@@ -80,6 +82,8 @@ private:
     std::string name_;
     MouseInteractionAxis current_mouse_interaction_axis_;
 
+    Line3D<double> line_;
+
     void renderBackground();
     void renderPlotBox();
     void renderBoxGrid();
@@ -101,6 +105,7 @@ public:
 
     void updateStates(const AxesLimits& axes_limits,
                       const ViewAngles& view_angles,
+                      const QueryPoint& query_point,
                       const GridVectors& gv,
                       const AxesSideConfiguration& axes_side_configuration,
                       const bool use_perspective_proj,
@@ -125,6 +130,12 @@ public:
     void setAxesBoxScaleFactor(const Vec3d& scale_vector);
     void setScaleOnRotation(const bool scale_on_rotation);
     void setAxesSquare(const bool axes_square);
+    void renderPointSelection(const Point3d& closest_point);
+
+    Line3D<double> getLine() const
+    {
+        return line_;
+    }
 };
 
 #endif  // MAIN_APPLICATION_AXES_AXES_RENDERER_H_

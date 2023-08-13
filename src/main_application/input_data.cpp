@@ -21,12 +21,12 @@ InputData::InputData(ReceivedData& received_data,
 }
 
 InputData::InputData(ReceivedData& received_data,
-                     std::unique_ptr<const ConvertedDataBase>& converted_data,
+                     const std::shared_ptr<const ConvertedDataBase>& converted_data,
                      const PlotObjectAttributes& plot_object_attributes,
                      const PropertiesData& properties_data)
     : received_data_{std::move(received_data)},
       function_{received_data_.getFunction()},
-      converted_data_{std::move(converted_data)},
+      converted_data_{converted_data},
       plot_object_attributes_{plot_object_attributes},
       properties_data_{properties_data}
 {
@@ -37,10 +37,10 @@ internal::Function InputData::getFunction() const
     return function_;
 }
 
-std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData, std::unique_ptr<const ConvertedDataBase>>
+std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData, std::shared_ptr<const ConvertedDataBase>>
 InputData::moveAllData()
 {
-    return {std::move(received_data_), plot_object_attributes_, properties_data_, std::move(converted_data_)};
+    return {std::move(received_data_), plot_object_attributes_, properties_data_, converted_data_};
 }
 
 std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData> InputData::moveAllDataButConvertedData()

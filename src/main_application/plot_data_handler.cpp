@@ -135,7 +135,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                               const PlotObjectAttributes& plot_object_attributes,
                               const PropertiesData& properties_data,
                               ReceivedData& received_data,
-                              std::unique_ptr<const ConvertedDataBase>& converted_data)
+                              const std::shared_ptr<const ConvertedDataBase>& converted_data)
 {
     if (pending_soft_clear_)
     {

@@ -278,6 +278,138 @@ vec3 calculateColormapRainbowPastel(float value)
     return vec3(r, g, b);
 }
 
+vec3 calculateColormapJetSoft(float value)
+{
+    if(value < 0.0)
+    {
+        value = 0.0;
+    }
+    else if(value >= 1.0)
+    {
+        value = 0.99999;
+    }
+
+    float full_range_value = value * 10.0;
+    float integer_part = floor(full_range_value);
+    float fraction_part = full_range_value - integer_part;
+
+    float r = 0.0, g = 0.0, b = 0.0;
+
+    switch(int(integer_part))
+    {
+    case 0:
+        r = 0.3686274509803922 - fraction_part * 0.17254901960784316;
+        g = 0.30980392156862746 + fraction_part * 0.22352941176470587;
+        b = 0.6352941176470588 + fraction_part * 0.10588235294117654;
+        break;
+    case 1:
+        r = 0.19607843137254902 + fraction_part * 0.203921568627451;
+        g = 0.5333333333333333 + fraction_part * 0.22745098039215683;
+        b = 0.7411764705882353 - fraction_part * 0.09411764705882353;
+        break;
+    case 2:
+        r = 0.4 + fraction_part * 0.2705882352941176;
+        g = 0.7607843137254902 + fraction_part * 0.10588235294117654;
+        b = 0.6470588235294118 - fraction_part * 0.0039215686274509665;
+        break;
+    case 3:
+        r = 0.6705882352941176 + fraction_part * 0.2313725490196079;
+        g = 0.8666666666666667 + fraction_part * 0.09411764705882353;
+        b = 0.6431372549019608 - fraction_part * 0.04705882352941182;
+        break;
+    case 4:
+        r = 0.9019607843137255 + fraction_part * 0.0980392156862745;
+        g = 0.9607843137254902 + fraction_part * 0.039215686274509776;
+        b = 0.596078431372549 + fraction_part * 0.15294117647058825;
+        break;
+    case 5:
+        r = 1.0 - fraction_part * 0.0039215686274509665;
+        g = 1.0 - fraction_part * 0.1215686274509804;
+        b = 0.7490196078431373 - fraction_part * 0.20392156862745103;
+        break;
+    case 6:
+        r = 0.996078431372549 - fraction_part * 0.0039215686274509665;
+        g = 0.8784313725490196 - fraction_part * 0.196078431372549;
+        b = 0.5450980392156862 - fraction_part * 0.16470588235294115;
+        break;
+    case 7:
+        r = 0.9921568627450981 - fraction_part * 0.03529411764705881;
+        g = 0.6823529411764706 - fraction_part * 0.25490196078431376;
+        b = 0.3803921568627451 - fraction_part * 0.11764705882352938;
+        break;
+    case 8:
+        r = 0.9568627450980393 - fraction_part * 0.1215686274509804;
+        g = 0.42745098039215684 - fraction_part * 0.18431372549019606;
+        b = 0.2627450980392157 + fraction_part * 0.047058823529411764;
+        break;
+    case 9:
+        r = 0.8352941176470589 - fraction_part * 0.21568627450980393;
+        g = 0.24313725490196078 - fraction_part * 0.2392156862745098;
+        b = 0.30980392156862746 - fraction_part * 0.05098039215686273;
+        break;
+    }
+
+    return vec3(r, g, b);
+}
+vec3 calculateColormapJetBright(float value)
+{
+    if(value < 0.0)
+    {
+        value = 0.0;
+    }
+    else if(value >= 1.0)
+    {
+        value = 0.99999;
+    }
+
+    float full_range_value = value * 7.0;
+    float integer_part = floor(full_range_value);
+    float fraction_part = full_range_value - integer_part;
+
+    float r = 0.0, g = 0.0, b = 0.0;
+
+    switch(int(integer_part))
+    {
+    case 0:
+        r = 0.19607843137254902 + fraction_part * 0.203921568627451;
+        g = 0.5333333333333333 + fraction_part * 0.22745098039215683;
+        b = 0.7411764705882353 - fraction_part * 0.09411764705882353;
+        break;
+    case 1:
+        r = 0.4 + fraction_part * 0.2705882352941176;
+        g = 0.7607843137254902 + fraction_part * 0.10588235294117654;
+        b = 0.6470588235294118 - fraction_part * 0.0039215686274509665;
+        break;
+    case 2:
+        r = 0.6705882352941176 + fraction_part * 0.2313725490196079;
+        g = 0.8666666666666667 + fraction_part * 0.09411764705882353;
+        b = 0.6431372549019608 - fraction_part * 0.04705882352941182;
+        break;
+    case 3:
+        r = 0.9019607843137255 + fraction_part * 0.09411764705882353;
+        g = 0.9607843137254902 - fraction_part * 0.08235294117647063;
+        b = 0.596078431372549 - fraction_part * 0.050980392156862786;
+        break;
+    case 4:
+        r = 0.996078431372549 - fraction_part * 0.0039215686274509665;
+        g = 0.8784313725490196 - fraction_part * 0.196078431372549;
+        b = 0.5450980392156862 - fraction_part * 0.16470588235294115;
+        break;
+    case 5:
+        r = 0.9921568627450981 - fraction_part * 0.03529411764705881;
+        g = 0.6823529411764706 - fraction_part * 0.25490196078431376;
+        b = 0.3803921568627451 - fraction_part * 0.11764705882352938;
+        break;
+    case 6:
+        r = 0.9568627450980393 - fraction_part * 0.1215686274509804;
+        g = 0.42745098039215684 - fraction_part * 0.18431372549019606;
+        b = 0.2627450980392157 + fraction_part * 0.047058823529411764;
+        break;
+    }
+
+    return vec3(r, g, b);
+}
+
 void main()
 {
     vec3 vertex_to_use = in_vertex;
@@ -325,6 +457,14 @@ void main()
         else if(color_map_selection == 5)
         {
             colormap_color = calculateColormapRainbowPastel((height_val - min_z) / delta);
+        }
+        else if(color_map_selection == 6)
+        {
+            colormap_color = calculateColormapJetSoft((height_val - min_z) / delta);
+        }
+        else if(color_map_selection == 7)
+        {
+            colormap_color = calculateColormapJetBright((height_val - min_z) / delta);
         }
         else
         {

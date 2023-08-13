@@ -373,7 +373,7 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
 
 void PlotObjectBase::updateWithNewData(ReceivedData& received_data,
                                        const CommunicationHeader& hdr,
-                                       const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                                       const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                        const PropertiesData& properties_data)
 {
     static_cast<void>(received_data);
@@ -391,7 +391,7 @@ void PlotObjectBase::throwIfNotUpdateable() const
 
 void PlotObjectBase::appendNewData(ReceivedData& received_data,
                                    const CommunicationHeader& hdr,
-                                   const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                                   const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                    const PropertiesData& properties_data)
 {
     std::cout << "appendNewData not implemented for this object!" << std::endl;

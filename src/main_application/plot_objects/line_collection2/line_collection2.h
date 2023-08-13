@@ -16,7 +16,7 @@ public:
     LineCollection2D();
     LineCollection2D(const CommunicationHeader& hdr,
                      ReceivedData& received_data,
-                     const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                     const std::shared_ptr<const ConvertedDataBase>& converted_data,
 
                      const PlotObjectAttributes& plot_object_attributes,
                      const PropertiesData& properties_data,
@@ -28,7 +28,7 @@ public:
 
     void render() override;
 
-    static std::unique_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr,
+    static std::shared_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr,
                                                                    const PlotObjectAttributes& attributes,
                                                                    const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr);

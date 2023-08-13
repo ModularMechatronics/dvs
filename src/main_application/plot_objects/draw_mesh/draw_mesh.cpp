@@ -39,15 +39,15 @@ struct InputParams
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 template <typename T>
-std::unique_ptr<ConvertedData> convertDataSeparateVectors(const uint8_t* const input_data,
-                                                          const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertDataSeparateVectors(const uint8_t* const input_data,
+                                                                const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -56,7 +56,7 @@ struct Converter
 struct ConverterSeparateVectors
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertDataSeparateVectors<T>(input_data, input_params);
     }
@@ -66,14 +66,14 @@ struct ConverterSeparateVectors
 
 DrawMesh::DrawMesh(const CommunicationHeader& hdr,
                    ReceivedData& received_data,
-                   std::unique_ptr<const ConvertedDataBase>& converted_data,
+                   const std::shared_ptr<const ConvertedDataBase>& converted_data,
                    const PlotObjectAttributes& plot_object_attributes,
                    const PropertiesData& properties_data,
                    const ShaderCollection& shader_collection,
                    ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::TRIANGLES},
-      converted_data_{std::move(converted_data)}
+      converted_data_{converted_data}
 {
     if ((function_ != Function::DRAW_MESH) && (function_ != Function::DRAW_MESH_SEPARATE_VECTORS))
     {
@@ -178,7 +178,7 @@ LegendProperties DrawMesh::getLegendProperties() const
 
 DrawMesh::~DrawMesh() {}
 
-std::unique_ptr<const ConvertedDataBase> DrawMesh::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> DrawMesh::convertRawData(const CommunicationHeader& hdr,
                                                                   const PlotObjectAttributes& attributes,
                                                                   const PropertiesData& properties_data,
                                                                   const uint8_t* const data_ptr)
@@ -187,13 +187,13 @@ std::unique_ptr<const ConvertedDataBase> DrawMesh::convertRawData(const Communic
 
     if (attributes.function == Function::DRAW_MESH)
     {
-        std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        std::shared_ptr<const ConvertedDataBase> converted_data_base{
             applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
         return converted_data_base;
     }
     else
     {
-        std::unique_ptr<const ConvertedDataBase> converted_data_base{
+        std::shared_ptr<const ConvertedDataBase> converted_data_base{
             applyConverter<ConvertedData>(data_ptr, attributes.data_type, ConverterSeparateVectors{}, input_params)};
         return converted_data_base;
     }
@@ -203,7 +203,7 @@ namespace
 {
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     ConvertedData* converted_data = new ConvertedData;
     converted_data->points_ptr = new float[input_params.num_indices * 3 * 3];
@@ -261,12 +261,12 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         height_idx += 3;
     }
 
-    return std::unique_ptr<ConvertedData>{converted_data};
+    return std::shared_ptr<const ConvertedData>{converted_data};
 }
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertDataSeparateVectors(const uint8_t* const input_data,
-                                                          const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertDataSeparateVectors(const uint8_t* const input_data,
+                                                                const InputParams& input_params)
 {
     ConvertedData* converted_data = new ConvertedData;
 
@@ -332,7 +332,7 @@ std::unique_ptr<ConvertedData> convertDataSeparateVectors(const uint8_t* const i
         height_idx += 3;
     }
 
-    return std::unique_ptr<ConvertedData>{converted_data};
+    return std::shared_ptr<const ConvertedData>{converted_data};
 }
 
 }  // namespace

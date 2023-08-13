@@ -46,12 +46,12 @@ struct InputParams
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -61,8 +61,7 @@ struct Converter
 
 Surf::Surf(const CommunicationHeader& hdr,
            ReceivedData& received_data,
-           const std::unique_ptr<const ConvertedDataBase>& converted_data,
-
+           const std::shared_ptr<const ConvertedDataBase>& converted_data,
            const PlotObjectAttributes& plot_object_attributes,
            const PropertiesData& properties_data,
            const ShaderCollection& shader_collection,
@@ -110,7 +109,7 @@ void Surf::findMinMax()
 
 void Surf::updateWithNewData(ReceivedData& received_data,
                              const CommunicationHeader& hdr,
-                             const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                             const std::shared_ptr<const ConvertedDataBase>& converted_data,
                              const PropertiesData& properties_data)
 {
     /*throwIfNotUpdateable();
@@ -194,14 +193,14 @@ void Surf::render()
 
 Surf::~Surf() {}
 
-std::unique_ptr<const ConvertedDataBase> Surf::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> Surf::convertRawData(const CommunicationHeader& hdr,
                                                               const PlotObjectAttributes& attributes,
                                                               const PropertiesData& properties_data,
                                                               const uint8_t* const data_ptr)
 {
     const InputParams input_params{attributes.dims, attributes.num_bytes_for_one_vec, attributes.has_color};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;
@@ -230,7 +229,7 @@ LegendProperties Surf::getLegendProperties() const
 namespace
 {
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const MatrixConstView<T> x{reinterpret_cast<const T*>(input_data), input_params.dims.rows, input_params.dims.cols},
         y{reinterpret_cast<const T*>(&(input_data[input_params.num_bytes_for_one_vec])),
@@ -446,6 +445,6 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         }
     }
 
-    return std::unique_ptr<ConvertedData>{converted_data};
+    return std::shared_ptr<const ConvertedData>{converted_data};
 }
 }  // namespace

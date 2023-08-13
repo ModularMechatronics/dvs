@@ -30,12 +30,12 @@ struct InputParams
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -45,7 +45,7 @@ struct Converter
 
 Stairs::Stairs(const CommunicationHeader& hdr,
                ReceivedData& received_data,
-               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+               const std::shared_ptr<const ConvertedDataBase>& converted_data,
 
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
@@ -64,14 +64,14 @@ Stairs::Stairs(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(converted_data_local->points_ptr, (num_elements_ * 2 - 1), 2);
 }
 
-std::unique_ptr<const ConvertedDataBase> Stairs::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> Stairs::convertRawData(const CommunicationHeader& hdr,
                                                                 const PlotObjectAttributes& attributes,
                                                                 const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
 {
     const InputParams input_params{attributes.num_elements};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;
@@ -103,7 +103,7 @@ Stairs::~Stairs() {}
 namespace
 {
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t num_support_points = input_params.num_elements - 1;
 
@@ -129,7 +129,7 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
     converted_data->points_ptr[idx] = input_data_dt_x[input_params.num_elements - 1U];
     converted_data->points_ptr[idx + 1] = input_data_dt_y[input_params.num_elements - 1U];
 
-    return std::unique_ptr<ConvertedData>(converted_data);
+    return std::shared_ptr<const ConvertedData>(converted_data);
 }
 
 }  // namespace

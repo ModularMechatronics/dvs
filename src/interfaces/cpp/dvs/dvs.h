@@ -1188,7 +1188,7 @@ inline void spawn()
 
     bool dvs_running = false;
 
-    for (const std::string line : lines)
+    for (const std::string& line : lines)
     {
         if ((line.length() > 0U) && (line.find("grep") == std::string::npos))
         {

@@ -11,6 +11,32 @@ rainbow = [
         [1.0, 0.0, 0.0]
 ]
 
+jet_soft = [
+        [94.0 / 255.0, 79.0 / 255.0, 162.0 / 255.0],
+        [50.0 / 255.0, 136.0 / 255.0, 189.0 / 255.0],
+        [102.0 / 255.0, 194.0 / 255.0, 165.0 / 255.0],
+        [171.0 / 255.0, 221.0 / 255.0, 164.0 / 255.0],
+        [230.0 / 255.0, 245.0 / 255.0, 152.0 / 255.0],
+        [255.0 / 255.0, 255.0 / 255.0, 191.0 / 255.0],
+        [254.0 / 255.0, 224.0 / 255.0, 139.0 / 255.0],
+        [253.0 / 255.0, 174.0 / 255.0, 97.0 / 255.0],
+        [244.0 / 255.0, 109.0 / 255.0, 67.0 / 255.0],
+        [213.0 / 255.0, 62.0 / 255.0, 79.0 / 255.0],
+        [158.0 / 255.0, 1.0 / 255.0, 66.0 / 255.0],
+]
+
+
+jet_bright = [
+        [50.0 / 255.0, 136.0 / 255.0, 189.0 / 255.0],
+        [102.0 / 255.0, 194.0 / 255.0, 165.0 / 255.0],
+        [171.0 / 255.0, 221.0 / 255.0, 164.0 / 255.0],
+        [230.0 / 255.0, 245.0 / 255.0, 152.0 / 255.0],
+        [254.0 / 255.0, 224.0 / 255.0, 139.0 / 255.0],
+        [253.0 / 255.0, 174.0 / 255.0, 97.0 / 255.0],
+        [244.0 / 255.0, 109.0 / 255.0, 67.0 / 255.0],
+        [213.0 / 255.0, 62.0 / 255.0, 79.0 / 255.0],
+]
+
 test_table = [
         [0.0, 0.0, 1.0],
         [1.0, 0.8, 0.1],
@@ -235,7 +261,8 @@ def print_colormap_function(colormap_name, colormap_breakpoints):
         print(l)
 
 if __name__ == "__main__":
-    colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet, "RainbowPastel": rainbow_pastel, "RainbowPastel2": rainbow_pastel2}
+    # colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet, "RainbowPastel": rainbow_pastel, "RainbowPastel2": rainbow_pastel2}
+    colormaps = {"JetSoft": jet_soft, "JetBright": jet_bright}
 
     for colormap_name, colormap_breakpoints in colormaps.items():
         print_colormap_function(colormap_name, colormap_breakpoints)

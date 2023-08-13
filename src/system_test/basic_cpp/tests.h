@@ -113,11 +113,11 @@ void testSurf()
 
     setCurrentElement("p_view_1");
     clearView();
-    surf(x, y, z, properties::EdgeColor::NONE, properties::ColorMap::JET);
+    surf(x, y, z, properties::EdgeColor::NONE, properties::ColorMap::JET_BRIGHT);
 
     setCurrentElement("p_view_2");
     clearView();
-    surf(x, y, z, properties::EdgeColor::NONE, properties::ColorMap::JET, properties::INTERPOLATE_COLORMAP);
+    surf(x, y, z, properties::EdgeColor::NONE, properties::ColorMap::JET_SOFT, properties::INTERPOLATE_COLORMAP);
 
     setCurrentElement("w1_p_view_0");
     clearView();
@@ -1381,6 +1381,37 @@ void testBackground()
     // axesSquare();
 }
 
+void testPointSelector()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_elements = 500;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements);
+    double t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const double r = t * 2.0;
+        const double theta = t;
+
+        x(k) = r * std::cos(theta);
+        y(k) = r * std::sin(theta);
+        z(k) = t;
+
+        t += 0.1;
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+
+    axis({-96.0, -96.0, 0.0}, {96.0, 96.0, 52.0});
+    view(0, 90);
+
+    scatter3(x, y, z, properties::PointSize(13));
+    plot3(x, y, z);
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1404,6 +1435,7 @@ void addTests()
     addTest("cpp", "basic", "setProperties", testSetProperties);
     addTest("cpp", "basic", "deletePlotObject", testDeleteObject);
     addTest("cpp", "basic", "background", testBackground);
+    addTest("cpp", "basic", "point_selector", testPointSelector);
 }
 
 }  // namespace basic_cpp

@@ -25,12 +25,12 @@ struct InputParams
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -40,7 +40,7 @@ struct Converter
 
 ScrollingPlot2D::ScrollingPlot2D(const CommunicationHeader& hdr,
                                  ReceivedData& received_data,
-                                 const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                                 const std::shared_ptr<const ConvertedDataBase>& converted_data,
 
                                  const PlotObjectAttributes& plot_object_attributes,
                                  const PropertiesData& properties_data,
@@ -117,14 +117,14 @@ LegendProperties ScrollingPlot2D::getLegendProperties() const
     return lp;
 }
 
-std::unique_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const CommunicationHeader& hdr,
                                                                          const PlotObjectAttributes& attributes,
                                                                          const PropertiesData& properties_data,
                                                                          const uint8_t* const data_ptr)
 {
     const InputParams input_params{};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;
@@ -132,7 +132,7 @@ std::unique_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const C
 
 void ScrollingPlot2D::updateWithNewData(ReceivedData& received_data,
                                         const CommunicationHeader& hdr,
-                                        const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                                        const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                         const PropertiesData& properties_data)
 {
     static_cast<void>(hdr);
@@ -220,7 +220,7 @@ namespace
 {
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     static_cast<void>(input_params);
 
@@ -235,7 +235,7 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
     converted_data->dt = dt;
     converted_data->x = x;
 
-    return std::unique_ptr<ConvertedData>(converted_data);
+    return std::shared_ptr<const ConvertedData>(converted_data);
 }
 
 }  // namespace

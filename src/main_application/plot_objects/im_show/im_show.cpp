@@ -59,12 +59,12 @@ struct InputParams
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -84,7 +84,7 @@ void ImShow::findMinMax()
 
 ImShow::ImShow(const CommunicationHeader& hdr,
                ReceivedData& received_data,
-               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+               const std::shared_ptr<const ConvertedDataBase>& converted_data,
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
                const ShaderCollection& shader_collection,
@@ -224,7 +224,7 @@ ImShow::~ImShow()
     glDeleteBuffers(1, &extended_buffer_object_);
 }
 
-std::unique_ptr<const ConvertedDataBase> ImShow::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> ImShow::convertRawData(const CommunicationHeader& hdr,
                                                                 const PlotObjectAttributes& attributes,
                                                                 const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
@@ -235,7 +235,7 @@ std::unique_ptr<const ConvertedDataBase> ImShow::convertRawData(const Communicat
                                    attributes.data_type,
                                    attributes.num_bytes_per_element};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;
@@ -244,7 +244,7 @@ std::unique_ptr<const ConvertedDataBase> ImShow::convertRawData(const Communicat
 namespace
 {
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     ConvertedData* converted_data = new ConvertedData;
 
@@ -427,6 +427,6 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         }
     }
 
-    return std::unique_ptr<ConvertedData>(converted_data);
+    return std::shared_ptr<const ConvertedData>(converted_data);
 }
 }  // namespace

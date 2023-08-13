@@ -45,19 +45,19 @@ struct InputParams
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t total_num_bytes = input_params.num_points * 3 * input_params.num_bytes_per_element;
     const size_t num_bytes_per_collection = input_params.vector_lengths.sum() * input_params.num_bytes_per_element;
@@ -115,14 +115,14 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
     converted_data->min_vec = min_vec;
     converted_data->max_vec = max_vec;
 
-    return std::unique_ptr<ConvertedData>(converted_data);
+    return std::shared_ptr<const ConvertedData>(converted_data);
 }
 
 }  // namespace
 
 PlotCollection3D::PlotCollection3D(const CommunicationHeader& hdr,
                                    ReceivedData& received_data,
-                                   const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                                   const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                    const PlotObjectAttributes& plot_object_attributes,
                                    const PropertiesData& properties_data,
                                    const ShaderCollection& shader_collection,
@@ -145,7 +145,7 @@ PlotCollection3D::PlotCollection3D(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(converted_data_local->data_ptr, num_points_, 3);
 }
 
-std::unique_ptr<const ConvertedDataBase> PlotCollection3D::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> PlotCollection3D::convertRawData(const CommunicationHeader& hdr,
                                                                           const PlotObjectAttributes& attributes,
                                                                           const PropertiesData& properties_data,
                                                                           const uint8_t* const data_ptr)
@@ -170,7 +170,7 @@ std::unique_ptr<const ConvertedDataBase> PlotCollection3D::convertRawData(const 
     const InputParams input_params{
         attributes.num_objects, attributes.num_bytes_per_element, num_points, vector_lengths};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr_local, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;

@@ -17,7 +17,7 @@ public:
     DrawMesh();
     DrawMesh(const CommunicationHeader& hdr,
              ReceivedData& received_data,
-             std::unique_ptr<const ConvertedDataBase>& converted_data,
+             const std::shared_ptr<const ConvertedDataBase>& converted_data,
              const PlotObjectAttributes& plot_object_attributes,
              const PropertiesData& properties_data,
              const ShaderCollection& shader_collection,
@@ -27,14 +27,14 @@ public:
     LegendProperties getLegendProperties() const override;
     void render() override;
 
-    static std::unique_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr,
+    static std::shared_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr,
                                                                    const PlotObjectAttributes& attributes,
                                                                    const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr);
 
 private:
     VertexBuffer vertex_buffer_;
-    std::unique_ptr<const ConvertedDataBase> converted_data_;
+    std::shared_ptr<const ConvertedDataBase> converted_data_;
     float* points_ptr_;
 
     size_t num_elements_to_render_;

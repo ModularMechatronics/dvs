@@ -33,6 +33,7 @@ struct ConvertedData : ConvertedDataBase
     float* points_ptr;
     float* color_ptr;
     float* point_sizes_data;
+    size_t num_elements;
 
     ConvertedData() : points_ptr{nullptr}, color_ptr{nullptr}, point_sizes_data{nullptr} {}
 
@@ -40,6 +41,34 @@ struct ConvertedData : ConvertedDataBase
     ConvertedData& operator=(const ConvertedData& other) = delete;
     ConvertedData(ConvertedData&& other) = delete;
     ConvertedData& operator=(ConvertedData&& other) = delete;
+
+    std::pair<dvs::Vec3<double>, double> getClosestPoint(const Line3D<double>& line) const override
+    {
+        double min_dist = std::numeric_limits<double>::max();
+
+        std::int64_t min_dist_point_index = -1;
+
+        for (std::int64_t k = 0; k < num_elements; k++)
+        {
+            const Vec3d current_point(points_ptr[3 * k], points_ptr[3 * k + 1], points_ptr[3 * k + 2]);
+            const Point3d closest_point = line.closestPointOnLineFromPoint(current_point);
+            const Vec3d dist_vec = current_point - closest_point;
+            const double current_dist = dist_vec.norm();
+
+            if (current_dist < min_dist)
+            {
+                min_dist = current_dist;
+                min_dist_point_index = k;
+            }
+        }
+
+        const Vec3d min_dist_point(points_ptr[3 * min_dist_point_index],
+                                   points_ptr[3 * min_dist_point_index + 1],
+                                   points_ptr[3 * min_dist_point_index + 2]);
+        std::cout << "Closest point from scatter: " << min_dist_point << std::endl;
+
+        return {min_dist_point, min_dist};
+    }
 
     ~ConvertedData() override
     {
@@ -50,12 +79,12 @@ struct ConvertedData : ConvertedDataBase
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -65,8 +94,7 @@ struct Converter
 
 Scatter3D::Scatter3D(const CommunicationHeader& hdr,
                      ReceivedData& received_data,
-                     const std::unique_ptr<const ConvertedDataBase>& converted_data,
-
+                     const std::shared_ptr<const ConvertedDataBase>& converted_data,
                      const PlotObjectAttributes& plot_object_attributes,
                      const PropertiesData& properties_data,
                      const ShaderCollection& shader_collection,
@@ -80,6 +108,11 @@ Scatter3D::Scatter3D(const CommunicationHeader& hdr,
     }
 
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
+
+    // converted_data_member_ = converted_data;
+
+    points_ptr_ = new float[num_elements_ * 3];
+    std::memcpy(points_ptr_, converted_data_local->points_ptr, num_elements_ * 3 * sizeof(float));
 
     num_added_elements_ = 0;
 
@@ -118,7 +151,7 @@ Scatter3D::Scatter3D(const CommunicationHeader& hdr,
 
 void Scatter3D::appendNewData(ReceivedData& received_data,
                               const CommunicationHeader& hdr,
-                              const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                              const std::shared_ptr<const ConvertedDataBase>& converted_data,
                               const PropertiesData& properties_data)
 {
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
@@ -141,7 +174,7 @@ void Scatter3D::appendNewData(ReceivedData& received_data,
     num_added_elements_ += num_elements_;
 }
 
-std::unique_ptr<const ConvertedDataBase> Scatter3D::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> Scatter3D::convertRawData(const CommunicationHeader& hdr,
                                                                    const PlotObjectAttributes& attributes,
                                                                    const PropertiesData& properties_data,
                                                                    const uint8_t* const data_ptr)
@@ -152,7 +185,7 @@ std::unique_ptr<const ConvertedDataBase> Scatter3D::convertRawData(const Communi
                                    attributes.has_color,
                                    attributes.has_point_sizes};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;
@@ -168,6 +201,35 @@ LegendProperties Scatter3D::getLegendProperties() const
 
     return lp;
 }
+
+/*Vec3<double> Scatter3D::getClosestPointFromLine(const Line3D<double>& line) const
+{
+    double min_dist = std::numeric_limits<double>::max();
+
+    std::int64_t min_dist_point_index = -1;
+
+    for (std::int64_t k = 0; k < num_elements_; k++)
+    {
+        const Vec3d current_point(points_ptr_[3 * k], points_ptr_[3 * k + 1], points_ptr_[3 * k + 2]);
+        const Point3d closest_point = line.closestPointOnLineFromPoint(current_point);
+        // const Point3d closest_point = Point3d{line.p.x, line.p.y, current_point.z};  // Hack
+        const Vec3d dist_vec = current_point - closest_point;
+        const double current_dist = dist_vec.norm();
+
+        if (current_dist < min_dist)
+        {
+            min_dist = current_dist;
+            min_dist_point_index = k;
+        }
+    }
+
+    const Vec3d min_dist_points(points_ptr_[3 * min_dist_point_index],
+                                points_ptr_[3 * min_dist_point_index + 1],
+                                points_ptr_[3 * min_dist_point_index + 2]);
+    std::cout << "Closest point: " << min_dist_points << std::endl;
+
+    return min_dist_points;
+}*/
 
 void Scatter3D::modifyShader()
 {
@@ -226,10 +288,11 @@ Scatter3D::~Scatter3D() {}
 namespace
 {
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     ConvertedData* converted_data = new ConvertedData;
     converted_data->points_ptr = new float[3 * input_params.num_elements];
+    converted_data->num_elements = input_params.num_elements;
 
     size_t idx = 0U;
 
@@ -285,7 +348,7 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         }
     }
 
-    return std::unique_ptr<ConvertedData>{converted_data};
+    return std::shared_ptr<const ConvertedData>{converted_data};
 }
 
 }  // namespace

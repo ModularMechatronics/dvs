@@ -8,12 +8,12 @@
 #include "dvs/enumerations.h"
 
 template <typename O, typename I, typename C>
-std::unique_ptr<const O> applyConverter(const uint8_t* const input_data,
+std::shared_ptr<const O> applyConverter(const uint8_t* const input_data,
                                         const dvs::internal::DataType data_type,
                                         C&& converter,
                                         const I& input_params)
 {
-    std::unique_ptr<const O> output_data;
+    std::shared_ptr<const O> output_data;
 
     if (data_type == dvs::internal::DataType::FLOAT)
     {

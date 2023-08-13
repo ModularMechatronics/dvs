@@ -43,7 +43,7 @@ public:
                  const PlotObjectAttributes& plot_object_attributes,
                  const PropertiesData& properties_data,
                  ReceivedData& received_data,
-                 std::unique_ptr<const ConvertedDataBase>& converted_data);
+                 const std::shared_ptr<const ConvertedDataBase>& converted_data);
     void setTransform(const internal::ItemId id,
                       const MatrixFixed<double, 3, 3>& rotation,
                       const Vec3<double>& translation,

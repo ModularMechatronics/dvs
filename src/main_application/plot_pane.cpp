@@ -164,6 +164,8 @@ PlotPane::PlotPane(wxWindow* parent,
     perspective_projection_ =
         (element_settings.projection_mode == ElementSettings::ProjectionMode::PERSPECTIVE) ? true : false;
 
+    should_render_point_selection_ = false;
+
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     Show();
@@ -290,6 +292,7 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     {
         const ItemId id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
         plot_data_handler_->deletePlotObject(id);
+        point_selection_.deletePlotObject(id);
     }
     else if (fcn == Function::GLOBAL_ILLUMINATION)
     {
@@ -333,6 +336,8 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     else if (fcn == Function::SOFT_CLEAR)
     {
         plot_data_handler_->softClear();
+        point_selection_.softClear();
+        should_render_point_selection_ = false;
     }
     else if (fcn == Function::DISABLE_AXES_FROM_MIN_MAX)
     {
@@ -760,15 +765,21 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
         {
             mouse_state_.updateOnMotion(current_mouse_position.x, current_mouse_position.y);
 
-            axes_interactor_.registerMouseDragInput(
-                current_mouse_interaction_axis_, mouse_state_.getDeltaPos().x, mouse_state_.getDeltaPos().y);
+            axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
+                                                    mouse_state_.getCurrPos().x,
+                                                    mouse_state_.getCurrPos().y,
+                                                    mouse_state_.getDeltaPos().x,
+                                                    mouse_state_.getDeltaPos().y);
         }
         else if (event.LeftIsDown())
         {
             mouse_state_.updateOnMotion(current_mouse_position.x, current_mouse_position.y);
 
-            axes_interactor_.registerMouseDragInput(
-                current_mouse_interaction_axis_, mouse_state_.getDeltaPos().x, mouse_state_.getDeltaPos().y);
+            axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
+                                                    mouse_state_.getCurrPos().x,
+                                                    mouse_state_.getCurrPos().y,
+                                                    mouse_state_.getDeltaPos().x,
+                                                    mouse_state_.getDeltaPos().y);
         }
 
         Refresh();
@@ -822,6 +833,10 @@ void PlotPane::keyPressed(const char key)
     else if (wxGetKeyState(static_cast<wxKeyCode>('p')) || wxGetKeyState(static_cast<wxKeyCode>('P')))
     {
         axes_interactor_.setMouseInteractionType(MouseInteractionType::PAN);
+    }
+    else if (wxGetKeyState(static_cast<wxKeyCode>('s')) || wxGetKeyState(static_cast<wxKeyCode>('S')))
+    {
+        axes_interactor_.setMouseInteractionType(MouseInteractionType::POINT_SELECTION);
     }
 
     Refresh();
@@ -944,11 +959,12 @@ bool viewShouldBeReset()
 void PlotPane::addPlotData(ReceivedData& received_data,
                            const PlotObjectAttributes& plot_object_attributes,
                            const PropertiesData& properties_data,
-                           std::unique_ptr<const ConvertedDataBase>& converted_data)
+                           const std::shared_ptr<const ConvertedDataBase>& converted_data)
 {
     const CommunicationHeader& hdr = received_data.getCommunicationHeader();
 
     plot_data_handler_->addData(hdr, plot_object_attributes, properties_data, received_data, converted_data);
+    point_selection_.addData(hdr, plot_object_attributes, properties_data, converted_data);
 
     internal::Function fcn = hdr.getFunction();
 
@@ -1002,6 +1018,8 @@ void PlotPane::addPlotData(ReceivedData& received_data,
 void PlotPane::clearPane()
 {
     plot_data_handler_->clear();
+    point_selection_.clear();
+    should_render_point_selection_ = false;
     pending_clear_ = true;
     axes_set_ = false;
     view_set_ = false;
@@ -1143,6 +1161,7 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
     axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
                                  axes_interactor_.getViewAngles(),
+                                 axes_interactor_.getQueryPoint(),
                                  axes_interactor_.generateGridVectors(),
                                  axes_side_configuration,
                                  perspective_projection_,
@@ -1166,6 +1185,25 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
     plot_data_handler_->render();
 
     axes_renderer_->plotEnd();
+
+    if (axes_interactor_.getQueryPoint().has_query_point)
+    {
+        bool has_closest_point = false;
+
+        std::tie(closest_point_, has_closest_point) = point_selection_.getClosestPoint(
+            axes_renderer_->getLine(), axes_interactor_.getQueryPoint().has_query_point);
+
+        if (has_closest_point)
+        {
+            should_render_point_selection_ = true;
+        }
+    }
+
+    if (should_render_point_selection_)
+    {
+        axes_renderer_->renderPointSelection(closest_point_);
+    }
+
     glDisable(GL_DEPTH_TEST);
 
     // glFlush();

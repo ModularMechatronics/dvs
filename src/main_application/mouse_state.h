@@ -23,6 +23,7 @@ public:
     void print() const;
 
     Vec2i getDeltaPos() const;
+    Vec2i getCurrPos() const;
 };
 
 #endif  // MAIN_APPLICATION_IO_DEVICES_MOUSE_STATE_H_

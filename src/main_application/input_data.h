@@ -17,13 +17,13 @@ public:
               const PlotObjectAttributes& plot_object_attributes,
               const PropertiesData& properties_data);
     InputData(ReceivedData& received_data,
-              std::unique_ptr<const ConvertedDataBase>& converted_data,
+              const std::shared_ptr<const ConvertedDataBase>& converted_data,
               const PlotObjectAttributes& plot_object_attributes,
               const PropertiesData& properties_data);
 
     internal::Function getFunction() const;
 
-    std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData, std::unique_ptr<const ConvertedDataBase>>
+    std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData, std::shared_ptr<const ConvertedDataBase>>
     moveAllData();
 
     std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData> moveAllDataButConvertedData();
@@ -31,7 +31,7 @@ public:
 private:
     ReceivedData received_data_;
     internal::Function function_;
-    std::unique_ptr<const ConvertedDataBase> converted_data_;
+    std::shared_ptr<const ConvertedDataBase> converted_data_;
     PlotObjectAttributes plot_object_attributes_;
     PropertiesData properties_data_;
 };

@@ -13,6 +13,7 @@ enum class MouseInteractionType
     ROTATE,
     PAN,
     ZOOM,
+    POINT_SELECTION,
     UNCHANGED,
     UNKNOWN
 };

@@ -401,6 +401,8 @@ enum class ColorMap : uint8_t
     MAGMA,
     VIRIDIS,
     PASTEL,
+    JET_SOFT,
+    JET_BRIGHT,
     UNKNOWN
 };
 
@@ -544,6 +546,8 @@ struct ColorMapContainer : internal::PropertyBase
     static constexpr properties::ColorMap MAGMA = properties::ColorMap::MAGMA;
     static constexpr properties::ColorMap VIRIDIS = properties::ColorMap::VIRIDIS;
     static constexpr properties::ColorMap PASTEL = properties::ColorMap::PASTEL;
+    static constexpr properties::ColorMap JET_SOFT = properties::ColorMap::JET_SOFT;
+    static constexpr properties::ColorMap JET_BRIGHT = properties::ColorMap::JET_BRIGHT;
 
     ColorMapContainer() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(properties::ColorMap::JET) {}
     explicit ColorMapContainer(const properties::ColorMap ct)

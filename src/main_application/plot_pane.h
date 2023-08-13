@@ -16,6 +16,7 @@
 #include "mouse_state.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data_handler.h"
+#include "point_selection.h"
 
 struct Bound2D
 {
@@ -86,6 +87,7 @@ private:
     float edit_size_margin_;
 
     PlotDataHandler* plot_data_handler_;
+    PointSelection point_selection_;
     ShaderCollection shader_collection_;
 
     bool is3DFunction(const Function fcn);
@@ -98,6 +100,9 @@ private:
     std::queue<std::unique_ptr<InputData>> queued_data_;
     std::queue<std::unique_ptr<InputData>> flush_queue_;
 
+    dvs::Vec3<double> closest_point_;
+    bool should_render_point_selection_;
+
     void adjustPaneSizeOnMouseMoved();
     void setCursorDependingOnMousePos(const wxPoint& current_mouse_position);
 
@@ -105,7 +110,7 @@ private:
     void addPlotData(ReceivedData& received_data,
                      const PlotObjectAttributes& plot_object_attributes,
                      const PropertiesData& properties_data,
-                     std::unique_ptr<const ConvertedDataBase>& converted_data);
+                     const std::shared_ptr<const ConvertedDataBase>& converted_data);
 
     wxGLAttributes getGLAttributes() const;
 

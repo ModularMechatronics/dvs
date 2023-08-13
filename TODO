@@ -32,6 +32,19 @@ Pre release:
 - Drop shadow and bevel of plot pane
 - Fix case for plot/plot3 when two adjacent points are equal
 - pane shadow
+- Rename: 
+  PlotObjectAttributes -> PlotDataAttributes
+  PropertiesData -> PlotDataUserProperties
+                    UserSuppliedPlotDataProperties
+                    UserSuppliedPlotProperties
+                    UserSuppliedProperties
+- Add property flag to "exclude object from point selection", "EXCLUDE_FROM_POINT_SELECTION" or something
+- plot2 with fill under/over x axis
+- candlestick/errorbar
+- Colorbar
+- Point selector
+- Move as much as possible from plot_pane into axes_interactor
+- Create "super struct" that contains all necessary information from axes_interactor that gets passed into axes_renderer
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Contour plotting function

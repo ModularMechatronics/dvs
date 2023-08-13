@@ -318,6 +318,11 @@ struct ConvertedDataBase
     Function function;
 
     virtual ~ConvertedDataBase() {}
+    virtual std::pair<dvs::Vec3<double>, double> getClosestPoint(const Line3D<double>& line) const
+    {
+        std::cout << "Called base function!" << std::endl;
+        return {Vec3<double>{0.0, 0.0, 0.0}, std::numeric_limits<double>::max()};
+    }
 };
 
 struct PlotObjectAttributes
@@ -491,7 +496,7 @@ public:
 
     virtual void appendNewData(ReceivedData& received_data,
                                const CommunicationHeader& hdr,
-                               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                               const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                const PropertiesData& properties_data);
 
     bool isAppendable() const;
@@ -521,7 +526,7 @@ public:
 
     virtual void updateWithNewData(ReceivedData& received_data,
                                    const CommunicationHeader& hdr,
-                                   const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                                   const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                    const PropertiesData& properties_data);
 
     bool hasName()

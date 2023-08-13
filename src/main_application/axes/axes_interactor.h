@@ -31,6 +31,13 @@ enum class MouseInteractionAxis
     ALL
 };
 
+struct QueryPoint
+{
+    bool has_query_point;
+    double query_point_screen_x;
+    double query_point_screen_y;
+};
+
 class AxesInteractor
 {
 private:
@@ -57,6 +64,9 @@ private:
 
     AxesSettings axes_settings_;
     bool show_legend_;
+    bool has_query_points_;
+    double query_point_screen_x_;
+    double query_point_screen_y_;
 
     Vec3d inc0;
 
@@ -66,6 +76,7 @@ private:
     void changeRotation(const double dx, const double dy, const MouseInteractionAxis mia);
 
 public:
+    QueryPoint getQueryPoint() const;
     AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width);
 
     void updateWindowSize(const int window_width, const int window_height);
@@ -90,7 +101,11 @@ public:
         }
     }
 
-    void registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis, const int dx, const int dy);
+    void registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis,
+                                const int x,
+                                const int y,
+                                const int dx,
+                                const int dy);
     void registerMousePressed(const Vec2f& mouse_pos);
     void registerMouseReleased(const Vec2f& mouse_pos);
 

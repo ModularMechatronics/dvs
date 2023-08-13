@@ -23,6 +23,11 @@ Vec2i MouseState::getDeltaPos() const
     return delta_pos_;
 }
 
+Vec2i MouseState::getCurrPos() const
+{
+    return curr_pos_;
+}
+
 void MouseState::setCurrentPos(const int current_x, const int current_y)
 {
     curr_pos_.x = current_x;

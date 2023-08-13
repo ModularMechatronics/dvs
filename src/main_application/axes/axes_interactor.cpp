@@ -19,6 +19,7 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     const Vec3d min_vec = Vec3d(-1.0, -1.0, -1.0);
     const Vec3d max_vec = Vec3d(1.0, 1.0, 1.0);
 
+    has_query_points_ = false;
     axes_limits_ = AxesLimits(min_vec, max_vec);
     default_axes_limits_ = axes_limits_;
     should_draw_zoom_rect_ = false;
@@ -227,13 +228,13 @@ void AxesInteractor::resetView()
     axes_limits_ = default_axes_limits_;
 }
 
-void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_mouse_interaction_axis,
-                                            const int dx,
-                                            const int dy)
+void AxesInteractor::registerMouseDragInput(
+    const MouseInteractionAxis current_mouse_interaction_axis, const int x, const int y, const int dx, const int dy)
 {
     const float dx_mod = 250.0f * static_cast<float>(dx) / current_window_width;
     const float dy_mod = 250.0f * static_cast<float>(dy) / current_window_height;
     should_draw_zoom_rect_ = false;
+    has_query_points_ = false;
 
     const MouseInteractionType mit = (overridden_mouse_interaction_type_ != MouseInteractionType::UNCHANGED)
                                          ? overridden_mouse_interaction_type_
@@ -261,9 +262,19 @@ void AxesInteractor::registerMouseDragInput(const MouseInteractionAxis current_m
         case MouseInteractionType::PAN:
             changePan(dx_mod * pan_mouse_gain, dy_mod * pan_mouse_gain, current_mouse_interaction_axis);
             break;
+        case MouseInteractionType::POINT_SELECTION:
+            query_point_screen_x_ = x;
+            query_point_screen_y_ = y;
+            has_query_points_ = true;
+            break;
         default:
             break;
     }
+}
+
+QueryPoint AxesInteractor::getQueryPoint() const
+{
+    return QueryPoint{has_query_points_, query_point_screen_x_, query_point_screen_y_};
 }
 
 void AxesInteractor::changeRotation(const double dx, const double dy, const MouseInteractionAxis mia)

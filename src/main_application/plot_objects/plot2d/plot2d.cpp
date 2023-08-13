@@ -65,12 +65,12 @@ struct ConvertedData : ConvertedDataBase
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -80,7 +80,7 @@ struct Converter
 
 Plot2D::Plot2D(const CommunicationHeader& hdr,
                ReceivedData& received_data,
-               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+               const std::shared_ptr<const ConvertedDataBase>& converted_data,
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
                const ShaderCollection& shader_collection,
@@ -166,7 +166,7 @@ void Plot2D::render()
     vertex_buffer_.render(num_points_);
 }
 
-std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> Plot2D::convertRawData(const CommunicationHeader& hdr,
                                                                 const PlotObjectAttributes& attributes,
                                                                 const PropertiesData& properties_data,
                                                                 const uint8_t* const data_ptr)
@@ -176,7 +176,7 @@ std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const Communicat
                                    attributes.num_bytes_for_one_vec,
                                    attributes.has_color};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;
@@ -184,7 +184,7 @@ std::unique_ptr<const ConvertedDataBase> Plot2D::convertRawData(const Communicat
 
 void Plot2D::updateWithNewData(ReceivedData& received_data,
                                const CommunicationHeader& hdr,
-                               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                               const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                const PropertiesData& properties_data)
 {
     throwIfNotUpdateable();
@@ -216,7 +216,7 @@ LegendProperties Plot2D::getLegendProperties() const
 namespace
 {
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     const size_t num_segments = input_params.num_elements - 1U;
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
@@ -706,7 +706,7 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         converted_data->color_data[idx + 17] = color_k_1.blue;
     }
 
-    return std::unique_ptr<ConvertedData>{converted_data};
+    return std::shared_ptr<const ConvertedData>{converted_data};
 }
 
 }  // namespace

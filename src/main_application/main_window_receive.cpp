@@ -78,14 +78,14 @@ void MainWindow::OnReceiveTimer(wxTimerEvent&)
     }
 }
 
-std::unique_ptr<const ConvertedDataBase> convertPlotObjectData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> convertPlotObjectData(const CommunicationHeader& hdr,
                                                                const ReceivedData& received_data,
                                                                const PlotObjectAttributes& attributes,
                                                                const PropertiesData& properties_data)
 {
     const Function fcn = received_data.getFunction();
 
-    std::unique_ptr<const ConvertedDataBase> converted_data;
+    std::shared_ptr<const ConvertedDataBase> converted_data;
 
     switch (fcn)
     {
@@ -184,7 +184,7 @@ void MainWindow::addActionToQueue(ReceivedData& received_data)
         const PlotObjectAttributes plot_object_attributes{hdr};
         const PropertiesData properties_data{hdr};
 
-        std::unique_ptr<const ConvertedDataBase> converted_data =
+        std::shared_ptr<const ConvertedDataBase> converted_data =
             convertPlotObjectData(hdr, received_data, plot_object_attributes, properties_data);
 
         queued_data_[current_element_name_].push(

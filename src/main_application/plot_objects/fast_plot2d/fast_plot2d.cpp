@@ -30,12 +30,12 @@ struct InputParams
 };
 
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params);
 
 struct Converter
 {
     template <class T>
-    std::unique_ptr<ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
+    std::shared_ptr<const ConvertedData> convert(const uint8_t* const input_data, const InputParams& input_params) const
     {
         return convertData<T>(input_data, input_params);
     }
@@ -44,8 +44,7 @@ struct Converter
 
 FastPlot2D::FastPlot2D(const CommunicationHeader& hdr,
                        ReceivedData& received_data,
-                       const std::unique_ptr<const ConvertedDataBase>& converted_data,
-
+                       const std::shared_ptr<const ConvertedDataBase>& converted_data,
                        const PlotObjectAttributes& plot_object_attributes,
                        const PropertiesData& properties_data,
                        const ShaderCollection& shader_collection,
@@ -80,7 +79,7 @@ FastPlot2D::FastPlot2D(const CommunicationHeader& hdr,
 
 void FastPlot2D::appendNewData(ReceivedData& received_data,
                                const CommunicationHeader& hdr,
-                               const std::unique_ptr<const ConvertedDataBase>& converted_data,
+                               const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                const PropertiesData& properties_data)
 {
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
@@ -98,14 +97,14 @@ void FastPlot2D::appendNewData(ReceivedData& received_data,
     num_added_elements_ += num_elements_;
 }
 
-std::unique_ptr<const ConvertedDataBase> FastPlot2D::convertRawData(const CommunicationHeader& hdr,
+std::shared_ptr<const ConvertedDataBase> FastPlot2D::convertRawData(const CommunicationHeader& hdr,
                                                                     const PlotObjectAttributes& attributes,
                                                                     const PropertiesData& properties_data,
                                                                     const uint8_t* const data_ptr)
 {
     const InputParams input_params{attributes.num_elements};
 
-    std::unique_ptr<const ConvertedDataBase> converted_data_base{
+    std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};
 
     return converted_data_base;
@@ -146,7 +145,7 @@ LegendProperties FastPlot2D::getLegendProperties() const
 namespace
 {
 template <typename T>
-std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
 {
     ConvertedData* converted_data = new ConvertedData;
     converted_data->points_ptr = new float[2 * input_params.num_elements];
@@ -164,6 +163,6 @@ std::unique_ptr<ConvertedData> convertData(const uint8_t* const input_data, cons
         idx += 2;
     }
 
-    return std::unique_ptr<ConvertedData>(converted_data);
+    return std::shared_ptr<const ConvertedData>(converted_data);
 }
 }  // namespace

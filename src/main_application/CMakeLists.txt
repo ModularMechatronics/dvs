@@ -18,6 +18,7 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/plot_box_grid.cpp
                      axes/text_rendering.cpp
                      axes/legend_renderer.cpp
+                     axes/point_selection_box.cpp
 
                      axes/axes_side_configuration.cpp
 
@@ -55,6 +56,7 @@ set(CPP_SOURCE_FILES main.cpp
                      communication/received_data.cpp
                      communication/data_receiver.cpp
                      input_data.cpp
+                     point_selection.cpp
 
                      tray_icon.cpp
                      tab_button.cpp
