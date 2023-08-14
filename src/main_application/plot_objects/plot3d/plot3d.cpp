@@ -57,7 +57,6 @@ struct ConvertedData : ConvertedDataBase
         }
 
         const Vec3d min_dist_point(px[min_dist_point_index], py[min_dist_point_index], pz[min_dist_point_index]);
-        std::cout << "Closest point from plot: " << min_dist_point << std::endl;
 
         return {min_dist_point, min_dist};
     }

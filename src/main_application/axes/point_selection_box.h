@@ -23,7 +23,7 @@ public:
     PointSelectionBox(const TextRenderer& text_renderer, const ShaderCollection& shader_collection);
     ~PointSelectionBox();
 
-    void render(const Point2d& closest_point);
+    void render(const Point2d& closest_point, const bool draw_up);
 };
 
 #endif  // POINT_SELECTRION_BOX_H

@@ -32,6 +32,7 @@ Pre release:
 - Drop shadow and bevel of plot pane
 - Fix case for plot/plot3 when two adjacent points are equal
 - pane shadow
+- Right click + hold + drag to open panel to toggle zoom/rotate/pan/select
 - Rename: 
   PlotObjectAttributes -> PlotDataAttributes
   PropertiesData -> PlotDataUserProperties

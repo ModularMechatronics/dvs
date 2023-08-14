@@ -65,7 +65,6 @@ struct ConvertedData : ConvertedDataBase
         const Vec3d min_dist_point(points_ptr[3 * min_dist_point_index],
                                    points_ptr[3 * min_dist_point_index + 1],
                                    points_ptr[3 * min_dist_point_index + 2]);
-        std::cout << "Closest point from scatter: " << min_dist_point << std::endl;
 
         return {min_dist_point, min_dist};
     }

@@ -395,14 +395,16 @@ void AxesRenderer::renderPointSelection(const Point3d& closest_point)
 
     const glm::mat4 local_mvp = view_mat_ * model_mat_ * local_scale_mat * window_scale_mat_ * t_mat;
 
-    const glm::vec4 v_viewport_2 = glm::vec4(0.0, 0.0, width_, height_);
+    const glm::vec4 v_viewport = glm::vec4(0.0, 0.0, width_, height_);
 
     const glm::vec3 data_point(closest_point.x, closest_point.y, closest_point.z);
 
-    const glm::vec3 projected_point = glm::project(data_point, local_mvp, projection_mat_, v_viewport_2);
+    const glm::vec3 projected_point = glm::project(data_point, local_mvp, projection_mat_, v_viewport);
 
     const Vec2d res_point(((projected_point.x / width_) - 0.5) * 6.0, ((projected_point.y / height_) - 0.5) * 6.0);
-    point_selection_box_.render(res_point);
+
+    const bool draw_up = current_mouse_pos_.y < 0.5;
+    point_selection_box_.render(res_point, draw_up);
 }
 
 void AxesRenderer::plotBegin()

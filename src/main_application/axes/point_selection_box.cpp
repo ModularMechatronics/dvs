@@ -2,10 +2,10 @@
 
 constexpr size_t kNumVertices{6U};
 
-void PointSelectionBox::render(const Point2d& closest_point)
+void PointSelectionBox::render(const Point2d& closest_point, const bool draw_up)
 {
-    const float x_len{0.05f};
-    const float z_len{0.05f};
+    const float x_len{0.2f};
+    const float z_len{draw_up ? -0.2f : 0.2f};
 
     // First triangle
     pane_vertices_(0) = 0.0 + closest_point.x;
