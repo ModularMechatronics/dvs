@@ -27,6 +27,7 @@ Pre release:
 - Change all reinterpret_cast to static_cast<whatever>(static_cast<void*>())
 - For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
   to populate it or property from the variadic templ. args
+- wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Data cursor, cursor to click on data to get xyz value
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Drop shadow and bevel of plot pane

@@ -268,8 +268,8 @@ TabSettings WindowTab::getTabSettings() const
 
 GuiElement* WindowTab::getGuiElement(const std::string& element_handle_string) const
 {
-    auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+    auto q = std::find_if(
+        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
             return elem->getHandleString() == element_handle_string;
         });
 
@@ -280,6 +280,14 @@ GuiElement* WindowTab::getGuiElement(const std::string& element_handle_string) c
     else
     {
         return nullptr;
+    }
+}
+
+void WindowTab::setMouseInteractionType(const MouseInteractionType mit)
+{
+    for (auto& ge : gui_elements_)
+    {
+        ge->setMouseInteractionType(mit);
     }
 }
 
@@ -301,8 +309,8 @@ void WindowTab::notifyChildrenOnKeyReleased(const char key)
 
 bool WindowTab::deleteElementIfItExists(const std::string& element_handle_string)
 {
-    auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+    auto q = std::find_if(
+        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
             return elem->getHandleString() == element_handle_string;
         });
 
@@ -322,8 +330,8 @@ bool WindowTab::deleteElementIfItExists(const std::string& element_handle_string
 
 void WindowTab::toggleProjectionMode(const std::string& element_handle_string)
 {
-    auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+    auto q = std::find_if(
+        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
             return elem->getHandleString() == element_handle_string;
         });
 
@@ -350,10 +358,11 @@ bool WindowTab::elementWithNameExists(const std::string& element_handle_string)
     }
 }
 
-bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_handle_string, const std::string& new_name)
+bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_handle_string,
+                                                   const std::string& new_name)
 {
-    auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+    auto q = std::find_if(
+        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
             return elem->getHandleString() == element_handle_string;
         });
 
@@ -370,8 +379,8 @@ bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_ha
 
 bool WindowTab::raiseElement(const std::string& element_handle_string)
 {
-    auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+    auto q = std::find_if(
+        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
             return elem->getHandleString() == element_handle_string;
         });
 
@@ -389,8 +398,8 @@ bool WindowTab::raiseElement(const std::string& element_handle_string)
 
 bool WindowTab::lowerElement(const std::string& element_handle_string)
 {
-    auto q =
-        std::find_if(gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
+    auto q = std::find_if(
+        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
             return elem->getHandleString() == element_handle_string;
         });
 

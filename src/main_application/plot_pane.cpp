@@ -795,6 +795,11 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
     previous_mouse_pos_ = current_mouse_pos_;
 }
 
+void PlotPane::setMouseInteractionType(const MouseInteractionType mit)
+{
+    axes_interactor_.setMouseInteractionType(mit);
+}
+
 void PlotPane::keyPressed(const char key)
 {
     if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('2')))

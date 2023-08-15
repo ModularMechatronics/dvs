@@ -126,6 +126,11 @@ GuiWindow::GuiWindow(
     popup_menu_window_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_window_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_window_->AppendSeparator();
+    popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
+    popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
+    popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
+    popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
+    popup_menu_window_->AppendSeparator();
     popup_menu_window_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_window_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
     popup_menu_window_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
@@ -135,6 +140,11 @@ GuiWindow::GuiWindow(
     popup_menu_element_->Append(dvs_ids::TOGGLE_PROJECTION_MODE, wxT("Toggle projection mode"));
     popup_menu_element_->Append(dvs_ids::RAISE_ELEMENT, wxT("Raise"));
     popup_menu_element_->Append(dvs_ids::LOWER_ELEMENT, wxT("Lower"));
+    popup_menu_element_->AppendSeparator();
+    popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
+    popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
+    popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
+    popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
     popup_menu_element_->AppendSeparator();
     popup_menu_element_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_element_->Append(callback_id_ + 1, wxT("Delete window"));
@@ -146,12 +156,21 @@ GuiWindow::GuiWindow(
     popup_menu_tab_->Append(dvs_ids::EDIT_TAB_NAME, wxT("Edit tab name"));
     popup_menu_tab_->Append(dvs_ids::DELETE_TAB, wxT("Delete tab"));
     popup_menu_tab_->AppendSeparator();
+    popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
+    popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
+    popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
+    popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
+    popup_menu_tab_->AppendSeparator();
     popup_menu_tab_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_tab_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_tab_->AppendSeparator();
     popup_menu_tab_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_tab_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
     popup_menu_tab_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
+
+    getMenuItemFromString(popup_menu_window_, "Rotate")->Check(true);
+    getMenuItemFromString(popup_menu_element_, "Rotate")->Check(true);
+    getMenuItemFromString(popup_menu_tab_, "Rotate")->Check(true);
 
     Bind(wxEVT_MENU, &GuiWindow::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
@@ -160,6 +179,11 @@ GuiWindow::GuiWindow(
     Bind(wxEVT_MENU, &GuiWindow::newElementCallback, this, dvs_ids::NEW_ELEMENT);
     Bind(wxEVT_MENU, &GuiWindow::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &GuiWindow::deleteElement, this, dvs_ids::DELETE_ELEMENT);
+
+    Bind(wxEVT_MENU, &GuiWindow::toggleToZoomCallback, this, dvs_ids::TOGGLE_TO_ZOOM);
+    Bind(wxEVT_MENU, &GuiWindow::toggleToPanCallback, this, dvs_ids::TOGGLE_TO_PAN);
+    Bind(wxEVT_MENU, &GuiWindow::toggleToRotateCallback, this, dvs_ids::TOGGLE_TO_ROTATE);
+    Bind(wxEVT_MENU, &GuiWindow::toggleToSelectCallback, this, dvs_ids::TOGGLE_TO_SELECT);
 
     Bind(wxEVT_MENU, &GuiWindow::toggleProjectionMode, this, dvs_ids::TOGGLE_PROJECTION_MODE);
     Bind(wxEVT_MENU, &GuiWindow::raiseElement, this, dvs_ids::RAISE_ELEMENT);
@@ -179,6 +203,20 @@ GuiWindow::GuiWindow(
 
     this->SetPosition(wxPoint(window_settings.x, window_settings.y));
     this->SetSize(wxSize(window_settings.width, window_settings.height));
+}
+
+wxMenuItem* GuiWindow::getMenuItemFromString(const wxMenu* const menu, const std::string& menu_item_string) const
+{
+    for (size_t i = 0; i < menu->GetMenuItemCount(); ++i)
+    {
+        wxMenuItem* menu_item = menu->FindItemByPosition(i);
+        if (menu_item->GetItemLabelText().ToStdString() == menu_item_string)
+        {
+            return menu_item;
+        }
+    }
+
+    return nullptr;
 }
 
 GuiWindow::~GuiWindow()
@@ -258,6 +296,32 @@ void GuiWindow::notifyChildrenOnKeyPressed(const char key)
     if (key == 'H')
     {
         help_pane_.show();
+        return;
+    }
+
+    if (key == 'r' || key == 'R')
+    {
+        getMenuItemFromString(popup_menu_window_, "Rotate")->Check(true);
+        getMenuItemFromString(popup_menu_element_, "Rotate")->Check(true);
+        getMenuItemFromString(popup_menu_tab_, "Rotate")->Check(true);
+    }
+    else if (key == 'z' || key == 'Z')
+    {
+        getMenuItemFromString(popup_menu_window_, "Zoom")->Check(true);
+        getMenuItemFromString(popup_menu_element_, "Zoom")->Check(true);
+        getMenuItemFromString(popup_menu_tab_, "Zoom")->Check(true);
+    }
+    else if (key == 'p' || key == 'P')
+    {
+        getMenuItemFromString(popup_menu_window_, "Pan")->Check(true);
+        getMenuItemFromString(popup_menu_element_, "Pan")->Check(true);
+        getMenuItemFromString(popup_menu_tab_, "Pan")->Check(true);
+    }
+    else if (key == 's' || key == 'S')
+    {
+        getMenuItemFromString(popup_menu_window_, "Select")->Check(true);
+        getMenuItemFromString(popup_menu_element_, "Select")->Check(true);
+        getMenuItemFromString(popup_menu_tab_, "Select")->Check(true);
     }
 
     for (const auto& tab : tabs_)
@@ -271,6 +335,7 @@ void GuiWindow::notifyChildrenOnKeyReleased(const char key)
     if (key == 'H')
     {
         help_pane_.hide();
+        return;
     }
 
     for (const auto& tab : tabs_)
@@ -749,4 +814,36 @@ void GuiWindow::deleteTab(wxCommandEvent& WXUNUSED(event))
     }
 
     notify_main_window_about_modification_();
+}
+
+void GuiWindow::toggleToZoomCallback(wxCommandEvent& WXUNUSED(event))
+{
+    for (const auto& t : tabs_)
+    {
+        t->setMouseInteractionType(MouseInteractionType::ZOOM);
+    }
+}
+
+void GuiWindow::toggleToPanCallback(wxCommandEvent& WXUNUSED(event))
+{
+    for (const auto& t : tabs_)
+    {
+        t->setMouseInteractionType(MouseInteractionType::PAN);
+    }
+}
+
+void GuiWindow::toggleToRotateCallback(wxCommandEvent& WXUNUSED(event))
+{
+    for (const auto& t : tabs_)
+    {
+        t->setMouseInteractionType(MouseInteractionType::ROTATE);
+    }
+}
+
+void GuiWindow::toggleToSelectCallback(wxCommandEvent& WXUNUSED(event))
+{
+    for (const auto& t : tabs_)
+    {
+        t->setMouseInteractionType(MouseInteractionType::POINT_SELECTION);
+    }
 }

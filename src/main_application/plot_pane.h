@@ -146,6 +146,7 @@ public:
     void hide() override;
     void destroy() override;
     void refresh() override;
+    void setMouseInteractionType(const MouseInteractionType mit) override;
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
     // void showLegend(const bool show_legend) override;

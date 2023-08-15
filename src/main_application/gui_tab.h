@@ -90,6 +90,7 @@ public:
     GuiElement* getGuiElement(const std::string& element_handle_string) const;
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
+    void setMouseInteractionType(const MouseInteractionType mit);
     bool deleteElementIfItExists(const std::string& element_handle_string);
     void toggleProjectionMode(const std::string& element_handle_string);
     bool elementWithNameExists(const std::string& element_handle_string);

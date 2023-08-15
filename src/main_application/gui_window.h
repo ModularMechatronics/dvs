@@ -60,6 +60,8 @@ private:
     wxMenu* popup_menu_element_;
     wxMenu* popup_menu_tab_;
 
+    wxMenuItem* getMenuItemFromString(const wxMenu* const menu, const std::string& menu_item_string) const;
+
     int current_tab_num_;
 
     std::string last_clicked_item_;
@@ -121,6 +123,11 @@ public:
     void lowerElement(wxCommandEvent& WXUNUSED(event));
 
     void toggleProjectionMode(wxCommandEvent& WXUNUSED(event));
+
+    void toggleToZoomCallback(wxCommandEvent& WXUNUSED(event));
+    void toggleToPanCallback(wxCommandEvent& WXUNUSED(event));
+    void toggleToRotateCallback(wxCommandEvent& WXUNUSED(event));
+    void toggleToSelectCallback(wxCommandEvent& WXUNUSED(event));
 
     void editTabName(wxCommandEvent& WXUNUSED(event));
     void deleteTab(wxCommandEvent& WXUNUSED(event));
