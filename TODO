@@ -29,6 +29,8 @@ Pre release:
   to populate it or property from the variadic templ. args
 - wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Data cursor, cursor to click on data to get xyz value
+- Make Alpha a float parameter
+- For 2D functions (plot, scatter etc.), implement rolling z-offset, so that one can plot multiple things on top of each other
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Drop shadow and bevel of plot pane
 - Fix case for plot/plot3 when two adjacent points are equal

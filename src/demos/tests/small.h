@@ -546,6 +546,189 @@ void testScatterVaryingSize()
     plot(x, y, properties::ScatterStyle::DISC);
 }
 
+void testScatterSmallPoints()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_elements = 50000;
+    Vector<double> x(num_elements), y(num_elements);
+
+    double t = 0.0;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<double> dx{0.0, 0.1};
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = std::cos(t) + dx(gen);
+        y(k) = std::sin(t) + dx(gen);
+        t += 0.1;
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    scatter(x,
+            y,
+            properties::PointSize(1),
+            properties::ScatterStyle::SQUARE,
+            properties::DistanceFrom::xy({0.0, 0.0}, 0.625, 1.25),
+            properties::ColorMap::MAGMA);
+
+    scatter(x + 0.3,
+            y - 0.5,
+            properties::PointSize(1),
+            properties::ScatterStyle::SQUARE,
+            properties::DistanceFrom::xy({0.3, -0.5}, 0.625, 1.25),
+            properties::ColorMap::RAINBOW);
+}
+
+void testTransparentFillBelowPlot()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_elements = 1000;
+    Vector<double> t(num_elements);
+
+    const auto create_mesh = [](const Vector<double>& t,
+                                const Vector<double>& x,
+                                const double z_offset) -> std::tuple<Vector<Point3<double>>, Vector<IndexTriplet>> {
+        const size_t num_elements = t.size();
+
+        const size_t num_gaps = num_elements - 1U;
+        const size_t num_triangles = num_gaps * 2U;
+        const size_t num_vertices = num_elements * 2U;
+
+        Vector<Point3<double>> vertices(num_vertices);
+        Vector<IndexTriplet> indices(num_triangles);
+
+        for (size_t k = 0; k < num_elements; k++)
+        {
+            vertices(k) = {t(k), x(k), z_offset};
+            vertices(k + num_elements) = {t(k), 0.0, z_offset};
+        }
+
+        const std::uint32_t num_elements_uint32 = num_elements;
+
+        for (size_t k = 0; k < num_gaps; k++)
+        {
+            const std::uint32_t ku = k;
+            indices(k * 2U) = {ku, ku + 1U, ku + num_elements_uint32};
+            indices(k * 2U + 1U) = {ku + 1U, ku + num_elements_uint32 + 1U, ku + num_elements_uint32};
+        }
+
+        return {vertices, indices};
+    };
+
+    t(0) = 0.0;
+    double dt = 0.01;
+
+    struct FunctionParameters
+    {
+        double Kf;
+        double Cf;
+        double m;
+        double L;
+        double dt;
+        double x0;
+        double dx0;
+        double mu;
+        double sigma;
+        size_t num_elements;
+    };
+
+    for (size_t k = 0U; k < (num_elements - 1U); k++)
+    {
+        t(k + 1U) = t(k) + dt;
+    }
+
+    const auto create_function = [](const Vector<double>& t,
+                                    const FunctionParameters& function_parameters) -> Vector<double> {
+        const size_t num_elements = t.size();
+
+        Vector<double> x{num_elements}, dx{num_elements};
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::normal_distribution<double> rand_gen{function_parameters.mu, function_parameters.sigma};
+
+        x(0) = function_parameters.x0;
+        dx(0) = function_parameters.dx0;
+
+        for (size_t k = 0U; k < (function_parameters.num_elements - 1U); k++)
+        {
+            const double diff_x = x(k) - function_parameters.L;
+
+            const double u = std::sin(t(k)) + rand_gen(gen);
+            dx(k + 1) = dx(k) + function_parameters.dt *
+                                    (-function_parameters.Kf * diff_x - function_parameters.Cf * dx(k) + u) /
+                                    function_parameters.m;
+            x(k + 1) = x(k) + function_parameters.dt * dx(k + 1);
+        }
+
+        return x;
+    };
+
+    const FunctionParameters fp0{.Kf = 5.0,
+                                 .Cf = 0.1,
+                                 .m = 1.0,
+                                 .L = 0.25,
+                                 .dt = dt,
+                                 .x0 = 0.0,
+                                 .dx0 = 0.0,
+                                 .mu = 0.0,
+                                 .sigma = 1.0,
+                                 .num_elements = num_elements};
+
+    const FunctionParameters fp1{.Kf = 4.0,
+                                 .Cf = 0.3,
+                                 .m = 1.3,
+                                 .L = 0.25,
+                                 .dt = dt,
+                                 .x0 = 0.1,
+                                 .dx0 = -1.0,
+                                 .mu = 0.0,
+                                 .sigma = 1.0,
+                                 .num_elements = num_elements};
+    const FunctionParameters fp2{.Kf = 3.0,
+                                 .Cf = 0.2,
+                                 .m = 1.0,
+                                 .L = 0.25,
+                                 .dt = dt,
+                                 .x0 = 0.0,
+                                 .dx0 = 0.0,
+                                 .mu = 0.0,
+                                 .sigma = 1.0,
+                                 .num_elements = num_elements};
+
+    const Vector<double> x0 = create_function(t, fp0);
+    const Vector<double> x1 = create_function(t, fp1);
+    const Vector<double> x2 = create_function(t, fp2);
+
+    Vector<Point3<double>> vertices0, vertices1, vertices2;
+    Vector<IndexTriplet> indices0, indices1, indices2;
+    std::tie(vertices0, indices0) = create_mesh(t, x0, 0.0);
+    std::tie(vertices1, indices1) = create_mesh(t, x1, -0.2);
+    std::tie(vertices2, indices2) = create_mesh(t, x2, -0.4);
+
+    setCurrentElement("p_view_0");
+    clearView();
+    // axis({-2.0, -2.0, -2.0}, {2.0, 2.0, 2.0});
+
+    view(0, 90);
+
+    plot(t, x0, properties::LineWidth(5), properties::Color::BLACK);
+    plot(t, x1, properties::LineWidth(5), properties::Color::BLACK);
+    plot(t, x2, properties::LineWidth(5), properties::Color::BLACK);
+    drawMesh(vertices2, indices2, properties::Color::GREEN, properties::EdgeColor::NONE, properties::Alpha(127));
+    drawMesh(vertices1, indices1, properties::Color::RED, properties::EdgeColor::NONE, properties::Alpha(127));
+    drawMesh(vertices0, indices0, properties::Color::BLUE, properties::EdgeColor::NONE, properties::Alpha(127));
+}
+
 }  // namespace small
 
 #endif  // DEMOS_SMALL_H
