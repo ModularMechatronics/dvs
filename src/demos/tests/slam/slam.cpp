@@ -1,0 +1,430 @@
+#include "tests/slam/slam.h"
+
+#include <math.h>
+#include <stdlib.h>
+
+// #include <boost/thread.hpp>
+#include <iostream>
+#include <string>
+#include <utility>
+#include <vector>
+
+// #include "FullSystem/FullSystem.h"
+// #include "IOWrapper/ImageDisplay.h"
+// #include "IOWrapper/Output3DWrapper.h"
+// #include "IOWrapper/OutputWrapper/DVSOutputWrapper.h"
+#include "dvs/dvs.h"
+#include "tests/slam/color_maps.h"
+// #include "util/DatasetReader.h"
+// #include "util/settings.h"
+
+using namespace dvs;
+
+namespace slam
+{
+
+// const std::string dataset_base_path = "/Users/danielpi/Downloads/dataset-corridor1_512_16/";
+// const std::string dataset_base_path = "/Users/danielpi/work/dvs/tum_dataset/dataset-corridor1_512_16/";
+const std::string dataset_base_path = "/Users/danielpi/work/dvs/tum_dataset/sequence_01/";
+
+void testBasicRunSlam();
+void testBasicViewDepthFrame();
+void testBasicVisualizePoints();
+void testPrintCams();
+void testRunSavedDataFromPython();
+
+void testBasic()
+{
+    testRunSavedDataFromPython();
+    // testBasicRunSlam();
+    // testBasicViewDepthFrame();
+    // testBasicVisualizePoints();
+    // testPrintCams();
+}
+
+ImageRGB<float> readDepthImage(const std::string& file_path)
+{
+    std::ifstream input(file_path, std::ios::binary);
+
+    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+    std::uint16_t num_rows;
+    std::uint16_t num_cols;
+
+    std::size_t idx = 0U;
+
+    std::memcpy(reinterpret_cast<char*>(&num_rows), buffer.data(), sizeof(std::uint16_t));
+    idx += sizeof(std::uint16_t);
+
+    std::memcpy(reinterpret_cast<char*>(&num_cols), buffer.data() + idx, sizeof(std::uint16_t));
+    idx += sizeof(std::uint16_t);
+
+    ImageRGB<float> output_img{num_rows, num_cols};
+
+    const size_t num_elements = num_rows * num_cols * sizeof(std::uint8_t);
+
+    ImageRGBConstView<std::uint8_t> input_img{buffer.data() + idx, num_rows, num_cols};
+
+    float min_val = 1.0f, max_val = 0.0f;
+
+    for (size_t r = 0; r < num_rows; r++)
+    {
+        for (size_t c = 0; c < num_cols; c++)
+        {
+            const float val = static_cast<float>(input_img(r, c, 0)) / 255.0f;
+            if (val < min_val)
+            {
+                min_val = val;
+            }
+            if (val > max_val)
+            {
+                max_val = val;
+            }
+        }
+    }
+    const float divisor = max_val - min_val;
+
+    for (size_t r = 0; r < num_rows; r++)
+    {
+        for (size_t c = 0; c < num_cols; c++)
+        {
+            const float val = (static_cast<float>(input_img(r, c, 0)) / 255.0f - min_val) / divisor;
+            // const RGBTripletf rgb_triplet{calculateColormapJetBright(val)};
+            // const RGBTripletf rgb_triplet{calculateColormapJetBright(val)};
+            const RGBTripletf rgb_triplet{calculateColormapJet(val)};
+            output_img(r, c, 0) = rgb_triplet.red;
+            output_img(r, c, 1) = rgb_triplet.green;
+            output_img(r, c, 2) = rgb_triplet.blue;
+        }
+    }
+
+    ImageRGB<float> output_img_cropped{400, 550};
+
+    for (size_t r = 0; r < 400; r++)
+    {
+        for (size_t c = 0; c < 550; c++)
+        {
+            output_img_cropped(r, c, 0) = output_img(r + 80, c + 50, 0);
+            output_img_cropped(r, c, 1) = output_img(r + 80, c + 50, 1);
+            output_img_cropped(r, c, 2) = output_img(r + 80, c + 50, 2);
+        }
+    }
+
+    return output_img_cropped;
+}
+
+ImageRGB<std::uint8_t> readImage(const std::string& file_path)
+{
+    std::ifstream input(file_path, std::ios::binary);
+
+    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+    std::uint16_t num_rows;
+    std::uint16_t num_cols;
+
+    std::size_t idx = 0U;
+
+    std::memcpy(reinterpret_cast<char*>(&num_rows), buffer.data(), sizeof(std::uint16_t));
+    idx += sizeof(std::uint16_t);
+
+    std::memcpy(reinterpret_cast<char*>(&num_cols), buffer.data() + idx, sizeof(std::uint16_t));
+    idx += sizeof(std::uint16_t);
+
+    ImageRGB<std::uint8_t> output_img{num_rows, num_cols};
+
+    const std::uint8_t* const data_ptr = reinterpret_cast<std::uint8_t*>(buffer.data() + idx);
+
+    const size_t num_elements = num_rows * num_cols * sizeof(std::uint8_t);
+
+    std::memcpy(reinterpret_cast<char*>(output_img.data() + num_elements * 2U),
+                buffer.data() + idx,
+                num_rows * num_cols * sizeof(std::uint8_t));
+    idx += num_elements;
+
+    std::memcpy(reinterpret_cast<char*>(output_img.data() + num_elements),
+                buffer.data() + idx,
+                num_rows * num_cols * sizeof(std::uint8_t));
+    idx += num_elements;
+
+    std::memcpy(
+        reinterpret_cast<char*>(output_img.data()), buffer.data() + idx, num_rows * num_cols * sizeof(std::uint8_t));
+
+    return output_img;
+}
+
+std::tuple<Vector<float>, Vector<float>, Vector<float>> read3DPoints(const std::string& file_path)
+{
+    std::ifstream input(file_path, std::ios::binary);
+
+    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+    std::uint16_t num_points;
+
+    std::size_t idx = 0U;
+
+    std::memcpy(reinterpret_cast<char*>(&num_points), buffer.data(), sizeof(std::uint16_t));
+    idx += sizeof(std::uint16_t);
+
+    Vector<float> x{num_points}, y{num_points}, z{num_points};
+
+    const double* const data_ptr = reinterpret_cast<double*>(buffer.data() + idx);
+
+    size_t pt_idx = 0U;
+    for (size_t k = 0; k < num_points; k++)
+    {
+        x(k) = data_ptr[pt_idx];
+        y(k) = data_ptr[pt_idx + 1];
+        z(k) = data_ptr[pt_idx + 2];
+        pt_idx += 3U;
+    }
+
+    return std::make_tuple(x, y, z);
+}
+
+std::vector<std::pair<Vector<float>, Vector<float>>> readKeyPoints(const std::string& file_path)
+{
+    std::ifstream input(file_path, std::ios::binary);
+
+    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+    std::uint16_t num_frames;
+
+    std::size_t idx = 0U;
+
+    std::memcpy(reinterpret_cast<char*>(&num_frames), buffer.data(), sizeof(std::uint16_t));
+    idx += sizeof(std::uint16_t);
+
+    std::vector<std::pair<Vector<float>, Vector<float>>> output_points;
+
+    for (size_t k = 0; k < num_frames; k++)
+    {
+        std::uint16_t num_points;
+        std::memcpy(reinterpret_cast<char*>(&num_points), buffer.data() + idx, sizeof(std::uint16_t));
+        idx += sizeof(std::uint16_t);
+
+        Vector<float> x{num_points}, y{num_points};
+
+        const float* const data_ptr = reinterpret_cast<float*>(buffer.data() + idx);
+        size_t pt_idx = 0U;
+
+        for (size_t i = 0; i < num_points; i++)
+        {
+            x(i) = data_ptr[pt_idx];
+            y(i) = data_ptr[pt_idx + 1];
+            pt_idx += 2U;
+        }
+
+        idx += num_points * 2U * sizeof(float);
+        output_points.push_back({x, y});
+    }
+
+    return output_points;
+}
+
+void showOneFrame(const std::string base_path, const size_t frame_num)
+{
+    const auto zero_padding = [](int num, int digits) -> std::string {
+        std::string s = std::to_string(num);
+        while (s.length() < digits)
+            s = "0" + s;
+        return s;
+    };
+
+    const std::string f_name = zero_padding(frame_num, 4) + ".bin";
+
+    const ImageRGB<std::uint8_t> rgb_img{readImage(base_path + "img/" + f_name)};
+    const ImageRGB<float> depth_img{readDepthImage(base_path + "depth/" + f_name)};
+
+    const std::vector<std::pair<Vector<float>, Vector<float>>> key_points{
+        readKeyPoints(base_path + "key_points/" + f_name)};
+    auto [x, y, z] = read3DPoints(base_path + "points/" + f_name);
+
+    setCurrentElement("3d_view");
+    softClearView();
+    scatter3(x, y, z);
+
+    setCurrentElement("image_view");
+    softClearView();
+    imShow(rgb_img);
+    scatter(key_points[3].first, key_points[3].second, properties::ZOffset(-0.1f));
+
+    setCurrentElement("depth_view");
+    softClearView();
+    imShow(depth_img);
+}
+
+void testRunSavedDataFromPython()
+{
+    const std::string project_file_path = "../../project_files/slam.dvs";
+    const std::string base_path = "/Users/danielpi/work/dvs/slam_output/";
+
+    // /Users/danielpi/work/dvs/slam_output
+    // cam/    depth/  img/    points/    key_points/
+
+    const ImageRGB<std::uint8_t> rgb_img{readImage(base_path + "img/0008.bin")};
+    const ImageRGB<float> depth_img{readDepthImage(base_path + "depth/0008.bin")};
+
+    const std::vector<std::pair<Vector<float>, Vector<float>>> key_points{
+        readKeyPoints(base_path + "key_points/0008.bin")};
+    auto [x, y, z] = read3DPoints(base_path + "points/0008.bin");
+
+    openProjectFile(project_file_path);
+
+    setCurrentElement("3d_view");
+    view(-21.0, -34.0);
+    axis({-16.0, -8.0, 0.0}, {24.0, 32.0, 64.0});
+
+    setCurrentElement("image_view");
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    setCurrentElement("depth_view");
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+
+    for (size_t k = 8; k < 34; k++)
+    {
+        showOneFrame(base_path, k);
+    }
+}
+/*
+void testPrintCams()
+{
+    std::string input_path = "/Users/danielpi/work/dvs/slam_output/cam/";
+
+    const auto zero_padding = [](int num, int digits) -> std::string {
+        std::string s = std::to_string(num);
+        while (s.length() < digits)
+            s = "0" + s;
+        return s;
+    };
+
+    for (size_t k = 0; k < 80; k++)
+    {
+        const std::string f_name = zero_padding(k, 4) + ".bin";
+        std::ifstream input(input_path + f_name, std::ios::binary);
+        std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+        size_t idx = 0U;
+        for (size_t r = 0; r < 3; r++)
+        {
+            for (size_t c = 0; c < 4; c++)
+            {
+                float val;
+                std::memcpy(reinterpret_cast<char*>(&val), buffer.data() + idx * sizeof(float), sizeof(float));
+                std::cout << val << ", ";
+                idx++;
+            }
+            std::cout << std::endl;
+        }
+    }
+}
+void testBasicVisualizePoints()
+{
+    std::string input_path = "/Users/danielpi/work/dvs/slam_output/points/";
+    std::ifstream input(input_path + "0000.bin", std::ios::binary);
+    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    size_t num_points = 640;
+    // std::memcpy()
+
+    // ImageGray<float> img(h, w);
+    ImageGrayConstView<float> img(reinterpret_cast<float*>(buffer.data()), h, w);
+    std::cout << "Buffer size: " << buffer.size() << std::endl;
+
+    // std::memcpy(img.data(), buffer.data(), buffer.size());
+
+    for (size_t r = 0; r < h; r++)
+    {
+        for (size_t c = 0; c < w; c++)
+        {
+            img(r, c) = img->image[idx] / 255.0f;
+        }
+    }
+
+    setCurrentElement("p_view_0");
+    imShow(img);
+}
+
+void testBasicViewDepthFrame()
+{
+    std::string input_path = "/Users/danielpi/work/dvs/slam_output/depth/";
+    std::ifstream input(input_path + "0001.bin", std::ios::binary);
+    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const int w = 640;
+    const int h = 480;
+
+    // ImageGray<float> img(h, w);
+    ImageGrayConstView<float> img(reinterpret_cast<float*>(buffer.data()), h, w);
+    std::cout << "Buffer size: " << buffer.size() << std::endl;
+
+    // std::memcpy(img.data(), buffer.data(), buffer.size());
+
+    for (size_t r = 0; r < h; r++)
+    {
+        for (size_t c = 0; c < w; c++)
+        {
+            img(r, c) = img->image[idx] / 255.0f;
+        }
+    }
+
+    setCurrentElement("p_view_0");
+    imShow(img);
+}
+
+void testBasicRunSlam()
+{
+    // camera.txt    images@       pcalib.txt    times.txt     vignette.png
+    std::string vignette = dataset_base_path + "vignette.png";
+    std::string gammaCalib = dataset_base_path + "pcalib.txt";
+    std::string source = dataset_base_path + "images/";
+    std::string calib = dataset_base_path + "camera.txt";
+
+    ImageFolderReader* reader = new ImageFolderReader(source, calib, gammaCalib, vignette);
+    reader->setGlobalCalibration();
+
+    FullSystem* fullSystem = new FullSystem();
+    fullSystem->setGammaFunction(reader->getPhotometricGamma());
+    fullSystem->linearizeOperation = true;
+    fullSystem->outputWrapper.push_back(new IOWrap::DVSOutputWrapper());
+
+    if (fullSystem->initFailed)
+    {
+        std::cout << "Init failed!" << std::endl;
+    }
+
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    setCurrentElement("p_view_0");
+
+    for (size_t i = 0; i < 4000; i++)
+    {
+        ImageAndExposure* img = reader->getImage(i);
+        std::cout << "Hello: " << i << std::endl;
+
+        ImageGray<float> img2(img->h, img->w);
+
+        for(size_t r = 0; r < img->h; r++)
+        {
+            for(size_t c = 0; c < img->w; c++)
+            {
+                const size_t idx = img->w * r + c;
+                img2(r, c) = img->image[idx] / 255.0f;
+            }
+        }
+
+        fullSystem->addActiveFrame(img, i);
+
+        // softClearView();
+        // imShow(img2);
+    }
+
+    fullSystem->blockUntilMappingIsFinished();
+    std::cout << "Done mapping!" << std::endl;
+}*/
+
+}  // namespace slam

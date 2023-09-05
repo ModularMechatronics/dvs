@@ -31,3 +31,12 @@
 [submodule "src/externals/dso"]
 	path = src/externals/dso
 	url = https://github.com/JakobEngel/dso.git
+[submodule "src/externals/pangolin"]
+	path = src/externals/pangolin
+	url = https://github.com/stevenlovegrove/Pangolin.git
+[submodule "src/externals/slam-python"]
+	path = src/externals/slam-python
+	url = https://github.com/filchy/slam-python.git
+[submodule "src/externals/pyslam"]
+	path = src/externals/pyslam
+	url = https://github.com/luigifreda/pyslam.git
