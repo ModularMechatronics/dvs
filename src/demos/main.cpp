@@ -62,7 +62,8 @@ int main(int argc, char* argv[])
                                       {"scatter_small_points", small::testScatterSmallPoints},
                                       {"transparent_fill_below_plot", small::testTransparentFillBelowPlot},
                                       {"test_transitioning_surfs", small::testTransitioningSurfs},
-                                      {"iso_surfaces", small::testIsoSurfaces}};
+                                      {"iso_surfaces", small::testIsoSurfaces},
+                                      {"sling_plot", sling_plot::testSlingPlot}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

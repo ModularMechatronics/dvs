@@ -12,6 +12,7 @@
 #include "tests/particle_field/particle_field.h"
 #include "tests/particles/particles.h"
 #include "tests/slam/slam.h"
+#include "tests/sling_plot/sling_plot.h"
 #include "tests/small.h"
 #include "tests/sphere/sphere.h"
 #include "tests/spring/spring.h"
