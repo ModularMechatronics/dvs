@@ -28,13 +28,10 @@ Pre release:
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
 - Change all reinterpret_cast to static_cast<whatever>(static_cast<void*>())
-- For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
-  to populate it or property from the variadic templ. args
 - wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Data cursor, cursor to click on data to get xyz value
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Fix case for plot/plot3 when two adjacent points are equal
-- pane shadow
 - Rename: 
   PlotObjectAttributes -> PlotDataAttributes
   PropertiesData -> PlotDataUserProperties
@@ -51,11 +48,14 @@ Pre release:
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Contour plotting function
+- Stairs is grey? Or without color
 - Bar plot
 - Time date axes
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 
 Post release:
+- For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
+  to populate it or property from the variadic templ. args
 - Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
 - For 2D functions (plot, scatter etc.), implement rolling z-offset, so that one can plot multiple things on top of each other

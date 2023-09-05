@@ -864,8 +864,7 @@ void drawLine(const Line3D<double>& line, const double t0, const double t1, cons
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y);
 }
 
-template <typename T, typename... Us>
-void realTimePlot(const T dt, const T y, const ItemId id, const Us&... settings)
+template <typename T, typename... Us> void realTimePlot(const T dt, const T y, const ItemId id, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::REAL_TIME_PLOT};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -918,7 +917,7 @@ template <typename... Us> void setProperties(const std::vector<PropertySet>& pro
     std::size_t total_size{0U};
     for (size_t k = 0; k < property_sets.size(); k++)
     {
-        total_size += property_sets[k].getTotaltSize();
+        total_size += property_sets[k].getTotalSize();
     }
 
     // +1 for number of property sets
@@ -930,7 +929,7 @@ template <typename... Us> void setProperties(const std::vector<PropertySet>& pro
     {
         property_sets[k].fillBuffer(data_vec.data() + idx);
 
-        idx += property_sets[k].getTotaltSize();
+        idx += property_sets[k].getTotalSize();
     }
 
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, data_vec);

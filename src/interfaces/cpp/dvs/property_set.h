@@ -49,7 +49,7 @@ private:
 
 public:
     PropertySet() : id_{ItemId::UNKNOWN} {}
-    template <typename... Us> PropertySet(const ItemId id, const Us&... props) : id_{id}
+    template <typename... Us> PropertySet(const ItemId id, const Us&... props) : id_{id_}
     {
         extendInternal(props...);
     }
@@ -59,7 +59,7 @@ public:
         extendInternal(props...);
     }
 
-    std::size_t getTotaltSize() const
+    std::size_t getTotalSize() const
     {
         std::size_t total_size{0U};
         for (size_t k = 0; k < props_.size(); k++)
@@ -68,16 +68,16 @@ public:
         }
 
         // +1 for number of properties in this property set
-        // +1 for id
+        // +sizeof(ItemId) for id
         // +props_.size() for size of each property
-        return total_size + 1U + 1U + props_.size();
+        return total_size + 1U + sizeof(ItemId) + props_.size();
     }
 
     void fillBuffer(std::uint8_t* const data_to_fill) const
     {
         data_to_fill[0U] = static_cast<std::uint8_t>(props_.size());
-        data_to_fill[1U] = static_cast<std::uint8_t>(id_);
-        std::size_t idx{2U};
+        std::memcpy(data_to_fill + 1U, reinterpret_cast<const std::uint8_t* const>(&id_), sizeof(ItemId));
+        std::size_t idx{1U + sizeof(ItemId)};
 
         for (size_t k = 0; k < props_.size(); k++)
         {

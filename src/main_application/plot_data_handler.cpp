@@ -68,8 +68,9 @@ void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_d
         const std::size_t num_props{prop_data[idx]};
         idx += 1U;
 
-        const ItemId id{static_cast<ItemId>(prop_data[idx])};
-        idx += 1U;
+        ItemId id;
+        std::memcpy(&id, prop_data + idx, sizeof(ItemId));
+        idx += sizeof(ItemId);
 
         hdr.append(CommunicationHeaderObjectType::ITEM_ID, id);
 
