@@ -882,7 +882,7 @@ void testImShow()
     clearView();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
     setCurrentElementToImageView();
-    imShow(img3, properties::Alpha(127));
+    imShow(img3, properties::Alpha(0.5f));
 
     setCurrentElement("p_view_1");
     clearView();

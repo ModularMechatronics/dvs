@@ -62,7 +62,7 @@ TEST_F(TestCommunication, TestBasic)
     }
 
     const prp::Color col(12, 14, 55);
-    const prp::Alpha alpha(137);
+    const prp::Alpha alpha(0.75f);
     const prp::Name name("SimpleName");
     const prp::LineStyle ls("-*");
     const prp::LineWidth lw(27);

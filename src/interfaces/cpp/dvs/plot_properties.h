@@ -62,10 +62,10 @@ struct LineWidth : internal::PropertyBase
 
 struct Alpha : internal::PropertyBase
 {
-    uint8_t data;
+    float data;
 
     Alpha() : internal::PropertyBase(internal::PropertyType::ALPHA) {}
-    explicit Alpha(const uint8_t alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
+    explicit Alpha(const float alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
 };
 
 struct ZOffset : internal::PropertyBase

@@ -34,7 +34,7 @@ TEST_F(TestCommunicationHeader, TestBasic0)
     hdr.append(CommunicationHeaderObjectType::DATA_TYPE, typeToDataTypeEnum<double>());
     hdr.append(CommunicationHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
 
-    variadicTemplateFunction(hdr, prp::Color(14, 56, 72), prp::Alpha(187), prp::LineWidth(4), prp::PERSISTENT);
+    variadicTemplateFunction(hdr, prp::Color(14, 56, 72), prp::Alpha(0.7f), prp::LineWidth(4), prp::PERSISTENT);
 
     ASSERT_TRUE(hdr.hasObjectWithType(CommunicationHeaderObjectType::FUNCTION));
     ASSERT_TRUE(hdr.hasObjectWithType(CommunicationHeaderObjectType::DATA_STRUCTURE));
@@ -65,7 +65,7 @@ TEST_F(TestCommunicationHeader, TestBasic)
     hdr.append(CommunicationHeaderObjectType::NUM_BUFFERS_REQUIRED, toUInt8(2));
 
     const prp::Color col(14, 56, 72);
-    const prp::Alpha alpha(187);
+    const prp::Alpha alpha(0.85f);
     const prp::LineWidth lw(4);
     const prp::PointSize ps(63);
 

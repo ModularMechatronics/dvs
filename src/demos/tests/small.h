@@ -724,9 +724,9 @@ void testTransparentFillBelowPlot()
     plot(t, x0, properties::LineWidth(5), properties::Color::BLACK);
     plot(t, x1, properties::LineWidth(5), properties::Color::BLACK);
     plot(t, x2, properties::LineWidth(5), properties::Color::BLACK);
-    drawMesh(vertices2, indices2, properties::Color::GREEN, properties::EdgeColor::NONE, properties::Alpha(127));
-    drawMesh(vertices1, indices1, properties::Color::RED, properties::EdgeColor::NONE, properties::Alpha(127));
-    drawMesh(vertices0, indices0, properties::Color::BLUE, properties::EdgeColor::NONE, properties::Alpha(127));
+    drawMesh(vertices2, indices2, properties::Color::GREEN, properties::EdgeColor::NONE, properties::Alpha(0.5f));
+    drawMesh(vertices1, indices1, properties::Color::RED, properties::EdgeColor::NONE, properties::Alpha(0.5f));
+    drawMesh(vertices0, indices0, properties::Color::BLUE, properties::EdgeColor::NONE, properties::Alpha(0.5f));
 }
 
 void testTransitioningSurfs()

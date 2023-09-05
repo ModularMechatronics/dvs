@@ -57,7 +57,7 @@ TEST_F(TestProperties, TestLinewidth)
 
 TEST_F(TestProperties, TestAlpha)
 {
-    const uint8_t alpha_val = 243;
+    const float alpha_val = 0.85f;
     const Alpha a0, a1(alpha_val);
     ASSERT_EQ(a0.getPropertyType(), PropertyType::ALPHA);
     ASSERT_EQ(a1.getPropertyType(), PropertyType::ALPHA);

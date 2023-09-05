@@ -19,7 +19,7 @@ Pre release:
 - Add real time plot to demo imu
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
-- Change name of application (to plotto or something)
+- Change name of application (to plotto or something, polyplot)
 - Add all keybindings to the help pane
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
@@ -33,7 +33,6 @@ Pre release:
   to populate it or property from the variadic templ. args
 - wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Data cursor, cursor to click on data to get xyz value
-- Make Alpha a float parameter
 - For 2D functions (plot, scatter etc.), implement rolling z-offset, so that one can plot multiple things on top of each other
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Drop shadow and bevel of plot pane

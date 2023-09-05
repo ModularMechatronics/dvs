@@ -101,7 +101,7 @@ public:
         // Properties
         if (props.hasProperty(PropertyType::ALPHA))
         {
-            alpha = static_cast<float>(props.getProperty<Alpha>().data) / 255.0f;
+            alpha = props.getProperty<Alpha>().data;
             has_properties_ = true;
         }
 
