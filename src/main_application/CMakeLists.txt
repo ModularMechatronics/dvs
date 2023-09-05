@@ -29,7 +29,6 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/structures/view_angles.cpp
 
                      misc/number_formatting.cpp
-                     misc/color_map.cpp
 
                      plot_objects/plot_object_base/plot_object_base.cpp
                      plot_objects/draw_mesh/draw_mesh.cpp

@@ -24,7 +24,6 @@ Pre release:
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
 - 2D plot with upper and lower interval (demo only?)
-- Rename "rainbow" colormap to "hsv"? Seems to be the correct name
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
 - Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
@@ -33,7 +32,6 @@ Pre release:
   to populate it or property from the variadic templ. args
 - wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Data cursor, cursor to click on data to get xyz value
-- For 2D functions (plot, scatter etc.), implement rolling z-offset, so that one can plot multiple things on top of each other
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Drop shadow and bevel of plot pane
 - Fix case for plot/plot3 when two adjacent points are equal
@@ -61,6 +59,7 @@ Pre release:
 Post release:
 - Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
+- For 2D functions (plot, scatter etc.), implement rolling z-offset, so that one can plot multiple things on top of each other
 - Pro version of dvs including buttons?
 - "Hole" in background canvas for grouping elements, should have a title
 - Get user mouse input from plot back to user application

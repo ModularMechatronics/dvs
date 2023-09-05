@@ -248,7 +248,7 @@ void testAdvanced1()
         evalKlein(u_mat, v_mat, x, y, z, u_offset, v_offset, klein_params, r_mat);
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::FaceColor(255, 0, 74));
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 74));
-        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::ColorMap::RAINBOW);
+        // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::ColorMap::HSV);
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::ColorMap::JET);
         // drawMesh(vx, vy, vz, indices.view(), properties::EdgeColor::NONE, properties::ColorMap::VIRIDIS);
         drawMesh(vx, vy, vz, indices.constView(), properties::EdgeColor::NONE, properties::ColorMap::MAGMA);

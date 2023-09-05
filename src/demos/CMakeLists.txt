@@ -23,8 +23,7 @@ add_executable(demos main.cpp
                      tests/boxes/boxes.cpp
                      tests/slam/slam.cpp
                      tests/particle_field/particle_field.cpp
-                     tests/ad_dataset/ad_dataset.cpp
-                     ${REPO_DIR}/src/main_application/misc/color_map.cpp)
+                     tests/ad_dataset/ad_dataset.cpp)
 
 target_link_libraries(demos 
         ${REPO_DIR}/src/externals/liquidfun/liquidfun/Box2D/Box2D/Release/libliquidfun.a

@@ -190,7 +190,7 @@ void testScatter()
     scatter(x,
             y,
             properties::DistanceFrom::xy({0.0, 0.0}, 0.0, 1.0),
-            properties::ColorMap::RAINBOW,
+            properties::ColorMap::HSV,
             properties::PointSize(13),
             properties::ScatterStyle::CIRCLE);
 
@@ -991,7 +991,7 @@ void testLegend()
     clearView();
 
     surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::JET, properties::Name("Jet"));
-    surf(x + 1.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::RAINBOW, properties::Name("Rainbow"));
+    surf(x + 1.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::HSV, properties::Name("Rainbow"));
     surf(x + 2.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::MAGMA, properties::Name("Magma"));
     surf(x + 3.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::VIRIDIS, properties::Name("Viridis"));
     surf(x + 4.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::PASTEL, properties::Name("Pastel"));

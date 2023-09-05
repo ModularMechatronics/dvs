@@ -583,7 +583,7 @@ void testScatterSmallPoints()
             properties::PointSize(1),
             properties::ScatterStyle::SQUARE,
             properties::DistanceFrom::xy({0.3, -0.5}, 0.625, 1.25),
-            properties::ColorMap::RAINBOW);
+            properties::ColorMap::HSV);
 }
 
 void testTransparentFillBelowPlot()

@@ -103,7 +103,7 @@ class DataStructure(Enum):
 
 class ColorMapType(Enum):
     JET = 0
-    RAINBOW = 1
+    HSV = 1
     MAGMA = 2
     VIRIDIS = 3
     UNKNOWN = 4

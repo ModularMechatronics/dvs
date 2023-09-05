@@ -397,7 +397,7 @@ struct FaceColor : internal::PropertyBase
 enum class ColorMap : uint8_t
 {
     JET,
-    RAINBOW,
+    HSV,
     MAGMA,
     VIRIDIS,
     PASTEL,
@@ -542,7 +542,7 @@ struct ColorMapContainer : internal::PropertyBase
     properties::ColorMap data;
 
     static constexpr properties::ColorMap JET = properties::ColorMap::JET;
-    static constexpr properties::ColorMap RAINBOW = properties::ColorMap::RAINBOW;
+    static constexpr properties::ColorMap HSV = properties::ColorMap::HSV;
     static constexpr properties::ColorMap MAGMA = properties::ColorMap::MAGMA;
     static constexpr properties::ColorMap VIRIDIS = properties::ColorMap::VIRIDIS;
     static constexpr properties::ColorMap PASTEL = properties::ColorMap::PASTEL;

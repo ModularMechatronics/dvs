@@ -2,7 +2,7 @@
 # import matplotlib.pyplot as plt
 import numpy as np
 
-rainbow = [
+hsv = [
         [1.0, 1.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, 1.0, 1.0],
@@ -261,7 +261,7 @@ def print_colormap_function(colormap_name, colormap_breakpoints):
         print(l)
 
 if __name__ == "__main__":
-    # colormaps = {"Rainbow": rainbow, "Magma": magma, "Viridis": viridis, "Jet": jet, "RainbowPastel": rainbow_pastel, "RainbowPastel2": rainbow_pastel2}
+    # colormaps = {"Rainbow": hsv, "Magma": magma, "Viridis": viridis, "Jet": jet, "RainbowPastel": rainbow_pastel, "RainbowPastel2": rainbow_pastel2}
     colormaps = {"JetSoft": jet_soft, "JetBright": jet_bright}
 
     for colormap_name, colormap_breakpoints in colormaps.items():
