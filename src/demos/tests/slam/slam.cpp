@@ -3,20 +3,13 @@
 #include <math.h>
 #include <stdlib.h>
 
-// #include <boost/thread.hpp>
 #include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
 
-// #include "FullSystem/FullSystem.h"
-// #include "IOWrapper/ImageDisplay.h"
-// #include "IOWrapper/Output3DWrapper.h"
-// #include "IOWrapper/OutputWrapper/DVSOutputWrapper.h"
 #include "dvs/dvs.h"
 #include "tests/slam/color_maps.h"
-// #include "util/DatasetReader.h"
-// #include "util/settings.h"
 
 using namespace dvs;
 
@@ -284,147 +277,5 @@ void testRunSavedDataFromPython()
         showOneFrame(base_path, k);
     }
 }
-/*
-void testPrintCams()
-{
-    std::string input_path = "/Users/danielpi/work/dvs/slam_output/cam/";
-
-    const auto zero_padding = [](int num, int digits) -> std::string {
-        std::string s = std::to_string(num);
-        while (s.length() < digits)
-            s = "0" + s;
-        return s;
-    };
-
-    for (size_t k = 0; k < 80; k++)
-    {
-        const std::string f_name = zero_padding(k, 4) + ".bin";
-        std::ifstream input(input_path + f_name, std::ios::binary);
-        std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
-        size_t idx = 0U;
-        for (size_t r = 0; r < 3; r++)
-        {
-            for (size_t c = 0; c < 4; c++)
-            {
-                float val;
-                std::memcpy(reinterpret_cast<char*>(&val), buffer.data() + idx * sizeof(float), sizeof(float));
-                std::cout << val << ", ";
-                idx++;
-            }
-            std::cout << std::endl;
-        }
-    }
-}
-void testBasicVisualizePoints()
-{
-    std::string input_path = "/Users/danielpi/work/dvs/slam_output/points/";
-    std::ifstream input(input_path + "0000.bin", std::ios::binary);
-    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
-
-    const std::string project_file_path = "../../project_files/small.dvs";
-    openProjectFile(project_file_path);
-
-    size_t num_points = 640;
-    // std::memcpy()
-
-    // ImageGray<float> img(h, w);
-    ImageGrayConstView<float> img(reinterpret_cast<float*>(buffer.data()), h, w);
-    std::cout << "Buffer size: " << buffer.size() << std::endl;
-
-    // std::memcpy(img.data(), buffer.data(), buffer.size());
-
-    for (size_t r = 0; r < h; r++)
-    {
-        for (size_t c = 0; c < w; c++)
-        {
-            img(r, c) = img->image[idx] / 255.0f;
-        }
-    }
-
-    setCurrentElement("p_view_0");
-    imShow(img);
-}
-
-void testBasicViewDepthFrame()
-{
-    std::string input_path = "/Users/danielpi/work/dvs/slam_output/depth/";
-    std::ifstream input(input_path + "0001.bin", std::ios::binary);
-    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
-
-    const std::string project_file_path = "../../project_files/small.dvs";
-    openProjectFile(project_file_path);
-
-    const int w = 640;
-    const int h = 480;
-
-    // ImageGray<float> img(h, w);
-    ImageGrayConstView<float> img(reinterpret_cast<float*>(buffer.data()), h, w);
-    std::cout << "Buffer size: " << buffer.size() << std::endl;
-
-    // std::memcpy(img.data(), buffer.data(), buffer.size());
-
-    for (size_t r = 0; r < h; r++)
-    {
-        for (size_t c = 0; c < w; c++)
-        {
-            img(r, c) = img->image[idx] / 255.0f;
-        }
-    }
-
-    setCurrentElement("p_view_0");
-    imShow(img);
-}
-
-void testBasicRunSlam()
-{
-    // camera.txt    images@       pcalib.txt    times.txt     vignette.png
-    std::string vignette = dataset_base_path + "vignette.png";
-    std::string gammaCalib = dataset_base_path + "pcalib.txt";
-    std::string source = dataset_base_path + "images/";
-    std::string calib = dataset_base_path + "camera.txt";
-
-    ImageFolderReader* reader = new ImageFolderReader(source, calib, gammaCalib, vignette);
-    reader->setGlobalCalibration();
-
-    FullSystem* fullSystem = new FullSystem();
-    fullSystem->setGammaFunction(reader->getPhotometricGamma());
-    fullSystem->linearizeOperation = true;
-    fullSystem->outputWrapper.push_back(new IOWrap::DVSOutputWrapper());
-
-    if (fullSystem->initFailed)
-    {
-        std::cout << "Init failed!" << std::endl;
-    }
-
-    const std::string project_file_path = "../../project_files/small.dvs";
-    openProjectFile(project_file_path);
-
-    setCurrentElement("p_view_0");
-
-    for (size_t i = 0; i < 4000; i++)
-    {
-        ImageAndExposure* img = reader->getImage(i);
-        std::cout << "Hello: " << i << std::endl;
-
-        ImageGray<float> img2(img->h, img->w);
-
-        for(size_t r = 0; r < img->h; r++)
-        {
-            for(size_t c = 0; c < img->w; c++)
-            {
-                const size_t idx = img->w * r + c;
-                img2(r, c) = img->image[idx] / 255.0f;
-            }
-        }
-
-        fullSystem->addActiveFrame(img, i);
-
-        // softClearView();
-        // imShow(img2);
-    }
-
-    fullSystem->blockUntilMappingIsFinished();
-    std::cout << "Done mapping!" << std::endl;
-}*/
 
 }  // namespace slam

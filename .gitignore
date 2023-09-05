@@ -41,3 +41,5 @@ build
 src/externals/glog/build
 .vscode
 leddar_dataset
+tum_dataset
+slam_output

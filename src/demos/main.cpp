@@ -60,7 +60,9 @@ int main(int argc, char* argv[])
                                       {"scatter_cluster", small::testScatterCluster},
                                       {"scatter_varying_size", small::testScatterVaryingSize},
                                       {"scatter_small_points", small::testScatterSmallPoints},
-                                      {"transparent_fill_below_plot", small::testTransparentFillBelowPlot}};
+                                      {"transparent_fill_below_plot", small::testTransparentFillBelowPlot},
+                                      {"test_transitioning_surfs", small::testTransitioningSurfs},
+                                      {"iso_surfaces", small::testIsoSurfaces}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;
@@ -75,6 +77,7 @@ int main(int argc, char* argv[])
     fcns["boxes"] = StringFunctionMap{{"basic", boxes::testBasic}};
     fcns["hexagon"] = StringFunctionMap{{"basic", hexagon_rods::testBasic}};
     fcns["particle_field"] = StringFunctionMap{{"basic", particle_field::testBasic}};
+    fcns["slam"] = StringFunctionMap{{"basic", slam::testBasic}};
     fcns["small"] = small_functions;
 
     if (argc == 1)
