@@ -393,7 +393,7 @@ struct Shape
     ImageRGBA<std::uint8_t> shape_img;
 
     b2Body* body_handle = nullptr;
-    internal::ItemId id;
+    ItemId id;
 
     float scale_factor = 100.0f;
 
@@ -401,7 +401,7 @@ struct Shape
     Shape(b2Body* body_handle_,
           const float width_,
           const float height_,
-          const internal::ItemId& id_,
+          const ItemId& id_,
           const std::uint8_t red,
           const std::uint8_t green,
           const std::uint8_t blue)
@@ -453,7 +453,7 @@ private:
     int32 velocity_iterations = 6;
     int32 position_iterations = 2;
 
-    internal::ItemId id_counter_;
+    ItemId id_counter_;
 
     b2Body* createStaticCollisionlessBody(const Vec2d& position, const Vec2d& size)
     {
@@ -502,7 +502,7 @@ private:
         body->CreateFixture(&body_shape, 0.0f);
 
         const Shape shp(body, size.x, size.y, id_counter_, red, green, blue);
-        id_counter_ = static_cast<internal::ItemId>(static_cast<int>(id_counter_) + 1);
+        id_counter_ = static_cast<ItemId>(static_cast<int>(id_counter_) + 1);
         return shp;
     }
 
@@ -531,12 +531,12 @@ private:
         const std::uint8_t blue = static_cast<std::uint8_t>(color.z * 255.0);
 
         const Shape shp(body, size.x, size.y, id_counter_, red, green, blue);
-        id_counter_ = static_cast<internal::ItemId>(static_cast<int>(id_counter_) + 1);
+        id_counter_ = static_cast<ItemId>(static_cast<int>(id_counter_) + 1);
         return shp;
     }
 
-    static constexpr dvs::internal::ItemId kLaunchSquareId = properties::ID0;
-    static constexpr dvs::internal::ItemId kSpinningSquareId = properties::ID1;
+    static constexpr dvs::ItemId kLaunchSquareId = properties::ID0;
+    static constexpr dvs::ItemId kSpinningSquareId = properties::ID1;
 
     float t = 0.0f;
     std::vector<Shape> shapes_;
@@ -575,7 +575,7 @@ private:
 public:
     Joints() : gravity_{0.0f, -10.0f}, world_{gravity_}, ground_box_{}
     {
-        id_counter_ = static_cast<internal::ItemId>(0);
+        id_counter_ = static_cast<ItemId>(0);
 
         b2Body* wall_body = createStaticCollisionlessBody({0.0, 0.0}, {50.0, 50.0});
 

@@ -12,19 +12,17 @@ Pre release:
  * Something with drone simulation data
  * Something with robotics
  * GIS point cloud
- * RGBD images
+ * Draw obj file from python interface, car running on a track
 - Finalize demos
-- Remove ItemId from internal namespace, so that one can produce an arbitrary item id
-- ItemId should be sent as 16 bit int (if it isn't already)
 - Grid lines when invalid/inf axes limits
 - Create layout grids
+- Add real time plot to demo imu
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
 - Change name of application (to plotto or something)
 - Add all keybindings to the help pane
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
-- Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - 2D plot with upper and lower interval (demo only?)
 - Rename "rainbow" colormap to "hsv"? Seems to be the correct name
 - Support no properties for C functions: https://stackoverflow.com/questions/5891221/variadic-macros-with-zero-arguments
@@ -51,7 +49,7 @@ Pre release:
 - plot2 with fill under/over x axis
 - candlestick/errorbar
 - Colorbar
-- Finish point selector
+- Finish point selector, specifically all different type's selector functions
 - Move as much as possible from plot_pane into axes_interactor
 - Create "super struct" that contains all necessary information from axes_interactor that gets passed into axes_renderer
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
@@ -62,6 +60,7 @@ Pre release:
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 
 Post release:
+- Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
 - Pro version of dvs including buttons?
 - "Hole" in background canvas for grouping elements, should have a title

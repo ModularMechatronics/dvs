@@ -436,8 +436,8 @@ private:
 
     template <typename T> CommunicationHeaderObjectType templateToObjectType() const
     {
-        static_assert(std::is_same<T, internal::ItemId>::value, "Type not allowed for template to type deduction!");
-        if (std::is_same<T, internal::ItemId>::value)
+        static_assert(std::is_same<T, ItemId>::value, "Type not allowed for template to type deduction!");
+        if (std::is_same<T, ItemId>::value)
         {
             return CommunicationHeaderObjectType::ITEM_ID;
         }

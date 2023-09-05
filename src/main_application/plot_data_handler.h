@@ -44,12 +44,12 @@ public:
                  const PropertiesData& properties_data,
                  ReceivedData& received_data,
                  const std::shared_ptr<const ConvertedDataBase>& converted_data);
-    void setTransform(const internal::ItemId id,
+    void setTransform(const ItemId id,
                       const MatrixFixed<double, 3, 3>& rotation,
                       const Vec3<double>& translation,
                       const MatrixFixed<double, 3, 3>& scale);
     std::vector<LegendProperties> getLegendStrings() const;
-    void propertiesExtension(const internal::ItemId id, const PropertiesData& properties_data);
+    void propertiesExtension(const ItemId id, const PropertiesData& properties_data);
     void propertiesExtensionMultiple(const ReceivedData& received_data);
     void deletePlotObject(const ItemId id);
 };

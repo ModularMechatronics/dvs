@@ -30,7 +30,7 @@ void PlotDataHandler::clear()
     color_picker_.reset();
 }
 
-void PlotDataHandler::setTransform(const internal::ItemId id,
+void PlotDataHandler::setTransform(const ItemId id,
                                    const MatrixFixed<double, 3, 3>& rotation,
                                    const Vec3<double>& translation,
                                    const MatrixFixed<double, 3, 3>& scale)
@@ -68,7 +68,7 @@ void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_d
         const std::size_t num_props{prop_data[idx]};
         idx += 1U;
 
-        const internal::ItemId id{static_cast<internal::ItemId>(prop_data[idx])};
+        const ItemId id{static_cast<ItemId>(prop_data[idx])};
         idx += 1U;
 
         hdr.append(CommunicationHeaderObjectType::ITEM_ID, id);
@@ -103,7 +103,7 @@ void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_d
     }
 }
 
-void PlotDataHandler::propertiesExtension(const internal::ItemId id, const PropertiesData& properties_data)
+void PlotDataHandler::propertiesExtension(const ItemId id, const PropertiesData& properties_data)
 {
     const auto q = std::find_if(plot_datas_.begin(), plot_datas_.end(), [&id](const PlotObjectBase* const pd) -> bool {
         return pd->getId() == id;
@@ -154,7 +154,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
-        const internal::ItemId id = hdr.value<internal::ItemId>();
+        const ItemId id = hdr.value<ItemId>();
 
         if (awaiting_properties_data_[static_cast<int>(id)].hasProperties())
         {

@@ -20,11 +20,11 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
-        id_ = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
+        id_ = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<ItemId>();
     }
     else
     {
-        id_ = internal::ItemId::UNKNOWN;
+        id_ = ItemId::UNKNOWN;
     }
 
     has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
@@ -62,11 +62,11 @@ void PlotObjectBase::postInitialize(ReceivedData& received_data,
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
-        id_ = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
+        id_ = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<ItemId>();
     }
     else
     {
-        id_ = internal::ItemId::UNKNOWN;
+        id_ = ItemId::UNKNOWN;
     }
 
     has_color_ = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);

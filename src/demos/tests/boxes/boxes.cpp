@@ -377,7 +377,7 @@ void testBasic()
                         cube_color,
                         properties::EdgeColor::NONE,
                         properties::FaceColor(cube_col.x, cube_col.y, cube_col.z),
-                        static_cast<internal::ItemId>(idx),
+                        static_cast<ItemId>(idx),
                         cube_transform);
                 assert(idx < 254);
                 idx++;
@@ -485,7 +485,7 @@ void testBasic()
             const Vector3& position = transform.getPosition();
             const Matrix<float> rot_mat = r3dMatToMat(transform.getOrientation().getMatrix()); 
 
-            props.emplace_back(static_cast<internal::ItemId>(k), properties::Transform{diagMatrix<double>({0.1, 0.1, 0.1}), rot_mat, {position.x, position.z, position.y}});
+            props.emplace_back(static_cast<ItemId>(k), properties::Transform{diagMatrix<double>({0.1, 0.1, 0.1}), rot_mat, {position.x, position.z, position.y}});
         }
 
         const Transform& transform = bullet_body->getTransform();

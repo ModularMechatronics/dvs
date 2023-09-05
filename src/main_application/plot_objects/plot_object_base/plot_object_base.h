@@ -37,7 +37,7 @@ constexpr bool kDefaultIsPersistent{false};
 constexpr bool kDefaultIsAppendable{false};
 constexpr bool kDefaultIsUpdateable{false};
 constexpr bool kDefaultInterpolateColormap{false};
-constexpr internal::ItemId kDefaultId{internal::ItemId::UNKNOWN};
+constexpr ItemId kDefaultId{ItemId::UNKNOWN};
 constexpr GLenum kDefaultDynamicOrStaticUsage{GL_STATIC_DRAW};
 constexpr bool kDefaultNoEdges{false};
 constexpr bool kDefaultNoFaces{false};
@@ -369,7 +369,7 @@ struct PlotObjectAttributes
 
         if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
         {
-            id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
+            id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<ItemId>();
         }
 
         has_color = hdr.hasObjectWithType(CommunicationHeaderObjectType::HAS_COLOR);
@@ -467,7 +467,7 @@ protected:
 
     bool has_name_;
 
-    internal::ItemId id_;
+    ItemId id_;
 
     void assignProperties(const PropertiesData& properties_data, ColorPicker& color_picker);
     virtual void findMinMax() = 0;
@@ -506,7 +506,7 @@ public:
                       const Vec3<double>& translation,
                       const MatrixFixed<double, 3, 3>& scale);
 
-    internal::ItemId getId() const
+    ItemId getId() const
     {
         return id_;
     }

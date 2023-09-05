@@ -19,7 +19,7 @@ setProperties({properties::ID0, transform0, properties::Color::RED},
 class PropertySet
 {
 private:
-    internal::ItemId id_;
+    ItemId id_;
     std::vector<internal::CommunicationHeaderObject> props_;
 
     template <typename U> void append(const U& prop)
@@ -48,13 +48,13 @@ private:
     }
 
 public:
-    PropertySet() : id_{internal::ItemId::UNKNOWN} {}
-    template <typename... Us> PropertySet(const internal::ItemId id, const Us&... props) : id_{id}
+    PropertySet() : id_{ItemId::UNKNOWN} {}
+    template <typename... Us> PropertySet(const ItemId id, const Us&... props) : id_{id}
     {
         extendInternal(props...);
     }
 
-    template <typename... Us> PropertySet(const Us&... props) : id_{internal::ItemId::UNKNOWN}
+    template <typename... Us> PropertySet(const Us&... props) : id_{ItemId::UNKNOWN}
     {
         extendInternal(props...);
     }

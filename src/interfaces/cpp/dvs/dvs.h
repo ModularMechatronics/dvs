@@ -865,7 +865,7 @@ void drawLine(const Line3D<double>& line, const double t0, const double t1, cons
 }
 
 template <typename T, typename... Us>
-void realTimePlot(const T dt, const T y, const internal::ItemId id, const Us&... settings)
+void realTimePlot(const T dt, const T y, const ItemId id, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::REAL_TIME_PLOT};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -888,7 +888,7 @@ void realTimePlot(const T dt, const T y, const internal::ItemId id, const Us&...
     drawMesh(x, y, z, indices, settings...);
 }*/
 
-template <typename... Us> void setProperties(const internal::ItemId id, const Us&... settings)
+template <typename... Us> void setProperties(const ItemId id, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PROPERTIES_EXTENSION};
     hdr.append(internal::CommunicationHeaderObjectType::ITEM_ID, id);
@@ -950,7 +950,7 @@ inline void setCurrentElement(const std::string& name)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void deletePlotObject(const internal::ItemId id)
+inline void deletePlotObject(const ItemId id)
 {
     internal::CommunicationHeader hdr{internal::Function::DELETE_PLOT_OBJECT};
     hdr.append(internal::CommunicationHeaderObjectType::ITEM_ID, id);
@@ -1115,7 +1115,7 @@ inline void setAxesBoxScaleFactor(const Vec3<double>& scale_vector)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void setTransform(const internal::ItemId id,
+inline void setTransform(const ItemId id,
                          const Matrix<double>& scale,
                          const Matrix<double>& rotation,
                          const Vec3<double>& translation)
@@ -1154,7 +1154,7 @@ inline void openProjectFile(const std::string& file_path)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void setTransform(const internal::ItemId id,
+inline void setTransform(const ItemId id,
                          const MatrixFixed<double, 3, 3>& scale,
                          const MatrixFixed<double, 3, 3>& rotation,
                          const Vec3<double>& translation)

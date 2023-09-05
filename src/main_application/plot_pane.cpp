@@ -290,7 +290,7 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     }
     else if (fcn == Function::DELETE_PLOT_OBJECT)
     {
-        const ItemId id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
+        const ItemId id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<ItemId>();
         plot_data_handler_->deletePlotObject(id);
         point_selection_.deletePlotObject(id);
     }
@@ -354,7 +354,7 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
         const MatrixFixed<double, 3, 3> rotation_mat =
             hdr.get(CommunicationHeaderObjectType::ROTATION_MATRIX).as<MatrixFixed<double, 3, 3>>();
 
-        const ItemId id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<internal::ItemId>();
+        const ItemId id = hdr.get(CommunicationHeaderObjectType::ITEM_ID).as<ItemId>();
 
         const MatrixFixed<double, 3, 3> scale =
             hdr.get(CommunicationHeaderObjectType::SCALE_MATRIX).as<MatrixFixed<double, 3, 3>>();
