@@ -6,7 +6,7 @@
 #include <string>
 
 #include "dvs/dvs.h"
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 #include "opengl_low_level/opengl_header.h"
 
 enum class ShaderSource

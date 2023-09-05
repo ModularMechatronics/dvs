@@ -2,7 +2,7 @@
 
 #include "dvs/math/math.h"
 #include "dvs/utils.h"
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 #include "plot_objects/plot_objects.h"
 #include "shader.h"

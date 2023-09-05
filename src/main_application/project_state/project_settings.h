@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 #include "dvs/logging.h"
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 
 enum class GuiElementType : std::uint8_t
 {

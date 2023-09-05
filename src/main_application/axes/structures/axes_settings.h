@@ -6,7 +6,7 @@
 #include <string>
 
 #include "dvs/math/math.h"
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 
 using namespace dvs;
 

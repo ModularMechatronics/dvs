@@ -10,7 +10,7 @@
 #include "dvs/dvs.h"
 #include "dvs/math/math.h"
 #include "input_data.h"
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 #include "properties.h"
 
 using namespace dvs;

@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 
 namespace
 {

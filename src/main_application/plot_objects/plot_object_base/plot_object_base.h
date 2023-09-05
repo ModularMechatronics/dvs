@@ -15,7 +15,7 @@
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "dvs/plot_properties.h"
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_objects/utils.h"
 #include "properties.h"

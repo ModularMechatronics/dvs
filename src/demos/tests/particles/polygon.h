@@ -9,7 +9,7 @@
 
 #include "dvs/dvs.h"
 #include "line2d.h"
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 #include "rapidxml.hpp"
 
 using namespace dvs;

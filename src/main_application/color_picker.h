@@ -1,7 +1,7 @@
 #ifndef MAIN_APPLICATION_COLOR_PICKER_H_
 #define MAIN_APPLICATION_COLOR_PICKER_H_
 
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 
 class ColorPicker
 {

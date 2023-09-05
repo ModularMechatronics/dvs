@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 
 constexpr int kMaxNumPoints{100};
 constexpr float kYOffset{-5.1f};

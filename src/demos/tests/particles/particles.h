@@ -10,7 +10,7 @@
 #include "dvs/dvs.h"
 #include "helper_functions.h"
 #include "line2d.h"
-#include "misc/color_map.h"
+#include "misc/rgb_triplet.h"
 #include "polygon.h"
 #include "rapidxml.hpp"
 
