@@ -161,6 +161,23 @@ template <typename T> Matrix<T> sqrt(const Matrix<T>& m_in)
     return m;
 }
 
+template <typename T> Matrix<T> elementWiseMultiply(const Matrix<T>& m0, const Matrix<T>& m1)
+{
+    DVS_ASSERT((m0.numRows() > 0) && (m0.numCols() > 0));
+    DVS_ASSERT((m0.numRows() == m1.numRows()) && (m0.numCols() == m1.numCols()));
+    Matrix<T> m(m0.numRows(), m0.numCols());
+
+    for (size_t r = 0; r < m0.numRows(); r++)
+    {
+        for (size_t c = 0; c < m0.numCols(); c++)
+        {
+            m(r, c) = m0(r, c) * m1(r, c);
+        }
+    }
+
+    return m;
+}
+
 template <typename T> T max(const Matrix<T>& m_in)
 {
     DVS_ASSERT((m_in.numRows() > 0) && (m_in.numCols() > 0));

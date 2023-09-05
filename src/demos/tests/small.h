@@ -729,6 +729,124 @@ void testTransparentFillBelowPlot()
     drawMesh(vertices0, indices0, properties::Color::BLUE, properties::EdgeColor::NONE, properties::Alpha(127));
 }
 
+void testTransitioningSurfs()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_rows = 100, num_cols = 100;
+    Matrix<double> x{num_rows, num_cols}, y{num_rows, num_cols}, z{num_rows, num_cols};
+
+    const double x_min = 0.0, x_max = 1.0, y_min = 0.0, y_max = 1.0;
+
+    const double inc = (x_max - x_min) / static_cast<double>(num_rows - 1U);
+
+    for (int r = 0; r < num_rows; r++)
+    {
+        for (int c = 0; c < num_cols; c++)
+        {
+            x(r, c) = c * inc;
+            y(r, c) = r * inc;
+
+            const double rd = x(r, c) - 5.5 * inc;
+            const double cd = y(r, c) - 5.5 * inc;
+            const double r_val = std::sqrt(rd * rd + cd * cd) * 10.0;
+            z(r, c) = std::sin(r_val) / r_val;
+        }
+    }
+
+    const size_t num_surfaces{5U};
+
+    Vector<Matrix<double>> surfaces{num_surfaces};
+
+    /////////////////////////////////////////////////////////////////////////
+    //////////////////////////// Create surfaces ////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
+
+    const Matrix<double> rd = x - 0.5;
+    const Matrix<double> cd = y - 0.5;
+    const Matrix<double> r_val = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 10.0;
+
+    surfaces(0) = dvs::sin(r_val) / r_val;
+
+    const Matrix<double> r_val1 = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 20.0;
+
+    surfaces(1) = dvs::sin(r_val1) / r_val1;
+
+    const Matrix<double> r_val2 = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 30.0;
+
+    surfaces(2) = elementWiseMultiply(rd, rd) - elementWiseMultiply(cd, cd);
+
+    const Matrix<double> r_val3 = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 40.0;
+
+    surfaces(3) = elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd);
+
+    const Matrix<double> r_val4 = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 50.0;
+
+    surfaces(4) = dvs::sin(r_val4) / r_val4;
+
+    /////////////////////////////////////////////////////////////////////////
+    //////////////////////////// Create surfaces ////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
+
+    setCurrentElement("p_view_0");
+    clearView();
+    view(-60, 40);
+    axis({0.0, 0.0, -1.0}, {1.0, 1.0, 1.0});
+
+    const size_t num_its = 100U;
+
+    Matrix<double> z_mix{surfaces(0)};
+
+    for (size_t k = 0U; k < (num_surfaces - 1U); k++)
+    {
+        Matrix<double>& z_k = surfaces(k);
+        Matrix<double>& z_kp1 = surfaces(k + 1U);
+
+        for (size_t i = 0; i < num_its; i++)
+        {
+            const double id = i;
+            const double h = id / static_cast<double>(num_its - 1U);
+            // 0, 1, 2, ..., i - 1
+            // const Matrix<double> z_mix = z_k * (1.0 - h) + z_kp1 * h;
+            const double dt = 0.5;
+            const double dt1 = 1.0 - dt;
+            z_mix = dt1 * z_mix + dt * (z_k * (1.0 - h) + z_kp1 * h);
+            surf(x, y, z_mix, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_BRIGHT);
+            usleep(1000 * 10);
+            softClearView();
+        }
+    }
+    // surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_BRIGHT);
+}
+
+void testIsoSurfaces()
+{
+    const size_t n_elems{100U};
+
+    // const std::pair<Matrix<double>, Matrix<double>> uv_mats =
+    //     meshGrid<double>(0.0, M_PI, 0.0, 2.0 * M_PI, n_elems, n_elems);
+    const std::pair<Matrix<double>, Matrix<double>> uv_mats = meshGrid<double>(1.0, 5.0, 1.0, 10.0, n_elems, n_elems);
+    Matrix<double> u{uv_mats.first}, v{uv_mats.second};
+
+    const Matrix<double> r = 2.0 + sin(7.0 * u + 5.0 * v);
+    // const Matrix<double> x = elementWiseMultiply(r, elementWiseMultiply(dvs::cos(u), dvs::sin(v)));
+    // const Matrix<double> y = elementWiseMultiply(r, elementWiseMultiply(dvs::sin(u), dvs::sin(v)));
+    // const Matrix<double> z = elementWiseMultiply(r, dvs::cos(v));
+
+    const Matrix<double> x = elementWiseMultiply(u, sin(v));
+    const Matrix<double> y = elementWiseMultiply(-u, cos(v));
+    const Matrix<double> z = v;
+
+    // funx = @(u,v) u.*sin(v);
+    // funy = @(u,v) -u.*cos(v);
+    // funz = @(u,v) v;
+
+    setCurrentElement("p_view_0");
+    clearView();
+    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_BRIGHT);
+}
+
 }  // namespace small
 
 #endif  // DEMOS_SMALL_H
