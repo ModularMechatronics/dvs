@@ -56,6 +56,7 @@ Pre release:
 Post release:
 - For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
   to populate it or property from the variadic templ. args
+- For plot2, dashed lines can probably be added assuming that the view is looking straight at the xy plane
 - Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
 - For 2D functions (plot, scatter etc.), implement rolling z-offset, so that one can plot multiple things on top of each other

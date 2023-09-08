@@ -49,6 +49,7 @@ public:
 
     void setVec(const dvs::Vec3d& v)
     {
+        // TODO: Is this correct? Vec3d is double precision, but glUniform3f takes floats
         dvs::Vec3d vf{v.x, v.y, v.z};
         glUniform3f(handle_, vf.x, vf.y, vf.z);
     }

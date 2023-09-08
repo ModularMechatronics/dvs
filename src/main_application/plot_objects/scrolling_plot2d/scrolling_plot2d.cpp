@@ -77,6 +77,7 @@ ScrollingPlot2D::ScrollingPlot2D(const CommunicationHeader& hdr,
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    is_updateable_ = true;  // TODO: Temporary hack
 }
 
 void ScrollingPlot2D::findMinMax()
@@ -214,6 +215,7 @@ void ScrollingPlot2D::updateWithNewData(ReceivedData& received_data,
 
     glBindBuffer(GL_ARRAY_BUFFER, sp_vertex_buffer_);
     glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_to_replace, points_ptr_);
+    is_updateable_ = true;  // TODO: Temporary hack
 }
 
 namespace

@@ -22,6 +22,9 @@ void testRealTimePlotBasic()
     axis({-1.0, -1.5f, -1.0}, {20.0, 1.5f, 1.0f});
 
     setProperties(properties::ID0, properties::Color::BLUE);
+    // #define IGNORE std::cin.ignore();
+#define IGNORE
+    IGNORE
 
     for (size_t k = 0; k < num_its; k++)
     {
@@ -31,6 +34,7 @@ void testRealTimePlotBasic()
         if (k == 600)
         {
             setProperties(properties::ID0, properties::Color::RED);
+            IGNORE
             setProperties(properties::ID0, properties::BufferSize(1000U));
         }
         /*if (k < 120)
@@ -47,6 +51,7 @@ void testRealTimePlotBasic()
             realTimePlot(dt, y, properties::ID0);
         }*/
         realTimePlot(dt, y, properties::ID0);
+        IGNORE
         usleep(10000);
     }
 }

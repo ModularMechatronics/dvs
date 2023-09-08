@@ -521,8 +521,6 @@ void AxesRenderer::renderPlotBox()
 
     const glm::mat4 mvp = projection_mat_ * view_mat_ * model_mat_ * window_scale_mat_;
 
-    const RGBTripletf color_vec{element_settings_.plot_box_color};
-
     shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
     shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(element_settings_.plot_box_color);
 

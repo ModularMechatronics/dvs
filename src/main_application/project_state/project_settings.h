@@ -166,7 +166,7 @@ struct ElementSettings
         PERSPECTIVE,
         ORTHOGRAPHIC
     };
-    
+
     ProjectionMode projection_mode;
 
     GuiElementType parseType(const nlohmann::json& j)
@@ -303,7 +303,6 @@ struct ElementSettings
         {
             projection_mode = ProjectionMode::ORTHOGRAPHIC;
         }
-
     }
 
     explicit ElementSettings(const nlohmann::json& j)
@@ -311,7 +310,7 @@ struct ElementSettings
         parseBaseAttributes(j);
         parsePlotPaneAttributes(j);
 
-        if(j.count("title") > 0)
+        if (j.count("title") > 0)
         {
             title = j["title"];
         }
@@ -326,7 +325,7 @@ struct ElementSettings
         nlohmann::json j;
 
         j["handle_string"] = handle_string;
-        if(title != handle_string)
+        if (title != handle_string)
         {
             j["title"] = title;
         }
@@ -386,12 +385,13 @@ struct ElementSettings
     bool operator==(const ElementSettings& other) const
     {
         return (x == other.x) && (y == other.y) && (width == other.width) && (height == other.height) &&
-               (handle_string == other.handle_string) && (title == other.title) && (background_color == other.background_color) &&
-               (plot_box_color == other.plot_box_color) && (grid_color == other.grid_color) &&
-               (axes_numbers_color == other.axes_numbers_color) && (axes_letters_color == other.axes_letters_color) &&
-               (grid_on == other.grid_on) && (plot_box_on == other.plot_box_on) &&
-               (axes_numbers_on == other.axes_numbers_on) && (axes_letters_on == other.axes_letters_on) &&
-               (clipping_on == other.clipping_on) && (pane_radius == other.pane_radius) && (z_order == other.z_order) &&
+               (handle_string == other.handle_string) && (title == other.title) &&
+               (background_color == other.background_color) && (plot_box_color == other.plot_box_color) &&
+               (grid_color == other.grid_color) && (axes_numbers_color == other.axes_numbers_color) &&
+               (axes_letters_color == other.axes_letters_color) && (grid_on == other.grid_on) &&
+               (plot_box_on == other.plot_box_on) && (axes_numbers_on == other.axes_numbers_on) &&
+               (axes_letters_on == other.axes_letters_on) && (clipping_on == other.clipping_on) &&
+               (pane_radius == other.pane_radius) && (z_order == other.z_order) &&
                (projection_mode == other.projection_mode);
     }
 
@@ -494,8 +494,10 @@ struct TabSettings
     {
         DVS_ASSERT(hasElementWithHandleString(handle_string));
 
-        const auto q = std::find_if(
-            elements.begin(), elements.end(), [&handle_string](const ElementSettings& e) -> bool { return e.handle_string == handle_string; });
+        const auto q =
+            std::find_if(elements.begin(), elements.end(), [&handle_string](const ElementSettings& e) -> bool {
+                return e.handle_string == handle_string;
+            });
 
         return *q;
     }
