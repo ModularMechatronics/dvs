@@ -127,6 +127,7 @@ public:
     void renderHelpPane();
     void activateGlobalIllumination(const Vec3d& light_pos);
     void resetGlobalIllumination();
+    Vec3d getAxesBoxScaleFactor() const;
     void setAxesBoxScaleFactor(const Vec3d& scale_vector);
     void setScaleOnRotation(const bool scale_on_rotation);
     void setAxesSquare(const bool axes_square);

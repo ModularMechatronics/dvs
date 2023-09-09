@@ -532,6 +532,11 @@ void AxesRenderer::setAxesBoxScaleFactor(const Vec3d& scale_vector)
     scale_vector_ = scale_vector;
 }
 
+Vec3d AxesRenderer::getAxesBoxScaleFactor() const
+{
+    return scale_vector_;
+}
+
 void AxesRenderer::setScaleOnRotation(const bool scale_on_rotation)
 {
     scale_on_rotation_ = scale_on_rotation;

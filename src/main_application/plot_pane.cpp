@@ -755,7 +755,22 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
     current_mouse_pos_ =
         Vec2f(current_pane_position.x + current_mouse_position.x, current_pane_position.y + current_mouse_position.y);
 
-    if ((event.LeftIsDown() || event.MiddleIsDown() || event.RightIsDown()))
+    if (wxGetKeyState(static_cast<wxKeyCode>('l')) && event.LeftIsDown())
+    {
+        const Vec2d diff{current_mouse_pos_ - previous_mouse_pos_};
+        Vec3d scale_factor = axes_renderer_->getAxesBoxScaleFactor();
+        if (diff.x < 0)
+        {
+            scale_factor = scale_factor * 0.99;
+        }
+        else
+        {
+            scale_factor = scale_factor * 1.01;
+        }
+
+        axes_renderer_->setAxesBoxScaleFactor(scale_factor);
+    }
+    else if ((event.LeftIsDown() || event.MiddleIsDown() || event.RightIsDown()))
     {
         if (event.LeftIsDown() && control_pressed_at_mouse_press_)
         {
