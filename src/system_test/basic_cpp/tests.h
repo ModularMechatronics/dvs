@@ -1412,6 +1412,130 @@ void testPointSelector()
     plot3(x, y, z);
 }
 
+void testPlot2DashedLine()
+{
+    const std::string project_file_path = "../../project_files/dashed_lines.dvs";
+    openProjectFile(project_file_path);
+
+    const auto prepare_element = [](const std::string& element_name) -> void {
+        setCurrentElement(element_name);
+        clearView();
+    };
+
+    const auto assign_vec = [](const float x, const float y) -> std::pair<float, float> {
+        return std::make_pair(x, y);
+    };
+
+    {
+        prepare_element("p0");
+
+        const size_t num_elements = 5;
+        Vector<float> x0(num_elements), y0(num_elements);
+        Vector<float> x1(3), y1(3);
+        Vector<float> x2(3), y2(3);
+        Vector<float> x3(4), y3(4);
+
+        std::tie(x0(0), y0(0)) = assign_vec(1.0f, 2.0f);
+        std::tie(x0(1), y0(1)) = assign_vec(1.0f, 7.0f);
+        std::tie(x0(2), y0(2)) = assign_vec(6.0f, 9.0f);
+        std::tie(x0(3), y0(3)) = assign_vec(8.0f, 7.0f);
+        std::tie(x0(4), y0(4)) = assign_vec(7.0f, 1.0f);
+
+        std::tie(x1(0), y1(0)) = assign_vec(3.0f, 2.0f);
+        std::tie(x1(1), y1(1)) = assign_vec(3.0f, 5.0f);
+        std::tie(x1(2), y1(2)) = assign_vec(5.0f, 7.0f);
+
+        std::tie(x2(0), y2(0)) = assign_vec(1.0f, 1.0f);
+        std::tie(x2(1), y2(1)) = assign_vec(5.0f, 1.0f);
+        std::tie(x2(2), y2(2)) = assign_vec(8.0f, 1.0f);
+
+        std::tie(x3(0), y3(0)) = assign_vec(5.0f, 2.0f);
+        std::tie(x3(1), y3(1)) = assign_vec(5.0f, 4.0f);
+        std::tie(x3(2), y3(2)) = assign_vec(6.0f, 4.0f);
+        std::tie(x3(3), y3(3)) = assign_vec(6.0f, 2.0f);
+
+        axis({0.0, 0.0}, {10.0, 10.0});
+        plot(x0, y0, properties::LineWidth(60));
+        plot(x1, y1, properties::LineWidth(100));
+        plot(x2, y2, properties::LineWidth(100));
+        plot(x3, y3, properties::LineWidth(100));
+    }
+    {
+        prepare_element("p1");
+
+        const size_t num_elements = 3;
+        Vector<float> x(num_elements), y(num_elements);
+        Vector<float> x0(9), y0(9);
+
+        std::tie(x(0), y(0)) = assign_vec(3.0f, 1.0f);
+        std::tie(x(1), y(1)) = assign_vec(6.0f, 4.0f);
+        std::tie(x(2), y(2)) = assign_vec(9.0f, 1.0f);
+
+        std::tie(x0(0), y0(0)) = assign_vec(0.5f, 0.5f);
+        std::tie(x0(1), y0(1)) = assign_vec(1.0f, 1.0f);
+        std::tie(x0(2), y0(2)) = assign_vec(2.0f, 2.0f);
+        std::tie(x0(3), y0(3)) = assign_vec(3.0f, 3.0f);
+        std::tie(x0(4), y0(4)) = assign_vec(4.5f, 4.5f);
+        std::tie(x0(5), y0(5)) = assign_vec(6.0f, 6.0f);
+        std::tie(x0(6), y0(6)) = assign_vec(8.0f, 8.0f);
+        std::tie(x0(7), y0(7)) = assign_vec(9.0f, 9.0f);
+        std::tie(x0(8), y0(8)) = assign_vec(10.0f, 10.0f);
+
+        axis({0.0, 0.0}, {10.0, 10.0});
+        plot(x, y, properties::LineWidth(60));
+        plot(x0, y0, properties::LineWidth(100));
+    }
+    {
+        prepare_element("p2");
+
+        const size_t num_elements = 3;
+        Vector<float> x(num_elements), y(num_elements);
+
+        std::tie(x(0), y(0)) = assign_vec(2.0f, 2.0f);
+        std::tie(x(1), y(1)) = assign_vec(5.0f, 8.0f);
+        std::tie(x(2), y(2)) = assign_vec(8.0f, 2.0f);
+        axis({0.0, 0.0}, {10.0, 10.0});
+        plot(x, y, properties::LineWidth(60));
+    }
+    {
+        prepare_element("p2");
+
+        const size_t num_elements = 1000;
+        Vector<float> x(num_elements), y0(num_elements), y1(num_elements);
+
+        for (size_t k = 0; k < num_elements; k++)
+        {
+            x(k) = static_cast<float>(k) * 0.01f;
+            y0(k) = std::sin(x(k));
+            y1(k) = x(k) * 0.1f - 0.5f;
+        }
+
+        axis({-0.5, -1.2}, {10.5, 1.2});
+        plot(x, y0, properties::LineWidth(20));
+        plot(x, y1, properties::LineWidth(20));
+    }
+    {
+        prepare_element("p3");
+
+        const size_t num_elements = 1000;
+        Vector<float> x(num_elements), y(num_elements);
+        Vector<float> x0(2), y0(2);
+
+        std::tie(x0(0), y0(0)) = assign_vec(0.0f, -1.0f);
+        std::tie(x0(1), y0(1)) = assign_vec(10.0f, 0.0f);
+
+        for (size_t k = 0; k < num_elements; k++)
+        {
+            x(k) = static_cast<float>(k) * 0.01f;
+            y(k) = x(k) * 0.1f - 0.5f;
+        }
+
+        axis({-0.5, -1.2}, {10.5, 1.2});
+        plot(x, y, properties::LineWidth(20));
+        plot(x0, y0, properties::LineWidth(20));
+    }
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1436,6 +1560,7 @@ void addTests()
     addTest("cpp", "basic", "deletePlotObject", testDeleteObject);
     addTest("cpp", "basic", "background", testBackground);
     addTest("cpp", "basic", "point_selector", testPointSelector);
+    addTest("cpp", "basic", "plot2_dashed_line", testPlot2DashedLine);
 }
 
 }  // namespace basic_cpp

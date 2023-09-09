@@ -1,0 +1,155 @@
+{
+    "windows": [
+        {
+            "height": 811.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "handle_string": "p0",
+                            "height": 0.6760563254356384,
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "projection_mode": "orthographic",
+                            "type": "PLOT_PANE",
+                            "width": 0.5027272701263428,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "handle_string": "p1",
+                            "height": 0.6786171793937683,
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "projection_mode": "orthographic",
+                            "type": "PLOT_PANE",
+                            "width": 0.49454545974731445,
+                            "x": 0.5054545402526855,
+                            "y": 0.0,
+                            "z_order": 0
+                        },
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "handle_string": "p2",
+                            "height": 0.31498080492019653,
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "projection_mode": "orthographic",
+                            "type": "PLOT_PANE",
+                            "width": 0.6229166388511658,
+                            "x": 0.0,
+                            "y": 0.6798975467681885
+                        },
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "handle_string": "p3",
+                            "height": 0.3159268796443939,
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "projection_mode": "orthographic",
+                            "type": "PLOT_PANE",
+                            "width": 0.375,
+                            "x": 0.625,
+                            "y": 0.6801566481590271
+                        }
+                    ],
+                    "name": "primary_view"
+                }
+            ],
+            "width": 1100.0,
+            "x": 340.0,
+            "y": 25.0
+        }
+    ]
+}
