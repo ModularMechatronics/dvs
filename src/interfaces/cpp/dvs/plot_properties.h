@@ -508,6 +508,7 @@ constexpr internal::PropertyFlag PERSISTENT = internal::PropertyFlag::PERSISTENT
 constexpr internal::PropertyFlag INTERPOLATE_COLORMAP = internal::PropertyFlag::INTERPOLATE_COLORMAP;
 constexpr internal::PropertyFlag FAST_PLOT = internal::PropertyFlag::FAST_PLOT;
 constexpr internal::PropertyFlag APPENDABLE = internal::PropertyFlag::APPENDABLE;
+constexpr internal::PropertyFlag EXCLUDE_FROM_SELECTION = internal::PropertyFlag::EXCLUDE_FROM_SELECTION;
 namespace not_ready
 {
 constexpr internal::PropertyFlag UPDATABLE = internal::PropertyFlag::UPDATABLE;

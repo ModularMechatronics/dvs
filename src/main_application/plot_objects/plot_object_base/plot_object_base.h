@@ -36,6 +36,7 @@ constexpr float kDefaultLineWidth{2.0f};
 constexpr float kDefaultPointSize{10.0f};
 constexpr bool kDefaultIsPersistent{false};
 constexpr bool kDefaultIsAppendable{false};
+constexpr bool kDefaultExcludeFromSelection{false};
 constexpr bool kDefaultIsUpdateable{false};
 constexpr bool kDefaultInterpolateColormap{false};
 constexpr ItemId kDefaultId{ItemId::UNKNOWN};
@@ -95,9 +96,11 @@ public:
         interpolate_colormap = props.hasFlag(PropertyFlag::INTERPOLATE_COLORMAP);
         is_updateable = props.hasFlag(PropertyFlag::UPDATABLE);
         is_appendable = props.hasFlag(PropertyFlag::APPENDABLE);
+        exclude_from_selection = props.hasFlag(PropertyFlag::EXCLUDE_FROM_SELECTION);
         dynamic_or_static_usage = (is_updateable || is_appendable) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
-        has_properties_ = has_properties_ || is_persistent || interpolate_colormap || is_updateable || is_appendable;
+        has_properties_ = has_properties_ || is_persistent || interpolate_colormap || is_updateable || is_appendable ||
+                          exclude_from_selection;
 
         // Properties
         if (props.hasProperty(PropertyType::ALPHA))
@@ -241,6 +244,7 @@ public:
         is_persistent = kDefaultIsPersistent;
         is_updateable = kDefaultIsUpdateable;
         is_appendable = kDefaultIsAppendable;
+        exclude_from_selection = kDefaultExcludeFromSelection;
         interpolate_colormap = kDefaultInterpolateColormap;
         dynamic_or_static_usage = kDefaultDynamicOrStaticUsage;
     }
@@ -279,10 +283,12 @@ public:
         is_persistent = is_persistent || props.is_persistent;
         is_updateable = is_updateable || props.is_updateable;
         is_appendable = is_appendable || props.is_appendable;
+        exclude_from_selection = exclude_from_selection || props.exclude_from_selection;
         interpolate_colormap = interpolate_colormap || props.interpolate_colormap;
         dynamic_or_static_usage = (is_updateable || is_appendable) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
-        has_properties_ = has_properties_ || is_persistent || interpolate_colormap || is_updateable;
+        has_properties_ =
+            has_properties_ || is_persistent || interpolate_colormap || is_updateable || exclude_from_selection;
     }
 
     bool hasProperties() const
@@ -320,6 +326,7 @@ public:
     bool is_persistent{kDefaultIsPersistent};
     bool is_updateable{kDefaultIsUpdateable};
     bool is_appendable{kDefaultIsAppendable};
+    bool exclude_from_selection{kDefaultExcludeFromSelection};
     bool interpolate_colormap{kDefaultInterpolateColormap};
     GLenum dynamic_or_static_usage{kDefaultDynamicOrStaticUsage};
 };

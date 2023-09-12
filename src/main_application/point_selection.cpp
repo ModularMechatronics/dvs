@@ -15,6 +15,11 @@ void PointSelection::addData(const CommunicationHeader& hdr,
                              const PropertiesData& properties_data,
                              const std::shared_ptr<const ConvertedDataBase>& converted_data)
 {
+    if (properties_data.exclude_from_selection)
+    {
+        return;
+    }
+
     if (pending_soft_clear_)
     {
         old_plot_datas_.clear();

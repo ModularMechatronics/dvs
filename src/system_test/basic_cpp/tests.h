@@ -1417,6 +1417,37 @@ void testPointSelector()
     plot3(x, y, z);
 }
 
+void testPointSelectorWithExcludeSelection()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_elements = 500;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements);
+    double t = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const double r = t * 2.0;
+        const double theta = t;
+
+        x(k) = r * std::cos(theta);
+        y(k) = r * std::sin(theta);
+        z(k) = 0.0;
+
+        t += 0.1;
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+
+    axis({-24.0, -24.0}, {24.0, 24.0});
+    view(-15, 72);
+
+    scatter3(x, y, z, properties::PointSize(13), properties::EXCLUDE_FROM_SELECTION);
+    scatter3(x, y + 5.0, z, properties::PointSize(13));
+}
+
 void testPlot2DashedLine()
 {
     const std::string project_file_path = "../../project_files/dashed_lines.dvs";
@@ -1637,6 +1668,7 @@ void addTests()
     addTest("cpp", "basic", "deletePlotObject", testDeleteObject);
     addTest("cpp", "basic", "background", testBackground);
     addTest("cpp", "basic", "point_selector", testPointSelector);
+    addTest("cpp", "basic", "point_selector_with_exclude", testPointSelectorWithExcludeSelection);
     addTest("cpp", "basic", "plot2_dashed_line", testPlot2DashedLine);
 }
 

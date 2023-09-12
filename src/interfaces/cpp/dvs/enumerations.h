@@ -53,6 +53,7 @@ enum class PropertyFlag : uint8_t
     INTERPOLATE_COLORMAP,
     UPDATABLE,
     FAST_PLOT,
+    EXCLUDE_FROM_SELECTION,
     UNKNOWN
 };
 

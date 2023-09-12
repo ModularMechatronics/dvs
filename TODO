@@ -16,7 +16,6 @@ Pre release:
 - Finalize demos
 - Grid lines when invalid/inf axes limits
 - Investigate weird bug not being able to set colors properly for realTimePlot
-- PropertiesData -> ParsedProperties
 - If first two points of plot2 is the same, there will be a division by zero
 - Create layout grids
 - Add real time plot of acceleration or something to demo imu
@@ -41,7 +40,7 @@ Pre release:
                     UserSuppliedPlotDataProperties
                     UserSuppliedPlotProperties
                     UserSuppliedProperties
-- Add property flag to "exclude object from point selection", "EXCLUDE_FROM_POINT_SELECTION" or something
+- PropertiesData -> ParsedProperties
 - plot2 with fill under/over x axis
 - candlestick/errorbar
 - Colorbar
