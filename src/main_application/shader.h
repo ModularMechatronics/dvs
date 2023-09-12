@@ -121,6 +121,9 @@ public:
         Uniform point_size;
 
         Uniform radius;
+
+        Uniform gap_size;
+        Uniform dash_size;
     };
 
     BaseUniformHandles base_uniform_handles;
@@ -140,6 +143,9 @@ public:
         Uniform half_line_width;
         Uniform z_offset;
         Uniform use_dash;
+        Uniform first_length;
+        Uniform first_point;
+        Uniform second_point;
 
         Uniform inverse_model_view_proj_mat;
     };

@@ -33,6 +33,9 @@ struct ConvertedData : ConvertedDataBase
     float* p1;
     float* p2;
     float* length_along;
+    float first_length;
+    Vec3f first_point;
+    Vec3f second_point;
     int32_t* idx_data;
     float* color_data;
     size_t num_points;
@@ -97,24 +100,27 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
 
     num_points_ = converted_data_local->num_points;
 
-    /*if (has_line_style_)
+    first_length_ = converted_data_local->first_length;
+    first_point_ = converted_data_local->first_point;
+    second_point_ = converted_data_local->second_point;
+    if (has_line_style_)
     {
         if (line_style_ == properties::LineStyle::DASHED)
         {
-            gap_size_ = 3.0f;
-            dash_size_ = 3.0f;
+            gap_size_ = 0.05f;
+            dash_size_ = 0.05f;
         }
-        else if (line_style_ == properties::LineStyle::DOTTED)
+        else if (line_style_ == properties::LineStyle::SHORT_DASHED)
         {
-            gap_size_ = 6.0f;
-            dash_size_ = 3.0f;
+            gap_size_ = 0.01f;
+            dash_size_ = 0.01f;
         }
         else if (line_style_ == properties::LineStyle::LONG_DASHED)
         {
-            gap_size_ = 2.0f;
-            dash_size_ = 6.0f;
+            gap_size_ = 0.1f;
+            dash_size_ = 0.1f;
         }
-    }*/
+    }
 
     vertex_buffer_.addBuffer(converted_data_local->p0, num_points_, 2, dynamic_or_static_usage_);
     vertex_buffer_.addBuffer(converted_data_local->p1, num_points_, 2, dynamic_or_static_usage_);
@@ -151,8 +157,13 @@ void Plot2D::render()
 
     shader_collection_.plot_2d_shader.uniform_handles.half_line_width.setFloat(line_width_ / 3.0f);
     shader_collection_.plot_2d_shader.uniform_handles.z_offset.setFloat(z_offset_);
-    shader_collection_.plot_2d_shader.uniform_handles.use_dash.setInt(0);
+    shader_collection_.plot_2d_shader.uniform_handles.use_dash.setInt(static_cast<int>(has_line_style_));
     shader_collection_.plot_2d_shader.base_uniform_handles.alpha.setFloat(alpha_);
+    shader_collection_.plot_2d_shader.uniform_handles.first_length.setFloat(first_length_);
+    shader_collection_.plot_2d_shader.uniform_handles.first_point.setVec(first_point_);
+    shader_collection_.plot_2d_shader.uniform_handles.second_point.setVec(second_point_);
+    shader_collection_.plot_2d_shader.base_uniform_handles.gap_size.setFloat(gap_size_);
+    shader_collection_.plot_2d_shader.base_uniform_handles.dash_size.setFloat(dash_size_);
 
     if (has_color_)
     {
@@ -253,7 +264,7 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
     for (size_t k = 1; k < input_params.num_elements; k++)
     {
-        // First segment
+        // Segments inbetween
         const T p0x = input_data_dt[k - 1];
         const T p0y = input_data_dt[input_params.num_elements + k - 1];
 
@@ -287,6 +298,10 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
         pts[0].p2.x = p2x;
         pts[0].p2.y = p2y;
+
+        converted_data->first_length = std::sqrt(vx * vx + vy * vy);
+        converted_data->first_point = Vec3f(p1x, p1y, 0.0f);
+        converted_data->second_point = Vec3f(p2x, p2y, 0.0f);
     }
 
     {
@@ -461,18 +476,17 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
         converted_data->p2[idx + 22] = pt.p2.x;
         converted_data->p2[idx + 23] = pt.p2.y;
 
-        /*
         // TODO: Currently broken, fix
         const float la_1 = length_along_tmp[k - 1];
         const float la = length_along_tmp[k];
 
         converted_data->length_along[length_along_idx] = la_1;
-        converted_data->length_along[length_along_idx + 1] = la;
-        converted_data->length_along[length_along_idx + 2] = la;
+        converted_data->length_along[length_along_idx + 1] = la_1;
+        converted_data->length_along[length_along_idx + 2] = la_1;
 
         converted_data->length_along[length_along_idx + 3] = la_1;
         converted_data->length_along[length_along_idx + 4] = la_1;
-        converted_data->length_along[length_along_idx + 5] = la;
+        converted_data->length_along[length_along_idx + 5] = la_1;
 
         converted_data->length_along[length_along_idx + 6] = la;
         converted_data->length_along[length_along_idx + 7] = la;
@@ -481,7 +495,6 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
         converted_data->length_along[length_along_idx + 9] = la;
         converted_data->length_along[length_along_idx + 10] = la;
         converted_data->length_along[length_along_idx + 11] = la;
-        */
 
         converted_data->idx_data[idx_idx] = 0;
         converted_data->idx_data[idx_idx + 1] = 1;
@@ -572,19 +585,17 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
     converted_data->idx_data[idx_idx + 4] = 4;
     converted_data->idx_data[idx_idx + 5] = 5;
 
-    /*
     // TODO: Currently broken, fix
     const float la_1 = length_along_tmp[input_params.num_elements - 2];
     const float la = length_along_tmp[input_params.num_elements - 1];
 
     converted_data->length_along[length_along_idx] = la_1;
-    converted_data->length_along[length_along_idx + 1] = la;
-    converted_data->length_along[length_along_idx + 2] = la;
+    converted_data->length_along[length_along_idx + 1] = la_1;
+    converted_data->length_along[length_along_idx + 2] = la_1;
 
     converted_data->length_along[length_along_idx + 3] = la_1;
     converted_data->length_along[length_along_idx + 4] = la_1;
-    converted_data->length_along[length_along_idx + 5] = la;
-    */
+    converted_data->length_along[length_along_idx + 5] = la_1;
 
     delete[] length_along_tmp;
 

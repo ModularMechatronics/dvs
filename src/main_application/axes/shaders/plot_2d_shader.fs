@@ -7,6 +7,7 @@ flat in vec3 p0_out;
 flat in vec3 p1_out;
 flat in float length_along_fs;
 flat in float theta;
+flat in float scale_factor;
 in vec3 fragment_pos;
 flat in int triangle_id;
 
@@ -76,10 +77,13 @@ void main()
       }
    }
 
-   /*float gap_size_ = 0.05;
-   float dash_size_ = 0.05;
+   // 0.005 is good for small
+   // 0.05 is good middle
+   // 0.1 is good for big
+   // float gap_size_ = 0.05;
+   // float dash_size_ = 0.05;
 
-   if(triangle_id < 2)
+   if(use_dash == 1)
    {
       vec3 vec_to_fragment;
       vec3 vec_along_line;
@@ -91,15 +95,16 @@ void main()
 
       vec2 dir = (projected_vec.xy);
 
-      float dist = length(dir) + length_along_fs;
+      float dist = length(dir) + length_along_fs / scale_factor;
 
-      if ((use_dash == 1) && (fract(dist / (dash_size_ + gap_size_)) > dash_size_ / (dash_size_ + gap_size_)) )
+      if ((fract(dist / (dash_size + gap_size)) > dash_size / (dash_size + gap_size)) )
       {
          discard;
       }
    }
-   else
+   /*else
    {
+      // TODO: Old code for fixing triangle ids 2, and 3
       vec3 vec_q = fragment_pos - p1_out;
       float phi = atan(vec_q.y, vec_q.x);
       float delta_angle = phi - theta;
@@ -110,7 +115,8 @@ void main()
 
       float dist = delta_angle * half_line_width + length_along_fs;
 
-      if (((use_dash == 1) && fract(dist / (dash_size_ + gap_size_)) > dash_size_ / (dash_size_ + gap_size_))) 
+      // if (((use_dash == 1) && fract(dist / (dash_size_ + gap_size_)) > dash_size_ / (dash_size_ + gap_size_))) 
+      if ((fract(dist / (dash_size_ + gap_size_)) > dash_size_ / (dash_size_ + gap_size_))) 
       {
          discard;
       }

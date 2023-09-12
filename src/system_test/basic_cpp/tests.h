@@ -69,8 +69,12 @@ RGB888 colorMapJet(const float value)
 void testOpenProjectFile()
 {
     const std::string base_path = "/Users/danielpi/work/dvs/project_files/";
-    const std::vector<std::string> project_files = {
-        "ad_dataset.dvs", "car.dvs", "exp0.dvs", "exp1.dvs", "exp2.dvs", "imu.dvs", "legend.dvs", "particles.dvs"};
+    const std::vector<std::string> project_files = {"ad_dataset.dvs",
+                                                    "car.dvs",
+                                                    "exp0.dvs"
+                                                    "imu.dvs",
+                                                    "legend.dvs",
+                                                    "particles.dvs"};
 
     for (const auto& pf : project_files)
     {
@@ -708,6 +712,7 @@ void testStairs()
 
 void testPlot3()
 {
+    openProjectFile("../../project_files/exp0.dvs");
     setCurrentElement("p_view_0");
     clearView();
 
@@ -1455,10 +1460,10 @@ void testPlot2DashedLine()
         std::tie(x3(3), y3(3)) = assign_vec(6.0f, 2.0f);
 
         axis({0.0, 0.0}, {10.0, 10.0});
-        plot(x0, y0, properties::LineWidth(60));
-        plot(x1, y1, properties::LineWidth(100));
-        plot(x2, y2, properties::LineWidth(100));
-        plot(x3, y3, properties::LineWidth(100));
+        plot(x0, y0, properties::LineWidth(60), properties::LineStyle::DASHED);
+        plot(x1, y1, properties::LineWidth(100), properties::LineStyle::DASHED);
+        plot(x2, y2, properties::LineWidth(100), properties::LineStyle::DASHED);
+        plot(x3, y3, properties::LineWidth(100), properties::LineStyle::DASHED);
     }
     {
         prepare_element("p1");
@@ -1482,8 +1487,8 @@ void testPlot2DashedLine()
         std::tie(x0(8), y0(8)) = assign_vec(10.0f, 10.0f);
 
         axis({0.0, 0.0}, {10.0, 10.0});
-        plot(x, y, properties::LineWidth(60));
-        plot(x0, y0, properties::LineWidth(100));
+        plot(x, y, properties::LineWidth(60), properties::LineStyle::DASHED);
+        plot(x0, y0, properties::LineWidth(100), properties::LineStyle::DASHED);
     }
     {
         prepare_element("p2");
@@ -1495,24 +1500,38 @@ void testPlot2DashedLine()
         std::tie(x(1), y(1)) = assign_vec(5.0f, 8.0f);
         std::tie(x(2), y(2)) = assign_vec(8.0f, 2.0f);
         axis({0.0, 0.0}, {10.0, 10.0});
-        plot(x, y, properties::LineWidth(60));
+        plot(x, y, properties::LineWidth(60), properties::LineStyle::DASHED);
     }
     {
         prepare_element("p2");
 
-        const size_t num_elements = 1000;
-        Vector<float> x(num_elements), y0(num_elements), y1(num_elements);
+        const std::vector<size_t> sizes = {10, 100, 1000, 10000, 100000};
+        const std::vector<properties::LineStyle> line_styles = {properties::LineStyle::DASHED,
+                                                                properties::LineStyle::DASHED,
+                                                                properties::LineStyle::LONG_DASHED,
+                                                                properties::LineStyle::SHORT_DASHED,
+                                                                properties::LineStyle::DASHED};
+        float offset = 0.0f;
 
-        for (size_t k = 0; k < num_elements; k++)
+        for (size_t i = 0; i < 5; i++)
         {
-            x(k) = static_cast<float>(k) * 0.01f;
-            y0(k) = std::sin(x(k));
-            y1(k) = x(k) * 0.1f - 0.5f;
-        }
+            const float inc = 10.0f / static_cast<float>(sizes[i]);
 
-        axis({-0.5, -1.2}, {10.5, 1.2});
-        plot(x, y0, properties::LineWidth(20));
-        plot(x, y1, properties::LineWidth(20));
+            const size_t num_elements = sizes[i];
+            Vector<float> x(num_elements), y0(num_elements), y1(num_elements);
+
+            for (size_t k = 0; k < num_elements; k++)
+            {
+                x(k) = static_cast<float>(k) * inc;
+                y0(k) = std::sin(x(k));
+                y1(k) = x(k) * 0.1f - 0.5f;
+            }
+
+            axis({-0.5, -1.2}, {10.5, 1.2});
+            plot(x, y0 + offset, properties::LineWidth(2), line_styles[i]);
+            plot(x, y1 + offset, properties::LineWidth(2), line_styles[i]);
+            offset += 0.1f;
+        }
     }
     {
         prepare_element("p3");
@@ -1531,8 +1550,66 @@ void testPlot2DashedLine()
         }
 
         axis({-0.5, -1.2}, {10.5, 1.2});
+        plot(x, y, properties::LineWidth(20), properties::LineStyle::DASHED);
+        plot(x0, y0, properties::LineWidth(20), properties::LineStyle::DASHED);
+    }
+    {
+        prepare_element("p4");
+
+        const size_t num_elements = 1000;
+        Vector<float> x(num_elements), y0(num_elements), y1(num_elements);
+
+        for (size_t k = 0; k < num_elements; k++)
+        {
+            x(k) = static_cast<float>(k) * 0.01f;
+            y0(k) = std::sin(x(k)) * 1000.0f;
+            y1(k) = (x(k) * 0.1f - 0.5f) * 1000.0f;
+        }
+
+        axis({-0.5, -1000.0}, {10.5, 1000.0});
+        plot(x, y0, properties::LineWidth(2), properties::LineStyle::DASHED);
+        plot(x, y1, properties::LineWidth(2), properties::LineStyle::DASHED);
+    }
+    {
+        prepare_element("p5");
+
+        const size_t num_elements = 1000;
+        Vector<float> x(num_elements), y0(num_elements), y1(num_elements), y2(num_elements);
+
+        for (size_t k = 0; k < num_elements; k++)
+        {
+            x(k) = static_cast<float>(k) * 0.01f;
+            y0(k) = (static_cast<float>(rand() % 1001) / 1000.0f - 0.5f) * 1000.0f;
+            y1(k) = (static_cast<float>(rand() % 1001) / 1000.0f - 0.5f) * 1000.0f;
+            y2(k) = (static_cast<float>(rand() % 1001) / 1000.0f - 0.5f) * 1000.0f;
+        }
+
+        axis({-0.5, -1000.0}, {10.5, 1000.0});
+        plot(x, y0 - 500.0f, properties::LineWidth(2), properties::LineStyle::DASHED);
+        plot(x, y1, properties::LineWidth(2), properties::LineStyle::DASHED);
+        plot(x, y2 + 500.0f, properties::LineWidth(2), properties::LineStyle::DASHED);
+    }
+    {
+        prepare_element("p6");
+
+        const size_t num_elements = 1000;
+        Vector<float> x(num_elements), y(num_elements);
+
+        for (size_t k = 0; k < num_elements; k++)
+        {
+            x(k) = static_cast<float>(k) * 0.01f;
+            y(k) = std::sin(x(k));
+        }
+
+        axis({-0.5, -1.2}, {10.5, 1.2});
+        plot(x, y, properties::LineWidth(20), properties::LineStyle::DASHED);
         plot(x, y, properties::LineWidth(20));
-        plot(x0, y0, properties::LineWidth(20));
+
+        plot(x, y + 0.1f, properties::LineWidth(20), properties::LineStyle::SHORT_DASHED);
+        plot(x, y + 0.1f, properties::LineWidth(20));
+
+        plot(x, y - 0.1f, properties::LineWidth(20), properties::LineStyle::LONG_DASHED);
+        plot(x, y - 0.1f, properties::LineWidth(20));
     }
 }
 

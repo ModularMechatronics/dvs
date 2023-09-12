@@ -103,6 +103,16 @@ void PlotObjectBase::updateProperties(const PropertiesData& properties_data)
         scatter_style_ = properties_data.scatter_style.data;
     }
 
+    if ((!properties_data.line_style.has_default_value) && (properties_data.line_style.data != LineStyle::SOLID))
+    {
+        has_line_style_ = true;
+        line_style_ = properties_data.line_style.data;
+    }
+    else
+    {
+        has_line_style_ = false;
+    }
+
     if (!properties_data.line_width.has_default_value)
     {
         line_width_ = properties_data.line_width.data;
@@ -282,6 +292,16 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
     point_size_ = properties_data.point_size.data;
 
     z_offset_ = properties_data.z_offset.data;
+
+    if ((!properties_data.line_style.has_default_value) && (properties_data.line_style.data != LineStyle::SOLID))
+    {
+        has_line_style_ = true;
+        line_style_ = properties_data.line_style.data;
+    }
+    else
+    {
+        has_line_style_ = false;
+    }
 
     if (!properties_data.custom_transform.has_default_value)
     {

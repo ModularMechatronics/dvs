@@ -51,7 +51,7 @@
                             },
                             "projection_mode": "orthographic",
                             "type": "PLOT_PANE",
-                            "width": 0.5027272701263428,
+                            "width": 0.40486112236976624,
                             "x": 0.0,
                             "y": 0.0
                         },
@@ -72,7 +72,7 @@
                                 "r": 0.699999988079071
                             },
                             "handle_string": "p1",
-                            "height": 0.6786171793937683,
+                            "height": 0.34699103236198425,
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,
@@ -80,8 +80,8 @@
                             },
                             "projection_mode": "orthographic",
                             "type": "PLOT_PANE",
-                            "width": 0.49454545974731445,
-                            "x": 0.5054545402526855,
+                            "width": 0.3784722089767456,
+                            "x": 0.4055555462837219,
                             "y": 0.0,
                             "z_order": 0
                         },
@@ -110,7 +110,7 @@
                             },
                             "projection_mode": "orthographic",
                             "type": "PLOT_PANE",
-                            "width": 0.6229166388511658,
+                            "width": 0.4055555462837219,
                             "x": 0.0,
                             "y": 0.6798975467681885
                         },
@@ -131,7 +131,7 @@
                                 "r": 0.699999988079071
                             },
                             "handle_string": "p3",
-                            "height": 0.3159268796443939,
+                            "height": 0.31498080492019653,
                             "plot_box_color": {
                                 "b": 1.0,
                                 "g": 1.0,
@@ -140,15 +140,102 @@
                             "projection_mode": "orthographic",
                             "type": "PLOT_PANE",
                             "width": 0.375,
-                            "x": 0.625,
-                            "y": 0.6801566481590271
+                            "x": 0.40763887763023376,
+                            "y": 0.6824584007263184
+                        },
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "handle_string": "p4",
+                            "height": 0.39948782324790955,
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "projection_mode": "orthographic",
+                            "type": "PLOT_PANE",
+                            "width": 0.21388888359069824,
+                            "x": 0.7861111164093018,
+                            "y": 0.0
+                        },
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "handle_string": "p5",
+                            "height": 0.5838668346405029,
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "projection_mode": "orthographic",
+                            "type": "PLOT_PANE",
+                            "width": 0.21250000596046448,
+                            "x": 0.7875000238418579,
+                            "y": 0.4058898985385895
+                        },
+                        {
+                            "axes_letters_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "axes_numbers_color": {
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "grid_color": {
+                                "b": 0.699999988079071,
+                                "g": 0.699999988079071,
+                                "r": 0.699999988079071
+                            },
+                            "handle_string": "p6",
+                            "height": 0.3303457200527191,
+                            "plot_box_color": {
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "projection_mode": "orthographic",
+                            "type": "PLOT_PANE",
+                            "width": 0.37708333134651184,
+                            "x": 0.40625,
+                            "y": 0.34955185651779175
                         }
                     ],
                     "name": "primary_view"
                 }
             ],
-            "width": 1100.0,
-            "x": 340.0,
+            "width": 1440.0,
+            "x": 0.0,
             "y": 25.0
         }
     ]

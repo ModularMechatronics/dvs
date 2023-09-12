@@ -16,6 +16,9 @@ void Plot2DShader::setUniformHandles()
     uniform_handles.half_line_width = Uniform(program_id_, "half_line_width");
     uniform_handles.z_offset = Uniform(program_id_, "z_offset");
     uniform_handles.use_dash = Uniform(program_id_, "use_dash");
+    uniform_handles.first_length = Uniform(program_id_, "first_length");
+    uniform_handles.first_point = Uniform(program_id_, "first_point");
+    uniform_handles.second_point = Uniform(program_id_, "second_point");
     uniform_handles.inverse_model_view_proj_mat = Uniform(program_id_, "inverse_model_view_proj_mat");
 }
 
@@ -146,6 +149,9 @@ void ShaderBase::setBaseUniformHandles()
     base_uniform_handles.point_size = Uniform(program_id_, "point_size");
 
     base_uniform_handles.radius = Uniform(program_id_, "radius");
+
+    base_uniform_handles.gap_size = Uniform(program_id_, "gap_size");
+    base_uniform_handles.dash_size = Uniform(program_id_, "dash_size");
 }
 
 void ShaderBase::loadShaderFromFiles(const std::string& vertex_path, const std::string& fragment_path)

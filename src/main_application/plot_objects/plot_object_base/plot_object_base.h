@@ -30,6 +30,7 @@ constexpr char* const kDefaultName = "";
 constexpr RGBTripletf kDefaultEdgeColor{0.0f, 0.0f, 0.0f};
 constexpr float kDefaultZOffset{0.0f};
 constexpr ScatterStyle kDefaultScatterStyle{ScatterStyle::CIRCLE};
+constexpr LineStyle kDefaultLineStyle{LineStyle::SOLID};
 constexpr float kDefaultAlpha{1.0f};
 constexpr float kDefaultLineWidth{2.0f};
 constexpr float kDefaultPointSize{10.0f};
@@ -115,6 +116,13 @@ public:
         {
             const ScatterStyleContainer ssc = props.getProperty<ScatterStyleContainer>();
             scatter_style = ssc.data;
+            has_properties_ = true;
+        }
+
+        if (props.hasProperty(PropertyType::LINE_STYLE))
+        {
+            const LineStyleContainer lsc = props.getProperty<LineStyleContainer>();
+            line_style = lsc.data;
             has_properties_ = true;
         }
 
@@ -207,6 +215,7 @@ public:
         name = OptionalParameter<std::string>{kDefaultName};
 
         scatter_style = OptionalParameter<ScatterStyle>{kDefaultScatterStyle};
+        line_style = OptionalParameter<LineStyle>{kDefaultLineStyle};
 
         z_offset = OptionalParameter<float>{kDefaultZOffset};
         alpha = OptionalParameter<float>{kDefaultAlpha};
@@ -241,6 +250,7 @@ public:
         overwritePropertyFromOtherIfPresent(alpha, props.alpha);
         overwritePropertyFromOtherIfPresent(buffer_size, props.buffer_size);
         overwritePropertyFromOtherIfPresent(scatter_style, props.scatter_style);
+        overwritePropertyFromOtherIfPresent(line_style, props.line_style);
         overwritePropertyFromOtherIfPresent(line_width, props.line_width);
         overwritePropertyFromOtherIfPresent(point_size, props.point_size);
         overwritePropertyFromOtherIfPresent(z_offset, props.z_offset);
@@ -284,6 +294,7 @@ public:
     OptionalParameter<std::string> name{kDefaultName};
 
     OptionalParameter<ScatterStyle> scatter_style{kDefaultScatterStyle};
+    OptionalParameter<LineStyle> line_style{kDefaultLineStyle};
 
     OptionalParameter<float> z_offset{kDefaultZOffset};
     OptionalParameter<float> alpha{kDefaultAlpha};
@@ -450,8 +461,8 @@ protected:
     ColorMap color_map_;
     bool has_color_map_;
 
-    // LineStyle line_style_;
-    // bool has_line_style_;
+    LineStyle line_style_;
+    bool has_line_style_;
 
     ScatterStyle scatter_style_;
 

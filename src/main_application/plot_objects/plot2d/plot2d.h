@@ -41,6 +41,10 @@ private:
     VertexBuffer vertex_buffer_;
     float gap_size_, dash_size_;
 
+    float first_length_;
+    Vec3f first_point_;
+    Vec3f second_point_;
+
     size_t num_points_;
 
     void findMinMax() override;

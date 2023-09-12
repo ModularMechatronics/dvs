@@ -9,6 +9,9 @@ layout(location = 3) in int idx;
 layout(location = 4) in float length_along;
 layout(location = 5) in vec3 in_color;
 uniform vec3 vertex_color;
+uniform vec3 first_point;
+uniform vec3 second_point;
+uniform float first_length;
 uniform float half_line_width;
 uniform float z_offset;
 uniform float axes_width;
@@ -26,6 +29,7 @@ flat out vec3 p0_out;
 flat out vec3 p1_out;
 flat out float length_along_fs;
 flat out float theta;
+flat out float scale_factor;
 out vec3 fragment_pos;
 flat out int triangle_id;
 
@@ -98,6 +102,13 @@ void main()
         p2_to_use = vec4(p2, z_offset, 1.0);
     }
 
+    vec4 first_point_transformed = model_view_proj_mat * vec4(first_point, 1.0);
+    vec4 second_point_transformed = model_view_proj_mat * vec4(second_point, 1.0);
+
+    // first_point_transformed = first_point_transformed / abs(first_point_transformed.w);
+    // second_point_transformed = second_point_transformed / abs(second_point_transformed.w);
+    scale_factor = first_length / length(second_point_transformed.xy - first_point_transformed.xy);
+
     vec4 p0_transformed = model_view_proj_mat * p0_to_use;
     vec4 p1_transformed = model_view_proj_mat * p1_to_use;
     vec4 p2_transformed = model_view_proj_mat * p2_to_use;
@@ -151,9 +162,9 @@ void main()
         should_flip = false;
     }
 
-    // 1st triangle
     switch(idx)
     {
+    // 1st triangle
     case 0:
         gl_Position = vec4(p1_transformed.xy + vec_on_line_edge12, p1_transformed.z, p1_transformed.w);
         triangle_id = 0;
@@ -260,45 +271,15 @@ void main()
 
     if(triangle_id == 0)
     {
-        if(idx == 0)
-        {
-            p0_out = p1_transformed.xyz;
-            p1_out = p2_transformed.xyz;
-            length_along_fs = length_along;
-        }
-        else if (idx == 1)
-        {
-            p0_out = p0_transformed.xyz;
-            p1_out = p1_transformed.xyz;
-            length_along_fs = length_along - length(p1_transformed.xy - p0_transformed.xy);
-        }
-        else if (idx == 2)
-        {
-            p0_out = p0_transformed.xyz;
-            p1_out = p1_transformed.xyz;
-            length_along_fs = length_along - length(p1_transformed.xy - p0_transformed.xy);
-        }
+        length_along_fs = length_along;
+        p0_out = p0_transformed.xyz;
+        p1_out = p1_transformed.xyz;
     }
     else if(triangle_id == 1)
     {
-        if (idx == 3)
-        {
-            p0_out = p1_transformed.xyz;
-            p1_out = p2_transformed.xyz;
-            length_along_fs = length_along;
-        }
-        else if (idx == 4)
-        {
-            p0_out = p0_transformed.xyz;
-            p1_out = p1_transformed.xyz;
-            length_along_fs = length_along - length(p1_transformed.xy - p0_transformed.xy);
-        }
-        else if (idx == 5)
-        {
-            p0_out = p1_transformed.xyz;
-            p1_out = p2_transformed.xyz;
-            length_along_fs = length_along;
-        }
+        length_along_fs = length_along;
+        p0_out = p1_transformed.xyz;
+        p1_out = p2_transformed.xyz;
     }
     else if(triangle_id == 2)
     {

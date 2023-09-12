@@ -146,16 +146,13 @@ inline bool operator==(const Name& n0, const Name& n1)
     return strcmp(n0.data, n1.data) == 0;
 }
 
-namespace not_ready
-{
 enum class LineStyle : uint8_t
 {
     SOLID,
     DASHED,
-    DOTTED,
+    SHORT_DASHED,
     LONG_DASHED
 };
-}
 
 enum class ScatterStyle : uint8_t
 {
@@ -558,23 +555,23 @@ struct ColorMapContainer : internal::PropertyBase
 
 struct LineStyleContainer : internal::PropertyBase
 {
-    properties::not_ready::LineStyle data;
+    properties::LineStyle data;
 
     LineStyleContainer() : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
     {
-        data = properties::not_ready::LineStyle::SOLID;
+        data = properties::LineStyle::SOLID;
     }
 
-    LineStyleContainer(const properties::not_ready::LineStyle line_style)
+    LineStyleContainer(const properties::LineStyle line_style)
         : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
     {
         data = line_style;
     }
 
-    static constexpr properties::not_ready::LineStyle SOLID = properties::not_ready::LineStyle::SOLID;
-    static constexpr properties::not_ready::LineStyle DASHED = properties::not_ready::LineStyle::DASHED;
-    static constexpr properties::not_ready::LineStyle DOTTED = properties::not_ready::LineStyle::DOTTED;
-    static constexpr properties::not_ready::LineStyle LONG_DASHED = properties::not_ready::LineStyle::LONG_DASHED;
+    static constexpr properties::LineStyle SOLID = properties::LineStyle::SOLID;
+    static constexpr properties::LineStyle DASHED = properties::LineStyle::DASHED;
+    // static constexpr properties::LineStyle DOTTED = properties::LineStyle::DOTTED;
+    // static constexpr properties::LineStyle LONG_DASHED = properties::LineStyle::LONG_DASHED;
 };
 
 }  // namespace internal
