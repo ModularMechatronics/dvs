@@ -322,6 +322,14 @@ void testBasic()
     ImuVisualizer visualizer{
         20U, properties::Transform{diagMatrix<double>({1.0, 1.0, 1.0}), rotationMatrixZ<double>(0), {0, 0, 0}}};
 
+    setCurrentElement("rt");
+    clearView();
+    waitForFlush();
+    setProperties(properties::ID0, properties::Color::RED);
+    setProperties(properties::ID1, properties::Color(127, 0, 136));
+    axis({0.0, -1.1}, {1.0, 1.1});
+    view(-180.0, -90.0);
+
     double t = 0.0;
 
     const auto f_noise = []() -> double { return 2.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5); };
@@ -332,9 +340,9 @@ void testBasic()
         const double theta_y = std::sin(t * 10.0);
         const double theta_z = std::sin(t);
 
-        const double theta_raw_x = theta_x + f_noise() * 0.05;
-        const double theta_raw_y = theta_y + f_noise() * 0.05;
-        const double theta_raw_z = theta_z + f_noise() * 0.05;
+        const double theta_raw_x = theta_x + f_noise() * 0.15;
+        const double theta_raw_y = theta_y + f_noise() * 0.15;
+        const double theta_raw_z = theta_z + f_noise() * 0.15;
 
         const double t_x = f_noise() * 0.05;
         const double t_y = f_noise() * 0.05;
@@ -353,7 +361,11 @@ void testBasic()
         setCurrentElement("raw");
         visualizer_raw.visualize(tr_noise);
 
-        flushMultipleElements("filtered", "raw");
+        setCurrentElement("rt");
+        realTimePlot(0.01, theta_x, properties::ID0);
+        realTimePlot(0.01, theta_raw_x, properties::ID1);
+
+        flushMultipleElements("filtered", "raw", "rt");
         t += 0.005;
     }
 }
