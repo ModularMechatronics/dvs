@@ -151,6 +151,9 @@ void Surf::updateWithNewData(ReceivedData& received_data,
 void Surf::render()
 {
     shader_collection_.draw_mesh_shader.use();
+
+    preRender(&shader_collection_.draw_mesh_shader);
+
     shader_collection_.draw_mesh_shader.uniform_handles.edge_color.setColor(edge_color_);
     shader_collection_.draw_mesh_shader.uniform_handles.face_color.setColor(face_color_);
     shader_collection_.draw_mesh_shader.base_uniform_handles.min_z.setFloat(min_vec.z);

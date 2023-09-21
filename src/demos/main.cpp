@@ -63,7 +63,9 @@ int main(int argc, char* argv[])
                                       {"transparent_fill_below_plot", small::testTransparentFillBelowPlot},
                                       {"test_transitioning_surfs", small::testTransitioningSurfs},
                                       {"iso_surfaces", small::testIsoSurfaces},
-                                      {"sling_plot", sling_plot::testSlingPlot}};
+                                      {"sling_plot", sling_plot::testSlingPlot},
+                                      {"hyperboloid", small::testHyperboloid},
+                                      {"sphere", small::testSphere}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

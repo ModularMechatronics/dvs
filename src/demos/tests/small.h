@@ -1,6 +1,7 @@
 #ifndef DEMOS_SMALL_H
 #define DEMOS_SMALL_H
 
+#include <complex>
 #include <random>
 
 namespace small
@@ -845,6 +846,117 @@ void testIsoSurfaces()
     setCurrentElement("p_view_0");
     clearView();
     surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_BRIGHT);
+}
+
+void testHyperboloid()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+    const size_t n_elems{30U};
+
+    struct XYZMats
+    {
+        Matrix<double> x;
+        Matrix<double> y;
+        Matrix<double> z;
+    };
+
+    const auto hyberboloid = [](const double v0, const double v1, const double f) -> XYZMats {
+        const std::pair<Matrix<double>, Matrix<double>> theta_v_mats =
+            meshGrid<double>(0, 2.0 * M_PI, v0, v1, n_elems, n_elems);
+
+        Matrix<double> theta{theta_v_mats.first}, v{theta_v_mats.second};
+        const double a = 1.0;
+        const double b = 1.0;
+        const double c = 1.0;
+
+        const Matrix<double> v2 = elementWiseMultiply(cosh(v), cosh(v));
+
+        // if(f < )
+
+        // const Matrix<double> x = a * elementWiseMultiply(dvs::sqrt(f + v2), cos(theta));
+        // const Matrix<double> y = b * elementWiseMultiply(dvs::sqrt(f + v2), sin(theta));
+        // const Matrix<double> z = c * sinh(v);
+
+        const Matrix<double> x = a * elementWiseMultiply(dvs::sqrt(f + v2), dvs::cos(theta));
+        const Matrix<double> y = b * elementWiseMultiply(dvs::sqrt(f + v2), dvs::sin(theta));
+        const Matrix<double> z = c * sinh(v);
+
+        return {x, y, z};
+
+        // const Matrix<double> x = elementWiseMultiply(a * cosh(v), cos(theta));
+        // const Matrix<double> y = elementWiseMultiply(b * cosh(v), sin(theta));
+        // const Matrix<double> z = c * sinh(v);
+
+        // const Matrix<double> x = elementWiseMultiply(a * sinh(v), cos(theta));
+        // const Matrix<double> y = elementWiseMultiply(b * sinh(v), sin(theta));
+        // const Matrix<double> z = c * cosh(v);
+
+        // return {x, y, z};
+    };
+
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-16.0, -16.0, -10.2}, {16.0, 16.0, 10.2});
+    view(-65, 12);
+
+    const size_t n_iters = 200U;
+
+    for (size_t k = 0; k < n_iters; k++)
+    {
+        const double kf = static_cast<double>(k) / static_cast<double>(n_iters - 1U);
+
+        const double f = -(2.0 - 4.0 * kf);
+        const auto [x, y, z] = hyberboloid(-3.0, 3.0, f);
+
+        softClearView();
+        surf(x, y, z, properties::ID0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_SOFT);
+
+        usleep(1000 * 10);
+    }
+
+    double t = 0.0;
+
+    for (size_t k = 0; k < 500; k++)
+    {
+        const double theta_x = std::sin(t * 20.0);
+        const double theta_y = std::sin(t * 10.0);
+        const double theta_z = std::sin(t);
+
+        // const auto r_mat =
+        //     rotationMatrixZ<double>(theta_z) * rotationMatrixY<double>(theta_y) * rotationMatrixX<double>(theta_x);
+        const auto r_mat = rotationMatrixZ<double>(t) * rotationMatrixX<double>(t);
+        const properties::Transform tr{diagMatrix<double>({1.0, 1.0, 1.0}), r_mat, {0, 0, 0}};
+
+        setProperties(properties::ID0, properties::FaceColor::NONE);
+        setTransform(properties::ID0, tr.scale, tr.rotation, tr.translation);
+
+        usleep(1000 * 10);
+        t += 0.001;
+    }
+}
+
+void testSphere()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+    const size_t n_elems{30U};
+
+    const std::pair<Matrix<double>, Matrix<double>> theta_phi_mats =
+        meshGrid<double>(0.0, M_PI, 0.0, 2.0 * M_PI, n_elems, n_elems);
+
+    Matrix<double> theta{theta_phi_mats.first}, phi{theta_phi_mats.second};
+
+    Matrix<double> r{n_elems, n_elems};
+    r.fill(1.0);
+
+    const Matrix<double> x = elementWiseMultiply(elementWiseMultiply(r, dvs::sin(theta)), dvs::cos(phi));
+    const Matrix<double> y = elementWiseMultiply(elementWiseMultiply(r, dvs::sin(theta)), dvs::sin(phi));
+    const Matrix<double> z = elementWiseMultiply(r, cos(theta));
+
+    setCurrentElement("p_view_0");
+    clearView();
+    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_SOFT);
 }
 
 }  // namespace small

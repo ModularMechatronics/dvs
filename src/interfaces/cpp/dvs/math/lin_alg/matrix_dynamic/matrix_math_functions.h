@@ -145,6 +145,39 @@ template <typename T> Matrix<T> sin(const Matrix<T>& m_in)
     return m;
 }
 
+template <typename T> Matrix<T> cosh(const Matrix<T>& m_in)
+{
+    DVS_ASSERT((m_in.numRows() > 0) && (m_in.numCols() > 0));
+    Matrix<T> m(m_in.numRows(), m_in.numCols());
+
+    for (size_t r = 0; r < m_in.numRows(); r++)
+    {
+        for (size_t c = 0; c < m_in.numCols(); c++)
+        {
+            m(r, c) = std::cosh(m_in(r, c));
+        }
+    }
+
+    return m;
+}
+
+
+template <typename T> Matrix<T> sinh(const Matrix<T>& m_in)
+{
+    DVS_ASSERT((m_in.numRows() > 0) && (m_in.numCols() > 0));
+    Matrix<T> m(m_in.numRows(), m_in.numCols());
+
+    for (size_t r = 0; r < m_in.numRows(); r++)
+    {
+        for (size_t c = 0; c < m_in.numCols(); c++)
+        {
+            m(r, c) = std::sinh(m_in(r, c));
+        }
+    }
+
+    return m;
+}
+
 template <typename T> Matrix<T> sqrt(const Matrix<T>& m_in)
 {
     DVS_ASSERT((m_in.numRows() > 0) && (m_in.numCols() > 0));

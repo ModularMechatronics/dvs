@@ -1114,6 +1114,20 @@ inline void setAxesBoxScaleFactor(const Vec3<double>& scale_vector)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+inline void setTitle(const std::string& title)
+{
+    if (title.length() == 0)
+    {
+        DVS_LOG_ERROR() << "Cannot set title with string length 0!";
+        return;
+    }
+
+    internal::CommunicationHeader hdr{internal::Function::SET_TITLE};
+    hdr.append(internal::CommunicationHeaderObjectType::TITLE_STRING, properties::Name(title.c_str()));
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void setTransform(const ItemId id,
                          const Matrix<double>& scale,
                          const Matrix<double>& rotation,

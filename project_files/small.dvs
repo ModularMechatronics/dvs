@@ -6,9 +6,9 @@
             "tabs": [
                 {
                     "background_color": {
-                        "b": 0.15294118225574493,
-                        "g": 0.8627451062202454,
-                        "r": 0.1882352977991104
+                        "r": 0.9922,
+                        "g": 0.9647,
+                        "b": 0.8941
                     },
                     "button_clicked_color": {
                         "b": 0.8199999928474426,
@@ -43,9 +43,9 @@
                                 "r": 0.0
                             },
                             "background_color": {
-                                "b": 0.7529411911964417,
-                                "g": 0.8627451062202454,
-                                "r": 0.28823530673980713
+                                "r": 0.9922,
+                                "g": 0.9647,
+                                "b": 0.8941
                             },
                             "grid_color": {
                                 "b": 0.699999988079071,
@@ -62,6 +62,11 @@
                             },
                             "projection_mode": "orthographic",
                             "type": "PLOT_PANE",
+                            "_axes_letters_on": false,
+                            "_axes_numbers_on": false,
+                            "_grid_on": false,
+                            "_plot_box_on": false,
+                            "_clipping_on": false,
                             "width": 1.0,
                             "x": 0.0,
                             "y": 0.0
