@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "dvs/communication.h"
-#include "dvs/function_header.h"
+#include "dvs/communication_header.h"
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
 

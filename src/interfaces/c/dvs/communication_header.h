@@ -1,11 +1,11 @@
-#ifndef DVS_FUNCTION_HEADER_H_
-#define DVS_FUNCTION_HEADER_H_
+#ifndef DVS_COMMUNICATION_HEADER_H
+#define DVS_COMMUNICATION_HEADER_H
 
 #include <limits.h>
 #include <stdint.h>
 
+#include "dvs/communication_header_object.h"
 #include "dvs/enumerations.h"
-#include "dvs/function_header_object.h"
 #include "dvs/plot_properties.h"
 
 #define kMaxNumHeaderObjects 30
@@ -36,4 +36,4 @@ void appendCommunicationHeaderObject(CommunicationHeader* const hdr, const Commu
     hdr->num_objects = hdr->num_objects + 1;
 }
 
-#endif  // DVS_FUNCTION_HEADER_H_
+#endif  // DVS_COMMUNICATION_HEADER_H

@@ -1,5 +1,5 @@
-#ifndef DVS_FUNCTION_HEADER_OBJECT_H_
-#define DVS_FUNCTION_HEADER_OBJECT_H_
+#ifndef DVS_COMMUNICATION_HEADER_OBJECT_H
+#define DVS_COMMUNICATION_HEADER_OBJECT_H
 
 #include <limits.h>
 #include <stdint.h>
@@ -23,4 +23,4 @@ CommunicationHeaderObject getLastCommHdrObj()
     return obj;
 }
 
-#endif  // DVS_FUNCTION_HEADER_OBJECT_H_
+#endif  // DVS_COMMUNICATION_HEADER_OBJECT_H

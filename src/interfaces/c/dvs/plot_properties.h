@@ -1,8 +1,8 @@
 #ifndef DVS_PLOT_PROPERTIES_H_
 #define DVS_PLOT_PROPERTIES_H_
 
+#include "dvs/communication_header_object.h"
 #include "dvs/enumerations.h"
-#include "dvs/function_header_object.h"
 
 typedef struct S_AlphaStruct
 {
