@@ -1644,6 +1644,48 @@ void testPlot2DashedLine()
     }
 }
 
+void testSetTitle()
+{
+    const std::string project_file_path = "../../project_files/exp0.dvs";
+    openProjectFile(project_file_path);
+
+    setCurrentElement("p_view_0");
+    clearView();
+    setTitle("This is p_view_0");
+
+    setCurrentElement("p1");
+    clearView();
+    setTitle("This is p1");
+
+    setCurrentElement("p_view_1");
+    clearView();
+    setTitle("This is p_view_1");
+
+    setCurrentElement("p_view_2");
+    clearView();
+    setTitle("This is p_view_2");
+
+    setCurrentElement("s_view_0");
+    clearView();
+    setTitle("This is s_view_0");
+
+    setCurrentElement("s_view_1");
+    clearView();
+    setTitle("This is s_view_1");
+
+    setCurrentElement("s_view_2");
+    clearView();
+    setTitle("This is s_view_2");
+
+    setCurrentElement("w1_p_view_0");
+    clearView();
+    setTitle("This is w1_p_view_0");
+
+    setCurrentElement("w1_p_view_1");
+    clearView();
+    setTitle("This is w1_p_view_1");
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1670,6 +1712,7 @@ void addTests()
     addTest("cpp", "basic", "point_selector", testPointSelector);
     addTest("cpp", "basic", "point_selector_with_exclude", testPointSelectorWithExcludeSelection);
     addTest("cpp", "basic", "plot2_dashed_line", testPlot2DashedLine);
+    addTest("cpp", "basic", "set_title", testSetTitle);
 }
 
 }  // namespace basic_cpp

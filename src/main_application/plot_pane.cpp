@@ -348,6 +348,11 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
         const Vec3d scale_vec = hdr.get(CommunicationHeaderObjectType::VEC3).as<Vec3d>() * 3.0;
         axes_renderer_->setAxesBoxScaleFactor(scale_vec);
     }
+    else if (fcn == Function::SET_TITLE)
+    {
+        const std::string pane_title = hdr.get(CommunicationHeaderObjectType::TITLE_STRING).as<properties::Name>().data;
+        axes_renderer_->setTitle(pane_title);
+    }
     else if (fcn == Function::SET_OBJECT_TRANSFORM)
     {
         const Vec3d translation_vec = hdr.get(CommunicationHeaderObjectType::TRANSLATION_VECTOR).as<Vec3d>();
@@ -1054,6 +1059,7 @@ void PlotPane::clearPane()
     axes_renderer_->setAxesBoxScaleFactor(Vec3d{2.5, 2.5, 2.5});
     axes_renderer_->setScaleOnRotation(true);
     axes_renderer_->setAxesSquare(false);
+    axes_renderer_->setTitle("");
 }
 
 void PlotPane::processActionQueue()

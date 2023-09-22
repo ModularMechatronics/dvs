@@ -176,7 +176,7 @@ void AxesRenderer::setClipPlane(const GLuint clip_plane_uniform_handle,
     glUniform4f(clip_plane_uniform_handle, plane.a, plane.b, plane.c, plane.d);
 }
 
-void AxesRenderer::renderTitle()
+void AxesRenderer::renderHandle()
 {
     shader_collection_.text_shader.use();
 
@@ -185,6 +185,17 @@ void AxesRenderer::renderTitle()
     const float x_coord = -1.0f + 5.0f / width_;
     const float y_coord = 1.0f - 20.0f / height_;
     text_renderer_.renderTextFromLeftCenter(name_, x_coord, y_coord, 0.0005f, width_, height_);
+}
+
+void AxesRenderer::renderTitle()
+{
+    shader_collection_.text_shader.use();
+
+    glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
+
+    const float x_coord = 5.0f / width_;
+    const float y_coord = 1.0f - 20.0f / height_;
+    text_renderer_.renderTextFromCenter(title_, x_coord, y_coord, 0.0005f, width_, height_);
 }
 
 void AxesRenderer::renderInteractionLetter()
@@ -269,7 +280,11 @@ void AxesRenderer::renderViewAngles()
 
 void AxesRenderer::render()
 {
-    renderTitle();
+    renderHandle();
+    if (has_title_)
+    {
+        renderTitle();
+    }
     renderInteractionLetter();
     if (mouse_pressed_)
     {
@@ -540,6 +555,19 @@ Vec3d AxesRenderer::getAxesBoxScaleFactor() const
 void AxesRenderer::setScaleOnRotation(const bool scale_on_rotation)
 {
     scale_on_rotation_ = scale_on_rotation;
+}
+
+void AxesRenderer::setTitle(const std::string& title)
+{
+    if (title == "")
+    {
+        has_title_ = false;
+    }
+    else
+    {
+        has_title_ = true;
+        title_ = title;
+    }
 }
 
 void AxesRenderer::setAxesSquare(const bool axes_square)

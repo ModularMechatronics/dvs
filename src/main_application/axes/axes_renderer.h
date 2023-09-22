@@ -80,6 +80,8 @@ private:
     Vec3d orth_scale_vector_;
     Vec3d persp_scale_vector_;
     std::string name_;
+    bool has_title_;
+    std::string title_;
     MouseInteractionAxis current_mouse_interaction_axis_;
 
     Line3D<double> line_;
@@ -89,6 +91,7 @@ private:
     void renderBoxGrid();
     void enableClipPlanes();
     void renderLegend();
+    void renderHandle();
     void renderTitle();
     void renderInteractionLetter();
     void renderViewAngles();
@@ -127,6 +130,7 @@ public:
     void renderHelpPane();
     void activateGlobalIllumination(const Vec3d& light_pos);
     void resetGlobalIllumination();
+    void setTitle(const std::string& title);
     Vec3d getAxesBoxScaleFactor() const;
     void setAxesBoxScaleFactor(const Vec3d& scale_vector);
     void setScaleOnRotation(const bool scale_on_rotation);

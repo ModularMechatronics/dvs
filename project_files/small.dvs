@@ -5,10 +5,20 @@
             "name": "Window 0",
             "tabs": [
                 {
-                    "background_color": {
+                    "_background_color": {
                         "r": 0.9922,
                         "g": 0.9647,
                         "b": 0.8941
+                    },
+                    "background_color1": {
+                        "r": 0.0,
+                        "g": 0.4902,
+                        "b": 0.4196
+                    },
+                    "background_color": {
+                        "r": 0,
+                        "g": 0.6352941176470588,
+                        "b": 0.5450980392156862
                     },
                     "button_clicked_color": {
                         "b": 0.8199999928474426,
@@ -42,10 +52,20 @@
                                 "g": 0.0,
                                 "r": 0.0
                             },
-                            "background_color": {
+                            "_background_color": {
                                 "r": 0.9922,
                                 "g": 0.9647,
                                 "b": 0.8941
+                            },
+                            "background_color1": {
+                                "r": 0.0,
+                                "g": 0.4902,
+                                "b": 0.4196
+                            },
+                            "background_color": {
+                                "r": 0,
+                                "g": 0.6352941176470588,
+                                "b": 0.5450980392156862
                             },
                             "grid_color": {
                                 "b": 0.699999988079071,

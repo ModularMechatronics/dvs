@@ -897,22 +897,23 @@ void testHyperboloid()
 
     setCurrentElement("p_view_0");
     clearView();
+    disableScaleOnRotation();
     axis({-16.0, -16.0, -10.2}, {16.0, 16.0, 10.2});
     view(-65, 12);
 
-    const size_t n_iters = 200U;
+    const size_t n_iters = 400U;
 
     for (size_t k = 0; k < n_iters; k++)
     {
         const double kf = static_cast<double>(k) / static_cast<double>(n_iters - 1U);
 
-        const double f = -(2.0 - 4.0 * kf);
+        const double f = -(4.0 - 8.0 * kf);
         const auto [x, y, z] = hyberboloid(-3.0, 3.0, f);
 
         softClearView();
         surf(x, y, z, properties::ID0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_SOFT);
 
-        usleep(1000 * 10);
+        usleep(1000 * 1);
     }
 
     double t = 0.0;
@@ -923,9 +924,9 @@ void testHyperboloid()
         const double theta_y = std::sin(t * 10.0);
         const double theta_z = std::sin(t);
 
-        // const auto r_mat =
-        //     rotationMatrixZ<double>(theta_z) * rotationMatrixY<double>(theta_y) * rotationMatrixX<double>(theta_x);
-        const auto r_mat = rotationMatrixZ<double>(t) * rotationMatrixX<double>(t);
+        const auto r_mat =
+            rotationMatrixZ<double>(theta_z) * rotationMatrixY<double>(theta_y) * rotationMatrixX<double>(theta_x);
+
         const properties::Transform tr{diagMatrix<double>({1.0, 1.0, 1.0}), r_mat, {0, 0, 0}};
 
         setProperties(properties::ID0, properties::FaceColor::NONE);
