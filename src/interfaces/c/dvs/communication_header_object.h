@@ -8,7 +8,7 @@
 
 #define kMaxNumFunctionHeaderBytes SCHAR_MAX
 
-typedef struct S_FunctionHeaderObject
+typedef struct S_CommunicationHeaderObject
 {
     CommunicationHeaderObjectType type;
     uint8_t num_bytes;

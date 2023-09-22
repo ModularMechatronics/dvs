@@ -7,9 +7,11 @@
 #include "dvs/communication_header.h"
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
+#include "dvs/uint8_array.h"
 
 const uint64_t kMagicNumber = 0xdeadbeefcafebabe;
-const uint64_t max_bytes_for_one_msg = 1380;
+const uint64_t kMaxNumBytesForOneTransmission = 1380;
+const uint64_t kTcpPortNum = 9755;
 
 int checkAck(char data[256])
 {
@@ -44,57 +46,30 @@ uint64_t minVal(const uint64_t v0, const uint64_t v1)
     }
 }
 
-void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
+void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
 {
-    SocketStructure sock_struct = createSocket(9752);
-    char data[256];
+    int tcp_sockfd;
+    struct sockaddr_in tcp_servaddr;
 
-    if (num_bytes > max_bytes_for_one_msg)
+    tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    bzero(&tcp_servaddr, sizeof(tcp_servaddr));
+
+    tcp_servaddr.sin_family = AF_INET;
+    tcp_servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    tcp_servaddr.sin_port = htons(kTcpPortNum);
+
+    if (connect(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
     {
-        uint64_t num_sent_bytes = 0;
-
-        while (num_sent_bytes < num_bytes)
-        {
-            const uint64_t num_bytes_to_send = minVal(max_bytes_for_one_msg, num_bytes - num_sent_bytes);
-
-            sendData(&sock_struct, &(data_blob[num_sent_bytes]), num_bytes_to_send);
-            num_sent_bytes += num_bytes_to_send;
-
-            const int num_received_bytes = receiveData(&sock_struct, data);
-
-            const int ack_received = checkAck(data);
-
-            if (!ack_received)
-            {
-                printf("Error receiving!\n");
-                exit(-1);
-            }
-            else if (num_received_bytes != 5)
-            {
-                printf("Error receiving, too many bytes!\n");
-                exit(-1);
-            }
-        }
+        printf("Failed to connect!\n");
     }
-    else
-    {
-        sendData(&sock_struct, data_blob, num_bytes);
 
-        const int num_received_bytes = receiveData(&sock_struct, data);
+    const uint64_t num_bytes_to_send = num_bytes;
 
-        const int ack_received = checkAck(data);
+    write(tcp_sockfd, &num_bytes_to_send, sizeof(uint64_t));
+    write(tcp_sockfd, data_blob, num_bytes);
 
-        if (!ack_received)
-        {
-            printf("Error receiving!\n");
-            exit(-1);
-        }
-        else if (num_received_bytes != 5)
-        {
-            printf("Error receiving, too many bytes!\n");
-            exit(-1);
-        }
-    }
+    close(tcp_sockfd);
 }
 
 #define APPEND_PROPERTIES(__hdr, __first_prop)                 \
@@ -128,7 +103,7 @@ typedef void (*SendFunction)(const uint8_t* const, const uint64_t);
 
 SendFunction getSendFunction()
 {
-    return sendThroughUdpInterface;
+    return sendThroughTcpInterface;
 }
 
 int countNumHeaderBytes(const CommunicationHeader* const hdr)

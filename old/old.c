@@ -16,3 +16,56 @@ void holdOff()
 
     sendHeader(getSendFunction(), &hdr);
 }
+
+void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
+{
+    SocketStructure sock_struct = createSocket(9752);
+    char data[256];
+
+    if (num_bytes > kMaxNumBytesForOneTransmission)
+    {
+        uint64_t num_sent_bytes = 0;
+
+        while (num_sent_bytes < num_bytes)
+        {
+            const uint64_t num_bytes_to_send = minVal(kMaxNumBytesForOneTransmission, num_bytes - num_sent_bytes);
+
+            sendData(&sock_struct, &(data_blob[num_sent_bytes]), num_bytes_to_send);
+            num_sent_bytes += num_bytes_to_send;
+
+            const int num_received_bytes = receiveData(&sock_struct, data);
+
+            const int ack_received = checkAck(data);
+
+            if (!ack_received)
+            {
+                printf("Error receiving!\n");
+                exit(-1);
+            }
+            else if (num_received_bytes != 5)
+            {
+                printf("Error receiving, too many bytes!\n");
+                exit(-1);
+            }
+        }
+    }
+    else
+    {
+        sendData(&sock_struct, data_blob, num_bytes);
+
+        const int num_received_bytes = receiveData(&sock_struct, data);
+
+        const int ack_received = checkAck(data);
+
+        if (!ack_received)
+        {
+            printf("Error receiving!\n");
+            exit(-1);
+        }
+        else if (num_received_bytes != 5)
+        {
+            printf("Error receiving, too many bytes!\n");
+            exit(-1);
+        }
+    }
+}
