@@ -18,7 +18,6 @@ Pre release:
 - Investigate weird bug not being able to set colors properly for realTimePlot
 - If first two points of plot2 is the same, there will be a division by zero
 - Create layout grids
-- Add real time plot of acceleration or something to demo imu
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
 - Change name of application (to plotto or something, polyplot)
@@ -43,15 +42,16 @@ Pre release:
 - PropertiesData -> ParsedProperties
 - plot2 with fill under/over x axis
 - candlestick/errorbar
+- Contour plotting function
+- Bar plot
 - Colorbar
 - Finish point selector, specifically all different type's selector functions
 - Move as much as possible from plot_pane into axes_interactor
 - Create "super struct" that contains all necessary information from axes_interactor that gets passed into axes_renderer
+- Test sequence function from C/C++ interfaces, that can be executed to check that encoding is correct
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
-- Contour plotting function
 - Stairs is grey? Or without color
-- Bar plot
 - Time date axes
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 

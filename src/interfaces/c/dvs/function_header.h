@@ -10,23 +10,25 @@
 
 #define kMaxNumHeaderObjects 30
 
-typedef struct S_FunctionHeader
+typedef struct S_CommunicationHeader
 {
-    FunctionHeaderObject values[kMaxNumHeaderObjects];
+    CommunicationHeaderObject values[kMaxNumHeaderObjects];
+    Function function;
     size_t num_objects;
 
-} FunctionHeader;
+} CommunicationHeader;
 
-void initFunctionHeader(FunctionHeader* const hdr)
+void initCommunicationHeader(CommunicationHeader* const hdr, const Function function)
 {
+    hdr->function = function;
     hdr->num_objects = 0;
 }
 
-void appendFunctionHeaderObject(FunctionHeader* const hdr, const FunctionHeaderObject* const hdr_obj)
+void appendCommunicationHeaderObject(CommunicationHeader* const hdr, const CommunicationHeaderObject* const hdr_obj)
 {
     if (hdr->num_objects == kMaxNumHeaderObjects)
     {
-        printf("Tried to append header objects to full FunctionHeader!\n");
+        printf("Tried to append header objects to full CommunicationHeader!\n");
         exit(0);
     }
 

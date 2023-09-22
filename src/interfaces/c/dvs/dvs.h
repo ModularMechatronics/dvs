@@ -14,15 +14,14 @@ void plotFunction3D(const Vector* const x,
                     const Vector* const y,
                     const Vector* const z,
                     const Function fcn,
-                    const FunctionHeaderObject first_prop,
+                    const CommunicationHeaderObject first_prop,
                     ...)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, fcn);
 
-    APPEND_VAL(&hdr, FHOT_FUNCTION, fcn, uint8_t);
-    APPEND_VAL(&hdr, FHOT_DATA_TYPE, x->data_type, uint8_t);
-    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
+    APPEND_VAL(&hdr, CHOT_DATA_TYPE, x->data_type, uint8_t);
+    APPEND_VAL(&hdr, CHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
 
     APPEND_PROPERTIES(hdr, first_prop);
 
@@ -30,32 +29,33 @@ void plotFunction3D(const Vector* const x,
 }
 
 void plotFunction2D(
-    const Vector* const x, const Vector* const y, const Function fcn, const FunctionHeaderObject first_prop, ...)
+    const Vector* const x, const Vector* const y, const Function fcn, const CommunicationHeaderObject first_prop, ...)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, fcn);
 
-    APPEND_VAL(&hdr, FHOT_FUNCTION, fcn, uint8_t);
-    APPEND_VAL(&hdr, FHOT_DATA_TYPE, x->data_type, uint8_t);
-    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
+    APPEND_VAL(&hdr, CHOT_DATA_TYPE, x->data_type, uint8_t);
+    APPEND_VAL(&hdr, CHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
 
     APPEND_PROPERTIES(hdr, first_prop);
 
     sendHeaderAndTwoVectors(getSendFunction(), x, y, &hdr);
 }
 
-void surfFunction(
-    const Matrix* const x, const Matrix* const y, const Matrix* const z, const FunctionHeaderObject first_prop, ...)
+void surfFunction(const Matrix* const x,
+                  const Matrix* const y,
+                  const Matrix* const z,
+                  const CommunicationHeaderObject first_prop,
+                  ...)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_SURF);
 
     Dimension2D dims = {x->num_rows, x->num_cols};
 
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_SURF, uint8_t);
-    APPEND_VAL(&hdr, FHOT_DATA_TYPE, x->data_type, uint8_t);
-    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, x->num_rows * x->num_cols, uint32_t);  // Needed?
-    APPEND_VAL(&hdr, FHOT_DIMENSION_2D, dims, Dimension2D);
+    APPEND_VAL(&hdr, CHOT_DATA_TYPE, x->data_type, uint8_t);
+    APPEND_VAL(&hdr, CHOT_NUM_ELEMENTS, x->num_rows * x->num_cols, uint32_t);  // Needed?
+    APPEND_VAL(&hdr, CHOT_DIMENSION_2D, dims, Dimension2D);
 
     APPEND_PROPERTIES(hdr, first_prop);
 
@@ -64,17 +64,16 @@ void surfFunction(
 
 void drawMeshFunction(const Point3dArray vertices,
                       const IndexTripletArray indices,
-                      const FunctionHeaderObject first_prop,
+                      const CommunicationHeaderObject first_prop,
                       ...)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_DRAW_MESH);
 
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_DRAW_MESH, uint8_t);
-    APPEND_VAL(&hdr, FHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
-    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, indices.num_elements, uint32_t);
-    APPEND_VAL(&hdr, FHOT_NUM_VERTICES, vertices.num_elements, uint32_t);
-    APPEND_VAL(&hdr, FHOT_NUM_INDICES, indices.num_elements, uint32_t);
+    APPEND_VAL(&hdr, CHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
+    APPEND_VAL(&hdr, CHOT_NUM_ELEMENTS, indices.num_elements, uint32_t);
+    APPEND_VAL(&hdr, CHOT_NUM_VERTICES, vertices.num_elements, uint32_t);
+    APPEND_VAL(&hdr, CHOT_NUM_INDICES, indices.num_elements, uint32_t);
 
     APPEND_PROPERTIES(hdr, first_prop);
 
@@ -86,18 +85,17 @@ void drawMeshFunction(const Point3dArray vertices,
                                &hdr);
 }
 
-void imShowFunction(const ImageC3* const img, const FunctionHeaderObject first_prop, ...)
+void imShowFunction(const ImageC3* const img, const CommunicationHeaderObject first_prop, ...)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_IM_SHOW);
 
     Dimension2D dims = {img->num_rows, img->num_cols};
 
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_IM_SHOW, uint8_t);
-    APPEND_VAL(&hdr, FHOT_DATA_TYPE, img->data_type, uint8_t);
-    APPEND_VAL(&hdr, FHOT_NUM_CHANNELS, 3, uint8_t);
-    APPEND_VAL(&hdr, FHOT_NUM_ELEMENTS, img->num_rows * img->num_cols, uint32_t);  // Needed?
-    APPEND_VAL(&hdr, FHOT_DIMENSION_2D, dims, Dimension2D);
+    APPEND_VAL(&hdr, CHOT_DATA_TYPE, img->data_type, uint8_t);
+    APPEND_VAL(&hdr, CHOT_NUM_CHANNELS, 3, uint8_t);
+    APPEND_VAL(&hdr, CHOT_NUM_ELEMENTS, img->num_rows * img->num_cols, uint32_t);  // Needed?
+    APPEND_VAL(&hdr, CHOT_DIMENSION_2D, dims, Dimension2D);
 
     APPEND_PROPERTIES(hdr, first_prop);
 
@@ -107,30 +105,29 @@ void imShowFunction(const ImageC3* const img, const FunctionHeaderObject first_p
                            &hdr);
 }
 
-#define imShow(img, ...) imShowFunction((ImageC3*)&img, __VA_ARGS__, getLastFuncHdrObj())
+#define imShow(img, ...) imShowFunction((ImageC3*)&img, __VA_ARGS__, getLastCommHdrObj())
 
-#define drawMesh(vertices, indices, ...) drawMeshFunction(vertices, indices, __VA_ARGS__, getLastFuncHdrObj())
+#define drawMesh(vertices, indices, ...) drawMeshFunction(vertices, indices, __VA_ARGS__, getLastCommHdrObj())
 
-#define surf(x, y, z, ...) surfFunction((Matrix*)&x, (Matrix*)&y, (Matrix*)&z, __VA_ARGS__, getLastFuncHdrObj())
+#define surf(x, y, z, ...) surfFunction((Matrix*)&x, (Matrix*)&y, (Matrix*)&z, __VA_ARGS__, getLastCommHdrObj())
 
-#define plot(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_PLOT2, __VA_ARGS__, getLastFuncHdrObj())
+#define plot(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_PLOT2, __VA_ARGS__, getLastCommHdrObj())
 
-#define scatter(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_SCATTER2, __VA_ARGS__, getLastFuncHdrObj())
+#define scatter(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_SCATTER2, __VA_ARGS__, getLastCommHdrObj())
 
 #define plot3(x, y, z, ...) \
-    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, __VA_ARGS__, getLastFuncHdrObj())
+    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, __VA_ARGS__, getLastCommHdrObj())
 
 #define scatter3(x, y, z, ...) \
-    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastFuncHdrObj())
+    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastCommHdrObj())
 
-void setCurrentElement(const char* name)
+void setCurrentElement(const char* const name)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_SET_CURRENT_ELEMENT);
     const size_t kNumBytesForName = 23;
 
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_SET_CURRENT_ELEMENT, uint8_t);
-    hdr.values[hdr.num_objects].type = FHOT_ELEMENT_NAME;
+    hdr.values[hdr.num_objects].type = CHOT_ELEMENT_NAME;
     hdr.values[hdr.num_objects].num_bytes = 1 + sizeof(size_t) + kNumBytesForName;
     hdr.values[hdr.num_objects].data[0] = (uint8_t)PT_NAME;
 
@@ -144,56 +141,35 @@ void setCurrentElement(const char* name)
 
 void clearView()
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_CLEAR, uint8_t);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_CLEAR);
 
     sendHeader(getSendFunction(), &hdr);
 }
 
 void softClearView()
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_SOFT_CLEAR, uint8_t);
-
-    sendHeader(getSendFunction(), &hdr);
-}
-
-void holdOn()
-{
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_HOLD_ON, uint8_t);
-
-    sendHeader(getSendFunction(), &hdr);
-}
-
-void holdOff()
-{
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_HOLD_OFF, uint8_t);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_SOFT_CLEAR);
 
     sendHeader(getSendFunction(), &hdr);
 }
 
 void view(const float azimuth, const float elevation)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_VIEW, uint8_t);
-    APPEND_VAL(&hdr, FHOT_AZIMUTH, azimuth, float);
-    APPEND_VAL(&hdr, FHOT_ELEVATION, elevation, float);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_VIEW);
+
+    APPEND_VAL(&hdr, CHOT_AZIMUTH, azimuth, float);
+    APPEND_VAL(&hdr, CHOT_ELEVATION, elevation, float);
 
     sendHeader(getSendFunction(), &hdr);
 }
 
 void axis(const Vec3d min_bound, const Vec3d max_bound)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_AXES_3D, uint8_t);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_AXES_3D);
 
     typedef struct S_Bnd3D
     {
@@ -203,16 +179,15 @@ void axis(const Vec3d min_bound, const Vec3d max_bound)
 
     const Bnd3D bnd = {min_bound, max_bound};
 
-    APPEND_VAL(&hdr, FHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
+    APPEND_VAL(&hdr, CHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
 
     sendHeader(getSendFunction(), &hdr);
 }
 
 void axis2D(const Vec2d min_bound, const Vec2d max_bound)
 {
-    FunctionHeader hdr;
-    initFunctionHeader(&hdr);
-    APPEND_VAL(&hdr, FHOT_FUNCTION, F_AXES_3D, uint8_t);
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_AXES_3D);
 
     typedef struct S_Bnd3D
     {
@@ -224,7 +199,7 @@ void axis2D(const Vec2d min_bound, const Vec2d max_bound)
 
     const Bnd3D bnd = {v0, v1};
 
-    APPEND_VAL(&hdr, FHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
+    APPEND_VAL(&hdr, CHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
 
     sendHeader(getSendFunction(), &hdr);
 }

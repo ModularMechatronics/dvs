@@ -10,15 +10,15 @@
 
 typedef struct S_FunctionHeaderObject
 {
-    FunctionHeaderObjectType type;
+    CommunicationHeaderObjectType type;
     uint8_t num_bytes;
     uint8_t data[kMaxNumFunctionHeaderBytes];
-} FunctionHeaderObject;
+} CommunicationHeaderObject;
 
-FunctionHeaderObject getLastFuncHdrObj()
+CommunicationHeaderObject getLastCommHdrObj()
 {
-    FunctionHeaderObject obj;
-    obj.type = FHOT_UNKNOWN;
+    CommunicationHeaderObject obj;
+    obj.type = CHOT_UNKNOWN;
 
     return obj;
 }

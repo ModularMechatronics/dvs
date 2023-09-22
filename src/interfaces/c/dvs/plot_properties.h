@@ -12,11 +12,11 @@ typedef struct S_AlphaStruct
 
 #define PROPERTY_TYPE_SERIALIZATION_TYPE uint8_t
 
-FunctionHeaderObject Color(const uint8_t red, const uint8_t green, const uint8_t blue)
+CommunicationHeaderObject Color(const uint8_t red, const uint8_t green, const uint8_t blue)
 {
-    FunctionHeaderObject hdr_obj;
+    CommunicationHeaderObject hdr_obj;
 
-    hdr_obj.type = FHOT_PROPERTY;
+    hdr_obj.type = CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(PropertyType) + 3;
     hdr_obj.data[0] = (PROPERTY_TYPE_SERIALIZATION_TYPE)PT_COLOR;
     hdr_obj.data[1] = red;
@@ -26,11 +26,11 @@ FunctionHeaderObject Color(const uint8_t red, const uint8_t green, const uint8_t
     return hdr_obj;
 }
 
-FunctionHeaderObject Alpha(const uint8_t alpha)
+CommunicationHeaderObject Alpha(const uint8_t alpha)
 {
-    FunctionHeaderObject hdr_obj;
+    CommunicationHeaderObject hdr_obj;
 
-    hdr_obj.type = FHOT_PROPERTY;
+    hdr_obj.type = CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(PropertyType) + 1;
     hdr_obj.data[0] = (PROPERTY_TYPE_SERIALIZATION_TYPE)PT_ALPHA;
     hdr_obj.data[1] = alpha;

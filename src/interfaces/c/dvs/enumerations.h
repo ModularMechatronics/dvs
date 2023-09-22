@@ -3,51 +3,67 @@
 
 #include <stdint.h>
 
-typedef enum S_FunctionHeaderObjectType
+typedef enum S_CommunicationHeaderObjectType
 {
-    FHOT_FUNCTION,
-    FHOT_NUM_BUFFERS_REQUIRED,
-    FHOT_NUM_BYTES,
-    FHOT_DATA_STRUCTURE,
-    FHOT_BYTES_PER_ELEMENT,
-    FHOT_DATA_TYPE,
-    FHOT_NUM_CHANNELS,
-    FHOT_NUM_ELEMENTS,
-    FHOT_NUM_VERTICES,
-    FHOT_NUM_INDICES,
-    FHOT_DIMENSION_2D,
-    FHOT_HAS_PAYLOAD,
-    FHOT_AZIMUTH,
-    FHOT_ELEVATION,
-    FHOT_AXIS_MIN_MAX_VEC,
-    FHOT_POS2D,
-    FHOT_FIGURE_NUM,
-    FHOT_PARENT_NAME,
-    FHOT_PARENT_TYPE,
-    FHOT_ELEMENT_NAME,
-    FHOT_GUI_ELEMENT_TYPE,
-    FHOT_PROPERTY,
-    FHOT_UNKNOWN
-} FunctionHeaderObjectType;
+    CHOT_FUNCTION,
+    CHOT_NUM_BUFFERS_REQUIRED,
+    CHOT_NUM_BYTES,
+    CHOT_DATA_STRUCTURE,
+    CHOT_BYTES_PER_ELEMENT,
+    CHOT_DATA_TYPE,
+    CHOT_NUM_CHANNELS,
+    CHOT_NUM_ELEMENTS,
+    CHOT_HAS_COLOR,
+    CHOT_HAS_POINT_SIZES,
+    CHOT_NUM_VERTICES,
+    CHOT_NUM_INDICES,
+    CHOT_NUM_OBJECTS,
+    CHOT_DIMENSION_2D,
+    CHOT_HAS_PAYLOAD,
+    CHOT_AZIMUTH,
+    CHOT_ELEVATION,
+    CHOT_AXIS_MIN_MAX_VEC,
+    CHOT_VEC3,
+    CHOT_SCALE_MATRIX,
+    CHOT_TRANSLATION_VECTOR,
+    CHOT_ROTATION_MATRIX,
+    CHOT_PROJECT_FILE_NAME,
+    CHOT_TITLE_STRING,
+    CHOT_POS2D,
+    CHOT_FIGURE_NUM,
+    CHOT_PARENT_NAME,
+    CHOT_PARENT_TYPE,
+    CHOT_ELEMENT_NAME,
+    CHOT_GUI_ELEMENT_TYPE,
+    CHOT_PROPERTY,
+    CHOT_ITEM_ID,
+    CHOT_NUM_NAMES,
+    CHOT_UNKNOWN
+} CommunicationHeaderObjectType;
 
 typedef enum S_PropertyType
 {
     PT_LINE_WIDTH,
     PT_ALPHA,
+    PT_Z_OFFSET,
+    PT_TRANSFORM,
     PT_NAME,
+    PT_DISTANCE_FROM,
     PT_LINE_STYLE,
     PT_COLOR,
     PT_EDGE_COLOR,
     PT_FACE_COLOR,
     PT_COLOR_MAP,
     PT_POINT_SIZE,
-    PT_PERSISTENT,
+    PT_BUFFER_SIZE,
+    PT_SCATTER_STYLE,
     PT_UNKNOWN
 } PropertyType;
 
 typedef enum S_Function
 {
     F_DRAW_LINE3D,
+    F_DRAW_ARROW,
     F_PLANE_XY,
     F_PLANE_XZ,
     F_PLANE_YZ,
@@ -55,26 +71,58 @@ typedef enum S_Function
     F_GRID_OFF,
     F_PLOT2,
     F_PLOT3,
+    F_REAL_TIME_PLOT,
+    F_CUBE,
+    F_SPHERE,
+    F_PROPERTIES_EXTENSION,
+    F_PROPERTIES_EXTENSION_MULTIPLE,
+    F_LINE_COLLECTION2,
+    F_LINE_COLLECTION3,
+    F_STEM,
+    F_FAST_PLOT2,
+    F_FAST_PLOT3,
+    F_PLOT_COLLECTION2,
+    F_PLOT_COLLECTION3,
     F_SET_CURRENT_ELEMENT,
     F_CREATE_NEW_ELEMENT,
+    F_DELETE_PLOT_OBJECT,
+    F_CURRENT_ELEMENT_AS_IMAGE_VIEW,
+    F_OPEN_PROJECT_FILE,
     F_NEW_ELEMENT,
+    F_WAIT_FOR_FLUSH,
+    F_FLUSH_ELEMENT,
+    F_FLUSH_MULTIPLE_ELEMENTS,
     F_SCATTER2,
     F_SCATTER3,
+    F_QUIVER,
+    F_QUIVER3,
     F_DRAW_LINE_BETWEEN_POINTS_3D,
     F_POLYGON_FROM_4_POINTS,
     F_DRAW_TRIANGLES_3D,
     F_DRAW_TRIANGLE_3D,
+    F_DRAW_TILES,
     F_DRAW_MESH,
+    F_DRAW_MESH_SEPARATE_VECTORS,
     F_HOLD_ON,
     F_HOLD_OFF,
     F_POSITION,
     F_SURF,
     F_IM_SHOW,
+    F_DISABLE_AXES_FROM_MIN_MAX,
+    F_SET_AXES_BOX_SCALE_FACTOR,
+    F_SET_TITLE,
+    F_SET_OBJECT_TRANSFORM,
+    F_IS_BUSY_RENDERING,
+    F_GLOBAL_ILLUMINATION,
     F_AXES_2D,
     F_AXES_3D,
     F_VIEW,
     F_CLEAR,
     F_SOFT_CLEAR,
+    F_STAIRS,
+    F_SHOW_LEGEND,
+    F_DISABLE_SCALE_ON_ROTATION,
+    F_AXES_SQUARE,
     F_UNKNOWN
 } Function;
 
@@ -93,44 +141,38 @@ typedef enum S_DataType
     DT_UNKNOWN
 } DataType;
 
-typedef enum S_DataStructure
+typedef enum S_ColorMap
 {
-    DS_MATRIX,
-    DS_VECTOR,
-    DS_IMAGE,
-    DS_TEXT,
-    DS_UNKNOWN
-} DataStructure;
+    CM_JET,
+    CM_HSV,
+    CM_MAGMA,
+    CM_VIRIDIS,
+    CM_PASTEL,
+    CM_JET_SOFT,
+    CM_JET_BRIGHT,
+    CM_UNKNOWN
+} ColorMap;
 
-typedef enum S_ColorMapType
+typedef enum S_DistanceFromType
 {
-    CMT_JET,
-    CMT_RAINBOW,
-    CMT_MAGMA,
-    CMT_VIRIDIS,
-    CMT_UNKNOWN
-} ColorMapType;
+    DFT_X,
+    DFT_Y,
+    DFT_Z,
+    DFT_XY,
+    DFT_XZ,
+    DFT_YZ,
+    DFT_XYZ
+} DistanceFromType;
 
-typedef enum S_ElementType
+enum S_PropertyFlag
 {
-    ET_PLOT,
-    ET_IMAGE,
-    ET_WORLD_3D,
-    ET_BUTTON,
-    ET_TEXT_FIELD,
-    ET_UNKNOWN
-} ElementType;
-
-typedef enum S_ElementParent
-{
-    EP_TAB,
-    EP_WINDOW,
-    EP_UNKNOWN
-} ElementParent;
-
-/*namespace properties
-{
-constexpr internal::PropertyType PERSISTENT = internal::PropertyType::PERSISTENT;
-}*/
+    PF_PERSISTENT,
+    PF_APPENDABLE,
+    PF_INTERPOLATE_COLORMAP,
+    PF_UPDATABLE,
+    PF_FAST_PLOT,
+    PF_EXCLUDE_FROM_SELECTION,
+    PF_UNKNOWN
+} PropertyFlag;
 
 #endif  // DVS_ENUMERATIONS_H_

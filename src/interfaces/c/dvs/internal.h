@@ -13,11 +13,7 @@ const uint64_t max_bytes_for_one_msg = 1380;
 
 int checkAck(char data[256])
 {
-    const int ack_received = data[0] == 'a' &&
-        data[1] == 'c' &&
-        data[2] == 'k' &&
-        data[3] == '#' &&
-        data[4] == '\0';
+    const int ack_received = data[0] == 'a' && data[1] == 'c' && data[2] == 'k' && data[3] == '#' && data[4] == '\0';
     return ack_received;
 }
 
@@ -101,18 +97,18 @@ void sendThroughUdpInterface(const uint8_t* const data_blob, const uint64_t num_
     }
 }
 
-#define APPEND_PROPERTIES(__hdr, __first_prop)            \
-    {                                                     \
-        va_list __args;                                   \
-        va_start(__args, __first_prop);                   \
-                                                          \
-        FunctionHeaderObject __prp = __first_prop;        \
-        while (__prp.type != FHOT_UNKNOWN)                \
-        {                                                 \
-            appendFunctionHeaderObject(&__hdr, &__prp);   \
-            __prp = va_arg(__args, FunctionHeaderObject); \
-        }                                                 \
-        va_end(__args);                                   \
+#define APPEND_PROPERTIES(__hdr, __first_prop)                 \
+    {                                                          \
+        va_list __args;                                        \
+        va_start(__args, __first_prop);                        \
+                                                               \
+        CommunicationHeaderObject __prp = __first_prop;        \
+        while (__prp.type != CHOT_UNKNOWN)                     \
+        {                                                      \
+            appendCommunicationHeaderObject(&__hdr, &__prp);   \
+            __prp = va_arg(__args, CommunicationHeaderObject); \
+        }                                                      \
+        va_end(__args);                                        \
     }
 
 #define APPEND_VAL(__hdr, __type, __val, __target_data_type)                          \
@@ -135,11 +131,14 @@ SendFunction getSendFunction()
     return sendThroughUdpInterface;
 }
 
-int countNumHeaderBytes(const FunctionHeader* const hdr)
+int countNumHeaderBytes(const CommunicationHeader* const hdr)
 {
     // 1 for first byte, that indicates how many attributes in buffer, which is
     // same as hdr->num_objects
     size_t s = 1;
+
+    // +1 for Function
+    s += 1;
 
     for (size_t k = 0; k < hdr->num_objects; k++)
     {
@@ -149,11 +148,13 @@ int countNumHeaderBytes(const FunctionHeader* const hdr)
     return s;
 }
 
-void fillBufferWithHeader(const FunctionHeader* const hdr, uint8_t* const buffer)
+void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const buffer)
 {
-    size_t idx = 1;
+    size_t idx = 2U;
     buffer[0] = (uint8_t)(hdr->num_objects);
-    const FunctionHeaderObject* const values = hdr->values;
+    buffer[1] = (uint8_t)(hdr->function);
+
+    const CommunicationHeaderObject* const values = hdr->values;
 
     for (size_t k = 0; k < hdr->num_objects; k++)
     {
@@ -171,7 +172,7 @@ void fillBufferWithHeader(const FunctionHeader* const hdr, uint8_t* const buffer
 void sendHeaderAndByteArray(SendFunction send_function,
                             const uint8_t* const array,
                             const size_t num_bytes_from_array,
-                            FunctionHeader* hdr)
+                            CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
 
@@ -207,7 +208,7 @@ void sendHeaderAndTwoByteArrays(SendFunction send_function,
                                 const size_t num_bytes_from_array0,
                                 const uint8_t* const array1,
                                 const size_t num_bytes_from_array1,
-                                FunctionHeader* hdr)
+                                CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
 
@@ -244,7 +245,7 @@ void sendHeaderAndTwoByteArrays(SendFunction send_function,
 void sendHeaderAndTwoVectors(SendFunction send_function,
                              const Vector* const x,
                              const Vector* const y,
-                             FunctionHeader* hdr)
+                             CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_vector = x->num_elements * x->num_bytes_per_element;
@@ -285,7 +286,7 @@ void sendHeaderAndThreeMatrices(SendFunction send_function,
                                 const Matrix* const x,
                                 const Matrix* const y,
                                 const Matrix* const z,
-                                FunctionHeader* hdr)
+                                CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_matrix = x->num_rows * x->num_cols * x->num_bytes_per_element;
@@ -329,7 +330,7 @@ void sendHeaderAndThreeVectors(SendFunction send_function,
                                const Vector* const x,
                                const Vector* const y,
                                const Vector* const z,
-                               FunctionHeader* hdr)
+                               CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_vector = x->num_elements * x->num_bytes_per_element;
@@ -369,7 +370,7 @@ void sendHeaderAndThreeVectors(SendFunction send_function,
     free(data_blob);
 }
 
-void sendHeader(SendFunction send_function, FunctionHeader* hdr)
+void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
 

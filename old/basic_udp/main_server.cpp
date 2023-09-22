@@ -42,7 +42,7 @@ void receiveBuffer(const char* const data, const uint64_t num_received_bytes)
 
     const uint8_t* const uint8_ptr = reinterpret_cast<const uint8_t* const>(data);
 
-    const dvs::internal::FunctionHeader hdr(&(uint8_ptr[2 * sizeof(uint64_t) + 1]));
+    const dvs::internal::CommunicationHeader hdr(&(uint8_ptr[2 * sizeof(uint64_t) + 1]));
 
     std::cout << "Num values: " << hdr.getNumValues() << std::endl;
     std::cout << "Is big endian: " << is_big_endian << std::endl;
