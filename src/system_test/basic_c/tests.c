@@ -10,7 +10,7 @@ void testPlot()
     VectorF x = vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
     VectorF y = vector_sinF(x);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     plot(x, y, Color(255, 0, 11));
 }

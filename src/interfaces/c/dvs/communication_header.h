@@ -3,6 +3,7 @@
 
 #include <limits.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "dvs/communication_header_object.h"
 #include "dvs/enumerations.h"
@@ -10,30 +11,85 @@
 
 #define kMaxNumHeaderObjects 30
 
+typedef struct S_CommunicationHeaderObjectLookupTable
+{
+    uint8_t size;
+    uint8_t data[(uint8_t)(CHOT_UNKNOWN) + 1U];
+
+} CommunicationHeaderObjectLookupTable;
+
+#define NUM_FLAGS ((uint8_t)(PF_UNKNOWN) + 1U)
+
+void initCommunicationHeaderObjectLookupTable(CommunicationHeaderObjectLookupTable* const lut)
+{
+    lut->size = (uint8_t)(CHOT_UNKNOWN) + 1U;
+    memset(lut->data, 255U, lut->size);
+}
+
+void appendObjectIndexToCommunicationHeaderObjectLookupTable(CommunicationHeaderObjectLookupTable* const lut,
+                                                             const CommunicationHeaderObjectType type,
+                                                             const uint8_t idx)
+{
+    lut->data[(uint8_t)(type)] = idx;
+}
+
+typedef struct S_PropertyLookupTable
+{
+    uint8_t size;
+    uint8_t data[(uint8_t)(PT_UNKNOWN) + 1U];
+} PropertyLookupTable;
+
+void initPropertyLookupTable(PropertyLookupTable* const lut)
+{
+    lut->size = (uint8_t)(PT_UNKNOWN) + 1U;
+    memset(lut->data, 255U, lut->size);
+}
+
+void appendPropertyIndexToPropertyLookupTable(PropertyLookupTable* const props_lut,
+                                              const PropertyType type,
+                                              const uint8_t idx)
+{
+    props_lut->data[(uint8_t)type] = idx;
+}
+
 typedef struct S_CommunicationHeader
 {
-    CommunicationHeaderObject values[kMaxNumHeaderObjects];
+    CommunicationHeaderObject objects[kMaxNumHeaderObjects];
+    CommunicationHeaderObject props[kMaxNumHeaderObjects];
     Function function;
-    size_t num_objects;
+    size_t obj_idx;
+    size_t prop_idx;
+    CommunicationHeaderObjectLookupTable objects_lut;
+    PropertyLookupTable props_lut;
+    uint8_t flags[NUM_FLAGS];
 
 } CommunicationHeader;
 
 void initCommunicationHeader(CommunicationHeader* const hdr, const Function function)
 {
     hdr->function = function;
-    hdr->num_objects = 0;
+    hdr->obj_idx = 0U;
+    hdr->prop_idx = 0U;
+
+    memset(hdr->flags, 0U, NUM_FLAGS);
+
+    initCommunicationHeaderObjectLookupTable(&(hdr->objects_lut));
+    initPropertyLookupTable(&(hdr->props_lut));
 }
 
-void appendCommunicationHeaderObject(CommunicationHeader* const hdr, const CommunicationHeaderObject* const hdr_obj)
+void appendProperty(CommunicationHeader* const hdr, const CommunicationHeaderObject* const prop)
 {
-    if (hdr->num_objects == kMaxNumHeaderObjects)
+    if ((hdr->prop_idx + 1U) == kMaxNumHeaderObjects)
     {
         printf("Tried to append header objects to full CommunicationHeader!\n");
         exit(0);
     }
 
-    hdr->values[hdr->num_objects] = *hdr_obj;
-    hdr->num_objects = hdr->num_objects + 1;
+    const PropertyType pt = (PropertyType)(prop->data[0]);
+
+    hdr->props[hdr->prop_idx] = *prop;
+    appendPropertyIndexToPropertyLookupTable(&(hdr->props_lut), pt, hdr->prop_idx);
+    hdr->prop_idx = hdr->prop_idx + 1;
 }
 
 #endif  // DVS_COMMUNICATION_HEADER_H

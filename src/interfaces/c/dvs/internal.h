@@ -80,23 +80,21 @@ void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_
         CommunicationHeaderObject __prp = __first_prop;        \
         while (__prp.type != CHOT_UNKNOWN)                     \
         {                                                      \
-            appendCommunicationHeaderObject(&__hdr, &__prp);   \
+            appendProperty(&__hdr, &__prp);                    \
             __prp = va_arg(__args, CommunicationHeaderObject); \
         }                                                      \
         va_end(__args);                                        \
     }
 
-#define APPEND_VAL(__hdr, __type, __val, __target_data_type)                          \
-    {                                                                                 \
-        (__hdr)->values[(__hdr)->num_objects].type = __type;                          \
-        (__hdr)->values[(__hdr)->num_objects].num_bytes = sizeof(__target_data_type); \
-        __target_data_type __tmp_val = __val;                                         \
-        uint8_t* __obj_ptr = (uint8_t*)(&__tmp_val);                                  \
-        for (size_t __k = 0; __k < sizeof(__target_data_type); __k++)                 \
-        {                                                                             \
-            (__hdr)->values[(__hdr)->num_objects].data[__k] = __obj_ptr[__k];         \
-        }                                                                             \
-        (__hdr)->num_objects += 1;                                                    \
+#define APPEND_OBJ(__hdr, __type, __val, __target_data_type)                                                        \
+    {                                                                                                               \
+        CommunicationHeaderObject* const __current_obj = (__hdr)->objects + (__hdr)->obj_idx;                       \
+        __current_obj->type = __type;                                                                               \
+        __current_obj->num_bytes = sizeof(__target_data_type);                                                      \
+        __target_data_type __tmp_val = __val;                                                                       \
+        memcpy(__current_obj->data, &__tmp_val, sizeof(__target_data_type));                                        \
+        appendObjectIndexToCommunicationHeaderObjectLookupTable(&((__hdr)->objects_lut), __type, (__hdr)->obj_idx); \
+        (__hdr)->obj_idx += 1;                                                                                      \
     }
 
 typedef void (*SendFunction)(const uint8_t* const, const uint64_t);
@@ -106,42 +104,86 @@ SendFunction getSendFunction()
     return sendThroughTcpInterface;
 }
 
+#define COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE uint16_t
+#define COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE uint8_t
+
 int countNumHeaderBytes(const CommunicationHeader* const hdr)
 {
-    // 1 for first byte, that indicates how many attributes in buffer, which is
-    // same as hdr->num_objects
-    size_t s = 1;
+    // 2 for first two bytes, that indicates how many objects and
+    // props there will be in the buffer
+    size_t s = 2;
 
-    // +1 for Function
-    s += 1;
+    s += sizeof(Function);
 
-    for (size_t k = 0; k < hdr->num_objects; k++)
+    // Object look up table
+    s += sizeof(uint8_t) + hdr->objects_lut.size;
+
+    // Properties look up table
+    s += sizeof(uint8_t) + hdr->props_lut.size;
+
+    const size_t base_size = sizeof(COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE) +
+                             sizeof(COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE);
+
+    for (size_t k = 0; k < hdr->obj_idx; k++)
     {
-        s = s + sizeof(uint16_t) + sizeof(uint8_t) + hdr->values[k].num_bytes;
+        s += base_size + hdr->objects[k].num_bytes;
     }
+
+    for (size_t k = 0; k < hdr->prop_idx; k++)
+    {
+        s += base_size + hdr->props[k].num_bytes;
+    }
+
+    s += NUM_FLAGS;
 
     return s;
 }
 
 void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const buffer)
 {
-    size_t idx = 2U;
-    buffer[0] = (uint8_t)(hdr->num_objects);
-    buffer[1] = (uint8_t)(hdr->function);
+    // #define COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE uint16_t
+    // enum class CommunicationHeaderObjectType : uint16_t
 
-    const CommunicationHeaderObject* const values = hdr->values;
+    size_t idx = 0U;
+    buffer[idx] = (uint8_t)(hdr->obj_idx);
+    idx++;
 
-    for (size_t k = 0; k < hdr->num_objects; k++)
+    buffer[idx] = (uint8_t)(hdr->prop_idx);
+    idx++;
+
+    buffer[idx] = (uint8_t)(hdr->function);
+    idx++;
+
+    // Objects look up table
+    buffer[idx] = (uint8_t)(hdr->objects_lut.size);
+    idx++;
+
+    memcpy(buffer + idx, hdr->objects_lut.data, hdr->objects_lut.size);
+    idx += hdr->objects_lut.size;
+
+    // Properties look up table
+    buffer[idx] = (uint8_t)(hdr->props_lut.size);
+    idx++;
+
+    memcpy(buffer + idx, hdr->props_lut.data, hdr->props_lut.size);
+    idx += hdr->props_lut.size;
+
+    const CommunicationHeaderObject* const objects = hdr->objects;
+
+    for (size_t k = 0; k < hdr->obj_idx; k++)
     {
-        memcpy(&(buffer[idx]), &(values[k].type), sizeof(uint16_t));
-        idx += sizeof(uint16_t);
+        memcpy(&(buffer[idx]), &(objects[k].type), sizeof(COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE));
+        idx += sizeof(COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE);
 
-        memcpy(&(buffer[idx]), &(values[k].num_bytes), sizeof(uint8_t));
-        idx += sizeof(uint8_t);
+        memcpy(
+            &(buffer[idx]), &(objects[k].num_bytes), sizeof(COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE));
+        idx += sizeof(COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE);
 
-        memcpy(&(buffer[idx]), values[k].data, values[k].num_bytes);
-        idx += values[k].num_bytes;
+        memcpy(&(buffer[idx]), objects[k].data, objects[k].num_bytes);
+        idx += objects[k].num_bytes;
     }
+
+    memcpy(buffer + idx, hdr->flags, NUM_FLAGS);
 }
 
 void sendHeaderAndByteArray(SendFunction send_function,
