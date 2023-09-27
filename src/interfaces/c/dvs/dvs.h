@@ -37,7 +37,7 @@ void plotFunction2D(
     APPEND_OBJ(&hdr, CHOT_DATA_TYPE, x->data_type, uint8_t);
     APPEND_OBJ(&hdr, CHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
 
-    // APPEND_PROPERTIES(hdr, first_prop);
+    APPEND_PROPERTIES(hdr, first_prop);
 
     sendHeaderAndTwoVectors(getSendFunction(), x, y, &hdr);
 }

@@ -113,7 +113,7 @@ int countNumHeaderBytes(const CommunicationHeader* const hdr)
     // props there will be in the buffer
     size_t s = 2;
 
-    s += sizeof(Function);
+    s += sizeof(uint8_t);
 
     // Object look up table
     s += sizeof(uint8_t) + hdr->objects_lut.size;
@@ -141,9 +141,6 @@ int countNumHeaderBytes(const CommunicationHeader* const hdr)
 
 void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const buffer)
 {
-    // #define COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE uint16_t
-    // enum class CommunicationHeaderObjectType : uint16_t
-
     size_t idx = 0U;
     buffer[idx] = (uint8_t)(hdr->obj_idx);
     idx++;
@@ -168,6 +165,7 @@ void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const b
     memcpy(buffer + idx, hdr->props_lut.data, hdr->props_lut.size);
     idx += hdr->props_lut.size;
 
+    // Objects
     const CommunicationHeaderObject* const objects = hdr->objects;
 
     for (size_t k = 0; k < hdr->obj_idx; k++)
@@ -183,6 +181,21 @@ void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const b
         idx += objects[k].num_bytes;
     }
 
+    // Properties
+    const CommunicationHeaderObject* const props = hdr->props;
+
+    for (size_t k = 0; k < hdr->prop_idx; k++)
+    {
+        memcpy(&(buffer[idx]), &(props[k].type), sizeof(COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE));
+        idx += sizeof(COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE);
+
+        memcpy(&(buffer[idx]), &(props[k].num_bytes), sizeof(COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE));
+        idx += sizeof(COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE);
+
+        memcpy(&(buffer[idx]), props[k].data, props[k].num_bytes);
+        idx += props[k].num_bytes;
+    }
+
     memcpy(buffer + idx, hdr->flags, NUM_FLAGS);
 }
 
@@ -195,7 +208,7 @@ void sendHeaderAndByteArray(SendFunction send_function,
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
-    const uint64_t num_bytes = num_bytes_from_array + num_bytes_hdr + 1 + 2 * sizeof(uint64_t);
+    const uint64_t num_bytes = num_bytes_from_array + num_bytes_hdr + 1U + 2U * sizeof(uint64_t);
 
     uint8_t* const data_blob = malloc(num_bytes);
 
@@ -203,13 +216,13 @@ void sendHeaderAndByteArray(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
+    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(&(data_blob[idx]), array, num_bytes_from_array);
@@ -231,7 +244,8 @@ void sendHeaderAndTwoByteArrays(SendFunction send_function,
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
-    const uint64_t num_bytes = num_bytes_from_array0 + num_bytes_from_array1 + num_bytes_hdr + 1 + 2 * sizeof(uint64_t);
+    const uint64_t num_bytes =
+        num_bytes_from_array0 + num_bytes_from_array1 + num_bytes_hdr + 1U + 2U * sizeof(uint64_t);
 
     uint8_t* const data_blob = malloc(num_bytes);
 
@@ -239,13 +253,13 @@ void sendHeaderAndTwoByteArrays(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
+    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(&(data_blob[idx]), array0, num_bytes_from_array0);
@@ -267,11 +281,11 @@ void sendHeaderAndTwoVectors(SendFunction send_function,
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_vector = x->num_elements * x->num_bytes_per_element;
 
-    const uint64_t num_bytes_from_object = 2 * num_bytes_one_vector + num_bytes_hdr;
+    const uint64_t num_bytes_from_object = 2U * num_bytes_one_vector + num_bytes_hdr;
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
-    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
+    const uint64_t num_bytes = num_bytes_from_object + 1U + 2U * sizeof(uint64_t);
 
     uint8_t* const data_blob = malloc(num_bytes);
 
@@ -279,19 +293,19 @@ void sendHeaderAndTwoVectors(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
+    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
-    memcpy(&(data_blob[idx]), x->data, num_bytes_one_vector);
+    memcpy(data_blob + idx, x->data, num_bytes_one_vector);
     idx += num_bytes_one_vector;
 
-    memcpy(&(data_blob[idx]), y->data, num_bytes_one_vector);
+    memcpy(data_blob + idx, y->data, num_bytes_one_vector);
     idx += num_bytes_one_vector;
 
     send_function(data_blob, num_bytes);
@@ -308,11 +322,11 @@ void sendHeaderAndThreeMatrices(SendFunction send_function,
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_matrix = x->num_rows * x->num_cols * x->num_bytes_per_element;
 
-    const uint64_t num_bytes_from_object = 3 * num_bytes_one_matrix + num_bytes_hdr;
+    const uint64_t num_bytes_from_object = 3U * num_bytes_one_matrix + num_bytes_hdr;
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
-    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
+    const uint64_t num_bytes = num_bytes_from_object + 1U + 2U * sizeof(uint64_t);
 
     uint8_t* const data_blob = malloc(num_bytes);
 
@@ -320,13 +334,13 @@ void sendHeaderAndThreeMatrices(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
+    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(&(data_blob[idx]), x->data, num_bytes_one_matrix);
@@ -356,7 +370,7 @@ void sendHeaderAndThreeVectors(SendFunction send_function,
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
-    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
+    const uint64_t num_bytes = num_bytes_from_object + 1U + 2U * sizeof(uint64_t);
 
     uint8_t* const data_blob = malloc(num_bytes);
 
@@ -364,13 +378,13 @@ void sendHeaderAndThreeVectors(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
+    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(&(data_blob[idx]), x->data, num_bytes_one_vector);
@@ -393,7 +407,7 @@ void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
-    const uint64_t num_bytes = num_bytes_hdr + 1 + 2 * sizeof(uint64_t);
+    const uint64_t num_bytes = num_bytes_hdr + 1U + 2U * sizeof(uint64_t);
 
     uint8_t* const data_blob = malloc(num_bytes);
 
@@ -401,13 +415,13 @@ void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(&(data_blob[idx]), &kMagicNumber, sizeof(uint64_t));
+    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    memcpy(&(data_blob[sizeof(uint64_t) + 1]), &num_bytes, sizeof(uint64_t));
+    memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, &(data_blob[idx]));
+    fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     send_function(data_blob, num_bytes);

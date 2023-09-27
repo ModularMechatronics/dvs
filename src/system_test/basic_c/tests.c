@@ -12,7 +12,11 @@ void testPlot()
 
     setCurrentElement("p_view_0");
     clearView();
-    plot(x, y, Color(255, 0, 11));
+    const Vec3d min_vec = {-1.0, -1.0, -1.0};
+    const Vec3d max_vec = {1.0, 1.0, 2.0};
+    axis(min_vec, max_vec);
+
+    plot(x, y, Color(0, 0, 255), LineWidth(53));
 }
 
 void testPlot3()
@@ -22,7 +26,7 @@ void testPlot3()
     VectorF y = vector_sinF(x);
     VectorF z = vector_cosF(x);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     plot3(x, y, z, Color(255, 0, 11));
 }
@@ -33,9 +37,9 @@ void testScatter()
     VectorF x = vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
     VectorF y = vector_sinF(x);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
-    scatter(x, y, Color(255, 0, 11));
+    scatter(x, y, Color(0, 0, 255), PointSize(10));
 }
 
 void testScatter3()
@@ -45,7 +49,7 @@ void testScatter3()
     VectorF y = vector_sinF(x);
     VectorF z = vector_cosF(x);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     scatter3(x, y, z, Color(255, 0, 11));
 }
@@ -61,9 +65,14 @@ void testSurf()
     const MatrixD ry = matrix_cosD(y);
     const MatrixD z = matrix_elementWiseMultiplyD(rx, ry);
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
-    surf(x, y, z, Color(255, 0, 11));
+
+    for (size_t k = 0; k < 40; k++)
+    {
+        printf("k: %zu\n", k);
+        surf(x, y, z, Alpha(0.7f, 9));
+    }
 
     free(x.data);
     free(y.data);
@@ -93,7 +102,7 @@ void testDrawLine3D()
 
     const Line3DD line = {p0, p1};
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     drawLine3D(line, -1.3, 3.4, Color(255, 0, 11));
 }
@@ -105,7 +114,7 @@ void testDrawLine2D()
 
     const PLine2DD line = {p0, p1};
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     drawLine2D(line, -1.3, 3.4, Color(255, 0, 11));
 }
@@ -116,7 +125,7 @@ void testDrawPlaneXY()
     const PointXYd p0 = {0.0, 0.0};
     const PointXYd p1 = {1.0, 1.0};
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     drawPlaneXY(plane, p0, p1, Color(255, 0, 11));
 }
@@ -176,7 +185,7 @@ void testImShow()
         }
     }
 
-    setCurrentElement("view_00");
+    setCurrentElement("p_view_0");
     clearView();
     imShow(img3, Color(255, 0, 11));
 
@@ -194,7 +203,7 @@ void testImShow()
     const Point2d p0_2 = {p0.x, p0.y};
     const Point2d p1_2 = {p1.x, p1.y};
 
-    setCurrentElement("view_00");  // TODO: <- Move to setup
+    setCurrentElement("p_view_0");  // TODO: <- Move to setup
     clearView();
     drawLineBetweenPoints(p0, p1, Color(255, 0, 11));
     drawLineBetween2DPoints(p0_2, p1_2, Color(255, 0, 11));

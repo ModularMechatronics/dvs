@@ -141,7 +141,7 @@ typedef enum S_DataType
     DT_UNKNOWN
 } DataType;
 
-typedef enum S_ColorMap
+typedef enum S_ColorMapT
 {
     CM_JET,
     CM_HSV,
@@ -151,7 +151,7 @@ typedef enum S_ColorMap
     CM_JET_SOFT,
     CM_JET_BRIGHT,
     CM_UNKNOWN
-} ColorMap;
+} ColorMapT;
 
 typedef enum S_DistanceFromType
 {
