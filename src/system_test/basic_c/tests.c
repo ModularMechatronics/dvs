@@ -68,11 +68,7 @@ void testSurf()
     setCurrentElement("p_view_0");
     clearView();
 
-    for (size_t k = 0; k < 40; k++)
-    {
-        printf("k: %zu\n", k);
-        surf(x, y, z, Alpha(0.7f, 9));
-    }
+    surf(x, y, z, Alpha(0.7f));
 
     free(x.data);
     free(y.data);

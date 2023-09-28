@@ -105,21 +105,21 @@ void imShowFunction(const ImageC3* const img, const CommunicationHeaderObject fi
                            &hdr);
 }
 
-#define imShow(img, ...) imShowFunction((ImageC3*)&img, __VA_ARGS__, getLastCommHdrObj())
+#define imShow(img, ...) imShowFunction((ImageC3*)&img, ##__VA_ARGS__, getLastCommHdrObj())
 
-#define drawMesh(vertices, indices, ...) drawMeshFunction(vertices, indices, __VA_ARGS__, getLastCommHdrObj())
+#define drawMesh(vertices, indices, ...) drawMeshFunction(vertices, indices, ##__VA_ARGS__, getLastCommHdrObj())
 
-#define surf(x, y, z, ...) surfFunction((Matrix*)&x, (Matrix*)&y, (Matrix*)&z, __VA_ARGS__, getLastCommHdrObj())
+#define surf(x, y, z, ...) surfFunction((Matrix*)&x, (Matrix*)&y, (Matrix*)&z, ##__VA_ARGS__, getLastCommHdrObj())
 
-#define plot(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_PLOT2, __VA_ARGS__, getLastCommHdrObj())
+#define plot(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_PLOT2, ##__VA_ARGS__, getLastCommHdrObj())
 
-#define scatter(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_SCATTER2, __VA_ARGS__, getLastCommHdrObj())
+#define scatter(x, y, ...) plotFunction2D((Vector*)&x, (Vector*)&y, F_SCATTER2, ##__VA_ARGS__, getLastCommHdrObj())
 
 #define plot3(x, y, z, ...) \
-    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, __VA_ARGS__, getLastCommHdrObj())
+    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, ##__VA_ARGS__, getLastCommHdrObj())
 
 #define scatter3(x, y, z, ...) \
-    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, __VA_ARGS__, getLastCommHdrObj())
+    plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, ##__VA_ARGS__, getLastCommHdrObj())
 
 void setCurrentElement(const char* const name)
 {

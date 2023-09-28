@@ -13,12 +13,6 @@ const uint64_t kMagicNumber = 0xdeadbeefcafebabe;
 const uint64_t kMaxNumBytesForOneTransmission = 1380;
 const uint64_t kTcpPortNum = 9755;
 
-int checkAck(char data[256])
-{
-    const int ack_received = data[0] == 'a' && data[1] == 'c' && data[2] == 'k' && data[3] == '#' && data[4] == '\0';
-    return ack_received;
-}
-
 uint8_t isBigEndian()
 {
     const uint32_t x = 1;

@@ -135,14 +135,14 @@ CommunicationHeaderObject ColorMapJetBright()
     return hdr_obj;
 }
 
-CommunicationHeaderObject Alpha(const float alpha, int n)
+CommunicationHeaderObject Alpha(const float alpha)
 {
     CommunicationHeaderObject hdr_obj;
 
     hdr_obj.type = CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(PROPERTY_TYPE_SERIALIZATION_TYPE) + 40U;
     hdr_obj.data[0] = (PROPERTY_TYPE_SERIALIZATION_TYPE)PT_ALPHA;
-    memcpy(hdr_obj.data + n, &alpha, sizeof(float));
+    memcpy(hdr_obj.data + 12U, &alpha, sizeof(float));
 
     return hdr_obj;
 }
