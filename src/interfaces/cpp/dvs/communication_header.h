@@ -640,21 +640,6 @@ public:
         extendInternal(other_objects...);
     }
 
-    void extendWithHeader(const CommunicationHeader& other_header)
-    {
-        for (size_t k = 0; k < other_header.objects_.usedSize(); k++)
-        {
-            const CommunicationHeaderObject& current_obj = other_header.objects_[k];
-            if (std::find_if(
-                    objects_.begin(), objects_.end(), [&current_obj](const CommunicationHeaderObject& this_obj) {
-                        return this_obj.type == current_obj.type;
-                    }) == objects_.end())
-            {
-                objects_.pushBack(current_obj);
-            }
-        }
-    }
-
     bool hasObjectWithType(const CommunicationHeaderObjectType tp) const
     {
         return objects_lut_.data[static_cast<uint8_t>(tp)] != 255;
