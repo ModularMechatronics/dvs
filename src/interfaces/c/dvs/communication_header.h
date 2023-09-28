@@ -11,10 +11,12 @@
 
 #define kMaxNumHeaderObjects 30
 
+#define COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE ((uint8_t)(CHOT_UNKNOWN) + 1U)
+#define PROPERTY_LOOKUP_TABLE_SIZE ((uint8_t)(PT_UNKNOWN) + 1U)
+
 typedef struct S_CommunicationHeaderObjectLookupTable
 {
-    uint8_t size;
-    uint8_t data[(uint8_t)(CHOT_UNKNOWN) + 1U];
+    uint8_t data[COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE];
 
 } CommunicationHeaderObjectLookupTable;
 
@@ -22,8 +24,7 @@ typedef struct S_CommunicationHeaderObjectLookupTable
 
 void initCommunicationHeaderObjectLookupTable(CommunicationHeaderObjectLookupTable* const lut)
 {
-    lut->size = (uint8_t)(CHOT_UNKNOWN) + 1U;
-    memset(lut->data, 255U, lut->size);
+    memset(lut->data, 255U, COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE);
 }
 
 void appendObjectIndexToCommunicationHeaderObjectLookupTable(CommunicationHeaderObjectLookupTable* const lut,
@@ -35,14 +36,12 @@ void appendObjectIndexToCommunicationHeaderObjectLookupTable(CommunicationHeader
 
 typedef struct S_PropertyLookupTable
 {
-    uint8_t size;
-    uint8_t data[(uint8_t)(PT_UNKNOWN) + 1U];
+    uint8_t data[PROPERTY_LOOKUP_TABLE_SIZE];
 } PropertyLookupTable;
 
 void initPropertyLookupTable(PropertyLookupTable* const lut)
 {
-    lut->size = (uint8_t)(PT_UNKNOWN) + 1U;
-    memset(lut->data, 255U, lut->size);
+    memset(lut->data, 255U, PROPERTY_LOOKUP_TABLE_SIZE);
 }
 
 void appendPropertyIndexToPropertyLookupTable(PropertyLookupTable* const props_lut,

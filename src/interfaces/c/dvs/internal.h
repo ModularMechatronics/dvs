@@ -110,10 +110,10 @@ int countNumHeaderBytes(const CommunicationHeader* const hdr)
     s += sizeof(uint8_t);
 
     // Object look up table
-    s += sizeof(uint8_t) + hdr->objects_lut.size;
+    s += COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE;
 
     // Properties look up table
-    s += sizeof(uint8_t) + hdr->props_lut.size;
+    s += PROPERTY_LOOKUP_TABLE_SIZE;
 
     const size_t base_size = sizeof(COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE) +
                              sizeof(COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE);
@@ -146,18 +146,12 @@ void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const b
     idx++;
 
     // Objects look up table
-    buffer[idx] = (uint8_t)(hdr->objects_lut.size);
-    idx++;
-
-    memcpy(buffer + idx, hdr->objects_lut.data, hdr->objects_lut.size);
-    idx += hdr->objects_lut.size;
+    memcpy(buffer + idx, hdr->objects_lut.data, COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE);
+    idx += COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE;
 
     // Properties look up table
-    buffer[idx] = (uint8_t)(hdr->props_lut.size);
-    idx++;
-
-    memcpy(buffer + idx, hdr->props_lut.data, hdr->props_lut.size);
-    idx += hdr->props_lut.size;
+    memcpy(buffer + idx, hdr->props_lut.data, PROPERTY_LOOKUP_TABLE_SIZE);
+    idx += PROPERTY_LOOKUP_TABLE_SIZE;
 
     // Objects
     const CommunicationHeaderObject* const objects = hdr->objects;

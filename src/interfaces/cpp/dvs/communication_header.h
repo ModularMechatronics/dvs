@@ -169,12 +169,13 @@ template <typename T> DataType typeToDataTypeEnum()
 
 struct CommunicationHeaderObjectLookupTable
 {
-    uint8_t size;
-    uint8_t data[static_cast<uint8_t>(CommunicationHeaderObjectType::UNKNOWN) + 1];
+    static constexpr std::uint8_t kTableSize{static_cast<uint8_t>(CommunicationHeaderObjectType::UNKNOWN) + 1U};
 
-    CommunicationHeaderObjectLookupTable() : size{static_cast<uint8_t>(CommunicationHeaderObjectType::UNKNOWN) + 1}
+    uint8_t data[kTableSize];
+
+    CommunicationHeaderObjectLookupTable()
     {
-        std::memset(data, static_cast<uint8_t>(255U), static_cast<uint8_t>(CommunicationHeaderObjectType::UNKNOWN) + 1);
+        std::memset(data, static_cast<uint8_t>(255U), kTableSize);
     }
 
     void appendObjectIndex(const CommunicationHeaderObjectType type, const uint8_t idx)
@@ -185,10 +186,11 @@ struct CommunicationHeaderObjectLookupTable
 
 struct PropertyLookupTable
 {
-    uint8_t size;
-    uint8_t data[static_cast<uint8_t>(PropertyType::UNKNOWN) + 1];
+    static constexpr std::uint8_t kTableSize{static_cast<uint8_t>(PropertyType::UNKNOWN) + 1U};
 
-    PropertyLookupTable() : size{static_cast<uint8_t>(PropertyType::UNKNOWN) + 1}
+    uint8_t data[kTableSize];
+
+    PropertyLookupTable()
     {
         this->clear();
     }
@@ -200,7 +202,7 @@ struct PropertyLookupTable
 
     void clear()
     {
-        std::memset(data, static_cast<uint8_t>(255U), static_cast<uint8_t>(PropertyType::UNKNOWN) + 1);
+        std::memset(data, static_cast<uint8_t>(255U), kTableSize);
     }
 };
 
@@ -496,18 +498,12 @@ public:
         idx += sizeof(function_);
 
         // Header Look Up Table
-        std::memcpy(&(objects_lut_.size), buffer + idx, sizeof(objects_lut_.size));
-        idx += sizeof(objects_lut_.size);
-
-        std::memcpy(objects_lut_.data, buffer + idx, objects_lut_.size);
-        idx += objects_lut_.size;
+        std::memcpy(objects_lut_.data, buffer + idx, CommunicationHeaderObjectLookupTable::kTableSize);
+        idx += CommunicationHeaderObjectLookupTable::kTableSize;
 
         // Properties Look Up Table
-        std::memcpy(&(properties_lut_.size), buffer + idx, sizeof(properties_lut_.size));
-        idx += sizeof(properties_lut_.size);
-
-        std::memcpy(properties_lut_.data, buffer + idx, properties_lut_.size);
-        idx += properties_lut_.size;
+        std::memcpy(properties_lut_.data, buffer + idx, PropertyLookupTable::kTableSize);
+        idx += PropertyLookupTable::kTableSize;
 
         uint8_t num_objects = 0;
 
@@ -549,11 +545,9 @@ public:
 
         fillable_array.fillWithStaticType(function_);
 
-        fillable_array.fillWithStaticType(objects_lut_.size);
-        fillable_array.fillWithDataFromPointer(objects_lut_.data, objects_lut_.size);
+        fillable_array.fillWithDataFromPointer(objects_lut_.data, CommunicationHeaderObjectLookupTable::kTableSize);
 
-        fillable_array.fillWithStaticType(properties_lut_.size);
-        fillable_array.fillWithDataFromPointer(properties_lut_.data, properties_lut_.size);
+        fillable_array.fillWithDataFromPointer(properties_lut_.data, PropertyLookupTable::kTableSize);
 
         for (size_t k = 0; k < objects_.usedSize(); k++)
         {
@@ -579,8 +573,8 @@ public:
         size_t s = 2;
 
         s += sizeof(function_);
-        s += sizeof(CommunicationHeaderObjectLookupTable::size) + objects_lut_.size;
-        s += sizeof(PropertyLookupTable::size) + properties_lut_.size;
+        s += CommunicationHeaderObjectLookupTable::kTableSize;
+        s += PropertyLookupTable::kTableSize;
 
         constexpr size_t base_size{sizeof(CommunicationHeaderObjectType) + sizeof(CommunicationHeaderObject::size)};
 
@@ -668,7 +662,7 @@ public:
 
     CommunicationHeaderObject get(const CommunicationHeaderObjectType tp) const
     {
-        DVS_ASSERT(static_cast<uint8_t>(tp) < objects_lut_.size);
+        DVS_ASSERT(static_cast<uint8_t>(tp) < CommunicationHeaderObjectLookupTable::kTableSize);
         const uint8_t idx = objects_lut_.data[static_cast<uint8_t>(tp)];
         if (idx == 255)
         {
