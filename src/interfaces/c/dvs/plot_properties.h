@@ -137,6 +137,11 @@ CommunicationHeaderObject ColorMapJetBright()
 
 CommunicationHeaderObject Alpha(const float alpha)
 {
+    // TODO: Alignment of data needs to be generalized and not hard coded
+    // Currently for some reason the Property data in C++
+    // is aligned so that it first skips 8 bytes, then 1 byte for
+    // property type, then 3 bytes for 4 byte alignment if it is a float,
+    // so for Alpha it starts at 12, but for 1 byte data it starts at 9
     CommunicationHeaderObject hdr_obj;
 
     hdr_obj.type = CHOT_PROPERTY;

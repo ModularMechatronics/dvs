@@ -3,11 +3,12 @@ import sys
 
 FUNCTION_NAMES = [q for q in main_tests.__dir__() if q.startswith("test_")]
 
+# Stand in folder python/test_applications/basic_tests to execute this file
 
 def print_help():
     print("Usage:")
-    print(
-        f'python3 main.py [{", ".join(FUNCTION_NAMES + ["all"])}]')
+    stripped_function_names = [q.replace("test_", "") for q in FUNCTION_NAMES if "test_" in q]
+    print(f'python3 main.py [{", ".join(stripped_function_names + ["all"])}]')
 
 
 if __name__ == "__main__":

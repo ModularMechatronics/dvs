@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import socket
 from typing import List, Union
+import struct
 
 from enums import *
 from constants import *
@@ -53,9 +54,10 @@ def np_data_type_to_data_type(dt: type):
 
 class CommunicationHeader:
 
-    def __init__(self):
+    def __init__(self, function):
         self.properties = {}
         self.settings = {}
+        self.function = function
 
     def append(self, setting_name, setting_value):
         self.settings[setting_name] = setting_value
@@ -71,12 +73,42 @@ class CommunicationHeader:
                 print("Argument {} not a valid property".format(key))
 
     def num_bytes(self):
-        total_size = 0
-        for key, val in self.properties.items():
+
+        """
+        // 2 for first two bytes, that indicates how many objects and
+        // props there will be in the buffer
+        size_t s = 2;
+
+        s += sizeof(function_);
+        s += sizeof(CommunicationHeaderObjectLookupTable::size) + objects_lut_.size;
+        s += sizeof(PropertyLookupTable::size) + properties_lut_.size;
+
+        constexpr size_t base_size{sizeof(CommunicationHeaderObjectType) + sizeof(CommunicationHeaderObject::size)};
+
+        for (size_t k = 0; k < objects_.usedSize(); k++)
+        {
+            s = s + base_size + objects_[k].size;
+        }
+
+        for (size_t k = 0; k < props_.usedSize(); k++)
+        {
+            s = s + base_size + props_[k].size;
+        }
+
+        s += kNumFlags;
+
+        return s;
+        """
+        total_size = 2
+        FUNCTION_ENCODING_SIZE = 1
+
+        total_size += FUNCTION_ENCODING_SIZE
+        
+        for key, _ in self.properties.items():
             # + 2 for CommunicationHeaderObjectType, + 1 for num bytes of setting, + 1 for type of property
             total_size += SIZE_OF_PROPERTY[key] + 2 + 1 + 1
 
-        for key, val in self.settings.items():
+        for key, _ in self.settings.items():
             # + 2 for CommunicationHeaderObjectType, + 1 for num bytes of setting
             total_size += SIZE_OF_FUNCTION_HEADER_OBJECT[key] + 2 + 1
 
@@ -126,6 +158,19 @@ while (num_sent_bytes < num_bytes)
 }
 """
 
+def send_with_tcp(bts: bytearray):
+
+    TCP_IP = "127.0.0.1"
+    PORT_NUM = 9755
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((TCP_IP, PORT_NUM))
+
+    num_bytes_to_send = np.uint64(len(bts))
+
+    sock.send(struct.pack('<Q', num_bytes_to_send))
+    sock.send(bts)
+    
 
 def send_with_udp(bts: bytearray):
 
@@ -191,6 +236,33 @@ def send_header(send_fcn, hdr, *args):
 
 
 def send_header_and_data(send_fcn, hdr, *args):
+
+    """
+    const uint64_t num_bytes_hdr = hdr.numBytes();
+    const uint64_t num_bytes_first = first_element.numBytes();
+
+    const uint64_t num_bytes_from_object = countNumBytes(other_elements...) + num_bytes_hdr + num_bytes_first;
+
+    // + 1 bytes for endianness byte
+    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
+    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
+
+    FillableUInt8Array fillable_array{num_bytes};
+
+    fillable_array.fillWithStaticType(isBigEndian());
+
+    fillable_array.fillWithStaticType(kMagicNumber);
+
+    fillable_array.fillWithStaticType(num_bytes);
+
+    hdr.fillBufferWithData(fillable_array);
+
+    fillable_array.fillWithDataFromPointer(first_element.data(), first_element.numElements());
+
+    fillBuffer(fillable_array, other_elements...);
+
+    send_function(fillable_array.view());
+    """
     total_num_bytes = hdr.num_bytes()
 
     for arg in args:
@@ -226,11 +298,11 @@ def axis(min_vec: Union[Vec2D, Vec3D], max_vec: Union[Vec2D, Vec3D]):
     send_header(send_with_udp, hdr)
 
 
-def view(azimuth, elevation):
+def view(azimuth_deg, elevation_deg):
     hdr = CommunicationHeader()
     hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.VIEW)
-    hdr.append(CommunicationHeaderObjectType.AZIMUTH, azimuth)
-    hdr.append(CommunicationHeaderObjectType.ELEVATION, elevation)
+    hdr.append(CommunicationHeaderObjectType.AZIMUTH, azimuth_deg)
+    hdr.append(CommunicationHeaderObjectType.ELEVATION, elevation_deg)
     send_header(send_with_udp, hdr)
 
 
@@ -253,27 +325,11 @@ def set_current_element(name: str):
     hdr.append(CommunicationHeaderObjectType.ELEMENT_NAME, name)
     send_header(send_with_udp, hdr)
 
-
-def hold_on(name: str):
-
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.HOLD_ON)
-    send_header(send_with_udp, hdr)
-
-
-def hold_off(name: str):
-
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.HOLD_OFF)
-    send_header(send_with_udp, hdr)
-
 ####### Plot functions #######
-
 
 def plot(x: np.array, y: np.array, **properties):
 
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.PLOT2)
+    hdr = CommunicationHeader(Function.PLOT2)
     hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
 
     if len(x.shape) == 2:
@@ -285,7 +341,7 @@ def plot(x: np.array, y: np.array, **properties):
 
     hdr.append_properties(properties)
 
-    send_header_and_data(send_with_udp, hdr, x, y)
+    send_header_and_data(send_with_tcp, hdr, x, y)
 
 
 def plot3(x: np.array, y: np.array, z: np.array, **properties):
@@ -376,134 +432,5 @@ def imshow(img: np.array, **properties):
     send_header_and_data(send_with_udp, hdr, img)
 
 
-def draw_polygon_from_4_points(p0: Point3D, p1: Point3D, p2: Point3D, p3: Point3D, **properties):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION,
-               Function.POLYGON_FROM_4_POINTS)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, 4)
-
-    hdr.append(CommunicationHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
-
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, p0, p1, p2, p3)
-
-
-def draw_triangle(triangle: Triangle3D, **properties):
-
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION,
-               Function.DRAW_TRIANGLES_3D)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, 1)
-    hdr.append(CommunicationHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
-
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, triangle)
-
-
-def draw_triangles(triangles: List[Triangle3D], **properties):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.DRAW_TRIANGLES_3D)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, len(triangles))
-    # hdr.append(CommunicationHeaderObjectType.DATA_TYPE, ) TODO
-
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, triangles)
-
-
 def draw_mesh(points: List[Point3D], indices: List[IndexTriplet], **properties):
     pass
-
-
-def draw_plane_xy(plane: Plane, p0: PointXY, p1: PointXY, **properties):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION,
-               Function.PLANE_XY)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, 2)
-    hdr.append(CommunicationHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
-
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, p0, p1, plane)
-
-
-def draw_plane_xz(plane: Plane, p0: PointXZ, p1: PointXZ, **properties):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION,
-               Function.PLANE_XZ)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, 2)
-    hdr.append(CommunicationHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
-
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, p0, p1, plane)
-
-
-def draw_plane_yz(plane: Plane, p0: PointYZ, p1: PointYZ, **properties):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION,
-               Function.PLANE_YZ)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, 2)
-    hdr.append(CommunicationHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
-
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, p0, p1, plane)
-
-
-def draw_line(line: Line3D, t0: np.float64, t1: np.float64, **properties):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION,
-               Function.DRAW_LINE3D)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, 0)
-    hdr.append(CommunicationHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
-
-    hdr.append_properties(properties)
-
-    p0 = line.eval(t0)
-    p1 = line.eval(t1)
-
-    send_header_and_data(send_with_udp, hdr, p0, p1)
-
-
-def draw_line_2d(line: PLine2D, t0: np.float64, t1: np.float64, **properties):
-
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION,
-               Function.DRAW_LINE3D)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, 0)
-    hdr.append(CommunicationHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
-
-    hdr.append_properties(properties)
-
-    p0_2d = line.eval(t0)
-    p1_2d = line.eval(t1)
-    p0 = Point3D(p0_2d.x, p0_2d.y, 0.0)
-    p1 = Point3D(p1_2d.x, p1_2d.y, 0.0)
-
-    send_header_and_data(send_with_udp, hdr, p0, p1)
-
-
-def draw_line_between_points(p0: Union[Point2D, Point3D], p1: Union[Point2D, Point3D], **properties):
-
-    assert(type(p0) == type(p1))
-
-    hdr = CommunicationHeader()
-
-    if type(p0) == Point3D:
-        p0_u = p0
-        p1_u = p1
-    else:
-        p0_u = Point3D(p0.x, p0.y, 0.0)
-        p1_u = Point3D(p1.x, p1.y, 0.0)
-        
-    hdr.append(CommunicationHeaderObjectType.FUNCTION,
-               Function.DRAW_LINE3D)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, 0)
-    hdr.append(CommunicationHeaderObjectType.DATA_TYPE, DataType.DOUBLE)
-
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, p0_u, p1_u)
