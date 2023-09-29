@@ -4,6 +4,22 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+template <typename T, typename Y> Y getPropertyOrValue(const Y& alternative_value) const
+{
+    const dvs::internal::PropertyType tp = templateToPropertyType<T>();
+
+    const uint8_t idx = props_lut_.data[static_cast<uint8_t>(tp)];
+
+    if (idx == 255U)
+    {
+        return alternative_value;
+    }
+    else
+    {
+        return props_[idx].as<T>().data;
+    }
+}
+
 void extendWithHeader(const CommunicationHeader& other_header)
 {
     for (size_t k = 0; k < other_header.objects_.usedSize(); k++)

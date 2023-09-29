@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "dvs/base_types.h"
+#include "dvs/communication_header_object.h"
 #include "dvs/constants.h"
 #include "dvs/enumerations.h"
 #include "dvs/fillable_uint8_array.h"
@@ -31,32 +32,6 @@ template <typename T> uint32_t toUInt32(const T v)
 {
     return static_cast<uint32_t>(v);
 }
-
-struct CommunicationHeaderObject
-{
-    CommunicationHeaderObjectType type;
-    uint8_t size;
-    uint8_t data[kCommunicationHeaderObjectDataSize];
-
-    CommunicationHeaderObject() : type{CommunicationHeaderObjectType::UNKNOWN}, size{0U} {}
-    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type) : type{input_type}, size{0U} {}
-
-    template <typename U>
-    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const U& input_data)
-        : type{input_type}, size{sizeof(U)}
-    {
-        static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
-        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), size);
-    }
-
-    template <typename T> T as() const
-    {
-        T out_val;
-        std::memcpy(reinterpret_cast<uint8_t*>(&out_val), data, sizeof(T));
-
-        return out_val;
-    }
-};
 
 inline uint8_t dataTypeToNumBytes(const DataType data_type)
 {
@@ -256,11 +231,6 @@ public:
             used_size_ = 0;
         }
 
-        bool isEmpty() const
-        {
-            return used_size_ > 0;
-        }
-
         void setUsedSize(const int16_t new_size)
         {
             if (new_size > N)
@@ -442,21 +412,7 @@ private:
         DVS_ASSERT(false);  // TODO: Ugly
     }
 
-    // TODO: Remove or move to lambda
-    template <typename T> void fillObjectFromBuffer(T& obj, size_t& idx, const uint8_t* const buffer)
-    {
-        std::memcpy(&(obj.type), buffer + idx, sizeof(CommunicationHeaderObjectType));
-        idx += sizeof(CommunicationHeaderObjectType);
-
-        std::memcpy(&(obj.size), buffer + idx, sizeof(obj.size));
-        idx += sizeof(obj.size);
-
-        std::memcpy(obj.data, buffer + idx, obj.size);
-        idx += obj.size;
-    }
-
 public:
-    // TODO: Split into send and receive comm. header classes?
     CommunicationHeader()
         : objects_{},
           props_{},
@@ -466,6 +422,7 @@ public:
           prop_idx_{0U},
           function_{Function::UNKNOWN}
     {
+        flags_.fill(0U);
     }
 
     CommunicationHeader(const Function& fcn)
@@ -474,7 +431,7 @@ public:
         flags_.fill(0U);
     }
 
-    CommunicationHeader(const UInt8ArrayView received_array_view)
+    CommunicationHeader(const UInt8ArrayView& received_array_view)
         : objects_{},
           props_{},
           objects_lut_{},
@@ -507,11 +464,23 @@ public:
 
         uint8_t num_objects = 0;
 
+        const auto fill_objects_from_buffer =
+            [](CommunicationHeaderObject& obj, size_t& idx, const uint8_t* const buffer) {
+                std::memcpy(&(obj.type), buffer + idx, sizeof(CommunicationHeaderObjectType));
+                idx += sizeof(CommunicationHeaderObjectType);
+
+                std::memcpy(&(obj.size), buffer + idx, sizeof(obj.size));
+                idx += sizeof(obj.size);
+
+                std::memcpy(obj.data, buffer + idx, obj.size);
+                idx += obj.size;
+            };
+
         while (num_objects < num_expected_objects)
         {
             CommunicationHeaderObject& obj = objects_[num_objects];
 
-            fillObjectFromBuffer(obj, idx, buffer);
+            fill_objects_from_buffer(obj, idx, buffer);
 
             num_objects++;
         }
@@ -522,7 +491,7 @@ public:
         {
             CommunicationHeaderObject& obj = props_[num_props];
 
-            fillObjectFromBuffer(obj, idx, buffer);
+            fill_objects_from_buffer(obj, idx, buffer);
 
             num_props++;
         }

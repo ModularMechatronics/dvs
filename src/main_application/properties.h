@@ -95,22 +95,6 @@ public:
         return props_[idx].as<T>();
     }
 
-    template <typename T, typename Y> Y getPropertyOrValue(const Y& alternative_value) const
-    {
-        const dvs::internal::PropertyType tp = templateToPropertyType<T>();
-
-        const uint8_t idx = props_lut_.data[static_cast<uint8_t>(tp)];
-
-        if (idx == 255U)
-        {
-            return alternative_value;
-        }
-        else
-        {
-            return props_[idx].as<T>().data;
-        }
-    }
-
     bool isEmpty() const
     {
         if (props_.usedSize() > 0)
