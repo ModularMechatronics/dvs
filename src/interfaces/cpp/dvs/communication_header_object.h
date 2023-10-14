@@ -10,6 +10,7 @@
 
 #include "dvs/base_types.h"
 #include "dvs/constants.h"
+#include "dvs/encode_decode_functions_defs.h"
 #include "dvs/enumerations.h"
 #include "dvs/fillable_uint8_array.h"
 #include "dvs/logging.h"
@@ -45,47 +46,84 @@ struct CommunicationHeaderObject
     }
 
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const internal::Dimension2D& input_data)
-        : type{input_type}, size{sizeof(Dimension2D)}
+        : type{input_type}, size{2U * sizeof(uint32_t)}
     {
-        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), size);
+        std::memcpy(data, &(input_data.rows), sizeof(uint32_t));
+        std::memcpy(data + sizeof(uint32_t), &(input_data.cols), sizeof(uint32_t));
     }
 
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type,
                               const std::pair<Vec3<double>, Vec3<double>>& input_data)
-        : type{input_type}, size{sizeof(std::pair<Vec3<double>, Vec3<double>>)}
+        : type{input_type}, size{sizeof(double) * 3U * 2U}
     {
-        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), size);
+        size_t idx = 0U;
+
+        std::memcpy(data + idx, &(input_data.first.x), sizeof(double));
+        idx += sizeof(double);
+
+        std::memcpy(data + idx, &(input_data.first.y), sizeof(double));
+        idx += sizeof(double);
+
+        std::memcpy(data + idx, &(input_data.first.z), sizeof(double));
+        idx += sizeof(double);
+
+        std::memcpy(data + idx, &(input_data.second.x), sizeof(double));
+        idx += sizeof(double);
+
+        std::memcpy(data + idx, &(input_data.second.y), sizeof(double));
+        idx += sizeof(double);
+
+        std::memcpy(data + idx, &(input_data.second.z), sizeof(double));
+        idx += sizeof(double);
+    }
+
+    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const ItemId& input_data)
+        : type{input_type}, size{sizeof(uint16_t)}
+    {
+        std::memcpy(data, &(input_data), sizeof(uint16_t));
     }
 
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const internal::DataType& input_data)
-        : type{input_type}, size{sizeof(internal::DataType)}
+        : type{input_type}, size{sizeof(uint8_t)}
     {
-        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), size);
+        data[0U] = static_cast<uint8_t>(input_data);
     }
 
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const Vec3<double>& input_data)
-        : type{input_type}, size{sizeof(Vec3<double>)}
+        : type{input_type}, size{sizeof(double) * 3U}
     {
-        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), size);
+        size_t idx = 0U;
+
+        std::memcpy(data + idx, &(input_data.x), sizeof(double));
+        idx += sizeof(double);
+
+        std::memcpy(data + idx, &(input_data.y), sizeof(double));
+        idx += sizeof(double);
+
+        std::memcpy(data + idx, &(input_data.z), sizeof(double));
+        idx += sizeof(double);
     }
 
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type,
                               const MatrixFixed<double, 3, 3>& input_data)
         : type{input_type}, size{sizeof(MatrixFixed<double, 3, 3>)}
     {
-        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), size);
-    }
+        size_t idx = 0U;
 
-    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const ItemId& input_data)
-        : type{input_type}, size{sizeof(ItemId)}
-    {
-        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), size);
+        for (size_t r = 0; r < 3; r++)
+        {
+            for (size_t c = 0; c < 3; c++)
+            {
+                std::memcpy(data + idx, &(input_data(r, c)), sizeof(double));
+                idx += sizeof(double);
+            }
+        }
     }
 
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const properties::Name& input_data)
-        : type{input_type}, size{sizeof(properties::Name)}
+        : type{input_type}, size{static_cast<uint8_t>(input_data.length + 1U)}
     {
-        std::memcpy(data, reinterpret_cast<const uint8_t* const>(&input_data), size);
+        serializeToCommunicationHeaderObject(*this, input_data);
     }
 
     template <typename T> T as() const
@@ -104,117 +142,157 @@ struct CommunicationHeaderObject
 
     template <> internal::Dimension2D as() const
     {
-        return *reinterpret_cast<const internal::Dimension2D* const>(data);
+        internal::Dimension2D dim;
+        deserializeFromCommunicationHeaderObject(dim, *this);
+        return dim;
     }
 
     template <> std::pair<Vec3<double>, Vec3<double>> as() const
     {
-        return *reinterpret_cast<const std::pair<Vec3<double>, Vec3<double>>* const>(data);
+        std::pair<Vec3<double>, Vec3<double>> pt;
+        deserializeFromCommunicationHeaderObject(pt, *this);
+        return pt;
     }
 
     template <> internal::DataType as() const
     {
-        return *reinterpret_cast<const internal::DataType* const>(data);
+        internal::DataType dt;
+        deserializeFromCommunicationHeaderObject(dt, *this);
+        return dt;
     }
 
     template <> Vec3<double> as() const
     {
-        return *reinterpret_cast<const Vec3<double>* const>(data);
+        Vec3<double> pt;
+        deserializeFromCommunicationHeaderObject(pt, *this);
+        return pt;
     }
 
     template <> MatrixFixed<double, 3, 3> as() const
     {
-        return *reinterpret_cast<const MatrixFixed<double, 3, 3>* const>(data);
+        MatrixFixed<double, 3, 3> mat;
+        deserializeFromCommunicationHeaderObject(mat, *this);
+        return mat;
     }
 
     template <> ItemId as() const
     {
-        return *reinterpret_cast<const ItemId* const>(data);
+        ItemId id;
+        deserializeFromCommunicationHeaderObject(id, *this);
+        return id;
+    }
+
+    // Properties
+    template <> internal::PropertyBase as() const
+    {
+        internal::PropertyBase pb;
+        deserializeFromCommunicationHeaderObject(pb, *this);
+        return pb;
     }
 
     template <> properties::Name as() const
     {
-        return *reinterpret_cast<const properties::Name* const>(data);
-    }
-
-    template <> internal::PropertyBase as() const
-    {
-        return *reinterpret_cast<const internal::PropertyBase* const>(data);
+        properties::Name name;
+        deserializeFromCommunicationHeaderObject(name, *this);
+        return name;
     }
 
     template <> properties::Alpha as() const
     {
-        return *reinterpret_cast<const properties::Alpha* const>(data);
+        properties::Alpha alpha;
+        deserializeFromCommunicationHeaderObject(alpha, *this);
+        return alpha;
     }
 
     template <> properties::LineWidth as() const
     {
-        return *reinterpret_cast<const properties::LineWidth* const>(data);
+        properties::LineWidth lw;
+        deserializeFromCommunicationHeaderObject(lw, *this);
+        return lw;
     }
 
     template <> properties::Color as() const
     {
-        return *reinterpret_cast<const properties::Color* const>(data);
+        properties::Color color;
+        deserializeFromCommunicationHeaderObject(color, *this);
+        return color;
     }
 
     template <> properties::EdgeColor as() const
     {
-        return *reinterpret_cast<const properties::EdgeColor* const>(data);
+        properties::EdgeColor color;
+        deserializeFromCommunicationHeaderObject(color, *this);
+        return color;
     }
 
     template <> properties::FaceColor as() const
     {
-        return *reinterpret_cast<const properties::FaceColor* const>(data);
+        properties::FaceColor color;
+        deserializeFromCommunicationHeaderObject(color, *this);
+        return color;
     }
 
     template <> properties::ScatterStyle as() const
     {
-        return *reinterpret_cast<const properties::ScatterStyle* const>(data);
+        properties::ScatterStyle style;
+        deserializeFromCommunicationHeaderObject(style, *this);
+        return style;
     }
 
     template <> properties::ColorMap as() const
     {
-        return *reinterpret_cast<const properties::ColorMap* const>(data);
+        properties::ColorMap cmap;
+        deserializeFromCommunicationHeaderObject(cmap, *this);
+        return cmap;
+    }
+
+    template <> properties::LineStyle as() const
+    {
+        properties::LineStyle ls;
+        deserializeFromCommunicationHeaderObject(ls, *this);
+        return ls;
     }
 
     template <> properties::PointSize as() const
     {
-        return *reinterpret_cast<const properties::PointSize* const>(data);
+        properties::PointSize ps;
+        deserializeFromCommunicationHeaderObject(ps, *this);
+        return ps;
     }
 
     template <> properties::BufferSize as() const
     {
-        return *reinterpret_cast<const properties::BufferSize* const>(data);
+        properties::BufferSize bs;
+        deserializeFromCommunicationHeaderObject(bs, *this);
+        return bs;
     }
 
     template <> properties::DistanceFrom as() const
     {
-        return *reinterpret_cast<const properties::DistanceFrom* const>(data);
+        properties::DistanceFrom df;
+        deserializeFromCommunicationHeaderObject(df, *this);
+        return df;
     }
 
     template <> properties::ZOffset as() const
     {
-        return *reinterpret_cast<const properties::ZOffset* const>(data);
+        properties::ZOffset zo;
+        deserializeFromCommunicationHeaderObject(zo, *this);
+        return zo;
     }
 
     template <> properties::Transform as() const
     {
-        return *reinterpret_cast<const properties::Transform* const>(data);
+        properties::Transform tf;
+        deserializeFromCommunicationHeaderObject(tf, *this);
+        return tf;
     }
 
-    template <> internal::LineStyleContainer as() const
+    template <> PropertyFlag as() const
     {
-        return *reinterpret_cast<const internal::LineStyleContainer* const>(data);
-    }
-
-    template <> internal::ScatterStyleContainer as() const
-    {
-        return *reinterpret_cast<const internal::ScatterStyleContainer* const>(data);
-    }
-
-    template <> internal::ColorMapContainer as() const
-    {
-        return *reinterpret_cast<const internal::ColorMapContainer* const>(data);
+        PropertyFlag flag;
+        deserializeFromCommunicationHeaderObject(flag, *this);
+        return flag;
     }
 };
 

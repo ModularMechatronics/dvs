@@ -11,6 +11,7 @@
 #include "dvs/base_types.h"
 #include "dvs/communication_header_object.h"
 #include "dvs/constants.h"
+#include "dvs/encode_decode_functions.h"
 #include "dvs/enumerations.h"
 #include "dvs/fillable_uint8_array.h"
 #include "dvs/logging.h"
@@ -302,21 +303,15 @@ private:
         }
         else if (std::is_same<properties::ScatterStyle, U>::value)
         {
-            const properties::ScatterStyle sst = *reinterpret_cast<const properties::ScatterStyle* const>(&obj);
-            const ScatterStyleContainer ssc{sst};
-            appendProperty(ssc);
+            appendEnumProperty(obj, PropertyType::SCATTER_STYLE);
         }
         else if (std::is_same<properties::ColorMap, U>::value)
         {
-            const properties::ColorMap cm = *reinterpret_cast<const properties::ColorMap* const>(&obj);
-            const ColorMapContainer cmc{cm};
-            appendProperty(cmc);
+            appendEnumProperty(obj, PropertyType::COLOR_MAP);
         }
         else if (std::is_same<properties::LineStyle, U>::value)
         {
-            const properties::LineStyle ls = *reinterpret_cast<const properties::LineStyle* const>(&obj);
-            const LineStyleContainer lsc{ls};
-            appendProperty(lsc);
+            appendEnumProperty(obj, PropertyType::LINE_STYLE);
         }
         else
         {
@@ -365,21 +360,15 @@ private:
         }
         else if (std::is_same<properties::ScatterStyle, U>::value)
         {
-            const properties::ScatterStyle sst = *reinterpret_cast<const properties::ScatterStyle* const>(&obj);
-            const ScatterStyleContainer ssc{sst};
-            appendProperty(ssc);
+            appendEnumProperty(obj, PropertyType::SCATTER_STYLE);
         }
         else if (std::is_same<properties::ColorMap, U>::value)
         {
-            const properties::ColorMap cm = *reinterpret_cast<const properties::ColorMap* const>(&obj);
-            const ColorMapContainer cmc{cm};
-            appendProperty(cmc);
+            appendEnumProperty(obj, PropertyType::COLOR_MAP);
         }
         else if (std::is_same<properties::LineStyle, U>::value)
         {
-            const properties::LineStyle ls = *reinterpret_cast<const properties::LineStyle* const>(&obj);
-            const LineStyleContainer lsc{ls};
-            appendProperty(lsc);
+            appendEnumProperty(obj, PropertyType::LINE_STYLE);
         }
         else
         {
@@ -394,11 +383,21 @@ private:
         props_.pushBack(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
         CommunicationHeaderObject& current_obj = props_.lastElement();
 
-        current_obj.size = sizeof(U);
-        fillBufferWithObjects(current_obj.data, prop);
+        serializeToCommunicationHeaderObject(current_obj, prop);
 
         const PropertyBase* const tmp_obj = reinterpret_cast<const PropertyBase* const>(&prop);
         properties_lut_.appendPropertyIndex(tmp_obj->getPropertyType(), prop_idx_);
+        prop_idx_++;
+    }
+
+    template <typename U> void appendEnumProperty(const U& prop, const PropertyType& prop_type)
+    {
+        props_.pushBack(CommunicationHeaderObject{CommunicationHeaderObjectType::PROPERTY});
+        CommunicationHeaderObject& current_obj = props_.lastElement();
+
+        serializeToCommunicationHeaderObject(current_obj, prop);
+
+        properties_lut_.appendPropertyIndex(prop_type, prop_idx_);
         prop_idx_++;
     }
 

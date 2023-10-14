@@ -20,7 +20,7 @@ def serialize_two_byte_num(num):
     return np.uint16(num).tobytes()
 
 
-def serialize_str(name):
+def serialize_str(name: str):
     return bytearray(name.encode('utf8'))
 
 

@@ -17,7 +17,7 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::LINE_WIDTH;
     }
-    else if (std::is_same<T, dvs::internal::LineStyleContainer>::value)
+    else if (std::is_same<T, dvs::properties::LineStyle>::value)
     {
         return dvs::internal::PropertyType::LINE_STYLE;
     }
@@ -33,11 +33,11 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::FACE_COLOR;
     }
-    else if (std::is_same<T, dvs::internal::ColorMapContainer>::value)
+    else if (std::is_same<T, dvs::properties::ColorMap>::value)
     {
         return dvs::internal::PropertyType::COLOR_MAP;
     }
-    else if (std::is_same<T, dvs::internal::ScatterStyleContainer>::value)
+    else if (std::is_same<T, dvs::properties::ScatterStyle>::value)
     {
         return dvs::internal::PropertyType::SCATTER_STYLE;
     }

@@ -74,6 +74,8 @@ enum class PropertyType : uint8_t
     POINT_SIZE,
     BUFFER_SIZE,
     SCATTER_STYLE,
+    PROPERTY_FLAG,
+    ITEM_ID,
     UNKNOWN
 };
 

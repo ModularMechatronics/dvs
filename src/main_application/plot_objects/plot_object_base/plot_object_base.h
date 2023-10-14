@@ -117,15 +117,13 @@ public:
 
         if (props.hasProperty(PropertyType::SCATTER_STYLE))
         {
-            const ScatterStyleContainer ssc = props.getProperty<ScatterStyleContainer>();
-            scatter_style = ssc.data;
+            scatter_style = props.getProperty<ScatterStyle>();
             has_properties_ = true;
         }
 
         if (props.hasProperty(PropertyType::LINE_STYLE))
         {
-            const LineStyleContainer lsc = props.getProperty<LineStyleContainer>();
-            line_style = lsc.data;
+            line_style = props.getProperty<LineStyle>();
             has_properties_ = true;
         }
 
@@ -176,7 +174,7 @@ public:
 
         if (props.hasProperty(PropertyType::COLOR_MAP))
         {
-            color_map = props.getProperty<ColorMapContainer>().data;
+            color_map = props.getProperty<ColorMap>();
             has_properties_ = true;
         }
 

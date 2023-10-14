@@ -18,8 +18,9 @@ protected:
     PropertyType property_type_;
 
 public:
-    PropertyBase() : property_type_(PropertyType::UNKNOWN) {}
-    explicit PropertyBase(const PropertyType property_type) : property_type_(property_type) {}
+    PropertyBase() : property_type_{PropertyType::UNKNOWN} {}
+
+    explicit PropertyBase(const PropertyType property_type) : property_type_{property_type} {}
 
     PropertyType getPropertyType() const
     {
@@ -36,6 +37,7 @@ public:
 
 inline size_t safeStringLenCheck(const char* const str, const size_t max_length)
 {
+    // Length does not include the null termination, so 'hello\0' will return 5
     size_t idx = 0;
     while (str[idx] && (idx < max_length))
     {
@@ -53,9 +55,10 @@ struct LineWidth : internal::PropertyBase
 {
     uint8_t data;
 
-    LineWidth() : internal::PropertyBase(internal::PropertyType::LINE_WIDTH) {}
+    LineWidth() : internal::PropertyBase{internal::PropertyType::LINE_WIDTH} {}
+
     explicit LineWidth(const uint8_t line_width)
-        : internal::PropertyBase(internal::PropertyType::LINE_WIDTH), data(line_width)
+        : internal::PropertyBase{internal::PropertyType::LINE_WIDTH}, data{line_width}
     {
     }
 };
@@ -64,16 +67,18 @@ struct Alpha : internal::PropertyBase
 {
     float data;
 
-    Alpha() : internal::PropertyBase(internal::PropertyType::ALPHA) {}
-    explicit Alpha(const float alpha) : internal::PropertyBase(internal::PropertyType::ALPHA), data(alpha) {}
+    Alpha() : internal::PropertyBase{internal::PropertyType::ALPHA} {}
+
+    explicit Alpha(const float alpha) : internal::PropertyBase{internal::PropertyType::ALPHA}, data{alpha} {}
 };
 
 struct ZOffset : internal::PropertyBase
 {
     float data;
 
-    ZOffset() : internal::PropertyBase(internal::PropertyType::Z_OFFSET) {}
-    explicit ZOffset(const float z_offset) : internal::PropertyBase(internal::PropertyType::Z_OFFSET), data(z_offset) {}
+    ZOffset() : internal::PropertyBase{internal::PropertyType::Z_OFFSET} {}
+
+    explicit ZOffset(const float z_offset) : internal::PropertyBase{internal::PropertyType::Z_OFFSET}, data{z_offset} {}
 };
 
 struct Transform : internal::PropertyBase
@@ -82,12 +87,12 @@ struct Transform : internal::PropertyBase
     MatrixFixed<double, 3, 3> rotation;
     Vec3<double> translation;
 
-    Transform() : internal::PropertyBase(internal::PropertyType::TRANSFORM) {}
+    Transform() : internal::PropertyBase{internal::PropertyType::TRANSFORM} {}
 
     explicit Transform(const MatrixFixed<double, 3, 3>& scale_,
                        const MatrixFixed<double, 3, 3>& rotation_,
                        const Vec3<double>& translation_)
-        : internal::PropertyBase(internal::PropertyType::TRANSFORM),
+        : internal::PropertyBase{internal::PropertyType::TRANSFORM},
           scale{scale_},
           rotation{rotation_},
           translation{translation_}
@@ -95,7 +100,7 @@ struct Transform : internal::PropertyBase
     }
 
     explicit Transform(const Matrix<double>& scale_, const Matrix<double>& rotation_, const Vec3<double>& translation_)
-        : internal::PropertyBase(internal::PropertyType::TRANSFORM)
+        : internal::PropertyBase{internal::PropertyType::TRANSFORM}
     {
         translation = translation_;
 
@@ -118,26 +123,35 @@ struct Transform : internal::PropertyBase
 
 struct Name : internal::PropertyBase
 {
-    static constexpr size_t max_length = 100;
-    char data[max_length + 1];  // +1 for null termination
-    size_t length;
+    // Number of characters that the name can contain (excluding null termination)
+    static constexpr size_t max_length = 100U;
+    static constexpr size_t data_full_length = max_length + 1U;  // +1 for null termination
 
-    Name() : internal::PropertyBase(internal::PropertyType::NAME)
+    char data[data_full_length];
+    uint8_t length;
+
+    Name() : internal::PropertyBase{internal::PropertyType::NAME}
     {
         data[0] = '\0';
         length = 0;
     }
 
-    explicit Name(const char* const name) : internal::PropertyBase(internal::PropertyType::NAME)
+    explicit Name(const char* const name) : internal::PropertyBase{internal::PropertyType::NAME}
     {
         DVS_ASSERT(name) << "Input name string is null!";
-        const size_t idx = internal::safeStringLenCheck(name, max_length + 1);
+        const size_t len = internal::safeStringLenCheck(name, max_length);
 
-        DVS_ASSERT(idx <= max_length) << "Name can't be more than 100 characters!";
-        length = idx;
+        DVS_ASSERT(len <= max_length) << "Name can't be more than 100 characters!";
+        length = len;
 
-        std::memcpy(data, name, idx);
-        data[idx] = '\0';
+        std::memcpy(data, name, len);
+        data[len] = '\0';
+    }
+
+    void resetData()
+    {
+        std::memset(data, 0, data_full_length);
+        length = 0;
     }
 };
 
@@ -167,45 +181,45 @@ struct Color : internal::PropertyBase
 {
     uint8_t red, green, blue;
 
-    Color() : internal::PropertyBase(internal::PropertyType::COLOR) {}
+    Color() : internal::PropertyBase{internal::PropertyType::COLOR} {}
 
     explicit Color(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
-        : internal::PropertyBase(internal::PropertyType::COLOR), red(red_), green(green_), blue(blue_)
+        : internal::PropertyBase{internal::PropertyType::COLOR}, red{red_}, green{green_}, blue{blue_}
     {
     }
 
-    Color(const internal::ColorT color) : internal::PropertyBase(internal::PropertyType::COLOR)
+    Color(const internal::ColorT color) : internal::PropertyBase{internal::PropertyType::COLOR}
     {
-        Color c;
+        Color c{};
 
         switch (color)
         {
             case internal::ColorT::RED:
-                c = Color(255, 0, 0);
+                c = Color{255, 0, 0};
                 break;
             case internal::ColorT::GREEN:
-                c = Color(0, 255, 0);
+                c = Color{0, 255, 0};
                 break;
             case internal::ColorT::BLUE:
-                c = Color(0, 0, 255);
+                c = Color{0, 0, 255};
                 break;
             case internal::ColorT::CYAN:
-                c = Color(0, 255, 255);
+                c = Color{0, 255, 255};
                 break;
             case internal::ColorT::MAGENTA:
-                c = Color(255, 0, 255);
+                c = Color{255, 0, 255};
                 break;
             case internal::ColorT::YELLOW:
-                c = Color(255, 255, 0);
+                c = Color{255, 255, 0};
                 break;
             case internal::ColorT::BLACK:
-                c = Color(0, 0, 0);
+                c = Color{0, 0, 0};
                 break;
             case internal::ColorT::WHITE:
-                c = Color(255, 255, 255);
+                c = Color{255, 255, 255};
                 break;
             case internal::ColorT::GRAY:
-                c = Color(127, 127, 127);
+                c = Color{127, 127, 127};
                 break;
         }
 
@@ -230,62 +244,62 @@ struct EdgeColor : internal::PropertyBase
     uint8_t use_color;
     uint8_t red, green, blue;
 
-    EdgeColor() : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color{1U} {}
+    EdgeColor() : internal::PropertyBase{internal::PropertyType::EDGE_COLOR}, use_color{1U} {}
 
     explicit EdgeColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::EDGE_COLOR),
           use_color{1U},
-          red(red_),
-          green(green_),
-          blue(blue_)
+          red{red_},
+          green{green_},
+          blue{blue_}
     {
     }
 
     explicit EdgeColor(const uint8_t use_color_)
         : internal::PropertyBase(internal::PropertyType::EDGE_COLOR),
           use_color{use_color_},
-          red(0U),
-          green(0U),
-          blue(0U)
+          red{0U},
+          green{0U},
+          blue{0U}
     {
     }
 
     EdgeColor(const internal::EdgeColorT color)
-        : internal::PropertyBase(internal::PropertyType::EDGE_COLOR), use_color(1U)
+        : internal::PropertyBase{internal::PropertyType::EDGE_COLOR}, use_color{1U}
     {
-        EdgeColor ec;
+        EdgeColor ec{};
 
         switch (color)
         {
             case internal::EdgeColorT::RED:
-                ec = EdgeColor(255, 0, 0);
+                ec = EdgeColor{255, 0, 0};
                 break;
             case internal::EdgeColorT::GREEN:
-                ec = EdgeColor(0, 255, 0);
+                ec = EdgeColor{0, 255, 0};
                 break;
             case internal::EdgeColorT::BLUE:
-                ec = EdgeColor(0, 0, 255);
+                ec = EdgeColor{0, 0, 255};
                 break;
             case internal::EdgeColorT::CYAN:
-                ec = EdgeColor(0, 255, 255);
+                ec = EdgeColor{0, 255, 255};
                 break;
             case internal::EdgeColorT::MAGENTA:
-                ec = EdgeColor(255, 0, 255);
+                ec = EdgeColor{255, 0, 255};
                 break;
             case internal::EdgeColorT::YELLOW:
-                ec = EdgeColor(255, 255, 0);
+                ec = EdgeColor{255, 255, 0};
                 break;
             case internal::EdgeColorT::BLACK:
-                ec = EdgeColor(0, 0, 0);
+                ec = EdgeColor{0, 0, 0};
                 break;
             case internal::EdgeColorT::WHITE:
-                ec = EdgeColor(255, 255, 255);
+                ec = EdgeColor{255, 255, 255};
                 break;
             case internal::EdgeColorT::GRAY:
-                ec = EdgeColor(127, 127, 127);
+                ec = EdgeColor{127, 127, 127};
                 break;
             case internal::EdgeColorT::NONE:
-                ec = EdgeColor(0U);
+                ec = EdgeColor{0U};
                 break;
         }
 
@@ -312,64 +326,64 @@ struct FaceColor : internal::PropertyBase
     uint8_t use_color;
     uint8_t red, green, blue;
 
-    FaceColor() : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color{1U}, red(0), green(0), blue(0)
+    FaceColor() : internal::PropertyBase{internal::PropertyType::FACE_COLOR}, use_color{1U}, red(0), green(0), blue(0)
     {
     }
 
     explicit FaceColor(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
         : internal::PropertyBase(internal::PropertyType::FACE_COLOR),
           use_color{1U},
-          red(red_),
-          green(green_),
-          blue(blue_)
+          red{red_},
+          green{green_},
+          blue{blue_}
     {
     }
 
     explicit FaceColor(const uint8_t use_color_)
         : internal::PropertyBase(internal::PropertyType::FACE_COLOR),
           use_color{use_color_},
-          red(0U),
-          green(0U),
-          blue(0U)
+          red{0U},
+          green{0U},
+          blue{0U}
     {
     }
 
     FaceColor(const internal::FaceColorT color)
         : internal::PropertyBase(internal::PropertyType::FACE_COLOR), use_color(1U)
     {
-        FaceColor fc;
+        FaceColor fc{};
 
         switch (color)
         {
             case internal::FaceColorT::RED:
-                fc = FaceColor(255, 0, 0);
+                fc = FaceColor{255, 0, 0};
                 break;
             case internal::FaceColorT::GREEN:
-                fc = FaceColor(0, 255, 0);
+                fc = FaceColor{0, 255, 0};
                 break;
             case internal::FaceColorT::BLUE:
-                fc = FaceColor(0, 0, 255);
+                fc = FaceColor{0, 0, 255};
                 break;
             case internal::FaceColorT::CYAN:
-                fc = FaceColor(0, 255, 255);
+                fc = FaceColor{0, 255, 255};
                 break;
             case internal::FaceColorT::MAGENTA:
-                fc = FaceColor(255, 0, 255);
+                fc = FaceColor{255, 0, 255};
                 break;
             case internal::FaceColorT::YELLOW:
-                fc = FaceColor(255, 255, 0);
+                fc = FaceColor{255, 255, 0};
                 break;
             case internal::FaceColorT::BLACK:
-                fc = FaceColor(0, 0, 0);
+                fc = FaceColor{0, 0, 0};
                 break;
             case internal::FaceColorT::WHITE:
-                fc = FaceColor(255, 255, 255);
+                fc = FaceColor{255, 255, 255};
                 break;
             case internal::FaceColorT::GRAY:
-                fc = FaceColor(127, 127, 127);
+                fc = FaceColor{127, 127, 127};
                 break;
             case internal::FaceColorT::NONE:
-                fc = FaceColor(0U);
+                fc = FaceColor{0U};
                 break;
         }
 
@@ -407,14 +421,15 @@ struct PointSize : internal::PropertyBase
 {
     uint8_t data;
 
-    PointSize() : internal::PropertyBase(internal::PropertyType::POINT_SIZE) {}
+    PointSize() : internal::PropertyBase{internal::PropertyType::POINT_SIZE} {}
+
     explicit PointSize(const uint8_t point_size)
-        : internal::PropertyBase(internal::PropertyType::POINT_SIZE), data(point_size)
+        : internal::PropertyBase{internal::PropertyType::POINT_SIZE}, data{point_size}
     {
     }
 };
 
-class DistanceFrom : internal::PropertyBase
+class DistanceFrom : public internal::PropertyBase
 {
 private:
     Vec3<double> pt_;
@@ -426,7 +441,7 @@ private:
                  const double min_dist,
                  const double max_dist,
                  const DistanceFromType dist_from_type)
-        : internal::PropertyBase(internal::PropertyType::DISTANCE_FROM),
+        : internal::PropertyBase{internal::PropertyType::DISTANCE_FROM},
           pt_{pt},
           min_dist_{min_dist},
           max_dist_{max_dist},
@@ -435,7 +450,7 @@ private:
     }
 
 public:
-    DistanceFrom() : internal::PropertyBase(internal::PropertyType::DISTANCE_FROM) {}
+    DistanceFrom() : internal::PropertyBase{internal::PropertyType::DISTANCE_FROM} {}
 
     Vec3<double> getPoint() const
     {
@@ -455,6 +470,26 @@ public:
     DistanceFromType getDistFromType() const
     {
         return dist_from_type_;
+    }
+
+    void setPoint(const Vec3<double>& pt)
+    {
+        pt_ = pt;
+    }
+
+    void setMinDist(const double min_dist)
+    {
+        min_dist_ = min_dist;
+    }
+
+    void setMaxDist(const double max_dist)
+    {
+        max_dist_ = max_dist;
+    }
+
+    void setDistFromType(const DistanceFromType dist_from_type)
+    {
+        dist_from_type_ = dist_from_type;
     }
 
     static DistanceFrom x(const double x_val, const double min_dist, const double max_dist)
@@ -497,9 +532,10 @@ struct BufferSize : internal::PropertyBase
 {
     uint16_t data;
 
-    BufferSize() : internal::PropertyBase(internal::PropertyType::BUFFER_SIZE) {}
+    BufferSize() : internal::PropertyBase{internal::PropertyType::BUFFER_SIZE} {}
+
     explicit BufferSize(const uint16_t buffer_size)
-        : internal::PropertyBase(internal::PropertyType::BUFFER_SIZE), data(buffer_size)
+        : internal::PropertyBase{internal::PropertyType::BUFFER_SIZE}, data{buffer_size}
     {
     }
 };
@@ -515,67 +551,6 @@ constexpr internal::PropertyFlag UPDATABLE = internal::PropertyFlag::UPDATABLE;
 }
 
 }  // namespace properties
-
-namespace internal
-{
-struct ScatterStyleContainer : internal::PropertyBase
-{
-    properties::ScatterStyle data;
-
-    ScatterStyleContainer() : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE) {}
-    explicit ScatterStyleContainer(const properties::ScatterStyle scatter_style_type)
-        : internal::PropertyBase(internal::PropertyType::SCATTER_STYLE), data{scatter_style_type}
-    {
-    }
-
-    static constexpr properties::ScatterStyle CROSS = properties::ScatterStyle::CROSS;
-    static constexpr properties::ScatterStyle CIRCLE = properties::ScatterStyle::CIRCLE;
-    static constexpr properties::ScatterStyle DISC = properties::ScatterStyle::DISC;
-    static constexpr properties::ScatterStyle SQUARE = properties::ScatterStyle::SQUARE;
-    static constexpr properties::ScatterStyle PLUS = properties::ScatterStyle::PLUS;
-};
-
-struct ColorMapContainer : internal::PropertyBase
-{
-    properties::ColorMap data;
-
-    static constexpr properties::ColorMap JET = properties::ColorMap::JET;
-    static constexpr properties::ColorMap HSV = properties::ColorMap::HSV;
-    static constexpr properties::ColorMap MAGMA = properties::ColorMap::MAGMA;
-    static constexpr properties::ColorMap VIRIDIS = properties::ColorMap::VIRIDIS;
-    static constexpr properties::ColorMap PASTEL = properties::ColorMap::PASTEL;
-    static constexpr properties::ColorMap JET_SOFT = properties::ColorMap::JET_SOFT;
-    static constexpr properties::ColorMap JET_BRIGHT = properties::ColorMap::JET_BRIGHT;
-
-    ColorMapContainer() : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(properties::ColorMap::JET) {}
-    explicit ColorMapContainer(const properties::ColorMap ct)
-        : internal::PropertyBase(internal::PropertyType::COLOR_MAP), data(ct)
-    {
-    }
-};
-
-struct LineStyleContainer : internal::PropertyBase
-{
-    properties::LineStyle data;
-
-    LineStyleContainer() : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
-    {
-        data = properties::LineStyle::SOLID;
-    }
-
-    LineStyleContainer(const properties::LineStyle line_style)
-        : internal::PropertyBase(internal::PropertyType::LINE_STYLE)
-    {
-        data = line_style;
-    }
-
-    static constexpr properties::LineStyle SOLID = properties::LineStyle::SOLID;
-    static constexpr properties::LineStyle DASHED = properties::LineStyle::DASHED;
-    // static constexpr properties::LineStyle DOTTED = properties::LineStyle::DOTTED;
-    // static constexpr properties::LineStyle LONG_DASHED = properties::LineStyle::LONG_DASHED;
-};
-
-}  // namespace internal
 
 }  // namespace dvs
 
