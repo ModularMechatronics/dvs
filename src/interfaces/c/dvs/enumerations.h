@@ -57,6 +57,8 @@ typedef enum S_PropertyType
     PT_POINT_SIZE,
     PT_BUFFER_SIZE,
     PT_SCATTER_STYLE,
+    PT_PROPERTY_FLAG,
+    PT_ITEM_ID,
     PT_UNKNOWN
 } PropertyType;
 

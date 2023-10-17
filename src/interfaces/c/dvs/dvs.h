@@ -55,7 +55,7 @@ void surfFunction(const Matrix* const x,
 
     APPEND_OBJ(&hdr, CHOT_DATA_TYPE, x->data_type, uint8_t);
     APPEND_OBJ(&hdr, CHOT_NUM_ELEMENTS, x->num_rows * x->num_cols, uint32_t);  // Needed?
-    APPEND_OBJ(&hdr, CHOT_DIMENSION_2D, dims, Dimension2D);
+    appendDims(&hdr, CHOT_DIMENSION_2D, dims);
 
     APPEND_PROPERTIES(hdr, first_prop);
 
@@ -95,7 +95,7 @@ void imShowFunction(const ImageC3* const img, const CommunicationHeaderObject fi
     APPEND_OBJ(&hdr, CHOT_DATA_TYPE, img->data_type, uint8_t);
     APPEND_OBJ(&hdr, CHOT_NUM_CHANNELS, 3, uint8_t);
     APPEND_OBJ(&hdr, CHOT_NUM_ELEMENTS, img->num_rows * img->num_cols, uint32_t);  // Needed?
-    APPEND_OBJ(&hdr, CHOT_DIMENSION_2D, dims, Dimension2D);
+    appendDims(&hdr, CHOT_DIMENSION_2D, dims);
 
     APPEND_PROPERTIES(hdr, first_prop);
 
@@ -131,12 +131,13 @@ void setCurrentElement(const char* const name)
     current_obj->type = CHOT_ELEMENT_NAME;
 
     const size_t name_length = strnlen(name, 100U);
-    current_obj->num_bytes = 101U;
+    current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)name_length;
 
     memset(current_obj->data, 0, kMaxNumFunctionHeaderBytes);
 
-    current_obj->data[0] = PT_NAME;
-    memcpy(current_obj->data + 9U, name, name_length);
+    current_obj->data[0U] = PT_NAME;
+    current_obj->data[1U] = name_length;
+    memcpy(current_obj->data + 2U, name, name_length);
 
     appendObjectIndexToCommunicationHeaderObjectLookupTable(&(hdr.objects_lut), CHOT_ELEMENT_NAME, hdr.obj_idx);
 

@@ -7,6 +7,7 @@
 #include "dvs/communication_header.h"
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
+#include "dvs/structures.h"
 #include "dvs/uint8_array.h"
 
 const uint64_t kMagicNumber = 0xdeadbeefcafebabe;
@@ -90,6 +91,17 @@ void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_
         appendObjectIndexToCommunicationHeaderObjectLookupTable(&((__hdr)->objects_lut), __type, (__hdr)->obj_idx); \
         (__hdr)->obj_idx += 1;                                                                                      \
     }
+
+void appendDims(CommunicationHeader* hdr, const CommunicationHeaderObjectType type, const Dimension2D dims)
+{
+    CommunicationHeaderObject* const current_obj = hdr->objects + hdr->obj_idx;
+    current_obj->type = type;
+    current_obj->num_bytes = 2U * sizeof(uint32_t);
+    memcpy(current_obj->data, &(dims.rows), sizeof(uint32_t));
+    memcpy(current_obj->data + sizeof(uint32_t), &(dims.cols), sizeof(uint32_t));
+    appendObjectIndexToCommunicationHeaderObjectLookupTable(&(hdr->objects_lut), type, hdr->obj_idx);
+    hdr->obj_idx += 1;
+}
 
 typedef void (*SendFunction)(const uint8_t* const, const uint64_t);
 
