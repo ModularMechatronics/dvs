@@ -4,12 +4,12 @@ from structures import *
 
 
 def setup_dvs_view():
-    dvs.set_current_element("view_00")
+    dvs.set_current_element("p_view_0")
     dvs.clear_view()
 
 
 def test_scatter():
-    dvs.set_current_element("view_00")
+    dvs.set_current_element("p_view_0")
     dvs.clear_view()
 
     for i in range(0, 100):
@@ -22,8 +22,8 @@ def test_scatter():
 
 
 def test_plot():
-    # dvs.set_current_element("view_00")
-    # dvs.clear_view()
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
 
     # for i in range(0, 100):
     # dvs.soft_clear_view()
@@ -36,20 +36,29 @@ def test_plot():
 
 
 def test_plot3():
-    dvs.set_current_element("view_00")
+    dvs.set_current_element("p_view_0")
 
     dvs.clear_view()
     x = np.linspace(0, 3, 100, dtype=np.float32)
     y = np.sin(x * 5.0)
     z = np.cos(x * 5.0)
 
-    dvs.axis([-10, -10, -10], [10, 10, 10])
+    dvs.axis([-10, 1, -10, -10], [10, 10, 10])
     dvs.view(0, 90)
     dvs.plot3(x, y, z)
 
 
+def test_scatter():
+    dvs.set_current_element("p_view_0")
+
+    dvs.clear_view()
+    x = np.linspace(0, 3, 100, dtype=np.float32)
+    y = np.sin(x * 5.0)
+    dvs.scatter(x, y)
+
+
 def test_scatter3():
-    dvs.set_current_element("view_00")
+    dvs.set_current_element("p_view_0")
 
     dvs.clear_view()
     x = np.linspace(0, 3, 100, dtype=np.float32)
@@ -59,22 +68,21 @@ def test_scatter3():
 
 
 def test_surf():
-    dvs.set_current_element("view_00")
+    dvs.set_current_element("p_view_0")
 
     dvs.clear_view()
     x = np.linspace(-0.1, 3, 100, dtype=np.float32)
     y = np.linspace(-0.1, 3, 100, dtype=np.float32)
     x, y = np.meshgrid(x, y)
     r = np.sqrt(x * x + y * y)
-    z = np.sin(r) / r
+    z = np.sin(r * 10.0) / (r * 10.0)
 
-    dvs.axis([-10, -10, -10], [10, 10, 10])
     dvs.view(0, 90)
     dvs.surf(x, y, z)
 
 
 def test_imshow():
-    dvs.set_current_element("view_00")
+    dvs.set_current_element("p_view_0")
 
     dvs.clear_view()
     x = np.linspace(-0.1, 3, 100, dtype=np.float32)

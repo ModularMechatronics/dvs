@@ -164,7 +164,6 @@ inline void deserializeFromCommunicationHeaderObject(properties::Transform& prop
 /////////////// Name ///////////////
 inline uint8_t numBytes(const properties::Name& obj)
 {
-    static_cast<void>(obj);
     return sizeof(uint8_t) + sizeof(uint8_t) + static_cast<uint8_t>(obj.length);
 }
 

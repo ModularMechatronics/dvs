@@ -52,111 +52,121 @@ def np_data_type_to_data_type(dt: type):
     return dt_ret
 
 
+COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE = CommunicationHeaderObjectType.UNKNOWN.value + 1
+PROPERTY_LOOKUP_TABLE_SIZE = PropertyType.UNKNOWN.value + 1
+
+class CommunicationHeaderObjectLookupTable:
+    def __init__(self):
+        self.data = COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE * [255]
+
+    def append_object_index(self, type: CommunicationHeaderObjectType, idx):
+        self.data[type.value] = idx
+
+    def clear(self):
+        self.data = COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE * [255]
+
+class PropertyLookupTable:
+    def __init__(self):
+        self.data = PROPERTY_LOOKUP_TABLE_SIZE * [255]
+    
+    def append_property_index(self, type: PropertyType, idx):
+        self.data[type.value] = idx
+
+    def clear(self):
+        self.data = PROPERTY_LOOKUP_TABLE_SIZE * [255]
+
 class CommunicationHeader:
 
     def __init__(self, function):
+        self.objects = {}
         self.properties = {}
-        self.settings = {}
+        self.flags = (PropertyFlag.UNKNOWN.value + 1) * [0]
+
+        self.objects_lut = CommunicationHeaderObjectLookupTable()
+        self.properties_lut = PropertyLookupTable()
+
+        self.obj_idx = 0
+        self.prop_idx = 0
         self.function = function
 
-    def append(self, setting_name, setting_value):
-        self.settings[setting_name] = setting_value
+    def append(self, object_type, object_value):
+        self.objects_lut.append_object_index(object_type, self.obj_idx)
+        self.obj_idx += 1
+        self.objects[object_type] = object_value
 
-    def append_property(self, property_name, property_value):
-        self.properties[property_name] = property_value
+    def append_property(self, property_type, property_value):
+        self.properties_lut.append_property_index(property_type, self.prop_idx)
+        self.prop_idx += 1
+        self.properties[property_type] = property_value
 
     def append_properties(self, properties):
         for key, value in properties.items():
             if key in VALID_PROPERTIES.keys():
-                hdr.append_property(VALID_PROPERTIES[key], value)
+                self.append_property(VALID_PROPERTIES[key], value)
             else:
                 print("Argument {} not a valid property".format(key))
 
     def num_bytes(self):
 
-        """
-        // 2 for first two bytes, that indicates how many objects and
-        // props there will be in the buffer
-        size_t s = 2;
-
-        s += sizeof(function_);
-        s += sizeof(CommunicationHeaderObjectLookupTable::size) + objects_lut_.size;
-        s += sizeof(PropertyLookupTable::size) + properties_lut_.size;
-
-        constexpr size_t base_size{sizeof(CommunicationHeaderObjectType) + sizeof(CommunicationHeaderObject::size)};
-
-        for (size_t k = 0; k < objects_.usedSize(); k++)
-        {
-            s = s + base_size + objects_[k].size;
-        }
-
-        for (size_t k = 0; k < props_.usedSize(); k++)
-        {
-            s = s + base_size + props_[k].size;
-        }
-
-        s += kNumFlags;
-
-        return s;
-        """
+        # 2 for first two bytes, that indicates how many objects and
+        # props there will be in the buffer
         total_size = 2
         FUNCTION_ENCODING_SIZE = 1
 
         total_size += FUNCTION_ENCODING_SIZE
-        
+        total_size += COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE
+        total_size += PROPERTY_LOOKUP_TABLE_SIZE
+
+        COMMUNICATION_HEADER_OBJECT_TYPE_SIZE = 2 # uint16
+        COMMUNICATION_HEADER_OBJECT_SIZE_SIZE = 1 # uint8
+
+        BASE_SIZE = COMMUNICATION_HEADER_OBJECT_TYPE_SIZE + COMMUNICATION_HEADER_OBJECT_SIZE_SIZE
+
+        for key, val in self.objects.items():
+            if key == CommunicationHeaderObjectType.ELEMENT_NAME:
+                total_size += BASE_SIZE + SIZE_OF_FUNCTION_HEADER_OBJECT[key] + len(val)
+            else:
+                total_size += BASE_SIZE + SIZE_OF_FUNCTION_HEADER_OBJECT[key]
+
         for key, _ in self.properties.items():
-            # + 2 for CommunicationHeaderObjectType, + 1 for num bytes of setting, + 1 for type of property
-            total_size += SIZE_OF_PROPERTY[key] + 2 + 1 + 1
+            total_size += BASE_SIZE + SIZE_OF_PROPERTY[key]
 
-        for key, _ in self.settings.items():
-            # + 2 for CommunicationHeaderObjectType, + 1 for num bytes of setting
-            total_size += SIZE_OF_FUNCTION_HEADER_OBJECT[key] + 2 + 1
+        total_size += len(self.flags)
 
-        # + 1 for number of header elements
-        return total_size + 1
+        return total_size
 
     def to_bytes(self):
-        bts = bytearray()
-        bts += (len(self.properties) + len(self.settings)
-                ).to_bytes(1, sys.byteorder)
 
-        for key, val in self.settings.items():
-            bts += key.value.to_bytes(2, sys.byteorder) + SIZE_OF_FUNCTION_HEADER_OBJECT[key].to_bytes(1, sys.byteorder) \
-                + FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
+        bts = bytearray()
+
+        bts += len(self.objects).to_bytes(1, sys.byteorder) # Objects
+        bts += len(self.properties).to_bytes(1, sys.byteorder) # Properties
+
+        bts += self.function.value.to_bytes(1, sys.byteorder) # Function
+
+        bts += bytearray([np.uint8(q) for q in self.objects_lut.data]) # Objects lookup table
+
+        bts += bytearray([np.uint8(q) for q in self.properties_lut.data])  # Properties lookup table
+
+        for key, val in self.objects.items():
+            if key == CommunicationHeaderObjectType.ELEMENT_NAME:
+                bts += key.value.to_bytes(2, sys.byteorder)
+                bts += (SIZE_OF_FUNCTION_HEADER_OBJECT[key] + len(val)).to_bytes(1, sys.byteorder)
+                bts += FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
+            else:
+                bts += key.value.to_bytes(2, sys.byteorder)
+                bts += SIZE_OF_FUNCTION_HEADER_OBJECT[key].to_bytes(1, sys.byteorder)
+                bts += FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
 
         for key, val in self.properties.items():
-            bts += CommunicationHeaderObjectType.PROPERTY.value.to_bytes(2, sys.byteorder) + \
-                SIZE_OF_PROPERTY[key].to_bytes(1, sys.byteorder) + \
-                PROPERTY_SERIALIZATION_FUNCTIONS[key](val)
+            bts += CommunicationHeaderObjectType.PROPERTY.value.to_bytes(2, sys.byteorder)
+            bts += SIZE_OF_PROPERTY[key].to_bytes(1, sys.byteorder)
+            bts += PROPERTY_SERIALIZATION_FUNCTIONS[key](val)
+
+        bts += bytearray([np.uint8(q) for q in self.flags]) # Flags
 
         return bts
 
-
-"""
-size_t num_sent_bytes = 0;
-
-while (num_sent_bytes < num_bytes)
-{
-    const size_t num_bytes_to_send =
-        std::min(kMaxNumBytesForOneTransmission, static_cast<size_t>(num_bytes) - num_sent_bytes);
-
-    udp_client.sendData(&(data_blob[num_sent_bytes]), num_bytes_to_send);
-    num_sent_bytes += num_bytes_to_send;
-
-    const int num_received_bytes = udp_client.receiveData(data);
-
-    bool ack_received = ackValid(data);
-
-    if (!ack_received)
-    {
-        throw std::runtime_error("No ack received!");
-    }
-    else if (num_received_bytes != 5)
-    {
-        throw std::runtime_error("Ack received but number of bytes was " + std::to_string(num_received_bytes));
-    }
-}
-"""
 
 def send_with_tcp(bts: bytearray):
 
@@ -237,32 +247,6 @@ def send_header(send_fcn, hdr, *args):
 
 def send_header_and_data(send_fcn, hdr, *args):
 
-    """
-    const uint64_t num_bytes_hdr = hdr.numBytes();
-    const uint64_t num_bytes_first = first_element.numBytes();
-
-    const uint64_t num_bytes_from_object = countNumBytes(other_elements...) + num_bytes_hdr + num_bytes_first;
-
-    // + 1 bytes for endianness byte
-    // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
-    const uint64_t num_bytes = num_bytes_from_object + 1 + 2 * sizeof(uint64_t);
-
-    FillableUInt8Array fillable_array{num_bytes};
-
-    fillable_array.fillWithStaticType(isBigEndian());
-
-    fillable_array.fillWithStaticType(kMagicNumber);
-
-    fillable_array.fillWithStaticType(num_bytes);
-
-    hdr.fillBufferWithData(fillable_array);
-
-    fillable_array.fillWithDataFromPointer(first_element.data(), first_element.numElements());
-
-    fillBuffer(fillable_array, other_elements...);
-
-    send_function(fillable_array.view());
-    """
     total_num_bytes = hdr.num_bytes()
 
     for arg in args:
@@ -287,67 +271,172 @@ def send_header_and_data(send_fcn, hdr, *args):
 
     send_fcn(buffer_to_send.data)
 
+def _ensure_vec3d(vec: Union[Vec2D, Vec3D, list, np.ndarray, tuple], z_val: float):
+    if isinstance(vec, list) or isinstance(vec, tuple):
+        if len(vec) == 3:
+            return Vec3D(vec[0], vec[1], vec[2])
+        elif len(vec) == 2:
+            return Vec3D(vec[0], vec[1], z_val)
+        else:
+            raise Exception(f"Invalid shape for input to axis: {vec}")
 
-def axis(min_vec: Union[Vec2D, Vec3D], max_vec: Union[Vec2D, Vec3D]):
+    elif isinstance(vec, np.ndarray):
+        if vec.shape == (3,):
+            return Vec3D(vec[0], vec[1], vec[2])
+        elif vec.shape == (3, 1):
+            return Vec3D(vec[0][0], vec[1][0], vec[2][0])
+        elif vec.shape == (1, 3):
+            return Vec3D(vec[0][0], vec[0][1], vec[0][2])
+        elif vec.shape == (2, ):
+            return Vec3D(vec[0], vec[1], z_val)
+        elif vec.shape == (2, 1):
+            return Vec3D(vec[0][0], vec[1][0], z_val)
+        elif vec.shape == (1, 2):
+            return Vec3D(vec[0][0], vec[0][1], z_val)
+        else:
+            raise Exception(f"Invalid shape for input to axis: {vec}")
+    else:
+        return vec
 
-    # TODO: Add if statement if Vec2D is input
+def axis(min_vec: Union[Vec2D, Vec3D, list, np.ndarray, tuple],
+         max_vec: Union[Vec2D, Vec3D, list, np.ndarray, tuple]):
 
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.AXES_3D)
+    min_vec = _ensure_vec3d(min_vec, -1.0)
+    max_vec = _ensure_vec3d(max_vec, 1.0)
+
+    if min_vec.x >= max_vec.x:
+        raise Exception("Invalid axis! x min >= x max")
+    if min_vec.y >= max_vec.y:
+        raise Exception("Invalid axis! y min >= y max")
+    if min_vec.z >= max_vec.z:
+        raise Exception("Invalid axis! z min >= z max")
+
+    hdr = CommunicationHeader(Function.AXES_3D)
     hdr.append(CommunicationHeaderObjectType.AXIS_MIN_MAX_VEC, (min_vec, max_vec))
-    send_header(send_with_udp, hdr)
+    send_header(send_with_tcp, hdr)
 
 
 def view(azimuth_deg, elevation_deg):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.VIEW)
-    hdr.append(CommunicationHeaderObjectType.AZIMUTH, azimuth_deg)
-    hdr.append(CommunicationHeaderObjectType.ELEVATION, elevation_deg)
-    send_header(send_with_udp, hdr)
+    hdr = CommunicationHeader(Function.VIEW)
+    hdr.append(CommunicationHeaderObjectType.AZIMUTH, np.float32(azimuth_deg))
+    hdr.append(CommunicationHeaderObjectType.ELEVATION, np.float32(elevation_deg))
+    send_header(send_with_tcp, hdr)
 
 
 def soft_clear_view():
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.SOFT_CLEAR)
-    send_header(send_with_udp, hdr)
+    hdr = CommunicationHeader(Function.SOFT_CLEAR)
+    send_header(send_with_tcp, hdr)
 
 
 def clear_view():
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.CLEAR)
-    send_header(send_with_udp, hdr)
+    hdr = CommunicationHeader(Function.CLEAR)
+    send_header(send_with_tcp, hdr)
 
 
 def set_current_element(name: str):
 
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.SET_CURRENT_ELEMENT)
+    if not isinstance(name, str):
+        raise Exception("Name must be a string!")
+
+    hdr = CommunicationHeader(Function.SET_CURRENT_ELEMENT)
     hdr.append(CommunicationHeaderObjectType.ELEMENT_NAME, name)
-    send_header(send_with_udp, hdr)
+    send_header(send_with_tcp, hdr)
 
 ####### Plot functions #######
 
-def plot(x: np.array, y: np.array, **properties):
+def get_dtype_from_element(elem):
+    if isinstance(elem, float):
+        return np.float64
+    elif isinstance(elem, int):
+        return np.int64
+    elif elem.__class__ in [np.int8, np.int16, np.int32,
+                            np.int64, np.uint8,  np.uint16, np.uint32,
+                            np.uint64, np.float32, np.float64]:
+        return elem.__class__
+    else:
+        raise Exception(f"Invalid type: {elem.__class__}")
+
+def clean_input_vec(x: Union[np.array, list, tuple]):
+    if isinstance(x, list) or isinstance(x, tuple):
+        return np.array(x, dtype=get_dtype_from_element(x[0]))
+    else:
+        if len(x.shape) > 1:
+            if x.shape[0] == 1 or x.shape[1] == 1:
+                return x.flatten()
+            else:
+                Exception(f"Invalid shape for input vector: {x.shape}")
+        else:
+            return x
+
+def plot(x: Union[np.array, list, tuple], y: Union[np.array, list, tuple], **properties):
+
+    x = clean_input_vec(x)
+    y = clean_input_vec(y)
+
+    if x.shape != y.shape:
+        raise Exception("x and y must have same shape! Shapes are x: {x.shape}, y: {y.shape}")
 
     hdr = CommunicationHeader(Function.PLOT2)
     hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
 
-    if len(x.shape) == 2:
-        hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
-                   np_data_type_to_data_type(x[0][0].__class__))
-    else:
-        hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
-                   np_data_type_to_data_type(x[0].__class__))
+    hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
+                np_data_type_to_data_type(x[0].__class__))
 
     hdr.append_properties(properties)
 
     send_header_and_data(send_with_tcp, hdr, x, y)
 
 
-def plot3(x: np.array, y: np.array, z: np.array, **properties):
+def plot3(x: Union[np.array, list, tuple], y: Union[np.array, list, tuple], z: Union[np.array, list, tuple], **properties):
 
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.PLOT3)
+    x = clean_input_vec(x)
+    y = clean_input_vec(y)
+    z = clean_input_vec(z)
+
+    if x.shape != y.shape or x.shape != z.shape:
+        raise Exception("x and y must have same shape! Shapes are x: {x.shape}, y: {y.shape}, z: {z.shape}")
+
+    hdr = CommunicationHeader(Function.PLOT3)
+    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
+
+    hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
+                np_data_type_to_data_type(x[0].__class__))
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_tcp, hdr, x, y, z)
+
+
+def scatter(x: Union[np.array, list, tuple], y: Union[np.array, list, tuple], **properties):
+    
+    x = clean_input_vec(x)
+    y = clean_input_vec(y)
+
+    if x.shape != y.shape:
+        raise Exception("x and y must have same shape! Shapes are x: {x.shape}, y: {y.shape}")
+
+    hdr = CommunicationHeader(Function.SCATTER2)
+    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
+
+
+    hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
+                np_data_type_to_data_type(x[0].__class__))
+
+    hdr.append_properties(properties)
+
+    send_header_and_data(send_with_tcp, hdr, x, y)
+
+
+def scatter3(x: Union[np.array, list, tuple], y: Union[np.array, list, tuple], z: Union[np.array, list, tuple], **properties):
+
+    x = clean_input_vec(x)
+    y = clean_input_vec(y)
+    z = clean_input_vec(z)
+
+    if x.shape != y.shape or x.shape != z.shape:
+        raise Exception("x and y must have same shape! Shapes are x: {x.shape}, y: {y.shape}, z: {z.shape}")
+
+    hdr = CommunicationHeader(Function.SCATTER3)
     hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
 
     if len(x.shape) == 2:
@@ -359,48 +448,30 @@ def plot3(x: np.array, y: np.array, z: np.array, **properties):
 
     hdr.append_properties(properties)
 
-    send_header_and_data(send_with_udp, hdr, x, y, z)
+    send_header_and_data(send_with_tcp, hdr, x, y, z)
 
-
-def scatter(x: np.array, y: np.array, **properties):
-
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.SCATTER2)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
-
-    if len(x.shape) == 2:
-        hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
-                   np_data_type_to_data_type(x[0][0].__class__))
+def clean_surf_input(x: Union[np.array, list, tuple]):
+    if isinstance(x, list) or isinstance(x, tuple):
+        # TODO: No assertion is made to ensure that it's a list of lists
+        # or a tuple of tuples
+        return np.array(x, dtype=get_dtype_from_element(x[0][0]))
     else:
-        hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
-                   np_data_type_to_data_type(x[0].__class__))
-
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, x, y)
+        return x.astype(get_dtype_from_element(x[0][0]))
 
 
-def scatter3(x: np.array, y: np.array, z: np.array, **properties):
+def surf(x: Union[np.array, list[list], tuple[tuple]], y: Union[np.array, list[list], tuple[tuple]], z: Union[np.array, list[list], tuple[tuple]], **properties):
 
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.SCATTER3)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
+    x = clean_surf_input(x)
+    y = clean_surf_input(y)
+    z = clean_surf_input(z)
 
-    if len(x.shape) == 2:
-        hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
-                   np_data_type_to_data_type(x[0][0].__class__))
-    else:
-        hdr.append(CommunicationHeaderObjectType.DATA_TYPE,
-                   np_data_type_to_data_type(x[0].__class__))
+    if x.shape != y.shape or x.shape != z.shape:
+        raise Exception("x, y, and z must have same shape!")
+    
+    if x.shape[0] == 1 or x.shape[1] == 1:
+        Exception(f"Invalid shape for input vector: {x.shape}! Both dimensions must be greater than 1.")
 
-    hdr.append_properties(properties)
-
-    send_header_and_data(send_with_udp, hdr, x, y, z)
-
-
-def surf(x: np.array, y: np.array, z: np.array, **properties):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.SURF)
+    hdr = CommunicationHeader(Function.SURF)
     hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
     hdr.append(CommunicationHeaderObjectType.DIMENSION_2D, x.shape)
 
@@ -409,12 +480,11 @@ def surf(x: np.array, y: np.array, z: np.array, **properties):
 
     hdr.append_properties(properties)
 
-    send_header_and_data(send_with_udp, hdr, x, y, z)
+    send_header_and_data(send_with_tcp, hdr, x, y, z)
 
 
 def imshow(img: np.array, **properties):
-    hdr = CommunicationHeader()
-    hdr.append(CommunicationHeaderObjectType.FUNCTION, Function.IM_SHOW)
+    hdr = CommunicationHeader(Function.IM_SHOW)
 
     if len(img.shape) == 2:
         hdr.append(CommunicationHeaderObjectType.NUM_CHANNELS, 1)
@@ -429,7 +499,7 @@ def imshow(img: np.array, **properties):
 
     hdr.append_properties(properties)
 
-    send_header_and_data(send_with_udp, hdr, img)
+    send_header_and_data(send_with_tcp, hdr, img)
 
 
 def draw_mesh(points: List[Point3D], indices: List[IndexTriplet], **properties):
