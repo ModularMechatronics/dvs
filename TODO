@@ -15,7 +15,9 @@ Pre release:
  * Something with robotics
  * GIS point cloud
  * Draw obj file from python interface, car running on a track
+ * Star wars targeting computer: https://scifi.stackexchange.com/questions/244759/how-does-the-targeting-work-in-the-millenium-falcon (1min 20s in)
 - Finalize demos
+- Color shall be set using floats in range [0, 1], but still transmitted as uint8_t [0, 255]
 - Grid lines when invalid/inf axes limits
 - Investigate weird bug not being able to set colors properly for realTimePlot
 - If first two points of plot2 is the same, there will be a division by zero
@@ -34,6 +36,7 @@ Pre release:
 - Data cursor, cursor to click on data to get xyz value
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Fix case for plot/plot3 when two adjacent points are equal
+- Delete RGB888 and replace with Color
 - Rename: 
   PlotObjectAttributes -> PlotDataAttributes
   PropertiesData -> PlotDataUserProperties
@@ -60,6 +63,7 @@ Post release:
 - For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
   to populate it or property from the variadic templ. args
 - For plot2, dashed lines can probably be added assuming that the view is looking straight at the xy plane
+- Maybe PropertyType could be removed from each property, and instead use a templated function to return correct property type? And property type does not need to be transmitted, since that information is already in the look up table
 - Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
 - For 2D functions (plot, scatter etc.), implement rolling z-offset, so that one can plot multiple things on top of each other

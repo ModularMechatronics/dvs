@@ -1,6 +1,9 @@
 import dvs
 import numpy as np
 from structures import *
+import properties
+import time
+import surf_functions
 
 
 def setup_dvs_view():
@@ -22,17 +25,30 @@ def test_scatter():
 
 
 def test_plot():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+    # dvs.set_current_element("p_view_0")
+    # dvs.clear_view()
 
-    # for i in range(0, 100):
-    # dvs.soft_clear_view()
     x = np.linspace(0, 3, 100, dtype=np.float32)
     y = np.sin(x * 5.0)
 
-    # dvs.axis([-10, -10, -10], [10, 10, 10])
-    # dvs.view(0, 90)
-    dvs.plot(x, y)  # ,color=dvs.Color(23, 25, 66) alpha=100, line_width=13
+    dvs.plot(
+        x,
+        y,
+        name="Hello",
+        alpha=0.1,
+        line_width=13,
+        point_size=13,
+        buffer_size=500,
+        z_offset=0.1,
+        edge_color=properties.EdgeColor(0.1, 0.2, 0.3),
+        face_color=properties.FaceColor(0.1, 0.2, 0.3),
+        color=properties.Color(0.1, 0.2, 0.3),
+        distance_from=properties.DistanceFrom.x(0.1, 0.2, 0.3),
+        color_map=properties.ColorMap.JET,
+        scatter_style=properties.ScatterStyle.CIRCLE,
+        line_style=properties.LineStyle.DASHED,
+        transform=properties.Transform(np.eye(3), np.eye(3), np.zeros(3)),
+    )
 
 
 def test_plot3():
@@ -43,7 +59,7 @@ def test_plot3():
     y = np.sin(x * 5.0)
     z = np.cos(x * 5.0)
 
-    dvs.axis([-10, 1, -10, -10], [10, 10, 10])
+    dvs.axis([-10, -10, -10], [10, 10, 10])
     dvs.view(0, 90)
     dvs.plot3(x, y, z)
 
@@ -81,6 +97,56 @@ def test_surf():
     dvs.surf(x, y, z)
 
 
+def test_surf_demo():
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
+    dvs.disable_scale_on_rotation()
+
+    x = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
+    y = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
+    x, y = np.meshgrid(x, y)
+
+    SURF_FUNCTION_NAMES = [
+        q
+        for q in surf_functions.__dir__()
+        if not q.startswith("__") and not q.startswith("np")
+    ]
+
+    def next_angle(current_angle):
+        if current_angle >= 0:
+            if current_angle + 1 > 179:
+                return -179
+            else:
+                return current_angle + 1
+        else:
+            return current_angle + 1
+
+    curr_angle = 0
+
+    color_maps = [
+        properties.ColorMap.JET,
+        properties.ColorMap.HSV,
+        properties.ColorMap.MAGMA,
+        properties.ColorMap.VIRIDIS,
+        properties.ColorMap.PASTEL,
+        properties.ColorMap.JET_SOFT,
+        properties.ColorMap.JET_BRIGHT,
+    ]
+
+    for idx, surf_fun in enumerate(SURF_FUNCTION_NAMES):
+        z = eval("surf_functions." + surf_fun + "(x, y)")
+        dvs.soft_clear_view()
+
+        # dvs.surf(x, y, z, color_map=properties.ColorMap.JET_SOFT)
+        cm = color_maps[idx % len(color_maps)]
+        dvs.surf(x, y, z, color_map=cm)
+
+        for _ in range(40):
+            dvs.view(curr_angle, 40)
+            time.sleep(0.01)
+            curr_angle = next_angle(curr_angle)
+
+
 def test_imshow():
     dvs.set_current_element("p_view_0")
 
@@ -109,14 +175,17 @@ def test_imshow():
 
 def test_draw_mesh():
     setup_dvs_view()
-    points = [Point3D(1.0, 1.0),
-              Point3D(2.0, 4.0),
-              Point3D(3.0, 2.0),
-              Point3D(4.0, 3.0),
-              Point3D(4.0, 1.5)]
-    indices = [IndexTriplet(0, 1, 2),
-               IndexTriplet(1, 2, 3),
-               IndexTriplet(2, 3, 4),
-               IndexTriplet(0, 2, 4)]
+    points = [
+        Point3D(1.0, 1.0),
+        Point3D(2.0, 4.0),
+        Point3D(3.0, 2.0),
+        Point3D(4.0, 3.0),
+        Point3D(4.0, 1.5),
+    ]
+    indices = [
+        IndexTriplet(0, 1, 2),
+        IndexTriplet(1, 2, 3),
+        IndexTriplet(2, 3, 4),
+        IndexTriplet(0, 2, 4),
+    ]
     draw_mesh(points, indices)
-

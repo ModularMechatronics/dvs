@@ -142,15 +142,6 @@ class DataType(Enum):
     _TRANSMISSION_DATA_TYPE = np.uint8
 
 
-class DataStructure(Enum):
-    MATRIX = 0
-    VECTOR = 1
-    IMAGE = 2
-    TEXT = 3
-    UNKNOWN = 4
-    _TRANSMISSION_DATA_TYPE = np.uint8
-
-
 class ColorMapType(Enum):
     JET = 0
     HSV = 1
@@ -159,22 +150,6 @@ class ColorMapType(Enum):
     UNKNOWN = 4
     _TRANSMISSION_DATA_TYPE = np.uint8
 
-
-class ElementType(Enum):
-    PLOT = 0
-    IMAGE = 1
-    WORLD_3D = 2
-    BUTTON = 3
-    TEXT_FIELD = 4
-    UNKNOWN = 5
-    _TRANSMISSION_DATA_TYPE = np.uint8
-
-
-class ElementParent(Enum):
-    TAB = 0
-    WINDOW = 1
-    UNKNOWN = 2
-    _TRANSMISSION_DATA_TYPE = np.uint8
 
 class PropertyFlag(Enum):
     PERSISTENT = 0

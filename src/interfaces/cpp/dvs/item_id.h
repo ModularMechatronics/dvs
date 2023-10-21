@@ -264,7 +264,7 @@ enum class ItemId : uint16_t
     ID252,
     ID253,
     ID254,
-    UNKNOWN
+    UNKNOWN = 0xFFFF
 };
 
 namespace properties

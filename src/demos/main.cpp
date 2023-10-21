@@ -65,7 +65,8 @@ int main(int argc, char* argv[])
                                       {"iso_surfaces", small::testIsoSurfaces},
                                       {"sling_plot", sling_plot::testSlingPlot},
                                       {"hyperboloid", small::testHyperboloid},
-                                      {"sphere", small::testSphere}};
+                                      {"sphere", small::testSphere},
+                                      {"lissajous", small::testLissaJous}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

@@ -1,4 +1,4 @@
-
+# TODO: Remove 'D' from class names and remove default initialization values
 class Vec2D:
     def __init__(self, x=0, y=0):
         self.x = x

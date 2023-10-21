@@ -960,6 +960,73 @@ void testSphere()
     surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_SOFT);
 }
 
+void testLissaJous()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t n_elements = 700;
+    Vector<double> x(n_elements), y(n_elements);
+
+    const double t_end = 2.0 * M_PI;
+
+    double t = 0.0;
+
+    const double dt = t_end / static_cast<double>(n_elements - 1U);
+
+    const double a = 3.0;
+    const double b = 4.0;
+    const double d = M_PI / 2.0;
+
+    for (size_t k = 0; k < n_elements; k++)
+    {
+        x(k) = std::sin(a * t + d);
+        y(k) = std::sin(b * t);
+
+        t = t + dt;
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+
+    const double delta = 0.3;
+
+    for (size_t k = 10; k < n_elements; k += 3)
+    {
+        Vector<double> xt(k), yt(k);
+
+        for (size_t i = 0; i < k; i++)
+        {
+            xt(i) = x(i);
+            yt(i) = y(i);
+        }
+
+        softClearView();
+        axis({xt(k - 1U) - delta, yt(k - 1U) - delta}, {xt(k - 1U) + delta, yt(k - 1U) + delta});
+        plot(xt, yt, properties::Color(201, 238, 121), properties::LineWidth(10.0f));
+    }
+
+    const double x_final = 1.0, y_final = 0.0;
+
+    for (size_t k = 0; k < 100; k++)
+    {
+        const double d_val = static_cast<double>(k) / 99.0;
+        const double d_val_1 = 1.0 - d_val;
+
+        const double x_min = (x_final - delta) * d_val_1 + d_val * -1.0;
+        const double x_max = (x_final + delta) * d_val_1 + d_val * 1.0;
+        const double y_min = (y_final - delta) * d_val_1 + d_val * -1.0;
+        const double y_max = (y_final + delta) * d_val_1 + d_val * 1.0;
+
+        axis({x_min, y_min}, {x_max, y_max});
+        usleep(1000 * 10);
+    }
+
+    axis({-1.0, -1.0}, {1.0, 1.0});
+
+    plot(x, y, properties::Color(201, 238, 121), properties::LineWidth(10.0f));
+}
+
 }  // namespace small
 
 #endif  // DEMOS_SMALL_H
