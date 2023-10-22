@@ -57,7 +57,7 @@
                                 "g": 0.9647,
                                 "b": 0.8941
                             },
-                            "background_color1": {
+                            "background_color": {
                                 "r": 0.0,
                                 "g": 0.4902,
                                 "b": 0.4196
@@ -65,21 +65,28 @@
                             "background_color": {
                                 "r": 0,
                                 "g": 0.6352941176470588,
-                                "b": 0.5450980392156862
+                                "b": 0.5450980392156862,
+                                "category": "nice_green"
+                            },
+                            "background_color2": {
+                                "r": 0.3098,
+                                "g": 0.9961,
+                                "b": 0.6275,
+                                "category": "green_youtube"
                             },
                             "grid_color": {
                                 "b": 0.699999988079071,
                                 "g": 0.699999988079071,
                                 "r": 0.699999988079071
                             },
+                            "plot_box_color_purple": {
+                                "r": 0.6196078431372549,
+                                "g": 0.4745098039215686,
+                                "b": 0.9333333333333333
+                            },
                             "handle_string": "p_view_0",
                             "height": 1.0,
                             "pane_radius": 20.0,
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "type": "PLOT_PANE",
                             "_axes_letters_on": false,

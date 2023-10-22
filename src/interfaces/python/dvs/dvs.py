@@ -409,7 +409,7 @@ def plot(
 
     hdr.append_properties(props_kw)
 
-    # send_header_and_data(send_with_tcp, hdr, x, y)
+    send_header_and_data(send_with_tcp, hdr, x, y)
 
 
 def plot3(

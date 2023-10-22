@@ -4,6 +4,8 @@ from structures import *
 import properties
 import time
 import surf_functions
+import plot_2d_functions
+import plot_3d_functions
 
 
 def setup_dvs_view():
@@ -95,6 +97,46 @@ def test_surf():
 
     dvs.view(0, 90)
     dvs.surf(x, y, z)
+
+
+def test_plot2_demo():
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
+
+    theta = np.linspace(-10.0, 10.0, 500, dtype=np.float32)
+
+    PLOT2D_FUNCTION_NAMES = [
+        q
+        for q in plot_2d_functions.__dir__()
+        if not q.startswith("__") and not q.startswith("np")
+    ]
+
+    for idx, plot_fun in enumerate(PLOT2D_FUNCTION_NAMES):
+        x, y = eval("plot_2d_functions." + plot_fun + "(theta)")
+        dvs.clear_view()
+
+        dvs.plot(x, y)
+        input("Press Enter to continue...")
+
+
+def test_plot3_demo():
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
+
+    theta = np.linspace(-10.0, 10.0, 500, dtype=np.float32)
+
+    PLOT2D_FUNCTION_NAMES = [
+        q
+        for q in plot_3d_functions.__dir__()
+        if not q.startswith("__") and not q.startswith("np")
+    ]
+
+    for idx, plot_fun in enumerate(PLOT2D_FUNCTION_NAMES):
+        x, y, z = eval("plot_3d_functions." + plot_fun + "(theta)")
+        dvs.clear_view()
+
+        dvs.plot3(x, y, z)
+        input("Press Enter to continue...")
 
 
 def test_surf_demo():
