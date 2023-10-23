@@ -33,34 +33,6 @@ def serialize_face_color(face_color):
     )
 
 
-def serialize_line_width(line_width):
-    return np.uint8(line_width.line_width).tobytes()
-
-
-def serialize_point_size(point_size):
-    return np.uint8(point_size.point_size).tobytes()
-
-
-def serialize_buffer_size(buffer_size):
-    return np.uint16(buffer_size.buffer_size).tobytes()
-
-
-def serialize_line_style(line_style):
-    return np.uint8(line_style.value).tobytes()
-
-
-def serialize_scatter_style(scatter_style):
-    return np.uint8(scatter_style.value).tobytes()
-
-
-def serialize_alpha(alpha: Alpha):
-    return np.float32(alpha.alpha).tobytes()
-
-
-def serialize_z_offset(z_offset: ZOffset):
-    return np.float32(z_offset.z_offset).tobytes()
-
-
 def serialize_transform(t: Transform):
     return (
         np.float64(t.rotation_matrix[0, 0]).tobytes()
@@ -106,12 +78,16 @@ def serialize_two_byte_num(num):
     return np.uint16(num).tobytes()
 
 
+def serialize_float32(num):
+    return np.float32(num).tobytes()
+
+
+def serialize_float64(num):
+    return np.float64(num).tobytes()
+
+
 def serialize_name(name: str):
     return np.uint8(len(name.name)).tobytes() + bytearray(name.name.encode("utf8"))
-
-
-def serialize_color_map(cm):
-    return np.uint8(cm.value).tobytes()
 
 
 def serialize_axes(axis_vecs):
@@ -130,20 +106,33 @@ def serialize_axes(axis_vecs):
     ).tobytes()
 
 
+"""
+
+
+def serialize_alpha(alpha: Alpha):
+    return np.float32(alpha.alpha).tobytes()
+
+
+def serialize_z_offset(z_offset: ZOffset):
+    return np.float32(z_offset.z_offset).tobytes()
+
+
+"""
+
 PROPERTY_SERIALIZATION_FUNCTIONS = {
     PropertyType.COLOR: serialize_color,
     PropertyType.EDGE_COLOR: serialize_edge_color,
     PropertyType.FACE_COLOR: serialize_face_color,
-    PropertyType.COLOR_MAP: serialize_color_map,
-    PropertyType.LINE_WIDTH: serialize_line_width,
-    PropertyType.POINT_SIZE: serialize_point_size,
-    PropertyType.LINE_STYLE: serialize_line_style,
-    PropertyType.SCATTER_STYLE: serialize_scatter_style,
-    PropertyType.BUFFER_SIZE: serialize_buffer_size,
+    PropertyType.COLOR_MAP: lambda x: serialize_one_byte_num(x.value),
+    PropertyType.LINE_WIDTH: lambda x: serialize_one_byte_num(x.line_width),
+    PropertyType.POINT_SIZE: lambda x: serialize_one_byte_num(x.point_size),
+    PropertyType.LINE_STYLE: lambda x: serialize_one_byte_num(x.value),
+    PropertyType.SCATTER_STYLE: lambda x: serialize_one_byte_num(x.value),
+    PropertyType.BUFFER_SIZE: lambda x: serialize_two_byte_num(x.buffer_size),
     PropertyType.DISTANCE_FROM: serialize_distance_from,
-    PropertyType.Z_OFFSET: serialize_z_offset,
+    PropertyType.Z_OFFSET: lambda x: serialize_float32(x.z_offset),
     PropertyType.TRANSFORM: serialize_transform,
-    PropertyType.ALPHA: serialize_alpha,
+    PropertyType.ALPHA: lambda x: serialize_float32(x.alpha),
     PropertyType.NAME: serialize_name,
 }
 
