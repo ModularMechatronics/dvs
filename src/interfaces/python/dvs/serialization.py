@@ -10,9 +10,117 @@ NUM_BYTES_FOR_NAME = 23
 def serialize_color(col: Color):
     return (
         PropertyType.COLOR.value.to_bytes(1, sys.byteorder)
-        + col.r.to_bytes(1, sys.byteorder)
-        + col.g.to_bytes(1, sys.byteorder)
-        + col.b.to_bytes(1, sys.byteorder)
+        + np.uint8(np.round(col.r * 255.0)).tobytes()
+        + np.uint8(np.round(col.g * 255.0)).tobytes()
+        + np.uint8(np.round(col.b * 255.0)).tobytes()
+    )
+
+
+def serialize_edge_color(edge_color):
+    return (
+        PropertyType.EDGE_COLOR.value.to_bytes(1, sys.byteorder)
+        + np.uint8(np.round(edge_color.r * 255.0)).tobytes()
+        + np.uint8(np.round(edge_color.g * 255.0)).tobytes()
+        + np.uint8(np.round(edge_color.b * 255.0)).tobytes()
+        + np.uint8(edge_color.has_color).tobytes()
+    )
+
+
+def serialize_face_color(face_color):
+    return (
+        PropertyType.FACE_COLOR.value.to_bytes(1, sys.byteorder)
+        + np.uint8(np.round(face_color.r * 255.0)).tobytes()
+        + np.uint8(np.round(face_color.g * 255.0)).tobytes()
+        + np.uint8(np.round(face_color.b * 255.0)).tobytes()
+        + np.uint8(face_color.has_color).tobytes()
+    )
+
+
+def serialize_line_width(line_width):
+    return (
+        PropertyType.LINE_WIDTH.value.to_bytes(1, sys.byteorder)
+        + np.float32(line_width.line_width).tobytes()
+    )
+
+
+def serialize_point_size(point_size):
+    return (
+        PropertyType.POINT_SIZE.value.to_bytes(1, sys.byteorder)
+        + np.float32(point_size.point_size).tobytes()
+    )
+
+
+def serialize_buffer_size(buffer_size):
+    return (
+        PropertyType.BUFFER_SIZE.value.to_bytes(1, sys.byteorder)
+        + np.float32(buffer_size.buffer_size).tobytes()
+    )
+
+
+def serialize_line_style(line_style):
+    return (
+        PropertyType.LINE_STYLE.value.to_bytes(1, sys.byteorder)
+        + np.uint8(line_style.value).tobytes()
+    )
+
+
+def serialize_scatter_style(scatter_style):
+    return (
+        PropertyType.SCATTER_STYLE.value.to_bytes(1, sys.byteorder)
+        + np.uint8(scatter_style.value).tobytes()
+    )
+
+
+def serialize_alpha(alpha: Alpha):
+    return (
+        PropertyType.ALPHA.value.to_bytes(1, sys.byteorder)
+        + np.float32(alpha.alpha).tobytes()
+    )
+
+
+def serialize_z_offset(z_offset: ZOffset):
+    return (
+        PropertyType.Z_OFFSET.value.to_bytes(1, sys.byteorder)
+        + np.float32(z_offset.z_offset).tobytes()
+    )
+
+
+def serialize_transform(t: Transform):
+    return (
+        PropertyType.TRANSFORM.value.to_bytes(1, sys.byteorder)
+        + np.float64(t.rotation_matrix[0, 0]).tobytes()
+        + np.float64(t.rotation_matrix[0, 1]).tobytes()
+        + np.float64(t.rotation_matrix[0, 2]).tobytes()
+        + np.float64(t.rotation_matrix[1, 0]).tobytes()
+        + np.float64(t.rotation_matrix[1, 1]).tobytes()
+        + np.float64(t.rotation_matrix[1, 2]).tobytes()
+        + np.float64(t.rotation_matrix[2, 0]).tobytes()
+        + np.float64(t.rotation_matrix[2, 1]).tobytes()
+        + np.float64(t.rotation_matrix[2, 2]).tobytes()
+        + np.float64(t.scale_matrix[0, 0]).tobytes()
+        + np.float64(t.scale_matrix[0, 1]).tobytes()
+        + np.float64(t.scale_matrix[0, 2]).tobytes()
+        + np.float64(t.scale_matrix[1, 0]).tobytes()
+        + np.float64(t.scale_matrix[1, 1]).tobytes()
+        + np.float64(t.scale_matrix[1, 2]).tobytes()
+        + np.float64(t.scale_matrix[2, 0]).tobytes()
+        + np.float64(t.scale_matrix[2, 1]).tobytes()
+        + np.float64(t.scale_matrix[2, 2]).tobytes()
+        + np.float64(t.translation_vector.flatten()[0]).tobytes()
+        + np.float64(t.translation_vector.flatten()[1]).tobytes()
+        + np.float64(t.translation_vector.flatten()[2]).tobytes()
+    )
+
+
+def serialize_distance_from(dist_from: DistanceFrom):
+    return (
+        PropertyType.DISTANCE_FROM.value.to_bytes(1, sys.byteorder)
+        + np.float64(dist_from.pt.x).tobytes()
+        + np.float64(dist_from.pt.y).tobytes()
+        + np.float64(dist_from.pt.z).tobytes()
+        + np.float64(dist_from.min_distance).tobytes()
+        + np.float64(dist_from.max_distance).tobytes()
+        + np.uint8(dist_from.distance_from_type.value).tobytes()
     )
 
 
@@ -31,8 +139,8 @@ def serialize_str(name: str):
 def serialize_name(name: str):
     return (
         PropertyType.NAME.value.to_bytes(1, sys.byteorder)
-        + np.uint64(NUM_BYTES_FOR_NAME).tobytes()
-        + bytearray(name.encode("utf8"))
+        + np.uint8(len(name.name)).tobytes()
+        + bytearray(name.name.encode("utf8"))
     )
 
 
@@ -58,27 +166,38 @@ def serialize_axes(axis_vecs):
 
 PROPERTY_SERIALIZATION_FUNCTIONS = {
     PropertyType.COLOR: serialize_color,
-    PropertyType.EDGE_COLOR: serialize_color,
-    PropertyType.FACE_COLOR: serialize_color,
+    PropertyType.EDGE_COLOR: serialize_edge_color,
+    PropertyType.FACE_COLOR: serialize_face_color,
     PropertyType.COLOR_MAP: serialize_color_map,
-    PropertyType.LINE_WIDTH: serialize_one_byte_num,
-    PropertyType.POINT_SIZE: serialize_one_byte_num,
-    PropertyType.LINE_STYLE: serialize_str,
-    PropertyType.ALPHA: serialize_one_byte_num,
+    PropertyType.LINE_WIDTH: serialize_line_width,
+    PropertyType.POINT_SIZE: serialize_point_size,
+    PropertyType.LINE_STYLE: serialize_line_style,
+    PropertyType.SCATTER_STYLE: serialize_scatter_style,
+    PropertyType.BUFFER_SIZE: serialize_buffer_size,
+    PropertyType.DISTANCE_FROM: serialize_distance_from,
+    PropertyType.Z_OFFSET: serialize_z_offset,
+    PropertyType.TRANSFORM: serialize_transform,
+    PropertyType.ALPHA: serialize_alpha,
     PropertyType.NAME: serialize_name,
 }
 
 SIZE_OF_PROPERTY = {
-    PropertyType.COLOR: 3,
-    PropertyType.EDGE_COLOR: 3,
-    PropertyType.FACE_COLOR: 3,
+    PropertyType.COLOR: 4,
+    PropertyType.EDGE_COLOR: 4,
+    PropertyType.FACE_COLOR: 4,
     PropertyType.COLOR_MAP: 2,
-    PropertyType.LINE_WIDTH: 1,
-    PropertyType.POINT_SIZE: 1,
-    PropertyType.LINE_STYLE: 10,
-    PropertyType.ALPHA: 1,
+    PropertyType.LINE_WIDTH: 2,
+    PropertyType.POINT_SIZE: 2,
+    PropertyType.BUFFER_SIZE: 3,
+    PropertyType.Z_OFFSET: 4,
+    PropertyType.DISTANCE_FROM: 1 + 3 * 8 + 8 + 8 + 1,
+    PropertyType.LINE_STYLE: 2,
+    PropertyType.SCATTER_STYLE: 2,
+    PropertyType.TRANSFORM: 1 + 8 + 3 * 3 + 3 * 3 + 3,
+    PropertyType.ALPHA: 5,
     PropertyType.NAME: 10,
 }
+
 
 FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     CommunicationHeaderObjectType.FUNCTION: None,

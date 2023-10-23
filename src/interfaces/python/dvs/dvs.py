@@ -88,6 +88,139 @@ class PropertyLookupTable:
         self.data = PROPERTY_LOOKUP_TABLE_SIZE * [255]
 
 
+def edge_color_t_to_edge_color(edge_color_t: EdgeColorT):
+    ec = EdgeColor(0.0, 0.0, 0.0)
+
+    if edge_color_t == EdgeColorT.RED:
+        ec.r = 1.0
+        ec.g = 0.0
+        ec.b = 0.0
+    elif edge_color_t == EdgeColorT.GREEN:
+        ec.r = 0.0
+        ec.g = 1.0
+        ec.b = 0.0
+    elif edge_color_t == EdgeColorT.BLUE:
+        ec.r = 0.0
+        ec.g = 0.0
+        ec.b = 1.0
+    elif edge_color_t == EdgeColorT.CYAN:
+        ec.r = 0.0
+        ec.g = 1.0
+        ec.b = 1.0
+    elif edge_color_t == EdgeColorT.MAGENTA:
+        ec.r = 1.0
+        ec.g = 0.0
+        ec.b = 1.0
+    elif edge_color_t == EdgeColorT.YELLOW:
+        ec.r = 1.0
+        ec.g = 1.0
+        ec.b = 0.0
+    elif edge_color_t == EdgeColorT.BLACK:
+        ec.r = 0.0
+        ec.g = 0.0
+        ec.b = 0.0
+    elif edge_color_t == EdgeColorT.WHITE:
+        ec.r = 1.0
+        ec.g = 1.0
+        ec.b = 1.0
+    elif edge_color_t == EdgeColorT.GRAY:
+        ec.r = 0.5
+        ec.g = 0.5
+        ec.b = 0.5
+    elif edge_color_t == EdgeColorT.NONE:
+        ec.has_color = False
+
+    return ec
+
+
+def face_color_t_to_face_color(face_color_t: FaceColorT):
+    fc = FaceColor(0.0, 0.0, 0.0)
+
+    if face_color_t == FaceColorT.RED:
+        fc.r = 1.0
+        fc.g = 0.0
+        fc.b = 0.0
+    elif face_color_t == FaceColorT.GREEN:
+        fc.r = 0.0
+        fc.g = 1.0
+        fc.b = 0.0
+    elif face_color_t == FaceColorT.BLUE:
+        fc.r = 0.0
+        fc.g = 0.0
+        fc.b = 1.0
+    elif face_color_t == FaceColorT.CYAN:
+        fc.r = 0.0
+        fc.g = 1.0
+        fc.b = 1.0
+    elif face_color_t == FaceColorT.MAGENTA:
+        fc.r = 1.0
+        fc.g = 0.0
+        fc.b = 1.0
+    elif face_color_t == FaceColorT.YELLOW:
+        fc.r = 1.0
+        fc.g = 1.0
+        fc.b = 0.0
+    elif face_color_t == FaceColorT.BLACK:
+        fc.r = 0.0
+        fc.g = 0.0
+        fc.b = 0.0
+    elif face_color_t == FaceColorT.WHITE:
+        fc.r = 1.0
+        fc.g = 1.0
+        fc.b = 1.0
+    elif face_color_t == FaceColorT.GRAY:
+        fc.r = 0.5
+        fc.g = 0.5
+        fc.b = 0.5
+    elif face_color_t == FaceColorT.NONE:
+        fc.has_color = False
+
+    return fc
+
+
+def color_t_to_color(color_t: ColorT):
+    c = Color(0.0, 0.0, 0.0)
+
+    if color_t == ColorT.RED:
+        c.r = 1.0
+        c.g = 0.0
+        c.b = 0.0
+    elif color_t == ColorT.GREEN:
+        c.r = 0.0
+        c.g = 1.0
+        c.b = 0.0
+    elif color_t == ColorT.BLUE:
+        c.r = 0.0
+        c.g = 0.0
+        c.b = 1.0
+    elif color_t == ColorT.CYAN:
+        c.r = 0.0
+        c.g = 1.0
+        c.b = 1.0
+    elif color_t == ColorT.MAGENTA:
+        c.r = 1.0
+        c.g = 0.0
+        c.b = 1.0
+    elif color_t == ColorT.YELLOW:
+        c.r = 1.0
+        c.g = 1.0
+        c.b = 0.0
+    elif color_t == ColorT.BLACK:
+        c.r = 0.0
+        c.g = 0.0
+        c.b = 0.0
+    elif color_t == ColorT.WHITE:
+        c.r = 1.0
+        c.g = 1.0
+        c.b = 1.0
+    elif color_t == ColorT.GRAY:
+        c.r = 0.5
+        c.g = 0.5
+        c.b = 0.5
+
+    return c
+
+
 class CommunicationHeader:
     def __init__(self, function):
         self.objects = {}
@@ -108,9 +241,20 @@ class CommunicationHeader:
 
     def append_property(self, property_type, property_value):
         if property_type in PROPERTY_TYPE_TO_CLASS:
-            self.props[property_type] = property_value
+            property_value_to_add = PROPERTY_TYPE_TO_CLASS[property_type](
+                property_value
+            )
+        elif isinstance(property_value, EdgeColorT):
+            property_value_to_add = edge_color_t_to_edge_color(property_value)
+        elif isinstance(property_value, FaceColorT):
+            property_value_to_add = face_color_t_to_face_color(property_value)
+        elif isinstance(property_value, ColorT):
+            property_value_to_add = color_t_to_color(property_value)
         else:
-            self.props[property_type] = property_value
+            property_value_to_add = property_value
+
+        self.props[property_type] = property_value_to_add
+
         self.properties_lut.append_property_index(property_type, self.prop_idx)
         self.prop_idx += 1
 
@@ -124,8 +268,8 @@ class CommunicationHeader:
     def to_bytes(self):
         bts = bytearray()
 
-        bts += len(self.objects).to_bytes(1, sys.byteorder)  # Objects
-        bts += len(self.props).to_bytes(1, sys.byteorder)  # Properties
+        bts += np.uint8(len(self.objects)).tobytes()  # Objects
+        bts += np.uint8(len(self.props)).tobytes()  # Properties
 
         bts += self.function.value.to_bytes(1, sys.byteorder)  # Function
 

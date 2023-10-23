@@ -6,30 +6,19 @@ from enums import *
 import item_id
 from item_id_constants import *
 
-"""
-PROPERTY_FLAG,
-ITEM_ID,
-UNKNOWN
-
-"""
-
 
 class PointSize:
-    def __init__(self, point_size: float):
-        if not isinstance(point_size, float):
-            raise TypeError("point_size must be of type float!")
-        if point_size <= 0.0:
-            raise ValueError("point_size must be greater than 0.0!")
+    def __init__(self, point_size: int):
+        if point_size <= 0:
+            raise ValueError("point_size must be greater than 0!")
 
         self.point_size = point_size
 
 
 class LineWidth:
-    def __init__(self, line_width: float):
-        if not isinstance(line_width, float):
-            raise TypeError("line_width must be of type float!")
-        if line_width <= 0.0:
-            raise ValueError("line_width must be greater than 0.0!")
+    def __init__(self, line_width: int):
+        if line_width <= 0:
+            raise ValueError("line_width must be greater than 0!")
 
         self.line_width = line_width
 
@@ -210,6 +199,7 @@ class EdgeColorT(Enum):
     BLACK = 6
     WHITE = 7
     GRAY = 8
+    NONE = 9
 
 
 class FaceColorT(Enum):
@@ -222,6 +212,7 @@ class FaceColorT(Enum):
     BLACK = 6
     WHITE = 7
     GRAY = 8
+    NONE = 9
 
 
 class Color:
@@ -265,7 +256,7 @@ class Color:
         self.b = b
 
 
-class FaceColor(Color):
+class FaceColor:
     RED = FaceColorT.RED
     GREEN = FaceColorT.GREEN
     BLUE = FaceColorT.BLUE
@@ -275,6 +266,7 @@ class FaceColor(Color):
     BLACK = FaceColorT.BLACK
     WHITE = FaceColorT.WHITE
     GRAY = FaceColorT.GRAY
+    NONE = FaceColorT.NONE
 
     def __init__(self, r: float, g: float, b: float):
         """
@@ -285,10 +277,13 @@ class FaceColor(Color):
             g (float): Green component value (0.0 to 1.0).
             b (float): Blue component value (0.0 to 1.0).
         """
-        super().__init__(r, g, b)
+        self.r = r
+        self.g = g
+        self.b = b
+        self.has_color = True
 
 
-class EdgeColor(Color):
+class EdgeColor:
     RED = EdgeColorT.RED
     GREEN = EdgeColorT.GREEN
     BLUE = EdgeColorT.BLUE
@@ -298,6 +293,7 @@ class EdgeColor(Color):
     BLACK = EdgeColorT.BLACK
     WHITE = EdgeColorT.WHITE
     GRAY = EdgeColorT.GRAY
+    NONE = EdgeColorT.NONE
 
     def __init__(self, r: float, g: float, b: float):
         """
@@ -308,7 +304,10 @@ class EdgeColor(Color):
             g (float): Green component value (0.0 to 1.0).
             b (float): Blue component value (0.0 to 1.0).
         """
-        super().__init__(r, g, b)
+        self.r = r
+        self.g = g
+        self.b = b
+        self.has_color = True
 
 
 class ScatterStyle(Enum):

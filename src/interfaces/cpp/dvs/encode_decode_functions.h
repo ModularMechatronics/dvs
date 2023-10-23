@@ -418,7 +418,7 @@ inline void deserializeFromCommunicationHeaderObject(properties::DistanceFrom& p
 inline uint8_t numBytes(const properties::BufferSize& obj)
 {
     static_cast<void>(obj);
-    return sizeof(uint8_t) + sizeof(uint8_t);
+    return sizeof(uint8_t) + sizeof(uint16_t);
 }
 
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::BufferSize& prop)

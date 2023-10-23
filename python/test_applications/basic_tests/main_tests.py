@@ -27,13 +27,13 @@ def test_scatter():
 
 
 def test_plot():
-    # dvs.set_current_element("p_view_0")
-    # dvs.clear_view()
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
 
-    x = np.linspace(0, 3, 100, dtype=np.float32)
+    x = np.linspace(0, 3, 500, dtype=np.float32)
     y = np.sin(x * 5.0)
 
-    dvs.plot(
+    """dvs.plot(
         x,
         y,
         name="Hello",
@@ -50,7 +50,10 @@ def test_plot():
         scatter_style=properties.ScatterStyle.CIRCLE,
         line_style=properties.LineStyle.DASHED,
         transform=properties.Transform(np.eye(3), np.eye(3), np.zeros(3)),
-    )
+    )"""
+
+    dvs.plot(x, y, color_map=properties.ColorMap.JET)
+    # dvs.plot(x, y, color=properties.Color(0.1, 0.2, 0.3))
 
 
 def test_plot3():
