@@ -9,8 +9,7 @@ NUM_BYTES_FOR_NAME = 23
 
 def serialize_color(col: Color):
     return (
-        PropertyType.COLOR.value.to_bytes(1, sys.byteorder)
-        + np.uint8(np.round(col.r * 255.0)).tobytes()
+        np.uint8(np.round(col.r * 255.0)).tobytes()
         + np.uint8(np.round(col.g * 255.0)).tobytes()
         + np.uint8(np.round(col.b * 255.0)).tobytes()
     )
@@ -18,8 +17,7 @@ def serialize_color(col: Color):
 
 def serialize_edge_color(edge_color):
     return (
-        PropertyType.EDGE_COLOR.value.to_bytes(1, sys.byteorder)
-        + np.uint8(np.round(edge_color.r * 255.0)).tobytes()
+        np.uint8(np.round(edge_color.r * 255.0)).tobytes()
         + np.uint8(np.round(edge_color.g * 255.0)).tobytes()
         + np.uint8(np.round(edge_color.b * 255.0)).tobytes()
         + np.uint8(edge_color.has_color).tobytes()
@@ -28,8 +26,7 @@ def serialize_edge_color(edge_color):
 
 def serialize_face_color(face_color):
     return (
-        PropertyType.FACE_COLOR.value.to_bytes(1, sys.byteorder)
-        + np.uint8(np.round(face_color.r * 255.0)).tobytes()
+        np.uint8(np.round(face_color.r * 255.0)).tobytes()
         + np.uint8(np.round(face_color.g * 255.0)).tobytes()
         + np.uint8(np.round(face_color.b * 255.0)).tobytes()
         + np.uint8(face_color.has_color).tobytes()
@@ -37,58 +34,36 @@ def serialize_face_color(face_color):
 
 
 def serialize_line_width(line_width):
-    return (
-        PropertyType.LINE_WIDTH.value.to_bytes(1, sys.byteorder)
-        + np.float32(line_width.line_width).tobytes()
-    )
+    return np.uint8(line_width.line_width).tobytes()
 
 
 def serialize_point_size(point_size):
-    return (
-        PropertyType.POINT_SIZE.value.to_bytes(1, sys.byteorder)
-        + np.float32(point_size.point_size).tobytes()
-    )
+    return np.uint8(point_size.point_size).tobytes()
 
 
 def serialize_buffer_size(buffer_size):
-    return (
-        PropertyType.BUFFER_SIZE.value.to_bytes(1, sys.byteorder)
-        + np.float32(buffer_size.buffer_size).tobytes()
-    )
+    return np.uint16(buffer_size.buffer_size).tobytes()
 
 
 def serialize_line_style(line_style):
-    return (
-        PropertyType.LINE_STYLE.value.to_bytes(1, sys.byteorder)
-        + np.uint8(line_style.value).tobytes()
-    )
+    return np.uint8(line_style.value).tobytes()
 
 
 def serialize_scatter_style(scatter_style):
-    return (
-        PropertyType.SCATTER_STYLE.value.to_bytes(1, sys.byteorder)
-        + np.uint8(scatter_style.value).tobytes()
-    )
+    return np.uint8(scatter_style.value).tobytes()
 
 
 def serialize_alpha(alpha: Alpha):
-    return (
-        PropertyType.ALPHA.value.to_bytes(1, sys.byteorder)
-        + np.float32(alpha.alpha).tobytes()
-    )
+    return np.float32(alpha.alpha).tobytes()
 
 
 def serialize_z_offset(z_offset: ZOffset):
-    return (
-        PropertyType.Z_OFFSET.value.to_bytes(1, sys.byteorder)
-        + np.float32(z_offset.z_offset).tobytes()
-    )
+    return np.float32(z_offset.z_offset).tobytes()
 
 
 def serialize_transform(t: Transform):
     return (
-        PropertyType.TRANSFORM.value.to_bytes(1, sys.byteorder)
-        + np.float64(t.rotation_matrix[0, 0]).tobytes()
+        np.float64(t.rotation_matrix[0, 0]).tobytes()
         + np.float64(t.rotation_matrix[0, 1]).tobytes()
         + np.float64(t.rotation_matrix[0, 2]).tobytes()
         + np.float64(t.rotation_matrix[1, 0]).tobytes()
@@ -114,8 +89,7 @@ def serialize_transform(t: Transform):
 
 def serialize_distance_from(dist_from: DistanceFrom):
     return (
-        PropertyType.DISTANCE_FROM.value.to_bytes(1, sys.byteorder)
-        + np.float64(dist_from.pt.x).tobytes()
+        np.float64(dist_from.pt.x).tobytes()
         + np.float64(dist_from.pt.y).tobytes()
         + np.float64(dist_from.pt.z).tobytes()
         + np.float64(dist_from.min_distance).tobytes()
@@ -132,16 +106,8 @@ def serialize_two_byte_num(num):
     return np.uint16(num).tobytes()
 
 
-def serialize_str(name: str):
-    return bytearray(name.encode("utf8"))
-
-
 def serialize_name(name: str):
-    return (
-        PropertyType.NAME.value.to_bytes(1, sys.byteorder)
-        + np.uint8(len(name.name)).tobytes()
-        + bytearray(name.name.encode("utf8"))
-    )
+    return np.uint8(len(name.name)).tobytes() + bytearray(name.name.encode("utf8"))
 
 
 def serialize_color_map(cm):
@@ -183,13 +149,13 @@ PROPERTY_SERIALIZATION_FUNCTIONS = {
 
 SIZE_OF_PROPERTY = {
     PropertyType.COLOR: 4,
-    PropertyType.EDGE_COLOR: 4,
-    PropertyType.FACE_COLOR: 4,
+    PropertyType.EDGE_COLOR: 5,
+    PropertyType.FACE_COLOR: 5,
     PropertyType.COLOR_MAP: 2,
     PropertyType.LINE_WIDTH: 2,
     PropertyType.POINT_SIZE: 2,
     PropertyType.BUFFER_SIZE: 3,
-    PropertyType.Z_OFFSET: 4,
+    PropertyType.Z_OFFSET: 5,
     PropertyType.DISTANCE_FROM: 1 + 3 * 8 + 8 + 8 + 1,
     PropertyType.LINE_STYLE: 2,
     PropertyType.SCATTER_STYLE: 2,

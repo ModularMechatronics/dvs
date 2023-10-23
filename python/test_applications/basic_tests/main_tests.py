@@ -36,7 +36,7 @@ def test_plot():
     """dvs.plot(
         x,
         y,
-        name="Hello",
+        # name="Hello", # TODO: Name is probably broken, name size is not included in SIZE_OF_PROPERTY
         alpha=0.1,
         line_width=13,
         point_size=13,
@@ -52,8 +52,16 @@ def test_plot():
         transform=properties.Transform(np.eye(3), np.eye(3), np.zeros(3)),
     )"""
 
-    dvs.plot(x, y, color_map=properties.ColorMap.JET)
-    # dvs.plot(x, y, color=properties.Color(0.1, 0.2, 0.3))
+    """dvs.plot(
+        x,
+        y,
+        color_map=properties.ColorMap.JET,
+        point_size=13,
+        buffer_size=500,
+        z_offset=0.1,
+    )"""
+    dvs.plot(x, y, line_width=13, color=properties.Color.CYAN)
+    dvs.scatter(x, y, point_size=23, color=properties.Color.BLACK)
 
 
 def test_plot3():

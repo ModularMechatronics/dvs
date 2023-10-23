@@ -223,8 +223,8 @@ def color_t_to_color(color_t: ColorT):
 
 class CommunicationHeader:
     def __init__(self, function):
-        self.objects = {}
-        self.props = {}
+        self.objects = []
+        self.props = []
         self.flags = (PropertyFlag.UNKNOWN.value + 1) * [0]
 
         self.objects_lut = CommunicationHeaderObjectLookupTable()
@@ -237,7 +237,7 @@ class CommunicationHeader:
     def append(self, object_type, object_value):
         self.objects_lut.append_object_index(object_type, self.obj_idx)
         self.obj_idx += 1
-        self.objects[object_type] = object_value
+        self.objects.append((object_type, object_value))
 
     def append_property(self, property_type, property_value):
         if property_type in PROPERTY_TYPE_TO_CLASS:
@@ -253,7 +253,7 @@ class CommunicationHeader:
         else:
             property_value_to_add = property_value
 
-        self.props[property_type] = property_value_to_add
+        self.props.append((property_type, property_value_to_add))
 
         self.properties_lut.append_property_index(property_type, self.prop_idx)
         self.prop_idx += 1
@@ -281,7 +281,7 @@ class CommunicationHeader:
             [np.uint8(q) for q in self.properties_lut.data]
         )  # Properties lookup table
 
-        for key, val in self.objects.items():
+        for key, val in self.objects:
             if key == CommunicationHeaderObjectType.ELEMENT_NAME:
                 bts += key.value.to_bytes(2, sys.byteorder)
                 bts += (SIZE_OF_FUNCTION_HEADER_OBJECT[key] + len(val)).to_bytes(
@@ -293,7 +293,7 @@ class CommunicationHeader:
                 bts += SIZE_OF_FUNCTION_HEADER_OBJECT[key].to_bytes(1, sys.byteorder)
                 bts += FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
 
-        for key, val in self.props.items():
+        for key, val in self.props:
             # Type
             bts += CommunicationHeaderObjectType.PROPERTY.value.to_bytes(
                 2, sys.byteorder
