@@ -106,19 +106,6 @@ def serialize_axes(axis_vecs):
     ).tobytes()
 
 
-"""
-
-
-def serialize_alpha(alpha: Alpha):
-    return np.float32(alpha.alpha).tobytes()
-
-
-def serialize_z_offset(z_offset: ZOffset):
-    return np.float32(z_offset.z_offset).tobytes()
-
-
-"""
-
 PROPERTY_SERIALIZATION_FUNCTIONS = {
     PropertyType.COLOR: serialize_color,
     PropertyType.EDGE_COLOR: serialize_edge_color,
@@ -159,14 +146,14 @@ FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     CommunicationHeaderObjectType.NUM_BUFFERS_REQUIRED: None,
     CommunicationHeaderObjectType.NUM_BYTES: None,
     CommunicationHeaderObjectType.DATA_STRUCTURE: None,
-    CommunicationHeaderObjectType.BYTES_PER_ELEMENT: None,
+    CommunicationHeaderObjectType.BYTES_PER_ELEMENT: lambda x: np.uint8(x).tobytes(),
     CommunicationHeaderObjectType.DATA_TYPE: lambda x: np.uint8(x.value).tobytes(),
-    CommunicationHeaderObjectType.NUM_CHANNELS: None,
+    CommunicationHeaderObjectType.NUM_CHANNELS: lambda x: np.uint8(x).tobytes(),
     CommunicationHeaderObjectType.NUM_ELEMENTS: lambda x: np.uint32(x).tobytes(),
     CommunicationHeaderObjectType.HAS_COLOR: None,
     CommunicationHeaderObjectType.HAS_POINT_SIZES: None,
-    CommunicationHeaderObjectType.NUM_VERTICES: None,
-    CommunicationHeaderObjectType.NUM_INDICES: None,
+    CommunicationHeaderObjectType.NUM_VERTICES: lambda x: np.uint32(x).tobytes(),
+    CommunicationHeaderObjectType.NUM_INDICES: lambda x: np.uint32(x).tobytes(),
     CommunicationHeaderObjectType.NUM_OBJECTS: None,
     CommunicationHeaderObjectType.DIMENSION_2D: lambda x: np.array(
         [np.uint32(a) for a in x]
@@ -196,32 +183,6 @@ FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     CommunicationHeaderObjectType.NUM_NAMES: None,
     CommunicationHeaderObjectType.UNKNOWN: None,
 }
-
-"""FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
-    CommunicationHeaderObjectType.FUNCTION: lambda x: np.uint8(x.value).tobytes(),
-    CommunicationHeaderObjectType.NUM_BUFFERS_REQUIRED: None,
-    CommunicationHeaderObjectType.NUM_BYTES: None,
-    CommunicationHeaderObjectType.DATA_STRUCTURE: None,
-    CommunicationHeaderObjectType.BYTES_PER_ELEMENT: lambda x: np.uint8(x).tobytes(),
-    CommunicationHeaderObjectType.DATA_TYPE: lambda x: np.uint8(x.value).tobytes(),
-    CommunicationHeaderObjectType.NUM_ELEMENTS: lambda x: np.uint32(x).tobytes(),
-    CommunicationHeaderObjectType.NUM_VERTICES: lambda x: np.uint32(x).tobytes(),
-    CommunicationHeaderObjectType.NUM_INDICES: lambda x: np.uint32(x).tobytes(),
-    CommunicationHeaderObjectType.DIMENSION_2D: lambda x: np.uint64(x).tobytes(),
-    CommunicationHeaderObjectType.HAS_PAYLOAD: None,
-    CommunicationHeaderObjectType.AZIMUTH: lambda x: np.float32(x).tobytes(),
-    CommunicationHeaderObjectType.ELEVATION: lambda x: np.float32(x).tobytes(),
-    CommunicationHeaderObjectType.AXIS_MIN_MAX_VEC: serialize_axes,
-    CommunicationHeaderObjectType.POS2D: None,
-    CommunicationHeaderObjectType.FIGURE_NUM: None,
-    CommunicationHeaderObjectType.PARENT_NAME: None,
-    CommunicationHeaderObjectType.PARENT_TYPE: None,
-    CommunicationHeaderObjectType.ELEMENT_NAME: serialize_name,
-    CommunicationHeaderObjectType.GUI_ELEMENT_TYPE: None,
-    CommunicationHeaderObjectType.PROPERTY: None,
-    CommunicationHeaderObjectType.NUM_CHANNELS: lambda x: np.uint8(x).tobytes(),
-    CommunicationHeaderObjectType.UNKNOWN: None
-}"""
 
 
 SIZE_OF_FUNCTION_HEADER_OBJECT = {

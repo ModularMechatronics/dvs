@@ -3,11 +3,12 @@ from typing import List, Union, Tuple
 import psutil
 import os
 
-from enums import *
-from serialization import *
-from structures import *
+import enums
 import internal
+
 import properties
+from structures import *
+from item_id import ItemId
 
 
 def plot(
@@ -23,11 +24,11 @@ def plot(
             "x and y must have same shape! Shapes are x: {x.shape}, y: {y.shape}"
         )
 
-    hdr = internal.CommunicationHeader(Function.PLOT2)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr = internal.CommunicationHeader(enums.Function.PLOT2)
+    hdr.append(enums.CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
 
     hdr.append(
-        CommunicationHeaderObjectType.DATA_TYPE,
+        enums.CommunicationHeaderObjectType.DATA_TYPE,
         internal.np_data_type_to_data_type(x[0].__class__),
     )
 
@@ -51,11 +52,11 @@ def plot3(
             "x and y must have same shape! Shapes are x: {x.shape}, y: {y.shape}, z: {z.shape}"
         )
 
-    hdr = internal.CommunicationHeader(Function.PLOT3)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr = internal.CommunicationHeader(enums.Function.PLOT3)
+    hdr.append(enums.CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
 
     hdr.append(
-        CommunicationHeaderObjectType.DATA_TYPE,
+        enums.CommunicationHeaderObjectType.DATA_TYPE,
         internal.np_data_type_to_data_type(x[0].__class__),
     )
 
@@ -75,11 +76,11 @@ def scatter(
             "x and y must have same shape! Shapes are x: {x.shape}, y: {y.shape}"
         )
 
-    hdr = internal.CommunicationHeader(Function.SCATTER2)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr = internal.CommunicationHeader(enums.Function.SCATTER2)
+    hdr.append(enums.CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
 
     hdr.append(
-        CommunicationHeaderObjectType.DATA_TYPE,
+        enums.CommunicationHeaderObjectType.DATA_TYPE,
         internal.np_data_type_to_data_type(x[0].__class__),
     )
 
@@ -103,17 +104,17 @@ def scatter3(
             "x and y must have same shape! Shapes are x: {x.shape}, y: {y.shape}, z: {z.shape}"
         )
 
-    hdr = internal.CommunicationHeader(Function.SCATTER3)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr = internal.CommunicationHeader(enums.Function.SCATTER3)
+    hdr.append(enums.CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
 
     if len(x.shape) == 2:
         hdr.append(
-            CommunicationHeaderObjectType.DATA_TYPE,
+            enums.CommunicationHeaderObjectType.DATA_TYPE,
             internal.np_data_type_to_data_type(x[0][0].__class__),
         )
     else:
         hdr.append(
-            CommunicationHeaderObjectType.DATA_TYPE,
+            enums.CommunicationHeaderObjectType.DATA_TYPE,
             internal.np_data_type_to_data_type(x[0].__class__),
         )
 
@@ -140,12 +141,12 @@ def surf(
             f"Invalid shape for input vector: {x.shape}! Both dimensions must be greater than 1."
         )
 
-    hdr = internal.CommunicationHeader(Function.SURF)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
-    hdr.append(CommunicationHeaderObjectType.DIMENSION_2D, x.shape)
+    hdr = internal.CommunicationHeader(enums.Function.SURF)
+    hdr.append(enums.CommunicationHeaderObjectType.NUM_ELEMENTS, x.size)
+    hdr.append(enums.CommunicationHeaderObjectType.DIMENSION_2D, x.shape)
 
     hdr.append(
-        CommunicationHeaderObjectType.DATA_TYPE,
+        enums.CommunicationHeaderObjectType.DATA_TYPE,
         internal.np_data_type_to_data_type(x[0][0].__class__),
     )
 
@@ -155,18 +156,18 @@ def surf(
 
 
 def imshow(img: np.array, **props_kw):
-    hdr = internal.CommunicationHeader(Function.IM_SHOW)
+    hdr = internal.CommunicationHeader(enums.Function.IM_SHOW)
 
     if len(img.shape) == 2:
-        hdr.append(CommunicationHeaderObjectType.NUM_CHANNELS, 1)
-        hdr.append(CommunicationHeaderObjectType.DIMENSION_2D, img.shape)
+        hdr.append(enums.CommunicationHeaderObjectType.NUM_CHANNELS, 1)
+        hdr.append(enums.CommunicationHeaderObjectType.DIMENSION_2D, img.shape)
     else:
-        hdr.append(CommunicationHeaderObjectType.NUM_CHANNELS, 3)
-        hdr.append(CommunicationHeaderObjectType.DIMENSION_2D, img[0].shape)
-    hdr.append(CommunicationHeaderObjectType.NUM_ELEMENTS, img.size)
+        hdr.append(enums.CommunicationHeaderObjectType.NUM_CHANNELS, 3)
+        hdr.append(enums.CommunicationHeaderObjectType.DIMENSION_2D, img[0].shape)
+    hdr.append(enums.CommunicationHeaderObjectType.NUM_ELEMENTS, img.size)
 
     hdr.append(
-        CommunicationHeaderObjectType.DATA_TYPE,
+        enums.CommunicationHeaderObjectType.DATA_TYPE,
         internal.np_data_type_to_data_type(img[0][0][0].__class__),
     )
 
@@ -193,30 +194,30 @@ def axis(
     if min_vec.z >= max_vec.z:
         raise Exception("Invalid axis! z min >= z max")
 
-    hdr = internal.CommunicationHeader(Function.AXES_3D)
-    hdr.append(CommunicationHeaderObjectType.AXIS_MIN_MAX_VEC, (min_vec, max_vec))
+    hdr = internal.CommunicationHeader(enums.Function.AXES_3D)
+    hdr.append(enums.CommunicationHeaderObjectType.AXIS_MIN_MAX_VEC, (min_vec, max_vec))
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def view(azimuth_deg, elevation_deg):
-    hdr = internal.CommunicationHeader(Function.VIEW)
-    hdr.append(CommunicationHeaderObjectType.AZIMUTH, np.float32(azimuth_deg))
-    hdr.append(CommunicationHeaderObjectType.ELEVATION, np.float32(elevation_deg))
+    hdr = internal.CommunicationHeader(enums.Function.VIEW)
+    hdr.append(enums.CommunicationHeaderObjectType.AZIMUTH, np.float32(azimuth_deg))
+    hdr.append(enums.CommunicationHeaderObjectType.ELEVATION, np.float32(elevation_deg))
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def disable_scale_on_rotation():
-    hdr = internal.CommunicationHeader(Function.DISABLE_SCALE_ON_ROTATION)
+    hdr = internal.CommunicationHeader(enums.Function.DISABLE_SCALE_ON_ROTATION)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def soft_clear_view():
-    hdr = internal.CommunicationHeader(Function.SOFT_CLEAR)
+    hdr = internal.CommunicationHeader(enums.Function.SOFT_CLEAR)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def clear_view():
-    hdr = internal.CommunicationHeader(Function.CLEAR)
+    hdr = internal.CommunicationHeader(enums.Function.CLEAR)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
@@ -224,41 +225,41 @@ def set_current_element(name: str):
     if not isinstance(name, str):
         raise Exception("Name must be a string!")
 
-    hdr = internal.CommunicationHeader(Function.SET_CURRENT_ELEMENT)
-    hdr.append(CommunicationHeaderObjectType.ELEMENT_NAME, name)
+    hdr = internal.CommunicationHeader(enums.Function.SET_CURRENT_ELEMENT)
+    hdr.append(enums.CommunicationHeaderObjectType.ELEMENT_NAME, name)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
-def set_properties(item_id: item_id.ItemId, **props_kw):
-    hdr = internal.CommunicationHeader(Function.PROPERTIES_EXTENSION)
-    hdr.append(CommunicationHeaderObjectType.ITEM_ID, item_id)
+def set_properties(itm_id: ItemId, **props_kw):
+    hdr = internal.CommunicationHeader(enums.Function.PROPERTIES_EXTENSION)
+    hdr.append(enums.CommunicationHeaderObjectType.ITEM_ID, itm_id)
     hdr.append_properties(props_kw)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
-def delete_plot_object(item_id: item_id.ItemId):
-    hdr = internal.CommunicationHeader(Function.DELETE_PLOT_OBJECT)
-    hdr.append(CommunicationHeaderObjectType.ITEM_ID, item_id)
+def delete_plot_object(itm_id: ItemId):
+    hdr = internal.CommunicationHeader(enums.Function.DELETE_PLOT_OBJECT)
+    hdr.append(enums.CommunicationHeaderObjectType.ITEM_ID, itm_id)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def set_current_element_to_image_view():
-    hdr = internal.CommunicationHeader(Function.CURRENT_ELEMENT_AS_IMAGE_VIEW)
+    hdr = internal.CommunicationHeader(enums.Function.CURRENT_ELEMENT_AS_IMAGE_VIEW)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def wait_for_flush():
-    hdr = internal.CommunicationHeader(Function.WAIT_FOR_FLUSH)
+    hdr = internal.CommunicationHeader(enums.Function.WAIT_FOR_FLUSH)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def flush_current_element():
-    hdr = internal.CommunicationHeader(Function.FLUSH_ELEMENT)
+    hdr = internal.CommunicationHeader(enums.Function.FLUSH_ELEMENT)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def flush_multiple_elements(*args):
-    hdr = internal.CommunicationHeader(Function.FLUSH_MULTIPLE_ELEMENTS)
+    hdr = internal.CommunicationHeader(enums.Function.FLUSH_MULTIPLE_ELEMENTS)
 
     name_lengths = np.zeros(len(args), dtype=np.uint8)
     concatenated_names = ""
@@ -270,36 +271,36 @@ def flush_multiple_elements(*args):
         name_lengths[idx] = len(arg)
         concatenated_names += arg
 
-    hdr.append(CommunicationHeaderObjectType.NUM_NAMES, len(args))
+    hdr.append(enums.CommunicationHeaderObjectType.NUM_NAMES, len(args))
     internal.send_header_and_data(
         internal.send_with_tcp, hdr, name_lengths, concatenated_names
     )
 
 
 def global_illumination(light_position: Vec3D):
-    hdr = internal.CommunicationHeader(Function.GLOBAL_ILLUMINATION)
-    hdr.append(CommunicationHeaderObjectType.VEC3, light_position)
+    hdr = internal.CommunicationHeader(enums.Function.GLOBAL_ILLUMINATION)
+    hdr.append(enums.CommunicationHeaderObjectType.VEC3, light_position)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def show_legend():
-    hdr = internal.CommunicationHeader(Function.SHOW_LEGEND)
+    hdr = internal.CommunicationHeader(enums.Function.SHOW_LEGEND)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def disable_automatic_axes_adjustment():
-    hdr = internal.CommunicationHeader(Function.DISABLE_AXES_FROM_MIN_MAX)
+    hdr = internal.CommunicationHeader(enums.Function.DISABLE_AXES_FROM_MIN_MAX)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def axes_square():
-    hdr = internal.CommunicationHeader(Function.AXES_SQUARE)
+    hdr = internal.CommunicationHeader(enums.Function.AXES_SQUARE)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def set_axes_box_scale_factor(scale_vector: Vec3D):
-    hdr = internal.CommunicationHeader(Function.SET_AXES_BOX_SCALE_FACTOR)
-    hdr.append(CommunicationHeaderObjectType.VEC3, scale_vector)
+    hdr = internal.CommunicationHeader(enums.Function.SET_AXES_BOX_SCALE_FACTOR)
+    hdr.append(enums.CommunicationHeaderObjectType.VEC3, scale_vector)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
@@ -309,18 +310,18 @@ def set_title(title: str):
     elif len(title) == 0:
         raise Exception("Title must have length greater than 0!")
 
-    hdr = internal.CommunicationHeader(Function.SET_TITLE)
-    hdr.append(CommunicationHeaderObjectType.TITLE_STRING, title)
+    hdr = internal.CommunicationHeader(enums.Function.SET_TITLE)
+    hdr.append(enums.CommunicationHeaderObjectType.TITLE_STRING, title)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
 def set_transform(
-    item_id: item_id.ItemId,
+    itm_id: ItemId,
     scale_matrix: np.ndarray,
     rotation_matrix: np.ndarray,
     translation_vec: Union[np.ndarray, Vec3D],
 ):
-    if not isinstance(item_id, item_id.ItemId):
+    if not isinstance(itm_id, ItemId):
         raise Exception("Item ID must be an ItemId!")
 
     if isinstance(translation_vec, Vec3D):
@@ -348,11 +349,11 @@ def set_transform(
     if not rotation_matrix.shape == (3, 3):
         raise Exception("Rotation matrix must be a 3x3 matrix!")
 
-    hdr = internal.CommunicationHeader(Function.SET_OBJECT_TRANSFORM)
-    hdr.append(CommunicationHeaderObjectType.ROTATION_MATRIX, rotation_matrix)
-    hdr.append(CommunicationHeaderObjectType.TRANSLATION_VECTOR, translation_vec)
-    hdr.append(CommunicationHeaderObjectType.SCALE_MATRIX, scale_matrix)
-    hdr.append(CommunicationHeaderObjectType.ITEM_ID, item_id)
+    hdr = internal.CommunicationHeader(enums.Function.SET_OBJECT_TRANSFORM)
+    hdr.append(enums.CommunicationHeaderObjectType.ROTATION_MATRIX, rotation_matrix)
+    hdr.append(enums.CommunicationHeaderObjectType.TRANSLATION_VECTOR, translation_vec)
+    hdr.append(enums.CommunicationHeaderObjectType.SCALE_MATRIX, scale_matrix)
+    hdr.append(enums.CommunicationHeaderObjectType.ITEM_ID, itm_id)
     internal.send_header(internal.send_with_tcp, hdr)
 
 
@@ -362,8 +363,8 @@ def open_project_file(file_path: str):
     elif len(file_path) == 0:
         raise Exception("File path must have length greater than 0!")
 
-    hdr = internal.CommunicationHeader(Function.OPEN_PROJECT_FILE)
-    hdr.append(CommunicationHeaderObjectType.PROJECT_FILE_NAME, file_path)
+    hdr = internal.CommunicationHeader(enums.Function.OPEN_PROJECT_FILE)
+    hdr.append(enums.CommunicationHeaderObjectType.PROJECT_FILE_NAME, file_path)
     internal.send_header(internal.send_with_tcp, hdr)
 
 

@@ -1,7 +1,8 @@
 import dvs
 import numpy as np
-from structures import *
-import properties
+
+# from structures import *
+# import properties
 import time
 import surf_functions
 import plot_2d_functions
@@ -42,26 +43,26 @@ def test_plot():
         point_size=13,
         buffer_size=500,
         z_offset=0.1,
-        edge_color=properties.EdgeColor(0.1, 0.2, 0.3),
-        face_color=properties.FaceColor(0.1, 0.2, 0.3),
-        color=properties.Color(0.1, 0.2, 0.3),
-        distance_from=properties.DistanceFrom.x(0.1, 0.2, 0.3),
-        color_map=properties.ColorMap.JET,
-        scatter_style=properties.ScatterStyle.CIRCLE,
-        line_style=properties.LineStyle.DASHED,
-        transform=properties.Transform(np.eye(3), np.eye(3), np.zeros(3)),
+        edge_color=dvs.properties.EdgeColor(0.1, 0.2, 0.3),
+        face_color=dvs.properties.FaceColor(0.1, 0.2, 0.3),
+        color=dvs.properties.Color(0.1, 0.2, 0.3),
+        distance_from=dvs.properties.DistanceFrom.x(0.1, 0.2, 0.3),
+        color_map=dvs.properties.ColorMap.JET,
+        scatter_style=dvs.properties.ScatterStyle.CIRCLE,
+        line_style=dvs.properties.LineStyle.DASHED,
+        transform=dvs.properties.Transform(np.eye(3), np.eye(3), np.zeros(3)),
     )"""
 
     """dvs.plot(
         x,
         y,
-        color_map=properties.ColorMap.JET,
+        color_map=dvs.properties.ColorMap.JET,
         point_size=13,
         buffer_size=500,
         z_offset=0.1,
     )"""
-    dvs.plot(x, y, line_width=13, color=properties.Color.CYAN)
-    dvs.scatter(x, y, point_size=23, color=properties.Color.BLACK)
+    dvs.plot(x, y, line_width=13, color=dvs.properties.Color.CYAN)
+    dvs.scatter(x, y, point_size=23, color=dvs.properties.Color.BLACK)
 
 
 def test_plot3():
@@ -177,13 +178,13 @@ def test_surf_demo():
     curr_angle = 0
 
     color_maps = [
-        properties.ColorMap.JET,
-        properties.ColorMap.HSV,
-        properties.ColorMap.MAGMA,
-        properties.ColorMap.VIRIDIS,
-        properties.ColorMap.PASTEL,
-        properties.ColorMap.JET_SOFT,
-        properties.ColorMap.JET_BRIGHT,
+        dvs.properties.ColorMap.JET,
+        dvs.properties.ColorMap.HSV,
+        dvs.properties.ColorMap.MAGMA,
+        dvs.properties.ColorMap.VIRIDIS,
+        dvs.properties.ColorMap.PASTEL,
+        dvs.properties.ColorMap.JET_SOFT,
+        dvs.properties.ColorMap.JET_BRIGHT,
     ]
 
     for idx, surf_fun in enumerate(SURF_FUNCTION_NAMES):
@@ -229,16 +230,16 @@ def test_imshow():
 def test_draw_mesh():
     setup_dvs_view()
     points = [
-        Point3D(1.0, 1.0),
-        Point3D(2.0, 4.0),
-        Point3D(3.0, 2.0),
-        Point3D(4.0, 3.0),
-        Point3D(4.0, 1.5),
+        dvs.Point3D(1.0, 1.0),
+        dvs.Point3D(2.0, 4.0),
+        dvs.Point3D(3.0, 2.0),
+        dvs.Point3D(4.0, 3.0),
+        dvs.Point3D(4.0, 1.5),
     ]
     indices = [
-        IndexTriplet(0, 1, 2),
-        IndexTriplet(1, 2, 3),
-        IndexTriplet(2, 3, 4),
-        IndexTriplet(0, 2, 4),
+        dvs.IndexTriplet(0, 1, 2),
+        dvs.IndexTriplet(1, 2, 3),
+        dvs.IndexTriplet(2, 3, 4),
+        dvs.IndexTriplet(0, 2, 4),
     ]
-    draw_mesh(points, indices)
+    dvs.draw_mesh(points, indices)
