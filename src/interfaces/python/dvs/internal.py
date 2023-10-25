@@ -347,16 +347,16 @@ class CommunicationHeader:
         )  # Properties lookup table
 
         for key, val in self.objects:
+            bts += key.value.to_bytes(2, sys.byteorder)
+
             if key == CommunicationHeaderObjectType.ELEMENT_NAME:
-                bts += key.value.to_bytes(2, sys.byteorder)
                 bts += (SIZE_OF_FUNCTION_HEADER_OBJECT[key] + len(val)).to_bytes(
                     1, sys.byteorder
                 )
-                bts += FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
             else:
-                bts += key.value.to_bytes(2, sys.byteorder)
                 bts += SIZE_OF_FUNCTION_HEADER_OBJECT[key].to_bytes(1, sys.byteorder)
-                bts += FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
+
+            bts += FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION[key](val)
 
         for key, val in self.props:
             # Type

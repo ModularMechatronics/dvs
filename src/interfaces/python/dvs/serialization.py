@@ -192,7 +192,7 @@ FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     + x.encode("utf-8"),
     CommunicationHeaderObjectType.GUI_ELEMENT_TYPE: None,
     CommunicationHeaderObjectType.PROPERTY: None,
-    CommunicationHeaderObjectType.ITEM_ID: None,
+    CommunicationHeaderObjectType.ITEM_ID: lambda x: np.uint16(x.value).tobytes(),
     CommunicationHeaderObjectType.NUM_NAMES: None,
     CommunicationHeaderObjectType.UNKNOWN: None,
 }
@@ -256,7 +256,7 @@ SIZE_OF_FUNCTION_HEADER_OBJECT = {
     CommunicationHeaderObjectType.ELEMENT_NAME: 2,
     CommunicationHeaderObjectType.GUI_ELEMENT_TYPE: None,
     CommunicationHeaderObjectType.PROPERTY: None,
-    CommunicationHeaderObjectType.ITEM_ID: None,
+    CommunicationHeaderObjectType.ITEM_ID: 2,
     CommunicationHeaderObjectType.NUM_NAMES: None,
     CommunicationHeaderObjectType.UNKNOWN: None,
 }

@@ -1,11 +1,13 @@
 import numpy as np
 from typing import List, Union, Tuple
+import psutil
+import os
 
 from enums import *
-from constants import *
 from serialization import *
 from structures import *
 import internal
+import properties
 
 
 def plot(
@@ -225,3 +227,152 @@ def set_current_element(name: str):
     hdr = internal.CommunicationHeader(Function.SET_CURRENT_ELEMENT)
     hdr.append(CommunicationHeaderObjectType.ELEMENT_NAME, name)
     internal.send_header(internal.send_with_tcp, hdr)
+
+
+def set_properties(item_id: item_id.ItemId, **props_kw):
+    hdr = internal.CommunicationHeader(Function.PROPERTIES_EXTENSION)
+    hdr.append(CommunicationHeaderObjectType.ITEM_ID, item_id)
+    hdr.append_properties(props_kw)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def delete_plot_object(item_id: item_id.ItemId):
+    hdr = internal.CommunicationHeader(Function.DELETE_PLOT_OBJECT)
+    hdr.append(CommunicationHeaderObjectType.ITEM_ID, item_id)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def set_current_element_to_image_view():
+    hdr = internal.CommunicationHeader(Function.CURRENT_ELEMENT_AS_IMAGE_VIEW)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def wait_for_flush():
+    hdr = internal.CommunicationHeader(Function.WAIT_FOR_FLUSH)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def flush_current_element():
+    hdr = internal.CommunicationHeader(Function.FLUSH_ELEMENT)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def flush_multiple_elements(*args):
+    hdr = internal.CommunicationHeader(Function.FLUSH_MULTIPLE_ELEMENTS)
+
+    name_lengths = np.zeros(len(args), dtype=np.uint8)
+    concatenated_names = ""
+
+    for idx, arg in enumerate(args):
+        if not isinstance(arg, str):
+            raise Exception("All arguments must be strings!")
+
+        name_lengths[idx] = len(arg)
+        concatenated_names += arg
+
+    hdr.append(CommunicationHeaderObjectType.NUM_NAMES, len(args))
+    internal.send_header_and_data(
+        internal.send_with_tcp, hdr, name_lengths, concatenated_names
+    )
+
+
+def global_illumination(light_position: Vec3D):
+    hdr = internal.CommunicationHeader(Function.GLOBAL_ILLUMINATION)
+    hdr.append(CommunicationHeaderObjectType.VEC3, light_position)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def show_legend():
+    hdr = internal.CommunicationHeader(Function.SHOW_LEGEND)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def disable_automatic_axes_adjustment():
+    hdr = internal.CommunicationHeader(Function.DISABLE_AXES_FROM_MIN_MAX)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def axes_square():
+    hdr = internal.CommunicationHeader(Function.AXES_SQUARE)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def set_axes_box_scale_factor(scale_vector: Vec3D):
+    hdr = internal.CommunicationHeader(Function.SET_AXES_BOX_SCALE_FACTOR)
+    hdr.append(CommunicationHeaderObjectType.VEC3, scale_vector)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def set_title(title: str):
+    if not isinstance(title, str):
+        raise Exception("Title must be a string!")
+    elif len(title) == 0:
+        raise Exception("Title must have length greater than 0!")
+
+    hdr = internal.CommunicationHeader(Function.SET_TITLE)
+    hdr.append(CommunicationHeaderObjectType.TITLE_STRING, title)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def set_transform(
+    item_id: item_id.ItemId,
+    scale_matrix: np.ndarray,
+    rotation_matrix: np.ndarray,
+    translation_vec: Union[np.ndarray, Vec3D],
+):
+    if not isinstance(item_id, item_id.ItemId):
+        raise Exception("Item ID must be an ItemId!")
+
+    if isinstance(translation_vec, Vec3D):
+        translation_vec = translation_vec
+    elif not isinstance(translation_vec, np.ndarray):
+        if translation_vec.shape == (3,):
+            translation_vec = Vec3D(
+                translation_vec[0], translation_vec[1], translation_vec[2]
+            )
+        elif translation_vec.shape == (1, 3):
+            translation_vec = Vec3D(
+                translation_vec[0][0], translation_vec[0][1], translation_vec[0][2]
+            )
+        elif translation_vec.shape == (3, 1):
+            translation_vec = Vec3D(
+                translation_vec[0][0], translation_vec[1][0], translation_vec[2][0]
+            )
+        else:
+            raise Exception("Translation vector must be a Vec3D or a numpy array!")
+    else:
+        raise Exception("Translation vector must be a Vec3D or a numpy array!")
+
+    if not scale_matrix.shape == (3, 3):
+        raise Exception("Scale matrix must be a 3x3 matrix!")
+    if not rotation_matrix.shape == (3, 3):
+        raise Exception("Rotation matrix must be a 3x3 matrix!")
+
+    hdr = internal.CommunicationHeader(Function.SET_OBJECT_TRANSFORM)
+    hdr.append(CommunicationHeaderObjectType.ROTATION_MATRIX, rotation_matrix)
+    hdr.append(CommunicationHeaderObjectType.TRANSLATION_VECTOR, translation_vec)
+    hdr.append(CommunicationHeaderObjectType.SCALE_MATRIX, scale_matrix)
+    hdr.append(CommunicationHeaderObjectType.ITEM_ID, item_id)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def open_project_file(file_path: str):
+    if not isinstance(file_path, str):
+        raise Exception("File path must be a string!")
+    elif len(file_path) == 0:
+        raise Exception("File path must have length greater than 0!")
+
+    hdr = internal.CommunicationHeader(Function.OPEN_PROJECT_FILE)
+    hdr.append(CommunicationHeaderObjectType.PROJECT_FILE_NAME, file_path)
+    internal.send_header(internal.send_with_tcp, hdr)
+
+
+def spawn():
+    # TODO: This function does not work...
+    return
+    if "dvs" not in [p.name() for p in psutil.process_iter()]:
+        os.spawnl(
+            os.P_NOWAIT,
+            "/Users/danielpi/work/dvs/src/build/main_application/dvs",
+            "/Users/danielpi/work/dvs/src/build/",
+        )
