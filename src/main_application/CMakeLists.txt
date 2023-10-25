@@ -22,6 +22,8 @@ set(CPP_SOURCE_FILES main.cpp
 
                      axes/axes_side_configuration.cpp
 
+                     project_state/project_settings.cpp
+
                      shader.cpp
 
                      axes/structures/axes_limits.cpp

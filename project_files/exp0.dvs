@@ -5,21 +5,6 @@
             "name": "Window 0",
             "tabs": [
                 {
-                    "button_clicked_color": {
-                        "b": 0.8199999928474426,
-                        "g": 0.8899999856948853,
-                        "r": 0.6819999814033508
-                    },
-                    "button_normal_color": {
-                        "b": 0.8199999928474426,
-                        "g": 0.8899999856948853,
-                        "r": 0.6819999814033508
-                    },
-                    "button_selected_color": {
-                        "b": 0.7799999713897705,
-                        "g": 0.8510000109672546,
-                        "r": 0.6430000066757202
-                    },
                     "button_text_color": {
                         "b": 0.0,
                         "g": 0.0,
@@ -45,11 +30,6 @@
                             },
                             "height": 0.5979112386703491,
                             "handle_string": "p_view_0",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 0.5229358077049255,
                             "x": 0.0,
@@ -74,11 +54,6 @@
                             },
                             "height": 0.5979112386703491,
                             "handle_string": "p1",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 0.4747706353664398,
                             "x": 0.5240825414657593,
@@ -104,11 +79,6 @@
                             },
                             "height": 0.3994778096675873,
                             "handle_string": "p_view_1",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 0.5986238718032837,
                             "x": 0.0,
@@ -133,11 +103,6 @@
                             },
                             "height": 0.3994778096675873,
                             "handle_string": "p_view_2",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 0.39908257126808167,
                             "x": 0.6009174585342407,
@@ -147,21 +112,6 @@
                     "name": "primary_view"
                 },
                 {
-                    "button_clicked_color": {
-                        "b": 0.8199999928474426,
-                        "g": 0.8899999856948853,
-                        "r": 0.6819999814033508
-                    },
-                    "button_normal_color": {
-                        "b": 0.8199999928474426,
-                        "g": 0.8899999856948853,
-                        "r": 0.6819999814033508
-                    },
-                    "button_selected_color": {
-                        "b": 0.7799999713897705,
-                        "g": 0.8510000109672546,
-                        "r": 0.6430000066757202
-                    },
                     "button_text_color": {
                         "b": 0.0,
                         "g": 0.0,
@@ -187,11 +137,6 @@
                             },
                             "height": 0.3256351053714752,
                             "handle_string": "s_view_0",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 0.5,
                             "x": 0.0,
@@ -216,11 +161,6 @@
                             },
                             "height": 0.3250652849674225,
                             "handle_string": "s_view_1",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 0.5,
                             "x": 0.5,
@@ -245,11 +185,6 @@
                             },
                             "height": 0.6651270389556885,
                             "handle_string": "s_view_2",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 1.0,
                             "x": 0.0,
@@ -268,21 +203,6 @@
             "name": "Window 1",
             "tabs": [
                 {
-                    "button_clicked_color": {
-                        "b": 0.8199999928474426,
-                        "g": 0.8899999856948853,
-                        "r": 0.6819999814033508
-                    },
-                    "button_normal_color": {
-                        "b": 0.8199999928474426,
-                        "g": 0.8899999856948853,
-                        "r": 0.6819999814033508
-                    },
-                    "button_selected_color": {
-                        "b": 0.7799999713897705,
-                        "g": 0.8510000109672546,
-                        "r": 0.6430000066757202
-                    },
                     "button_text_color": {
                         "b": 0.0,
                         "g": 0.0,
@@ -308,11 +228,6 @@
                             },
                             "height": 1.0,
                             "handle_string": "w1_p_view_0",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 1.0,
                             "x": 0.0,
@@ -322,21 +237,6 @@
                     "name": "primary_view"
                 },
                 {
-                    "button_clicked_color": {
-                        "b": 0.8199999928474426,
-                        "g": 0.8899999856948853,
-                        "r": 0.6819999814033508
-                    },
-                    "button_normal_color": {
-                        "b": 0.8199999928474426,
-                        "g": 0.8899999856948853,
-                        "r": 0.6819999814033508
-                    },
-                    "button_selected_color": {
-                        "b": 0.7799999713897705,
-                        "g": 0.8510000109672546,
-                        "r": 0.6430000066757202
-                    },
                     "button_text_color": {
                         "b": 0.0,
                         "g": 0.0,
@@ -362,11 +262,6 @@
                             },
                             "height": 0.6882216930389404,
                             "handle_string": "w1_p_view_1",
-                            "plot_box_color": {
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
-                            },
                             "projection_mode": "orthographic",
                             "width": 0.9967426657676697,
                             "x": 0.0,
