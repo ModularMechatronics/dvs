@@ -28,7 +28,7 @@ out vec4 coord_out;
 flat out vec3 p0_out;
 flat out vec3 p1_out;
 flat out float length_along_fs;
-flat out float theta;
+// flat out float theta;
 flat out float scale_factor;
 out vec3 fragment_pos;
 flat out int triangle_id;
@@ -267,7 +267,7 @@ void main()
     }
 
     fragment_pos     = gl_Position.xyz / gl_Position.w;
-    theta = atan(vec_on_line_edge01.y, vec_on_line_edge01.x);
+    // theta = atan(vec_on_line_edge01.y, vec_on_line_edge01.x);
 
     if(triangle_id == 0)
     {

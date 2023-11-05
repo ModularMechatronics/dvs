@@ -229,17 +229,171 @@ def test_imshow():
 
 def test_draw_mesh():
     setup_dvs_view()
-    points = [
-        dvs.Point3D(1.0, 1.0),
-        dvs.Point3D(2.0, 4.0),
-        dvs.Point3D(3.0, 2.0),
-        dvs.Point3D(4.0, 3.0),
-        dvs.Point3D(4.0, 1.5),
+
+    vertices = [
+        dvs.Point3D(0.0, 0.0, 0.0),
+        dvs.Point3D(1.0, 0.0, 0.0),
+        dvs.Point3D(0.5, -1.0, 1.0),
+        dvs.Point3D(0.0, 0.0, 0.0),
+        dvs.Point3D(-1.0, 0.0, 0.0),
+        dvs.Point3D(0.0, 1.0, 1.0),
+        dvs.Point3D(0.0, 0.0, 0.0),
+        dvs.Point3D(-1.0, 0.0, 0.0),
+        dvs.Point3D(0.0, 1.0, -1.0),
+        dvs.Point3D(0.0, 0.0, 0.0),
+        dvs.Point3D(1.0, 0.0, 0.0),
+        dvs.Point3D(0.5, -1.0, -1.0),
     ]
+
+    vertices2 = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.5, -1.0, 1.0],
+            [0.0, 0.0, 0.0],
+            [-1.0, 0.0, 0.0],
+            [0.0, 1.0, 1.0],
+            [0.0, 0.0, 0.0],
+            [-1.0, 0.0, 0.0],
+            [0.0, 1.0, -1.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.5, -1.0, -1.0],
+        ]
+    )
+
     indices = [
         dvs.IndexTriplet(0, 1, 2),
-        dvs.IndexTriplet(1, 2, 3),
-        dvs.IndexTriplet(2, 3, 4),
-        dvs.IndexTriplet(0, 2, 4),
+        dvs.IndexTriplet(3, 4, 5),
+        dvs.IndexTriplet(6, 7, 8),
+        dvs.IndexTriplet(9, 10, 11),
     ]
-    dvs.draw_mesh(points, indices)
+
+    dvs.draw_mesh(vertices, indices)
+
+    vertices2[:, 0] = vertices2[:, 0] + 2.0
+    dvs.draw_mesh(
+        vertices2,
+        indices,
+        edge_color=dvs.properties.EdgeColor(0, 0, 0),
+        face_color=dvs.properties.FaceColor(1.0, 0, 0.9),
+    )
+
+    vertices2[:, 2] = vertices2[:, 2] - 2.0
+    dvs.draw_mesh(
+        vertices2,
+        indices,
+        edge_color=dvs.properties.EdgeColor(0, 0, 0),
+        face_color=dvs.properties.FaceColor(0.0, 0, 0.9),
+    )
+
+
+def test_line_collection():
+    setup_dvs_view()
+
+    x = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
+    y = [0.0, 0.0, 1.0, 1.0, 2.0, 2.0, 3.0, 3.0]
+    z = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
+
+    dvs.line_collection(x, y, color=dvs.properties.Color(1, 0, 1))
+
+    dvs.line_collection3(x, y, z, color=dvs.properties.Color(1, 0, 1))
+
+
+def test_plot_collection():
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
+    dvs.set_current_element("p1")
+    dvs.clear_view()
+
+    x = []
+    y = []
+    z = []
+    xl = []
+    yl = []
+    zl = []
+
+    dvs.soft_clear_view()
+
+    for _ in range(0, 5):
+        t = np.linspace(0, 3, 100, dtype=np.float32)
+        xp = np.sin(t * 5.0 * np.random.rand() + np.random.rand())
+        yp = np.cos(t * 5.0 * np.random.rand() + np.random.rand())
+        zp = np.sin(t * 5.0 * np.random.rand() + np.random.rand())
+        x.append(xp)
+        y.append(yp)
+        z.append(zp)
+        xl.append((xp + 1.0).tolist())
+        yl.append((yp + 1.0).tolist())
+        zl.append((zp + 1.0).tolist())
+
+        dvs.set_current_element("p_view_0")
+
+        dvs.scatter(
+            xp,
+            yp,
+            color=dvs.properties.Color(
+                np.random.rand(), np.random.rand(), np.random.rand()
+            ),
+        )
+
+        dvs.scatter(
+            xp + 1.0,
+            yp + 1.0,
+            color=dvs.properties.Color(
+                np.random.rand(), np.random.rand(), np.random.rand()
+            ),
+        )
+
+        dvs.set_current_element("p1")
+        dvs.scatter3(
+            xp,
+            yp,
+            zp,
+            color=dvs.properties.Color(
+                np.random.rand(), np.random.rand(), np.random.rand()
+            ),
+        )
+
+        dvs.scatter3(
+            xp + 1.0,
+            yp + 1.0,
+            zp + 1.0,
+            color=dvs.properties.Color(
+                np.random.rand(), np.random.rand(), np.random.rand()
+            ),
+        )
+
+    dvs.set_current_element("p_view_0")
+
+    dvs.plot_collection(x, y, color=dvs.properties.Color.RED)
+    dvs.plot_collection(xl, yl, color=dvs.properties.Color.RED)
+
+    dvs.set_current_element("p1")
+
+    dvs.plot_collection3(x, y, z, color=dvs.properties.Color.RED)
+    dvs.plot_collection3(xl, yl, zl, color=dvs.properties.Color.RED)
+
+
+def test_stairs():
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
+
+    x = np.linspace(0, 3, 500, dtype=np.float32)
+    y = np.sin(x * 5.0)
+
+    dvs.plot(x, y, color=dvs.properties.Color.CYAN)
+    dvs.scatter(x, y, color=dvs.properties.Color.BLACK)
+    dvs.stairs(x, y, color=dvs.properties.Color.RED)
+
+
+def test_stem():
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
+
+    x = np.linspace(0, 3, 500, dtype=np.float32)
+    y = np.sin(x * 5.0)
+
+    dvs.plot(x, y, color=dvs.properties.Color.CYAN)
+    dvs.scatter(x, y, point_size=13, color=dvs.properties.Color.BLACK)
+    dvs.stem(x, y, color=dvs.properties.Color.RED)

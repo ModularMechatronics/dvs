@@ -154,7 +154,7 @@ FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     CommunicationHeaderObjectType.HAS_POINT_SIZES: None,
     CommunicationHeaderObjectType.NUM_VERTICES: lambda x: np.uint32(x).tobytes(),
     CommunicationHeaderObjectType.NUM_INDICES: lambda x: np.uint32(x).tobytes(),
-    CommunicationHeaderObjectType.NUM_OBJECTS: None,
+    CommunicationHeaderObjectType.NUM_OBJECTS: lambda x: np.uint32(x).tobytes(),
     CommunicationHeaderObjectType.DIMENSION_2D: lambda x: np.array(
         [np.uint32(a) for a in x]
     ).tobytes(),
@@ -196,9 +196,9 @@ SIZE_OF_FUNCTION_HEADER_OBJECT = {
     CommunicationHeaderObjectType.NUM_ELEMENTS: 4,  # uint32
     CommunicationHeaderObjectType.HAS_COLOR: None,
     CommunicationHeaderObjectType.HAS_POINT_SIZES: None,
-    CommunicationHeaderObjectType.NUM_VERTICES: None,
-    CommunicationHeaderObjectType.NUM_INDICES: None,
-    CommunicationHeaderObjectType.NUM_OBJECTS: None,
+    CommunicationHeaderObjectType.NUM_VERTICES: 4,
+    CommunicationHeaderObjectType.NUM_INDICES: 4,
+    CommunicationHeaderObjectType.NUM_OBJECTS: 4,
     CommunicationHeaderObjectType.DIMENSION_2D: 2 * 4,
     CommunicationHeaderObjectType.HAS_PAYLOAD: None,
     CommunicationHeaderObjectType.AZIMUTH: 4,

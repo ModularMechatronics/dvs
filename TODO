@@ -22,17 +22,18 @@ Pre release:
 - Investigate weird bug not being able to set colors properly for realTimePlot
 - If first two points of plot2 is the same, there will be a division by zero
 - Create layout grids
+- Zoom from/to point where mouse is when it clicked
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
 - Change name of application (to plotto or something, polyplot)
 - Add all keybindings to the help pane
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
+- Remove "dummy" comment in interface
+- In python, "dvs.line_collection3(x, y, z, color=dvs.properties.Color(1, 0, 1))" does not work, line is transparent, same with plot_collection/plot_collection3 when not specifying colors and plotting twice
 - 2D plot with upper and lower interval (demo only?)
-- Unify function names in interfaces, allow for different names between interfaces, e.g. C interface will probably have separate 2D/3D functions
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
 - Change all reinterpret_cast to static_cast<whatever>(static_cast<void*>())
-- wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Data cursor, cursor to click on data to get xyz value
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Fix case for plot/plot3 when two adjacent points are equal
@@ -64,9 +65,12 @@ Post release:
   to populate it or property from the variadic templ. args
 - For plot2, dashed lines can probably be added assuming that the view is looking straight at the xy plane
 - Maybe PropertyType could be removed from each property, and instead use a templated function to return correct property type? And property type does not need to be transmitted, since that information is already in the look up table
+- wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
 - For 2D functions (plot, scatter etc.), implement rolling z-offset, so that one can plot multiple things on top of each other
+- Remove the need to always send "NUM_ELEMENTS" if it's not needed for the function
+- Remove unecessary asserts in the receiving end
 - Split CommunicationHeader into send and receive comm. header classes?
 - Drop shadow and bevel of plot pane
 - Pro version of dvs including buttons?

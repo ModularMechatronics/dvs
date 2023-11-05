@@ -97,6 +97,35 @@ VALID_PROPERTIES = {
 }
 
 
+def np_data_type_to_size(dt: type):
+    dt_size = 0
+
+    if dt == np.float32:
+        dt_size = 4
+    elif dt == np.float64:
+        dt_size = 8
+    elif dt == np.int8:
+        dt_size = 1
+    elif dt == np.int16:
+        dt_size = 2
+    elif dt == np.int32:
+        dt_size = 4
+    elif dt == np.int64:
+        dt_size = 8
+    elif dt == np.uint8:
+        dt_size = 1
+    elif dt == np.uint16:
+        dt_size = 2
+    elif dt == np.uint32:
+        dt_size = 4
+    elif dt == np.uint64:
+        dt_size = 8
+    else:
+        raise Exception("Invalid type!")
+
+    return dt_size
+
+
 def np_data_type_to_data_type(dt: type):
     dt_ret = DataType.UNKNOWN
 
@@ -448,6 +477,38 @@ def send_header(send_fcn, hdr, *args):
     buffer_to_send.append(total_num_bytes.to_bytes(8, sys.byteorder))
 
     buffer_to_send.append(hdr_bytes)
+
+    send_fcn(buffer_to_send.data)
+
+
+def send_header_and_vector_collection(
+    send_fcn, hdr, num_bytes_to_send, vector_lengths, *args
+):
+    hdr_bytes = hdr.to_bytes()
+    total_num_bytes = len(hdr_bytes)
+
+    total_num_bytes += num_bytes_to_send
+
+    total_num_bytes += 1 + 2 * 8
+
+    total_num_bytes += len(vector_lengths) * np_data_type_to_size(np.uint16)
+
+    buffer_to_send = Buffer(total_num_bytes)
+
+    is_big_endian = sys.byteorder == "big"
+
+    buffer_to_send.append(is_big_endian.to_bytes(1, sys.byteorder))
+
+    buffer_to_send.append(MAGIC_NUM.to_bytes(8, sys.byteorder))
+
+    buffer_to_send.append(total_num_bytes.to_bytes(8, sys.byteorder))
+
+    buffer_to_send.append(hdr_bytes)
+
+    buffer_to_send.append(np.array([np.uint16(v) for v in vector_lengths]).tobytes())
+
+    for arg in args:
+        buffer_to_send.append(arg.tobytes())
 
     send_fcn(buffer_to_send.data)
 

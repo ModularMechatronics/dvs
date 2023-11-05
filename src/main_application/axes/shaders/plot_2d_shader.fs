@@ -6,7 +6,7 @@ in vec4 coord_out;
 flat in vec3 p0_out;
 flat in vec3 p1_out;
 flat in float length_along_fs;
-flat in float theta;
+// flat in float theta;
 flat in float scale_factor;
 in vec3 fragment_pos;
 flat in int triangle_id;
