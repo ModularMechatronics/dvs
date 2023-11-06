@@ -80,13 +80,13 @@ WindowTab::WindowTab(wxFrame* parent_window,
 
     for (const auto& elem : tab_settings.elements)
     {
-        GuiElement* const ge = new PlotPane(parent_window_,
-                                            elem,
-                                            background_color_,
-                                            notify_main_window_key_pressed,
-                                            notify_main_window_key_released,
-                                            notify_parent_window_right_mouse_pressed,
-                                            notify_main_window_about_modification);
+        ApplicationGuiElement* const ge = new PlotPane(parent_window_,
+                                                       elem,
+                                                       background_color_,
+                                                       notify_main_window_key_pressed,
+                                                       notify_main_window_key_released,
+                                                       notify_parent_window_right_mouse_pressed,
+                                                       notify_main_window_about_modification);
 
         ge->setMinXPos(element_x_offset_);
         ge->updateSizeFromParent(parent_window_->GetSize());
@@ -137,7 +137,7 @@ WindowTab::~WindowTab()
     }
 }
 
-std::vector<GuiElement*> WindowTab::getGuiElements() const
+std::vector<ApplicationGuiElement*> WindowTab::getGuiElements() const
 {
     return gui_elements_;
 }
@@ -169,13 +169,13 @@ void WindowTab::newElement()
     elem_settings.handle_string = "element-" + std::to_string(current_element_idx_);
     elem_settings.title = elem_settings.handle_string;
 
-    GuiElement* const ge = new PlotPane(parent_window_,
-                                        elem_settings,
-                                        background_color_,
-                                        notify_main_window_key_pressed_,
-                                        notify_main_window_key_released_,
-                                        notify_parent_window_right_mouse_pressed_,
-                                        notify_main_window_about_modification_);
+    ApplicationGuiElement* const ge = new PlotPane(parent_window_,
+                                                   elem_settings,
+                                                   background_color_,
+                                                   notify_main_window_key_pressed_,
+                                                   notify_main_window_key_released_,
+                                                   notify_parent_window_right_mouse_pressed_,
+                                                   notify_main_window_about_modification_);
     ge->setMinXPos(element_x_offset_);
     ge->updateSizeFromParent(parent_window_->GetSize());
     gui_elements_.push_back(ge);
@@ -197,13 +197,13 @@ void WindowTab::newElement(const std::string& element_handle_string)
 
 void WindowTab::newElement(const ElementSettings& element_settings)
 {
-    GuiElement* const ge = new PlotPane(parent_window_,
-                                        element_settings,
-                                        background_color_,
-                                        notify_main_window_key_pressed_,
-                                        notify_main_window_key_released_,
-                                        notify_parent_window_right_mouse_pressed_,
-                                        notify_main_window_about_modification_);
+    ApplicationGuiElement* const ge = new PlotPane(parent_window_,
+                                                   element_settings,
+                                                   background_color_,
+                                                   notify_main_window_key_pressed_,
+                                                   notify_main_window_key_released_,
+                                                   notify_parent_window_right_mouse_pressed_,
+                                                   notify_main_window_about_modification_);
     ge->setMinXPos(element_x_offset_);
     ge->updateSizeFromParent(parent_window_->GetSize());
     gui_elements_.push_back(ge);
@@ -266,12 +266,13 @@ TabSettings WindowTab::getTabSettings() const
     return ts;
 }
 
-GuiElement* WindowTab::getGuiElement(const std::string& element_handle_string) const
+ApplicationGuiElement* WindowTab::getGuiElement(const std::string& element_handle_string) const
 {
-    auto q = std::find_if(
-        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
-            return elem->getHandleString() == element_handle_string;
-        });
+    auto q = std::find_if(gui_elements_.begin(),
+                          gui_elements_.end(),
+                          [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                              return elem->getHandleString() == element_handle_string;
+                          });
 
     if (gui_elements_.end() != q)
     {
@@ -309,10 +310,11 @@ void WindowTab::notifyChildrenOnKeyReleased(const char key)
 
 bool WindowTab::deleteElementIfItExists(const std::string& element_handle_string)
 {
-    auto q = std::find_if(
-        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
-            return elem->getHandleString() == element_handle_string;
-        });
+    auto q = std::find_if(gui_elements_.begin(),
+                          gui_elements_.end(),
+                          [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                              return elem->getHandleString() == element_handle_string;
+                          });
 
     if (gui_elements_.end() != q)
     {
@@ -330,10 +332,11 @@ bool WindowTab::deleteElementIfItExists(const std::string& element_handle_string
 
 void WindowTab::toggleProjectionMode(const std::string& element_handle_string)
 {
-    auto q = std::find_if(
-        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
-            return elem->getHandleString() == element_handle_string;
-        });
+    auto q = std::find_if(gui_elements_.begin(),
+                          gui_elements_.end(),
+                          [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                              return elem->getHandleString() == element_handle_string;
+                          });
 
     if (gui_elements_.end() != q)
     {
@@ -343,10 +346,11 @@ void WindowTab::toggleProjectionMode(const std::string& element_handle_string)
 
 bool WindowTab::elementWithNameExists(const std::string& element_handle_string)
 {
-    auto q = std::find_if(
-        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const& elem) -> bool {
-            return elem->getHandleString() == element_handle_string;
-        });
+    auto q = std::find_if(gui_elements_.begin(),
+                          gui_elements_.end(),
+                          [&element_handle_string](const ApplicationGuiElement* const& elem) -> bool {
+                              return elem->getHandleString() == element_handle_string;
+                          });
 
     if (gui_elements_.end() != q)
     {
@@ -361,10 +365,11 @@ bool WindowTab::elementWithNameExists(const std::string& element_handle_string)
 bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_handle_string,
                                                    const std::string& new_name)
 {
-    auto q = std::find_if(
-        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
-            return elem->getHandleString() == element_handle_string;
-        });
+    auto q = std::find_if(gui_elements_.begin(),
+                          gui_elements_.end(),
+                          [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                              return elem->getHandleString() == element_handle_string;
+                          });
 
     if (gui_elements_.end() != q)
     {
@@ -379,10 +384,11 @@ bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_ha
 
 bool WindowTab::raiseElement(const std::string& element_handle_string)
 {
-    auto q = std::find_if(
-        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
-            return elem->getHandleString() == element_handle_string;
-        });
+    auto q = std::find_if(gui_elements_.begin(),
+                          gui_elements_.end(),
+                          [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                              return elem->getHandleString() == element_handle_string;
+                          });
 
     if (gui_elements_.end() != q)
     {
@@ -398,10 +404,11 @@ bool WindowTab::raiseElement(const std::string& element_handle_string)
 
 bool WindowTab::lowerElement(const std::string& element_handle_string)
 {
-    auto q = std::find_if(
-        gui_elements_.begin(), gui_elements_.end(), [&element_handle_string](const GuiElement* const elem) -> bool {
-            return elem->getHandleString() == element_handle_string;
-        });
+    auto q = std::find_if(gui_elements_.begin(),
+                          gui_elements_.end(),
+                          [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                              return elem->getHandleString() == element_handle_string;
+                          });
 
     if (gui_elements_.end() != q)
     {

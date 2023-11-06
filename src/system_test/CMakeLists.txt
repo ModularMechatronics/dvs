@@ -11,6 +11,6 @@ target_include_directories(basic-tests-c-library PUBLIC ${REPO_DIR}/src/interfac
 
 project(system-test CXX)
 
-add_executable(system-test main.cpp)
+add_executable(system-test main.cpp two_way_comm/two_way_comm.cpp)
 target_link_libraries(system-test basic-tests-c-library)
 target_include_directories(system-test PUBLIC ${REPO_DIR}/src/interfaces/cpp)

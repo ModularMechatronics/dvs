@@ -1,7 +1,8 @@
 #ifndef MAIN_APPLICATION_COMMUNICATION_RECEIVED_DATA_H_
 #define MAIN_APPLICATION_COMMUNICATION_RECEIVED_DATA_H_
 
-#include "dvs/dvs.h"
+#include "dvs/internal.h"
+#include "dvs/math/math.h"
 #include "dvs/fillable_uint8_array.h"
 
 class ReceivedData

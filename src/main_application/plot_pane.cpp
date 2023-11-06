@@ -148,7 +148,7 @@ PlotPane::PlotPane(wxWindow* parent,
                        notify_parent_window_right_mouse_pressed,
                    const std::function<void()>& notify_main_window_about_modification)
     : wxGLCanvas(parent, getGLAttributes()),
-      GuiElement(element_settings,
+      ApplicationGuiElement(element_settings,
                  notify_main_window_key_pressed,
                  notify_main_window_key_released,
                  notify_parent_window_right_mouse_pressed,

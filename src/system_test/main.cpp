@@ -7,6 +7,7 @@
 #include "basic_c/tests.h"
 #include "basic_cpp/tests.h"
 #include "dvs/dvs.h"
+#include "two_way_comm/two_way_comm.h"
 #include "utils.h"
 
 TestMap tests_;
@@ -38,6 +39,7 @@ int main(int argc, char* argv[])
     basic_cpp::addTests();
     advanced_cpp::addTests();
     basic_c::addTests();
+    two_way_comm::addTests();
 
     if (argc == 1)
     {

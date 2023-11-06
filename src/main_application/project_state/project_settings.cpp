@@ -75,7 +75,7 @@ ElementSettings::ElementSettings()
       height{100.0f},
       handle_string{"<NO-NAME>"},
       z_order{kZOrderDefault},
-      type{GuiElementType::Unknown},
+      type{dvs::GuiElementType::Unknown},
       label{"<NO-NAME>"},
       title{"<NO-NAME>"},
       background_color{kElementBackgroundColorDefault},
@@ -154,53 +154,53 @@ void ElementSettings::parsePlotPaneAttributes(const nlohmann::json& j)
     }
 }
 
-GuiElementType ElementSettings::parseType(const nlohmann::json& j)
+dvs::GuiElementType ElementSettings::parseType(const nlohmann::json& j)
 {
     const std::string type_string = j["type"];
 
     if (type_string == "BUTTON")
     {
-        return GuiElementType::Button;
+        return dvs::GuiElementType::Button;
     }
     else if (type_string == "SLIDER")
     {
-        return GuiElementType::Slider;
+        return dvs::GuiElementType::Slider;
     }
     else if (type_string == "CHECKBOX")
     {
-        return GuiElementType::CheckBox;
+        return dvs::GuiElementType::CheckBox;
     }
     else if (type_string == "EDITABLE_TEXT")
     {
-        return GuiElementType::EditableText;
+        return dvs::GuiElementType::EditableText;
     }
     else if (type_string == "DROPDOWN_MENU")
     {
-        return GuiElementType::DropDownMenu;
+        return dvs::GuiElementType::DropDownMenu;
     }
     else if (type_string == "LISTBOX")
     {
-        return GuiElementType::ListBox;
+        return dvs::GuiElementType::ListBox;
     }
     else if (type_string == "RADIO_BUTTON_GROUP")
     {
-        return GuiElementType::RadioButtonGroup;
+        return dvs::GuiElementType::RadioButtonGroup;
     }
     else if (type_string == "TEXT_LABEL")
     {
-        return GuiElementType::TextLabel;
+        return dvs::GuiElementType::TextLabel;
     }
     else if (type_string == "STATIC_BOX")
     {
-        return GuiElementType::StaticBox;
+        return dvs::GuiElementType::StaticBox;
     }
     else if (type_string == "PLOT_PANE")
     {
-        return GuiElementType::PlotPane;
+        return dvs::GuiElementType::PlotPane;
     }
     else
     {
-        return GuiElementType::Unknown;
+        return dvs::GuiElementType::Unknown;
     }
 }
 

@@ -18,12 +18,25 @@
 #include <vector>
 
 #include "axes/axes.h"
+#include "dvs/gui_api.h"
 #include "gui_element.h"
 #include "gui_tab.h"
 #include "help_pane.h"
 #include "plot_pane.h"
 #include "project_state/project_settings.h"
 #include "tab_buttons.h"
+
+class ButtonGuiElement : public wxButton
+{
+private:
+    std::string handle_string_;
+
+public:
+    ButtonGuiElement(
+        wxFrame* parent, const std::string& handle_string, const wxWindowID id, const wxPoint& pos, const wxSize& size);
+
+    void mouseLeftPressed(wxMouseEvent& event);
+};
 
 class GuiWindow : public wxFrame
 {
@@ -49,6 +62,8 @@ private:
     std::function<void(const std::string&, const std::string&)> notify_main_window_name_changed_;
     std::function<void()> notify_main_window_about_modification_;
     HelpPane help_pane_;
+
+    ButtonGuiElement* button_;
 
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
 
@@ -102,7 +117,7 @@ public:
     void setProjectName(const std::string& project_name);
     void deleteAllTabs();
 
-    GuiElement* getGuiElement(const std::string& element_handle_string) const;
+    ApplicationGuiElement* getGuiElement(const std::string& element_handle_string) const;
 
     void mouseRightPressed(const wxPoint pos, const ClickSource source, const std::string& item_name);
 
@@ -135,7 +150,7 @@ public:
     virtual void OnClose(wxCloseEvent& event);
 
     void updateAllElements();
-    std::vector<GuiElement*> getGuiElements() const;
+    std::vector<ApplicationGuiElement*> getGuiElements() const;
 
     std::vector<std::string> getElementNames() const;
 };

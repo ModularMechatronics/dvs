@@ -212,6 +212,24 @@ void MainWindow::addActionToQueue(ReceivedData& received_data)
     }
 }
 
+bool isGuiRelatedFunction(const Function fcn)
+{
+    return fcn == Function::GET_FLOAT_PARAMETER;
+}
+
+void MainWindow::transmitBackGuiData(ReceivedData& received_data)
+{
+    const float f = 42.42f;
+
+    const std::uint64_t num_bytes_to_send = sizeof(float);
+
+    FillableUInt8Array output_array{num_bytes_to_send};
+
+    output_array.fillWithStaticType(f);
+
+    sendThroughTcpInterface(output_array.view(), dvs::internal::kGuiTcpPortNum);
+}
+
 void MainWindow::manageReceivedData(ReceivedData& received_data)
 {
     const Function fcn = received_data.getFunction();
@@ -231,6 +249,10 @@ void MainWindow::manageReceivedData(ReceivedData& received_data)
             queued_project_file_name_ =
                 hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>().data;
             open_project_file_queued_ = true;
+        }
+        else if (isGuiRelatedFunction(fcn))
+        {
+            transmitBackGuiData(received_data);
         }
         else
         {
@@ -386,7 +408,7 @@ void MainWindow::receiveData()
 
                 if (gui_elements_.count(element_handle_string) > 0U)
                 {
-                    GuiElement* gui_element = gui_elements_[element_handle_string];
+                    ApplicationGuiElement* gui_element = gui_elements_[element_handle_string];
                     gui_element->pushQueue(qa.second);
                 }
             }

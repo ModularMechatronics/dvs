@@ -17,6 +17,8 @@ Pre release:
  * Draw obj file from python interface, car running on a track
  * Star wars targeting computer: https://scifi.stackexchange.com/questions/244759/how-does-the-targeting-work-in-the-millenium-falcon (1min 20s in)
 - Finalize demos
+- Exception when 0 is passed into FillableUInt8Array
+- No saved file name shall be showed in title bar when no file is loaded
 - Color shall be set using floats in range [0, 1], but still transmitted as uint8_t [0, 255]
 - Grid lines when invalid/inf axes limits
 - Investigate weird bug not being able to set colors properly for realTimePlot

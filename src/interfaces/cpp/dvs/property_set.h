@@ -49,7 +49,7 @@ private:
 
 public:
     PropertySet() : id_{ItemId::UNKNOWN} {}
-    template <typename... Us> PropertySet(const ItemId id, const Us&... props) : id_{id_}
+    template <typename... Us> PropertySet(const ItemId id, const Us&... props) : id_{id}
     {
         extendInternal(props...);
     }

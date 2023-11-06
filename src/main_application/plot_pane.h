@@ -10,7 +10,8 @@
 #include "axes/axes.h"
 #include "communication/data_receiver.h"
 #include "communication/received_data.h"
-#include "dvs/dvs.h"
+#include "dvs/internal.h"
+#include "dvs/math/math.h"
 #include "gui_element.h"
 #include "input_data.h"
 #include "mouse_state.h"
@@ -53,7 +54,7 @@ enum class CursorSquareState
     BOTTOM_RIGHT
 };
 
-class PlotPane : public wxGLCanvas, public GuiElement
+class PlotPane : public wxGLCanvas, public ApplicationGuiElement
 {
 private:
     wxGLContext* getContext();

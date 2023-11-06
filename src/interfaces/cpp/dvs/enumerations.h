@@ -142,6 +142,7 @@ enum class Function : uint8_t
     SHOW_LEGEND,
     DISABLE_SCALE_ON_ROTATION,
     AXES_SQUARE,
+    GET_FLOAT_PARAMETER,
     UNKNOWN
 };
 
@@ -228,6 +229,21 @@ enum DistanceFromType : uint8_t
     XZ,
     YZ,
     XYZ
+};
+
+enum class GuiElementType : std::uint8_t
+{
+    Button,
+    Slider,
+    CheckBox,
+    EditableText,
+    DropDownMenu,
+    ListBox,
+    RadioButtonGroup,
+    TextLabel,
+    StaticBox,
+    PlotPane,
+    Unknown
 };
 
 }  // namespace dvs

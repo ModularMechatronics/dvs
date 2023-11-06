@@ -1,7 +1,8 @@
 #ifndef MAIN_APPLICATION_PROPERTIES_H_
 #define MAIN_APPLICATION_PROPERTIES_H_
 
-#include "dvs/dvs.h"
+#include "dvs/internal.h"
+#include "dvs/math/math.h"
 
 template <typename T> dvs::internal::PropertyType templateToPropertyType()
 {

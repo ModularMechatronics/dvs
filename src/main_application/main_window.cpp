@@ -224,7 +224,7 @@ void MainWindow::elementNameChanged(const std::string& old_name, const std::stri
     {
         if (local_ge.first == old_name)
         {
-            GuiElement* ge = local_ge.second;
+            ApplicationGuiElement* ge = local_ge.second;
             gui_elements_.erase(local_ge.first);
             gui_elements_[new_name] = ge;
             break;
@@ -337,7 +337,7 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
     this->SetSize(wxSize(kMainWindowWidth, kMainWindowButtonHeight * windows_.size() + first_window_button_offset_));
     for (auto we : windows_)
     {
-        std::vector<GuiElement*> ges = we->getGuiElements();
+        std::vector<ApplicationGuiElement*> ges = we->getGuiElements();
         for (const auto& ge : ges)
         {
             gui_elements_[ge->getHandleString()] = ge;
@@ -686,7 +686,7 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
 
     if (q != windows_.end())
     {
-        const std::vector<GuiElement*> ges = (*q)->getGuiElements();
+        const std::vector<ApplicationGuiElement*> ges = (*q)->getGuiElements();
         for (const auto& ge : ges)
         {
             gui_elements_.erase(ge->getHandleString());

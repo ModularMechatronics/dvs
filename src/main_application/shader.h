@@ -5,7 +5,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "dvs/dvs.h"
+#include "dvs/internal.h"
+#include "dvs/math/math.h"
 #include "misc/rgb_triplet.h"
 #include "opengl_low_level/opengl_header.h"
 

@@ -47,7 +47,7 @@ class WindowTab
 {
 private:
     std::string name_;
-    std::vector<GuiElement*> gui_elements_;
+    std::vector<ApplicationGuiElement*> gui_elements_;
     wxFrame* parent_window_;
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
@@ -75,7 +75,7 @@ public:
               const std::function<void()>& notify_main_window_about_modification);
     void initializeZOrder(const TabSettings& tab_settings);
     ~WindowTab();
-    std::vector<GuiElement*> getGuiElements() const;
+    std::vector<ApplicationGuiElement*> getGuiElements() const;
     void updateAllElements();
     void setMinXPos(const int min_x_pos);
     void newElement();
@@ -87,7 +87,7 @@ public:
     RGBTripletf getBackgroundColor() const;
     std::string getName() const;
     TabSettings getTabSettings() const;
-    GuiElement* getGuiElement(const std::string& element_handle_string) const;
+    ApplicationGuiElement* getGuiElement(const std::string& element_handle_string) const;
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
     void setMouseInteractionType(const MouseInteractionType mit);

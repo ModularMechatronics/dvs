@@ -1,5 +1,5 @@
-#ifndef MAIN_APPLICATION_COMMUNICATION_UDP_SERVER_H_
-#define MAIN_APPLICATION_COMMUNICATION_UDP_SERVER_H_
+#ifndef MAIN_APPLICATION_COMMUNICATION_DATA_RECEIVER_H
+#define MAIN_APPLICATION_COMMUNICATION_DATA_RECEIVER_H
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -25,7 +25,8 @@
 
 #include "communication/received_data.h"
 #include "dvs/constants.h"
-#include "dvs/dvs.h"
+#include "dvs/internal.h"
+#include "dvs/math/math.h"
 #include "dvs/timing.h"
 
 class DataReceiver
@@ -48,4 +49,4 @@ public:
     ~DataReceiver();
 };
 
-#endif  // MAIN_APPLICATION_COMMUNICATION_UDP_SERVER_H_
+#endif  // MAIN_APPLICATION_COMMUNICATION_DATA_RECEIVER_H

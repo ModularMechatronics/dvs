@@ -7,7 +7,7 @@
 #include "axes/legend_properties.h"
 #include "color_picker.h"
 #include "communication/received_data.h"
-#include "dvs/dvs.h"
+#include "dvs/internal.h"
 #include "dvs/math/math.h"
 #include "input_data.h"
 #include "misc/rgb_triplet.h"

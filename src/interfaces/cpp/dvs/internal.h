@@ -88,9 +88,9 @@ public:
     }
 };
 
-using SendFunctionType = std::function<void(const UInt8ArrayView& input_array)>;
+using SendFunctionType = std::function<void(const UInt8ArrayView& input_array, const std::uint64_t port_num)>;
 
-inline void sendThroughTcpInterface(const UInt8ArrayView& input_array)
+inline void sendThroughTcpInterface(const UInt8ArrayView& input_array, const uint64_t port_num)
 {
     int tcp_sockfd;
     struct sockaddr_in tcp_servaddr;
@@ -101,11 +101,12 @@ inline void sendThroughTcpInterface(const UInt8ArrayView& input_array)
 
     tcp_servaddr.sin_family = AF_INET;
     tcp_servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    tcp_servaddr.sin_port = htons(kTcpPortNum);
+    tcp_servaddr.sin_port = htons(port_num);
 
     if (connect(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
     {
-        DVS_LOG_INFO() << "Failed to connect!";
+        DVS_LOG_WARNING() << "Failed to connect! Is dvs application running?";
+        return;
     }
 
     const uint64_t num_bytes_to_send = input_array.size();
@@ -222,7 +223,7 @@ void sendHeaderAndData(const SendFunctionType& send_function, const Communicatio
 
     fillable_array.fillWithDataFromPointer(first_element.data(), first_element.numElements());
 
-    send_function(fillable_array.view());
+    send_function(fillable_array.view(), kTcpPortNum);
 }
 
 template <typename U, typename... Us>
@@ -254,7 +255,7 @@ void sendHeaderAndData(const SendFunctionType& send_function,
 
     fillBuffer(fillable_array, other_elements...);
 
-    send_function(fillable_array.view());
+    send_function(fillable_array.view(), kTcpPortNum);
 }
 
 template <typename U> void fillBufferWithCollection(FillableUInt8Array& fillable_array, const U& data_to_be_sent)
@@ -310,7 +311,7 @@ void sendHeaderAndVectorCollection(const SendFunctionType& send_function,
 
     fillBufferWithCollection(fillable_array, other_elements...);
 
-    send_function(fillable_array.view());
+    send_function(fillable_array.view(), kTcpPortNum);
 }
 
 inline void sendHeaderOnly(const SendFunctionType& send_function, const CommunicationHeader& hdr)
@@ -331,7 +332,7 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Communic
 
     hdr.fillBufferWithData(fillable_array);
 
-    send_function(fillable_array.view());
+    send_function(fillable_array.view(), kTcpPortNum);
 }
 
 }  // namespace internal

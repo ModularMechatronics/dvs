@@ -1,5 +1,6 @@
 #include "gui_window.h"
 
+#include "dvs/internal.h"
 #include "events.h"
 #include "globals.h"
 #include "main_window.h"
@@ -8,6 +9,34 @@
 namespace element_number_counter
 {
 int getNextFreeElementNumber();
+}
+
+ButtonGuiElement::ButtonGuiElement(
+    wxFrame* parent, const std::string& handle_string, const wxWindowID id, const wxPoint& pos, const wxSize& size)
+    : wxButton(parent, wxID_ANY, handle_string, pos, size), handle_string_{handle_string}
+{
+    this->Bind(wxEVT_LEFT_DOWN, &ButtonGuiElement::mouseLeftPressed, this);
+}
+
+void ButtonGuiElement::mouseLeftPressed(wxMouseEvent& event)
+{
+    std::cout << "Button pressed!" << std::endl;
+
+    if (handle_string_.length() >= 256U)
+    {
+        throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
+    }
+
+    const std::uint8_t handle_string_length = handle_string_.length();
+
+    const std::uint64_t num_bytes_to_send = handle_string_length + sizeof(std::uint8_t);
+
+    FillableUInt8Array output_array{num_bytes_to_send};
+
+    output_array.fillWithStaticType(handle_string_length);
+    output_array.fillWithDataFromPointer(handle_string_.data(), handle_string_.length());
+
+    sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
 }
 
 GuiWindow::GuiWindow(
@@ -54,6 +83,8 @@ GuiWindow::GuiWindow(
     updateLabel();
 
     Show();
+
+    button_ = new ButtonGuiElement(this, "button0", wxID_ANY, wxPoint(0, 0), wxSize(100, 100));
 
     if (window_settings.tabs.size() == 0)
     {
@@ -242,22 +273,22 @@ void GuiWindow::setProjectName(const std::string& project_name)
     project_name_ = project_name;
 }
 
-std::vector<GuiElement*> GuiWindow::getGuiElements() const
+std::vector<ApplicationGuiElement*> GuiWindow::getGuiElements() const
 {
-    std::vector<GuiElement*> gui_elements;
+    std::vector<ApplicationGuiElement*> gui_elements;
 
     for (const auto& tab : tabs_)
     {
-        std::vector<GuiElement*> tab_gui_elements = tab->getGuiElements();
+        std::vector<ApplicationGuiElement*> tab_gui_elements = tab->getGuiElements();
         gui_elements.insert(gui_elements.end(), tab_gui_elements.begin(), tab_gui_elements.end());
     }
 
     return gui_elements;
 }
 
-GuiElement* GuiWindow::getGuiElement(const std::string& element_handle_string) const
+ApplicationGuiElement* GuiWindow::getGuiElement(const std::string& element_handle_string) const
 {
-    GuiElement* ge;
+    ApplicationGuiElement* ge;
     for (const auto& tab : tabs_)
     {
         ge = tab->getGuiElement(element_handle_string);

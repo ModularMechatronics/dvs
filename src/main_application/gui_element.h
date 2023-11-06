@@ -17,7 +17,7 @@
 
 using namespace dvs;
 
-class GuiElement
+class ApplicationGuiElement
 {
 protected:
     ElementSettings element_settings_;
@@ -31,13 +31,13 @@ protected:
     Vec2f parent_size_;  // Pixels
 
 public:
-    GuiElement() = delete;
-    GuiElement(const ElementSettings& element_settings,
-               const std::function<void(const char key)>& notify_main_window_key_pressed,
-               const std::function<void(const char key)>& notify_main_window_key_released,
-               const std::function<void(const wxPoint pos, const std::string& elem_name)>&
-                   notify_parent_window_right_mouse_pressed,
-               const std::function<void()>& notify_main_window_about_modification)
+    ApplicationGuiElement() = delete;
+    ApplicationGuiElement(const ElementSettings& element_settings,
+                          const std::function<void(const char key)>& notify_main_window_key_pressed,
+                          const std::function<void(const char key)>& notify_main_window_key_released,
+                          const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                              notify_parent_window_right_mouse_pressed,
+                          const std::function<void()>& notify_main_window_about_modification)
         : element_settings_{element_settings},
           notify_main_window_key_pressed_{notify_main_window_key_pressed},
           notify_main_window_key_released_{notify_main_window_key_released},
@@ -46,7 +46,7 @@ public:
     {
     }
 
-    virtual ~GuiElement() {}
+    virtual ~ApplicationGuiElement() {}
 
     virtual void setMinXPos(const int min_x_pos) = 0;
     virtual void raise() = 0;

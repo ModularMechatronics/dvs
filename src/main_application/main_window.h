@@ -23,6 +23,7 @@
 #include "close_button.h"
 #include "communication/data_receiver.h"
 #include "communication/received_data.h"
+#include "dvs/gui_api.h"
 #include "events.h"
 #include "gui_element.h"
 #include "input_data.h"
@@ -45,7 +46,7 @@ private:
     std::mutex receive_mtx_;
 
     std::thread* tcp_receive_thread_;
-    std::map<std::string, GuiElement*> gui_elements_;
+    std::map<std::string, ApplicationGuiElement*> gui_elements_;
 
     std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
 
@@ -120,6 +121,7 @@ private:
     bool currentGuiElementSet() const;
     void tcpReceiveThreadFunction();
     void manageReceivedData(ReceivedData& received_data);
+    void transmitBackGuiData(ReceivedData& received_data);
 
     void mainWindowFlushMultipleElements(const ReceivedData& received_data);
     void addActionToQueue(ReceivedData& received_data);

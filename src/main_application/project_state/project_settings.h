@@ -6,25 +6,11 @@
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 
+#include "dvs/enumerations.h"
 #include "dvs/logging.h"
 #include "misc/rgb_triplet.h"
 
 extern RGBTriplet<float> kMainWindowBackgroundColor;
-
-enum class GuiElementType : std::uint8_t
-{
-    Button,
-    Slider,
-    CheckBox,
-    EditableText,
-    DropDownMenu,
-    ListBox,
-    RadioButtonGroup,
-    TextLabel,
-    StaticBox,
-    PlotPane,
-    Unknown
-};
 
 /*
 {
@@ -91,7 +77,7 @@ struct ElementSettings
 
     int z_order;
 
-    GuiElementType type;
+    dvs::GuiElementType type;
 
     std::string label;
 
@@ -120,7 +106,7 @@ struct ElementSettings
 
     ProjectionMode projection_mode;
 
-    static GuiElementType parseType(const nlohmann::json& j);
+    static dvs::GuiElementType parseType(const nlohmann::json& j);
 
     ElementSettings();
     explicit ElementSettings(const nlohmann::json& j);
