@@ -79,7 +79,10 @@ private:
     bool perspective_projection_;
     bool wait_for_flush_;
 
-    wxSize parent_size_;
+    int minimum_x_pos_;
+    int minimum_y_pos_;
+
+    wxSize parent_size_;  // Pixels
     Vec2f mouse_pos_at_press_;
     Vec2f current_mouse_pos_;
     Vec2f previous_mouse_pos_;
@@ -114,10 +117,11 @@ private:
                      const std::shared_ptr<const ConvertedDataBase>& converted_data);
 
     wxGLAttributes getGLAttributes() const;
+    const std::shared_ptr<PlotPaneSettings> plot_pane_settings_;
 
 public:
     PlotPane(wxNotebookPage* parent,  // TODO: wxNotebookPage is obsolete, should be wxWindow/wxFrame?
-             const ElementSettings& element_settings,
+             const std::shared_ptr<ElementSettings>& element_settings,
              const RGBTripletf& tab_background_color,
              const std::function<void(const char key)>& notify_main_window_key_pressed,
              const std::function<void(const char key)>& notify_main_window_key_released,
@@ -150,9 +154,8 @@ public:
     void setMouseInteractionType(const MouseInteractionType mit) override;
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
-    // void showLegend(const bool show_legend) override;
-    void waitForFlush() override;
-    void toggleProjectionMode() override;
+    void waitForFlush();
+    void toggleProjectionMode();
     void update() override;
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
@@ -170,6 +173,12 @@ public:
     void mouseLeftReleased(wxMouseEvent& event);
 
     void bindCallbacks();
+
+    /*virtual void showLegend(const bool show_legend)
+    {
+        static_cast<void>(show_legend);
+        std::cout << "Not implemented!" << std::endl;
+    }*/
 };
 
 #endif  // MAIN_APPLICATION_PLOT_PANE_H_

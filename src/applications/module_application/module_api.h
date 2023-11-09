@@ -62,15 +62,9 @@ namespace api_internal
 class InternalTimer
 {
 public:
-    InternalTimer() : iteration_number_{0}, handle_string_{""}
-    {
+    InternalTimer() : iteration_number_{0}, handle_string_{""} {}
 
-    }
-
-    InternalTimer(const std::string& handle_string) : iteration_number_{0}, handle_string_{handle_string}
-    {
-
-    }
+    InternalTimer(const std::string& handle_string) : iteration_number_{0}, handle_string_{handle_string} {}
 
     virtual void stop() const = 0;
     virtual void start(const std::int32_t period) const = 0;
@@ -90,23 +84,18 @@ public:
 protected:
     mutable std::int64_t iteration_number_ = 0;
     std::string handle_string_;
-
 };
-}
-
+}  // namespace api_internal
 
 class Timer
 {
 public:
     Timer() : internal_timer_{nullptr} {}
-    Timer(api_internal::InternalTimer* const internal_timer)
-        : internal_timer_{internal_timer}
-    {
-    }
-    
+    Timer(api_internal::InternalTimer* const internal_timer) : internal_timer_{internal_timer} {}
+
     void stop() const
     {
-        if(printErrorIfNotInitialized(__func__))
+        if (printErrorIfNotInitialized(__func__))
         {
             internal_timer_->stop();
         }
@@ -114,7 +103,7 @@ public:
 
     void start(const std::int32_t period) const
     {
-        if(printErrorIfNotInitialized(__func__))
+        if (printErrorIfNotInitialized(__func__))
         {
             internal_timer_->start(period);
         }
@@ -122,7 +111,7 @@ public:
 
     void runOnce(const std::int32_t period) const
     {
-        if(printErrorIfNotInitialized(__func__))
+        if (printErrorIfNotInitialized(__func__))
         {
             internal_timer_->runOnce(period);
         }
@@ -130,15 +119,15 @@ public:
 
     void runNTimesWithPeriod(const std::int32_t n_times, const std::int32_t period) const
     {
-        if(printErrorIfNotInitialized(__func__))
+        if (printErrorIfNotInitialized(__func__))
         {
             internal_timer_->runNTimesWithPeriod(n_times, period);
         }
     }
-    
+
     std::int64_t getIterationNumber() const
     {
-        if(printErrorIfNotInitialized(__func__))
+        if (printErrorIfNotInitialized(__func__))
         {
             return internal_timer_->getIterationNumber();
         }
@@ -493,7 +482,9 @@ class RadioButtonGroup : public api_internal::Control
 {
 private:
     friend class GuiElement;
-    RadioButtonGroup(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element} {}
+    RadioButtonGroup(api_internal::InternalGuiElement* const internal_element) : api_internal::Control{internal_element}
+    {
+    }
 
 public:
     RadioButtonGroup() : api_internal::Control{} {}

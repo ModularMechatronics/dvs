@@ -5,6 +5,7 @@
 #include <wx/wxprec.h>
 
 #include <csignal>
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
 
@@ -161,24 +162,22 @@ void MainWindow::setupRadioButtonGroup(const RadioButtonGroupAttributes& radio_b
     // wxArrayString *selection = new wxArrayString;
     wxArrayString radio_buttons_to_add{};
 
-    for(const auto& radio_button_attribute : radio_button_group_attributes.radio_buttons)
+    for (const auto& radio_button_attribute : radio_button_group_attributes.radio_buttons)
     {
         radio_buttons_to_add.Add(radio_button_attribute.label);
     }
 
-    MovableElement<wxRadioBox>* radio_box =
-        new MovableElement<wxRadioBox>(
-            this,
-            radio_button_group_attributes.handle_string,
-            elem_callback,
-            GuiElementType::RadioButtonGroup,
-            wxID_ANY,
-            radio_button_group_attributes.label,
-            elem_pos,
-            elem_size,
-            radio_buttons_to_add,
-            1,
-            wxRA_SPECIFY_COLS);
+    MovableElement<wxRadioBox>* radio_box = new MovableElement<wxRadioBox>(this,
+                                                                           radio_button_group_attributes.handle_string,
+                                                                           elem_callback,
+                                                                           GuiElementType::RadioButtonGroup,
+                                                                           wxID_ANY,
+                                                                           radio_button_group_attributes.label,
+                                                                           elem_pos,
+                                                                           elem_size,
+                                                                           radio_buttons_to_add,
+                                                                           1,
+                                                                           wxRA_SPECIFY_COLS);
 
     gui_elements_[radio_box->getId()] = static_cast<api_internal::InternalGuiElement*>(radio_box);
     Bind(wxEVT_RADIOBOX, &MainWindow::guiElementCallback, this, radio_box->getId());
@@ -217,7 +216,8 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
 
         if (q == timers_.end())
         {
-            DVS_LOG_ERROR() << "Could not find timer with handle string: " << handle_string << ", returning empty object.";
+            DVS_LOG_ERROR() << "Could not find timer with handle string: " << handle_string
+                            << ", returning empty object.";
             return Timer{};
         }
         else
@@ -229,8 +229,8 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
     std::map<std::string, GuiElementCallback> gui_element_callbacks;
     std::map<std::string, TimerCallback> timer_callbacks;
 
-    dynamic_module_.registerCallbacks(gui_element_callbacks, timer_callbacks, get_gui_element_function_, get_timer_function_);
-
+    dynamic_module_.registerCallbacks(
+        gui_element_callbacks, timer_callbacks, get_gui_element_function_, get_timer_function_);
 
     for (const auto& elem : timer_callbacks)
     {

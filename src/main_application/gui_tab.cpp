@@ -80,17 +80,18 @@ WindowTab::WindowTab(wxFrame* parent_window,
 
     for (const auto& elem : tab_settings.elements)
     {
-        ApplicationGuiElement* const ge = new PlotPane(parent_window_,
-                                                       elem,
-                                                       background_color_,
-                                                       notify_main_window_key_pressed,
-                                                       notify_main_window_key_released,
-                                                       notify_parent_window_right_mouse_pressed,
-                                                       notify_main_window_about_modification);
+        PlotPane* const pp = new PlotPane(parent_window_,
+                                          elem,
+                                          background_color_,
+                                          notify_main_window_key_pressed,
+                                          notify_main_window_key_released,
+                                          notify_parent_window_right_mouse_pressed,
+                                          notify_main_window_about_modification);
 
-        ge->setMinXPos(element_x_offset_);
-        ge->updateSizeFromParent(parent_window_->GetSize());
-        gui_elements_.push_back(ge);
+        pp->setMinXPos(element_x_offset_);
+        pp->updateSizeFromParent(parent_window_->GetSize());
+
+        plot_panes_.push_back(pp);
 
         current_element_idx_++;
     }
@@ -110,9 +111,9 @@ void WindowTab::initializeZOrder(const TabSettings& tab_settings)
 
     for (const auto& elem : tab_settings.elements)
     {
-        if (elem.z_order != -1)
+        if (elem->z_order != -1)
         {
-            z_order.push_back({elem.z_order, elem.handle_string});
+            z_order.push_back({elem->z_order, elem->handle_string});
         }
     }
 
@@ -130,107 +131,114 @@ void WindowTab::initializeZOrder(const TabSettings& tab_settings)
 
 WindowTab::~WindowTab()
 {
-    for (const auto& ge : gui_elements_)
+    for (const auto& pp : plot_panes_)
     {
-        notify_main_window_element_deleted_(ge->getHandleString());
-        delete ge;
+        notify_main_window_element_deleted_(pp->getHandleString());
+        delete pp;
     }
 }
 
 std::vector<ApplicationGuiElement*> WindowTab::getGuiElements() const
 {
-    return gui_elements_;
+    std::vector<ApplicationGuiElement*> gui_elements;
+
+    for (const auto& pp : plot_panes_)
+    {
+        gui_elements.push_back(pp);
+    }
+
+    return gui_elements;
 }
 
 void WindowTab::updateAllElements()
 {
-    for (auto& ge : gui_elements_)
+    for (auto& pp : plot_panes_)
     {
-        ge->update();
+        pp->update();
     }
 }
 
 void WindowTab::setMinXPos(const int min_x_pos)
 {
     element_x_offset_ = min_x_pos;
-    for (auto const& ge : gui_elements_)
+    for (auto const& pp : plot_panes_)
     {
-        ge->setMinXPos(min_x_pos);
+        pp->setMinXPos(min_x_pos);
     }
 }
 
-void WindowTab::newElement()
+void WindowTab::createNewPlotPane()
 {
-    ElementSettings elem_settings;
-    elem_settings.x = 0.1;
-    elem_settings.y = 0;
-    elem_settings.width = 0.4;
-    elem_settings.height = 0.4;
-    elem_settings.handle_string = "element-" + std::to_string(current_element_idx_);
-    elem_settings.title = elem_settings.handle_string;
+    std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
+    pp_settings->x = 0.1;
+    pp_settings->y = 0;
+    pp_settings->width = 0.4;
+    pp_settings->height = 0.4;
+    pp_settings->handle_string = "element-" + std::to_string(current_element_idx_);
+    pp_settings->title = pp_settings->handle_string;
 
-    ApplicationGuiElement* const ge = new PlotPane(parent_window_,
-                                                   elem_settings,
-                                                   background_color_,
-                                                   notify_main_window_key_pressed_,
-                                                   notify_main_window_key_released_,
-                                                   notify_parent_window_right_mouse_pressed_,
-                                                   notify_main_window_about_modification_);
-    ge->setMinXPos(element_x_offset_);
-    ge->updateSizeFromParent(parent_window_->GetSize());
-    gui_elements_.push_back(ge);
+    PlotPane* const pp = new PlotPane(parent_window_,
+                                      pp_settings,
+                                      background_color_,
+                                      notify_main_window_key_pressed_,
+                                      notify_main_window_key_released_,
+                                      notify_parent_window_right_mouse_pressed_,
+                                      notify_main_window_about_modification_);
+    pp->setMinXPos(element_x_offset_);
+    pp->updateSizeFromParent(parent_window_->GetSize());
+    plot_panes_.push_back(pp);
     current_element_idx_++;
 }
 
-void WindowTab::newElement(const std::string& element_handle_string)
+void WindowTab::createNewPlotPane(const std::string& element_handle_string)
 {
-    ElementSettings element_settings;
-    element_settings.x = 0.0;
-    element_settings.y = 0.0;
-    element_settings.width = 0.4;
-    element_settings.height = 0.4;
-    element_settings.handle_string = element_handle_string;
-    element_settings.title = element_handle_string;
+    std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
+    pp_settings->x = 0.0;
+    pp_settings->y = 0.0;
+    pp_settings->width = 0.4;
+    pp_settings->height = 0.4;
+    pp_settings->handle_string = element_handle_string;
+    pp_settings->title = element_handle_string;
 
-    newElement(element_settings);
+    createNewPlotPane(pp_settings);
 }
 
-void WindowTab::newElement(const ElementSettings& element_settings)
+void WindowTab::createNewPlotPane(const std::shared_ptr<ElementSettings>& element_settings)
 {
-    ApplicationGuiElement* const ge = new PlotPane(parent_window_,
-                                                   element_settings,
-                                                   background_color_,
-                                                   notify_main_window_key_pressed_,
-                                                   notify_main_window_key_released_,
-                                                   notify_parent_window_right_mouse_pressed_,
-                                                   notify_main_window_about_modification_);
-    ge->setMinXPos(element_x_offset_);
-    ge->updateSizeFromParent(parent_window_->GetSize());
-    gui_elements_.push_back(ge);
+    PlotPane* const pp = new PlotPane(parent_window_,
+                                      element_settings,
+                                      background_color_,
+                                      notify_main_window_key_pressed_,
+                                      notify_main_window_key_released_,
+                                      notify_parent_window_right_mouse_pressed_,
+                                      notify_main_window_about_modification_);
+    pp->setMinXPos(element_x_offset_);
+    pp->updateSizeFromParent(parent_window_->GetSize());
+    plot_panes_.push_back(pp);
     current_element_idx_++;
 }
 
 void WindowTab::show()
 {
-    for (auto const& ge : gui_elements_)
+    for (auto const& pp : plot_panes_)
     {
-        ge->show();
+        pp->show();
     }
 }
 
 void WindowTab::hide()
 {
-    for (auto const& ge : gui_elements_)
+    for (auto const& pp : plot_panes_)
     {
-        ge->hide();
+        pp->hide();
     }
 }
 
 void WindowTab::updateSizeFromParent(const wxSize new_size) const
 {
-    for (auto const& ge : gui_elements_)
+    for (auto const& pp : plot_panes_)
     {
-        ge->updateSizeFromParent(new_size);
+        pp->updateSizeFromParent(new_size);
     }
 }
 
@@ -255,11 +263,11 @@ TabSettings WindowTab::getTabSettings() const
     ts.button_selected_color = button_selected_color_;
     ts.button_text_color = button_text_color_;
 
-    for (const auto& ge : gui_elements_)
+    for (const auto& pp : plot_panes_)
     {
-        ElementSettings es = ge->getElementSettings();
-        const std::string element_handle_string = ge->getHandleString();
-        es.z_order = z_order_queue_.getOrderOfElement(element_handle_string);
+        std::shared_ptr<ElementSettings> es = pp->getElementSettings();
+        const std::string element_handle_string = pp->getHandleString();
+        es->z_order = z_order_queue_.getOrderOfElement(element_handle_string);
         ts.elements.push_back(es);
     }
 
@@ -268,13 +276,13 @@ TabSettings WindowTab::getTabSettings() const
 
 ApplicationGuiElement* WindowTab::getGuiElement(const std::string& element_handle_string) const
 {
-    auto q = std::find_if(gui_elements_.begin(),
-                          gui_elements_.end(),
+    auto q = std::find_if(plot_panes_.begin(),
+                          plot_panes_.end(),
                           [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
                               return elem->getHandleString() == element_handle_string;
                           });
 
-    if (gui_elements_.end() != q)
+    if (plot_panes_.end() != q)
     {
         return (*q);
     }
@@ -286,41 +294,41 @@ ApplicationGuiElement* WindowTab::getGuiElement(const std::string& element_handl
 
 void WindowTab::setMouseInteractionType(const MouseInteractionType mit)
 {
-    for (auto& ge : gui_elements_)
+    for (auto& pp : plot_panes_)
     {
-        ge->setMouseInteractionType(mit);
+        pp->setMouseInteractionType(mit);
     }
 }
 
 void WindowTab::notifyChildrenOnKeyPressed(const char key)
 {
-    for (const auto& ge : gui_elements_)
+    for (const auto& pp : plot_panes_)
     {
-        ge->keyPressed(key);
+        pp->keyPressed(key);
     }
 }
 
 void WindowTab::notifyChildrenOnKeyReleased(const char key)
 {
-    for (const auto& ge : gui_elements_)
+    for (const auto& pp : plot_panes_)
     {
-        ge->keyReleased(key);
+        pp->keyReleased(key);
     }
 }
 
 bool WindowTab::deleteElementIfItExists(const std::string& element_handle_string)
 {
-    auto q = std::find_if(gui_elements_.begin(),
-                          gui_elements_.end(),
+    auto q = std::find_if(plot_panes_.begin(),
+                          plot_panes_.end(),
                           [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
                               return elem->getHandleString() == element_handle_string;
                           });
 
-    if (gui_elements_.end() != q)
+    if (plot_panes_.end() != q)
     {
         delete (*q);
         z_order_queue_.eraseElement(element_handle_string);
-        gui_elements_.erase(q);
+        plot_panes_.erase(q);
         notify_main_window_element_deleted_(element_handle_string);
         return true;
     }
@@ -332,13 +340,13 @@ bool WindowTab::deleteElementIfItExists(const std::string& element_handle_string
 
 void WindowTab::toggleProjectionMode(const std::string& element_handle_string)
 {
-    auto q = std::find_if(gui_elements_.begin(),
-                          gui_elements_.end(),
+    auto q = std::find_if(plot_panes_.begin(),
+                          plot_panes_.end(),
                           [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
                               return elem->getHandleString() == element_handle_string;
                           });
 
-    if (gui_elements_.end() != q)
+    if (plot_panes_.end() != q)
     {
         (*q)->toggleProjectionMode();
     }
@@ -346,32 +354,25 @@ void WindowTab::toggleProjectionMode(const std::string& element_handle_string)
 
 bool WindowTab::elementWithNameExists(const std::string& element_handle_string)
 {
-    auto q = std::find_if(gui_elements_.begin(),
-                          gui_elements_.end(),
+    auto q = std::find_if(plot_panes_.begin(),
+                          plot_panes_.end(),
                           [&element_handle_string](const ApplicationGuiElement* const& elem) -> bool {
                               return elem->getHandleString() == element_handle_string;
                           });
 
-    if (gui_elements_.end() != q)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return plot_panes_.end() != q;
 }
 
 bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_handle_string,
                                                    const std::string& new_name)
 {
-    auto q = std::find_if(gui_elements_.begin(),
-                          gui_elements_.end(),
+    auto q = std::find_if(plot_panes_.begin(),
+                          plot_panes_.end(),
                           [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
                               return elem->getHandleString() == element_handle_string;
                           });
 
-    if (gui_elements_.end() != q)
+    if (plot_panes_.end() != q)
     {
         (*q)->setHandleString(new_name);
         return true;
@@ -384,13 +385,13 @@ bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_ha
 
 bool WindowTab::raiseElement(const std::string& element_handle_string)
 {
-    auto q = std::find_if(gui_elements_.begin(),
-                          gui_elements_.end(),
+    auto q = std::find_if(plot_panes_.begin(),
+                          plot_panes_.end(),
                           [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
                               return elem->getHandleString() == element_handle_string;
                           });
 
-    if (gui_elements_.end() != q)
+    if (plot_panes_.end() != q)
     {
         (*q)->raise();
         z_order_queue_.raise(element_handle_string);
@@ -404,13 +405,13 @@ bool WindowTab::raiseElement(const std::string& element_handle_string)
 
 bool WindowTab::lowerElement(const std::string& element_handle_string)
 {
-    auto q = std::find_if(gui_elements_.begin(),
-                          gui_elements_.end(),
+    auto q = std::find_if(plot_panes_.begin(),
+                          plot_panes_.end(),
                           [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
                               return elem->getHandleString() == element_handle_string;
                           });
 
-    if (gui_elements_.end() != q)
+    if (plot_panes_.end() != q)
     {
         (*q)->lower();
         z_order_queue_.lower(element_handle_string);
@@ -426,9 +427,9 @@ std::vector<std::string> WindowTab::getElementNames() const
 {
     std::vector<std::string> element_names;
 
-    for (const auto& ge : gui_elements_)
+    for (const auto& pp : plot_panes_)
     {
-        element_names.push_back(ge->getHandleString());
+        element_names.push_back(pp->getHandleString());
     }
 
     return element_names;

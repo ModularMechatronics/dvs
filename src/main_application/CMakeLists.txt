@@ -23,6 +23,9 @@ set(CPP_SOURCE_FILES main.cpp
                      axes/axes_side_configuration.cpp
 
                      project_state/project_settings.cpp
+                     project_state/element_settings.cpp
+                     project_state/button_settings.cpp
+                     project_state/plot_pane_settings.cpp
 
                      shader.cpp
 

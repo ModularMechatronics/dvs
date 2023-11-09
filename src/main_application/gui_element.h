@@ -20,19 +20,16 @@ using namespace dvs;
 class ApplicationGuiElement
 {
 protected:
-    ElementSettings element_settings_;
+    std::shared_ptr<ElementSettings> element_settings_;
+
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
     std::function<void()> notify_main_window_about_modification_;
 
-    int minimum_x_pos_;
-    int minimum_y_pos_;
-    Vec2f parent_size_;  // Pixels
-
 public:
     ApplicationGuiElement() = delete;
-    ApplicationGuiElement(const ElementSettings& element_settings,
+    ApplicationGuiElement(const std::shared_ptr<ElementSettings>& element_settings,
                           const std::function<void(const char key)>& notify_main_window_key_pressed,
                           const std::function<void(const char key)>& notify_main_window_key_released,
                           const std::function<void(const wxPoint pos, const std::string& elem_name)>&
@@ -54,15 +51,15 @@ public:
 
     std::string getHandleString() const
     {
-        return element_settings_.handle_string;
+        return element_settings_->handle_string;
     }
 
     virtual void setHandleString(const std::string& new_name)
     {
-        element_settings_.handle_string = new_name;
+        element_settings_->handle_string = new_name;
     }
 
-    ElementSettings getElementSettings() const
+    std::shared_ptr<ElementSettings> getElementSettings() const
     {
         return element_settings_;
     }
@@ -76,15 +73,7 @@ public:
     virtual void hide() = 0;
     virtual void destroy() = 0;
     virtual void refresh() = 0;
-    virtual void waitForFlush() = 0;
-    virtual void toggleProjectionMode() = 0;
     virtual void update() = 0;
-
-    /*virtual void showLegend(const bool show_legend)
-    {
-        static_cast<void>(show_legend);
-        std::cout << "Not implemented!" << std::endl;
-    }*/
 };
 
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

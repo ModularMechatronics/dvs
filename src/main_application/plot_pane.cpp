@@ -140,7 +140,7 @@ void PlotPane::initShaders()
 }
 
 PlotPane::PlotPane(wxWindow* parent,
-                   const ElementSettings& element_settings,
+                   const std::shared_ptr<ElementSettings>& element_settings,
                    const RGBTripletf& tab_background_color,
                    const std::function<void(const char key)>& notify_main_window_key_pressed,
                    const std::function<void(const char key)>& notify_main_window_key_released,
@@ -149,12 +149,13 @@ PlotPane::PlotPane(wxWindow* parent,
                    const std::function<void()>& notify_main_window_about_modification)
     : wxGLCanvas(parent, getGLAttributes()),
       ApplicationGuiElement(element_settings,
-                 notify_main_window_key_pressed,
-                 notify_main_window_key_released,
-                 notify_parent_window_right_mouse_pressed,
-                 notify_main_window_about_modification),
+                            notify_main_window_key_pressed,
+                            notify_main_window_key_released,
+                            notify_parent_window_right_mouse_pressed,
+                            notify_main_window_about_modification),
       m_context(getContext()),
-      axes_interactor_(axes_settings_, getWidth(), getHeight())
+      axes_interactor_(axes_settings_, getWidth(), getHeight()),
+      plot_pane_settings_{std::dynamic_pointer_cast<PlotPaneSettings>(element_settings)}
 {
     pending_clear_ = false;
     parent_size_ = parent->GetSize();
@@ -162,7 +163,7 @@ PlotPane::PlotPane(wxWindow* parent,
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
     perspective_projection_ =
-        (element_settings.projection_mode == ElementSettings::ProjectionMode::PERSPECTIVE) ? true : false;
+        (plot_pane_settings_->projection_mode == PlotPaneSettings::ProjectionMode::PERSPECTIVE) ? true : false;
 
     should_render_point_selection_ = false;
 
@@ -180,7 +181,7 @@ PlotPane::PlotPane(wxWindow* parent,
     wxGLCanvas::SetCurrent(*m_context);
     initShaders();
 
-    axes_renderer_ = new AxesRenderer(shader_collection_, element_settings, tab_background_color);
+    axes_renderer_ = new AxesRenderer(shader_collection_, *plot_pane_settings_, tab_background_color);
     plot_data_handler_ = new PlotDataHandler(shader_collection_);
 
     axes_set_ = false;
@@ -416,8 +417,8 @@ void PlotPane::waitForFlush()
 void PlotPane::toggleProjectionMode()
 {
     perspective_projection_ = !perspective_projection_;
-    element_settings_.projection_mode = perspective_projection_ ? ElementSettings::ProjectionMode::PERSPECTIVE
-                                                                : ElementSettings::ProjectionMode::ORTHOGRAPHIC;
+    plot_pane_settings_->projection_mode = perspective_projection_ ? PlotPaneSettings::ProjectionMode::PERSPECTIVE
+                                                                   : PlotPaneSettings::ProjectionMode::ORTHOGRAPHIC;
     Refresh();
 }
 
@@ -437,7 +438,7 @@ void PlotPane::destroy()
 
 void PlotPane::setHandleString(const std::string& new_name)
 {
-    element_settings_.handle_string = new_name;
+    plot_pane_settings_->handle_string = new_name;
     Refresh();
 }
 
@@ -541,7 +542,7 @@ void PlotPane::mouseRightPressed(wxMouseEvent& event)
     else
     {
         notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(),
-                                                  element_settings_.handle_string);
+                                                  plot_pane_settings_->handle_string);
     }
 }
 
@@ -691,10 +692,10 @@ void PlotPane::adjustPaneSizeOnMouseMoved()
         const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
         const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
 
-        element_settings_.width = static_cast<float>(new_size.GetWidth()) / (px * ratio_x);
-        element_settings_.height = static_cast<float>(new_size.GetHeight()) / (py * ratio_y);
-        element_settings_.x = static_cast<float>(new_position.x - minimum_x_pos_) / (px * ratio_x);
-        element_settings_.y = static_cast<float>(new_position.y - minimum_y_pos_) / (py * ratio_y);
+        plot_pane_settings_->width = static_cast<float>(new_size.GetWidth()) / (px * ratio_x);
+        plot_pane_settings_->height = static_cast<float>(new_size.GetHeight()) / (py * ratio_y);
+        plot_pane_settings_->x = static_cast<float>(new_position.x - minimum_x_pos_) / (px * ratio_x);
+        plot_pane_settings_->y = static_cast<float>(new_position.y - minimum_y_pos_) / (py * ratio_y);
 
         Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);  // TODO: Needed?
         notify_main_window_about_modification_();
@@ -922,10 +923,10 @@ void PlotPane::setElementPositionAndSize()
     const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
     const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
 
-    new_size.SetWidth(element_settings_.width * px * ratio_x);
-    new_size.SetHeight(element_settings_.height * py * ratio_y);
-    new_pos.x = minimum_x_pos_ + element_settings_.x * px * ratio_x;
-    new_pos.y = minimum_y_pos_ + element_settings_.y * py * ratio_y;
+    new_size.SetWidth(plot_pane_settings_->width * px * ratio_x);
+    new_size.SetHeight(plot_pane_settings_->height * py * ratio_y);
+    new_pos.x = minimum_x_pos_ + plot_pane_settings_->x * px * ratio_x;
+    new_pos.y = minimum_y_pos_ + plot_pane_settings_->y * py * ratio_y;
 
     SetPosition(new_pos);
     setSize(new_size);
@@ -1160,7 +1161,7 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
     glEnable(GL_MULTISAMPLE);
 
-    const RGBTripletf color_vec{element_settings_.background_color};
+    const RGBTripletf color_vec{plot_pane_settings_->background_color};
     glClearColor(color_vec.red, color_vec.green, color_vec.blue, 0.0f);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1201,7 +1202,7 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
                                  axes_interactor_.getShowLegend(),
                                  legend_scale_factor_,
                                  plot_data_handler_->getLegendStrings(),
-                                 element_settings_.handle_string,
+                                 plot_pane_settings_->handle_string,
                                  current_mouse_interaction_axis_);
 
     axes_renderer_->render();

@@ -430,7 +430,7 @@ void MainWindow::newWindowWithoutFileModification()
                                                0,
                                                [this](const std::string& f) -> void { toggleWindowVisibility(f); }));
 
-    gui_window->newElement();
+    gui_window->createNewPlotPane();
 }
 
 void MainWindow::windowNameChanged(const std::string& old_name, const std::string& new_name)

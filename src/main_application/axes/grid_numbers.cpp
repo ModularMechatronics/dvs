@@ -66,7 +66,7 @@ void drawZLetter(const TextRenderer& text_renderer,
 }
 
 void drawXAxisNumbers(const TextRenderer& text_renderer,
-                      const ElementSettings& element_settings,
+                      const PlotPaneSettings& plot_pane_settings,
                       const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
@@ -88,19 +88,19 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
     const double y = -axes_side_configuration.xz_plane_y_value * distance_multiplier;
     const double z = axes_side_configuration.xy_plane_z_value * z_value_distance_multiplier;
 
-    if (element_settings.axes_letters_on)
+    if (plot_pane_settings.axes_letters_on)
     {
-        const auto c = element_settings.axes_letters_color;
+        const auto c = plot_pane_settings.axes_letters_color;
         glUniform3f(text_color_uniform, c.red, c.green, c.blue);
         drawXLetter(
             text_renderer, view_model, v_viewport, projection, width, height, y, z, z_value_distance_multiplier);
     }
 
-    if (!element_settings.axes_numbers_on)
+    if (!plot_pane_settings.axes_numbers_on)
     {
         return;
     }
-    const auto c = element_settings.axes_numbers_color;
+    const auto c = plot_pane_settings.axes_numbers_color;
     glUniform3f(text_color_uniform, c.red, c.green, c.blue);
 
     const bool cond2 =
@@ -126,7 +126,7 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
 }
 
 void drawYAxisNumbers(const TextRenderer& text_renderer,
-                      const ElementSettings& element_settings,
+                      const PlotPaneSettings& plot_pane_settings,
                       const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
@@ -151,19 +151,19 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
     const bool cond2 =
         ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
 
-    if (element_settings.axes_letters_on)
+    if (plot_pane_settings.axes_letters_on)
     {
-        const auto c = element_settings.axes_letters_color;
+        const auto c = plot_pane_settings.axes_letters_color;
         glUniform3f(text_color_uniform, c.red, c.green, c.blue);
         drawYLetter(
             text_renderer, view_model, v_viewport, projection, width, height, x, z, z_value_distance_multiplier);
     }
 
-    if (!element_settings.axes_numbers_on)
+    if (!plot_pane_settings.axes_numbers_on)
     {
         return;
     }
-    const auto c = element_settings.axes_numbers_color;
+    const auto c = plot_pane_settings.axes_numbers_color;
     glUniform3f(text_color_uniform, c.red, c.green, c.blue);
 
     for (size_t k = 0; k < gv.y.num_valid_values; k++)
@@ -197,7 +197,7 @@ void drawYAxisNumbers(const TextRenderer& text_renderer,
 }
 
 void drawZAxisNumbers(const TextRenderer& text_renderer,
-                      const ElementSettings& element_settings,
+                      const PlotPaneSettings& plot_pane_settings,
                       const glm::mat4& view_model,
                       const glm::vec4& v_viewport,
                       const glm::mat4& projection,
@@ -239,9 +239,9 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
     const double x = axes_side_configuration.z_axes_numbers_x_value * x_value_distance_multiplier;
     const double y = axes_side_configuration.z_axes_numbers_y_value * y_value_distance_multiplier;
 
-    if (element_settings.axes_letters_on)
+    if (plot_pane_settings.axes_letters_on)
     {
-        const auto c = element_settings.axes_letters_color;
+        const auto c = plot_pane_settings.axes_letters_color;
         glUniform3f(text_color_uniform, c.red, c.green, c.blue);
         drawZLetter(text_renderer,
                     view_model,
@@ -255,11 +255,11 @@ void drawZAxisNumbers(const TextRenderer& text_renderer,
                     y_value_distance_multiplier);
     }
 
-    if (!element_settings.axes_numbers_on)
+    if (!plot_pane_settings.axes_numbers_on)
     {
         return;
     }
-    const auto c = element_settings.axes_numbers_color;
+    const auto c = plot_pane_settings.axes_numbers_color;
     glUniform3f(text_color_uniform, c.red, c.green, c.blue);
 
     for (size_t k = 0; k < gv.z.num_valid_values; k++)
@@ -285,7 +285,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
                      const TextShader* const text_shader,
                      const AxesLimits& axes_limits,
                      const ViewAngles& view_angles,
-                     const ElementSettings& element_settings,
+                     const PlotPaneSettings& plot_pane_settings,
                      const glm::mat4& view_mat,
                      const glm::mat4& model_mat,
                      const glm::mat4& projection_mat,
@@ -336,7 +336,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
     if ((!view_angles.isSnappedAlongX()) || perspective_projection)
     {
         drawXAxisNumbers(text_renderer,
-                         element_settings,
+                         plot_pane_settings,
                          view_model_x,
                          v_viewport,
                          projection_mat,
@@ -355,7 +355,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
     if ((!view_angles.isSnappedAlongY()) || perspective_projection)
     {
         drawYAxisNumbers(text_renderer,
-                         element_settings,
+                         plot_pane_settings,
                          view_model_y,
                          v_viewport,
                          projection_mat,
@@ -375,7 +375,7 @@ void drawGridNumbers(const TextRenderer& text_renderer,
     if ((!view_angles.isSnappedAlongZ()) || perspective_projection)
     {
         drawZAxisNumbers(text_renderer,
-                         element_settings,
+                         plot_pane_settings,
                          view_model_z,
                          v_viewport,
                          projection_mat,

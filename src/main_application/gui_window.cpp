@@ -207,7 +207,7 @@ GuiWindow::GuiWindow(
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
     Bind(wxEVT_MENU, &GuiWindow::newTab, this, dvs_ids::NEW_TAB);
-    Bind(wxEVT_MENU, &GuiWindow::newElementCallback, this, dvs_ids::NEW_ELEMENT);
+    Bind(wxEVT_MENU, &GuiWindow::createNewPlotPaneCallbackFunction, this, dvs_ids::NEW_ELEMENT);
     Bind(wxEVT_MENU, &GuiWindow::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &GuiWindow::deleteElement, this, dvs_ids::DELETE_ELEMENT);
 
@@ -544,7 +544,7 @@ void GuiWindow::newTab(wxCommandEvent& WXUNUSED(event))
     notify_main_window_about_modification_();
 }
 
-void GuiWindow::newElement()
+void GuiWindow::createNewPlotPane()
 {
     const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
 
@@ -571,20 +571,20 @@ void GuiWindow::newElement()
             }
         }
 
-        ElementSettings element_settings;
-        element_settings.x = 0.0;
-        element_settings.y = 0.0;
-        element_settings.width = 1.0;
-        element_settings.height = 1.0;
-        element_settings.handle_string = element_handle_string;
-        element_settings.title = element_handle_string;
+        std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
+        pp_settings->x = 0.0;
+        pp_settings->y = 0.0;
+        pp_settings->width = 1.0;
+        pp_settings->height = 1.0;
+        pp_settings->handle_string = element_handle_string;
+        pp_settings->title = element_handle_string;
 
-        (*q)->newElement(element_settings);
+        (*q)->createNewPlotPane(pp_settings);
         notify_main_window_about_modification_();
     }
 }
 
-void GuiWindow::newElementCallback(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event))
 {
     const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
 
@@ -639,7 +639,7 @@ void GuiWindow::newElementCallback(wxCommandEvent& WXUNUSED(event))
             }
         }
 
-        (*q)->newElement(element_handle_string);
+        (*q)->createNewPlotPane(element_handle_string);
         notify_main_window_about_modification_();
     }
 }

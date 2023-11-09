@@ -44,7 +44,7 @@ private:
     PlotBoxWalls plot_box_walls_{};
     PlotBoxSilhouette plot_box_silhouette_{};
     PlotBoxGrid plot_box_grid_{};
-    ElementSettings element_settings_;
+    PlotPaneSettings plot_pane_settings_;
     PlotPaneBackground plot_pane_background_;
     RGBTripletf tab_background_color_;
     AxesSideConfiguration axes_side_configuration_;
@@ -103,7 +103,7 @@ private:
 
 public:
     AxesRenderer(const ShaderCollection& shader_collection,
-                 const ElementSettings& element_settings,
+                 const PlotPaneSettings& plot_pane_settings,
                  const RGBTripletf& tab_background_color);
 
     void updateStates(const AxesLimits& axes_limits,

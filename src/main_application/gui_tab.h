@@ -47,7 +47,7 @@ class WindowTab
 {
 private:
     std::string name_;
-    std::vector<ApplicationGuiElement*> gui_elements_;
+    std::vector<PlotPane*> plot_panes_;
     wxFrame* parent_window_;
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
@@ -78,9 +78,9 @@ public:
     std::vector<ApplicationGuiElement*> getGuiElements() const;
     void updateAllElements();
     void setMinXPos(const int min_x_pos);
-    void newElement();
-    void newElement(const std::string& element_handle_string);
-    void newElement(const ElementSettings& element_settings);
+    void createNewPlotPane();
+    void createNewPlotPane(const std::string& element_handle_string);
+    void createNewPlotPane(const std::shared_ptr<ElementSettings>& element_settings);
     void show();
     void hide();
     void updateSizeFromParent(const wxSize new_size) const;

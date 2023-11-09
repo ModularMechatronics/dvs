@@ -11,14 +11,14 @@
 using namespace dvs;
 
 AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
-                           const ElementSettings& element_settings,
+                           const PlotPaneSettings& plot_pane_settings,
                            const RGBTripletf& tab_background_color)
     : shader_collection_{shader_collection},
       legend_renderer_{text_renderer_, shader_collection_},
       point_selection_box_{text_renderer_, shader_collection_},
-      element_settings_{element_settings},
+      plot_pane_settings_{plot_pane_settings},
       tab_background_color_{tab_background_color},
-      plot_pane_background_{element_settings_.pane_radius}
+      plot_pane_background_{plot_pane_settings_.pane_radius}
 {
     shader_collection_.text_shader.use();
     axes_square_ = false;
@@ -28,7 +28,7 @@ AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
 
     glUniform1i(shader_collection_.text_shader.uniform_handles.text_sampler, 0);
 
-    if (element_settings_.clipping_on)
+    if (plot_pane_settings_.clipping_on)
     {
         shader_collection_.basic_plot_shader.use();
         shader_collection_.basic_plot_shader.base_uniform_handles.use_clip_plane.setInt(1);
@@ -81,7 +81,7 @@ AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
 
 void AxesRenderer::enableClipPlanes()
 {
-    if (element_settings_.clipping_on)
+    if (plot_pane_settings_.clipping_on)
     {
         const double f = 0.1;
 
@@ -293,7 +293,7 @@ void AxesRenderer::render()
     // shader_collection_.pane_background_shader.use();
     // renderBackground();
     shader_collection_.plot_box_shader.use();
-    if (element_settings_.plot_box_on)
+    if (plot_pane_settings_.plot_box_on)
     {
         renderPlotBox();
     }
@@ -315,11 +315,11 @@ void AxesRenderer::render()
                           projection_mat_);
     }
 
-    if (element_settings_.grid_on)
+    if (plot_pane_settings_.grid_on)
     {
         renderBoxGrid();
     }
-    if (element_settings_.plot_box_on)
+    if (plot_pane_settings_.plot_box_on)
     {
         // Render the silhouette after the box grid because of reasons...
 
@@ -339,7 +339,7 @@ void AxesRenderer::render()
                     &shader_collection_.text_shader,
                     axes_limits_,
                     view_angles_,
-                    element_settings_,
+                    plot_pane_settings_,
                     view_mat_,
                     model_mat_ * window_scale_mat_,
                     projection_mat_,
@@ -377,7 +377,7 @@ void AxesRenderer::renderBoxGrid()
 
     const glm::mat4 mvp = projection_mat_ * view_mat_ * model_mat_ * scale_mat_ * window_scale_mat_;
 
-    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(element_settings_.grid_color);
+    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(plot_pane_settings_.grid_color);
     shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
 
     plot_box_grid_.render(grid_vectors_, axes_limits_, view_angles_, axes_side_configuration_);
@@ -503,7 +503,7 @@ void AxesRenderer::renderBackground()
     shader_collection_.pane_background_shader.use();
     shader_collection_.pane_background_shader.base_uniform_handles.axes_width.setFloat(width_);
     shader_collection_.pane_background_shader.base_uniform_handles.axes_height.setFloat(height_);
-    shader_collection_.pane_background_shader.base_uniform_handles.radius.setFloat(element_settings_.pane_radius);
+    shader_collection_.pane_background_shader.base_uniform_handles.radius.setFloat(plot_pane_settings_.pane_radius);
 
     model_mat_[3][0] = 0.0;
     model_mat_[3][1] = 0.0;
@@ -537,7 +537,7 @@ void AxesRenderer::renderPlotBox()
     const glm::mat4 mvp = projection_mat_ * view_mat_ * model_mat_ * window_scale_mat_;
 
     shader_collection_.plot_box_shader.base_uniform_handles.model_view_proj_mat.setMat4x4(mvp);
-    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(element_settings_.plot_box_color);
+    shader_collection_.plot_box_shader.base_uniform_handles.vertex_color.setColor(plot_pane_settings_.plot_box_color);
 
     plot_box_walls_.render(axes_side_configuration_);
 }

@@ -9,8 +9,7 @@
 #include "dvs/enumerations.h"
 #include "dvs/logging.h"
 #include "misc/rgb_triplet.h"
-
-extern RGBTriplet<float> kMainWindowBackgroundColor;
+#include "project_state/helper_functions.h"
 
 /*
 {
@@ -65,9 +64,10 @@ extern RGBTriplet<float> kMainWindowBackgroundColor;
 }
 */
 
+extern RGBTriplet<float> kMainWindowBackgroundColor;
+
 struct ElementSettings
 {
-    // Base attributes
     float x;
     float y;
     float width;
@@ -79,9 +79,23 @@ struct ElementSettings
 
     dvs::GuiElementType type;
 
-    std::string label;
+    ElementSettings();
+    explicit ElementSettings(const nlohmann::json& j);
+    virtual ~ElementSettings() {}
 
-    // Plot pane settings
+    void parseSettings(const nlohmann::json& j);
+
+    virtual nlohmann::json toJson() const;
+
+    bool operator==(const ElementSettings& other) const;
+    bool operator!=(const ElementSettings& other) const;
+};
+
+struct PlotPaneSettings : ElementSettings
+{
+    PlotPaneSettings();
+    explicit PlotPaneSettings(const nlohmann::json& j);
+
     std::string title;
 
     RGBTripletf background_color;
@@ -106,18 +120,19 @@ struct ElementSettings
 
     ProjectionMode projection_mode;
 
-    static dvs::GuiElementType parseType(const nlohmann::json& j);
-
-    ElementSettings();
-    explicit ElementSettings(const nlohmann::json& j);
-
-    void parseBaseAttributes(const nlohmann::json& j);
     void parsePlotPaneAttributes(const nlohmann::json& j);
 
-    nlohmann::json toJson() const;
+    nlohmann::json toJson() const override;
 
-    bool operator==(const ElementSettings& other) const;
-    bool operator!=(const ElementSettings& other) const;
+    bool operator==(const PlotPaneSettings& other) const;
+    bool operator!=(const PlotPaneSettings& other) const;
+};
+
+struct ButtonSettings : public ElementSettings
+{
+    std::string label;
+    ButtonSettings() : ElementSettings{}, label{""} {}
+    ButtonSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{j_data["attributes"]["label"]} {}
 };
 
 struct TabSettings
@@ -128,14 +143,14 @@ struct TabSettings
     RGBTripletf button_clicked_color;
     RGBTripletf button_selected_color;
     RGBTripletf button_text_color;
-    std::vector<ElementSettings> elements;
+    std::vector<std::shared_ptr<ElementSettings>> elements;
 
     TabSettings();
     TabSettings(const nlohmann::json& j);
     nlohmann::json toJson() const;
 
     bool hasElementWithHandleString(const std::string& handle_string) const;
-    ElementSettings getElementWithHandleString(const std::string& handle_string) const;
+    std::shared_ptr<ElementSettings> getElementWithHandleString(const std::string& handle_string) const;
 
     bool operator==(const TabSettings& other) const;
     bool operator!=(const TabSettings& other) const;

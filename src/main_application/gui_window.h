@@ -20,6 +20,7 @@
 #include "axes/axes.h"
 #include "dvs/gui_api.h"
 #include "gui_element.h"
+#include "gui_elements.h"
 #include "gui_tab.h"
 #include "help_pane.h"
 #include "plot_pane.h"
@@ -128,8 +129,8 @@ public:
     void editWindowName(wxCommandEvent& WXUNUSED(event));
 
     void newTab(wxCommandEvent& WXUNUSED(event));
-    void newElementCallback(wxCommandEvent& WXUNUSED(event));
-    void newElement();
+    void createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewPlotPane();
 
     void editElementName(wxCommandEvent& WXUNUSED(event));
     void deleteElement(wxCommandEvent& WXUNUSED(event));
