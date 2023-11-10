@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+#include <functional>
+#include <map>
+
+#include "dvs/gui_api.h"
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
 
@@ -1181,22 +1185,21 @@ inline void setTransform(const ItemId id,
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
-inline void spawn()
+inline bool isDvsRunning()
 {
     char path[1035];
 
     FILE* const fp = popen("ps -ef | grep dvs", "r");
     if (fp == NULL)
     {
-        std::cout << "Failed to run command" << std::endl;
-        return;
+        DVS_LOG_ERROR() << "Failed to run command";
+        return false;
     }
 
     std::vector<std::string> lines;
     while (fgets(path, sizeof(path), fp) != NULL)
     {
         lines.push_back(path);
-        printf("%s", path);
     }
 
     bool dvs_running = false;
@@ -1211,11 +1214,288 @@ inline void spawn()
 
     pclose(fp);
 
-    if (!dvs_running)
+    return dvs_running;
+}
+
+inline void spawn()
+{
+    if (!isDvsRunning())
     {
-        std::cout << "Starting DVS" << std::endl;
+        DVS_LOG_INFO() << "Starting DVS";
         system("./main_application/dvs &");
     }
+}
+
+using GuiCallbackFunction = std::function<void(std::string)>;
+
+namespace internal
+{
+inline std::map<std::string, GuiCallbackFunction>& getGuiCallbacks()
+{
+    static std::map<std::string, GuiCallbackFunction> gui_callbacks;
+
+    return gui_callbacks;
+}
+}  // namespace internal
+
+inline void registerGuiCallback(const std::string& handle_string, GuiCallbackFunction callback_function)
+{
+    std::map<std::string, GuiCallbackFunction>& gui_callbacks = internal::getGuiCallbacks();
+
+    if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+    {
+        DVS_LOG_WARNING() << "Gui callback with name " << handle_string << " already exists!";
+        return;
+    }
+
+    gui_callbacks[handle_string] = callback_function;
+}
+
+class ReceivedGuiData
+{
+private:
+    uint8_t* data_;
+    uint64_t num_data_bytes_;
+
+public:
+    ReceivedGuiData() : data_{nullptr}, num_data_bytes_{0U} {}
+    ReceivedGuiData(const ReceivedGuiData& other) = delete;
+    ReceivedGuiData(ReceivedGuiData&& other) : data_{other.data_}, num_data_bytes_{other.num_data_bytes_}
+    {
+        other.data_ = nullptr;
+        other.num_data_bytes_ = 0U;
+    }
+    ReceivedGuiData& operator=(const ReceivedGuiData& other) = delete;
+    ReceivedGuiData& operator=(ReceivedGuiData&& other)
+    {
+        if (data_ != nullptr)
+        {
+            delete[] data_;
+        }
+
+        data_ = other.data_;
+        num_data_bytes_ = other.num_data_bytes_;
+
+        other.data_ = nullptr;
+        other.num_data_bytes_ = 0U;
+
+        return *this;
+    }
+
+    ReceivedGuiData(const size_t size_to_allocate)
+    {
+        data_ = new uint8_t[size_to_allocate];
+        num_data_bytes_ = size_to_allocate;
+    }
+
+    ~ReceivedGuiData()
+    {
+        if (data_ != nullptr)
+        {
+            delete[] data_;
+        }
+        num_data_bytes_ = 0U;
+    }
+
+    uint8_t* data() const
+    {
+        return data_;
+    }
+
+    uint64_t size() const
+    {
+        return num_data_bytes_;
+    }
+};
+
+inline ReceivedGuiData receiveGuiData()
+{
+    int tcp_sockfd, tcp_connfd;
+    socklen_t tcp_len;
+    struct sockaddr_in tcp_servaddr;
+    struct sockaddr_in tcp_cli;
+
+    tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    // Set reuse address that's already in use (probably by exited dvs instance)
+    int true_val = 1;
+    setsockopt(tcp_sockfd, SOL_SOCKET, SO_REUSEADDR, &true_val, sizeof(int));
+
+    bzero(&tcp_servaddr, sizeof(tcp_servaddr));
+
+    tcp_servaddr.sin_family = AF_INET;
+    tcp_servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    tcp_servaddr.sin_port = htons(9758);
+
+    if ((bind(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr))) != 0)
+    {
+        throw std::runtime_error("Socket bind failed...");
+    }
+
+    tcp_len = sizeof(tcp_cli);
+
+    if ((listen(tcp_sockfd, 5)) != 0)
+    {
+        throw std::runtime_error("Socket listen failed...");
+    }
+
+    ////// Read
+    tcp_connfd = accept(tcp_sockfd, (struct sockaddr*)&tcp_cli, &tcp_len);
+    if (tcp_connfd < 0)
+    {
+        throw std::runtime_error("Server accept failed...");
+    }
+
+    size_t num_expected_bytes;
+    read(tcp_connfd, &num_expected_bytes, sizeof(uint64_t));
+
+    ReceivedGuiData received_data{num_expected_bytes};
+
+    char* rec_buffer = reinterpret_cast<char*>(received_data.data());
+
+    size_t total_num_received_bytes = 0U;
+    size_t num_bytes_left = num_expected_bytes;
+
+    while (true)
+    {
+        const ssize_t num_received_bytes = read(tcp_connfd, rec_buffer + total_num_received_bytes, num_bytes_left);
+
+        total_num_received_bytes += num_received_bytes;
+        num_bytes_left -= static_cast<size_t>(num_received_bytes);
+
+        if (total_num_received_bytes >= num_expected_bytes)
+        {
+            break;
+        }
+    }
+    close(tcp_connfd);
+    close(tcp_sockfd);
+
+    return std::move(received_data);
+}
+
+class ParsedGuiData
+{
+private:
+    std::string handle_string_;
+
+public:
+    ParsedGuiData() = default;
+    ParsedGuiData(const ParsedGuiData& other) = delete;
+    ParsedGuiData(const ReceivedGuiData& received_gui_data)
+    {
+        std::uint16_t num_data_bytes;
+
+        const std::uint8_t* const raw_data = received_gui_data.data();
+        const std::uint8_t handle_string_length = raw_data[0];
+
+        size_t idx{1U};
+        for (std::uint8_t k = 0; k < handle_string_length; k++)
+        {
+            handle_string_.push_back(raw_data[idx]);
+            idx++;
+        }
+    }
+
+    std::string getHandleString() const
+    {
+        return handle_string_;
+    }
+};
+
+inline void callGuiCallbackFunction(const std::string& handle_string)
+{
+    std::map<std::string, GuiCallbackFunction>& gui_callbacks = internal::getGuiCallbacks();
+
+    if (gui_callbacks.find(handle_string) == gui_callbacks.end())
+    {
+        DVS_LOG_WARNING() << "Gui callback with name " << handle_string << " does not exists!";
+        return;
+    }
+
+    gui_callbacks[handle_string]("Some data!");
+}
+
+inline void startGuiReceiveThread()
+{
+    std::thread gui_receive_thread([]() {
+        while (true)
+        {
+            // receiveGuiData is a blocking method
+            const ReceivedGuiData received_data{receiveGuiData()};
+
+            std::cout << " ############################################################" << std::endl;
+            std::cout << " ##################### Gui thread print #####################" << std::endl;
+            std::cout << " ############################################################" << std::endl;
+
+            ParsedGuiData parsed_gui_data{received_data};
+
+            std::cout << "Handle string: \"" << parsed_gui_data.getHandleString() << "\"" << std::endl;
+            callGuiCallbackFunction(parsed_gui_data.getHandleString());
+        }
+    });
+
+    gui_receive_thread.detach();
+
+    std::thread dvs_application_heart_beat_monitor_threadd([]() {
+        while (true)
+        {
+            usleep(1000U * 1000U);
+            if (isDvsRunning())
+            {
+                DVS_LOG_INFO() << "DVS is running!";
+            }
+            else
+            {
+                DVS_LOG_ERROR() << "DVS is not running!";
+            }
+        }
+    });
+
+    dvs_application_heart_beat_monitor_threadd.detach();
+}
+
+// const float radio_value = dvs::getValue<float>("slider0")
+
+/*
+Alternative solution:
+ Whenever a gui element is updated on the application side, this new updated state is sent to the
+ client application, which stores all the values in a map. Whenever the user calls getValue, the
+ value is simply read from the map.
+Functions should be named properly so that the name refects that it's the current state, and
+not a state which is continuously updated.
+
+Or could it be continously updated? If a reference/pointer is given to the returned GUI object,
+then it could be updated continously.
+
+Can a function be called at startup of client application to poll dvs for all
+gui element values?
+
+*/
+
+/*
+Prototyping:
+const float f = dvs::getSlider("slider0").getValue<float>();
+const float f = dvs::getGuiElement("slider0").asSlider().getValue<float>();
+
+*/
+
+inline float getValue(const std::string& handle_string)
+{
+    float ret_value;
+    std::thread receive_thread([&ret_value]() {
+        // TODO: Implement timout timer for this thread
+        while (true)
+        {
+            // receiveGuiData is a blocking method
+            const ReceivedGuiData received_data{receiveGuiData()};
+            std::memcpy(&ret_value, received_data.data(), sizeof(float));
+        }
+    });
+
+    receive_thread.join();
+
+    std::cout << "ret_value: " << ret_value << std::endl;
 }
 
 namespace not_ready
@@ -1224,7 +1504,7 @@ inline size_t numObjectsInReceiveBuffer()
 {
     internal::CommunicationHeader hdr{internal::Function::IS_BUSY_RENDERING};
 
-    internal::sendHeaderOnly(internal::sendThroughQueryUdpInterface, hdr);
+    // internal::sendHeaderOnly(internal::sendThroughQueryUdpInterface, hdr);
 
     usleep(1000 * 40);
 
