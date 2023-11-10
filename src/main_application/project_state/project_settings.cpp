@@ -163,7 +163,7 @@ bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const s
             const std::shared_ptr<ButtonSettings> rhs_casted = std::dynamic_pointer_cast<ButtonSettings>(rhs);
             return *lhs_casted == *rhs_casted;
         }
-        /*case dvs::GuiElementType::Slider: {
+        case dvs::GuiElementType::Slider: {
             const std::shared_ptr<SliderSettings> lhs_casted = std::dynamic_pointer_cast<SliderSettings>(lhs);
             const std::shared_ptr<SliderSettings> rhs_casted = std::dynamic_pointer_cast<SliderSettings>(rhs);
             return *lhs_casted == *rhs_casted;
@@ -208,7 +208,7 @@ bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const s
             const std::shared_ptr<StaticBoxSettings> lhs_casted = std::dynamic_pointer_cast<StaticBoxSettings>(lhs);
             const std::shared_ptr<StaticBoxSettings> rhs_casted = std::dynamic_pointer_cast<StaticBoxSettings>(rhs);
             return *lhs_casted == *rhs_casted;
-        }*/
+        }
         default: {
             throw std::runtime_error("Unknown element type");
         }

@@ -51,18 +51,17 @@ nlohmann::json ElementSettings::toJson() const
     j["y"] = y;
     j["width"] = width;
     j["height"] = height;
+    j["type"] = guiElementTypeToString(type);
 
     assignIfNotDefault(j, "z_order", z_order, kZOrderDefault);
-
-    j["type"] = guiElementTypeToString(type);
 
     return j;
 }
 
 bool ElementSettings::operator==(const ElementSettings& other) const
 {
-    return (x == other.x) && (y == other.y) && (width == other.width) && (height == other.height) &&
-           (handle_string == other.handle_string) && (z_order == other.z_order) && (type == other.type);
+    return x == other.x && y == other.y && width == other.width && height == other.height &&
+           handle_string == other.handle_string && z_order == other.z_order && type == other.type;
 }
 
 bool ElementSettings::operator!=(const ElementSettings& other) const

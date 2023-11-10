@@ -30,20 +30,37 @@ PlotPaneSettings::PlotPaneSettings()
 {
 }
 
+void PlotPaneSettings::defaultInitializeAllSettings()
+{
+    title = "";
+    background_color = kElementBackgroundColorDefault;
+    plot_box_color = kPlotBoxColorDefault;
+    grid_color = kGridColorDefault;
+    axes_numbers_color = kAxesNumbersColorDefault;
+    axes_letters_color = kAxesLettersColorDefault;
+    grid_on = kGridOnDefault;
+    plot_box_on = kPlotBoxOnDefault;
+    axes_numbers_on = kAxesNumbersOnDefault;
+    axes_letters_on = kAxesLettersOnDefault;
+    clipping_on = kClippingOnDefault;
+    pane_radius = kPaneRadiusDefault;
+    projection_mode = ProjectionMode::ORTHOGRAPHIC;
+}
+
 PlotPaneSettings::PlotPaneSettings(const nlohmann::json& j) : ElementSettings{j}
 {
-    parsePlotPaneAttributes(j);
+    defaultInitializeAllSettings();
+    parsePlotPaneSettings(j);
 }
 
 bool PlotPaneSettings::operator==(const PlotPaneSettings& other) const
 {
-    return ElementSettings::operator==(other) && (title == other.title) &&
-           (background_color == other.background_color) && (plot_box_color == other.plot_box_color) &&
-           (grid_color == other.grid_color) && (axes_numbers_color == other.axes_numbers_color) &&
-           (axes_letters_color == other.axes_letters_color) && (grid_on == other.grid_on) &&
-           (plot_box_on == other.plot_box_on) && (axes_numbers_on == other.axes_numbers_on) &&
-           (axes_letters_on == other.axes_letters_on) && (clipping_on == other.clipping_on) &&
-           (pane_radius == other.pane_radius) && (projection_mode == other.projection_mode);
+    return ElementSettings::operator==(other) && title == other.title && background_color == other.background_color &&
+           plot_box_color == other.plot_box_color && grid_color == other.grid_color &&
+           axes_numbers_color == other.axes_numbers_color && axes_letters_color == other.axes_letters_color &&
+           grid_on == other.grid_on && plot_box_on == other.plot_box_on && axes_numbers_on == other.axes_numbers_on &&
+           axes_letters_on == other.axes_letters_on && clipping_on == other.clipping_on &&
+           pane_radius == other.pane_radius && projection_mode == other.projection_mode;
 }
 
 bool PlotPaneSettings::operator!=(const PlotPaneSettings& other) const
@@ -51,28 +68,35 @@ bool PlotPaneSettings::operator!=(const PlotPaneSettings& other) const
     return !(*this == other);
 }
 
-void PlotPaneSettings::parsePlotPaneAttributes(const nlohmann::json& j)
+void PlotPaneSettings::parsePlotPaneSettings(const nlohmann::json& j)
 {
-    background_color =
-        (j.count("background_color") > 0) ? jsonObjToColor(j["background_color"]) : kElementBackgroundColorDefault;
-    plot_box_color = (j.count("plot_box_color") > 0) ? jsonObjToColor(j["plot_box_color"]) : kPlotBoxColorDefault;
-    grid_color = (j.count("grid_color") > 0) ? jsonObjToColor(j["grid_color"]) : kGridColorDefault;
-    axes_numbers_color =
-        (j.count("axes_numbers_color") > 0) ? jsonObjToColor(j["axes_numbers_color"]) : kAxesNumbersColorDefault;
-    axes_letters_color =
-        (j.count("axes_letters_color") > 0) ? jsonObjToColor(j["axes_letters_color"]) : kAxesLettersColorDefault;
-    grid_on = (j.count("grid_on") > 0) ? static_cast<bool>(j["grid_on"]) : kGridOnDefault;
-    plot_box_on = (j.count("plot_box_on") > 0) ? static_cast<bool>(j["plot_box_on"]) : kPlotBoxOnDefault;
-    axes_numbers_on =
-        (j.count("axes_numbers_on") > 0) ? static_cast<bool>(j["axes_numbers_on"]) : kAxesNumbersOnDefault;
-    axes_letters_on =
-        (j.count("axes_letters_on") > 0) ? static_cast<bool>(j["axes_letters_on"]) : kAxesLettersOnDefault;
-    clipping_on = (j.count("clipping_on") > 0) ? static_cast<bool>(j["clipping_on"]) : kClippingOnDefault;
-    pane_radius = (j.count("pane_radius") > 0) ? static_cast<float>(j["pane_radius"]) : kPaneRadiusDefault;
-
-    if (j.count("projection_mode") > 0)
+    if (!j.contains("element_specific_settings"))
     {
-        const std::string projection_type_str = j["projection_mode"];
+        return;
+    }
+
+    nlohmann::json j_ess = j["element_specific_settings"];
+
+    background_color =
+        j_ess.contains("background_color") ? jsonObjToColor(j_ess["background_color"]) : kElementBackgroundColorDefault;
+    plot_box_color = j_ess.contains("plot_box_color") ? jsonObjToColor(j_ess["plot_box_color"]) : kPlotBoxColorDefault;
+    grid_color = j_ess.contains("grid_color") ? jsonObjToColor(j_ess["grid_color"]) : kGridColorDefault;
+    axes_numbers_color =
+        j_ess.contains("axes_numbers_color") ? jsonObjToColor(j_ess["axes_numbers_color"]) : kAxesNumbersColorDefault;
+    axes_letters_color =
+        j_ess.contains("axes_letters_color") ? jsonObjToColor(j_ess["axes_letters_color"]) : kAxesLettersColorDefault;
+    grid_on = j_ess.contains("grid_on") ? static_cast<bool>(j_ess["grid_on"]) : kGridOnDefault;
+    plot_box_on = j_ess.contains("plot_box_on") ? static_cast<bool>(j_ess["plot_box_on"]) : kPlotBoxOnDefault;
+    axes_numbers_on =
+        j_ess.contains("axes_numbers_on") ? static_cast<bool>(j_ess["axes_numbers_on"]) : kAxesNumbersOnDefault;
+    axes_letters_on =
+        j_ess.contains("axes_letters_on") ? static_cast<bool>(j_ess["axes_letters_on"]) : kAxesLettersOnDefault;
+    clipping_on = j_ess.contains("clipping_on") ? static_cast<bool>(j_ess["clipping_on"]) : kClippingOnDefault;
+    pane_radius = j_ess.contains("pane_radius") ? static_cast<float>(j_ess["pane_radius"]) : kPaneRadiusDefault;
+
+    if (j_ess.contains("projection_mode"))
+    {
+        const std::string projection_type_str = j_ess["projection_mode"];
         if (projection_type_str == "orthographic")
         {
             projection_mode = ProjectionMode::ORTHOGRAPHIC;
@@ -91,13 +115,13 @@ void PlotPaneSettings::parsePlotPaneAttributes(const nlohmann::json& j)
         projection_mode = ProjectionMode::ORTHOGRAPHIC;
     }
 
-    if (j.count("title") > 0)
+    if (j_ess.contains("title"))
     {
-        title = j["title"];
+        title = j_ess["title"];
     }
     else
     {
-        title = handle_string;
+        title = "";
     }
 }
 
@@ -105,52 +129,46 @@ nlohmann::json PlotPaneSettings::toJson() const
 {
     nlohmann::json j = ElementSettings::toJson();
 
-    if (title != handle_string)
+    if (title != "")
     {
-        j["title"] = title;
+        j["element_specific_settings"]["title"] = title;
     }
 
-    j["element_specific_settings"] = nlohmann::json::object();
-
-    // if (background_color != kElementBackgroundColorDefault)
+    if (background_color != kElementBackgroundColorDefault)
     {
         j["element_specific_settings"]["background_color"] = colorToJsonObj(background_color);
     }
 
     if (plot_box_color != kPlotBoxColorDefault)
     {
-        j["plot_box_color"] = colorToJsonObj(plot_box_color);
+        j["element_specific_settings"]["plot_box_color"] = colorToJsonObj(plot_box_color);
     }
 
     if (grid_color != kGridColorDefault)
     {
-        j["grid_color"] = colorToJsonObj(grid_color);
+        j["element_specific_settings"]["grid_color"] = colorToJsonObj(grid_color);
     }
 
     if (axes_numbers_color != kAxesNumbersColorDefault)
     {
-        j["axes_numbers_color"] = colorToJsonObj(axes_numbers_color);
+        j["element_specific_settings"]["axes_numbers_color"] = colorToJsonObj(axes_numbers_color);
     }
 
     if (axes_letters_color != kAxesLettersColorDefault)
     {
-        j["axes_letters_color"] = colorToJsonObj(axes_letters_color);
+        j["element_specific_settings"]["axes_letters_color"] = colorToJsonObj(axes_letters_color);
     }
 
-    assignIfNotDefault(j, "grid_on", grid_on, kGridOnDefault);
-    assignIfNotDefault(j, "plot_box_on", plot_box_on, kPlotBoxOnDefault);
-    assignIfNotDefault(j, "axes_numbers_on", axes_numbers_on, kAxesNumbersOnDefault);
-    assignIfNotDefault(j, "axes_letters_on", axes_letters_on, kAxesLettersOnDefault);
-    assignIfNotDefault(j, "clipping_on", clipping_on, kClippingOnDefault);
-    assignIfNotDefault(j, "pane_radius", pane_radius, kPaneRadiusDefault);
+    assignIfNotDefault(j, "element_specific_settings", "grid_on", grid_on, kGridOnDefault);
+    assignIfNotDefault(j, "element_specific_settings", "plot_box_on", plot_box_on, kPlotBoxOnDefault);
+    assignIfNotDefault(j, "element_specific_settings", "axes_numbers_on", axes_numbers_on, kAxesNumbersOnDefault);
+    assignIfNotDefault(j, "element_specific_settings", "axes_letters_on", axes_letters_on, kAxesLettersOnDefault);
+    assignIfNotDefault(j, "element_specific_settings", "clipping_on", clipping_on, kClippingOnDefault);
+    assignIfNotDefault(j, "element_specific_settings", "pane_radius", pane_radius, kPaneRadiusDefault);
 
-    if (projection_mode == ProjectionMode::ORTHOGRAPHIC)
+    if (projection_mode == ProjectionMode::PERSPECTIVE)
     {
-        j["projection_mode"] = "orthographic";
-    }
-    else if (projection_mode == ProjectionMode::PERSPECTIVE)
-    {
-        j["projection_mode"] = "perspective";
+        j["element_specific_settings"]["projection_mode"] = "perspective";
     }
 
     return j;

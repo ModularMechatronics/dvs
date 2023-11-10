@@ -1,0 +1,39 @@
+{
+    "windows": [
+        {
+            "height": 323.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "elements": [
+                        {
+                            "handle_string": "p_view_0",
+                            "height": 0.3890784978866577,
+                            "type": "PLOT_PANE",
+                            "width": 0.29243120551109314,
+                            "x": 0.5137614607810974,
+                            "y": 0.5187713503837585
+                        }
+                    ],
+                    "name": "primary_view"
+                },
+                {
+                    "elements": [
+                        {
+                            "handle_string": "s_view_2",
+                            "height": 0.6484641432762146,
+                            "type": "PLOT_PANE",
+                            "width": 0.4919724762439728,
+                            "x": 0.4954128563404083,
+                            "y": 0.3071672320365906
+                        }
+                    ],
+                    "name": "secondary_view"
+                }
+            ],
+            "width": 942.0,
+            "x": 0.0,
+            "y": 496.0
+        }
+    ]
+}

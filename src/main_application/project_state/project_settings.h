@@ -11,59 +11,6 @@
 #include "misc/rgb_triplet.h"
 #include "project_state/helper_functions.h"
 
-/*
-{
-    "attributes": {
-        "label": "Button2"
-    },
-    "type": "BUTTON",
-},
-{
-    "type": "SLIDER",
-    "attributes": {
-        "min": 0,
-        "max": 100,
-        "step_size": 1,
-        "init_value": 0,
-        "style": "horizontal"
-    },
-},
-{
-    "attributes": {
-        "label": "Check BoxButton"
-    },
-    "type": "CHECK_BOX",
-},
-{
-    "attributes": {
-        "init_value": "Editable Text"
-    },
-    "type": "EDITABLE_TEXT",
-},
-{
-    "type": "DROP_DOWN_MENU",
-    "attributes": {
-        "init_value": "Drop down menu"
-    },
-},
-{
-    "handle_string": "list_box0",
-    "type": "LIST_BOX",
-},
-{
-    "type": "RADIO_BUTTON",
-    "attributes": {
-        "label": "Radio Button"
-    },
-},
-{
-    "type": "TEXT_LABEL",
-    "attributes": {
-        "label": "Text Label"
-    },
-}
-*/
-
 extern RGBTriplet<float> kMainWindowBackgroundColor;
 
 struct ElementSettings
@@ -90,6 +37,8 @@ struct ElementSettings
     bool operator==(const ElementSettings& other) const;
     bool operator!=(const ElementSettings& other) const;
 };
+
+bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const std::shared_ptr<ElementSettings>& rhs);
 
 struct PlotPaneSettings : ElementSettings
 {
@@ -120,9 +69,11 @@ struct PlotPaneSettings : ElementSettings
 
     ProjectionMode projection_mode;
 
-    void parsePlotPaneAttributes(const nlohmann::json& j);
+    void parsePlotPaneSettings(const nlohmann::json& j);
 
     nlohmann::json toJson() const override;
+
+    void defaultInitializeAllSettings();
 
     bool operator==(const PlotPaneSettings& other) const;
     bool operator!=(const PlotPaneSettings& other) const;
@@ -131,8 +82,138 @@ struct PlotPaneSettings : ElementSettings
 struct ButtonSettings : public ElementSettings
 {
     std::string label;
-    ButtonSettings() : ElementSettings{}, label{""} {}
-    ButtonSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{j_data["attributes"]["label"]} {}
+
+    ButtonSettings();
+    explicit ButtonSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const ButtonSettings& other) const;
+    bool operator!=(const ButtonSettings& other) const;
+};
+
+struct CheckBoxSettings : public ElementSettings
+{
+    std::string label;
+
+    CheckBoxSettings();
+    explicit CheckBoxSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const CheckBoxSettings& other) const;
+    bool operator!=(const CheckBoxSettings& other) const;
+};
+
+struct EditableTextSettings : public ElementSettings
+{
+    std::string init_value;
+
+    EditableTextSettings();
+    explicit EditableTextSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const EditableTextSettings& other) const;
+    bool operator!=(const EditableTextSettings& other) const;
+};
+
+struct DropDownMenuSettings : public ElementSettings
+{
+    std::string initially_selected_item;
+    std::vector<std::string> elements;
+
+    DropDownMenuSettings();
+    explicit DropDownMenuSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const DropDownMenuSettings& other) const;
+    bool operator!=(const DropDownMenuSettings& other) const;
+};
+
+struct ListBoxSettings : public ElementSettings
+{
+    std::vector<std::string> elements;
+
+    ListBoxSettings();
+    explicit ListBoxSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const ListBoxSettings& other) const;
+    bool operator!=(const ListBoxSettings& other) const;
+};
+
+struct RadioButtonSettings
+{
+    std::string label;
+
+    RadioButtonSettings();
+    explicit RadioButtonSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const;
+
+    bool operator==(const RadioButtonSettings& other) const;
+    bool operator!=(const RadioButtonSettings& other) const;
+};
+
+struct RadioButtonGroupSettings : public ElementSettings
+{
+    std::string label;
+    std::vector<RadioButtonSettings> radio_buttons;
+
+    RadioButtonGroupSettings();
+    explicit RadioButtonGroupSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const RadioButtonGroupSettings& other) const;
+    bool operator!=(const RadioButtonGroupSettings& other) const;
+};
+
+struct TextLabelSettings : public ElementSettings
+{
+    std::string label;
+
+    TextLabelSettings();
+    explicit TextLabelSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const TextLabelSettings& other) const;
+    bool operator!=(const TextLabelSettings& other) const;
+};
+
+struct SliderSettings : public ElementSettings
+{
+    int min_value;
+    int max_value;
+    int init_value;
+    int step_size;
+    bool is_horizontal;
+
+    SliderSettings();
+    explicit SliderSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const SliderSettings& other) const;
+    bool operator!=(const SliderSettings& other) const;
+};
+
+struct StaticBoxSettings : public ElementSettings
+{
+    std::string label;
+    std::vector<std::shared_ptr<ElementSettings>> elements;
+
+    StaticBoxSettings();
+    explicit StaticBoxSettings(const nlohmann::json& j_data);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const StaticBoxSettings& other) const;
+    bool operator!=(const StaticBoxSettings& other) const;
 };
 
 struct TabSettings

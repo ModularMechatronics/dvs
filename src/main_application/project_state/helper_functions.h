@@ -156,4 +156,26 @@ void assignIfNotDefault(nlohmann::json& j, const std::string& key, const T& val,
     }
 }
 
+template <typename T>
+void assignIfNotDefault(
+    nlohmann::json& j, const std::string& key, const std::string& sub_key, const T& val, const T& default_value)
+{
+    if (val != default_value)
+    {
+        j[key][sub_key] = val;
+    }
+}
+
+template <typename T> T getOptionalValue(const nlohmann::json& j_data, const std::string& key, const T& default_value)
+{
+    if (j_data.contains(key))
+    {
+        return j_data[key];
+    }
+    else
+    {
+        return default_value;
+    }
+}
+
 #endif  // PROJECT_STATE_HELPER_FUNCTIONS_H
