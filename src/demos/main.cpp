@@ -7,6 +7,7 @@
 
 using StringFunctionMap = std::map<std::string, std::function<void()>>;
 
+std::map<std::string, std::vector<std::uint8_t>> parsed_args;
 std::map<std::string, StringFunctionMap> fcns;
 
 void displayHelp()
@@ -28,6 +29,8 @@ void displayHelp()
 
 int main(int argc, char* argv[])
 {
+    parseArgs(argc, argv);
+
     // ######################### klein #########################
     StringFunctionMap klein_functions{
         {"basic", klein::testBasic}, {"adv0", klein::testAdvanced0}, {"adv1", klein::testAdvanced1}};
@@ -66,7 +69,8 @@ int main(int argc, char* argv[])
                                       {"sling_plot", sling_plot::testSlingPlot},
                                       {"hyperboloid", small::testHyperboloid},
                                       {"sphere", small::testSphere},
-                                      {"lissajous", small::testLissaJous}};
+                                      {"lissajous", small::testLissaJous},
+                                      {"lines_and_dots", small::testLinesAndDots}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

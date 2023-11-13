@@ -4,6 +4,8 @@
 #include <complex>
 #include <random>
 
+#include "args.h"
+
 namespace small
 {
 
@@ -958,6 +960,132 @@ void testSphere()
     setCurrentElement("p_view_0");
     clearView();
     surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_SOFT);
+}
+
+void testLinesAndDots()
+{
+    // IMPORTANT: For this demo, set minimum_y_pos_ = 0; in "plot_pane.cpp"
+    // and remove the showing of handle. Also set the snapping angle to 0.0
+    const std::string project_file_path = "../../project_files/lines_and_dots.dvs";
+    openProjectFile(project_file_path);
+
+    const double size_bias = getArg<double>("size-bias", 3.0);
+    const double size_multiplier = getArg<double>("size-multiplier", 10.0);
+
+    const size_t num_elements = 200U, num_its = 500U;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements), vx(num_elements), vy(num_elements),
+        vz(num_elements), point_sizes(num_elements), bx(num_elements), by(num_elements), bz(num_elements);
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = (static_cast<double>(rand() % 1001) / 1000.0 - 0.5) * 3.5;
+        y(k) = (static_cast<double>(rand() % 1001) / 1000.0 - 0.5) * 3.5;
+        z(k) = (static_cast<double>(rand() % 1001) / 1000.0 - 0.5) * 3.5;
+
+        bx(k) = (static_cast<double>(rand() % 1001) / 1000.0 - 0.5) * 2.5;
+        by(k) = (static_cast<double>(rand() % 1001) / 1000.0 - 0.5) * 2.5;
+        bz(k) = (static_cast<double>(rand() % 1001) / 1000.0 - 0.5) * 2.5;
+
+        vx(k) = 0.0;
+        vy(k) = 0.0;
+        vz(k) = 0.0;
+
+        point_sizes(k) = (static_cast<double>(rand() % 1001) / 1000.0) * size_multiplier + size_bias;
+    }
+
+    const double thresh = getArg<double>("dist-thresh", 0.05);
+
+    setCurrentElement("p_view_0");
+    clearView();
+    view(180.0, 90.0);
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    axesSquare();
+    disableAutomaticAxesAdjustment();
+    disableScaleOnRotation();
+
+    axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+
+    double azimuth = 180.0;
+    double elevation = 90.0;
+
+    for (size_t k = 0; k < num_its; k++)
+    {
+        std::vector<double> x_lines_std, y_lines_std, z_lines_std;
+        x_lines_std.reserve(num_elements * num_elements);
+        y_lines_std.reserve(num_elements * num_elements);
+        z_lines_std.reserve(num_elements * num_elements);
+
+        for (size_t i = 0; i < num_elements; i++)
+        {
+            const double outer_x = x(i);
+            const double outer_y = y(i);
+            const double outer_z = z(i);
+
+            for (size_t j = 0; j < num_elements; j++)
+            {
+                const double inner_x = x(j);
+                const double inner_y = y(j);
+                const double inner_z = z(j);
+
+                const double dx = outer_x - inner_x;
+                const double dy = outer_y - inner_y;
+                const double dz = outer_z - inner_z;
+                const double dx2 = dx * dx;
+                const double dy2 = dy * dy;
+                const double dz2 = dz * dz;
+
+                if (dx2 + dy2 + dz2 < thresh)
+                {
+                    x_lines_std.push_back(inner_x);
+                    x_lines_std.push_back(outer_x);
+                    y_lines_std.push_back(inner_y);
+                    y_lines_std.push_back(outer_y);
+                    z_lines_std.push_back(inner_z);
+                    z_lines_std.push_back(outer_z);
+                }
+            }
+        }
+
+        Vector<double> x_lines = x_lines_std;
+        Vector<double> y_lines = y_lines_std;
+        Vector<double> z_lines = z_lines_std;
+
+        softClearView();
+        // if (k > num_its / 2U)
+        azimuth -= 0.5;
+        if (azimuth < -180.0)
+        {
+            azimuth = 180.0;
+        }
+        elevation -= 0.1;
+        view(azimuth, elevation);
+
+        scatter3(x,
+                 y,
+                 z,
+                 point_sizes,
+                 properties::Color(0.1686 * 255.0, 0.1686 * 255.0, 0.2510 * 255.0),
+                 properties::ScatterStyle::DISC);
+        lineCollection3(x_lines, y_lines, z_lines, properties::Color(0.1686 * 255.0, 0.1686 * 255.0, 0.2510 * 255.0));
+
+        const double h = 0.01;
+
+        for (size_t i = 0; i < num_elements; i++)
+        {
+            vx(i) = (static_cast<double>(rand() % 1001) / 1000.0 - bx(i)) * 0.1;
+            vy(i) = (static_cast<double>(rand() % 1001) / 1000.0 - by(i)) * 0.1;
+
+            x(i) = x(i) + vx(i) * h;
+            y(i) = y(i) + vy(i) * h;
+            /*if (y(i) > 1.0)
+            {
+                y(i) = 1.0 - (y(i) - 1.0);
+                vy(i) = -vy(i);
+            }*/
+        }
+
+        usleep(10 * 1000);
+    }
 }
 
 void testLissaJous()
