@@ -548,6 +548,8 @@ constexpr internal::PropertyFlag EXCLUDE_FROM_SELECTION = internal::PropertyFlag
 namespace not_ready
 {
 constexpr internal::PropertyFlag UPDATABLE = internal::PropertyFlag::UPDATABLE;
+constexpr internal::PropertyFlag SELECTABLE = internal::PropertyFlag::SELECTABLE;
+
 }
 
 }  // namespace properties

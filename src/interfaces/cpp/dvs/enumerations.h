@@ -56,6 +56,7 @@ enum class PropertyFlag : uint8_t
     UPDATABLE,
     FAST_PLOT,
     EXCLUDE_FROM_SELECTION,
+    SELECTABLE,
     UNKNOWN
 };
 

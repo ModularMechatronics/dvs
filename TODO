@@ -1,14 +1,11 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Refactor from top down, from the app and down into the GUI
-- Refactor legend properties
 - Finalize grid numbers placement when snapped
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
-- In C interface, have all properties functions return
-  "Property" or "PropertyObject" or something, which can then be converted to CommunicationHeaderObject
 - Demos:
  * Something for machine learning practitioners
  * Something with drone simulation data
@@ -22,7 +19,6 @@ Pre release:
 - Color shall be set using floats in range [0, 1], but still transmitted as uint8_t [0, 255]
 - Grid lines when invalid/inf axes limits
 - Investigate weird bug not being able to set colors properly for realTimePlot
-- If first two points of plot2 is the same, there will be a division by zero
 - Create layout grids
 - Zoom from/to point where mouse is when it clicked
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
@@ -38,7 +34,7 @@ Pre release:
 - Change all reinterpret_cast to static_cast<whatever>(static_cast<void*>())
 - Data cursor, cursor to click on data to get xyz value
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
-- Fix case for plot/plot3 when two adjacent points are equal
+- Fix case for plot/plot3 when two adjacent points are equal. If first two points of plot2 is the same, there will be a division by zero
 - Delete RGB888 and replace with Color
 - Rename: 
   PlotObjectAttributes -> PlotDataAttributes
@@ -65,8 +61,10 @@ Pre release:
 Post release:
 - For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
   to populate it or property from the variadic templ. args
-- For plot2, dashed lines can probably be added assuming that the view is looking straight at the xy plane
+- In C interface, have all properties functions return
+  "Property" or "PropertyObject" or something, which can then be converted to CommunicationHeaderObject
 - Maybe PropertyType could be removed from each property, and instead use a templated function to return correct property type? And property type does not need to be transmitted, since that information is already in the look up table
+- Refactor legend properties
 - wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.
@@ -79,6 +77,8 @@ Post release:
 - "Hole" in background canvas for grouping elements, should have a title
 - Get user mouse input from plot back to user application
 - Drawing annotations in image (2D/3D bounding boxes, semantic pixel labeling)
+- Selecable points in scatter plot, which can then be queried from client application, to get points and
+indices. Selected points shall be highlighted in plot
 - New application that loads dynamic library (like the newer app) that plots real time data (like main_application),
   not using TCP IPC, but just sending the data within the application, so that one can design their own real time
   data viewer application gui
@@ -143,7 +143,6 @@ Post release:
 - Edge and Facecolor transparent
 - Fix so that one can set axis square and axis equal
 - Nice looking buttons in interface
-- Ability to add button to gui
 - quiver3
 - Ability to set FOV
 - Show plot walls differently if perspective projection
@@ -156,7 +155,6 @@ Post release:
 - Dashed line for plot and plot3
 - Change all relevant functions to accept "View" types
 - Implement findMinMax for matrices and vectors
-
-Unsure:
 - Command line window that prints errors etc.
 - Set order in which different types are plotted
+- 

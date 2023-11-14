@@ -136,7 +136,7 @@ inline Vec3d calculateColormapPastel2(double value)
 
     return Vec3d(r, g, b);
 }
-}
+}  // namespace
 
 void drawGrid()
 {
@@ -244,9 +244,9 @@ Matrix<float> r3dMatToMat(const Matrix3x3& mat)
 {
     Matrix<float> m(3, 3);
 
-    for(size_t r = 0; r < 3; r++)
+    for (size_t r = 0; r < 3; r++)
     {
-        for(size_t c = 0; c < 3; c++)
+        for (size_t c = 0; c < 3; c++)
         {
             m(r, c) = mat[r][c];
         }
@@ -259,9 +259,9 @@ Matrix3x3 matToR3dMat(const Matrix<float>& mat)
 {
     Matrix3x3 m;
 
-    for(size_t r = 0; r < 3; r++)
+    for (size_t r = 0; r < 3; r++)
     {
-        for(size_t c = 0; c < 3; c++)
+        for (size_t c = 0; c < 3; c++)
         {
             m[r][c] = mat(r, c);
         }
@@ -270,7 +270,11 @@ Matrix3x3 matToR3dMat(const Matrix<float>& mat)
     return m;
 }
 
-RigidBody* placeCubeAt(PhysicsWorld* world, PhysicsCommon& physicsCommon, const Quaternion& orientation, const Vector3& position, const Vector3& size = kCubeExtents)
+RigidBody* placeCubeAt(PhysicsWorld* world,
+                       PhysicsCommon& physicsCommon,
+                       const Quaternion& orientation,
+                       const Vector3& position,
+                       const Vector3& size = kCubeExtents)
 {
     // Create a rigid body in the world
     BoxShape* boxShape = physicsCommon.createBoxShape(size);
@@ -279,12 +283,12 @@ RigidBody* placeCubeAt(PhysicsWorld* world, PhysicsCommon& physicsCommon, const 
     RigidBody* body = world->createRigidBody(transform);
 
     Collider* collider_body = body->addCollider(boxShape, Transform{Vector3(0, 0, 0), Quaternion::identity()});
-    Material& material = collider_body->getMaterial(); 
-    
-    // Change the bounciness of the collider 
-    material.setBounciness(0.1); 
-    
-    // Change the friction coefficient of the collider 
+    Material& material = collider_body->getMaterial();
+
+    // Change the bounciness of the collider
+    material.setBounciness(0.1);
+
+    // Change the friction coefficient of the collider
     material.setFrictionCoefficient(0.2);
 
     return body;
@@ -297,24 +301,23 @@ void testBasic()
 
     PhysicsCommon physicsCommon;
 
-    PhysicsWorld::WorldSettings settings; 
-    settings.defaultVelocitySolverNbIterations = 20; 
-    settings.isSleepingEnabled = false; 
-    settings.gravity = Vector3(0, 0.0, 0); 
+    PhysicsWorld::WorldSettings settings;
+    settings.defaultVelocitySolverNbIterations = 20;
+    settings.isSleepingEnabled = false;
+    settings.gravity = Vector3(0, 0.0, 0);
 
     // Create a physics world
     PhysicsWorld* world = physicsCommon.createPhysicsWorld(settings);
 
-    
     const Vector3 halfExtents(10.0, 0.1, 10.0);
-    BoxShape* boxShapeGround = physicsCommon.createBoxShape(halfExtents); 
+    BoxShape* boxShapeGround = physicsCommon.createBoxShape(halfExtents);
 
     /*Vector3 ground_position(0, 0, 0);
     Transform ground_transform(ground_position, Quaternion::identity());
     RigidBody* ground_body = world->createRigidBody(ground_transform);
     ground_body->setType(BodyType::STATIC);
 
-    Collider* collider; 
+    Collider* collider;
     collider = ground_body->addCollider(boxShapeGround, Transform{Vector3(0, 0, 0), Quaternion::identity()});*/
 
     float timeStep = 1.0f / 600.0f;
@@ -330,78 +333,80 @@ void testBasic()
     PointsAndIndices cube_pts_indices = generateCube();
     PointsAndIndices cube_pts_indices_10 = generateCube(bullet_size);
     const properties::FaceColor cube_color{242, 152, 124};
-    properties::Transform cube_transform{diagMatrix<double>({0.15, 0.15, 1.0}), rotationMatrixX<double>(0.0), {0.0, 0.0, 2.0}};
+    properties::Transform cube_transform{
+        diagMatrix<double>({0.15, 0.15, 1.0}), rotationMatrixX<double>(0.0), {0.0, 0.0, 2.0}};
 
     std::vector<RigidBody*> bodies;
     const size_t num_rows = 5;
     const size_t num_cols = 5;
     const size_t num_cubes_z = 7;
 
-    const auto rand_func = [] () -> std::uint8_t {
+    const auto rand_func = []() -> std::uint8_t {
         const std::size_t v = 150U;
         return (rand() % v) + (256U - v);
-        };
+    };
 
-    const auto col_func = [] () -> Vec3<std::uint8_t> {
+    const auto col_func = []() -> Vec3<std::uint8_t> {
         const double d = static_cast<double>(rand() % 1001) / 1000.0;
 
         const Vec3d v = calculateColormapPastel2(d);
-        return Vec3<std::uint8_t>{
-            static_cast<std::uint8_t>(v.x * 255.0),
-            static_cast<std::uint8_t>(v.y * 255.0),
-            static_cast<std::uint8_t>(v.z * 255.0)};
+        return Vec3<std::uint8_t>{static_cast<std::uint8_t>(v.x * 255.0),
+                                  static_cast<std::uint8_t>(v.y * 255.0),
+                                  static_cast<std::uint8_t>(v.z * 255.0)};
     };
     size_t idx = 0;
     const float o_offset = 1.0f;
-    for(size_t r = 0; r < num_rows; r++)
+    for (size_t r = 0; r < num_rows; r++)
     {
         const float rf = r;
 
-        for(size_t c = 0; c < num_cols; c++)
+        for (size_t c = 0; c < num_cols; c++)
         {
             const float cf = c;
 
-            for(size_t z = 0; z < num_cubes_z; z++)
+            for (size_t z = 0; z < num_cubes_z; z++)
             {
                 const float zf = z;
-                RigidBody* body = placeCubeAt(world, physicsCommon, Quaternion::identity(), Vector3{
-                    1.001f * rf * 2.0f * kCubeExtents.x,
-                    1.001f * kCubeExtents.y * 2.0f + zf * 2.0f * kCubeExtents.y,
-                    1.001f * cf * 2.0f * kCubeExtents.z});
+                RigidBody* body = placeCubeAt(world,
+                                              physicsCommon,
+                                              Quaternion::identity(),
+                                              Vector3{1.001f * rf * 2.0f * kCubeExtents.x,
+                                                      1.001f * kCubeExtents.y * 2.0f + zf * 2.0f * kCubeExtents.y,
+                                                      1.001f * cf * 2.0f * kCubeExtents.z});
                 bodies.push_back(body);
 
                 const auto cube_col = col_func();
 
                 drawMesh(cube_pts_indices.points,
-                        cube_pts_indices.indices,
-                        cube_color,
-                        properties::EdgeColor::NONE,
-                        properties::FaceColor(cube_col.x, cube_col.y, cube_col.z),
-                        static_cast<ItemId>(idx),
-                        cube_transform);
+                         cube_pts_indices.indices,
+                         cube_color,
+                         properties::EdgeColor::NONE,
+                         properties::FaceColor(cube_col.x, cube_col.y, cube_col.z),
+                         static_cast<ItemId>(idx),
+                         cube_transform);
                 assert(idx < 254);
                 idx++;
             }
         }
     }
 
-    const Quaternion bullet_rotation{Quaternion::fromEulerAngles(M_PI / debug_value_reader::readFloat("div_x"),
-                                                                 M_PI / debug_value_reader::readFloat("div_y"),
-                                                                 M_PI / debug_value_reader::readFloat("div_z"))};
+    const Quaternion bullet_rotation{Quaternion::fromEulerAngles(M_PI / debug_value_reader::getValue<float>("div_x"),
+                                                                 M_PI / debug_value_reader::getValue<float>("div_y"),
+                                                                 M_PI / debug_value_reader::getValue<float>("div_z"))};
 
-    RigidBody* bullet_body = placeCubeAt(world, physicsCommon, bullet_rotation, Vector3{
-                    0.375f,
-                    0.75f,
-                    8.0f},
-                    Vector3(bullet_size, bullet_size, bullet_size));
+    RigidBody* bullet_body = placeCubeAt(world,
+                                         physicsCommon,
+                                         bullet_rotation,
+                                         Vector3{0.375f, 0.75f, 8.0f},
+                                         Vector3(bullet_size, bullet_size, bullet_size));
     bullet_body->setMass(bullet_body->getMass() * 100.0f);
 
     drawMesh(cube_pts_indices_10.points,
-            cube_pts_indices_10.indices,
-            cube_color,
-            properties::EdgeColor::NONE,
-            properties::ID254,
-            cube_transform);
+             cube_pts_indices_10.indices,
+             cube_color,
+             properties::EdgeColor::NONE,
+             properties::ID254,
+             cube_transform);
     float axis_zoom_scale_ref = 2.0f;
     float axis_zoom_scale = 2.0f;
     axis({-axis_zoom_scale, -axis_zoom_scale, -axis_zoom_scale}, {axis_zoom_scale, axis_zoom_scale, axis_zoom_scale});
@@ -426,7 +431,7 @@ void testBasic()
     // Step the simulation a few steps
     for (int i = 0; i < 1500; i++)
     {
-        if(i < 350)
+        if (i < 350)
         {
             // axes_center = Vec3f(0.0, 0.0, 0.0);
         }
@@ -438,7 +443,7 @@ void testBasic()
             azimuth = azimuth_ref * (1.0f - h) + azimuth * h;
             view(azimuth, 14);
         }
-        else if((i < 700) && ((timeStep - 1.0 / 60000.0) > 0.0f))
+        else if ((i < 700) && ((timeStep - 1.0 / 60000.0) > 0.0f))
         {
             timeStep -= 1.0 / 70000.0;
             axis_zoom_scale_ref = std::max(1.5f, axis_zoom_scale_ref - 0.01f);
@@ -456,7 +461,7 @@ void testBasic()
             view(azimuth, 14);
             run_simulation = false;
         }
-        else if(i < 1500)
+        else if (i < 1500)
         {
             // azimuth_ref += 0.5f;
             const float h = 0.99f;
@@ -469,28 +474,30 @@ void testBasic()
             run_simulation = true;
         }
 
-        if(run_simulation)
+        if (run_simulation)
         {
             world->update(timeStep);
         }
 
         std::vector<PropertySet> props;
 
-        for(size_t k = 0; k < bodies.size(); k++)
+        for (size_t k = 0; k < bodies.size(); k++)
         {
             RigidBody* body = bodies[k];
 
             // Get the updated position of the body
             const Transform& transform = body->getTransform();
             const Vector3& position = transform.getPosition();
-            const Matrix<float> rot_mat = r3dMatToMat(transform.getOrientation().getMatrix()); 
+            const Matrix<float> rot_mat = r3dMatToMat(transform.getOrientation().getMatrix());
 
-            props.emplace_back(static_cast<ItemId>(k), properties::Transform{diagMatrix<double>({0.1, 0.1, 0.1}), rot_mat, {position.x, position.z, position.y}});
+            props.emplace_back(static_cast<ItemId>(k),
+                               properties::Transform{
+                                   diagMatrix<double>({0.1, 0.1, 0.1}), rot_mat, {position.x, position.z, position.y}});
         }
 
         const Transform& transform = bullet_body->getTransform();
         const Vector3& position = transform.getPosition();
-        if(center_on_bullet)
+        if (center_on_bullet)
         {
             axes_center = Vec3f(position.x, position.y, position.z);
         }
@@ -499,21 +506,23 @@ void testBasic()
         const float h1 = 1.0f - h;
         azimuth = azimuth_ref * (1.0f - h) + azimuth * h;
         axis_zoom_scale = axis_zoom_scale_ref * (1.0f - h) + axis_zoom_scale * h;
-        
+
         axes_center_filtered.x = axes_center.x * h1 + axes_center_filtered.x * h;
         axes_center_filtered.z = axes_center.z * h1 + axes_center_filtered.z * h;
         axes_center_filtered.y = axes_center.y * h1 + axes_center_filtered.y * h;
 
-        axis({
-                axes_center_filtered.x -axis_zoom_scale,
-                axes_center_filtered.z -axis_zoom_scale,
-                axes_center_filtered.y -axis_zoom_scale},
-                {axes_center_filtered.x + axis_zoom_scale,
-                 axes_center_filtered.z +axis_zoom_scale,
-                 axes_center_filtered.y + axis_zoom_scale});
+        axis({axes_center_filtered.x - axis_zoom_scale,
+              axes_center_filtered.z - axis_zoom_scale,
+              axes_center_filtered.y - axis_zoom_scale},
+             {axes_center_filtered.x + axis_zoom_scale,
+              axes_center_filtered.z + axis_zoom_scale,
+              axes_center_filtered.y + axis_zoom_scale});
         const Matrix<float> rot_mat_bullet = r3dMatToMat(transform.getOrientation().getMatrix());
 
-        props.emplace_back(properties::ID254, properties::Transform{diagMatrix<double>({1.0, 1.0, 1.0}), rot_mat_bullet, {position.x, position.z, position.y}});
+        props.emplace_back(
+            properties::ID254,
+            properties::Transform{
+                diagMatrix<double>({1.0, 1.0, 1.0}), rot_mat_bullet, {position.x, position.z, position.y}});
 
         setProperties(props);
         std::cout << i << std::endl;
@@ -523,7 +532,6 @@ void testBasic()
         // softClearView();
     }
 
-    
     // waitForFlush();
     // axesSquare();
     // disableScaleOnRotation();

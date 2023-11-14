@@ -11,11 +11,13 @@ namespace debug_value_args
 
 namespace internal
 {
+
 std::map<std::string, std::string>& getParsedArgs()
 {
     static std::map<std::string, std::string> parsed_args;
     return parsed_args;
 }
+
 std::string getArgumentNameWithNoLeadingDashes(const std::string& arg_name)
 {
     if (arg_name[0] == '-')
@@ -76,7 +78,7 @@ inline void parseArgs(int argc, char* argv[])
     }
 }
 
-template <typename T> T getArg(const std::string& arg_name)
+bool isFlagArgumentPresent(const std::string& arg_name)
 {
     if (arg_name.empty())
     {
@@ -87,10 +89,26 @@ template <typename T> T getArg(const std::string& arg_name)
 
     std::map<std::string, std::string>& parsed_args = internal::getParsedArgs();
 
-    if (std::is_same<T, bool>::value)
+    return parsed_args.find(new_arg_name) != parsed_args.end();
+}
+
+template <typename T> T getValue(const std::string& arg_name)
+{
+    static_assert(std::is_same<T, double>::value || std::is_same<T, float>::value ||
+                      std::is_same<T, std::int64_t>::value || std::is_same<T, std::uint64_t>::value ||
+                      std::is_same<T, std::int32_t>::value || std::is_same<T, std::uint32_t>::value ||
+                      std::is_same<T, std::int16_t>::value || std::is_same<T, std::uint16_t>::value ||
+                      std::is_same<T, std::int8_t>::value || std::is_same<T, std::uint8_t>::value,
+                  "Type not supported!");
+
+    if (arg_name.empty())
     {
-        return parsed_args.find(new_arg_name) != parsed_args.end();
+        throw std::runtime_error("Argument name cannot be empty");
     }
+
+    const std::string new_arg_name = internal::getArgumentNameWithNoLeadingDashes(arg_name);
+
+    std::map<std::string, std::string>& parsed_args = internal::getParsedArgs();
 
     if (parsed_args.find(new_arg_name) == parsed_args.end())
     {
@@ -148,7 +166,32 @@ template <typename T> T getArg(const std::string& arg_name)
     }
 }
 
-template <> std::string getArg(const std::string& arg_name)
+template <> bool getValue(const std::string& arg_name)
+{
+    if (arg_name.empty())
+    {
+        throw std::runtime_error("Argument name cannot be empty");
+    }
+
+    const std::string new_arg_name = internal::getArgumentNameWithNoLeadingDashes(arg_name);
+
+    std::map<std::string, std::string>& parsed_args = internal::getParsedArgs();
+
+    if (parsed_args.find(new_arg_name) == parsed_args.end())
+    {
+        throw std::runtime_error("Argument " + new_arg_name + " not found");
+    }
+
+    if (parsed_args[new_arg_name].empty())
+    {
+        throw std::runtime_error("Argument " + new_arg_name + " has no value");
+    }
+
+    return parsed_args[new_arg_name] == "true" || parsed_args[new_arg_name] == "1" ||
+           parsed_args[new_arg_name] == "True";
+}
+
+template <> std::string getValue(const std::string& arg_name)
 {
     if (arg_name.empty())
     {
@@ -172,7 +215,51 @@ template <> std::string getArg(const std::string& arg_name)
     return parsed_args[new_arg_name];
 }
 
-template <typename T> T getArg(const std::string& arg_name, const T default_value)
+template <typename T> T getValue(const std::string& arg_name, const T& default_value)
+{
+    static_assert(std::is_same<T, double>::value || std::is_same<T, float>::value ||
+                      std::is_same<T, std::int64_t>::value || std::is_same<T, std::uint64_t>::value ||
+                      std::is_same<T, std::int32_t>::value || std::is_same<T, std::uint32_t>::value ||
+                      std::is_same<T, std::int16_t>::value || std::is_same<T, std::uint16_t>::value ||
+                      std::is_same<T, std::int8_t>::value || std::is_same<T, std::uint8_t>::value,
+                  "Type not supported!");
+
+    if (arg_name.empty())
+    {
+        throw std::runtime_error("Argument name cannot be empty");
+    }
+
+    const std::string new_arg_name = internal::getArgumentNameWithNoLeadingDashes(arg_name);
+
+    std::map<std::string, std::string>& parsed_args = internal::getParsedArgs();
+
+    if (parsed_args.find(new_arg_name) == parsed_args.end())
+    {
+        return default_value;
+    }
+
+    return getValue<T>(new_arg_name);
+}
+
+template <> std::string getValue(const std::string& arg_name, const std::string& default_value)
+{
+    if (arg_name.empty())
+    {
+        throw std::runtime_error("Argument name cannot be empty");
+    }
+
+    std::map<std::string, std::string>& parsed_args = internal::getParsedArgs();
+    const std::string new_arg_name = internal::getArgumentNameWithNoLeadingDashes(arg_name);
+
+    if (parsed_args.find(new_arg_name) == parsed_args.end())
+    {
+        return default_value;
+    }
+
+    return getValue<std::string>(new_arg_name);
+}
+
+template <> bool getValue(const std::string& arg_name, const bool& default_value)
 {
     if (arg_name.empty())
     {
@@ -183,27 +270,12 @@ template <typename T> T getArg(const std::string& arg_name, const T default_valu
 
     std::map<std::string, std::string>& parsed_args = internal::getParsedArgs();
 
-    static_assert(!std::is_same<T, bool>::value,
-                  "Type \"bool\" does not make sense for the default value variant of this method!");
-
     if (parsed_args.find(new_arg_name) == parsed_args.end())
     {
         return default_value;
     }
 
-    return getArg<T>(new_arg_name);
-}
-
-template <> std::string getArg(const std::string& arg_name, const std::string default_value)
-{
-    if (arg_name.empty())
-    {
-        throw std::runtime_error("Argument name cannot be empty");
-    }
-
-    const std::string new_arg_name = internal::getArgumentNameWithNoLeadingDashes(arg_name);
-
-    return getArg<std::string>(new_arg_name);
+    return getValue<bool>(new_arg_name);
 }
 
 }  // namespace debug_value_args

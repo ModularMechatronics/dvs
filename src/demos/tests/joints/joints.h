@@ -521,8 +521,8 @@ private:
 
         b2FixtureDef fixture_def;
         fixture_def.shape = &dynamic_box;
-        fixture_def.density = debug_value_reader::readFloat("density");
-        fixture_def.friction = debug_value_reader::readFloat("friction");
+        fixture_def.density = debug_value_reader::getValue<float>("density");
+        fixture_def.friction = debug_value_reader::getValue<float>("friction");
 
         body->CreateFixture(&fixture_def);
 
@@ -588,23 +588,23 @@ public:
         funnel_right_ = createStaticBoxShape(
             Vec2d{4.0, -1.0}, Vec2d{12.0, 1.0}, (-120.0) * M_PI / 180.0, calculateColormapPastel2(0.8));
 
-        pusher_x = debug_value_reader::readFloat("pusher_x");
-        pusher_y = debug_value_reader::readFloat("pusher_y");
-        const double pusher_width = debug_value_reader::readDouble("pusher_width");
-        const double pusher_height = debug_value_reader::readDouble("pusher_height");
+        pusher_x = debug_value_reader::getValue<float>("pusher_x");
+        pusher_y = debug_value_reader::getValue<float>("pusher_y");
+        const double pusher_width = debug_value_reader::getValue<double>("pusher_width");
+        const double pusher_height = debug_value_reader::getValue<double>("pusher_height");
 
-        pusher_frequency = debug_value_reader::readFloat("pusher_frequency");
-        pusher_amplitude = debug_value_reader::readFloat("pusher_amp");
-        pusher_p = debug_value_reader::readFloat("pusher_p");
-        pusher_d = debug_value_reader::readFloat("pusher_d");
+        pusher_frequency = debug_value_reader::getValue<float>("pusher_frequency");
+        pusher_amplitude = debug_value_reader::getValue<float>("pusher_amp");
+        pusher_p = debug_value_reader::getValue<float>("pusher_p");
+        pusher_d = debug_value_reader::getValue<float>("pusher_d");
         // float pusher_p;
         // float pusher_d;
 
         pusher_ = createDynamicBoxShape(
             Vec2d{pusher_x, pusher_y}, Vec2d{pusher_width, pusher_height}, 0.0, calculateColormapPastel2(0.2));
 
-        flipper_p = debug_value_reader::readFloat("flipper_p");
-        flipper_d = debug_value_reader::readFloat("flipper_d");
+        flipper_p = debug_value_reader::getValue<float>("flipper_p");
+        flipper_d = debug_value_reader::getValue<float>("flipper_d");
 
         float x_pos = -6.0f;
         float y_pos = 6.0f;
@@ -625,36 +625,38 @@ public:
             shapes_.emplace_back(createDynamicBoxShape(Vec2d{x_pos, y_pos}, Vec2d{1.0, 1.0}, rot, col));
         }
 
-        flipper_offset = debug_value_reader::readDouble("flipper_offset");
+        flipper_offset = debug_value_reader::getValue<double>("flipper_offset");
         flipper_ = createDynamicBoxShape(
-            Vec2d{debug_value_reader::readDouble("flipper_x"), debug_value_reader::readDouble("flipper_y")},
-            Vec2d{debug_value_reader::readDouble("flipper_width"), debug_value_reader::readDouble("flipper_height")},
+            Vec2d{debug_value_reader::getValue<double>("flipper_x"), debug_value_reader::getValue<double>("flipper_y")},
+            Vec2d{debug_value_reader::getValue<double>("flipper_width"),
+                  debug_value_reader::getValue<double>("flipper_height")},
             flipper_offset,
             calculateColormapPastel2(0.1));
 
-        flipper_frequency = debug_value_reader::readDouble("flipper_frequency");
-        flipper_amplitude = debug_value_reader::readDouble("flipper_amplitude");
+        flipper_frequency = debug_value_reader::getValue<double>("flipper_frequency");
+        flipper_amplitude = debug_value_reader::getValue<double>("flipper_amplitude");
 
         // Pendulum
 
         float pendulum_width = 1.0f;
         float pendulum_height = 8.0f;
 
-        pend_base_ = createDynamicBoxShape(
-            Vec2d{debug_value_reader::readDouble("pend_base_x"), debug_value_reader::readDouble("pend_base_y")},
-            Vec2d{pendulum_width, pendulum_height},
-            0.0,
-            calculateColormapPastel2(0.2));
+        pend_base_ = createDynamicBoxShape(Vec2d{debug_value_reader::getValue<double>("pend_base_x"),
+                                                 debug_value_reader::getValue<double>("pend_base_y")},
+                                           Vec2d{pendulum_width, pendulum_height},
+                                           0.0,
+                                           calculateColormapPastel2(0.2));
 
-        pend_second_ = createDynamicBoxShape(Vec2d{debug_value_reader::readDouble("pend_base_x"),
-                                                   debug_value_reader::readDouble("pend_base_y") + pendulum_height},
-                                             Vec2d{pendulum_width, pendulum_height},
-                                             0.0,
-                                             calculateColormapPastel2(0.5));
+        pend_second_ =
+            createDynamicBoxShape(Vec2d{debug_value_reader::getValue<double>("pend_base_x"),
+                                        debug_value_reader::getValue<double>("pend_base_y") + pendulum_height},
+                                  Vec2d{pendulum_width, pendulum_height},
+                                  0.0,
+                                  calculateColormapPastel2(0.5));
 
         pend_horizontal_ =
-            createDynamicBoxShape(Vec2d{debug_value_reader::readDouble("pend_base_x"),
-                                        debug_value_reader::readDouble("pend_base_y") + pendulum_height * 2.0f},
+            createDynamicBoxShape(Vec2d{debug_value_reader::getValue<double>("pend_base_x"),
+                                        debug_value_reader::getValue<double>("pend_base_y") + pendulum_height * 2.0f},
                                   Vec2d{pendulum_width, pendulum_height * 0.8},
                                   0.0,
                                   calculateColormapPastel2(0.7));
@@ -662,8 +664,8 @@ public:
         b2RevoluteJointDef joint_def0;
         joint_def0.bodyA = wall_body;
         joint_def0.bodyB = pend_base_.body_handle;
-        joint_def0.localAnchorA = b2Vec2{debug_value_reader::readFloat("pend_base_x"),
-                                         debug_value_reader::readFloat("pend_base_y") - pendulum_height / 2.0f};
+        joint_def0.localAnchorA = b2Vec2{debug_value_reader::getValue<float>("pend_base_x"),
+                                         debug_value_reader::getValue<float>("pend_base_y") - pendulum_height / 2.0f};
         joint_def0.localAnchorB = b2Vec2{0.0, -pendulum_height / 2.0f};
         joint_def0.enableLimit = false;
 
@@ -693,7 +695,7 @@ public:
         joint_def_flipper.bodyA = wall_body;
         joint_def_flipper.bodyB = flipper_.body_handle;
         joint_def_flipper.localAnchorA =
-            b2Vec2{debug_value_reader::readFloat("flipper_x"), debug_value_reader::readFloat("flipper_y")};
+            b2Vec2{debug_value_reader::getValue<float>("flipper_x"), debug_value_reader::getValue<float>("flipper_y")};
         joint_def_flipper.localAnchorB = b2Vec2{0.0, 0.0};
         joint_def_flipper.enableLimit = false;
 

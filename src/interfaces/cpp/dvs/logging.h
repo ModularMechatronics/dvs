@@ -128,37 +128,37 @@ inline size_t getThreadId()
 
 // Global variables
 
-inline std::mutex& _Var_thread_mutex()
+inline std::mutex& Variable_thread_mutex()
 {
     static std::mutex mtx;
     return mtx;
 }
 
-inline bool& _Var_use_colors()
+inline bool& Variable_use_colors()
 {
     static bool use_colors = true;
     return use_colors;
 }
 
-inline bool& _Var_show_file()
+inline bool& Variable_show_file()
 {
     static bool show_file = true;
     return show_file;
 }
 
-inline bool& _Var_show_func()
+inline bool& Variable_show_func()
 {
     static bool show_func = true;
     return show_func;
 }
 
-inline bool& _Var_show_line_number()
+inline bool& Variable_show_line_number()
 {
     static bool show_line_number = true;
     return show_line_number;
 }
 
-inline bool& _Var_show_thread_id()
+inline bool& Variable_show_thread_id()
 {
     static bool thread_id = true;
     return thread_id;
@@ -168,62 +168,62 @@ inline bool& _Var_show_thread_id()
 
 inline bool getUseColors()
 {
-    const bool use_colors = _Var_use_colors();
+    const bool use_colors = Variable_use_colors();
     return use_colors;
 }
 
 inline void setUseColors(const bool new_val)
 {
-    std::lock_guard<std::mutex> guard(_Var_thread_mutex());
-    _Var_use_colors() = new_val;
+    std::lock_guard<std::mutex> guard(Variable_thread_mutex());
+    Variable_use_colors() = new_val;
 }
 
 inline bool getShowFunc()
 {
-    const bool show_func = _Var_show_func();
+    const bool show_func = Variable_show_func();
     return show_func;
 }
 
 inline void setShowFunc(const bool new_val)
 {
-    std::lock_guard<std::mutex> guard(_Var_thread_mutex());
-    _Var_show_func() = new_val;
+    std::lock_guard<std::mutex> guard(Variable_thread_mutex());
+    Variable_show_func() = new_val;
 }
 
 inline bool getShowFile()
 {
-    const bool show_file = _Var_show_file();
+    const bool show_file = Variable_show_file();
     return show_file;
 }
 
 inline void setShowFile(const bool new_val)
 {
-    std::lock_guard<std::mutex> guard(_Var_thread_mutex());
-    _Var_show_file() = new_val;
+    std::lock_guard<std::mutex> guard(Variable_thread_mutex());
+    Variable_show_file() = new_val;
 }
 
 inline bool getShowLineNumber()
 {
-    const bool show_line_number = _Var_show_line_number();
+    const bool show_line_number = Variable_show_line_number();
     return show_line_number;
 }
 
 inline void setShowLineNumber(const bool new_val)
 {
-    std::lock_guard<std::mutex> guard(_Var_thread_mutex());
-    _Var_show_line_number() = new_val;
+    std::lock_guard<std::mutex> guard(Variable_thread_mutex());
+    Variable_show_line_number() = new_val;
 }
 
 inline bool getShowThreadId()
 {
-    const bool show_thread_id = _Var_show_thread_id();
+    const bool show_thread_id = Variable_show_thread_id();
     return show_thread_id;
 }
 
 inline void setShowThreadId(const bool new_val)
 {
-    std::lock_guard<std::mutex> guard(_Var_thread_mutex());
-    _Var_show_thread_id() = new_val;
+    std::lock_guard<std::mutex> guard(Variable_thread_mutex());
+    Variable_show_thread_id() = new_val;
 }
 
 inline std::string getPreString(const MessageSeverity msg_severity,
