@@ -1686,6 +1686,59 @@ void testSetTitle()
     setTitle("This is w1_p_view_1");
 }
 
+void testScreenshot()
+{
+    const int num_rows = 200, num_cols = 250;
+    Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
+    Matrix<RGB888> color(num_rows, num_cols);
+
+    const double inc = 0.4;
+    const float nr = (num_rows - 100U);
+    const float nc = (num_cols - 100U);
+    const float mul = 1.0f / (std::sqrt(nr * nr + nc * nc));
+
+    for (int r = 0; r < num_rows; r++)
+    {
+        for (int c = 0; c < num_cols; c++)
+        {
+            const double rd = static_cast<double>(r - 5) * inc;
+            const double cd = static_cast<double>(c - 5) * inc * 2;
+            x(r, c) = c;
+            y(r, c) = r;
+            const float r_val = std::sqrt(rd * rd + cd * cd);
+            z(r, c) = 50.0 * std::sin(r_val * 0.05);
+
+            color(r, c) = colorMapJet(r_val * mul);
+        }
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    surf(x, y, z, properties::EdgeColor(0, 0, 0), properties::FaceColor(255, 0, 0));
+
+    setCurrentElement("p_view_1");
+    clearView();
+    surf(x, y, z, properties::EdgeColor::NONE, properties::ColorMap::JET_BRIGHT);
+
+    setCurrentElement("p_view_2");
+    clearView();
+    surf(x, y, z, properties::EdgeColor::NONE, properties::ColorMap::JET_SOFT, properties::INTERPOLATE_COLORMAP);
+
+    setCurrentElement("w1_p_view_0");
+    clearView();
+    surf(x, y, z, color, properties::EdgeColor::NONE, properties::ColorMap::JET);
+
+    setCurrentElement("p1");
+    clearView();
+    surf(x, y, z);
+    surf(x, y, z + 1.0);
+    surf(x, y, z + 2.0);
+    surf(x, y, z + 3.0);
+    surf(x, y, z + 4.0);
+
+    screenshot("/Users/danielpi/work/dvs/screenshots");
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1713,6 +1766,7 @@ void addTests()
     addTest("cpp", "basic", "point_selector_with_exclude", testPointSelectorWithExcludeSelection);
     addTest("cpp", "basic", "plot2_dashed_line", testPlot2DashedLine);
     addTest("cpp", "basic", "set_title", testSetTitle);
+    addTest("cpp", "basic", "screenshot", testScreenshot);
 }
 
 }  // namespace basic_cpp

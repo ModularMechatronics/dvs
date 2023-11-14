@@ -220,6 +220,17 @@ void MainWindow::mouseLeftPressed(wxMouseEvent& event)
 
 void MainWindow::elementNameChanged(const std::string& old_name, const std::string& new_name)
 {
+    for (auto& local_ge : plot_panes_)
+    {
+        if (local_ge.first == old_name)
+        {
+            ApplicationGuiElement* ge = local_ge.second;
+            plot_panes_.erase(local_ge.first);
+            plot_panes_[new_name] = ge;
+            break;
+        }
+    }
+
     for (auto& local_ge : gui_elements_)
     {
         if (local_ge.first == old_name)
@@ -236,7 +247,11 @@ void MainWindow::elementDeleted(const std::string& element_handle_string)
 {
     if (!shutdown_in_progress_)
     {
-        if (gui_elements_.count(element_handle_string) > 0)
+        if (plot_panes_.count(element_handle_string) > 0)
+        {
+            plot_panes_.erase(element_handle_string);
+        }
+        else if (gui_elements_.count(element_handle_string) > 0)
         {
             gui_elements_.erase(element_handle_string);
         }
@@ -337,6 +352,11 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
     this->SetSize(wxSize(kMainWindowWidth, kMainWindowButtonHeight * windows_.size() + first_window_button_offset_));
     for (auto we : windows_)
     {
+        std::vector<ApplicationGuiElement*> pps = we->getPlotPanes();
+        for (const auto& ge : pps)
+        {
+            plot_panes_[ge->getHandleString()] = ge;
+        }
         std::vector<ApplicationGuiElement*> ges = we->getGuiElements();
         for (const auto& ge : ges)
         {
@@ -355,6 +375,27 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
                              [this](const std::string& f) -> void { toggleWindowVisibility(f); }));
         pos_y += kMainWindowButtonHeight;
     }
+
+    // updateClientApplicationAboutGuiState();
+}
+
+void MainWindow::updateClientApplicationAboutGuiState() const
+{
+    // Send to client application
+    // TODO...
+    // Send query for response?
+    std::vector<std::shared_ptr<GuiElementState>> gui_elements_state;
+
+    std::uint64_t total_num_bytes = 0U;
+
+    for (const auto& ge : gui_elements_)
+    {
+        gui_elements_state.push_back(ge.second->getGuiElementState());
+
+        total_num_bytes += gui_elements_state.back()->getTotalNumBytes();
+    }
+
+    FillableUInt8Array output_array{total_num_bytes};
 }
 
 std::vector<std::string> MainWindow::getAllElementNames() const
@@ -369,6 +410,22 @@ std::vector<std::string> MainWindow::getAllElementNames() const
     }
 
     return element_names;
+}
+
+void MainWindow::performScreenshot(const std::string& screenshot_base_path)
+{
+    const std::string final_path =
+        screenshot_base_path.back() == '/' ? screenshot_base_path : screenshot_base_path + "/";
+
+    if (!dvs::filesystem::exists(final_path))
+    {
+        dvs::filesystem::create_directory(final_path);
+    }
+
+    for (auto we : windows_)
+    {
+        we->screenshot(final_path);
+    }
 }
 
 void MainWindow::newWindowCallback(wxCommandEvent& WXUNUSED(event))
@@ -560,6 +617,7 @@ void MainWindow::newProject()
 
 void MainWindow::removeAllWindows()
 {
+    plot_panes_.clear();
     gui_elements_.clear();
 
     for (auto we : windows_)
@@ -686,6 +744,11 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
 
     if (q != windows_.end())
     {
+        const std::vector<ApplicationGuiElement*> pps = (*q)->getPlotPanes();
+        for (const auto& ge : pps)
+        {
+            plot_panes_.erase(ge->getHandleString());
+        }
         const std::vector<ApplicationGuiElement*> ges = (*q)->getGuiElements();
         for (const auto& ge : ges)
         {

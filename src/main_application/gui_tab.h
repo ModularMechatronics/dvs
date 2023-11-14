@@ -19,6 +19,7 @@
 
 #include "axes/axes.h"
 #include "gui_element.h"
+#include "gui_elements.h"
 #include "help_pane.h"
 #include "plot_pane.h"
 #include "project_state/project_settings.h"
@@ -48,6 +49,7 @@ class WindowTab
 private:
     std::string name_;
     std::vector<PlotPane*> plot_panes_;
+    std::vector<ApplicationGuiElement*> gui_elements_;
     wxFrame* parent_window_;
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
@@ -75,7 +77,9 @@ public:
               const std::function<void()>& notify_main_window_about_modification);
     void initializeZOrder(const TabSettings& tab_settings);
     ~WindowTab();
+    std::vector<ApplicationGuiElement*> getPlotPanes() const;
     std::vector<ApplicationGuiElement*> getGuiElements() const;
+    std::vector<ApplicationGuiElement*> getAllGuiElements() const;
     void updateAllElements();
     void setMinXPos(const int min_x_pos);
     void createNewPlotPane();

@@ -5,19 +5,107 @@
             "name": "Window 0",
             "tabs": [
                 {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
                     "elements": [
                         {
                             "handle_string": "p_view_0",
-                            "height": 0.3890784978866577,
+                            "height": 0.3903394341468811,
                             "type": "PLOT_PANE",
                             "width": 0.29243120551109314,
-                            "x": 0.5137614607810974,
-                            "y": 0.5187713503837585
+                            "x": 0.6020641922950745,
+                            "y": 0.5208877325057983
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "Start timer"
+                            },
+                            "handle_string": "button0",
+                            "height": 0.20000000298023224,
+                            "type": "BUTTON",
+                            "width": 0.20000000298023224,
+                            "x": 0.5,
+                            "y": 0.10000000149011612
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "Stop timer"
+                            },
+                            "handle_string": "button1",
+                            "height": 0.20000000298023224,
+                            "type": "BUTTON",
+                            "width": 0.20000000298023224,
+                            "x": 0.8999999761581421,
+                            "y": 0.10000000149011612
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "A checkbox"
+                            },
+                            "handle_string": "checkbox0",
+                            "height": 0.20000000298023224,
+                            "type": "CHECKBOX",
+                            "width": 0.20000000298023224,
+                            "x": 0.3,
+                            "y": 0.40000000149011612
+                        },
+                        {
+                            "element_specific_settings": {
+                                "min": 0,
+                                "max": 100,
+                                "init_value": 0,
+                                "step_size": 1,
+                                "style": "horizontal"
+                            },
+                            "handle_string": "slider0",
+                            "height": 0.20000000298023224,
+                            "type": "SLIDER",
+                            "width": 0.20000000298023224,
+                            "x": 0.8999999761581421,
+                            "y": 0.50000000149011612
                         }
                     ],
                     "name": "primary_view"
                 },
                 {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
                     "elements": [
                         {
                             "handle_string": "s_view_2",
@@ -32,8 +120,8 @@
                 }
             ],
             "width": 942.0,
-            "x": 0.0,
-            "y": 496.0
+            "x": 59.0,
+            "y": 499.0
         }
     ]
 }

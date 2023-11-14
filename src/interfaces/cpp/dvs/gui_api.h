@@ -651,6 +651,7 @@ class GuiElement : public api_internal::GuiElementBase
 {
 public:
     GuiElement() : api_internal::GuiElementBase{} {}
+
     GuiElement(api_internal::InternalGuiElement* const internal_element)
         : api_internal::GuiElementBase{internal_element}
     {

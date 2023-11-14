@@ -10,15 +10,18 @@
 
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
-#include "dvs/gui_api.h"
+// #include "dvs/gui_api.h"
 #include "dvs/math/math.h"
+#include "gui_element.h"
 #include "project_state/project_settings.h"
 
-template <class C> class MovableElement : public C, public api_internal::InternalGuiElement
+template <class C>
+// class MovableElement : public C, public api_internal::InternalGuiElement, public ApplicationGuiElement
+class MovableElement : public C, public ApplicationGuiElement
 {
 public:
     // Slider
-    MovableElement(wxFrame* parent,
+    /*MovableElement(wxFrame* parent,
                    const std::string& handle_string,
                    const GuiElementCallback& elem_callback,
                    const GuiElementType gui_element_type,
@@ -32,26 +35,30 @@ public:
         : C(parent, id, init_value, min_value, max_value, pos, size, style),
           api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
-        control_pressed_at_mouse_down = false;
+        control_pressed_at_mouse_down_ = false;
 
         this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
         this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
         this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
-    }
+    }*/
 
     // Button, Checkbox, ComboBox
     MovableElement(wxFrame* parent,
                    const std::string& handle_string,
-                   const GuiElementCallback& elem_callback,
+                   // const GuiElementCallback& elem_callback,
                    const GuiElementType gui_element_type,
                    const wxWindowID id,
                    const std::string& label,
                    const wxPoint& pos,
                    const wxSize& size)
-        : C(parent, id, label, pos, size),
-          api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
+        : C(parent,
+            id,
+            label,
+            pos,
+            size)  // ,
+                   // api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
-        control_pressed_at_mouse_down = false;
+        control_pressed_at_mouse_down_ = false;
 
         this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
         this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
@@ -59,7 +66,7 @@ public:
     }
 
     // ListBox
-    MovableElement(wxFrame* parent,
+    /*MovableElement(wxFrame* parent,
                    const std::string& handle_string,
                    const GuiElementCallback& elem_callback,
                    const GuiElementType gui_element_type,
@@ -68,7 +75,7 @@ public:
                    const wxSize& size)
         : C(parent, id, pos, size), api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
-        control_pressed_at_mouse_down = false;
+        control_pressed_at_mouse_down_ = false;
 
         this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
         this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
@@ -88,7 +95,7 @@ public:
         : C(parent, id, initial_text, pos, size, style),
           api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
-        control_pressed_at_mouse_down = false;
+        control_pressed_at_mouse_down_ = false;
 
         this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
         this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
@@ -110,18 +117,36 @@ public:
         : C(parent, id, initial_text, pos, size, radio_buttons_to_add, n, style),
           api_internal::InternalGuiElement(handle_string, elem_callback, gui_element_type)
     {
-        control_pressed_at_mouse_down = false;
+        control_pressed_at_mouse_down_ = false;
 
         this->Bind(wxEVT_MOTION, &MovableElement<C>::mouseMovedOverItem, this);
         this->Bind(wxEVT_LEFT_DOWN, &MovableElement<C>::mouseLeftPressed, this);
         this->Bind(wxEVT_LEFT_UP, &MovableElement<C>::mouseLeftReleased, this);
-    }
+    }*/
+
+    void updateSizeFromParent(const wxSize& parent_size) override {}
+
+    void keyPressed(const char key) override {}
+
+    void keyReleased(const char key) override {}
+
+    void setMouseInteractionType(const MouseInteractionType mit) override {}
+
+    void show() override {}
+
+    void hide() override {}
+
+    void destroy() override {}
+
+    void refresh() override {}
+
+    void update() override {}
 
     void mouseLeftPressed(wxMouseEvent& event)
     {
         if (wxGetKeyState(WXK_CONTROL))
         {
-            control_pressed_at_mouse_down = true;
+            control_pressed_at_mouse_down_ = true;
 
             const wxPoint pos_at_press = this->GetPosition();
 
@@ -136,9 +161,9 @@ public:
 
     void mouseLeftReleased(wxMouseEvent& event)
     {
-        if (control_pressed_at_mouse_down)
+        if (control_pressed_at_mouse_down_)
         {
-            control_pressed_at_mouse_down = false;
+            control_pressed_at_mouse_down_ = false;
         }
         else
         {
@@ -148,7 +173,7 @@ public:
 
     void mouseMovedOverItem(wxMouseEvent& event)
     {
-        if (control_pressed_at_mouse_down && event.LeftIsDown())
+        if (control_pressed_at_mouse_down_ && event.LeftIsDown())
         {
             const wxPoint current_mouse_position_local = event.GetPosition();
             const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
@@ -163,7 +188,7 @@ public:
         }
     }
 
-    long getId() const override
+    /*long getId() const override
     {
         return this->GetId();
     }
@@ -343,12 +368,201 @@ public:
     {
         const wxItemContainer* const elem = dynamic_cast<const wxItemContainer* const>(this);
         return elem->GetSelection();
-    }
+    }*/
 
 private:
-    bool control_pressed_at_mouse_down;
+    bool control_pressed_at_mouse_down_;
     wxPoint mouse_pos_at_press_;
     wxPoint previous_mouse_pos_;
+};
+
+class ButtonGuiElement : public wxButton, public ApplicationGuiElement
+{
+private:
+public:
+    ButtonGuiElement(wxFrame* parent,
+                     const std::shared_ptr<ElementSettings>& element_settings,
+                     const std::function<void(const char key)>& notify_main_window_key_pressed,
+                     const std::function<void(const char key)>& notify_main_window_key_released,
+                     const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                         notify_parent_window_right_mouse_pressed,
+                     const std::function<void()>& notify_main_window_about_modification,
+                     const wxPoint& pos,
+                     const wxSize& size);
+
+    void mouseLeftPressed(wxMouseEvent& event);
+
+    void setMinXPos(const int min_x_pos) override
+    {
+        minimum_x_pos_ = min_x_pos;
+        setElementPositionAndSize();
+    }
+
+    void setElementPositionAndSize()
+    {
+        const float px = parent_size_.GetWidth();
+        const float py = parent_size_.GetHeight();
+
+        wxPoint new_pos;
+        wxSize new_size;
+
+        const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+        const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
+
+        new_size.SetWidth(element_settings_->width * px * ratio_x);
+        new_size.SetHeight(element_settings_->height * py * ratio_y);
+        new_pos.x = minimum_x_pos_ + element_settings_->x * px * ratio_x;
+        new_pos.y = minimum_y_pos_ + element_settings_->y * py * ratio_y;
+
+        SetPosition(new_pos);
+        this->SetSize(new_size);
+    }
+
+    void keyPressed(const char key) override {}
+
+    void keyReleased(const char key) override {}
+
+    void refresh() override {}
+
+    void update() override {}
+
+    void updateSizeFromParent(const wxSize& parent_size) override
+    {
+        parent_size_ = parent_size;
+
+        setElementPositionAndSize();
+    }
+
+    virtual void getGuiElementState() {}
+};
+
+class SliderGuiElement : public wxSlider, public ApplicationGuiElement
+{
+private:
+public:
+    SliderGuiElement(wxFrame* parent,
+                     const std::shared_ptr<ElementSettings>& element_settings,
+                     const std::function<void(const char key)>& notify_main_window_key_pressed,
+                     const std::function<void(const char key)>& notify_main_window_key_released,
+                     const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                         notify_parent_window_right_mouse_pressed,
+                     const std::function<void()>& notify_main_window_about_modification,
+                     const wxPoint& pos,
+                     const wxSize& size);
+
+    void sliderEvent(wxCommandEvent& event);
+
+    std::shared_ptr<GuiElementState> getGuiElementState() const override
+    {
+        std::shared_ptr<SliderState> slider_state = std::make_shared<SliderState>();
+        slider_state->type = dvs::GuiElementType::Slider;
+
+        slider_state->handle_string = element_settings_->handle_string;
+        slider_state->min_value = std::dynamic_pointer_cast<SliderSettings>(element_settings_)->min_value;
+        slider_state->max_value = std::dynamic_pointer_cast<SliderSettings>(element_settings_)->max_value;
+        slider_state->step_size = std::dynamic_pointer_cast<SliderSettings>(element_settings_)->step_size;
+        slider_state->value = this->GetValue();
+        return slider_state;
+    }
+
+    void setMinXPos(const int min_x_pos) override
+    {
+        minimum_x_pos_ = min_x_pos;
+        setElementPositionAndSize();
+    }
+
+    void setElementPositionAndSize()
+    {
+        const float px = parent_size_.GetWidth();
+        const float py = parent_size_.GetHeight();
+
+        wxPoint new_pos;
+        wxSize new_size;
+
+        const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+        const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
+
+        new_size.SetWidth(element_settings_->width * px * ratio_x);
+        new_size.SetHeight(element_settings_->height * py * ratio_y);
+        new_pos.x = minimum_x_pos_ + element_settings_->x * px * ratio_x;
+        new_pos.y = minimum_y_pos_ + element_settings_->y * py * ratio_y;
+
+        SetPosition(new_pos);
+        this->SetSize(new_size);
+    }
+
+    void keyPressed(const char key) override {}
+
+    void keyReleased(const char key) override {}
+
+    void refresh() override {}
+
+    void update() override {}
+
+    void updateSizeFromParent(const wxSize& parent_size) override
+    {
+        parent_size_ = parent_size;
+
+        setElementPositionAndSize();
+    }
+};
+
+class CheckboxGuiElement : public wxCheckBox, public ApplicationGuiElement
+{
+private:
+public:
+    CheckboxGuiElement(wxFrame* parent,
+                       const std::shared_ptr<ElementSettings>& element_settings,
+                       const std::function<void(const char key)>& notify_main_window_key_pressed,
+                       const std::function<void(const char key)>& notify_main_window_key_released,
+                       const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                           notify_parent_window_right_mouse_pressed,
+                       const std::function<void()>& notify_main_window_about_modification,
+                       const wxPoint& pos,
+                       const wxSize& size);
+
+    void setMinXPos(const int min_x_pos) override
+    {
+        minimum_x_pos_ = min_x_pos;
+        setElementPositionAndSize();
+    }
+
+    void setElementPositionAndSize()
+    {
+        const float px = parent_size_.GetWidth();
+        const float py = parent_size_.GetHeight();
+
+        wxPoint new_pos;
+        wxSize new_size;
+
+        const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+        const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
+
+        new_size.SetWidth(element_settings_->width * px * ratio_x);
+        new_size.SetHeight(element_settings_->height * py * ratio_y);
+        new_pos.x = minimum_x_pos_ + element_settings_->x * px * ratio_x;
+        new_pos.y = minimum_y_pos_ + element_settings_->y * py * ratio_y;
+
+        SetPosition(new_pos);
+        this->SetSize(new_size);
+    }
+
+    void keyPressed(const char key) override {}
+
+    void keyReleased(const char key) override {}
+
+    void refresh() override {}
+
+    void update() override {}
+
+    void updateSizeFromParent(const wxSize& parent_size) override
+    {
+        parent_size_ = parent_size;
+
+        setElementPositionAndSize();
+    }
+
+    void checkBoxCallback(wxCommandEvent& event);
 };
 
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

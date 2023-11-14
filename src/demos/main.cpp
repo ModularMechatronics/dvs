@@ -7,7 +7,6 @@
 
 using StringFunctionMap = std::map<std::string, std::function<void()>>;
 
-std::map<std::string, std::vector<std::uint8_t>> parsed_args;
 std::map<std::string, StringFunctionMap> fcns;
 
 void displayHelp()
@@ -29,7 +28,7 @@ void displayHelp()
 
 int main(int argc, char* argv[])
 {
-    parseArgs(argc, argv);
+    debug_value_args::parseArgs(argc, argv);
 
     // ######################### klein #########################
     StringFunctionMap klein_functions{

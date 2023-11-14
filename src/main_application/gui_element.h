@@ -12,6 +12,7 @@
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
+#include "gui_element_state.h"
 #include "input_data.h"
 #include "project_state/project_settings.h"
 
@@ -26,6 +27,11 @@ protected:
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
     std::function<void()> notify_main_window_about_modification_;
+
+    int minimum_x_pos_;
+    int minimum_y_pos_;
+
+    wxSize parent_size_;  // Pixels
 
 public:
     ApplicationGuiElement() = delete;
@@ -46,8 +52,6 @@ public:
     virtual ~ApplicationGuiElement() {}
 
     virtual void setMinXPos(const int min_x_pos) = 0;
-    virtual void raise() = 0;
-    virtual void lower() = 0;
 
     std::string getHandleString() const
     {
@@ -65,15 +69,16 @@ public:
     }
 
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
-    virtual void pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue) = 0;
     virtual void keyPressed(const char key) = 0;
     virtual void keyReleased(const char key) = 0;
-    virtual void setMouseInteractionType(const MouseInteractionType mit) = 0;
-    virtual void show() = 0;
-    virtual void hide() = 0;
-    virtual void destroy() = 0;
     virtual void refresh() = 0;
     virtual void update() = 0;
+
+    virtual std::shared_ptr<GuiElementState> getGuiElementState() const
+    {
+        std::cout << "getGuiElementState() not implemented!" << std::endl;
+        return std::shared_ptr<GuiElementState>();
+    }
 };
 
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

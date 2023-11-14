@@ -48,6 +48,19 @@ void ZOrderQueue::eraseElement(const std::string& element_handle_string)
         elements_.erase(q);
     }
 }
+
+std::tuple<wxPoint, wxSize> getPosAndSizeInPixelCoords(const wxSize current_window_size,
+                                                       const ElementSettings* const element_settings)
+{
+    const float x_pos_in_pixels = element_settings->x * current_window_size.GetWidth();
+    const float y_pos_in_pixels = element_settings->y * current_window_size.GetHeight();
+
+    const float width_in_pixels = element_settings->width * current_window_size.GetWidth();
+    const float height_in_pixels = element_settings->height * current_window_size.GetHeight();
+
+    return std::make_tuple(wxPoint(x_pos_in_pixels, y_pos_in_pixels), wxSize(width_in_pixels, height_in_pixels));
+}
+
 // ###############################################################
 // ########################## WindowTab ##########################
 // ###############################################################
@@ -78,20 +91,77 @@ WindowTab::WindowTab(wxFrame* parent_window,
     button_selected_color_ = tab_settings.button_selected_color;
     button_text_color_ = tab_settings.button_text_color;
 
-    for (const auto& elem : tab_settings.elements)
+    for (const std::shared_ptr<ElementSettings> elem_settings : tab_settings.elements)
     {
-        PlotPane* const pp = new PlotPane(parent_window_,
-                                          elem,
-                                          background_color_,
-                                          notify_main_window_key_pressed,
-                                          notify_main_window_key_released,
-                                          notify_parent_window_right_mouse_pressed,
-                                          notify_main_window_about_modification);
+        if (elem_settings->type == dvs::GuiElementType::PlotPane)
+        {
+            PlotPane* const pp = new PlotPane(parent_window_,
+                                              elem_settings,
+                                              background_color_,
+                                              notify_main_window_key_pressed,
+                                              notify_main_window_key_released,
+                                              notify_parent_window_right_mouse_pressed,
+                                              notify_main_window_about_modification);
 
-        pp->setMinXPos(element_x_offset_);
-        pp->updateSizeFromParent(parent_window_->GetSize());
+            pp->setMinXPos(element_x_offset_);
+            pp->updateSizeFromParent(parent_window_->GetSize());
 
-        plot_panes_.push_back(pp);
+            plot_panes_.push_back(pp);
+        }
+        else if (elem_settings->type == dvs::GuiElementType::Button)
+        {
+            auto const [elem_pos, elem_size] =
+                getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+            ButtonGuiElement* button_ = new ButtonGuiElement(parent_window_,
+                                                             elem_settings,
+                                                             notify_main_window_key_pressed,
+                                                             notify_main_window_key_released,
+                                                             notify_parent_window_right_mouse_pressed,
+                                                             notify_main_window_about_modification,
+                                                             elem_pos,
+                                                             elem_size);
+
+            button_->setMinXPos(element_x_offset_);
+            button_->updateSizeFromParent(parent_window_->GetSize());
+            gui_elements_.push_back(button_);
+        }
+        else if (elem_settings->type == dvs::GuiElementType::Slider)
+        {
+            auto const [elem_pos, elem_size] =
+                getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+            SliderGuiElement* slider_ = new SliderGuiElement(parent_window_,
+                                                             elem_settings,
+                                                             notify_main_window_key_pressed,
+                                                             notify_main_window_key_released,
+                                                             notify_parent_window_right_mouse_pressed,
+                                                             notify_main_window_about_modification,
+                                                             elem_pos,
+                                                             elem_size);
+
+            slider_->setMinXPos(element_x_offset_);
+            slider_->updateSizeFromParent(parent_window_->GetSize());
+            gui_elements_.push_back(slider_);
+        }
+        else if (elem_settings->type == dvs::GuiElementType::CheckBox)
+        {
+            auto const [elem_pos, elem_size] =
+                getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+            CheckboxGuiElement* check_box_ = new CheckboxGuiElement(parent_window_,
+                                                                    elem_settings,
+                                                                    notify_main_window_key_pressed,
+                                                                    notify_main_window_key_released,
+                                                                    notify_parent_window_right_mouse_pressed,
+                                                                    notify_main_window_about_modification,
+                                                                    elem_pos,
+                                                                    elem_size);
+
+            check_box_->setMinXPos(element_x_offset_);
+            check_box_->updateSizeFromParent(parent_window_->GetSize());
+            gui_elements_.push_back(check_box_);
+        }
 
         current_element_idx_++;
     }
@@ -136,11 +206,34 @@ WindowTab::~WindowTab()
         notify_main_window_element_deleted_(pp->getHandleString());
         delete pp;
     }
+
+    for (const auto& elem : gui_elements_)
+    {
+        notify_main_window_element_deleted_(elem->getHandleString());
+        delete elem;
+    }
 }
 
 std::vector<ApplicationGuiElement*> WindowTab::getGuiElements() const
 {
+    return gui_elements_;
+}
+
+std::vector<ApplicationGuiElement*> WindowTab::getPlotPanes() const
+{
     std::vector<ApplicationGuiElement*> gui_elements;
+
+    for (const auto& pp : plot_panes_)
+    {
+        gui_elements.push_back(pp);
+    }
+
+    return gui_elements;
+}
+
+std::vector<ApplicationGuiElement*> WindowTab::getAllGuiElements() const
+{
+    std::vector<ApplicationGuiElement*> gui_elements = gui_elements_;
 
     for (const auto& pp : plot_panes_)
     {
@@ -222,7 +315,7 @@ void WindowTab::show()
 {
     for (auto const& pp : plot_panes_)
     {
-        pp->show();
+        pp->Show();
     }
 }
 
@@ -230,7 +323,7 @@ void WindowTab::hide()
 {
     for (auto const& pp : plot_panes_)
     {
-        pp->hide();
+        pp->Hide();
     }
 }
 
@@ -239,6 +332,11 @@ void WindowTab::updateSizeFromParent(const wxSize new_size) const
     for (auto const& pp : plot_panes_)
     {
         pp->updateSizeFromParent(new_size);
+    }
+
+    for (auto const& elem : gui_elements_)
+    {
+        elem->updateSizeFromParent(new_size);
     }
 }
 
@@ -267,6 +365,14 @@ TabSettings WindowTab::getTabSettings() const
     {
         std::shared_ptr<ElementSettings> es = pp->getElementSettings();
         const std::string element_handle_string = pp->getHandleString();
+        es->z_order = z_order_queue_.getOrderOfElement(element_handle_string);
+        ts.elements.push_back(es);
+    }
+
+    for (const auto& ge : gui_elements_)
+    {
+        std::shared_ptr<ElementSettings> es = ge->getElementSettings();
+        const std::string element_handle_string = ge->getHandleString();
         es->z_order = z_order_queue_.getOrderOfElement(element_handle_string);
         ts.elements.push_back(es);
     }
@@ -393,7 +499,7 @@ bool WindowTab::raiseElement(const std::string& element_handle_string)
 
     if (plot_panes_.end() != q)
     {
-        (*q)->raise();
+        (*q)->Raise();
         z_order_queue_.raise(element_handle_string);
         return true;
     }
@@ -413,7 +519,7 @@ bool WindowTab::lowerElement(const std::string& element_handle_string)
 
     if (plot_panes_.end() != q)
     {
-        (*q)->lower();
+        (*q)->Lower();
         z_order_queue_.lower(element_handle_string);
         return true;
     }

@@ -30,19 +30,19 @@ TabSettings::TabSettings(const nlohmann::json& j)
         {
             elements.emplace_back(std::make_shared<PlotPaneSettings>(j["elements"][k]));
         }
-        /*else if (type == dvs::GuiElementType::Button)
+        else if (type == dvs::GuiElementType::Button)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<ButtonSettings>(j["elements"][k]));
         }
         else if (type == dvs::GuiElementType::Slider)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<SliderSettings>(j["elements"][k]));
         }
         else if (type == dvs::GuiElementType::CheckBox)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<CheckBoxSettings>(j["elements"][k]));
         }
-        else if (type == dvs::GuiElementType::EditableText)
+        /*else if (type == dvs::GuiElementType::EditableText)
         {
             elements.emplace_back(j["elements"][k]);
         }

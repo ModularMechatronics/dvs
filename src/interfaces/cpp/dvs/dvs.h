@@ -6,7 +6,8 @@
 #include <functional>
 #include <map>
 
-#include "dvs/gui_api.h"
+// #include "dvs/gui_api.h"
+#include "dvs/gui_api2.h"
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
 
@@ -1171,6 +1172,15 @@ inline void openProjectFile(const std::string& file_path)
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
 
+// inline void screenshot(const std::string& base_path, const std::string& filename)
+inline void screenshot(const std::string& base_path)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCREENSHOT};
+    hdr.append(internal::CommunicationHeaderObjectType::SCREENSHOT_BASE_PATH, properties::Name(base_path.c_str()));
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void setTransform(const ItemId id,
                          const MatrixFixed<double, 3, 3>& scale,
                          const MatrixFixed<double, 3, 3>& rotation,
@@ -1226,7 +1236,8 @@ inline void spawn()
     }
 }
 
-using GuiCallbackFunction = std::function<void(std::string)>;
+// using GuiCallbackFunction = std::function<void(std::string)>;
+using GuiCallbackFunction = std::function<void(const GuiElementHandle&)>;
 
 namespace internal
 {
@@ -1235,6 +1246,13 @@ inline std::map<std::string, GuiCallbackFunction>& getGuiCallbacks()
     static std::map<std::string, GuiCallbackFunction> gui_callbacks;
 
     return gui_callbacks;
+}
+
+inline std::map<std::string, GuiElementHandle>& getGuiElementHandles()
+{
+    static std::map<std::string, GuiElementHandle> gui_element_handles;
+
+    return gui_element_handles;
 }
 }  // namespace internal
 
@@ -1374,6 +1392,62 @@ inline ReceivedGuiData receiveGuiData()
     return std::move(received_data);
 }
 
+inline void querySyncForAllGuiElements()
+{
+    DVS_LOG_INFO() << "Waiting for DVS application to send GUI state...";
+    const ReceivedGuiData received_data{receiveGuiData()};
+
+    DVS_LOG_INFO() << "GUI state received!";
+
+    std::map<std::string, GuiElementHandle>& gui_element_handles = internal::getGuiElementHandles();
+
+    size_t idx{1U};
+
+    const std::uint8_t* const raw_data = received_data.data();
+
+    // Receive[0]: Number of gui objects (std::uint8_t)
+    const std::size_t num_gui_objects = static_cast<std::size_t>(raw_data[0]);
+
+    for (std::size_t k = 0; k < num_gui_objects; k++)
+    {
+        // Receive[1]: Gui element type (std::uint8_t)
+        dvs::GuiElementType type = static_cast<dvs::GuiElementType>(raw_data[idx]);
+        idx += sizeof(std::uint8_t);
+
+        // Receive[2]: Handle string length (std::uint8_t)
+        const std::size_t handle_string_length = static_cast<std::size_t>(raw_data[idx]);
+        idx += sizeof(std::uint8_t);
+
+        std::string handle_string = "";
+
+        // Receive[3]: Handle string (variable)
+        for (std::uint16_t i = 0; i < handle_string_length; i++)
+        {
+            handle_string.push_back(raw_data[idx]);
+            idx++;
+        }
+
+        std::uint16_t size_of_current_gui_element;
+
+        // Receive[4]: Size of current gui element (std::uint16_t)
+        std::memcpy(&size_of_current_gui_element, raw_data + idx, sizeof(std::uint16_t));
+        idx += sizeof(std::uint16_t);
+
+        // Receive[5]: Gui element data (variable)
+        const std::uint8_t* const gui_element_data = raw_data + idx;
+
+        gui_element_handles[handle_string] = GuiElementHandle{handle_string, type, gui_element_data};
+    }
+
+    /*
+    Client application starts before dvs:
+
+    Dvs starts before client application:
+    */
+
+    // usleep(100000);
+}
+
 class ParsedGuiData
 {
 private:
@@ -1403,21 +1477,39 @@ public:
     }
 };
 
-inline void callGuiCallbackFunction(const std::string& handle_string)
+inline void updateGuiState(const std::string& handle_string, const ReceivedGuiData& received_data)
+{
+    std::map<std::string, GuiElementHandle>& gui_element_handles = internal::getGuiElementHandles();
+
+    if (gui_element_handles.find(handle_string) == gui_element_handles.end())
+    {
+        DVS_LOG_WARNING() << "Gui element with name " << handle_string << " does not exists!";
+        return;
+    }
+
+    // gui_element_handles[handle_string] = gui_element_handle;
+}
+
+inline void callGuiCallbackFunction(const ParsedGuiData& parsed_gui_data)
 {
     std::map<std::string, GuiCallbackFunction>& gui_callbacks = internal::getGuiCallbacks();
 
+    const std::string handle_string{parsed_gui_data.getHandleString()};
+
     if (gui_callbacks.find(handle_string) == gui_callbacks.end())
     {
+        // TODO: Not necessarily error that there is no CB function?
         DVS_LOG_WARNING() << "Gui callback with name " << handle_string << " does not exists!";
         return;
     }
 
-    gui_callbacks[handle_string]("Some data!");
+    // gui_callbacks[handle_string](parsed_gui_data);
 }
 
 inline void startGuiReceiveThread()
 {
+    querySyncForAllGuiElements();  // TODO: Should run in its own thread?
+
     std::thread gui_receive_thread([]() {
         while (true)
         {
@@ -1431,7 +1523,7 @@ inline void startGuiReceiveThread()
             ParsedGuiData parsed_gui_data{received_data};
 
             std::cout << "Handle string: \"" << parsed_gui_data.getHandleString() << "\"" << std::endl;
-            callGuiCallbackFunction(parsed_gui_data.getHandleString());
+            callGuiCallbackFunction(parsed_gui_data);
         }
     });
 
@@ -1440,14 +1532,15 @@ inline void startGuiReceiveThread()
     std::thread dvs_application_heart_beat_monitor_threadd([]() {
         while (true)
         {
+            // TODO: If dvs is not running, kill gui_receive_thread and call querySyncForAllGuiElements again
             usleep(1000U * 1000U);
             if (isDvsRunning())
             {
-                DVS_LOG_INFO() << "DVS is running!";
+                // DVS_LOG_INFO() << "DVS is running!";
             }
             else
             {
-                DVS_LOG_ERROR() << "DVS is not running!";
+                // DVS_LOG_ERROR() << "DVS is not running!";
             }
         }
     });

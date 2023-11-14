@@ -1,5 +1,8 @@
 #include "gui_window.h"
 
+#include <ctime>
+#include <iomanip>
+
 #include "dvs/internal.h"
 #include "events.h"
 #include "globals.h"
@@ -9,34 +12,6 @@
 namespace element_number_counter
 {
 int getNextFreeElementNumber();
-}
-
-ButtonGuiElement::ButtonGuiElement(
-    wxFrame* parent, const std::string& handle_string, const wxWindowID id, const wxPoint& pos, const wxSize& size)
-    : wxButton(parent, wxID_ANY, handle_string, pos, size), handle_string_{handle_string}
-{
-    this->Bind(wxEVT_LEFT_DOWN, &ButtonGuiElement::mouseLeftPressed, this);
-}
-
-void ButtonGuiElement::mouseLeftPressed(wxMouseEvent& event)
-{
-    std::cout << "Button pressed!" << std::endl;
-
-    if (handle_string_.length() >= 256U)
-    {
-        throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
-    }
-
-    const std::uint8_t handle_string_length = handle_string_.length();
-
-    const std::uint64_t num_bytes_to_send = handle_string_length + sizeof(std::uint8_t);
-
-    FillableUInt8Array output_array{num_bytes_to_send};
-
-    output_array.fillWithStaticType(handle_string_length);
-    output_array.fillWithDataFromPointer(handle_string_.data(), handle_string_.length());
-
-    sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
 }
 
 GuiWindow::GuiWindow(
@@ -83,8 +58,6 @@ GuiWindow::GuiWindow(
     updateLabel();
 
     Show();
-
-    button_ = new ButtonGuiElement(this, "button0", wxID_ANY, wxPoint(0, 0), wxSize(100, 100));
 
     if (window_settings.tabs.size() == 0)
     {
@@ -286,6 +259,32 @@ std::vector<ApplicationGuiElement*> GuiWindow::getGuiElements() const
     return gui_elements;
 }
 
+std::vector<ApplicationGuiElement*> GuiWindow::getPlotPanes() const
+{
+    std::vector<ApplicationGuiElement*> plot_panes;
+
+    for (const auto& tab : tabs_)
+    {
+        std::vector<ApplicationGuiElement*> tab_plot_panes = tab->getPlotPanes();
+        plot_panes.insert(plot_panes.end(), tab_plot_panes.begin(), tab_plot_panes.end());
+    }
+
+    return plot_panes;
+}
+
+std::vector<ApplicationGuiElement*> GuiWindow::getAllGuiElements() const
+{
+    std::vector<ApplicationGuiElement*> gui_elements;
+
+    for (const auto& tab : tabs_)
+    {
+        std::vector<ApplicationGuiElement*> tab_gui_elements = tab->getAllGuiElements();
+        gui_elements.insert(gui_elements.end(), tab_gui_elements.begin(), tab_gui_elements.end());
+    }
+
+    return gui_elements;
+}
+
 ApplicationGuiElement* GuiWindow::getGuiElement(const std::string& element_handle_string) const
 {
     ApplicationGuiElement* ge;
@@ -443,6 +442,41 @@ void GuiWindow::OnSize(wxSizeEvent& event)
 int GuiWindow::getCallbackId() const
 {
     return callback_id_;
+}
+
+void GuiWindow::screenshot(const std::string& base_path)
+{
+    Raise();
+    wxScreenDC dc_screen;
+
+    wxCoord screen_width, screen_height;
+    dc_screen.GetSize(&screen_width, &screen_height);
+
+    const wxSize window_size = this->GetSize();
+    const wxPoint window_pos = this->GetPosition();
+
+    wxBitmap screenshot(screen_width, screen_height, -1);
+
+    wxMemoryDC mem_dc;
+    mem_dc.SelectObject(screenshot);
+
+    mem_dc.StretchBlit(0, 0, screen_width, screen_height, &dc_screen, 0, 0, screen_width, screen_height);
+    mem_dc.SelectObject(wxNullBitmap);
+
+    wxImage image = screenshot.ConvertToImage();
+
+    const wxRect rect(window_pos.x, window_pos.y, window_size.GetWidth(), window_size.GetHeight());
+
+    wxImage cropped_image = image.GetSubImage(rect);
+
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    std::stringstream ss;
+    ss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
+
+    const std::string file_name = base_path + "Screenshot_" + ss.str() + "_" + name_ + ".png";
+    cropped_image.SaveFile(file_name, wxBITMAP_TYPE_PNG);
 }
 
 void GuiWindow::updateLabel()

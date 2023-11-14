@@ -4,7 +4,7 @@
 #include <complex>
 #include <random>
 
-#include "args.h"
+#include "debug_value_args.h"
 
 namespace small
 {
@@ -969,8 +969,8 @@ void testLinesAndDots()
     const std::string project_file_path = "../../project_files/lines_and_dots.dvs";
     openProjectFile(project_file_path);
 
-    const double size_bias = getArg<double>("size-bias", 3.0);
-    const double size_multiplier = getArg<double>("size-multiplier", 10.0);
+    const double size_bias = debug_value_args::getArg<double>("size-bias", 3.0);
+    const double size_multiplier = debug_value_args::getArg<double>("size-multiplier", 10.0);
 
     const size_t num_elements = 200U, num_its = 500U;
     Vector<double> x(num_elements), y(num_elements), z(num_elements), vx(num_elements), vy(num_elements),
@@ -993,7 +993,7 @@ void testLinesAndDots()
         point_sizes(k) = (static_cast<double>(rand() % 1001) / 1000.0) * size_multiplier + size_bias;
     }
 
-    const double thresh = getArg<double>("dist-thresh", 0.05);
+    const double thresh = debug_value_args::getArg<double>("dist-thresh", 0.05);
 
     setCurrentElement("p_view_0");
     clearView();

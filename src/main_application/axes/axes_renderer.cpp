@@ -680,7 +680,6 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     if (axes_square_)
     {
         // TODO: Currently broken when the ratio between different axes are large, like for imShow
-        /*
         glm::mat4 scale_mat_square = glm::mat4(1.0f);
 
         const float scale_factor = std::min(width_, height_) * 0.003f;
@@ -692,6 +691,5 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
         scale_mat_square = glm::transpose(model_mat_) * scale_mat_square * model_mat_;
 
         window_scale_mat_ = scale_mat_square * window_scale_mat_;
-        */
     }
 }

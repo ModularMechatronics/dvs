@@ -49,9 +49,9 @@ void MainWindow::setCurrentElement(const ReceivedData& received_data)
     {
         // TODO: Create new window with gui element or something
     }
-    if (gui_elements_.count(element_name_str) > 0)
+    if (plot_panes_.count(element_name_str) > 0)
     {
-        current_gui_element_ = gui_elements_[element_name_str];
+        current_gui_element_ = plot_panes_[element_name_str];
         // current_gui_element_set_ = true;
     }
     else
@@ -250,6 +250,13 @@ void MainWindow::manageReceivedData(ReceivedData& received_data)
                 hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>().data;
             open_project_file_queued_ = true;
         }
+        else if (fcn == Function::SCREENSHOT)
+        {
+            const CommunicationHeader& hdr = received_data.getCommunicationHeader();
+            std::string screenshot_base_path =
+                hdr.get(CommunicationHeaderObjectType::SCREENSHOT_BASE_PATH).as<properties::Name>().data;
+            performScreenshot(screenshot_base_path);
+        }
         else if (isGuiRelatedFunction(fcn))
         {
             transmitBackGuiData(received_data);
@@ -290,9 +297,9 @@ void MainWindow::createNewElement(const CommunicationHeader& hdr)
     const properties::Name elem_name = elem_obj.as<properties::Name>();
     const std::string element_name_str = elem_name.data;
 
-    if (gui_elements_.count(element_name_str) > 0)
+    if (plot_panes_.count(element_name_str) > 0)
     {
-        current_gui_element_ = gui_elements_[element_name_str];
+        current_gui_element_ = plot_panes_[element_name_str];
         // current_gui_element_set_ = true;
     }
     else
@@ -406,16 +413,16 @@ void MainWindow::receiveData()
             {
                 const std::string element_handle_string = qa.first;
 
-                if (gui_elements_.count(element_handle_string) > 0U)
+                if (plot_panes_.count(element_handle_string) > 0U)
                 {
-                    ApplicationGuiElement* gui_element = gui_elements_[element_handle_string];
-                    gui_element->pushQueue(qa.second);
+                    PlotPane* const plot_pane = dynamic_cast<PlotPane*>(plot_panes_[element_handle_string]);
+                    plot_pane->pushQueue(qa.second);
                 }
             }
         }
     }
 
-    for (auto& ge : gui_elements_)
+    for (auto& ge : plot_panes_)
     {
         ge.second->update();
     }

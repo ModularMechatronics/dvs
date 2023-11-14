@@ -105,7 +105,7 @@ inline void sendThroughTcpInterface(const UInt8ArrayView& input_array, const uin
 
     if (connect(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
     {
-        DVS_LOG_WARNING() << "Failed to connect! Is dvs application running?";
+        DVS_LOG_WARNING() << "Failed to connect! Is receiving application running?";
         return;
     }
 

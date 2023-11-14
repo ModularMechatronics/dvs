@@ -34,6 +34,7 @@ enum class CommunicationHeaderObjectType : uint16_t
     TRANSLATION_VECTOR,
     ROTATION_MATRIX,
     PROJECT_FILE_NAME,
+    SCREENSHOT_BASE_PATH,
     TITLE_STRING,
     POS2D,
     FIGURE_NUM,
@@ -143,6 +144,7 @@ enum class Function : uint8_t
     DISABLE_SCALE_ON_ROTATION,
     AXES_SQUARE,
     GET_FLOAT_PARAMETER,
+    SCREENSHOT,
     UNKNOWN
 };
 

@@ -79,10 +79,6 @@ private:
     bool perspective_projection_;
     bool wait_for_flush_;
 
-    int minimum_x_pos_;
-    int minimum_y_pos_;
-
-    wxSize parent_size_;  // Pixels
     Vec2f mouse_pos_at_press_;
     Vec2f current_mouse_pos_;
     Vec2f previous_mouse_pos_;
@@ -117,7 +113,7 @@ private:
                      const std::shared_ptr<const ConvertedDataBase>& converted_data);
 
     wxGLAttributes getGLAttributes() const;
-    const std::shared_ptr<PlotPaneSettings> plot_pane_settings_;
+    std::shared_ptr<PlotPaneSettings> plot_pane_settings_;
 
 public:
     PlotPane(wxNotebookPage* parent,  // TODO: wxNotebookPage is obsolete, should be wxWindow/wxFrame?
@@ -134,7 +130,7 @@ public:
     int getHeight();
 
     void setHandleString(const std::string& new_name) override;
-    void pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue) override;
+    void pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue);
 
     void render(wxPaintEvent& evt);
 
@@ -142,16 +138,14 @@ public:
     void setMinXPos(const int min_x_pos) override;
     void setSize(const wxSize& new_size);
     void updateSizeFromParent(const wxSize& parent_size) override;
-    void raise() override;
-    void lower() override;
     void addSettingsData(const ReceivedData& received_data,
                          const PlotObjectAttributes& plot_object_attributes,
                          const PropertiesData& properties_data);
-    void show() override;
-    void hide() override;
-    void destroy() override;
+    // void show() override;
+    // void hide() override;
+    // void destroy() override;
     void refresh() override;
-    void setMouseInteractionType(const MouseInteractionType mit) override;
+    void setMouseInteractionType(const MouseInteractionType mit);
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
     void waitForFlush();

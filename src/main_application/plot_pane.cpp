@@ -105,16 +105,6 @@ wxGLContext* PlotPane::getContext()
 #endif
 }
 
-void PlotPane::raise()
-{
-    Raise();
-}
-
-void PlotPane::lower()
-{
-    Lower();
-}
-
 template <typename T> T createShader(const std::string& base_path, const std::string& shader_name)
 {
     const std::string v_path = base_path + shader_name + ".vs";
@@ -224,7 +214,7 @@ void PlotPane::setSize(const wxSize& new_size)
     this->SetSize(new_size);
 }
 
-void PlotPane::show()
+/*void PlotPane::show()
 {
     this->Show();
 }
@@ -232,7 +222,7 @@ void PlotPane::show()
 void PlotPane::hide()
 {
     this->Hide();
-}
+}*/
 
 void PlotPane::bindCallbacks()
 {
@@ -431,10 +421,10 @@ void PlotPane::toggleProjectionMode()
     }
 }*/
 
-void PlotPane::destroy()
-{
-    this->Destroy();
-}
+// void PlotPane::destroy()
+// {
+//     this->Destroy();
+// }
 
 void PlotPane::setHandleString(const std::string& new_name)
 {

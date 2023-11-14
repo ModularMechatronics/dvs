@@ -23,7 +23,7 @@
 #include "close_button.h"
 #include "communication/data_receiver.h"
 #include "communication/received_data.h"
-#include "dvs/gui_api.h"
+// #include "dvs/gui_api.h"
 #include "events.h"
 #include "gui_element.h"
 #include "input_data.h"
@@ -46,6 +46,7 @@ private:
     std::mutex receive_mtx_;
 
     std::thread* tcp_receive_thread_;
+    std::map<std::string, ApplicationGuiElement*> plot_panes_;
     std::map<std::string, ApplicationGuiElement*> gui_elements_;
 
     std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
@@ -114,6 +115,10 @@ private:
     void saveProjectAs();
     void saveProjectAsCallback(wxCommandEvent& event);
     void openExistingFile(const std::string& file_path);
+
+    void updateClientApplicationAboutGuiState() const;
+
+    void performScreenshot(const std::string& screenshot_base_path);
 
     void removeAllWindows();
     void setupWindows(const ProjectSettings& project_settings);
