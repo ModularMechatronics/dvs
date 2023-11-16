@@ -379,6 +379,7 @@ private:
 class ButtonGuiElement : public wxButton, public ApplicationGuiElement
 {
 private:
+    bool is_pressed_;
 public:
     ButtonGuiElement(wxFrame* parent,
                      const std::shared_ptr<ElementSettings>& element_settings,
@@ -391,6 +392,7 @@ public:
                      const wxSize& size);
 
     void mouseLeftPressed(wxMouseEvent& event);
+    void mouseLeftReleased(wxMouseEvent& event);
 
     void setMinXPos(const int min_x_pos) override
     {
@@ -433,7 +435,13 @@ public:
         setElementPositionAndSize();
     }
 
-    virtual void getGuiElementState() {}
+    std::shared_ptr<GuiElementState> getGuiElementState() const override
+    {
+        std::shared_ptr<ButtonState> button_state = std::make_shared<ButtonState>(element_settings_->handle_string,
+                                                                                   is_pressed_);
+
+        return button_state;
+    }
 };
 
 class SliderGuiElement : public wxSlider, public ApplicationGuiElement
@@ -454,14 +462,14 @@ public:
 
     std::shared_ptr<GuiElementState> getGuiElementState() const override
     {
-        std::shared_ptr<SliderState> slider_state = std::make_shared<SliderState>();
-        slider_state->type = dvs::GuiElementType::Slider;
+        std::shared_ptr<SliderState> slider_state = std::make_shared<SliderState>(
+            element_settings_->handle_string,
+            std::dynamic_pointer_cast<SliderSettings>(element_settings_)->min_value,
+            std::dynamic_pointer_cast<SliderSettings>(element_settings_)->max_value,
+            std::dynamic_pointer_cast<SliderSettings>(element_settings_)->step_size,
+            this->GetValue(),
+            true);
 
-        slider_state->handle_string = element_settings_->handle_string;
-        slider_state->min_value = std::dynamic_pointer_cast<SliderSettings>(element_settings_)->min_value;
-        slider_state->max_value = std::dynamic_pointer_cast<SliderSettings>(element_settings_)->max_value;
-        slider_state->step_size = std::dynamic_pointer_cast<SliderSettings>(element_settings_)->step_size;
-        slider_state->value = this->GetValue();
         return slider_state;
     }
 
@@ -563,6 +571,14 @@ public:
     }
 
     void checkBoxCallback(wxCommandEvent& event);
+
+    std::shared_ptr<GuiElementState> getGuiElementState() const override
+    {
+        std::shared_ptr<CheckboxState> button_state = std::make_shared<CheckboxState>(element_settings_->handle_string,
+                                                                                   this->GetValue());
+
+        return button_state;
+    }
 };
 
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

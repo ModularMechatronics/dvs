@@ -1,0 +1,175 @@
+{
+    "windows": [
+        {
+            "height": 323.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "elements": [
+                        {
+                            "handle_string": "p_view_0",
+                            "height": 0.3903394341468811,
+                            "type": "PLOT_PANE",
+                            "width": 0.29243120551109314,
+                            "x": 0.6020641922950745,
+                            "y": 0.5208877325057983
+                        },
+                        {
+                            "handle_string": "button0",
+                            "element_specific_settings": {
+                                "label": "Start timer"
+                            },
+                            "type": "BUTTON",
+                            "height": 0.2,
+                            "width": 0.2,
+                            "x": 0.05,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "button1",
+                            "element_specific_settings": {
+                                "label": "Stop timer"
+                            },
+                            "type": "BUTTON",
+                            "height": 0.2,
+                            "width": 0.2,
+                            "x": 0.4,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "slider0",
+                            "type": "SLIDER",
+                            "element_specific_settings": {
+                                "min": 0,
+                                "max": 100,
+                                "step_size": 1,
+                                "init_value": 0,
+                                "style": "horizontal"
+                            },
+                            "height": 0.05,
+                            "width": 0.3,
+                            "x": 0.0,
+                            "y": 0.1
+                        },
+                        {
+                            "handle_string": "check_box0",
+                            "element_specific_settings": {
+                                "label": "Check BoxButton"
+                            },
+                            "type": "CHECK_BOX",
+                            "height": 0.1,
+                            "width": 0.3,
+                            "x": 0.0,
+                            "y": 0.2
+                        },
+                        {
+                            "handle_string": "editable_text0",
+                            "element_specific_settings": {
+                                "init_value": "Editable Text"
+                            },
+                            "type": "EDITABLE_TEXT",
+                            "height": 0.1,
+                            "width": 0.3,
+                            "x": 0.0,
+                            "y": 0.3
+                        },
+                        {
+                            "handle_string": "drop_down_menu0",
+                            "type": "DROP_DOWN_MENU",
+                            "element_specific_settings": {
+                                "initially_selected_item": "Item X",
+                                "elements": [
+                                    {
+                                        "label": "Item 0"
+                                    },
+                                    {
+                                        "label": "Item 1"
+                                    },
+                                    {
+                                        "label": "Item 2"
+                                    }
+                                ]
+                            },
+                            "height": 0.1,
+                            "width": 0.3,
+                            "x": 0.0,
+                            "y": 0.4
+                        },
+                        {
+                            "handle_string": "list_box0",
+                            "type": "LIST_BOX",
+                            "height": 0.1,
+                            "width": 0.3,
+                            "x": 0.0,
+                            "y": 0.5,
+                            "element_specific_settings": {
+                                "label": "List box 0",
+                                "elements": [
+                                    {
+                                        "label": "Item 0"
+                                    },
+                                    {
+                                        "label": "Item 1"
+                                    },
+                                    {
+                                        "label": "Item 2"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "handle_string": "radio_button_group0",
+                            "type": "RADIO_BUTTON_GROUP",
+                            "element_specific_settings": {
+                                "label": "Radio Button Group",
+                                "elements": [
+                                    {
+                                        "label": "Option 0"
+                                    },
+                                    {
+                                        "label": "Option 1"
+                                    },
+                                    {
+                                        "label": "Option 2"
+                                    }
+                                ]
+                            },
+                            "height": 0.3,
+                            "width": 0.3,
+                            "x": 0.5,
+                            "y": 0.6
+                        },
+                        {
+                            "handle_string": "text_label0",
+                            "type": "TEXT_LABEL",
+                            "element_specific_settings": {
+                                "label": "Text Label"
+                            },
+                            "height": 0.1,
+                            "width": 0.3,
+                            "x": 0.2,
+                            "y": 0.7
+                        }
+                    ],
+                    "name": "primary_view"
+                },
+                {
+                    "elements": [
+                        {
+                            "handle_string": "s_view_2",
+                            "height": 0.6484641432762146,
+                            "type": "PLOT_PANE",
+                            "width": 0.4919724762439728,
+                            "x": 0.4954128563404083,
+                            "y": 0.3071672320365906
+                        }
+                    ],
+                    "name": "secondary_view"
+                }
+            ],
+            "width": 942.0,
+            "x": 0.0,
+            "y": 496.0
+        }
+    ]
+}

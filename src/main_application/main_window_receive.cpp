@@ -257,6 +257,10 @@ void MainWindow::manageReceivedData(ReceivedData& received_data)
                 hdr.get(CommunicationHeaderObjectType::SCREENSHOT_BASE_PATH).as<properties::Name>().data;
             performScreenshot(screenshot_base_path);
         }
+        else if (fcn == Function::QUERY_FOR_SYNC_OF_GUI_DATA)
+        {
+            updateClientApplicationAboutGuiState();
+        }
         else if (isGuiRelatedFunction(fcn))
         {
             transmitBackGuiData(received_data);

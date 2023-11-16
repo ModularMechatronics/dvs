@@ -6,6 +6,7 @@
 #include "advanced_cpp/tests.h"
 #include "basic_c/tests.h"
 #include "basic_cpp/tests.h"
+#include "debug_value_args.h"
 #include "dvs/dvs.h"
 #include "two_way_comm/two_way_comm.h"
 #include "utils.h"
@@ -36,6 +37,8 @@ void displayHelp()
 
 int main(int argc, char* argv[])
 {
+    debug_value_args::parseArgs(argc, argv);
+
     basic_cpp::addTests();
     advanced_cpp::addTests();
     basic_c::addTests();

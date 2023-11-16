@@ -376,14 +376,11 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         pos_y += kMainWindowButtonHeight;
     }
 
-    // updateClientApplicationAboutGuiState();
+    updateClientApplicationAboutGuiState();
 }
 
 void MainWindow::updateClientApplicationAboutGuiState() const
 {
-    // Send to client application
-    // TODO...
-    // Send query for response?
     std::vector<std::shared_ptr<GuiElementState>> gui_elements_state;
 
     std::uint64_t total_num_bytes = 0U;
@@ -395,7 +392,18 @@ void MainWindow::updateClientApplicationAboutGuiState() const
         total_num_bytes += gui_elements_state.back()->getTotalNumBytes();
     }
 
+    total_num_bytes += sizeof(std::uint8_t); // Number of gui elements
+
     FillableUInt8Array output_array{total_num_bytes};
+
+    output_array.fillWithStaticType(static_cast<std::uint8_t>(gui_elements_state.size()));
+
+    for (const auto& ges : gui_elements_state)
+    {
+        ges->serializeToBuffer(output_array);
+    }
+
+    sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
 }
 
 std::vector<std::string> MainWindow::getAllElementNames() const

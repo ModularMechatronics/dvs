@@ -77,7 +77,7 @@ public:
     virtual std::shared_ptr<GuiElementState> getGuiElementState() const
     {
         std::cout << "getGuiElementState() not implemented!" << std::endl;
-        return std::shared_ptr<GuiElementState>();
+        return std::make_shared<GuiElementState>();
     }
 };
 

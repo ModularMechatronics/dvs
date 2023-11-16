@@ -7,8 +7,8 @@
 #include <vector>
 
 #include "dvs/enumerations.h"
-// #include "dvs/gui_api.h"
 #include "dvs/logging.h"
+#include "dvs/fillable_uint8_array.h"
 
 namespace dvs
 {
@@ -18,6 +18,8 @@ namespace internal
 class InternalGuiElementHandle
 {
 private:
+    std::string handle_string_;
+    dvs::GuiElementType type_;
 public:
     InternalGuiElementHandle() {}
 };
@@ -25,13 +27,11 @@ public:
 
 class SliderInternal
 {
-private:
+public:
     std::int32_t min_value;
     std::int32_t max_value;
     std::int32_t step_size;
     std::int32_t value;
-
-    std::string handle_string_;
 
 public:
     SliderInternal() {}
@@ -44,18 +44,33 @@ public:
     }
 };
 
-class Slider
+class SliderHandle
 {
 private:
-    std::int32_t min_value;
-    std::int32_t max_value;
-    std::int32_t step_size;
-    std::int32_t value;
 
     std::shared_ptr<SliderInternal> internal_ptr_;
 
 public:
-    Slider() {}
+    SliderHandle() {}
+    std::int32_t getMinValue() const
+    {
+        return internal_ptr_->min_value;
+    }
+
+    std::int32_t getMaxValue() const
+    {
+        return internal_ptr_->max_value;
+    }
+
+    std::int32_t getStepSize() const
+    {
+        return internal_ptr_->step_size;
+    }
+
+    std::int32_t getValue() const
+    {
+        return internal_ptr_->value;
+    }
 };
 
 class GuiElementHandle
@@ -70,7 +85,7 @@ public:
     GuiElementHandle() {}
     GuiElementHandle(const std::string& handle_string,
                      const dvs::GuiElementType type,
-                     const std::uint8_t* const raw_gui_data)
+                     const UInt8ArrayView& data_view)
         : handle_string_{handle_string}, type_{type}
     {
     }

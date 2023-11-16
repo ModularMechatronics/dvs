@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 
+#include "debug_value_args.h"
 #include "tests.h"
 
 using StringFunctionMap = std::map<std::string, std::function<void()>>;

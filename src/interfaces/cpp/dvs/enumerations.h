@@ -146,6 +146,7 @@ enum class Function : uint8_t
     AXES_SQUARE,
     GET_FLOAT_PARAMETER,
     SCREENSHOT,
+    QUERY_FOR_SYNC_OF_GUI_DATA,
     UNKNOWN
 };
 

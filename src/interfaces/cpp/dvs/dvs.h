@@ -1392,7 +1392,36 @@ inline ReceivedGuiData receiveGuiData()
     return std::move(received_data);
 }
 
-inline void querySyncForAllGuiElements()
+inline void populateGuiElementWithData(const dvs::GuiElementType type, const std::string& handle_string, const UInt8ArrayView& data_view)
+{
+    std::map<std::string, GuiElementHandle>& gui_element_handles = internal::getGuiElementHandles();
+
+    if(type == dvs::GuiElementType::Button)
+    {
+        GuiElementHandle gui_element_handle{handle_string, type, data_view};
+
+        if(gui_element_handles.count(handle_string) == 0U)
+        {
+            // Does not exist
+        }
+        else
+        {
+            // Exists
+        }
+        
+        std::cout << "Creating Button from sync!" << std::endl;
+    }
+    else if(type == dvs::GuiElementType::CheckBox)
+    {
+        std::cout << "Creating Checkbox from sync!" << std::endl;
+    }
+    else if(type == dvs::GuiElementType::Slider)
+    {
+        std::cout << "Creating Slider from sync!" << std::endl;
+    }
+}
+
+inline void waitForSyncForAllGuiElements()
 {
     DVS_LOG_INFO() << "Waiting for DVS application to send GUI state...";
     const ReceivedGuiData received_data{receiveGuiData()};
@@ -1407,15 +1436,16 @@ inline void querySyncForAllGuiElements()
 
     // Receive[0]: Number of gui objects (std::uint8_t)
     const std::size_t num_gui_objects = static_cast<std::size_t>(raw_data[0]);
+    std::cout << "Number of gui elements: " << num_gui_objects << std::endl;
 
     for (std::size_t k = 0; k < num_gui_objects; k++)
     {
         // Receive[1]: Gui element type (std::uint8_t)
-        dvs::GuiElementType type = static_cast<dvs::GuiElementType>(raw_data[idx]);
+        const dvs::GuiElementType type = static_cast<dvs::GuiElementType>(raw_data[idx]);
         idx += sizeof(std::uint8_t);
 
         // Receive[2]: Handle string length (std::uint8_t)
-        const std::size_t handle_string_length = static_cast<std::size_t>(raw_data[idx]);
+        const std::uint16_t handle_string_length = static_cast<std::uint16_t>(raw_data[idx]);
         idx += sizeof(std::uint8_t);
 
         std::string handle_string = "";
@@ -1431,12 +1461,18 @@ inline void querySyncForAllGuiElements()
 
         // Receive[4]: Size of current gui element (std::uint16_t)
         std::memcpy(&size_of_current_gui_element, raw_data + idx, sizeof(std::uint16_t));
-        idx += sizeof(std::uint16_t);
+        idx += sizeof(std::uint32_t);
+        
+        std::cout << "Size of current gui element: " << size_of_current_gui_element << std::endl;
+
+        populateGuiElementWithData(type, handle_string, UInt8ArrayView{raw_data + idx, size_of_current_gui_element});
+
+        idx += size_of_current_gui_element;
 
         // Receive[5]: Gui element data (variable)
-        const std::uint8_t* const gui_element_data = raw_data + idx;
+        // const std::uint8_t* const gui_element_data = raw_data + idx;
 
-        gui_element_handles[handle_string] = GuiElementHandle{handle_string, type, gui_element_data};
+        // gui_element_handles[handle_string] = GuiElementHandle{handle_string, type, gui_element_data};
     }
 
     /*
@@ -1506,13 +1542,37 @@ inline void callGuiCallbackFunction(const ParsedGuiData& parsed_gui_data)
     // gui_callbacks[handle_string](parsed_gui_data);
 }
 
+inline void queryForSyncOfGuiData()
+{
+    internal::CommunicationHeader hdr{internal::Function::QUERY_FOR_SYNC_OF_GUI_DATA};
+
+    internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
 inline void startGuiReceiveThread()
 {
-    querySyncForAllGuiElements();  // TODO: Should run in its own thread?
+    if(isDvsRunning())
+    {
+        std::thread query_thread([]() {
+            // Sleep 100ms in order for client execution to create the waiting
+            // TCP connection that receives the data GUI from the DVS application
+            usleep(1000 * 100);
+            queryForSyncOfGuiData();
+        
+        });
+        query_thread.detach();
+    }
+
+    waitForSyncForAllGuiElements();  // TODO: Should run in its own thread?
 
     std::thread gui_receive_thread([]() {
         while (true)
         {
+            // TODO: Fix case where client app has already been updated once,
+            // and then dvs restarts and tries to submit gui data again.
+            // Preferebly that should just be handled by this loop, as
+            // any normal gui element update.
+
             // receiveGuiData is a blocking method
             const ReceivedGuiData received_data{receiveGuiData()};
 
@@ -1529,10 +1589,10 @@ inline void startGuiReceiveThread()
 
     gui_receive_thread.detach();
 
-    std::thread dvs_application_heart_beat_monitor_threadd([]() {
+    std::thread dvs_application_heart_beat_monitor_thread([]() {
         while (true)
         {
-            // TODO: If dvs is not running, kill gui_receive_thread and call querySyncForAllGuiElements again
+            // TODO: If dvs is not running, kill gui_receive_thread and call waitForSyncForAllGuiElements again
             usleep(1000U * 1000U);
             if (isDvsRunning())
             {
@@ -1545,7 +1605,7 @@ inline void startGuiReceiveThread()
         }
     });
 
-    dvs_application_heart_beat_monitor_threadd.detach();
+    dvs_application_heart_beat_monitor_thread.detach();
 }
 
 // const float radio_value = dvs::getValue<float>("slider0")

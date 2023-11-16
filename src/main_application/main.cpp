@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "debug_value_args.h"
 #include "dvs/logging.h"
 #include "main_window.h"
 
@@ -19,6 +20,8 @@ IMPLEMENT_APP(MainApp)
 
 bool MainApp::OnInit()
 {
+    debug_value_args::parseArgs(argc, argv);
+
     wxImage::AddHandler(new wxPNGHandler);
     wxImage::AddHandler(new wxICOHandler);
 
