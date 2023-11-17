@@ -28,9 +28,6 @@
 [submodule "src/externals/reactphysics3d"]
 	path = src/externals/reactphysics3d
 	url = https://github.com/DanielChappuis/reactphysics3d.git
-[submodule "src/externals/dso"]
-	path = src/externals/dso
-	url = https://github.com/JakobEngel/dso.git
 [submodule "src/externals/pangolin"]
 	path = src/externals/pangolin
 	url = https://github.com/stevenlovegrove/Pangolin.git
