@@ -18,6 +18,8 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
 {
     parent_size_ = parent->GetSize();
     is_pressed_ = false;
+    minimum_x_pos_ = 70;
+    minimum_y_pos_ = 30;
     this->Bind(wxEVT_LEFT_DOWN, &ButtonGuiElement::mouseLeftPressed, this);
     this->Bind(wxEVT_LEFT_UP, &ButtonGuiElement::mouseLeftReleased, this);
 }
@@ -99,6 +101,9 @@ SliderGuiElement::SliderGuiElement(wxFrame* parent,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification), slider_value_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->init_value}
 {
+    minimum_x_pos_ = 70;
+    minimum_y_pos_ = 30;
+
     parent_size_ = parent->GetSize();
     Bind(wxEVT_SLIDER, &SliderGuiElement::sliderEvent, this);
 }
@@ -158,6 +163,9 @@ CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification)
 {
+    minimum_x_pos_ = 70;
+    minimum_y_pos_ = 30;
+
     parent_size_ = parent->GetSize();
     this->Bind(wxEVT_CHECKBOX, &CheckboxGuiElement::checkBoxCallback, this);
 }

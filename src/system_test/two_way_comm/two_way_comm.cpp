@@ -30,15 +30,19 @@ void firstTest()
     // dvs::registerGuiCallback("slider0", Button::InteractionType::DRAGGED, lambda...)
 
     dvs::registerGuiCallback("slider0", [](const dvs::SliderHandle& gui_element_handle) -> void {
-        std::cout << "callback function: \"slider0\" value: " << gui_element_handle.getValue() << std::endl;
+        std::cout << "Callback function: \"slider0\" value: " << gui_element_handle.getValue() << std::endl;
     });
 
     dvs::registerGuiCallback("button0", [](const dvs::ButtonHandle& gui_element_handle) -> void {
-        std::cout << "callback function: \"button0\" pressed!" << std::endl;
+        std::cout << "Callback function: \"button0\" pressed: " << gui_element_handle.getIsPressed() << std::endl;
+    });
+
+    dvs::registerGuiCallback("button1", [](const dvs::ButtonHandle& gui_element_handle) -> void {
+        std::cout << "Callback function: \"button1\" pressed: " << gui_element_handle.getIsPressed() << std::endl;
     });
 
     dvs::registerGuiCallback("checkbox0", [](const dvs::CheckboxHandle& gui_element_handle) -> void {
-        std::cout << "callback function: \"checkbox0\" pressed!" << std::endl;
+        std::cout << "Callback function: \"checkbox0\" pressed: " << gui_element_handle.getIsChecked() << std::endl;
     });
 
     dvs::startGuiReceiveThread();
