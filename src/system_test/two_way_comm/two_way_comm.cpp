@@ -31,31 +31,31 @@ dvs::registerGuiCallback("button0", [](const dvs::ButtonElementHandle& gui_eleme
         // std::cout << "callback function: \"button0\" pressed!" << std::endl;
     });
 
-template <typename T>
-void registerGuiCallback_new(const std::string& handle_string, std::function<void(const GuiElementHandle&)> callback_function);
-
-template <>
-void registerGuiCallback_new(const std::string& handle_string, std::function<void(const SliderHandle&)> callback_function) {}
-template <>
-void registerGuiCallback_new(const std::string& handle_string, std::function<void(const ButtonHandle&)> callback_function) {}
-template <>
-void registerGuiCallback_new(const std::string& handle_string, std::function<void(const CheckboxHandle&)> callback_function) {}
-
 */
-
-
 
 void firstTest()
 {
     std::cout << "Starting GUI thread!" << std::endl;
 
     // Synchronous update
-    // dvs::registerGuiCallback("button0", Button::Interaction::PRESSED, lambda...)
-    // dvs::registerGuiCallback("button0", Button::Interaction::RELEASED, lambda...)
+    // dvs::registerGuiCallback("button0", Button::InteractionType::PRESSED, lambda...)
+    // dvs::registerGuiCallback("button0", Button::InteractionType::RELEASED, lambda...)
 
-    // dvs::registerGuiCallback("slider0", Button::Interaction::PRESSED, lambda...)
-    // dvs::registerGuiCallback("slider0", Button::Interaction::RELEASED, lambda...)
-    // dvs::registerGuiCallback("slider0", Button::Interaction::DRAGGED, lambda...)
+    // dvs::registerGuiCallback("slider0", Button::InteractionType::PRESSED, lambda...)
+    // dvs::registerGuiCallback("slider0", Button::InteractionType::RELEASED, lambda...)
+    // dvs::registerGuiCallback("slider0", Button::InteractionType::DRAGGED, lambda...)
+
+    dvs::registerGuiCallback_new("slider0", [](const dvs::SliderHandle& gui_element_handle) -> void {
+        std::cout << "callback function: \"slider0\" value: " << gui_element_handle.getValue() << std::endl;
+    });
+
+    dvs::registerGuiCallback_new("button0", [](const dvs::ButtonHandle& gui_element_handle) -> void {
+        std::cout << "callback function: \"button0\" pressed!" << std::endl;
+    });
+
+    dvs::registerGuiCallback_new("checkbox0", [](const dvs::CheckboxHandle& gui_element_handle) -> void {
+        std::cout << "callback function: \"checkbox0\" pressed!" << std::endl;
+    });
 
     // dvs::registerGuiCallback("button0", [](const dvs::GuiElementHandle& gui_element_handle) -> void {
     //     // std::cout << "callback function: \"button0\" pressed!" << std::endl;

@@ -5,6 +5,7 @@
 
 #include <functional>
 #include <map>
+#include <utility>
 
 // #include "dvs/gui_api.h"
 #include "dvs/gui_api2.h"
@@ -1236,7 +1237,6 @@ inline void spawn()
     }
 }
 
-// using GuiCallbackFunction = std::function<void(std::string)>;
 using GuiCallbackFunction = std::function<void(const GuiElementHandle&)>;
 
 namespace internal
@@ -1248,9 +1248,9 @@ inline std::map<std::string, GuiCallbackFunction>& getGuiCallbacks()
     return gui_callbacks;
 }
 
-inline std::map<std::string, GuiElementHandle>& getGuiElementHandles()
+inline std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>& getGuiElementHandles()
 {
-    static std::map<std::string, GuiElementHandle> gui_element_handles;
+    static std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>> gui_element_handles;
 
     return gui_element_handles;
 }
@@ -1394,30 +1394,35 @@ inline ReceivedGuiData receiveGuiData()
 
 inline void populateGuiElementWithData(const dvs::GuiElementType type, const std::string& handle_string, const UInt8ArrayView& data_view)
 {
-    std::map<std::string, GuiElementHandle>& gui_element_handles = internal::getGuiElementHandles();
+    std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>& gui_element_handles = internal::getGuiElementHandles();
 
-    if(type == dvs::GuiElementType::Button)
+    if(gui_element_handles.count(handle_string) > 0U)
     {
-        GuiElementHandle gui_element_handle{handle_string, type, data_view};
-
-        if(gui_element_handles.count(handle_string) == 0U)
+        if(gui_element_handles[handle_string]->getType() != type)
         {
-            // Does not exist
+            DVS_LOG_ERROR() << "Gui element with handle string " << handle_string << " already exists, but has different type!";
+            return;
         }
-        else
+        std::cout << "Updating existing element: " << handle_string << std::endl;
+        gui_element_handles[handle_string]->updateState(data_view);
+    }
+    else
+    {
+        if(type == dvs::GuiElementType::Button)
         {
-            // Exists
+            gui_element_handles[handle_string] = std::make_shared<internal::ButtonInternal>(handle_string, data_view);
+            std::cout << "Creating Button from sync!" << std::endl;
         }
-        
-        std::cout << "Creating Button from sync!" << std::endl;
-    }
-    else if(type == dvs::GuiElementType::CheckBox)
-    {
-        std::cout << "Creating Checkbox from sync!" << std::endl;
-    }
-    else if(type == dvs::GuiElementType::Slider)
-    {
-        std::cout << "Creating Slider from sync!" << std::endl;
+        else if(type == dvs::GuiElementType::CheckBox)
+        {
+            gui_element_handles[handle_string] = std::make_shared<internal::CheckboxInternal>(handle_string, data_view);
+            std::cout << "Creating Checkbox from sync!" << std::endl;
+        }
+        else if(type == dvs::GuiElementType::Slider)
+        {
+            gui_element_handles[handle_string] = std::make_shared<internal::SliderInternal>(handle_string, data_view);
+            std::cout << "Creating Slider from sync!" << std::endl;
+        }
     }
 }
 
@@ -1428,15 +1433,12 @@ inline void waitForSyncForAllGuiElements()
 
     DVS_LOG_INFO() << "GUI state received!";
 
-    std::map<std::string, GuiElementHandle>& gui_element_handles = internal::getGuiElementHandles();
-
     size_t idx{1U};
 
     const std::uint8_t* const raw_data = received_data.data();
 
     // Receive[0]: Number of gui objects (std::uint8_t)
     const std::size_t num_gui_objects = static_cast<std::size_t>(raw_data[0]);
-    std::cout << "Number of gui elements: " << num_gui_objects << std::endl;
 
     for (std::size_t k = 0; k < num_gui_objects; k++)
     {
@@ -1462,26 +1464,12 @@ inline void waitForSyncForAllGuiElements()
         // Receive[4]: Size of current gui element (std::uint16_t)
         std::memcpy(&size_of_current_gui_element, raw_data + idx, sizeof(std::uint16_t));
         idx += sizeof(std::uint32_t);
-        
-        std::cout << "Size of current gui element: " << size_of_current_gui_element << std::endl;
 
+        // Receive[5]: Gui element data (variable)
         populateGuiElementWithData(type, handle_string, UInt8ArrayView{raw_data + idx, size_of_current_gui_element});
 
         idx += size_of_current_gui_element;
-
-        // Receive[5]: Gui element data (variable)
-        // const std::uint8_t* const gui_element_data = raw_data + idx;
-
-        // gui_element_handles[handle_string] = GuiElementHandle{handle_string, type, gui_element_data};
     }
-
-    /*
-    Client application starts before dvs:
-
-    Dvs starts before client application:
-    */
-
-    // usleep(100000);
 }
 
 class ParsedGuiData
@@ -1513,19 +1501,6 @@ public:
     }
 };
 
-inline void updateGuiState(const std::string& handle_string, const ReceivedGuiData& received_data)
-{
-    std::map<std::string, GuiElementHandle>& gui_element_handles = internal::getGuiElementHandles();
-
-    if (gui_element_handles.find(handle_string) == gui_element_handles.end())
-    {
-        DVS_LOG_WARNING() << "Gui element with name " << handle_string << " does not exists!";
-        return;
-    }
-
-    // gui_element_handles[handle_string] = gui_element_handle;
-}
-
 inline void callGuiCallbackFunction(const ParsedGuiData& parsed_gui_data)
 {
     std::map<std::string, GuiCallbackFunction>& gui_callbacks = internal::getGuiCallbacks();
@@ -1547,6 +1522,34 @@ inline void queryForSyncOfGuiData()
     internal::CommunicationHeader hdr{internal::Function::QUERY_FOR_SYNC_OF_GUI_DATA};
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+}
+
+inline void updateGuiState(const ReceivedGuiData& received_gui_data)
+{
+    size_t idx = 0U;
+
+    const std::uint8_t* const raw_data = received_gui_data.data();
+
+    const dvs::GuiElementType type{raw_data[idx]};
+    idx += sizeof(std::uint8_t);
+
+    const std::uint8_t handle_string_length = raw_data[1];
+    idx += sizeof(std::uint8_t);
+
+    std::string handle_string = "";
+
+    for(std::size_t k = 0; k < handle_string_length; k++)
+    {
+        handle_string.push_back(raw_data[idx]);
+        idx += sizeof(std::uint8_t);
+    }
+
+    std::uint32_t payload_size;
+    std::memcpy(&payload_size, raw_data + idx, sizeof(std::uint32_t));
+    idx += sizeof(std::uint32_t);
+
+    populateGuiElementWithData(type, handle_string, UInt8ArrayView{raw_data + idx, payload_size});
+    // callGuiCallbackFunction(parsed_gui_data);
 }
 
 inline void startGuiReceiveThread()
@@ -1580,10 +1583,11 @@ inline void startGuiReceiveThread()
             std::cout << " ##################### Gui thread print #####################" << std::endl;
             std::cout << " ############################################################" << std::endl;
 
-            ParsedGuiData parsed_gui_data{received_data};
+            /*ParsedGuiData parsed_gui_data{received_data};
 
             std::cout << "Handle string: \"" << parsed_gui_data.getHandleString() << "\"" << std::endl;
-            callGuiCallbackFunction(parsed_gui_data);
+            callGuiCallbackFunction(parsed_gui_data);*/
+            updateGuiState(received_data);
         }
     });
 
