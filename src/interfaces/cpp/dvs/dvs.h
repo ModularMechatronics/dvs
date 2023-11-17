@@ -2,6 +2,8 @@
 #define DVS_DVS_H_
 
 #include <stdlib.h>
+#include <errno.h>
+#include <sys/resource.h>
 
 #include <functional>
 #include <map>
@@ -1215,9 +1217,23 @@ inline bool isDvsRunning()
 
     bool dvs_running = false;
 
+    const auto ends_with =[] (const std::string& full_string, const std::string& ending) {
+        if (full_string.length() >= ending.length())
+        {
+            return (0 == full_string.compare (full_string.length() - ending.length(), ending.length(), ending));
+        }
+        else
+        {
+            return false;
+        }
+    };
+
     for (const std::string& line : lines)
     {
-        if ((line.length() > 0U) && (line.find("grep") == std::string::npos))
+        if ((line.length() > 0U) &&
+            (line.find("dvs") != std::string::npos) &&
+            (line.find("grep") == std::string::npos) &&
+            (ends_with(line, "dvs\n") || ends_with(line, "dvs &\n")))
         {
             dvs_running = true;
         }
@@ -1254,6 +1270,14 @@ inline std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>
 
     return gui_element_handles;
 }
+
+inline int& getTcpSocket()
+{
+    static int tcp_sockfd;
+
+    return tcp_sockfd;
+}
+
 }  // namespace internal
 
 inline void registerGuiCallback(const std::string& handle_string, GuiCallbackFunction callback_function)
@@ -1326,45 +1350,53 @@ public:
     }
 };
 
-inline ReceivedGuiData receiveGuiData()
+inline void initTcpSocket()
 {
-    int tcp_sockfd, tcp_connfd;
+    int& tcp_sockfd = internal::getTcpSocket();
     socklen_t tcp_len;
     struct sockaddr_in tcp_servaddr;
-    struct sockaddr_in tcp_cli;
 
     tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     // Set reuse address that's already in use (probably by exited dvs instance)
     int true_val = 1;
-    setsockopt(tcp_sockfd, SOL_SOCKET, SO_REUSEADDR, &true_val, sizeof(int));
+    int setsockopt_ret_val = setsockopt(tcp_sockfd, SOL_SOCKET, SO_REUSEADDR, &true_val, sizeof(int));
 
     bzero(&tcp_servaddr, sizeof(tcp_servaddr));
 
     tcp_servaddr.sin_family = AF_INET;
     tcp_servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    tcp_servaddr.sin_port = htons(9758);
+    tcp_servaddr.sin_port = htons(internal::kGuiTcpPortNum);
 
-    if ((bind(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr))) != 0)
+    int ret_val = bind(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr));
+
+    int errno_val = errno;
+
+    if (ret_val != 0)
     {
         throw std::runtime_error("Socket bind failed...");
     }
-
-    tcp_len = sizeof(tcp_cli);
 
     if ((listen(tcp_sockfd, 5)) != 0)
     {
         throw std::runtime_error("Socket listen failed...");
     }
+}
 
-    ////// Read
-    tcp_connfd = accept(tcp_sockfd, (struct sockaddr*)&tcp_cli, &tcp_len);
+inline ReceivedGuiData receiveGuiData()
+{
+    const int tcp_sockfd = internal::getTcpSocket();
+
+    struct sockaddr_in tcp_cli;
+    socklen_t tcp_len = sizeof(tcp_cli);
+
+    const int tcp_connfd = accept(tcp_sockfd, (struct sockaddr*)&tcp_cli, &tcp_len);
     if (tcp_connfd < 0)
     {
         throw std::runtime_error("Server accept failed...");
     }
 
-    size_t num_expected_bytes;
+    uint64_t num_expected_bytes;
     read(tcp_connfd, &num_expected_bytes, sizeof(uint64_t));
 
     ReceivedGuiData received_data{num_expected_bytes};
@@ -1386,8 +1418,8 @@ inline ReceivedGuiData receiveGuiData()
             break;
         }
     }
+
     close(tcp_connfd);
-    close(tcp_sockfd);
 
     return std::move(received_data);
 }
@@ -1554,6 +1586,8 @@ inline void updateGuiState(const ReceivedGuiData& received_gui_data)
 
 inline void startGuiReceiveThread()
 {
+    initTcpSocket();
+
     if(isDvsRunning())
     {
         std::thread query_thread([]() {
