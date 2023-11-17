@@ -1,0 +1,9 @@
+https://github.com/heremaps/pptk/blob/master/cmake/CopyAppleDependencies.cmake
+https://packaging.python.org/tutorials/packaging-projects/
+https://github.com/ziglang/zig-pypi/blob/de14cf728fa35c014821f62a4fa9abd9f4bb560e/make_wheels.py#L115-L124
+https://stackoverflow.com/questions/38405248/packaging-a-python-library-with-an-executable
+https://simonwillison.net/2022/May/23/bundling-binary-tools-in-python-wheels/
+https://discuss.python.org/t/packaging-a-compiled-executable/9954
+https://discuss.python.org/t/how-to-include-an-exe-in-a-package-and-run-it-from-a-py-script/14304/2
+
+

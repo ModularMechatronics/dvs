@@ -1,0 +1,21 @@
+Hi. Can you provide me with some demo functions for my C++ plotting library?
+
+Here is how you create a vector of type float with size 10:
+Vector<float> x(10);
+
+You can assign elements of the vector using the functor operator
+x(3) = 1.23f;
+
+where 3 is the index in this example.
+
+Here is how you get the size of a vector:
+
+const size_t vec_size = x.size();
+
+Here is how you plot the vector x against vector y:
+plot(x, y);
+
+You can set the color using properties:
+
+plot(x, y, properties::Color::BLUE);  // Plot data x with a blue color
+plot(x, y, properties::Color::BLUE);  // Plot data x with a blue color
