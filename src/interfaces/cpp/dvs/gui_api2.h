@@ -105,7 +105,6 @@ public:
     void updateState(const UInt8ArrayView& data_view) override
     {
         is_checked_ = data_view.data()[0];
-        std::cout << "Checkbox state: " << is_checked_ << std::endl;
     }
 };
 
@@ -234,22 +233,6 @@ public:
     {
     }
 };
-
-inline void registerGuiCallback_new(const std::string& handle_string, std::function<void(const SliderHandle&)> callback_function)
-{
-
-}
-
-inline void registerGuiCallback_new(const std::string& handle_string, std::function<void(const ButtonHandle&)> callback_function)
-{
-
-}
-
-inline void registerGuiCallback_new(const std::string& handle_string, std::function<void(const CheckboxHandle&)> callback_function)
-{
-
-}
-
 
 }  // namespace dvs
 
