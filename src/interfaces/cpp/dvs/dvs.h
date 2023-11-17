@@ -1504,38 +1504,9 @@ inline void waitForSyncForAllGuiElements()
     }
 }
 
-class ParsedGuiData
+inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
 {
-private:
-    std::string handle_string_;
-
-public:
-    ParsedGuiData() = default;
-    ParsedGuiData(const ParsedGuiData& other) = delete;
-    ParsedGuiData(const ReceivedGuiData& received_gui_data)
-    {
-        std::uint16_t num_data_bytes;
-
-        const std::uint8_t* const raw_data = received_gui_data.data();
-        const std::uint8_t handle_string_length = raw_data[0];
-
-        size_t idx{1U};
-        for (std::uint8_t k = 0; k < handle_string_length; k++)
-        {
-            handle_string_.push_back(raw_data[idx]);
-            idx++;
-        }
-    }
-
-    std::string getHandleString() const
-    {
-        return handle_string_;
-    }
-};
-
-inline void callGuiCallbackFunction(const ParsedGuiData& parsed_gui_data)
-{
-    std::map<std::string, GuiCallbackFunction>& gui_callbacks = internal::getGuiCallbacks();
+    /*std::map<std::string, GuiCallbackFunction>& gui_callbacks = internal::getGuiCallbacks();
 
     const std::string handle_string{parsed_gui_data.getHandleString()};
 
@@ -1546,7 +1517,7 @@ inline void callGuiCallbackFunction(const ParsedGuiData& parsed_gui_data)
         return;
     }
 
-    // gui_callbacks[handle_string](parsed_gui_data);
+    // gui_callbacks[handle_string](parsed_gui_data);*/
 }
 
 inline void queryForSyncOfGuiData()
@@ -1581,7 +1552,6 @@ inline void updateGuiState(const ReceivedGuiData& received_gui_data)
     idx += sizeof(std::uint32_t);
 
     populateGuiElementWithData(type, handle_string, UInt8ArrayView{raw_data + idx, payload_size});
-    // callGuiCallbackFunction(parsed_gui_data);
 }
 
 inline void startGuiReceiveThread()
@@ -1593,7 +1563,7 @@ inline void startGuiReceiveThread()
         std::thread query_thread([]() {
             // Sleep 100ms in order for client execution to create the waiting
             // TCP connection that receives the data GUI from the DVS application
-            usleep(1000 * 100);
+            usleep(1000U * 100U);
             queryForSyncOfGuiData();
         
         });
@@ -1617,10 +1587,7 @@ inline void startGuiReceiveThread()
             std::cout << " ##################### Gui thread print #####################" << std::endl;
             std::cout << " ############################################################" << std::endl;
 
-            /*ParsedGuiData parsed_gui_data{received_data};
-
-            std::cout << "Handle string: \"" << parsed_gui_data.getHandleString() << "\"" << std::endl;
-            callGuiCallbackFunction(parsed_gui_data);*/
+            // callGuiCallbackFunction(received_data);
             updateGuiState(received_data);
         }
     });
@@ -1646,66 +1613,64 @@ inline void startGuiReceiveThread()
     dvs_application_heart_beat_monitor_thread.detach();
 }
 
-// const float radio_value = dvs::getValue<float>("slider0")
+template <typename T> T getGuiElementHandle(const std::string& handle_string);
 
-/*
-Alternative solution:
- Whenever a gui element is updated on the application side, this new updated state is sent to the
- client application, which stores all the values in a map. Whenever the user calls getValue, the
- value is simply read from the map.
-Functions should be named properly so that the name refects that it's the current state, and
-not a state which is continuously updated.
-
-Or could it be continously updated? If a reference/pointer is given to the returned GUI object,
-then it could be updated continously.
-
-Can a function be called at startup of client application to poll dvs for all
-gui element values?
-
-*/
-
-/*
-Prototyping:
-const float f = dvs::getSlider("slider0").getValue<float>();
-const float f = dvs::getGuiElement("slider0").asSlider().getValue<float>();
-
-*/
-
-inline float getValue(const std::string& handle_string)
+template <> inline SliderHandle getGuiElementHandle(const std::string& handle_string)
 {
-    float ret_value;
-    std::thread receive_thread([&ret_value]() {
-        // TODO: Implement timout timer for this thread
-        while (true)
-        {
-            // receiveGuiData is a blocking method
-            const ReceivedGuiData received_data{receiveGuiData()};
-            std::memcpy(&ret_value, received_data.data(), sizeof(float));
-        }
-    });
+    std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>& gui_element_handles = internal::getGuiElementHandles();
 
-    receive_thread.join();
+    if(gui_element_handles.count(handle_string) == 0U)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
+    }
 
-    std::cout << "ret_value: " << ret_value << std::endl;
+    const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
+
+    if(gui_element->getType() != dvs::GuiElementType::Slider)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " is not a slider!");
+    }
+
+    return SliderHandle{gui_element};
 }
 
-namespace not_ready
+template <> inline ButtonHandle getGuiElementHandle(const std::string& handle_string)
 {
-inline size_t numObjectsInReceiveBuffer()
-{
-    internal::CommunicationHeader hdr{internal::Function::IS_BUSY_RENDERING};
+    std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>& gui_element_handles = internal::getGuiElementHandles();
 
-    // internal::sendHeaderOnly(internal::sendThroughQueryUdpInterface, hdr);
+    if(gui_element_handles.count(handle_string) == 0U)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
+    }
 
-    usleep(1000 * 40);
+    const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
 
-    const size_t d = internal::receiveFromQueryUdpInterface();
+    if(gui_element->getType() != dvs::GuiElementType::Button)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " is not a button!");
+    }
 
-    std::cout << d << std::endl;
-
-    return 0;
+    return ButtonHandle{gui_element};
 }
-}  // namespace not_ready
+
+template <> inline CheckboxHandle getGuiElementHandle(const std::string& handle_string)
+{
+    std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>& gui_element_handles = internal::getGuiElementHandles();
+
+    if(gui_element_handles.count(handle_string) == 0U)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
+    }
+
+    const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
+
+    if(gui_element->getType() != dvs::GuiElementType::CheckBox)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " is not a checkbox!");
+    }
+
+    return CheckboxHandle{gui_element};
+}
 
 }  // namespace dvs
 

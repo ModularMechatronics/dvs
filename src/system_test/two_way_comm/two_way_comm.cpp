@@ -11,6 +11,15 @@ void printValues()
     // const float slider_value = dvs::getValue<float>("slider0")
     // const float radio_value = dvs::getValue<float>("slider0")
     // const float f = dvs::getValue("slider0");
+
+    dvs::SliderHandle slider = dvs::getGuiElementHandle<dvs::SliderHandle>("slider0");
+    dvs::ButtonHandle button0 = dvs::getGuiElementHandle<dvs::ButtonHandle>("button0");
+    dvs::ButtonHandle button1 = dvs::getGuiElementHandle<dvs::ButtonHandle>("button1");
+    dvs::CheckboxHandle checkbox = dvs::getGuiElementHandle<dvs::CheckboxHandle>("checkbox0");
+
+    std::cout << "slider value: " << slider.getValue() << std::endl;
+    std::cout << "checkbox is checked: " << checkbox.getIsChecked() << std::endl;
+
 }
 
 /*

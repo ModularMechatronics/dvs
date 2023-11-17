@@ -66,8 +66,6 @@ public:
         max_value_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data + sizeof(std::int32_t));
         step_size_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data + 2U * sizeof(std::int32_t));
         value_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data + 3U * sizeof(std::int32_t));
-
-        std::cout << "Slider state: " << min_value_ << " " << max_value_ << " " << step_size_ << " " << value_ << std::endl;
     }
 
 };
@@ -80,7 +78,7 @@ public:
 public:
     ButtonInternal() {}
     ButtonInternal(const std::string& handle_string, const UInt8ArrayView& data_view) : 
-    InternalGuiElementHandle{handle_string, dvs::GuiElementType::Button}
+        InternalGuiElementHandle{handle_string, dvs::GuiElementType::Button}
     {
         is_pressed_ = data_view.data()[0];
     }
@@ -111,53 +109,74 @@ public:
     }
 };
 
+inline void throwExceptionIfPointerIsNotInitialized(const std::shared_ptr<internal::SliderInternal>& internal_ptr)
+{
+    if (internal_ptr == nullptr)
+    {
+        throw std::runtime_error("Pointer not initialized!");
+    }
+}
+
 }  // namespace internal
 
 class SliderHandle
 {
 private:
-
     std::shared_ptr<internal::SliderInternal> internal_ptr_;
 
+    template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
+
+    SliderHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr) : 
+        internal_ptr_{std::dynamic_pointer_cast<internal::SliderInternal>(internal_ptr)} {}
+
 public:
-    SliderHandle() {}
+    SliderHandle() : internal_ptr_{nullptr} {}
+
     std::int32_t getMinValue() const
     {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         return internal_ptr_->min_value_;
     }
 
     std::int32_t getMaxValue() const
     {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         return internal_ptr_->max_value_;
     }
 
     std::int32_t getStepSize() const
     {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         return internal_ptr_->step_size_;
     }
 
     std::int32_t getValue() const
     {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         return internal_ptr_->value_;
     }
 
     void setMinValue(const std::int32_t new_min_value)
     {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         // TODO...
     }
 
     void setMaxValue(const std::int32_t new_max_value)
     {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         // TODO...
     }
 
     void setStepSize(const std::int32_t new_step_size)
     {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         // TODO...
     }
 
     void setValue(const std::int32_t new_value)
     {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         // TODO...
     }
 };
@@ -167,6 +186,10 @@ class ButtonHandle
 private:
 
     std::shared_ptr<internal::ButtonInternal> internal_ptr_;
+    template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
+
+    ButtonHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr) : 
+        internal_ptr_{std::dynamic_pointer_cast<internal::ButtonInternal>(internal_ptr)} {}
 
 public:
     ButtonHandle() {}
@@ -180,6 +203,10 @@ class CheckboxHandle
 {
 private:
     std::shared_ptr<internal::CheckboxInternal> internal_ptr_;
+    template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
+
+    CheckboxHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr) : 
+        internal_ptr_{std::dynamic_pointer_cast<internal::CheckboxInternal>(internal_ptr)} {}
 
 public:
     CheckboxHandle() {}
