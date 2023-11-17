@@ -33,6 +33,27 @@ protected:
 
     wxSize parent_size_;  // Pixels
 
+    void fillWithBasicData(FillableUInt8Array& output_array) const
+    {
+        const std::uint8_t handle_string_length = element_settings_->handle_string.length();
+
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(element_settings_->type));
+        output_array.fillWithStaticType(handle_string_length);
+        output_array.fillWithDataFromPointer(element_settings_->handle_string.data(),
+                                            element_settings_->handle_string.length());
+    }
+
+    std::uint64_t basicDataSize() const
+    {
+        const std::uint8_t handle_string_length = element_settings_->handle_string.length();
+
+        const std::uint64_t basic_data_size = handle_string_length + // the handle_string itself
+            sizeof(std::uint8_t) + // length of handle_string
+            sizeof(std::uint8_t) + // type
+            sizeof(std::uint32_t); // payload size
+        return basic_data_size;
+    }
+
 public:
     ApplicationGuiElement() = delete;
     ApplicationGuiElement(const std::shared_ptr<ElementSettings>& element_settings,

@@ -25,7 +25,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -Wno-deprecated \
-    -Wall -Wextra -pedantic -fdiagnostics-color")
+    -Wall -Wextra -Wno-deprecated-copy -pedantic -fdiagnostics-color")
 
 # if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")

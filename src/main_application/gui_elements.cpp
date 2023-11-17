@@ -61,20 +61,15 @@ void ButtonGuiElement::mouseLeftPressed(wxMouseEvent& event)
         throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
     }
 
-    const std::uint8_t handle_string_length = element_settings_->handle_string.length();
-
-    const std::uint64_t num_bytes_to_send = handle_string_length + // the handle_string itself
-        sizeof(std::uint8_t) + // length of handle_string
-        sizeof(std::uint8_t) + // type
-        sizeof(std::uint8_t) + // is_pressed
-        sizeof(std::uint32_t); // payload size
+    const std::uint64_t num_bytes_to_send{
+        basicDataSize() + 
+        sizeof(std::int8_t) // gui data
+    };
 
     FillableUInt8Array output_array{num_bytes_to_send};
 
-    output_array.fillWithStaticType(static_cast<std::uint8_t>(element_settings_->type));
-    output_array.fillWithStaticType(handle_string_length);
-    output_array.fillWithDataFromPointer(element_settings_->handle_string.data(),
-                                         element_settings_->handle_string.length());
+    fillWithBasicData(output_array);
+
     // Payload size
     output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));
     output_array.fillWithStaticType(static_cast<std::uint8_t>(is_pressed_));
@@ -102,7 +97,7 @@ SliderGuiElement::SliderGuiElement(wxFrame* parent,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,
                             notify_parent_window_right_mouse_pressed,
-                            notify_main_window_about_modification)
+                            notify_main_window_about_modification), slider_value_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->init_value}
 {
     parent_size_ = parent->GetSize();
     Bind(wxEVT_SLIDER, &SliderGuiElement::sliderEvent, this);
@@ -110,32 +105,31 @@ SliderGuiElement::SliderGuiElement(wxFrame* parent,
 
 void SliderGuiElement::sliderEvent(wxCommandEvent& event)
 {
-    // std::cout << "Slider event!" << std::endl;
-    
-
     if (element_settings_->handle_string.length() >= 256U)
     {
         throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
     }
 
-    const std::uint8_t handle_string_length = element_settings_->handle_string.length();
+    const std::int32_t new_value{this->GetValue()};
+    if(new_value == slider_value_)
+    {
+        return;
+    }
 
-    const std::uint64_t num_bytes_to_send = handle_string_length + // the handle_string itself
-        sizeof(std::uint8_t) + // length of handle_string
-        sizeof(std::uint8_t) + // type
-        4U * sizeof(std::int32_t) + // gui data
-        sizeof(std::uint32_t); // payload size
+    slider_value_ = new_value;
+
+    const std::uint64_t num_bytes_to_send{
+        basicDataSize() + 
+        4U * sizeof(std::int32_t) // gui data
+    };
 
     FillableUInt8Array output_array{num_bytes_to_send};
 
-    output_array.fillWithStaticType(static_cast<std::uint8_t>(element_settings_->type));
-    output_array.fillWithStaticType(handle_string_length);
-    output_array.fillWithDataFromPointer(element_settings_->handle_string.data(),
-                                         element_settings_->handle_string.length());
+    fillWithBasicData(output_array);
+
     // Payload size
     output_array.fillWithStaticType(static_cast<std::uint32_t>(4U * sizeof(std::int32_t)));
 
-    const std::int32_t value{this->GetValue()};
     const std::int32_t step_size{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->step_size};
     const std::int32_t min_value{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->min_value};
     const std::int32_t max_value{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->max_value};
@@ -143,7 +137,7 @@ void SliderGuiElement::sliderEvent(wxCommandEvent& event)
     output_array.fillWithStaticType(min_value);
     output_array.fillWithStaticType(max_value);
     output_array.fillWithStaticType(step_size);
-    output_array.fillWithStaticType(value);
+    output_array.fillWithStaticType(new_value);
 
     sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
 }
@@ -175,20 +169,15 @@ void CheckboxGuiElement::checkBoxCallback(wxCommandEvent& event)
         throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
     }
 
-    const std::uint8_t handle_string_length = element_settings_->handle_string.length();
-
-    const std::uint64_t num_bytes_to_send = handle_string_length + // the handle_string itself
-        sizeof(std::uint8_t) + // length of handle_string
-        sizeof(std::uint8_t) + // type
-        sizeof(std::uint8_t) + // is_pressed
-        sizeof(std::uint32_t); // payload size
+    const std::uint64_t num_bytes_to_send{
+        basicDataSize() + 
+        sizeof(std::int8_t) // gui data
+    };
 
     FillableUInt8Array output_array{num_bytes_to_send};
 
-    output_array.fillWithStaticType(static_cast<std::uint8_t>(element_settings_->type));
-    output_array.fillWithStaticType(handle_string_length);
-    output_array.fillWithDataFromPointer(element_settings_->handle_string.data(),
-                                         element_settings_->handle_string.length());
+    fillWithBasicData(output_array);
+
     // Payload size
     output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));
 

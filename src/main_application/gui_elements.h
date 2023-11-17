@@ -447,6 +447,7 @@ public:
 class SliderGuiElement : public wxSlider, public ApplicationGuiElement
 {
 private:
+    std::int32_t slider_value_;
 public:
     SliderGuiElement(wxFrame* parent,
                      const std::shared_ptr<ElementSettings>& element_settings,
