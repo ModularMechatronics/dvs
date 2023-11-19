@@ -45,6 +45,11 @@ void ButtonGuiElement::mouseMovedOverItem(wxMouseEvent& event)
         const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
         this->SetPosition(this->GetPosition() + delta);
 
+        notify_main_window_about_modification_();
+
+        element_settings_->x = this->GetPosition().x / static_cast<float>(parent_size_.x);
+        element_settings_->y = this->GetPosition().y / static_cast<float>(parent_size_.y);
+
         previous_mouse_pos_ = current_mouse_position_global;
     }
     else
@@ -146,6 +151,11 @@ void SliderGuiElement::mouseMovedOverItem(wxMouseEvent& event)
         const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
         this->SetPosition(this->GetPosition() + delta);
 
+        notify_main_window_about_modification_();
+
+        element_settings_->x = this->GetPosition().x / static_cast<float>(parent_size_.x);
+        element_settings_->y = this->GetPosition().y / static_cast<float>(parent_size_.y);
+
         previous_mouse_pos_ = current_mouse_position_global;
     }
     else
@@ -222,6 +232,11 @@ void CheckboxGuiElement::mouseMovedOverItem(wxMouseEvent& event)
         const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
         const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
         this->SetPosition(this->GetPosition() + delta);
+
+        notify_main_window_about_modification_();
+
+        element_settings_->x = this->GetPosition().x / static_cast<float>(parent_size_.x);
+        element_settings_->y = this->GetPosition().y / static_cast<float>(parent_size_.y);
 
         previous_mouse_pos_ = current_mouse_position_global;
     }
