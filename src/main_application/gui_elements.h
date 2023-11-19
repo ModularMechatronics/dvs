@@ -10,7 +10,6 @@
 
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
-// #include "dvs/gui_api.h"
 #include "dvs/math/math.h"
 #include "gui_element.h"
 #include "project_state/project_settings.h"
@@ -393,6 +392,18 @@ public:
 
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
+    void mouseMovedOverItem(wxMouseEvent& event);
+    void buttonEvent(wxCommandEvent& event);
+
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        return sizeof(std::int8_t);
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(is_pressed_));
+    }
 
     void setMinXPos(const int min_x_pos) override
     {
@@ -500,6 +511,27 @@ public:
         this->SetSize(new_size);
     }
 
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        return 4U * sizeof(std::int32_t);
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+        const std::int32_t step_size{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->step_size};
+        const std::int32_t min_value{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->min_value};
+        const std::int32_t max_value{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->max_value};
+
+        output_array.fillWithStaticType(min_value);
+        output_array.fillWithStaticType(max_value);
+        output_array.fillWithStaticType(step_size);
+        output_array.fillWithStaticType(slider_value_);
+    }
+
+    void mouseMovedOverItem(wxMouseEvent& event);
+    void mouseLeftReleased(wxMouseEvent& event);
+    void mouseLeftPressed(wxMouseEvent& event);
+
     void keyPressed(const char key) override {}
 
     void keyReleased(const char key) override {}
@@ -564,6 +596,17 @@ public:
 
     void update() override {}
 
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        return sizeof(std::int8_t);
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+        const bool is_checked = this->IsChecked();
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(is_checked));
+    }
+
     void updateSizeFromParent(const wxSize& parent_size) override
     {
         parent_size_ = parent_size;
@@ -572,6 +615,10 @@ public:
     }
 
     void checkBoxCallback(wxCommandEvent& event);
+
+    void mouseMovedOverItem(wxMouseEvent& event);
+    void mouseLeftReleased(wxMouseEvent& event);
+    void mouseLeftPressed(wxMouseEvent& event);
 
     std::shared_ptr<GuiElementState> getGuiElementState() const override
     {

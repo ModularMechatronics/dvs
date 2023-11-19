@@ -18,65 +18,71 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
 {
     parent_size_ = parent->GetSize();
     is_pressed_ = false;
+    control_pressed_at_mouse_down_ = false;
+    previous_mouse_pos_ = wxPoint(0, 0);
+
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
+
+    this->Bind(wxEVT_BUTTON, &ButtonGuiElement::buttonEvent, this);
+
     this->Bind(wxEVT_LEFT_DOWN, &ButtonGuiElement::mouseLeftPressed, this);
     this->Bind(wxEVT_LEFT_UP, &ButtonGuiElement::mouseLeftReleased, this);
+    this->Bind(wxEVT_MOTION, &ButtonGuiElement::mouseMovedOverItem, this);
+}
+
+void ButtonGuiElement::buttonEvent(wxCommandEvent& event)
+{
+    sendGuiData();
+}
+
+void ButtonGuiElement::mouseMovedOverItem(wxMouseEvent& event)
+{
+    if (control_pressed_at_mouse_down_ && event.LeftIsDown())
+    {
+        const wxPoint current_mouse_position_local = event.GetPosition();
+        const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
+        const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
+        this->SetPosition(this->GetPosition() + delta);
+
+        previous_mouse_pos_ = current_mouse_position_global;
+    }
+    else
+    {
+        event.Skip();
+    }
 }
 
 void ButtonGuiElement::mouseLeftReleased(wxMouseEvent& event)
 {
-    is_pressed_ = false;
-
-    if (element_settings_->handle_string.length() >= 256U)
+    if (control_pressed_at_mouse_down_)
     {
-        throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
+        control_pressed_at_mouse_down_ = false;
     }
+    else
+    {
+        event.Skip();
 
-    const std::uint8_t handle_string_length = element_settings_->handle_string.length();
-
-    const std::uint64_t num_bytes_to_send = handle_string_length + // the handle_string itself
-        sizeof(std::uint8_t) + // length of handle_string
-        sizeof(std::uint8_t) + // type
-        sizeof(std::uint8_t) + // is_pressed
-        sizeof(std::uint32_t); // payload size
-
-    FillableUInt8Array output_array{num_bytes_to_send};
-
-    output_array.fillWithStaticType(static_cast<std::uint8_t>(element_settings_->type));
-    output_array.fillWithStaticType(handle_string_length);
-    output_array.fillWithDataFromPointer(element_settings_->handle_string.data(),
-                                         element_settings_->handle_string.length());
-    // Payload size
-    output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));
-    output_array.fillWithStaticType(static_cast<std::uint8_t>(is_pressed_));
-
-    sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
+        is_pressed_ = false;
+    }
 }
 
 void ButtonGuiElement::mouseLeftPressed(wxMouseEvent& event)
 {
-    is_pressed_ = true;
-
-    if (element_settings_->handle_string.length() >= 256U)
+    if (wxGetKeyState(WXK_CONTROL))
     {
-        throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
+        control_pressed_at_mouse_down_ = true;
+
+        const wxPoint pos_at_press = this->GetPosition();
+
+        mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
+        previous_mouse_pos_ = mouse_pos_at_press_;
     }
-
-    const std::uint64_t num_bytes_to_send{
-        basicDataSize() + 
-        sizeof(std::int8_t) // gui data
-    };
-
-    FillableUInt8Array output_array{num_bytes_to_send};
-
-    fillWithBasicData(output_array);
-
-    // Payload size
-    output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));
-    output_array.fillWithStaticType(static_cast<std::uint8_t>(is_pressed_));
-
-    sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
+    else
+    {
+        event.Skip();
+        is_pressed_ = true;
+    }
 }
 
 SliderGuiElement::SliderGuiElement(wxFrame* parent,
@@ -99,13 +105,18 @@ SliderGuiElement::SliderGuiElement(wxFrame* parent,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,
                             notify_parent_window_right_mouse_pressed,
-                            notify_main_window_about_modification), slider_value_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->init_value}
+                            notify_main_window_about_modification),
+      slider_value_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->init_value}
 {
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
 
     parent_size_ = parent->GetSize();
     Bind(wxEVT_SLIDER, &SliderGuiElement::sliderEvent, this);
+
+    this->Bind(wxEVT_LEFT_DOWN, &SliderGuiElement::mouseLeftPressed, this);
+    this->Bind(wxEVT_LEFT_UP, &SliderGuiElement::mouseLeftReleased, this);
+    this->Bind(wxEVT_MOTION, &SliderGuiElement::mouseMovedOverItem, this);
 }
 
 void SliderGuiElement::sliderEvent(wxCommandEvent& event)
@@ -123,28 +134,53 @@ void SliderGuiElement::sliderEvent(wxCommandEvent& event)
 
     slider_value_ = new_value;
 
-    const std::uint64_t num_bytes_to_send{
-        basicDataSize() + 
-        4U * sizeof(std::int32_t) // gui data
-    };
+    sendGuiData();
+}
 
-    FillableUInt8Array output_array{num_bytes_to_send};
+void SliderGuiElement::mouseMovedOverItem(wxMouseEvent& event)
+{
+    if (control_pressed_at_mouse_down_ && event.LeftIsDown())
+    {
+        const wxPoint current_mouse_position_local = event.GetPosition();
+        const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
+        const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
+        this->SetPosition(this->GetPosition() + delta);
 
-    fillWithBasicData(output_array);
+        previous_mouse_pos_ = current_mouse_position_global;
+    }
+    else
+    {
+        event.Skip();
+    }
+}
 
-    // Payload size
-    output_array.fillWithStaticType(static_cast<std::uint32_t>(4U * sizeof(std::int32_t)));
+void SliderGuiElement::mouseLeftReleased(wxMouseEvent& event)
+{
+    if (control_pressed_at_mouse_down_)
+    {
+        control_pressed_at_mouse_down_ = false;
+    }
+    else
+    {
+        event.Skip();
+    }
+}
 
-    const std::int32_t step_size{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->step_size};
-    const std::int32_t min_value{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->min_value};
-    const std::int32_t max_value{std::dynamic_pointer_cast<SliderSettings>(element_settings_)->max_value};
+void SliderGuiElement::mouseLeftPressed(wxMouseEvent& event)
+{
+    if (wxGetKeyState(WXK_CONTROL))
+    {
+        control_pressed_at_mouse_down_ = true;
 
-    output_array.fillWithStaticType(min_value);
-    output_array.fillWithStaticType(max_value);
-    output_array.fillWithStaticType(step_size);
-    output_array.fillWithStaticType(new_value);
+        const wxPoint pos_at_press = this->GetPosition();
 
-    sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
+        mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
+        previous_mouse_pos_ = mouse_pos_at_press_;
+    }
+    else
+    {
+        event.Skip();
+    }
 }
 
 CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
@@ -166,8 +202,62 @@ CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
 
+    control_pressed_at_mouse_down_ = false;
+    previous_mouse_pos_ = wxPoint(0, 0);
+
     parent_size_ = parent->GetSize();
     this->Bind(wxEVT_CHECKBOX, &CheckboxGuiElement::checkBoxCallback, this);
+
+    this->Bind(wxEVT_LEFT_DOWN, &CheckboxGuiElement::mouseLeftPressed, this);
+    this->Bind(wxEVT_LEFT_UP, &CheckboxGuiElement::mouseLeftReleased, this);
+    this->Bind(wxEVT_MOTION, &CheckboxGuiElement::mouseMovedOverItem, this);
+}
+
+
+void CheckboxGuiElement::mouseMovedOverItem(wxMouseEvent& event)
+{
+    if (control_pressed_at_mouse_down_ && event.LeftIsDown())
+    {
+        const wxPoint current_mouse_position_local = event.GetPosition();
+        const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
+        const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
+        this->SetPosition(this->GetPosition() + delta);
+
+        previous_mouse_pos_ = current_mouse_position_global;
+    }
+    else
+    {
+        event.Skip();
+    }
+}
+
+void CheckboxGuiElement::mouseLeftReleased(wxMouseEvent& event)
+{
+    if (control_pressed_at_mouse_down_)
+    {
+        control_pressed_at_mouse_down_ = false;
+    }
+    else
+    {
+        event.Skip();
+    }
+}
+
+void CheckboxGuiElement::mouseLeftPressed(wxMouseEvent& event)
+{
+    if (wxGetKeyState(WXK_CONTROL))
+    {
+        control_pressed_at_mouse_down_ = true;
+
+        const wxPoint pos_at_press = this->GetPosition();
+
+        mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
+        previous_mouse_pos_ = mouse_pos_at_press_;
+    }
+    else
+    {
+        event.Skip();
+    }
 }
 
 void CheckboxGuiElement::checkBoxCallback(wxCommandEvent& event)
@@ -177,20 +267,5 @@ void CheckboxGuiElement::checkBoxCallback(wxCommandEvent& event)
         throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
     }
 
-    const std::uint64_t num_bytes_to_send{
-        basicDataSize() + 
-        sizeof(std::int8_t) // gui data
-    };
-
-    FillableUInt8Array output_array{num_bytes_to_send};
-
-    fillWithBasicData(output_array);
-
-    // Payload size
-    output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));
-
-    const std::uint8_t is_checked{this->GetValue()};
-    output_array.fillWithStaticType(static_cast<std::uint8_t>(is_checked));
-
-    sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
+    sendGuiData();
 }

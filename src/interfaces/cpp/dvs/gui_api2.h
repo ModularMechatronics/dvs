@@ -154,30 +154,6 @@ public:
         throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         return internal_ptr_->value_;
     }
-
-    void setMinValue(const std::int32_t new_min_value)
-    {
-        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
-        // TODO...
-    }
-
-    void setMaxValue(const std::int32_t new_max_value)
-    {
-        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
-        // TODO...
-    }
-
-    void setStepSize(const std::int32_t new_step_size)
-    {
-        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
-        // TODO...
-    }
-
-    void setValue(const std::int32_t new_value)
-    {
-        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
-        // TODO...
-    }
 };
 
 class ButtonHandle
@@ -191,7 +167,8 @@ private:
         internal_ptr_{std::dynamic_pointer_cast<internal::ButtonInternal>(internal_ptr)} {}
 
 public:
-    ButtonHandle() {}
+    ButtonHandle() : internal_ptr_{nullptr} {}
+
     bool getIsPressed() const
     {
         return internal_ptr_->is_pressed_;
@@ -208,29 +185,11 @@ private:
         internal_ptr_{std::dynamic_pointer_cast<internal::CheckboxInternal>(internal_ptr)} {}
 
 public:
-    CheckboxHandle() {}
+    CheckboxHandle() : internal_ptr_{nullptr} {}
 
     bool getIsChecked() const
     {
         return internal_ptr_->is_checked_;
-    }
-};
-
-class GuiElementHandle
-{
-private:
-    std::string handle_string_;
-    dvs::GuiElementType type_;
-
-    std::shared_ptr<internal::InternalGuiElementHandle> internal_handle_;
-
-public:
-    GuiElementHandle() {}
-    GuiElementHandle(const std::string& handle_string,
-                     const dvs::GuiElementType type,
-                     const UInt8ArrayView& data_view)
-        : handle_string_{handle_string}, type_{type}
-    {
     }
 };
 

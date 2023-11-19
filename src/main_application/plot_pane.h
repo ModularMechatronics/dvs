@@ -115,6 +115,16 @@ private:
     wxGLAttributes getGLAttributes() const;
     std::shared_ptr<PlotPaneSettings> plot_pane_settings_;
 
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        return 0U;
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+
+    }
+
 public:
     PlotPane(wxNotebookPage* parent,  // TODO: wxNotebookPage is obsolete, should be wxWindow/wxFrame?
              const std::shared_ptr<ElementSettings>& element_settings,

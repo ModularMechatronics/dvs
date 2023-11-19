@@ -1253,7 +1253,6 @@ inline void spawn()
     }
 }
 
-// using GuiCallbackFunction = std::function<void(const GuiElementHandle&)>;
 using SliderCallbackFunction = std::function<void(const SliderHandle&)>;
 using ButtonCallbackFunction = std::function<void(const ButtonHandle&)>;
 using CheckboxCallbackFunction = std::function<void(const CheckboxHandle&)>;
@@ -1261,12 +1260,6 @@ using CheckboxCallbackFunction = std::function<void(const CheckboxHandle&)>;
 
 namespace internal
 {
-// inline std::map<std::string, GuiCallbackFunction>& getGuiCallbacks()
-// {
-//     static std::map<std::string, GuiCallbackFunction> gui_callbacks;
-// 
-//     return gui_callbacks;
-// }
 
 inline std::map<std::string, SliderCallbackFunction>& getSliderCallbacks()
 {

@@ -33,6 +33,10 @@ protected:
 
     wxSize parent_size_;  // Pixels
 
+    bool control_pressed_at_mouse_down_;
+    wxPoint previous_mouse_pos_;
+    wxPoint mouse_pos_at_press_;
+
     void fillWithBasicData(FillableUInt8Array& output_array) const
     {
         const std::uint8_t handle_string_length = element_settings_->handle_string.length();
@@ -52,6 +56,31 @@ protected:
             sizeof(std::uint8_t) + // type
             sizeof(std::uint32_t); // payload size
         return basic_data_size;
+    }
+
+    virtual std::uint64_t getGuiPayloadSize() const = 0;
+    virtual void fillGuiPayload(FillableUInt8Array& output_array) const = 0;
+
+    void sendGuiData()
+    {
+        if (element_settings_->handle_string.length() >= 256U)
+        {
+            throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
+        }
+
+        const std::uint64_t num_bytes_to_send{
+            basicDataSize() + 
+            getGuiPayloadSize()
+        };
+
+        FillableUInt8Array output_array{num_bytes_to_send};
+
+        fillWithBasicData(output_array);
+
+        output_array.fillWithStaticType(static_cast<std::uint32_t>(getGuiPayloadSize()));
+
+        fillGuiPayload(output_array);
+        sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
     }
 
 public:
