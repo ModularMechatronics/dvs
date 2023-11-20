@@ -26,68 +26,14 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
 
     this->Bind(wxEVT_BUTTON, &ButtonGuiElement::buttonEvent, this);
 
-    this->Bind(wxEVT_LEFT_DOWN, &ButtonGuiElement::mouseLeftPressed, this);
-    this->Bind(wxEVT_LEFT_UP, &ButtonGuiElement::mouseLeftReleased, this);
-    this->Bind(wxEVT_MOTION, &ButtonGuiElement::mouseMovedOverItem, this);
+    this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    this->Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    this->Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
 }
 
 void ButtonGuiElement::buttonEvent(wxCommandEvent& event)
 {
     sendGuiData();
-}
-
-void ButtonGuiElement::mouseMovedOverItem(wxMouseEvent& event)
-{
-    if (control_pressed_at_mouse_down_ && event.LeftIsDown())
-    {
-        const wxPoint current_mouse_position_local = event.GetPosition();
-        const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
-        const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
-        this->SetPosition(this->GetPosition() + delta);
-
-        notify_main_window_about_modification_();
-
-        element_settings_->x = this->GetPosition().x / static_cast<float>(parent_size_.x);
-        element_settings_->y = this->GetPosition().y / static_cast<float>(parent_size_.y);
-
-        previous_mouse_pos_ = current_mouse_position_global;
-    }
-    else
-    {
-        event.Skip();
-    }
-}
-
-void ButtonGuiElement::mouseLeftReleased(wxMouseEvent& event)
-{
-    if (control_pressed_at_mouse_down_)
-    {
-        control_pressed_at_mouse_down_ = false;
-    }
-    else
-    {
-        event.Skip();
-
-        is_pressed_ = false;
-    }
-}
-
-void ButtonGuiElement::mouseLeftPressed(wxMouseEvent& event)
-{
-    if (wxGetKeyState(WXK_CONTROL))
-    {
-        control_pressed_at_mouse_down_ = true;
-
-        const wxPoint pos_at_press = this->GetPosition();
-
-        mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
-        previous_mouse_pos_ = mouse_pos_at_press_;
-    }
-    else
-    {
-        event.Skip();
-        is_pressed_ = true;
-    }
 }
 
 SliderGuiElement::SliderGuiElement(wxFrame* parent,
@@ -119,9 +65,9 @@ SliderGuiElement::SliderGuiElement(wxFrame* parent,
     parent_size_ = parent->GetSize();
     Bind(wxEVT_SLIDER, &SliderGuiElement::sliderEvent, this);
 
-    this->Bind(wxEVT_LEFT_DOWN, &SliderGuiElement::mouseLeftPressed, this);
-    this->Bind(wxEVT_LEFT_UP, &SliderGuiElement::mouseLeftReleased, this);
-    this->Bind(wxEVT_MOTION, &SliderGuiElement::mouseMovedOverItem, this);
+    this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    this->Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    this->Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
 }
 
 void SliderGuiElement::sliderEvent(wxCommandEvent& event)
@@ -140,57 +86,6 @@ void SliderGuiElement::sliderEvent(wxCommandEvent& event)
     slider_value_ = new_value;
 
     sendGuiData();
-}
-
-void SliderGuiElement::mouseMovedOverItem(wxMouseEvent& event)
-{
-    if (control_pressed_at_mouse_down_ && event.LeftIsDown())
-    {
-        const wxPoint current_mouse_position_local = event.GetPosition();
-        const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
-        const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
-        this->SetPosition(this->GetPosition() + delta);
-
-        notify_main_window_about_modification_();
-
-        element_settings_->x = this->GetPosition().x / static_cast<float>(parent_size_.x);
-        element_settings_->y = this->GetPosition().y / static_cast<float>(parent_size_.y);
-
-        previous_mouse_pos_ = current_mouse_position_global;
-    }
-    else
-    {
-        event.Skip();
-    }
-}
-
-void SliderGuiElement::mouseLeftReleased(wxMouseEvent& event)
-{
-    if (control_pressed_at_mouse_down_)
-    {
-        control_pressed_at_mouse_down_ = false;
-    }
-    else
-    {
-        event.Skip();
-    }
-}
-
-void SliderGuiElement::mouseLeftPressed(wxMouseEvent& event)
-{
-    if (wxGetKeyState(WXK_CONTROL))
-    {
-        control_pressed_at_mouse_down_ = true;
-
-        const wxPoint pos_at_press = this->GetPosition();
-
-        mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
-        previous_mouse_pos_ = mouse_pos_at_press_;
-    }
-    else
-    {
-        event.Skip();
-    }
 }
 
 CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
@@ -218,61 +113,9 @@ CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
     parent_size_ = parent->GetSize();
     this->Bind(wxEVT_CHECKBOX, &CheckboxGuiElement::checkBoxCallback, this);
 
-    this->Bind(wxEVT_LEFT_DOWN, &CheckboxGuiElement::mouseLeftPressed, this);
-    this->Bind(wxEVT_LEFT_UP, &CheckboxGuiElement::mouseLeftReleased, this);
-    this->Bind(wxEVT_MOTION, &CheckboxGuiElement::mouseMovedOverItem, this);
-}
-
-
-void CheckboxGuiElement::mouseMovedOverItem(wxMouseEvent& event)
-{
-    if (control_pressed_at_mouse_down_ && event.LeftIsDown())
-    {
-        const wxPoint current_mouse_position_local = event.GetPosition();
-        const wxPoint current_mouse_position_global = current_mouse_position_local + this->GetPosition();
-        const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
-        this->SetPosition(this->GetPosition() + delta);
-
-        notify_main_window_about_modification_();
-
-        element_settings_->x = this->GetPosition().x / static_cast<float>(parent_size_.x);
-        element_settings_->y = this->GetPosition().y / static_cast<float>(parent_size_.y);
-
-        previous_mouse_pos_ = current_mouse_position_global;
-    }
-    else
-    {
-        event.Skip();
-    }
-}
-
-void CheckboxGuiElement::mouseLeftReleased(wxMouseEvent& event)
-{
-    if (control_pressed_at_mouse_down_)
-    {
-        control_pressed_at_mouse_down_ = false;
-    }
-    else
-    {
-        event.Skip();
-    }
-}
-
-void CheckboxGuiElement::mouseLeftPressed(wxMouseEvent& event)
-{
-    if (wxGetKeyState(WXK_CONTROL))
-    {
-        control_pressed_at_mouse_down_ = true;
-
-        const wxPoint pos_at_press = this->GetPosition();
-
-        mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
-        previous_mouse_pos_ = mouse_pos_at_press_;
-    }
-    else
-    {
-        event.Skip();
-    }
+    this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    this->Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    this->Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
 }
 
 void CheckboxGuiElement::checkBoxCallback(wxCommandEvent& event)

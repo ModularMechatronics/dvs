@@ -428,6 +428,7 @@ void MainWindow::receiveData()
 
     for (auto& ge : plot_panes_)
     {
-        ge.second->update();
+        PlotPane* const plot_pane = dynamic_cast<PlotPane*>(ge.second);
+        plot_pane->update();
     }
 }

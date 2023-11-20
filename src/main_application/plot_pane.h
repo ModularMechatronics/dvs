@@ -154,13 +154,13 @@ public:
     // void show() override;
     // void hide() override;
     // void destroy() override;
-    void refresh() override;
+    void refresh();
     void setMouseInteractionType(const MouseInteractionType mit);
     void keyPressed(const char key) override;
     void keyReleased(const char key) override;
     void waitForFlush();
     void toggleProjectionMode();
-    void update() override;
+    void update();
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
     void mouseRightPressed(wxMouseEvent& event);

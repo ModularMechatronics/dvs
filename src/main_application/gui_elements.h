@@ -137,9 +137,9 @@ public:
 
     void destroy() override {}
 
-    void refresh() override {}
+    // void refresh() override {}
 
-    void update() override {}
+    // void update() override {}
 
     void mouseLeftPressed(wxMouseEvent& event)
     {
@@ -435,15 +435,31 @@ public:
 
     void keyReleased(const char key) override {}
 
-    void refresh() override {}
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
 
-    void update() override {}
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
 
     void updateSizeFromParent(const wxSize& parent_size) override
     {
         parent_size_ = parent_size;
 
         setElementPositionAndSize();
+    }
+
+    void mousePressedGuiElementCallback(wxMouseEvent& event) override
+    {
+        is_pressed_ = true;
+    }
+
+    void mouseReleasedGuiElementCallback(wxMouseEvent& event) override
+    {
+        is_pressed_ = false;
     }
 
     std::shared_ptr<GuiElementState> getGuiElementState() const override
@@ -532,13 +548,19 @@ public:
     void mouseLeftReleased(wxMouseEvent& event);
     void mouseLeftPressed(wxMouseEvent& event);
 
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
+
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
+
     void keyPressed(const char key) override {}
 
     void keyReleased(const char key) override {}
-
-    void refresh() override {}
-
-    void update() override {}
 
     void updateSizeFromParent(const wxSize& parent_size) override
     {
@@ -592,10 +614,6 @@ public:
 
     void keyReleased(const char key) override {}
 
-    void refresh() override {}
-
-    void update() override {}
-
     std::uint64_t getGuiPayloadSize() const override
     {
         return sizeof(std::int8_t);
@@ -614,11 +632,17 @@ public:
         setElementPositionAndSize();
     }
 
-    void checkBoxCallback(wxCommandEvent& event);
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
 
-    void mouseMovedOverItem(wxMouseEvent& event);
-    void mouseLeftReleased(wxMouseEvent& event);
-    void mouseLeftPressed(wxMouseEvent& event);
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
+
+    void checkBoxCallback(wxCommandEvent& event);
 
     std::shared_ptr<GuiElementState> getGuiElementState() const override
     {

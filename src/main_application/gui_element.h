@@ -121,13 +121,84 @@ public:
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
     virtual void keyPressed(const char key) = 0;
     virtual void keyReleased(const char key) = 0;
-    virtual void refresh() = 0;
-    virtual void update() = 0;
+
+    virtual void mousePressedGuiElementCallback(wxMouseEvent& event)
+    {
+    }
+
+    virtual void mouseReleasedGuiElementCallback(wxMouseEvent& event)
+    {
+
+    }
+
+    virtual wxPoint getPosition() const
+    {
+        DVS_LOG_WARNING() << "getPosition() not implemented!";
+        return wxPoint{0, 0};
+    }
+
+    virtual void setPosition(const wxPoint& new_pos)
+    {
+        DVS_LOG_WARNING() << "setPosition() not implemented!";
+    }
 
     virtual std::shared_ptr<GuiElementState> getGuiElementState() const
     {
-        std::cout << "getGuiElementState() not implemented!" << std::endl;
+        DVS_LOG_WARNING() << "getGuiElementState() not implemented!";
         return std::make_shared<GuiElementState>();
+    }
+
+    void mouseMovedOverItem(wxMouseEvent& event)
+    {
+        if (control_pressed_at_mouse_down_ && event.LeftIsDown())
+        {
+            const wxPoint current_mouse_position_local = event.GetPosition();
+            const wxPoint current_mouse_position_global = current_mouse_position_local + this->getPosition();
+            const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
+            this->setPosition(this->getPosition() + delta);
+
+            notify_main_window_about_modification_();
+
+            element_settings_->x = this->getPosition().x / static_cast<float>(parent_size_.x);
+            element_settings_->y = this->getPosition().y / static_cast<float>(parent_size_.y);
+
+            previous_mouse_pos_ = current_mouse_position_global;
+        }
+        else
+        {
+            event.Skip();
+            mousePressedGuiElementCallback(event);
+        }
+    }
+
+    void mouseLeftReleased(wxMouseEvent& event)
+    {
+        if (control_pressed_at_mouse_down_)
+        {
+            control_pressed_at_mouse_down_ = false;
+        }
+        else
+        {
+            event.Skip();
+        }
+    }
+
+    void mouseLeftPressed(wxMouseEvent& event)
+    {
+        if (wxGetKeyState(WXK_CONTROL))
+        {
+            control_pressed_at_mouse_down_ = true;
+
+            const wxPoint pos_at_press = this->getPosition();
+
+            mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
+            previous_mouse_pos_ = mouse_pos_at_press_;
+        }
+        else
+        {
+            mouseReleasedGuiElementCallback(event);
+            event.Skip();
+        }
     }
 };
 

@@ -1712,7 +1712,7 @@ inline void startGuiReceiveThread()
         query_thread.detach();
     }
 
-    waitForSyncForAllGuiElements();  // TODO: Should run in its own thread?
+    waitForSyncForAllGuiElements();
 
     std::thread gui_receive_thread([]() {
         while (true)
