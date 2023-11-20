@@ -15,6 +15,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/resource.h>
 
 #include <chrono>
 #include <cstdint>
@@ -334,6 +335,53 @@ inline void sendHeaderOnly(const SendFunctionType& send_function, const Communic
 
     send_function(fillable_array.view(), kTcpPortNum);
 }
+
+inline bool isDvsRunning()
+{
+    char path[1035];
+
+    FILE* const fp = popen("ps -ef | grep dvs", "r");
+    if (fp == NULL)
+    {
+        DVS_LOG_ERROR() << "Failed to run command";
+        return false;
+    }
+
+    std::vector<std::string> lines;
+    while (fgets(path, sizeof(path), fp) != NULL)
+    {
+        lines.push_back(path);
+    }
+
+    bool dvs_running = false;
+
+    const auto ends_with =[] (const std::string& full_string, const std::string& ending) {
+        if (full_string.length() >= ending.length())
+        {
+            return (0 == full_string.compare (full_string.length() - ending.length(), ending.length(), ending));
+        }
+        else
+        {
+            return false;
+        }
+    };
+
+    for (const std::string& line : lines)
+    {
+        if ((line.length() > 0U) &&
+            (line.find("dvs") != std::string::npos) &&
+            (line.find("grep") == std::string::npos) &&
+            (ends_with(line, "dvs\n") || ends_with(line, "dvs &\n")))
+        {
+            dvs_running = true;
+        }
+    }
+
+    pclose(fp);
+
+    return dvs_running;
+}
+
 
 }  // namespace internal
 }  // namespace dvs
