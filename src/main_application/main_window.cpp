@@ -392,7 +392,7 @@ void MainWindow::updateClientApplicationAboutGuiState() const
         total_num_bytes += gui_elements_state.back()->getTotalNumBytes();
     }
 
-    total_num_bytes += sizeof(std::uint8_t); // Number of gui elements
+    total_num_bytes += sizeof(std::uint8_t);  // Number of gui elements
 
     FillableUInt8Array output_array{total_num_bytes};
 

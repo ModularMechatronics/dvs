@@ -12,60 +12,6 @@
 
 using namespace dvs::internal;
 
-CursorSquareState getCursorSquareState(const Bound2D bound, const Bound2D bound_margin, const Vec2f mouse_pos)
-{
-    if ((bound.x_min <= mouse_pos.x) && (mouse_pos.x <= bound.x_max) && (bound.y_min <= mouse_pos.y) &&
-        (mouse_pos.y <= bound.y_max))
-    {
-        if (mouse_pos.x <= bound_margin.x_min)
-        {
-            if (mouse_pos.y <= bound_margin.y_min)
-            {
-                return CursorSquareState::TOP_LEFT;
-            }
-            else if (bound_margin.y_max <= mouse_pos.y)
-            {
-                return CursorSquareState::BOTTOM_LEFT;
-            }
-            else
-            {
-                return CursorSquareState::LEFT;
-            }
-        }
-        else if (bound_margin.x_max <= mouse_pos.x)
-        {
-            if (mouse_pos.y <= bound_margin.y_min)
-            {
-                return CursorSquareState::TOP_RIGHT;
-            }
-            else if (bound_margin.y_max <= mouse_pos.y)
-            {
-                return CursorSquareState::BOTTOM_RIGHT;
-            }
-            else
-            {
-                return CursorSquareState::RIGHT;
-            }
-        }
-        else if (mouse_pos.y <= bound_margin.y_min)
-        {
-            return CursorSquareState::TOP;
-        }
-        else if (bound_margin.y_max <= mouse_pos.y)
-        {
-            return CursorSquareState::BOTTOM;
-        }
-        else
-        {
-            return CursorSquareState::INSIDE;
-        }
-    }
-    else
-    {
-        return CursorSquareState::OUTSIDE;
-    }
-}
-
 wxGLAttributes PlotPane::getGLAttributes() const
 {
     wxGLAttributes attrs;
@@ -214,26 +160,16 @@ void PlotPane::setSize(const wxSize& new_size)
     this->SetSize(new_size);
 }
 
-/*void PlotPane::show()
-{
-    this->Show();
-}
-
-void PlotPane::hide()
-{
-    this->Hide();
-}*/
-
 void PlotPane::bindCallbacks()
 {
     Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
-    Bind(wxEVT_ENTER_WINDOW, &PlotPane::mouseEntered, this);
     Bind(wxEVT_LEFT_DOWN, &PlotPane::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &PlotPane::mouseLeftReleased, this);
     Bind(wxEVT_KEY_DOWN, &PlotPane::keyPressedCallback, this);
     Bind(wxEVT_KEY_UP, &PlotPane::keyReleasedCallback, this);
     Bind(wxEVT_PAINT, &PlotPane::render, this);
-    Bind(wxEVT_LEAVE_WINDOW, &PlotPane::mouseLeftWindow, this);
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
 }
 
 PlotPane::~PlotPane()
@@ -453,12 +389,13 @@ void PlotPane::mouseLeftPressed(wxMouseEvent& event)
     cursor_state_at_press_ =
         getCursorSquareState(bnd, bnd_margin, Vec2f(current_mouse_position.x, current_mouse_position.y));
 
-    mouse_pos_at_press_ = Vec2f(current_mouse_position.x, current_mouse_position.y);
+    mouse_pos_at_press_ = current_mouse_position;
+    Vec2f mouse_pos_at_press(current_mouse_position.x, current_mouse_position.y);
 
     mouse_state_.setCurrentPos(current_mouse_position.x, current_mouse_position.y);
 
     axes_interactor_.registerMousePressed(
-        mouse_pos_at_press_.elementWiseDivide(Vec2f(size_at_press_.x, size_at_press_.y)));
+        mouse_pos_at_press.elementWiseDivide(Vec2f(size_at_press_.x, size_at_press_.y)));
 
     if (wxGetKeyState(WXK_CONTROL))
     {
@@ -550,24 +487,9 @@ void PlotPane::mouseRightReleased(wxMouseEvent& event)
     }
 }
 
-void PlotPane::mouseLeftWindow(wxMouseEvent& event)
-{
-    // if (!(event.LeftIsDown() && control_pressed_at_mouse_press_))
-    {
-        wxSetCursor(wxCursor(wxCURSOR_ARROW));
-    }
-}
-
-void PlotPane::mouseEntered(wxMouseEvent& event)
-{
-    const wxPoint current_mouse_point = event.GetPosition();
-    const wxPoint current_position = this->GetPosition();
-    previous_mouse_pos_ = Vec2f(current_position.x + current_mouse_point.x, current_position.y + current_mouse_point.y);
-}
-
 void PlotPane::adjustPaneSizeOnMouseMoved()
 {
-    const Vec2f delta = current_mouse_pos_ - previous_mouse_pos_;
+    const Vec2f delta(current_mouse_pos_.x - previous_mouse_pos_.x, current_mouse_pos_.y - previous_mouse_pos_.y);
 
     const Vec2f current_pos(this->GetPosition().x, this->GetPosition().y);
 
@@ -694,66 +616,17 @@ void PlotPane::adjustPaneSizeOnMouseMoved()
     }
 }
 
-void PlotPane::setCursorDependingOnMousePos(const wxPoint& current_mouse_position)
-{
-    Bound2D bnd;
-    bnd.x_min = 0.0f;
-    bnd.x_max = this->GetSize().GetWidth();
-    bnd.y_min = 0.0f;
-    bnd.y_max = this->GetSize().GetHeight();
-
-    Bound2D bnd_margin;
-    bnd_margin.x_min = bnd.x_min + edit_size_margin_;
-    bnd_margin.x_max = bnd.x_max - edit_size_margin_;
-    bnd_margin.y_min = bnd.y_min + edit_size_margin_;
-    bnd_margin.y_max = bnd.y_max - edit_size_margin_;
-    const CursorSquareState cms =
-        getCursorSquareState(bnd, bnd_margin, Vec2f(current_mouse_position.x, current_mouse_position.y));
-    switch (cms)
-    {
-        case CursorSquareState::LEFT:
-            wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
-            break;
-        case CursorSquareState::RIGHT:
-            wxSetCursor(wxCursor(wxCURSOR_SIZEWE));
-            break;
-        case CursorSquareState::TOP:
-            wxSetCursor(wxCursor(wxCURSOR_SIZENS));
-            break;
-        case CursorSquareState::BOTTOM:
-            wxSetCursor(wxCursor(wxCURSOR_SIZENS));
-            break;
-        case CursorSquareState::BOTTOM_RIGHT:
-            wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
-            break;
-        case CursorSquareState::BOTTOM_LEFT:
-            wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
-            break;
-        case CursorSquareState::TOP_RIGHT:
-            wxSetCursor(wxCursor(wxCURSOR_SIZENESW));
-            break;
-        case CursorSquareState::TOP_LEFT:
-            wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
-            break;
-        case CursorSquareState::INSIDE:
-            wxSetCursor(wxCursor(wxCURSOR_HAND));
-            break;
-        default:
-            wxSetCursor(wxCursor(wxCURSOR_HAND));
-    }
-}
-
 void PlotPane::mouseMoved(wxMouseEvent& event)
 {
     const wxPoint current_mouse_position = event.GetPosition();
     const wxPoint current_pane_position = this->GetPosition();
 
-    current_mouse_pos_ =
-        Vec2f(current_pane_position.x + current_mouse_position.x, current_pane_position.y + current_mouse_position.y);
+    current_mouse_pos_ = current_pane_position + current_mouse_position;
 
     if (wxGetKeyState(static_cast<wxKeyCode>('l')) && event.LeftIsDown())
     {
-        const Vec2d diff{current_mouse_pos_ - previous_mouse_pos_};
+        // Adjust plot box size
+        const Vec2d diff(current_mouse_pos_.x - previous_mouse_pos_.x, current_mouse_pos_.y - previous_mouse_pos_.y);
         Vec3d scale_factor = axes_renderer_->getAxesBoxScaleFactor();
         if (diff.x < 0)
         {
@@ -855,6 +728,24 @@ void PlotPane::keyPressed(const char key)
         axes_interactor_.setMouseInteractionType(MouseInteractionType::POINT_SELECTION);
     }
 
+    if (wxGetKeyState(WXK_COMMAND))
+    {
+        wxWindow* parent_handle = this->GetParent();
+
+        const float x0 = static_cast<float>(this->GetPosition().x);
+        const float y0 = static_cast<float>(this->GetPosition().y);
+
+        const float x1 = x0 + static_cast<float>(this->GetSize().GetWidth());
+        const float y1 = y0 + static_cast<float>(this->GetSize().GetHeight());
+
+        const wxPoint pt = wxGetMousePosition() - parent_handle->GetPosition();
+
+        if ((pt.x > x0) && (pt.x < x1) && (pt.y > y0) && (pt.y < y1))
+        {
+            setCursorDependingOnMousePos(pt - this->GetPosition());
+        }
+    }
+
     Refresh();
 }
 
@@ -885,6 +776,11 @@ void PlotPane::keyReleased(const char key)
     else if (wxGetKeyState(static_cast<wxKeyCode>('3')))
     {
         current_mouse_interaction_axis_ = MouseInteractionAxis::Z;
+    }
+
+    if (!wxGetKeyState(WXK_COMMAND))
+    {
+        this->setCursor(wxCursor(wxCURSOR_ARROW));
     }
 
     Refresh();
@@ -1176,6 +1072,9 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
     const AxesSideConfiguration axes_side_configuration{axes_interactor_.getViewAngles(), perspective_projection_};
 
+    const Vec2f mouse_pos_at_press(mouse_pos_at_press_.x, mouse_pos_at_press_.y);
+    const Vec2f current_mouse_pos(current_mouse_pos_.x, current_mouse_pos_.y);
+
     axes_renderer_->updateStates(axes_interactor_.getAxesLimits(),
                                  axes_interactor_.getViewAngles(),
                                  axes_interactor_.getQueryPoint(),
@@ -1184,8 +1083,8 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
                                  perspective_projection_,
                                  getWidth(),
                                  getHeight(),
-                                 mouse_pos_at_press_.elementWiseDivide(pane_size),
-                                 current_mouse_pos_.elementWiseDivide(pane_size),
+                                 mouse_pos_at_press.elementWiseDivide(pane_size),
+                                 current_mouse_pos.elementWiseDivide(pane_size),
                                  axes_interactor_.getMouseInteractionType(),
                                  left_mouse_pressed_,
                                  axes_interactor_.shouldDrawZoomRect(),

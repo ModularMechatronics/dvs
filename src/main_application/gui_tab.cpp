@@ -412,6 +412,11 @@ void WindowTab::notifyChildrenOnKeyPressed(const char key)
     {
         pp->keyPressed(key);
     }
+
+    for (const auto& ge : gui_elements_)
+    {
+        ge->keyPressed(key);
+    }
 }
 
 void WindowTab::notifyChildrenOnKeyReleased(const char key)
@@ -419,6 +424,11 @@ void WindowTab::notifyChildrenOnKeyReleased(const char key)
     for (const auto& pp : plot_panes_)
     {
         pp->keyReleased(key);
+    }
+
+    for (const auto& ge : gui_elements_)
+    {
+        ge->keyReleased(key);
     }
 }
 

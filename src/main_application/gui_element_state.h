@@ -11,9 +11,7 @@ private:
     std::string handle_string_;
 
 public:
-    GuiElementState() : type_{dvs::GuiElementType::Unknown}, handle_string_{""}
-    {
-    }
+    GuiElementState() : type_{dvs::GuiElementType::Unknown}, handle_string_{""} {}
 
     GuiElementState(const dvs::GuiElementType type, const std::string& handle_string)
         : type_{type}, handle_string_{handle_string}
@@ -41,12 +39,13 @@ private:
 
 public:
     CheckboxState() = delete;
-    CheckboxState(const std::string& handle_string, const bool is_checked) : GuiElementState(dvs::GuiElementType::CheckBox, handle_string), is_checked_{is_checked}
+    CheckboxState(const std::string& handle_string, const bool is_checked)
+        : GuiElementState(dvs::GuiElementType::CheckBox, handle_string), is_checked_{is_checked}
     {
     }
     ~CheckboxState() override {}
 
-    std::uint64_t getTotalNumBytes() const
+    std::uint64_t getTotalNumBytes() const override
     {
         return GuiElementState::getTotalNumBytes() + sizeof(std::uint8_t);
     }
@@ -54,7 +53,7 @@ public:
     virtual void serializeToBuffer(FillableUInt8Array& output_array) const override
     {
         GuiElementState::serializeToBuffer(output_array);
-        output_array.fillWithStaticType(static_cast<std::uint32_t>(1U)); // Payload size
+        output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));  // Payload size
         output_array.fillWithStaticType(static_cast<std::uint8_t>(is_checked_));
     }
 };
@@ -71,22 +70,22 @@ private:
 public:
     SliderState() = delete;
     SliderState(const std::string& handle_string,
-        const std::int32_t min_value,
-        const std::int32_t max_value,
-        const std::int32_t step_size,
-        const std::int32_t value,
-        const bool is_horizontal) :
-            GuiElementState(dvs::GuiElementType::Slider, handle_string),
-            min_value_{min_value},
-            max_value_{max_value},
-            step_size_{step_size},
-            value_{value},
-            is_horizontal_{is_horizontal}
+                const std::int32_t min_value,
+                const std::int32_t max_value,
+                const std::int32_t step_size,
+                const std::int32_t value,
+                const bool is_horizontal)
+        : GuiElementState(dvs::GuiElementType::Slider, handle_string),
+          min_value_{min_value},
+          max_value_{max_value},
+          step_size_{step_size},
+          value_{value},
+          is_horizontal_{is_horizontal}
     {
     }
     ~SliderState() override {}
 
-    std::uint64_t getTotalNumBytes() const
+    std::uint64_t getTotalNumBytes() const override
     {
         return GuiElementState::getTotalNumBytes() + sizeof(std::int32_t) * 4U + sizeof(std::uint8_t);
     }
@@ -95,8 +94,8 @@ public:
     {
         GuiElementState::serializeToBuffer(output_array);
 
-        output_array.fillWithStaticType(static_cast<std::uint32_t>(
-            sizeof(std::int32_t) * 4U + sizeof(std::uint8_t))); // Payload size
+        output_array.fillWithStaticType(
+            static_cast<std::uint32_t>(sizeof(std::int32_t) * 4U + sizeof(std::uint8_t)));  // Payload size
 
         output_array.fillWithStaticType(static_cast<std::int32_t>(min_value_));
         output_array.fillWithStaticType(static_cast<std::int32_t>(max_value_));
@@ -113,12 +112,13 @@ private:
 
 public:
     ButtonState() = delete;
-    ButtonState(const std::string& handle_string, const bool is_pressed) : GuiElementState(dvs::GuiElementType::Button, handle_string), is_pressed_{is_pressed}
+    ButtonState(const std::string& handle_string, const bool is_pressed)
+        : GuiElementState(dvs::GuiElementType::Button, handle_string), is_pressed_{is_pressed}
     {
     }
     ~ButtonState() override {}
 
-    std::uint64_t getTotalNumBytes() const
+    std::uint64_t getTotalNumBytes() const override
     {
         return GuiElementState::getTotalNumBytes() + sizeof(std::uint8_t);
     }
@@ -127,7 +127,7 @@ public:
     {
         GuiElementState::serializeToBuffer(output_array);
 
-        output_array.fillWithStaticType(static_cast<std::uint32_t>(1U)); // Payload size
+        output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));  // Payload size
         output_array.fillWithStaticType(static_cast<std::uint8_t>(is_pressed_));
     }
 };

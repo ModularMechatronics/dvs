@@ -19,41 +19,6 @@
 #include "plot_data_handler.h"
 #include "point_selection.h"
 
-struct Bound2D
-{
-    float x_min;
-    float x_max;
-    float y_min;
-    float y_max;
-
-    Bound2D() = default;
-};
-
-inline Bound2D operator+(const Bound2D& bnd, const Vec2f& offset)
-{
-    Bound2D new_bnd;
-    new_bnd.x_min = bnd.x_min + offset.x;
-    new_bnd.x_max = bnd.x_max + offset.x;
-    new_bnd.y_min = bnd.y_min + offset.y;
-    new_bnd.y_max = bnd.y_max + offset.y;
-
-    return new_bnd;
-}
-
-enum class CursorSquareState
-{
-    INSIDE,
-    OUTSIDE,
-    LEFT,
-    RIGHT,
-    TOP,
-    BOTTOM,
-    TOP_LEFT,
-    TOP_RIGHT,
-    BOTTOM_LEFT,
-    BOTTOM_RIGHT
-};
-
 class PlotPane : public wxGLCanvas, public ApplicationGuiElement
 {
 private:
@@ -64,11 +29,8 @@ private:
     AxesInteractor axes_interactor_;
     AxesRenderer* axes_renderer_;
     MouseState mouse_state_;
-    CursorSquareState cursor_state_at_press_;
 
     bool shift_pressed_at_mouse_press_;
-    bool control_pressed_at_mouse_press_;
-    bool left_mouse_pressed_;
 
     bool axes_from_min_max_disabled_;
     bool axes_set_;
@@ -78,13 +40,6 @@ private:
 
     bool perspective_projection_;
     bool wait_for_flush_;
-
-    Vec2f mouse_pos_at_press_;
-    Vec2f current_mouse_pos_;
-    Vec2f previous_mouse_pos_;
-    wxPoint pos_at_press_;
-    wxSize size_at_press_;
-    float edit_size_margin_;
 
     PlotDataHandler* plot_data_handler_;
     PointSelection point_selection_;
@@ -104,7 +59,6 @@ private:
     bool should_render_point_selection_;
 
     void adjustPaneSizeOnMouseMoved();
-    void setCursorDependingOnMousePos(const wxPoint& current_mouse_position);
 
     void processActionQueue();
     void addPlotData(ReceivedData& received_data,
@@ -120,10 +74,7 @@ private:
         return 0U;
     }
 
-    void fillGuiPayload(FillableUInt8Array& output_array) const override
-    {
-
-    }
+    void fillGuiPayload(FillableUInt8Array& output_array) const override {}
 
 public:
     PlotPane(wxNotebookPage* parent,  // TODO: wxNotebookPage is obsolete, should be wxWindow/wxFrame?
@@ -171,12 +122,25 @@ public:
 
     // Event callback function
     void mouseMoved(wxMouseEvent& event);
-    void mouseEntered(wxMouseEvent& event);
-    void mouseLeftWindow(wxMouseEvent& event);
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
 
     void bindCallbacks();
+
+    void setCursor(const wxCursor& cursor) override
+    {
+        wxSetCursor(cursor);
+    }
+
+    wxSize getSize() const override
+    {
+        return this->GetSize();
+    }
+
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
 
     /*virtual void showLegend(const bool show_legend)
     {

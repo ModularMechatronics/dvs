@@ -18,13 +18,20 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
 {
     parent_size_ = parent->GetSize();
     is_pressed_ = false;
-    control_pressed_at_mouse_down_ = false;
+    control_pressed_at_mouse_press_ = false;
     previous_mouse_pos_ = wxPoint(0, 0);
 
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
 
     this->Bind(wxEVT_BUTTON, &ButtonGuiElement::buttonEvent, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed_tmp, this);
+    Bind(wxEVT_KEY_DOWN, &ApplicationGuiElement::keyPressedCallback_new, this);
+    Bind(wxEVT_KEY_UP, &ApplicationGuiElement::keyReleasedCallback_new, this);
+
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
 
     this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
     this->Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
@@ -78,7 +85,7 @@ void SliderGuiElement::sliderEvent(wxCommandEvent& event)
     }
 
     const std::int32_t new_value{this->GetValue()};
-    if(new_value == slider_value_)
+    if (new_value == slider_value_)
     {
         return;
     }
@@ -107,7 +114,7 @@ CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
 
-    control_pressed_at_mouse_down_ = false;
+    control_pressed_at_mouse_press_ = false;
     previous_mouse_pos_ = wxPoint(0, 0);
 
     parent_size_ = parent->GetSize();
