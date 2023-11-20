@@ -13,7 +13,8 @@
 
 namespace dvs
 {
-
+namespace gui
+{
 class SliderHandle
 {
 private:
@@ -93,31 +94,36 @@ using SliderCallbackFunction = std::function<void(const SliderHandle&)>;
 using ButtonCallbackFunction = std::function<void(const ButtonHandle&)>;
 using CheckboxCallbackFunction = std::function<void(const CheckboxHandle&)>;
 
+}
+
 namespace internal
 {
 
-inline std::map<std::string, SliderCallbackFunction>& getSliderCallbacks()
+inline std::map<std::string, gui::SliderCallbackFunction>& getSliderCallbacks()
 {
-    static std::map<std::string, SliderCallbackFunction> gui_callbacks;
+    static std::map<std::string, gui::SliderCallbackFunction> gui_callbacks;
 
     return gui_callbacks;
 }
 
-inline std::map<std::string, ButtonCallbackFunction>& getButtonCallbacks()
+inline std::map<std::string, gui::ButtonCallbackFunction>& getButtonCallbacks()
 {
-    static std::map<std::string, ButtonCallbackFunction> gui_callbacks;
+    static std::map<std::string, gui::ButtonCallbackFunction> gui_callbacks;
 
     return gui_callbacks;
 }
 
-inline std::map<std::string, CheckboxCallbackFunction>& getCheckboxCallbacks()
+inline std::map<std::string, gui::CheckboxCallbackFunction>& getCheckboxCallbacks()
 {
-    static std::map<std::string, CheckboxCallbackFunction> gui_callbacks;
+    static std::map<std::string, gui::CheckboxCallbackFunction> gui_callbacks;
 
     return gui_callbacks;
 }
 
 }
+
+namespace gui
+{
 
 inline void registerGuiCallback(const std::string& handle_string, std::function<void(const SliderHandle&)> callback_function)
 {
@@ -217,6 +223,8 @@ template <> inline CheckboxHandle getGuiElementHandle(const std::string& handle_
     return CheckboxHandle{gui_element};
 }
 
+}  // namespace gui
+
 namespace internal
 {
 
@@ -248,35 +256,37 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
 
     if(type == dvs::GuiElementType::Slider)
     {
-        std::map<std::string, SliderCallbackFunction>& gui_callbacks = getSliderCallbacks();
+        std::map<std::string, gui::SliderCallbackFunction>& gui_callbacks = getSliderCallbacks();
 
         if (gui_callbacks.find(handle_string) != gui_callbacks.end())
         {
-            gui_callbacks[handle_string](getGuiElementHandle<SliderHandle>(handle_string));
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::SliderHandle>(handle_string));
         }
     }
     else if(type == dvs::GuiElementType::Button)
     {
-        std::map<std::string, ButtonCallbackFunction>& gui_callbacks = getButtonCallbacks();
+        std::map<std::string, gui::ButtonCallbackFunction>& gui_callbacks = getButtonCallbacks();
 
         if (gui_callbacks.find(handle_string) != gui_callbacks.end())
         {
-            gui_callbacks[handle_string](getGuiElementHandle<ButtonHandle>(handle_string));
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::ButtonHandle>(handle_string));
         }
     }
     else if(type == dvs::GuiElementType::CheckBox)
     {
-        std::map<std::string, CheckboxCallbackFunction>& gui_callbacks = getCheckboxCallbacks();
+        std::map<std::string, gui::CheckboxCallbackFunction>& gui_callbacks = getCheckboxCallbacks();
 
         if (gui_callbacks.find(handle_string) != gui_callbacks.end())
         {
-            gui_callbacks[handle_string](getGuiElementHandle<CheckboxHandle>(handle_string));
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::CheckboxHandle>(handle_string));
         }
     }
 }
 
 }
 
+namespace gui
+{
 inline void startGuiReceiveThread()
 {
     internal::initTcpSocket();
@@ -333,6 +343,8 @@ inline void startGuiReceiveThread()
 
     dvs_application_heart_beat_monitor_thread.detach();
 }
+
+}  // namespace gui
 
 }  // namespace dvs
 
