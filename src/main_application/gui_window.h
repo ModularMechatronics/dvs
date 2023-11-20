@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "axes/axes.h"
-// #include "dvs/gui_api.h"
 #include "gui_element.h"
 #include "gui_elements.h"
 #include "gui_tab.h"

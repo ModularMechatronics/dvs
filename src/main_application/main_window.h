@@ -23,7 +23,6 @@
 #include "close_button.h"
 #include "communication/data_receiver.h"
 #include "communication/received_data.h"
-// #include "dvs/gui_api.h"
 #include "events.h"
 #include "gui_element.h"
 #include "input_data.h"

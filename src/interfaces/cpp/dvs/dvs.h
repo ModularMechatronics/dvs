@@ -9,8 +9,7 @@
 #include <map>
 #include <utility>
 
-// #include "dvs/gui_api.h"
-#include "dvs/gui_api2.h"
+#include "dvs/gui_api.h"
 #include "dvs/internal.h"
 #include "dvs/math/math.h"
 
