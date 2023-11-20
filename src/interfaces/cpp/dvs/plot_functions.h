@@ -1,7 +1,6 @@
 #ifndef DVS_PLOT_FUNCTIONS_H
 #define DVS_PLOT_FUNCTIONS_H
 
-
 #include <stdlib.h>
 
 #include <functional>
@@ -883,16 +882,521 @@ template <typename T, typename... Us> void realTimePlot(const T dt, const T y, c
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, data);
 }
 
-/*template <typename T, typename... Us> void drawCube(const Us&... settings)
+template <typename T, typename... Us>
+void drawCubes(const VectorConstView<T>& x,
+               const VectorConstView<T>& y,
+               const VectorConstView<T>& z,
+               const T size,
+               const Us&... settings)
 {
-    const Vector<T> x{VectorInitializer<T>{-1, 1, 1, -1, -1, 1, 1, -1}};
-    const Vector<T> y{VectorInitializer<T>{-1, -1, 1, 1, -1, -1, 1, 1}};
-    const Vector<T> z{VectorInitializer<T>{-1, -1, -1, -1, 1, 1, 1, 1}};
-    Vector<IndexTriplet> indices;
+    const size_t num_cubes = x.size();
+    const size_t num_triangles = num_cubes * 6U * 2U;
+    const size_t num_points = num_triangles * 3U;
 
-    drawMesh(x, y, z, indices, settings...);
-}*/
+    Vector<T> x_new(num_points), y_new(num_points), z_new(num_points);
+    Vector<IndexTriplet> indices(num_triangles);
 
+    size_t points_idx{0U};
+    size_t indices_idx{0U};
+
+    for (size_t i = 0; i < num_cubes; i++)
+    {
+        const T x_i = x(i);
+        const T y_i = y(i);
+        const T z_i = z(i);
+
+        // XY plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i + size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i + size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i - size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i - size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // XZ plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i + size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i + size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i - size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i - size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // YZ plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i + size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i + size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i - size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i - size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+    }
+
+    drawMesh(x_new, y_new, z_new, indices, settings...);
 }
 
-#endif // DVS_PLOT_FUNCTIONS_H
+template <typename T, typename... Us>
+void drawCubes(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const T size, const Us&... settings)
+{
+    drawCubes(x.constView(), y.constView(), z.constView(), size, settings...);
+}
+
+template <typename T, typename... Us>
+void drawCubes(const VectorConstView<T>& x,
+               const VectorConstView<T>& y,
+               const VectorConstView<T>& z,
+               const VectorConstView<T> sizes,
+               const Us&... settings)
+{
+    const size_t num_cubes = x.size();
+    const size_t num_triangles = num_cubes * 6U * 2U;
+    const size_t num_points = num_triangles * 3U;
+
+    Vector<T> x_new(num_points), y_new(num_points), z_new(num_points);
+    Vector<IndexTriplet> indices(num_triangles);
+
+    size_t points_idx{0U};
+    size_t indices_idx{0U};
+
+    for (size_t i = 0; i < num_cubes; i++)
+    {
+        const T x_i = x(i);
+        const T y_i = y(i);
+        const T z_i = z(i);
+
+        const T size = sizes(i);
+
+        // XY plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i + size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i + size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i - size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i - size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // XZ plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i + size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i + size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i - size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i - size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // YZ plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i + size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i + size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i - size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i - size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+
+        points_idx += 3U;
+        indices_idx += 1U;
+    }
+
+    drawMesh(x_new, y_new, z_new, indices, settings...);
+}
+
+template <typename T, typename... Us>
+void drawCubes(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<T> sizes, const Us&... settings)
+{
+    drawCubes(x.constView(), y.constView(), z.constView(), sizes.constView(), settings...);
+}
+
+template <typename T, typename... Us> void drawCube(const T x, const T y, const T z, const T size, const Us&... settings)
+{
+    const Vector<T> x_vec{VectorInitializer<T>{x}};
+    const Vector<T> y_vec{VectorInitializer<T>{y}};
+    const Vector<T> z_vec{VectorInitializer<T>{z}};
+
+    drawCubes(x_vec, y_vec, z_vec, size, settings...);
+}
+
+}  // namespace dvs
+
+#endif  // DVS_PLOT_FUNCTIONS_H

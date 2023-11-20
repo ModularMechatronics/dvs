@@ -1739,6 +1739,41 @@ void testScreenshot()
     screenshot("/Users/danielpi/work/dvs/screenshots");
 }
 
+void testDrawCubes()
+{
+    const size_t num_elements = 100;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements), sizes(num_elements);
+
+    double t0 = 0.0f, t1 = 0.0f, t2 = 0.0f, y0 = 0.0f, z0 = 0.0f;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const float xf = 7.0 * cos(t0) + 20.0f;
+        const float yf = 7.0 * sin(t0) - 110.0f;
+        const float zf = 0.0f;
+
+        const Vec3f v0 = rotationMatrixY<float>(t1) * Vec3f(xf, yf, zf);
+        const Vec3f v1 = rotationMatrixZ<float>(t2) * (v0 + Vec3f(50.0f, y0, 0.0f));
+
+        x(k) = v1.x;
+        y(k) = v1.y;
+        z(k) = v1.z + z0 - 70;
+        sizes(k) = static_cast<double>(rand() % 1001) / 1000.0f + 0.3;
+        t0 = t0 + 0.3;
+        t1 = t1 - 0.01;
+        t2 = t2 + 0.002;
+        y0 = y0 + 0.05;
+        z0 = z0 + 0.02;
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    globalIllumination({2.0, 2.0, 2.0});
+
+    drawCubes(x, y, z, 1.0, properties::ColorMap::MAGMA, properties::EdgeColor::NONE);
+    drawCubes(x - 20.0, y, z, sizes, properties::ColorMap::JET_BRIGHT, properties::EdgeColor::NONE);
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1767,6 +1802,7 @@ void addTests()
     addTest("cpp", "basic", "plot2_dashed_line", testPlot2DashedLine);
     addTest("cpp", "basic", "set_title", testSetTitle);
     addTest("cpp", "basic", "screenshot", testScreenshot);
+    addTest("cpp", "basic", "draw_cubes", testDrawCubes);
 }
 
 }  // namespace basic_cpp
