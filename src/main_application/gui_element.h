@@ -73,7 +73,7 @@ protected:
 
     CursorSquareState cursor_state_at_press_;
 
-    float edit_size_margin_{5.0f};
+    float edit_size_margin_;
 
     void fillWithBasicData(FillableUInt8Array& output_array) const;
     std::uint64_t basicDataSize() const;
@@ -106,14 +106,7 @@ public:
                           const std::function<void(const char key)>& notify_main_window_key_released,
                           const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                               notify_parent_window_right_mouse_pressed,
-                          const std::function<void()>& notify_main_window_about_modification)
-        : element_settings_{element_settings},
-          notify_main_window_key_pressed_{notify_main_window_key_pressed},
-          notify_main_window_key_released_{notify_main_window_key_released},
-          notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
-          notify_main_window_about_modification_{notify_main_window_about_modification}
-    {
-    }
+                          const std::function<void()>& notify_main_window_about_modification);
 
     virtual ~ApplicationGuiElement() {}
 
@@ -197,9 +190,9 @@ public:
     }
 
     // Mouse functions
-    virtual void mousePressedGuiElementSpecific(wxMouseEvent& event) {}
-
-    virtual void mouseReleasedGuiElementSpecific(wxMouseEvent& event) {}
+    virtual void mouseLeftPressedGuiElementSpecific(wxMouseEvent& event) {}
+    virtual void mouseMovedGuiElementSpecific(wxMouseEvent& event) {}
+    virtual void mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event) {}
 
     void mouseEnteredElement(wxMouseEvent& event);
     void mouseLeftElement(wxMouseEvent& event);

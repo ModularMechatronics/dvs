@@ -25,9 +25,6 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
     control_pressed_at_mouse_press_ = false;
     previous_mouse_pos_ = wxPoint(0, 0);
 
-    minimum_x_pos_ = 70;
-    minimum_y_pos_ = 30;
-
     this->Bind(wxEVT_BUTTON, &ButtonGuiElement::buttonEvent, this);
 
     Bind(wxEVT_KEY_DOWN, &ApplicationGuiElement::keyPressedCallback_new, this);

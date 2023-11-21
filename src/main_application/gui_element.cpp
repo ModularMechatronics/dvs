@@ -1,5 +1,22 @@
 #include "gui_element.h"
 
+ApplicationGuiElement::ApplicationGuiElement(const std::shared_ptr<ElementSettings>& element_settings,
+                                             const std::function<void(const char key)>& notify_main_window_key_pressed,
+                                             const std::function<void(const char key)>& notify_main_window_key_released,
+                                             const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                                                 notify_parent_window_right_mouse_pressed,
+                                             const std::function<void()>& notify_main_window_about_modification)
+    : element_settings_{element_settings},
+      notify_main_window_key_pressed_{notify_main_window_key_pressed},
+      notify_main_window_key_released_{notify_main_window_key_released},
+      notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
+      notify_main_window_about_modification_{notify_main_window_about_modification}
+{
+    edit_size_margin_ = 5.0f;
+    minimum_x_pos_ = 70;
+    minimum_y_pos_ = 30;
+}
+
 void ApplicationGuiElement::mouseEnteredElement(wxMouseEvent& event)
 {
     const wxPoint current_mouse_local_position = event.GetPosition();
@@ -23,6 +40,8 @@ void ApplicationGuiElement::mouseLeftPressed(wxMouseEvent& event)
 
     element_pos_at_press_ = this->getPosition();
     element_size_at_press_ = this->getSize();
+    mouse_pos_at_press_ = event.GetPosition() + this->getPosition();
+    previous_mouse_pos_ = mouse_pos_at_press_;
 
     const auto [bnd, bnd_with_margin] = getBounds();
 
@@ -31,15 +50,10 @@ void ApplicationGuiElement::mouseLeftPressed(wxMouseEvent& event)
     if (wxGetKeyState(WXK_CONTROL))
     {
         control_pressed_at_mouse_press_ = true;
-
-        const wxPoint element_pos_at_press = this->getPosition();
-
-        mouse_pos_at_press_ = event.GetPosition() + element_pos_at_press;
-        previous_mouse_pos_ = mouse_pos_at_press_;
     }
     else
     {
-        mouseReleasedGuiElementSpecific(event);
+        mouseLeftPressedGuiElementSpecific(event);
         event.Skip();
     }
 }
@@ -52,6 +66,7 @@ void ApplicationGuiElement::mouseLeftReleased(wxMouseEvent& event)
     }
     else
     {
+        mouseLeftReleasedGuiElementSpecific(event);
         event.Skip();
     }
 }
@@ -72,7 +87,7 @@ void ApplicationGuiElement::mouseMovedOverItem(wxMouseEvent& event)
     else
     {
         event.Skip();
-        mousePressedGuiElementSpecific(event);
+        mouseMovedGuiElementSpecific(event);
     }
 
     if (wxGetKeyState(WXK_COMMAND))

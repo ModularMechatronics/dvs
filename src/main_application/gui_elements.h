@@ -115,12 +115,12 @@ public:
         setElementPositionAndSize();
     }
 
-    void mousePressedGuiElementSpecific(wxMouseEvent& event) override
+    void mouseLeftPressedGuiElementSpecific(wxMouseEvent& event) override
     {
         is_pressed_ = true;
     }
 
-    void mouseReleasedGuiElementSpecific(wxMouseEvent& event) override
+    void mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event) override
     {
         is_pressed_ = false;
     }

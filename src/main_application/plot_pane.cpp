@@ -93,9 +93,6 @@ PlotPane::PlotPane(wxWindow* parent,
       plot_pane_settings_{std::dynamic_pointer_cast<PlotPaneSettings>(element_settings)}
 {
     pending_clear_ = false;
-    edit_size_margin_ = 20.0f;
-    minimum_x_pos_ = 70;
-    minimum_y_pos_ = 30;
     perspective_projection_ =
         (plot_pane_settings_->projection_mode == PlotPaneSettings::ProjectionMode::PERSPECTIVE) ? true : false;
 
@@ -158,13 +155,13 @@ void PlotPane::setSize(const wxSize& new_size)
 
 void PlotPane::bindCallbacks()
 {
-    Bind(wxEVT_MOTION, &PlotPane::mouseMovedGuiElementSpecific, this);
-    Bind(wxEVT_LEFT_DOWN, &PlotPane::mouseLeftPressedGuiElementSpecific, this);
-    Bind(wxEVT_LEFT_UP, &PlotPane::mouseLeftReleasedGuiElementSpecific, this);
+    // Bind(wxEVT_MOTION, &PlotPane::mouseMovedGuiElementSpecific, this);
+    // Bind(wxEVT_LEFT_DOWN, &PlotPane::mouseLeftPressedGuiElementSpecific, this);
+    // Bind(wxEVT_LEFT_UP, &PlotPane::mouseLeftReleasedGuiElementSpecific, this);
 
-    // Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
-    // Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
-    // Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+    Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
 
     Bind(wxEVT_KEY_DOWN, &PlotPane::keyPressedCallback, this);
     Bind(wxEVT_KEY_UP, &PlotPane::keyReleasedCallback, this);
@@ -656,28 +653,6 @@ void PlotPane::keyReleasedCallback(wxKeyEvent& evt)
     const int key = evt.GetUnicodeKey();
     notify_main_window_key_released_(key);
 }
-
-/*void PlotPane::setElementPositionAndSize()
-{
-    const wxSize parent_size = this->getParent()->GetSize();
-
-    const float px = parent_size.GetWidth();
-    const float py = parent_size.GetHeight();
-
-    wxPoint new_pos;
-    wxSize new_size;
-
-    const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
-    const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
-
-    new_size.SetWidth(element_settings_->width * px * ratio_x);
-    new_size.SetHeight(element_settings_->height * py * ratio_y);
-    new_pos.x = minimum_x_pos_ + element_settings_->x * px * ratio_x;
-    new_pos.y = minimum_y_pos_ + element_settings_->y * py * ratio_y;
-
-    this->setPosition(new_pos);
-    this->setSize(new_size);
-}*/
 
 void PlotPane::setMinXPos(const int min_x_pos)
 {

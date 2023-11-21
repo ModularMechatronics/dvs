@@ -101,7 +101,6 @@ public:
 
     void render(wxPaintEvent& evt);
 
-    // void setElementPositionAndSize();
     void setMinXPos(const int min_x_pos) override;
     void setSize(const wxSize& new_size) override;
     void updateSizeFromParent(const wxSize& parent_size) override;
@@ -127,9 +126,9 @@ public:
     void setMinimumXPos(const int new_min_x_pos);
 
     // Event callback function
-    void mouseMovedGuiElementSpecific(wxMouseEvent& event);
-    void mouseLeftPressedGuiElementSpecific(wxMouseEvent& event);
-    void mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event);
+    void mouseMovedGuiElementSpecific(wxMouseEvent& event) override;
+    void mouseLeftPressedGuiElementSpecific(wxMouseEvent& event) override;
+    void mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event) override;
 
     void bindCallbacks();
 
