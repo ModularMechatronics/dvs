@@ -160,6 +160,11 @@ public:
         DVS_LOG_WARNING() << "setPosition() not implemented!";
     }
 
+    virtual void setSize(const wxSize& new_size)
+    {
+        DVS_LOG_WARNING() << "setSize() not implemented!";
+    }
+
     virtual std::shared_ptr<GuiElementState> getGuiElementState() const
     {
         DVS_LOG_WARNING() << "getGuiElementState() not implemented!";
@@ -173,10 +178,7 @@ public:
     void setCursorDependingOnMousePos(const wxPoint& current_mouse_position);
 
     void adjustPaneSizeOnMouseMoved();
-    virtual void setElementPositionAndSize()
-    {
-        DVS_LOG_WARNING() << "setElementPositionAndSize() not implemented!";
-    }
+    void setElementPositionAndSize();
 
     // Keyboard functions
     virtual void keyPressed(const char key) = 0;

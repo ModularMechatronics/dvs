@@ -657,7 +657,7 @@ void PlotPane::keyReleasedCallback(wxKeyEvent& evt)
     notify_main_window_key_released_(key);
 }
 
-void PlotPane::setElementPositionAndSize()
+/*void PlotPane::setElementPositionAndSize()
 {
     const wxSize parent_size = this->getParent()->GetSize();
 
@@ -670,14 +670,14 @@ void PlotPane::setElementPositionAndSize()
     const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
     const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
 
-    new_size.SetWidth(plot_pane_settings_->width * px * ratio_x);
-    new_size.SetHeight(plot_pane_settings_->height * py * ratio_y);
-    new_pos.x = minimum_x_pos_ + plot_pane_settings_->x * px * ratio_x;
-    new_pos.y = minimum_y_pos_ + plot_pane_settings_->y * py * ratio_y;
+    new_size.SetWidth(element_settings_->width * px * ratio_x);
+    new_size.SetHeight(element_settings_->height * py * ratio_y);
+    new_pos.x = minimum_x_pos_ + element_settings_->x * px * ratio_x;
+    new_pos.y = minimum_y_pos_ + element_settings_->y * py * ratio_y;
 
-    SetPosition(new_pos);
-    setSize(new_size);
-}
+    this->setPosition(new_pos);
+    this->setSize(new_size);
+}*/
 
 void PlotPane::setMinXPos(const int min_x_pos)
 {

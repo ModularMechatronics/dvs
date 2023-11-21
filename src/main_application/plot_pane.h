@@ -61,6 +61,11 @@ private:
         return this->GetParent();
     }
 
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
+
     void processActionQueue();
     void addPlotData(ReceivedData& received_data,
                      const PlotObjectAttributes& plot_object_attributes,
@@ -96,9 +101,9 @@ public:
 
     void render(wxPaintEvent& evt);
 
-    void setElementPositionAndSize();
+    // void setElementPositionAndSize();
     void setMinXPos(const int min_x_pos) override;
-    void setSize(const wxSize& new_size);
+    void setSize(const wxSize& new_size) override;
     void updateSizeFromParent(const wxSize& parent_size) override;
     void addSettingsData(const ReceivedData& received_data,
                          const PlotObjectAttributes& plot_object_attributes,

@@ -51,27 +51,6 @@ public:
         setElementPositionAndSize();
     }
 
-    void setElementPositionAndSize() override
-    {
-        const wxSize parent_size = this->getParent()->GetSize();
-        const float px = parent_size.GetWidth();
-        const float py = parent_size.GetHeight();
-
-        wxPoint new_pos;
-        wxSize new_size;
-
-        const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
-        const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
-
-        new_size.SetWidth(element_settings_->width * px * ratio_x);
-        new_size.SetHeight(element_settings_->height * py * ratio_y);
-        new_pos.x = minimum_x_pos_ + element_settings_->x * px * ratio_x;
-        new_pos.y = minimum_y_pos_ + element_settings_->y * py * ratio_y;
-
-        SetPosition(new_pos);
-        this->SetSize(new_size);
-    }
-
     void keyPressed(const char key) override
     {
         if (wxGetKeyState(WXK_COMMAND))
@@ -124,6 +103,11 @@ public:
     void setPosition(const wxPoint& new_pos) override
     {
         this->SetPosition(new_pos);
+    }
+
+    void setSize(const wxSize& new_size) override
+    {
+        this->SetSize(new_size);
     }
 
     void updateSizeFromParent(const wxSize& parent_size) override
@@ -187,27 +171,6 @@ public:
         setElementPositionAndSize();
     }
 
-    void setElementPositionAndSize() override
-    {
-        const wxSize parent_size = this->getParent()->GetSize();
-        const float px = parent_size.GetWidth();
-        const float py = parent_size.GetHeight();
-
-        wxPoint new_pos;
-        wxSize new_size;
-
-        const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
-        const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
-
-        new_size.SetWidth(element_settings_->width * px * ratio_x);
-        new_size.SetHeight(element_settings_->height * py * ratio_y);
-        new_pos.x = minimum_x_pos_ + element_settings_->x * px * ratio_x;
-        new_pos.y = minimum_y_pos_ + element_settings_->y * py * ratio_y;
-
-        SetPosition(new_pos);
-        this->SetSize(new_size);
-    }
-
     std::uint64_t getGuiPayloadSize() const override
     {
         return 4U * sizeof(std::int32_t);
@@ -254,6 +217,11 @@ public:
         this->SetPosition(new_pos);
     }
 
+    void setSize(const wxSize& new_size) override
+    {
+        this->SetSize(new_size);
+    }
+
     void keyPressed(const char key) override {}
 
     void keyReleased(const char key) override {}
@@ -282,27 +250,6 @@ public:
     {
         minimum_x_pos_ = min_x_pos;
         setElementPositionAndSize();
-    }
-
-    void setElementPositionAndSize() override
-    {
-        const wxSize parent_size = this->getParent()->GetSize();
-        const float px = parent_size.GetWidth();
-        const float py = parent_size.GetHeight();
-
-        wxPoint new_pos;
-        wxSize new_size;
-
-        const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
-        const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
-
-        new_size.SetWidth(element_settings_->width * px * ratio_x);
-        new_size.SetHeight(element_settings_->height * py * ratio_y);
-        new_pos.x = minimum_x_pos_ + element_settings_->x * px * ratio_x;
-        new_pos.y = minimum_y_pos_ + element_settings_->y * py * ratio_y;
-
-        SetPosition(new_pos);
-        this->SetSize(new_size);
     }
 
     void keyPressed(const char key) override {}
@@ -348,6 +295,11 @@ public:
     void setPosition(const wxPoint& new_pos) override
     {
         this->SetPosition(new_pos);
+    }
+
+    void setSize(const wxSize& new_size) override
+    {
+        this->SetSize(new_size);
     }
 
     void checkBoxCallback(wxCommandEvent& event);

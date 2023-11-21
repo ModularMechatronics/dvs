@@ -274,19 +274,9 @@ CursorSquareState ApplicationGuiElement::getCursorSquareState(const Bound2D boun
 
 void ApplicationGuiElement::setCursorDependingOnMousePos(const wxPoint& current_mouse_position)
 {
-    Bound2D bnd;
-    bnd.x_min = 0.0f;
-    bnd.x_max = this->getSize().GetWidth();
-    bnd.y_min = 0.0f;
-    bnd.y_max = this->getSize().GetHeight();
+    const auto [bnd, bnd_with_margin] = getBounds();
 
-    Bound2D bnd_margin;
-    bnd_margin.x_min = bnd.x_min + edit_size_margin_;
-    bnd_margin.x_max = bnd.x_max - edit_size_margin_;
-    bnd_margin.y_min = bnd.y_min + edit_size_margin_;
-    bnd_margin.y_max = bnd.y_max - edit_size_margin_;
-
-    const CursorSquareState cms = getCursorSquareState(bnd, bnd_margin, current_mouse_position);
+    const CursorSquareState cms = getCursorSquareState(bnd, bnd_with_margin, current_mouse_position);
 
     switch (cms)
     {
@@ -320,6 +310,25 @@ void ApplicationGuiElement::setCursorDependingOnMousePos(const wxPoint& current_
         default:
             this->setCursor(wxCursor(wxCURSOR_HAND));
     }
+}
+
+void ApplicationGuiElement::setElementPositionAndSize()
+{
+    const wxSize parent_size = this->getParent()->GetSize();
+
+    const float px = parent_size.GetWidth();
+    const float py = parent_size.GetHeight();
+
+    const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
+    const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
+
+    const wxSize new_size(element_settings_->width * px * ratio_x, element_settings_->height * py * ratio_y);
+
+    const wxPoint new_pos{minimum_x_pos_ + static_cast<int>(element_settings_->x * px * ratio_x),
+                          minimum_y_pos_ + static_cast<int>(element_settings_->y * py * ratio_y)};
+
+    this->setPosition(new_pos);
+    this->setSize(new_size);
 }
 
 void ApplicationGuiElement::sendGuiData()
