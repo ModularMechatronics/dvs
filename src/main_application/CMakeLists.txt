@@ -6,7 +6,6 @@ include_directories(${REPO_DIR}/src/main_application)
 include_directories(${REPO_DIR}/src/interfaces/cpp)
 
 set(CPP_SOURCE_FILES main.cpp
-                     mouse_state.cpp
                      axes/axes_interactor.cpp
 
                      axes/axes_renderer.cpp
@@ -30,6 +29,7 @@ set(CPP_SOURCE_FILES main.cpp
                      shader.cpp
 
                      gui_elements.cpp
+                     gui_element.cpp
 
                      axes/structures/axes_limits.cpp
                      axes/structures/axes_settings.cpp

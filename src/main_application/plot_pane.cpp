@@ -8,7 +8,6 @@
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "events.h"
-#include "mouse_state.h"
 
 using namespace dvs::internal;
 
@@ -162,9 +161,14 @@ void PlotPane::setSize(const wxSize& new_size)
 
 void PlotPane::bindCallbacks()
 {
-    Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
-    Bind(wxEVT_LEFT_DOWN, &PlotPane::mouseLeftPressed, this);
-    Bind(wxEVT_LEFT_UP, &PlotPane::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &PlotPane::mouseMovedGuiElementSpecific, this);
+    Bind(wxEVT_LEFT_DOWN, &PlotPane::mouseLeftPressedGuiElementSpecific, this);
+    Bind(wxEVT_LEFT_UP, &PlotPane::mouseLeftReleasedGuiElementSpecific, this);
+
+    // Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    // Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    // Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
     Bind(wxEVT_KEY_DOWN, &PlotPane::keyPressedCallback, this);
     Bind(wxEVT_KEY_UP, &PlotPane::keyReleasedCallback, this);
     Bind(wxEVT_PAINT, &PlotPane::render, this);
@@ -368,34 +372,27 @@ void PlotPane::setHandleString(const std::string& new_name)
     Refresh();
 }
 
-void PlotPane::mouseLeftPressed(wxMouseEvent& event)
+void PlotPane::mouseLeftPressedGuiElementSpecific(wxMouseEvent& event)
 {
-    const wxPoint current_mouse_position = event.GetPosition();
-    pos_at_press_ = this->GetPosition();
-    size_at_press_ = this->GetSize();
+    const wxPoint mouse_pos_at_press_local = event.GetPosition();
 
-    Bound2D bnd;
-    bnd.x_min = 0.0f;
-    bnd.x_max = this->GetSize().GetWidth();
-    bnd.y_min = 0.0f;
-    bnd.y_max = this->GetSize().GetHeight();
+    element_pos_at_press_ = this->GetPosition();
+    element_size_at_press_ = this->GetSize();
+    mouse_pos_at_press_ = element_pos_at_press_ + mouse_pos_at_press_local;
 
-    Bound2D bnd_margin;
-    bnd_margin.x_min = bnd.x_min + edit_size_margin_;
-    bnd_margin.x_max = bnd.x_max - edit_size_margin_;
-    bnd_margin.y_min = bnd.y_min + edit_size_margin_;
-    bnd_margin.y_max = bnd.y_max - edit_size_margin_;
+    previous_mouse_pos_ = element_pos_at_press_ + mouse_pos_at_press_local;
 
-    cursor_state_at_press_ =
-        getCursorSquareState(bnd, bnd_margin, Vec2f(current_mouse_position.x, current_mouse_position.y));
+    left_mouse_pressed_ = true;
 
-    mouse_pos_at_press_ = current_mouse_position;
-    Vec2f mouse_pos_at_press(current_mouse_position.x, current_mouse_position.y);
+    const auto [bnd, bnd_with_margin] = getBounds();
 
-    mouse_state_.setCurrentPos(current_mouse_position.x, current_mouse_position.y);
+    cursor_state_at_press_ = getCursorSquareState(bnd, bnd_with_margin, mouse_pos_at_press_local);
 
-    axes_interactor_.registerMousePressed(
-        mouse_pos_at_press.elementWiseDivide(Vec2f(size_at_press_.x, size_at_press_.y)));
+    const Vec2f mouse_pos_at_press_normalized{
+        Vec2f(mouse_pos_at_press_local.x, mouse_pos_at_press_local.y)
+            .elementWiseDivide(Vec2f(element_size_at_press_.x, element_size_at_press_.y))};
+
+    axes_interactor_.registerMousePressed(mouse_pos_at_press_normalized);
 
     if (wxGetKeyState(WXK_CONTROL))
     {
@@ -407,17 +404,16 @@ void PlotPane::mouseLeftPressed(wxMouseEvent& event)
         axes_interactor_.setOverriddenMouseInteractionType(MouseInteractionType::ROTATE);
     }
 
-    left_mouse_pressed_ = true;
-
     Refresh();
 }
 
-void PlotPane::mouseLeftReleased(wxMouseEvent& event)
+void PlotPane::mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event)
 {
     const wxPoint mouse_pos{event.GetPosition()};
     const wxSize size_now = this->GetSize();
-    const Vec2f size_now_vec(size_now.x, size_now.y);
-    axes_interactor_.registerMouseReleased(Vec2f(mouse_pos.x, mouse_pos.y).elementWiseDivide(size_now_vec));
+
+    axes_interactor_.registerMouseReleased(
+        Vec2f(mouse_pos.x, mouse_pos.y).elementWiseDivide(Vec2f(size_now.x, size_now.y)));
 
     control_pressed_at_mouse_press_ = false;
     left_mouse_pressed_ = false;
@@ -434,8 +430,6 @@ void PlotPane::mouseLeftReleased(wxMouseEvent& event)
 void PlotPane::mouseMiddlePressed(wxMouseEvent& event)
 {
     const wxPoint current_point = event.GetPosition();
-
-    mouse_state_.setCurrentPos(current_point.x, current_point.y);
 
     if (wxGetKeyState(WXK_SHIFT))
     {
@@ -457,9 +451,10 @@ void PlotPane::mouseMiddleReleased(wxMouseEvent& event)
 
 void PlotPane::mouseRightPressed(wxMouseEvent& event)
 {
-    const wxPoint current_point = event.GetPosition();
+    const wxPoint current_mouse_position_local = event.GetPosition();
+    const wxPoint current_pane_position = this->GetPosition();
 
-    mouse_state_.setCurrentPos(current_point.x, current_point.y);
+    previous_mouse_pos_ = current_pane_position + current_mouse_position_local;
 
     if (wxGetKeyState(WXK_SHIFT))
     {
@@ -469,7 +464,7 @@ void PlotPane::mouseRightPressed(wxMouseEvent& event)
     else
     {
         notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(),
-                                                  plot_pane_settings_->handle_string);
+                                                  element_settings_->handle_string);
     }
 }
 
@@ -487,141 +482,12 @@ void PlotPane::mouseRightReleased(wxMouseEvent& event)
     }
 }
 
-void PlotPane::adjustPaneSizeOnMouseMoved()
+void PlotPane::mouseMovedGuiElementSpecific(wxMouseEvent& event)
 {
-    const Vec2f delta(current_mouse_pos_.x - previous_mouse_pos_.x, current_mouse_pos_.y - previous_mouse_pos_.y);
-
-    const Vec2f current_pos(this->GetPosition().x, this->GetPosition().y);
-
-    const wxSize size_now = this->GetSize();
-
-    wxPoint new_position = this->GetPosition();
-    wxSize new_size = this->GetSize();
-
-    switch (cursor_state_at_press_)
-    {
-        case CursorSquareState::LEFT:
-            new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
-            new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight());
-            break;
-        case CursorSquareState::RIGHT:
-            new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight());
-            break;
-        case CursorSquareState::TOP:
-            new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
-            new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() - delta.y);
-            break;
-        case CursorSquareState::BOTTOM:
-            new_size = wxSize(size_now.GetWidth(), size_now.GetHeight() + delta.y);
-            break;
-        case CursorSquareState::INSIDE:
-            new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
-            new_size = size_at_press_;
-            break;
-        case CursorSquareState::BOTTOM_RIGHT:
-            new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight() + delta.y);
-            break;
-        case CursorSquareState::BOTTOM_LEFT:
-            new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
-            new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() + delta.y);
-            break;
-        case CursorSquareState::TOP_RIGHT:
-            new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
-            new_size = wxSize(size_now.GetWidth() + delta.x, size_now.GetHeight() - delta.y);
-            break;
-        case CursorSquareState::TOP_LEFT:
-            new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
-            new_size = wxSize(size_now.GetWidth() - delta.x, size_now.GetHeight() - delta.y);
-            break;
-        default:
-            std::cout << "Invalid cursor state!" << std::endl;
-    }
-    if (new_size.GetWidth() < 50)
-    {
-        new_size.SetWidth(50);
-        new_position.x = current_pos.x;
-    }
-    if (new_size.GetHeight() < 50)
-    {
-        new_size.SetHeight(50);
-        new_position.y = current_pos.y;
-    }
-
-    const float px = parent_size_.GetWidth();
-    const float py = parent_size_.GetHeight();
-
-    if (new_position.x < minimum_x_pos_)
-    {
-        if (cursor_state_at_press_ == CursorSquareState::INSIDE)
-        {
-            new_position.x = current_pos.x;
-        }
-        else
-        {
-            new_size.SetWidth(size_now.GetWidth());
-            new_position.x = current_pos.x;
-        }
-    }
-    else if ((new_position.x + new_size.GetWidth()) > px)
-    {
-        if (cursor_state_at_press_ == CursorSquareState::INSIDE)
-        {
-            new_position.x = current_pos.x;
-        }
-        else
-        {
-            new_size.SetWidth(size_now.GetWidth());
-        }
-    }
-
-    if (new_position.y < minimum_y_pos_)
-    {
-        if (cursor_state_at_press_ == CursorSquareState::INSIDE)
-        {
-            new_position.y = current_pos.y;
-        }
-        else
-        {
-            new_size.SetHeight(size_now.GetHeight());
-            new_position.y = current_pos.y;
-        }
-    }
-    else if ((new_position.y + new_size.GetHeight()) > py)
-    {
-        if (cursor_state_at_press_ == CursorSquareState::INSIDE)
-        {
-            new_position.y = current_pos.y;
-        }
-        else
-        {
-            new_size.SetHeight(size_now.GetHeight());
-        }
-    }
-
-    if ((this->GetPosition().x != new_position.x) || (this->GetPosition().y != new_position.y) ||
-        (new_size.GetWidth() != this->GetSize().GetWidth()) || (new_size.GetHeight() != this->GetSize().GetHeight()))
-    {
-        const float ratio_x = 1.0f - static_cast<float>(minimum_x_pos_) / px;
-        const float ratio_y = 1.0f - static_cast<float>(minimum_y_pos_) / py;
-
-        plot_pane_settings_->width = static_cast<float>(new_size.GetWidth()) / (px * ratio_x);
-        plot_pane_settings_->height = static_cast<float>(new_size.GetHeight()) / (py * ratio_y);
-        plot_pane_settings_->x = static_cast<float>(new_position.x - minimum_x_pos_) / (px * ratio_x);
-        plot_pane_settings_->y = static_cast<float>(new_position.y - minimum_y_pos_) / (py * ratio_y);
-
-        Unbind(wxEVT_MOTION, &PlotPane::mouseMoved, this);  // TODO: Needed?
-        notify_main_window_about_modification_();
-        setElementPositionAndSize();
-        Bind(wxEVT_MOTION, &PlotPane::mouseMoved, this);
-    }
-}
-
-void PlotPane::mouseMoved(wxMouseEvent& event)
-{
-    const wxPoint current_mouse_position = event.GetPosition();
+    const wxPoint current_mouse_position_local = event.GetPosition();
     const wxPoint current_pane_position = this->GetPosition();
 
-    current_mouse_pos_ = current_pane_position + current_mouse_position;
+    current_mouse_pos_ = current_pane_position + current_mouse_position_local;
 
     if (wxGetKeyState(static_cast<wxKeyCode>('l')) && event.LeftIsDown())
     {
@@ -647,23 +513,19 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
         }
         else if (shift_pressed_at_mouse_press_)
         {
-            mouse_state_.updateOnMotion(current_mouse_position.x, current_mouse_position.y);
-
             axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
-                                                    mouse_state_.getCurrPos().x,
-                                                    mouse_state_.getCurrPos().y,
-                                                    mouse_state_.getDeltaPos().x,
-                                                    mouse_state_.getDeltaPos().y);
+                                                    current_mouse_position_local.x,
+                                                    current_mouse_position_local.y,
+                                                    current_mouse_pos_.x - previous_mouse_pos_.x,
+                                                    current_mouse_pos_.y - previous_mouse_pos_.y);
         }
         else if (event.LeftIsDown())
         {
-            mouse_state_.updateOnMotion(current_mouse_position.x, current_mouse_position.y);
-
             axes_interactor_.registerMouseDragInput(current_mouse_interaction_axis_,
-                                                    mouse_state_.getCurrPos().x,
-                                                    mouse_state_.getCurrPos().y,
-                                                    mouse_state_.getDeltaPos().x,
-                                                    mouse_state_.getDeltaPos().y);
+                                                    current_mouse_position_local.x,
+                                                    current_mouse_position_local.y,
+                                                    current_mouse_pos_.x - previous_mouse_pos_.x,
+                                                    current_mouse_pos_.y - previous_mouse_pos_.y);
         }
 
         Refresh();
@@ -672,7 +534,7 @@ void PlotPane::mouseMoved(wxMouseEvent& event)
     {
         if (wxGetKeyState(WXK_COMMAND))
         {
-            setCursorDependingOnMousePos(current_mouse_position);
+            setCursorDependingOnMousePos(current_mouse_position_local);
         }
     }
 

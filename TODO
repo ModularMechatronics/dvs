@@ -120,6 +120,7 @@ indices. Selected points shall be highlighted in plot
 - Investigate why axes_limits_ is half of what the axes show (probably due to doubling the values in generateGridVectors)
 - Do something better/neater than "fillBufferWithData"?
 - Change to google logging
+- Notify client application when a gui element has been deleted, so calling the GuiElementHandle will give an error message
 - Generic "buffer" class that can be used to send Line3D, Triangles, etc.
 - Don't always update on keypress?
 - What to do if two adjecent points are at the same pos for plot/plot3

@@ -11,7 +11,6 @@
 
 #include "axes/structures/grid_vectors.h"
 #include "dvs/math/math.h"
-#include "mouse_state.h"
 #include "opengl_low_level/opengl_header.h"
 
 AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width)

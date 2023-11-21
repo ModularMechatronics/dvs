@@ -40,6 +40,11 @@ struct Bound2D
     float y_max;
 
     Bound2D() = default;
+
+    bool pointIsWithin(const wxPoint& point) const
+    {
+        return (x_min <= point.x) && (point.x <= x_max) && (y_min <= point.y) && (point.y <= y_max);
+    }
 };
 
 class ApplicationGuiElement
@@ -59,58 +64,41 @@ protected:
 
     wxPoint current_mouse_pos_;
     wxPoint previous_mouse_pos_;
+
     wxPoint mouse_pos_at_press_;
+
+    wxPoint element_pos_at_press_;
+    wxSize element_size_at_press_;
+
     bool control_pressed_at_mouse_press_;
     bool left_mouse_pressed_;
 
-    wxPoint pos_at_press_;
-    wxSize size_at_press_;
-
     CursorSquareState cursor_state_at_press_;
 
-    float edit_size_margin_{20.0f};
+    float edit_size_margin_{5.0f};
 
-    void fillWithBasicData(FillableUInt8Array& output_array) const
-    {
-        const std::uint8_t handle_string_length = element_settings_->handle_string.length();
-
-        output_array.fillWithStaticType(static_cast<std::uint8_t>(element_settings_->type));
-        output_array.fillWithStaticType(handle_string_length);
-        output_array.fillWithDataFromPointer(element_settings_->handle_string.data(),
-                                             element_settings_->handle_string.length());
-    }
-
-    std::uint64_t basicDataSize() const
-    {
-        const std::uint8_t handle_string_length = element_settings_->handle_string.length();
-
-        const std::uint64_t basic_data_size = handle_string_length +  // the handle_string itself
-                                              sizeof(std::uint8_t) +  // length of handle_string
-                                              sizeof(std::uint8_t) +  // type
-                                              sizeof(std::uint32_t);  // payload size
-        return basic_data_size;
-    }
-
+    void fillWithBasicData(FillableUInt8Array& output_array) const;
+    std::uint64_t basicDataSize() const;
     virtual std::uint64_t getGuiPayloadSize() const = 0;
     virtual void fillGuiPayload(FillableUInt8Array& output_array) const = 0;
 
-    void sendGuiData()
+    void sendGuiData();
+
+    std::pair<Bound2D, Bound2D> getBounds() const
     {
-        if (element_settings_->handle_string.length() >= 256U)
-        {
-            throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
-        }
+        Bound2D bnd;
+        bnd.x_min = 0.0f;
+        bnd.x_max = this->getSize().GetWidth();
+        bnd.y_min = 0.0f;
+        bnd.y_max = this->getSize().GetHeight();
 
-        const std::uint64_t num_bytes_to_send{basicDataSize() + getGuiPayloadSize()};
+        Bound2D bnd_with_margin;
+        bnd_with_margin.x_min = bnd.x_min + edit_size_margin_;
+        bnd_with_margin.x_max = bnd.x_max - edit_size_margin_;
+        bnd_with_margin.y_min = bnd.y_min + edit_size_margin_;
+        bnd_with_margin.y_max = bnd.y_max - edit_size_margin_;
 
-        FillableUInt8Array output_array{num_bytes_to_send};
-
-        fillWithBasicData(output_array);
-
-        output_array.fillWithStaticType(static_cast<std::uint32_t>(getGuiPayloadSize()));
-
-        fillGuiPayload(output_array);
-        sendThroughTcpInterface(output_array.view(), kGuiTcpPortNum);
+        return std::make_pair(bnd, bnd_with_margin);
     }
 
 public:
@@ -149,24 +137,6 @@ public:
     }
 
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
-    virtual void keyPressed(const char key) = 0;
-    virtual void keyReleased(const char key) = 0;
-
-    void keyPressedCallback_new(wxKeyEvent& evt)
-    {
-        const int key = evt.GetUnicodeKey();
-        notify_main_window_key_pressed_(key);
-    }
-
-    void keyReleasedCallback_new(wxKeyEvent& evt)
-    {
-        const int key = evt.GetUnicodeKey();
-        notify_main_window_key_released_(key);
-    }
-
-    virtual void mousePressedGuiElementCallback(wxMouseEvent& event) {}
-
-    virtual void mouseReleasedGuiElementCallback(wxMouseEvent& event) {}
 
     virtual wxPoint getPosition() const
     {
@@ -202,188 +172,46 @@ public:
         return std::make_shared<GuiElementState>();
     }
 
-    void mouseEnteredElement(wxMouseEvent& event)
-    {
-        const wxPoint current_mouse_point = event.GetPosition();
-        const wxPoint current_position = this->getPosition();
-        previous_mouse_pos_ = current_position + current_mouse_point;
-
-        if (wxGetKeyState(WXK_COMMAND))
-        {
-            setCursorDependingOnMousePos(event.GetPosition());
-        }
-    }
-
-    void mouseLeftElement(wxMouseEvent& event)
-    {
-        this->setCursor(wxCursor(wxCURSOR_ARROW));
-    }
-
     static CursorSquareState getCursorSquareState(const Bound2D bound,
                                                   const Bound2D bound_margin,
-                                                  const Vec2f mouse_pos)
+                                                  const wxPoint mouse_pos);
+
+    void setCursorDependingOnMousePos(const wxPoint& current_mouse_position);
+
+    void adjustPaneSizeOnMouseMoved();
+    virtual void setElementPositionAndSize()
     {
-        if ((bound.x_min <= mouse_pos.x) && (mouse_pos.x <= bound.x_max) && (bound.y_min <= mouse_pos.y) &&
-            (mouse_pos.y <= bound.y_max))
-        {
-            if (mouse_pos.x <= bound_margin.x_min)
-            {
-                if (mouse_pos.y <= bound_margin.y_min)
-                {
-                    return CursorSquareState::TOP_LEFT;
-                }
-                else if (bound_margin.y_max <= mouse_pos.y)
-                {
-                    return CursorSquareState::BOTTOM_LEFT;
-                }
-                else
-                {
-                    return CursorSquareState::LEFT;
-                }
-            }
-            else if (bound_margin.x_max <= mouse_pos.x)
-            {
-                if (mouse_pos.y <= bound_margin.y_min)
-                {
-                    return CursorSquareState::TOP_RIGHT;
-                }
-                else if (bound_margin.y_max <= mouse_pos.y)
-                {
-                    return CursorSquareState::BOTTOM_RIGHT;
-                }
-                else
-                {
-                    return CursorSquareState::RIGHT;
-                }
-            }
-            else if (mouse_pos.y <= bound_margin.y_min)
-            {
-                return CursorSquareState::TOP;
-            }
-            else if (bound_margin.y_max <= mouse_pos.y)
-            {
-                return CursorSquareState::BOTTOM;
-            }
-            else
-            {
-                return CursorSquareState::INSIDE;
-            }
-        }
-        else
-        {
-            return CursorSquareState::OUTSIDE;
-        }
+        DVS_LOG_WARNING() << "setElementPositionAndSize() not implemented!";
     }
 
-    void setCursorDependingOnMousePos(const wxPoint& current_mouse_position)
+    // Keyboard functions
+    virtual void keyPressed(const char key) = 0;
+    virtual void keyReleased(const char key) = 0;
+
+    void keyPressedCallback_new(wxKeyEvent& evt)
     {
-        Bound2D bnd;
-        bnd.x_min = 0.0f;
-        bnd.x_max = this->getSize().GetWidth();
-        bnd.y_min = 0.0f;
-        bnd.y_max = this->getSize().GetHeight();
-
-        Bound2D bnd_margin;
-        bnd_margin.x_min = bnd.x_min + edit_size_margin_;
-        bnd_margin.x_max = bnd.x_max - edit_size_margin_;
-        bnd_margin.y_min = bnd.y_min + edit_size_margin_;
-        bnd_margin.y_max = bnd.y_max - edit_size_margin_;
-
-        const CursorSquareState cms =
-            getCursorSquareState(bnd, bnd_margin, Vec2f(current_mouse_position.x, current_mouse_position.y));
-
-        switch (cms)
-        {
-            case CursorSquareState::LEFT:
-                this->setCursor(wxCursor(wxCURSOR_SIZEWE));
-                break;
-            case CursorSquareState::RIGHT:
-                this->setCursor(wxCursor(wxCURSOR_SIZEWE));
-                break;
-            case CursorSquareState::TOP:
-                this->setCursor(wxCursor(wxCURSOR_SIZENS));
-                break;
-            case CursorSquareState::BOTTOM:
-                this->setCursor(wxCursor(wxCURSOR_SIZENS));
-                break;
-            case CursorSquareState::BOTTOM_RIGHT:
-                this->setCursor(wxCursor(wxCURSOR_SIZENWSE));
-                break;
-            case CursorSquareState::BOTTOM_LEFT:
-                this->setCursor(wxCursor(wxCURSOR_SIZENESW));
-                break;
-            case CursorSquareState::TOP_RIGHT:
-                this->setCursor(wxCursor(wxCURSOR_SIZENESW));
-                break;
-            case CursorSquareState::TOP_LEFT:
-                this->setCursor(wxCursor(wxCURSOR_SIZENWSE));
-                break;
-            case CursorSquareState::INSIDE:
-                this->setCursor(wxCursor(wxCURSOR_HAND));
-                break;
-            default:
-                this->setCursor(wxCursor(wxCURSOR_HAND));
-        }
+        const int key = evt.GetUnicodeKey();
+        notify_main_window_key_pressed_(key);
     }
 
-    void mouseMovedOverItem(wxMouseEvent& event)
+    void keyReleasedCallback_new(wxKeyEvent& evt)
     {
-        if (control_pressed_at_mouse_press_ && event.LeftIsDown())
-        {
-            const wxPoint current_mouse_position_local = event.GetPosition();
-            const wxPoint current_mouse_position_global = current_mouse_position_local + this->getPosition();
-            const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
-            this->setPosition(this->getPosition() + delta);
-
-            element_settings_->x = this->getPosition().x / static_cast<float>(parent_size_.x);
-            element_settings_->y = this->getPosition().y / static_cast<float>(parent_size_.y);
-
-            previous_mouse_pos_ = current_mouse_position_global;
-
-            notify_main_window_about_modification_();
-        }
-        else
-        {
-            event.Skip();
-            mousePressedGuiElementCallback(event);
-        }
+        const int key = evt.GetUnicodeKey();
+        notify_main_window_key_released_(key);
     }
 
-    void mouseRightPressed_tmp(wxMouseEvent& event)
-    {
-        notify_parent_window_right_mouse_pressed_(this->getPosition() + event.GetPosition(),
-                                                  element_settings_->handle_string);
-    }
+    // Mouse functions
+    virtual void mousePressedGuiElementSpecific(wxMouseEvent& event) {}
 
-    void mouseLeftReleased(wxMouseEvent& event)
-    {
-        if (control_pressed_at_mouse_press_)
-        {
-            control_pressed_at_mouse_press_ = false;
-        }
-        else
-        {
-            event.Skip();
-        }
-    }
+    virtual void mouseReleasedGuiElementSpecific(wxMouseEvent& event) {}
 
-    void mouseLeftPressed(wxMouseEvent& event)
-    {
-        if (wxGetKeyState(WXK_CONTROL))
-        {
-            control_pressed_at_mouse_press_ = true;
+    void mouseEnteredElement(wxMouseEvent& event);
+    void mouseLeftElement(wxMouseEvent& event);
 
-            const wxPoint pos_at_press = this->getPosition();
+    void mouseMovedOverItem(wxMouseEvent& event);
 
-            mouse_pos_at_press_ = event.GetPosition() + pos_at_press;
-            previous_mouse_pos_ = mouse_pos_at_press_;
-        }
-        else
-        {
-            mouseReleasedGuiElementCallback(event);
-            event.Skip();
-        }
-    }
+    void mouseLeftReleased(wxMouseEvent& event);
+    void mouseLeftPressed(wxMouseEvent& event);
 };
 
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

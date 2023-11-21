@@ -51,7 +51,7 @@ public:
         setElementPositionAndSize();
     }
 
-    void setElementPositionAndSize()
+    void setElementPositionAndSize() override
     {
         const float px = parent_size_.GetWidth();
         const float py = parent_size_.GetHeight();
@@ -132,12 +132,12 @@ public:
         setElementPositionAndSize();
     }
 
-    void mousePressedGuiElementCallback(wxMouseEvent& event) override
+    void mousePressedGuiElementSpecific(wxMouseEvent& event) override
     {
         is_pressed_ = true;
     }
 
-    void mouseReleasedGuiElementCallback(wxMouseEvent& event) override
+    void mouseReleasedGuiElementSpecific(wxMouseEvent& event) override
     {
         is_pressed_ = false;
     }
@@ -188,7 +188,7 @@ public:
         setElementPositionAndSize();
     }
 
-    void setElementPositionAndSize()
+    void setElementPositionAndSize() override
     {
         const float px = parent_size_.GetWidth();
         const float py = parent_size_.GetHeight();
@@ -281,7 +281,7 @@ public:
         setElementPositionAndSize();
     }
 
-    void setElementPositionAndSize()
+    void setElementPositionAndSize() override
     {
         const float px = parent_size_.GetWidth();
         const float py = parent_size_.GetHeight();

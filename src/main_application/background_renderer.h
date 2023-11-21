@@ -12,7 +12,6 @@
 #include "dvs/math/math.h"
 #include "gui_element.h"
 #include "input_data.h"
-#include "mouse_state.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data_handler.h"
 

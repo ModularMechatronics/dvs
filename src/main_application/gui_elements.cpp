@@ -9,7 +9,12 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
                                    const std::function<void()>& notify_main_window_about_modification,
                                    const wxPoint& pos,
                                    const wxSize& size)
-    : wxButton(parent, wxID_ANY, std::dynamic_pointer_cast<ButtonSettings>(element_settings)->label, pos, size),
+    : wxButton(parent,
+               wxID_ANY,
+               std::dynamic_pointer_cast<ButtonSettings>(element_settings)->label,
+               pos,
+               size,
+               wxBU_EXACTFIT),
       ApplicationGuiElement(element_settings,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,
@@ -26,7 +31,6 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
 
     this->Bind(wxEVT_BUTTON, &ButtonGuiElement::buttonEvent, this);
 
-    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed_tmp, this);
     Bind(wxEVT_KEY_DOWN, &ApplicationGuiElement::keyPressedCallback_new, this);
     Bind(wxEVT_KEY_UP, &ApplicationGuiElement::keyReleasedCallback_new, this);
 

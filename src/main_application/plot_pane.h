@@ -14,7 +14,6 @@
 #include "dvs/math/math.h"
 #include "gui_element.h"
 #include "input_data.h"
-#include "mouse_state.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data_handler.h"
 #include "point_selection.h"
@@ -28,7 +27,6 @@ private:
     AxesSettings axes_settings_;
     AxesInteractor axes_interactor_;
     AxesRenderer* axes_renderer_;
-    MouseState mouse_state_;
 
     bool shift_pressed_at_mouse_press_;
 
@@ -57,8 +55,6 @@ private:
 
     dvs::Vec3<double> closest_point_;
     bool should_render_point_selection_;
-
-    void adjustPaneSizeOnMouseMoved();
 
     void processActionQueue();
     void addPlotData(ReceivedData& received_data,
@@ -121,9 +117,9 @@ public:
     void setMinimumXPos(const int new_min_x_pos);
 
     // Event callback function
-    void mouseMoved(wxMouseEvent& event);
-    void mouseLeftPressed(wxMouseEvent& event);
-    void mouseLeftReleased(wxMouseEvent& event);
+    void mouseMovedGuiElementSpecific(wxMouseEvent& event);
+    void mouseLeftPressedGuiElementSpecific(wxMouseEvent& event);
+    void mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event);
 
     void bindCallbacks();
 

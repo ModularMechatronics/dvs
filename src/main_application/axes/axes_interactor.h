@@ -10,7 +10,6 @@
 #include "axes/structures/grid_vectors.h"
 #include "axes/structures/view_angles.h"
 #include "dvs/math/math.h"
-#include "mouse_state.h"
 
 using namespace dvs;
 
