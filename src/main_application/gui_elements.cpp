@@ -21,7 +21,6 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification)
 {
-    parent_size_ = parent->GetSize();
     is_pressed_ = false;
     control_pressed_at_mouse_press_ = false;
     previous_mouse_pos_ = wxPoint(0, 0);
@@ -73,7 +72,6 @@ SliderGuiElement::SliderGuiElement(wxFrame* parent,
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
 
-    parent_size_ = parent->GetSize();
     Bind(wxEVT_SLIDER, &SliderGuiElement::sliderEvent, this);
 
     this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
@@ -121,7 +119,6 @@ CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
     control_pressed_at_mouse_press_ = false;
     previous_mouse_pos_ = wxPoint(0, 0);
 
-    parent_size_ = parent->GetSize();
     this->Bind(wxEVT_CHECKBOX, &CheckboxGuiElement::checkBoxCallback, this);
 
     this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);

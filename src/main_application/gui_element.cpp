@@ -65,14 +65,6 @@ void ApplicationGuiElement::mouseMovedOverItem(wxMouseEvent& event)
 
     if (control_pressed_at_mouse_press_ && event.LeftIsDown())
     {
-        /*const wxPoint current_mouse_position_local = event.GetPosition();
-        const wxPoint current_mouse_position_global = current_mouse_position_local + this->getPosition();
-        const wxPoint delta = current_mouse_position_global - previous_mouse_pos_;
-        this->setPosition(this->getPosition() + delta);
-
-        element_settings_->x = this->getPosition().x / static_cast<float>(parent_size_.x);
-        element_settings_->y = this->getPosition().y / static_cast<float>(parent_size_.y);*/
-
         adjustPaneSizeOnMouseMoved();
 
         notify_main_window_about_modification_();
@@ -155,8 +147,9 @@ void ApplicationGuiElement::adjustPaneSizeOnMouseMoved()
         new_position.y = current_pos.y;
     }
 
-    const float px = parent_size_.GetWidth();
-    const float py = parent_size_.GetHeight();
+    const wxSize parent_size = this->getParent()->GetSize();
+    const float px = parent_size.GetWidth();
+    const float py = parent_size.GetHeight();
 
     if (new_position.x < minimum_x_pos_)
     {

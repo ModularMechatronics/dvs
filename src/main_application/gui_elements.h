@@ -53,8 +53,9 @@ public:
 
     void setElementPositionAndSize() override
     {
-        const float px = parent_size_.GetWidth();
-        const float py = parent_size_.GetHeight();
+        const wxSize parent_size = this->getParent()->GetSize();
+        const float px = parent_size.GetWidth();
+        const float py = parent_size.GetHeight();
 
         wxPoint new_pos;
         wxSize new_size;
@@ -127,8 +128,6 @@ public:
 
     void updateSizeFromParent(const wxSize& parent_size) override
     {
-        parent_size_ = parent_size;
-
         setElementPositionAndSize();
     }
 
@@ -190,8 +189,9 @@ public:
 
     void setElementPositionAndSize() override
     {
-        const float px = parent_size_.GetWidth();
-        const float py = parent_size_.GetHeight();
+        const wxSize parent_size = this->getParent()->GetSize();
+        const float px = parent_size.GetWidth();
+        const float py = parent_size.GetHeight();
 
         wxPoint new_pos;
         wxSize new_size;
@@ -239,6 +239,11 @@ public:
         return this->GetSize();
     }
 
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
+    }
+
     void setCursor(const wxCursor& cursor) override
     {
         wxSetCursor(cursor);
@@ -255,8 +260,6 @@ public:
 
     void updateSizeFromParent(const wxSize& parent_size) override
     {
-        parent_size_ = parent_size;
-
         setElementPositionAndSize();
     }
 };
@@ -283,8 +286,9 @@ public:
 
     void setElementPositionAndSize() override
     {
-        const float px = parent_size_.GetWidth();
-        const float py = parent_size_.GetHeight();
+        const wxSize parent_size = this->getParent()->GetSize();
+        const float px = parent_size.GetWidth();
+        const float py = parent_size.GetHeight();
 
         wxPoint new_pos;
         wxSize new_size;
@@ -318,8 +322,6 @@ public:
 
     void updateSizeFromParent(const wxSize& parent_size) override
     {
-        parent_size_ = parent_size;
-
         setElementPositionAndSize();
     }
 
@@ -331,6 +333,11 @@ public:
     wxSize getSize() const override
     {
         return this->GetSize();
+    }
+
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
     }
 
     void setCursor(const wxCursor& cursor) override

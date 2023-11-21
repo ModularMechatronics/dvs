@@ -56,6 +56,11 @@ private:
     dvs::Vec3<double> closest_point_;
     bool should_render_point_selection_;
 
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
+    }
+
     void processActionQueue();
     void addPlotData(ReceivedData& received_data,
                      const PlotObjectAttributes& plot_object_attributes,

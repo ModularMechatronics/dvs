@@ -93,7 +93,6 @@ PlotPane::PlotPane(wxWindow* parent,
       plot_pane_settings_{std::dynamic_pointer_cast<PlotPaneSettings>(element_settings)}
 {
     pending_clear_ = false;
-    parent_size_ = parent->GetSize();
     edit_size_margin_ = 20.0f;
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
@@ -139,8 +138,6 @@ PlotPane::PlotPane(wxWindow* parent,
 
 void PlotPane::updateSizeFromParent(const wxSize& parent_size)
 {
-    parent_size_ = parent_size;
-
     setElementPositionAndSize();
 }
 
@@ -662,8 +659,10 @@ void PlotPane::keyReleasedCallback(wxKeyEvent& evt)
 
 void PlotPane::setElementPositionAndSize()
 {
-    const float px = parent_size_.GetWidth();
-    const float py = parent_size_.GetHeight();
+    const wxSize parent_size = this->getParent()->GetSize();
+
+    const float px = parent_size.GetWidth();
+    const float py = parent_size.GetHeight();
 
     wxPoint new_pos;
     wxSize new_size;

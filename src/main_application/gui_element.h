@@ -60,8 +60,6 @@ protected:
     int minimum_x_pos_;
     int minimum_y_pos_;
 
-    wxSize parent_size_;  // Pixels
-
     wxPoint current_mouse_pos_;
     wxPoint previous_mouse_pos_;
 
@@ -150,11 +148,7 @@ public:
         return wxSize{0, 0};
     }
 
-    virtual wxWindow* getParent() const
-    {
-        DVS_LOG_WARNING() << "getParent() not implemented!";
-        return nullptr;
-    }
+    virtual wxWindow* getParent() const = 0;
 
     virtual void setCursor(const wxCursor& cursor)
     {
