@@ -155,13 +155,9 @@ void PlotPane::setSize(const wxSize& new_size)
 
 void PlotPane::bindCallbacks()
 {
-    // Bind(wxEVT_MOTION, &PlotPane::mouseMovedGuiElementSpecific, this);
-    // Bind(wxEVT_LEFT_DOWN, &PlotPane::mouseLeftPressedGuiElementSpecific, this);
-    // Bind(wxEVT_LEFT_UP, &PlotPane::mouseLeftReleasedGuiElementSpecific, this);
-
     Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
-    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
     Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
 
     Bind(wxEVT_KEY_DOWN, &PlotPane::keyPressedCallback, this);
     Bind(wxEVT_KEY_UP, &PlotPane::keyReleasedCallback, this);
@@ -370,17 +366,7 @@ void PlotPane::mouseLeftPressedGuiElementSpecific(wxMouseEvent& event)
 {
     const wxPoint mouse_pos_at_press_local = event.GetPosition();
 
-    element_pos_at_press_ = this->GetPosition();
-    element_size_at_press_ = this->GetSize();
-    mouse_pos_at_press_ = element_pos_at_press_ + mouse_pos_at_press_local;
-
-    previous_mouse_pos_ = element_pos_at_press_ + mouse_pos_at_press_local;
-
     left_mouse_pressed_ = true;
-
-    const auto [bnd, bnd_with_margin] = getBounds();
-
-    cursor_state_at_press_ = getCursorSquareState(bnd, bnd_with_margin, mouse_pos_at_press_local);
 
     const Vec2f mouse_pos_at_press_normalized{
         Vec2f(mouse_pos_at_press_local.x, mouse_pos_at_press_local.y)
@@ -388,11 +374,7 @@ void PlotPane::mouseLeftPressedGuiElementSpecific(wxMouseEvent& event)
 
     axes_interactor_.registerMousePressed(mouse_pos_at_press_normalized);
 
-    if (wxGetKeyState(WXK_CONTROL))
-    {
-        control_pressed_at_mouse_press_ = true;
-    }
-    else if (wxGetKeyState(WXK_SHIFT))
+    if (wxGetKeyState(WXK_SHIFT))
     {
         shift_pressed_at_mouse_press_ = true;
         axes_interactor_.setOverriddenMouseInteractionType(MouseInteractionType::ROTATE);
@@ -403,13 +385,12 @@ void PlotPane::mouseLeftPressedGuiElementSpecific(wxMouseEvent& event)
 
 void PlotPane::mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event)
 {
-    const wxPoint mouse_pos{event.GetPosition()};
+    const wxPoint mouse_local_pos{event.GetPosition()};
     const wxSize size_now = this->GetSize();
 
     axes_interactor_.registerMouseReleased(
-        Vec2f(mouse_pos.x, mouse_pos.y).elementWiseDivide(Vec2f(size_now.x, size_now.y)));
+        Vec2f(mouse_local_pos.x, mouse_local_pos.y).elementWiseDivide(Vec2f(size_now.x, size_now.y)));
 
-    control_pressed_at_mouse_press_ = false;
     left_mouse_pressed_ = false;
 
     if (shift_pressed_at_mouse_press_)
@@ -479,9 +460,6 @@ void PlotPane::mouseRightReleased(wxMouseEvent& event)
 void PlotPane::mouseMovedGuiElementSpecific(wxMouseEvent& event)
 {
     const wxPoint current_mouse_position_local = event.GetPosition();
-    const wxPoint current_pane_position = this->GetPosition();
-
-    current_mouse_pos_ = current_pane_position + current_mouse_position_local;
 
     if (wxGetKeyState(static_cast<wxKeyCode>('l')) && event.LeftIsDown())
     {
@@ -524,15 +502,15 @@ void PlotPane::mouseMovedGuiElementSpecific(wxMouseEvent& event)
 
         Refresh();
     }
-    else
+    /*else
     {
         if (wxGetKeyState(WXK_COMMAND))
         {
             setCursorDependingOnMousePos(current_mouse_position_local);
         }
-    }
+    }*/
 
-    previous_mouse_pos_ = current_mouse_pos_;
+    // previous_mouse_pos_ = current_mouse_pos_;
 }
 
 void PlotPane::setMouseInteractionType(const MouseInteractionType mit)

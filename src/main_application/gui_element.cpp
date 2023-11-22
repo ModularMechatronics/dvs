@@ -242,14 +242,17 @@ CursorSquareState ApplicationGuiElement::getCursorSquareState(const Bound2D boun
         {
             if (mouse_pos.y <= bound_margin.y_min)
             {
+                std::cout << "TOP_LEFT" << std::endl;
                 return CursorSquareState::TOP_LEFT;
             }
             else if (bound_margin.y_max <= mouse_pos.y)
             {
+                std::cout << "BOTTOM_LEFT" << std::endl;
                 return CursorSquareState::BOTTOM_LEFT;
             }
             else
             {
+                std::cout << "LEFT" << std::endl;
                 return CursorSquareState::LEFT;
             }
         }
@@ -257,32 +260,39 @@ CursorSquareState ApplicationGuiElement::getCursorSquareState(const Bound2D boun
         {
             if (mouse_pos.y <= bound_margin.y_min)
             {
+                std::cout << "TOP_RIGHT" << std::endl;
                 return CursorSquareState::TOP_RIGHT;
             }
             else if (bound_margin.y_max <= mouse_pos.y)
             {
+                std::cout << "BOTTOM_RIGHT" << std::endl;
                 return CursorSquareState::BOTTOM_RIGHT;
             }
             else
             {
+                std::cout << "RIGHT" << std::endl;
                 return CursorSquareState::RIGHT;
             }
         }
         else if (mouse_pos.y <= bound_margin.y_min)
         {
+            std::cout << "TOP" << std::endl;
             return CursorSquareState::TOP;
         }
         else if (bound_margin.y_max <= mouse_pos.y)
         {
+            std::cout << "BOTTOM" << std::endl;
             return CursorSquareState::BOTTOM;
         }
         else
         {
+            std::cout << "INSIDE" << std::endl;
             return CursorSquareState::INSIDE;
         }
     }
     else
     {
+        std::cout << "OUTSIDE" << std::endl;
         return CursorSquareState::OUTSIDE;
     }
 }
