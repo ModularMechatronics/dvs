@@ -47,7 +47,7 @@ GuiWindow::GuiWindow(
     main_window_ = main_window;
     current_tab_num_ = 0;
     callback_id_ = callback_id;
-    dialog_color_ = RGBTripletf(0.5, 0.0, 0.0);
+    dialog_color_ = RGBTripletf{0.7765f, 0.9020f, 0.5569f};
     project_is_saved_ = project_is_saved;
 
     notify_parent_window_right_mouse_pressed_ = [this](const wxPoint pos, const std::string& item_name) {
@@ -122,9 +122,27 @@ GuiWindow::GuiWindow(
         }
     }
 
+    new_element_menu_window_ = new wxMenu(wxT(""));
+    new_element_menu_element_ = new wxMenu(wxT(""));
+    new_element_menu_tab_ = new wxMenu(wxT(""));
     popup_menu_window_ = new wxMenu(wxT(""));
     popup_menu_element_ = new wxMenu(wxT(""));
     popup_menu_tab_ = new wxMenu(wxT(""));
+
+    new_element_menu_window_->Append(dvs_ids::NEW_PLOT_PANE, wxT("Plot pane"));
+    new_element_menu_window_->Append(dvs_ids::NEW_BUTTON, wxT("Button"));
+    new_element_menu_window_->Append(dvs_ids::NEW_SLIDER, wxT("Slider"));
+    new_element_menu_window_->Append(dvs_ids::NEW_CHECK_BOX, wxT("Checkbox"));
+
+    new_element_menu_element_->Append(dvs_ids::NEW_PLOT_PANE, wxT("Plot pane"));
+    new_element_menu_element_->Append(dvs_ids::NEW_BUTTON, wxT("Button"));
+    new_element_menu_element_->Append(dvs_ids::NEW_SLIDER, wxT("Slider"));
+    new_element_menu_element_->Append(dvs_ids::NEW_CHECK_BOX, wxT("Checkbox"));
+
+    new_element_menu_tab_->Append(dvs_ids::NEW_PLOT_PANE, wxT("Plot pane"));
+    new_element_menu_tab_->Append(dvs_ids::NEW_BUTTON, wxT("Button"));
+    new_element_menu_tab_->Append(dvs_ids::NEW_SLIDER, wxT("Slider"));
+    new_element_menu_tab_->Append(dvs_ids::NEW_CHECK_BOX, wxT("Checkbox"));
 
     popup_menu_window_->AppendSeparator();
     popup_menu_window_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
@@ -137,7 +155,8 @@ GuiWindow::GuiWindow(
     popup_menu_window_->AppendSeparator();
     popup_menu_window_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_window_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
-    popup_menu_window_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
+
+    popup_menu_window_->AppendSubMenu(new_element_menu_window_, wxT("New element"));
 
     popup_menu_element_->Append(dvs_ids::EDIT_ELEMENT_NAME, wxT("Edit element name"));
     popup_menu_element_->Append(dvs_ids::DELETE_ELEMENT, wxT("Delete element"));
@@ -155,7 +174,7 @@ GuiWindow::GuiWindow(
     popup_menu_element_->AppendSeparator();
     popup_menu_element_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_element_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
-    popup_menu_element_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
+    popup_menu_element_->AppendSubMenu(new_element_menu_element_, wxT("New element"));
 
     popup_menu_tab_->Append(dvs_ids::EDIT_TAB_NAME, wxT("Edit tab name"));
     popup_menu_tab_->Append(dvs_ids::DELETE_TAB, wxT("Delete tab"));
@@ -170,7 +189,7 @@ GuiWindow::GuiWindow(
     popup_menu_tab_->AppendSeparator();
     popup_menu_tab_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_tab_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
-    popup_menu_tab_->Append(dvs_ids::NEW_ELEMENT, wxT("New element"));
+    popup_menu_tab_->AppendSubMenu(new_element_menu_tab_, wxT("New element"));
 
     getMenuItemFromString(popup_menu_window_, "Rotate")->Check(true);
     getMenuItemFromString(popup_menu_element_, "Rotate")->Check(true);
@@ -180,7 +199,12 @@ GuiWindow::GuiWindow(
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
     Bind(wxEVT_MENU, &GuiWindow::newTab, this, dvs_ids::NEW_TAB);
-    Bind(wxEVT_MENU, &GuiWindow::createNewPlotPaneCallbackFunction, this, dvs_ids::NEW_ELEMENT);
+
+    Bind(wxEVT_MENU, &GuiWindow::createNewPlotPaneCallbackFunction, this, dvs_ids::NEW_PLOT_PANE);
+    Bind(wxEVT_MENU, &GuiWindow::createNewButtonCallbackFunction, this, dvs_ids::NEW_BUTTON);
+    Bind(wxEVT_MENU, &GuiWindow::createNewSliderCallbackFunction, this, dvs_ids::NEW_SLIDER);
+    Bind(wxEVT_MENU, &GuiWindow::createNewCheckBoxCallbackFunction, this, dvs_ids::NEW_CHECK_BOX);
+
     Bind(wxEVT_MENU, &GuiWindow::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &GuiWindow::deleteElement, this, dvs_ids::DELETE_ELEMENT);
 
@@ -618,6 +642,66 @@ void GuiWindow::createNewPlotPane()
     }
 }
 
+void GuiWindow::createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event))
+{
+    const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
+
+    auto q = std::find_if(tabs_.begin(), tabs_.end(), [&selected_tab](const WindowTab* const tb) -> bool {
+        return selected_tab == tb->getName();
+    });
+
+    if (q != tabs_.end())
+    {
+        const std::string element_handle_string = getValidNewElementHandleString();
+
+        if (element_handle_string != "")
+        {
+            (*q)->createNewSlider(element_handle_string);
+            notify_main_window_about_modification_();
+        }
+    }
+}
+
+void GuiWindow::createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event))
+{
+    const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
+
+    auto q = std::find_if(tabs_.begin(), tabs_.end(), [&selected_tab](const WindowTab* const tb) -> bool {
+        return selected_tab == tb->getName();
+    });
+
+    if (q != tabs_.end())
+    {
+        const std::string element_handle_string = getValidNewElementHandleString();
+
+        if (element_handle_string != "")
+        {
+            (*q)->createNewButton(element_handle_string);
+            notify_main_window_about_modification_();
+        }
+    }
+}
+
+void GuiWindow::createNewCheckBoxCallbackFunction(wxCommandEvent& WXUNUSED(event))
+{
+    const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
+
+    auto q = std::find_if(tabs_.begin(), tabs_.end(), [&selected_tab](const WindowTab* const tb) -> bool {
+        return selected_tab == tb->getName();
+    });
+
+    if (q != tabs_.end())
+    {
+        const std::string element_handle_string = getValidNewElementHandleString();
+
+        if (element_handle_string != "")
+        {
+            (*q)->createNewCheckBox(element_handle_string);
+            notify_main_window_about_modification_();
+        }
+    }
+}
+
 void GuiWindow::createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event))
 {
     const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
@@ -628,54 +712,63 @@ void GuiWindow::createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event
 
     if (q != tabs_.end())
     {
-        wxTextEntryDialog name_dialog(
-            this, "Enter the name for the new element", "Enter element name", "<element-name>");
+        const std::string element_handle_string = getValidNewElementHandleString();
 
-        name_dialog.SetBackgroundColour(
-            wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
-        std::string element_handle_string;
-
-        while (true)
+        if (element_handle_string != "")
         {
-            if (name_dialog.ShowModal() == wxID_CANCEL)
-            {
-                return;
-            }
+            (*q)->createNewPlotPane(element_handle_string);
+            notify_main_window_about_modification_();
+        }
+    }
+}
 
-            element_handle_string = name_dialog.GetValue().mb_str();
+std::string GuiWindow::getValidNewElementHandleString()
+{
+    wxTextEntryDialog name_dialog(this, "Enter the name for the new element", "Enter element name", "<element-name>");
 
-            if (element_handle_string.length() == 0)
-            {
-                wxMessageDialog dlg(&name_dialog, "Can't have an empty element name!", "Invalid name!");
-                dlg.SetBackgroundColour(
-                    wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
-                dlg.ShowModal();
-                continue;
-            }
+    name_dialog.SetBackgroundColour(
+        wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
+    std::string element_handle_string;
 
-            const std::vector<std::string> all_element_names = get_all_element_names_();
-
-            auto q = std::find(all_element_names.begin(), all_element_names.end(), element_handle_string);
-
-            const bool element_exists = q != all_element_names.end();
-
-            if (element_exists)
-            {
-                wxMessageDialog dlg(
-                    &name_dialog, "Choose a unique name", "Element name \"" + element_handle_string + "\" exists!");
-                dlg.SetBackgroundColour(
-                    wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
-                dlg.ShowModal();
-            }
-            else
-            {
-                break;
-            }
+    while (true)
+    {
+        if (name_dialog.ShowModal() == wxID_CANCEL)
+        {
+            return "";
         }
 
-        (*q)->createNewPlotPane(element_handle_string);
-        notify_main_window_about_modification_();
+        element_handle_string = name_dialog.GetValue().mb_str();
+
+        if (element_handle_string.length() == 0)
+        {
+            wxMessageDialog dlg(&name_dialog, "Can't have an empty element name!", "Invalid name!");
+            dlg.SetBackgroundColour(
+                wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
+            dlg.ShowModal();
+            continue;
+        }
+
+        const std::vector<std::string> all_element_names = get_all_element_names_();
+
+        auto q = std::find(all_element_names.begin(), all_element_names.end(), element_handle_string);
+
+        const bool element_exists = q != all_element_names.end();
+
+        if (element_exists)
+        {
+            wxMessageDialog dlg(
+                &name_dialog, "Choose a unique name", "Element name \"" + element_handle_string + "\" exists!");
+            dlg.SetBackgroundColour(
+                wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
+            dlg.ShowModal();
+        }
+        else
+        {
+            break;
+        }
     }
+
+    return element_handle_string;
 }
 
 std::vector<std::string> GuiWindow::getElementNames() const

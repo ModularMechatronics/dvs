@@ -57,11 +57,16 @@ private:
     std::string name_;
     wxFrame* main_window_;
 
+    wxMenu* new_element_menu_window_;
+    wxMenu* new_element_menu_element_;
+    wxMenu* new_element_menu_tab_;
+
     wxMenu* popup_menu_window_;
     wxMenu* popup_menu_element_;
     wxMenu* popup_menu_tab_;
 
     wxMenuItem* getMenuItemFromString(const wxMenu* const menu, const std::string& menu_item_string) const;
+    std::string getValidNewElementHandleString();
 
     int current_tab_num_;
 
@@ -115,6 +120,9 @@ public:
 
     void newTab(wxCommandEvent& WXUNUSED(event));
     void createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewCheckBoxCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewPlotPane();
 
     void editElementName(wxCommandEvent& WXUNUSED(event));
