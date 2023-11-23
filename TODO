@@ -158,4 +158,5 @@ indices. Selected points shall be highlighted in plot
 - Implement findMinMax for matrices and vectors
 - Command line window that prints errors etc.
 - Set order in which different types are plotted
-- 
+- Be able to select plot object and pan it around (and rotate and zoom?)
+- Be able to draw lines and rectangles in plot, with mouse movement

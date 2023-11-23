@@ -120,11 +120,11 @@ PlotPane::PlotPane(wxWindow* parent,
     axes_from_min_max_disabled_ = false;
     axes_interactor_.setOverriddenMouseInteractionType(MouseInteractionType::UNCHANGED);
 
-    Bind(wxEVT_RIGHT_DOWN, &PlotPane::mouseRightPressed, this);
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
     Bind(wxEVT_MIDDLE_DOWN, &PlotPane::mouseMiddlePressed, this);
 
     Bind(wxEVT_MIDDLE_UP, &PlotPane::mouseMiddleReleased, this);
-    Bind(wxEVT_RIGHT_UP, &PlotPane::mouseRightReleased, this);
+    Bind(wxEVT_RIGHT_UP, &ApplicationGuiElement::mouseRightReleased, this);
 
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -424,26 +424,15 @@ void PlotPane::mouseMiddleReleased(wxMouseEvent& event)
     Refresh();
 }
 
-void PlotPane::mouseRightPressed(wxMouseEvent& event)
+void PlotPane::mouseRightPressedGuiElementSpecific(wxMouseEvent& event)
 {
-    const wxPoint current_mouse_position_local = event.GetPosition();
-    const wxPoint current_pane_position = this->GetPosition();
-
-    previous_mouse_pos_ = current_pane_position + current_mouse_position_local;
-
     if (wxGetKeyState(WXK_SHIFT))
     {
-        shift_pressed_at_mouse_press_ = true;
         axes_interactor_.setOverriddenMouseInteractionType(MouseInteractionType::ZOOM);
-    }
-    else
-    {
-        notify_parent_window_right_mouse_pressed_(this->GetPosition() + event.GetPosition(),
-                                                  element_settings_->handle_string);
     }
 }
 
-void PlotPane::mouseRightReleased(wxMouseEvent& event)
+void PlotPane::mouseRightReleasedGuiElementSpecific(wxMouseEvent& event)
 {
     if (event.RightIsDown())
     {

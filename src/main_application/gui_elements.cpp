@@ -22,8 +22,6 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
                             notify_main_window_about_modification)
 {
     is_pressed_ = false;
-    control_pressed_at_mouse_press_ = false;
-    previous_mouse_pos_ = wxPoint(0, 0);
 
     this->Bind(wxEVT_BUTTON, &ButtonGuiElement::buttonEvent, this);
 
@@ -33,9 +31,11 @@ ButtonGuiElement::ButtonGuiElement(wxFrame* parent,
     Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
     Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
 
-    this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
-    this->Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
-    this->Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+    Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
 }
 
 void ButtonGuiElement::buttonEvent(wxCommandEvent& event)
@@ -66,23 +66,18 @@ SliderGuiElement::SliderGuiElement(wxFrame* parent,
                             notify_main_window_about_modification),
       slider_value_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->init_value}
 {
-    minimum_x_pos_ = 70;
-    minimum_y_pos_ = 30;
-
     Bind(wxEVT_SLIDER, &SliderGuiElement::sliderEvent, this);
 
     this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
     this->Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
     this->Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
 }
 
 void SliderGuiElement::sliderEvent(wxCommandEvent& event)
 {
-    if (element_settings_->handle_string.length() >= 256U)
-    {
-        throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
-    }
-
     const std::int32_t new_value{this->GetValue()};
     if (new_value == slider_value_)
     {
@@ -110,25 +105,17 @@ CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification)
 {
-    minimum_x_pos_ = 70;
-    minimum_y_pos_ = 30;
-
-    control_pressed_at_mouse_press_ = false;
-    previous_mouse_pos_ = wxPoint(0, 0);
-
     this->Bind(wxEVT_CHECKBOX, &CheckboxGuiElement::checkBoxCallback, this);
 
-    this->Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
-    this->Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
-    this->Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
+
+    Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
 }
 
 void CheckboxGuiElement::checkBoxCallback(wxCommandEvent& event)
 {
-    if (element_settings_->handle_string.length() >= 256U)
-    {
-        throw std::runtime_error("Handle string too long! Maximum length is 255 characters!");
-    }
-
     sendGuiData();
 }

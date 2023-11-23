@@ -68,6 +68,7 @@ protected:
     wxPoint element_pos_at_press_;
     wxSize element_size_at_press_;
 
+    bool shift_pressed_at_mouse_press_;
     bool control_pressed_at_mouse_press_;
     bool left_mouse_pressed_;
 
@@ -129,34 +130,17 @@ public:
 
     virtual void updateSizeFromParent(const wxSize& parent_size) = 0;
 
-    virtual wxPoint getPosition() const
-    {
-        DVS_LOG_WARNING() << "getPosition() not implemented!";
-        return wxPoint{0, 0};
-    }
+    virtual wxPoint getPosition() const = 0;
 
-    virtual wxSize getSize() const
-    {
-        DVS_LOG_WARNING() << "getSize() not implemented!";
-        return wxSize{0, 0};
-    }
+    virtual wxSize getSize() const = 0;
 
     virtual wxWindow* getParent() const = 0;
 
-    virtual void setCursor(const wxCursor& cursor)
-    {
-        DVS_LOG_WARNING() << "setCursor() not implemented!";
-    }
+    virtual void setCursor(const wxCursor& cursor) = 0;
 
-    virtual void setPosition(const wxPoint& new_pos)
-    {
-        DVS_LOG_WARNING() << "setPosition() not implemented!";
-    }
+    virtual void setPosition(const wxPoint& new_pos) = 0;
 
-    virtual void setSize(const wxSize& new_size)
-    {
-        DVS_LOG_WARNING() << "setSize() not implemented!";
-    }
+    virtual void setSize(const wxSize& new_size) = 0;
 
     virtual std::shared_ptr<GuiElementState> getGuiElementState() const
     {
@@ -164,9 +148,7 @@ public:
         return std::make_shared<GuiElementState>();
     }
 
-    static CursorSquareState getCursorSquareState(const Bound2D bound,
-                                                  const Bound2D bound_margin,
-                                                  const wxPoint mouse_pos);
+    CursorSquareState getCursorSquareState(const Bound2D bound, const Bound2D bound_margin, const wxPoint mouse_pos);
 
     void setCursorDependingOnMousePos(const wxPoint& current_mouse_position);
 
@@ -194,6 +176,9 @@ public:
     virtual void mouseMovedGuiElementSpecific(wxMouseEvent& event) {}
     virtual void mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event) {}
 
+    virtual void mouseRightPressedGuiElementSpecific(wxMouseEvent& event) {}
+    virtual void mouseRightLeftGuiElementSpecific(wxMouseEvent& event) {}
+
     void mouseEnteredElement(wxMouseEvent& event);
     void mouseLeftElement(wxMouseEvent& event);
 
@@ -201,6 +186,9 @@ public:
 
     void mouseLeftReleased(wxMouseEvent& event);
     void mouseLeftPressed(wxMouseEvent& event);
+
+    void mouseRightReleased(wxMouseEvent& event);
+    void mouseRightPressed(wxMouseEvent& event);
 };
 
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

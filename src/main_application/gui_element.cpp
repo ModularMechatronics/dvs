@@ -12,6 +12,9 @@ ApplicationGuiElement::ApplicationGuiElement(const std::shared_ptr<ElementSettin
       notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
       notify_main_window_about_modification_{notify_main_window_about_modification}
 {
+    control_pressed_at_mouse_press_ = false;
+    shift_pressed_at_mouse_press_ = false;
+
     edit_size_margin_ = 5.0f;
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
@@ -96,17 +99,44 @@ void ApplicationGuiElement::mouseMovedOverItem(wxMouseEvent& event)
     }
 
     previous_mouse_pos_ = current_mouse_pos_;
+}
 
-    // TODO: Where to call?
-    // notify_parent_window_right_mouse_pressed_(this->getPosition() + event.GetPosition(),
-    //                                               element_settings_->handle_string);
+void ApplicationGuiElement::mouseRightPressed(wxMouseEvent& event)
+{
+    const wxPoint current_mouse_position_local = event.GetPosition();
+    const wxPoint current_pane_position = this->getPosition();
+
+    previous_mouse_pos_ = current_pane_position + current_mouse_position_local;
+
+    if (wxGetKeyState(WXK_SHIFT))
+    {
+        shift_pressed_at_mouse_press_ = true;
+    }
+    else
+    {
+        notify_parent_window_right_mouse_pressed_(this->getPosition() + event.GetPosition(),
+                                                  element_settings_->handle_string);
+    }
+}
+
+void ApplicationGuiElement::mouseRightReleased(wxMouseEvent& event)
+{
+    mouseRightPressedGuiElementSpecific(event);
+
+    shift_pressed_at_mouse_press_ = false;
 }
 
 void ApplicationGuiElement::adjustPaneSizeOnMouseMoved()
 {
-    const Vec2f delta(current_mouse_pos_.x - previous_mouse_pos_.x, current_mouse_pos_.y - previous_mouse_pos_.y);
+    const wxPoint delta = current_mouse_pos_ - previous_mouse_pos_;
+    const wxPoint delta_x = wxPoint(delta.x, 0);
+    const wxPoint delta_y = wxPoint(0, delta.y);
 
-    const Vec2f current_pos(this->getPosition().x, this->getPosition().y);
+    const wxSize delta_size_x = wxSize(delta.x, 0);
+    const wxSize delta_size_y = wxSize(0, delta.y);
+    const wxSize delta_size = wxSize(delta.x, delta.y);
+
+    const wxPoint current_element_pos = this->getPosition();
 
     const wxSize current_size = this->getSize();
 
@@ -116,37 +146,40 @@ void ApplicationGuiElement::adjustPaneSizeOnMouseMoved()
     switch (cursor_state_at_press_)
     {
         case CursorSquareState::LEFT:
-            new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
-            new_size = wxSize(current_size.GetWidth() - delta.x, current_size.GetHeight());
+            new_position = current_element_pos + delta_x;
+            new_size = current_size - delta_size_x;
             break;
         case CursorSquareState::RIGHT:
-            new_size = wxSize(current_size.GetWidth() + delta.x, current_size.GetHeight());
+            new_size = current_size + delta_size_x;
             break;
         case CursorSquareState::TOP:
-            new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
-            new_size = wxSize(current_size.GetWidth(), current_size.GetHeight() - delta.y);
+            new_position = current_element_pos + delta_y;
+            new_size = current_size - delta_size_y;
             break;
         case CursorSquareState::BOTTOM:
-            new_size = wxSize(current_size.GetWidth(), current_size.GetHeight() + delta.y);
+            new_size = current_size + delta_size_y;
             break;
         case CursorSquareState::INSIDE:
-            new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
+            new_position = current_element_pos + delta;
             new_size = element_size_at_press_;
             break;
         case CursorSquareState::BOTTOM_RIGHT:
-            new_size = wxSize(current_size.GetWidth() + delta.x, current_size.GetHeight() + delta.y);
+            new_size = current_size + delta_size;
             break;
         case CursorSquareState::BOTTOM_LEFT:
-            new_position = wxPoint(current_pos.x + delta.x, current_pos.y);
-            new_size = wxSize(current_size.GetWidth() - delta.x, current_size.GetHeight() + delta.y);
+            new_position = current_element_pos + delta_x;
+            new_size = current_size - delta_size_x + delta_size_y;
             break;
         case CursorSquareState::TOP_RIGHT:
-            new_position = wxPoint(current_pos.x, current_pos.y + delta.y);
-            new_size = wxSize(current_size.GetWidth() + delta.x, current_size.GetHeight() - delta.y);
+            new_position = current_element_pos + delta_y;
+            new_size = current_size + delta_size_x - delta_size_y;
             break;
         case CursorSquareState::TOP_LEFT:
-            new_position = wxPoint(current_pos.x + delta.x, current_pos.y + delta.y);
-            new_size = wxSize(current_size.GetWidth() - delta.x, current_size.GetHeight() - delta.y);
+            new_position = current_element_pos + delta;
+            new_size = current_size - delta_size_x - delta_size_y;
+            break;
+        case CursorSquareState::OUTSIDE:
+            // Do nothing
             break;
         default:
             std::cout << "Invalid cursor state!" << std::endl;
@@ -154,12 +187,12 @@ void ApplicationGuiElement::adjustPaneSizeOnMouseMoved()
     if (new_size.GetWidth() < 50)
     {
         new_size.SetWidth(50);
-        new_position.x = current_pos.x;
+        new_position.x = current_element_pos.x;
     }
     if (new_size.GetHeight() < 50)
     {
         new_size.SetHeight(50);
-        new_position.y = current_pos.y;
+        new_position.y = current_element_pos.y;
     }
 
     const wxSize parent_size = this->getParent()->GetSize();
@@ -170,19 +203,19 @@ void ApplicationGuiElement::adjustPaneSizeOnMouseMoved()
     {
         if (cursor_state_at_press_ == CursorSquareState::INSIDE)
         {
-            new_position.x = current_pos.x;
+            new_position.x = current_element_pos.x;
         }
         else
         {
             new_size.SetWidth(current_size.GetWidth());
-            new_position.x = current_pos.x;
+            new_position.x = current_element_pos.x;
         }
     }
     else if ((new_position.x + new_size.GetWidth()) > px)
     {
         if (cursor_state_at_press_ == CursorSquareState::INSIDE)
         {
-            new_position.x = current_pos.x;
+            new_position.x = current_element_pos.x;
         }
         else
         {
@@ -194,19 +227,19 @@ void ApplicationGuiElement::adjustPaneSizeOnMouseMoved()
     {
         if (cursor_state_at_press_ == CursorSquareState::INSIDE)
         {
-            new_position.y = current_pos.y;
+            new_position.y = current_element_pos.y;
         }
         else
         {
             new_size.SetHeight(current_size.GetHeight());
-            new_position.y = current_pos.y;
+            new_position.y = current_element_pos.y;
         }
     }
     else if ((new_position.y + new_size.GetHeight()) > py)
     {
         if (cursor_state_at_press_ == CursorSquareState::INSIDE)
         {
-            new_position.y = current_pos.y;
+            new_position.y = current_element_pos.y;
         }
         else
         {
@@ -242,17 +275,14 @@ CursorSquareState ApplicationGuiElement::getCursorSquareState(const Bound2D boun
         {
             if (mouse_pos.y <= bound_margin.y_min)
             {
-                std::cout << "TOP_LEFT" << std::endl;
                 return CursorSquareState::TOP_LEFT;
             }
             else if (bound_margin.y_max <= mouse_pos.y)
             {
-                std::cout << "BOTTOM_LEFT" << std::endl;
                 return CursorSquareState::BOTTOM_LEFT;
             }
             else
             {
-                std::cout << "LEFT" << std::endl;
                 return CursorSquareState::LEFT;
             }
         }
@@ -260,39 +290,32 @@ CursorSquareState ApplicationGuiElement::getCursorSquareState(const Bound2D boun
         {
             if (mouse_pos.y <= bound_margin.y_min)
             {
-                std::cout << "TOP_RIGHT" << std::endl;
                 return CursorSquareState::TOP_RIGHT;
             }
             else if (bound_margin.y_max <= mouse_pos.y)
             {
-                std::cout << "BOTTOM_RIGHT" << std::endl;
                 return CursorSquareState::BOTTOM_RIGHT;
             }
             else
             {
-                std::cout << "RIGHT" << std::endl;
                 return CursorSquareState::RIGHT;
             }
         }
         else if (mouse_pos.y <= bound_margin.y_min)
         {
-            std::cout << "TOP" << std::endl;
             return CursorSquareState::TOP;
         }
         else if (bound_margin.y_max <= mouse_pos.y)
         {
-            std::cout << "BOTTOM" << std::endl;
             return CursorSquareState::BOTTOM;
         }
         else
         {
-            std::cout << "INSIDE" << std::endl;
             return CursorSquareState::INSIDE;
         }
     }
     else
     {
-        std::cout << "OUTSIDE" << std::endl;
         return CursorSquareState::OUTSIDE;
     }
 }
@@ -332,8 +355,11 @@ void ApplicationGuiElement::setCursorDependingOnMousePos(const wxPoint& current_
         case CursorSquareState::INSIDE:
             this->setCursor(wxCursor(wxCURSOR_HAND));
             break;
+        case CursorSquareState::OUTSIDE:
+            this->setCursor(wxCursor(wxCURSOR_ARROW));
+            break;
         default:
-            this->setCursor(wxCursor(wxCURSOR_HAND));
+            this->setCursor(wxCursor(wxCURSOR_ARROW));
     }
 }
 

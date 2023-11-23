@@ -28,8 +28,6 @@ private:
     AxesInteractor axes_interactor_;
     AxesRenderer* axes_renderer_;
 
-    bool shift_pressed_at_mouse_press_;
-
     bool axes_from_min_max_disabled_;
     bool axes_set_;
     bool view_set_;
@@ -119,8 +117,8 @@ public:
     void update();
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);
-    void mouseRightPressed(wxMouseEvent& event);
-    void mouseRightReleased(wxMouseEvent& event);
+    void mouseRightPressedGuiElementSpecific(wxMouseEvent& event) override;
+    void mouseRightReleasedGuiElementSpecific(wxMouseEvent& event);
     void mouseMiddlePressed(wxMouseEvent& event);
     void mouseMiddleReleased(wxMouseEvent& event);
     void setMinimumXPos(const int new_min_x_pos);
