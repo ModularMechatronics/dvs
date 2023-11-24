@@ -28,6 +28,8 @@ set(CPP_SOURCE_FILES main.cpp
 
                      shader.cpp
 
+                     settings_window.cpp
+
                      gui_elements.cpp
                      gui_element.cpp
 

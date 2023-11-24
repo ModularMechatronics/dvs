@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "main_window.h"
 #include "plot_pane.h"
+#include "settings_window.h"
 
 namespace element_number_counter
 {
@@ -724,24 +725,32 @@ void GuiWindow::createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event
 
 std::string GuiWindow::getValidNewElementHandleString()
 {
-    wxTextEntryDialog name_dialog(this, "Enter the name for the new element", "Enter element name", "<element-name>");
+    std::map<std::string, std::string> fields;
+    fields["Handle string"] = "<handle-string>";
+    fields["Label"] = "<label>";
+    fields["Min value"] = "0";
+    fields["Max value"] = "100";
+    fields["Step size"] = "100";
 
-    name_dialog.SetBackgroundColour(
+    SettingsWindow settings_window(this, "Hello", fields);
+
+    settings_window.SetBackgroundColour(
         wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
+
     std::string element_handle_string;
 
     while (true)
     {
-        if (name_dialog.ShowModal() == wxID_CANCEL)
+        if (settings_window.ShowModal() == wxID_CANCEL)
         {
             return "";
         }
 
-        element_handle_string = name_dialog.GetValue().mb_str();
+        element_handle_string = settings_window.getFieldString("Handle string");
 
         if (element_handle_string.length() == 0)
         {
-            wxMessageDialog dlg(&name_dialog, "Can't have an empty element name!", "Invalid name!");
+            wxMessageDialog dlg(&settings_window, "Can't have an empty element name!", "Invalid name!");
             dlg.SetBackgroundColour(
                 wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
             dlg.ShowModal();
@@ -757,7 +766,7 @@ std::string GuiWindow::getValidNewElementHandleString()
         if (element_exists)
         {
             wxMessageDialog dlg(
-                &name_dialog, "Choose a unique name", "Element name \"" + element_handle_string + "\" exists!");
+                &settings_window, "Choose a unique name", "Element name \"" + element_handle_string + "\" exists!");
             dlg.SetBackgroundColour(
                 wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
             dlg.ShowModal();
