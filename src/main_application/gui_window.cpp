@@ -725,12 +725,12 @@ void GuiWindow::createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event
 
 std::string GuiWindow::getValidNewElementHandleString()
 {
-    std::map<std::string, std::string> fields;
-    fields["Handle string"] = "<handle-string>";
-    fields["Label"] = "<label>";
-    fields["Min value"] = "0";
-    fields["Max value"] = "100";
-    fields["Step size"] = "100";
+    std::map<std::string, std::pair<std::string, std::string>> fields;
+    fields["handle_string"] = {"Handle string", "<handle-string>"};
+    fields["label"] = {"Label", "<label>"};
+    fields["min_value"] = {"Min value", "0"};
+    fields["max_value"] = {"Max value", "100"};
+    fields["step_size"] = {"Step size", "100"};
 
     SettingsWindow settings_window(this, "Hello", fields);
 
@@ -746,7 +746,7 @@ std::string GuiWindow::getValidNewElementHandleString()
             return "";
         }
 
-        element_handle_string = settings_window.getFieldString("Handle string");
+        element_handle_string = settings_window.getFieldString("handle_string");
 
         if (element_handle_string.length() == 0)
         {

@@ -1,8 +1,6 @@
 #include "settings_window.h"
 
-SettingsWindow::SettingsWindow(wxFrame* parent,
-                               const std::string& some_string,
-                               const std::map<std::string, std::string>& fields)
+SettingsWindow::SettingsWindow(wxFrame* parent, const std::string& some_string, const FieldsType& fields)
     : wxDialog{
           parent, wxID_ANY, some_string, wxPoint(100, 100), wxSize(200, 200), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER}
 {
@@ -15,12 +13,16 @@ SettingsWindow::SettingsWindow(wxFrame* parent,
 
     for (const auto& p : fields)
     {
+        const std::string key_name = p.first;
+        const std::string field_description = p.second.first;
+        const std::string field_init_value = p.second.second;
+
         wxSizer* sub_sizer = new wxBoxSizer(wxHORIZONTAL);
-        wxTextCtrl* editable_text_field = new wxTextCtrl(this, wxID_ANY, p.second);
-        sub_sizer->Add(new wxStaticText(this, wxID_ANY, p.first), 0, wxALIGN_CENTER_VERTICAL);
+        wxTextCtrl* editable_text_field = new wxTextCtrl(this, wxID_ANY, field_init_value);
+        sub_sizer->Add(new wxStaticText(this, wxID_ANY, field_description), 0, wxALIGN_CENTER_VERTICAL);
         sub_sizer->Add(editable_text_field, 0, wxALIGN_CENTER_VERTICAL);
         sizer->Add(sub_sizer, 0, wxALL | wxEXPAND, 10);
-        editable_text_generic_fields_map_[p.first] = editable_text_field;
+        editable_text_generic_fields_map_[key_name] = editable_text_field;
     }
 
     wxButton* ok = new wxButton(this, wxID_OK, "Ok");

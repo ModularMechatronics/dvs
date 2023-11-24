@@ -25,8 +25,10 @@ private:
     std::map<std::string, wxTextCtrl*> editable_text_generic_fields_map_;
 
 public:
+    using FieldsType = std::map<std::string, std::pair<std::string, std::string>>;
+
     SettingsWindow() = delete;
-    SettingsWindow(wxFrame* parent, const std::string& some_string, const std::map<std::string, std::string>& fields);
+    SettingsWindow(wxFrame* parent, const std::string& some_string, const FieldsType& fields);
 
     std::string getHandleString() const;
 
