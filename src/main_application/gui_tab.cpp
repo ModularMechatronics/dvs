@@ -560,17 +560,29 @@ bool WindowTab::elementWithNameExists(const std::string& element_handle_string)
 }
 
 bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_handle_string,
-                                                   const std::string& new_name)
+                                                   const std::map<std::string, std::string>& new_values)
 {
-    auto q = std::find_if(plot_panes_.begin(),
-                          plot_panes_.end(),
-                          [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
-                              return elem->getHandleString() == element_handle_string;
-                          });
+    auto q_pp = std::find_if(plot_panes_.begin(),
+                             plot_panes_.end(),
+                             [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                                 return elem->getHandleString() == element_handle_string;
+                             });
 
-    if (plot_panes_.end() != q)
+    if (plot_panes_.end() != q_pp)
     {
-        (*q)->setHandleString(new_name);
+        (*q_pp)->setElementSettings(new_values);
+        return true;
+    }
+
+    auto q_ge = std::find_if(gui_elements_.begin(),
+                             gui_elements_.end(),
+                             [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                                 return elem->getHandleString() == element_handle_string;
+                             });
+
+    if (gui_elements_.end() != q_ge)
+    {
+        (*q_ge)->setElementSettings(new_values);
         return true;
     }
     else

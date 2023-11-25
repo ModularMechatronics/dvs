@@ -43,6 +43,18 @@ void ButtonGuiElement::buttonEvent(wxCommandEvent& event)
     sendGuiData();
 }
 
+void ButtonGuiElement::setElementSettings(const std::map<std::string, std::string>& new_settings)
+{
+    ButtonSettings* button_settings = dynamic_cast<ButtonSettings*>(element_settings_.get());
+
+    if (new_settings.count("label") > 0U)
+    {
+        this->SetLabel(new_settings.at("label"));
+        button_settings->label = new_settings.at("label");
+    }
+    element_settings_->handle_string = new_settings.at("handle_string");
+}
+
 SliderGuiElement::SliderGuiElement(wxFrame* parent,
                                    const std::shared_ptr<ElementSettings>& element_settings,
                                    const std::function<void(const char key)>& notify_main_window_key_pressed,
@@ -74,6 +86,8 @@ SliderGuiElement::SliderGuiElement(wxFrame* parent,
 
     Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
     Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
 }
 
 void SliderGuiElement::sliderEvent(wxCommandEvent& event)
@@ -88,6 +102,8 @@ void SliderGuiElement::sliderEvent(wxCommandEvent& event)
 
     sendGuiData();
 }
+
+void SliderGuiElement::setElementSettings(const std::map<std::string, std::string>& new_settings) {}
 
 CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
                                        const std::shared_ptr<ElementSettings>& element_settings,
@@ -113,9 +129,13 @@ CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
     Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
     Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
 }
 
 void CheckboxGuiElement::checkBoxCallback(wxCommandEvent& event)
 {
     sendGuiData();
 }
+
+void CheckboxGuiElement::setElementSettings(const std::map<std::string, std::string>& new_settings) {}

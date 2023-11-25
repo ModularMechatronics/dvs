@@ -35,6 +35,8 @@ public:
     void mouseMovedOverItem(wxMouseEvent& event);
     void buttonEvent(wxCommandEvent& event);
 
+    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
+
     std::uint64_t getGuiPayloadSize() const override
     {
         return sizeof(std::int8_t);
@@ -152,6 +154,8 @@ public:
 
     void sliderEvent(wxCommandEvent& event);
 
+    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
+
     std::shared_ptr<GuiElementState> getGuiElementState() const override
     {
         std::shared_ptr<SliderState> slider_state =
@@ -251,6 +255,8 @@ public:
         minimum_x_pos_ = min_x_pos;
         setElementPositionAndSize();
     }
+
+    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
 
     void keyPressed(const char key) override {}
 

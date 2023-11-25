@@ -101,7 +101,8 @@ public:
     bool deleteElementIfItExists(const std::string& element_handle_string);
     void toggleProjectionMode(const std::string& element_handle_string);
     bool elementWithNameExists(const std::string& element_handle_string);
-    bool changeNameOfElementIfElementExists(const std::string& element_handle_string, const std::string& new_name);
+    bool changeNameOfElementIfElementExists(const std::string& element_handle_string,
+                                            const std::map<std::string, std::string>& new_values);
     bool raiseElement(const std::string& element_handle_string);
     bool lowerElement(const std::string& element_handle_string);
     std::vector<std::string> getElementNames() const;

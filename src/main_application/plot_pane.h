@@ -123,6 +123,8 @@ public:
     void mouseMiddleReleased(wxMouseEvent& event);
     void setMinimumXPos(const int new_min_x_pos);
 
+    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
+
     // Event callback function
     void mouseMovedGuiElementSpecific(wxMouseEvent& event) override;
     void mouseLeftPressedGuiElementSpecific(wxMouseEvent& event) override;

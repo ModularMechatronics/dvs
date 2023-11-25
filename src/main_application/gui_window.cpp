@@ -768,7 +768,7 @@ void GuiWindow::createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event
 std::map<std::string, std::string> GuiWindow::getValidNewElementHandleString(
     const std::map<std::string, std::pair<std::string, std::string>>& fields)
 {
-    SettingsWindow settings_window(this, "Hello", fields);
+    SettingsWindow settings_window(this, "Enter element settings", fields);
 
     settings_window.SetBackgroundColour(
         wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
@@ -838,70 +838,149 @@ std::vector<std::string> GuiWindow::getElementNames() const
     return element_names;
 }
 
+std::map<std::string, std::pair<std::string, std::string>> transformElementSettingsToFieldsMap(
+    const std::shared_ptr<ElementSettings>& element_settings)
+{
+    std::map<std::string, std::pair<std::string, std::string>> ret_fields;
+    ret_fields["handle_string"] = {"Handle string", element_settings->handle_string};
+
+    if (element_settings->type == dvs::GuiElementType::Button)
+    {
+        std::shared_ptr<ButtonSettings> bs = std::dynamic_pointer_cast<ButtonSettings>(element_settings);
+        ret_fields["label"] = {"Label", bs->label};
+    }
+    else if (element_settings->type == dvs::GuiElementType::CheckBox)
+    {
+        std::shared_ptr<CheckBoxSettings> cs = std::dynamic_pointer_cast<CheckBoxSettings>(element_settings);
+        ret_fields["label"] = {"Label", cs->label};
+    }
+    else if (element_settings->type == dvs::GuiElementType::Slider)
+    {
+        std::shared_ptr<SliderSettings> ss = std::dynamic_pointer_cast<SliderSettings>(element_settings);
+        ret_fields["is_horizontal"] = {"Is horizontal", ss->is_horizontal ? "true" : "false"};
+        ret_fields["step_size"] = {"Step size", std::to_string(ss->step_size)};
+        ret_fields["max_value"] = {"Max value", std::to_string(ss->max_value)};
+        ret_fields["min_value"] = {"Min value", std::to_string(ss->min_value)};
+    }
+    else if (element_settings->type == dvs::GuiElementType::PlotPane)
+    {
+        std::shared_ptr<PlotPaneSettings> pps = std::dynamic_pointer_cast<PlotPaneSettings>(element_settings);
+        ret_fields["title"] = {"Title", pps->title};
+    }
+
+    return ret_fields;
+}
+
 void GuiWindow::editElementName(wxCommandEvent& WXUNUSED(event))
 {
-    wxTextEntryDialog name_dialog(this, "Enter the new name for the element", "Edit element name", last_clicked_item_);
+    std::map<std::string, std::pair<std::string, std::string>> fields;
 
-    name_dialog.SetBackgroundColour(
+    for (const auto& tab : tabs_)
+    {
+        // Search gui elements
+        std::vector<ApplicationGuiElement*> tab_gui_elements = tab->getGuiElements();
+
+        const auto q_ge = std::find_if(
+            tab_gui_elements.begin(), tab_gui_elements.end(), [this](const ApplicationGuiElement* const ge) -> bool {
+                return last_clicked_item_ == ge->getElementSettings()->handle_string;
+            });
+
+        if (q_ge != tab_gui_elements.end())
+        {
+            const auto element_settings = (*q_ge)->getElementSettings();
+            fields = transformElementSettingsToFieldsMap(element_settings);
+            break;
+        }
+
+        // Search plot panes
+        std::vector<ApplicationGuiElement*> tab_plot_panes = tab->getPlotPanes();
+
+        const auto q_pp = std::find_if(
+            tab_plot_panes.begin(), tab_plot_panes.end(), [this](const ApplicationGuiElement* const ge) -> bool {
+                return last_clicked_item_ == ge->getElementSettings()->handle_string;
+            });
+
+        if (q_pp != tab_plot_panes.end())
+        {
+            const auto element_settings = (*q_pp)->getElementSettings();
+            fields = transformElementSettingsToFieldsMap(element_settings);
+            break;
+        }
+    }
+
+    if (fields.size() == 0)
+    {
+        std::cout << "Couldn't find element with name " << last_clicked_item_ << " to edit" << std::endl;
+        return;
+    }
+
+    SettingsWindow settings_window(this, "Enter element settings", fields);
+
+    settings_window.SetBackgroundColour(
         wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
 
-    std::string new_name;
+    std::string element_handle_string;
+
+    std::map<std::string, std::string> ret_fields;
 
     while (true)
     {
-        if (name_dialog.ShowModal() == wxID_CANCEL)
+        if (settings_window.ShowModal() == wxID_CANCEL)
         {
             return;
         }
 
-        new_name = name_dialog.GetValue().mb_str();
+        element_handle_string = settings_window.getFieldString("handle_string");
 
-        if (new_name == last_clicked_item_)
+        if (element_handle_string.length() == 0)
         {
-            return;
+            wxMessageDialog dlg(&settings_window, "Can't have an empty element name!", "Invalid name!");
+            dlg.SetBackgroundColour(
+                wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
+            dlg.ShowModal();
+            continue;
+        }
+
+        if (element_handle_string == last_clicked_item_)
+        {
+            break;
+        }
+
+        const std::vector<std::string> all_element_names = get_all_element_names_();
+
+        auto q = std::find(all_element_names.begin(), all_element_names.end(), element_handle_string);
+
+        const bool element_exists = q != all_element_names.end();
+
+        if (element_exists)
+        {
+            wxMessageDialog dlg(
+                &settings_window, "Choose a unique name", "Element name \"" + element_handle_string + "\" exists!");
+            dlg.SetBackgroundColour(
+                wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
+            dlg.ShowModal();
         }
         else
         {
-            new_name = name_dialog.GetValue().mb_str();
-
-            if (new_name.length() == 0)
-            {
-                wxMessageDialog dlg(&name_dialog, "Can't have an empty element name!", "Invalid name!");
-                dlg.SetBackgroundColour(
-                    wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
-                dlg.ShowModal();
-                continue;
-            }
-
-            const std::vector<std::string> all_element_names = get_all_element_names_();
-
-            auto q = std::find(all_element_names.begin(), all_element_names.end(), new_name);
-
-            const bool element_exists = q != all_element_names.end();
-
-            if (element_exists)
-            {
-                wxMessageDialog dlg(&name_dialog, "Choose a unique name", "Element name \"" + new_name + "\" exists!");
-                dlg.SetBackgroundColour(
-                    wxColour(dialog_color_.red * 255.0f, dialog_color_.green * 255.0f, dialog_color_.blue * 255.0f));
-                dlg.ShowModal();
-            }
-            else
-            {
-                break;
-            }
+            break;
         }
+    }
+
+    for (const auto& p : fields)
+    {
+        const std::string key = p.first;
+        ret_fields[key] = settings_window.getFieldString(key);
     }
 
     bool name_changed = false;
     for (const auto& t : tabs_)
     {
-        name_changed = name_changed || t->changeNameOfElementIfElementExists(last_clicked_item_, new_name);
+        name_changed = name_changed || t->changeNameOfElementIfElementExists(last_clicked_item_, ret_fields);
     }
 
     if (name_changed)
     {
-        notify_main_window_element_name_changed_(last_clicked_item_, new_name);
+        notify_main_window_element_name_changed_(last_clicked_item_, ret_fields["handle_string"]);
     }
 }
 

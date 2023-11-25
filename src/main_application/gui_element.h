@@ -123,6 +123,8 @@ public:
         element_settings_->handle_string = new_name;
     }
 
+    virtual void setElementSettings(const std::map<std::string, std::string>& new_settings) = 0;
+
     std::shared_ptr<ElementSettings> getElementSettings() const
     {
         return element_settings_;
