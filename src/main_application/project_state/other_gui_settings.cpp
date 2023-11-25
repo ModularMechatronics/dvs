@@ -1,6 +1,13 @@
 #include "project_state/project_settings.h"
 
-ButtonSettings::ButtonSettings() : ElementSettings{}, label{""} {}
+ButtonSettings::ButtonSettings() : ElementSettings{}, label{""}
+{
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::Button;
+}
 
 ButtonSettings::ButtonSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}
 {
@@ -30,7 +37,14 @@ nlohmann::json ButtonSettings::toJson() const
     return j;
 }
 
-CheckBoxSettings::CheckBoxSettings() : ElementSettings{}, label{""} {}
+CheckBoxSettings::CheckBoxSettings() : ElementSettings{}, label{""}
+{
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::CheckBox;
+}
 CheckBoxSettings::CheckBoxSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}
 {
     if (!j_data.contains("element_specific_settings"))
@@ -58,7 +72,14 @@ nlohmann::json CheckBoxSettings::toJson() const
     return j;
 }
 
-EditableTextSettings::EditableTextSettings() : ElementSettings{}, init_value{""} {}
+EditableTextSettings::EditableTextSettings() : ElementSettings{}, init_value{""}
+{
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::EditableText;
+}
 EditableTextSettings::EditableTextSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, init_value{""}
 {
     if (!j_data.contains("element_specific_settings"))
@@ -87,7 +108,14 @@ nlohmann::json EditableTextSettings::toJson() const
     return j;
 }
 
-DropDownMenuSettings::DropDownMenuSettings() : ElementSettings{}, initially_selected_item{""}, elements{} {}
+DropDownMenuSettings::DropDownMenuSettings() : ElementSettings{}, initially_selected_item{""}, elements{}
+{
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::DropDownMenu;
+}
 DropDownMenuSettings::DropDownMenuSettings(const nlohmann::json& j_data)
     : ElementSettings{j_data}, initially_selected_item{""}, elements{}
 {
@@ -130,7 +158,14 @@ nlohmann::json DropDownMenuSettings::toJson() const
     return j;
 }
 
-ListBoxSettings::ListBoxSettings() : ElementSettings{}, elements{} {}
+ListBoxSettings::ListBoxSettings() : ElementSettings{}, elements{}
+{
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::ListBox;
+}
 ListBoxSettings::ListBoxSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, elements{}
 {
     if (!j_data.contains("element_specific_settings"))
@@ -231,7 +266,14 @@ nlohmann::json RadioButtonGroupSettings::toJson() const
     return j;
 }
 
-TextLabelSettings::TextLabelSettings() : ElementSettings{}, label{""} {}
+TextLabelSettings::TextLabelSettings() : ElementSettings{}, label{""}
+{
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::TextLabel;
+}
 TextLabelSettings::TextLabelSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}
 {
     if (!j_data.contains("element_specific_settings"))
@@ -263,6 +305,11 @@ nlohmann::json TextLabelSettings::toJson() const
 SliderSettings::SliderSettings()
     : ElementSettings{}, min_value{0}, max_value{100}, init_value{0}, step_size{1}, is_horizontal{true}
 {
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::Slider;
 }
 
 SliderSettings::SliderSettings(const nlohmann::json& j_data) : ElementSettings{j_data}
@@ -320,7 +367,14 @@ nlohmann::json SliderSettings::toJson() const
 // std::string label;
 // std::vector<std::shared_ptr<ElementSettings>> elements;
 
-StaticBoxSettings::StaticBoxSettings() : label{""}, elements{} {}
+StaticBoxSettings::StaticBoxSettings() : label{""}, elements{}
+{
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::StaticBox;
+}
 
 StaticBoxSettings::StaticBoxSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}, elements{}
 {

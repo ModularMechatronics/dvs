@@ -84,9 +84,9 @@ public:
     void setMinXPos(const int min_x_pos);
     void createNewPlotPane();
     void createNewPlotPane(const std::string& element_handle_string);
-    void createNewButton(const std::string& element_handle_string);
-    void createNewSlider(const std::string& element_handle_string);
-    void createNewCheckBox(const std::string& element_handle_string);
+    void createNewButton(const std::shared_ptr<ButtonSettings>& elem_settings);
+    void createNewSlider(const std::shared_ptr<SliderSettings>& elem_settings);
+    void createNewCheckBox(const std::shared_ptr<CheckBoxSettings>& elem_settings);
     void createNewPlotPane(const std::shared_ptr<ElementSettings>& element_settings);
     void show();
     void hide();

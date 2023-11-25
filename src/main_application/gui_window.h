@@ -66,7 +66,7 @@ private:
     wxMenu* popup_menu_tab_;
 
     wxMenuItem* getMenuItemFromString(const wxMenu* const menu, const std::string& menu_item_string) const;
-    std::string getValidNewElementHandleString();
+    std::map<std::string, std::string> getValidNewElementHandleString(const std::map<std::string, std::pair<std::string, std::string>>& fields);
 
     int current_tab_num_;
 

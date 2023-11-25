@@ -77,6 +77,11 @@ AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
     scale_vector_ = Vec3d(2.5, 2.5, 2.5);
 
     global_illumination_active_ = false;
+
+    if (plot_pane_settings_.title != "")
+    {
+        setTitle(plot_pane_settings_.title);
+    }
 }
 
 void AxesRenderer::enableClipPlanes()

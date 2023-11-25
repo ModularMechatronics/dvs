@@ -159,7 +159,7 @@ GuiWindow::GuiWindow(
 
     popup_menu_window_->AppendSubMenu(new_element_menu_window_, wxT("New element"));
 
-    popup_menu_element_->Append(dvs_ids::EDIT_ELEMENT_NAME, wxT("Edit element name"));
+    popup_menu_element_->Append(dvs_ids::EDIT_ELEMENT_NAME, wxT("Edit element"));
     popup_menu_element_->Append(dvs_ids::DELETE_ELEMENT, wxT("Delete element"));
     popup_menu_element_->Append(dvs_ids::TOGGLE_PROJECTION_MODE, wxT("Toggle projection mode"));
     popup_menu_element_->Append(dvs_ids::RAISE_ELEMENT, wxT("Raise"));
@@ -630,7 +630,7 @@ void GuiWindow::createNewPlotPane()
             }
         }
 
-        std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
+        const std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
         pp_settings->x = 0.0;
         pp_settings->y = 0.0;
         pp_settings->width = 1.0;
@@ -653,11 +653,26 @@ void GuiWindow::createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event))
 
     if (q != tabs_.end())
     {
-        const std::string element_handle_string = getValidNewElementHandleString();
+        std::map<std::string, std::pair<std::string, std::string>> fields;
+        fields["handle_string"] = {"Handle string", ""};
+        fields["min_value"] = {"Min value", "0"};
+        fields["max_value"] = {"Max value", "100"};
+        fields["step_size"] = {"Step size", "1"};
+        fields["is_horizontal"] = {"Is horizontal", "true/false"};
+
+        const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
+        const std::string element_handle_string = ret_fields.at("handle_string");
+
+        const std::shared_ptr<SliderSettings> elem_settings = std::make_shared<SliderSettings>();
+        elem_settings->handle_string = element_handle_string;
+        elem_settings->min_value = std::stoi(ret_fields.at("min_value"));
+        elem_settings->max_value = std::stoi(ret_fields.at("max_value"));
+        elem_settings->init_value = elem_settings->min_value;
+        elem_settings->is_horizontal = ret_fields.at("is_horizontal") == "true";
 
         if (element_handle_string != "")
         {
-            (*q)->createNewSlider(element_handle_string);
+            (*q)->createNewSlider(elem_settings);
             notify_main_window_about_modification_();
         }
     }
@@ -673,11 +688,20 @@ void GuiWindow::createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event))
 
     if (q != tabs_.end())
     {
-        const std::string element_handle_string = getValidNewElementHandleString();
+        std::map<std::string, std::pair<std::string, std::string>> fields;
+        fields["handle_string"] = {"Handle string", ""};
+        fields["label"] = {"Label", ""};
+
+        const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
+        const std::string element_handle_string = ret_fields.at("handle_string");
+
+        const std::shared_ptr<ButtonSettings> elem_settings = std::make_shared<ButtonSettings>();
+        elem_settings->handle_string = element_handle_string;
+        elem_settings->label = ret_fields.at("label");
 
         if (element_handle_string != "")
         {
-            (*q)->createNewButton(element_handle_string);
+            (*q)->createNewButton(elem_settings);
             notify_main_window_about_modification_();
         }
     }
@@ -693,11 +717,20 @@ void GuiWindow::createNewCheckBoxCallbackFunction(wxCommandEvent& WXUNUSED(event
 
     if (q != tabs_.end())
     {
-        const std::string element_handle_string = getValidNewElementHandleString();
+        std::map<std::string, std::pair<std::string, std::string>> fields;
+        fields["handle_string"] = {"Handle string", ""};
+        fields["label"] = {"Label", ""};
+
+        const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
+        const std::string element_handle_string = ret_fields.at("handle_string");
+
+        const std::shared_ptr<CheckBoxSettings> elem_settings = std::make_shared<CheckBoxSettings>();
+        elem_settings->handle_string = element_handle_string;
+        elem_settings->label = ret_fields.at("label");
 
         if (element_handle_string != "")
         {
-            (*q)->createNewCheckBox(element_handle_string);
+            (*q)->createNewCheckBox(elem_settings);
             notify_main_window_about_modification_();
         }
     }
@@ -713,25 +746,28 @@ void GuiWindow::createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event
 
     if (q != tabs_.end())
     {
-        const std::string element_handle_string = getValidNewElementHandleString();
+        std::map<std::string, std::pair<std::string, std::string>> fields;
+        fields["handle_string"] = {"Handle string", ""};
+        fields["title"] = {"Title", ""};
+
+        const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
+        const std::string element_handle_string = ret_fields.at("handle_string");
 
         if (element_handle_string != "")
         {
-            (*q)->createNewPlotPane(element_handle_string);
+            const std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
+            pp_settings->handle_string = element_handle_string;
+            pp_settings->title = ret_fields.at("title");
+
+            (*q)->createNewPlotPane(pp_settings);
             notify_main_window_about_modification_();
         }
     }
 }
 
-std::string GuiWindow::getValidNewElementHandleString()
+std::map<std::string, std::string> GuiWindow::getValidNewElementHandleString(
+    const std::map<std::string, std::pair<std::string, std::string>>& fields)
 {
-    std::map<std::string, std::pair<std::string, std::string>> fields;
-    fields["handle_string"] = {"Handle string", "<handle-string>"};
-    fields["label"] = {"Label", "<label>"};
-    fields["min_value"] = {"Min value", "0"};
-    fields["max_value"] = {"Max value", "100"};
-    fields["step_size"] = {"Step size", "100"};
-
     SettingsWindow settings_window(this, "Hello", fields);
 
     settings_window.SetBackgroundColour(
@@ -739,11 +775,14 @@ std::string GuiWindow::getValidNewElementHandleString()
 
     std::string element_handle_string;
 
+    std::map<std::string, std::string> ret_fields;
+
     while (true)
     {
         if (settings_window.ShowModal() == wxID_CANCEL)
         {
-            return "";
+            ret_fields["handle_string"] = "";
+            return ret_fields;
         }
 
         element_handle_string = settings_window.getFieldString("handle_string");
@@ -777,7 +816,13 @@ std::string GuiWindow::getValidNewElementHandleString()
         }
     }
 
-    return element_handle_string;
+    for (const auto& p : fields)
+    {
+        const std::string key = p.first;
+        ret_fields[key] = settings_window.getFieldString(key);
+    }
+
+    return ret_fields;
 }
 
 std::vector<std::string> GuiWindow::getElementNames() const

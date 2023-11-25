@@ -28,6 +28,11 @@ PlotPaneSettings::PlotPaneSettings()
       pane_radius{kPaneRadiusDefault},
       projection_mode{ProjectionMode::ORTHOGRAPHIC}
 {
+    x = 0.0;
+    y = 0.0;
+    width = 0.4;
+    height = 0.4;
+    type = dvs::GuiElementType::PlotPane;
 }
 
 void PlotPaneSettings::defaultInitializeAllSettings()
