@@ -5,6 +5,7 @@
 #include <random>
 
 #include "debug_value_args.h"
+#include "particles/particles.h"
 
 namespace small
 {
@@ -1153,6 +1154,58 @@ void testLissaJous()
     axis({-1.0, -1.0}, {1.0, 1.0});
 
     plot(x, y, properties::Color(201, 238, 121), properties::LineWidth(10.0f));
+}
+
+void testCubeImage()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    ImageRGBA<std::uint8_t> input_img{10, 10};
+
+    for (size_t r = 0; r < input_img.height(); r++)
+    {
+        for (size_t c = 0; c < input_img.width(); c++)
+        {
+            input_img(r, c, 0) = r * 25;
+            input_img(r, c, 1) = c * 25;
+            input_img(r, c, 2) = r * c % 40;
+            input_img(r, c, 3) = 255;
+        }
+    }
+
+    const size_t num_cubes = input_img.width() * input_img.height();
+
+    Vector<double> x(num_cubes), y(num_cubes), z(num_cubes);
+
+    Vector<RGB888> colors{num_cubes};
+
+    const size_t img_height = input_img.height();
+    const size_t img_width = input_img.width();
+
+    const double img_width_1 = static_cast<double>(img_width - 1);
+    const double img_height_1 = static_cast<double>(img_height - 1);
+
+    for (size_t r = 0; r < img_height; r++)
+    {
+        for (size_t c = 0; c < img_width; c++)
+        {
+            const size_t idx = r * img_width + c;
+
+            x(idx) = static_cast<double>(c) * 1.05 - 0.5;
+            y(idx) = static_cast<double>(r) * 1.05 - 0.5;
+            z(idx) = 0.0;
+
+            colors(idx) = RGB888{input_img(r, c, 0), input_img(r, c, 1), input_img(r, c, 2)};
+        }
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+
+    axis({-1.0, -1.0, -5.0}, {10.0, 10.0, 5.0});
+
+    drawCubes(x, y, z, colors, 1.0, properties::EdgeColor::NONE);
 }
 
 }  // namespace small
