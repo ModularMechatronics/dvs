@@ -835,6 +835,86 @@ void drawMesh(const Vector<T>& x,
 }
 
 template <typename T, typename... Us>
+void drawMesh(const Vector<Point3<T>>& vertices,
+              const Vector<IndexTriplet>& indices,
+              const Vector<RGB888>& colors,
+              const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::DRAW_MESH};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(vertices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, vertices, indices, colors);
+}
+
+template <typename T, typename... Us>
+void drawMesh(const Vector<T>& x,
+              const Vector<T>& y,
+              const Vector<T>& z,
+              const Vector<IndexTriplet>& indices,
+              const Vector<RGB888>& colors,
+              const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::DRAW_MESH_SEPARATE_VECTORS};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, indices, colors);
+}
+
+template <typename T, typename... Us>
+void drawMesh(const VectorConstView<Point3<T>>& vertices,
+              const VectorConstView<IndexTriplet>& indices,
+              const VectorConstView<RGB888>& colors,
+              const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::DRAW_MESH};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(vertices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, vertices, indices, colors);
+}
+
+template <typename T, typename... Us>
+void drawMesh(const VectorConstView<T>& x,
+              const VectorConstView<T>& y,
+              const VectorConstView<T>& z,
+              const VectorConstView<IndexTriplet>& indices,
+              const VectorConstView<RGB888>& colors,
+              const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::DRAW_MESH_SEPARATE_VECTORS};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
+    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
+               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z, indices, colors);
+}
+
+template <typename T, typename... Us>
 void drawMesh(const VectorConstView<T>& x,
               const VectorConstView<T>& y,
               const VectorConstView<T>& z,
@@ -886,12 +966,14 @@ template <typename T, typename... Us>
 void drawCubes(const VectorConstView<T>& x,
                const VectorConstView<T>& y,
                const VectorConstView<T>& z,
-               const T size,
+               const T side_length,
                const Us&... settings)
 {
     const size_t num_cubes = x.size();
     const size_t num_triangles = num_cubes * 6U * 2U;
     const size_t num_points = num_triangles * 3U;
+
+    const T size = side_length / static_cast<T>(2.0);
 
     Vector<T> x_new(num_points), y_new(num_points), z_new(num_points);
     Vector<IndexTriplet> indices(num_triangles);
@@ -1129,16 +1211,295 @@ void drawCubes(const VectorConstView<T>& x,
 }
 
 template <typename T, typename... Us>
-void drawCubes(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const T size, const Us&... settings)
+void drawCubes(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const T side_length, const Us&... settings)
 {
-    drawCubes(x.constView(), y.constView(), z.constView(), size, settings...);
+    drawCubes(x.constView(), y.constView(), z.constView(), side_length, settings...);
 }
 
 template <typename T, typename... Us>
 void drawCubes(const VectorConstView<T>& x,
                const VectorConstView<T>& y,
                const VectorConstView<T>& z,
-               const VectorConstView<T> sizes,
+               const VectorConstView<RGB888>& colors,
+               const T side_length,
+               const Us&... settings)
+{
+    const size_t num_cubes = x.size();
+    const size_t num_triangles = num_cubes * 6U * 2U;
+    const size_t num_points = num_triangles * 3U;
+
+    const T size = side_length / static_cast<T>(2.0);
+
+    Vector<T> x_new(num_points), y_new(num_points), z_new(num_points);
+    Vector<RGB888> colors_new{num_triangles};
+    Vector<IndexTriplet> indices(num_triangles);
+
+    size_t points_idx{0U};
+    size_t indices_idx{0U};
+
+    for (size_t i = 0; i < num_cubes; i++)
+    {
+        const T x_i = x(i);
+        const T y_i = y(i);
+        const T z_i = z(i);
+        const RGB888 col_i = colors(i);
+
+        // XY plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i + size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i + size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i - size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i - size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // XZ plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i + size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i + size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i - size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i - size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // YZ plane
+        // First triangle, positive xy plane, lower triangle
+        x_new(points_idx) = x_i + size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Second triangle, positive xy plane, upper triangle
+        x_new(points_idx) = x_i + size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i + size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i + size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Third triangle, negative xy plane, lower triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i - size;
+        z_new(points_idx + 1) = z_i + size;
+
+        x_new(points_idx + 2) = x_i - size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+
+        // Fourth triangle, negative xy plane, upper triangle
+        x_new(points_idx) = x_i - size;
+        y_new(points_idx) = y_i - size;
+        z_new(points_idx) = z_i - size;
+
+        x_new(points_idx + 1) = x_i - size;
+        y_new(points_idx + 1) = y_i + size;
+        z_new(points_idx + 1) = z_i - size;
+
+        x_new(points_idx + 2) = x_i - size;
+        y_new(points_idx + 2) = y_i + size;
+        z_new(points_idx + 2) = z_i + size;
+
+        indices(indices_idx) = IndexTriplet(points_idx, points_idx + 1, points_idx + 2);
+        colors_new(indices_idx) = col_i;
+
+        points_idx += 3U;
+        indices_idx += 1U;
+    }
+
+    drawMesh(x_new.constView(),
+             y_new.constView(),
+             z_new.constView(),
+             indices.constView(),
+             colors_new.constView(),
+             settings...);
+}
+
+template <typename T, typename... Us>
+void drawCubes(const Vector<T>& x,
+               const Vector<T>& y,
+               const Vector<T>& z,
+               const Vector<RGB888>& colors,
+               const T side_length,
+               const Us&... settings)
+{
+    drawCubes(x.constView(), y.constView(), z.constView(), colors.constView(), side_length, settings...);
+}
+
+template <typename T, typename... Us>
+void drawCubes(const VectorConstView<T>& x,
+               const VectorConstView<T>& y,
+               const VectorConstView<T>& z,
+               const VectorConstView<T> side_lengths,
                const Us&... settings)
 {
     const size_t num_cubes = x.size();
@@ -1157,7 +1518,7 @@ void drawCubes(const VectorConstView<T>& x,
         const T y_i = y(i);
         const T z_i = z(i);
 
-        const T size = sizes(i);
+        const T size = side_lengths(i);
 
         // XY plane
         // First triangle, positive xy plane, lower triangle
@@ -1383,12 +1744,14 @@ void drawCubes(const VectorConstView<T>& x,
 }
 
 template <typename T, typename... Us>
-void drawCubes(const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<T> sizes, const Us&... settings)
+void drawCubes(
+    const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<T> side_lengths, const Us&... settings)
 {
-    drawCubes(x.constView(), y.constView(), z.constView(), sizes.constView(), settings...);
+    drawCubes(x.constView(), y.constView(), z.constView(), side_lengths.constView(), settings...);
 }
 
-template <typename T, typename... Us> void drawCube(const T x, const T y, const T z, const T size, const Us&... settings)
+template <typename T, typename... Us>
+void drawCube(const T x, const T y, const T z, const T size, const Us&... settings)
 {
     const Vector<T> x_vec{VectorInitializer<T>{x}};
     const Vector<T> y_vec{VectorInitializer<T>{y}};

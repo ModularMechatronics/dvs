@@ -428,6 +428,7 @@ void testBasic()
         imShow(img_left);
 
         flushMultipleElements("point_cloud", "center", "left", "right");
+        // screenshot("/Users/danielpi/work/dvs/demo_screenshots_output/ad_dataset");
         if ((k % 10) == 0)
         {
             std::cout << "Iter: " << k << std::endl;

@@ -70,7 +70,8 @@ int main(int argc, char* argv[])
                                       {"hyperboloid", small::testHyperboloid},
                                       {"sphere", small::testSphere},
                                       {"lissajous", small::testLissaJous},
-                                      {"lines_and_dots", small::testLinesAndDots}};
+                                      {"lines_and_dots", small::testLinesAndDots},
+                                      {"cube_image", small::testCubeImage}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

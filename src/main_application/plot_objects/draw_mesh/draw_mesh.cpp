@@ -9,8 +9,9 @@ struct ConvertedData : ConvertedDataBase
     float* points_ptr;
     float* normals_ptr;
     float* mean_height_ptr;
+    float* color_data;
 
-    ConvertedData() : points_ptr{nullptr}, normals_ptr{nullptr}, mean_height_ptr{nullptr} {}
+    ConvertedData() : points_ptr{nullptr}, normals_ptr{nullptr}, mean_height_ptr{nullptr}, color_data{nullptr} {}
 
     ConvertedData(const ConvertedData& other) = delete;
     ConvertedData& operator=(const ConvertedData& other) = delete;
@@ -22,6 +23,7 @@ struct ConvertedData : ConvertedDataBase
         delete[] points_ptr;
         delete[] normals_ptr;
         delete[] mean_height_ptr;
+        delete[] color_data;
     }
 };
 
@@ -30,10 +32,17 @@ struct InputParams
     uint32_t num_vertices;
     uint32_t num_indices;
     uint32_t num_bytes_per_element;
+    bool has_color;
 
     InputParams() = default;
-    InputParams(const uint32_t num_vertices_, const uint32_t num_indices_, const uint32_t num_bytes_per_element_)
-        : num_vertices{num_vertices_}, num_indices{num_indices_}, num_bytes_per_element{num_bytes_per_element_}
+    InputParams(const uint32_t num_vertices_,
+                const uint32_t num_indices_,
+                const uint32_t num_bytes_per_element_,
+                const bool has_color_)
+        : num_vertices{num_vertices_},
+          num_indices{num_indices_},
+          num_bytes_per_element{num_bytes_per_element_},
+          has_color{has_color_}
     {
     }
 };
@@ -93,13 +102,18 @@ DrawMesh::DrawMesh(const CommunicationHeader& hdr,
     vertex_buffer_.addBuffer(points_ptr_, num_elements_to_render_, 3);
     vertex_buffer_.addBuffer(converted_data_local->normals_ptr, num_elements_to_render_, 3);
     vertex_buffer_.addBuffer(converted_data_local->mean_height_ptr, num_elements_to_render_, 1);
+
+    if (has_color_)
+    {
+        vertex_buffer_.addBuffer(converted_data_local->color_data, num_elements_to_render_, 3);
+    }
 }
 
 void DrawMesh::findMinMax()
 {
     min_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
     max_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
-    size_t idx = 0;
+
     for (size_t k = 0; k < (num_indices_ * 3 * 3); k += 3)
     {
         const Point3d current_point(points_ptr_[k], points_ptr_[k + 1], points_ptr_[k + 2]);
@@ -110,8 +124,6 @@ void DrawMesh::findMinMax()
         max_vec.x = std::max(current_point.x, max_vec.x);
         max_vec.y = std::max(current_point.y, max_vec.y);
         max_vec.z = std::max(current_point.z, max_vec.z);
-
-        idx += 3;
     }
 }
 
@@ -127,16 +139,24 @@ void DrawMesh::render()
     shader_collection_.draw_mesh_shader.base_uniform_handles.max_z.setFloat(max_vec.z);
     shader_collection_.draw_mesh_shader.base_uniform_handles.alpha.setFloat(alpha_);
 
-    if (has_color_map_)
+    if (has_color_)
     {
-        shader_collection_.draw_mesh_shader.base_uniform_handles.color_map_selection.setInt(
-            static_cast<int>(color_map_) + 1);
-        shader_collection_.draw_mesh_shader.uniform_handles.interpolate_colormap.setInt(
-            static_cast<int>(interpolate_colormap_));
+        shader_collection_.draw_mesh_shader.base_uniform_handles.has_color_vec.setInt(1);
+        shader_collection_.draw_mesh_shader.base_uniform_handles.color_map_selection.setInt(0);
     }
     else
     {
-        shader_collection_.draw_mesh_shader.base_uniform_handles.color_map_selection.setInt(0);
+        if (has_color_map_)
+        {
+            shader_collection_.draw_mesh_shader.base_uniform_handles.color_map_selection.setInt(
+                static_cast<int>(color_map_) + 1);
+            shader_collection_.draw_mesh_shader.uniform_handles.interpolate_colormap.setInt(
+                static_cast<int>(interpolate_colormap_));
+        }
+        else
+        {
+            shader_collection_.draw_mesh_shader.base_uniform_handles.color_map_selection.setInt(0);
+        }
     }
 
     shader_collection_.draw_mesh_shader.uniform_handles.is_edge.setInt(1);
@@ -183,7 +203,8 @@ std::shared_ptr<const ConvertedDataBase> DrawMesh::convertRawData(const Communic
                                                                   const PropertiesData& properties_data,
                                                                   const uint8_t* const data_ptr)
 {
-    const InputParams input_params(attributes.num_vertices, attributes.num_indices, attributes.num_bytes_per_element);
+    const InputParams input_params(
+        attributes.num_vertices, attributes.num_indices, attributes.num_bytes_per_element, attributes.has_color);
 
     if (attributes.function == Function::DRAW_MESH)
     {
@@ -261,6 +282,54 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
         height_idx += 3;
     }
 
+    if (input_params.has_color)
+    {
+        VectorConstView<RGB888> colors{
+            reinterpret_cast<const RGB888*>(
+                &(input_data[input_params.num_vertices * input_params.num_bytes_per_element * 3 +
+                             input_params.num_indices * 3U * sizeof(std::uint32_t)])),
+            input_params.num_indices};
+
+        converted_data->color_data = new float[input_params.num_indices * 3U * 3U];
+        Vector<float> cv{input_params.num_indices * 3U * 3U};
+
+        size_t idx = 0U;
+        for (size_t k = 0; k < input_params.num_indices; k++)
+        {
+            const RGB888& current_color = colors(k);
+
+            const float red = static_cast<float>(current_color.red) / 255.0f;
+            const float green = static_cast<float>(current_color.green) / 255.0f;
+            const float blue = static_cast<float>(current_color.blue) / 255.0f;
+
+            converted_data->color_data[idx] = red;
+            converted_data->color_data[idx + 1] = green;
+            converted_data->color_data[idx + 2] = blue;
+
+            converted_data->color_data[idx + 3] = red;
+            converted_data->color_data[idx + 4] = green;
+            converted_data->color_data[idx + 5] = blue;
+
+            converted_data->color_data[idx + 6] = red;
+            converted_data->color_data[idx + 7] = green;
+            converted_data->color_data[idx + 8] = blue;
+
+            cv(idx) = red;
+            cv(idx + 1) = green;
+            cv(idx + 2) = blue;
+
+            cv(idx + 3) = red;
+            cv(idx + 4) = green;
+            cv(idx + 5) = blue;
+
+            cv(idx + 6) = red;
+            cv(idx + 7) = green;
+            cv(idx + 8) = blue;
+
+            idx = idx + 9;
+        }
+    }
+
     return std::shared_ptr<const ConvertedData>{converted_data};
 }
 
@@ -330,6 +399,41 @@ std::shared_ptr<const ConvertedData> convertDataSeparateVectors(const uint8_t* c
 
         idx += 9;
         height_idx += 3;
+    }
+
+    if (input_params.has_color)
+    {
+        VectorConstView<RGB888> colors{
+            reinterpret_cast<const RGB888*>(
+                &(input_data[input_params.num_vertices * input_params.num_bytes_per_element * 3 +
+                             input_params.num_indices * 3U * sizeof(std::uint32_t)])),
+            input_params.num_indices};
+
+        converted_data->color_data = new float[input_params.num_indices * 3U * 3U];
+
+        size_t idx = 0U;
+        for (size_t k = 0; k < input_params.num_indices; k++)
+        {
+            const RGB888& current_color = colors(k);
+
+            const float red = static_cast<float>(current_color.red) / 255.0f;
+            const float green = static_cast<float>(current_color.green) / 255.0f;
+            const float blue = static_cast<float>(current_color.blue) / 255.0f;
+
+            converted_data->color_data[idx] = red;
+            converted_data->color_data[idx + 1] = green;
+            converted_data->color_data[idx + 2] = blue;
+
+            converted_data->color_data[idx + 3] = red;
+            converted_data->color_data[idx + 4] = green;
+            converted_data->color_data[idx + 5] = blue;
+
+            converted_data->color_data[idx + 6] = red;
+            converted_data->color_data[idx + 7] = green;
+            converted_data->color_data[idx + 8] = blue;
+
+            idx = idx + 9;
+        }
     }
 
     return std::shared_ptr<const ConvertedData>{converted_data};

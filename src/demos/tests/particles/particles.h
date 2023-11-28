@@ -281,6 +281,11 @@ public:
         readShapeImage("/Users/danielpi/work/dvs/src/demos/tests/particles/img.bin", img_);
     }
 
+    PointAssignerImg(const std::string& img_path)
+    {
+        readShapeImage(img_path, img_);
+    }
+
     VectorConstView<RGB888> getColors() const
     {
         return output_color_.constView();
@@ -289,6 +294,11 @@ public:
     ImageRGBA<std::uint8_t> getImage() const
     {
         return img_;
+    }
+
+    ImageRGBAConstView<std::uint8_t> getImageView() const
+    {
+        return img_.constView();
     }
 
     void assignColors(const Vector<Point2f>& points, const Vec2d min_bnd, const Vec2d max_bnd)
