@@ -47,45 +47,71 @@
                                 "projection_mode": "perspective"
                             },
                             "handle_string": "point_cloud",
-                            "height": 0.6409921646118164,
+                            "height": 0.6398467421531677,
                             "type": "PLOT_PANE",
                             "width": 1.0,
                             "x": 0.0,
-                            "y": 0.3224543035030365,
+                            "y": 0.20306512713432312,
                             "z_order": 0
                         },
                         {
                             "handle_string": "center",
                             "height": 0.19795657694339752,
                             "type": "PLOT_PANE",
-                            "width": 0.33195021748542786,
-                            "x": 0.33402490615844727,
+                            "width": 0.3333333432674408,
+                            "x": 0.3333333432674408,
                             "y": 0.0,
                             "z_order": 2
                         },
                         {
                             "handle_string": "left",
-                            "height": 0.19667944312095642,
+                            "height": 0.19795657694339752,
                             "type": "PLOT_PANE",
-                            "width": 0.33195021748542786,
+                            "width": 0.3333333432674408,
                             "x": 0.0,
                             "y": 0.0,
                             "z_order": 1
                         },
                         {
                             "handle_string": "right",
-                            "height": 0.20051085948944092,
+                            "height": 0.19795657694339752,
                             "type": "PLOT_PANE",
-                            "width": 0.33195021748542786,
-                            "x": 0.6659750938415527,
+                            "width": 0.3333333432674408,
+                            "x": 0.6666666865348816,
                             "y": 0.0,
                             "z_order": 3
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "Play/Pause"
+                            },
+                            "handle_string": "button0",
+                            "height": 0.09961685538291931,
+                            "type": "BUTTON",
+                            "width": 0.22807016968727112,
+                            "x": 0.7543859481811523,
+                            "y": 0.8991060256958008
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 100,
+                                "min": 0,
+                                "step_size": 1,
+                                "style": "horizontal"
+                            },
+                            "handle_string": "slider0",
+                            "height": 0.10000000149011612,
+                            "type": "SLIDER",
+                            "width": 0.9122055768966675,
+                            "x": 0.049250535666942596,
+                            "y": 0.8480204343795776
                         }
                     ],
                     "name": "Tab 0"
                 }
             ],
-            "width": 467.0,
+            "width": 456.0,
             "x": 0.0,
             "y": 23.0
         }

@@ -393,7 +393,78 @@ void testBasic()
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
     waitForFlush();
 
-    for (size_t k = 0; k < dataset_reader->numFrames(); k++)
+    bool should_run_free = false;
+    int current_frame = 0;
+
+    dvs::gui::startGuiReceiveThread();
+
+    dvs::gui::registerGuiCallback(
+        "slider0", [&should_run_free, &current_frame](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+            current_frame = gui_element_handle.getValue();
+        });
+
+    dvs::gui::registerGuiCallback(
+        "button0", [&should_run_free, &current_frame](const dvs::gui::ButtonHandle& gui_element_handle) -> void {
+            should_run_free = !should_run_free;
+
+            std::cout << "Current frame: " << current_frame << std::endl;
+        });
+
+    const auto plot_data = [&dataset_reader, &circle_points](const int k) -> void {
+        const ImageRGBConstView<uint8_t> img_front = dataset_reader->getFrontImage(k);
+        const ImageRGBConstView<uint8_t> img_left = dataset_reader->getLeftImage(k);
+        const ImageRGBConstView<uint8_t> img_right = dataset_reader->getRightImage(k);
+
+        const PointCollection& pc = dataset_reader->getPointCollection(k);
+
+        setCurrentElement("point_cloud");
+        softClearView();
+        scatter3(pc.x,
+                 pc.y,
+                 pc.z,
+                 properties::DistanceFrom::xyz({0, 0, 0}, 0.0, 64.0),
+                 properties::ColorMap::VIRIDIS,
+                 properties::PointSize(5),
+                 properties::ScatterStyle::DISC);
+        for (const auto& circ_pts : circle_points)
+        {
+            plot(circ_pts.first, circ_pts.second, properties::Color::WHITE, properties::LineWidth(3));
+        }
+
+        setCurrentElement("center");
+        softClearView();
+        imShow(img_front);
+
+        setCurrentElement("right");
+        softClearView();
+        imShow(img_right);
+
+        setCurrentElement("left");
+        softClearView();
+        imShow(img_left);
+
+        flushMultipleElements("point_cloud", "center", "left", "right");
+    };
+
+    int previous_frame = current_frame;
+    while (true)
+    {
+        if (should_run_free)
+        {
+            current_frame++;
+            current_frame = current_frame <= 199 ? current_frame : 0;
+        }
+
+        if (previous_frame != current_frame)
+        {
+            plot_data(current_frame);
+            // usleep(1000U * 10U);
+        }
+
+        previous_frame = current_frame;
+    }
+
+    /*for (size_t k = 0; k < dataset_reader->numFrames(); k++)
     {
         const ImageRGBConstView<uint8_t> img_front = dataset_reader->getFrontImage(k);
         const ImageRGBConstView<uint8_t> img_left = dataset_reader->getLeftImage(k);
@@ -433,7 +504,7 @@ void testBasic()
         {
             std::cout << "Iter: " << k << std::endl;
         }
-    }
+    }*/
 }
 
 void testScroll()
