@@ -53,8 +53,7 @@ int main(int argc, char* argv[])
 
     StringFunctionMap joints_functions{{"basic", joints::testBasic}};
 
-    StringFunctionMap small_functions{{"basic", small::testBasic},
-                                      {"lorenz", small::testLorenz},
+    StringFunctionMap small_functions{{"lorenz", small::testLorenz},
                                       {"bump", small::testBump},
                                       {"scatter_color_map", small::testScatterColorMap},
                                       {"scatter_samples", small::testScatterSamples},
@@ -87,6 +86,7 @@ int main(int argc, char* argv[])
     fcns["hexagon"] = StringFunctionMap{{"basic", hexagon_rods::testBasic}};
     fcns["particle_field"] = StringFunctionMap{{"basic", particle_field::testBasic}};
     fcns["slam"] = StringFunctionMap{{"basic", slam::testBasic}};
+    fcns["gui"] = StringFunctionMap{{"basic", gui_test::testBasic}};
     fcns["small"] = small_functions;
 
     if (argc == 1)

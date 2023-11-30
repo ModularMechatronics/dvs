@@ -101,6 +101,9 @@ public:
            float x0,
            float y0,
            float z0,
+           float vx0,
+           float vy0,
+           float vz0,
            int num_subdivisions);
     Sphere();
     ~Sphere();

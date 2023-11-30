@@ -1,0 +1,91 @@
+{
+    "windows": [
+        {
+            "height": 811.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "handle_string": "p_view_0",
+                            "height": 0.582586407661438,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.001280409749597311
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 100,
+                                "min": 0,
+                                "step_size": 1,
+                                "style": "horizontal"
+                            },
+                            "handle_string": "slider0",
+                            "height": 0.19974391162395477,
+                            "type": "SLIDER",
+                            "width": 0.5131579041481018,
+                            "x": 0.21710526943206787,
+                            "y": 0.6
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 100,
+                                "min": 0,
+                                "step_size": 1,
+                                "style": "horizontal"
+                            },
+                            "handle_string": "slider1",
+                            "height": 0.19974391162395477,
+                            "type": "SLIDER",
+                            "width": 0.5131579041481018,
+                            "x": 0.21710526943206787,
+                            "y": 0.7
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 100,
+                                "min": 0,
+                                "step_size": 1,
+                                "style": "horizontal"
+                            },
+                            "handle_string": "slider2",
+                            "height": 0.19974391162395477,
+                            "type": "SLIDER",
+                            "width": 0.5131579041481018,
+                            "x": 0.21710526943206787,
+                            "y": 0.8
+                        }
+                    ],
+                    "name": "primary_view"
+                }
+            ],
+            "width": 456.0,
+            "x": 0.0,
+            "y": 25.0
+        }
+    ]
+}

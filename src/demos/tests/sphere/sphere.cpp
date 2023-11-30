@@ -5,6 +5,7 @@
 
 #include <iostream>
 
+#include "debug_value_args.h"
 #include "dvs/dvs.h"
 
 using namespace dvs;
@@ -255,6 +256,9 @@ Sphere::Sphere(float m_,
                float x0,
                float y0,
                float z0,
+               float vx0,
+               float vy0,
+               float vz0,
                int num_subdivisions)
 {
     subdivisor = new Subdivisor(num_subdivisions, Lc_);
@@ -341,6 +345,13 @@ Sphere::Sphere(float m_,
             Ls[i * N + k] = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
         }
     }
+
+    float v[3];
+    const Vec3f v3{vx0, vy0, vz0};
+    v[0] = v3.x;
+    v[1] = v3.y;
+    v[2] = v3.z;
+    set_velocity(v, v3.norm());
 }
 
 Sphere::~Sphere()
@@ -367,16 +378,19 @@ void testBasic()
     float ca = 0.0f * 1.0f;  // Air resistance
     float m = 0.05f;         // Exterior mass
     float mc = 1.0f;         // Center mass
-    float x0 = 0.0f;
-    float y0 = 3.0f;
-    float z0 = 0.0f;
-    float K = 10000.0f;   // Exterior spring constant
-    float Kc = 10000.0f;  // Center to exterior spring constant
-    float h = 0.0001f;    // Time step
-    float Lc = 3.0f;      // Length between center and exterior
+    float x0 = debug_value_args::getValue<float>("x0", 0.0f);
+    float y0 = debug_value_args::getValue<float>("y0", 5.0f);
+    float z0 = debug_value_args::getValue<float>("z0", 0.0f);
+    float vx0 = debug_value_args::getValue<float>("vx0", 0.0f);
+    float vy0 = debug_value_args::getValue<float>("vy0", 0.0f);
+    float vz0 = debug_value_args::getValue<float>("vz0", 0.0f);
+    float K = debug_value_args::getValue<float>("K", 10000.0f);    // Exterior spring constant
+    float Kc = debug_value_args::getValue<float>("Kc", 10000.0f);  // Center to exterior spring constant
+    float h = 0.0001f;                                             // Time step
+    float Lc = 3.0f;                                               // Length between center and exterior
     int num_subdivisions = 3;
 
-    Sphere sphere(m, c, K, h, Kc, cc, mc, Lc, ca, x0, y0, z0, num_subdivisions);
+    Sphere sphere(m, c, K, h, Kc, cc, mc, Lc, ca, x0, y0, z0, vx0, vy0, vz0, num_subdivisions);
 
     const size_t num_points = sphere.N;
 
@@ -394,9 +408,14 @@ void testBasic()
 
     setCurrentElement("p_view_0");
     clearView();
+    disableScaleOnRotation();
+    disableAutomaticAxesAdjustment();
+    axesSquare();
+    view(40, 40);
     waitForFlush();
 
-    axis({-6.0, -6.0, -2.0}, {6.0, 6.0, 10.0});
+    float zv0 = 3.0f;
+    axis({-3.0, -3.0, zv0 - 3.0}, {3.0, 3.0, zv0 + 3.0});
 
     for (size_t k = 0; k < 1000; k++)
     {
@@ -427,14 +446,14 @@ void testBasic()
             idx += 1;
         }
 
-        lineCollection3(xl, zl, yl);
+        lineCollection3(xl, zl, yl, properties::Color::BLACK);
         scatter3(x,
                  z,
                  y,
-                 properties::DistanceFrom::xyz({0, 0, 2}, 0.0, 3.0),
-                 properties::ColorMap::HSV,
+                 properties::DistanceFrom::xyz({0, 1, 2}, 0.0, 4.0),
+                 properties::ColorMap::MAGMA,
                  properties::PointSize(13),
-                 properties::ScatterStyle::CIRCLE);
+                 properties::ScatterStyle::DISC);
 
         flushCurrentElement();
 

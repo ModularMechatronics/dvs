@@ -20,6 +20,7 @@ add_executable(demos main.cpp
                      tests/sphere/sphere_subdivision/point.cpp
                      tests/sphere/sphere_subdivision/subdivisor.cpp
                      tests/joints/joints.cpp
+                     tests/gui/gui.cpp
                      tests/sling_plot/sling_plot.cpp
                      tests/boxes/boxes.cpp
                      tests/slam/slam.cpp

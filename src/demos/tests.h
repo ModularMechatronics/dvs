@@ -14,6 +14,7 @@
 #include "tests/slam/slam.h"
 #include "tests/sling_plot/sling_plot.h"
 #include "tests/small.h"
+#include "tests/gui/gui.h"
 #include "tests/sphere/sphere.h"
 #include "tests/spring/spring.h"
 #include "tests/wave_equation.h"

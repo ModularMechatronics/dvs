@@ -183,6 +183,7 @@ void AxesRenderer::setClipPlane(const GLuint clip_plane_uniform_handle,
 
 void AxesRenderer::renderHandle()
 {
+    return;  // TODO: For demo, handle is not used
     shader_collection_.text_shader.use();
 
     glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
@@ -205,6 +206,7 @@ void AxesRenderer::renderTitle()
 
 void AxesRenderer::renderInteractionLetter()
 {
+    return;  // TODO: For demo, interafction letter is not used
     shader_collection_.text_shader.use();
 
     glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
@@ -272,6 +274,7 @@ void AxesRenderer::renderViewAngles()
 {
     shader_collection_.text_shader.use();
 
+    return;  // TODO: For demo, rendering view angles is not used
     glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
 
     const int az = static_cast<int>(view_angles_.getSnappedAzimuth() * 180.0 / M_PI);

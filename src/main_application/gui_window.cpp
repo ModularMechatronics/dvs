@@ -511,7 +511,8 @@ void GuiWindow::updateLabel()
     {
         save_string = "*";
     }
-    this->SetLabel(name_ + " [" + project_name_ + save_string + "]");
+    // this->SetLabel(name_ + " [" + project_name_ + save_string + "]");
+    this->SetLabel(name_);  // TODO: For demos, don't show project name
 }
 
 void GuiWindow::setName(const std::string& new_name)

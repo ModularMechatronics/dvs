@@ -136,11 +136,9 @@ inline RGB888 calculateColormapJet(double value)
 }
 }  // namespace
 
-void testBasic() {}
-
 void testLorenz()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const Vec3f p0{8.5f, 8.5f, 27.0f};
@@ -183,11 +181,11 @@ void testLorenz()
 
         if (dist0 < dist1)
         {
-            colorp(k) = calculateColormapJet(dist0 / max_dist);
+            colorp(k) = calculateColormapViridis(dist0 / max_dist);
         }
         else
         {
-            colorp(k) = calculateColormapJet(dist1 / max_dist);
+            colorp(k) = calculateColormapViridis(dist1 / max_dist);
         }
 
         x0 = x1;
@@ -197,7 +195,7 @@ void testLorenz()
 
     setCurrentElement("p_view_0");
     clearView();
-    axis({-32.0f, -32.0f, -10.0f}, {32.0f, 32.0f, 55.0f});
+    axis({-28.0f, -28.0f, -10.0f}, {28.0f, 28.0f, 55.0f});
 
     plot(x, y, colorp);
 
@@ -206,7 +204,7 @@ void testLorenz()
 
 void testBump()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const int num_rows = 70, num_cols = 70;
@@ -236,7 +234,8 @@ void testBump()
 
 void testScatterColorMap()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    // TOOD: To use white plot box
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const int num_rows = 70, num_cols = 70;
@@ -292,8 +291,9 @@ void testScatterSamples()
 
     mean_val /= static_cast<float>(x.size());
 
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
+    disableScaleOnRotation();
 
     setCurrentElement("p_view_0");
     clearView();
@@ -307,7 +307,7 @@ void testScatterSamples()
 
 void testFakeContour()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const std::int32_t num_rows = 100, num_cols = 100;
@@ -429,7 +429,7 @@ void testFakeContour()
 
 void testStocks()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 1000;
@@ -467,7 +467,7 @@ void testStocks()
 
 void testScatterCluster()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 1000, num_cluester = 6;
@@ -518,7 +518,7 @@ void testScatterCluster()
 
 void testScatterVaryingSize()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 200;
@@ -552,7 +552,7 @@ void testScatterVaryingSize()
 
 void testScatterSmallPoints()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 50000;
@@ -592,7 +592,7 @@ void testScatterSmallPoints()
 
 void testTransparentFillBelowPlot()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 1000;
@@ -735,7 +735,7 @@ void testTransparentFillBelowPlot()
 
 void testTransitioningSurfs()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const size_t num_rows = 100, num_cols = 100;
@@ -795,6 +795,7 @@ void testTransitioningSurfs()
 
     setCurrentElement("p_view_0");
     clearView();
+    disableScaleOnRotation();
     view(-60, 40);
     axis({0.0, 0.0, -1.0}, {1.0, 1.0, 1.0});
 
@@ -853,9 +854,9 @@ void testIsoSurfaces()
 
 void testHyperboloid()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
-    const size_t n_elems{30U};
+    const size_t n_elems{100U};
 
     struct XYZMats
     {
@@ -864,14 +865,14 @@ void testHyperboloid()
         Matrix<double> z;
     };
 
-    const auto hyberboloid = [](const double v0, const double v1, const double f) -> XYZMats {
+    const auto hyberboloid = [](const double v0, const double v1, const double f, const size_t n_elems) -> XYZMats {
         const std::pair<Matrix<double>, Matrix<double>> theta_v_mats =
             meshGrid<double>(0, 2.0 * M_PI, v0, v1, n_elems, n_elems);
 
         Matrix<double> theta{theta_v_mats.first}, v{theta_v_mats.second};
         const double a = 1.0;
         const double b = 1.0;
-        const double c = 1.0;
+        const double c = 1.5;
 
         const Matrix<double> v2 = elementWiseMultiply(cosh(v), cosh(v));
 
@@ -901,8 +902,12 @@ void testHyperboloid()
     setCurrentElement("p_view_0");
     clearView();
     disableScaleOnRotation();
-    axis({-16.0, -16.0, -10.2}, {16.0, 16.0, 10.2});
+    axesSquare();
+
+    axis({-10.0, -10.0, -10.0}, {10.0, 10.0, 10.0});
     view(-65, 12);
+
+    XYZMats xyz_mats;
 
     const size_t n_iters = 400U;
 
@@ -911,28 +916,57 @@ void testHyperboloid()
         const double kf = static_cast<double>(k) / static_cast<double>(n_iters - 1U);
 
         const double f = -(4.0 - 8.0 * kf);
-        const auto [x, y, z] = hyberboloid(-3.0, 3.0, f);
+        xyz_mats = hyberboloid(-3.0, 3.0, f, n_elems);
+        auto [x, y, z] = xyz_mats;
 
         softClearView();
-        surf(x, y, z, properties::ID0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET_SOFT);
+        if (k < n_iters / 2U)
+        {
+            surf(x,
+                 y,
+                 z,
+                 properties::ID0,
+                 properties::EdgeColor::NONE,
+                 properties::ColorMap::JET_SOFT,
+                 properties::INTERPOLATE_COLORMAP);
+        }
+        else
+        {
+            surf(x, y, z, properties::ID0, properties::EdgeColor::NONE, properties::ColorMap::JET_SOFT);
+        }
 
         usleep(1000 * 1);
     }
+
+    usleep(1000U * 1000U * 6U);
+    openProjectFile("../../project_files/small_bright.dvs");
+
+    setCurrentElement("p_view_0");
+    clearView();
+    disableScaleOnRotation();
+    axesSquare();
+    axis({-10.0, -10.0, -10.0}, {10.0, 10.0, 10.0});
+    view(-65, 12);
+
+    softClearView();
+    xyz_mats = hyberboloid(-3.0, 3.0, 1.0, 30U);
+    auto [x, y, z] = xyz_mats;
+    surf(x, y, z, properties::ID0, properties::EdgeColor(0, 0, 0), properties::FaceColor::NONE);
 
     double t = 0.0;
 
     for (size_t k = 0; k < 500; k++)
     {
-        const double theta_x = std::sin(t * 20.0);
-        const double theta_y = std::sin(t * 10.0);
-        const double theta_z = std::sin(t);
+        const double theta_x = t * 10.0;
+        const double theta_y = t * 10.0;
+        const double theta_z = t * 10.0;
 
         const auto r_mat =
             rotationMatrixZ<double>(theta_z) * rotationMatrixY<double>(theta_y) * rotationMatrixX<double>(theta_x);
 
         const properties::Transform tr{diagMatrix<double>({1.0, 1.0, 1.0}), r_mat, {0, 0, 0}};
 
-        setProperties(properties::ID0, properties::FaceColor::NONE);
+        // setProperties(properties::ID0, properties::FaceColor::NONE);
         setTransform(properties::ID0, tr.scale, tr.rotation, tr.translation);
 
         usleep(1000 * 10);
@@ -942,7 +976,7 @@ void testHyperboloid()
 
 void testSphere()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
     const size_t n_elems{30U};
 
@@ -1091,7 +1125,7 @@ void testLinesAndDots()
 
 void testLissaJous()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     const size_t n_elements = 700;
@@ -1158,7 +1192,7 @@ void testLissaJous()
 
 void testCubeImage()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
     ImageRGBA<std::uint8_t> input_img{10, 10};

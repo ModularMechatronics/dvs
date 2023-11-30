@@ -523,6 +523,9 @@ SpringStructure::SpringStructure(const std::string& conn_file_name,
 
 void testBasic()
 {
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    openProjectFile(project_file_path);
+
     float c = 4.0f;   // Exterior dampening
     float ca = 0.1f;  // Air resistance
     float m = 0.5f;   // Exterior mass
@@ -570,9 +573,12 @@ void testBasic()
 
     setCurrentElement("p_view_0");
     clearView();
+    disableScaleOnRotation();
+    disableAutomaticAxesAdjustment();
+    axesSquare();
     waitForFlush();
 
-    axis({-6.0, -6.0, -2.0}, {6.0, 6.0, 10.0});
+    axis({-4.0, -4.0, -4.0}, {4.0, 4.0, 4.0});
 
     for (size_t k = 0; k < 1000; k++)
     {
@@ -610,8 +616,13 @@ void testBasic()
             }
         }
 
-        lineCollection3(xl, zl, yl);
-        scatter3(x, z, y);
+        lineCollection3(xl, zl, yl, properties::Color::BLACK);
+        scatter3(
+            x,
+            z,
+            y,
+            properties::ScatterStyle::DISC,
+            properties::Color(0.19607843137254902 * 255.0, 0.5333333333333333 * 255.0, 0.7411764705882353 * 255.0));
 
         flushCurrentElement();
 

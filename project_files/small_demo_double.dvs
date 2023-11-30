@@ -1,0 +1,75 @@
+{
+    "windows": [
+        {
+            "height": 811.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "background_color": {
+                        "b": 0.545098066329956,
+                        "g": 0.6352941393852234,
+                        "r": 0.0
+                    },
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "element_specific_settings": {
+                                "background_color": {
+                                    "b": 0.545098066329956,
+                                    "g": 0.6352941393852234,
+                                    "r": 0.0
+                                },
+                                "pane_radius": 20.0
+                            },
+                            "handle_string": "p_view_0",
+                            "height": 0.5697823166847229,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "element_specific_settings": {
+                                "background_color": {
+                                    "b": 0.545098066329956,
+                                    "g": 0.6352941393852234,
+                                    "r": 0.0
+                                },
+                                "pane_radius": 20.0
+                            },
+                            "handle_string": "p_view_1",
+                            "height": 0.43149808049201965,
+                            "type": "PLOT_PANE",
+                            "width": 0.7828947305679321,
+                            "x": 0.11184210330247879,
+                            "y": 0.5685019493103027
+                        }
+                    ],
+                    "name": "Tab 0"
+                }
+            ],
+            "width": 456.0,
+            "x": 0.0,
+            "y": 25.0
+        }
+    ]
+}

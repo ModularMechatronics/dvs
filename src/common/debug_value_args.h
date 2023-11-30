@@ -12,13 +12,13 @@ namespace debug_value_args
 namespace internal
 {
 
-std::map<std::string, std::string>& getParsedArgs()
+inline std::map<std::string, std::string>& getParsedArgs()
 {
     static std::map<std::string, std::string> parsed_args;
     return parsed_args;
 }
 
-std::string getArgumentNameWithNoLeadingDashes(const std::string& arg_name)
+inline std::string getArgumentNameWithNoLeadingDashes(const std::string& arg_name)
 {
     if (arg_name[0] == '-')
     {
@@ -78,7 +78,7 @@ inline void parseArgs(int argc, char* argv[])
     }
 }
 
-bool isFlagArgumentPresent(const std::string& arg_name)
+inline bool isFlagArgumentPresent(const std::string& arg_name)
 {
     if (arg_name.empty())
     {
@@ -166,7 +166,7 @@ template <typename T> T getValue(const std::string& arg_name)
     }
 }
 
-template <> bool getValue(const std::string& arg_name)
+template <> inline bool getValue(const std::string& arg_name)
 {
     if (arg_name.empty())
     {
@@ -191,7 +191,7 @@ template <> bool getValue(const std::string& arg_name)
            parsed_args[new_arg_name] == "True";
 }
 
-template <> std::string getValue(const std::string& arg_name)
+template <> inline std::string getValue(const std::string& arg_name)
 {
     if (arg_name.empty())
     {
@@ -241,7 +241,7 @@ template <typename T> T getValue(const std::string& arg_name, const T& default_v
     return getValue<T>(new_arg_name);
 }
 
-template <> std::string getValue(const std::string& arg_name, const std::string& default_value)
+template <> inline std::string getValue(const std::string& arg_name, const std::string& default_value)
 {
     if (arg_name.empty())
     {
@@ -259,7 +259,7 @@ template <> std::string getValue(const std::string& arg_name, const std::string&
     return getValue<std::string>(new_arg_name);
 }
 
-template <> bool getValue(const std::string& arg_name, const bool& default_value)
+template <> inline bool getValue(const std::string& arg_name, const bool& default_value)
 {
     if (arg_name.empty())
     {
