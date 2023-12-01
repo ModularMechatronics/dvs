@@ -1,8 +1,8 @@
 #ifndef DVS_GUI_INTERNAL_H
 #define DVS_GUI_INTERNAL_H
 
-#include <stdlib.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <sys/resource.h>
 
 #include <functional>
@@ -26,9 +26,10 @@ private:
 
 public:
     InternalGuiElementHandle() {}
-    InternalGuiElementHandle(const std::string& handle_string, const dvs::GuiElementType type) :
-        handle_string_{handle_string}, type_{type}
-    {}
+    InternalGuiElementHandle(const std::string& handle_string, const dvs::GuiElementType type)
+        : handle_string_{handle_string}, type_{type}
+    {
+    }
 
     dvs::GuiElementType getType() const
     {
@@ -52,8 +53,8 @@ public:
     std::int32_t value_;
 
 public:
-    SliderInternal(const std::string& handle_string, const UInt8ArrayView& data_view) :
-        InternalGuiElementHandle{handle_string, dvs::GuiElementType::Slider}
+    SliderInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::Slider}
     {
         const std::uint8_t* const raw_gui_data = data_view.data();
         min_value_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data);
@@ -70,7 +71,6 @@ public:
         step_size_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data + 2U * sizeof(std::int32_t));
         value_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data + 3U * sizeof(std::int32_t));
     }
-
 };
 
 class ButtonInternal final : public InternalGuiElementHandle
@@ -80,8 +80,8 @@ public:
 
 public:
     ButtonInternal() {}
-    ButtonInternal(const std::string& handle_string, const UInt8ArrayView& data_view) : 
-        InternalGuiElementHandle{handle_string, dvs::GuiElementType::Button}
+    ButtonInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::Button}
     {
         is_pressed_ = data_view.data()[0];
     }
@@ -99,8 +99,8 @@ public:
 
 public:
     CheckboxInternal() {}
-    CheckboxInternal(const std::string& handle_string, const UInt8ArrayView& data_view) :
-        InternalGuiElementHandle{handle_string, dvs::GuiElementType::CheckBox}
+    CheckboxInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::CheckBox}
     {
         is_checked_ = data_view.data()[0];
     }
@@ -136,14 +136,13 @@ inline int& getTcpSocket()
 inline void initTcpSocket()
 {
     int& tcp_sockfd = getTcpSocket();
-    socklen_t tcp_len;
     struct sockaddr_in tcp_servaddr;
 
     tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     // Set reuse address that's already in use (probably by exited dvs instance)
     int true_val = 1;
-    int setsockopt_ret_val = setsockopt(tcp_sockfd, SOL_SOCKET, SO_REUSEADDR, &true_val, sizeof(int));
+    setsockopt(tcp_sockfd, SOL_SOCKET, SO_REUSEADDR, &true_val, sizeof(int));
 
     bzero(&tcp_servaddr, sizeof(tcp_servaddr));
 
@@ -152,8 +151,6 @@ inline void initTcpSocket()
     tcp_servaddr.sin_port = htons(kGuiTcpPortNum);
 
     int ret_val = bind(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr));
-
-    int errno_val = errno;
 
     if (ret_val != 0)
     {
@@ -223,7 +220,6 @@ public:
     }
 };
 
-
 inline ReceivedGuiData receiveGuiData()
 {
     const int tcp_sockfd = getTcpSocket();
@@ -265,35 +261,35 @@ inline ReceivedGuiData receiveGuiData()
     return std::move(received_data);
 }
 
-inline void populateGuiElementWithData(const dvs::GuiElementType type, const std::string& handle_string, const UInt8ArrayView& data_view)
+inline void populateGuiElementWithData(const dvs::GuiElementType type,
+                                       const std::string& handle_string,
+                                       const UInt8ArrayView& data_view)
 {
     std::map<std::string, std::shared_ptr<InternalGuiElementHandle>>& gui_element_handles = getGuiElementHandles();
 
-    if(gui_element_handles.count(handle_string) > 0U)
+    if (gui_element_handles.count(handle_string) > 0U)
     {
-        if(gui_element_handles[handle_string]->getType() != type)
+        if (gui_element_handles[handle_string]->getType() != type)
         {
-            DVS_LOG_ERROR() << "Gui element with handle string " << handle_string << " already exists, but has different type!";
+            DVS_LOG_ERROR() << "Gui element with handle string " << handle_string
+                            << " already exists, but has different type!";
             return;
         }
         gui_element_handles[handle_string]->updateState(data_view);
     }
     else
     {
-        if(type == dvs::GuiElementType::Button)
+        if (type == dvs::GuiElementType::Button)
         {
             gui_element_handles[handle_string] = std::make_shared<ButtonInternal>(handle_string, data_view);
-            std::cout << "Creating Button from sync!" << std::endl;
         }
-        else if(type == dvs::GuiElementType::CheckBox)
+        else if (type == dvs::GuiElementType::CheckBox)
         {
             gui_element_handles[handle_string] = std::make_shared<CheckboxInternal>(handle_string, data_view);
-            std::cout << "Creating Checkbox from sync!" << std::endl;
         }
-        else if(type == dvs::GuiElementType::Slider)
+        else if (type == dvs::GuiElementType::Slider)
         {
             gui_element_handles[handle_string] = std::make_shared<SliderInternal>(handle_string, data_view);
-            std::cout << "Creating Slider from sync!" << std::endl;
         }
     }
 }
@@ -365,7 +361,7 @@ inline void updateGuiState(const ReceivedGuiData& received_gui_data)
 
     std::string handle_string = "";
 
-    for(std::size_t k = 0; k < handle_string_length; k++)
+    for (std::size_t k = 0; k < handle_string_length; k++)
     {
         handle_string.push_back(raw_data[idx]);
         idx += sizeof(std::uint8_t);
@@ -378,8 +374,7 @@ inline void updateGuiState(const ReceivedGuiData& received_gui_data)
     populateGuiElementWithData(type, handle_string, UInt8ArrayView{raw_data + idx, payload_size});
 }
 
-}
-}
+}  // namespace internal
+}  // namespace dvs
 
-
-#endif // DVS_GUI_INTERNAL_H
+#endif  // DVS_GUI_INTERNAL_H

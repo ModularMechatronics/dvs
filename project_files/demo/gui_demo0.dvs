@@ -28,11 +28,19 @@
                     "elements": [
                         {
                             "handle_string": "p_view_0",
-                            "height": 0.582586407661438,
+                            "height": 0.7,
                             "type": "PLOT_PANE",
-                            "width": 1.0,
+                            "width": 0.6535087823867798,
                             "x": 0.0,
-                            "y": 0.001280409749597311
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "p_view_1",
+                            "height": 0.7,
+                            "type": "PLOT_PANE",
+                            "width": 0.3399122953414917,
+                            "x": 0.6600877046585083,
+                            "y": 0.0
                         },
                         {
                             "element_specific_settings": {
@@ -42,26 +50,11 @@
                                 "step_size": 1,
                                 "style": "horizontal"
                             },
-                            "handle_string": "slider0",
-                            "height": 0.19974391162395477,
+                            "handle_string": "slider_m",
+                            "height": 0.09987195581197739,
                             "type": "SLIDER",
-                            "width": 0.5131579041481018,
-                            "x": 0.21710526943206787,
-                            "y": 0.6
-                        },
-                        {
-                            "element_specific_settings": {
-                                "init_value": 0,
-                                "max": 100,
-                                "min": 0,
-                                "step_size": 1,
-                                "style": "horizontal"
-                            },
-                            "handle_string": "slider1",
-                            "height": 0.19974391162395477,
-                            "type": "SLIDER",
-                            "width": 0.5131579041481018,
-                            "x": 0.21710526943206787,
+                            "width": 0.9,
+                            "x": 0.05,
                             "y": 0.7
                         },
                         {
@@ -72,12 +65,57 @@
                                 "step_size": 1,
                                 "style": "horizontal"
                             },
-                            "handle_string": "slider2",
-                            "height": 0.19974391162395477,
+                            "handle_string": "slider_c",
+                            "height": 0.06658130884170532,
                             "type": "SLIDER",
-                            "width": 0.5131579041481018,
-                            "x": 0.21710526943206787,
+                            "width": 0.9,
+                            "x": 0.05,
+                            "y": 0.75
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 100,
+                                "min": 0,
+                                "step_size": 1,
+                                "style": "horizontal"
+                            },
+                            "handle_string": "slider_ks",
+                            "height": 0.06402048468589783,
+                            "type": "SLIDER",
+                            "width": 0.9,
+                            "x": 0.05,
                             "y": 0.8
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 100,
+                                "min": 0,
+                                "step_size": 1,
+                                "style": "horizontal"
+                            },
+                            "handle_string": "slider_freq",
+                            "height": 0.06402048468589783,
+                            "type": "SLIDER",
+                            "width": 0.9,
+                            "x": 0.05,
+                            "y": 0.85
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 100,
+                                "min": 0,
+                                "step_size": 1,
+                                "style": "horizontal"
+                            },
+                            "handle_string": "slider_amp",
+                            "height": 0.06402048468589783,
+                            "type": "SLIDER",
+                            "width": 0.9,
+                            "x": 0.05,
+                            "y": 0.9
                         }
                     ],
                     "name": "primary_view"

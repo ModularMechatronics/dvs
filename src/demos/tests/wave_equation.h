@@ -65,15 +65,22 @@ public:
         m1_.fill(0.0f);
         m2_.fill(0.0f);
 
-        /*for (size_t r = 20; r < 30; r++)
+        const size_t r_c = num_rows_ / 2;
+        const size_t c_c = num_cols_ / 2;
+
+        const size_t cc = 5;
+        assert(r_c > cc);
+        assert(c_c > cc);
+
+        for (size_t r = (r_c - cc); r < (r_c + cc); r++)
         {
-            for (size_t c = 20; c < 30; c++)
+            for (size_t c = (c_c - cc); c < (c_c + cc); c++)
             {
                 m0_(r, c) = 0.1f;
             }
-        }*/
-        m0_(2, 2) = 0.1f;
-        m0_(3, 3) = 0.1f;
+        }
+        // m0_(2, 2) = 0.1f;
+        // m0_(3, 3) = 0.1f;
     }
 
     void run()
@@ -164,10 +171,10 @@ float getMax(const MatrixConstView<float>& m)
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/particle_field.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
 
-    const size_t num_rows = 200, num_cols = 200, num_its = 1000;
+    const size_t num_rows = 200, num_cols = 200, num_its = 2000;
     const float c = 2.0f, dx = 0.005f, dy = 0.005f, dt = 0.000001f;
 
     const Vector<float> xv = linspaceFromStartPointIncAndCount<float>(0.0f, dx, num_cols);
@@ -198,34 +205,30 @@ void testBasic()
 
         const float z_max = getMax(z);
 
-        if(k < 100)
-        {
-            /*surf(x.constView(),
-                    y.constView(),
-                    z,
-                    properties::ColorMap::JET,
-                    properties::EdgeColor::NONE);*/
-        }
-        else if(k < 200)
+        if (k < 500)
         {
             surf(x.constView(),
-                y.constView(),
-                z,
-                properties::FaceColor::NONE,
-                properties::EdgeColor::BLACK);
+                 y.constView(),
+                 z,
+                 properties::ColorMap::JET_BRIGHT,
+                 properties::EdgeColor::NONE,
+                 properties::INTERPOLATE_COLORMAP);
+        }
+        else if (k < 700)
+        {
+            surf(x.constView(), y.constView(), z, properties::FaceColor::NONE, properties::EdgeColor::BLACK);
         }
         else
         {
-            scatter3(
-                x_vec,
-                y_vec,
-                z_vec,
-                properties::ScatterStyle::DISC,
-                properties::PointSize(5.0f),
-                properties::DistanceFrom::z(0.0f, 0.0f, z_max));
+            scatter3(x_vec,
+                     y_vec,
+                     z_vec,
+                     properties::ScatterStyle::DISC,
+                     properties::PointSize(5.0f),
+                     properties::ColorMap::VIRIDIS,
+                     properties::DistanceFrom::z(0.0f, 0.0f, z_max));
         }
 
-        
         // std::cin.ignore();
         // usleep(50 * 1000);
         softClearView();
