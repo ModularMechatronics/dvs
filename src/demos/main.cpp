@@ -87,6 +87,7 @@ int main(int argc, char* argv[])
     fcns["particle_field"] = StringFunctionMap{{"basic", particle_field::testBasic}};
     fcns["slam"] = StringFunctionMap{{"basic", slam::testBasic}};
     fcns["gui"] = StringFunctionMap{{"basic", gui_test::testBasic}, {"dynamic_system", gui_test::testDynamicSystem}};
+    fcns["marbles"] = StringFunctionMap{{"basic", marbles::testBasic}};
     fcns["small"] = small_functions;
 
     if (argc == 1)
