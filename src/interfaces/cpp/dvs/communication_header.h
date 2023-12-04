@@ -590,7 +590,8 @@ public:
         props_.pushBack(object);
 
         const PropertyBase* const tmp_obj = reinterpret_cast<const PropertyBase* const>(object.data);
-        properties_lut_.appendPropertyIndex(tmp_obj->getPropertyType(), prop_idx_);
+        const PropertyType prop_type = static_cast<PropertyType>(object.data[0U]);
+        properties_lut_.appendPropertyIndex(prop_type, prop_idx_);
         prop_idx_++;
     }
 

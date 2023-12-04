@@ -51,21 +51,18 @@ void PlotDataHandler::setTransform(const ItemId id,
 
 void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_data)
 {
-    const std::size_t num_property_sets{received_data.payloadData()[0]};
-
-    std::vector<PropertiesData> props;
-    props.resize(num_property_sets);
+    const std::uint8_t num_property_sets{received_data.payloadData()[0]};
 
     const std::uint8_t* const prop_data{received_data.payloadData() + 1U};
 
     std::size_t idx{0U};
 
-    for (size_t k = 0; k < num_property_sets; k++)
+    for (std::uint8_t k = 0; k < num_property_sets; k++)
     {
         CommunicationHeader hdr{internal::Function::PROPERTIES_EXTENSION_MULTIPLE};
         // For each property set
         // Num properties in prop set
-        const std::size_t num_props{prop_data[idx]};
+        const std::uint8_t num_props{prop_data[idx]};
         idx += 1U;
 
         ItemId id;
@@ -74,7 +71,7 @@ void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_d
 
         hdr.append(CommunicationHeaderObjectType::ITEM_ID, id);
 
-        for (size_t i = 0; i < num_props; i++)
+        for (std::uint8_t i = 0; i < num_props; i++)
         {
             CommunicationHeaderObject obj;
             obj.type = CommunicationHeaderObjectType::PROPERTY;

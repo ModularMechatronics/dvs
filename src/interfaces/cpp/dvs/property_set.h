@@ -27,8 +27,7 @@ private:
         props_.push_back(internal::CommunicationHeaderObject{internal::CommunicationHeaderObjectType::PROPERTY});
         internal::CommunicationHeaderObject& current_obj = props_.back();
 
-        current_obj.size = sizeof(U);
-        fillBufferWithObjects(current_obj.data, prop);
+        serializeToCommunicationHeaderObject(current_obj, prop);
     }
 
     void extendInternal()

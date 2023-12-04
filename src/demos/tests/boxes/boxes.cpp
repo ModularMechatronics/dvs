@@ -326,6 +326,7 @@ void testBasic()
     clearView();
     globalIllumination({2.0, 2.0, 2.0});
     disableScaleOnRotation();
+    axesSquare();
     waitForFlush();
 
     const float bullet_size = 0.8f;
@@ -525,7 +526,6 @@ void testBasic()
                 diagMatrix<double>({1.0, 1.0, 1.0}), rot_mat_bullet, {position.x, position.z, position.y}});
 
         setProperties(props);
-        std::cout << i << std::endl;
         flushCurrentElement();
         // std::cin.ignore();
         // usleep(1000 * 10);

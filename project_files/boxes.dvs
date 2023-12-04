@@ -1,7 +1,7 @@
 {
     "windows": [
         {
-            "height": 813.0,
+            "height": 811.0,
             "name": "Window 0",
             "tabs": [
                 {
@@ -77,7 +77,7 @@
                     "name": "Tab 0"
                 }
             ],
-            "width": 825.0,
+            "width": 456.0,
             "x": 0.0,
             "y": 23.0
         }
