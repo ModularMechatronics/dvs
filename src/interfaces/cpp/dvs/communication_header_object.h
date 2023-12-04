@@ -80,7 +80,7 @@ struct CommunicationHeaderObject
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const ItemId& input_data)
         : type{input_type}, size{sizeof(uint16_t)}
     {
-        std::memcpy(data, &(input_data), sizeof(uint16_t));
+        serializeToCommunicationHeaderObject(*this, input_data);
     }
 
     CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const internal::DataType& input_data)

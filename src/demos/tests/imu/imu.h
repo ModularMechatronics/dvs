@@ -304,6 +304,7 @@ void testBasic()
 
     setCurrentElement("raw");
     clearView();
+    axesSquare();
     waitForFlush();
     axis({-4.0, -4.0, -4.0}, {4.0, 4.0, 4.0});
     view(-38.0, 32.0);
@@ -314,6 +315,7 @@ void testBasic()
 
     setCurrentElement("filtered");
     clearView();
+    axesSquare();
     waitForFlush();
     axis({-4.0, -4.0, -4.0}, {4.0, 4.0, 4.0});
     view(-38.0, 32.0);

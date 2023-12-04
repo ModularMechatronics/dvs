@@ -105,7 +105,7 @@ inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj,
     {
         for (size_t c = 0; c < 3; c++)
         {
-            std::memcpy(obj.data + idx, &(prop.rotation(r, c)), sizeof(float));
+            std::memcpy(obj.data + idx, &(prop.rotation(r, c)), sizeof(double));
             idx += sizeof(double);
         }
     }
@@ -138,7 +138,7 @@ inline void deserializeFromCommunicationHeaderObject(properties::Transform& prop
     {
         for (size_t c = 0; c < 3; c++)
         {
-            std::memcpy(&(prop.rotation(r, c)), obj.data + idx, sizeof(float));
+            std::memcpy(&(prop.rotation(r, c)), obj.data + idx, sizeof(double));
             idx += sizeof(double);
         }
     }
@@ -469,7 +469,7 @@ inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj,
 
 inline void deserializeFromCommunicationHeaderObject(ItemId& prop, const CommunicationHeaderObject& obj)
 {
-    prop = static_cast<ItemId>(obj.data[1U]);
+    std::memcpy(&(prop), obj.data + 1U, sizeof(uint16_t));
 }
 
 /////////////// Others ///////////////
