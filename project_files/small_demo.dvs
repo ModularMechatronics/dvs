@@ -42,7 +42,7 @@
                                 "_axes_numbers_on": false,
                                 "_grid_on": false,
                                 "_plot_box_on": false,
-                                "_clipping_on": false,
+                                "clipping_on": false,
                                 "_pane_radius": 20.0
                             },
                             "handle_string": "p_view_0",

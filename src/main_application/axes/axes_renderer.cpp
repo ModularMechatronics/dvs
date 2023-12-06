@@ -274,7 +274,7 @@ void AxesRenderer::renderViewAngles()
 {
     shader_collection_.text_shader.use();
 
-    return;  // TODO: For demo, rendering view angles is not used
+    // return;  // TODO: For demo, rendering view angles is not used
     glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
 
     const int az = static_cast<int>(view_angles_.getSnappedAzimuth() * 180.0 / M_PI);
