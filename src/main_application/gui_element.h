@@ -170,17 +170,8 @@ public:
     virtual void keyPressed(const char key) = 0;
     virtual void keyReleased(const char key) = 0;
 
-    void keyPressedCallback_new(wxKeyEvent& evt)
-    {
-        const int key = evt.GetUnicodeKey();
-        notify_main_window_key_pressed_(key);
-    }
-
-    void keyReleasedCallback_new(wxKeyEvent& evt)
-    {
-        const int key = evt.GetUnicodeKey();
-        notify_main_window_key_released_(key);
-    }
+    void keyPressedCallback(wxKeyEvent& evt);
+    void keyReleasedCallback(wxKeyEvent& evt);
 
     // Mouse functions
     virtual void mouseLeftPressedGuiElementSpecific(wxMouseEvent& event) {}

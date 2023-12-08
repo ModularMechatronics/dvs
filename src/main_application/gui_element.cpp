@@ -440,3 +440,15 @@ void ApplicationGuiElement::setCursor(const wxCursor& cursor)
 {
     wxSetCursor(cursor);
 }
+
+void ApplicationGuiElement::keyPressedCallback(wxKeyEvent& evt)
+{
+    const int key = evt.GetUnicodeKey();
+    notify_main_window_key_pressed_(key);
+}
+
+void ApplicationGuiElement::keyReleasedCallback(wxKeyEvent& evt)
+{
+    const int key = evt.GetUnicodeKey();
+    notify_main_window_key_released_(key);
+}

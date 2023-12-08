@@ -115,8 +115,6 @@ public:
     void waitForFlush();
     void toggleProjectionMode();
     void update();
-    void keyPressedCallback(wxKeyEvent& evt);
-    void keyReleasedCallback(wxKeyEvent& evt);
     void mouseRightPressedGuiElementSpecific(wxMouseEvent& event) override;
     void mouseRightReleasedGuiElementSpecific(wxMouseEvent& event);
     void mouseMiddlePressed(wxMouseEvent& event);

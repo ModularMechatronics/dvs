@@ -28,8 +28,8 @@ ButtonGuiElement::ButtonGuiElement(
 
     this->Bind(wxEVT_BUTTON, &ButtonGuiElement::buttonEvent, this);
 
-    Bind(wxEVT_KEY_DOWN, &ApplicationGuiElement::keyPressedCallback_new, this);
-    Bind(wxEVT_KEY_UP, &ApplicationGuiElement::keyReleasedCallback_new, this);
+    Bind(wxEVT_KEY_DOWN, &ApplicationGuiElement::keyPressedCallback, this);
+    Bind(wxEVT_KEY_UP, &ApplicationGuiElement::keyReleasedCallback, this);
 
     Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
     Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);

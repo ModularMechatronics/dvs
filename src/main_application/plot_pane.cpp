@@ -620,18 +620,6 @@ void PlotPane::keyReleased(const char key)
     Refresh();
 }
 
-void PlotPane::keyPressedCallback(wxKeyEvent& evt)
-{
-    const int key = evt.GetUnicodeKey();
-    notify_main_window_key_pressed_(key);
-}
-
-void PlotPane::keyReleasedCallback(wxKeyEvent& evt)
-{
-    const int key = evt.GetUnicodeKey();
-    notify_main_window_key_released_(key);
-}
-
 void PlotPane::setMinXPos(const int min_x_pos)
 {
     minimum_x_pos_ = min_x_pos;
