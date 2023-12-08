@@ -43,6 +43,11 @@ void ButtonGuiElement::buttonEvent(wxCommandEvent& event)
     sendGuiData();
 }
 
+void ButtonGuiElement::setLabel(const std::string& new_label)
+{
+    CallAfter(&ButtonGuiElement::SetLabel, new_label);
+}
+
 void ButtonGuiElement::setElementSettings(const std::map<std::string, std::string>& new_settings)
 {
     ButtonSettings* button_settings = dynamic_cast<ButtonSettings*>(element_settings_.get());

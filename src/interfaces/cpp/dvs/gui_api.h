@@ -7,9 +7,9 @@
 #include <vector>
 
 #include "dvs/enumerations.h"
-#include "dvs/logging.h"
 #include "dvs/fillable_uint8_array.h"
 #include "dvs/gui_internal.h"
+#include "dvs/logging.h"
 
 namespace dvs
 {
@@ -22,8 +22,10 @@ private:
 
     template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
 
-    SliderHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr) : 
-        internal_ptr_{std::dynamic_pointer_cast<internal::SliderInternal>(internal_ptr)} {}
+    SliderHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::SliderInternal>(internal_ptr)}
+    {
+    }
 
 public:
     SliderHandle() : internal_ptr_{nullptr} {}
@@ -56,12 +58,13 @@ public:
 class ButtonHandle
 {
 private:
-
     std::shared_ptr<internal::ButtonInternal> internal_ptr_;
     template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
 
-    ButtonHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr) : 
-        internal_ptr_{std::dynamic_pointer_cast<internal::ButtonInternal>(internal_ptr)} {}
+    ButtonHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::ButtonInternal>(internal_ptr)}
+    {
+    }
 
 public:
     ButtonHandle() : internal_ptr_{nullptr} {}
@@ -69,6 +72,11 @@ public:
     bool getIsPressed() const
     {
         return internal_ptr_->is_pressed_;
+    }
+
+    void setLabel(const std::string& label) const
+    {
+        internal_ptr_->setLabel(label);
     }
 };
 
@@ -78,8 +86,10 @@ private:
     std::shared_ptr<internal::CheckboxInternal> internal_ptr_;
     template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
 
-    CheckboxHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr) : 
-        internal_ptr_{std::dynamic_pointer_cast<internal::CheckboxInternal>(internal_ptr)} {}
+    CheckboxHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::CheckboxInternal>(internal_ptr)}
+    {
+    }
 
 public:
     CheckboxHandle() : internal_ptr_{nullptr} {}
@@ -88,13 +98,44 @@ public:
     {
         return internal_ptr_->is_checked_;
     }
+
+    void setLabel(const std::string& label) const
+    {
+        internal_ptr_->setLabel(label);
+    }
+};
+
+class TextLabelHandle
+{
+private:
+    std::shared_ptr<internal::TextLabelInternal> internal_ptr_;
+    template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
+
+    TextLabelHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::TextLabelInternal>(internal_ptr)}
+    {
+    }
+
+public:
+    TextLabelHandle() : internal_ptr_{nullptr} {}
+
+    std::string getLabel() const
+    {
+        return internal_ptr_->label_;
+    }
+
+    void setLabel(const std::string& label) const
+    {
+        internal_ptr_->setLabel(label);
+    }
 };
 
 using SliderCallbackFunction = std::function<void(const SliderHandle&)>;
 using ButtonCallbackFunction = std::function<void(const ButtonHandle&)>;
 using CheckboxCallbackFunction = std::function<void(const CheckboxHandle&)>;
+using TextLabelCallbackFunction = std::function<void(const TextLabelHandle&)>;
 
-}
+}  // namespace gui
 
 namespace internal
 {
@@ -120,45 +161,71 @@ inline std::map<std::string, gui::CheckboxCallbackFunction>& getCheckboxCallback
     return gui_callbacks;
 }
 
+inline std::map<std::string, gui::TextLabelCallbackFunction>& getTextLabelCallbacks()
+{
+    static std::map<std::string, gui::TextLabelCallbackFunction> gui_callbacks;
+
+    return gui_callbacks;
 }
+
+using InternalGuiElementHandleMap = std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>;
+
+}  // namespace internal
 
 namespace gui
 {
 
-inline void registerGuiCallback(const std::string& handle_string, std::function<void(const SliderHandle&)> callback_function)
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const SliderHandle&)> callback_function)
 {
     std::map<std::string, SliderCallbackFunction>& gui_callbacks = internal::getSliderCallbacks();
 
     if (gui_callbacks.find(handle_string) != gui_callbacks.end())
     {
-        DVS_LOG_WARNING() << "Gui callback with name " << handle_string << " already exists!";
-        return;
+        DVS_LOG_WARNING() << "Gui callback with name " << handle_string
+                          << " already exists! Overwriting old callback...";
     }
 
     gui_callbacks[handle_string] = callback_function;
 }
 
-inline void registerGuiCallback(const std::string& handle_string, std::function<void(const ButtonHandle&)> callback_function)
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const ButtonHandle&)> callback_function)
 {
     std::map<std::string, ButtonCallbackFunction>& gui_callbacks = internal::getButtonCallbacks();
 
     if (gui_callbacks.find(handle_string) != gui_callbacks.end())
     {
-        DVS_LOG_WARNING() << "Gui callback with name " << handle_string << " already exists!";
-        return;
+        DVS_LOG_WARNING() << "Gui callback with name " << handle_string
+                          << " already exists! Overwriting old callback...";
     }
 
     gui_callbacks[handle_string] = callback_function;
 }
 
-inline void registerGuiCallback(const std::string& handle_string, std::function<void(const CheckboxHandle&)> callback_function)
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const CheckboxHandle&)> callback_function)
 {
     std::map<std::string, CheckboxCallbackFunction>& gui_callbacks = internal::getCheckboxCallbacks();
 
     if (gui_callbacks.find(handle_string) != gui_callbacks.end())
     {
-        DVS_LOG_WARNING() << "Gui callback with name " << handle_string << " already exists!";
-        return;
+        DVS_LOG_WARNING() << "Gui callback with name " << handle_string
+                          << " already exists! Overwriting old callback...";
+    }
+
+    gui_callbacks[handle_string] = callback_function;
+}
+
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const TextLabelHandle&)> callback_function)
+{
+    std::map<std::string, TextLabelCallbackFunction>& gui_callbacks = internal::getTextLabelCallbacks();
+
+    if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+    {
+        DVS_LOG_WARNING() << "Gui callback with name " << handle_string
+                          << " already exists! Overwriting old callback...";
     }
 
     gui_callbacks[handle_string] = callback_function;
@@ -168,16 +235,16 @@ template <typename T> T getGuiElementHandle(const std::string& handle_string);
 
 template <> inline SliderHandle getGuiElementHandle(const std::string& handle_string)
 {
-    std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>& gui_element_handles = internal::getGuiElementHandles();
+    internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
 
-    if(gui_element_handles.count(handle_string) == 0U)
+    if (gui_element_handles.count(handle_string) == 0U)
     {
         throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
     }
 
     const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
 
-    if(gui_element->getType() != dvs::GuiElementType::Slider)
+    if (gui_element->getType() != dvs::GuiElementType::Slider)
     {
         throw std::runtime_error("Gui element with handle string " + handle_string + " is not a slider!");
     }
@@ -187,16 +254,16 @@ template <> inline SliderHandle getGuiElementHandle(const std::string& handle_st
 
 template <> inline ButtonHandle getGuiElementHandle(const std::string& handle_string)
 {
-    std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>& gui_element_handles = internal::getGuiElementHandles();
+    internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
 
-    if(gui_element_handles.count(handle_string) == 0U)
+    if (gui_element_handles.count(handle_string) == 0U)
     {
         throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
     }
 
     const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
 
-    if(gui_element->getType() != dvs::GuiElementType::Button)
+    if (gui_element->getType() != dvs::GuiElementType::Button)
     {
         throw std::runtime_error("Gui element with handle string " + handle_string + " is not a button!");
     }
@@ -206,21 +273,40 @@ template <> inline ButtonHandle getGuiElementHandle(const std::string& handle_st
 
 template <> inline CheckboxHandle getGuiElementHandle(const std::string& handle_string)
 {
-    std::map<std::string, std::shared_ptr<internal::InternalGuiElementHandle>>& gui_element_handles = internal::getGuiElementHandles();
+    internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
 
-    if(gui_element_handles.count(handle_string) == 0U)
+    if (gui_element_handles.count(handle_string) == 0U)
     {
         throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
     }
 
     const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
 
-    if(gui_element->getType() != dvs::GuiElementType::CheckBox)
+    if (gui_element->getType() != dvs::GuiElementType::CheckBox)
     {
         throw std::runtime_error("Gui element with handle string " + handle_string + " is not a checkbox!");
     }
 
     return CheckboxHandle{gui_element};
+}
+
+template <> inline TextLabelHandle getGuiElementHandle(const std::string& handle_string)
+{
+    internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
+
+    if (gui_element_handles.count(handle_string) == 0U)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
+    }
+
+    const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
+
+    if (gui_element->getType() != dvs::GuiElementType::TextLabel)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " is not a text label!");
+    }
+
+    return TextLabelHandle{gui_element};
 }
 
 }  // namespace gui
@@ -242,7 +328,7 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
 
     std::string handle_string = "";
 
-    for(std::size_t k = 0; k < handle_string_length; k++)
+    for (std::size_t k = 0; k < handle_string_length; k++)
     {
         handle_string.push_back(raw_data[idx]);
         idx += sizeof(std::uint8_t);
@@ -254,7 +340,7 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
 
     UInt8ArrayView payload_data_view{raw_data + idx, payload_size};
 
-    if(type == dvs::GuiElementType::Slider)
+    if (type == dvs::GuiElementType::Slider)
     {
         std::map<std::string, gui::SliderCallbackFunction>& gui_callbacks = getSliderCallbacks();
 
@@ -263,7 +349,7 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
             gui_callbacks[handle_string](gui::getGuiElementHandle<gui::SliderHandle>(handle_string));
         }
     }
-    else if(type == dvs::GuiElementType::Button)
+    else if (type == dvs::GuiElementType::Button)
     {
         std::map<std::string, gui::ButtonCallbackFunction>& gui_callbacks = getButtonCallbacks();
 
@@ -272,7 +358,7 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
             gui_callbacks[handle_string](gui::getGuiElementHandle<gui::ButtonHandle>(handle_string));
         }
     }
-    else if(type == dvs::GuiElementType::CheckBox)
+    else if (type == dvs::GuiElementType::CheckBox)
     {
         std::map<std::string, gui::CheckboxCallbackFunction>& gui_callbacks = getCheckboxCallbacks();
 
@@ -281,9 +367,18 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
             gui_callbacks[handle_string](gui::getGuiElementHandle<gui::CheckboxHandle>(handle_string));
         }
     }
+    else if (type == dvs::GuiElementType::TextLabel)
+    {
+        std::map<std::string, gui::TextLabelCallbackFunction>& gui_callbacks = getTextLabelCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::TextLabelHandle>(handle_string));
+        }
+    }
 }
 
-}
+}  // namespace internal
 
 namespace gui
 {
@@ -291,14 +386,13 @@ inline void startGuiReceiveThread()
 {
     internal::initTcpSocket();
 
-    if(internal::isDvsRunning())
+    if (internal::isDvsRunning())
     {
         std::thread query_thread([]() {
             // Sleep 100ms in order for client execution to create the waiting
             // TCP connection that receives the data GUI from the DVS application
             usleep(1000U * 100U);
             internal::queryForSyncOfGuiData();
-        
         });
         query_thread.detach();
     }

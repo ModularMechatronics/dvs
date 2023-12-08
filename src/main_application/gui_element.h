@@ -144,6 +144,10 @@ public:
 
     virtual void setSize(const wxSize& new_size) = 0;
 
+    virtual void setLabel(const std::string& new_label)
+    {
+        DVS_LOG_WARNING() << "setLabel() not implemented!";
+    }
     virtual std::shared_ptr<GuiElementState> getGuiElementState() const
     {
         DVS_LOG_WARNING() << "getGuiElementState() not implemented!";

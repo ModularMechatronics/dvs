@@ -41,6 +41,67 @@ public:
         return handle_string_;
     }
 
+    void setLabel(const std::string& label)
+    {
+        internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_LABEL};
+        hdr.append(internal::CommunicationHeaderObjectType::LABEL, properties::Name(label.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+
+        internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+    }
+
+    void enable()
+    {
+        internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_ENABLED};
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+
+        internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+    }
+
+    void disable()
+    {
+        internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_DISABLED};
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+
+        internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+    }
+
+    void setMinValue(const std::int32_t min_value)
+    {
+        internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_MIN_VALUE};
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::INT32, toInt32(min_value));
+
+        internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+    }
+
+    void setMaxValue(const std::int32_t max_value)
+    {
+        internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_MAX_VALUE};
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::INT32, toInt32(max_value));
+
+        internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+    }
+
+    void setValue(const std::int32_t value)
+    {
+        internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_VALUE};
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::INT32, toInt32(value));
+
+        internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+    }
+
+    void setStepSize(const std::int32_t step_size)
+    {
+        internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_STEP};
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::INT32, toInt32(step_size));
+
+        internal::sendHeaderOnly(internal::getSendFunction(), hdr);
+    }
+
     virtual void updateState(const UInt8ArrayView& data_view) = 0;
 };
 
@@ -56,11 +117,7 @@ public:
     SliderInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
         : InternalGuiElementHandle{handle_string, dvs::GuiElementType::Slider}
     {
-        const std::uint8_t* const raw_gui_data = data_view.data();
-        min_value_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data);
-        max_value_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data + sizeof(std::int32_t));
-        step_size_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data + 2U * sizeof(std::int32_t));
-        value_ = *reinterpret_cast<const std::int32_t* const>(raw_gui_data + 3U * sizeof(std::int32_t));
+        updateState(data_view);
     }
 
     void updateState(const UInt8ArrayView& data_view) override
@@ -83,7 +140,7 @@ public:
     ButtonInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
         : InternalGuiElementHandle{handle_string, dvs::GuiElementType::Button}
     {
-        is_pressed_ = data_view.data()[0];
+        updateState(data_view);
     }
 
     void updateState(const UInt8ArrayView& data_view) override
@@ -102,12 +159,33 @@ public:
     CheckboxInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
         : InternalGuiElementHandle{handle_string, dvs::GuiElementType::CheckBox}
     {
-        is_checked_ = data_view.data()[0];
+        updateState(data_view);
     }
 
     void updateState(const UInt8ArrayView& data_view) override
     {
         is_checked_ = data_view.data()[0];
+    }
+};
+
+class TextLabelInternal final : public InternalGuiElementHandle
+{
+public:
+    std::string label_;
+
+public:
+    TextLabelInternal() {}
+    TextLabelInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::TextLabel}
+    {
+        updateState(data_view);
+    }
+
+    void updateState(const UInt8ArrayView& data_view) override
+    {
+        const std::uint8_t label_length = data_view.data()[0];
+        label_.resize(label_length);
+        std::memcpy(label_.data(), data_view.data() + 1U, label_length);
     }
 };
 
@@ -290,6 +368,10 @@ inline void populateGuiElementWithData(const dvs::GuiElementType type,
         else if (type == dvs::GuiElementType::Slider)
         {
             gui_element_handles[handle_string] = std::make_shared<SliderInternal>(handle_string, data_view);
+        }
+        else if (type == dvs::GuiElementType::TextLabel)
+        {
+            gui_element_handles[handle_string] = std::make_shared<TextLabelInternal>(handle_string, data_view);
         }
     }
 }

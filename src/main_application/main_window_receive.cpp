@@ -214,12 +214,24 @@ void MainWindow::addActionToQueue(ReceivedData& received_data)
 
 bool isGuiRelatedFunction(const Function fcn)
 {
-    return fcn == Function::GET_FLOAT_PARAMETER;
+    return fcn == Function::SET_GUI_ELEMENT_LABEL;
 }
 
-void MainWindow::transmitBackGuiData(ReceivedData& received_data)
+void MainWindow::handleGuiManipulation(ReceivedData& received_data)
 {
-    const float f = 42.42f;
+    std::cout << "Gui manip!" << std::endl;
+    const Function fcn = received_data.getFunction();
+
+    const CommunicationHeader& hdr{received_data.getCommunicationHeader()};
+    const std::string handle_string = hdr.get(CommunicationHeaderObjectType::HANDLE_STRING).as<properties::Name>().data;
+    const std::string label = hdr.get(CommunicationHeaderObjectType::LABEL).as<properties::Name>().data;
+
+    std::cout << "Element to change: " << handle_string << std::endl;
+    std::cout << "New label: " << label << std::endl;
+
+    gui_elements_[handle_string]->setLabel(label);
+
+    /*const float f = 42.42f;
 
     const std::uint64_t num_bytes_to_send = sizeof(float);
 
@@ -227,7 +239,7 @@ void MainWindow::transmitBackGuiData(ReceivedData& received_data)
 
     output_array.fillWithStaticType(f);
 
-    sendThroughTcpInterface(output_array.view(), dvs::internal::kGuiTcpPortNum);
+    sendThroughTcpInterface(output_array.view(), dvs::internal::kGuiTcpPortNum);*/
 }
 
 void MainWindow::manageReceivedData(ReceivedData& received_data)
@@ -263,7 +275,7 @@ void MainWindow::manageReceivedData(ReceivedData& received_data)
         }
         else if (isGuiRelatedFunction(fcn))
         {
-            transmitBackGuiData(received_data);
+            handleGuiManipulation(received_data);
         }
         else
         {

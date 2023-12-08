@@ -125,7 +125,7 @@ private:
     bool currentGuiElementSet() const;
     void tcpReceiveThreadFunction();
     void manageReceivedData(ReceivedData& received_data);
-    void transmitBackGuiData(ReceivedData& received_data);
+    void handleGuiManipulation(ReceivedData& received_data);
 
     void mainWindowFlushMultipleElements(const ReceivedData& received_data);
     void addActionToQueue(ReceivedData& received_data);

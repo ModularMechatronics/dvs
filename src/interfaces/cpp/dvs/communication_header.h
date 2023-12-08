@@ -34,6 +34,11 @@ template <typename T> uint32_t toUInt32(const T v)
     return static_cast<uint32_t>(v);
 }
 
+template <typename T> int32_t toInt32(const T v)
+{
+    return static_cast<int32_t>(v);
+}
+
 inline uint8_t dataTypeToNumBytes(const DataType data_type)
 {
     uint8_t num_bytes = 0;

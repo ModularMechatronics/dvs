@@ -1,0 +1,14 @@
+For element type GUI_ELEMENT, do the following:
+[Interface side]
+1. Add a new GUI_ELEMENTInternal class in gui_internal.h
+2. Add statement for GUI_ELEMENTInternal in if statements in populateGuiElementWithData in gui_internal.h
+3. Add new GUI_ELEMENTHandle class in gui_api.h
+4. Add new alias for callback: using GUI_ELEMENTCallbackFunction = std::function<void(const GUI_ELEMENTHandle&)>; in gui_api.h
+5. Add getGUI_ELEMENTCallbacks in gui_api.h
+6. Add new registerGuiCallback function for std::function<void(const GUI_ELEMENTHandle&)> callback type in gui_api.h
+7. Add new getGuiElementHandle for GUI_ELEMENTHandle type: template <> inline GUI_ELEMENTHandle getGuiElementHandle(const std::string& handle_string) in gui_api.h
+8. Add if statement to callGuiCallbackFunction in gui_api.h
+
+[Main application side]
+9. Add GUI_ELEMENTState in gui_element_state.h
+10. Add GUI_ELEMENTGuiElement in gui_elements.h and gui_elements.cpp

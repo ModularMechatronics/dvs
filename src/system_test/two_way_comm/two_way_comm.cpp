@@ -7,28 +7,24 @@
 
 void printValues()
 {
-    dvs::gui::SliderHandle slider = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider0");
-    dvs::gui::ButtonHandle button0 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button0");
-    dvs::gui::ButtonHandle button1 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button1");
-    dvs::gui::CheckboxHandle checkbox = dvs::gui::getGuiElementHandle<dvs::gui::CheckboxHandle>("checkbox0");
+    const dvs::gui::SliderHandle slider = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider0");
+    const dvs::gui::ButtonHandle button0 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button0");
+    const dvs::gui::ButtonHandle button1 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button1");
+    const dvs::gui::CheckboxHandle checkbox = dvs::gui::getGuiElementHandle<dvs::gui::CheckboxHandle>("checkbox0");
 
     std::cout << "slider value: " << slider.getValue() << std::endl;
     std::cout << "checkbox is checked: " << checkbox.getIsChecked() << std::endl;
+}
 
+void changeGuiFromClientApp()
+{
+    const dvs::gui::ButtonHandle button0 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button0");
+    button0.setLabel("New label");
 }
 
 void firstTest()
 {
-    std::cout << "Starting GUI thread!" << std::endl;
-
-    // Synchronous update
-    // dvs::gui::registerGuiCallback("button0", gui::Button::InteractionType::PRESSED, lambda...)
-    // dvs::gui::registerGuiCallback("button0", gui::Button::InteractionType::RELEASED, lambda...)
-
-    // dvs::gui::registerGuiCallback("slider0", gui::Button::InteractionType::PRESSED, lambda...)
-    // dvs::gui::registerGuiCallback("slider0", gui::Button::InteractionType::RELEASED, lambda...)
-    // dvs::gui::registerGuiCallback("slider0", gui::Button::InteractionType::DRAGGED, lambda...)
-
+    std::cout << "Registering callbacks!" << std::endl;
     dvs::gui::registerGuiCallback("slider0", [](const dvs::gui::SliderHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"slider0\" value: " << gui_element_handle.getValue() << std::endl;
     });
@@ -45,11 +41,13 @@ void firstTest()
         std::cout << "Callback function: \"checkbox0\" pressed: " << gui_element_handle.getIsChecked() << std::endl;
     });
 
+    std::cout << "Starting GUI thread!" << std::endl;
     dvs::gui::startGuiReceiveThread();
 
     std::cout << "Instructions:" << std::endl
               << "\"q\": Exits application" << std::endl
-              << "\"v\" print values" << std::endl;
+              << "\"v\" print values" << std::endl
+              << "\"c\" change gui" << std::endl;
 
     // Client application loop
     while (true)
@@ -64,6 +62,10 @@ void firstTest()
         else if (input == "v")
         {
             printValues();
+        }
+        else if (input == "c")
+        {
+            changeGuiFromClientApp();
         }
     }
 }

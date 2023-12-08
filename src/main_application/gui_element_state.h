@@ -132,4 +132,32 @@ public:
     }
 };
 
+class TextLabelState : public GuiElementState
+{
+private:
+    std::string label_;
+
+public:
+    TextLabelState() = delete;
+    TextLabelState(const std::string& handle_string, const std::string& label)
+        : GuiElementState(dvs::GuiElementType::TextLabel, handle_string), label_{label}
+    {
+    }
+    ~TextLabelState() override {}
+
+    std::uint64_t getTotalNumBytes() const override
+    {
+        return GuiElementState::getTotalNumBytes() + sizeof(std::uint8_t) + label_.length();
+    }
+
+    virtual void serializeToBuffer(FillableUInt8Array& output_array) const override
+    {
+        GuiElementState::serializeToBuffer(output_array);
+
+        output_array.fillWithStaticType(static_cast<std::uint32_t>(label_.length() + 1U));  // Payload size
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(label_.length()));
+        output_array.fillWithDataFromPointer(label_.data(), label_.length());
+    }
+};
+
 #endif  // GUI_ELEMENT_STATE_H

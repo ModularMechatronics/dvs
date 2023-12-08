@@ -134,6 +134,8 @@ public:
 
         return button_state;
     }
+
+    void setLabel(const std::string& new_label) override;
 };
 
 class SliderGuiElement : public wxSlider, public ApplicationGuiElement
@@ -316,6 +318,91 @@ public:
             std::make_shared<CheckboxState>(element_settings_->handle_string, this->GetValue());
 
         return button_state;
+    }
+};
+
+class TextLabelGuiElement : public wxStaticText, public ApplicationGuiElement
+{
+private:
+    std::string label_;
+
+public:
+    TextLabelGuiElement(wxFrame* parent,
+                        const std::shared_ptr<ElementSettings>& element_settings,
+                        const std::function<void(const char key)>& notify_main_window_key_pressed,
+                        const std::function<void(const char key)>& notify_main_window_key_released,
+                        const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                            notify_parent_window_right_mouse_pressed,
+                        const std::function<void()>& notify_main_window_about_modification,
+                        const wxPoint& pos,
+                        const wxSize& size);
+
+    void setMinXPos(const int min_x_pos) override
+    {
+        minimum_x_pos_ = min_x_pos;
+        setElementPositionAndSize();
+    }
+
+    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
+
+    void keyPressed(const char key) override {}
+
+    void keyReleased(const char key) override {}
+
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        return sizeof(std::int8_t) + label_.length();
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(label_.length()));
+        output_array.fillWithDataFromPointer(label_.data(), label_.length());
+    }
+
+    void updateSizeFromParent(const wxSize& parent_size) override
+    {
+        setElementPositionAndSize();
+    }
+
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
+
+    wxSize getSize() const override
+    {
+        return this->GetSize();
+    }
+
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
+    }
+
+    void setCursor(const wxCursor& cursor) override
+    {
+        wxSetCursor(cursor);
+    }
+
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
+
+    void setSize(const wxSize& new_size) override
+    {
+        this->SetSize(new_size);
+    }
+
+    void checkBoxCallback(wxCommandEvent& event);
+
+    std::shared_ptr<GuiElementState> getGuiElementState() const override
+    {
+        std::shared_ptr<TextLabelState> text_label_state =
+            std::make_shared<TextLabelState>(element_settings_->handle_string, this->GetLabel().ToStdString());
+
+        return text_label_state;
     }
 };
 
