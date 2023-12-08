@@ -175,10 +175,10 @@ using InternalGuiElementHandleMap = std::map<std::string, std::shared_ptr<intern
 namespace gui
 {
 
-inline void registerGuiCallback(const std::string& handle_string,
-                                std::function<void(const SliderHandle&)> callback_function)
+template <typename Fcb, typename Fg>
+void registerGuiCallback(const std::string& handle_string, const Fcb callback_function, const Fg get_function)
 {
-    std::map<std::string, SliderCallbackFunction>& gui_callbacks = internal::getSliderCallbacks();
+    std::map<std::string, Fcb>& gui_callbacks = get_function();
 
     if (gui_callbacks.find(handle_string) != gui_callbacks.end())
     {
@@ -187,48 +187,30 @@ inline void registerGuiCallback(const std::string& handle_string,
     }
 
     gui_callbacks[handle_string] = callback_function;
+}
+
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const SliderHandle&)> callback_function)
+{
+    registerGuiCallback(handle_string, callback_function, internal::getSliderCallbacks);
 }
 
 inline void registerGuiCallback(const std::string& handle_string,
                                 std::function<void(const ButtonHandle&)> callback_function)
 {
-    std::map<std::string, ButtonCallbackFunction>& gui_callbacks = internal::getButtonCallbacks();
-
-    if (gui_callbacks.find(handle_string) != gui_callbacks.end())
-    {
-        DVS_LOG_WARNING() << "Gui callback with name " << handle_string
-                          << " already exists! Overwriting old callback...";
-    }
-
-    gui_callbacks[handle_string] = callback_function;
+    registerGuiCallback(handle_string, callback_function, internal::getButtonCallbacks);
 }
 
 inline void registerGuiCallback(const std::string& handle_string,
                                 std::function<void(const CheckboxHandle&)> callback_function)
 {
-    std::map<std::string, CheckboxCallbackFunction>& gui_callbacks = internal::getCheckboxCallbacks();
-
-    if (gui_callbacks.find(handle_string) != gui_callbacks.end())
-    {
-        DVS_LOG_WARNING() << "Gui callback with name " << handle_string
-                          << " already exists! Overwriting old callback...";
-    }
-
-    gui_callbacks[handle_string] = callback_function;
+    registerGuiCallback(handle_string, callback_function, internal::getCheckboxCallbacks);
 }
 
 inline void registerGuiCallback(const std::string& handle_string,
                                 std::function<void(const TextLabelHandle&)> callback_function)
 {
-    std::map<std::string, TextLabelCallbackFunction>& gui_callbacks = internal::getTextLabelCallbacks();
-
-    if (gui_callbacks.find(handle_string) != gui_callbacks.end())
-    {
-        DVS_LOG_WARNING() << "Gui callback with name " << handle_string
-                          << " already exists! Overwriting old callback...";
-    }
-
-    gui_callbacks[handle_string] = callback_function;
+    registerGuiCallback(handle_string, callback_function, internal::getTextLabelCallbacks);
 }
 
 template <typename T> T getGuiElementHandle(const std::string& handle_string);

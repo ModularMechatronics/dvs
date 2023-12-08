@@ -6,7 +6,7 @@ Pre release:
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
-- Fix imu, not working
+- Consolidate use of "CheckBox" vs "Checkbox" in interfaces
 - Demos:
  * Something for machine learning practitioners
  * Something with drone simulation data
@@ -161,3 +161,4 @@ indices. Selected points shall be highlighted in plot
 - Set order in which different types are plotted
 - Be able to select plot object and pan it around (and rotate and zoom?)
 - Be able to draw lines and rectangles in plot, with mouse movement
+- Be able to specify which callback type one wants for a gui element (ButtonPressed, ButtonReleased, SliderDragged, SliderReleased etc.)
