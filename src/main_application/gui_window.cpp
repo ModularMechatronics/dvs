@@ -668,15 +668,15 @@ void GuiWindow::createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event))
         const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
         const std::string element_handle_string = ret_fields.at("handle_string");
 
-        const std::shared_ptr<SliderSettings> elem_settings = std::make_shared<SliderSettings>();
-        elem_settings->handle_string = element_handle_string;
-        elem_settings->min_value = std::stoi(ret_fields.at("min_value"));
-        elem_settings->max_value = std::stoi(ret_fields.at("max_value"));
-        elem_settings->init_value = elem_settings->min_value;
-        elem_settings->is_horizontal = ret_fields.at("is_horizontal") == "true";
-
         if (element_handle_string != "")
         {
+            const std::shared_ptr<SliderSettings> elem_settings = std::make_shared<SliderSettings>();
+            elem_settings->handle_string = element_handle_string;
+            elem_settings->min_value = std::stoi(ret_fields.at("min_value"));
+            elem_settings->max_value = std::stoi(ret_fields.at("max_value"));
+            elem_settings->init_value = elem_settings->min_value;
+            elem_settings->is_horizontal = ret_fields.at("is_horizontal") == "true";
+
             (*q)->createNewSlider(elem_settings);
             notify_main_window_about_modification_();
         }
@@ -700,12 +700,12 @@ void GuiWindow::createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event))
         const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
         const std::string element_handle_string = ret_fields.at("handle_string");
 
-        const std::shared_ptr<ButtonSettings> elem_settings = std::make_shared<ButtonSettings>();
-        elem_settings->handle_string = element_handle_string;
-        elem_settings->label = ret_fields.at("label");
-
         if (element_handle_string != "")
         {
+            const std::shared_ptr<ButtonSettings> elem_settings = std::make_shared<ButtonSettings>();
+            elem_settings->handle_string = element_handle_string;
+            elem_settings->label = ret_fields.at("label");
+
             (*q)->createNewButton(elem_settings);
             notify_main_window_about_modification_();
         }
@@ -729,12 +729,13 @@ void GuiWindow::createNewCheckboxCallbackFunction(wxCommandEvent& WXUNUSED(event
         const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
         const std::string element_handle_string = ret_fields.at("handle_string");
 
-        const std::shared_ptr<CheckboxSettings> elem_settings = std::make_shared<CheckboxSettings>();
-        elem_settings->handle_string = element_handle_string;
-        elem_settings->label = ret_fields.at("label");
-
         if (element_handle_string != "")
         {
+            const std::shared_ptr<CheckboxSettings> elem_settings = std::make_shared<CheckboxSettings>();
+
+            elem_settings->handle_string = element_handle_string;
+            elem_settings->label = ret_fields.at("label");
+
             (*q)->createNewCheckbox(elem_settings);
             notify_main_window_about_modification_();
         }
@@ -758,12 +759,13 @@ void GuiWindow::createNewTextLabelCallbackFunction(wxCommandEvent& WXUNUSED(even
         const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
         const std::string element_handle_string = ret_fields.at("handle_string");
 
-        const std::shared_ptr<TextLabelSettings> elem_settings = std::make_shared<TextLabelSettings>();
-        elem_settings->handle_string = element_handle_string;
-        elem_settings->label = ret_fields.at("label");
-
         if (element_handle_string != "")
         {
+            const std::shared_ptr<TextLabelSettings> elem_settings = std::make_shared<TextLabelSettings>();
+
+            elem_settings->handle_string = element_handle_string;
+            elem_settings->label = ret_fields.at("label");
+
             (*q)->createNewTextLabel(elem_settings);
             notify_main_window_about_modification_();
         }

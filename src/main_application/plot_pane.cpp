@@ -508,7 +508,7 @@ void PlotPane::setMouseInteractionType(const MouseInteractionType mit)
     axes_interactor_.setMouseInteractionType(mit);
 }
 
-void PlotPane::keyPressed(const char key)
+void PlotPane::keyPressedElementSpecific(const char key)
 {
     if (wxGetKeyState(static_cast<wxKeyCode>('1')) && wxGetKeyState(static_cast<wxKeyCode>('2')))
     {
@@ -552,33 +552,10 @@ void PlotPane::keyPressed(const char key)
         axes_interactor_.setMouseInteractionType(MouseInteractionType::POINT_SELECTION);
     }
 
-    if (wxGetKeyState(WXK_COMMAND))
-    {
-        wxWindow* parent_handle = this->GetParent();
-
-        const float x0 = static_cast<float>(this->GetPosition().x);
-        const float y0 = static_cast<float>(this->GetPosition().y);
-
-        const float x1 = x0 + static_cast<float>(this->GetSize().GetWidth());
-        const float y1 = y0 + static_cast<float>(this->GetSize().GetHeight());
-
-        const wxPoint pt = wxGetMousePosition() - parent_handle->GetPosition();
-
-        if ((pt.x > x0) && (pt.x < x1) && (pt.y > y0) && (pt.y < y1))
-        {
-            setCursorDependingOnMousePos(pt - this->GetPosition());
-        }
-
-        if (mouse_is_inside_)
-        {
-            notify_tab_about_editing_(this->getPosition(), this->getSize(), true);
-        }
-    }
-
     Refresh();
 }
 
-void PlotPane::keyReleased(const char key)
+void PlotPane::keyReleasedElementSpecific(const char key)
 {
     current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
 
@@ -605,16 +582,6 @@ void PlotPane::keyReleased(const char key)
     else if (wxGetKeyState(static_cast<wxKeyCode>('3')))
     {
         current_mouse_interaction_axis_ = MouseInteractionAxis::Z;
-    }
-
-    if (!wxGetKeyState(WXK_COMMAND))
-    {
-        const wxMouseState mouse_state{wxGetMouseState()};
-        if (!mouse_state.LeftIsDown())
-        {
-            this->setCursor(wxCursor(wxCURSOR_ARROW));
-            notify_tab_about_editing_(wxPoint{0, 0}, wxSize{0, 0}, false);
-        }
     }
 
     Refresh();

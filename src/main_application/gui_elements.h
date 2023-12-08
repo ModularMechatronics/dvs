@@ -55,43 +55,9 @@ public:
         setElementPositionAndSize();
     }
 
-    void keyPressed(const char key) override
-    {
-        if (wxGetKeyState(WXK_COMMAND))
-        {
-            wxWindow* parent_handle = this->getParent();
+    void keyPressedElementSpecific(const char key) override {}
 
-            const float x0 = static_cast<float>(this->getPosition().x);
-            const float y0 = static_cast<float>(this->getPosition().y);
-
-            const float x1 = x0 + static_cast<float>(this->getSize().GetWidth());
-            const float y1 = y0 + static_cast<float>(this->getSize().GetHeight());
-
-            const wxPoint pt = wxGetMousePosition() - parent_handle->GetPosition();
-
-            if ((pt.x > x0) && (pt.x < x1) && (pt.y > y0) && (pt.y < y1))
-            {
-                setCursorDependingOnMousePos(pt - this->getPosition());
-            }
-            if (mouse_is_inside_)
-            {
-                notify_tab_about_editing_(this->getPosition(), this->getSize(), true);
-            }
-        }
-    }
-
-    void keyReleased(const char key) override
-    {
-        if (!wxGetKeyState(WXK_COMMAND))
-        {
-            const wxMouseState mouse_state = wxGetMouseState();
-            if (!mouse_state.LeftIsDown())
-            {
-                this->setCursor(wxCursor(wxCURSOR_ARROW));
-                notify_tab_about_editing_(wxPoint{0, 0}, wxSize{0, 0}, false);
-            }
-        }
-    }
+    void keyReleasedElementSpecific(const char key) override {}
 
     wxPoint getPosition() const override
     {
@@ -231,9 +197,9 @@ public:
         this->SetSize(new_size);
     }
 
-    void keyPressed(const char key) override {}
+    void keyPressedElementSpecific(const char key) override {}
 
-    void keyReleased(const char key) override {}
+    void keyReleasedElementSpecific(const char key) override {}
 
     void updateSizeFromParent(const wxSize& parent_size) override
     {
@@ -265,9 +231,9 @@ public:
 
     void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
 
-    void keyPressed(const char key) override {}
+    void keyPressedElementSpecific(const char key) override {}
 
-    void keyReleased(const char key) override {}
+    void keyReleasedElementSpecific(const char key) override {}
 
     std::uint64_t getGuiPayloadSize() const override
     {
@@ -347,9 +313,9 @@ public:
 
     void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
 
-    void keyPressed(const char key) override {}
+    void keyPressedElementSpecific(const char key) override {}
 
-    void keyReleased(const char key) override {}
+    void keyReleasedElementSpecific(const char key) override {}
 
     std::uint64_t getGuiPayloadSize() const override
     {

@@ -167,8 +167,11 @@ public:
     void setElementPositionAndSize();
 
     // Keyboard functions
-    virtual void keyPressed(const char key) = 0;
-    virtual void keyReleased(const char key) = 0;
+    virtual void keyPressedElementSpecific(const char key) = 0;
+    virtual void keyReleasedElementSpecific(const char key) = 0;
+
+    void keyPressed(const char key);
+    void keyReleased(const char key);
 
     void keyPressedCallback(wxKeyEvent& evt);
     void keyReleasedCallback(wxKeyEvent& evt);

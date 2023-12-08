@@ -110,8 +110,8 @@ public:
     // void destroy() override;
     void refresh();
     void setMouseInteractionType(const MouseInteractionType mit);
-    void keyPressed(const char key) override;
-    void keyReleased(const char key) override;
+    void keyPressedElementSpecific(const char key) override;
+    void keyReleasedElementSpecific(const char key) override;
     void waitForFlush();
     void toggleProjectionMode();
     void update();

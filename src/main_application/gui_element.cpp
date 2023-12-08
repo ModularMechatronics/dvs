@@ -24,6 +24,48 @@ ApplicationGuiElement::ApplicationGuiElement(
     minimum_y_pos_ = 30;
 }
 
+void ApplicationGuiElement::keyPressed(const char key)
+{
+    if (wxGetKeyState(WXK_COMMAND))
+    {
+        wxWindow* parent_handle = this->getParent();
+
+        const float x0 = static_cast<float>(this->getPosition().x);
+        const float y0 = static_cast<float>(this->getPosition().y);
+
+        const float x1 = x0 + static_cast<float>(this->getSize().GetWidth());
+        const float y1 = y0 + static_cast<float>(this->getSize().GetHeight());
+
+        const wxPoint pt = wxGetMousePosition() - parent_handle->GetPosition();
+
+        if ((pt.x > x0) && (pt.x < x1) && (pt.y > y0) && (pt.y < y1))
+        {
+            setCursorDependingOnMousePos(pt - this->getPosition());
+        }
+        if (mouse_is_inside_)
+        {
+            notify_tab_about_editing_(this->getPosition(), this->getSize(), true);
+        }
+    }
+
+    keyPressedElementSpecific(key);
+}
+
+void ApplicationGuiElement::keyReleased(const char key)
+{
+    if (!wxGetKeyState(WXK_COMMAND))
+    {
+        const wxMouseState mouse_state = wxGetMouseState();
+        if (!mouse_state.LeftIsDown())
+        {
+            this->setCursor(wxCursor(wxCURSOR_ARROW));
+            notify_tab_about_editing_(wxPoint{0, 0}, wxSize{0, 0}, false);
+        }
+    }
+
+    keyReleasedElementSpecific(key);
+}
+
 void ApplicationGuiElement::mouseEnteredElement(wxMouseEvent& event)
 {
     mouse_is_inside_ = true;
