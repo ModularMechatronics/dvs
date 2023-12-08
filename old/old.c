@@ -1,4 +1,19 @@
 
+#include <execinfo.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void printBackTrace()
+{
+    void* array[100];
+    size_t size = backtrace(array, 100);
+
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    std::cout << size << std::endl;
+}
+
 void holdOn()
 {
     CommunicationHeader hdr;

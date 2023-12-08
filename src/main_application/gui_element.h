@@ -56,9 +56,12 @@ protected:
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
     std::function<void()> notify_main_window_about_modification_;
+    std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)> notify_tab_about_editing_;
 
     int minimum_x_pos_;
     int minimum_y_pos_;
+
+    bool mouse_is_inside_;
 
     wxPoint current_mouse_pos_;
     wxPoint previous_mouse_pos_;
@@ -107,7 +110,9 @@ public:
                           const std::function<void(const char key)>& notify_main_window_key_released,
                           const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                               notify_parent_window_right_mouse_pressed,
-                          const std::function<void()>& notify_main_window_about_modification);
+                          const std::function<void()>& notify_main_window_about_modification,
+                          const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+                              notify_tab_about_editing);
 
     virtual ~ApplicationGuiElement() {}
 
@@ -138,7 +143,7 @@ public:
 
     virtual wxWindow* getParent() const = 0;
 
-    virtual void setCursor(const wxCursor& cursor) = 0;
+    void setCursor(const wxCursor& cursor);
 
     virtual void setPosition(const wxPoint& new_pos) = 0;
 

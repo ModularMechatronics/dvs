@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "axes/axes.h"
+#include "editing_silhouette.h"
 #include "gui_element.h"
 #include "gui_elements.h"
 #include "help_pane.h"
@@ -54,6 +55,7 @@ private:
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
+    std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)> notify_tab_about_editing_;
     std::function<void(const std::string&)> notify_main_window_element_deleted_;
     std::function<void()> notify_main_window_about_modification_;
     int current_element_idx_;
@@ -64,6 +66,8 @@ private:
     RGBTripletf button_text_color_;
     ZOrderQueue z_order_queue_;
     int element_x_offset_;
+
+    EditingSilhouette* editing_silhouette_;
 
 public:
     WindowTab(wxFrame* parent_window,

@@ -27,6 +27,8 @@ public:
                      const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                          notify_parent_window_right_mouse_pressed,
                      const std::function<void()>& notify_main_window_about_modification,
+                     const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+                         notify_tab_about_editing,
                      const wxPoint& pos,
                      const wxSize& size);
 
@@ -71,6 +73,10 @@ public:
             {
                 setCursorDependingOnMousePos(pt - this->getPosition());
             }
+            if (mouse_is_inside_)
+            {
+                notify_tab_about_editing_(this->getPosition(), this->getSize(), true);
+            }
         }
     }
 
@@ -78,7 +84,12 @@ public:
     {
         if (!wxGetKeyState(WXK_COMMAND))
         {
-            this->setCursor(wxCursor(wxCURSOR_ARROW));
+            const wxMouseState mouse_state = wxGetMouseState();
+            if (!mouse_state.LeftIsDown())
+            {
+                this->setCursor(wxCursor(wxCURSOR_ARROW));
+                notify_tab_about_editing_(wxPoint{0, 0}, wxSize{0, 0}, false);
+            }
         }
     }
 
@@ -90,11 +101,6 @@ public:
     wxSize getSize() const override
     {
         return this->GetSize();
-    }
-
-    void setCursor(const wxCursor& cursor) override
-    {
-        wxSetCursor(cursor);
     }
 
     wxWindow* getParent() const override
@@ -151,6 +157,8 @@ public:
                      const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                          notify_parent_window_right_mouse_pressed,
                      const std::function<void()>& notify_main_window_about_modification,
+                     const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+                         notify_tab_about_editing,
                      const wxPoint& pos,
                      const wxSize& size);
 
@@ -213,11 +221,6 @@ public:
         return this->GetParent();
     }
 
-    void setCursor(const wxCursor& cursor) override
-    {
-        wxSetCursor(cursor);
-    }
-
     void setPosition(const wxPoint& new_pos) override
     {
         this->SetPosition(new_pos);
@@ -249,6 +252,8 @@ public:
                        const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                            notify_parent_window_right_mouse_pressed,
                        const std::function<void()>& notify_main_window_about_modification,
+                       const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+                           notify_tab_about_editing,
                        const wxPoint& pos,
                        const wxSize& size);
 
@@ -295,11 +300,6 @@ public:
         return this->GetParent();
     }
 
-    void setCursor(const wxCursor& cursor) override
-    {
-        wxSetCursor(cursor);
-    }
-
     void setPosition(const wxPoint& new_pos) override
     {
         this->SetPosition(new_pos);
@@ -334,6 +334,8 @@ public:
                         const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                             notify_parent_window_right_mouse_pressed,
                         const std::function<void()>& notify_main_window_about_modification,
+                        const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+                            notify_tab_about_editing,
                         const wxPoint& pos,
                         const wxSize& size);
 
@@ -378,11 +380,6 @@ public:
     wxWindow* getParent() const override
     {
         return this->GetParent();
-    }
-
-    void setCursor(const wxCursor& cursor) override
-    {
-        wxSetCursor(cursor);
     }
 
     void setPosition(const wxPoint& new_pos) override

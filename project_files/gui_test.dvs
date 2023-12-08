@@ -36,14 +36,14 @@
                         },
                         {
                             "element_specific_settings": {
-                                "label": "Some text here"
+                                "label": "Stop timer"
                             },
-                            "handle_string": "text_label0",
-                            "height": 0.3903394341468811,
-                            "type": "TEXT_LABEL",
-                            "width": 0.29243120551109314,
-                            "x": 0.6020641922950745,
-                            "y": 0.2208877325057983
+                            "handle_string": "button1",
+                            "height": 0.20000000298023224,
+                            "type": "BUTTON",
+                            "width": 0.20000000298023224,
+                            "x": 0.6369426846504211,
+                            "y": 0.16408668458461761
                         },
                         {
                             "element_specific_settings": {
@@ -55,43 +55,6 @@
                             "width": 0.50000000298023224,
                             "x": 0.0074309976771473885,
                             "y": 0.08049535751342773
-                        },
-                        {
-                            "element_specific_settings": {
-                                "label": "Stop timer"
-                            },
-                            "handle_string": "button1",
-                            "height": 0.20000000298023224,
-                            "type": "BUTTON",
-                            "width": 0.20000000298023224,
-                            "x": 0.006369426846504211,
-                            "y": 0.16408668458461761
-                        },
-                        {
-                            "element_specific_settings": {
-                                "label": "A checkbox"
-                            },
-                            "handle_string": "checkbox0",
-                            "height": 0.20000000298023224,
-                            "type": "CHECKBOX",
-                            "width": 0.20000000298023224,
-                            "x": 0.03927813097834587,
-                            "y": 0.38699689507484436
-                        },
-                        {
-                            "element_specific_settings": {
-                                "init_value": 0,
-                                "max": 100,
-                                "min": 0,
-                                "step_size": 1,
-                                "style": "horizontal"
-                            },
-                            "handle_string": "slider0",
-                            "height": 0.20000000298023224,
-                            "type": "SLIDER",
-                            "width": 0.20000000298023224,
-                            "x": 0.01698513887822628,
-                            "y": 0.28792569041252136
                         }
                     ],
                     "name": "primary_view"

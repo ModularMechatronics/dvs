@@ -33,6 +33,8 @@ set(CPP_SOURCE_FILES main.cpp
                      gui_elements.cpp
                      gui_element.cpp
 
+                     editing_silhouette.cpp
+
                      axes/structures/axes_limits.cpp
                      axes/structures/axes_settings.cpp
                      axes/structures/view_angles.cpp

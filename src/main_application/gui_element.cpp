@@ -1,19 +1,23 @@
 #include "gui_element.h"
 
-ApplicationGuiElement::ApplicationGuiElement(const std::shared_ptr<ElementSettings>& element_settings,
-                                             const std::function<void(const char key)>& notify_main_window_key_pressed,
-                                             const std::function<void(const char key)>& notify_main_window_key_released,
-                                             const std::function<void(const wxPoint pos, const std::string& elem_name)>&
-                                                 notify_parent_window_right_mouse_pressed,
-                                             const std::function<void()>& notify_main_window_about_modification)
+ApplicationGuiElement::ApplicationGuiElement(
+    const std::shared_ptr<ElementSettings>& element_settings,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released,
+    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+        notify_parent_window_right_mouse_pressed,
+    const std::function<void()>& notify_main_window_about_modification,
+    const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing)
     : element_settings_{element_settings},
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
       notify_main_window_key_released_{notify_main_window_key_released},
       notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
-      notify_main_window_about_modification_{notify_main_window_about_modification}
+      notify_main_window_about_modification_{notify_main_window_about_modification},
+      notify_tab_about_editing_{notify_tab_about_editing}
 {
     control_pressed_at_mouse_press_ = false;
     shift_pressed_at_mouse_press_ = false;
+    mouse_is_inside_ = false;
 
     edit_size_margin_ = 5.0f;
     minimum_x_pos_ = 70;
@@ -22,18 +26,22 @@ ApplicationGuiElement::ApplicationGuiElement(const std::shared_ptr<ElementSettin
 
 void ApplicationGuiElement::mouseEnteredElement(wxMouseEvent& event)
 {
+    mouse_is_inside_ = true;
     const wxPoint current_mouse_local_position = event.GetPosition();
     const wxPoint current_element_position = this->getPosition();
     previous_mouse_pos_ = current_element_position + current_mouse_local_position;
 
     if (wxGetKeyState(WXK_COMMAND))
     {
+        notify_tab_about_editing_(this->getPosition(), this->getSize(), true);
         setCursorDependingOnMousePos(event.GetPosition());
     }
 }
 
 void ApplicationGuiElement::mouseLeftElement(wxMouseEvent& event)
 {
+    mouse_is_inside_ = false;
+    notify_tab_about_editing_(wxPoint{0, 0}, wxSize{0, 0}, false);
     this->setCursor(wxCursor(wxCURSOR_ARROW));
 }
 
@@ -66,6 +74,11 @@ void ApplicationGuiElement::mouseLeftReleased(wxMouseEvent& event)
     if (control_pressed_at_mouse_press_)
     {
         control_pressed_at_mouse_press_ = false;
+        if (!wxGetKeyState(WXK_CONTROL))
+        {
+            this->setCursor(wxCursor(wxCURSOR_ARROW));
+            notify_tab_about_editing_(wxPoint{0, 0}, wxSize{0, 0}, false);
+        }
     }
     else
     {
@@ -84,6 +97,7 @@ void ApplicationGuiElement::mouseMovedOverItem(wxMouseEvent& event)
     if (control_pressed_at_mouse_press_ && event.LeftIsDown())
     {
         adjustPaneSizeOnMouseMoved();
+        notify_tab_about_editing_(this->getPosition(), this->getSize(), true);
 
         notify_main_window_about_modification_();
     }
@@ -420,4 +434,9 @@ std::uint64_t ApplicationGuiElement::basicDataSize() const
                                           sizeof(std::uint8_t) +  // type
                                           sizeof(std::uint32_t);  // payload size
     return basic_data_size;
+}
+
+void ApplicationGuiElement::setCursor(const wxCursor& cursor)
+{
+    wxSetCursor(cursor);
 }

@@ -74,20 +74,23 @@ void PlotPane::initShaders()
     shader_collection_.legend_shader = createShader<ShaderBase>(base_path, "legend_shader");
 }
 
-PlotPane::PlotPane(wxWindow* parent,
-                   const std::shared_ptr<ElementSettings>& element_settings,
-                   const RGBTripletf& tab_background_color,
-                   const std::function<void(const char key)>& notify_main_window_key_pressed,
-                   const std::function<void(const char key)>& notify_main_window_key_released,
-                   const std::function<void(const wxPoint pos, const std::string& elem_name)>&
-                       notify_parent_window_right_mouse_pressed,
-                   const std::function<void()>& notify_main_window_about_modification)
+PlotPane::PlotPane(
+    wxWindow* parent,
+    const std::shared_ptr<ElementSettings>& element_settings,
+    const RGBTripletf& tab_background_color,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released,
+    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+        notify_parent_window_right_mouse_pressed,
+    const std::function<void()>& notify_main_window_about_modification,
+    const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing)
     : wxGLCanvas(parent, getGLAttributes()),
       ApplicationGuiElement(element_settings,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,
                             notify_parent_window_right_mouse_pressed,
-                            notify_main_window_about_modification),
+                            notify_main_window_about_modification,
+                            notify_tab_about_editing),
       m_context(getContext()),
       axes_interactor_(axes_settings_, getWidth(), getHeight()),
       plot_pane_settings_{std::dynamic_pointer_cast<PlotPaneSettings>(element_settings)}
@@ -103,8 +106,6 @@ PlotPane::PlotPane(wxWindow* parent,
     Show();
 
     wait_for_flush_ = false;
-    shift_pressed_at_mouse_press_ = false;
-    control_pressed_at_mouse_press_ = false;
     left_mouse_pressed_ = false;
 
     bindCallbacks();
@@ -567,6 +568,11 @@ void PlotPane::keyPressed(const char key)
         {
             setCursorDependingOnMousePos(pt - this->GetPosition());
         }
+
+        if (mouse_is_inside_)
+        {
+            notify_tab_about_editing_(this->getPosition(), this->getSize(), true);
+        }
     }
 
     Refresh();
@@ -603,7 +609,12 @@ void PlotPane::keyReleased(const char key)
 
     if (!wxGetKeyState(WXK_COMMAND))
     {
-        this->setCursor(wxCursor(wxCURSOR_ARROW));
+        const wxMouseState mouse_state{wxGetMouseState()};
+        if (!mouse_state.LeftIsDown())
+        {
+            this->setCursor(wxCursor(wxCURSOR_ARROW));
+            notify_tab_about_editing_(wxPoint{0, 0}, wxSize{0, 0}, false);
+        }
     }
 
     Refresh();

@@ -91,6 +91,23 @@ WindowTab::WindowTab(wxFrame* parent_window,
     button_selected_color_ = tab_settings.button_selected_color;
     button_text_color_ = tab_settings.button_text_color;
 
+    editing_silhouette_ = new EditingSilhouette(parent_window_, wxPoint{0, 0}, wxSize{100, 100});
+
+    notify_tab_about_editing_ = [this](const wxPoint& pos, const wxSize& size, const bool is_editing) -> void {
+        if (is_editing)
+        {
+            const wxPoint new_pos = pos - wxPoint{1, 1};
+            const wxSize new_size = size + wxSize{2, 2};
+
+            editing_silhouette_->setPosAndSize(new_pos, new_size);
+            editing_silhouette_->Show();
+        }
+        else
+        {
+            editing_silhouette_->Hide();
+        }
+    };
+
     for (const std::shared_ptr<ElementSettings> elem_settings : tab_settings.elements)
     {
         if (elem_settings->type == dvs::GuiElementType::PlotPane)
@@ -101,7 +118,8 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                               notify_main_window_key_pressed,
                                               notify_main_window_key_released,
                                               notify_parent_window_right_mouse_pressed,
-                                              notify_main_window_about_modification);
+                                              notify_main_window_about_modification,
+                                              notify_tab_about_editing_);
 
             pp->setMinXPos(element_x_offset_);
             pp->updateSizeFromParent(parent_window_->GetSize());
@@ -119,6 +137,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                                              notify_main_window_key_released,
                                                              notify_parent_window_right_mouse_pressed,
                                                              notify_main_window_about_modification,
+                                                             notify_tab_about_editing_,
                                                              elem_pos,
                                                              elem_size);
 
@@ -137,6 +156,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                                              notify_main_window_key_released,
                                                              notify_parent_window_right_mouse_pressed,
                                                              notify_main_window_about_modification,
+                                                             notify_tab_about_editing_,
                                                              elem_pos,
                                                              elem_size);
 
@@ -155,6 +175,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                                                   notify_main_window_key_released,
                                                                   notify_parent_window_right_mouse_pressed,
                                                                   notify_main_window_about_modification,
+                                                                  notify_tab_about_editing_,
                                                                   elem_pos,
                                                                   elem_size);
 
@@ -173,6 +194,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                                                       notify_main_window_key_released,
                                                                       notify_parent_window_right_mouse_pressed,
                                                                       notify_main_window_about_modification,
+                                                                      notify_tab_about_editing_,
                                                                       elem_pos,
                                                                       elem_size);
 
@@ -294,7 +316,8 @@ void WindowTab::createNewPlotPane()
                                       notify_main_window_key_pressed_,
                                       notify_main_window_key_released_,
                                       notify_parent_window_right_mouse_pressed_,
-                                      notify_main_window_about_modification_);
+                                      notify_main_window_about_modification_,
+                                      notify_tab_about_editing_);
     pp->setMinXPos(element_x_offset_);
     pp->updateSizeFromParent(parent_window_->GetSize());
     plot_panes_.push_back(pp);
@@ -318,7 +341,8 @@ void WindowTab::createNewPlotPane(const std::shared_ptr<ElementSettings>& elemen
                                       notify_main_window_key_pressed_,
                                       notify_main_window_key_released_,
                                       notify_parent_window_right_mouse_pressed_,
-                                      notify_main_window_about_modification_);
+                                      notify_main_window_about_modification_,
+                                      notify_tab_about_editing_);
     pp->setMinXPos(element_x_offset_);
     pp->updateSizeFromParent(parent_window_->GetSize());
     plot_panes_.push_back(pp);
@@ -335,6 +359,7 @@ void WindowTab::createNewButton(const std::shared_ptr<ButtonSettings>& elem_sett
                                                      notify_main_window_key_released_,
                                                      notify_parent_window_right_mouse_pressed_,
                                                      notify_main_window_about_modification_,
+                                                     notify_tab_about_editing_,
                                                      elem_pos,
                                                      elem_size);
 
@@ -353,6 +378,7 @@ void WindowTab::createNewSlider(const std::shared_ptr<SliderSettings>& elem_sett
                                                      notify_main_window_key_released_,
                                                      notify_parent_window_right_mouse_pressed_,
                                                      notify_main_window_about_modification_,
+                                                     notify_tab_about_editing_,
                                                      elem_pos,
                                                      elem_size);
 
@@ -371,6 +397,7 @@ void WindowTab::createNewCheckbox(const std::shared_ptr<CheckboxSettings>& elem_
                                                           notify_main_window_key_released_,
                                                           notify_parent_window_right_mouse_pressed_,
                                                           notify_main_window_about_modification_,
+                                                          notify_tab_about_editing_,
                                                           elem_pos,
                                                           elem_size);
 
@@ -389,6 +416,7 @@ void WindowTab::createNewTextLabel(const std::shared_ptr<TextLabelSettings>& ele
                                                               notify_main_window_key_released_,
                                                               notify_parent_window_right_mouse_pressed_,
                                                               notify_main_window_about_modification_,
+                                                              notify_tab_about_editing_,
                                                               elem_pos,
                                                               elem_size);
 

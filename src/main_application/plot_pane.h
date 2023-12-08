@@ -32,8 +32,6 @@ private:
     bool axes_set_;
     bool view_set_;
 
-    int args[9];
-
     bool perspective_projection_;
     bool wait_for_flush_;
 
@@ -88,7 +86,9 @@ public:
              const std::function<void(const char key)>& notify_main_window_key_released,
              const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                  notify_parent_window_right_mouse_pressed,
-             const std::function<void()>& notify_main_window_about_modification);
+             const std::function<void()>& notify_main_window_about_modification,
+             const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+                 notify_tab_about_editing);
     ~PlotPane() override;
 
     int getWidth();
@@ -131,11 +131,6 @@ public:
     void mouseLeftReleasedGuiElementSpecific(wxMouseEvent& event) override;
 
     void bindCallbacks();
-
-    void setCursor(const wxCursor& cursor) override
-    {
-        wxSetCursor(cursor);
-    }
 
     wxSize getSize() const override
     {
