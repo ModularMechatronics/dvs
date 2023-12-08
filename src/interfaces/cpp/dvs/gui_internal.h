@@ -157,7 +157,7 @@ public:
 public:
     CheckboxInternal() {}
     CheckboxInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
-        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::CheckBox}
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::Checkbox}
     {
         updateState(data_view);
     }
@@ -361,7 +361,7 @@ inline void populateGuiElementWithData(const dvs::GuiElementType type,
         {
             gui_element_handles[handle_string] = std::make_shared<ButtonInternal>(handle_string, data_view);
         }
-        else if (type == dvs::GuiElementType::CheckBox)
+        else if (type == dvs::GuiElementType::Checkbox)
         {
             gui_element_handles[handle_string] = std::make_shared<CheckboxInternal>(handle_string, data_view);
         }

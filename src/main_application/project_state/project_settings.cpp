@@ -38,9 +38,9 @@ TabSettings::TabSettings(const nlohmann::json& j)
         {
             elements.emplace_back(std::make_shared<SliderSettings>(j["elements"][k]));
         }
-        else if (type == dvs::GuiElementType::CheckBox)
+        else if (type == dvs::GuiElementType::Checkbox)
         {
-            elements.emplace_back(std::make_shared<CheckBoxSettings>(j["elements"][k]));
+            elements.emplace_back(std::make_shared<CheckboxSettings>(j["elements"][k]));
         }
         /*else if (type == dvs::GuiElementType::EditableText)
         {
@@ -168,9 +168,9 @@ bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const s
             const std::shared_ptr<SliderSettings> rhs_casted = std::dynamic_pointer_cast<SliderSettings>(rhs);
             return *lhs_casted == *rhs_casted;
         }
-        case dvs::GuiElementType::CheckBox: {
-            const std::shared_ptr<CheckBoxSettings> lhs_casted = std::dynamic_pointer_cast<CheckBoxSettings>(lhs);
-            const std::shared_ptr<CheckBoxSettings> rhs_casted = std::dynamic_pointer_cast<CheckBoxSettings>(rhs);
+        case dvs::GuiElementType::Checkbox: {
+            const std::shared_ptr<CheckboxSettings> lhs_casted = std::dynamic_pointer_cast<CheckboxSettings>(lhs);
+            const std::shared_ptr<CheckboxSettings> rhs_casted = std::dynamic_pointer_cast<CheckboxSettings>(rhs);
             return *lhs_casted == *rhs_casted;
         }
         case dvs::GuiElementType::EditableText: {

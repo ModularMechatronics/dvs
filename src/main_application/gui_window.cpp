@@ -204,7 +204,7 @@ GuiWindow::GuiWindow(
     Bind(wxEVT_MENU, &GuiWindow::createNewPlotPaneCallbackFunction, this, dvs_ids::NEW_PLOT_PANE);
     Bind(wxEVT_MENU, &GuiWindow::createNewButtonCallbackFunction, this, dvs_ids::NEW_BUTTON);
     Bind(wxEVT_MENU, &GuiWindow::createNewSliderCallbackFunction, this, dvs_ids::NEW_SLIDER);
-    Bind(wxEVT_MENU, &GuiWindow::createNewCheckBoxCallbackFunction, this, dvs_ids::NEW_CHECK_BOX);
+    Bind(wxEVT_MENU, &GuiWindow::createNewCheckboxCallbackFunction, this, dvs_ids::NEW_CHECK_BOX);
 
     Bind(wxEVT_MENU, &GuiWindow::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &GuiWindow::deleteElement, this, dvs_ids::DELETE_ELEMENT);
@@ -708,7 +708,7 @@ void GuiWindow::createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiWindow::createNewCheckBoxCallbackFunction(wxCommandEvent& WXUNUSED(event))
+void GuiWindow::createNewCheckboxCallbackFunction(wxCommandEvent& WXUNUSED(event))
 {
     const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
 
@@ -725,13 +725,13 @@ void GuiWindow::createNewCheckBoxCallbackFunction(wxCommandEvent& WXUNUSED(event
         const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
         const std::string element_handle_string = ret_fields.at("handle_string");
 
-        const std::shared_ptr<CheckBoxSettings> elem_settings = std::make_shared<CheckBoxSettings>();
+        const std::shared_ptr<CheckboxSettings> elem_settings = std::make_shared<CheckboxSettings>();
         elem_settings->handle_string = element_handle_string;
         elem_settings->label = ret_fields.at("label");
 
         if (element_handle_string != "")
         {
-            (*q)->createNewCheckBox(elem_settings);
+            (*q)->createNewCheckbox(elem_settings);
             notify_main_window_about_modification_();
         }
     }
@@ -850,9 +850,9 @@ std::map<std::string, std::pair<std::string, std::string>> transformElementSetti
         std::shared_ptr<ButtonSettings> bs = std::dynamic_pointer_cast<ButtonSettings>(element_settings);
         ret_fields["label"] = {"Label", bs->label};
     }
-    else if (element_settings->type == dvs::GuiElementType::CheckBox)
+    else if (element_settings->type == dvs::GuiElementType::Checkbox)
     {
-        std::shared_ptr<CheckBoxSettings> cs = std::dynamic_pointer_cast<CheckBoxSettings>(element_settings);
+        std::shared_ptr<CheckboxSettings> cs = std::dynamic_pointer_cast<CheckboxSettings>(element_settings);
         ret_fields["label"] = {"Label", cs->label};
     }
     else if (element_settings->type == dvs::GuiElementType::Slider)

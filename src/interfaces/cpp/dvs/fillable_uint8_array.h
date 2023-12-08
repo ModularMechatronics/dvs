@@ -34,12 +34,21 @@ private:
     size_t idx_;
 
 public:
-    FillableUInt8Array() : data_{nullptr}, size_{0U}, idx_{0U} {}
-    FillableUInt8Array(const size_t array_size) : data_{new uint8_t[array_size]}, size_{array_size}, idx_{0U} {}
+    FillableUInt8Array() = delete;
+    FillableUInt8Array(const size_t size) : data_{new uint8_t[size]}, size_{size}, idx_{0U}
+    {
+        if (size == 0U)
+        {
+            throw std::runtime_error("FillableUInt8Array: size cannot be 0.");
+        }
+    }
     FillableUInt8Array(const FillableUInt8Array& a) = delete;
     ~FillableUInt8Array()
     {
+        idx_ = 0U;
+        size_ = 0U;
         delete[] data_;
+        data_ = nullptr;
     }
 
     uint8_t* data() const

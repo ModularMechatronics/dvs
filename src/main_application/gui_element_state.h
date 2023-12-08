@@ -40,7 +40,7 @@ private:
 public:
     CheckboxState() = delete;
     CheckboxState(const std::string& handle_string, const bool is_checked)
-        : GuiElementState(dvs::GuiElementType::CheckBox, handle_string), is_checked_{is_checked}
+        : GuiElementState(dvs::GuiElementType::Checkbox, handle_string), is_checked_{is_checked}
     {
     }
     ~CheckboxState() override {}

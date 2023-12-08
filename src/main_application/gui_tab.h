@@ -86,7 +86,7 @@ public:
     void createNewPlotPane(const std::string& element_handle_string);
     void createNewButton(const std::shared_ptr<ButtonSettings>& elem_settings);
     void createNewSlider(const std::shared_ptr<SliderSettings>& elem_settings);
-    void createNewCheckBox(const std::shared_ptr<CheckBoxSettings>& elem_settings);
+    void createNewCheckbox(const std::shared_ptr<CheckboxSettings>& elem_settings);
     void createNewPlotPane(const std::shared_ptr<ElementSettings>& element_settings);
     void show();
     void hide();

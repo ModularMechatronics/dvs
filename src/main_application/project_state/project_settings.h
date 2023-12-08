@@ -92,17 +92,17 @@ struct ButtonSettings : public ElementSettings
     bool operator!=(const ButtonSettings& other) const;
 };
 
-struct CheckBoxSettings : public ElementSettings
+struct CheckboxSettings : public ElementSettings
 {
     std::string label;
 
-    CheckBoxSettings();
-    explicit CheckBoxSettings(const nlohmann::json& j_data);
+    CheckboxSettings();
+    explicit CheckboxSettings(const nlohmann::json& j_data);
 
     nlohmann::json toJson() const override;
 
-    bool operator==(const CheckBoxSettings& other) const;
-    bool operator!=(const CheckBoxSettings& other) const;
+    bool operator==(const CheckboxSettings& other) const;
+    bool operator!=(const CheckboxSettings& other) const;
 };
 
 struct EditableTextSettings : public ElementSettings

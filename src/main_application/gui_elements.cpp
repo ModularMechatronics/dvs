@@ -119,7 +119,7 @@ CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
                                        const std::function<void()>& notify_main_window_about_modification,
                                        const wxPoint& pos,
                                        const wxSize& size)
-    : wxCheckBox(parent, wxID_ANY, std::dynamic_pointer_cast<CheckBoxSettings>(element_settings)->label, pos, size),
+    : wxCheckBox(parent, wxID_ANY, std::dynamic_pointer_cast<CheckboxSettings>(element_settings)->label, pos, size),
       ApplicationGuiElement(element_settings,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,

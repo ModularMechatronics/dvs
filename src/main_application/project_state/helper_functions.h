@@ -34,7 +34,7 @@ inline dvs::GuiElementType parseGuiElementType(const nlohmann::json& j)
     }
     else if (type_string == "CHECKBOX")
     {
-        return dvs::GuiElementType::CheckBox;
+        return dvs::GuiElementType::Checkbox;
     }
     else if (type_string == "EDITABLE_TEXT")
     {
@@ -84,7 +84,7 @@ inline std::string guiElementTypeToString(const dvs::GuiElementType& type)
             res = "SLIDER";
             break;
         }
-        case dvs::GuiElementType::CheckBox: {
+        case dvs::GuiElementType::Checkbox: {
             res = "CHECKBOX";
             break;
         }

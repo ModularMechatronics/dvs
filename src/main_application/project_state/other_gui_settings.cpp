@@ -37,15 +37,15 @@ nlohmann::json ButtonSettings::toJson() const
     return j;
 }
 
-CheckBoxSettings::CheckBoxSettings() : ElementSettings{}, label{""}
+CheckboxSettings::CheckboxSettings() : ElementSettings{}, label{""}
 {
     x = 0.0;
     y = 0.0;
     width = 0.4;
     height = 0.4;
-    type = dvs::GuiElementType::CheckBox;
+    type = dvs::GuiElementType::Checkbox;
 }
-CheckBoxSettings::CheckBoxSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}
+CheckboxSettings::CheckboxSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}
 {
     if (!j_data.contains("element_specific_settings"))
     {
@@ -55,17 +55,17 @@ CheckBoxSettings::CheckBoxSettings(const nlohmann::json& j_data) : ElementSettin
     const nlohmann::json j_ess = j_data["element_specific_settings"];
     label = j_ess["label"];
 }
-bool CheckBoxSettings::operator==(const CheckBoxSettings& other) const
+bool CheckboxSettings::operator==(const CheckboxSettings& other) const
 {
     return ElementSettings::operator==(other) && label == other.label;
 }
 
-bool CheckBoxSettings::operator!=(const CheckBoxSettings& other) const
+bool CheckboxSettings::operator!=(const CheckboxSettings& other) const
 {
     return !(*this == other);
 }
 
-nlohmann::json CheckBoxSettings::toJson() const
+nlohmann::json CheckboxSettings::toJson() const
 {
     nlohmann::json j = ElementSettings::toJson();
     j["element_specific_settings"]["label"] = label;
@@ -392,9 +392,9 @@ StaticBoxSettings::StaticBoxSettings(const nlohmann::json& j_data) : ElementSett
             {
                 elements.push_back(std::make_shared<ButtonSettings>(j_element));
             }
-            else if (ge_type == dvs::GuiElementType::CheckBox)
+            else if (ge_type == dvs::GuiElementType::Checkbox)
             {
-                elements.push_back(std::make_shared<CheckBoxSettings>(j_element));
+                elements.push_back(std::make_shared<CheckboxSettings>(j_element));
             }
             else if (ge_type == dvs::GuiElementType::EditableText)
             {

@@ -123,7 +123,7 @@ public:
     void createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event));
-    void createNewCheckBoxCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewCheckboxCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewPlotPane();
 
     void editElementName(wxCommandEvent& WXUNUSED(event));

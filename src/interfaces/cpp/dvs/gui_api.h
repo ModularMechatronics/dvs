@@ -264,7 +264,7 @@ template <> inline CheckboxHandle getGuiElementHandle(const std::string& handle_
 
     const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
 
-    if (gui_element->getType() != dvs::GuiElementType::CheckBox)
+    if (gui_element->getType() != dvs::GuiElementType::Checkbox)
     {
         throw std::runtime_error("Gui element with handle string " + handle_string + " is not a checkbox!");
     }
@@ -340,7 +340,7 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
             gui_callbacks[handle_string](gui::getGuiElementHandle<gui::ButtonHandle>(handle_string));
         }
     }
-    else if (type == dvs::GuiElementType::CheckBox)
+    else if (type == dvs::GuiElementType::Checkbox)
     {
         std::map<std::string, gui::CheckboxCallbackFunction>& gui_callbacks = getCheckboxCallbacks();
 

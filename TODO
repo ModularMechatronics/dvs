@@ -6,7 +6,6 @@ Pre release:
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
-- Consolidate use of "CheckBox" vs "Checkbox" in interfaces
 - Demos:
  * Something for machine learning practitioners
  * Something with drone simulation data
@@ -15,12 +14,10 @@ Pre release:
  * Draw obj file from python interface, car running on a track
  * Star wars targeting computer: https://scifi.stackexchange.com/questions/244759/how-does-the-targeting-work-in-the-millenium-falcon (1min 20s in)
 - Finalize demos
-- Exception when 0 is passed into FillableUInt8Array
 - No saved file name shall be showed in title bar when no file is loaded
 - Color shall be set using floats in range [0, 1], but still transmitted as uint8_t [0, 255]
 - Grid lines when invalid/inf axes limits
 - Investigate weird bug not being able to set colors properly for realTimePlot
-- Create layout grids
 - Zoom from/to point where mouse is when it clicked
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Make axes numbers fit better at the edges, fewer line points per axis?
@@ -66,6 +63,7 @@ Post release:
   "Property" or "PropertyObject" or something, which can then be converted to CommunicationHeaderObject
 - Maybe PropertyType could be removed from each property, and instead use a templated function to return correct property type? And property type does not need to be transmitted, since that information is already in the look up table
 - Refactor legend properties
+- Create layout grids
 - wxWidgets objects should have a "GetParent" method. Use this instead of saving the parent in a pointer
 - Global args functions which is accessible from everywhere, getArg("sample_length").as<std::uint32_t>() for example. Passed in like "./some/path/to/app --other-arg apa --some-arg bepa --sample_length 100". Positional args does not lead with "--", and are accessed with getArg(0).as<std::string>() for example. Shortened args are accessed with getArg("s").as<std::string>() for example, and are passed in like "./some/path/to/app -s 100"
 - "Tuner gui" - a small gui app where one can add controls whose values can be queried over TCP, if you're tuning something in real time for example.

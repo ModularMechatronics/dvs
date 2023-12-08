@@ -144,23 +144,23 @@ WindowTab::WindowTab(wxFrame* parent_window,
             slider_->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_.push_back(slider_);
         }
-        else if (elem_settings->type == dvs::GuiElementType::CheckBox)
+        else if (elem_settings->type == dvs::GuiElementType::Checkbox)
         {
             auto const [elem_pos, elem_size] =
                 getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
 
-            CheckboxGuiElement* check_box_ = new CheckboxGuiElement(parent_window_,
-                                                                    elem_settings,
-                                                                    notify_main_window_key_pressed,
-                                                                    notify_main_window_key_released,
-                                                                    notify_parent_window_right_mouse_pressed,
-                                                                    notify_main_window_about_modification,
-                                                                    elem_pos,
-                                                                    elem_size);
+            CheckboxGuiElement* checkbox = new CheckboxGuiElement(parent_window_,
+                                                                  elem_settings,
+                                                                  notify_main_window_key_pressed,
+                                                                  notify_main_window_key_released,
+                                                                  notify_parent_window_right_mouse_pressed,
+                                                                  notify_main_window_about_modification,
+                                                                  elem_pos,
+                                                                  elem_size);
 
-            check_box_->setMinXPos(element_x_offset_);
-            check_box_->updateSizeFromParent(parent_window_->GetSize());
-            gui_elements_.push_back(check_box_);
+            checkbox->setMinXPos(element_x_offset_);
+            checkbox->updateSizeFromParent(parent_window_->GetSize());
+            gui_elements_.push_back(checkbox);
         }
 
         current_element_idx_++;
@@ -364,31 +364,31 @@ void WindowTab::createNewSlider(const std::shared_ptr<SliderSettings>& elem_sett
     gui_elements_.push_back(slider_);
 }
 
-void WindowTab::createNewCheckBox(const std::shared_ptr<CheckBoxSettings>& elem_settings)
+void WindowTab::createNewCheckbox(const std::shared_ptr<CheckboxSettings>& elem_settings)
 {
-    /*std::shared_ptr<CheckBoxSettings> elem_settings = std::make_shared<CheckBoxSettings>();
+    /*std::shared_ptr<CheckboxSettings> elem_settings = std::make_shared<CheckboxSettings>();
     elem_settings->x = 0.0;
     elem_settings->y = 0.0;
     elem_settings->width = 0.4;
     elem_settings->height = 0.4;
     elem_settings->handle_string = element_handle_string;
-    elem_settings->type = dvs::GuiElementType::CheckBox;
+    elem_settings->type = dvs::GuiElementType::Checkbox;
     elem_settings->label = element_handle_string;*/
 
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
 
-    CheckboxGuiElement* check_box_ = new CheckboxGuiElement(parent_window_,
-                                                            elem_settings,
-                                                            notify_main_window_key_pressed_,
-                                                            notify_main_window_key_released_,
-                                                            notify_parent_window_right_mouse_pressed_,
-                                                            notify_main_window_about_modification_,
-                                                            elem_pos,
-                                                            elem_size);
+    CheckboxGuiElement* checkbox = new CheckboxGuiElement(parent_window_,
+                                                          elem_settings,
+                                                          notify_main_window_key_pressed_,
+                                                          notify_main_window_key_released_,
+                                                          notify_parent_window_right_mouse_pressed_,
+                                                          notify_main_window_about_modification_,
+                                                          elem_pos,
+                                                          elem_size);
 
-    check_box_->setMinXPos(element_x_offset_);
-    check_box_->updateSizeFromParent(parent_window_->GetSize());
-    gui_elements_.push_back(check_box_);
+    checkbox->setMinXPos(element_x_offset_);
+    checkbox->updateSizeFromParent(parent_window_->GetSize());
+    gui_elements_.push_back(checkbox);
 }
 
 void WindowTab::show()
