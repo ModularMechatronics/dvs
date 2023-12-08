@@ -10,5 +10,14 @@ For element type GUI_ELEMENT, do the following:
 8. Add if statement to callGuiCallbackFunction in gui_api.h
 
 [Main application side]
-9. Add GUI_ELEMENTState in gui_element_state.h
-10. Add GUI_ELEMENTGuiElement in gui_elements.h and gui_elements.cpp
+9. Make sure GUI_ELEMENTSettings is implemented in project_settings.h
+10. Add GUI_ELEMENTState in gui_element_state.h
+11. Add GUI_ELEMENTGuiElement in gui_elements.h and gui_elements.cpp
+12. Add GUI_ELEMENTGuiElement creation to WindowTab::WindowTab in gui_tab.cpp
+13. Add function WindowTab::createNewGUI_ELEMENT in gui_tab.cpp
+14. Add function GuiWindow::createNewGUI_ELEMENTCallbackFunction in gui_window.cpp
+15. Add Bind commapnd in gui_window.cpp:
+   Bind(wxEVT_MENU, &GuiWindow::createNewGUI_ELEMENTCallbackFunction, this, dvs_ids::NEW_GUI_ELEMENT);
+16. Add field to menu items: new_element_menu_window_->Append(dvs_ids::NEW_GUI_ELEMENT, wxT("GUI_ELEMENT"));
+17. Add new event enum NEW_GUI_ELEMENT to events.h
+

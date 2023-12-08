@@ -48,7 +48,7 @@ void ButtonGuiElement::setLabel(const std::string& new_label)
     CallAfter(&ButtonGuiElement::SetLabel, new_label);
 }
 
-void ButtonGuiElement::setElementSettings(const std::map<std::string, std::string>& new_settings)
+void ButtonGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings)
 {
     ButtonSettings* button_settings = dynamic_cast<ButtonSettings*>(element_settings_.get());
 
@@ -108,7 +108,7 @@ void SliderGuiElement::sliderEvent(wxCommandEvent& event)
     sendGuiData();
 }
 
-void SliderGuiElement::setElementSettings(const std::map<std::string, std::string>& new_settings) {}
+void SliderGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings) {}
 
 CheckboxGuiElement::CheckboxGuiElement(wxFrame* parent,
                                        const std::shared_ptr<ElementSettings>& element_settings,
@@ -143,4 +143,47 @@ void CheckboxGuiElement::checkBoxCallback(wxCommandEvent& event)
     sendGuiData();
 }
 
-void CheckboxGuiElement::setElementSettings(const std::map<std::string, std::string>& new_settings) {}
+void CheckboxGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings) {}
+
+TextLabelGuiElement::TextLabelGuiElement(wxFrame* parent,
+                                         const std::shared_ptr<ElementSettings>& element_settings,
+                                         const std::function<void(const char key)>& notify_main_window_key_pressed,
+                                         const std::function<void(const char key)>& notify_main_window_key_released,
+                                         const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                                             notify_parent_window_right_mouse_pressed,
+                                         const std::function<void()>& notify_main_window_about_modification,
+                                         const wxPoint& pos,
+                                         const wxSize& size)
+    : wxStaticText(parent, wxID_ANY, std::dynamic_pointer_cast<TextLabelSettings>(element_settings)->label, pos, size),
+      ApplicationGuiElement(element_settings,
+                            notify_main_window_key_pressed,
+                            notify_main_window_key_released,
+                            notify_parent_window_right_mouse_pressed,
+                            notify_main_window_about_modification)
+{
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
+
+    Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
+}
+
+void TextLabelGuiElement::setLabel(const std::string& new_label)
+{
+    CallAfter(&TextLabelGuiElement::SetLabel, new_label);
+}
+
+void TextLabelGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings)
+{
+    TextLabelSettings* button_settings = dynamic_cast<TextLabelSettings*>(element_settings_.get());
+
+    if (new_settings.count("label") > 0U)
+    {
+        this->SetLabel(new_settings.at("label"));
+        button_settings->label = new_settings.at("label");
+    }
+    element_settings_->handle_string = new_settings.at("handle_string");
+}

@@ -659,7 +659,7 @@ MouseInteractionType getMouseInteractionType()
     }
 }
 
-void PlotPane::setElementSettings(const std::map<std::string, std::string>& new_settings)
+void PlotPane::updateElementSettings(const std::map<std::string, std::string>& new_settings)
 {
     plot_pane_settings_->handle_string = new_settings.at("handle_string");
     if (new_settings.count("title") > 0U)

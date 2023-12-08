@@ -124,6 +124,7 @@ public:
     void createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewCheckboxCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewTextLabelCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewPlotPane();
 
     void editElementName(wxCommandEvent& WXUNUSED(event));

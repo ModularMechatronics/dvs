@@ -35,7 +35,7 @@ public:
     void mouseMovedOverItem(wxMouseEvent& event);
     void buttonEvent(wxCommandEvent& event);
 
-    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
+    void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
 
     std::uint64_t getGuiPayloadSize() const override
     {
@@ -156,7 +156,7 @@ public:
 
     void sliderEvent(wxCommandEvent& event);
 
-    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
+    void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
 
     std::shared_ptr<GuiElementState> getGuiElementState() const override
     {
@@ -258,7 +258,7 @@ public:
         setElementPositionAndSize();
     }
 
-    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
+    void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
 
     void keyPressed(const char key) override {}
 
@@ -343,7 +343,7 @@ public:
         setElementPositionAndSize();
     }
 
-    void setElementSettings(const std::map<std::string, std::string>& new_settings) override;
+    void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
 
     void keyPressed(const char key) override {}
 
@@ -404,6 +404,8 @@ public:
 
         return text_label_state;
     }
+
+    void setLabel(const std::string& new_label);
 };
 
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

@@ -42,34 +42,34 @@ TabSettings::TabSettings(const nlohmann::json& j)
         {
             elements.emplace_back(std::make_shared<CheckboxSettings>(j["elements"][k]));
         }
-        /*else if (type == dvs::GuiElementType::EditableText)
+        else if (type == dvs::GuiElementType::EditableText)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<EditableTextSettings>(j["elements"][k]));
         }
         else if (type == dvs::GuiElementType::DropDownMenu)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<DropDownMenuSettings>(j["elements"][k]));
         }
         else if (type == dvs::GuiElementType::ListBox)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<ListBoxSettings>(j["elements"][k]));
         }
         else if (type == dvs::GuiElementType::RadioButtonGroup)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<RadioButtonGroupSettings>(j["elements"][k]));
         }
         else if (type == dvs::GuiElementType::TextLabel)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<TextLabelSettings>(j["elements"][k]));
         }
         else if (type == dvs::GuiElementType::StaticBox)
         {
-            elements.emplace_back(j["elements"][k]);
+            elements.emplace_back(std::make_shared<StaticBoxSettings>(j["elements"][k]));
         }
         else
         {
             throw std::runtime_error("Unknown element type: \"" + j["elements"][k]["type"].get<std::string>() + "\"");
-        }*/
+        }
     }
 
     background_color =

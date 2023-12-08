@@ -162,6 +162,24 @@ WindowTab::WindowTab(wxFrame* parent_window,
             checkbox->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_.push_back(checkbox);
         }
+        else if (elem_settings->type == dvs::GuiElementType::TextLabel)
+        {
+            auto const [elem_pos, elem_size] =
+                getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+            TextLabelGuiElement* text_label = new TextLabelGuiElement(parent_window_,
+                                                                      elem_settings,
+                                                                      notify_main_window_key_pressed,
+                                                                      notify_main_window_key_released,
+                                                                      notify_parent_window_right_mouse_pressed,
+                                                                      notify_main_window_about_modification,
+                                                                      elem_pos,
+                                                                      elem_size);
+
+            text_label->setMinXPos(element_x_offset_);
+            text_label->updateSizeFromParent(parent_window_->GetSize());
+            gui_elements_.push_back(text_label);
+        }
 
         current_element_idx_++;
     }
@@ -309,15 +327,6 @@ void WindowTab::createNewPlotPane(const std::shared_ptr<ElementSettings>& elemen
 
 void WindowTab::createNewButton(const std::shared_ptr<ButtonSettings>& elem_settings)
 {
-    /*std::shared_ptr<ButtonSettings> elem_settings = std::make_shared<ButtonSettings>();
-    elem_settings->x = 0.0;
-    elem_settings->y = 0.0;
-    elem_settings->width = 0.4;
-    elem_settings->height = 0.4;
-    elem_settings->handle_string = element_handle_string;
-    elem_settings->type = dvs::GuiElementType::Button;
-    elem_settings->label = element_handle_string;*/
-
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
 
     ButtonGuiElement* button_ = new ButtonGuiElement(parent_window_,
@@ -336,18 +345,6 @@ void WindowTab::createNewButton(const std::shared_ptr<ButtonSettings>& elem_sett
 
 void WindowTab::createNewSlider(const std::shared_ptr<SliderSettings>& elem_settings)
 {
-    /*std::shared_ptr<SliderSettings> elem_settings = std::make_shared<SliderSettings>();
-    elem_settings->x = 0.0;
-    elem_settings->y = 0.0;
-    elem_settings->width = 0.4;
-    elem_settings->height = 0.4;
-    elem_settings->handle_string = element_handle_string;
-    elem_settings->type = dvs::GuiElementType::Slider;
-    elem_settings->min_value = 0;
-    elem_settings->max_value = 100;
-    elem_settings->init_value = 50;
-    elem_settings->step_size = 1;*/
-
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
 
     SliderGuiElement* slider_ = new SliderGuiElement(parent_window_,
@@ -366,15 +363,6 @@ void WindowTab::createNewSlider(const std::shared_ptr<SliderSettings>& elem_sett
 
 void WindowTab::createNewCheckbox(const std::shared_ptr<CheckboxSettings>& elem_settings)
 {
-    /*std::shared_ptr<CheckboxSettings> elem_settings = std::make_shared<CheckboxSettings>();
-    elem_settings->x = 0.0;
-    elem_settings->y = 0.0;
-    elem_settings->width = 0.4;
-    elem_settings->height = 0.4;
-    elem_settings->handle_string = element_handle_string;
-    elem_settings->type = dvs::GuiElementType::Checkbox;
-    elem_settings->label = element_handle_string;*/
-
     auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
 
     CheckboxGuiElement* checkbox = new CheckboxGuiElement(parent_window_,
@@ -389,6 +377,24 @@ void WindowTab::createNewCheckbox(const std::shared_ptr<CheckboxSettings>& elem_
     checkbox->setMinXPos(element_x_offset_);
     checkbox->updateSizeFromParent(parent_window_->GetSize());
     gui_elements_.push_back(checkbox);
+}
+
+void WindowTab::createNewTextLabel(const std::shared_ptr<TextLabelSettings>& elem_settings)
+{
+    auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+    TextLabelGuiElement* text_label = new TextLabelGuiElement(parent_window_,
+                                                              elem_settings,
+                                                              notify_main_window_key_pressed_,
+                                                              notify_main_window_key_released_,
+                                                              notify_parent_window_right_mouse_pressed_,
+                                                              notify_main_window_about_modification_,
+                                                              elem_pos,
+                                                              elem_size);
+
+    text_label->setMinXPos(element_x_offset_);
+    text_label->updateSizeFromParent(parent_window_->GetSize());
+    gui_elements_.push_back(text_label);
 }
 
 void WindowTab::show()
@@ -570,7 +576,7 @@ bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_ha
 
     if (plot_panes_.end() != q_pp)
     {
-        (*q_pp)->setElementSettings(new_values);
+        (*q_pp)->updateElementSettings(new_values);
         return true;
     }
 
@@ -582,7 +588,7 @@ bool WindowTab::changeNameOfElementIfElementExists(const std::string& element_ha
 
     if (gui_elements_.end() != q_ge)
     {
-        (*q_ge)->setElementSettings(new_values);
+        (*q_ge)->updateElementSettings(new_values);
         return true;
     }
     else

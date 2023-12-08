@@ -134,16 +134,19 @@ GuiWindow::GuiWindow(
     new_element_menu_window_->Append(dvs_ids::NEW_BUTTON, wxT("Button"));
     new_element_menu_window_->Append(dvs_ids::NEW_SLIDER, wxT("Slider"));
     new_element_menu_window_->Append(dvs_ids::NEW_CHECK_BOX, wxT("Checkbox"));
+    new_element_menu_window_->Append(dvs_ids::NEW_TEXT_LABEL, wxT("Text label"));
 
     new_element_menu_element_->Append(dvs_ids::NEW_PLOT_PANE, wxT("Plot pane"));
     new_element_menu_element_->Append(dvs_ids::NEW_BUTTON, wxT("Button"));
     new_element_menu_element_->Append(dvs_ids::NEW_SLIDER, wxT("Slider"));
     new_element_menu_element_->Append(dvs_ids::NEW_CHECK_BOX, wxT("Checkbox"));
+    new_element_menu_element_->Append(dvs_ids::NEW_TEXT_LABEL, wxT("Text label"));
 
     new_element_menu_tab_->Append(dvs_ids::NEW_PLOT_PANE, wxT("Plot pane"));
     new_element_menu_tab_->Append(dvs_ids::NEW_BUTTON, wxT("Button"));
     new_element_menu_tab_->Append(dvs_ids::NEW_SLIDER, wxT("Slider"));
     new_element_menu_tab_->Append(dvs_ids::NEW_CHECK_BOX, wxT("Checkbox"));
+    new_element_menu_tab_->Append(dvs_ids::NEW_TEXT_LABEL, wxT("Text label"));
 
     popup_menu_window_->AppendSeparator();
     popup_menu_window_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
@@ -205,6 +208,7 @@ GuiWindow::GuiWindow(
     Bind(wxEVT_MENU, &GuiWindow::createNewButtonCallbackFunction, this, dvs_ids::NEW_BUTTON);
     Bind(wxEVT_MENU, &GuiWindow::createNewSliderCallbackFunction, this, dvs_ids::NEW_SLIDER);
     Bind(wxEVT_MENU, &GuiWindow::createNewCheckboxCallbackFunction, this, dvs_ids::NEW_CHECK_BOX);
+    Bind(wxEVT_MENU, &GuiWindow::createNewTextLabelCallbackFunction, this, dvs_ids::NEW_TEXT_LABEL);
 
     Bind(wxEVT_MENU, &GuiWindow::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
     Bind(wxEVT_MENU, &GuiWindow::deleteElement, this, dvs_ids::DELETE_ELEMENT);
@@ -732,6 +736,35 @@ void GuiWindow::createNewCheckboxCallbackFunction(wxCommandEvent& WXUNUSED(event
         if (element_handle_string != "")
         {
             (*q)->createNewCheckbox(elem_settings);
+            notify_main_window_about_modification_();
+        }
+    }
+}
+
+void GuiWindow::createNewTextLabelCallbackFunction(wxCommandEvent& WXUNUSED(event))
+{
+    const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
+
+    auto q = std::find_if(tabs_.begin(), tabs_.end(), [&selected_tab](const WindowTab* const tb) -> bool {
+        return selected_tab == tb->getName();
+    });
+
+    if (q != tabs_.end())
+    {
+        std::map<std::string, std::pair<std::string, std::string>> fields;
+        fields["handle_string"] = {"Handle string", ""};
+        fields["label"] = {"Label", ""};
+
+        const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
+        const std::string element_handle_string = ret_fields.at("handle_string");
+
+        const std::shared_ptr<TextLabelSettings> elem_settings = std::make_shared<TextLabelSettings>();
+        elem_settings->handle_string = element_handle_string;
+        elem_settings->label = ret_fields.at("label");
+
+        if (element_handle_string != "")
+        {
+            (*q)->createNewTextLabel(elem_settings);
             notify_main_window_about_modification_();
         }
     }

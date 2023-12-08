@@ -36,6 +36,17 @@
                         },
                         {
                             "element_specific_settings": {
+                                "label": "Some text here"
+                            },
+                            "handle_string": "text_label0",
+                            "height": 0.3903394341468811,
+                            "type": "TEXT_LABEL",
+                            "width": 0.29243120551109314,
+                            "x": 0.6020641922950745,
+                            "y": 0.2208877325057983
+                        },
+                        {
+                            "element_specific_settings": {
                                 "label": "Start timer"
                             },
                             "handle_string": "button0",
