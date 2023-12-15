@@ -69,11 +69,6 @@ public:
         return this->GetSize();
     }
 
-    wxWindow* getParent() const override
-    {
-        return this->GetParent();
-    }
-
     void setPosition(const wxPoint& new_pos) override
     {
         this->SetPosition(new_pos);
@@ -82,6 +77,11 @@ public:
     void setSize(const wxSize& new_size) override
     {
         this->SetSize(new_size);
+    }
+
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
     }
 
     void updateSizeFromParent(const wxSize& parent_size) override
@@ -280,10 +280,10 @@ public:
 
     std::shared_ptr<GuiElementState> getGuiElementState() const override
     {
-        std::shared_ptr<CheckboxState> button_state =
+        std::shared_ptr<CheckboxState> checkbox_state =
             std::make_shared<CheckboxState>(element_settings_->handle_string, this->GetValue());
 
-        return button_state;
+        return checkbox_state;
     }
 };
 

@@ -27,11 +27,11 @@ void ElementSettings::parseSettings(const nlohmann::json& j)
     width = j["width"];
     height = j["height"];
 
-    width = std::min(std::max(width, 0.1f), 1.0f);
-    height = std::min(std::max(height, 0.1f), 1.0f);
+    width = std::min(std::max(width, 0.01f), 1.0f);
+    height = std::min(std::max(height, 0.01f), 1.0f);
 
-    x = std::max(std::min(x, 0.9f), 0.0f);
-    y = std::max(std::min(y, 0.9f), 0.0f);
+    x = std::max(std::min(x, 0.99f), 0.0f);
+    y = std::max(std::min(y, 0.99f), 0.0f);
 
     if (j.count("z_order") > 0)
     {

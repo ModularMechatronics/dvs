@@ -96,10 +96,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
     notify_tab_about_editing_ = [this](const wxPoint& pos, const wxSize& size, const bool is_editing) -> void {
         if (is_editing)
         {
-            const wxPoint new_pos = pos - wxPoint{1, 1};
-            const wxSize new_size = size + wxSize{2, 2};
-
-            editing_silhouette_->setPosAndSize(new_pos, new_size);
+            editing_silhouette_->setPosAndSize(pos, size);
             editing_silhouette_->Show();
         }
         else

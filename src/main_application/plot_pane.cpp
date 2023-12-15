@@ -160,8 +160,8 @@ void PlotPane::bindCallbacks()
     Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
     Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
 
-    Bind(wxEVT_KEY_DOWN, &PlotPane::keyPressedCallback, this);
-    Bind(wxEVT_KEY_UP, &PlotPane::keyReleasedCallback, this);
+    Bind(wxEVT_KEY_DOWN, &ApplicationGuiElement::keyPressedCallback, this);
+    Bind(wxEVT_KEY_UP, &ApplicationGuiElement::keyReleasedCallback, this);
     Bind(wxEVT_PAINT, &PlotPane::render, this);
     Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
     Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);

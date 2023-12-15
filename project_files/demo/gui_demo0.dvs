@@ -28,7 +28,7 @@
                     "elements": [
                         {
                             "handle_string": "p_view_0",
-                            "height": 0.7,
+                            "height": 0.699999988079071,
                             "type": "PLOT_PANE",
                             "width": 0.6535087823867798,
                             "x": 0.0,
@@ -36,7 +36,7 @@
                         },
                         {
                             "handle_string": "p_view_1",
-                            "height": 0.7,
+                            "height": 0.699999988079071,
                             "type": "PLOT_PANE",
                             "width": 0.3399122953414917,
                             "x": 0.6600877046585083,
@@ -51,11 +51,11 @@
                                 "style": "horizontal"
                             },
                             "handle_string": "slider_m",
-                            "height": 0.09987195581197739,
+                            "height": 0.03713188320398331,
                             "type": "SLIDER",
-                            "width": 0.9,
-                            "x": 0.05,
-                            "y": 0.7
+                            "width": 0.8991228342056274,
+                            "x": 0.04,
+                            "y": 0.7234315276145935
                         },
                         {
                             "element_specific_settings": {
@@ -66,11 +66,11 @@
                                 "style": "horizontal"
                             },
                             "handle_string": "slider_c",
-                            "height": 0.06658130884170532,
+                            "height": 0.03713188320398331,
                             "type": "SLIDER",
-                            "width": 0.9,
-                            "x": 0.05,
-                            "y": 0.75
+                            "width": 0.8991228342056274,
+                            "x": 0.04,
+                            "y": 0.7708066701889038
                         },
                         {
                             "element_specific_settings": {
@@ -81,11 +81,11 @@
                                 "style": "horizontal"
                             },
                             "handle_string": "slider_ks",
-                            "height": 0.06402048468589783,
+                            "height": 0.04097311198711395,
                             "type": "SLIDER",
-                            "width": 0.9,
-                            "x": 0.05,
-                            "y": 0.8
+                            "width": 0.8991228342056274,
+                            "x": 0.04,
+                            "y": 0.819462239742279
                         },
                         {
                             "element_specific_settings": {
@@ -96,11 +96,11 @@
                                 "style": "horizontal"
                             },
                             "handle_string": "slider_freq",
-                            "height": 0.06402048468589783,
+                            "height": 0.03457106277346611,
                             "type": "SLIDER",
-                            "width": 0.9,
-                            "x": 0.05,
-                            "y": 0.85
+                            "width": 0.8991228342056274,
+                            "x": 0.04,
+                            "y": 0.8732394576072693
                         },
                         {
                             "element_specific_settings": {
@@ -111,11 +111,11 @@
                                 "style": "horizontal"
                             },
                             "handle_string": "slider_amp",
-                            "height": 0.06402048468589783,
+                            "height": 0.03457106277346611,
                             "type": "SLIDER",
-                            "width": 0.9,
-                            "x": 0.05,
-                            "y": 0.9
+                            "width": 0.8991228342056274,
+                            "x": 0.04,
+                            "y": 0.9218950271606445
                         }
                     ],
                     "name": "primary_view"

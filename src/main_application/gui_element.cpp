@@ -149,7 +149,7 @@ void ApplicationGuiElement::mouseMovedOverItem(wxMouseEvent& event)
         mouseMovedGuiElementSpecific(event);
     }
 
-    if (wxGetKeyState(WXK_COMMAND))
+    if (wxGetKeyState(WXK_COMMAND) && !event.LeftIsDown())
     {
         setCursorDependingOnMousePos(event.GetPosition());
     }
@@ -240,14 +240,14 @@ void ApplicationGuiElement::adjustPaneSizeOnMouseMoved()
         default:
             std::cout << "Invalid cursor state!" << std::endl;
     }
-    if (new_size.GetWidth() < 50)
+    if (new_size.GetWidth() < 10)
     {
-        new_size.SetWidth(50);
+        new_size.SetWidth(10);
         new_position.x = current_element_pos.x;
     }
-    if (new_size.GetHeight() < 50)
+    if (new_size.GetHeight() < 10)
     {
-        new_size.SetHeight(50);
+        new_size.SetHeight(10);
         new_position.y = current_element_pos.y;
     }
 
