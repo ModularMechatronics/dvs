@@ -118,6 +118,16 @@ public:
 
     virtual void setMinXPos(const int min_x_pos) = 0;
 
+    virtual void hide()
+    {
+        DVS_LOG_WARNING() << "hide() not implemented!";
+    }
+
+    virtual void show()
+    {
+        DVS_LOG_WARNING() << "show() not implemented!";
+    }
+
     std::string getHandleString() const
     {
         return element_settings_->handle_string;
@@ -164,7 +174,7 @@ public:
     void setCursorDependingOnMousePos(const wxPoint& current_mouse_position);
 
     void adjustPaneSizeOnMouseMoved();
-    void setElementPositionAndSize();
+    virtual void setElementPositionAndSize();
 
     // Keyboard functions
     virtual void keyPressedElementSpecific(const char key) = 0;

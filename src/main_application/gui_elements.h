@@ -79,6 +79,16 @@ public:
         this->SetSize(new_size);
     }
 
+    void hide() override
+    {
+        Hide();
+    }
+
+    void show() override
+    {
+        Show();
+    }
+
     wxWindow* getParent() const override
     {
         return this->GetParent();
@@ -114,6 +124,9 @@ class SliderGuiElement : public wxSlider, public ApplicationGuiElement
 {
 private:
     std::int32_t slider_value_;
+    wxStaticText* value_text_;
+    wxStaticText* min_text_;
+    wxStaticText* max_text_;
 
 public:
     SliderGuiElement(wxFrame* parent,
@@ -150,6 +163,8 @@ public:
         minimum_x_pos_ = min_x_pos;
         setElementPositionAndSize();
     }
+
+    void setElementPositionAndSize() override;
 
     std::uint64_t getGuiPayloadSize() const override
     {
@@ -195,6 +210,22 @@ public:
     void setSize(const wxSize& new_size) override
     {
         this->SetSize(new_size);
+    }
+
+    void hide() override
+    {
+        Hide();
+        value_text_->Hide();
+        min_text_->Hide();
+        max_text_->Hide();
+    }
+
+    void show() override
+    {
+        Show();
+        value_text_->Show();
+        min_text_->Show();
+        max_text_->Show();
     }
 
     void keyPressedElementSpecific(const char key) override {}
@@ -274,6 +305,16 @@ public:
     void setSize(const wxSize& new_size) override
     {
         this->SetSize(new_size);
+    }
+
+    void hide() override
+    {
+        Hide();
+    }
+
+    void show() override
+    {
+        Show();
     }
 
     void checkBoxCallback(wxCommandEvent& event);
@@ -356,6 +397,16 @@ public:
     void setSize(const wxSize& new_size) override
     {
         this->SetSize(new_size);
+    }
+
+    void hide() override
+    {
+        Hide();
+    }
+
+    void show() override
+    {
+        Show();
     }
 
     void checkBoxCallback(wxCommandEvent& event);

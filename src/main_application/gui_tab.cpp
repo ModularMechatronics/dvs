@@ -295,6 +295,11 @@ void WindowTab::setMinXPos(const int min_x_pos)
     {
         pp->setMinXPos(min_x_pos);
     }
+
+    for (auto const& elem : gui_elements_)
+    {
+        elem->setMinXPos(min_x_pos);
+    }
 }
 
 void WindowTab::createNewPlotPane()
@@ -428,6 +433,11 @@ void WindowTab::show()
     {
         pp->Show();
     }
+
+    for (auto const& ge : gui_elements_)
+    {
+        ge->show();
+    }
 }
 
 void WindowTab::hide()
@@ -435,6 +445,11 @@ void WindowTab::hide()
     for (auto const& pp : plot_panes_)
     {
         pp->Hide();
+    }
+
+    for (auto const& ge : gui_elements_)
+    {
+        ge->hide();
     }
 }
 

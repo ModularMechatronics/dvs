@@ -80,8 +80,7 @@ SliderGuiElement::SliderGuiElement(
                std::dynamic_pointer_cast<SliderSettings>(element_settings)->min_value,
                std::dynamic_pointer_cast<SliderSettings>(element_settings)->max_value,
                pos,
-               size,
-               wxSL_VALUE_LABEL),
+               size),
       ApplicationGuiElement{element_settings,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,
@@ -100,6 +99,12 @@ SliderGuiElement::SliderGuiElement(
     Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
 
     Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
+
+    value_text_ = new wxStaticText(parent, wxID_ANY, std::to_string(slider_value_));
+    min_text_ = new wxStaticText(
+        parent, wxID_ANY, std::to_string(std::dynamic_pointer_cast<SliderSettings>(element_settings)->min_value));
+    max_text_ = new wxStaticText(
+        parent, wxID_ANY, std::to_string(std::dynamic_pointer_cast<SliderSettings>(element_settings)->max_value));
 }
 
 void SliderGuiElement::sliderEvent(wxCommandEvent& event)
@@ -110,12 +115,45 @@ void SliderGuiElement::sliderEvent(wxCommandEvent& event)
         return;
     }
 
+    value_text_->SetLabel(std::to_string(new_value));
+
     slider_value_ = new_value;
 
     sendGuiData();
 }
 
-void SliderGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings) {}
+void SliderGuiElement::setElementPositionAndSize()
+{
+    ApplicationGuiElement::setElementPositionAndSize();
+    const wxSize size{this->GetSize()};
+    const wxPoint pos{this->GetPosition()};
+    value_text_->SetPosition(wxPoint(pos.x + size.x / 2, pos.y + size.y / 2 + 7));
+
+    min_text_->SetPosition(wxPoint(pos.x - 13, pos.y + size.y / 2 - 10));
+    max_text_->SetPosition(wxPoint(pos.x + size.x + 5, pos.y + size.y / 2 - 10));
+}
+
+void SliderGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings)
+{
+    SliderSettings* slider_settings = dynamic_cast<SliderSettings*>(element_settings_.get());
+
+    if (new_settings.count("min_value") > 0U)
+    {
+        slider_settings->min_value = std::stoi(new_settings.at("min_value"));
+        this->SetMin(slider_settings->min_value);
+    }
+
+    if (new_settings.count("max_value") > 0U)
+    {
+        slider_settings->max_value = std::stoi(new_settings.at("max_value"));
+        this->SetMax(slider_settings->max_value);
+    }
+
+    min_text_->SetLabel(std::to_string(slider_settings->min_value));
+    max_text_->SetLabel(std::to_string(slider_settings->max_value));
+
+    element_settings_->handle_string = new_settings.at("handle_string");
+}
 
 CheckboxGuiElement::CheckboxGuiElement(
     wxFrame* parent,
