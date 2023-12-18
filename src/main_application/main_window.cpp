@@ -61,7 +61,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     menu_bar_ = createMainMenuBar();
 
     cmdl_output_window_ = new CmdlOutputWindow();
-    cmdl_output_window_->Show();
+    cmdl_output_window_->Hide();
 
     push_text_to_cmdl_output_window_ = [this](const Color_t col, const std::string& text) -> void {
         cmdl_output_window_->pushNewText(col, text);
@@ -253,6 +253,8 @@ std::string getCallbackFunctionUseFromType(const GuiElementType tp)
 void MainWindow::printGuiCallbackCode()
 {
     // clang-format off
+    cmdl_output_window_->clear();
+    cmdl_output_window_->Show();
 
     push_text_to_cmdl_output_window_(Color_t::BLACK, "\n");
 

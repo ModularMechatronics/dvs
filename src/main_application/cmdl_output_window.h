@@ -22,6 +22,8 @@ public:
     ~CmdlOutputWindow();
 
     void OnSize(wxSizeEvent& event);
+    void OnClose(wxCloseEvent& event);
+    void clear();
 
     void pushNewText(const Color_t col, const std::string& text);
 };

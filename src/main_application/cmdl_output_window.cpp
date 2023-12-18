@@ -44,7 +44,7 @@ wxColour ColorToWxColour(const Color_t col)
     }
 }
 
-CmdlOutputWindow::CmdlOutputWindow() : wxFrame(nullptr, wxID_ANY, "CMDL Output", wxDefaultPosition, wxSize(800, 600))
+CmdlOutputWindow::CmdlOutputWindow() : wxFrame(nullptr, wxID_ANY, "Output", wxDefaultPosition, wxSize(800, 600))
 {
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     text_ctrl_ = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY);
@@ -61,6 +61,7 @@ CmdlOutputWindow::CmdlOutputWindow() : wxFrame(nullptr, wxID_ANY, "CMDL Output",
     SetBackgroundColour(RGBTripletfToWxColour(kMainWindowBackgroundColor));
 
     Bind(wxEVT_SIZE, &CmdlOutputWindow::OnSize, this);
+    Bind(wxEVT_CLOSE_WINDOW, &CmdlOutputWindow::OnClose, this);
 }
 
 void CmdlOutputWindow::pushNewText(const Color_t col, const std::string& text)
@@ -71,11 +72,15 @@ void CmdlOutputWindow::pushNewText(const Color_t col, const std::string& text)
     stream.flush();
 }
 
-/*void CmdlOutputWindow::OnClose(wxCloseEvent& event)
+void CmdlOutputWindow::OnClose(wxCloseEvent& event)
 {
-    wxFrame::OnClose(event);
-    std::cout << "CmdlOutputWindow::OnClose" << std::endl;
-}*/
+    Hide();
+}
+
+void CmdlOutputWindow::clear()
+{
+    text_ctrl_->Clear();
+}
 
 void CmdlOutputWindow::OnSize(wxSizeEvent& event)
 {
