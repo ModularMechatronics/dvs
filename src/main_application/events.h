@@ -39,6 +39,7 @@ enum DvsIds : uint16_t
     LOWER_ELEMENT,
     EDIT_TAB_NAME,
     DELETE_TAB,
+    PRINT_GUI_CODE,
     WINDOW_TOGGLE = wxID_HIGHEST + 1000,
     NEW_EVENT_ID
 };

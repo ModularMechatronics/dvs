@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "axes/axes.h"
+#include "color.h"
 #include "editing_silhouette.h"
 #include "gui_element.h"
 #include "gui_elements.h"
@@ -58,6 +59,8 @@ private:
     std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)> notify_tab_about_editing_;
     std::function<void(const std::string&)> notify_main_window_element_deleted_;
     std::function<void()> notify_main_window_about_modification_;
+    std::function<void(const Color_t, const std::string&)> push_text_to_cmdl_output_window_;
+    std::function<void(void)> print_gui_callback_code_;
     int current_element_idx_;
     RGBTripletf background_color_;
     RGBTripletf button_normal_color_;
@@ -78,7 +81,9 @@ public:
               const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                   notify_parent_window_right_mouse_pressed,
               const std::function<void(const std::string&)>& notify_main_window_element_deleted,
-              const std::function<void()>& notify_main_window_about_modification);
+              const std::function<void()>& notify_main_window_about_modification,
+              const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+              const std::function<void(void)>& print_gui_callback_code);
     void initializeZOrder(const TabSettings& tab_settings);
     ~WindowTab();
     std::vector<ApplicationGuiElement*> getPlotPanes() const;

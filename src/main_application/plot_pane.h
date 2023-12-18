@@ -88,7 +88,8 @@ public:
                  notify_parent_window_right_mouse_pressed,
              const std::function<void()>& notify_main_window_about_modification,
              const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
-                 notify_tab_about_editing);
+                 notify_tab_about_editing,
+             const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window);
     ~PlotPane() override;
 
     int getWidth();

@@ -27,7 +27,9 @@ GuiWindow::GuiWindow(
     const std::function<void(const std::string&)>& notify_main_window_element_deleted,
     const std::function<void(const std::string&, const std::string&)>& notify_main_window_element_name_changed,
     const std::function<void(const std::string&, const std::string&)>& notify_main_window_name_changed,
-    const std::function<void()>& notify_main_window_about_modification)
+    const std::function<void()>& notify_main_window_about_modification,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+    const std::function<void(void)>& print_gui_callback_code)
     : wxFrame(main_window, wxID_ANY, "Figure 1"),
       tab_buttons_{this,
                    window_settings,
@@ -42,6 +44,8 @@ GuiWindow::GuiWindow(
       notify_main_window_element_name_changed_{notify_main_window_element_name_changed},
       notify_main_window_name_changed_{notify_main_window_name_changed},
       notify_main_window_about_modification_{notify_main_window_about_modification},
+      push_text_to_cmdl_output_window_{push_text_to_cmdl_output_window},
+      print_gui_callback_code_{print_gui_callback_code},
       help_pane_{this, wxPoint(150, 150), wxSize(100, 100), this->GetSize()}
 {
     project_name_ = project_name;
@@ -72,7 +76,9 @@ GuiWindow::GuiWindow(
                                       notify_main_window_key_released,
                                       notify_parent_window_right_mouse_pressed_,
                                       notify_main_window_element_deleted_,
-                                      notify_main_window_about_modification_));
+                                      notify_main_window_about_modification_,
+                                      push_text_to_cmdl_output_window_,
+                                      print_gui_callback_code_));
         tab_buttons_.addNewTab(tab_settings.name);
         tab_buttons_.setSelection(tab_settings.name);
         SetBackgroundColour(wxColour(tab_settings.background_color.red * 255.0f,
@@ -100,7 +106,9 @@ GuiWindow::GuiWindow(
                                           notify_main_window_key_released,
                                           notify_parent_window_right_mouse_pressed_,
                                           notify_main_window_element_deleted_,
-                                          notify_main_window_about_modification_));
+                                          notify_main_window_about_modification_,
+                                          push_text_to_cmdl_output_window_,
+                                          print_gui_callback_code_));
             current_tab_num_++;
         }
     }
@@ -156,6 +164,10 @@ GuiWindow::GuiWindow(
     popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
     popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
     popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
+
+    popup_menu_window_->AppendSeparator();
+    popup_menu_window_->Append(dvs_ids::PRINT_GUI_CODE, wxT("Print gui code"));
+
     popup_menu_window_->AppendSeparator();
     popup_menu_window_->Append(callback_id_ + 2, wxT("New window"));
     popup_menu_window_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
@@ -172,6 +184,10 @@ GuiWindow::GuiWindow(
     popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
     popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
     popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
+
+    popup_menu_element_->AppendSeparator();
+    popup_menu_element_->Append(dvs_ids::PRINT_GUI_CODE, wxT("Print gui code"));
+
     popup_menu_element_->AppendSeparator();
     popup_menu_element_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_element_->Append(callback_id_ + 1, wxT("Delete window"));
@@ -187,6 +203,10 @@ GuiWindow::GuiWindow(
     popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
     popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
     popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
+
+    popup_menu_tab_->AppendSeparator();
+    popup_menu_tab_->Append(dvs_ids::PRINT_GUI_CODE, wxT("Print gui code"));
+
     popup_menu_tab_->AppendSeparator();
     popup_menu_tab_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_tab_->Append(callback_id_ + 1, wxT("Delete window"));
@@ -226,6 +246,8 @@ GuiWindow::GuiWindow(
     Bind(wxEVT_KEY_DOWN, &GuiWindow::keyPressedCallback, this);
     Bind(wxEVT_KEY_UP, &GuiWindow::keyReleasedCallback, this);
 
+    Bind(wxEVT_MENU, &GuiWindow::printGuiCode, this, dvs_ids::PRINT_GUI_CODE);
+
     Bind(wxEVT_CLOSE_WINDOW, &GuiWindow::OnClose, this);
     Bind(wxEVT_SIZE, &GuiWindow::OnSize, this);
     Bind(wxEVT_MOVE, &GuiWindow::OnMove, this);
@@ -236,6 +258,11 @@ GuiWindow::GuiWindow(
 
     this->SetPosition(wxPoint(window_settings.x, window_settings.y));
     this->SetSize(wxSize(window_settings.width, window_settings.height));
+}
+
+void GuiWindow::printGuiCode(wxCommandEvent& WXUNUSED(event))
+{
+    print_gui_callback_code_();
 }
 
 wxMenuItem* GuiWindow::getMenuItemFromString(const wxMenu* const menu, const std::string& menu_item_string) const
@@ -598,7 +625,9 @@ void GuiWindow::newTab(wxCommandEvent& WXUNUSED(event))
                                   notify_main_window_key_released_,
                                   notify_parent_window_right_mouse_pressed_,
                                   notify_main_window_element_deleted_,
-                                  notify_main_window_about_modification_));
+                                  notify_main_window_about_modification_,
+                                  push_text_to_cmdl_output_window_,
+                                  print_gui_callback_code_));
     tab_buttons_.addNewTab(tab_settings.name);
 
     for (const auto& t : tabs_)

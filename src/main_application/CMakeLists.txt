@@ -35,6 +35,8 @@ set(CPP_SOURCE_FILES main.cpp
 
                      editing_silhouette.cpp
 
+                     cmdl_output_window.cpp
+
                      axes/structures/axes_limits.cpp
                      axes/structures/axes_settings.cpp
                      axes/structures/view_angles.cpp

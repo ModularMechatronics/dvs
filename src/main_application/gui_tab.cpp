@@ -73,13 +73,17 @@ WindowTab::WindowTab(wxFrame* parent_window,
                      const std::function<void(const wxPoint pos, const std::string& elem_name)>&
                          notify_parent_window_right_mouse_pressed,
                      const std::function<void(const std::string&)>& notify_main_window_element_deleted,
-                     const std::function<void()>& notify_main_window_about_modification)
+                     const std::function<void()>& notify_main_window_about_modification,
+                     const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+                     const std::function<void(void)>& print_gui_callback_code)
     : name_{tab_settings.name},
       notify_main_window_key_pressed_{notify_main_window_key_pressed},
       notify_main_window_key_released_{notify_main_window_key_released},
       notify_parent_window_right_mouse_pressed_{notify_parent_window_right_mouse_pressed},
       notify_main_window_element_deleted_{notify_main_window_element_deleted},
-      notify_main_window_about_modification_{notify_main_window_about_modification}
+      notify_main_window_about_modification_{notify_main_window_about_modification},
+      push_text_to_cmdl_output_window_{push_text_to_cmdl_output_window},
+      print_gui_callback_code_{print_gui_callback_code}
 {
     parent_window_ = parent_window;
     current_element_idx_ = 0;
@@ -116,7 +120,8 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                               notify_main_window_key_released,
                                               notify_parent_window_right_mouse_pressed,
                                               notify_main_window_about_modification,
-                                              notify_tab_about_editing_);
+                                              notify_tab_about_editing_,
+                                              push_text_to_cmdl_output_window_);
 
             pp->setMinXPos(element_x_offset_);
             pp->updateSizeFromParent(parent_window_->GetSize());
@@ -135,6 +140,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                                              notify_parent_window_right_mouse_pressed,
                                                              notify_main_window_about_modification,
                                                              notify_tab_about_editing_,
+                                                             push_text_to_cmdl_output_window_,
                                                              elem_pos,
                                                              elem_size);
 
@@ -154,6 +160,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                                              notify_parent_window_right_mouse_pressed,
                                                              notify_main_window_about_modification,
                                                              notify_tab_about_editing_,
+                                                             push_text_to_cmdl_output_window_,
                                                              elem_pos,
                                                              elem_size);
 
@@ -173,6 +180,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                                                   notify_parent_window_right_mouse_pressed,
                                                                   notify_main_window_about_modification,
                                                                   notify_tab_about_editing_,
+                                                                  push_text_to_cmdl_output_window_,
                                                                   elem_pos,
                                                                   elem_size);
 
@@ -192,6 +200,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
                                                                       notify_parent_window_right_mouse_pressed,
                                                                       notify_main_window_about_modification,
                                                                       notify_tab_about_editing_,
+                                                                      push_text_to_cmdl_output_window_,
                                                                       elem_pos,
                                                                       elem_size);
 
@@ -319,7 +328,8 @@ void WindowTab::createNewPlotPane()
                                       notify_main_window_key_released_,
                                       notify_parent_window_right_mouse_pressed_,
                                       notify_main_window_about_modification_,
-                                      notify_tab_about_editing_);
+                                      notify_tab_about_editing_,
+                                      push_text_to_cmdl_output_window_);
     pp->setMinXPos(element_x_offset_);
     pp->updateSizeFromParent(parent_window_->GetSize());
     plot_panes_.push_back(pp);
@@ -344,7 +354,8 @@ void WindowTab::createNewPlotPane(const std::shared_ptr<ElementSettings>& elemen
                                       notify_main_window_key_released_,
                                       notify_parent_window_right_mouse_pressed_,
                                       notify_main_window_about_modification_,
-                                      notify_tab_about_editing_);
+                                      notify_tab_about_editing_,
+                                      push_text_to_cmdl_output_window_);
     pp->setMinXPos(element_x_offset_);
     pp->updateSizeFromParent(parent_window_->GetSize());
     plot_panes_.push_back(pp);
@@ -362,6 +373,7 @@ void WindowTab::createNewButton(const std::shared_ptr<ButtonSettings>& elem_sett
                                                      notify_parent_window_right_mouse_pressed_,
                                                      notify_main_window_about_modification_,
                                                      notify_tab_about_editing_,
+                                                     push_text_to_cmdl_output_window_,
                                                      elem_pos,
                                                      elem_size);
 
@@ -381,6 +393,7 @@ void WindowTab::createNewSlider(const std::shared_ptr<SliderSettings>& elem_sett
                                                      notify_parent_window_right_mouse_pressed_,
                                                      notify_main_window_about_modification_,
                                                      notify_tab_about_editing_,
+                                                     push_text_to_cmdl_output_window_,
                                                      elem_pos,
                                                      elem_size);
 
@@ -400,6 +413,7 @@ void WindowTab::createNewCheckbox(const std::shared_ptr<CheckboxSettings>& elem_
                                                           notify_parent_window_right_mouse_pressed_,
                                                           notify_main_window_about_modification_,
                                                           notify_tab_about_editing_,
+                                                          push_text_to_cmdl_output_window_,
                                                           elem_pos,
                                                           elem_size);
 
@@ -419,6 +433,7 @@ void WindowTab::createNewTextLabel(const std::shared_ptr<TextLabelSettings>& ele
                                                               notify_parent_window_right_mouse_pressed_,
                                                               notify_main_window_about_modification_,
                                                               notify_tab_about_editing_,
+                                                              push_text_to_cmdl_output_window_,
                                                               elem_pos,
                                                               elem_size);
 

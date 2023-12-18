@@ -60,6 +60,15 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     menu_bar_ = createMainMenuBar();
 
+    cmdl_output_window_ = new CmdlOutputWindow();
+    cmdl_output_window_->Show();
+
+    push_text_to_cmdl_output_window_ = [this](const Color_t col, const std::string& text) -> void {
+        cmdl_output_window_->pushNewText(col, text);
+    };
+
+    print_gui_callback_code_ = [this]() { printGuiCallbackCode(); };
+
     SetMenuBar(menu_bar_);
     wxMenuBar::MacSetCommonMenuBar(menu_bar_);
 
@@ -188,6 +197,142 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 void MainWindow::exitApplication(wxCommandEvent& WXUNUSED(event))
 {
     this->destroy();
+}
+
+std::string guiElementTypeToGuiHandleString(const GuiElementType tp)
+{
+    switch (tp)
+    {
+        case GuiElementType::Slider:
+            return "SliderHandle";
+        case GuiElementType::Button:
+            return "ButtonHandle";
+        case GuiElementType::Checkbox:
+            return "CheckboxHandle";
+        case GuiElementType::TextLabel:
+            return "TextLabelHandle";
+        case GuiElementType::Unknown:
+            throw std::runtime_error("guiElementTypeToGuiHandleString: Unknown GuiElementType!");
+            return "";
+        default:
+            return "unknown";
+    }
+}
+
+std::string getCallbackFunctionUseFromType(const GuiElementType tp)
+{
+    std::string s = "";
+
+    if (tp == GuiElementType::Slider)
+    {
+        s = "        const std::int32_t min_value = gui_element_handle.getMinValue();\n"
+            "        const std::int32_t max_value = gui_element_handle.getMaxValue();\n"
+            "        const std::int32_t step_size = gui_element_handle.getStepSize();\n"
+            "        const std::int32_t value = gui_element_handle.getValue();\n";
+    }
+    else if (tp == GuiElementType::Button)
+    {
+        s = "        const bool is_pressed = gui_element_handle.getIsPressed();\n";
+    }
+    else if (tp == GuiElementType::Checkbox)
+    {
+        s = "        const bool is_checked = gui_element_handle.getIsChecked();\n";
+    }
+    else if (tp == GuiElementType::TextLabel)
+    {
+        s = "TextLabelHandle";
+    }
+    else
+    {
+        throw std::runtime_error("getCallbackFunctionUseFromType: Unknown GuiElementType!");
+    }
+
+    return s;
+}
+
+void MainWindow::printGuiCallbackCode()
+{
+    // clang-format off
+
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "\n");
+
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "void userFunction()\n");
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "{\n");
+
+    for (const GuiWindow* gw : windows_)
+    {
+        const WindowSettings ws{gw->getWindowSettings()};
+
+        const std::string window_str = "    /// Window: " + ws.name + "\n";
+
+        push_text_to_cmdl_output_window_(Color_t::BLACK, window_str);
+
+        for (const TabSettings& ts : ws.tabs)
+        {
+            const std::string tab_str = "    /// Tab: " + ts.name + "\n";
+
+            push_text_to_cmdl_output_window_(Color_t::BLACK, tab_str);
+
+            for (const std::shared_ptr<ElementSettings>& es : ts.elements)
+            {
+                const dvs::GuiElementType type{es->type};
+                if(type == GuiElementType::Unknown || type == GuiElementType::PlotPane)
+                {
+                    continue;
+                }
+                const std::string handle_string{es->handle_string};
+
+                const std::string get_function_text = "    const dvs::gui::" +
+                    guiElementTypeToGuiHandleString(type) + " " + handle_string + " = dvs::gui::getGuiElementHandle<dvs::gui::" + guiElementTypeToGuiHandleString(type) + ">(\"" + handle_string + "\");\n";
+
+                push_text_to_cmdl_output_window_(Color_t::BLACK, get_function_text);
+            }
+
+            push_text_to_cmdl_output_window_(Color_t::BLACK, "\n");
+        }
+    }
+
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "}\n\n\n");
+
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "int main(int argc, char** argv)\n{\n");
+
+    for (const GuiWindow* gw : windows_)
+    {
+        const WindowSettings ws{gw->getWindowSettings()};
+
+        const std::string window_str = "    /// Window: " + ws.name + "\n";
+
+        push_text_to_cmdl_output_window_(Color_t::BLACK, window_str);
+
+        for (const TabSettings& ts : ws.tabs)
+        {
+            const std::string tab_str = "    /// Tab: " + ts.name + "\n";
+
+            push_text_to_cmdl_output_window_(Color_t::BLACK, tab_str);
+
+            for (const std::shared_ptr<ElementSettings>& es : ts.elements)
+            {
+                const dvs::GuiElementType type{es->type};
+                if(type == GuiElementType::Unknown || type == GuiElementType::PlotPane || type == GuiElementType::TextLabel)
+                {
+                    continue;
+                }
+                const std::string handle_string{es->handle_string};
+
+                const std::string cb_function_text = "    dvs::gui::registerGuiCallback(\"" + handle_string + "\", [](const " + guiElementTypeToGuiHandleString(type) + "& gui_element_handle) -> void {\n"
+                + getCallbackFunctionUseFromType(type) +
+                    "    });\n\n";
+                push_text_to_cmdl_output_window_(Color_t::BLACK, cb_function_text);
+            }
+        }
+    }
+
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "    dvs::gui::startGuiReceiveThread();\n");
+
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "    // Other client code here...\n");
+
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "}\n");
+    // clang-format on
 }
 
 void MainWindow::mouseMoved(wxMouseEvent& event)
@@ -342,7 +487,9 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
                                             notify_main_window_element_deleted_,
                                             notify_main_window_element_name_changed_,
                                             notify_main_window_name_changed_,
-                                            notify_main_window_about_modification_));
+                                            notify_main_window_about_modification_,
+                                            push_text_to_cmdl_output_window_,
+                                            print_gui_callback_code_));
         window_callback_id_ += 1;
         current_window_num_++;
         task_bar_->addNewWindow(ws.name);
@@ -471,7 +618,9 @@ void MainWindow::newWindowWithoutFileModification()
                                           notify_main_window_element_deleted_,
                                           notify_main_window_element_name_changed_,
                                           notify_main_window_name_changed_,
-                                          notify_main_window_about_modification_);
+                                          notify_main_window_about_modification_,
+                                          push_text_to_cmdl_output_window_,
+                                          print_gui_callback_code_);
 
     windows_menu_->Append(gui_window->getCallbackId(), gui_window->getName());
     Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, gui_window->getCallbackId());

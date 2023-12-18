@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "close_button.h"
+#include "cmdl_output_window.h"
 #include "communication/data_receiver.h"
 #include "communication/received_data.h"
 #include "events.h"
@@ -43,6 +44,8 @@ private:
     SaveManager* save_manager_;
     ConfigurationAgent* configuration_agent_;
     std::mutex receive_mtx_;
+
+    CmdlOutputWindow* cmdl_output_window_;
 
     std::thread* tcp_receive_thread_;
     std::map<std::string, ApplicationGuiElement*> plot_panes_;
@@ -77,6 +80,10 @@ private:
     std::function<void(const std::string&, const std::string&)> notify_main_window_element_name_changed_;
     std::function<void(const std::string&, const std::string&)> notify_main_window_name_changed_;
     std::function<void()> notify_main_window_about_modification_;
+    std::function<void(const Color_t, const std::string&)> push_text_to_cmdl_output_window_;
+    std::function<void(void)> print_gui_callback_code_;
+
+    void printGuiCallbackCode();
 
     void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);

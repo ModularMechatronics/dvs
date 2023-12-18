@@ -49,6 +49,8 @@ private:
     std::function<void(const std::string&, const std::string&)> notify_main_window_element_name_changed_;
     std::function<void(const std::string&, const std::string&)> notify_main_window_name_changed_;
     std::function<void()> notify_main_window_about_modification_;
+    std::function<void(const Color_t, const std::string&)> push_text_to_cmdl_output_window_;
+    std::function<void(void)> print_gui_callback_code_;
     HelpPane help_pane_;
 
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
@@ -93,7 +95,9 @@ public:
         const std::function<void(const std::string&)>& notify_main_window_element_deleted,
         const std::function<void(const std::string&, const std::string&)>& notify_main_window_element_name_changed,
         const std::function<void(const std::string&, const std::string&)>& notify_main_window_name_changed,
-        const std::function<void()>& notify_main_window_about_modification);
+        const std::function<void()>& notify_main_window_about_modification,
+        const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+        const std::function<void(void)>& print_gui_callback_code);
     ~GuiWindow();
     int getCallbackId() const;
     void OnSize(wxSizeEvent& event);
@@ -139,6 +143,8 @@ public:
     void toggleToPanCallback(wxCommandEvent& WXUNUSED(event));
     void toggleToRotateCallback(wxCommandEvent& WXUNUSED(event));
     void toggleToSelectCallback(wxCommandEvent& WXUNUSED(event));
+
+    void printGuiCode(wxCommandEvent& event);
 
     void editTabName(wxCommandEvent& WXUNUSED(event));
     void deleteTab(wxCommandEvent& WXUNUSED(event));

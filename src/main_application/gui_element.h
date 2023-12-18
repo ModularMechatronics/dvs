@@ -15,6 +15,7 @@
 #include "gui_element_state.h"
 #include "input_data.h"
 #include "project_state/project_settings.h"
+#include "color.h"
 
 using namespace dvs;
 
@@ -57,6 +58,7 @@ protected:
     std::function<void(const wxPoint pos, const std::string& elem_name)> notify_parent_window_right_mouse_pressed_;
     std::function<void()> notify_main_window_about_modification_;
     std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)> notify_tab_about_editing_;
+    std::function<void(const Color_t, const std::string&)> push_text_to_cmdl_output_window_;
 
     int minimum_x_pos_;
     int minimum_y_pos_;
@@ -105,14 +107,16 @@ protected:
 
 public:
     ApplicationGuiElement() = delete;
-    ApplicationGuiElement(const std::shared_ptr<ElementSettings>& element_settings,
-                          const std::function<void(const char key)>& notify_main_window_key_pressed,
-                          const std::function<void(const char key)>& notify_main_window_key_released,
-                          const std::function<void(const wxPoint pos, const std::string& elem_name)>&
-                              notify_parent_window_right_mouse_pressed,
-                          const std::function<void()>& notify_main_window_about_modification,
-                          const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
-                              notify_tab_about_editing);
+    ApplicationGuiElement(
+        const std::shared_ptr<ElementSettings>& element_settings,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released,
+        const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+            notify_parent_window_right_mouse_pressed,
+        const std::function<void()>& notify_main_window_about_modification,
+        const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+            notify_tab_about_editing,
+        const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window);
 
     virtual ~ApplicationGuiElement() {}
 

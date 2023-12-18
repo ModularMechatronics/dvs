@@ -9,6 +9,7 @@ ButtonGuiElement::ButtonGuiElement(
         notify_parent_window_right_mouse_pressed,
     const std::function<void()>& notify_main_window_about_modification,
     const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
     const wxPoint& pos,
     const wxSize& size)
     : wxButton(parent,
@@ -22,7 +23,8 @@ ButtonGuiElement::ButtonGuiElement(
                             notify_main_window_key_released,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification,
-                            notify_tab_about_editing}
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window}
 {
     is_pressed_ = false;
 
@@ -72,6 +74,7 @@ SliderGuiElement::SliderGuiElement(
         notify_parent_window_right_mouse_pressed,
     const std::function<void()>& notify_main_window_about_modification,
     const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
     const wxPoint& pos,
     const wxSize& size)
     : wxSlider(parent,
@@ -86,7 +89,8 @@ SliderGuiElement::SliderGuiElement(
                             notify_main_window_key_released,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification,
-                            notify_tab_about_editing},
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window},
       slider_value_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->init_value}
 {
     Bind(wxEVT_SLIDER, &SliderGuiElement::sliderEvent, this);
@@ -164,6 +168,7 @@ CheckboxGuiElement::CheckboxGuiElement(
         notify_parent_window_right_mouse_pressed,
     const std::function<void()>& notify_main_window_about_modification,
     const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
     const wxPoint& pos,
     const wxSize& size)
     : wxCheckBox(parent, wxID_ANY, std::dynamic_pointer_cast<CheckboxSettings>(element_settings)->label, pos, size),
@@ -172,7 +177,8 @@ CheckboxGuiElement::CheckboxGuiElement(
                             notify_main_window_key_released,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification,
-                            notify_tab_about_editing}
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window}
 {
     this->Bind(wxEVT_CHECKBOX, &CheckboxGuiElement::checkBoxCallback, this);
 
@@ -202,6 +208,7 @@ TextLabelGuiElement::TextLabelGuiElement(
         notify_parent_window_right_mouse_pressed,
     const std::function<void()>& notify_main_window_about_modification,
     const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
     const wxPoint& pos,
     const wxSize& size)
     : wxStaticText(parent, wxID_ANY, std::dynamic_pointer_cast<TextLabelSettings>(element_settings)->label, pos, size),
@@ -210,7 +217,8 @@ TextLabelGuiElement::TextLabelGuiElement(
                             notify_main_window_key_released,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification,
-                            notify_tab_about_editing}
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window}
 {
     Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
     Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);

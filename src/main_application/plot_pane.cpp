@@ -83,14 +83,16 @@ PlotPane::PlotPane(
     const std::function<void(const wxPoint pos, const std::string& elem_name)>&
         notify_parent_window_right_mouse_pressed,
     const std::function<void()>& notify_main_window_about_modification,
-    const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing)
+    const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window)
     : wxGLCanvas(parent, getGLAttributes()),
-      ApplicationGuiElement(element_settings,
+      ApplicationGuiElement{element_settings,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,
                             notify_parent_window_right_mouse_pressed,
                             notify_main_window_about_modification,
-                            notify_tab_about_editing),
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window},
       m_context(getContext()),
       axes_interactor_(axes_settings_, getWidth(), getHeight()),
       plot_pane_settings_{std::dynamic_pointer_cast<PlotPaneSettings>(element_settings)}
