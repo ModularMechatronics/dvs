@@ -83,7 +83,8 @@ SliderGuiElement::SliderGuiElement(
                std::dynamic_pointer_cast<SliderSettings>(element_settings)->min_value,
                std::dynamic_pointer_cast<SliderSettings>(element_settings)->max_value,
                pos,
-               size),
+               size,
+               getStyle(element_settings)),
       ApplicationGuiElement{element_settings,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,
@@ -91,7 +92,8 @@ SliderGuiElement::SliderGuiElement(
                             notify_main_window_about_modification,
                             notify_tab_about_editing,
                             push_text_to_cmdl_output_window},
-      slider_value_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->init_value}
+      slider_value_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->init_value},
+      is_horizontal_{std::dynamic_pointer_cast<SliderSettings>(element_settings)->is_horizontal}
 {
     Bind(wxEVT_SLIDER, &SliderGuiElement::sliderEvent, this);
 
@@ -109,6 +111,40 @@ SliderGuiElement::SliderGuiElement(
         parent, wxID_ANY, std::to_string(std::dynamic_pointer_cast<SliderSettings>(element_settings)->min_value));
     max_text_ = new wxStaticText(
         parent, wxID_ANY, std::to_string(std::dynamic_pointer_cast<SliderSettings>(element_settings)->max_value));
+
+    value_text_->SetLabel(std::to_string(this->GetValue()));
+
+    /*if (is_horizontal_)
+    {
+        if (element_settings_->height > element_settings_->width)
+        {
+            std::swap(element_settings_->width, element_settings_->height);
+            this->SetWindowStyle(wxSL_HORIZONTAL);
+        }
+    }
+    else
+    {
+        if (element_settings_->width > element_settings_->height)
+        {
+            std::cout << "Swapping width and height" << std::endl;
+            std::swap(element_settings_->width, element_settings_->height);
+            element_settings_->height *= 4.0f;
+            this->setSize(wxSize(element_settings_->width, element_settings_->height));
+            this->SetWindowStyle(wxSL_VERTICAL | wxSL_INVERSE | wxSL_RIGHT);
+        }
+    }*/
+}
+
+int SliderGuiElement::getStyle(const std::shared_ptr<ElementSettings>& element_settings) const
+{
+    if (std::dynamic_pointer_cast<SliderSettings>(element_settings)->is_horizontal)
+    {
+        return wxSL_HORIZONTAL;
+    }
+    else
+    {
+        return wxSL_VERTICAL | wxSL_INVERSE | wxSL_RIGHT;
+    }
 }
 
 void SliderGuiElement::sliderEvent(wxCommandEvent& event)
@@ -131,10 +167,21 @@ void SliderGuiElement::setElementPositionAndSize()
     ApplicationGuiElement::setElementPositionAndSize();
     const wxSize size{this->GetSize()};
     const wxPoint pos{this->GetPosition()};
-    value_text_->SetPosition(wxPoint(pos.x + size.x / 2, pos.y + size.y / 2 + 7));
 
-    min_text_->SetPosition(wxPoint(pos.x - 13, pos.y + size.y / 2 - 10));
-    max_text_->SetPosition(wxPoint(pos.x + size.x + 5, pos.y + size.y / 2 - 10));
+    if (is_horizontal_)
+    {
+        value_text_->SetPosition(wxPoint(pos.x + size.x / 2, pos.y + size.y / 2 + 7));
+
+        min_text_->SetPosition(wxPoint(pos.x - 13, pos.y + size.y / 2 - 10));
+        max_text_->SetPosition(wxPoint(pos.x + size.x + 5, pos.y + size.y / 2 - 10));
+    }
+    else
+    {
+        value_text_->SetPosition(wxPoint(pos.x + size.x / 2 + 7, pos.y + size.y / 2));
+
+        min_text_->SetPosition(wxPoint(pos.x + size.x / 2, pos.y - 13));
+        max_text_->SetPosition(wxPoint(pos.x + size.x / 2, pos.y + size.y + 5));
+    }
 }
 
 void SliderGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings)

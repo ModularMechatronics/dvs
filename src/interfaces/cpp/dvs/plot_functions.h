@@ -790,8 +790,7 @@ void drawMesh(const Vector<Point3<T>>& vertices, const Vector<IndexTriplet>& ind
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(vertices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
-               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(indices.size()));
 
     hdr.extend(settings...);
 
@@ -807,8 +806,7 @@ void drawMesh(const VectorConstView<Point3<T>>& vertices,
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(vertices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
-               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(indices.size()));
 
     hdr.extend(settings...);
 
@@ -826,8 +824,7 @@ void drawMesh(const Vector<T>& x,
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
-               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(indices.size()));
 
     hdr.extend(settings...);
 
@@ -845,8 +842,7 @@ void drawMesh(const Vector<Point3<T>>& vertices,
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(vertices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
-               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(indices.size()));
 
     hdr.extend(settings...);
 
@@ -866,8 +862,7 @@ void drawMesh(const Vector<T>& x,
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
-               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(indices.size()));
 
     hdr.extend(settings...);
 
@@ -885,8 +880,7 @@ void drawMesh(const VectorConstView<Point3<T>>& vertices,
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(vertices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
-               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(indices.size()));
 
     hdr.extend(settings...);
 
@@ -906,8 +900,7 @@ void drawMesh(const VectorConstView<T>& x,
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
     hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
-               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(indices.size()));
 
     hdr.extend(settings...);
 
@@ -925,8 +918,7 @@ void drawMesh(const VectorConstView<T>& x,
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
     hdr.append(internal::CommunicationHeaderObjectType::NUM_VERTICES, internal::toUInt32(x.size()));
     hdr.append(internal::CommunicationHeaderObjectType::NUM_INDICES, internal::toUInt32(indices.size()));
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS,
-               internal::toUInt32(indices.size()));  // Dummy, otherwise it fails
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(indices.size()));
 
     hdr.extend(settings...);
 

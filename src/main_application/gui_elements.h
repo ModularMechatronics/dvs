@@ -128,6 +128,9 @@ private:
     wxStaticText* value_text_;
     wxStaticText* min_text_;
     wxStaticText* max_text_;
+    bool is_horizontal_;
+
+    int getStyle(const std::shared_ptr<ElementSettings>& element_settings) const;
 
 public:
     SliderGuiElement(wxFrame* parent,

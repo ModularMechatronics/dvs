@@ -314,7 +314,7 @@ SliderSettings::SliderSettings()
 
 SliderSettings::SliderSettings(const nlohmann::json& j_data) : ElementSettings{j_data}
 {
-    if (!j_data.contains("element_specific_settings"))
+    if (j_data.contains("element_specific_settings"))
     {
         const nlohmann::json j_ess = j_data["element_specific_settings"];
 
@@ -325,7 +325,18 @@ SliderSettings::SliderSettings(const nlohmann::json& j_data) : ElementSettings{j
 
         if (j_ess.contains("style"))
         {
-            is_horizontal = j_ess["style"] == "horizontal";
+            if (j_ess["style"] == "vertical")
+            {
+                is_horizontal = false;
+            }
+            else if (j_ess["style"] == "horizontal")
+            {
+                is_horizontal = true;
+            }
+            else
+            {
+                is_horizontal = true;
+            }
         }
         else
         {

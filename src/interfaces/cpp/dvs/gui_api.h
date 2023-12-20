@@ -53,6 +53,42 @@ public:
         throwExceptionIfPointerIsNotInitialized(internal_ptr_);
         return internal_ptr_->value_;
     }
+
+    void setEnabled() const
+    {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
+        internal_ptr_->setEnabled();
+    }
+
+    void setDisabled() const
+    {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
+        internal_ptr_->setDisabled();
+    }
+
+    void setMinValue(const std::int32_t min_value) const
+    {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
+        setMinValue(min_value);
+    }
+
+    void setMaxValue(const std::int32_t max_value) const
+    {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
+        setMaxValue(max_value);
+    }
+
+    void setValue(const std::int32_t value) const
+    {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
+        setValue(value);
+    }
+
+    void setStepSize(const std::int32_t step_size) const
+    {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
+        setStepSize(step_size);
+    }
 };
 
 class ButtonHandle
