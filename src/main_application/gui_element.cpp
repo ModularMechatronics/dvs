@@ -24,6 +24,11 @@ ApplicationGuiElement::ApplicationGuiElement(
     edit_size_margin_ = 5.0f;
     minimum_x_pos_ = 70;
     minimum_y_pos_ = 30;
+
+    min_x_size_ = 10;
+    max_x_size_ = 10000;
+    min_y_size_ = 10;
+    max_y_size_ = 10000;
 }
 
 void ApplicationGuiElement::keyPressed(const char key)

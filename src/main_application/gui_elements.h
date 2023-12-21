@@ -214,7 +214,37 @@ public:
 
     void setSize(const wxSize& new_size) override
     {
-        this->SetSize(new_size);
+        wxSize final_size{new_size};
+        final_size.SetWidth(std::max(min_x_size_, std::min(max_x_size_, final_size.GetWidth())));
+        final_size.SetHeight(std::max(min_y_size_, std::min(max_y_size_, final_size.GetHeight())));
+        this->SetSize(final_size);
+    }
+
+    wxSize getSizeInternal(const std::shared_ptr<ElementSettings>& element_settings, const wxFrame* const parent) const
+    {
+        const bool is_horizontal = std::dynamic_pointer_cast<SliderSettings>(element_settings)->is_horizontal;
+        const wxSize parent_size = parent->GetSize();
+
+        wxSize new_size;
+
+        if (is_horizontal)
+        {
+            const float width = element_settings->width * parent_size.x;
+            const float height = element_settings->height * parent_size.y;
+
+            new_size.x = std::max(width, 70.0f);
+            new_size.y = std::max(height, 30.0f);
+        }
+        else
+        {
+            const float width = element_settings->width * parent_size.x;
+            const float height = element_settings->height * parent_size.y;
+
+            new_size.x = std::max(height, 70.0f);
+            new_size.y = std::max(width, 30.0f);
+        }
+
+        return new_size;
     }
 
     void hide() override

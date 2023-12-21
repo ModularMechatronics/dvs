@@ -323,7 +323,10 @@ SliderSettings::SliderSettings(const nlohmann::json& j_data) : ElementSettings{j
         init_value = getOptionalValue(j_ess, "init_value", 0);
         step_size = getOptionalValue(j_ess, "step_size", 1);
 
-        if (j_ess.contains("style"))
+        is_horizontal = true;
+
+        // TODO: Only support horizontal sliders for now
+        /*if (j_ess.contains("style"))
         {
             if (j_ess["style"] == "vertical")
             {
@@ -341,7 +344,7 @@ SliderSettings::SliderSettings(const nlohmann::json& j_data) : ElementSettings{j
         else
         {
             is_horizontal = true;
-        }
+        }*/
     }
     else
     {
@@ -371,7 +374,7 @@ nlohmann::json SliderSettings::toJson() const
     j["element_specific_settings"]["max"] = max_value;
     j["element_specific_settings"]["init_value"] = init_value;
     j["element_specific_settings"]["step_size"] = step_size;
-    j["element_specific_settings"]["style"] = is_horizontal ? "horizontal" : "vertical";
+    // j["element_specific_settings"]["style"] = is_horizontal ? "horizontal" : "vertical";
     return j;
 }
 

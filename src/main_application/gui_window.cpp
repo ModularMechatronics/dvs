@@ -692,7 +692,7 @@ void GuiWindow::createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event))
         fields["min_value"] = {"Min value", "0"};
         fields["max_value"] = {"Max value", "100"};
         fields["step_size"] = {"Step size", "1"};
-        fields["is_horizontal"] = {"Is horizontal", "true/false"};
+        // fields["is_horizontal"] = {"Is horizontal", "true/false"};
 
         const std::map<std::string, std::string> ret_fields = getValidNewElementHandleString(fields);
         const std::string element_handle_string = ret_fields.at("handle_string");
@@ -704,7 +704,7 @@ void GuiWindow::createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event))
             elem_settings->min_value = std::stoi(ret_fields.at("min_value"));
             elem_settings->max_value = std::stoi(ret_fields.at("max_value"));
             elem_settings->init_value = elem_settings->min_value;
-            elem_settings->is_horizontal = ret_fields.at("is_horizontal") == "true";
+            // elem_settings->is_horizontal = ret_fields.at("is_horizontal") == "true";
 
             (*q)->createNewSlider(elem_settings);
             notify_main_window_about_modification_();
@@ -922,7 +922,7 @@ std::map<std::string, std::pair<std::string, std::string>> transformElementSetti
     else if (element_settings->type == dvs::GuiElementType::Slider)
     {
         std::shared_ptr<SliderSettings> ss = std::dynamic_pointer_cast<SliderSettings>(element_settings);
-        ret_fields["is_horizontal"] = {"Is horizontal", ss->is_horizontal ? "true" : "false"};
+        // ret_fields["is_horizontal"] = {"Is horizontal", ss->is_horizontal ? "true" : "false"};
         ret_fields["step_size"] = {"Step size", std::to_string(ss->step_size)};
         ret_fields["max_value"] = {"Max value", std::to_string(ss->max_value)};
         ret_fields["min_value"] = {"Min value", std::to_string(ss->min_value)};

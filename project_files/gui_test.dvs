@@ -1,7 +1,7 @@
 {
     "windows": [
         {
-            "height": 323.0,
+            "height": 415.0,
             "name": "Window 0",
             "tabs": [
                 {
@@ -39,56 +39,69 @@
                                 "label": "Start timer"
                             },
                             "handle_string": "button0",
-                            "height": 0.50000000298023224,
+                            "height": 0.12286689132452011,
                             "type": "BUTTON",
-                            "width": 0.50000000298023224,
-                            "x": 0.0074309976771473885,
-                            "y": 0.08049535751342773
+                            "width": 0.29723992943763733,
+                            "x": 0.2887473404407501,
+                            "y": 0.10580204427242279
                         },
                         {
                             "element_specific_settings": {
                                 "label": "Stop timer"
                             },
                             "handle_string": "button1",
-                            "height": 0.20000000298023224,
+                            "height": 0.09897611290216446,
                             "type": "BUTTON",
-                            "width": 0.20000000298023224,
-                            "x": 0.006369426846504211,
-                            "y": 0.16408668458461761
+                            "width": 0.19957536458969116,
+                            "x": 0.009554140269756317,
+                            "y": 0.05119453743100166
                         },
                         {
                             "element_specific_settings": {
                                 "label": "A checkbox"
                             },
                             "handle_string": "checkbox0",
-                            "height": 0.20000000298023224,
+                            "height": 0.08873720467090607,
                             "type": "CHECKBOX",
-                            "width": 0.20000000298023224,
+                            "width": 0.11571124941110611,
                             "x": 0.03927813097834587,
-                            "y": 0.38699689507484436
+                            "y": 0.38566553592681885
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 103,
+                                "min": 5,
+                                "step_size": 1
+                            },
+                            "handle_string": "slider0",
+                            "height": 0.07792207598686218,
+                            "type": "SLIDER",
+                            "width": 0.1408776044845581,
+                            "x": 0.3094688355922699,
+                            "y": 0.45194804668426514
                         },
                         {
                             "element_specific_settings": {
                                 "init_value": 0,
                                 "max": 100,
                                 "min": 0,
-                                "step_size": 1,
-                                "style": "horizontal"
+                                "step_size": 1
                             },
-                            "handle_string": "slider0",
-                            "height": 0.20000000298023224,
+                            "handle_string": "slider_horizontal",
+                            "height": 0.07792207598686218,
                             "type": "SLIDER",
-                            "width": 0.20000000298023224,
-                            "x": 0.01698513887822628,
-                            "y": 0.28792569041252136
+                            "width": 0.13856813311576843,
+                            "x": 0.43648961186408997,
+                            "y": 0.25974026322364807
                         }
                     ],
                     "name": "primary_view"
                 }
             ],
-            "width": 942.0,
-            "x": 59.0,
-            "y": 499.0
+            "width": 866.0,
+            "x": 142.0,
+            "y": 299.0
         }
     ]
 }

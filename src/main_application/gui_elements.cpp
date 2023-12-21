@@ -83,8 +83,8 @@ SliderGuiElement::SliderGuiElement(
                std::dynamic_pointer_cast<SliderSettings>(element_settings)->min_value,
                std::dynamic_pointer_cast<SliderSettings>(element_settings)->max_value,
                pos,
-               size,
-               getStyle(element_settings)),
+               getSizeInternal(element_settings, parent),
+               wxSL_HORIZONTAL),
       ApplicationGuiElement{element_settings,
                             notify_main_window_key_pressed,
                             notify_main_window_key_released,
@@ -114,25 +114,16 @@ SliderGuiElement::SliderGuiElement(
 
     value_text_->SetLabel(std::to_string(this->GetValue()));
 
-    /*if (is_horizontal_)
+    if (is_horizontal_)
     {
-        if (element_settings_->height > element_settings_->width)
-        {
-            std::swap(element_settings_->width, element_settings_->height);
-            this->SetWindowStyle(wxSL_HORIZONTAL);
-        }
+        min_y_size_ = 30;
+        max_y_size_ = 30;
     }
     else
     {
-        if (element_settings_->width > element_settings_->height)
-        {
-            std::cout << "Swapping width and height" << std::endl;
-            std::swap(element_settings_->width, element_settings_->height);
-            element_settings_->height *= 4.0f;
-            this->setSize(wxSize(element_settings_->width, element_settings_->height));
-            this->SetWindowStyle(wxSL_VERTICAL | wxSL_INVERSE | wxSL_RIGHT);
-        }
-    }*/
+        min_x_size_ = 30;
+        max_x_size_ = 30;
+    }
 }
 
 int SliderGuiElement::getStyle(const std::shared_ptr<ElementSettings>& element_settings) const

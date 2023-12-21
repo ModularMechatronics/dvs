@@ -63,6 +63,11 @@ protected:
     int minimum_x_pos_;
     int minimum_y_pos_;
 
+    int min_x_size_;
+    int max_x_size_;
+    int min_y_size_;
+    int max_y_size_;
+
     bool mouse_is_inside_;
 
     wxPoint current_mouse_pos_;
