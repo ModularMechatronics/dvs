@@ -1242,6 +1242,191 @@ void testCubeImage()
     drawCubes(x, y, z, colors, 1.0, properties::EdgeColor::NONE);
 }
 
+void testFilteringWithSliders()
+{
+    const std::string project_file_path = "../../project_files/slider_and_plot.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_elements = 1000U;
+    const size_t end_idx = num_elements - 1U;
+
+    const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0, 1.0, num_elements);
+    Vector<double> y = sin((2.0 * M_PI) * x);
+    Vector<double> y_n = y;
+    Vector<double> y_f = y;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const double r = static_cast<double>(rand() % 1001) / 1000.0 - 0.5;
+        y_n(k) += r * 0.1;
+    }
+
+    dvs::gui::registerGuiCallback("slider0", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+        const double val0 = static_cast<double>(gui_element_handle.getValue()) / 100.0;
+
+        Vector<double> y_f = y_n;
+        const double c0 = val0;
+        const double c1 = 1.0 - c0;
+
+        for (size_t k = 1U; k < num_elements; k++)
+        {
+            y_f(k) = y_f(k - 1U) * c0 + c1 * y_n(k);
+        }
+
+        plot(x, y_n, properties::LineWidth(3.0f));
+        plot(x, y_f, properties::LineWidth(5.0f));
+        flushCurrentElement();
+        softClearView();
+    });
+
+    dvs::gui::startGuiReceiveThread();
+
+    setCurrentElement("p_view_0");
+    clearView();
+    waitForFlush();
+    axis({0.125, 0.625}, {0.375, 1.125});
+    // scatter(t, c);
+    // flushCurrentElement();
+
+    while (true)
+    {
+        usleep(1000 * 1000 * 10);
+    }
+}
+
+void testPidTuner()
+{
+    const std::string project_file_path = "../../project_files/3_sliders_and_plot.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t num_elements = 1000U;
+    const size_t end_idx = num_elements - 1U;
+
+    const Vector<double> t = linspaceFromBoundariesAndCount<double>(0.0, 1.0, num_elements);
+    Vector<double> x = t;
+    Vector<double> vx = t;
+
+    struct SimParams
+    {
+        double h;
+        double x0;
+        double vx0;
+        double L;
+        double Kf;
+        double Cf;
+        double m;
+        double Kp;
+        double Ki;
+        double Kd;
+        double r;
+    };
+
+    SimParams sim_params{.h = 0.01,
+                         .x0 = 0.5,
+                         .vx0 = 0.0,
+                         .L = 0.25,
+                         .Kf = 5.0,
+                         .Cf = 0.5,
+                         .m = 0.1,
+                         .Kp = 0.0,
+                         .Ki = 0.0,
+                         .Kd = 0.0,
+                         .r = 1.0};
+
+    const auto run_sim = [](const SimParams& sim_params, Vector<double>& x, Vector<double>& vx) -> void {
+        x(0) = sim_params.x0;
+        vx(0) = sim_params.vx0;
+
+        const size_t num_elements = x.size();
+
+        float eI = 0.0;
+
+        for (size_t k = 0; k < num_elements - 1U; k++)
+        {
+            const double x_k = x(k);
+            const double vx_k = vx(k);
+
+            const double e = sim_params.r - x_k;
+
+            eI += e * sim_params.h;
+
+            const double F = sim_params.Kp * e + sim_params.Kd * vx_k + sim_params.Ki * eI;
+
+            vx(k + 1) =
+                vx_k + sim_params.h * (-sim_params.Kf * (x_k - sim_params.L) - F - sim_params.Cf * vx_k) / sim_params.m;
+            x(k + 1) = x_k + sim_params.h * vx(k + 1);
+        }
+    };
+
+    dvs::gui::registerGuiCallback("slider_kp", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+        const double val_kp = gui_element_handle.getNormalizedValue();
+        const double val_ki = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ki").getNormalizedValue();
+        const double val_kd = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kd").getNormalizedValue();
+
+        sim_params.Kp = val_kp * 10.0;
+        // sim_params.Ki = val_ki * 10.0;
+        sim_params.Kd = val_kd;
+
+        run_sim(sim_params, x, vx);
+
+        plot(t, x, properties::LineWidth(3.0f));
+        plot(t, vx, properties::LineWidth(3.0f));
+        flushCurrentElement();
+        softClearView();
+    });
+
+    dvs::gui::registerGuiCallback("slider_ki", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+        const double val_kp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kp").getNormalizedValue();
+        const double val_ki = gui_element_handle.getNormalizedValue();
+        const double val_kd = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kd").getNormalizedValue();
+
+        sim_params.Kp = val_kp * 10.0;
+        // sim_params.Ki = val_ki * 10.0;
+        sim_params.Kd = val_kd;
+
+        run_sim(sim_params, x, vx);
+
+        plot(t, x, properties::LineWidth(3.0f));
+        plot(t, vx, properties::LineWidth(3.0f));
+        flushCurrentElement();
+        softClearView();
+    });
+
+    dvs::gui::registerGuiCallback("slider_kd", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+        const double val_kp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kp").getNormalizedValue();
+        const double val_ki = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ki").getNormalizedValue();
+        const double val_kd = gui_element_handle.getNormalizedValue();
+
+        sim_params.Kp = val_kp * 10.0;
+        // sim_params.Ki = val_ki * 10.0;
+        sim_params.Kd = val_kd;
+
+        run_sim(sim_params, x, vx);
+
+        plot(t, x, properties::LineWidth(3.0f));
+        plot(t, vx, properties::LineWidth(3.0f));
+        flushCurrentElement();
+        softClearView();
+    });
+
+    run_sim(sim_params, x, vx);
+
+    dvs::gui::startGuiReceiveThread();
+
+    setCurrentElement("p_view_0");
+    clearView();
+    waitForFlush();
+    axis({0.0, -1.5}, {x(end_idx), 1.5});
+    // plot(t, x, properties::LineWidth(3.0f));
+    // plot(t, vx, properties::LineWidth(3.0f));
+    // flushCurrentElement();
+
+    while (true)
+    {
+        usleep(1000 * 1000 * 10);
+    }
+}
+
 }  // namespace small
 
 #endif  // DEMOS_SMALL_H

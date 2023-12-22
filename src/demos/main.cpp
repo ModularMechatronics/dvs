@@ -70,7 +70,9 @@ int main(int argc, char* argv[])
                                       {"sphere", small::testSphere},
                                       {"lissajous", small::testLissaJous},
                                       {"lines_and_dots", small::testLinesAndDots},
-                                      {"cube_image", small::testCubeImage}};
+                                      {"cube_image", small::testCubeImage},
+                                      {"filtering_with_slider", small::testFilteringWithSliders},
+                                      {"pid_tuner", small::testPidTuner}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

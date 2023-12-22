@@ -1,0 +1,121 @@
+{
+    "windows": [
+        {
+            "height": 811.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "handle_string": "p_view_0",
+                            "height": 0.810499370098114,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.002560819499194622
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 103,
+                                "min": 5,
+                                "step_size": 1
+                            },
+                            "handle_string": "slider_kp",
+                            "height": 0.038412291556596756,
+                            "type": "SLIDER",
+                            "width": 0.8684210777282715,
+                            "x": 0.048245612531900406,
+                            "y": 0.8297054767608643
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 103,
+                                "min": 5,
+                                "step_size": 1
+                            },
+                            "handle_string": "slider_ki",
+                            "height": 0.038412291556596756,
+                            "type": "SLIDER",
+                            "width": 0.8684210777282715,
+                            "x": 0.048245612531900406,
+                            "y": 0.8834826946258545
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 103,
+                                "min": 5,
+                                "step_size": 1
+                            },
+                            "handle_string": "slider_kd",
+                            "height": 0.038412291556596756,
+                            "type": "SLIDER",
+                            "width": 0.8684210777282715,
+                            "x": 0.048245612531900406,
+                            "y": 0.9411011338233948
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "Kp"
+                            },
+                            "handle_string": "tl0",
+                            "height": 0.03457106277346611,
+                            "type": "TEXT_LABEL",
+                            "width": 0.06798245757818222,
+                            "x": 0.4100877046585083,
+                            "y": 0.8553137183189392
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "Ki"
+                            },
+                            "handle_string": "tl1",
+                            "height": 0.028169013559818268,
+                            "type": "TEXT_LABEL",
+                            "width": 0.05043859779834747,
+                            "x": 0.4100877046585083,
+                            "y": 0.9103713035583496
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "Kd"
+                            },
+                            "handle_string": "tl2",
+                            "height": 0.030729833990335464,
+                            "type": "TEXT_LABEL",
+                            "width": 0.08552631735801697,
+                            "x": 0.4100877046585083,
+                            "y": 0.9679897427558899
+                        }
+                    ],
+                    "name": "primary_view"
+                }
+            ],
+            "width": 456.0,
+            "x": 0.0,
+            "y": 25.0
+        }
+    ]
+}

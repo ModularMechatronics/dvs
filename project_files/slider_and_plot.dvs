@@ -1,0 +1,60 @@
+{
+    "windows": [
+        {
+            "height": 811.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "handle_string": "p_view_0",
+                            "height": 0.8604353666305542,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 103,
+                                "min": 5,
+                                "step_size": 1
+                            },
+                            "handle_string": "slider0",
+                            "height": 0.038412291556596756,
+                            "type": "SLIDER",
+                            "width": 0.8684210777282715,
+                            "x": 0.05263157933950424,
+                            "y": 0.8758002519607544
+                        }
+                    ],
+                    "name": "primary_view"
+                }
+            ],
+            "width": 456.0,
+            "x": 0.0,
+            "y": 25.0
+        }
+    ]
+}
