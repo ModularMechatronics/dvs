@@ -1299,13 +1299,6 @@ void testPidTuner()
     const std::string project_file_path = "../../project_files/3_sliders_and_plot.dvs";
     openProjectFile(project_file_path);
 
-    const size_t num_elements = 1000U;
-    const size_t end_idx = num_elements - 1U;
-
-    const Vector<double> t = linspaceFromBoundariesAndCount<double>(0.0, 1.0, num_elements);
-    Vector<double> x = t;
-    Vector<double> vx = t;
-
     struct SimParams
     {
         double h;
@@ -1319,6 +1312,7 @@ void testPidTuner()
         double Ki;
         double Kd;
         double r;
+        double error_bound;
     };
 
     SimParams sim_params{.h = 0.01,
@@ -1331,7 +1325,15 @@ void testPidTuner()
                          .Kp = 0.0,
                          .Ki = 0.0,
                          .Kd = 0.0,
-                         .r = 1.0};
+                         .r = 1.0,
+                         .error_bound = 0.05};
+
+    const size_t num_elements = 1000U;
+    const size_t end_idx = num_elements - 1U;
+
+    const Vector<double> t = linspaceFromStartPointIncAndCount<double>(0.0, sim_params.h, num_elements);
+    Vector<double> x(num_elements);
+    Vector<double> vx(num_elements);
 
     const auto run_sim = [](const SimParams& sim_params, Vector<double>& x, Vector<double>& vx) -> void {
         x(0) = sim_params.x0;
@@ -1350,12 +1352,101 @@ void testPidTuner()
 
             eI += e * sim_params.h;
 
-            const double F = sim_params.Kp * e + sim_params.Kd * vx_k + sim_params.Ki * eI;
+            const double F = sim_params.Kp * e - sim_params.Kd * vx_k + sim_params.Ki * eI;
 
             vx(k + 1) =
-                vx_k + sim_params.h * (-sim_params.Kf * (x_k - sim_params.L) - F - sim_params.Cf * vx_k) / sim_params.m;
+                vx_k + sim_params.h * (-sim_params.Kf * (x_k - sim_params.L) + F - sim_params.Cf * vx_k) / sim_params.m;
             x(k + 1) = x_k + sim_params.h * vx(k + 1);
         }
+    };
+
+    const auto find_ss = [](SimParams& sim_params, const Vector<double>& x) -> size_t {
+        size_t candidate_index = 0U;
+
+        const size_t x_size = x.size();
+
+        for (size_t k = 1; k < x_size; k++)
+        {
+            const double prev_error = std::abs(x(k - 1U) - sim_params.r);
+            const double current_error = std::abs(x(k) - sim_params.r);
+
+            if (prev_error > sim_params.error_bound && current_error < sim_params.error_bound)
+            {
+                candidate_index = k;
+            }
+            else if (prev_error < sim_params.error_bound && current_error > sim_params.error_bound)
+            {
+                candidate_index = x_size - 1U;
+            }
+        }
+
+        return candidate_index;
+    };
+
+    const auto plot_data = [&run_sim, &find_ss](const double val_kp,
+                                                const double val_ki,
+                                                const double val_kd,
+                                                SimParams& sim_params,
+                                                const Vector<double>& t,
+                                                Vector<double>& x,
+                                                Vector<double>& vx) -> void {
+        sim_params.Kp = val_kp * 50.0;
+        sim_params.Ki = val_ki * 50.0;
+        sim_params.Kd = val_kd * 5.0;
+
+        run_sim(sim_params, x, vx);
+
+        const Vector<double> start_stop_x{VectorInitializer<double>{0.0, t(t.size() - 1U)}};
+        const Vector<double> ref_vec_y{VectorInitializer<double>{sim_params.r, sim_params.r}};
+        const Vector<double> l_vec_y{VectorInitializer<double>{sim_params.L, sim_params.L}};
+
+        const size_t ss_idx = find_ss(sim_params, x);
+
+        using Vd = Vector<double>;
+        using Vid = VectorInitializer<double>;
+
+        setCurrentElement("p_view_0");
+
+        plot(t, x, properties::LineWidth(7.0f), properties::Name("Position"));
+        plot(t, vx, properties::LineWidth(7.0f), properties::Name("Velocity"));
+        plot(start_stop_x,
+             ref_vec_y,
+             properties::LineWidth(3.0f),
+             properties::Color::BLACK,
+             properties::Name("Reference"));
+        plot(start_stop_x,
+             l_vec_y,
+             properties::LineWidth(3.0f),
+             properties::Color::BLACK,
+             properties::Name("Position equilibrium state"));
+        plot(Vd{Vid{t(ss_idx), t(ss_idx)}},
+             Vd{Vid{0.0, 2.0}},
+             properties::LineWidth(7.0f),
+             properties::Color{255, 127, 0});
+        // showLegend();
+        flushCurrentElement();
+        softClearView();
+
+        setCurrentElement("p_view_1");
+
+        plot(Vd{Vid{t(0), t(end_idx)}},
+             Vd{Vid{sim_params.error_bound, sim_params.error_bound}},
+             properties::LineWidth(3.0f),
+             properties::Color::BLUE);
+
+        plot(Vd{Vid{t(0), t(end_idx)}},
+             Vd{Vid{-sim_params.error_bound, -sim_params.error_bound}},
+             properties::LineWidth(3.0f),
+             properties::Color::BLUE);
+
+        plot(Vd{Vid{t(ss_idx), t(ss_idx)}},
+             Vd{Vid{-sim_params.error_bound, sim_params.error_bound}},
+             properties::LineWidth(7.0f),
+             properties::Color{255, 127, 0});
+        plot(t, x - sim_params.r, properties::LineWidth(7.0f), properties::Name("Velocity"));
+
+        flushCurrentElement();
+        softClearView();
     };
 
     dvs::gui::registerGuiCallback("slider_kp", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
@@ -1363,16 +1454,7 @@ void testPidTuner()
         const double val_ki = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ki").getNormalizedValue();
         const double val_kd = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kd").getNormalizedValue();
 
-        sim_params.Kp = val_kp * 10.0;
-        // sim_params.Ki = val_ki * 10.0;
-        sim_params.Kd = val_kd;
-
-        run_sim(sim_params, x, vx);
-
-        plot(t, x, properties::LineWidth(3.0f));
-        plot(t, vx, properties::LineWidth(3.0f));
-        flushCurrentElement();
-        softClearView();
+        plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
     });
 
     dvs::gui::registerGuiCallback("slider_ki", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
@@ -1380,16 +1462,7 @@ void testPidTuner()
         const double val_ki = gui_element_handle.getNormalizedValue();
         const double val_kd = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kd").getNormalizedValue();
 
-        sim_params.Kp = val_kp * 10.0;
-        // sim_params.Ki = val_ki * 10.0;
-        sim_params.Kd = val_kd;
-
-        run_sim(sim_params, x, vx);
-
-        plot(t, x, properties::LineWidth(3.0f));
-        plot(t, vx, properties::LineWidth(3.0f));
-        flushCurrentElement();
-        softClearView();
+        plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
     });
 
     dvs::gui::registerGuiCallback("slider_kd", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
@@ -1397,16 +1470,7 @@ void testPidTuner()
         const double val_ki = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ki").getNormalizedValue();
         const double val_kd = gui_element_handle.getNormalizedValue();
 
-        sim_params.Kp = val_kp * 10.0;
-        // sim_params.Ki = val_ki * 10.0;
-        sim_params.Kd = val_kd;
-
-        run_sim(sim_params, x, vx);
-
-        plot(t, x, properties::LineWidth(3.0f));
-        plot(t, vx, properties::LineWidth(3.0f));
-        flushCurrentElement();
-        softClearView();
+        plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
     });
 
     run_sim(sim_params, x, vx);
@@ -1416,10 +1480,18 @@ void testPidTuner()
     setCurrentElement("p_view_0");
     clearView();
     waitForFlush();
-    axis({0.0, -1.5}, {x(end_idx), 1.5});
-    // plot(t, x, properties::LineWidth(3.0f));
-    // plot(t, vx, properties::LineWidth(3.0f));
-    // flushCurrentElement();
+    axis({0.0, -0.5}, {t(end_idx), 1.5});
+
+    setCurrentElement("p_view_1");
+    clearView();
+    waitForFlush();
+    axis({0.0, -0.5}, {t(end_idx), 0.5});
+
+    const double val_kp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kp").getNormalizedValue();
+    const double val_ki = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ki").getNormalizedValue();
+    const double val_kd = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kd").getNormalizedValue();
+
+    plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
 
     while (true)
     {

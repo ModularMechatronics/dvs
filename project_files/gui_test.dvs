@@ -94,6 +94,17 @@
                             "width": 0.13856813311576843,
                             "x": 0.43648961186408997,
                             "y": 0.25974026322364807
+                        },
+                        {
+                            "element_specific_settings": {
+                                "elements": ["elem0", "elem1", "elem2"]
+                            },
+                            "handle_string": "listbox0",
+                            "height": 0.17792207598686218,
+                            "type": "LISTBOX",
+                            "width": 0.1408776044845581,
+                            "x": 0.3094688355922699,
+                            "y": 0.6194804668426514
                         }
                     ],
                     "name": "primary_view"

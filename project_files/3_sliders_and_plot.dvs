@@ -27,12 +27,26 @@
                     },
                     "elements": [
                         {
+                            "element_specific_settings": {
+                                "title": "System response"
+                            },
                             "handle_string": "p_view_0",
-                            "height": 0.810499370098114,
+                            "height": 0.4,
                             "type": "PLOT_PANE",
                             "width": 1.0,
                             "x": 0.0,
                             "y": 0.002560819499194622
+                        },
+                        {
+                            "element_specific_settings": {
+                                "title": "Error"
+                            },
+                            "handle_string": "p_view_1",
+                            "height": 0.4,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.4
                         },
                         {
                             "element_specific_settings": {
