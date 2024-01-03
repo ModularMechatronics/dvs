@@ -9,10 +9,13 @@
 namespace marbles
 {
 
+double azimuth = -179.0;
+
 struct MarbleState
 {
     Vec3d pos;
     Vec3d vel;
+    Vec2d dir;
     double theta;
 
     MarbleState() : pos({0.0, 0.0, 0.0}), vel({0.0, 0.0, 0.0}), theta(0.0) {}
@@ -99,11 +102,13 @@ public:
             Vector<RGB888>& col_vec = colors_[k];
             col_vec.resize(marble_.indices.size());
 
-            std::function<RGBTripletf(float)> colormap_func = calculateColormapRainbow;
+            std::function<RGBTripletf(float)> colormap_func = calculateColormapViridis;
+
+            int kr = k % num_marbles;
 
             if (k == 0)
             {
-                colormap_func = calculateColormapRainbow;
+                // colormap_func = calculateColormapRainbow;
             }
             else if (k == 1)
             {
@@ -115,7 +120,7 @@ public:
             }
             else if (k == 3)
             {
-                colormap_func = calculateColormapJet;
+                // colormap_func = calculateColormapJet;
             }
             else if (k == 4)
             {
@@ -146,24 +151,19 @@ public:
         for (size_t k = 0; k < ids_.size(); k++)
         {
             Vector<RGB888>& col_vec = colors_[k];
-            double kd = k;
 
-            drawMesh(marble_.x,
-                     marble_.y + (kd * 2.0),
-                     marble_.z + kd,
-                     marble_.indices,
-                     col_vec,
-                     ids_[k],
-                     properties::EdgeColor::NONE);
+            drawMesh(marble_.x, marble_.y, marble_.z, marble_.indices, col_vec, ids_[k], properties::EdgeColor::NONE);
         }
 
         for (size_t k = 0; k < ids_.size(); k++)
         {
             MarbleState ms;
 
-            // ms.vel = {randFunc(), randFunc(), randFunc() + 1.0};
-            ms.vel = {0.0, 0.0, randFunc() + 1.0};
+            ms.vel = {randFunc(), randFunc(), randFunc() + 1.0};
+            // ms.vel = {0.0, 0.0, randFunc() + 1.0};
             ms.pos = {2.0 * randFunc(), 2.0 * randFunc(), randFunc() + 3.0};
+            ms.dir.x = ms.vel.x;
+            ms.dir.y = ms.vel.y;
 
             marble_states_.push_back(ms);
         }
@@ -197,9 +197,9 @@ public:
     void run()
     {
         double theta = 0.0;
-        const double h = 0.001;
+        const double h = 0.01;
 
-        for (size_t i = 0; i < 300; i++)
+        for (size_t i = 0; i < 1000; i++)
         {
             std::vector<PropertySet> props;
 
@@ -208,30 +208,92 @@ public:
             for (size_t k = 0; k < ids_.size(); k++)
             {
                 MarbleState& ms = marble_states_[k];
-                double kd = k;
 
-                const Matrix<double> rot = rotationMatrixZ<double>(theta);
-                const Matrix<double> neg_rot = rotationMatrixZ<double>(-theta);
-                const Vec3d rot_pos = rot * ms.pos;
-                const Vec3d delta = rot * ms.pos - ms.pos;
+                const double ang = std::atan2(ms.dir.y, ms.dir.x) + M_PI / 2.0;
+                const Matrix<double> rot = rotationMatrixY<double>(theta) * rotationMatrixZ<double>(ang);
 
-                // const Vec3d final_pos = rot_pos - ms.pos;
-                // const Vec3d final_pos = -rot_pos + ms.pos;
-                const Vec3d final_pos = ms.pos;
-                props.emplace_back(
-                    ids_[k],
-                    properties::Transform{
-                        diagMatrix<double>({1.0, 1.0, 1.0}), rot, {final_pos.x, final_pos.y, final_pos.z}});
+                props.emplace_back(ids_[k], properties::Transform{diagMatrix<double>({1.0, 1.0, 1.0}), rot, ms.pos});
             };
 
             setProperties(props);
 
             theta += 0.01;
+            view(azimuth, 35);
+            azimuth += 0.3;
+            if (azimuth > 180.0)
+            {
+                azimuth = -179.0;
+            }
             flushCurrentElement();
             usleep(1000U * 10U);
         }
     }
 };
+
+void drawGrid()
+{
+    const float grid_step = 0.5;
+    const float grid_size = 200.0;
+
+    std::vector<float> x_vec, y_vec;
+
+    float x_pos = -grid_size / 2.0f, y_pos = -grid_size / 2.0f;
+
+    const size_t n_its = static_cast<float>(grid_size / grid_step);
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        // Left point
+        x_vec.push_back(x_pos);
+        y_vec.push_back(y_pos);
+
+        // Right point
+        if ((k % 2) == 0)
+        {
+            x_pos += grid_size;
+        }
+        else
+        {
+            x_pos -= grid_size;
+        }
+
+        x_vec.push_back(x_pos);
+        y_vec.push_back(y_pos);
+
+        y_pos += grid_step;
+    }
+
+    x_pos = -grid_size / 2.0f;
+    y_pos = -grid_size / 2.0f;
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        // Left point
+        x_vec.push_back(x_pos);
+        y_vec.push_back(y_pos);
+
+        // Right point
+        if ((k % 2) == 0)
+        {
+            y_pos += grid_size;
+        }
+        else
+        {
+            y_pos -= grid_size;
+        }
+
+        x_vec.push_back(x_pos);
+        y_vec.push_back(y_pos);
+
+        x_pos += grid_step;
+    }
+
+    Vector<float> x{x_vec}, y{y_vec};
+
+    plot(x, y, properties::Color(0, 0, 0), properties::ZOffset(-1.0f), properties::LineWidth(2.0f));
+    // TODO: CHange line width for this demo:
+    // shader_collection_.plot_2d_shader.uniform_handles.half_line_width.setFloat(line_width_ / 20.0f);
+}
 
 void testBasic()
 {
@@ -243,12 +305,15 @@ void testBasic()
 
     // globalIllumination({2.0, 2.0, 2.0});
     axesSquare();
+    view(azimuth, 35);
     // waitForFlush();
 
+    disableScaleOnRotation();
     axis({-5.0, -5.0, -1.0}, {5.0, 5.0, 9.0});
-    view(-90, 90);
+    // view(-90, 90);
 
-    Marbles marbles(4, 2);
+    Marbles marbles(10, 4);
+    drawGrid();
     marbles.run();
 }
 

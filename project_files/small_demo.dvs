@@ -38,10 +38,10 @@
                                     "g": 0.6352941393852234,
                                     "r": 0.0
                                 },
-                                "_axes_letters_on": false,
-                                "_axes_numbers_on": false,
-                                "_grid_on": false,
-                                "_plot_box_on": false,
+                                "axes_letters_on": false,
+                                "axes_numbers_on": false,
+                                "grid_on": false,
+                                "plot_box_on": false,
                                 "clipping_on": false,
                                 "_pane_radius": 20.0
                             },

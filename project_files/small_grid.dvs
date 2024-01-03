@@ -1,0 +1,263 @@
+{
+    "windows": [
+        {
+            "width": 456.0,
+            "height": 811.0,
+            "x": 0.0,
+            "y": 25.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "background_color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "elements": [
+                        {
+                            "handle_string": "p00",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p01",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.3333333333,
+                            "y": 0.0,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p02",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.66666666666666,
+                            "y": 0.0,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p10",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.0,
+                            "y": 0.1874229,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p11",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.3333333333,
+                            "y": 0.1874229,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p12",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.66666666666666,
+                            "y": 0.1874229,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p20",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.0,
+                            "y": 0.3748458,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p21",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.3333333333,
+                            "y": 0.3748458,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p22",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.66666666666666,
+                            "y": 0.3748458,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p30",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.0,
+                            "y": 0.5622687,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p31",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.3333333333,
+                            "y": 0.5622687,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p32",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.66666666666666,
+                            "y": 0.5622687,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p40",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.0,
+                            "y": 0.7496916,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p41",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.3333333333,
+                            "y": 0.7496916,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        },
+                        {
+                            "handle_string": "p42",
+                            "height": 0.1874229,
+                            "type": "PLOT_PANE",
+                            "width": 0.3333333333,
+                            "x": 0.66666666666666,
+                            "y": 0.7496916,
+                            "element_specific_settings": {
+                                "axes_letters_on": false,
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                }
+                            }
+                        }
+                    ],
+                    "name": "Tab 0"
+                }
+            ]
+        }
+    ]
+}

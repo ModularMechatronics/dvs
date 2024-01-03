@@ -48,6 +48,7 @@ Pre release:
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 - Add scaling, min max to sliders (so instead of going from 4, to 105, it could go from 0.3 to 14.2)
 - Add protection from "NaN" of axes calculation
+- Make it so that shader code and font data can be reached when the application is at arbitrary location
 EditableText
 DropDownMenu
 RadioButtonGroup

@@ -1405,6 +1405,9 @@ void testPidTuner()
         using Vd = Vector<double>;
         using Vid = VectorInitializer<double>;
 
+        dvs::gui::getGuiElementHandle<dvs::gui::TextLabelHandle>("tl_rt").setLabel("Rise time: " +
+                                                                                   std::to_string(t(ss_idx)));
+
         setCurrentElement("p_view_0");
 
         plot(t, x, properties::LineWidth(7.0f), properties::Name("Position"));
