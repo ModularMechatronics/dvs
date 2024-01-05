@@ -1,6 +1,5 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
-- Refactor from top down, from the app and down into the GUI
 - Finalize grid numbers placement when snapped
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set
@@ -14,9 +13,9 @@ Pre release:
  * GIS point cloud
  * Draw obj file from python interface, car running on a track
  * Star wars targeting computer: https://scifi.stackexchange.com/questions/244759/how-does-the-targeting-work-in-the-millenium-falcon (1min 20s in)
+ * Hundreds of runs of some chaos dynamic system (bicycle, double pendulum) with slightly different initial conditions, drawns as plot lines from top to bottom, with color indicating the initial condition
 - Finalize demos
 - No saved file name shall be showed in title bar when no file is loaded
-- Color shall be set using floats in range [0, 1], but still transmitted as uint8_t [0, 255]
 - Grid lines when invalid/inf axes limits
 - Investigate weird bug not being able to set colors properly for realTimePlot
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
@@ -26,34 +25,36 @@ Pre release:
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
 - In python, "dvs.line_collection3(x, y, z, color=dvs.properties.Color(1, 0, 1))" does not work, line is transparent, same with plot_collection/plot_collection3 when not specifying colors and plotting twice
-- 2D plot with upper and lower interval (demo only?)
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
 - Data cursor, cursor to click on data to get xyz value
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Fix case for plot/plot3 when two adjacent points are equal. If first two points of plot2 is the same, there will be a division by zero
 - Delete RGB888 and replace with Color
-- plot2 with fill under/over x axis
-- candlestick/errorbar
-- Contour plotting function
-- Bar plot
-- Colorbar
 - Finish point selector, specifically all different type's selector functions
-- Move as much as possible from plot_pane into axes_interactor
-- Create "super struct" that contains all necessary information from axes_interactor that gets passed into axes_renderer
 - Test sequence function from C/C++ interfaces, that can be executed to check that encoding is correct
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Stairs is grey? Or without color
-- Time date axes
+- Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 - Add scaling, min max to sliders (so instead of going from 4, to 105, it could go from 0.3 to 14.2)
 - Add protection from "NaN" of axes calculation
 - Make it so that shader code and font data can be reached when the application is at arbitrary location
-EditableText
-DropDownMenu
-RadioButtonGroup
+- Python scatter with individual colors
+- Python draw mesh with individual colors
+- DropDownMenuHandle -> DropdownMenuHandle and so on
 
 Post release:
+- Color shall be set using floats in range [0, 1], but still transmitted as uint8_t [0, 255]
+- plot2 with fill under/over x axis
+- candlestick/errorbar
+- Contour plotting function
+- Bar plot
+- 2D plot with upper and lower interval (demo only?)
+- Colorbar
+- Time date axes
+- Move as much as possible from plot_pane into axes_interactor
+- Create "super struct" that contains all necessary information from axes_interactor that gets passed into axes_renderer
 - For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser
   to populate it or property from the variadic templ. args
 - In C interface, have all properties functions return

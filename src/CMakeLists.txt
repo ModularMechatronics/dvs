@@ -74,6 +74,7 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 # Adding subdirectories
 add_subdirectory(applications/real_time_gui)
 add_subdirectory(system_test)
+add_subdirectory(interfaces/test/c)
 add_subdirectory(demos)
 # add_subdirectory(test)
 add_subdirectory(main_application)

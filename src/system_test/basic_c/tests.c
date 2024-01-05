@@ -204,3 +204,42 @@ void testImShow()
     drawLineBetweenPoints(p0, p1, Color(255, 0, 11));
     drawLineBetween2DPoints(p0_2, p1_2, Color(255, 0, 11));
 }*/
+
+// GUI
+
+void printValues()
+{
+    // const dvs::gui::SliderHandle slider = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider0");
+    // const dvs::gui::ButtonHandle button0 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button0");
+    // const dvs::gui::ButtonHandle button1 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button1");
+}
+
+void slider0Callback(const SliderHandle* const gui_element_handle)
+{
+    // gui_element_handle->value;
+    // setSliderMin(gui_element_handle, 0.0);
+    // setSliderMax(gui_element_handle, 100.0);
+}
+
+void button0Callback(const ButtonHandle* const gui_element_handle)
+{
+    // printf("Callback function: \"button0\" pressed: %d\n", gui_element_handle->is_pressed);
+}
+
+void testGUIBasic()
+{
+    startGuiReceiveThread();
+
+    registerButtonCallback("button0", button0Callback);
+    registerSliderCallback("slider0", slider0Callback);
+
+    // dvs::gui::registerGuiCallback("button0", [](const dvs::gui::ButtonHandle& gui_element_handle) -> void {
+    //     std::cout << "Callback function: \"button0\" pressed: " << gui_element_handle.getIsPressed() << std::endl;
+    // });
+
+    while (true)
+    {
+        usleep(1000 * 1000);
+        printf("Sleeping...");
+    }
+}

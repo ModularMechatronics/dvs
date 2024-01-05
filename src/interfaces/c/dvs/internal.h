@@ -1,6 +1,7 @@
 #ifndef DVS_INTERNAL_H_
 #define DVS_INTERNAL_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "dvs/communication.h"
@@ -427,6 +428,112 @@ void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
     send_function(data_blob, num_bytes);
 
     free(data_blob);
+}
+
+bool internal_isSubstringInString(const char* const substring, const char* const string)
+{
+    if (substring == NULL || string == NULL)
+    {
+        return false;
+    }
+    else if (substring[0] == '\0' || string[0] == '\0')
+    {
+        return false;
+    }
+
+    const size_t substring_len = strlen(substring);
+    const size_t string_len = strlen(string);
+
+    if (substring_len > string_len)
+    {
+        return false;
+    }
+
+    for (size_t k = 0; k < string_len - substring_len + 1; k++)
+    {
+        bool match = true;
+
+        for (size_t l = 0; l < substring_len; l++)
+        {
+            if (substring[l] != string[k + l])
+            {
+                match = false;
+                break;
+            }
+        }
+
+        if (match)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool internal_stringEndsWith(const char* const str, const char* const suffix)
+{
+    if (str == NULL || suffix == NULL)
+    {
+        return false;
+    }
+    else if (str[0] == '\0' || suffix[0] == '\0')
+    {
+        return false;
+    }
+
+    const size_t str_len = strlen(str);
+    const size_t suffix_len = strlen(suffix);
+
+    if (suffix_len > str_len)
+    {
+        return false;
+    }
+
+    for (size_t k = 0; k < suffix_len; k++)
+    {
+        if (str[str_len - suffix_len + k] != suffix[k])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool internal_isDvsRunning()
+{
+    char path[1035];
+
+    FILE* const fp = popen("ps -ef | grep dvs", "r");
+    if (fp == NULL)
+    {
+        printf("Failed to run command\n");
+        return false;
+    }
+
+    bool dvs_running = false;
+
+    while (fgets(path, sizeof(path), fp) != NULL)
+    {
+        if (path[0] == '\0')
+        {
+            continue;
+        }
+        else if (!internal_isSubstringInString("dvs", path) || internal_isSubstringInString("grep", path))
+        {
+            continue;
+        }
+        else if (internal_stringEndsWith(path, "dvs\n") || internal_stringEndsWith(path, "dvs &\n"))
+        {
+            dvs_running = true;
+            break;
+        }
+    }
+
+    pclose(fp);
+
+    return dvs_running;
 }
 
 #endif  // DVS_INTERNAL_H_

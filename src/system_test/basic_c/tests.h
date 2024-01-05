@@ -5,12 +5,16 @@
 extern "C" {
 #endif
 
+// Basic C
 void testPlot();
 void testPlot3();
 void testScatter();
 void testScatter3();
 void testSurf();
 void testImShow();
+
+// GUI Test
+void testGUIBasic();
 
 #ifdef __cplusplus
 }
@@ -27,6 +31,8 @@ inline void addTests()
     addTest("c", "basic", "scatter3", testScatter3);
     addTest("c", "basic", "surf", testSurf);
     addTest("c", "basic", "imShow", testImShow);
+
+    addTest("c", "gui", "basic", testGUIBasic);
 }
 }  // namespace basic_c
 #endif
