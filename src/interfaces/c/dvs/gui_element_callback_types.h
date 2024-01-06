@@ -6,17 +6,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "dvs/enumerations.h"
 #include "dvs/internal_gui_element_handle.h"
 #include "dvs/uint8_array.h"
 
+typedef struct S_BaseHandle
+{
+    GuiElementType type;
+    char* handle_string;
+} BaseHandle;
+
 typedef struct S_ButtonHandle
 {
+    GuiElementType type;
     char* handle_string;
     bool is_pressed;
 } ButtonHandle;
 
 typedef struct S_SliderHandle
 {
+    GuiElementType type;
     char* handle_string;
     int32_t min_value;
     int32_t max_value;

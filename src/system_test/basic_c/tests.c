@@ -240,6 +240,6 @@ void testGUIBasic()
     while (true)
     {
         usleep(1000 * 1000);
-        printf("Sleeping...");
+        printf("Sleeping...\n");
     }
 }

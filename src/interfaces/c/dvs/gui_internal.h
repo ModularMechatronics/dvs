@@ -232,12 +232,52 @@ void populateGuiElementWithData(const GuiElementType type,
     }
 }
 
+void updateGuiState(const ReceivedGuiData* received_gui_data)
+{
+    size_t idx = 0U;
+
+    uint8_t* const raw_data = received_gui_data->data;
+
+    // Receive[1]: Gui element type (uint8_t)
+    const GuiElementType type = (GuiElementType)(raw_data[idx]);
+    idx += sizeof(uint8_t);
+
+    // Receive[2]: Handle string length (uint8_t)
+    const uint8_t handle_string_length = (uint8_t)(raw_data[idx]);
+    idx += sizeof(uint8_t);
+
+    char* const handle_string = (char*)malloc(handle_string_length + 1U);
+
+    // Receive[3]: Handle string (variable)
+    for (uint8_t i = 0; i < handle_string_length; i++)
+    {
+        handle_string[i] = raw_data[idx];
+        idx++;
+    }
+    handle_string[handle_string_length] = '\0';  // Null-terminate string
+
+    uint32_t size_of_current_gui_element;
+
+    // Receive[4]: Current gui element payload size (uint32_t)
+    memcpy(&size_of_current_gui_element, raw_data + idx, sizeof(uint32_t));
+    idx += sizeof(uint32_t);
+
+    const UInt8Array gui_element_data = {raw_data + idx, size_of_current_gui_element};
+
+    // Receive[5]: Gui element data (variable)
+    populateGuiElementWithData(type, handle_string, &gui_element_data);
+
+    printf("Updating %s\n", handle_string);
+
+    free(handle_string);
+}
+
 void internal_waitForSyncForAllGuiElements()
 {
     printf("Waiting for DVS application to send GUI state...\n");
     const ReceivedGuiData received_data = internal_receiveGuiData();
 
-    printf("GUI state received!");
+    printf("GUI state received!\n");
 
     size_t idx = 1U;
 
