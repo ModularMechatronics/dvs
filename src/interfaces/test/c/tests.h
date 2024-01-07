@@ -131,7 +131,8 @@ void testInsertSlider()
     insertElementIntoGuiElementHandleContainerMap(gui_element_map, handle_string, gui_element);
 
     // Get from map
-    SliderHandle* const slider = (SliderHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+    SliderInternalHandle* const slider =
+        (SliderInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
 
     assert(TO_BASE_HANDLE_PTR((*slider)) == gui_element);
     assert(slider->type == GUI_ET_SLIDER);

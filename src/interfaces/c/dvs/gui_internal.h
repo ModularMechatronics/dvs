@@ -141,22 +141,22 @@ void initDataStructures(const size_t initial_size)
     initButtonCallbackFunctionMap(button_callback_function_map, initial_size);
 }
 
-void updateButtonState(ButtonHandle* const handle, const UInt8Array* data_view)
+void updateButtonState(ButtonInternalHandle* const handle, const UInt8Array* data_view)
 {
     handle->is_pressed = data_view->data[0];
 }
 
-void updateSliderState(SliderHandle* const handle, const UInt8Array* data_view)
+void updateSliderState(SliderInternalHandle* const handle, const UInt8Array* data_view)
 {
-    memcpy(&handle->min_value, data_view->data, sizeof(int32_t));
-    memcpy(&handle->max_value, data_view->data + sizeof(int32_t), sizeof(int32_t));
-    memcpy(&handle->step_size, data_view->data + 2U * sizeof(int32_t), sizeof(int32_t));
-    memcpy(&handle->value, data_view->data + 3U * sizeof(int32_t), sizeof(int32_t));
+    memcpy(&handle->state.min_value, data_view->data, sizeof(int32_t));
+    memcpy(&handle->state.max_value, data_view->data + sizeof(int32_t), sizeof(int32_t));
+    memcpy(&handle->state.step_size, data_view->data + 2U * sizeof(int32_t), sizeof(int32_t));
+    memcpy(&handle->state.value, data_view->data + 3U * sizeof(int32_t), sizeof(int32_t));
 }
 
 BaseHandle* internal_createButton(const char* const handle_string, const UInt8Array* const data_view)
 {
-    ButtonHandle* const button = (ButtonHandle*)malloc(sizeof(ButtonHandle));
+    ButtonInternalHandle* const button = (ButtonInternalHandle*)malloc(sizeof(ButtonInternalHandle));
 
     size_t handle_string_length = strlen(handle_string);
 
@@ -174,7 +174,7 @@ BaseHandle* internal_createButton(const char* const handle_string, const UInt8Ar
 
 BaseHandle* internal_createSlider(const char* const handle_string, const UInt8Array* const data_view)
 {
-    SliderHandle* const slider = (SliderHandle*)malloc(sizeof(SliderHandle));
+    SliderInternalHandle* const slider = (SliderInternalHandle*)malloc(sizeof(SliderInternalHandle));
 
     size_t handle_string_length = strlen(handle_string);
 
@@ -210,12 +210,12 @@ void populateGuiElementWithData(const GuiElementType type,
 
             if (type == GUI_ET_BUTTON)
             {
-                updateButtonState((ButtonHandle*)handle, data_view);
+                updateButtonState((ButtonInternalHandle*)handle, data_view);
             }
             else if (type == GUI_ET_CHECKBOX) {}
             else if (type == GUI_ET_SLIDER)
             {
-                updateSliderState((SliderHandle*)handle, data_view);
+                updateSliderState((SliderInternalHandle*)handle, data_view);
             }
         }
     }
@@ -338,7 +338,7 @@ void internal_waitForSyncForAllGuiElements()
     free(received_data.data);
 }
 
-void registerButtonCallback(const char* const handle_string, ButtonCallbackFunction button_callback_function)
+void registerButtonCallback(const char* const handle_string, void (*button_callback_function)(const ButtonHandle))
 {
     ButtonCallbackFunctionMap* const button_callback_function_map = getButtonCallbackFunctionMap();
 
@@ -350,9 +350,6 @@ void registerButtonCallback(const char* const handle_string, ButtonCallbackFunct
     insertElementIntoButtonCallbackFunctionMap(button_callback_function_map, handle_string, button_callback_function);
 }
 
-void registerSliderCallback(const char* const handle_string,
-                            void (*slider_callback_function)(const SliderHandle* const))
-{
-}
+void registerSliderCallback(const char* const handle_string, void (*slider_callback_function)(const SliderHandle)) {}
 
 #endif  // DVS_GUI_INTERNAL_H

@@ -16,26 +16,40 @@ typedef struct S_BaseHandle
     char* handle_string;
 } BaseHandle;
 
-typedef struct S_ButtonHandle
+typedef struct S_ButtonInternalHandle
 {
     GuiElementType type;
     char* handle_string;
     bool is_pressed;
-} ButtonHandle;
+} ButtonInternalHandle;
 
-typedef struct S_SliderHandle
+typedef struct S_SliderState
 {
-    GuiElementType type;
-    char* handle_string;
     int32_t min_value;
     int32_t max_value;
     int32_t step_size;
     int32_t value;
+} SliderState;
+
+typedef struct S_SliderInternalHandle
+{
+    GuiElementType type;
+    char* handle_string;
+    SliderState state;
+} SliderInternalHandle;
+
+typedef struct S_ButtonHandle
+{
+    ButtonInternalHandle* __handle;
+} ButtonHandle;
+
+typedef struct S_SliderHandle
+{
+    SliderInternalHandle* __handle;
 } SliderHandle;
 
-typedef void (*ButtonCallbackFunction)(const ButtonHandle* const);
-typedef void (*SliderCallbackFunction)(const SliderHandle* const);
-// void (*button_callback_function)(const ButtonHandle* const)
+typedef void (*ButtonCallbackFunction)(const ButtonHandle);
+typedef void (*SliderCallbackFunction)(const SliderHandle);
 
 #define TO_BASE_HANDLE_PTR(button_handle) ((BaseHandle*)(&(button_handle)))
 

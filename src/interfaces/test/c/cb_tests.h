@@ -23,7 +23,7 @@ void testCbInitMaps()
 
 bool variable_to_manipulate;
 
-void button0Callback(const ButtonHandle* const gui_element_handle)
+void button0Callback(const ButtonHandle gui_element_handle)
 {
     printf("Callback function: \"button0\" pressed\n");
     variable_to_manipulate = true;
@@ -46,7 +46,9 @@ void testRegisterButtonCallback()
     assert(cb_fun != NULL);
 
     variable_to_manipulate = false;
-    const ButtonHandle* const gui_element_handle = NULL;
+    ButtonHandle gui_element_handle;
+    gui_element_handle.__handle = NULL;
+
     cb_fun(gui_element_handle);
     assert(variable_to_manipulate);
 }

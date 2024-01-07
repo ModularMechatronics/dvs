@@ -214,14 +214,14 @@ void printValues()
     // const dvs::gui::ButtonHandle button1 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button1");
 }
 
-void slider0Callback(const SliderHandle* const gui_element_handle)
+void slider0Callback(const SliderHandle gui_element_handle)
 {
     // gui_element_handle->value;
     // setSliderMin(gui_element_handle, 0.0);
     // setSliderMax(gui_element_handle, 100.0);
 }
 
-void button0Callback(const ButtonHandle* const gui_element_handle)
+void button0Callback(const ButtonHandle gui_element_handle)
 {
     // printf("Callback function: \"button0\" pressed: %d\n", gui_element_handle->is_pressed);
 }
@@ -240,8 +240,8 @@ void testGUIBasic()
     while (true)
     {
         usleep(1000 * 1000);
-        const SliderHandle* const slider = getSliderHandle("slider0");
-        printf("Slider value: %i\n", slider->value);
+        const SliderHandle slider = getSliderHandle("slider0");
+        printf("Slider value: %i\n", getSliderValue(slider));
         printf("Sleeping...\n");
     }
 }

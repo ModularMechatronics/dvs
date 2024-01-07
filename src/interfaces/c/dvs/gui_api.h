@@ -8,52 +8,119 @@
 
 #include "dvs/gui_internal.h"
 
-ButtonHandle* getButtonHandle(const char* const handle_string)
+ButtonHandle getButtonHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    ButtonHandle button_handle;
+    button_handle.__handle = NULL;
 
     if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
     {
         printf("Gui element with handle string %s does not exist!\n", handle_string);
-        return NULL;
+        return button_handle;
     }
 
-    ButtonHandle* const gui_elem = (ButtonHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+    ButtonInternalHandle* const gui_elem =
+        (ButtonInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
 
     if (gui_elem->type != GUI_ET_BUTTON)
     {
         printf("Gui element with handle string %s is not a button!\n", handle_string);
-        return NULL;
+        return button_handle;
     }
 
-    return gui_elem;
+    button_handle.__handle = gui_elem;
+
+    return button_handle;
 }
 
-// TODO: Implement SliderInternalHandle and ButtonInternalHandle to be what SliderHandle and ButtonHandle are now.
-// Then from the "getSliderHandle", a copy of "SliderHandle" will be returned, and not a pointer. The
-// same goes for "getButtonHandle". SliderHandle can be used with "getSliderValue(slider_handle)", and
-// the SliderInternalHandle will then be a "hidden" member of SliderHandle (__handle or something). This
-// way, the user will not be able to change the internal state of the gui element, but only read it.
-
-SliderHandle* getSliderHandle(const char* const handle_string)
+SliderHandle getSliderHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    SliderHandle slider_handle;
+    slider_handle.__handle = NULL;
 
     if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
     {
         printf("Gui element with handle string %s does not exist!\n", handle_string);
-        return NULL;
+        return slider_handle;
     }
 
-    SliderHandle* const gui_elem = (SliderHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+    SliderInternalHandle* const gui_elem =
+        (SliderInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
 
     if (gui_elem->type != GUI_ET_SLIDER)
     {
         printf("Gui element with handle string %s is not a slider!\n", handle_string);
-        return NULL;
+        return slider_handle;
     }
 
-    return gui_elem;
+    slider_handle.__handle = gui_elem;
+
+    return slider_handle;
+}
+
+int32_t getSliderValue(const SliderHandle slider_handle)
+{
+    if (slider_handle.__handle == NULL)
+    {
+        printf("Slider handle is NULL!\n");
+        return 0;
+    }
+
+    return slider_handle.__handle->state.value;
+}
+
+int32_t getSliderMinValue(const SliderHandle slider_handle)
+{
+    if (slider_handle.__handle == NULL)
+    {
+        printf("Slider handle is NULL!\n");
+        return 0;
+    }
+
+    return slider_handle.__handle->state.min_value;
+}
+
+int32_t getSliderMaxValue(const SliderHandle slider_handle)
+{
+    if (slider_handle.__handle == NULL)
+    {
+        printf("Slider handle is NULL!\n");
+        return 0;
+    }
+
+    return slider_handle.__handle->state.max_value;
+}
+
+int32_t getSliderStepSize(const SliderHandle slider_handle)
+{
+    if (slider_handle.__handle == NULL)
+    {
+        printf("Slider handle is NULL!\n");
+        return 0;
+    }
+
+    return slider_handle.__handle->state.step_size;
+}
+
+SliderState getSliderState(const SliderHandle slider_handle)
+{
+    if (slider_handle.__handle == NULL)
+    {
+        printf("Slider handle is NULL!\n");
+        SliderState slider_state;
+        slider_state.value = 0;
+        slider_state.min_value = 0;
+        slider_state.max_value = 0;
+        slider_state.step_size = 0;
+
+        return slider_state;
+    }
+
+    return slider_handle.__handle->state;
 }
 
 void* queryThreadFunction(void* vargp)
