@@ -18,9 +18,42 @@ ButtonHandle* getButtonHandle(const char* const handle_string)
         return NULL;
     }
 
-    GuiElementHandleContainer* gui_elem = getGuiElementHandleContainer(handle_string, gui_element_map);
+    ButtonHandle* const gui_elem = (ButtonHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
 
-    return (ButtonHandle*)gui_elem->data;
+    if (gui_elem->type != GUI_ET_BUTTON)
+    {
+        printf("Gui element with handle string %s is not a button!\n", handle_string);
+        return NULL;
+    }
+
+    return gui_elem;
+}
+
+// TODO: Implement SliderInternalHandle and ButtonInternalHandle to be what SliderHandle and ButtonHandle are now.
+// Then from the "getSliderHandle", a copy of "SliderHandle" will be returned, and not a pointer. The
+// same goes for "getButtonHandle". SliderHandle can be used with "getSliderValue(slider_handle)", and
+// the SliderInternalHandle will then be a "hidden" member of SliderHandle (__handle or something). This
+// way, the user will not be able to change the internal state of the gui element, but only read it.
+
+SliderHandle* getSliderHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return NULL;
+    }
+
+    SliderHandle* const gui_elem = (SliderHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_SLIDER)
+    {
+        printf("Gui element with handle string %s is not a slider!\n", handle_string);
+        return NULL;
+    }
+
+    return gui_elem;
 }
 
 void* queryThreadFunction(void* vargp)

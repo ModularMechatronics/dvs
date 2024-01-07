@@ -141,7 +141,20 @@ void initDataStructures(const size_t initial_size)
     initButtonCallbackFunctionMap(button_callback_function_map, initial_size);
 }
 
-GuiElementHandleContainer* internal_createButton(const char* const handle_string, const UInt8Array* const data_view)
+void updateButtonState(ButtonHandle* const handle, const UInt8Array* data_view)
+{
+    handle->is_pressed = data_view->data[0];
+}
+
+void updateSliderState(SliderHandle* const handle, const UInt8Array* data_view)
+{
+    memcpy(&handle->min_value, data_view->data, sizeof(int32_t));
+    memcpy(&handle->max_value, data_view->data + sizeof(int32_t), sizeof(int32_t));
+    memcpy(&handle->step_size, data_view->data + 2U * sizeof(int32_t), sizeof(int32_t));
+    memcpy(&handle->value, data_view->data + 3U * sizeof(int32_t), sizeof(int32_t));
+}
+
+BaseHandle* internal_createButton(const char* const handle_string, const UInt8Array* const data_view)
 {
     ButtonHandle* const button = (ButtonHandle*)malloc(sizeof(ButtonHandle));
 
@@ -150,18 +163,16 @@ GuiElementHandleContainer* internal_createButton(const char* const handle_string
     button->handle_string = (char*)malloc(handle_string_length + 1U);
     strcpy(button->handle_string, handle_string);
     button->handle_string[handle_string_length] = '\0';  // Null-terminate string
+    button->type = GUI_ET_BUTTON;
 
-    button->is_pressed = (bool)(data_view->data[0]);
+    updateButtonState(button, data_view);
 
-    GuiElementHandleContainer* const container = (GuiElementHandleContainer*)malloc(sizeof(GuiElementHandleContainer));
+    BaseHandle* const handle = (BaseHandle*)button;
 
-    container->type = GUI_ET_BUTTON;
-    container->data = (uint8_t*)button;
-
-    return container;
+    return handle;
 }
 
-GuiElementHandleContainer* internal_createSlider(const char* const handle_string, const UInt8Array* const data_view)
+BaseHandle* internal_createSlider(const char* const handle_string, const UInt8Array* const data_view)
 {
     SliderHandle* const slider = (SliderHandle*)malloc(sizeof(SliderHandle));
 
@@ -170,21 +181,14 @@ GuiElementHandleContainer* internal_createSlider(const char* const handle_string
     slider->handle_string = (char*)malloc(handle_string_length + 1U);
     strcpy(slider->handle_string, handle_string);
     slider->handle_string[handle_string_length] = '\0';  // Null-terminate string
+    slider->type = GUI_ET_SLIDER;
 
-    memcpy(&slider->min_value, data_view->data, sizeof(int32_t));
-    memcpy(&slider->max_value, data_view->data + sizeof(int32_t), sizeof(int32_t));
-    memcpy(&slider->step_size, data_view->data + 2U * sizeof(int32_t), sizeof(int32_t));
-    memcpy(&slider->value, data_view->data + 3U * sizeof(int32_t), sizeof(int32_t));
+    updateSliderState(slider, data_view);
 
-    GuiElementHandleContainer* const container = (GuiElementHandleContainer*)malloc(sizeof(GuiElementHandleContainer));
+    BaseHandle* const handle = (BaseHandle*)slider;
 
-    container->type = GUI_ET_SLIDER;
-    container->data = (uint8_t*)slider;
-
-    return container;
+    return handle;
 }
-
-void updateContainerState(GuiElementHandleContainer* const container, const UInt8Array* data_view) {}
 
 void populateGuiElementWithData(const GuiElementType type,
                                 const char* const handle_string,
@@ -195,29 +199,38 @@ void populateGuiElementWithData(const GuiElementType type,
     if (isGuiElementHandleContainerKeyInMap(handle_string, gui_element_handles))
     {
         // Key is already in map, update state
-        GuiElementHandleContainer* const container = getGuiElementHandleContainer(handle_string, gui_element_handles);
-        if (container != NULL)
+        BaseHandle* const handle = (BaseHandle*)getGuiElementHandleContainer(handle_string, gui_element_handles);
+        if (handle != NULL)
         {
-            if (container->type != type)
+            if (handle->type != type)
             {
                 printf("Gui element with handle string %s already exists, but has different type!\n", handle_string);
                 return;
             }
-            updateContainerState(container, data_view);
+
+            if (type == GUI_ET_BUTTON)
+            {
+                updateButtonState((ButtonHandle*)handle, data_view);
+            }
+            else if (type == GUI_ET_CHECKBOX) {}
+            else if (type == GUI_ET_SLIDER)
+            {
+                updateSliderState((SliderHandle*)handle, data_view);
+            }
         }
     }
     else
     {
-        GuiElementHandleContainer* container = NULL;
+        BaseHandle* handle = NULL;
         // Key is not in map, create new element
         if (type == GUI_ET_BUTTON)
         {
-            container = internal_createButton(handle_string, data_view);
+            handle = (BaseHandle*)internal_createButton(handle_string, data_view);
         }
         else if (type == GUI_ET_CHECKBOX) {}
         else if (type == GUI_ET_SLIDER)
         {
-            container = internal_createSlider(handle_string, data_view);
+            handle = (BaseHandle*)internal_createSlider(handle_string, data_view);
         }
         else if (type == GUI_ET_TEXT_LABEL) {}
         else if (type == GUI_ET_LIST_BOX) {}
@@ -225,9 +238,9 @@ void populateGuiElementWithData(const GuiElementType type,
         else if (type == GUI_ET_DROPDOWN_MENU) {}
         else if (type == GUI_ET_RADIO_BUTTON_GROUP) {}
 
-        if (container != NULL)
+        if (handle != NULL)
         {
-            insertElementIntoGuiElementHandleContainerMap(gui_element_handles, handle_string, container);
+            insertElementIntoGuiElementHandleContainerMap(gui_element_handles, handle_string, handle);
         }
     }
 }

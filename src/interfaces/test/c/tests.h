@@ -10,7 +10,7 @@ void testInitMaps()
     const size_t num_elements = 20U;
     initDataStructures(num_elements);
 
-    GuiElementMap* gui_element_map = getGuiElementHandles();
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
 
     assert(gui_element_map->size == 20U);
 
@@ -26,17 +26,17 @@ void testInsertElementIntoMap()
     const size_t num_elements = 20U;
     initDataStructures(num_elements);
 
-    GuiElementMap* gui_element_map = getGuiElementHandles();
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
 
-    GuiElementHandleContainer container;
+    ButtonHandle button;
 
-    insertElementIntoGuiElementHandleContainerMap(gui_element_map, "first_element", &container);
+    insertElementIntoGuiElementHandleContainerMap(gui_element_map, "first_element", TO_BASE_HANDLE_PTR(button));
 
     assert(isGuiElementHandleContainerKeyInMap("first_element", gui_element_map));
     assert(!isGuiElementHandleContainerKeyInMap("some_non_existent", gui_element_map));
 
-    GuiElementHandleContainer* container_from_map = getGuiElementHandleContainer("first_element", gui_element_map);
-    assert(container_from_map == &container);
+    BaseHandle* const handle_from_map = getGuiElementHandleContainer("first_element", gui_element_map);
+    assert(handle_from_map == TO_BASE_HANDLE_PTR(button));
 }
 
 void testExpandingMap()
@@ -46,7 +46,7 @@ void testExpandingMap()
 
     GuiElementMap* gui_element_map = getGuiElementHandles();
 
-    GuiElementHandleContainer container;
+    ButtonHandle button;
 
     size_t expected_map_size = 5U;
 
@@ -55,7 +55,7 @@ void testExpandingMap()
         char key[20];
 
         sprintf(key, "element_%zu", k);
-        insertElementIntoGuiElementHandleContainerMap(gui_element_map, key, &container);
+        insertElementIntoGuiElementHandleContainerMap(gui_element_map, key, TO_BASE_HANDLE_PTR(button));
 
         const size_t num_inserted = k + 1;
 
@@ -72,8 +72,8 @@ void testExpandingMap()
         char key[20];
         sprintf(key, "element_%zu", k);
         assert(isGuiElementHandleContainerKeyInMap(key, gui_element_map));
-        GuiElementHandleContainer* container_from_map = getGuiElementHandleContainer(key, gui_element_map);
-        assert(container_from_map == &container);
+        BaseHandle* const handle_from_map = getGuiElementHandleContainer(key, gui_element_map);
+        assert(handle_from_map == TO_BASE_HANDLE_PTR(button));
     }
 }
 
@@ -84,14 +84,14 @@ void testResetMap()
 
     GuiElementMap* gui_element_map = getGuiElementHandles();
 
-    GuiElementHandleContainer container;
+    ButtonHandle button;
 
     for (size_t k = 0; k < 6; ++k)
     {
         char key[20];
 
         sprintf(key, "element_%zu", k);
-        insertElementIntoGuiElementHandleContainerMap(gui_element_map, key, &container);
+        insertElementIntoGuiElementHandleContainerMap(gui_element_map, key, TO_BASE_HANDLE_PTR(button));
     }
 
     assert(gui_element_map->size == 10U);
@@ -124,18 +124,17 @@ void testInsertSlider()
     memcpy(data_view.data + 3U * sizeof(int32_t), &value, sizeof(int32_t));
 
     // Create slider
-    GuiElementHandleContainer* gui_element = internal_createSlider(handle_string, &data_view);
+    BaseHandle* gui_element = internal_createSlider(handle_string, &data_view);
 
     // Push into map
     GuiElementMap* gui_element_map = getGuiElementHandles();
     insertElementIntoGuiElementHandleContainerMap(gui_element_map, handle_string, gui_element);
 
     // Get from map
-    GuiElementHandleContainer* container_from_map = getGuiElementHandleContainer(handle_string, gui_element_map);
-    SliderHandle* slider = (SliderHandle*)container_from_map->data;
+    SliderHandle* const slider = (SliderHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
 
-    assert(container_from_map == gui_element);
-    assert(container_from_map->type == GUI_ET_SLIDER);
+    assert(TO_BASE_HANDLE_PTR((*slider)) == gui_element);
+    assert(slider->type == GUI_ET_SLIDER);
 
     assert(min_value == slider->min_value);
     assert(max_value == slider->max_value);

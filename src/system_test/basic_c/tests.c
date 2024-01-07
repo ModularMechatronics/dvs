@@ -240,6 +240,8 @@ void testGUIBasic()
     while (true)
     {
         usleep(1000 * 1000);
+        const SliderHandle* const slider = getSliderHandle("slider0");
+        printf("Slider value: %i\n", slider->value);
         printf("Sleeping...\n");
     }
 }

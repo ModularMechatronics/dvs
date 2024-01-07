@@ -25,7 +25,7 @@ char* createAndCopyString(const char* const str)
 typedef struct S_GuiElementMap
 {
     char** keys;
-    GuiElementHandleContainer** values;
+    BaseHandle** values;
 
     size_t size;
 } GuiElementMap;
@@ -126,7 +126,7 @@ typedef struct S_ButtonCallbackMap
 void initGuiElementHandleContainerMap(GuiElementMap* const map, const size_t initial_size)
 {
     map->keys = (char**)malloc(initial_size * sizeof(char*));
-    map->values = (GuiElementHandleContainer**)malloc(initial_size * sizeof(GuiElementHandleContainer*));
+    map->values = (BaseHandle**)malloc(initial_size * sizeof(BaseHandle*));
 
     map->size = initial_size;
 
@@ -139,7 +139,7 @@ void initGuiElementHandleContainerMap(GuiElementMap* const map, const size_t ini
 
 void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* const map,
                                                    const char* const handle_string,
-                                                   GuiElementHandleContainer* container)
+                                                   BaseHandle* handle)
 {
     for (size_t k = 0; k < map->size; k++)
     {
@@ -147,14 +147,13 @@ void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* const map,
         {
             map->keys[k] = (char*)malloc((strlen(handle_string) + 1) * sizeof(char));
             map->keys[k] = strcpy(map->keys[k], handle_string);
-            map->values[k] = container;
+            map->values[k] = handle;
             return;
         }
     }
     size_t new_size = map->size * 2U;
     char** tmp_keys = (char**)malloc(new_size * sizeof(char*));
-    GuiElementHandleContainer** tmp_values =
-        (GuiElementHandleContainer**)malloc(new_size * sizeof(GuiElementHandleContainer*));
+    BaseHandle** tmp_values = (BaseHandle**)malloc(new_size * sizeof(BaseHandle*));
     for (size_t k = 0; k < new_size; k++)
     {
         if (k < map->size)
@@ -170,7 +169,7 @@ void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* const map,
     }
     tmp_keys[map->size] = (char*)malloc((strlen(handle_string) + 1) * sizeof(char));
     strcpy(tmp_keys[map->size], handle_string);
-    tmp_values[map->size] = container;
+    tmp_values[map->size] = handle;
     free(map->keys);
     free(map->values);
     map->keys = tmp_keys;
@@ -178,9 +177,9 @@ void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* const map,
     map->size = new_size;
 }
 
-GuiElementHandleContainer* getGuiElementHandleContainer(const char* const handle_string, const GuiElementMap* const map)
+BaseHandle* getGuiElementHandleContainer(const char* const handle_string, const GuiElementMap* const map)
 {
-    GuiElementHandleContainer* ret_val = NULL;
+    BaseHandle* ret_val = NULL;
 
     if (!handle_string || !map || !(map->keys) || handle_string[0] == '\0')
     {

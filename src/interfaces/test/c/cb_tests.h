@@ -43,17 +43,12 @@ void testRegisterButtonCallback()
 
     ButtonCallbackFunction cb_fun = getButtonCallbackFunction("button0", button_callback_function_map);
 
-    if (cb_fun == NULL)
-    {
-        printf("cb_fun is NULL\n");
-    }
-    else
-    {
-        variable_to_manipulate = false;
-        const ButtonHandle* const gui_element_handle = NULL;
-        cb_fun(gui_element_handle);
-        assert(variable_to_manipulate);
-    }
+    assert(cb_fun != NULL);
+
+    variable_to_manipulate = false;
+    const ButtonHandle* const gui_element_handle = NULL;
+    cb_fun(gui_element_handle);
+    assert(variable_to_manipulate);
 }
 
 void runCbTests()

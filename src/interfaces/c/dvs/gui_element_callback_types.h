@@ -37,4 +37,6 @@ typedef void (*ButtonCallbackFunction)(const ButtonHandle* const);
 typedef void (*SliderCallbackFunction)(const SliderHandle* const);
 // void (*button_callback_function)(const ButtonHandle* const)
 
+#define TO_BASE_HANDLE_PTR(button_handle) ((BaseHandle*)(&(button_handle)))
+
 #endif  // GUI_ELEMENT_CALLBACK_TYPES_H
