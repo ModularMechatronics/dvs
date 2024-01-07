@@ -109,7 +109,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
         }
     };
 
-    for (const std::shared_ptr<ElementSettings> elem_settings : tab_settings.elements)
+    for (const std::shared_ptr<ElementSettings>& elem_settings : tab_settings.elements)
     {
         if (elem_settings->type == dvs::GuiElementType::PlotPane)
         {
@@ -207,6 +207,66 @@ WindowTab::WindowTab(wxFrame* parent_window,
             text_label->setMinXPos(element_x_offset_);
             text_label->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_.push_back(text_label);
+        }
+        else if (elem_settings->type == dvs::GuiElementType::ListBox)
+        {
+            auto const [elem_pos, elem_size] =
+                getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+            ListBoxGuiElement* list_box = new ListBoxGuiElement(parent_window_,
+                                                                elem_settings,
+                                                                notify_main_window_key_pressed,
+                                                                notify_main_window_key_released,
+                                                                notify_parent_window_right_mouse_pressed,
+                                                                notify_main_window_about_modification,
+                                                                notify_tab_about_editing_,
+                                                                push_text_to_cmdl_output_window_,
+                                                                elem_pos,
+                                                                elem_size);
+
+            list_box->setMinXPos(element_x_offset_);
+            list_box->updateSizeFromParent(parent_window_->GetSize());
+            gui_elements_.push_back(list_box);
+        }
+        else if (elem_settings->type == dvs::GuiElementType::EditableText)
+        {
+            auto const [elem_pos, elem_size] =
+                getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+            EditableTextGuiElement* text_entry = new EditableTextGuiElement(parent_window_,
+                                                                            elem_settings,
+                                                                            notify_main_window_key_pressed,
+                                                                            notify_main_window_key_released,
+                                                                            notify_parent_window_right_mouse_pressed,
+                                                                            notify_main_window_about_modification,
+                                                                            notify_tab_about_editing_,
+                                                                            push_text_to_cmdl_output_window_,
+                                                                            elem_pos,
+                                                                            elem_size);
+
+            text_entry->setMinXPos(element_x_offset_);
+            text_entry->updateSizeFromParent(parent_window_->GetSize());
+            gui_elements_.push_back(text_entry);
+        }
+        else if (elem_settings->type == dvs::GuiElementType::DropDownMenu)
+        {
+            auto const [elem_pos, elem_size] =
+                getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+            DropdownMenuGuiElement* dropdown_menu = new DropdownMenuGuiElement(parent_window_,
+                                                                               elem_settings,
+                                                                               notify_main_window_key_pressed,
+                                                                               notify_main_window_key_released,
+                                                                               notify_parent_window_right_mouse_pressed,
+                                                                               notify_main_window_about_modification,
+                                                                               notify_tab_about_editing_,
+                                                                               push_text_to_cmdl_output_window_,
+                                                                               elem_pos,
+                                                                               elem_size);
+
+            dropdown_menu->setMinXPos(element_x_offset_);
+            dropdown_menu->updateSizeFromParent(parent_window_->GetSize());
+            gui_elements_.push_back(dropdown_menu);
         }
 
         current_element_idx_++;
@@ -440,6 +500,66 @@ void WindowTab::createNewTextLabel(const std::shared_ptr<TextLabelSettings>& ele
     text_label->setMinXPos(element_x_offset_);
     text_label->updateSizeFromParent(parent_window_->GetSize());
     gui_elements_.push_back(text_label);
+}
+
+void WindowTab::createNewListBox(const std::shared_ptr<ElementSettings>& element_settings)
+{
+    auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), element_settings.get());
+
+    ListBoxGuiElement* list_box = new ListBoxGuiElement(parent_window_,
+                                                        element_settings,
+                                                        notify_main_window_key_pressed_,
+                                                        notify_main_window_key_released_,
+                                                        notify_parent_window_right_mouse_pressed_,
+                                                        notify_main_window_about_modification_,
+                                                        notify_tab_about_editing_,
+                                                        push_text_to_cmdl_output_window_,
+                                                        elem_pos,
+                                                        elem_size);
+
+    list_box->setMinXPos(element_x_offset_);
+    list_box->updateSizeFromParent(parent_window_->GetSize());
+    gui_elements_.push_back(list_box);
+}
+
+void WindowTab::createNewEditableText(const std::shared_ptr<ElementSettings>& element_settings)
+{
+    auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), element_settings.get());
+
+    EditableTextGuiElement* text_entry = new EditableTextGuiElement(parent_window_,
+                                                                    element_settings,
+                                                                    notify_main_window_key_pressed_,
+                                                                    notify_main_window_key_released_,
+                                                                    notify_parent_window_right_mouse_pressed_,
+                                                                    notify_main_window_about_modification_,
+                                                                    notify_tab_about_editing_,
+                                                                    push_text_to_cmdl_output_window_,
+                                                                    elem_pos,
+                                                                    elem_size);
+
+    text_entry->setMinXPos(element_x_offset_);
+    text_entry->updateSizeFromParent(parent_window_->GetSize());
+    gui_elements_.push_back(text_entry);
+}
+
+void WindowTab::createDropdownMenu(const std::shared_ptr<ElementSettings>& element_settings)
+{
+    auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), element_settings.get());
+
+    DropdownMenuGuiElement* dropdown_menu = new DropdownMenuGuiElement(parent_window_,
+                                                                       element_settings,
+                                                                       notify_main_window_key_pressed_,
+                                                                       notify_main_window_key_released_,
+                                                                       notify_parent_window_right_mouse_pressed_,
+                                                                       notify_main_window_about_modification_,
+                                                                       notify_tab_about_editing_,
+                                                                       push_text_to_cmdl_output_window_,
+                                                                       elem_pos,
+                                                                       elem_size);
+
+    dropdown_menu->setMinXPos(element_x_offset_);
+    dropdown_menu->updateSizeFromParent(parent_window_->GetSize());
+    gui_elements_.push_back(dropdown_menu);
 }
 
 void WindowTab::show()

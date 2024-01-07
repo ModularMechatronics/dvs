@@ -459,4 +459,324 @@ public:
     void setLabel(const std::string& new_label);
 };
 
+class ListBoxGuiElement : public wxListBox, public ApplicationGuiElement
+{
+private:
+    std::vector<std::string> elements_;
+    std::string selected_element_;
+
+public:
+    ListBoxGuiElement(wxFrame* parent,
+                      const std::shared_ptr<ElementSettings>& element_settings,
+                      const std::function<void(const char key)>& notify_main_window_key_pressed,
+                      const std::function<void(const char key)>& notify_main_window_key_released,
+                      const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+                          notify_parent_window_right_mouse_pressed,
+                      const std::function<void()>& notify_main_window_about_modification,
+                      const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+                          notify_tab_about_editing,
+                      const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+                      const wxPoint& pos,
+                      const wxSize& size);
+
+    void setMinXPos(const int min_x_pos) override
+    {
+        minimum_x_pos_ = min_x_pos;
+        setElementPositionAndSize();
+    }
+
+    void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
+
+    void keyPressedElementSpecific(const char key) override {}
+
+    void keyReleasedElementSpecific(const char key) override {}
+
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        std::uint64_t total_num_bytes = sizeof(std::uint8_t) + selected_element_.length();
+
+        total_num_bytes += sizeof(std::uint16_t);  // Number of elements
+
+        for (const auto& element : elements_)
+        {
+            total_num_bytes += sizeof(std::uint8_t) + element.length();
+        }
+        return total_num_bytes;
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(selected_element_.length()));
+        output_array.fillWithDataFromPointer(selected_element_.data(), selected_element_.length());
+
+        output_array.fillWithStaticType(static_cast<std::uint16_t>(elements_.size()));
+
+        for (const auto& element : elements_)
+        {
+            output_array.fillWithStaticType(static_cast<std::uint8_t>(element.length()));
+            output_array.fillWithDataFromPointer(element.data(), element.length());
+        }
+    }
+
+    void updateSizeFromParent(const wxSize& parent_size) override
+    {
+        setElementPositionAndSize();
+    }
+
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
+
+    wxSize getSize() const override
+    {
+        return this->GetSize();
+    }
+
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
+    }
+
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
+
+    void setSize(const wxSize& new_size) override
+    {
+        this->SetSize(new_size);
+    }
+
+    void hide() override
+    {
+        Hide();
+    }
+
+    void show() override
+    {
+        Show();
+    }
+
+    void listBoxCallback(wxCommandEvent& event);
+
+    std::shared_ptr<GuiElementState> getGuiElementState() const override
+    {
+        std::shared_ptr<ListBoxState> list_box_state =
+            std::make_shared<ListBoxState>(element_settings_->handle_string, elements_, selected_element_);
+
+        return list_box_state;
+    }
+};
+
+class EditableTextGuiElement : public wxTextCtrl, public ApplicationGuiElement
+{
+private:
+    std::string text_;
+    bool enter_pressed_;
+
+public:
+    EditableTextGuiElement(
+        wxFrame* parent,
+        const std::shared_ptr<ElementSettings>& element_settings,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released,
+        const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+            notify_parent_window_right_mouse_pressed,
+        const std::function<void()>& notify_main_window_about_modification,
+        const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+            notify_tab_about_editing,
+        const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+        const wxPoint& pos,
+        const wxSize& size);
+
+    void setMinXPos(const int min_x_pos) override
+    {
+        minimum_x_pos_ = min_x_pos;
+        setElementPositionAndSize();
+    }
+
+    void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
+
+    void keyPressedElementSpecific(const char key) override {}
+
+    void keyReleasedElementSpecific(const char key) override {}
+
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        const std::uint64_t total_num_bytes = sizeof(std::uint8_t) + sizeof(std::uint8_t) + text_.length();
+
+        return total_num_bytes;
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(enter_pressed_));
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(text_.length()));
+        output_array.fillWithDataFromPointer(text_.data(), text_.length());
+    }
+
+    void updateSizeFromParent(const wxSize& parent_size) override
+    {
+        setElementPositionAndSize();
+    }
+
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
+
+    wxSize getSize() const override
+    {
+        return this->GetSize();
+    }
+
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
+    }
+
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
+
+    void setSize(const wxSize& new_size) override
+    {
+        this->SetSize(new_size);
+    }
+
+    void hide() override
+    {
+        Hide();
+    }
+
+    void show() override
+    {
+        Show();
+    }
+
+    void editableTextCallback(wxCommandEvent& event);
+    void editableTextEnterPressedCallback(wxCommandEvent& event);
+
+    std::shared_ptr<GuiElementState> getGuiElementState() const override
+    {
+        std::shared_ptr<EditableTextState> editable_text_state =
+            std::make_shared<EditableTextState>(element_settings_->handle_string, enter_pressed_, text_);
+
+        return editable_text_state;
+    }
+};
+
+class DropdownMenuGuiElement : public wxComboBox, public ApplicationGuiElement
+{
+private:
+    std::vector<std::string> elements_;
+    std::string selected_element_;
+
+public:
+    DropdownMenuGuiElement(
+        wxFrame* parent,
+        const std::shared_ptr<ElementSettings>& element_settings,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released,
+        const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+            notify_parent_window_right_mouse_pressed,
+        const std::function<void()>& notify_main_window_about_modification,
+        const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+            notify_tab_about_editing,
+        const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+        const wxPoint& pos,
+        const wxSize& size);
+
+    void setMinXPos(const int min_x_pos) override
+    {
+        minimum_x_pos_ = min_x_pos;
+        setElementPositionAndSize();
+    }
+
+    void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
+
+    void keyPressedElementSpecific(const char key) override {}
+
+    void keyReleasedElementSpecific(const char key) override {}
+
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        std::uint64_t total_num_bytes = sizeof(std::uint8_t) + selected_element_.length();
+
+        total_num_bytes += sizeof(std::uint16_t);  // Number of elements
+
+        for (const auto& element : elements_)
+        {
+            total_num_bytes += sizeof(std::uint8_t) + element.length();
+        }
+        return total_num_bytes;
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(selected_element_.length()));
+        output_array.fillWithDataFromPointer(selected_element_.data(), selected_element_.length());
+
+        output_array.fillWithStaticType(static_cast<std::uint16_t>(elements_.size()));
+
+        for (const auto& element : elements_)
+        {
+            output_array.fillWithStaticType(static_cast<std::uint8_t>(element.length()));
+            output_array.fillWithDataFromPointer(element.data(), element.length());
+        }
+    }
+
+    void updateSizeFromParent(const wxSize& parent_size) override
+    {
+        setElementPositionAndSize();
+    }
+
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
+
+    wxSize getSize() const override
+    {
+        return this->GetSize();
+    }
+
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
+    }
+
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
+
+    void setSize(const wxSize& new_size) override
+    {
+        this->SetSize(new_size);
+    }
+
+    void hide() override
+    {
+        Hide();
+    }
+
+    void show() override
+    {
+        Show();
+    }
+
+    void dropdownCallback(wxCommandEvent& event);
+
+    std::shared_ptr<GuiElementState> getGuiElementState() const override
+    {
+        std::shared_ptr<ListBoxState> list_box_state =
+            std::make_shared<ListBoxState>(element_settings_->handle_string, elements_, selected_element_);
+
+        return list_box_state;
+    }
+};
+
 #endif  // MAIN_APPLICATION_GUI_ELEMENT_H_

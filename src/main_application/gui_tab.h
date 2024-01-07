@@ -98,6 +98,9 @@ public:
     void createNewCheckbox(const std::shared_ptr<CheckboxSettings>& elem_settings);
     void createNewTextLabel(const std::shared_ptr<TextLabelSettings>& elem_settings);
     void createNewPlotPane(const std::shared_ptr<ElementSettings>& element_settings);
+    void createNewListBox(const std::shared_ptr<ElementSettings>& element_settings);
+    void createNewEditableText(const std::shared_ptr<ElementSettings>& element_settings);
+    void createDropdownMenu(const std::shared_ptr<ElementSettings>& element_settings);
     void show();
     void hide();
     void updateSizeFromParent(const wxSize new_size) const;
