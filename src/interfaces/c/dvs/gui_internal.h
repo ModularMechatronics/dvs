@@ -154,6 +154,60 @@ void updateSliderState(SliderInternalHandle* const handle, const UInt8Array* dat
     memcpy(&handle->state.value, data_view->data + 3U * sizeof(int32_t), sizeof(int32_t));
 }
 
+void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* data_view)
+{
+    // TODO: state needs to be freed somewhere
+    ListBoxState* const state = &(handle->state);
+
+    const uint8_t selected_string_length = data_view->data[0];
+
+    size_t idx = 1U;
+
+    if (selected_string_length > 0U)
+    {
+        state->selected_string = (char*)malloc(selected_string_length + 1U);
+        memcpy(state->selected_string, data_view->data + idx, selected_string_length);
+        state->selected_string[selected_string_length] = '\0';
+        idx += selected_string_length;
+    }
+    else
+    {
+        state->selected_string = (char*)malloc(1U);
+        state->selected_string[0] = '\0';
+    }
+
+    uint16_t num_elements;
+
+    memcpy(&num_elements, data_view->data + idx + selected_string_length, sizeof(uint16_t));
+
+    printf("Num elements: %u\n", num_elements);
+
+    /*idx += sizeof(uint16_t);
+
+    state->elements = createListOfStrings(num_elements);
+
+    for (uint16_t i = 0U; i < num_elements; i++)
+    {
+        const uint8_t element_length = data_view->data[idx];
+        idx++;
+
+        state->elements.strings[i] = (char*)malloc(element_length + 1U);
+        memcpy(state->elements.strings[i], data_view->data + idx, element_length);
+        state->elements.strings[i][element_length] = '\0';
+
+        idx += element_length;
+    }
+
+    //
+    printf("Size: %zu\n", state->elements.size);
+
+    for (size_t k = 0U; k < state->elements.size; k++)
+    {
+        printf("Element %zu: %s\n", k, state->elements.strings[k]);
+    }
+    printf("Selected element: %s\n", state->selected_string);*/
+}
+
 BaseHandle* internal_createButton(const char* const handle_string, const UInt8Array* const data_view)
 {
     ButtonInternalHandle* const button = (ButtonInternalHandle*)malloc(sizeof(ButtonInternalHandle));
@@ -190,6 +244,24 @@ BaseHandle* internal_createSlider(const char* const handle_string, const UInt8Ar
     return handle;
 }
 
+BaseHandle* internal_createListBox(const char* const handle_string, const UInt8Array* const data_view)
+{
+    ListBoxInternalHandle* const list_box = (ListBoxInternalHandle*)malloc(sizeof(ListBoxInternalHandle));
+
+    size_t handle_string_length = strlen(handle_string);
+
+    list_box->handle_string = (char*)malloc(handle_string_length + 1U);
+    strcpy(list_box->handle_string, handle_string);
+    list_box->handle_string[handle_string_length] = '\0';  // Null-terminate string
+    list_box->type = GUI_ET_LIST_BOX;
+
+    BaseHandle* const handle = (BaseHandle*)list_box;
+
+    updateListBoxState((ListBoxInternalHandle*)handle, data_view);
+
+    return handle;
+}
+
 void populateGuiElementWithData(const GuiElementType type,
                                 const char* const handle_string,
                                 const UInt8Array* const data_view)
@@ -217,6 +289,14 @@ void populateGuiElementWithData(const GuiElementType type,
             {
                 updateSliderState((SliderInternalHandle*)handle, data_view);
             }
+            else if (type == GUI_ET_TEXT_LABEL) {}
+            else if (type == GUI_ET_LIST_BOX)
+            {
+                updateListBoxState((ListBoxInternalHandle*)handle, data_view);
+            }
+            else if (type == GUI_ET_EDITABLE_TEXT) {}
+            else if (type == GUI_ET_DROPDOWN_MENU) {}
+            else if (type == GUI_ET_RADIO_BUTTON_GROUP) {}
         }
     }
     else
@@ -233,7 +313,10 @@ void populateGuiElementWithData(const GuiElementType type,
             handle = (BaseHandle*)internal_createSlider(handle_string, data_view);
         }
         else if (type == GUI_ET_TEXT_LABEL) {}
-        else if (type == GUI_ET_LIST_BOX) {}
+        else if (type == GUI_ET_LIST_BOX)
+        {
+            handle = (BaseHandle*)internal_createListBox(handle_string, data_view);
+        }
         else if (type == GUI_ET_EDITABLE_TEXT) {}
         else if (type == GUI_ET_DROPDOWN_MENU) {}
         else if (type == GUI_ET_RADIO_BUTTON_GROUP) {}
@@ -283,6 +366,142 @@ void updateGuiState(const ReceivedGuiData* received_gui_data)
     printf("Updating %s\n", handle_string);
 
     free(handle_string);
+}
+
+ButtonHandle getButtonHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    ButtonHandle button_handle;
+    button_handle.__handle = NULL;
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return button_handle;
+    }
+
+    ButtonInternalHandle* const gui_elem =
+        (ButtonInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_BUTTON)
+    {
+        printf("Gui element with handle string %s is not a button!\n", handle_string);
+        return button_handle;
+    }
+
+    button_handle.__handle = gui_elem;
+
+    return button_handle;
+}
+
+SliderHandle getSliderHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    SliderHandle slider_handle;
+    slider_handle.__handle = NULL;
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return slider_handle;
+    }
+
+    SliderInternalHandle* const gui_elem =
+        (SliderInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_SLIDER)
+    {
+        printf("Gui element with handle string %s is not a slider!\n", handle_string);
+        return slider_handle;
+    }
+
+    slider_handle.__handle = gui_elem;
+
+    return slider_handle;
+}
+
+void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)
+{
+    size_t idx = 0U;
+
+    uint8_t* const raw_data = received_gui_data->data;
+
+    const GuiElementType type = (GuiElementType)(raw_data[idx]);
+    idx += sizeof(uint8_t);
+
+    const uint8_t handle_string_length = (uint8_t)(raw_data[idx]);
+    idx += sizeof(uint8_t);
+
+    char* const handle_string = (char*)malloc(handle_string_length + 1U);
+    strcpy(handle_string, (char*)(raw_data + idx));
+    handle_string[handle_string_length] = '\0';  // Null-terminate string
+    idx += handle_string_length;
+
+    uint32_t payload_size;
+    memcpy(&payload_size, raw_data + idx, sizeof(uint32_t));
+    idx += sizeof(uint32_t);
+
+    UInt8Array payload_data_view;
+    payload_data_view.data = raw_data + idx;
+    payload_data_view.size = payload_size;
+
+    if (type == GUI_ET_BUTTON)
+    {
+        ButtonCallbackFunctionMap* const button_callback_function_map = getButtonCallbackFunctionMap();
+
+        if (isButtonCallbackFunctionKeyInMap(handle_string, button_callback_function_map))
+        {
+            ButtonCallbackFunction cb_fun = getButtonCallbackFunction("button0", button_callback_function_map);
+            cb_fun(getButtonHandle(handle_string));
+        }
+    }
+    else if (type == GUI_ET_SLIDER)
+    {
+        // TODO...
+    }
+    /*
+
+    UInt8ArrayView payload_data_view{raw_data + idx, payload_size};
+
+    if (type == dvs::GuiElementType::Slider)
+    {
+        std::map<std::string, gui::SliderCallbackFunction>& gui_callbacks = getSliderCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::SliderHandle>(handle_string));
+        }
+    }
+    else if (type == dvs::GuiElementType::Button)
+    {
+        std::map<std::string, gui::ButtonCallbackFunction>& gui_callbacks = getButtonCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::ButtonHandle>(handle_string));
+        }
+    }
+    else if (type == dvs::GuiElementType::Checkbox)
+    {
+        std::map<std::string, gui::CheckboxCallbackFunction>& gui_callbacks = getCheckboxCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::CheckboxHandle>(handle_string));
+        }
+    }
+    else if (type == dvs::GuiElementType::TextLabel)
+    {
+        std::map<std::string, gui::TextLabelCallbackFunction>& gui_callbacks = getTextLabelCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::TextLabelHandle>(handle_string));
+        }
+    }
+    */
 }
 
 void internal_waitForSyncForAllGuiElements()

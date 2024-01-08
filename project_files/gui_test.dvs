@@ -28,22 +28,22 @@
                     "elements": [
                         {
                             "handle_string": "p_view_0",
-                            "height": 0.3903394341468811,
+                            "height": 0.3896103799343109,
                             "type": "PLOT_PANE",
-                            "width": 0.29243120551109314,
-                            "x": 0.6020641922950745,
-                            "y": 0.5208877325057983
+                            "width": 0.29214781522750854,
+                            "x": 0.6916859149932861,
+                            "y": 0.2857142984867096
                         },
                         {
                             "element_specific_settings": {
                                 "label": "Start timer"
                             },
                             "handle_string": "button0",
-                            "height": 0.12286689132452011,
+                            "height": 0.1818181872367859,
                             "type": "BUTTON",
-                            "width": 0.29723992943763733,
-                            "x": 0.2887473404407501,
-                            "y": 0.10580204427242279
+                            "width": 0.2967667579650879,
+                            "x": 0.2586604952812195,
+                            "y": 0.002597402548417449
                         },
                         {
                             "element_specific_settings": {
@@ -78,8 +78,8 @@
                             "height": 0.07792207598686218,
                             "type": "SLIDER",
                             "width": 0.1408776044845581,
-                            "x": 0.3094688355922699,
-                            "y": 0.45194804668426514
+                            "x": 0.2725173234939575,
+                            "y": 0.30909091234207153
                         },
                         {
                             "element_specific_settings": {
@@ -92,19 +92,50 @@
                             "height": 0.07792207598686218,
                             "type": "SLIDER",
                             "width": 0.13856813311576843,
-                            "x": 0.43648961186408997,
-                            "y": 0.25974026322364807
+                            "x": 0.7274826765060425,
+                            "y": 0.05454545468091965
                         },
                         {
                             "element_specific_settings": {
-                                "elements": ["elem0", "elem1", "elem2"]
+                                "elements": [
+                                    "elem0",
+                                    "elem1",
+                                    "elem2"
+                                ]
                             },
                             "handle_string": "listbox0",
-                            "height": 0.17792207598686218,
+                            "height": 0.1766233742237091,
                             "type": "LISTBOX",
                             "width": 0.1408776044845581,
-                            "x": 0.3094688355922699,
-                            "y": 0.6194804668426514
+                            "x": 0.7471131682395935,
+                            "y": 0.7350649237632751
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": "blabla"
+                            },
+                            "handle_string": "text_entry",
+                            "height": 0.1766233742237091,
+                            "type": "EDITABLE_TEXT",
+                            "width": 0.1408776044845581,
+                            "x": 0.013856813311576843,
+                            "y": 0.6623376607894897
+                        },
+                        {
+                            "element_specific_settings": {
+                                "elements": [
+                                    "elem0",
+                                    "elem1",
+                                    "elem2"
+                                ],
+                                "initially_selected_item": "elem0"
+                            },
+                            "handle_string": "ddm0",
+                            "height": 0.1766233742237091,
+                            "type": "DROPDOWN_MENU",
+                            "width": 0.1408776044845581,
+                            "x": 0.5471131682395935,
+                            "y": 0.7350649237632751
                         }
                     ],
                     "name": "primary_view"

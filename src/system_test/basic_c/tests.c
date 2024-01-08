@@ -223,7 +223,7 @@ void slider0Callback(const SliderHandle gui_element_handle)
 
 void button0Callback(const ButtonHandle gui_element_handle)
 {
-    // printf("Callback function: \"button0\" pressed: %d\n", gui_element_handle->is_pressed);
+    printf("Callback function: \"button0\"\n");
 }
 
 void testGUIBasic()

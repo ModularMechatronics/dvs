@@ -10,6 +10,44 @@
 #include "dvs/internal_gui_element_handle.h"
 #include "dvs/uint8_array.h"
 
+typedef struct S_String
+{
+    char* data;
+    size_t length;
+} String;
+
+typedef struct S_ListOfStrings
+{
+    char** strings;
+    size_t size;
+} ListOfStrings;
+
+ListOfStrings createListOfStrings(const size_t size)
+{
+    ListOfStrings list_of_strings;
+
+    list_of_strings.size = size;
+    list_of_strings.strings = (char**)malloc(size * sizeof(char*));
+
+    for (size_t k = 0; k < size; k++)
+    {
+        list_of_strings.strings[k] = NULL;
+    }
+
+    return list_of_strings;
+}
+
+String createString(const size_t length)
+{
+    String s;
+
+    s.length = length;
+    s.data = (char*)malloc(s.length + 1);
+    s.data[0] = '\0';
+
+    return s;
+}
+
 typedef struct S_BaseHandle
 {
     GuiElementType type;
@@ -37,6 +75,20 @@ typedef struct S_SliderInternalHandle
     char* handle_string;
     SliderState state;
 } SliderInternalHandle;
+
+typedef struct S_ListBoxState
+{
+    ListOfStrings elements;
+    char* selected_string;
+} ListBoxState;
+
+typedef struct S_ListBoxInternalHandle
+{
+    GuiElementType type;
+    char* handle_string;
+
+    ListBoxState state;
+} ListBoxInternalHandle;
 
 typedef struct S_ButtonHandle
 {

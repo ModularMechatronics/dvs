@@ -137,12 +137,18 @@ void testInsertSlider()
     assert(TO_BASE_HANDLE_PTR((*slider)) == gui_element);
     assert(slider->type == GUI_ET_SLIDER);
 
-    assert(min_value == slider->min_value);
-    assert(max_value == slider->max_value);
-    assert(step_size == slider->step_size);
-    assert(value == slider->value);
+    assert(min_value == slider->state.min_value);
+    assert(max_value == slider->state.max_value);
+    assert(step_size == slider->state.step_size);
+    assert(value == slider->state.value);
 
     assert(strcmp(slider->handle_string, handle_string) == 0);
+}
+
+void testListBox()
+{
+    // ListBoxInternalHandle list_box_handle;
+    // getListBoxHandle("list_box_1");
 }
 
 void runTests()
