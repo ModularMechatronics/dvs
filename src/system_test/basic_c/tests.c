@@ -233,14 +233,22 @@ void testGUIBasic()
     registerButtonCallback("button0", button0Callback);
     registerSliderCallback("slider0", slider0Callback);
 
-    // dvs::gui::registerGuiCallback("button0", [](const dvs::gui::ButtonHandle& gui_element_handle) -> void {
-    //     std::cout << "Callback function: \"button0\" pressed: " << gui_element_handle.getIsPressed() << std::endl;
-    // });
-
     while (true)
     {
         usleep(1000 * 1000);
         const SliderHandle slider = getSliderHandle("slider0");
+        const ListBoxHandle list_box = getListBoxHandle("listbox0");
+
+        ListBoxState state = list_box.__handle->state;
+
+        printf("Size: %zu\n", state.elements.size);
+
+        for (size_t k = 0U; k < state.elements.size; k++)
+        {
+            printf("Element %zu: %s\n", k, state.elements.strings[k]);
+        }
+        printf("Selected element: %s\n", state.selected_string);
+
         printf("Slider value: %i\n", getSliderValue(slider));
         printf("Sleeping...\n");
     }

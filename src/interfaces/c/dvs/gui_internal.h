@@ -156,8 +156,9 @@ void updateSliderState(SliderInternalHandle* const handle, const UInt8Array* dat
 
 void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* data_view)
 {
-    // TODO: state needs to be freed somewhere
     ListBoxState* const state = &(handle->state);
+    destroyListOfStrings(&(state->elements));
+    free(state->selected_string);
 
     const uint8_t selected_string_length = data_view->data[0];
 
@@ -178,11 +179,9 @@ void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* d
 
     uint16_t num_elements;
 
-    memcpy(&num_elements, data_view->data + idx + selected_string_length, sizeof(uint16_t));
+    memcpy(&num_elements, data_view->data + idx, sizeof(uint16_t));
 
-    printf("Num elements: %u\n", num_elements);
-
-    /*idx += sizeof(uint16_t);
+    idx += sizeof(uint16_t);
 
     state->elements = createListOfStrings(num_elements);
 
@@ -197,15 +196,6 @@ void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* d
 
         idx += element_length;
     }
-
-    //
-    printf("Size: %zu\n", state->elements.size);
-
-    for (size_t k = 0U; k < state->elements.size; k++)
-    {
-        printf("Element %zu: %s\n", k, state->elements.strings[k]);
-    }
-    printf("Selected element: %s\n", state->selected_string);*/
 }
 
 BaseHandle* internal_createButton(const char* const handle_string, const UInt8Array* const data_view)
@@ -256,6 +246,10 @@ BaseHandle* internal_createListBox(const char* const handle_string, const UInt8A
     list_box->type = GUI_ET_LIST_BOX;
 
     BaseHandle* const handle = (BaseHandle*)list_box;
+
+    list_box->state.elements = createListOfStrings(10U);
+    list_box->state.selected_string = (char*)malloc(1U);
+    list_box->state.selected_string[0] = '\0';
 
     updateListBoxState((ListBoxInternalHandle*)handle, data_view);
 
@@ -420,6 +414,33 @@ SliderHandle getSliderHandle(const char* const handle_string)
     slider_handle.__handle = gui_elem;
 
     return slider_handle;
+}
+
+ListBoxHandle getListBoxHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    ListBoxHandle list_box_handle;
+    list_box_handle.__handle = NULL;
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return list_box_handle;
+    }
+
+    ListBoxInternalHandle* const gui_elem =
+        (ListBoxInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_LIST_BOX)
+    {
+        printf("Gui element with handle string %s is not a slider!\n", handle_string);
+        return list_box_handle;
+    }
+
+    list_box_handle.__handle = gui_elem;
+
+    return list_box_handle;
 }
 
 void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)

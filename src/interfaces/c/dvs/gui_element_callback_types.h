@@ -37,6 +37,21 @@ ListOfStrings createListOfStrings(const size_t size)
     return list_of_strings;
 }
 
+void destroyListOfStrings(ListOfStrings* const list_of_strings)
+{
+    for (size_t k = 0; k < list_of_strings->size; k++)
+    {
+        if (list_of_strings->strings[k] != NULL)
+        {
+            free(list_of_strings->strings[k]);
+        }
+    }
+
+    free(list_of_strings->strings);
+    list_of_strings->strings = NULL;
+    list_of_strings->size = 0;
+}
+
 String createString(const size_t length)
 {
     String s;
@@ -99,6 +114,11 @@ typedef struct S_SliderHandle
 {
     SliderInternalHandle* __handle;
 } SliderHandle;
+
+typedef struct S_ListBoxHandle
+{
+    ListBoxInternalHandle* __handle;
+} ListBoxHandle;
 
 typedef void (*ButtonCallbackFunction)(const ButtonHandle);
 typedef void (*SliderCallbackFunction)(const SliderHandle);
