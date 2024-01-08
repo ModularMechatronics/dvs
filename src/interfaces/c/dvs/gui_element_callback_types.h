@@ -18,7 +18,7 @@ typedef struct S_String
 
 typedef struct S_ListOfStrings
 {
-    char** strings;
+    char** elements;
     size_t size;
 } ListOfStrings;
 
@@ -27,11 +27,11 @@ ListOfStrings createListOfStrings(const size_t size)
     ListOfStrings list_of_strings;
 
     list_of_strings.size = size;
-    list_of_strings.strings = (char**)malloc(size * sizeof(char*));
+    list_of_strings.elements = (char**)malloc(size * sizeof(char*));
 
     for (size_t k = 0; k < size; k++)
     {
-        list_of_strings.strings[k] = NULL;
+        list_of_strings.elements[k] = NULL;
     }
 
     return list_of_strings;
@@ -41,14 +41,14 @@ void destroyListOfStrings(ListOfStrings* const list_of_strings)
 {
     for (size_t k = 0; k < list_of_strings->size; k++)
     {
-        if (list_of_strings->strings[k] != NULL)
+        if (list_of_strings->elements[k] != NULL)
         {
-            free(list_of_strings->strings[k]);
+            free(list_of_strings->elements[k]);
         }
     }
 
-    free(list_of_strings->strings);
-    list_of_strings->strings = NULL;
+    free(list_of_strings->elements);
+    list_of_strings->elements = NULL;
     list_of_strings->size = 0;
 }
 
@@ -94,7 +94,7 @@ typedef struct S_SliderInternalHandle
 typedef struct S_ListBoxState
 {
     ListOfStrings elements;
-    char* selected_string;
+    char* selected_element;
 } ListBoxState;
 
 typedef struct S_ListBoxInternalHandle

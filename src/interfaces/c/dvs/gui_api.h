@@ -69,6 +69,50 @@ SliderState getSliderCurrentState(const SliderHandle slider_handle)
     return slider_handle.__handle->state;
 }
 
+ListOfStrings getListBoxElements(const ListBoxHandle list_box_handle)
+{
+    ListOfStrings list_of_strings;
+
+    if (list_box_handle.__handle == NULL)
+    {
+        printf("List box handle is NULL!\n");
+
+        list_of_strings.elements = NULL;
+        list_of_strings.size = 0;
+
+        return list_of_strings;
+    }
+
+    return list_box_handle.__handle->state.elements;
+}
+
+char* getListBoxSelectedElement(const ListBoxHandle list_box_handle)
+{
+    if (list_box_handle.__handle == NULL)
+    {
+        printf("List box handle is NULL!\n");
+        return NULL;
+    }
+
+    return list_box_handle.__handle->state.selected_element;
+}
+
+ListBoxState getListBoxCurrentState(const ListBoxHandle list_box_handle)
+{
+    if (list_box_handle.__handle == NULL)
+    {
+        printf("List box handle is NULL!\n");
+        ListBoxState list_box_state;
+        list_box_state.elements.elements = NULL;
+        list_box_state.selected_element = NULL;
+        list_box_state.elements.size = 0;
+
+        return list_box_state;
+    }
+
+    return list_box_handle.__handle->state;
+}
+
 void* queryThreadFunction(void* vargp)
 {
     usleep(1000U * 100U);

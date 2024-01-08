@@ -216,6 +216,9 @@ void printValues()
 
 void slider0Callback(const SliderHandle gui_element_handle)
 {
+    const SliderHandle slider = getSliderHandle("slider0");
+
+    printf("Callback function: \"slider0\": %i\n", getSliderValue(slider));
     // gui_element_handle->value;
     // setSliderMin(gui_element_handle, 0.0);
     // setSliderMax(gui_element_handle, 100.0);
@@ -239,15 +242,15 @@ void testGUIBasic()
         const SliderHandle slider = getSliderHandle("slider0");
         const ListBoxHandle list_box = getListBoxHandle("listbox0");
 
-        ListBoxState state = list_box.__handle->state;
+        const ListBoxState state = getListBoxCurrentState(list_box);
 
         printf("Size: %zu\n", state.elements.size);
 
         for (size_t k = 0U; k < state.elements.size; k++)
         {
-            printf("Element %zu: %s\n", k, state.elements.strings[k]);
+            printf("Element %zu: %s\n", k, state.elements.elements[k]);
         }
-        printf("Selected element: %s\n", state.selected_string);
+        printf("Selected element: %s\n", state.selected_element);
 
         printf("Slider value: %i\n", getSliderValue(slider));
         printf("Sleeping...\n");

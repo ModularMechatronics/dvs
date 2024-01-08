@@ -132,6 +132,13 @@ ButtonCallbackFunctionMap* getButtonCallbackFunctionMap()
     return &button_callback_function_map;
 }
 
+SliderCallbackFunctionMap* getSliderCallbackFunctionMap()
+{
+    static SliderCallbackFunctionMap slider_callback_function_map;
+
+    return &slider_callback_function_map;
+}
+
 void initDataStructures(const size_t initial_size)
 {
     GuiElementMap* const gui_element_handles = getGuiElementHandles();
@@ -139,6 +146,9 @@ void initDataStructures(const size_t initial_size)
 
     ButtonCallbackFunctionMap* const button_callback_function_map = getButtonCallbackFunctionMap();
     initButtonCallbackFunctionMap(button_callback_function_map, initial_size);
+
+    SliderCallbackFunctionMap* const slider_callback_function_map = getSliderCallbackFunctionMap();
+    initSliderCallbackFunctionMap(slider_callback_function_map, initial_size);
 }
 
 void updateButtonState(ButtonInternalHandle* const handle, const UInt8Array* data_view)
@@ -158,23 +168,23 @@ void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* d
 {
     ListBoxState* const state = &(handle->state);
     destroyListOfStrings(&(state->elements));
-    free(state->selected_string);
+    free(state->selected_element);
 
-    const uint8_t selected_string_length = data_view->data[0];
+    const uint8_t selected_element_length = data_view->data[0];
 
     size_t idx = 1U;
 
-    if (selected_string_length > 0U)
+    if (selected_element_length > 0U)
     {
-        state->selected_string = (char*)malloc(selected_string_length + 1U);
-        memcpy(state->selected_string, data_view->data + idx, selected_string_length);
-        state->selected_string[selected_string_length] = '\0';
-        idx += selected_string_length;
+        state->selected_element = (char*)malloc(selected_element_length + 1U);
+        memcpy(state->selected_element, data_view->data + idx, selected_element_length);
+        state->selected_element[selected_element_length] = '\0';
+        idx += selected_element_length;
     }
     else
     {
-        state->selected_string = (char*)malloc(1U);
-        state->selected_string[0] = '\0';
+        state->selected_element = (char*)malloc(1U);
+        state->selected_element[0] = '\0';
     }
 
     uint16_t num_elements;
@@ -190,9 +200,9 @@ void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* d
         const uint8_t element_length = data_view->data[idx];
         idx++;
 
-        state->elements.strings[i] = (char*)malloc(element_length + 1U);
-        memcpy(state->elements.strings[i], data_view->data + idx, element_length);
-        state->elements.strings[i][element_length] = '\0';
+        state->elements.elements[i] = (char*)malloc(element_length + 1U);
+        memcpy(state->elements.elements[i], data_view->data + idx, element_length);
+        state->elements.elements[i][element_length] = '\0';
 
         idx += element_length;
     }
@@ -248,8 +258,8 @@ BaseHandle* internal_createListBox(const char* const handle_string, const UInt8A
     BaseHandle* const handle = (BaseHandle*)list_box;
 
     list_box->state.elements = createListOfStrings(10U);
-    list_box->state.selected_string = (char*)malloc(1U);
-    list_box->state.selected_string[0] = '\0';
+    list_box->state.selected_element = (char*)malloc(1U);
+    list_box->state.selected_element[0] = '\0';
 
     updateListBoxState((ListBoxInternalHandle*)handle, data_view);
 
@@ -474,55 +484,20 @@ void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)
 
         if (isButtonCallbackFunctionKeyInMap(handle_string, button_callback_function_map))
         {
-            ButtonCallbackFunction cb_fun = getButtonCallbackFunction("button0", button_callback_function_map);
+            ButtonCallbackFunction cb_fun = getButtonCallbackFunction(handle_string, button_callback_function_map);
             cb_fun(getButtonHandle(handle_string));
         }
     }
     else if (type == GUI_ET_SLIDER)
     {
-        // TODO...
-    }
-    /*
+        SliderCallbackFunctionMap* const slider_callback_function_map = getSliderCallbackFunctionMap();
 
-    UInt8ArrayView payload_data_view{raw_data + idx, payload_size};
-
-    if (type == dvs::GuiElementType::Slider)
-    {
-        std::map<std::string, gui::SliderCallbackFunction>& gui_callbacks = getSliderCallbacks();
-
-        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        if (isSliderCallbackFunctionKeyInMap(handle_string, slider_callback_function_map))
         {
-            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::SliderHandle>(handle_string));
+            SliderCallbackFunction cb_fun = getSliderCallbackFunction(handle_string, slider_callback_function_map);
+            cb_fun(getSliderHandle(handle_string));
         }
     }
-    else if (type == dvs::GuiElementType::Button)
-    {
-        std::map<std::string, gui::ButtonCallbackFunction>& gui_callbacks = getButtonCallbacks();
-
-        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
-        {
-            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::ButtonHandle>(handle_string));
-        }
-    }
-    else if (type == dvs::GuiElementType::Checkbox)
-    {
-        std::map<std::string, gui::CheckboxCallbackFunction>& gui_callbacks = getCheckboxCallbacks();
-
-        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
-        {
-            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::CheckboxHandle>(handle_string));
-        }
-    }
-    else if (type == dvs::GuiElementType::TextLabel)
-    {
-        std::map<std::string, gui::TextLabelCallbackFunction>& gui_callbacks = getTextLabelCallbacks();
-
-        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
-        {
-            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::TextLabelHandle>(handle_string));
-        }
-    }
-    */
 }
 
 void internal_waitForSyncForAllGuiElements()
@@ -590,6 +565,16 @@ void registerButtonCallback(const char* const handle_string, void (*button_callb
     insertElementIntoButtonCallbackFunctionMap(button_callback_function_map, handle_string, button_callback_function);
 }
 
-void registerSliderCallback(const char* const handle_string, void (*slider_callback_function)(const SliderHandle)) {}
+void registerSliderCallback(const char* const handle_string, void (*slider_callback_function)(const SliderHandle))
+{
+    SliderCallbackFunctionMap* const slider_callback_function_map = getSliderCallbackFunctionMap();
+
+    if (isSliderCallbackFunctionKeyInMap(handle_string, slider_callback_function_map))
+    {
+        printf("Slider callback with name %s already exists! Overwriting old callback...\n", handle_string);
+    }
+
+    insertElementIntoSliderCallbackFunctionMap(slider_callback_function_map, handle_string, slider_callback_function);
+}
 
 #endif  // DVS_GUI_INTERNAL_H

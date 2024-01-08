@@ -38,6 +38,14 @@ typedef struct S_ButtonCallbackMap
     size_t size;
 } ButtonCallbackFunctionMap;
 
+typedef struct S_SliderCallbackFunctionMap
+{
+    char** keys;
+    SliderCallbackFunction* values;
+
+    size_t size;
+} SliderCallbackFunctionMap;
+
 #define INIT_MAP(__map, __initial_size, __map_value_type)                                 \
     __map->keys = (char**)malloc(__initial_size * sizeof(char*));                         \
     __map->values = (__map_value_type*)malloc(__initial_size * sizeof(__map_value_type)); \
@@ -260,6 +268,42 @@ bool isButtonCallbackFunctionKeyInMap(const char* const handle_string,
 void resetButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map, const size_t initial_size)
 {
     RESET_MAP(map, initial_size, ButtonCallbackFunction);
+}
+
+// SliderCallbackFunctionMap
+void initSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map, const size_t initial_size)
+{
+    INIT_MAP(map, initial_size, SliderCallbackFunction);
+}
+
+void insertElementIntoSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map,
+                                                const char* const handle_string,
+                                                SliderCallbackFunction const callback_function)
+{
+    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, SliderCallbackFunction);
+}
+
+SliderCallbackFunction getSliderCallbackFunction(const char* const handle_string,
+                                                 const SliderCallbackFunctionMap* const map)
+{
+    SliderCallbackFunction ret_val = NULL;
+    GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
+    return ret_val;
+}
+
+bool isSliderCallbackFunctionKeyInMap(const char* const handle_string,
+                                      const SliderCallbackFunctionMap* const gui_element_handles)
+{
+    bool is_in_map = false;
+
+    IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
+
+    return is_in_map;
+}
+
+void resetSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map, const size_t initial_size)
+{
+    RESET_MAP(map, initial_size, SliderCallbackFunction);
 }
 
 #endif  // DVS_MAP_H
