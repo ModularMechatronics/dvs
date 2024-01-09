@@ -126,6 +126,10 @@ public:
     void newTab(wxCommandEvent& WXUNUSED(event));
     void createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewListBoxCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewEditableTextCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewDropDownMenuCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewRadioButtonGroupCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewCheckboxCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewTextLabelCallbackFunction(wxCommandEvent& WXUNUSED(event));

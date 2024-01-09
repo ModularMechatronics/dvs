@@ -54,6 +54,17 @@ public:
         return internal_ptr_->value_;
     }
 
+    double getNormalizedValue() const
+    {
+        throwExceptionIfPointerIsNotInitialized(internal_ptr_);
+
+        const double val = static_cast<double>(internal_ptr_->value_);
+        const double min_val = static_cast<double>(internal_ptr_->min_value_);
+        const double max_val = static_cast<double>(internal_ptr_->max_value_);
+
+        return (val - min_val) / (max_val - min_val);
+    }
+
     void setEnabled() const
     {
         throwExceptionIfPointerIsNotInitialized(internal_ptr_);
@@ -69,25 +80,25 @@ public:
     void setMinValue(const std::int32_t min_value) const
     {
         throwExceptionIfPointerIsNotInitialized(internal_ptr_);
-        setMinValue(min_value);
+        internal_ptr_->setMinValue(min_value);
     }
 
     void setMaxValue(const std::int32_t max_value) const
     {
         throwExceptionIfPointerIsNotInitialized(internal_ptr_);
-        setMaxValue(max_value);
+        internal_ptr_->setMaxValue(max_value);
     }
 
     void setValue(const std::int32_t value) const
     {
         throwExceptionIfPointerIsNotInitialized(internal_ptr_);
-        setValue(value);
+        internal_ptr_->setValue(value);
     }
 
     void setStepSize(const std::int32_t step_size) const
     {
         throwExceptionIfPointerIsNotInitialized(internal_ptr_);
-        setStepSize(step_size);
+        internal_ptr_->setStepSize(step_size);
     }
 };
 
@@ -166,10 +177,114 @@ public:
     }
 };
 
+class ListBoxHandle
+{
+private:
+    std::shared_ptr<internal::ListBoxInternal> internal_ptr_;
+    template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
+
+    ListBoxHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::ListBoxInternal>(internal_ptr)}
+    {
+    }
+
+public:
+    ListBoxHandle() : internal_ptr_{nullptr} {}
+
+    std::vector<std::string> getElements() const
+    {
+        return internal_ptr_->elements_;
+    }
+
+    std::string getSelectedElement() const
+    {
+        return internal_ptr_->selected_element_;
+    }
+};
+
+class EditableTextHandle
+{
+private:
+    std::shared_ptr<internal::EditableTextInternal> internal_ptr_;
+    template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
+
+    EditableTextHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::EditableTextInternal>(internal_ptr)}
+    {
+    }
+
+public:
+    EditableTextHandle() : internal_ptr_{nullptr} {}
+
+    std::string getText() const
+    {
+        return internal_ptr_->text_;
+    }
+
+    bool getEnterPressed() const
+    {
+        return internal_ptr_->enter_pressed_;
+    }
+};
+
+class DropDownMenuHandle
+{
+private:
+    std::shared_ptr<internal::DropDownMenuInternal> internal_ptr_;
+    template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
+
+    DropDownMenuHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::DropDownMenuInternal>(internal_ptr)}
+    {
+    }
+
+public:
+    DropDownMenuHandle() : internal_ptr_{nullptr} {}
+
+    std::vector<std::string> getElements() const
+    {
+        return internal_ptr_->elements_;
+    }
+
+    std::string getSelectedElement() const
+    {
+        return internal_ptr_->selected_element_;
+    }
+};
+
+class RadioButtonGroupHandle
+{
+private:
+    std::shared_ptr<internal::RadioButtonGroupInternal> internal_ptr_;
+    template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
+
+    RadioButtonGroupHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::RadioButtonGroupInternal>(internal_ptr)}
+    {
+    }
+
+public:
+    RadioButtonGroupHandle() : internal_ptr_{nullptr} {}
+
+    std::vector<std::string> getButtons() const
+    {
+        return internal_ptr_->getButtons();
+    }
+
+    std::int32_t getSelectedIdx() const
+    {
+        return internal_ptr_->getSelectedIdx();
+    }
+};
+
 using SliderCallbackFunction = std::function<void(const SliderHandle&)>;
 using ButtonCallbackFunction = std::function<void(const ButtonHandle&)>;
 using CheckboxCallbackFunction = std::function<void(const CheckboxHandle&)>;
 using TextLabelCallbackFunction = std::function<void(const TextLabelHandle&)>;
+using ListBoxCallbackFunction = std::function<void(const ListBoxHandle&)>;
+using EditableTextCallbackFunction = std::function<void(const EditableTextHandle&)>;
+using DropDownMenuCallbackFunction = std::function<void(const DropDownMenuHandle&)>;
+using RadioButtonGroupCallbackFunction = std::function<void(const RadioButtonGroupHandle&)>;
 
 }  // namespace gui
 
@@ -200,6 +315,34 @@ inline std::map<std::string, gui::CheckboxCallbackFunction>& getCheckboxCallback
 inline std::map<std::string, gui::TextLabelCallbackFunction>& getTextLabelCallbacks()
 {
     static std::map<std::string, gui::TextLabelCallbackFunction> gui_callbacks;
+
+    return gui_callbacks;
+}
+
+inline std::map<std::string, gui::ListBoxCallbackFunction>& getListBoxCallbacks()
+{
+    static std::map<std::string, gui::ListBoxCallbackFunction> gui_callbacks;
+
+    return gui_callbacks;
+}
+
+inline std::map<std::string, gui::EditableTextCallbackFunction>& getEditableTextCallbacks()
+{
+    static std::map<std::string, gui::EditableTextCallbackFunction> gui_callbacks;
+
+    return gui_callbacks;
+}
+
+inline std::map<std::string, gui::DropDownMenuCallbackFunction>& getDropDownMenuCallbacks()
+{
+    static std::map<std::string, gui::DropDownMenuCallbackFunction> gui_callbacks;
+
+    return gui_callbacks;
+}
+
+inline std::map<std::string, gui::RadioButtonGroupCallbackFunction>& getRadioButtonGroupCallbacks()
+{
+    static std::map<std::string, gui::RadioButtonGroupCallbackFunction> gui_callbacks;
 
     return gui_callbacks;
 }
@@ -247,6 +390,30 @@ inline void registerGuiCallback(const std::string& handle_string,
                                 std::function<void(const TextLabelHandle&)> callback_function)
 {
     registerGuiCallback(handle_string, callback_function, internal::getTextLabelCallbacks);
+}
+
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const ListBoxHandle&)> callback_function)
+{
+    registerGuiCallback(handle_string, callback_function, internal::getListBoxCallbacks);
+}
+
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const EditableTextHandle&)> callback_function)
+{
+    registerGuiCallback(handle_string, callback_function, internal::getEditableTextCallbacks);
+}
+
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const DropDownMenuHandle&)> callback_function)
+{
+    registerGuiCallback(handle_string, callback_function, internal::getDropDownMenuCallbacks);
+}
+
+inline void registerGuiCallback(const std::string& handle_string,
+                                std::function<void(const RadioButtonGroupHandle&)> callback_function)
+{
+    registerGuiCallback(handle_string, callback_function, internal::getRadioButtonGroupCallbacks);
 }
 
 template <typename T> T getGuiElementHandle(const std::string& handle_string);
@@ -327,6 +494,87 @@ template <> inline TextLabelHandle getGuiElementHandle(const std::string& handle
     return TextLabelHandle{gui_element};
 }
 
+template <> inline ListBoxHandle getGuiElementHandle(const std::string& handle_string)
+{
+    internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
+
+    if (gui_element_handles.count(handle_string) == 0U)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
+    }
+
+    const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
+
+    if (gui_element->getType() != dvs::GuiElementType::ListBox)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " is not a list box!");
+    }
+
+    return ListBoxHandle{gui_element};
+}
+
+template <> inline EditableTextHandle getGuiElementHandle(const std::string& handle_string)
+{
+    internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
+
+    if (gui_element_handles.count(handle_string) == 0U)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
+    }
+
+    const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
+
+    if (gui_element->getType() != dvs::GuiElementType::EditableText)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " is not an editable text!");
+    }
+
+    // TODO: Solve this in a better way.
+    // Since enter pressed is a one-time event, we need to reset it here in the get function
+    // when the user gets the state in a synchronous way (from user application code, not from the callback function)
+    // std::dynamic_pointer_cast<internal::EditableTextInternal>(gui_element)->setEnterPressed(false);
+
+    return EditableTextHandle{gui_element};
+}
+
+template <> inline DropDownMenuHandle getGuiElementHandle(const std::string& handle_string)
+{
+    internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
+
+    if (gui_element_handles.count(handle_string) == 0U)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
+    }
+
+    const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
+
+    if (gui_element->getType() != dvs::GuiElementType::DropDownMenu)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " is not a drop down menu!");
+    }
+
+    return DropDownMenuHandle{gui_element};
+}
+
+template <> inline RadioButtonGroupHandle getGuiElementHandle(const std::string& handle_string)
+{
+    internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
+
+    if (gui_element_handles.count(handle_string) == 0U)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " does not exist!");
+    }
+
+    const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
+
+    if (gui_element->getType() != dvs::GuiElementType::RadioButtonGroup)
+    {
+        throw std::runtime_error("Gui element with handle string " + handle_string + " is not a radio button group!");
+    }
+
+    return RadioButtonGroupHandle{gui_element};
+}
+
 }  // namespace gui
 
 namespace internal
@@ -392,6 +640,42 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
         if (gui_callbacks.find(handle_string) != gui_callbacks.end())
         {
             gui_callbacks[handle_string](gui::getGuiElementHandle<gui::TextLabelHandle>(handle_string));
+        }
+    }
+    else if (type == dvs::GuiElementType::ListBox)
+    {
+        std::map<std::string, gui::ListBoxCallbackFunction>& gui_callbacks = getListBoxCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::ListBoxHandle>(handle_string));
+        }
+    }
+    else if (type == dvs::GuiElementType::EditableText)
+    {
+        std::map<std::string, gui::EditableTextCallbackFunction>& gui_callbacks = getEditableTextCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::EditableTextHandle>(handle_string));
+        }
+    }
+    else if (type == dvs::GuiElementType::DropDownMenu)
+    {
+        std::map<std::string, gui::DropDownMenuCallbackFunction>& gui_callbacks = getDropDownMenuCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::DropDownMenuHandle>(handle_string));
+        }
+    }
+    else if (type == dvs::GuiElementType::RadioButtonGroup)
+    {
+        std::map<std::string, gui::RadioButtonGroupCallbackFunction>& gui_callbacks = getRadioButtonGroupCallbacks();
+
+        if (gui_callbacks.find(handle_string) != gui_callbacks.end())
+        {
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::RadioButtonGroupHandle>(handle_string));
         }
     }
 }

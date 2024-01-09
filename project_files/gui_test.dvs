@@ -134,16 +134,38 @@
                             "height": 0.1766233742237091,
                             "type": "DROPDOWN_MENU",
                             "width": 0.1408776044845581,
-                            "x": 0.5471131682395935,
+                            "x": 0.5471131801605225,
                             "y": 0.7350649237632751
+                        },
+                        {
+                            "element_specific_settings": {
+                                "elements": [
+                                    {
+                                        "label": "Radio button 0"
+                                    },
+                                    {
+                                        "label": "Radio button 1"
+                                    },
+                                    {
+                                        "label": "Radio button 2"
+                                    }
+                                ],
+                                "label": "A radio button group"
+                            },
+                            "handle_string": "rbg0",
+                            "height": 0.3168831169605255,
+                            "type": "RADIO_BUTTON_GROUP",
+                            "width": 0.21016165614128113,
+                            "x": 0.2840646505355835,
+                            "y": 0.5324675440788269
                         }
                     ],
                     "name": "primary_view"
                 }
             ],
             "width": 866.0,
-            "x": 142.0,
-            "y": 299.0
+            "x": 283.0,
+            "y": 253.0
         }
     ]
 }

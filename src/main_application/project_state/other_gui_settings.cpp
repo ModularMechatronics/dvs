@@ -126,17 +126,29 @@ DropDownMenuSettings::DropDownMenuSettings(const nlohmann::json& j_data)
 
     const nlohmann::json j_ess = j_data["element_specific_settings"];
 
-    initially_selected_item = j_ess["initially_selected_item"];
-
-    for (const std::string elem : j_ess["elements"])
+    if (j_ess.contains("elements"))
     {
-        elements.push_back(elem);
+        for (const std::string elem : j_ess["elements"])
+        {
+            if (elem != "")
+            {
+                elements.push_back(elem);
+            }
+        }
     }
 
-    if (std::find(elements.begin(), elements.end(), initially_selected_item) == elements.end() &&
-        initially_selected_item != "")
+    if (j_ess.contains("initially_selected_item"))
     {
-        elements.push_back(initially_selected_item);
+        initially_selected_item = j_ess["initially_selected_item"];
+    }
+    else
+    {
+        initially_selected_item = "";
+    }
+
+    if (std::find(elements.begin(), elements.end(), initially_selected_item) == elements.end())
+    {
+        initially_selected_item = "";
     }
 }
 
@@ -175,9 +187,12 @@ ListBoxSettings::ListBoxSettings(const nlohmann::json& j_data) : ElementSettings
 
     const nlohmann::json j_ess = j_data["element_specific_settings"];
 
-    for (const std::string elem : j_ess["elements"])
+    if (j_ess.contains("elements"))
     {
-        elements.push_back(elem);
+        for (const std::string elem : j_ess["elements"])
+        {
+            elements.push_back(elem);
+        }
     }
 }
 
@@ -234,7 +249,7 @@ RadioButtonGroupSettings::RadioButtonGroupSettings(const nlohmann::json& j_data)
 
     label = j_ess["label"];
 
-    for (const std::string radio_button : j_ess["elements"])
+    for (const nlohmann::json& radio_button : j_ess["elements"])
     {
         radio_buttons.push_back(RadioButtonSettings{radio_button});
     }

@@ -25,6 +25,7 @@ void changeGuiFromClientApp()
 void firstTest()
 {
     std::cout << "Registering callbacks!" << std::endl;
+
     dvs::gui::registerGuiCallback("slider0", [](const dvs::gui::SliderHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"slider0\" value: " << gui_element_handle.getValue() << std::endl;
     });
@@ -39,6 +40,49 @@ void firstTest()
 
     dvs::gui::registerGuiCallback("checkbox0", [](const dvs::gui::CheckboxHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"checkbox0\" pressed: " << gui_element_handle.getIsChecked() << std::endl;
+    });
+
+    dvs::gui::registerGuiCallback("listbox0", [](const dvs::gui::ListBoxHandle& gui_element_handle) -> void {
+        std::cout << "Callback function: \"listbox0\" selected: " << gui_element_handle.getSelectedElement()
+                  << std::endl;
+
+        for (const std::string elem : gui_element_handle.getElements())
+        {
+            std::cout << "elem: " << elem << std::endl;
+        }
+    });
+
+    dvs::gui::registerGuiCallback("text_entry", [](const dvs::gui::EditableTextHandle& gui_element_handle) -> void {
+        if (gui_element_handle.getEnterPressed())
+        {
+            std::cout << "Callback function: \"text_entry\": Enter pressed with text \"" << gui_element_handle.getText()
+                      << "\"" << std::endl;
+        }
+        else
+        {
+            std::cout << "Callback function: \"text_entry\": " << gui_element_handle.getText() << std::endl;
+        }
+    });
+
+    dvs::gui::registerGuiCallback("ddm0", [](const dvs::gui::DropDownMenuHandle& gui_element_handle) -> void {
+        std::cout << "Callback function: \"ddm0\" selected: " << gui_element_handle.getSelectedElement() << std::endl;
+
+        for (const std::string elem : gui_element_handle.getElements())
+        {
+            std::cout << "elem: " << elem << std::endl;
+        }
+    });
+
+    dvs::gui::registerGuiCallback("rbg0", [](const dvs::gui::RadioButtonGroupHandle& gui_element_handle) -> void {
+        std::cout << "Callback function: \"rbg0\" selected: " << std::endl;
+        std::cout << "Selected idx: " << gui_element_handle.getSelectedIdx() << std::endl;
+
+        const std::vector<std::string> buttons = gui_element_handle.getButtons();
+
+        for (size_t i = 0; i < buttons.size(); ++i)
+        {
+            std::cout << "Button: " << buttons[i] << std::endl;
+        }
     });
 
     std::cout << "Starting GUI thread!" << std::endl;

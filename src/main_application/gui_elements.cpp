@@ -284,3 +284,300 @@ void TextLabelGuiElement::updateElementSettings(const std::map<std::string, std:
     }
     element_settings_->handle_string = new_settings.at("handle_string");
 }
+
+ListBoxGuiElement::ListBoxGuiElement(
+    wxFrame* parent,
+    const std::shared_ptr<ElementSettings>& element_settings,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released,
+    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+        notify_parent_window_right_mouse_pressed,
+    const std::function<void()>& notify_main_window_about_modification,
+    const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+    const wxPoint& pos,
+    const wxSize& size)
+    : wxListBox{parent, wxID_ANY, pos, size},
+      ApplicationGuiElement{element_settings,
+                            notify_main_window_key_pressed,
+                            notify_main_window_key_released,
+                            notify_parent_window_right_mouse_pressed,
+                            notify_main_window_about_modification,
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window}
+{
+    elements_ = std::dynamic_pointer_cast<ListBoxSettings>(element_settings)->elements;
+
+    for (const std::string& element : elements_)
+    {
+        this->Append(element);
+    }
+
+    this->SetSelection(0);
+
+    if (this->GetSelection() >= 0 && this->GetSelection() < elements_.size())
+    {
+        selected_element_ = elements_.at(this->GetSelection());
+    }
+    else
+    {
+        selected_element_ = "";
+    }
+
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
+
+    Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
+
+    Bind(wxEVT_LISTBOX, &ListBoxGuiElement::listBoxCallback, this);
+}
+
+void ListBoxGuiElement::listBoxCallback(wxCommandEvent& event)
+{
+    const int selection = this->GetSelection();
+    if (selection >= 0 && selection < elements_.size())
+    {
+        selected_element_ = elements_.at(selection);
+    }
+    else
+    {
+        selected_element_ = "";
+    }
+
+    sendGuiData();
+}
+
+void ListBoxGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings)
+{
+    /*ListBoxGuiElement* button_settings = dynamic_cast<TextLabelSettings*>(element_settings_.get());
+
+    if (new_settings.count("label") > 0U)
+    {
+        this->SetLabel(new_settings.at("label"));
+        button_settings->label = new_settings.at("label");
+    }
+    element_settings_->handle_string = new_settings.at("handle_string");*/
+}
+
+EditableTextGuiElement::EditableTextGuiElement(
+    wxFrame* parent,
+    const std::shared_ptr<ElementSettings>& element_settings,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released,
+    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+        notify_parent_window_right_mouse_pressed,
+    const std::function<void()>& notify_main_window_about_modification,
+    const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+    const wxPoint& pos,
+    const wxSize& size)
+    : wxTextCtrl{parent, wxID_ANY, "empty", pos, size, wxTE_PROCESS_ENTER | wxTE_LEFT},
+      ApplicationGuiElement{element_settings,
+                            notify_main_window_key_pressed,
+                            notify_main_window_key_released,
+                            notify_parent_window_right_mouse_pressed,
+                            notify_main_window_about_modification,
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window}
+{
+    text_ = std::dynamic_pointer_cast<EditableTextSettings>(element_settings)->init_value;
+
+    this->SetLabel(text_);
+
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
+
+    Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
+
+    Bind(wxEVT_TEXT, &EditableTextGuiElement::editableTextCallback, this);
+    Bind(wxEVT_TEXT_ENTER, &EditableTextGuiElement::editableTextEnterPressedCallback, this);
+}
+
+void EditableTextGuiElement::editableTextEnterPressedCallback(wxCommandEvent& event)
+{
+    enter_pressed_ = true;
+    sendGuiData();
+    enter_pressed_ = false;
+}
+
+void EditableTextGuiElement::editableTextCallback(wxCommandEvent& event)
+{
+    enter_pressed_ = false;
+    text_ = this->GetValue();
+
+    sendGuiData();
+}
+
+void EditableTextGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings)
+{
+    /*EditableTextGuiElement* button_settings = dynamic_cast<TextLabelSettings*>(element_settings_.get());
+
+    if (new_settings.count("label") > 0U)
+    {
+        this->SetLabel(new_settings.at("label"));
+        button_settings->label = new_settings.at("label");
+    }
+    element_settings_->handle_string = new_settings.at("handle_string");*/
+}
+
+DropdownMenuGuiElement::DropdownMenuGuiElement(
+    wxFrame* parent,
+    const std::shared_ptr<ElementSettings>& element_settings,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released,
+    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+        notify_parent_window_right_mouse_pressed,
+    const std::function<void()>& notify_main_window_about_modification,
+    const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+    const wxPoint& pos,
+    const wxSize& size)
+    : wxComboBox{parent, wxID_ANY, "", pos, size, 0, NULL, wxCB_READONLY},
+      ApplicationGuiElement{element_settings,
+                            notify_main_window_key_pressed,
+                            notify_main_window_key_released,
+                            notify_parent_window_right_mouse_pressed,
+                            notify_main_window_about_modification,
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window}
+{
+    this->SetWindowStyle(wxCB_READONLY);
+    elements_ = std::dynamic_pointer_cast<DropDownMenuSettings>(element_settings)->elements;
+
+    for (const std::string& element : elements_)
+    {
+        this->Append(element);
+    }
+
+    this->SetSelection(0);
+
+    if (this->GetSelection() >= 0 && this->GetSelection() < elements_.size())
+    {
+        selected_element_ = elements_.at(this->GetSelection());
+    }
+    else
+    {
+        selected_element_ = "";
+    }
+
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
+
+    Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
+
+    Bind(wxEVT_COMBOBOX, &DropdownMenuGuiElement::dropdownCallback, this);
+}
+
+void DropdownMenuGuiElement::dropdownCallback(wxCommandEvent& event)
+{
+    const int selection = this->GetSelection();
+    if (selection >= 0 && selection < elements_.size())
+    {
+        selected_element_ = elements_.at(selection);
+    }
+    else
+    {
+        selected_element_ = "";
+    }
+
+    sendGuiData();
+}
+
+void DropdownMenuGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings)
+{
+    /*DropdownMenuGuiElement* button_settings = dynamic_cast<TextLabelSettings*>(element_settings_.get());
+
+    if (new_settings.count("label") > 0U)
+    {
+        this->SetLabel(new_settings.at("label"));
+        button_settings->label = new_settings.at("label");
+    }
+    element_settings_->handle_string = new_settings.at("handle_string");*/
+}
+
+RadioButtonGroupGuiElement::RadioButtonGroupGuiElement(
+    wxFrame* parent,
+    const std::shared_ptr<ElementSettings>& element_settings,
+    const std::function<void(const char key)>& notify_main_window_key_pressed,
+    const std::function<void(const char key)>& notify_main_window_key_released,
+    const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+        notify_parent_window_right_mouse_pressed,
+    const std::function<void()>& notify_main_window_about_modification,
+    const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>& notify_tab_about_editing,
+    const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+    const wxPoint& pos,
+    const wxSize& size)
+    : wxRadioBox{parent,
+                 wxID_ANY,
+                 std::dynamic_pointer_cast<RadioButtonGroupSettings>(element_settings)->label,
+                 pos,
+                 size,
+                 getRadioButtons(element_settings),
+                 1,
+                 wxRA_SPECIFY_COLS},
+      ApplicationGuiElement{element_settings,
+                            notify_main_window_key_pressed,
+                            notify_main_window_key_released,
+                            notify_parent_window_right_mouse_pressed,
+                            notify_main_window_about_modification,
+                            notify_tab_about_editing,
+                            push_text_to_cmdl_output_window}
+{
+    Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
+    Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
+
+    Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
+
+    Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
+
+    Bind(wxEVT_RADIOBOX, &RadioButtonGroupGuiElement::radioButtonGroupCallback, this);
+
+    buttons_.clear();
+
+    for (size_t k = 0; k < this->GetCount(); ++k)
+    {
+        buttons_.push_back(this->GetString(k).ToStdString());
+    }
+
+    selected_idx_ = this->GetSelection();
+}
+
+void RadioButtonGroupGuiElement::radioButtonGroupCallback(wxCommandEvent& event)
+{
+    buttons_.clear();
+
+    for (size_t k = 0; k < this->GetCount(); ++k)
+    {
+        buttons_.push_back(this->GetString(k).ToStdString());
+    }
+
+    selected_idx_ = this->GetSelection();
+
+    sendGuiData();
+}
+
+void RadioButtonGroupGuiElement::updateElementSettings(const std::map<std::string, std::string>& new_settings)
+{
+    /*RadioButtonGroupGuiElement* button_settings = dynamic_cast<TextLabelSettings*>(element_settings_.get());
+
+    if (new_settings.count("label") > 0U)
+    {
+        this->SetLabel(new_settings.at("label"));
+        button_settings->label = new_settings.at("label");
+    }
+    element_settings_->handle_string = new_settings.at("handle_string");*/
+}

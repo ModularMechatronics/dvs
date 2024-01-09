@@ -189,6 +189,193 @@ public:
     }
 };
 
+class ListBoxInternal final : public InternalGuiElementHandle
+{
+public:
+    std::vector<std::string> elements_;
+    std::string selected_element_;
+
+public:
+    ListBoxInternal() {}
+    ListBoxInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::ListBox}
+    {
+        updateState(data_view);
+    }
+
+    void updateState(const UInt8ArrayView& data_view) override
+    {
+        const std::uint8_t* const data_ptr = data_view.data();
+        std::uint8_t selected_element_length = data_ptr[0];
+
+        selected_element_.resize(selected_element_length);
+
+        std::size_t idx{1U};
+
+        std::memcpy(selected_element_.data(), data_ptr + idx, selected_element_length);
+
+        idx += selected_element_length;
+
+        std::uint16_t num_elements;
+        std::memcpy(&num_elements, data_ptr + idx, sizeof(std::uint16_t));
+        idx += sizeof(std::uint16_t);
+
+        elements_.clear();
+        elements_.reserve(num_elements);
+        for (std::uint16_t k = 0; k < num_elements; k++)
+        {
+            std::uint8_t element_length = data_ptr[idx];
+            idx += sizeof(std::uint8_t);
+
+            std::string element;
+            element.resize(element_length);
+
+            std::memcpy(element.data(), data_ptr + idx, element_length);
+            idx += element_length;
+
+            elements_.push_back(element);
+        }
+    }
+};
+
+class EditableTextInternal final : public InternalGuiElementHandle
+{
+public:
+    bool enter_pressed_;
+    std::string text_;
+
+public:
+    EditableTextInternal() {}
+    EditableTextInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::EditableText}
+    {
+        updateState(data_view);
+    }
+
+    void setEnterPressed(const bool enter_pressed)
+    {
+        enter_pressed_ = enter_pressed;
+    }
+
+    void updateState(const UInt8ArrayView& data_view) override
+    {
+        const std::uint8_t* const data_ptr = data_view.data();
+        enter_pressed_ = data_ptr[0];
+
+        const std::uint8_t text_length = data_ptr[1];
+
+        text_.resize(text_length);
+
+        std::size_t idx{2U};
+
+        std::memcpy(text_.data(), data_ptr + idx, text_length);
+    }
+};
+
+class DropDownMenuInternal final : public InternalGuiElementHandle
+{
+public:
+    std::vector<std::string> elements_;
+    std::string selected_element_;
+
+public:
+    DropDownMenuInternal() {}
+    DropDownMenuInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::DropDownMenu}
+    {
+        updateState(data_view);
+    }
+
+    void updateState(const UInt8ArrayView& data_view) override
+    {
+        const std::uint8_t* const data_ptr = data_view.data();
+        std::uint8_t selected_element_length = data_ptr[0];
+
+        selected_element_.resize(selected_element_length);
+
+        std::size_t idx{1U};
+
+        std::memcpy(selected_element_.data(), data_ptr + idx, selected_element_length);
+
+        idx += selected_element_length;
+
+        std::uint16_t num_elements;
+        std::memcpy(&num_elements, data_ptr + idx, sizeof(std::uint16_t));
+        idx += sizeof(std::uint16_t);
+
+        elements_.clear();
+        elements_.reserve(num_elements);
+        for (std::uint16_t k = 0; k < num_elements; k++)
+        {
+            std::uint8_t element_length = data_ptr[idx];
+            idx += sizeof(std::uint8_t);
+
+            std::string element;
+            element.resize(element_length);
+
+            std::memcpy(element.data(), data_ptr + idx, element_length);
+            idx += element_length;
+
+            elements_.push_back(element);
+        }
+    }
+};
+
+class RadioButtonGroupInternal final : public InternalGuiElementHandle
+{
+public:
+    std::vector<std::string> buttons_;
+    std::int32_t selected_idx_;
+
+public:
+    RadioButtonGroupInternal() {}
+    RadioButtonGroupInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::RadioButtonGroup}
+    {
+        updateState(data_view);
+    }
+
+    void updateState(const UInt8ArrayView& data_view) override
+    {
+        size_t idx = 0U;
+
+        std::memcpy(&selected_idx_, data_view.data() + idx, sizeof(std::int32_t));
+        idx += sizeof(std::int32_t);
+
+        std::uint16_t num_buttons;
+
+        std::memcpy(&num_buttons, data_view.data() + idx, sizeof(std::uint16_t));
+        idx += sizeof(std::uint16_t);
+
+        buttons_.clear();
+        buttons_.reserve(num_buttons);
+
+        for (std::uint16_t k = 0; k < num_buttons; k++)
+        {
+            std::uint8_t button_length = data_view.data()[idx];
+            idx += sizeof(std::uint8_t);
+
+            std::string button;
+            button.resize(button_length);
+
+            std::memcpy(button.data(), data_view.data() + idx, button_length);
+            idx += button_length;
+
+            buttons_.push_back(button);
+        }
+    }
+
+    std::vector<std::string> getButtons() const
+    {
+        return buttons_;
+    }
+
+    std::int32_t getSelectedIdx() const
+    {
+        return selected_idx_;
+    }
+};
+
 inline std::map<std::string, std::shared_ptr<InternalGuiElementHandle>>& getGuiElementHandles()
 {
     static std::map<std::string, std::shared_ptr<InternalGuiElementHandle>> gui_element_handles;
@@ -336,7 +523,7 @@ inline ReceivedGuiData receiveGuiData()
 
     close(tcp_connfd);
 
-    return std::move(received_data);
+    return received_data;
 }
 
 inline void populateGuiElementWithData(const dvs::GuiElementType type,
@@ -373,6 +560,22 @@ inline void populateGuiElementWithData(const dvs::GuiElementType type,
         {
             gui_element_handles[handle_string] = std::make_shared<TextLabelInternal>(handle_string, data_view);
         }
+        else if (type == dvs::GuiElementType::ListBox)
+        {
+            gui_element_handles[handle_string] = std::make_shared<ListBoxInternal>(handle_string, data_view);
+        }
+        else if (type == dvs::GuiElementType::EditableText)
+        {
+            gui_element_handles[handle_string] = std::make_shared<EditableTextInternal>(handle_string, data_view);
+        }
+        else if (type == dvs::GuiElementType::DropDownMenu)
+        {
+            gui_element_handles[handle_string] = std::make_shared<DropDownMenuInternal>(handle_string, data_view);
+        }
+        else if (type == dvs::GuiElementType::RadioButtonGroup)
+        {
+            gui_element_handles[handle_string] = std::make_shared<RadioButtonGroupInternal>(handle_string, data_view);
+        }
     }
 }
 
@@ -397,6 +600,7 @@ inline void waitForSyncForAllGuiElements()
         idx += sizeof(std::uint8_t);
 
         // Receive[2]: Handle string length (std::uint8_t)
+        // TODO: Should be std::uint8_t???
         const std::uint16_t handle_string_length = static_cast<std::uint16_t>(raw_data[idx]);
         idx += sizeof(std::uint8_t);
 
@@ -409,10 +613,10 @@ inline void waitForSyncForAllGuiElements()
             idx++;
         }
 
-        std::uint16_t size_of_current_gui_element;
+        std::uint32_t size_of_current_gui_element;
 
-        // Receive[4]: Size of current gui element (std::uint16_t)
-        std::memcpy(&size_of_current_gui_element, raw_data + idx, sizeof(std::uint16_t));
+        // Receive[4]: Current gui element payload size (std::uint32_t)
+        std::memcpy(&size_of_current_gui_element, raw_data + idx, sizeof(std::uint32_t));
         idx += sizeof(std::uint32_t);
 
         // Receive[5]: Gui element data (variable)

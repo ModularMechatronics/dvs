@@ -50,7 +50,7 @@ public:
         return GuiElementState::getTotalNumBytes() + sizeof(std::uint8_t);
     }
 
-    virtual void serializeToBuffer(FillableUInt8Array& output_array) const override
+    void serializeToBuffer(FillableUInt8Array& output_array) const override
     {
         GuiElementState::serializeToBuffer(output_array);
         output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));  // Payload size
@@ -90,7 +90,7 @@ public:
         return GuiElementState::getTotalNumBytes() + sizeof(std::int32_t) * 4U + sizeof(std::uint8_t);
     }
 
-    virtual void serializeToBuffer(FillableUInt8Array& output_array) const override
+    void serializeToBuffer(FillableUInt8Array& output_array) const override
     {
         GuiElementState::serializeToBuffer(output_array);
 
@@ -123,7 +123,7 @@ public:
         return GuiElementState::getTotalNumBytes() + sizeof(std::uint8_t);
     }
 
-    virtual void serializeToBuffer(FillableUInt8Array& output_array) const override
+    void serializeToBuffer(FillableUInt8Array& output_array) const override
     {
         GuiElementState::serializeToBuffer(output_array);
 
@@ -150,13 +150,220 @@ public:
         return GuiElementState::getTotalNumBytes() + sizeof(std::uint8_t) + label_.length();
     }
 
-    virtual void serializeToBuffer(FillableUInt8Array& output_array) const override
+    void serializeToBuffer(FillableUInt8Array& output_array) const override
     {
         GuiElementState::serializeToBuffer(output_array);
 
         output_array.fillWithStaticType(static_cast<std::uint32_t>(label_.length() + 1U));  // Payload size
         output_array.fillWithStaticType(static_cast<std::uint8_t>(label_.length()));
         output_array.fillWithDataFromPointer(label_.data(), label_.length());
+    }
+};
+
+class ListBoxState : public GuiElementState
+{
+private:
+    std::vector<std::string> elements_;
+    std::string selected_element_;
+
+public:
+    ListBoxState() = delete;
+    ListBoxState(const std::string& handle_string,
+                 const std::vector<std::string>& elements,
+                 const std::string& selected_element)
+        : GuiElementState{dvs::GuiElementType::ListBox, handle_string},
+          elements_{elements},
+          selected_element_{selected_element}
+    {
+    }
+    ~ListBoxState() override {}
+
+    std::uint64_t getTotalNumBytes() const override
+    {
+        std::uint64_t total_num_bytes = GuiElementState::getTotalNumBytes();
+        total_num_bytes += sizeof(std::uint8_t) + selected_element_.length();
+
+        total_num_bytes += sizeof(std::uint16_t);  // Number of elements
+
+        for (const auto& element : elements_)
+        {
+            total_num_bytes += sizeof(std::uint8_t) + element.length();
+        }
+        return total_num_bytes;
+    }
+
+    void serializeToBuffer(FillableUInt8Array& output_array) const override
+    {
+        GuiElementState::serializeToBuffer(output_array);
+
+        std::uint32_t payload_size = sizeof(std::uint8_t) + selected_element_.length();
+
+        payload_size += sizeof(std::uint16_t);  // Number of elements
+
+        for (const auto& element : elements_)
+        {
+            payload_size += sizeof(std::uint8_t) + element.length();
+        }
+
+        output_array.fillWithStaticType(payload_size);
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(selected_element_.length()));
+        output_array.fillWithDataFromPointer(selected_element_.data(), selected_element_.length());
+
+        output_array.fillWithStaticType(static_cast<std::uint16_t>(elements_.size()));
+
+        for (const auto& element : elements_)
+        {
+            output_array.fillWithStaticType(static_cast<std::uint8_t>(element.length()));
+            output_array.fillWithDataFromPointer(element.data(), element.length());
+        }
+    }
+};
+
+class EditableTextState : public GuiElementState
+{
+private:
+    bool enter_pressed_;
+    std::string text_;
+
+public:
+    EditableTextState() = delete;
+    EditableTextState(const std::string& handle_string, const bool enter_pressed, const std::string& text)
+        : GuiElementState{dvs::GuiElementType::EditableText, handle_string}, enter_pressed_{enter_pressed}, text_{text}
+    {
+    }
+    ~EditableTextState() override {}
+
+    std::uint64_t getTotalNumBytes() const override
+    {
+        std::uint64_t total_num_bytes = GuiElementState::getTotalNumBytes();
+        total_num_bytes += sizeof(std::uint8_t) + sizeof(std::uint8_t) + text_.length();
+
+        return total_num_bytes;
+    }
+
+    void serializeToBuffer(FillableUInt8Array& output_array) const override
+    {
+        GuiElementState::serializeToBuffer(output_array);
+
+        const std::uint32_t payload_size = sizeof(std::uint8_t) + sizeof(std::uint8_t) + text_.length();
+
+        output_array.fillWithStaticType(payload_size);
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(enter_pressed_));
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(text_.length()));
+        output_array.fillWithDataFromPointer(text_.data(), text_.length());
+    }
+};
+
+class DropDownMenuState : public GuiElementState
+{
+private:
+    std::vector<std::string> elements_;
+    std::string selected_element_;
+
+public:
+    DropDownMenuState() = delete;
+    DropDownMenuState(const std::string& handle_string)
+        : GuiElementState{dvs::GuiElementType::DropDownMenu, handle_string}
+    {
+    }
+    ~DropDownMenuState() override {}
+
+    std::uint64_t getTotalNumBytes() const override
+    {
+        std::uint64_t total_num_bytes = GuiElementState::getTotalNumBytes();
+        total_num_bytes += sizeof(std::uint8_t) + selected_element_.length();
+
+        total_num_bytes += sizeof(std::uint16_t);  // Number of elements
+
+        for (const auto& element : elements_)
+        {
+            total_num_bytes += sizeof(std::uint8_t) + element.length();
+        }
+        return total_num_bytes;
+    }
+
+    void serializeToBuffer(FillableUInt8Array& output_array) const override
+    {
+        GuiElementState::serializeToBuffer(output_array);
+
+        std::uint32_t payload_size = sizeof(std::uint8_t) + selected_element_.length();
+
+        payload_size += sizeof(std::uint16_t);  // Number of elements
+
+        for (const auto& element : elements_)
+        {
+            payload_size += sizeof(std::uint8_t) + element.length();
+        }
+
+        output_array.fillWithStaticType(payload_size);
+        output_array.fillWithStaticType(static_cast<std::uint8_t>(selected_element_.length()));
+        output_array.fillWithDataFromPointer(selected_element_.data(), selected_element_.length());
+
+        output_array.fillWithStaticType(static_cast<std::uint16_t>(elements_.size()));
+
+        for (const auto& element : elements_)
+        {
+            output_array.fillWithStaticType(static_cast<std::uint8_t>(element.length()));
+            output_array.fillWithDataFromPointer(element.data(), element.length());
+        }
+    }
+};
+
+class RadioButtonGroupState : public GuiElementState
+{
+private:
+    std::vector<std::string> buttons_;
+    std::int32_t selected_button_;
+
+public:
+    RadioButtonGroupState() = delete;
+    RadioButtonGroupState(const std::string& handle_string,
+                          const std::vector<std::string>& buttons,
+                          const std::int32_t selected_button)
+        : GuiElementState{dvs::GuiElementType::RadioButtonGroup, handle_string}
+    {
+    }
+    ~RadioButtonGroupState() override {}
+
+    std::uint64_t getTotalNumBytes() const override
+    {
+        std::uint64_t total_num_bytes = GuiElementState::getTotalNumBytes();
+
+        total_num_bytes += sizeof(std::uint16_t);  // Number of buttons
+        total_num_bytes += sizeof(std::uint32_t);  // Selected button
+
+        for (const auto& button : buttons_)
+        {
+            total_num_bytes += sizeof(std::uint8_t) + button.length();
+        }
+
+        return total_num_bytes;
+    }
+
+    void serializeToBuffer(FillableUInt8Array& output_array) const override
+    {
+        GuiElementState::serializeToBuffer(output_array);
+
+        std::uint32_t payload_size = 0U;
+
+        payload_size += sizeof(std::uint16_t);  // Number of buttons
+        payload_size += sizeof(std::uint32_t);  // Selected button
+
+        for (const auto& button : buttons_)
+        {
+            payload_size += sizeof(std::uint8_t) + button.length();
+        }
+
+        output_array.fillWithStaticType(payload_size);
+        output_array.fillWithStaticType(selected_button_);
+
+        output_array.fillWithStaticType(static_cast<std::uint16_t>(buttons_.size()));
+
+        for (const auto& button : buttons_)
+        {
+            output_array.fillWithStaticType(static_cast<std::uint8_t>(button.length()));
+            output_array.fillWithDataFromPointer(button.data(), button.length());
+        }
     }
 };
 
