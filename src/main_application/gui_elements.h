@@ -772,10 +772,10 @@ public:
 
     std::shared_ptr<GuiElementState> getGuiElementState() const override
     {
-        std::shared_ptr<ListBoxState> list_box_state =
-            std::make_shared<ListBoxState>(element_settings_->handle_string, elements_, selected_element_);
+        std::shared_ptr<DropDownMenuState> drop_down_menu_state =
+            std::make_shared<DropDownMenuState>(element_settings_->handle_string, elements_, selected_element_);
 
-        return list_box_state;
+        return drop_down_menu_state;
     }
 };
 

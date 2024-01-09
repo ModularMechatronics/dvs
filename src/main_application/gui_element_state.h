@@ -262,8 +262,12 @@ private:
 
 public:
     DropDownMenuState() = delete;
-    DropDownMenuState(const std::string& handle_string)
-        : GuiElementState{dvs::GuiElementType::DropDownMenu, handle_string}
+    DropDownMenuState(const std::string& handle_string,
+                      const std::vector<std::string>& elements,
+                      const std::string& selected_element)
+        : GuiElementState{dvs::GuiElementType::DropDownMenu, handle_string},
+          elements_{elements},
+          selected_element_{selected_element}
     {
     }
     ~DropDownMenuState() override {}
