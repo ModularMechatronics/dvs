@@ -9,13 +9,13 @@
 #include <queue>
 
 #include "axes/structures/grid_vectors.h"
+#include "color.h"
 #include "communication/received_data.h"
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "gui_element_state.h"
 #include "input_data.h"
 #include "project_state/project_settings.h"
-#include "color.h"
 
 using namespace dvs;
 

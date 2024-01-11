@@ -289,6 +289,10 @@ void MainWindow::tcpReceiveThreadFunction()
     while (1)
     {
         ReceivedData received_data = data_receiver_.receiveAndGetDataFromTcp();
+        if (received_data.rawData() == nullptr)
+        {
+            continue;
+        }
 
         /*std::atomic<bool> received_data_has_been_moved = false;
 

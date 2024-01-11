@@ -139,6 +139,41 @@ SliderCallbackFunctionMap* getSliderCallbackFunctionMap()
     return &slider_callback_function_map;
 }
 
+ListBoxCallbackFunctionMap* getListBoxCallbackFunctionMap()
+{
+    static ListBoxCallbackFunctionMap list_box_handle_callback_function_map;
+
+    return &list_box_handle_callback_function_map;
+}
+
+DropDownMenuCallbackFunctionMap* getDropDownMenuCallbackFunctionMap()
+{
+    static DropDownMenuCallbackFunctionMap dropdown_menu_handle_callback_function_map;
+
+    return &dropdown_menu_handle_callback_function_map;
+}
+
+CheckboxCallbackFunctionMap* getCheckboxCallbackFunctionMap()
+{
+    static CheckboxCallbackFunctionMap checkbox_handle_callback_function_map;
+
+    return &checkbox_handle_callback_function_map;
+}
+
+RadioButtonGroupCallbackFunctionMap* getRadioButtonGroupCallbackFunctionMap()
+{
+    static RadioButtonGroupCallbackFunctionMap radiobutton_group_handle_callback_function_map;
+
+    return &radiobutton_group_handle_callback_function_map;
+}
+
+EditableTextCallbackFunctionMap* getEditableTextCallbackFunctionMap()
+{
+    static EditableTextCallbackFunctionMap editable_text_handle_callback_function_map;
+
+    return &editable_text_handle_callback_function_map;
+}
+
 void initDataStructures(const size_t initial_size)
 {
     GuiElementMap* const gui_element_handles = getGuiElementHandles();
@@ -149,6 +184,24 @@ void initDataStructures(const size_t initial_size)
 
     SliderCallbackFunctionMap* const slider_callback_function_map = getSliderCallbackFunctionMap();
     initSliderCallbackFunctionMap(slider_callback_function_map, initial_size);
+
+    ListBoxCallbackFunctionMap* const list_box_handle_callback_function_map = getListBoxCallbackFunctionMap();
+    initListBoxCallbackFunctionMap(list_box_handle_callback_function_map, initial_size);
+
+    DropDownMenuCallbackFunctionMap* const dropdown_menu_handle_callback_function_map =
+        getDropDownMenuCallbackFunctionMap();
+    initDropDownMenuCallbackFunctionMap(dropdown_menu_handle_callback_function_map, initial_size);
+
+    CheckboxCallbackFunctionMap* const checkbox_handle_callback_function_map = getCheckboxCallbackFunctionMap();
+    initCheckboxCallbackFunctionMap(checkbox_handle_callback_function_map, initial_size);
+
+    RadioButtonGroupCallbackFunctionMap* const radiobutton_group_handle_callback_function_map =
+        getRadioButtonGroupCallbackFunctionMap();
+    initRadioButtonGroupCallbackFunctionMap(radiobutton_group_handle_callback_function_map, initial_size);
+
+    EditableTextCallbackFunctionMap* const editable_text_handle_callback_function_map =
+        getEditableTextCallbackFunctionMap();
+    initEditableTextCallbackFunctionMap(editable_text_handle_callback_function_map, initial_size);
 }
 
 void updateButtonState(ButtonInternalHandle* const handle, const UInt8Array* data_view)
@@ -208,6 +261,96 @@ void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* d
     }
 }
 
+void updateDropDownMenuState(DropDownMenuInternalHandle* const handle, const UInt8Array* data_view)
+{
+    DropDownMenuState* const state = &(handle->state);
+    destroyListOfStrings(&(state->elements));
+    free(state->selected_element);
+
+    const uint8_t selected_element_length = data_view->data[0];
+
+    size_t idx = 1U;
+
+    if (selected_element_length > 0U)
+    {
+        state->selected_element = (char*)malloc(selected_element_length + 1U);
+        memcpy(state->selected_element, data_view->data + idx, selected_element_length);
+        state->selected_element[selected_element_length] = '\0';
+        idx += selected_element_length;
+    }
+    else
+    {
+        state->selected_element = (char*)malloc(1U);
+        state->selected_element[0] = '\0';
+    }
+
+    uint16_t num_elements;
+
+    memcpy(&num_elements, data_view->data + idx, sizeof(uint16_t));
+
+    idx += sizeof(uint16_t);
+
+    state->elements = createListOfStrings(num_elements);
+
+    for (uint16_t i = 0U; i < num_elements; i++)
+    {
+        const uint8_t element_length = data_view->data[idx];
+        idx++;
+
+        state->elements.elements[i] = (char*)malloc(element_length + 1U);
+        memcpy(state->elements.elements[i], data_view->data + idx, element_length);
+        state->elements.elements[i][element_length] = '\0';
+
+        idx += element_length;
+    }
+}
+
+void updateCheckboxState(CheckboxInternalHandle* const handle, const UInt8Array* data_view)
+{
+    handle->is_checked = data_view->data[0];
+}
+
+void updateRadioButtonGroupState(RadioButtonGroupInternalHandle* const handle, const UInt8Array* data_view)
+{
+    size_t idx = 0U;
+
+    memcpy(&handle->selected_button_idx, data_view->data + idx, sizeof(int32_t));
+    idx += sizeof(int32_t);
+
+    uint16_t num_buttons;
+
+    memcpy(&num_buttons, data_view->data + idx, sizeof(uint16_t));
+    idx += sizeof(uint16_t);
+
+    handle->buttons = createListOfStrings(num_buttons);
+
+    for (uint16_t k = 0U; k < num_buttons; k++)
+    {
+        const uint8_t button_length = data_view->data[idx];
+        idx += sizeof(uint8_t);
+
+        handle->buttons.elements[k] = (char*)malloc(button_length + 1U);
+        memcpy(handle->buttons.elements[k], data_view->data + idx, button_length);
+        handle->buttons.elements[k][button_length] = '\0';
+
+        idx += button_length;
+    }
+}
+
+void updateEditableTextState(EditableTextInternalHandle* const handle, const UInt8Array* data_view)
+{
+    const uint8_t* const data_ptr = data_view->data;
+    handle->enter_pressed = data_ptr[0];
+
+    const uint8_t text_length = data_ptr[1];
+
+    handle->text = (char*)malloc(text_length + 1U);
+
+    size_t idx = 2U;
+
+    memcpy(handle->text, data_ptr + idx, text_length);
+}
+
 BaseHandle* internal_createButton(const char* const handle_string, const UInt8Array* const data_view)
 {
     ButtonInternalHandle* const button = (ButtonInternalHandle*)malloc(sizeof(ButtonInternalHandle));
@@ -217,6 +360,7 @@ BaseHandle* internal_createButton(const char* const handle_string, const UInt8Ar
     button->handle_string = (char*)malloc(handle_string_length + 1U);
     strcpy(button->handle_string, handle_string);
     button->handle_string[handle_string_length] = '\0';  // Null-terminate string
+
     button->type = GUI_ET_BUTTON;
 
     updateButtonState(button, data_view);
@@ -235,6 +379,7 @@ BaseHandle* internal_createSlider(const char* const handle_string, const UInt8Ar
     slider->handle_string = (char*)malloc(handle_string_length + 1U);
     strcpy(slider->handle_string, handle_string);
     slider->handle_string[handle_string_length] = '\0';  // Null-terminate string
+
     slider->type = GUI_ET_SLIDER;
 
     updateSliderState(slider, data_view);
@@ -253,6 +398,7 @@ BaseHandle* internal_createListBox(const char* const handle_string, const UInt8A
     list_box->handle_string = (char*)malloc(handle_string_length + 1U);
     strcpy(list_box->handle_string, handle_string);
     list_box->handle_string[handle_string_length] = '\0';  // Null-terminate string
+
     list_box->type = GUI_ET_LIST_BOX;
 
     BaseHandle* const handle = (BaseHandle*)list_box;
@@ -262,6 +408,89 @@ BaseHandle* internal_createListBox(const char* const handle_string, const UInt8A
     list_box->state.selected_element[0] = '\0';
 
     updateListBoxState((ListBoxInternalHandle*)handle, data_view);
+
+    return handle;
+}
+
+BaseHandle* internal_createDropDownMenu(const char* const handle_string, const UInt8Array* const data_view)
+{
+    DropDownMenuInternalHandle* const dropdown_menu =
+        (DropDownMenuInternalHandle*)malloc(sizeof(DropDownMenuInternalHandle));
+
+    size_t handle_string_length = strlen(handle_string);
+
+    dropdown_menu->handle_string = (char*)malloc(handle_string_length + 1U);
+    strcpy(dropdown_menu->handle_string, handle_string);
+    dropdown_menu->handle_string[handle_string_length] = '\0';  // Null-terminate string
+
+    dropdown_menu->type = GUI_ET_DROPDOWN_MENU;
+
+    BaseHandle* const handle = (BaseHandle*)dropdown_menu;
+
+    dropdown_menu->state.elements = createListOfStrings(10U);
+    dropdown_menu->state.selected_element = (char*)malloc(1U);
+    dropdown_menu->state.selected_element[0] = '\0';
+
+    updateDropDownMenuState((DropDownMenuInternalHandle*)handle, data_view);
+
+    return handle;
+}
+
+BaseHandle* internal_createCheckbox(const char* const handle_string, const UInt8Array* const data_view)
+{
+    CheckboxInternalHandle* const checkbox = (CheckboxInternalHandle*)malloc(sizeof(CheckboxInternalHandle));
+
+    size_t handle_string_length = strlen(handle_string);
+
+    checkbox->handle_string = (char*)malloc(handle_string_length + 1U);
+    strcpy(checkbox->handle_string, handle_string);
+    checkbox->handle_string[handle_string_length] = '\0';  // Null-terminate string
+
+    checkbox->type = GUI_ET_CHECKBOX;
+
+    BaseHandle* const handle = (BaseHandle*)checkbox;
+
+    updateCheckboxState((CheckboxInternalHandle*)handle, data_view);
+
+    return handle;
+}
+
+BaseHandle* internal_createRadioButtonGroup(const char* const handle_string, const UInt8Array* const data_view)
+{
+    RadioButtonGroupInternalHandle* const radiobutton_group =
+        (RadioButtonGroupInternalHandle*)malloc(sizeof(RadioButtonGroupInternalHandle));
+
+    size_t handle_string_length = strlen(handle_string);
+
+    radiobutton_group->handle_string = (char*)malloc(handle_string_length + 1U);
+    strcpy(radiobutton_group->handle_string, handle_string);
+    radiobutton_group->handle_string[handle_string_length] = '\0';  // Null-terminate string
+
+    radiobutton_group->type = GUI_ET_RADIO_BUTTON_GROUP;
+
+    BaseHandle* const handle = (BaseHandle*)radiobutton_group;
+
+    updateRadioButtonGroupState((RadioButtonGroupInternalHandle*)handle, data_view);
+
+    return handle;
+}
+
+BaseHandle* internal_createEditableText(const char* const handle_string, const UInt8Array* const data_view)
+{
+    EditableTextInternalHandle* const editable_text =
+        (EditableTextInternalHandle*)malloc(sizeof(EditableTextInternalHandle));
+
+    size_t handle_string_length = strlen(handle_string);
+
+    editable_text->handle_string = (char*)malloc(handle_string_length + 1U);
+    strcpy(editable_text->handle_string, handle_string);
+    editable_text->handle_string[handle_string_length] = '\0';  // Null-terminate string
+
+    editable_text->type = GUI_ET_EDITABLE_TEXT;
+
+    BaseHandle* const handle = (BaseHandle*)editable_text;
+
+    updateEditableTextState((EditableTextInternalHandle*)handle, data_view);
 
     return handle;
 }
@@ -288,19 +517,34 @@ void populateGuiElementWithData(const GuiElementType type,
             {
                 updateButtonState((ButtonInternalHandle*)handle, data_view);
             }
-            else if (type == GUI_ET_CHECKBOX) {}
+            else if (type == GUI_ET_CHECKBOX)
+            {
+                updateCheckboxState((CheckboxInternalHandle*)handle, data_view);
+            }
             else if (type == GUI_ET_SLIDER)
             {
                 updateSliderState((SliderInternalHandle*)handle, data_view);
             }
-            else if (type == GUI_ET_TEXT_LABEL) {}
+            else if (type == GUI_ET_TEXT_LABEL)
+            {
+                // updateTextLabelState((TextLabelInternalHandle*)handle, data_view);
+            }
             else if (type == GUI_ET_LIST_BOX)
             {
                 updateListBoxState((ListBoxInternalHandle*)handle, data_view);
             }
-            else if (type == GUI_ET_EDITABLE_TEXT) {}
-            else if (type == GUI_ET_DROPDOWN_MENU) {}
-            else if (type == GUI_ET_RADIO_BUTTON_GROUP) {}
+            else if (type == GUI_ET_EDITABLE_TEXT)
+            {
+                updateEditableTextState((EditableTextInternalHandle*)handle, data_view);
+            }
+            else if (type == GUI_ET_DROPDOWN_MENU)
+            {
+                updateDropDownMenuState((DropDownMenuInternalHandle*)handle, data_view);
+            }
+            else if (type == GUI_ET_RADIO_BUTTON_GROUP)
+            {
+                updateRadioButtonGroupState((RadioButtonGroupInternalHandle*)handle, data_view);
+            }
         }
     }
     else
@@ -311,19 +555,30 @@ void populateGuiElementWithData(const GuiElementType type,
         {
             handle = (BaseHandle*)internal_createButton(handle_string, data_view);
         }
-        else if (type == GUI_ET_CHECKBOX) {}
         else if (type == GUI_ET_SLIDER)
         {
             handle = (BaseHandle*)internal_createSlider(handle_string, data_view);
         }
-        else if (type == GUI_ET_TEXT_LABEL) {}
         else if (type == GUI_ET_LIST_BOX)
         {
             handle = (BaseHandle*)internal_createListBox(handle_string, data_view);
         }
-        else if (type == GUI_ET_EDITABLE_TEXT) {}
-        else if (type == GUI_ET_DROPDOWN_MENU) {}
-        else if (type == GUI_ET_RADIO_BUTTON_GROUP) {}
+        else if (type == GUI_ET_DROPDOWN_MENU)
+        {
+            handle = (BaseHandle*)internal_createDropDownMenu(handle_string, data_view);
+        }
+        else if (type == GUI_ET_CHECKBOX)
+        {
+            handle = (BaseHandle*)internal_createCheckbox(handle_string, data_view);
+        }
+        else if (type == GUI_ET_RADIO_BUTTON_GROUP)
+        {
+            handle = (BaseHandle*)internal_createRadioButtonGroup(handle_string, data_view);
+        }
+        else if (type == GUI_ET_EDITABLE_TEXT)
+        {
+            handle = (BaseHandle*)internal_createEditableText(handle_string, data_view);
+        }
 
         if (handle != NULL)
         {
@@ -366,8 +621,6 @@ void updateGuiState(const ReceivedGuiData* received_gui_data)
 
     // Receive[5]: Gui element data (variable)
     populateGuiElementWithData(type, handle_string, &gui_element_data);
-
-    printf("Updating %s\n", handle_string);
 
     free(handle_string);
 }
@@ -453,6 +706,114 @@ ListBoxHandle getListBoxHandle(const char* const handle_string)
     return list_box_handle;
 }
 
+DropDownMenuHandle getDropDownMenuHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    DropDownMenuHandle dropdown_menu_handle;
+    dropdown_menu_handle.__handle = NULL;
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return dropdown_menu_handle;
+    }
+
+    DropDownMenuInternalHandle* const gui_elem =
+        (DropDownMenuInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_DROPDOWN_MENU)
+    {
+        printf("Gui element with handle string %s is not a slider!\n", handle_string);
+        return dropdown_menu_handle;
+    }
+
+    dropdown_menu_handle.__handle = gui_elem;
+
+    return dropdown_menu_handle;
+}
+
+CheckboxHandle getCheckboxHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    CheckboxHandle checkbox_handle;
+    checkbox_handle.__handle = NULL;
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return checkbox_handle;
+    }
+
+    CheckboxInternalHandle* const gui_elem =
+        (CheckboxInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_CHECKBOX)
+    {
+        printf("Gui element with handle string %s is not a slider!\n", handle_string);
+        return checkbox_handle;
+    }
+
+    checkbox_handle.__handle = gui_elem;
+
+    return checkbox_handle;
+}
+
+RadioButtonGroupHandle getRadioButtonGroupHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    RadioButtonGroupHandle radiobutton_group_handle;
+    radiobutton_group_handle.__handle = NULL;
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return radiobutton_group_handle;
+    }
+
+    RadioButtonGroupInternalHandle* const gui_elem =
+        (RadioButtonGroupInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_RADIO_BUTTON_GROUP)
+    {
+        printf("Gui element with handle string %s is not a slider!\n", handle_string);
+        return radiobutton_group_handle;
+    }
+
+    radiobutton_group_handle.__handle = gui_elem;
+
+    return radiobutton_group_handle;
+}
+
+EditableTextHandle getEditableTextHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    EditableTextHandle editable_text_handle;
+    editable_text_handle.__handle = NULL;
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return editable_text_handle;
+    }
+
+    EditableTextInternalHandle* const gui_elem =
+        (EditableTextInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_EDITABLE_TEXT)
+    {
+        printf("Gui element with handle string %s is not a slider!\n", handle_string);
+        return editable_text_handle;
+    }
+
+    editable_text_handle.__handle = gui_elem;
+
+    return editable_text_handle;
+}
+
 void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)
 {
     size_t idx = 0U;
@@ -496,6 +857,63 @@ void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)
         {
             SliderCallbackFunction cb_fun = getSliderCallbackFunction(handle_string, slider_callback_function_map);
             cb_fun(getSliderHandle(handle_string));
+        }
+    }
+    else if (type == GUI_ET_LIST_BOX)
+    {
+        ListBoxCallbackFunctionMap* const list_box_callback_function_map = getListBoxCallbackFunctionMap();
+
+        if (isListBoxCallbackFunctionKeyInMap(handle_string, list_box_callback_function_map))
+        {
+            ListBoxCallbackFunction cb_fun = getListBoxCallbackFunction(handle_string, list_box_callback_function_map);
+            cb_fun(getListBoxHandle(handle_string));
+        }
+    }
+    else if (type == GUI_ET_DROPDOWN_MENU)
+    {
+        DropDownMenuCallbackFunctionMap* const dropdown_menu_callback_function_map =
+            getDropDownMenuCallbackFunctionMap();
+
+        if (isDropDownMenuCallbackFunctionKeyInMap(handle_string, dropdown_menu_callback_function_map))
+        {
+            DropDownMenuCallbackFunction cb_fun =
+                getDropDownMenuCallbackFunction(handle_string, dropdown_menu_callback_function_map);
+            cb_fun(getDropDownMenuHandle(handle_string));
+        }
+    }
+    else if (type == GUI_ET_CHECKBOX)
+    {
+        CheckboxCallbackFunctionMap* const checkbox_callback_function_map = getCheckboxCallbackFunctionMap();
+
+        if (isCheckboxCallbackFunctionKeyInMap(handle_string, checkbox_callback_function_map))
+        {
+            CheckboxCallbackFunction cb_fun =
+                getCheckboxCallbackFunction(handle_string, checkbox_callback_function_map);
+            cb_fun(getCheckboxHandle(handle_string));
+        }
+    }
+    else if (type == GUI_ET_RADIO_BUTTON_GROUP)
+    {
+        RadioButtonGroupCallbackFunctionMap* const radiobutton_group_callback_function_map =
+            getRadioButtonGroupCallbackFunctionMap();
+
+        if (isRadioButtonGroupCallbackFunctionKeyInMap(handle_string, radiobutton_group_callback_function_map))
+        {
+            RadioButtonGroupCallbackFunction cb_fun =
+                getRadioButtonGroupCallbackFunction(handle_string, radiobutton_group_callback_function_map);
+            cb_fun(getRadioButtonGroupHandle(handle_string));
+        }
+    }
+    else if (type == GUI_ET_EDITABLE_TEXT)
+    {
+        EditableTextCallbackFunctionMap* const editable_text_callback_function_map =
+            getEditableTextCallbackFunctionMap();
+
+        if (isEditableTextCallbackFunctionKeyInMap(handle_string, editable_text_callback_function_map))
+        {
+            EditableTextCallbackFunction cb_fun =
+                getEditableTextCallbackFunction(handle_string, editable_text_callback_function_map);
+            cb_fun(getEditableTextHandle(handle_string));
         }
     }
 }
@@ -575,6 +993,75 @@ void registerSliderCallback(const char* const handle_string, void (*slider_callb
     }
 
     insertElementIntoSliderCallbackFunctionMap(slider_callback_function_map, handle_string, slider_callback_function);
+}
+
+void registerListBoxCallback(const char* const handle_string, void (*list_box_callback_function)(const ListBoxHandle))
+{
+    ListBoxCallbackFunctionMap* const list_box_callback_function_map = getListBoxCallbackFunctionMap();
+
+    if (isListBoxCallbackFunctionKeyInMap(handle_string, list_box_callback_function_map))
+    {
+        printf("List box callback with name %s already exists! Overwriting old callback...\n", handle_string);
+    }
+
+    insertElementIntoListBoxCallbackFunctionMap(
+        list_box_callback_function_map, handle_string, list_box_callback_function);
+}
+
+void registerDropDownMenuCallback(const char* const handle_string,
+                                  void (*dropdown_menu_callback_function)(const DropDownMenuHandle))
+{
+    DropDownMenuCallbackFunctionMap* const dropdown_menu_callback_function_map = getDropDownMenuCallbackFunctionMap();
+
+    if (isDropDownMenuCallbackFunctionKeyInMap(handle_string, dropdown_menu_callback_function_map))
+    {
+        printf("Drop down menu callback with name %s already exists! Overwriting old callback...\n", handle_string);
+    }
+
+    insertElementIntoDropDownMenuCallbackFunctionMap(
+        dropdown_menu_callback_function_map, handle_string, dropdown_menu_callback_function);
+}
+
+void registerCheckboxCallback(const char* const handle_string, void (*checkbox_callback_function)(const CheckboxHandle))
+{
+    CheckboxCallbackFunctionMap* const checkbox_callback_function_map = getCheckboxCallbackFunctionMap();
+
+    if (isCheckboxCallbackFunctionKeyInMap(handle_string, checkbox_callback_function_map))
+    {
+        printf("Checkbox callback with name %s already exists! Overwriting old callback...\n", handle_string);
+    }
+
+    insertElementIntoCheckboxCallbackFunctionMap(
+        checkbox_callback_function_map, handle_string, checkbox_callback_function);
+}
+
+void registerRadioButtonGroupCallback(const char* const handle_string,
+                                      void (*radiobutton_group_callback_function)(const RadioButtonGroupHandle))
+{
+    RadioButtonGroupCallbackFunctionMap* const radiobutton_group_callback_function_map =
+        getRadioButtonGroupCallbackFunctionMap();
+
+    if (isRadioButtonGroupCallbackFunctionKeyInMap(handle_string, radiobutton_group_callback_function_map))
+    {
+        printf("Radio button group callback with name %s already exists! Overwriting old callback...\n", handle_string);
+    }
+
+    insertElementIntoRadioButtonGroupCallbackFunctionMap(
+        radiobutton_group_callback_function_map, handle_string, radiobutton_group_callback_function);
+}
+
+void registerEditableTextCallback(const char* const handle_string,
+                                  void (*editable_text_callback_function)(const EditableTextHandle))
+{
+    EditableTextCallbackFunctionMap* const editable_text_callback_function_map = getEditableTextCallbackFunctionMap();
+
+    if (isEditableTextCallbackFunctionKeyInMap(handle_string, editable_text_callback_function_map))
+    {
+        printf("Editable text callback with name %s already exists! Overwriting old callback...\n", handle_string);
+    }
+
+    insertElementIntoEditableTextCallbackFunctionMap(
+        editable_text_callback_function_map, handle_string, editable_text_callback_function);
 }
 
 #endif  // DVS_GUI_INTERNAL_H

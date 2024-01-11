@@ -324,7 +324,9 @@ public:
     RadioButtonGroupState(const std::string& handle_string,
                           const std::vector<std::string>& buttons,
                           const std::int32_t selected_button)
-        : GuiElementState{dvs::GuiElementType::RadioButtonGroup, handle_string}
+        : GuiElementState{dvs::GuiElementType::RadioButtonGroup, handle_string},
+          buttons_{buttons},
+          selected_button_{selected_button}
     {
     }
     ~RadioButtonGroupState() override {}

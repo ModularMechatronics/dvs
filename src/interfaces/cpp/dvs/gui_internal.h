@@ -370,7 +370,7 @@ public:
         return buttons_;
     }
 
-    std::int32_t getSelectedIdx() const
+    std::int32_t getSelectedButtonIdx() const
     {
         return selected_idx_;
     }
@@ -600,8 +600,7 @@ inline void waitForSyncForAllGuiElements()
         idx += sizeof(std::uint8_t);
 
         // Receive[2]: Handle string length (std::uint8_t)
-        // TODO: Should be std::uint8_t???
-        const std::uint16_t handle_string_length = static_cast<std::uint16_t>(raw_data[idx]);
+        const std::uint8_t handle_string_length = static_cast<std::uint8_t>(raw_data[idx]);
         idx += sizeof(std::uint8_t);
 
         std::string handle_string = "";

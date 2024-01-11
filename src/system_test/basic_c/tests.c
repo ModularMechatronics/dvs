@@ -207,13 +207,6 @@ void testImShow()
 
 // GUI
 
-void printValues()
-{
-    // const dvs::gui::SliderHandle slider = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider0");
-    // const dvs::gui::ButtonHandle button0 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button0");
-    // const dvs::gui::ButtonHandle button1 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button1");
-}
-
 void slider0Callback(const SliderHandle gui_element_handle)
 {
     const SliderHandle slider = getSliderHandle("slider0");
@@ -229,6 +222,78 @@ void button0Callback(const ButtonHandle gui_element_handle)
     printf("Callback function: \"button0\"\n");
 }
 
+void listBoxCallback(const ListBoxHandle gui_element_handle)
+{
+    printf("Callback function: \"listbox0\"\n");
+    printf("Selected element: %s\n", gui_element_handle.__handle->state.selected_element);
+
+    for (size_t k = 0U; k < gui_element_handle.__handle->state.elements.size; k++)
+    {
+        printf("Element %zu: %s\n", k, gui_element_handle.__handle->state.elements.elements[k]);
+    }
+}
+
+void dropDownMenuCallback(const DropDownMenuHandle gui_element_handle)
+{
+    printf("Callback function: \"ddm0\"\n");
+    printf("Selected element: %s\n", gui_element_handle.__handle->state.selected_element);
+
+    for (size_t k = 0U; k < gui_element_handle.__handle->state.elements.size; k++)
+    {
+        printf("Element %zu: %s\n", k, gui_element_handle.__handle->state.elements.elements[k]);
+    }
+}
+
+void radioButtonsCallback(const RadioButtonGroupHandle gui_element_handle)
+{
+    printf("Callback function: \"rbg0\"\n");
+    printf("Selected element idx: %i\n", gui_element_handle.__handle->selected_button_idx);
+
+    for (size_t k = 0U; k < gui_element_handle.__handle->buttons.size; k++)
+    {
+        printf("Element %zu: %s\n", k, gui_element_handle.__handle->buttons.elements[k]);
+    }
+}
+void editableTextCallback(const EditableTextHandle gui_element_handle)
+{
+    printf("Callback function: \"text_entry\"\n");
+    printf("Text: %s\n", gui_element_handle.__handle->text);
+}
+
+void checkboxCallback(const CheckboxHandle gui_element_handle)
+{
+    printf("Callback function: \"checkbox0\"\n");
+    printf("Checked: %i\n", gui_element_handle.__handle->is_checked);
+}
+
+void printValues()
+{
+    const SliderHandle slider = getSliderHandle("slider0");
+    const ListBoxHandle list_box = getListBoxHandle("listbox0");
+    // const DropDownMenuHandle drop_down_menu = getDropDownMenuHandle("ddm0");
+
+    const ListBoxState state = getListBoxCurrentState(list_box);
+
+    printf("Listbox size: %zu\n", state.elements.size);
+
+    for (size_t k = 0U; k < state.elements.size; k++)
+    {
+        printf("Element %zu: %s\n", k, state.elements.elements[k]);
+    }
+    printf("Selected element: %s\n", state.selected_element);
+
+    printf("Slider value: %i\n", getSliderValue(slider));
+
+    /*
+    printf("DropDownMenu size: %zu\n", state.elements.size);
+
+    for (size_t k = 0U; k < drop_down_menu.__handle->state.elements.size; k++)
+    {
+        printf("Element %zu: %s\n", k, drop_down_menu.__handle->state.elements.elements[k]);
+    }
+    printf("Selected element: %s\n", drop_down_menu.__handle->state.selected_element);*/
+}
+
 void testGUIBasic()
 {
     startGuiReceiveThread();
@@ -236,23 +301,31 @@ void testGUIBasic()
     registerButtonCallback("button0", button0Callback);
     registerSliderCallback("slider0", slider0Callback);
 
+    registerListBoxCallback("listbox0", listBoxCallback);
+    registerDropDownMenuCallback("ddm0", dropDownMenuCallback);
+    registerCheckboxCallback("checkbox0", checkboxCallback);
+    registerRadioButtonGroupCallback("rbg0", radioButtonsCallback);
+    registerEditableTextCallback("text_entry", editableTextCallback);
+
+    // registerGuiCallback("checkbox0", [](Checkbox
+    // registerGuiCallback("listbox0", [](ListBox
+    // registerGuiCallback("text_entry", [](EditableText
+    // registerGuiCallback("ddm0", [](DropDownMenu
+    // registerGuiCallback("rbg0", [](RadioButtonGroup
+
+    char input_array[1000];
+
     while (true)
     {
-        usleep(1000 * 1000);
-        const SliderHandle slider = getSliderHandle("slider0");
-        const ListBoxHandle list_box = getListBoxHandle("listbox0");
+        scanf("%s", input_array);
 
-        const ListBoxState state = getListBoxCurrentState(list_box);
-
-        printf("Size: %zu\n", state.elements.size);
-
-        for (size_t k = 0U; k < state.elements.size; k++)
+        if (strcmp(input_array, "q") == 0)
         {
-            printf("Element %zu: %s\n", k, state.elements.elements[k]);
+            break;
         }
-        printf("Selected element: %s\n", state.selected_element);
-
-        printf("Slider value: %i\n", getSliderValue(slider));
-        printf("Sleeping...\n");
+        else if (strcmp(input_array, "v") == 0)
+        {
+            printValues();
+        }
     }
 }

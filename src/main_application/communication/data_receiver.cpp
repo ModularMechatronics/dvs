@@ -37,8 +37,13 @@ ReceivedData DataReceiver::receiveAndGetDataFromTcp()
         throw std::runtime_error("Server accept failed...");
     }
 
-    size_t num_expected_bytes;
+    size_t num_expected_bytes = 0U;
     read(tcp_connfd_, &num_expected_bytes, sizeof(uint64_t));
+
+    if (num_expected_bytes == 0)
+    {
+        return ReceivedData{};
+    }
 
     ReceivedData received_data{num_expected_bytes};
     char* rec_buffer = reinterpret_cast<char*>(received_data.rawData());

@@ -271,9 +271,9 @@ public:
         return internal_ptr_->getButtons();
     }
 
-    std::int32_t getSelectedIdx() const
+    std::int32_t getSelectedButtonIdx() const
     {
-        return internal_ptr_->getSelectedIdx();
+        return internal_ptr_->getSelectedButtonIdx();
     }
 };
 
