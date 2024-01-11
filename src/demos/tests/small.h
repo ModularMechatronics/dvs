@@ -1502,6 +1502,252 @@ void testPidTuner()
     }
 }
 
+void testThreeBodyProblem()
+{
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    openProjectFile(project_file_path);
+
+    struct Body
+    {
+        double x;
+        double y;
+        double z;
+        double vx;
+        double vy;
+        double vz;
+        double m;
+
+        double min_vel;
+        double max_vel;
+
+        Vec3d F;
+
+        Vector<double> vec_x;
+        Vector<double> vec_y;
+        Vector<double> vec_z;
+        Vector<double> vec_vx;
+        Vector<double> vec_vy;
+        Vector<double> vec_vz;
+
+        Vector<RGB888> colors;
+    };
+
+    std::vector<Body> bodies;
+
+    const size_t n_bodies = 4;
+    const size_t n_its = 500;
+
+    for (size_t k = 0; k < n_bodies; k++)
+    {
+        Body body;
+
+        body.x = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        body.y = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        body.z = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+
+        body.vx = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        body.vy = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        body.vz = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+
+        body.m = (static_cast<double>(rand() % 1001) / 1000.0 + 0.5) * 0.1;
+
+        body.vec_x.resize(n_its);
+        body.vec_y.resize(n_its);
+        body.vec_z.resize(n_its);
+        body.vec_vx.resize(n_its);
+        body.vec_vy.resize(n_its);
+        body.vec_vz.resize(n_its);
+
+        body.colors.resize(n_its);
+
+        for (size_t i = 0; i < n_its; i++)
+        {
+            body.vec_x(i) = 0.0;
+            body.vec_y(i) = 0.0;
+            body.vec_z(i) = 0.0;
+            body.vec_vx(i) = 0.0;
+            body.vec_vy(i) = 0.0;
+            body.vec_vz(i) = 0.0;
+
+            body.colors(i) = RGB888{255, 255, 255};
+        }
+
+        bodies.push_back(body);
+    }
+
+    const auto plot_bodies = [](const std::vector<Body>& bodies, const size_t it) -> void {
+        const size_t num_bodies = bodies.size();
+
+        Vector<double> x(num_bodies), y(num_bodies), z(num_bodies);
+        Vector<double> xc(1U), yc(1U), zc(1U);
+
+        for (size_t k = 0; k < num_bodies; k++)
+        {
+            x(k) = bodies[k].vec_x(it);
+            y(k) = bodies[k].vec_y(it);
+            z(k) = bodies[k].vec_z(it);
+        }
+
+        xc(0) = 0.0;
+        yc(0) = 0.0;
+        zc(0) = 0.0;
+
+        scatter3(x, y, z, properties::ScatterStyle::DISC, properties::PointSize(20));
+        scatter3(xc, yc, zc, properties::ScatterStyle::DISC, properties::PointSize(50), properties::Color::BLUE);
+
+        if (it != 0U)
+        {
+            for (size_t k = 0; k < num_bodies; k++)
+            {
+                const VectorConstView x_vec{bodies[k].vec_x.data(), it + 1U};
+                const VectorConstView y_vec{bodies[k].vec_y.data(), it + 1U};
+                const VectorConstView z_vec{bodies[k].vec_z.data(), it + 1U};
+
+                const VectorConstView cols{bodies[k].colors.data(), it + 1U};
+
+                plot3(x_vec, y_vec, z_vec, cols, properties::LineWidth(10.0f));
+            }
+        }
+
+        flushCurrentElement();
+    };
+
+    setCurrentElement("p_view_0");
+    clearView();
+    axis({-2.0, -2.0, -4.0}, {2.0, 2.0, 4.0});
+    view(-20, 47);
+
+    const double h = 0.05;
+    const double damping = 0.0001;
+    const double G = 5.0;
+
+    Body center_body;
+    center_body.x = 0.0;
+    center_body.y = 0.0;
+    center_body.z = 0.0;
+    center_body.m = 10.0;
+
+    const auto update_body = [&](Body& body_to_update, const Body& other_body) -> void {
+        const double dx = other_body.x - body_to_update.x;
+        const double dy = other_body.y - body_to_update.y;
+        const double dz = other_body.z - body_to_update.z;
+
+        const double dx2 = dx * dx;
+        const double dy2 = dy * dy;
+        const double dz2 = dz * dz;
+
+        const double r = std::sqrt(dx2 + dy2 + dz2);
+
+        const double r2 = r * r;
+
+        double F = G * body_to_update.m * other_body.m / r2;
+
+        const double dx_normalized = dx / r;
+        const double dy_normalized = dy / r;
+        const double dz_normalized = dz / r;
+
+        if (r < 1.0)
+        {
+            F = G * body_to_update.m * other_body.m * r2;
+        }
+
+        body_to_update.F.x += F * dx_normalized;
+        body_to_update.F.y += F * dy_normalized;
+        body_to_update.F.z += F * dz_normalized;
+    };
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        for (size_t i = 0; i < n_bodies; i++)
+        {
+            Body& body_i = bodies[i];
+
+            for (size_t j = 0; j < n_bodies; j++)
+            {
+                if (i == j)
+                {
+                    continue;
+                }
+
+                const Body& body_j = bodies[j];
+
+                body_i.F.x = 0.0;
+                body_i.F.y = 0.0;
+                body_i.F.z = 0.0;
+
+                update_body(body_i, body_j);
+                update_body(body_i, center_body);
+            }
+
+            body_i.vx += h * body_i.F.x / body_i.m;
+            body_i.vy += h * body_i.F.y / body_i.m;
+            body_i.vz += h * body_i.F.z / body_i.m;
+
+            body_i.x += h * body_i.vx;
+            body_i.y += h * body_i.vy;
+            body_i.z += h * body_i.vz;
+
+            body_i.vec_x(k) = body_i.x;
+            body_i.vec_y(k) = body_i.y;
+            body_i.vec_z(k) = body_i.z;
+
+            body_i.vx *= (1.0 - damping);
+            body_i.vy *= (1.0 - damping);
+            body_i.vz *= (1.0 - damping);
+        }
+    }
+
+    for (size_t i = 0; i < n_bodies; i++)
+    {
+        Body& body_i = bodies[i];
+
+        Vector<double> v{body_i.vec_vx.size()};
+
+        for (size_t k = 0; k < n_its; k++)
+        {
+            const double vx = body_i.vec_x(k);
+            const double vy = body_i.vec_y(k);
+            const double vz = body_i.vec_z(k);
+            v(k) = sqrt(vx * vx + vy * vy + vz * vz);
+        }
+
+        body_i.min_vel = v.min();
+        body_i.max_vel = v.max();
+
+        const double delta = body_i.max_vel - body_i.min_vel;
+
+        for (size_t k = 0; k < n_its; k++)
+        {
+            const double v_k = v(k);
+            const double v_n = (v_k - body_i.min_vel) / delta;
+
+            body_i.colors(k) = calculateColormapJet(v_n);
+        }
+    }
+
+    disableAutomaticAxesAdjustment();
+    disableScaleOnRotation();
+    waitForFlush();
+
+    float azimuth = -180.0f;
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        const double t = static_cast<double>(k) * 0.01;
+        const double elevation = std::sin(t) * 20.0;
+        plot_bodies(bodies, k);
+
+        view(azimuth, elevation);
+        azimuth += 0.5f;
+        if (azimuth > 180.0f)
+        {
+            azimuth = -180.0f;
+        }
+
+        softClearView();
+    }
+}
+
 }  // namespace small
 
 #endif  // DEMOS_SMALL_H

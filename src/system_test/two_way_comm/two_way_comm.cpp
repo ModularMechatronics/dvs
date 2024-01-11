@@ -75,7 +75,7 @@ void firstTest()
 
     dvs::gui::registerGuiCallback("rbg0", [](const dvs::gui::RadioButtonGroupHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"rbg0\" selected: " << std::endl;
-        std::cout << "Selected idx: " << gui_element_handle.getSelectedIdx() << std::endl;
+        std::cout << "Selected idx: " << gui_element_handle.getSelectedButtonIdx() << std::endl;
 
         const std::vector<std::string> buttons = gui_element_handle.getButtons();
 
