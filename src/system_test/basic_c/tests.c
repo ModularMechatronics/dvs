@@ -211,87 +211,96 @@ void slider0Callback(const SliderHandle gui_element_handle)
 {
     const SliderHandle slider = getSliderHandle("slider0");
 
-    printf("Callback function: \"slider0\": %i\n", getSliderValue(slider));
-    // gui_element_handle->value;
-    // setSliderMin(gui_element_handle, 0.0);
-    // setSliderMax(gui_element_handle, 100.0);
+    printf("Callback function: \"%s\": %i\n", GET_HANDLE_STRING(gui_element_handle), getSliderValue(slider));
 }
 
 void button0Callback(const ButtonHandle gui_element_handle)
 {
-    printf("Callback function: \"button0\"\n");
+    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
 }
 
 void listBoxCallback(const ListBoxHandle gui_element_handle)
 {
-    printf("Callback function: \"listbox0\"\n");
-    printf("Selected element: %s\n", gui_element_handle.__handle->state.selected_element);
+    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
+    printf("Selected element: %s\n", getListBoxSelectedElement(gui_element_handle));
 
-    for (size_t k = 0U; k < gui_element_handle.__handle->state.elements.size; k++)
+    for (size_t k = 0U; k < getListBoxElements(gui_element_handle).size; k++)
     {
-        printf("Element %zu: %s\n", k, gui_element_handle.__handle->state.elements.elements[k]);
+        printf("Element %zu: %s\n", k, getListBoxElements(gui_element_handle).elements[k]);
     }
 }
 
 void dropDownMenuCallback(const DropDownMenuHandle gui_element_handle)
 {
-    printf("Callback function: \"ddm0\"\n");
-    printf("Selected element: %s\n", gui_element_handle.__handle->state.selected_element);
+    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
+    printf("Selected element: %s\n", getDropDownMenuSelectedElement(gui_element_handle));
 
-    for (size_t k = 0U; k < gui_element_handle.__handle->state.elements.size; k++)
+    for (size_t k = 0U; k < getDropDownMenuElements(gui_element_handle).size; k++)
     {
-        printf("Element %zu: %s\n", k, gui_element_handle.__handle->state.elements.elements[k]);
+        printf("Element %zu: %s\n", k, getDropDownMenuElements(gui_element_handle).elements[k]);
     }
 }
 
 void radioButtonsCallback(const RadioButtonGroupHandle gui_element_handle)
 {
-    printf("Callback function: \"rbg0\"\n");
-    printf("Selected element idx: %i\n", gui_element_handle.__handle->selected_button_idx);
+    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
+    printf("Selected element idx: %i\n", getRadioButtonGroupSelectedButtonIdx(gui_element_handle));
 
-    for (size_t k = 0U; k < gui_element_handle.__handle->buttons.size; k++)
+    for (size_t k = 0U; k < getRadioButtonGroupButtonNames(gui_element_handle).size; k++)
     {
-        printf("Element %zu: %s\n", k, gui_element_handle.__handle->buttons.elements[k]);
+        printf("Element %zu: %s\n", k, getRadioButtonGroupButtonNames(gui_element_handle).elements[k]);
     }
 }
 void editableTextCallback(const EditableTextHandle gui_element_handle)
 {
-    printf("Callback function: \"text_entry\"\n");
-    printf("Text: %s\n", gui_element_handle.__handle->text);
+    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
+    printf("Text: %s\n", getEditableTextValue(gui_element_handle));
 }
 
 void checkboxCallback(const CheckboxHandle gui_element_handle)
 {
-    printf("Callback function: \"checkbox0\"\n");
-    printf("Checked: %i\n", gui_element_handle.__handle->is_checked);
+    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
+    printf("Checked: %i\n", getIsCheckBoxChecked(gui_element_handle));
 }
 
 void printValues()
 {
     const SliderHandle slider = getSliderHandle("slider0");
     const ListBoxHandle list_box = getListBoxHandle("listbox0");
-    // const DropDownMenuHandle drop_down_menu = getDropDownMenuHandle("ddm0");
+    const DropDownMenuHandle drop_down_menu = getDropDownMenuHandle("ddm0");
 
-    const ListBoxState state = getListBoxCurrentState(list_box);
+    printf("Listbox size: %zu\n", getListBoxElements(list_box).size);
 
-    printf("Listbox size: %zu\n", state.elements.size);
-
-    for (size_t k = 0U; k < state.elements.size; k++)
+    for (size_t k = 0U; k < getListBoxElements(list_box).size; k++)
     {
-        printf("Element %zu: %s\n", k, state.elements.elements[k]);
+        printf("Element %zu: %s\n", k, getListBoxElements(list_box).elements[k]);
     }
-    printf("Selected element: %s\n", state.selected_element);
+    printf("Selected element: %s\n", getListBoxSelectedElement(list_box));
 
     printf("Slider value: %i\n", getSliderValue(slider));
 
-    /*
-    printf("DropDownMenu size: %zu\n", state.elements.size);
+    const RadioButtonGroupHandle rb_h = getRadioButtonGroupHandle("rbg0");
+    printf("Selected element idx: %i\n", getRadioButtonGroupSelectedButtonIdx(rb_h));
 
-    for (size_t k = 0U; k < drop_down_menu.__handle->state.elements.size; k++)
+    for (size_t k = 0U; k < getRadioButtonGroupButtonNames(rb_h).size; k++)
     {
-        printf("Element %zu: %s\n", k, drop_down_menu.__handle->state.elements.elements[k]);
+        printf("Button %zu: %s\n", k, getRadioButtonGroupButtonNames(rb_h).elements[k]);
     }
-    printf("Selected element: %s\n", drop_down_menu.__handle->state.selected_element);*/
+
+    const EditableTextHandle et_h = getEditableTextHandle("text_entry");
+    printf("Text: %s\n", getEditableTextValue(et_h));
+
+    const CheckboxHandle cb_h = getCheckboxHandle("checkbox0");
+    printf("Checked: %i\n", getIsCheckBoxChecked(cb_h));
+
+    printf("DropDownMenu size: %zu\n", getDropDownMenuElements(drop_down_menu).size);
+
+    for (size_t k = 0U; k < getDropDownMenuElements(drop_down_menu).size; k++)
+    {
+        printf("Element %zu: %s\n", k, getDropDownMenuElements(drop_down_menu).elements[k]);
+    }
+
+    printf("Selected element: %s\n", getDropDownMenuSelectedElement(drop_down_menu));
 }
 
 void testGUIBasic()
@@ -306,12 +315,6 @@ void testGUIBasic()
     registerCheckboxCallback("checkbox0", checkboxCallback);
     registerRadioButtonGroupCallback("rbg0", radioButtonsCallback);
     registerEditableTextCallback("text_entry", editableTextCallback);
-
-    // registerGuiCallback("checkbox0", [](Checkbox
-    // registerGuiCallback("listbox0", [](ListBox
-    // registerGuiCallback("text_entry", [](EditableText
-    // registerGuiCallback("ddm0", [](DropDownMenu
-    // registerGuiCallback("rbg0", [](RadioButtonGroup
 
     char input_array[1000];
 

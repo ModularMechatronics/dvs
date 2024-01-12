@@ -97,21 +97,91 @@ char* getListBoxSelectedElement(const ListBoxHandle list_box_handle)
     return list_box_handle.__handle->state.selected_element;
 }
 
-ListBoxState getListBoxCurrentState(const ListBoxHandle list_box_handle)
+char* getDropDownMenuSelectedElement(const DropDownMenuHandle drop_down_menu_handle)
 {
-    if (list_box_handle.__handle == NULL)
+    if (drop_down_menu_handle.__handle == NULL)
     {
-        printf("List box handle is NULL!\n");
-        ListBoxState list_box_state;
-        list_box_state.elements.elements = NULL;
-        list_box_state.selected_element = NULL;
-        list_box_state.elements.size = 0;
-
-        return list_box_state;
+        printf("Drop down menu handle is NULL!\n");
+        return NULL;
     }
 
-    return list_box_handle.__handle->state;
+    return drop_down_menu_handle.__handle->state.selected_element;
 }
+
+ListOfStrings getDropDownMenuElements(const DropDownMenuHandle drop_down_menu_handle)
+{
+    ListOfStrings list_of_strings;
+
+    if (drop_down_menu_handle.__handle == NULL)
+    {
+        printf("Drop down menu handle is NULL!\n");
+
+        list_of_strings.elements = NULL;
+        list_of_strings.size = 0;
+
+        return list_of_strings;
+    }
+
+    return drop_down_menu_handle.__handle->state.elements;
+}
+
+ListOfStrings getRadioButtonGroupButtonNames(const RadioButtonGroupHandle radio_button_group_handle)
+{
+    ListOfStrings list_of_strings;
+
+    if (radio_button_group_handle.__handle == NULL)
+    {
+        printf("Radio button group handle is NULL!\n");
+
+        list_of_strings.elements = NULL;
+        list_of_strings.size = 0;
+
+        return list_of_strings;
+    }
+
+    return radio_button_group_handle.__handle->buttons;
+}
+
+int32_t getRadioButtonGroupSelectedButtonIdx(const RadioButtonGroupHandle radio_button_group_handle)
+{
+    if (radio_button_group_handle.__handle == NULL)
+    {
+        printf("Radio button group handle is NULL!\n");
+        return -1;
+    }
+
+    return radio_button_group_handle.__handle->selected_button_idx;
+}
+
+char* getEditableTextValue(const EditableTextHandle editable_text_handle)
+{
+    if (editable_text_handle.__handle == NULL)
+    {
+        printf("Editable text handle is NULL!\n");
+        return NULL;
+    }
+
+    return editable_text_handle.__handle->text;
+}
+
+bool getIsCheckBoxChecked(const CheckboxHandle checkbox_handle)
+{
+    if (checkbox_handle.__handle == NULL)
+    {
+        printf("Checkbox handle is NULL!\n");
+        return false;
+    }
+
+    return checkbox_handle.__handle->is_checked;
+}
+
+char* internal_getNullString()
+{
+    static char* null_str = "NULL";
+    return null_str;
+}
+
+#define GET_HANDLE_STRING(handle) (handle.__handle == NULL ? internal_getNullString() : handle.__handle->handle_string)
 
 void* queryThreadFunction(void* vargp)
 {
