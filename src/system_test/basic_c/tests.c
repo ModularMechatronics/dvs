@@ -212,6 +212,13 @@ void slider0Callback(const SliderHandle gui_element_handle)
     const SliderHandle slider = getSliderHandle("slider0");
 
     printf("Callback function: \"%s\": %i\n", GET_HANDLE_STRING(gui_element_handle), getSliderValue(slider));
+
+    const TextLabelHandle text_label = getTextLabelHandle("text_label0");
+
+    char text[100];
+    sprintf(text, "Slider value: %i\n", getSliderValue(slider));
+
+    setTextLabelValue(text_label, text);
 }
 
 void button0Callback(const ButtonHandle gui_element_handle)
@@ -268,6 +275,10 @@ void printValues()
     const SliderHandle slider = getSliderHandle("slider0");
     const ListBoxHandle list_box = getListBoxHandle("listbox0");
     const DropDownMenuHandle drop_down_menu = getDropDownMenuHandle("ddm0");
+
+    const TextLabelHandle text_label = getTextLabelHandle("text_label0");
+
+    printf("Text label: %s\n", getTextLabelValue(text_label));
 
     printf("Listbox size: %zu\n", getListBoxElements(list_box).size);
 

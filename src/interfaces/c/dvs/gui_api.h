@@ -164,6 +164,17 @@ char* getEditableTextValue(const EditableTextHandle editable_text_handle)
     return editable_text_handle.__handle->text;
 }
 
+char* getTextLabelValue(const TextLabelHandle text_label_handle)
+{
+    if (text_label_handle.__handle == NULL)
+    {
+        printf("Text label handle is NULL!\n");
+        return NULL;
+    }
+
+    return text_label_handle.__handle->text;
+}
+
 bool getIsCheckBoxChecked(const CheckboxHandle checkbox_handle)
 {
     if (checkbox_handle.__handle == NULL)
@@ -173,6 +184,63 @@ bool getIsCheckBoxChecked(const CheckboxHandle checkbox_handle)
     }
 
     return checkbox_handle.__handle->is_checked;
+}
+
+void setTextLabelValue(const TextLabelHandle text_label_handle, const char* const new_value)
+{
+    if (text_label_handle.__handle == NULL)
+    {
+        printf("Text label handle is NULL!\n");
+        return;
+    }
+    else if (new_value == NULL)
+    {
+        printf("New value is NULL!\n");
+        return;
+    }
+
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_SET_GUI_ELEMENT_LABEL);
+
+    {
+        CommunicationHeaderObject* const current_obj = hdr.objects + hdr.obj_idx;
+
+        current_obj->type = CHOT_LABEL;
+
+        const size_t label_length = strnlen(new_value, 100U);
+        current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)label_length;
+
+        memset(current_obj->data, 0, kMaxNumFunctionHeaderBytes);
+
+        current_obj->data[0U] = PT_NAME;
+        current_obj->data[1U] = label_length;
+        memcpy(current_obj->data + 2U, new_value, label_length);
+
+        appendObjectIndexToCommunicationHeaderObjectLookupTable(&(hdr.objects_lut), CHOT_LABEL, hdr.obj_idx);
+
+        hdr.obj_idx += 1;
+    }
+
+    {
+        CommunicationHeaderObject* const current_obj = hdr.objects + hdr.obj_idx;
+
+        current_obj->type = CHOT_HANDLE_STRING;
+
+        const size_t handle_string_length = strnlen(text_label_handle.__handle->handle_string, 100U);
+        current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)handle_string_length;
+
+        memset(current_obj->data, 0, kMaxNumFunctionHeaderBytes);
+
+        current_obj->data[0U] = PT_NAME;
+        current_obj->data[1U] = handle_string_length;
+        memcpy(current_obj->data + 2U, text_label_handle.__handle->handle_string, handle_string_length);
+
+        appendObjectIndexToCommunicationHeaderObjectLookupTable(&(hdr.objects_lut), CHOT_HANDLE_STRING, hdr.obj_idx);
+
+        hdr.obj_idx += 1;
+    }
+
+    sendHeader(getSendFunction(), &hdr);
 }
 
 char* internal_getNullString()

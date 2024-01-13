@@ -219,27 +219,13 @@ bool isGuiRelatedFunction(const Function fcn)
 
 void MainWindow::handleGuiManipulation(ReceivedData& received_data)
 {
-    std::cout << "Gui manip!" << std::endl;
     const Function fcn = received_data.getFunction();
 
     const CommunicationHeader& hdr{received_data.getCommunicationHeader()};
     const std::string handle_string = hdr.get(CommunicationHeaderObjectType::HANDLE_STRING).as<properties::Name>().data;
     const std::string label = hdr.get(CommunicationHeaderObjectType::LABEL).as<properties::Name>().data;
 
-    std::cout << "Element to change: " << handle_string << std::endl;
-    std::cout << "New label: " << label << std::endl;
-
     gui_elements_[handle_string]->setLabel(label);
-
-    /*const float f = 42.42f;
-
-    const std::uint64_t num_bytes_to_send = sizeof(float);
-
-    FillableUInt8Array output_array{num_bytes_to_send};
-
-    output_array.fillWithStaticType(f);
-
-    sendThroughTcpInterface(output_array.view(), dvs::internal::kGuiTcpPortNum);*/
 }
 
 void MainWindow::manageReceivedData(ReceivedData& received_data)

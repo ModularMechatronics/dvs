@@ -217,6 +217,18 @@ void updateSliderState(SliderInternalHandle* const handle, const UInt8Array* dat
     memcpy(&handle->state.value, data_view->data + 3U * sizeof(int32_t), sizeof(int32_t));
 }
 
+void updateTextLabelState(TextLabelInternalHandle* const handle, const UInt8Array* data_view)
+{
+    const uint8_t text_length = data_view->data[0];
+
+    handle->text = (char*)malloc(text_length + 1U);
+
+    size_t idx = 1U;
+
+    memcpy(handle->text, data_view->data + idx, text_length);
+    handle->text[text_length] = '\0';
+}
+
 void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* data_view)
 {
     ListBoxState* const state = &(handle->state);
@@ -495,6 +507,25 @@ BaseHandle* internal_createEditableText(const char* const handle_string, const U
     return handle;
 }
 
+BaseHandle* internal_createTextLabel(const char* const handle_string, const UInt8Array* const data_view)
+{
+    TextLabelInternalHandle* const text_label = (TextLabelInternalHandle*)malloc(sizeof(TextLabelInternalHandle));
+
+    size_t handle_string_length = strlen(handle_string);
+
+    text_label->handle_string = (char*)malloc(handle_string_length + 1U);
+    strcpy(text_label->handle_string, handle_string);
+    text_label->handle_string[handle_string_length] = '\0';  // Null-terminate string
+
+    text_label->type = GUI_ET_TEXT_LABEL;
+
+    BaseHandle* const handle = (BaseHandle*)text_label;
+
+    updateTextLabelState((TextLabelInternalHandle*)handle, data_view);
+
+    return handle;
+}
+
 void populateGuiElementWithData(const GuiElementType type,
                                 const char* const handle_string,
                                 const UInt8Array* const data_view)
@@ -527,7 +558,7 @@ void populateGuiElementWithData(const GuiElementType type,
             }
             else if (type == GUI_ET_TEXT_LABEL)
             {
-                // updateTextLabelState((TextLabelInternalHandle*)handle, data_view);
+                updateTextLabelState((TextLabelInternalHandle*)handle, data_view);
             }
             else if (type == GUI_ET_LIST_BOX)
             {
@@ -578,6 +609,10 @@ void populateGuiElementWithData(const GuiElementType type,
         else if (type == GUI_ET_EDITABLE_TEXT)
         {
             handle = (BaseHandle*)internal_createEditableText(handle_string, data_view);
+        }
+        else if (type == GUI_ET_TEXT_LABEL)
+        {
+            handle = (BaseHandle*)internal_createTextLabel(handle_string, data_view);
         }
 
         if (handle != NULL)
@@ -812,6 +847,33 @@ EditableTextHandle getEditableTextHandle(const char* const handle_string)
     editable_text_handle.__handle = gui_elem;
 
     return editable_text_handle;
+}
+
+TextLabelHandle getTextLabelHandle(const char* const handle_string)
+{
+    GuiElementMap* const gui_element_map = getGuiElementHandles();
+
+    TextLabelHandle text_label_handle;
+    text_label_handle.__handle = NULL;
+
+    if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
+    {
+        printf("Gui element with handle string %s does not exist!\n", handle_string);
+        return text_label_handle;
+    }
+
+    TextLabelInternalHandle* const gui_elem =
+        (TextLabelInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+
+    if (gui_elem->type != GUI_ET_TEXT_LABEL)
+    {
+        printf("Gui element with handle string %s is not a slider!\n", handle_string);
+        return text_label_handle;
+    }
+
+    text_label_handle.__handle = gui_elem;
+
+    return text_label_handle;
 }
 
 void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)

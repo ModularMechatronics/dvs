@@ -54,6 +54,7 @@ Post release:
 - Colorbar
 - Time date axes
 - Should be possible to set layout to "relative" or "absolute" for elements
+- Python gui api
 - Move as much as possible from plot_pane into axes_interactor
 - Create "super struct" that contains all necessary information from axes_interactor that gets passed into axes_renderer
 - For FeatureSet, don't have ItemId as a specific argument pos, just put in support for the argument parser

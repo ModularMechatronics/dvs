@@ -133,4 +133,9 @@ typedef struct S_EditableTextHandle
     EditableTextInternalHandle* __handle;
 } EditableTextHandle;
 
+typedef struct S_TextLabelHandle
+{
+    TextLabelInternalHandle* __handle;
+} TextLabelHandle;
+
 #endif  // DVS_INTERNAL_GUI_ELEMENT_HANDLE_H

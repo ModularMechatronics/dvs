@@ -312,12 +312,12 @@ inline std::map<std::string, gui::CheckboxCallbackFunction>& getCheckboxCallback
     return gui_callbacks;
 }
 
-inline std::map<std::string, gui::TextLabelCallbackFunction>& getTextLabelCallbacks()
+/*inline std::map<std::string, gui::TextLabelCallbackFunction>& getTextLabelCallbacks()
 {
     static std::map<std::string, gui::TextLabelCallbackFunction> gui_callbacks;
 
     return gui_callbacks;
-}
+}*/
 
 inline std::map<std::string, gui::ListBoxCallbackFunction>& getListBoxCallbacks()
 {
@@ -386,11 +386,11 @@ inline void registerGuiCallback(const std::string& handle_string,
     registerGuiCallback(handle_string, callback_function, internal::getCheckboxCallbacks);
 }
 
-inline void registerGuiCallback(const std::string& handle_string,
+/*inline void registerGuiCallback(const std::string& handle_string,
                                 std::function<void(const TextLabelHandle&)> callback_function)
 {
     registerGuiCallback(handle_string, callback_function, internal::getTextLabelCallbacks);
-}
+}*/
 
 inline void registerGuiCallback(const std::string& handle_string,
                                 std::function<void(const ListBoxHandle&)> callback_function)
@@ -633,7 +633,7 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
             gui_callbacks[handle_string](gui::getGuiElementHandle<gui::CheckboxHandle>(handle_string));
         }
     }
-    else if (type == dvs::GuiElementType::TextLabel)
+    /*else if (type == dvs::GuiElementType::TextLabel)
     {
         std::map<std::string, gui::TextLabelCallbackFunction>& gui_callbacks = getTextLabelCallbacks();
 
@@ -641,7 +641,7 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
         {
             gui_callbacks[handle_string](gui::getGuiElementHandle<gui::TextLabelHandle>(handle_string));
         }
-    }
+    }*/
     else if (type == dvs::GuiElementType::ListBox)
     {
         std::map<std::string, gui::ListBoxCallbackFunction>& gui_callbacks = getListBoxCallbacks();
