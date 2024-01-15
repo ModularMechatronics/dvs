@@ -73,7 +73,9 @@ int main(int argc, char* argv[])
                                       {"cube_image", small::testCubeImage},
                                       {"filtering_with_slider", small::testFilteringWithSliders},
                                       {"pid_tuner", small::testPidTuner},
-                                      {"three_body_problem", small::testThreeBodyProblem}};
+                                      {"three_body_problem", small::testThreeBodyProblem},
+                                      {"swirls", small::testSwirls},
+                                      {"bouncing_balls", small::testBouncingBalls}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

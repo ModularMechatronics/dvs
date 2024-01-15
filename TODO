@@ -41,6 +41,7 @@ Pre release:
 - Add protection from "NaN" of axes calculation
 - Make it so that shader code and font data can be reached when the application is at arbitrary location
 - Python scatter with individual colors
+- Both line width and point size should be sent as float
 - Python draw mesh with individual colors
 - DropDownMenuHandle -> DropdownMenuHandle and so on
 

@@ -1748,6 +1748,315 @@ void testThreeBodyProblem()
     }
 }
 
+void testSwirls()
+{
+    const std::string project_file_path = "../../project_files/demo_white.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t n_its = 500U;
+    const size_t n_elems = 100U;
+
+    const double t_end = 2.0 * M_PI;
+
+    const Vector<double> t = linspaceFromBoundariesAndCount<double>(0.0, t_end, n_elems);
+    const Vectord xc = dvs::sin(t);
+    const Vectord yc = dvs::cos(t);
+
+    const Vectord xs = dvs::sin(t + xc / 4.0);
+
+    const auto col = properties::Color::BLACK;
+    const auto lw = properties::LineWidth(1.0f);
+
+    const auto plot_circle = [&](const double xs, const double ys, const double xo, const double yo) -> void {
+        plot((xc * xs) + xo, (yc * ys) + yo, col, lw);
+    };
+
+    const auto plot_sin = [&]() -> void { plot(t, xc, col, lw); };
+
+    const auto plot_point = [&](const double x, const double y, const double s) -> void {
+        Vectord x_vec{1U};
+        Vectord y_vec{1U};
+        x_vec(0) = x;
+        y_vec(0) = y;
+        scatter(x_vec, y_vec, properties::ScatterStyle::DISC, properties::PointSize(s), col);
+    };
+
+    setCurrentElement("p_view_0");
+    clearView();
+    view(0, 90);
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    axesSquare();
+    axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+    waitForFlush();
+
+    const size_t n_circles = 5;
+
+    struct SwirlSettings
+    {
+        double r;
+        double xo;
+        double yo;
+        double ps;
+        double rs;
+
+        double x_pos;
+        double y_pos;
+        double t;
+    };
+
+    std::vector<SwirlSettings> settings;
+
+    for (size_t k = 0; k < n_circles; k++)
+    {
+        // Radius, center, point size, rotation speed
+        SwirlSettings ss;
+
+        ss.r = static_cast<double>(rand() % 1001) / 1000.0 + 0.1;
+        ss.xo = 2.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        ss.yo = 2.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        ss.ps = debug_value_args::getValue<double>("ps", 100.0) * (static_cast<double>(rand() % 1001) / 1000.0 + 0.1);
+        ss.rs = 0.01 * (static_cast<double>(rand() % 1001) / 1000.0 + 0.1);
+
+        ss.t = 0.0;
+
+        settings.push_back(ss);
+    }
+
+    // for (size_t k = 0; k < n_its; k++)
+    {
+        for (size_t i = 0; i < n_circles; i++)
+        {
+            SwirlSettings& ss = settings[i];
+
+            plot_circle(ss.r, ss.r, ss.xo, ss.yo);
+            const double xo = ss.xo + std::sin(ss.t) * ss.r;
+            const double yo = ss.yo + std::cos(ss.t) * ss.r;
+
+            ss.t += ss.rs;
+
+            plot_point(xo, yo, ss.ps);
+        }
+
+        // plot_point(1.0, 0.0, 50.0);
+        plot(t, xs);
+        flushCurrentElement();
+        // softClearView();
+        // usleep(1000U * 10U);
+    }
+}
+
+void testBouncingBalls()
+{
+    const std::string project_file_path = "../../project_files/demo_black.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t n_balls = 50;
+    const size_t n_its = 1000;
+
+    const double radius = 1.0;
+    const double radius2 = radius * radius;
+
+    const Vector<double> t = linspaceFromBoundariesAndCount<double>(0.0, 2.0 * M_PI, 100U);
+    const Vectord xc = radius * dvs::sin(t);
+    const Vectord yc = radius * dvs::cos(t);
+
+    struct Ball
+    {
+        double x;
+        double y;
+        double vx;
+        double vy;
+        double h;
+        double r;
+        double m;
+        double e;
+        double c;
+
+        properties::Color col;
+        RGB888 rgb_val;
+
+        Vector<double> vec_x;
+        Vector<double> vec_y;
+    };
+
+    const double g = 9.82;
+
+    const auto update_balls = [&](std::vector<Ball>& balls, const size_t k) -> void {
+        for (size_t i = 0; i < n_balls; i++)
+        {
+            Ball& ball = balls[i];
+
+            const double v = std::sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            const double fc = ball.c * v * v;
+            const double vxn = ball.vx / v;
+            const double vyn = ball.vy / v;
+
+            const double ax = (-fc * vxn) / ball.m;
+            const double ay = (-fc * vyn - g) / ball.m;
+
+            const double vx_inc = ax * ball.h;
+            const double vy_inc = ay * ball.h;
+
+            ball.vx += vx_inc;
+            ball.vy += vy_inc;
+
+            const double x_inc = ball.vx * ball.h;
+            const double y_inc = ball.vy * ball.h;
+
+            ball.x += x_inc;
+            ball.y += y_inc;
+
+            // The balls shall reflect at the walls of the circle with centre (0, 0) and radius 1.0
+            const double x2 = ball.x * ball.x;
+            const double y2 = ball.y * ball.y;
+
+            const double r2 = x2 + y2;
+
+            if (r2 > radius2)
+            {
+                const double r = std::sqrt(r2);
+
+                const double x_prev = ball.x - x_inc;
+                const double y_prev = ball.y - y_inc;
+
+                // radius2 == (x_prev + t * (ball.x - x_prev))^2 + (y_prev + t * (ball.y - y_prev))^2
+                // radius2 == x_prev^2 + t * 2 * x_prev * (ball.x - x_prev) + t^2 * (ball.x - x_prev)^2
+                //          + y_prev^2 + t * 2 * y_prev * (ball.y - y_prev) + t^2 * (ball.y - y_prev)^2
+
+                const double a = (ball.x - x_prev) * (ball.x - x_prev) + (ball.y - y_prev) * (ball.y - y_prev);
+                const double b = 2.0 * x_prev * (ball.x - x_prev) + 2.0 * y_prev * (ball.y - y_prev);
+                const double c = x_prev * x_prev + y_prev * y_prev - radius2;
+
+                double t_sol = (-b + std::sqrt(b * b - 4.0 * a * c)) / (2.0 * a);
+                if (t_sol < 0.0)
+                {
+                    t_sol = (-b - std::sqrt(b * b - 4.0 * a * c)) / (2.0 * a);
+                }
+
+                const double x_sol = x_prev + t_sol * (ball.x - x_prev);
+                const double y_sol = y_prev + t_sol * (ball.y - y_prev);
+
+                const Vec2d full_vec{ball.x - x_prev, ball.y - y_prev};
+                const Vec2d first_vec{x_sol - x_prev, y_sol - y_prev};
+
+                const double remainder = full_vec.norm() - first_vec.norm();
+
+                const Vec2d circle_normal_vec = Vec2d{x_sol, y_sol}.normalized();
+
+                const Vec2d reflected_vec =
+                    (first_vec -
+                     2.0 * (first_vec.x * circle_normal_vec.x + first_vec.y * circle_normal_vec.y) * circle_normal_vec)
+                        .normalized();
+
+                const double v = std::sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+
+                const Vec2d v_final{x_sol + reflected_vec.x * remainder, y_sol + reflected_vec.y * remainder};
+                const Vec2d vel_final{reflected_vec.x * v, reflected_vec.y * v};
+
+                ball.x = v_final.x;
+                ball.y = v_final.y;
+
+                ball.vx = vel_final.x;
+                ball.vy = vel_final.y;
+            }
+
+            ball.vec_x(k) = ball.x;
+            ball.vec_y(k) = ball.y;
+        }
+    };
+
+    Vector<double> xb{n_balls}, yb{n_balls};
+    Vector<RGB888> cols{n_balls};
+
+    const float lw = 3.0f;
+
+    const auto plot_balls = [&](std::vector<Ball>& balls, const size_t k) -> void {
+        for (size_t i = 0; i < n_balls; i++)
+        {
+            Ball& ball = balls[i];
+
+            xb(i) = ball.vec_x(k);
+            yb(i) = ball.vec_y(k);
+            cols(i) = ball.rgb_val;
+        }
+
+        if (k > 1U)
+        {
+            for (size_t i = 0; i < n_balls; i++)
+            {
+                Ball& ball = balls[i];
+
+                const VectorConstView xv{ball.vec_x.data(), k + 1U};
+                const VectorConstView yv{ball.vec_y.data(), k + 1U};
+                plot(xv, yv, ball.col, properties::LineWidth(lw));
+            }
+        }
+
+        scatter(xb, yb, cols, properties::ScatterStyle::DISC, properties::PointSize(10.0f), properties::Color::WHITE);
+    };
+
+    std::vector<Ball> balls;
+    const Vec2d init_pos{std::cos(-M_PI / 4.0), std::sin(-M_PI / 4.0)};
+
+    const double start_dir = M_PI / 4.0;
+    double tv = start_dir;
+
+    for (size_t k = 0; k < n_balls; k++)
+    {
+        Ball ball;
+
+        const double d = static_cast<double>(k) / static_cast<double>(n_balls - 1U);
+
+        ball.x = init_pos.x;
+        ball.y = init_pos.y;
+        ball.c = 0.05;
+        ball.h = 0.001;
+        ball.m = 0.1;
+
+        ball.vx = -100.0 * std::cos(tv);
+        ball.vy = 100.0 * std::sin(tv);
+
+        ball.rgb_val = calculateColormapViridis(d);
+        ball.col = properties::Color{ball.rgb_val.red, ball.rgb_val.green, ball.rgb_val.blue};
+
+        ball.vec_x.resize(n_its);
+        ball.vec_y.resize(n_its);
+
+        for (size_t i = 0; i < n_its; i++)
+        {
+            ball.vec_x(i) = 0.0;
+            ball.vec_y(i) = 0.0;
+        }
+
+        tv += 0.01;
+
+        balls.push_back(ball);
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    view(0, 90);
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    axesSquare();
+    axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+    waitForFlush();
+
+    plot(xc, yc, properties::Color::WHITE, properties::LineWidth(lw), properties::PERSISTENT);
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        update_balls(balls, k);
+    }
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        plot_balls(balls, k);
+        softClearView();
+        usleep(1000U * 10U);
+        flushCurrentElement();
+    }
+}
+
 }  // namespace small
 
 #endif  // DEMOS_SMALL_H
