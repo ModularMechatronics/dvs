@@ -134,6 +134,7 @@ public:
     void createNewCheckboxCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewTextLabelCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewPlotPane();
+    void createNewPlotPane(const std::string& handle_string);
 
     void editElementName(wxCommandEvent& WXUNUSED(event));
     void deleteElement(wxCommandEvent& WXUNUSED(event));

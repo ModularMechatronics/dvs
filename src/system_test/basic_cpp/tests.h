@@ -1774,6 +1774,23 @@ void testDrawCubes()
     drawCubes(x - 20.0, y, z, sizes, properties::ColorMap::JET_BRIGHT, properties::EdgeColor::NONE);
 }
 
+void testCreateNewElement()
+{
+    const std::string project_file_path = "../../project_files/exp0.dvs";
+    openProjectFile(project_file_path);
+
+    const Vector<double> t = linspaceFromBoundariesAndCount(0.0, 2.0 * M_PI, 1000);
+    const Vector<double> x = dvs::cos(t);
+
+    setCurrentElement("p_view_0");
+    clearView();
+    plot(t, x);
+
+    setCurrentElement("a_non_existing_element");
+    clearView();
+    plot(t, x);
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1803,6 +1820,7 @@ void addTests()
     addTest("cpp", "basic", "set_title", testSetTitle);
     addTest("cpp", "basic", "screenshot", testScreenshot);
     addTest("cpp", "basic", "draw_cubes", testDrawCubes);
+    addTest("cpp", "basic", "create_new_element", testCreateNewElement);
 }
 
 }  // namespace basic_cpp

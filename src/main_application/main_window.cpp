@@ -43,6 +43,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     static_cast<void>(cmdl_args);
     window_initialization_in_progress_ = true;
     open_project_file_queued_ = false;
+    new_window_queued_ = false;
 
     window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
 
@@ -647,6 +648,65 @@ void MainWindow::newWindowWithoutFileModification()
                                                [this](const std::string& f) -> void { toggleWindowVisibility(f); }));
 
     gui_window->createNewPlotPane();
+}
+
+void MainWindow::newWindowWithoutFileModification(const std::string& element_handle_string)
+{
+    WindowSettings window_settings;
+    window_settings.name = "Window " + std::to_string(current_window_num_);
+    window_settings.x = 30;
+    window_settings.y = 30;
+    window_settings.width = 600;
+    window_settings.height = 628;
+
+    GuiWindow* gui_window = new GuiWindow(this,
+                                          window_settings,
+                                          save_manager_->getCurrentFileName(),
+                                          window_callback_id_,
+                                          save_manager_->isSaved(),
+                                          notification_from_gui_element_key_pressed_,
+                                          notification_from_gui_element_key_released_,
+                                          get_all_element_names_,
+                                          notify_main_window_element_deleted_,
+                                          notify_main_window_element_name_changed_,
+                                          notify_main_window_name_changed_,
+                                          notify_main_window_about_modification_,
+                                          push_text_to_cmdl_output_window_,
+                                          print_gui_callback_code_);
+
+    windows_menu_->Append(gui_window->getCallbackId(), gui_window->getName());
+    Bind(wxEVT_MENU, &MainWindow::toggleWindowVisibilityCallback, this, gui_window->getCallbackId());
+
+    task_bar_->addNewWindow(window_settings.name);
+    current_window_num_++;
+    window_callback_id_ += 1;
+
+    windows_.push_back(gui_window);
+
+    int pos_y = first_window_button_offset_ + kMainWindowButtonHeight * (windows_.size() - 1);
+    this->SetSize(wxSize(kMainWindowWidth, kMainWindowButtonHeight * windows_.size() + first_window_button_offset_));
+
+    TabSettings tab_settings;
+    tab_settings.name = gui_window->getName();
+
+    window_buttons_.push_back(new WindowButton(this,
+                                               tab_settings,
+                                               wxPoint(0, pos_y),
+                                               wxSize(kMainWindowWidth, kMainWindowButtonHeight),
+                                               0,
+                                               [this](const std::string& f) -> void { toggleWindowVisibility(f); }));
+
+    gui_window->createNewPlotPane(element_handle_string);
+
+    std::vector<ApplicationGuiElement*> pps = gui_window->getPlotPanes();
+
+    for (const auto& ge : pps)
+    {
+        if (plot_panes_.count(ge->getHandleString()) == 0)
+        {
+            plot_panes_[ge->getHandleString()] = ge;
+        }
+    }
 }
 
 void MainWindow::windowNameChanged(const std::string& old_name, const std::string& new_name)

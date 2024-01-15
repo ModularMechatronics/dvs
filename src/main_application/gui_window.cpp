@@ -680,6 +680,29 @@ void GuiWindow::createNewPlotPane()
     }
 }
 
+void GuiWindow::createNewPlotPane(const std::string& handle_string)
+{
+    const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();
+
+    auto q = std::find_if(tabs_.begin(), tabs_.end(), [&selected_tab](const WindowTab* const tb) -> bool {
+        return selected_tab == tb->getName();
+    });
+
+    if (q != tabs_.end())
+    {
+        const std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
+        pp_settings->x = 0.0;
+        pp_settings->y = 0.0;
+        pp_settings->width = 1.0;
+        pp_settings->height = 1.0;
+        pp_settings->handle_string = handle_string;
+        pp_settings->title = "";
+
+        (*q)->createNewPlotPane(pp_settings);
+        notify_main_window_about_modification_();
+    }
+}
+
 void GuiWindow::createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event))
 {
     const std::string selected_tab = tab_buttons_.getNameOfSelectedTab();

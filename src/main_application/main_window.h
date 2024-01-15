@@ -61,6 +61,8 @@ private:
     std::atomic<bool> open_project_file_queued_;
     std::string queued_project_file_name_;
 
+    std::atomic<bool> new_window_queued_;
+
     std::string current_element_name_;
 
     wxTimer receive_timer_;
@@ -88,7 +90,6 @@ private:
     void OnReceiveTimer(wxTimerEvent&);
     void OnRefreshTimer(wxTimerEvent&);
     void setCurrentElement(const ReceivedData& received_data);
-    void createNewElement(const internal::CommunicationHeader& hdr);
     void receiveData();
 
     void mouseLeftPressed(wxMouseEvent& event);
@@ -162,6 +163,7 @@ public:
     void newWindowCallback(wxCommandEvent& WXUNUSED(event));
     void newWindow();
     void newWindowWithoutFileModification();
+    void newWindowWithoutFileModification(const std::string& element_handle_string);
 
     void elementDeleted(const std::string& element_handle_string);
     void elementNameChanged(const std::string& old_name, const std::string& new_name);
