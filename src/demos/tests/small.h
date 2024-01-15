@@ -1850,7 +1850,7 @@ void testBouncingBalls()
     const std::string project_file_path = "../../project_files/demo_black.dvs";
     openProjectFile(project_file_path);
 
-    const size_t n_balls = 50;
+    const size_t n_balls = 100;
     const size_t n_its = 1000;
 
     const double radius = 1.0;

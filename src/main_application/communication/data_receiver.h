@@ -32,7 +32,7 @@
 class DataReceiver
 {
 private:
-    int tcp_sockfd_, tcp_connfd_;
+    int tcp_sockfd_;
     socklen_t tcp_len_;
     struct sockaddr_in tcp_servaddr_;
     struct sockaddr_in tcp_cli_;

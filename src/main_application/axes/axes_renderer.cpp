@@ -678,8 +678,6 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
         const glm::vec3 v_in_screen(query_point.query_point_screen_x, sceen_y, -0.1);
         const glm::vec3 v_in_screen_unprojected = glm::unProject(v_in_screen, local_mvp, projection_mat_, v_viewport);
 
-        const glm::vec3 projected_point = glm::project(unprojected_point, local_mvp, projection_mat_, v_viewport);
-
         line_ = Line3D<double>::fromTwoPoints(
             Vec3d{unprojected_point.x, unprojected_point.y, unprojected_point.z},
             Vec3d{v_in_screen_unprojected.x, v_in_screen_unprojected.y, v_in_screen_unprojected.z});

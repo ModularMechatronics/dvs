@@ -12,10 +12,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/resource.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <sys/resource.h>
 
 #include <chrono>
 #include <cstdint>
@@ -355,10 +355,10 @@ inline bool isDvsRunning()
 
     bool dvs_running = false;
 
-    const auto ends_with =[] (const std::string& full_string, const std::string& ending) {
+    const auto ends_with = [](const std::string& full_string, const std::string& ending) {
         if (full_string.length() >= ending.length())
         {
-            return (0 == full_string.compare (full_string.length() - ending.length(), ending.length(), ending));
+            return (0 == full_string.compare(full_string.length() - ending.length(), ending.length(), ending));
         }
         else
         {
@@ -368,10 +368,8 @@ inline bool isDvsRunning()
 
     for (const std::string& line : lines)
     {
-        if ((line.length() > 0U) &&
-            (line.find("dvs") != std::string::npos) &&
-            (line.find("grep") == std::string::npos) &&
-            (ends_with(line, "dvs\n") || ends_with(line, "dvs &\n")))
+        if ((line.length() > 0U) && (line.find("dvs") != std::string::npos) &&
+            (line.find("grep") == std::string::npos) && (ends_with(line, "dvs\n") || ends_with(line, "dvs &\n")))
         {
             dvs_running = true;
         }
@@ -381,7 +379,6 @@ inline bool isDvsRunning()
 
     return dvs_running;
 }
-
 
 }  // namespace internal
 }  // namespace dvs
