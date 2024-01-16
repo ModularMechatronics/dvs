@@ -82,7 +82,7 @@ class Triangle3D:
 
 
 class IndexTriplet:
-    def __init__(self, i1=0, i0=0, i2=0):
+    def __init__(self, i0=0, i1=0, i2=0):
         self.i0 = i0
         self.i1 = i1
         self.i2 = i2

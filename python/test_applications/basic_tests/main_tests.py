@@ -4,9 +4,12 @@ import numpy as np
 # from structures import *
 # import properties
 import time
+import sys
 import surf_functions
 import plot_2d_functions
 import plot_3d_functions
+import pywavefront
+import os
 
 
 def setup_dvs_view():
@@ -397,3 +400,168 @@ def test_stem():
     dvs.plot(x, y, color=dvs.properties.Color.CYAN)
     dvs.scatter(x, y, point_size=13, color=dvs.properties.Color.BLACK)
     dvs.stem(x, y, color=dvs.properties.Color.RED)
+
+
+def color_map_jet(d, colors):
+    value = np.float32(d)
+    value[value < 0.0] = 0.0
+    value[value >= 1.0] = 0.99999
+
+    full_range_value = value * np.float32(11.0)
+    integer_part = np.floor(full_range_value).astype(np.int16)
+    fraction_part = full_range_value - integer_part
+
+    colors[integer_part == 0, 0] = ((0.3686274509803922 - fraction_part[integer_part == 0] * 0.17254901960784316) * 255.0).astype(np.uint8)
+    colors[integer_part == 0, 1] = ((0.30980392156862746 + fraction_part[integer_part == 0] * 0.22352941176470587) * 255.0).astype(np.uint8)
+    colors[integer_part == 0, 2] = ((0.6352941176470588 + fraction_part[integer_part == 0] * 0.10588235294117654) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 1, 0] = ((0.19607843137254902 + fraction_part[integer_part == 1] * 0.203921568627451) * 255.0).astype(np.uint8)
+    colors[integer_part == 1, 1] = ((0.5333333333333333 + fraction_part[integer_part == 1] * 0.22745098039215683) * 255.0).astype(np.uint8)
+    colors[integer_part == 1, 2] = ((0.7411764705882353 - fraction_part[integer_part == 1] * 0.09411764705882353) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 2, 0] = ((0.4 + fraction_part[integer_part == 2] * 0.2705882352941176) * 255.0).astype(np.uint8)
+    colors[integer_part == 2, 1] = ((0.7607843137254902 + fraction_part[integer_part == 2] * 0.10588235294117654) * 255.0).astype(np.uint8)
+    colors[integer_part == 2, 2] = ((0.6470588235294118 - fraction_part[integer_part == 2] * 0.0039215686274509665) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 3, 0] = ((0.6705882352941176 + fraction_part[integer_part == 3] * 0.2313725490196079) * 255.0).astype(np.uint8)
+    colors[integer_part == 3, 1] = ((0.8666666666666667 + fraction_part[integer_part == 3] * 0.09411764705882353) * 255.0).astype(np.uint8)
+    colors[integer_part == 3, 2] = ((0.6431372549019608 - fraction_part[integer_part == 3] * 0.04705882352941182) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 4, 0] = ((0.9019607843137255 + fraction_part[integer_part == 4] * 0.0980392156862745) * 255.0).astype(np.uint8)
+    colors[integer_part == 4, 1] = ((0.9607843137254902 + fraction_part[integer_part == 4] * 0.039215686274509776) * 255.0).astype(np.uint8)
+    colors[integer_part == 4, 2] = ((0.596078431372549 + fraction_part[integer_part == 4] * 0.15294117647058825) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 5, 0] = ((1.0 - fraction_part[integer_part == 5] * 0.0039215686274509665) * 255.0).astype(np.uint8)
+    colors[integer_part == 5, 1] = ((1.0 - fraction_part[integer_part == 5] * 0.1215686274509804) * 255.0).astype(np.uint8)
+    colors[integer_part == 5, 2] = ((0.7490196078431373 - fraction_part[integer_part == 5] * 0.20392156862745103) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 6, 0] = ((0.996078431372549 - fraction_part[integer_part == 6] * 0.0039215686274509665) * 255.0).astype(np.uint8)
+    colors[integer_part == 6, 1] = ((0.8784313725490196 - fraction_part[integer_part == 6] * 0.196078431372549) * 255.0).astype(np.uint8)
+    colors[integer_part == 6, 2] = ((0.5450980392156862 - fraction_part[integer_part == 6] * 0.16470588235294115) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 7, 0] = ((0.9921568627450981 - fraction_part[integer_part == 7] * 0.03529411764705881) * 255.0).astype(np.uint8)
+    colors[integer_part == 7, 1] = ((0.6823529411764706 - fraction_part[integer_part == 7] * 0.25490196078431376) * 255.0).astype(np.uint8)
+    colors[integer_part == 7, 2] = ((0.3803921568627451 - fraction_part[integer_part == 7] * 0.11764705882352938) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 8, 0] = ((0.9568627450980393 - fraction_part[integer_part == 8] * 0.1215686274509804) * 255.0).astype(np.uint8)
+    colors[integer_part == 8, 1] = ((0.42745098039215684 - fraction_part[integer_part == 8] * 0.18431372549019606) * 255.0).astype(np.uint8)
+    colors[integer_part == 8, 2] = ((0.2627450980392157 + fraction_part[integer_part == 8] * 0.047058823529411764) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 9, 0] = ((0.8352941176470589 - fraction_part[integer_part == 9] * 0.21568627450980393) * 255.0).astype(np.uint8)
+    colors[integer_part == 9, 1] = ((0.24313725490196078 - fraction_part[integer_part == 9] * 0.2392156862745098) * 255.0).astype(np.uint8)
+    colors[integer_part == 9, 2] = ((0.30980392156862746 - fraction_part[integer_part == 9] * 0.05098039215686273) * 255.0).astype(np.uint8)
+
+    colors[integer_part == 10, 0] = ((0.6196078431372549 - fraction_part[integer_part == 10] * 0.25098039215686274) * 255.0).astype(np.uint8)
+    colors[integer_part == 10, 1] = ((0.00392156862745098 + fraction_part[integer_part == 10] * 0.3058823529411765) * 255.0).astype(np.uint8)
+    colors[integer_part == 10, 2] = ((0.25882352941176473 + fraction_part[integer_part == 10] * 0.37647058823529406) * 255.0).astype(np.uint8)
+
+
+def test_3d_obj():
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
+
+    x = np.linspace(0, 3, 500, dtype=np.float32)
+    y = np.sin(x * 5.0)
+
+    duck_path = "../../../misc_data/RubberDuck/RubberDuck.obj"
+
+    if not os.path.exists(duck_path):
+        duck_path = "misc_data/RubberDuck/RubberDuck.obj"
+
+    bb = pywavefront.Wavefront(duck_path, create_materials=False, collect_faces=True)
+    # create_materials=True,collect_faces=True)
+    vertices = np.array(bb.vertices, dtype=np.float32)
+    # vertices_t = vertices.T
+
+    dvs.axes_square()
+    z = 2
+    dvs.axis([-2, -2, z - 2], [2, 2, z + 2])
+    dvs.view(-30, 30)
+    dvs.disable_scale_on_rotation()
+
+    num_faces = len(bb.mesh_list[0].faces)
+
+    indices = num_faces * [dvs.IndexTriplet(0, 0, 0)]
+    faces = bb.mesh_list[0].faces
+
+    for i in range(0, num_faces):
+        indices[i] = dvs.IndexTriplet(
+            faces[i][0],
+            faces[i][1],
+            faces[i][2],
+        )
+
+    vertices_original = vertices.copy()
+
+    phase = 0.0
+
+    t_elevation = np.pi / 2.0 + np.pi / 4.0
+
+    n_its = 1000
+    azimuth = -160
+    amplitude = 1.0
+
+    decay = 0.997
+
+    colors = (np.random.rand(num_faces, 3) * 255).astype(np.uint8)
+    colors[:, 0] = 0
+    colors[:, 1] = 0
+    colors[:, 2] = 0
+
+    x_interval = [np.min(vertices[:, 0]), np.max(vertices[:, 0])]
+
+    dx = x_interval[1] - x_interval[0]
+
+    offset = 0.0
+
+    x_distances = np.zeros(num_faces, dtype=np.float32)
+
+    for k in range(0, num_faces):
+        idx_triplet = indices[k]
+        p0 = vertices[idx_triplet.i0][0]
+        p1 = vertices[idx_triplet.i1][0]
+        p2 = vertices[idx_triplet.i2][0]
+
+        p_mean = (p0 + p1 + p2) / 3.0
+
+        d = (p_mean - x_interval[0]) / dx
+
+        x_distances[k] = d
+
+    for i in range(0, 1000):
+        y_vec = np.sin(vertices[:, 0] * 5.0 + phase) * 0.5 * amplitude
+        vertices[:, 1] = vertices_original[:, 1] + y_vec
+
+        amplitude = amplitude * decay
+
+        """for k in range(0, num_faces):
+            d = x_distances[k]
+            do = d + offset
+
+            colors[k] = color_map_jet(do - np.floor(do))"""
+        do = x_distances + offset
+        color_map_jet(do - np.floor(do), colors)
+
+        offset = offset + 0.01
+
+        if i > (n_its / 4):
+            dvs.draw_mesh(vertices, indices, colors=colors)
+        else:
+            dvs.draw_mesh(
+                vertices,
+                indices,
+                colors=colors,
+                edge_color=dvs.properties.EdgeColor.NONE,
+            )
+        if i == n_its / 2:
+            decay = 0.95
+
+        phase = phase + 0.1
+        dvs.view(azimuth, np.sin(t_elevation) * 10)
+        t_elevation += 0.01
+
+        azimuth -= 0.5
+        if azimuth < -180.0:
+            azimuth = 180.0
+
+        dvs.soft_clear_view()

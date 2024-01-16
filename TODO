@@ -5,7 +5,7 @@ Pre release:
   - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
-- Remove ability to add callbacks for TextLabel
+- Plotting without any element set at all at startup (Create default window and element)
 - Demos:
  * Something for machine learning practitioners
  * Something with drone simulation data

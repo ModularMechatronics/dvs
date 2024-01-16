@@ -223,16 +223,39 @@ def draw_mesh(
         internal.np_data_type_to_data_type(vertices[0][0].__class__),
     )
 
-    hdr.append_properties(props_kw)
+    new_props = {}
 
-    internal.send_header_and_data(
-        internal.send_with_tcp,
-        hdr,
-        vertices[0, :],
-        vertices[1, :],
-        vertices[2, :],
-        indices.T.flatten(),
-    )
+    colors = None
+
+    for itm in props_kw.items():
+        if itm[0] == "colors":
+            colors = itm[1]
+            # hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
+            hdr.append(enums.CommunicationHeaderObjectType.HAS_COLOR, 1)
+        else:
+            new_props[itm[0]] = itm[1]
+
+    hdr.append_properties(new_props)
+
+    if colors is None:
+        internal.send_header_and_data(
+            internal.send_with_tcp,
+            hdr,
+            vertices[0, :],
+            vertices[1, :],
+            vertices[2, :],
+            indices.T.flatten(),
+        )
+    else:
+        internal.send_header_and_data(
+            internal.send_with_tcp,
+            hdr,
+            vertices[0, :],
+            vertices[1, :],
+            vertices[2, :],
+            indices.T.flatten(),
+            colors.flatten(),
+        )
 
 
 def line_collection(
