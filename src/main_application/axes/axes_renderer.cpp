@@ -23,6 +23,7 @@ AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
     shader_collection_.text_shader.use();
     axes_square_ = false;
     scale_on_rotation_ = true;
+    glEnable(GL_DEPTH_CLAMP);
 
     initFreetype();
 

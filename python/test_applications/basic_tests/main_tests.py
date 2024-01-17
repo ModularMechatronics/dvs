@@ -1,8 +1,7 @@
 import dvs
 import numpy as np
 
-# from structures import *
-# import properties
+import pylas
 import time
 import sys
 import surf_functions
@@ -534,11 +533,6 @@ def test_3d_obj():
 
         amplitude = amplitude * decay
 
-        """for k in range(0, num_faces):
-            d = x_distances[k]
-            do = d + offset
-
-            colors[k] = color_map_jet(do - np.floor(do))"""
         do = x_distances + offset
         color_map_jet(do - np.floor(do), colors)
 
@@ -565,3 +559,49 @@ def test_3d_obj():
             azimuth = 180.0
 
         dvs.soft_clear_view()
+
+
+
+def test_las_file():
+    f_name = "Africa_Palace.las"
+    f_name = "laman_mahkota.laz"
+
+    las_path = "../../../misc_data/" + f_name
+
+    if not os.path.exists(las_path):
+        las_path = "misc_data/" + f_name
+
+    with pylas.open(las_path) as fh:
+        las = fh.read()
+
+        stride = 10
+
+        x = las.x[0::stride]
+        y = las.y[0::stride]
+        z = las.z[0::stride]
+
+        x = x - np.mean(x)
+        y = y - np.mean(y)
+        z = z - np.mean(z)
+
+        red = (las.red[0::stride] / 255).astype(np.uint8)
+        green = (las.green[0::stride] / 255).astype(np.uint8)
+        blue = (las.blue[0::stride] / 255).astype(np.uint8)
+
+        colors = np.array([red, green, blue]).T
+
+        x_interval = [np.min(x), np.max(x)]
+        y_interval = [np.min(y), np.max(y)]
+        z_interval = [np.min(z), np.max(z)]
+
+        min_val = np.min([x_interval[0], y_interval[0], z_interval[0]])
+        max_val = np.max([x_interval[1], y_interval[1], z_interval[1]])
+
+        dvs.set_current_element("p_view_0")
+        dvs.clear_view()
+        dvs.axes_square()
+        dvs.disable_scale_on_rotation()
+
+        dvs.axis([min_val, min_val, min_val], [max_val, max_val, max_val])
+
+        dvs.scatter3(x, y, z, colors=colors, color=dvs.properties.Color(0, 0, 0), scatter_style=dvs.properties.ScatterStyle.DISC, point_size=3)

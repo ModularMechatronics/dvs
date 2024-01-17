@@ -117,10 +117,24 @@ def scatter3(
             enums.CommunicationHeaderObjectType.DATA_TYPE,
             internal.np_data_type_to_data_type(x[0].__class__),
         )
+    
+    new_props = {}
 
-    hdr.append_properties(props_kw)
+    colors = None
 
-    internal.send_header_and_data(internal.send_with_tcp, hdr, x, y, z)
+    for itm in props_kw.items():
+        if itm[0] == "colors":
+            colors = itm[1]
+            hdr.append(enums.CommunicationHeaderObjectType.HAS_COLOR, 1)
+        else:
+            new_props[itm[0]] = itm[1]
+
+    hdr.append_properties(new_props)
+
+    if colors is None:
+        internal.send_header_and_data(internal.send_with_tcp, hdr, x, y, z)
+    else:
+        internal.send_header_and_data(internal.send_with_tcp, hdr, x, y, z, colors)
 
 
 def surf(
@@ -230,7 +244,6 @@ def draw_mesh(
     for itm in props_kw.items():
         if itm[0] == "colors":
             colors = itm[1]
-            # hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
             hdr.append(enums.CommunicationHeaderObjectType.HAS_COLOR, 1)
         else:
             new_props[itm[0]] = itm[1]
