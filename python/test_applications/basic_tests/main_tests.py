@@ -458,6 +458,7 @@ def color_map_jet(d, colors):
 def test_3d_obj():
     dvs.set_current_element("p_view_0")
     dvs.clear_view()
+    dvs.wait_for_flush()
 
     x = np.linspace(0, 3, 500, dtype=np.float32)
     y = np.sin(x * 5.0)
@@ -468,9 +469,7 @@ def test_3d_obj():
         duck_path = "misc_data/RubberDuck/RubberDuck.obj"
 
     bb = pywavefront.Wavefront(duck_path, create_materials=False, collect_faces=True)
-    # create_materials=True,collect_faces=True)
     vertices = np.array(bb.vertices, dtype=np.float32)
-    # vertices_t = vertices.T
 
     dvs.axes_square()
     z = 2
@@ -507,6 +506,13 @@ def test_3d_obj():
     colors[:, 1] = 0
     colors[:, 2] = 0
 
+    num_points = vertices.shape[0]
+
+    point_colors = (np.random.rand(num_points, 3) * 255).astype(np.uint8)
+    point_colors[:, 0] = 0
+    point_colors[:, 1] = 0
+    point_colors[:, 2] = 0
+
     x_interval = [np.min(vertices[:, 0]), np.max(vertices[:, 0])]
 
     dx = x_interval[1] - x_interval[0]
@@ -514,6 +520,8 @@ def test_3d_obj():
     offset = 0.0
 
     x_distances = np.zeros(num_faces, dtype=np.float32)
+    
+    point_x_distances = np.zeros(num_points, dtype=np.float32)
 
     for k in range(0, num_faces):
         idx_triplet = indices[k]
@@ -526,8 +534,13 @@ def test_3d_obj():
         d = (p_mean - x_interval[0]) / dx
 
         x_distances[k] = d
+    
+    for k in range(0, num_points):
 
-    for i in range(0, 1000):
+        d = (vertices[k, 0] - x_interval[0]) / dx
+        point_x_distances[k] = d
+
+    for i in range(0, 1500):
         y_vec = np.sin(vertices[:, 0] * 5.0 + phase) * 0.5 * amplitude
         vertices[:, 1] = vertices_original[:, 1] + y_vec
 
@@ -538,17 +551,50 @@ def test_3d_obj():
 
         offset = offset + 0.01
 
-        if i > (n_its / 4):
+        if i == n_its / 2:
+            decay = 0.95
+
+        if i > 1000: 
+            # Draw with only point cloud
+            do = point_x_distances + offset
+            color_map_jet(do - np.floor(do), point_colors)
+            decay = 1.01
+            amplitude = 0.3
+
+            dvs.scatter3(vertices[:, 0], vertices[:, 1], vertices[:, 2], colors=point_colors, scatter_style=dvs.properties.ScatterStyle.DISC, point_size=5)
+
+        elif i > 800: 
+            # Draw with only edges, and point cloud
+            do = point_x_distances + offset
+            color_map_jet(do - np.floor(do), point_colors)
+
+            dvs.draw_mesh(
+                vertices,
+                indices,
+                face_color=dvs.properties.FaceColor.NONE,
+            )
+            dvs.scatter3(vertices[:, 0], vertices[:, 1], vertices[:, 2], colors=point_colors, scatter_style=dvs.properties.ScatterStyle.DISC, point_size=5)
+
+        elif i > 600: 
+            # Draw with only edges
+            dvs.draw_mesh(
+                vertices,
+                indices,
+                face_color=dvs.properties.FaceColor.NONE,
+            )
+        elif i > 375:
+            # Draw with edges
             dvs.draw_mesh(vertices, indices, colors=colors)
         else:
+            # Draw without edges
             dvs.draw_mesh(
                 vertices,
                 indices,
                 colors=colors,
                 edge_color=dvs.properties.EdgeColor.NONE,
             )
-        if i == n_its / 2:
-            decay = 0.95
+
+        dvs.flush_current_element()
 
         phase = phase + 0.1
         dvs.view(azimuth, np.sin(t_elevation) * 10)
