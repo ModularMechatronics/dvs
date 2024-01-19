@@ -403,18 +403,27 @@ class CommunicationHeader:
 
         return bts
 
+socket_fd = None
 
-def send_with_tcp(bts: bytearray):
+def initialize_tcp_socket():
+    global socket_fd
+
     TCP_IP = "127.0.0.1"
     PORT_NUM = 9755
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((TCP_IP, PORT_NUM))
+    socket_fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_fd.connect((TCP_IP, PORT_NUM))
+
+def send_with_tcp(bts: bytearray):
+    global socket_fd
+
+    if socket_fd is None:
+        initialize_tcp_socket()
 
     num_bytes_to_send = np.uint64(len(bts))
 
-    sock.send(struct.pack("<Q", num_bytes_to_send))
-    sock.send(bts)
+    socket_fd.send(struct.pack("<Q", num_bytes_to_send))
+    socket_fd.send(bts)
 
 
 def send_with_udp(bts: bytearray):

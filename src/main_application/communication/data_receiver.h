@@ -37,6 +37,10 @@ private:
     struct sockaddr_in tcp_servaddr_;
     struct sockaddr_in tcp_cli_;
 
+    int tcp_connfd_;
+
+    bool is_connected_;
+
 public:
     DataReceiver();
     DataReceiver(const DataReceiver& other) = delete;

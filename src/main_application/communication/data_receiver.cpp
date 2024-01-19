@@ -27,22 +27,30 @@ DataReceiver::DataReceiver()
     {
         throw std::runtime_error("Socket listen failed...");
     }
+
+    is_connected_ = false;
 }
 
 ReceivedData DataReceiver::receiveAndGetDataFromTcp()
 {
-    int tcp_connfd = accept(tcp_sockfd_, (struct sockaddr*)&tcp_cli_, &tcp_len_);
+    if(!is_connected_)
+    {
+        tcp_connfd_ = accept(tcp_sockfd_, (struct sockaddr*)&tcp_cli_, &tcp_len_);
+        is_connected_ = true;
+    }
 
-    if (tcp_connfd < 0)
+    if (tcp_connfd_ < 0)
     {
         throw std::runtime_error("Server accept failed...");
     }
 
     size_t num_expected_bytes = 0U;
-    read(tcp_connfd, &num_expected_bytes, sizeof(uint64_t));
-
-    if (num_expected_bytes == 0)
+    const ssize_t num_read_bytes0 = read(tcp_connfd_, &num_expected_bytes, sizeof(uint64_t));
+    if(num_read_bytes0 == 0 || num_expected_bytes == 0)
     {
+        is_connected_ = false;
+        close(tcp_connfd_);
+
         return ReceivedData{};
     }
 
@@ -54,7 +62,15 @@ ReceivedData DataReceiver::receiveAndGetDataFromTcp()
 
     while (true)
     {
-        const ssize_t num_received_bytes = read(tcp_connfd, rec_buffer + total_num_received_bytes, num_bytes_left);
+        const ssize_t num_received_bytes = read(tcp_connfd_, rec_buffer + total_num_received_bytes, num_bytes_left);
+
+        if(num_received_bytes == 0)
+        {
+            is_connected_ = false;
+            close(tcp_connfd_);
+
+            return ReceivedData{};
+        }
 
         total_num_received_bytes += num_received_bytes;
         num_bytes_left -= static_cast<size_t>(num_received_bytes);
@@ -64,13 +80,13 @@ ReceivedData DataReceiver::receiveAndGetDataFromTcp()
             break;
         }
     }
-    close(tcp_connfd);
 
     uint64_t received_magic_num;
     std::memcpy(&received_magic_num, rec_buffer + 1, sizeof(uint64_t));  // +1 because first byte is endianness
 
     if (received_magic_num != dvs::internal::kMagicNumber)
     {
+        close(tcp_connfd_);
         throw std::runtime_error("Invalid magic number received!");
     }
 

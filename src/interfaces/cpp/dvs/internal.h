@@ -91,6 +91,54 @@ public:
 
 using SendFunctionType = std::function<void(const UInt8ArrayView& input_array, const std::uint64_t port_num)>;
 
+inline int& getSocketFileDescriptor()
+{
+    static int sock_file_descr = -1;
+    return sock_file_descr;
+}
+
+inline bool& getIsInitialized()
+{
+    static bool is_initialized = false;
+    return is_initialized;
+}
+
+inline void initializeTcpSocket(const uint64_t port_num)
+{
+    int& tcp_sockfd = getSocketFileDescriptor();
+    struct sockaddr_in tcp_servaddr;
+
+    tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    bzero(&tcp_servaddr, sizeof(tcp_servaddr));
+
+    tcp_servaddr.sin_family = AF_INET;
+    tcp_servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    tcp_servaddr.sin_port = htons(port_num);
+
+    if (connect(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
+    {
+        DVS_LOG_WARNING() << "Failed to connect! Is receiving application running?";
+        return;
+    }
+}
+
+inline void sendThroughTcpInterfaceClient(const UInt8ArrayView& input_array, const uint64_t port_num)
+{
+    if(!getIsInitialized())
+    {
+        initializeTcpSocket(port_num);
+        getIsInitialized() = true;
+    }
+
+    int& tcp_sockfd = getSocketFileDescriptor();
+
+    const uint64_t num_bytes_to_send = input_array.size();
+
+    write(tcp_sockfd, &num_bytes_to_send, sizeof(uint64_t));
+    write(tcp_sockfd, input_array.data(), input_array.size());
+}
+
 inline void sendThroughTcpInterface(const UInt8ArrayView& input_array, const uint64_t port_num)
 {
     int tcp_sockfd;
@@ -166,7 +214,7 @@ inline size_t receiveFromQueryUdpInterface()
 
 inline SendFunctionType getSendFunction()
 {
-    return sendThroughTcpInterface;
+    return sendThroughTcpInterfaceClient;
 }
 
 template <typename U> void countNumBytes(uint64_t& num_bytes, const U& data_to_be_sent)

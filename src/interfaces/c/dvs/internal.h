@@ -42,12 +42,24 @@ uint64_t minVal(const uint64_t v0, const uint64_t v1)
     }
 }
 
-void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
+int* getSocketFileDescriptor()
 {
-    int tcp_sockfd;
+    static int sock_file_descr = -1;
+    return &sock_file_descr;
+}
+
+bool* getIsInitialized()
+{
+    static bool is_initialized = false;
+    return &is_initialized;
+}
+
+void initializeTcpSocket()
+{
+    int* const tcp_sockfd = getSocketFileDescriptor();
     struct sockaddr_in tcp_servaddr;
 
-    tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    *tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     bzero(&tcp_servaddr, sizeof(tcp_servaddr));
 
@@ -55,17 +67,26 @@ void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_
     tcp_servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     tcp_servaddr.sin_port = htons(kTcpPortNum);
 
-    if (connect(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
+    if (connect(*tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
     {
-        printf("Failed to connect!\n");
+        printf("Failed to connect! Is receiving application running?\n");
     }
+}
+
+void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
+{
+    if(!(*getIsInitialized()))
+    {
+        initializeTcpSocket();
+        (*getIsInitialized()) = true;
+    }
+
+    int* const tcp_sockfd = getSocketFileDescriptor();
 
     const uint64_t num_bytes_to_send = num_bytes;
 
-    write(tcp_sockfd, &num_bytes_to_send, sizeof(uint64_t));
-    write(tcp_sockfd, data_blob, num_bytes);
-
-    close(tcp_sockfd);
+    write(*tcp_sockfd, &num_bytes_to_send, sizeof(uint64_t));
+    write(*tcp_sockfd, data_blob, num_bytes);
 }
 
 #define APPEND_PROPERTIES(__hdr, __first_prop)                 \
