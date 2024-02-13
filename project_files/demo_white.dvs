@@ -1,0 +1,44 @@
+{
+    "windows": [
+        {
+            "height": 811.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "background_color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "elements": [
+                        {
+                            "element_specific_settings": {
+                                "background_color": {
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "axes_letters_on": false,
+                                "axes_numbers_on": false,
+                                "grid_on": false,
+                                "plot_box_on": false,
+                                "clipping_on": false,
+                                "_pane_radius": 20.0
+                            },
+                            "handle_string": "p_view_0",
+                            "height": 1.0,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    ],
+                    "name": "Tab 0"
+                }
+            ],
+            "width": 456.0,
+            "x": 0.0,
+            "y": 25.0
+        }
+    ]
+}

@@ -162,7 +162,9 @@ FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     CommunicationHeaderObjectType.AZIMUTH: lambda x: np.float32(x).tobytes(),
     CommunicationHeaderObjectType.ELEVATION: lambda x: np.float32(x).tobytes(),
     CommunicationHeaderObjectType.AXIS_MIN_MAX_VEC: serialize_axes,
-    CommunicationHeaderObjectType.VEC3: None,
+    CommunicationHeaderObjectType.VEC3: lambda v: np.array(
+        [v.x, v.y, v.z], dtype=np.float32
+    ).tobytes(),
     CommunicationHeaderObjectType.SCALE_MATRIX: None,
     CommunicationHeaderObjectType.TRANSLATION_VECTOR: None,
     CommunicationHeaderObjectType.ROTATION_MATRIX: None,
@@ -204,7 +206,7 @@ SIZE_OF_FUNCTION_HEADER_OBJECT = {
     CommunicationHeaderObjectType.AZIMUTH: 4,
     CommunicationHeaderObjectType.ELEVATION: 4,
     CommunicationHeaderObjectType.AXIS_MIN_MAX_VEC: 6 * 8,
-    CommunicationHeaderObjectType.VEC3: None,
+    CommunicationHeaderObjectType.VEC3: 3 * 4,
     CommunicationHeaderObjectType.SCALE_MATRIX: None,
     CommunicationHeaderObjectType.TRANSLATION_VECTOR: None,
     CommunicationHeaderObjectType.ROTATION_MATRIX: None,

@@ -153,6 +153,104 @@ def test_plot3_demo():
         input("Press Enter to continue...")
 
 
+def test_series_demo():
+    # dvs.open_project_file("./project_files/series.dvs") # TODO: Open this file for this test
+
+    for i in range(0, 15):
+        dvs.set_current_element("p" + str(i))
+        dvs.clear_view()
+        # dvs.disable_scale_on_rotation()
+        dvs.view(30, 33)
+        dvs.axes_square()
+        dvs.axis(dvs.Vec3D(1.0, 1.0, -1.0), dvs.Vec3D(3.0, 3.0, 1.0))
+
+    x = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
+    y = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
+    x, y = np.meshgrid(x, y)
+
+    SURF_FUNCTION_NAMES = [
+        q
+        for q in surf_functions.__dir__()
+        if not q.startswith("__") and not q.startswith("np")
+    ]
+
+    SURF_FUNCTION_NAMES = [q for q in reversed(SURF_FUNCTION_NAMES)]
+
+    color_maps = [
+        dvs.properties.ColorMap.MAGMA,
+        dvs.properties.ColorMap.VIRIDIS,
+        dvs.properties.ColorMap.JET_SOFT,
+        dvs.properties.ColorMap.JET_BRIGHT,
+        dvs.properties.ColorMap.PASTEL,
+        dvs.properties.ColorMap.HSV,
+        dvs.properties.ColorMap.JET,
+    ]
+
+    for idx, surf_fun in enumerate(SURF_FUNCTION_NAMES):
+        if idx >= 15:
+            break
+
+        print(surf_fun)
+        dvs.set_current_element("p" + str(idx))
+        z = eval("surf_functions." + surf_fun + "(x, y)")
+        dvs.soft_clear_view()
+
+        cm = color_maps[idx % len(color_maps)]
+        if idx < 2:
+            dvs.surf(x, y, z, color_map=cm)
+        else:
+            dvs.surf(x, y, z, color_map=cm, edge_color=dvs.properties.EdgeColor.NONE)
+
+        # for _ in range(40):
+        #     dvs.view(curr_angle, 40)
+        #     time.sleep(0.01)
+        #     curr_angle = next_angle(curr_angle)
+
+    """x = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
+    y = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
+    x, y = np.meshgrid(x, y)
+
+    SURF_FUNCTION_NAMES = [
+        q
+        for q in surf_functions.__dir__()
+        if not q.startswith("__") and not q.startswith("np")
+    ]
+
+    def next_angle(current_angle):
+        if current_angle >= 0:
+            if current_angle + 1 > 179:
+                return -179
+            else:
+                return current_angle + 1
+        else:
+            return current_angle + 1
+
+    curr_angle = 0
+
+    color_maps = [
+        dvs.properties.ColorMap.JET,
+        dvs.properties.ColorMap.HSV,
+        dvs.properties.ColorMap.MAGMA,
+        dvs.properties.ColorMap.VIRIDIS,
+        dvs.properties.ColorMap.PASTEL,
+        dvs.properties.ColorMap.JET_SOFT,
+        dvs.properties.ColorMap.JET_BRIGHT,
+    ]
+
+    for idx, surf_fun in enumerate(SURF_FUNCTION_NAMES):
+        z = eval("surf_functions." + surf_fun + "(x, y)")
+        dvs.soft_clear_view()
+
+        # dvs.surf(x, y, z, color_map=properties.ColorMap.JET_SOFT)
+        cm = color_maps[idx % len(color_maps)]
+        dvs.surf(x, y, z, color_map=cm)
+
+        for _ in range(40):
+            dvs.view(curr_angle, 40)
+            time.sleep(0.01)
+            curr_angle = next_angle(curr_angle)"""
+
+
 def test_surf_demo():
     dvs.set_current_element("p_view_0")
     dvs.clear_view()
@@ -410,49 +508,145 @@ def color_map_jet(d, colors):
     integer_part = np.floor(full_range_value).astype(np.int16)
     fraction_part = full_range_value - integer_part
 
-    colors[integer_part == 0, 0] = ((0.3686274509803922 - fraction_part[integer_part == 0] * 0.17254901960784316) * 255.0).astype(np.uint8)
-    colors[integer_part == 0, 1] = ((0.30980392156862746 + fraction_part[integer_part == 0] * 0.22352941176470587) * 255.0).astype(np.uint8)
-    colors[integer_part == 0, 2] = ((0.6352941176470588 + fraction_part[integer_part == 0] * 0.10588235294117654) * 255.0).astype(np.uint8)
+    colors[integer_part == 0, 0] = (
+        (0.3686274509803922 - fraction_part[integer_part == 0] * 0.17254901960784316)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 0, 1] = (
+        (0.30980392156862746 + fraction_part[integer_part == 0] * 0.22352941176470587)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 0, 2] = (
+        (0.6352941176470588 + fraction_part[integer_part == 0] * 0.10588235294117654)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 1, 0] = ((0.19607843137254902 + fraction_part[integer_part == 1] * 0.203921568627451) * 255.0).astype(np.uint8)
-    colors[integer_part == 1, 1] = ((0.5333333333333333 + fraction_part[integer_part == 1] * 0.22745098039215683) * 255.0).astype(np.uint8)
-    colors[integer_part == 1, 2] = ((0.7411764705882353 - fraction_part[integer_part == 1] * 0.09411764705882353) * 255.0).astype(np.uint8)
+    colors[integer_part == 1, 0] = (
+        (0.19607843137254902 + fraction_part[integer_part == 1] * 0.203921568627451)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 1, 1] = (
+        (0.5333333333333333 + fraction_part[integer_part == 1] * 0.22745098039215683)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 1, 2] = (
+        (0.7411764705882353 - fraction_part[integer_part == 1] * 0.09411764705882353)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 2, 0] = ((0.4 + fraction_part[integer_part == 2] * 0.2705882352941176) * 255.0).astype(np.uint8)
-    colors[integer_part == 2, 1] = ((0.7607843137254902 + fraction_part[integer_part == 2] * 0.10588235294117654) * 255.0).astype(np.uint8)
-    colors[integer_part == 2, 2] = ((0.6470588235294118 - fraction_part[integer_part == 2] * 0.0039215686274509665) * 255.0).astype(np.uint8)
+    colors[integer_part == 2, 0] = (
+        (0.4 + fraction_part[integer_part == 2] * 0.2705882352941176) * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 2, 1] = (
+        (0.7607843137254902 + fraction_part[integer_part == 2] * 0.10588235294117654)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 2, 2] = (
+        (0.6470588235294118 - fraction_part[integer_part == 2] * 0.0039215686274509665)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 3, 0] = ((0.6705882352941176 + fraction_part[integer_part == 3] * 0.2313725490196079) * 255.0).astype(np.uint8)
-    colors[integer_part == 3, 1] = ((0.8666666666666667 + fraction_part[integer_part == 3] * 0.09411764705882353) * 255.0).astype(np.uint8)
-    colors[integer_part == 3, 2] = ((0.6431372549019608 - fraction_part[integer_part == 3] * 0.04705882352941182) * 255.0).astype(np.uint8)
+    colors[integer_part == 3, 0] = (
+        (0.6705882352941176 + fraction_part[integer_part == 3] * 0.2313725490196079)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 3, 1] = (
+        (0.8666666666666667 + fraction_part[integer_part == 3] * 0.09411764705882353)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 3, 2] = (
+        (0.6431372549019608 - fraction_part[integer_part == 3] * 0.04705882352941182)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 4, 0] = ((0.9019607843137255 + fraction_part[integer_part == 4] * 0.0980392156862745) * 255.0).astype(np.uint8)
-    colors[integer_part == 4, 1] = ((0.9607843137254902 + fraction_part[integer_part == 4] * 0.039215686274509776) * 255.0).astype(np.uint8)
-    colors[integer_part == 4, 2] = ((0.596078431372549 + fraction_part[integer_part == 4] * 0.15294117647058825) * 255.0).astype(np.uint8)
+    colors[integer_part == 4, 0] = (
+        (0.9019607843137255 + fraction_part[integer_part == 4] * 0.0980392156862745)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 4, 1] = (
+        (0.9607843137254902 + fraction_part[integer_part == 4] * 0.039215686274509776)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 4, 2] = (
+        (0.596078431372549 + fraction_part[integer_part == 4] * 0.15294117647058825)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 5, 0] = ((1.0 - fraction_part[integer_part == 5] * 0.0039215686274509665) * 255.0).astype(np.uint8)
-    colors[integer_part == 5, 1] = ((1.0 - fraction_part[integer_part == 5] * 0.1215686274509804) * 255.0).astype(np.uint8)
-    colors[integer_part == 5, 2] = ((0.7490196078431373 - fraction_part[integer_part == 5] * 0.20392156862745103) * 255.0).astype(np.uint8)
+    colors[integer_part == 5, 0] = (
+        (1.0 - fraction_part[integer_part == 5] * 0.0039215686274509665) * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 5, 1] = (
+        (1.0 - fraction_part[integer_part == 5] * 0.1215686274509804) * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 5, 2] = (
+        (0.7490196078431373 - fraction_part[integer_part == 5] * 0.20392156862745103)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 6, 0] = ((0.996078431372549 - fraction_part[integer_part == 6] * 0.0039215686274509665) * 255.0).astype(np.uint8)
-    colors[integer_part == 6, 1] = ((0.8784313725490196 - fraction_part[integer_part == 6] * 0.196078431372549) * 255.0).astype(np.uint8)
-    colors[integer_part == 6, 2] = ((0.5450980392156862 - fraction_part[integer_part == 6] * 0.16470588235294115) * 255.0).astype(np.uint8)
+    colors[integer_part == 6, 0] = (
+        (0.996078431372549 - fraction_part[integer_part == 6] * 0.0039215686274509665)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 6, 1] = (
+        (0.8784313725490196 - fraction_part[integer_part == 6] * 0.196078431372549)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 6, 2] = (
+        (0.5450980392156862 - fraction_part[integer_part == 6] * 0.16470588235294115)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 7, 0] = ((0.9921568627450981 - fraction_part[integer_part == 7] * 0.03529411764705881) * 255.0).astype(np.uint8)
-    colors[integer_part == 7, 1] = ((0.6823529411764706 - fraction_part[integer_part == 7] * 0.25490196078431376) * 255.0).astype(np.uint8)
-    colors[integer_part == 7, 2] = ((0.3803921568627451 - fraction_part[integer_part == 7] * 0.11764705882352938) * 255.0).astype(np.uint8)
+    colors[integer_part == 7, 0] = (
+        (0.9921568627450981 - fraction_part[integer_part == 7] * 0.03529411764705881)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 7, 1] = (
+        (0.6823529411764706 - fraction_part[integer_part == 7] * 0.25490196078431376)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 7, 2] = (
+        (0.3803921568627451 - fraction_part[integer_part == 7] * 0.11764705882352938)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 8, 0] = ((0.9568627450980393 - fraction_part[integer_part == 8] * 0.1215686274509804) * 255.0).astype(np.uint8)
-    colors[integer_part == 8, 1] = ((0.42745098039215684 - fraction_part[integer_part == 8] * 0.18431372549019606) * 255.0).astype(np.uint8)
-    colors[integer_part == 8, 2] = ((0.2627450980392157 + fraction_part[integer_part == 8] * 0.047058823529411764) * 255.0).astype(np.uint8)
+    colors[integer_part == 8, 0] = (
+        (0.9568627450980393 - fraction_part[integer_part == 8] * 0.1215686274509804)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 8, 1] = (
+        (0.42745098039215684 - fraction_part[integer_part == 8] * 0.18431372549019606)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 8, 2] = (
+        (0.2627450980392157 + fraction_part[integer_part == 8] * 0.047058823529411764)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 9, 0] = ((0.8352941176470589 - fraction_part[integer_part == 9] * 0.21568627450980393) * 255.0).astype(np.uint8)
-    colors[integer_part == 9, 1] = ((0.24313725490196078 - fraction_part[integer_part == 9] * 0.2392156862745098) * 255.0).astype(np.uint8)
-    colors[integer_part == 9, 2] = ((0.30980392156862746 - fraction_part[integer_part == 9] * 0.05098039215686273) * 255.0).astype(np.uint8)
+    colors[integer_part == 9, 0] = (
+        (0.8352941176470589 - fraction_part[integer_part == 9] * 0.21568627450980393)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 9, 1] = (
+        (0.24313725490196078 - fraction_part[integer_part == 9] * 0.2392156862745098)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 9, 2] = (
+        (0.30980392156862746 - fraction_part[integer_part == 9] * 0.05098039215686273)
+        * 255.0
+    ).astype(np.uint8)
 
-    colors[integer_part == 10, 0] = ((0.6196078431372549 - fraction_part[integer_part == 10] * 0.25098039215686274) * 255.0).astype(np.uint8)
-    colors[integer_part == 10, 1] = ((0.00392156862745098 + fraction_part[integer_part == 10] * 0.3058823529411765) * 255.0).astype(np.uint8)
-    colors[integer_part == 10, 2] = ((0.25882352941176473 + fraction_part[integer_part == 10] * 0.37647058823529406) * 255.0).astype(np.uint8)
+    colors[integer_part == 10, 0] = (
+        (0.6196078431372549 - fraction_part[integer_part == 10] * 0.25098039215686274)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 10, 1] = (
+        (0.00392156862745098 + fraction_part[integer_part == 10] * 0.3058823529411765)
+        * 255.0
+    ).astype(np.uint8)
+    colors[integer_part == 10, 2] = (
+        (0.25882352941176473 + fraction_part[integer_part == 10] * 0.37647058823529406)
+        * 255.0
+    ).astype(np.uint8)
 
 
 def test_3d_obj():
@@ -476,6 +670,7 @@ def test_3d_obj():
     dvs.axis([-2, -2, z - 2], [2, 2, z + 2])
     dvs.view(-30, 30)
     dvs.disable_scale_on_rotation()
+    dvs.global_illumination(dvs.Vec3D(2.0, 2.0, 2.0))
 
     num_faces = len(bb.mesh_list[0].faces)
 
@@ -520,7 +715,7 @@ def test_3d_obj():
     offset = 0.0
 
     x_distances = np.zeros(num_faces, dtype=np.float32)
-    
+
     point_x_distances = np.zeros(num_points, dtype=np.float32)
 
     for k in range(0, num_faces):
@@ -534,9 +729,8 @@ def test_3d_obj():
         d = (p_mean - x_interval[0]) / dx
 
         x_distances[k] = d
-    
-    for k in range(0, num_points):
 
+    for k in range(0, num_points):
         d = (vertices[k, 0] - x_interval[0]) / dx
         point_x_distances[k] = d
 
@@ -554,16 +748,23 @@ def test_3d_obj():
         if i == n_its / 2:
             decay = 0.95
 
-        if i > 1000: 
+        if i > 1000:
             # Draw with only point cloud
             do = point_x_distances + offset
             color_map_jet(do - np.floor(do), point_colors)
             decay = 1.01
             amplitude = 0.3
 
-            dvs.scatter3(vertices[:, 0], vertices[:, 1], vertices[:, 2], colors=point_colors, scatter_style=dvs.properties.ScatterStyle.DISC, point_size=5)
+            dvs.scatter3(
+                vertices[:, 0],
+                vertices[:, 1],
+                vertices[:, 2],
+                colors=point_colors,
+                scatter_style=dvs.properties.ScatterStyle.DISC,
+                point_size=5,
+            )
 
-        elif i > 800: 
+        elif i > 800:
             # Draw with only edges, and point cloud
             do = point_x_distances + offset
             color_map_jet(do - np.floor(do), point_colors)
@@ -573,9 +774,16 @@ def test_3d_obj():
                 indices,
                 face_color=dvs.properties.FaceColor.NONE,
             )
-            dvs.scatter3(vertices[:, 0], vertices[:, 1], vertices[:, 2], colors=point_colors, scatter_style=dvs.properties.ScatterStyle.DISC, point_size=5)
+            dvs.scatter3(
+                vertices[:, 0],
+                vertices[:, 1],
+                vertices[:, 2],
+                colors=point_colors,
+                scatter_style=dvs.properties.ScatterStyle.DISC,
+                point_size=5,
+            )
 
-        elif i > 600: 
+        elif i > 600:
             # Draw with only edges
             dvs.draw_mesh(
                 vertices,
@@ -605,7 +813,6 @@ def test_3d_obj():
             azimuth = 180.0
 
         dvs.soft_clear_view()
-
 
 
 def test_las_file():
@@ -650,4 +857,12 @@ def test_las_file():
 
         dvs.axis([min_val, min_val, min_val], [max_val, max_val, max_val])
 
-        dvs.scatter3(x, y, z, colors=colors, color=dvs.properties.Color(0, 0, 0), scatter_style=dvs.properties.ScatterStyle.DISC, point_size=3)
+        dvs.scatter3(
+            x,
+            y,
+            z,
+            colors=colors,
+            color=dvs.properties.Color(0, 0, 0),
+            scatter_style=dvs.properties.ScatterStyle.DISC,
+            point_size=3,
+        )

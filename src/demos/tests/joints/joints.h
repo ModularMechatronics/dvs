@@ -446,8 +446,6 @@ private:
     b2Vec2 gravity_{};
     b2World world_;
     b2PolygonShape ground_box_{};
-    b2Body* dynamic_body_;
-    b2Body* spinner_body_;
 
     float time_step = 1.0f / 60.0f;
     int32 velocity_iterations = 6;

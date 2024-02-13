@@ -182,9 +182,7 @@ inline void sendThroughQueryUdpInterface(const UInt8ArrayView& input_array)
 
     udp_client.sendData(data_to_send, total_num_bytes_to_send);
 
-    std::cout << "Before receive" << std::endl;
     const int num_received_bytes = udp_client.receiveData<kNumReceiveBytes>(received_data);
-    std::cout << "After receive" << std::endl;
 
     if (!ackValid(received_data))
     {

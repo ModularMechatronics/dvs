@@ -1,0 +1,58 @@
+{
+    "windows": [
+        {
+            "height": 811.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "background_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "elements": [
+                        {
+                            "element_specific_settings": {
+                                "background_color": {
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "axes_letters_on": false,
+                                "axes_numbers_on": false,
+                                "grid_on": false,
+                                "plot_box_on": false,
+                                "clipping_on": false
+                            },
+                            "handle_string": "p0",
+                            "height": 1.0,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    ],
+                    "name": "Tab 0"
+                }
+            ],
+            "width": 456.0,
+            "x": 0.0,
+            "y": 25.0
+        }
+    ]
+}

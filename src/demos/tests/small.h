@@ -1850,8 +1850,8 @@ void testBouncingBalls()
     const std::string project_file_path = "../../project_files/demo_black.dvs";
     openProjectFile(project_file_path);
 
-    const size_t n_balls = 100;
-    const size_t n_its = 1000;
+    const size_t n_balls = 50U;
+    const size_t n_its = 1000U;
 
     const double radius = 1.0;
     const double radius2 = radius * radius;
@@ -2033,7 +2033,7 @@ void testBouncingBalls()
         balls.push_back(ball);
     }
 
-    setCurrentElement("p_view_0");
+    setCurrentElement("p0");
     clearView();
     view(0, 90);
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
@@ -2055,6 +2055,189 @@ void testBouncingBalls()
         usleep(1000U * 10U);
         flushCurrentElement();
     }
+}
+
+/*
+def saddle_surface(x, y):
+    return x**2 - y**2
+
+
+# 2. Paraboloid surface
+def paraboloid_surface(x, y):
+    return x**2 + y**2
+
+
+# 3. Cone surface
+def cone_surface(x, y):
+    return np.sqrt(x**2 + y**2)
+
+
+# 5. Hyperbolic cone
+def hyperbolic_cone(x, y):
+    return np.sqrt(x**2 - y**2)
+
+
+# 9. Torus surface
+def torus_surface(x, y):
+    return np.cos(x) + np.cos(y)
+
+
+# 10. Ripple surface
+def ripple_surface(x, y):
+    return np.sin(np.sqrt(x**2 + y**2))
+
+
+# 11. Spiral surface
+def spiral_surface(x, y):
+    return np.sin(x + y)
+
+
+# 12. Sine-cosine surface
+def sine_cosine_surface(x, y):
+    return np.sin(x) * np.cos(y)
+
+
+# 13. Egg crate surface
+def egg_crate_surface(x, y):
+    return np.cos(x) * np.cos(y)
+
+
+# 14. Sinc function surface
+def sinc_surface(x, y):
+    r = np.sqrt(x**2 + y**2)
+    return np.sin(r) / r
+
+
+# 15. Mexican hat surface (Ricker wavelet)
+def mexican_hat_surface(x, y):
+    r = np.sqrt(x**2 + y**2)
+    return np.exp(-(r**2)) * (1 - r**2)
+
+
+# 17. Möbius strip surface
+def mobius_strip_surface(x, y):
+    return np.sin(y) * (1 + x / (2 * np.pi))
+
+
+# 18. Enneper surface
+def enneper_surface(x, y):
+    return (3 * x * (1 - x**2) - 3 * x * y**2) / (3 * (1 + x**2 + y**2) ** 2)
+
+*/
+std::function<double(double, double)> f_enneper = [] (const double x, const double y) -> double
+{
+    const float r_val = std::sqrt(x * x + y * y);
+    return std::sin(r_val * 3.0) / r_val;
+};
+
+std::function<double(double, double)> f_sinc = [] (const double x, const double y) -> double
+{
+    const float r_val = std::sqrt(x * x + y * y);
+    return std::sin(r_val * 3.0) / r_val;
+};
+
+std::function<double(double, double)> f_klein = [] (const double x, const double y) -> double
+{
+    return (8.0 * (1.0 - y) * std::cos(x) - 2.0 * std::sin(2.0 * x) * std::sin(2.0 * y)) / 8.0;
+};
+
+void testSeries()
+{
+    const std::string project_file_path = "../../project_files/series.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t n_size = 100;
+    Matrix<double> z(n_size, n_size);
+
+    const auto [x, y] = meshGrid(1.0, 3.0, 1.0, 3.0, n_size, n_size);
+
+    const auto apply_function = [&] (const std::function<double(double, double)>& f) -> void {
+        for (int r = 0; r < n_size; r++)
+        {
+            for (int c = 0; c < n_size; c++)
+            {
+                const double x_val = x(r, c) - 2.01;
+                const double y_val = y(r, c) - 2.01;
+                z(r, c) = f(x_val, y_val);
+            }
+        }
+    };
+
+    const size_t n_elements = 15U;
+
+    for(size_t k = 0; k < n_elements; k++)
+    {
+        const std::string element_name = "p" + std::to_string(k);
+        setCurrentElement(element_name);
+        clearView();
+        view(0, 90);
+        // setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+        axesSquare();
+        axis({1.0, 1.0, -1.0}, {3.0, 3.0, 1.0});
+    }
+
+    apply_function(f_sinc);
+    setCurrentElement("p0");
+    surf(x, y, z, properties::ColorMap::JET_SOFT);
+
+    apply_function(f_klein);
+    setCurrentElement("p1");
+    surf(x, y, z, properties::ColorMap::HSV);
+
+    setCurrentElement("p2");
+    surf(x, y, z, properties::ColorMap::HSV);
+
+    setCurrentElement("p3");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p4");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p5");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p6");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p7");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p8");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p9");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p10");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p11");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p12");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p13");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    setCurrentElement("p14");
+    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+
+    /*size_t current_element = 0U;
+    size_t idx = 1;
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        usleep(1000U * 10U);
+        flushCurrentElement();
+
+        if((idx % inc) == 0U)
+        {
+            current_element++;
+            setCurrentElement("p" + std::to_string(current_element));
+        }
+        idx++;
+    }*/
 }
 
 }  // namespace small
