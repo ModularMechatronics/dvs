@@ -2096,48 +2096,38 @@ def spiral_surface(x, y):
 def sine_cosine_surface(x, y):
     return np.sin(x) * np.cos(y)
 
-
-# 13. Egg crate surface
-def egg_crate_surface(x, y):
-    return np.cos(x) * np.cos(y)
-
-
-# 14. Sinc function surface
-def sinc_surface(x, y):
-    r = np.sqrt(x**2 + y**2)
-    return np.sin(r) / r
-
-
-# 15. Mexican hat surface (Ricker wavelet)
-def mexican_hat_surface(x, y):
-    r = np.sqrt(x**2 + y**2)
-    return np.exp(-(r**2)) * (1 - r**2)
-
-
-# 17. Möbius strip surface
-def mobius_strip_surface(x, y):
-    return np.sin(y) * (1 + x / (2 * np.pi))
-
-
-# 18. Enneper surface
-def enneper_surface(x, y):
-    return (3 * x * (1 - x**2) - 3 * x * y**2) / (3 * (1 + x**2 + y**2) ** 2)
-
 */
-std::function<double(double, double)> f_enneper = [] (const double x, const double y) -> double
-{
+
+std::function<double(double, double)> f_spiral = [](const double x, const double y) -> double {
+    return std::cos(x + y);
+};
+
+std::function<double(double, double)> f_sin_cos = [](const double x, const double y) -> double {
+    return std::sin(x) * std::cos(y);
+};
+
+std::function<double(double, double)> f_egg_crate = [](const double x, const double y) -> double {
+    return std::cos(x) * std::cos(y);
+};
+
+std::function<double(double, double)> f_saddle = [](const double x, const double y) -> double { return x * x - y * y; };
+
+std::function<double(double, double)> f_mobius = [](const double x, const double y) -> double {
+    const double pi = 3.14159265358979323846;
+    return std::sin(y) * (1.0 + x / (2.0 * pi));
+};
+
+std::function<double(double, double)> f_enneper = [](const double x, const double y) -> double {
     const float r_val = std::sqrt(x * x + y * y);
     return std::sin(r_val * 3.0) / r_val;
 };
 
-std::function<double(double, double)> f_sinc = [] (const double x, const double y) -> double
-{
+std::function<double(double, double)> f_sinc = [](const double x, const double y) -> double {
     const float r_val = std::sqrt(x * x + y * y);
     return std::sin(r_val * 3.0) / r_val;
 };
 
-std::function<double(double, double)> f_klein = [] (const double x, const double y) -> double
-{
+std::function<double(double, double)> f_klein = [](const double x, const double y) -> double {
     return (8.0 * (1.0 - y) * std::cos(x) - 2.0 * std::sin(2.0 * x) * std::sin(2.0 * y)) / 8.0;
 };
 
@@ -2151,7 +2141,7 @@ void testSeries()
 
     const auto [x, y] = meshGrid(1.0, 3.0, 1.0, 3.0, n_size, n_size);
 
-    const auto apply_function = [&] (const std::function<double(double, double)>& f) -> void {
+    const auto apply_function = [&](const std::function<double(double, double)>& f) -> void {
         for (int r = 0; r < n_size; r++)
         {
             for (int c = 0; c < n_size; c++)
@@ -2165,80 +2155,158 @@ void testSeries()
 
     const size_t n_elements = 15U;
 
-    for(size_t k = 0; k < n_elements; k++)
+    for (size_t k = 0; k < n_elements; k++)
     {
         const std::string element_name = "p" + std::to_string(k);
         setCurrentElement(element_name);
         clearView();
         view(0, 90);
+        disableScaleOnRotation();
         // setAxesBoxScaleFactor({1.0, 1.0, 1.0});
         axesSquare();
         axis({1.0, 1.0, -1.0}, {3.0, 3.0, 1.0});
     }
 
-    apply_function(f_sinc);
+    std::vector<std::function<double(double, double)>> functions = {f_sinc,
+                                                                    f_klein,
+                                                                    f_saddle,
+                                                                    f_egg_crate,
+                                                                    f_sin_cos,
+                                                                    f_spiral,
+                                                                    f_sinc,
+                                                                    f_klein,
+                                                                    f_saddle,
+                                                                    f_egg_crate,
+                                                                    f_sin_cos,
+                                                                    f_spiral,
+                                                                    f_sinc,
+                                                                    f_klein,
+                                                                    f_saddle};
+    std::vector<properties::ColorMap> colormaps = {properties::ColorMap::JET_SOFT,
+                                                   properties::ColorMap::VIRIDIS,
+                                                   properties::ColorMap::MAGMA,
+                                                   properties::ColorMap::JET_BRIGHT,
+                                                   properties::ColorMap::JET,
+                                                   properties::ColorMap::JET_SOFT,
+                                                   properties::ColorMap::VIRIDIS,
+                                                   properties::ColorMap::MAGMA,
+                                                   properties::ColorMap::JET_BRIGHT,
+                                                   properties::ColorMap::JET,
+                                                   properties::ColorMap::JET_SOFT,
+                                                   properties::ColorMap::VIRIDIS,
+                                                   properties::ColorMap::MAGMA,
+                                                   properties::ColorMap::JET_BRIGHT,
+                                                   properties::ColorMap::JET};
+
+    std::vector<float> elevations = {
+        70.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 70.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f};
+
+    const size_t n_its = 1000U;
+    size_t current_element = 0U;
+
+    float azimuth = 30.0f;
+
+    const auto f_rotate_all = [&]() -> void {
+        for (size_t k = 0; k <= current_element; k++)
+        {
+            const std::string element_name = "p" + std::to_string(k);
+            setCurrentElement(element_name);
+            view(azimuth, elevations[k]);
+        }
+        azimuth += 0.7f;
+        if (azimuth > 180.0f)
+        {
+            azimuth = -180.0f;
+        }
+    };
+
+    size_t stride = 50U;
+
+    for (size_t i = 0; i < n_its; i++)
+    {
+        if ((i % stride == 0) && current_element < n_elements)
+        {
+            apply_function(functions[current_element]);
+            const std::string element_name = "p" + std::to_string(current_element);
+            setCurrentElement(element_name);
+            surf(x, y, z, colormaps[current_element], properties::EdgeColor::NONE);
+            current_element++;
+
+            stride = ((stride - 5U) > 10U) ? stride - 5U : 10U;
+        }
+        f_rotate_all();
+        usleep(1000U * 10U);
+    }
+
+    /*for (size_t k = 0; k < n_elements; k++)
+    {
+        const std::string element_name = "p" + std::to_string(k);
+        setCurrentElement(element_name);
+        view(azimuth, 70.0f);
+    }*/
+
+    /*apply_function(f_sinc);
     setCurrentElement("p0");
-    surf(x, y, z, properties::ColorMap::JET_SOFT);
+    surf(x, y, z, properties::ColorMap::JET_SOFT, properties::EdgeColor::NONE);
 
     apply_function(f_klein);
     setCurrentElement("p1");
-    surf(x, y, z, properties::ColorMap::HSV);
+    surf(x, y, z, properties::ColorMap::VIRIDIS, properties::EdgeColor::NONE);
 
+    apply_function(f_saddle);
     setCurrentElement("p2");
-    surf(x, y, z, properties::ColorMap::HSV);
+    surf(x, y, z, properties::ColorMap::MAGMA, properties::EdgeColor::NONE);
 
+    apply_function(f_egg_crate);
     setCurrentElement("p3");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::JET_BRIGHT, properties::EdgeColor::NONE);
 
+    apply_function(f_sin_cos);
     setCurrentElement("p4");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::JET, properties::EdgeColor::NONE);
 
+    apply_function(f_spiral);
     setCurrentElement("p5");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::JET_SOFT, properties::EdgeColor::NONE);
 
+    apply_function(f_sinc);
     setCurrentElement("p6");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::VIRIDIS, properties::EdgeColor::NONE);
 
+    apply_function(f_klein);
     setCurrentElement("p7");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::MAGMA, properties::EdgeColor::NONE);
 
+    apply_function(f_saddle);
     setCurrentElement("p8");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::JET_BRIGHT, properties::EdgeColor::NONE);
 
+    apply_function(f_egg_crate);
     setCurrentElement("p9");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::JET, properties::EdgeColor::NONE);
 
+    apply_function(f_sin_cos);
     setCurrentElement("p10");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::JET_SOFT, properties::EdgeColor::NONE);
 
+    apply_function(f_spiral);
     setCurrentElement("p11");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::VIRIDIS, properties::EdgeColor::NONE);
 
+    apply_function(f_sinc);
     setCurrentElement("p12");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::MAGMA, properties::EdgeColor::NONE);
 
+    apply_function(f_klein);
     setCurrentElement("p13");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
+    surf(x, y, z, properties::ColorMap::JET_BRIGHT, properties::EdgeColor::NONE);
 
+    apply_function(f_saddle);
     setCurrentElement("p14");
-    surf(x, y, z, properties::ColorMap::HSV, properties::EdgeColor::NONE);
-
-    /*size_t current_element = 0U;
-    size_t idx = 1;
-
-    for (size_t k = 0; k < n_its; k++)
-    {
-        usleep(1000U * 10U);
-        flushCurrentElement();
-
-        if((idx % inc) == 0U)
-        {
-            current_element++;
-            setCurrentElement("p" + std::to_string(current_element));
-        }
-        idx++;
-    }*/
+    surf(x, y, z, properties::ColorMap::JET, properties::EdgeColor::NONE);*/
 }
+
+void testChaos() {}
 
 }  // namespace small
 

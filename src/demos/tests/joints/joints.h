@@ -243,7 +243,7 @@ inline ImageRGBA<std::uint8_t> createRectangle(
     ImageRGBA<std::uint8_t> rectangle{height, width};
 
     rectangle.fill(red, green, blue, 255);
-    const size_t black_border_width = 0;
+    const size_t black_border_width = 2;
 
     for (size_t r = 0; r < height; r++)
     {

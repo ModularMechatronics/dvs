@@ -76,7 +76,8 @@ int main(int argc, char* argv[])
                                       {"three_body_problem", small::testThreeBodyProblem},
                                       {"swirls", small::testSwirls},
                                       {"bouncing_balls", small::testBouncingBalls},
-                                      {"series", small::testSeries}};
+                                      {"series", small::testSeries},
+                                      {"chaos", small::testChaos}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

@@ -6,11 +6,11 @@ Pre release:
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
 - Plotting without any element set at all at startup (Create default window and element)
+- Bug when creating starting various simulations, a new window appears with an element with the same name as the first window
 - Demos:
  * Something for machine learning practitioners
  * Something with drone simulation data
  * Something with robotics
- * GIS point cloud
  * Draw obj file from python interface, car running on a track
  * Star wars targeting computer: https://scifi.stackexchange.com/questions/244759/how-does-the-targeting-work-in-the-millenium-falcon (1min 20s in)
  * Hundreds of runs of some chaos dynamic system (bicycle, double pendulum) with slightly different initial conditions, drawns as plot lines from top to bottom, with color indicating the initial condition
@@ -37,7 +37,6 @@ Pre release:
 - Stairs is grey? Or without color
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
-- Add scaling, min max to sliders (so instead of going from 4, to 105, it could go from 0.3 to 14.2)
 - Add protection from "NaN" of axes calculation
 - Make it so that shader code and font data can be reached when the application is at arbitrary location
 - Python scatter with individual colors
@@ -53,6 +52,7 @@ Post release:
 - Bar plot
 - 2D plot with upper and lower interval (demo only?)
 - Colorbar
+- Add scaling, min max to sliders (so instead of going from 4, to 105, it could go from 0.3 to 14.2)
 - Time date axes
 - Should be possible to set layout to "relative" or "absolute" for elements
 - Python gui api
