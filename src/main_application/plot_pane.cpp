@@ -101,6 +101,8 @@ PlotPane::PlotPane(
     perspective_projection_ =
         (plot_pane_settings_->projection_mode == PlotPaneSettings::ProjectionMode::PERSPECTIVE) ? true : false;
 
+    axes_interactor_.setViewAnglesSnapAngle(plot_pane_settings_->snap_view_to_axes ? (5.0 * M_PI / 180.0) : 0.0);
+
     should_render_point_selection_ = false;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);

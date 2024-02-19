@@ -26,6 +26,11 @@ double ViewAngles::getAngleLimit() const
     return angle_limit_;
 }
 
+void ViewAngles::setAngleLimit(const double snap_angle)
+{
+    angle_limit_ = snap_angle;
+}
+
 void ViewAngles::setSnapAngles()
 {
     if (isCloseToSnap())

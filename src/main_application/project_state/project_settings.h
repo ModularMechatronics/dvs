@@ -58,6 +58,7 @@ struct PlotPaneSettings : ElementSettings
     bool axes_numbers_on;
     bool axes_letters_on;
     bool clipping_on;
+    bool snap_view_to_axes;
 
     float pane_radius;
 

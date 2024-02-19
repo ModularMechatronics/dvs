@@ -10,6 +10,7 @@ constexpr bool kPlotBoxOnDefault{true};
 constexpr bool kAxesNumbersOnDefault{true};
 constexpr bool kAxesLettersOnDefault{true};
 constexpr bool kClippingOnDefault{true};
+constexpr bool kSnapViewToAxesDefault{true};
 constexpr float kPaneRadiusDefault{10.0f};
 
 PlotPaneSettings::PlotPaneSettings()
@@ -25,6 +26,7 @@ PlotPaneSettings::PlotPaneSettings()
       axes_numbers_on{kAxesNumbersOnDefault},
       axes_letters_on{kAxesLettersOnDefault},
       clipping_on{kClippingOnDefault},
+      snap_view_to_axes{kSnapViewToAxesDefault},
       pane_radius{kPaneRadiusDefault},
       projection_mode{ProjectionMode::ORTHOGRAPHIC}
 {
@@ -48,6 +50,7 @@ void PlotPaneSettings::defaultInitializeAllSettings()
     axes_numbers_on = kAxesNumbersOnDefault;
     axes_letters_on = kAxesLettersOnDefault;
     clipping_on = kClippingOnDefault;
+    snap_view_to_axes = kSnapViewToAxesDefault;
     pane_radius = kPaneRadiusDefault;
     projection_mode = ProjectionMode::ORTHOGRAPHIC;
 }
@@ -65,7 +68,8 @@ bool PlotPaneSettings::operator==(const PlotPaneSettings& other) const
            axes_numbers_color == other.axes_numbers_color && axes_letters_color == other.axes_letters_color &&
            grid_on == other.grid_on && plot_box_on == other.plot_box_on && axes_numbers_on == other.axes_numbers_on &&
            axes_letters_on == other.axes_letters_on && clipping_on == other.clipping_on &&
-           pane_radius == other.pane_radius && projection_mode == other.projection_mode;
+           snap_view_to_axes == other.snap_view_to_axes && pane_radius == other.pane_radius &&
+           projection_mode == other.projection_mode;
 }
 
 bool PlotPaneSettings::operator!=(const PlotPaneSettings& other) const
@@ -97,6 +101,8 @@ void PlotPaneSettings::parsePlotPaneSettings(const nlohmann::json& j)
     axes_letters_on =
         j_ess.contains("axes_letters_on") ? static_cast<bool>(j_ess["axes_letters_on"]) : kAxesLettersOnDefault;
     clipping_on = j_ess.contains("clipping_on") ? static_cast<bool>(j_ess["clipping_on"]) : kClippingOnDefault;
+    snap_view_to_axes =
+        j_ess.contains("snap_view_to_axes") ? static_cast<bool>(j_ess["snap_view_to_axes"]) : kSnapViewToAxesDefault;
     pane_radius = j_ess.contains("pane_radius") ? static_cast<float>(j_ess["pane_radius"]) : kPaneRadiusDefault;
 
     if (j_ess.contains("projection_mode"))
@@ -169,6 +175,7 @@ nlohmann::json PlotPaneSettings::toJson() const
     assignIfNotDefault(j, "element_specific_settings", "axes_numbers_on", axes_numbers_on, kAxesNumbersOnDefault);
     assignIfNotDefault(j, "element_specific_settings", "axes_letters_on", axes_letters_on, kAxesLettersOnDefault);
     assignIfNotDefault(j, "element_specific_settings", "clipping_on", clipping_on, kClippingOnDefault);
+    assignIfNotDefault(j, "element_specific_settings", "snap_view_to_axes", snap_view_to_axes, kSnapViewToAxesDefault);
     assignIfNotDefault(j, "element_specific_settings", "pane_radius", pane_radius, kPaneRadiusDefault);
 
     if (projection_mode == ProjectionMode::PERSPECTIVE)

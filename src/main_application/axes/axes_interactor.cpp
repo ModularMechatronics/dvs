@@ -200,6 +200,11 @@ AxesLimits AxesInteractor::getAxesLimits() const
     return axes_limits_;
 }
 
+void AxesInteractor::setViewAnglesSnapAngle(const double snap_angle)
+{
+    view_angles_.setAngleLimit(snap_angle);
+}
+
 void AxesInteractor::showLegend(const bool show_legend)
 {
     show_legend_ = show_legend;

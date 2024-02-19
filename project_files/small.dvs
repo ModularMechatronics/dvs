@@ -91,7 +91,8 @@
                                 "_axes_numbers_on": false,
                                 "_grid_on": false,
                                 "_plot_box_on": false,
-                                "_clipping_on": false
+                                "_clipping_on": false,
+                                "snap_view_to_axes": false
                             },
                             "handle_string": "p_view_0",
                             "height": 1.0,

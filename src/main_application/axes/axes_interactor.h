@@ -85,6 +85,8 @@ public:
     void setViewAngles(const double azimuth, const double elevation);
     void setAxesLimits(const Vec3d& min_vec, const Vec3d& max_vec);
     void setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec);
+
+    void setViewAnglesSnapAngle(const double snap_angle);
     bool shouldDrawZoomRect() const
     {
         return should_draw_zoom_rect_;

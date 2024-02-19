@@ -1,25 +1,14 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
-- Finalize grid numbers placement when snapped
-- Making sure that view and axes are set properly when not explicitly setting them
-  - Behaviour when plotting when no configuration is set
 - Fix number formatting and grid vectors system
 - Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
 - Plotting without any element set at all at startup (Create default window and element)
-- Bug when creating starting various simulations, a new window appears with an element with the same name as the first window
-- Demos:
- * Something for machine learning practitioners
- * Something with drone simulation data
- * Something with robotics
- * Draw obj file from python interface, car running on a track
- * Star wars targeting computer: https://scifi.stackexchange.com/questions/244759/how-does-the-targeting-work-in-the-millenium-falcon (1min 20s in)
- * Hundreds of runs of some chaos dynamic system (bicycle, double pendulum) with slightly different initial conditions, drawns as plot lines from top to bottom, with color indicating the initial condition
-- Finalize demos
+- Bug when creating starting various simulations, a new window appears with an element with the same name as the first window (for series.dvs amongst others)
+ Demo: Hundreds of runs of some chaos dynamic system (bicycle, double pendulum) with slightly different initial conditions, drawns as plot lines from top to bottom, with color indicating the initial condition
 - No saved file name shall be showed in title bar when no file is loaded
 - Grid lines when invalid/inf axes limits
 - Investigate weird bug not being able to set colors properly for realTimePlot
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
-- Make axes numbers fit better at the edges, fewer line points per axis?
 - Change name of application (to plotto or something, polyplot)
 - Add all keybindings to the help pane
 - Zoom with rect only if certain button is pressed
@@ -31,7 +20,6 @@ Pre release:
 - Fix case for plot/plot3 when two adjacent points are equal. If first two points of plot2 is the same, there will be a division by zero
 - Delete RGB888 and replace with Color
 - Finish point selector, specifically all different type's selector functions
-- Test sequence function from C/C++ interfaces, that can be executed to check that encoding is correct
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Stairs is grey? Or without color
@@ -39,13 +27,15 @@ Pre release:
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 - Add protection from "NaN" of axes calculation
 - Make it so that shader code and font data can be reached when the application is at arbitrary location
-- Python scatter with individual colors
 - Both line width and point size should be sent as float
-- Python draw mesh with individual colors
 - DropDownMenuHandle -> DropdownMenuHandle and so on
 
 Post release:
+- Finalize grid numbers placement when snapped
+- Making sure that view and axes are set properly when not explicitly setting them
+  - Behaviour when plotting when no configuration is set
 - Color shall be set using floats in range [0, 1], but still transmitted as uint8_t [0, 255]
+- Test sequence function from C/C++ interfaces, that can be executed to check that encoding is correct
 - plot2 with fill under/over x axis
 - candlestick/errorbar
 - Contour plotting function

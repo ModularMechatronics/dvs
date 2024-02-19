@@ -32,6 +32,7 @@ public:
     ViewAngles(const double azimuth, const double elevation, const double angle_limit);
     void setAngles(const double azimuth, const double elevation);
     void changeAnglesWithDelta(const double azimuth, const double elevation);
+    void setAngleLimit(const double angle_limit);
     double getAzimuth() const;
     double getElevation() const;
     double getSnappedAzimuth() const;

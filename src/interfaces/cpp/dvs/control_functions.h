@@ -319,6 +319,6 @@ inline void spawn()
     }
 }
 
-}
+}  // namespace dvs
 
-#endif // DVS_CONTROL_FUNCTIONS_H
+#endif  // DVS_CONTROL_FUNCTIONS_H

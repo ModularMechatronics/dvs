@@ -31,7 +31,7 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles, cons
         z_axes_numbers_x_value = 1.0f;
     }
 
-    if (view_angles.isSnappedLookingAlongPositiveX())
+    /*if (view_angles.isSnappedLookingAlongPositiveX())
     {
         xz_plane_y_value = 1.0f;
         z_axes_numbers_x_value = -1.0f;
@@ -90,12 +90,12 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles, cons
         {
             xz_plane_y_value = -1.0f;
         }
-    }
+    }*/
 
     y_axes_numbers_x_value = yz_plane_x_value;
     y_axes_numbers_z_value = xy_plane_z_value;
 
-    if (!perspective_projection)
+    /*if (!perspective_projection)
     {
         if (view_angles.isSnappedLookingAlongNegativeZ() && (azimuth_abs < angle_limit))
         {
@@ -107,5 +107,5 @@ AxesSideConfiguration::AxesSideConfiguration(const ViewAngles& view_angles, cons
             y_axes_numbers_x_value = 1.0f;
             y_axes_numbers_z_value = -1.0f;
         }
-    }
+    }*/
 }
