@@ -8,6 +8,7 @@
 #include "dvs/enumerations.h"
 #include "dvs/math/math.h"
 #include "events.h"
+#include "platform_paths.h"
 
 using namespace dvs::internal;
 
@@ -60,7 +61,7 @@ template <typename T> T createShader(const std::string& base_path, const std::st
 
 void PlotPane::initShaders()
 {
-    const std::string base_path{"../main_application/axes/shaders/"};
+    const std::string base_path{getResourcesPathString() + "/shaders/"};
 
     shader_collection_.plot_box_shader = createShader<ShaderBase>(base_path, "plot_box_shader");
     shader_collection_.pane_background_shader = createShader<ShaderBase>(base_path, "pane_background");

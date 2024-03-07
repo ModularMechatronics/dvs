@@ -2057,47 +2057,6 @@ void testBouncingBalls()
     }
 }
 
-/*
-def saddle_surface(x, y):
-    return x**2 - y**2
-
-
-# 2. Paraboloid surface
-def paraboloid_surface(x, y):
-    return x**2 + y**2
-
-
-# 3. Cone surface
-def cone_surface(x, y):
-    return np.sqrt(x**2 + y**2)
-
-
-# 5. Hyperbolic cone
-def hyperbolic_cone(x, y):
-    return np.sqrt(x**2 - y**2)
-
-
-# 9. Torus surface
-def torus_surface(x, y):
-    return np.cos(x) + np.cos(y)
-
-
-# 10. Ripple surface
-def ripple_surface(x, y):
-    return np.sin(np.sqrt(x**2 + y**2))
-
-
-# 11. Spiral surface
-def spiral_surface(x, y):
-    return np.sin(x + y)
-
-
-# 12. Sine-cosine surface
-def sine_cosine_surface(x, y):
-    return np.sin(x) * np.cos(y)
-
-*/
-
 std::function<double(double, double)> f_spiral = [](const double x, const double y) -> double {
     return std::cos(x + y);
 };
@@ -2237,73 +2196,189 @@ void testSeries()
         f_rotate_all();
         usleep(1000U * 10U);
     }
+}
 
-    /*for (size_t k = 0; k < n_elements; k++)
+void testTopology()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t n_size = 100;
+    const size_t n_triangles = (n_size - 1U) * (n_size - 1U) * 2U;
+
+    Vector<Point3<double>> vertices{n_size * n_size};
+    Vector<IndexTriplet> indices(n_triangles);
+
+    size_t idx = 0U;
+    for (size_t r = 0; r < (n_size - 1U); r++)
     {
-        const std::string element_name = "p" + std::to_string(k);
-        setCurrentElement(element_name);
-        view(azimuth, 70.0f);
-    }*/
+        for (size_t c = 0; c < (n_size - 1U); c++)
+        {
+            indices(idx) = IndexTriplet(r * n_size + c, r * n_size + c + 1U, (r + 1U) * n_size + c);
+            idx++;
 
-    /*apply_function(f_sinc);
-    setCurrentElement("p0");
-    surf(x, y, z, properties::ColorMap::JET_SOFT, properties::EdgeColor::NONE);
+            indices(idx) = IndexTriplet((r + 1U) * n_size + c + 1U, r * n_size + c + 1U, (r + 1U) * n_size + c);
+            idx++;
+        }
+    }
 
-    apply_function(f_klein);
-    setCurrentElement("p1");
-    surf(x, y, z, properties::ColorMap::VIRIDIS, properties::EdgeColor::NONE);
+    const auto rf = []() -> double { return 2.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5); };
 
-    apply_function(f_saddle);
-    setCurrentElement("p2");
-    surf(x, y, z, properties::ColorMap::MAGMA, properties::EdgeColor::NONE);
+    // Setup domain
+    for (size_t r = 0; r < n_size; r++)
+    {
+        for (size_t c = 0; c < n_size; c++)
+        {
+            const size_t idx = r * n_size + c;
+            const double x = static_cast<double>(c) + (rf() - 0.5) * 0.1;
+            const double y = static_cast<double>(r) + (rf() - 0.5) * 0.1;
+            vertices(idx) = Point3<double>{y, x, 0.0};
+        }
+    }
 
-    apply_function(f_egg_crate);
-    setCurrentElement("p3");
-    surf(x, y, z, properties::ColorMap::JET_BRIGHT, properties::EdgeColor::NONE);
+    const auto apply_noise = [&](Vector<Point3<double>>& vertices) -> void {
+        for (size_t r = 0; r < n_size; r++)
+        {
+            for (size_t c = 0; c < n_size; c++)
+            {
+                const size_t idx = r * n_size + c;
+                vertices(idx).z = vertices(idx).z + rf();
+            }
+        }
+    };
 
-    apply_function(f_sin_cos);
-    setCurrentElement("p4");
-    surf(x, y, z, properties::ColorMap::JET, properties::EdgeColor::NONE);
+    const auto apply_average = [](Vector<Point3<double>>& vertices) -> void {
+        const Vector<Point3<double>> old_vertices = vertices;
 
-    apply_function(f_spiral);
-    setCurrentElement("p5");
-    surf(x, y, z, properties::ColorMap::JET_SOFT, properties::EdgeColor::NONE);
+        for (int64_t r = 0; r < static_cast<int64_t>(n_size); r++)
+        {
+            for (int64_t c = 0; c < static_cast<int64_t>(n_size); c++)
+            {
+                double s = 0.0;
+                for (int64_t ri = -1; ri < 2; ri++)
+                {
+                    for (int64_t ci = -1; ci < 2; ci++)
+                    {
+                        int64_t new_r = r + ri;
+                        int64_t new_c = c + ci;
+                        if (new_r < 0)
+                        {
+                            new_r = 1;
+                        }
+                        else if (new_r >= static_cast<int64_t>(n_size))
+                        {
+                            new_r = static_cast<int64_t>(n_size) - 2;
+                        }
 
-    apply_function(f_sinc);
-    setCurrentElement("p6");
-    surf(x, y, z, properties::ColorMap::VIRIDIS, properties::EdgeColor::NONE);
+                        if (new_c < 0)
+                        {
+                            new_c = 1;
+                        }
+                        else if (new_c >= static_cast<int64_t>(n_size))
+                        {
+                            new_c = static_cast<int64_t>(n_size) - 2;
+                        }
 
-    apply_function(f_klein);
-    setCurrentElement("p7");
-    surf(x, y, z, properties::ColorMap::MAGMA, properties::EdgeColor::NONE);
+                        const size_t new_idx = static_cast<size_t>(new_r) * n_size + static_cast<size_t>(new_c);
+                        s += old_vertices(new_idx).z;
+                    }
+                }
+                const size_t idx = r * n_size + c;
 
-    apply_function(f_saddle);
-    setCurrentElement("p8");
-    surf(x, y, z, properties::ColorMap::JET_BRIGHT, properties::EdgeColor::NONE);
+                vertices(idx).z = s / 9.0;
+            }
+        }
+    };
 
-    apply_function(f_egg_crate);
-    setCurrentElement("p9");
-    surf(x, y, z, properties::ColorMap::JET, properties::EdgeColor::NONE);
+    const auto apply_circle = [](Vector<Point3<double>>& vertices,
+                                 const int64_t radius,
+                                 const int64_t x,
+                                 const int64_t y,
+                                 const double amplitude) -> void {
+        for (int64_t r = (y - radius); r < (y + radius); r++)
+        {
+            for (int64_t c = (x - radius); c < (x + radius); c++)
+            {
+                const int64_t r_diff = r - y;
+                const int64_t c_diff = c - x;
+                if ((r_diff * r_diff + c_diff * c_diff) > (radius * radius))
+                {
+                    continue;
+                }
 
-    apply_function(f_sin_cos);
-    setCurrentElement("p10");
-    surf(x, y, z, properties::ColorMap::JET_SOFT, properties::EdgeColor::NONE);
+                int64_t new_r = r;
+                int64_t new_c = c;
+                if (new_r < 0)
+                {
+                    new_r = 0;
+                }
+                else if (new_r >= static_cast<int64_t>(n_size))
+                {
+                    new_r = static_cast<int64_t>(n_size) - 1;
+                }
 
-    apply_function(f_spiral);
-    setCurrentElement("p11");
-    surf(x, y, z, properties::ColorMap::VIRIDIS, properties::EdgeColor::NONE);
+                if (new_c < 0)
+                {
+                    new_c = 0;
+                }
+                else if (new_c >= static_cast<int64_t>(n_size))
+                {
+                    new_c = static_cast<int64_t>(n_size) - 1;
+                }
 
-    apply_function(f_sinc);
-    setCurrentElement("p12");
-    surf(x, y, z, properties::ColorMap::MAGMA, properties::EdgeColor::NONE);
+                const size_t new_idx = static_cast<size_t>(new_r) * n_size + static_cast<size_t>(new_c);
 
-    apply_function(f_klein);
-    setCurrentElement("p13");
-    surf(x, y, z, properties::ColorMap::JET_BRIGHT, properties::EdgeColor::NONE);
+                vertices(new_idx).z = amplitude;
+            }
+        }
+    };
 
-    apply_function(f_saddle);
-    setCurrentElement("p14");
-    surf(x, y, z, properties::ColorMap::JET, properties::EdgeColor::NONE);*/
+    const auto apply_over_domain = [](Vector<Point3<double>>& vertices,
+                                      const double x0,
+                                      const double x1,
+                                      const double y0,
+                                      const double y1,
+                                      const double z_g,
+                                      const std::function<double(double, double)> apply_fun) -> void {
+        const double dx = x1 - x0;
+        const double dy = y1 - y0;
+
+        const double d = static_cast<double>(n_size - 1U);
+
+        for (size_t r = 0; r < n_size; r++)
+        {
+            for (size_t c = 0; c < n_size; c++)
+            {
+                const double x = dx * static_cast<double>(c) / d + x0;
+                const double y = dy * static_cast<double>(r) / d + y0;
+
+                const size_t idx = r * n_size + c;
+
+                vertices(idx).z = apply_fun(x, y) * z_g;
+            }
+        }
+    };
+
+    // apply_over_domain(vertices, 0.0, 2.0 * M_PI, 0.0, 2.0 * M_PI, 0.1, f_spiral);
+    // apply_over_domain(vertices, 0.0, 2.0 * M_PI, 0.0, 2.0 * M_PI, 0.1, f_sin_cos);
+    // apply_over_domain(vertices, 0.0, 2.0 * M_PI, 0.0, 2.0 * M_PI, 0.1, f_egg_crate);
+    apply_over_domain(vertices, 0.0, 2.0 * M_PI, 0.0, 2.0 * M_PI, 0.02, f_saddle);
+    // apply_over_domain(vertices, 1.0, 2.0 * M_PI, 1.0, 2.0 * M_PI, 0.1, f_sinc);
+
+    apply_noise(vertices);
+    apply_average(vertices);
+    apply_average(vertices);
+    apply_average(vertices);
+    // apply_average(vertices);
+
+    setCurrentElement("p_view_0");
+    clearView();
+    globalIllumination({2.0, 2.0, 2.0});
+    // view(0, 90);
+    // setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+    // axesSquare();
+    axis({0.0, 0.0, -1.0}, {static_cast<double>(n_size - 1U), static_cast<double>(n_size - 1U), 1.0});
+    drawMesh(vertices, indices, properties::ColorMap::JET_SOFT, properties::EdgeColor::BLACK);
 }
 
 void testChaos() {}

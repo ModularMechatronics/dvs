@@ -22,7 +22,6 @@ class ConfigurationAgent
 public:
     ~ConfigurationAgent();
     ConfigurationAgent();
-    ConfigurationAgent(const std::string& configuration_folder_name);
 
     bool isValid() const;
     bool hasKey(const std::string& key);

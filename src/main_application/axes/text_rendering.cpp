@@ -12,6 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "opengl_low_level/opengl_header.h"
+#include "platform_paths.h"
 #include "shader.h"
 
 using namespace dvs;
@@ -30,7 +31,7 @@ std::map<GLchar, Character> characters;
 
 bool is_initialized = false;
 
-const char* const kFontPath = "../resources/fonts/Roboto-Regular.ttf";
+const std::string kFontPath = getResourcesPathString() + "fonts/Roboto-Regular.ttf";
 
 constexpr float kTextScaleParameter = 1000.0f;
 
@@ -146,7 +147,7 @@ bool initFreetype()
     }
 
     FT_Face face;
-    if (FT_New_Face(ft, kFontPath, 0, &face))
+    if (FT_New_Face(ft, kFontPath.c_str(), 0, &face))
     {
         std::cout << "Failed to load font" << std::endl;
         return false;

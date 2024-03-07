@@ -77,7 +77,8 @@ int main(int argc, char* argv[])
                                       {"swirls", small::testSwirls},
                                       {"bouncing_balls", small::testBouncingBalls},
                                       {"series", small::testSeries},
-                                      {"chaos", small::testChaos}};
+                                      {"chaos", small::testChaos},
+                                      {"topology", small::testTopology}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

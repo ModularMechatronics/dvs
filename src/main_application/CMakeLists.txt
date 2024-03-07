@@ -37,6 +37,8 @@ set(CPP_SOURCE_FILES main.cpp
 
                      cmdl_output_window.cpp
 
+                     platform_paths.cpp
+
                      axes/structures/axes_limits.cpp
                      axes/structures/axes_settings.cpp
                      axes/structures/view_angles.cpp
