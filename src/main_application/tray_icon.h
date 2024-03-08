@@ -46,6 +46,40 @@ public:
     }
 };
 
+#ifdef PLATFORM_APPLE_M
+
+class CustomTaskBarIcon
+{
+public:
+    CustomTaskBarIcon() {}
+
+    void setOnMenuExitCallback(std::function<void()>&& exit_function) {}
+    void setOnMenuFileNew(std::function<void()>&& file_new_function) {}
+    void setOnMenuFileOpen(std::function<void()>&& file_open_function) {}
+    void setOnMenuFileSave(std::function<void()>&& file_save_function) {}
+    void setOnMenuFileSaveAs(std::function<void()>&& file_save_as_function) {}
+    void setOnMenuSubWindow(std::function<void(const std::string&)>&& submenu_function) {}
+    void setOnMenuPreferences(std::function<void()>&& preferences_function) {}
+    void setOnMenuFileNewWindow(std::function<void()>&& new_window_function) {}
+    void onMenuExit(wxCommandEvent&) {}
+    void onMenuFileNew(wxCommandEvent&) {}
+    void onMenuFileOpen(wxCommandEvent&) {}
+    void onMenuFileSave(wxCommandEvent&) {}
+    void onMenuFileSaveAs(wxCommandEvent&) {}
+    void onMenuFileNewWindow(wxCommandEvent&) {}
+    void onMenuPreferences(wxCommandEvent&) {}
+    void onMenuSubWindow(wxCommandEvent& evt) {}
+    void addNewWindow(const std::string& window_name) {}
+    void removeWindow(const std::string& window_name) {}
+
+    bool SetIcon(const wxIcon& icn, const wxString& tooltip)
+    {
+        return true;
+    }
+};
+
+#else
+
 class CustomTaskBarIcon : public wxTaskBarIcon
 {
 public:
@@ -113,5 +147,7 @@ private:
     std::map<std::string, wxEventTypeTag<wxCommandEvent>> window_events_;
     std::map<std::string, int> window_event_ids_;
 };
+
+#endif
 
 #endif  // MAIN_APPLICATION_TRAY_ICON_H_

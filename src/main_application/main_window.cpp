@@ -33,7 +33,9 @@ using namespace dvs::internal;
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 130), wxSize(kMainWindowWidth, 150), wxNO_BORDER), data_receiver_{}
 {
+#ifndef PLATFORM_APPLE_M
     Show();
+#endif
 
     shutdown_in_progress_ = false;
 
@@ -51,11 +53,11 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     configuration_agent_ = new ConfigurationAgent();
 
-    task_bar_ = new CustomTaskBarIcon();
     wxIcon* icon = new wxIcon();
 
     icon->LoadFile(getResourcesPathString() + "images/apple.ico", wxBITMAP_TYPE_ICO, 32, 32);
 
+    task_bar_ = new CustomTaskBarIcon();
     if (!task_bar_->SetIcon(*icon, "wxTaskBarIcon Sample\n"))
     {
         wxLogError("Could not set icon.");
@@ -80,7 +82,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(wxEVT_MENU, &MainWindow::saveProjectCallback, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::openExistingFileCallback, this, wxID_OPEN);
     Bind(wxEVT_MENU, &MainWindow::saveProjectAsCallback, this, wxID_SAVEAS);
-    Bind(wxEVT_MENU, &MainWindow::exitApplication, this, wxID_HELP_INDEX);
+    // Bind(wxEVT_MENU, &MainWindow::exitApplication, this, wxID_HELP_INDEX);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, this, wxID_HELP_CONTENTS);
 
     task_bar_->setOnMenuExitCallback([this]() -> void { this->destroy(); });
@@ -200,8 +202,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
 void MainWindow::exitApplication(wxCommandEvent& WXUNUSED(event))
 {
-    // this->destroy();
-    Destroy();
+    this->destroy();
 }
 
 std::string guiElementTypeToGuiHandleString(const GuiElementType tp)
@@ -424,7 +425,7 @@ wxMenuBar* MainWindow::createMainMenuBar()
     file_menu_->Append(wxID_SAVEAS, _T("&Save As..."));
 
     file_menu_->AppendSeparator();
-    file_menu_->Append(wxID_HELP_INDEX, _T("Quit"));
+    // file_menu_->Append(wxID_HELP_INDEX, _T("Quit"));
 
     menu_bar_tmp->Append(file_menu_, _T("&File"));
 
@@ -432,7 +433,7 @@ wxMenuBar* MainWindow::createMainMenuBar()
     windows_menu_->Append(wxID_HELP_CONTENTS, "New window");
     windows_menu_->AppendSeparator();
 
-    menu_bar_tmp->Append(windows_menu_, _T("&Windows"));
+    menu_bar_tmp->Append(windows_menu_, _T("&Window"));
 
     return menu_bar_tmp;
 }
@@ -944,11 +945,11 @@ void MainWindow::notifyChildrenOnKeyPressed(const char key)
     {
         saveProject();
     }
-    else if ((wxGetKeyState(WXK_COMMAND) || wxGetKeyState(WXK_CONTROL)) &&
+    /*else if ((wxGetKeyState(WXK_COMMAND) || wxGetKeyState(WXK_CONTROL)) &&
              (wxGetKeyState(static_cast<wxKeyCode>('q')) || wxGetKeyState(static_cast<wxKeyCode>('Q'))))
     {
         this->destroy();
-    }
+    }*/
 }
 
 void MainWindow::notifyChildrenOnKeyReleased(const char key)
@@ -1016,5 +1017,5 @@ void MainWindow::deleteWindow(wxCommandEvent& event)
 void MainWindow::destroy()
 {
     shutdown_in_progress_ = true;
-    this->Destroy();
+    this->Close();
 }

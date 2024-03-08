@@ -20,31 +20,6 @@ MainWindow* main_window;
 
 IMPLEMENT_APP(MainApp)
 
-void func()
-{
-    CFBundleRef mainBundle = CFBundleGetMainBundle();
-
-    if (mainBundle)
-    {
-        // Get the bundle URL
-        CFURLRef bundleURL = CFBundleCopyBundleURL(mainBundle);
-
-        // Check if the URL is valid
-        if (bundleURL)
-        {
-            // Convert CFURL to C string
-            char bundlePath[PATH_MAX];
-            if (CFURLGetFileSystemRepresentation(bundleURL, true, (UInt8*)bundlePath, PATH_MAX))
-            {
-                wxMessageBox(std::string(bundlePath), "Title", wxICON_QUESTION | wxYES_NO, nullptr);
-            }
-
-            // Release the CFURL
-            CFRelease(bundleURL);
-        }
-    }
-}
-
 bool MainApp::OnInit()
 {
     debug_value_args::parseArgs(argc, argv);
@@ -67,6 +42,7 @@ bool MainApp::OnInit()
 
 int MainApp::OnExit()
 {
+    main_window->destroy();
     DVS_LOG_INFO() << "Exit from MainApp::OnExit!";
     return this->wxApp::OnExit();
 }

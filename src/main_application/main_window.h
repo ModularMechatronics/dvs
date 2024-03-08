@@ -113,8 +113,6 @@ private:
     void notifyChildrenOnKeyPressed(const char key);
     void notifyChildrenOnKeyReleased(const char key);
 
-    void destroy();
-
     void saveProject();
     void saveProjectCallback(wxCommandEvent& event);
     void newProjectCallback(wxCommandEvent& event);
@@ -168,7 +166,7 @@ public:
     void elementDeleted(const std::string& element_handle_string);
     void elementNameChanged(const std::string& old_name, const std::string& new_name);
 
-    void disableEditing();
+    void destroy();
 };
 
 #endif  // MAIN_APPLICATION_MAIN_WINDOW_H_

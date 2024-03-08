@@ -2,6 +2,8 @@
 
 #include "events.h"
 
+#ifndef PLATFORM_APPLE_M
+
 // clang-format off
 wxBEGIN_EVENT_TABLE(CustomTaskBarIcon, wxTaskBarIcon)
 EVT_MENU(PU_EXIT, CustomTaskBarIcon::onMenuExit)
@@ -166,7 +168,7 @@ wxMenu* CustomTaskBarIcon::CreatePopupMenu()
         Bind(wxEVT_MENU, &CustomTaskBarIcon::onMenuSubWindow, this, p.second);
     }
 
-    menu_->Append(PU_SUBMAIN, wxT("Windows"), windows_submenu_);
+    menu_->Append(PU_SUBMAIN, wxT("Window"), windows_submenu_);
 
     // menu_->Append(PU_PREFERENCES, "Preferences");
     // menu_->AppendSeparator();
@@ -175,8 +177,10 @@ wxMenu* CustomTaskBarIcon::CreatePopupMenu()
     if (OSXIsStatusItem())
 #endif
     {
-        menu_->AppendSeparator();
-        menu_->Append(PU_EXIT, wxT("&Exit"));
+        // menu_->AppendSeparator();
+        // menu_->Append(PU_EXIT, wxT("&Exit"));
     }
     return menu_;
 }
+
+#endif
