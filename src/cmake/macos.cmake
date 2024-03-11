@@ -1,7 +1,9 @@
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -framework CoreFoundation -framework OpenDirectory -I/Users/annotelldaniel/work/repos/dvs/src/externals/wxwidgets/lib/wx/include/osx_cocoa-unicode-static-3.1 -I/Users/annotelldaniel/work/repos/dvs/src/externals/wxwidgets/include -D_FILE_OFFSET_BITS=64 -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__ -mmacosx-version-min=10.0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FILE_OFFSET_BITS=64 -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__")
 
+#  -mmacosx-version-min=10.1.5 --sysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.5.sdk
 # -x objective-c++ -framework Foundation
+# set(CMAKE_OSX_DEPLOYMENT_TARGET "10.1" CACHE STRING "Minimum macOS version")
 link_directories(/usr/local/Cellar/libpng/1.6.40/lib)
 
 set(wxWidgets_LIBRARIES libwx_osx_cocoau-3.1.a
