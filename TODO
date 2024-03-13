@@ -1,21 +1,16 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Fix number formatting and grid vectors system
-- Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
-- Plotting without any element set at all at startup (Create default window and element)
 - Bug when creating starting various simulations, a new window appears with an element with the same name as the first window (for series.dvs amongst others)
- Demo: Hundreds of runs of some chaos dynamic system (bicycle, double pendulum) with slightly different initial conditions, drawns as plot lines from top to bottom, with color indicating the initial condition
-- No saved file name shall be showed in title bar when no file is loaded
-- Grid lines when invalid/inf axes limits
+- Demo: Hundreds of runs of some chaos dynamic system (bicycle, double pendulum) with slightly different initial conditions, drawns as plot lines from top to bottom, with color indicating the initial condition
 - Investigate weird bug not being able to set colors properly for realTimePlot
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
-- Change name of application (to plotto or something, polyplot)
+- Change name of application to duoplot
 - Add all keybindings to the help pane
 - Zoom with rect only if certain button is pressed
 - Solve all TODOs
 - In python, "dvs.line_collection3(x, y, z, color=dvs.properties.Color(1, 0, 1))" does not work, line is transparent, same with plot_collection/plot_collection3 when not specifying colors and plotting twice
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
-- Data cursor, cursor to click on data to get xyz value
 - Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Fix case for plot/plot3 when two adjacent points are equal. If first two points of plot2 is the same, there will be a division by zero
 - Delete RGB888 and replace with Color
@@ -26,11 +21,15 @@ Pre release:
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 - Add protection from "NaN" of axes calculation
+- Grid lines when invalid/inf axes limits
 - Make it so that shader code and font data can be reached when the application is at arbitrary location
 - Both line width and point size should be sent as float
 - DropDownMenuHandle -> DropdownMenuHandle and so on
 
 Post release:
+- Fix platform macros (PLATFORM_APPLE_M etc) needing separate #ifdef statements
+- No saved file name shall be showed in title bar when no file is loaded
+- Data cursor, cursor to click on data to get xyz value
 - Finalize grid numbers placement when snapped
 - Making sure that view and axes are set properly when not explicitly setting them
   - Behaviour when plotting when no configuration is set

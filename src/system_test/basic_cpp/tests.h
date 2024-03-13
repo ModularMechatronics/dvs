@@ -1791,6 +1791,55 @@ void testCreateNewElement()
     plot(t, x);
 }
 
+void testAxesSquare()
+{
+    const size_t num_elements = 100;
+    Vector<double> x(num_elements), y(num_elements), z(num_elements), t(num_elements);
+    Vector<double> xc(10U), yc(10U), zc(10U);
+
+    xc = VectorInitializer<double>({-1.0, 1.0, 1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0});
+    yc = VectorInitializer<double>({-1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0});
+    zc = VectorInitializer<double>({-1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
+
+    t = linspaceFromBoundariesAndCount(0.0, 2.0 * M_PI, num_elements);
+
+    x = dvs::cos(t);
+    y = dvs::sin(t);
+    z = 2.0 * t / (2.0 * M_PI) - 1.0;
+
+    setCurrentElement("p0");
+    clearView();
+
+    axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+    plot3(x, y, z, properties::LineWidth(20));
+    view(32, 45);
+    axesSquare();
+
+    setCurrentElement("p1");
+    clearView();
+
+    axis({-1.0, -1.0, -1.0}, {1.0, 2.0, 1.0});
+    plot3(x, y, z, properties::LineWidth(20));
+    view(32, 45);
+    axesSquare();
+
+    setCurrentElement("p2");
+    clearView();
+
+    axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+    plot3(x, y, z, properties::LineWidth(20));
+    view(32, 45);
+
+    setCurrentElement("p3");
+    clearView();
+
+    axis({-100.0, -100.0, -1.0}, {100.0, 100.0, 1.0});
+    plot3(x * 100.0, y * 100.0, z, properties::LineWidth(20));
+    plot3(xc * 100.0, yc * 100.0, zc, properties::LineWidth(20));
+    view(32, 45);
+    axesSquare();
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1821,6 +1870,7 @@ void addTests()
     addTest("cpp", "basic", "screenshot", testScreenshot);
     addTest("cpp", "basic", "draw_cubes", testDrawCubes);
     addTest("cpp", "basic", "create_new_element", testCreateNewElement);
+    addTest("cpp", "basic", "axes_square", testAxesSquare);
 }
 
 }  // namespace basic_cpp

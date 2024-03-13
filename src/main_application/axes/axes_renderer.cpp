@@ -17,8 +17,8 @@ AxesRenderer::AxesRenderer(const ShaderCollection& shader_collection,
       legend_renderer_{text_renderer_, shader_collection_},
       point_selection_box_{text_renderer_, shader_collection_},
       plot_pane_settings_{plot_pane_settings},
-      tab_background_color_{tab_background_color},
-      plot_pane_background_{plot_pane_settings_.pane_radius}
+      plot_pane_background_{plot_pane_settings_.pane_radius},
+      tab_background_color_{tab_background_color}
 {
     shader_collection_.text_shader.use();
     axes_square_ = false;
@@ -631,6 +631,34 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
         }
     }
 
+    if (axes_square_)
+    {
+        float aspect_ratio = static_cast<float>(width_) / static_cast<float>(height_);
+        const float s = 3.0f;
+
+        float left = -aspect_ratio * s;
+        float right = aspect_ratio * s;
+
+        float bottom = -1.0f * s;
+        float top = 1.0f * s;
+
+        float fov = glm::radians(75.0f);
+
+        if (aspect_ratio < 1.0)
+        {
+            left = -1.0f * s;
+            right = 1.0f * s;
+
+            bottom = -1.0f / aspect_ratio * s;
+            top = 1.0f / aspect_ratio * s;
+
+            fov = 2.0f * std::atan(std::tan(fov / 2.0f) * (1.0f / aspect_ratio));
+        }
+
+        orth_projection_mat_ = glm::ortho(left, right, bottom, top, 0.1f, 100.0f);
+        persp_projection_mat_ = glm::perspective(fov, aspect_ratio, 0.1f, 100.0f);
+    }
+
     projection_mat_ = use_perspective_proj_ ? persp_projection_mat_ : orth_projection_mat_;
 
     float s = 0.2f;
@@ -682,21 +710,5 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
         line_ = Line3D<double>::fromTwoPoints(
             Vec3d{unprojected_point.x, unprojected_point.y, unprojected_point.z},
             Vec3d{v_in_screen_unprojected.x, v_in_screen_unprojected.y, v_in_screen_unprojected.z});
-    }
-
-    if (axes_square_)
-    {
-        // TODO: Currently broken when the ratio between different axes are large, like for imShow
-        glm::mat4 scale_mat_square = glm::mat4(1.0f);
-
-        const float scale_factor = std::min(width_, height_) * 0.003f;
-
-        scale_mat_square[0][0] = scale_factor * 300.0f / width_;
-        scale_mat_square[1][1] = scale_factor;
-        scale_mat_square[2][2] = scale_factor * 300.0f / height_;
-
-        scale_mat_square = glm::transpose(model_mat_) * scale_mat_square * model_mat_;
-
-        window_scale_mat_ = scale_mat_square * window_scale_mat_;
     }
 }
