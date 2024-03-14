@@ -2383,6 +2383,12 @@ void testTopology()
 
 void testChaos() {}
 
+void testColorfulScatter()
+{
+    const std::string project_file_path = "../../project_files/small.dvs";
+    openProjectFile(project_file_path);
+}
+
 }  // namespace small
 
 #endif  // DEMOS_SMALL_H

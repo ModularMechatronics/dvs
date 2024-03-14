@@ -146,6 +146,7 @@ void DrawMesh::render()
     }
     else
     {
+        shader_collection_.draw_mesh_shader.base_uniform_handles.has_color_vec.setInt(0);
         if (has_color_map_)
         {
             shader_collection_.draw_mesh_shader.base_uniform_handles.color_map_selection.setInt(

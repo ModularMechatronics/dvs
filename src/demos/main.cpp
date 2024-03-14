@@ -78,7 +78,8 @@ int main(int argc, char* argv[])
                                       {"bouncing_balls", small::testBouncingBalls},
                                       {"series", small::testSeries},
                                       {"chaos", small::testChaos},
-                                      {"topology", small::testTopology}};
+                                      {"topology", small::testTopology},
+                                      {"colorful_scatter", small::testColorfulScatter}};
 
     fcns["klein"] = klein_functions;
     fcns["car"] = car_functions;

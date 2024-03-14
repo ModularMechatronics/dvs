@@ -866,3 +866,121 @@ def test_las_file():
             scatter_style=dvs.properties.ScatterStyle.DISC,
             point_size=3,
         )
+
+
+def test_3d_map():
+    import trimesh
+
+    map_path = "/Users/danielpi/work/dvs/map_data/map3d.glb"
+    glbd = trimesh.load(map_path)
+
+    vertices = None
+    faces = np.array([])
+
+    for k, v in glbd.geometry.items():
+        va = np.array(v.vertices.T)
+        fs = np.array(v.faces)
+
+        # if vertices is None:
+        #     vertices_1 = va
+        #     faces_1 = fs
+        # else:
+        a = 1
+        # vertices = np.concatenate((vertices, v.vertices.T), axis=1)
+        # faces = np.concatenate((faces, np.array(v.faces) - 3), axis=0)
+        if k == "GLTF":
+            continue
+
+        vertices = v.vertices.T
+        faces = np.array(v.faces)
+        colors = v.visual.to_color().vertex_colors
+        break
+
+    vertices = vertices.T
+    indices = [
+        dvs.IndexTriplet(np.uint32(q[0]), np.uint32(q[1]), np.uint32(q[2]))
+        for q in faces
+    ]
+
+    # indices = [indices[0], indices[1], indices[2], indices[3]]
+    # vertices i (X, 3) in shape
+    # indices is list of IndexTriplet
+    import copy
+
+    vertices_new = copy.deepcopy(vertices)
+    vertices_new[:, 1] = vertices[:, 2]
+    vertices_new[:, 2] = vertices[:, 1]
+
+    # colors is (X, 3), np.uint8, same size as indices
+
+    colors_new = []
+
+    for idx in indices:
+        c0 = np.float32(colors[idx.i0][0:3])
+        c1 = np.float32(colors[idx.i1][0:3])
+        c2 = np.float32(colors[idx.i2][0:3])
+        c = np.round((c0 + c1 + c2) / 3.0).astype(np.uint8)
+        colors_new.append(c)
+
+    colors_new = np.array(colors_new)
+
+    dvs.set_current_element("p_view_0")
+    dvs.clear_view()
+
+    dvs.axes_square()
+    dvs.disable_scale_on_rotation()
+
+    dvs.global_illumination(dvs.Vec3D(2.0, 2.0, 2.0))
+
+    zo = -10.0
+    s = 1.0
+    dvs.axis(
+        dvs.Vec3D(0.0, 0.0, 0.0 + zo), dvs.Vec3D(80.0 * s, 80.0 * s, 20.0 * s + zo)
+    )
+
+    dvs.draw_mesh(
+        vertices_new,
+        indices,
+        colors=colors_new,
+        edge_color=dvs.properties.EdgeColor.NONE,
+    )
+
+    dvs.soft_clear_view()
+    azimuth = -180.0
+
+    for i in range(0, 1000):
+        time.sleep(0.01)
+        dvs.view(azimuth, 21.0)
+
+        azimuth += 0.4
+        if azimuth > 180.0:
+            azimuth = -180.0
+
+        if i == 300:
+            dvs.draw_mesh(
+                vertices_new,
+                indices,
+                colors=colors_new,
+                edge_color=dvs.properties.EdgeColor.BLACK,
+            )
+
+            dvs.soft_clear_view()
+        elif i == 500:
+            dvs.draw_mesh(
+                vertices_new,
+                indices,
+                edge_color=dvs.properties.EdgeColor.BLACK,
+                color_map=dvs.properties.ColorMap.JET_SOFT,
+            )
+
+            dvs.soft_clear_view()
+        elif i == 900:
+
+            dvs.draw_mesh(
+                vertices_new,
+                indices,
+                edge_color=dvs.properties.EdgeColor.NONE,
+                color_map=dvs.properties.ColorMap.JET_SOFT,
+            )
+
+            dvs.soft_clear_view()
