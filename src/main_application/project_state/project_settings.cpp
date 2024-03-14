@@ -46,9 +46,9 @@ TabSettings::TabSettings(const nlohmann::json& j)
         {
             elements.emplace_back(std::make_shared<EditableTextSettings>(j["elements"][k]));
         }
-        else if (type == dvs::GuiElementType::DropDownMenu)
+        else if (type == dvs::GuiElementType::DropdownMenu)
         {
-            elements.emplace_back(std::make_shared<DropDownMenuSettings>(j["elements"][k]));
+            elements.emplace_back(std::make_shared<DropdownMenuSettings>(j["elements"][k]));
         }
         else if (type == dvs::GuiElementType::ListBox)
         {
@@ -180,11 +180,11 @@ bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const s
                 std::dynamic_pointer_cast<EditableTextSettings>(rhs);
             return *lhs_casted == *rhs_casted;
         }
-        case dvs::GuiElementType::DropDownMenu: {
-            const std::shared_ptr<DropDownMenuSettings> lhs_casted =
-                std::dynamic_pointer_cast<DropDownMenuSettings>(lhs);
-            const std::shared_ptr<DropDownMenuSettings> rhs_casted =
-                std::dynamic_pointer_cast<DropDownMenuSettings>(rhs);
+        case dvs::GuiElementType::DropdownMenu: {
+            const std::shared_ptr<DropdownMenuSettings> lhs_casted =
+                std::dynamic_pointer_cast<DropdownMenuSettings>(lhs);
+            const std::shared_ptr<DropdownMenuSettings> rhs_casted =
+                std::dynamic_pointer_cast<DropdownMenuSettings>(rhs);
             return *lhs_casted == *rhs_casted;
         }
         case dvs::GuiElementType::ListBox: {

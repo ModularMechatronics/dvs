@@ -64,7 +64,7 @@ void firstTest()
         }
     });
 
-    dvs::gui::registerGuiCallback("ddm0", [](const dvs::gui::DropDownMenuHandle& gui_element_handle) -> void {
+    dvs::gui::registerGuiCallback("ddm0", [](const dvs::gui::DropdownMenuHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"ddm0\" selected: " << gui_element_handle.getSelectedElement() << std::endl;
 
         for (const std::string elem : gui_element_handle.getElements())

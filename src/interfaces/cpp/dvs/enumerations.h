@@ -251,7 +251,7 @@ enum class GuiElementType : std::uint8_t
     Slider,
     Checkbox,
     EditableText,
-    DropDownMenu,
+    DropdownMenu,
     ListBox,
     RadioButtonGroup,
     TextLabel,

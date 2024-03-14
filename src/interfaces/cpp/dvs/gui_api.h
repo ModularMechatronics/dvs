@@ -227,19 +227,19 @@ public:
     }
 };
 
-class DropDownMenuHandle
+class DropdownMenuHandle
 {
 private:
-    std::shared_ptr<internal::DropDownMenuInternal> internal_ptr_;
+    std::shared_ptr<internal::DropdownMenuInternal> internal_ptr_;
     template <typename T> friend T getGuiElementHandle(const std::string& handle_string);
 
-    DropDownMenuHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
-        : internal_ptr_{std::dynamic_pointer_cast<internal::DropDownMenuInternal>(internal_ptr)}
+    DropdownMenuHandle(const std::shared_ptr<internal::InternalGuiElementHandle>& internal_ptr)
+        : internal_ptr_{std::dynamic_pointer_cast<internal::DropdownMenuInternal>(internal_ptr)}
     {
     }
 
 public:
-    DropDownMenuHandle() : internal_ptr_{nullptr} {}
+    DropdownMenuHandle() : internal_ptr_{nullptr} {}
 
     std::vector<std::string> getElements() const
     {
@@ -283,7 +283,7 @@ using CheckboxCallbackFunction = std::function<void(const CheckboxHandle&)>;
 using TextLabelCallbackFunction = std::function<void(const TextLabelHandle&)>;
 using ListBoxCallbackFunction = std::function<void(const ListBoxHandle&)>;
 using EditableTextCallbackFunction = std::function<void(const EditableTextHandle&)>;
-using DropDownMenuCallbackFunction = std::function<void(const DropDownMenuHandle&)>;
+using DropdownMenuCallbackFunction = std::function<void(const DropdownMenuHandle&)>;
 using RadioButtonGroupCallbackFunction = std::function<void(const RadioButtonGroupHandle&)>;
 
 }  // namespace gui
@@ -333,9 +333,9 @@ inline std::map<std::string, gui::EditableTextCallbackFunction>& getEditableText
     return gui_callbacks;
 }
 
-inline std::map<std::string, gui::DropDownMenuCallbackFunction>& getDropDownMenuCallbacks()
+inline std::map<std::string, gui::DropdownMenuCallbackFunction>& getDropdownMenuCallbacks()
 {
-    static std::map<std::string, gui::DropDownMenuCallbackFunction> gui_callbacks;
+    static std::map<std::string, gui::DropdownMenuCallbackFunction> gui_callbacks;
 
     return gui_callbacks;
 }
@@ -405,9 +405,9 @@ inline void registerGuiCallback(const std::string& handle_string,
 }
 
 inline void registerGuiCallback(const std::string& handle_string,
-                                std::function<void(const DropDownMenuHandle&)> callback_function)
+                                std::function<void(const DropdownMenuHandle&)> callback_function)
 {
-    registerGuiCallback(handle_string, callback_function, internal::getDropDownMenuCallbacks);
+    registerGuiCallback(handle_string, callback_function, internal::getDropdownMenuCallbacks);
 }
 
 inline void registerGuiCallback(const std::string& handle_string,
@@ -537,7 +537,7 @@ template <> inline EditableTextHandle getGuiElementHandle(const std::string& han
     return EditableTextHandle{gui_element};
 }
 
-template <> inline DropDownMenuHandle getGuiElementHandle(const std::string& handle_string)
+template <> inline DropdownMenuHandle getGuiElementHandle(const std::string& handle_string)
 {
     internal::InternalGuiElementHandleMap& gui_element_handles = internal::getGuiElementHandles();
 
@@ -548,12 +548,12 @@ template <> inline DropDownMenuHandle getGuiElementHandle(const std::string& han
 
     const std::shared_ptr<internal::InternalGuiElementHandle> gui_element{gui_element_handles[handle_string]};
 
-    if (gui_element->getType() != dvs::GuiElementType::DropDownMenu)
+    if (gui_element->getType() != dvs::GuiElementType::DropdownMenu)
     {
         throw std::runtime_error("Gui element with handle string " + handle_string + " is not a drop down menu!");
     }
 
-    return DropDownMenuHandle{gui_element};
+    return DropdownMenuHandle{gui_element};
 }
 
 template <> inline RadioButtonGroupHandle getGuiElementHandle(const std::string& handle_string)
@@ -660,13 +660,13 @@ inline void callGuiCallbackFunction(const ReceivedGuiData& received_gui_data)
             gui_callbacks[handle_string](gui::getGuiElementHandle<gui::EditableTextHandle>(handle_string));
         }
     }
-    else if (type == dvs::GuiElementType::DropDownMenu)
+    else if (type == dvs::GuiElementType::DropdownMenu)
     {
-        std::map<std::string, gui::DropDownMenuCallbackFunction>& gui_callbacks = getDropDownMenuCallbacks();
+        std::map<std::string, gui::DropdownMenuCallbackFunction>& gui_callbacks = getDropdownMenuCallbacks();
 
         if (gui_callbacks.find(handle_string) != gui_callbacks.end())
         {
-            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::DropDownMenuHandle>(handle_string));
+            gui_callbacks[handle_string](gui::getGuiElementHandle<gui::DropdownMenuHandle>(handle_string));
         }
     }
     else if (type == dvs::GuiElementType::RadioButtonGroup)

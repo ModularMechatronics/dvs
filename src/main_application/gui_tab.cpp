@@ -248,7 +248,7 @@ WindowTab::WindowTab(wxFrame* parent_window,
             text_entry->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_.push_back(text_entry);
         }
-        else if (elem_settings->type == dvs::GuiElementType::DropDownMenu)
+        else if (elem_settings->type == dvs::GuiElementType::DropdownMenu)
         {
             auto const [elem_pos, elem_size] =
                 getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());

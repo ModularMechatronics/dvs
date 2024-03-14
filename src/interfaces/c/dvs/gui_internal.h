@@ -146,9 +146,9 @@ ListBoxCallbackFunctionMap* getListBoxCallbackFunctionMap()
     return &list_box_handle_callback_function_map;
 }
 
-DropDownMenuCallbackFunctionMap* getDropDownMenuCallbackFunctionMap()
+DropdownMenuCallbackFunctionMap* getDropdownMenuCallbackFunctionMap()
 {
-    static DropDownMenuCallbackFunctionMap dropdown_menu_handle_callback_function_map;
+    static DropdownMenuCallbackFunctionMap dropdown_menu_handle_callback_function_map;
 
     return &dropdown_menu_handle_callback_function_map;
 }
@@ -188,9 +188,9 @@ void initDataStructures(const size_t initial_size)
     ListBoxCallbackFunctionMap* const list_box_handle_callback_function_map = getListBoxCallbackFunctionMap();
     initListBoxCallbackFunctionMap(list_box_handle_callback_function_map, initial_size);
 
-    DropDownMenuCallbackFunctionMap* const dropdown_menu_handle_callback_function_map =
-        getDropDownMenuCallbackFunctionMap();
-    initDropDownMenuCallbackFunctionMap(dropdown_menu_handle_callback_function_map, initial_size);
+    DropdownMenuCallbackFunctionMap* const dropdown_menu_handle_callback_function_map =
+        getDropdownMenuCallbackFunctionMap();
+    initDropdownMenuCallbackFunctionMap(dropdown_menu_handle_callback_function_map, initial_size);
 
     CheckboxCallbackFunctionMap* const checkbox_handle_callback_function_map = getCheckboxCallbackFunctionMap();
     initCheckboxCallbackFunctionMap(checkbox_handle_callback_function_map, initial_size);
@@ -273,9 +273,9 @@ void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* d
     }
 }
 
-void updateDropDownMenuState(DropDownMenuInternalHandle* const handle, const UInt8Array* data_view)
+void updateDropdownMenuState(DropdownMenuInternalHandle* const handle, const UInt8Array* data_view)
 {
-    DropDownMenuState* const state = &(handle->state);
+    DropdownMenuState* const state = &(handle->state);
     destroyListOfStrings(&(state->elements));
     free(state->selected_element);
 
@@ -424,10 +424,10 @@ BaseHandle* internal_createListBox(const char* const handle_string, const UInt8A
     return handle;
 }
 
-BaseHandle* internal_createDropDownMenu(const char* const handle_string, const UInt8Array* const data_view)
+BaseHandle* internal_createDropdownMenu(const char* const handle_string, const UInt8Array* const data_view)
 {
-    DropDownMenuInternalHandle* const dropdown_menu =
-        (DropDownMenuInternalHandle*)malloc(sizeof(DropDownMenuInternalHandle));
+    DropdownMenuInternalHandle* const dropdown_menu =
+        (DropdownMenuInternalHandle*)malloc(sizeof(DropdownMenuInternalHandle));
 
     size_t handle_string_length = strlen(handle_string);
 
@@ -443,7 +443,7 @@ BaseHandle* internal_createDropDownMenu(const char* const handle_string, const U
     dropdown_menu->state.selected_element = (char*)malloc(1U);
     dropdown_menu->state.selected_element[0] = '\0';
 
-    updateDropDownMenuState((DropDownMenuInternalHandle*)handle, data_view);
+    updateDropdownMenuState((DropdownMenuInternalHandle*)handle, data_view);
 
     return handle;
 }
@@ -570,7 +570,7 @@ void populateGuiElementWithData(const GuiElementType type,
             }
             else if (type == GUI_ET_DROPDOWN_MENU)
             {
-                updateDropDownMenuState((DropDownMenuInternalHandle*)handle, data_view);
+                updateDropdownMenuState((DropdownMenuInternalHandle*)handle, data_view);
             }
             else if (type == GUI_ET_RADIO_BUTTON_GROUP)
             {
@@ -596,7 +596,7 @@ void populateGuiElementWithData(const GuiElementType type,
         }
         else if (type == GUI_ET_DROPDOWN_MENU)
         {
-            handle = (BaseHandle*)internal_createDropDownMenu(handle_string, data_view);
+            handle = (BaseHandle*)internal_createDropdownMenu(handle_string, data_view);
         }
         else if (type == GUI_ET_CHECKBOX)
         {
@@ -741,11 +741,11 @@ ListBoxHandle getListBoxHandle(const char* const handle_string)
     return list_box_handle;
 }
 
-DropDownMenuHandle getDropDownMenuHandle(const char* const handle_string)
+DropdownMenuHandle getDropdownMenuHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
-    DropDownMenuHandle dropdown_menu_handle;
+    DropdownMenuHandle dropdown_menu_handle;
     dropdown_menu_handle.__handle = NULL;
 
     if (!isGuiElementHandleContainerKeyInMap(handle_string, gui_element_map))
@@ -754,8 +754,8 @@ DropDownMenuHandle getDropDownMenuHandle(const char* const handle_string)
         return dropdown_menu_handle;
     }
 
-    DropDownMenuInternalHandle* const gui_elem =
-        (DropDownMenuInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
+    DropdownMenuInternalHandle* const gui_elem =
+        (DropdownMenuInternalHandle*)getGuiElementHandleContainer(handle_string, gui_element_map);
 
     if (gui_elem->type != GUI_ET_DROPDOWN_MENU)
     {
@@ -933,14 +933,14 @@ void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)
     }
     else if (type == GUI_ET_DROPDOWN_MENU)
     {
-        DropDownMenuCallbackFunctionMap* const dropdown_menu_callback_function_map =
-            getDropDownMenuCallbackFunctionMap();
+        DropdownMenuCallbackFunctionMap* const dropdown_menu_callback_function_map =
+            getDropdownMenuCallbackFunctionMap();
 
-        if (isDropDownMenuCallbackFunctionKeyInMap(handle_string, dropdown_menu_callback_function_map))
+        if (isDropdownMenuCallbackFunctionKeyInMap(handle_string, dropdown_menu_callback_function_map))
         {
-            DropDownMenuCallbackFunction cb_fun =
-                getDropDownMenuCallbackFunction(handle_string, dropdown_menu_callback_function_map);
-            cb_fun(getDropDownMenuHandle(handle_string));
+            DropdownMenuCallbackFunction cb_fun =
+                getDropdownMenuCallbackFunction(handle_string, dropdown_menu_callback_function_map);
+            cb_fun(getDropdownMenuHandle(handle_string));
         }
     }
     else if (type == GUI_ET_CHECKBOX)
@@ -1070,17 +1070,17 @@ void registerListBoxCallback(const char* const handle_string, void (*list_box_ca
         list_box_callback_function_map, handle_string, list_box_callback_function);
 }
 
-void registerDropDownMenuCallback(const char* const handle_string,
-                                  void (*dropdown_menu_callback_function)(const DropDownMenuHandle))
+void registerDropdownMenuCallback(const char* const handle_string,
+                                  void (*dropdown_menu_callback_function)(const DropdownMenuHandle))
 {
-    DropDownMenuCallbackFunctionMap* const dropdown_menu_callback_function_map = getDropDownMenuCallbackFunctionMap();
+    DropdownMenuCallbackFunctionMap* const dropdown_menu_callback_function_map = getDropdownMenuCallbackFunctionMap();
 
-    if (isDropDownMenuCallbackFunctionKeyInMap(handle_string, dropdown_menu_callback_function_map))
+    if (isDropdownMenuCallbackFunctionKeyInMap(handle_string, dropdown_menu_callback_function_map))
     {
         printf("Drop down menu callback with name %s already exists! Overwriting old callback...\n", handle_string);
     }
 
-    insertElementIntoDropDownMenuCallbackFunctionMap(
+    insertElementIntoDropdownMenuCallbackFunctionMap(
         dropdown_menu_callback_function_map, handle_string, dropdown_menu_callback_function);
 }
 

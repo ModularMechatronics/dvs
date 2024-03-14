@@ -108,15 +108,15 @@ nlohmann::json EditableTextSettings::toJson() const
     return j;
 }
 
-DropDownMenuSettings::DropDownMenuSettings() : ElementSettings{}, initially_selected_item{""}, elements{}
+DropdownMenuSettings::DropdownMenuSettings() : ElementSettings{}, initially_selected_item{""}, elements{}
 {
     x = 0.0;
     y = 0.0;
     width = 0.4;
     height = 0.4;
-    type = dvs::GuiElementType::DropDownMenu;
+    type = dvs::GuiElementType::DropdownMenu;
 }
-DropDownMenuSettings::DropDownMenuSettings(const nlohmann::json& j_data)
+DropdownMenuSettings::DropdownMenuSettings(const nlohmann::json& j_data)
     : ElementSettings{j_data}, initially_selected_item{""}, elements{}
 {
     if (!j_data.contains("element_specific_settings"))
@@ -152,17 +152,17 @@ DropDownMenuSettings::DropDownMenuSettings(const nlohmann::json& j_data)
     }
 }
 
-bool DropDownMenuSettings::operator==(const DropDownMenuSettings& other) const
+bool DropdownMenuSettings::operator==(const DropdownMenuSettings& other) const
 {
     return ElementSettings::operator==(other) && initially_selected_item == other.initially_selected_item;
 }
 
-bool DropDownMenuSettings::operator!=(const DropDownMenuSettings& other) const
+bool DropdownMenuSettings::operator!=(const DropdownMenuSettings& other) const
 {
     return !(*this == other);
 }
 
-nlohmann::json DropDownMenuSettings::toJson() const
+nlohmann::json DropdownMenuSettings::toJson() const
 {
     nlohmann::json j = ElementSettings::toJson();
     j["element_specific_settings"]["initially_selected_item"] = initially_selected_item;
@@ -429,9 +429,9 @@ StaticBoxSettings::StaticBoxSettings(const nlohmann::json& j_data) : ElementSett
             {
                 elements.push_back(std::make_shared<EditableTextSettings>(j_element));
             }
-            else if (ge_type == dvs::GuiElementType::DropDownMenu)
+            else if (ge_type == dvs::GuiElementType::DropdownMenu)
             {
-                elements.push_back(std::make_shared<DropDownMenuSettings>(j_element));
+                elements.push_back(std::make_shared<DropdownMenuSettings>(j_element));
             }
             else if (ge_type == dvs::GuiElementType::ListBox)
             {

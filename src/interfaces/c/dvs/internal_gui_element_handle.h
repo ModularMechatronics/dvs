@@ -26,11 +26,11 @@ typedef struct S_ListBoxState
     char* selected_element;
 } ListBoxState;
 
-typedef struct S_DropDownMenuState
+typedef struct S_DropdownMenuState
 {
     ListOfStrings elements;
     char* selected_element;
-} DropDownMenuState;
+} DropdownMenuState;
 
 // Gui element internal handle types
 
@@ -63,13 +63,13 @@ typedef struct S_TextLabelInternalHandle
     char* text;
 } TextLabelInternalHandle;
 
-typedef struct S_DropDownMenuInternalHandle
+typedef struct S_DropdownMenuInternalHandle
 {
     GuiElementType type;
     char* handle_string;
 
-    DropDownMenuState state;
-} DropDownMenuInternalHandle;
+    DropdownMenuState state;
+} DropdownMenuInternalHandle;
 
 typedef struct S_CheckboxInternalHandle
 {
@@ -112,11 +112,11 @@ typedef struct S_ListBoxHandle
     ListBoxInternalHandle* __handle;
 } ListBoxHandle;
 
-typedef struct S_DropDownMenuHandle
+typedef struct S_DropdownMenuHandle
 {
-    DropDownMenuInternalHandle* __handle;
+    DropdownMenuInternalHandle* __handle;
 
-} DropDownMenuHandle;
+} DropdownMenuHandle;
 
 typedef struct S_CheckboxHandle
 {

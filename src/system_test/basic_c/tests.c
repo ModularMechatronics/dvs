@@ -237,14 +237,14 @@ void listBoxCallback(const ListBoxHandle gui_element_handle)
     }
 }
 
-void dropDownMenuCallback(const DropDownMenuHandle gui_element_handle)
+void dropDownMenuCallback(const DropdownMenuHandle gui_element_handle)
 {
     printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
-    printf("Selected element: %s\n", getDropDownMenuSelectedElement(gui_element_handle));
+    printf("Selected element: %s\n", getDropdownMenuSelectedElement(gui_element_handle));
 
-    for (size_t k = 0U; k < getDropDownMenuElements(gui_element_handle).size; k++)
+    for (size_t k = 0U; k < getDropdownMenuElements(gui_element_handle).size; k++)
     {
-        printf("Element %zu: %s\n", k, getDropDownMenuElements(gui_element_handle).elements[k]);
+        printf("Element %zu: %s\n", k, getDropdownMenuElements(gui_element_handle).elements[k]);
     }
 }
 
@@ -274,7 +274,7 @@ void printValues()
 {
     const SliderHandle slider = getSliderHandle("slider0");
     const ListBoxHandle list_box = getListBoxHandle("listbox0");
-    const DropDownMenuHandle drop_down_menu = getDropDownMenuHandle("ddm0");
+    const DropdownMenuHandle drop_down_menu = getDropdownMenuHandle("ddm0");
 
     const TextLabelHandle text_label = getTextLabelHandle("text_label0");
 
@@ -304,14 +304,14 @@ void printValues()
     const CheckboxHandle cb_h = getCheckboxHandle("checkbox0");
     printf("Checked: %i\n", getIsCheckBoxChecked(cb_h));
 
-    printf("DropDownMenu size: %zu\n", getDropDownMenuElements(drop_down_menu).size);
+    printf("DropdownMenu size: %zu\n", getDropdownMenuElements(drop_down_menu).size);
 
-    for (size_t k = 0U; k < getDropDownMenuElements(drop_down_menu).size; k++)
+    for (size_t k = 0U; k < getDropdownMenuElements(drop_down_menu).size; k++)
     {
-        printf("Element %zu: %s\n", k, getDropDownMenuElements(drop_down_menu).elements[k]);
+        printf("Element %zu: %s\n", k, getDropdownMenuElements(drop_down_menu).elements[k]);
     }
 
-    printf("Selected element: %s\n", getDropDownMenuSelectedElement(drop_down_menu));
+    printf("Selected element: %s\n", getDropdownMenuSelectedElement(drop_down_menu));
 }
 
 void testGUIBasic()
@@ -322,7 +322,7 @@ void testGUIBasic()
     registerSliderCallback("slider0", slider0Callback);
 
     registerListBoxCallback("listbox0", listBoxCallback);
-    registerDropDownMenuCallback("ddm0", dropDownMenuCallback);
+    registerDropdownMenuCallback("ddm0", dropDownMenuCallback);
     registerCheckboxCallback("checkbox0", checkboxCallback);
     registerRadioButtonGroupCallback("rbg0", radioButtonsCallback);
     registerEditableTextCallback("text_entry", editableTextCallback);

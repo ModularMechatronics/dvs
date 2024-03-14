@@ -228,7 +228,7 @@ GuiWindow::GuiWindow(
     Bind(wxEVT_MENU, &GuiWindow::createNewSliderCallbackFunction, this, dvs_ids::NEW_SLIDER);
     Bind(wxEVT_MENU, &GuiWindow::createNewListBoxCallbackFunction, this, dvs_ids::NEW_LIST_BOX);
     Bind(wxEVT_MENU, &GuiWindow::createNewEditableTextCallbackFunction, this, dvs_ids::NEW_EDITABLE_TEXT);
-    Bind(wxEVT_MENU, &GuiWindow::createNewDropDownMenuCallbackFunction, this, dvs_ids::NEW_DROP_DOWN_MENU);
+    Bind(wxEVT_MENU, &GuiWindow::createNewDropdownMenuCallbackFunction, this, dvs_ids::NEW_DROP_DOWN_MENU);
     Bind(wxEVT_MENU, &GuiWindow::createNewRadioButtonGroupCallbackFunction, this, dvs_ids::NEW_RADIO_BUTTON_GROUP);
     Bind(wxEVT_MENU, &GuiWindow::createNewCheckboxCallbackFunction, this, dvs_ids::NEW_CHECK_BOX);
     Bind(wxEVT_MENU, &GuiWindow::createNewTextLabelCallbackFunction, this, dvs_ids::NEW_TEXT_LABEL);
@@ -406,12 +406,12 @@ void GuiWindow::notifyChildrenOnKeyPressed(const char key)
         getMenuItemFromString(popup_menu_element_, "Pan")->Check(true);
         getMenuItemFromString(popup_menu_tab_, "Pan")->Check(true);
     }
-    else if (key == 's' || key == 'S')
-    {
-        getMenuItemFromString(popup_menu_window_, "Select")->Check(true);
-        getMenuItemFromString(popup_menu_element_, "Select")->Check(true);
-        getMenuItemFromString(popup_menu_tab_, "Select")->Check(true);
-    }
+    // else if (key == 's' || key == 'S')
+    // {
+    //     getMenuItemFromString(popup_menu_window_, "Select")->Check(true);
+    //     getMenuItemFromString(popup_menu_element_, "Select")->Check(true);
+    //     getMenuItemFromString(popup_menu_tab_, "Select")->Check(true);
+    // }
 
     for (const auto& tab : tabs_)
     {
@@ -775,7 +775,7 @@ void GuiWindow::createNewListBoxCallbackFunction(wxCommandEvent& WXUNUSED(event)
 
 void GuiWindow::createNewEditableTextCallbackFunction(wxCommandEvent& WXUNUSED(event)) {}
 
-void GuiWindow::createNewDropDownMenuCallbackFunction(wxCommandEvent& WXUNUSED(event)) {}
+void GuiWindow::createNewDropdownMenuCallbackFunction(wxCommandEvent& WXUNUSED(event)) {}
 
 void GuiWindow::createNewRadioButtonGroupCallbackFunction(wxCommandEvent& WXUNUSED(event)) {}
 

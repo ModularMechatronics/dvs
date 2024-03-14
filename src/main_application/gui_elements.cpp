@@ -450,7 +450,7 @@ DropdownMenuGuiElement::DropdownMenuGuiElement(
                             push_text_to_cmdl_output_window}
 {
     this->SetWindowStyle(wxCB_READONLY);
-    elements_ = std::dynamic_pointer_cast<DropDownMenuSettings>(element_settings)->elements;
+    elements_ = std::dynamic_pointer_cast<DropdownMenuSettings>(element_settings)->elements;
 
     for (const std::string& element : elements_)
     {

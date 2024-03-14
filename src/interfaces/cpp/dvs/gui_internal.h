@@ -272,16 +272,16 @@ public:
     }
 };
 
-class DropDownMenuInternal final : public InternalGuiElementHandle
+class DropdownMenuInternal final : public InternalGuiElementHandle
 {
 public:
     std::vector<std::string> elements_;
     std::string selected_element_;
 
 public:
-    DropDownMenuInternal() {}
-    DropDownMenuInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
-        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::DropDownMenu}
+    DropdownMenuInternal() {}
+    DropdownMenuInternal(const std::string& handle_string, const UInt8ArrayView& data_view)
+        : InternalGuiElementHandle{handle_string, dvs::GuiElementType::DropdownMenu}
     {
         updateState(data_view);
     }
@@ -568,9 +568,9 @@ inline void populateGuiElementWithData(const dvs::GuiElementType type,
         {
             gui_element_handles[handle_string] = std::make_shared<EditableTextInternal>(handle_string, data_view);
         }
-        else if (type == dvs::GuiElementType::DropDownMenu)
+        else if (type == dvs::GuiElementType::DropdownMenu)
         {
-            gui_element_handles[handle_string] = std::make_shared<DropDownMenuInternal>(handle_string, data_view);
+            gui_element_handles[handle_string] = std::make_shared<DropdownMenuInternal>(handle_string, data_view);
         }
         else if (type == dvs::GuiElementType::RadioButtonGroup)
         {

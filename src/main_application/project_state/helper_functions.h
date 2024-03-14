@@ -42,7 +42,7 @@ inline dvs::GuiElementType parseGuiElementType(const nlohmann::json& j)
     }
     else if (type_string == "DROPDOWN_MENU")
     {
-        return dvs::GuiElementType::DropDownMenu;
+        return dvs::GuiElementType::DropdownMenu;
     }
     else if (type_string == "LISTBOX")
     {
@@ -92,7 +92,7 @@ inline std::string guiElementTypeToString(const dvs::GuiElementType& type)
             res = "EDITABLE_TEXT";
             break;
         }
-        case dvs::GuiElementType::DropDownMenu: {
+        case dvs::GuiElementType::DropdownMenu: {
             res = "DROPDOWN_MENU";
             break;
         }

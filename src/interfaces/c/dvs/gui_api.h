@@ -97,7 +97,7 @@ char* getListBoxSelectedElement(const ListBoxHandle list_box_handle)
     return list_box_handle.__handle->state.selected_element;
 }
 
-char* getDropDownMenuSelectedElement(const DropDownMenuHandle drop_down_menu_handle)
+char* getDropdownMenuSelectedElement(const DropdownMenuHandle drop_down_menu_handle)
 {
     if (drop_down_menu_handle.__handle == NULL)
     {
@@ -108,7 +108,7 @@ char* getDropDownMenuSelectedElement(const DropDownMenuHandle drop_down_menu_han
     return drop_down_menu_handle.__handle->state.selected_element;
 }
 
-ListOfStrings getDropDownMenuElements(const DropDownMenuHandle drop_down_menu_handle)
+ListOfStrings getDropdownMenuElements(const DropdownMenuHandle drop_down_menu_handle)
 {
     ListOfStrings list_of_strings;
 

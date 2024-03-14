@@ -128,7 +128,7 @@ public:
     void createNewSliderCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewListBoxCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewEditableTextCallbackFunction(wxCommandEvent& WXUNUSED(event));
-    void createNewDropDownMenuCallbackFunction(wxCommandEvent& WXUNUSED(event));
+    void createNewDropdownMenuCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewRadioButtonGroupCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewButtonCallbackFunction(wxCommandEvent& WXUNUSED(event));
     void createNewCheckboxCallbackFunction(wxCommandEvent& WXUNUSED(event));

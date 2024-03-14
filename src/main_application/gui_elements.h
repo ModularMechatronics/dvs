@@ -772,8 +772,8 @@ public:
 
     std::shared_ptr<GuiElementState> getGuiElementState() const override
     {
-        std::shared_ptr<DropDownMenuState> drop_down_menu_state =
-            std::make_shared<DropDownMenuState>(element_settings_->handle_string, elements_, selected_element_);
+        std::shared_ptr<DropdownMenuState> drop_down_menu_state =
+            std::make_shared<DropdownMenuState>(element_settings_->handle_string, elements_, selected_element_);
 
         return drop_down_menu_state;
     }

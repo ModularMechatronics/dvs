@@ -119,18 +119,18 @@ struct EditableTextSettings : public ElementSettings
     bool operator!=(const EditableTextSettings& other) const;
 };
 
-struct DropDownMenuSettings : public ElementSettings
+struct DropdownMenuSettings : public ElementSettings
 {
     std::string initially_selected_item;
     std::vector<std::string> elements;
 
-    DropDownMenuSettings();
-    explicit DropDownMenuSettings(const nlohmann::json& j_data);
+    DropdownMenuSettings();
+    explicit DropdownMenuSettings(const nlohmann::json& j_data);
 
     nlohmann::json toJson() const override;
 
-    bool operator==(const DropDownMenuSettings& other) const;
-    bool operator!=(const DropDownMenuSettings& other) const;
+    bool operator==(const DropdownMenuSettings& other) const;
+    bool operator!=(const DropdownMenuSettings& other) const;
 };
 
 struct ListBoxSettings : public ElementSettings

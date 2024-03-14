@@ -54,13 +54,13 @@ typedef struct S_ListBoxCallbackFunctionMap
     size_t size;
 } ListBoxCallbackFunctionMap;
 
-typedef struct S_DropDownMenuCallbackFunctionMap
+typedef struct S_DropdownMenuCallbackFunctionMap
 {
     char** keys;
-    DropDownMenuCallbackFunction* values;
+    DropdownMenuCallbackFunction* values;
 
     size_t size;
-} DropDownMenuCallbackFunctionMap;
+} DropdownMenuCallbackFunctionMap;
 
 typedef struct S_CheckboxCallbackFunctionMap
 {
@@ -382,29 +382,29 @@ void resetListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map, cons
     RESET_MAP(map, initial_size, ListBoxCallbackFunction);
 }
 
-// DropDownMenuCallbackFunctionMap
-void initDropDownMenuCallbackFunctionMap(DropDownMenuCallbackFunctionMap* const map, const size_t initial_size)
+// DropdownMenuCallbackFunctionMap
+void initDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map, const size_t initial_size)
 {
-    INIT_MAP(map, initial_size, DropDownMenuCallbackFunction);
+    INIT_MAP(map, initial_size, DropdownMenuCallbackFunction);
 }
 
-void insertElementIntoDropDownMenuCallbackFunctionMap(DropDownMenuCallbackFunctionMap* const map,
+void insertElementIntoDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map,
                                                       const char* const handle_string,
-                                                      DropDownMenuCallbackFunction const callback_function)
+                                                      DropdownMenuCallbackFunction const callback_function)
 {
-    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, DropDownMenuCallbackFunction);
+    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, DropdownMenuCallbackFunction);
 }
 
-DropDownMenuCallbackFunction getDropDownMenuCallbackFunction(const char* const handle_string,
-                                                             const DropDownMenuCallbackFunctionMap* const map)
+DropdownMenuCallbackFunction getDropdownMenuCallbackFunction(const char* const handle_string,
+                                                             const DropdownMenuCallbackFunctionMap* const map)
 {
-    DropDownMenuCallbackFunction ret_val = NULL;
+    DropdownMenuCallbackFunction ret_val = NULL;
     GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-bool isDropDownMenuCallbackFunctionKeyInMap(const char* const handle_string,
-                                            const DropDownMenuCallbackFunctionMap* const gui_element_handles)
+bool isDropdownMenuCallbackFunctionKeyInMap(const char* const handle_string,
+                                            const DropdownMenuCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
@@ -413,9 +413,9 @@ bool isDropDownMenuCallbackFunctionKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetDropDownMenuCallbackFunctionMap(DropDownMenuCallbackFunctionMap* const map, const size_t initial_size)
+void resetDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map, const size_t initial_size)
 {
-    RESET_MAP(map, initial_size, DropDownMenuCallbackFunction);
+    RESET_MAP(map, initial_size, DropdownMenuCallbackFunction);
 }
 
 // CheckboxCallbackFunctionMap

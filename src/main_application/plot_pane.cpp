@@ -552,10 +552,10 @@ void PlotPane::keyPressedElementSpecific(const char key)
     {
         axes_interactor_.setMouseInteractionType(MouseInteractionType::PAN);
     }
-    else if (wxGetKeyState(static_cast<wxKeyCode>('s')) || wxGetKeyState(static_cast<wxKeyCode>('S')))
-    {
-        axes_interactor_.setMouseInteractionType(MouseInteractionType::POINT_SELECTION);
-    }
+    // else if (wxGetKeyState(static_cast<wxKeyCode>('s')) || wxGetKeyState(static_cast<wxKeyCode>('S')))
+    // {
+    //     axes_interactor_.setMouseInteractionType(MouseInteractionType::POINT_SELECTION);
+    // }
 
     Refresh();
 }

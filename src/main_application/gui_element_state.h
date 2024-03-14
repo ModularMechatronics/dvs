@@ -254,23 +254,23 @@ public:
     }
 };
 
-class DropDownMenuState : public GuiElementState
+class DropdownMenuState : public GuiElementState
 {
 private:
     std::vector<std::string> elements_;
     std::string selected_element_;
 
 public:
-    DropDownMenuState() = delete;
-    DropDownMenuState(const std::string& handle_string,
+    DropdownMenuState() = delete;
+    DropdownMenuState(const std::string& handle_string,
                       const std::vector<std::string>& elements,
                       const std::string& selected_element)
-        : GuiElementState{dvs::GuiElementType::DropDownMenu, handle_string},
+        : GuiElementState{dvs::GuiElementType::DropdownMenu, handle_string},
           elements_{elements},
           selected_element_{selected_element}
     {
     }
-    ~DropDownMenuState() override {}
+    ~DropdownMenuState() override {}
 
     std::uint64_t getTotalNumBytes() const override
     {
