@@ -2381,7 +2381,47 @@ void testTopology()
     drawMesh(vertices, indices, properties::ColorMap::JET_SOFT, properties::EdgeColor::BLACK);
 }
 
-void testChaos() {}
+void testChaos()
+{
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    openProjectFile(project_file_path);
+
+    const size_t n_its = 100U;
+    const size_t n_elements = 100U;
+
+    const auto rnd = []() -> double { return static_cast<double>(rand() % 1001) / 1000.0 - 0.5; };
+
+    double theta = M_PI / 2.0;
+    double r = 0;
+    const double h = 0.01;
+
+    setCurrentElement("p_view_0");
+    clearView();
+    setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+
+    Vector<double> x_v{n_elements}, y_v{n_elements};
+
+    for (size_t n = 0; n < n_its; n++)
+    {
+        double x = 0.0, y = 0.0;
+
+        for (size_t k = 0; k < n_elements; k++)
+        {
+            x_v(k) = x;
+            y_v(k) = y;
+
+            double d = theta - M_PI / 2.0;
+            d = d * d * (d < 0.0 ? -1.0 : 1.0);
+
+            theta = theta + h * rnd() * 3.0 - d * 2.5;
+            r = rnd() * 0.5 + 1.0;
+            x = x + r * std::cos(theta);
+            y = y + r * std::sin(theta);
+        }
+
+        plot(x_v, y_v, properties::Color::BLACK);
+    }
+}
 
 void testColorfulScatter()
 {

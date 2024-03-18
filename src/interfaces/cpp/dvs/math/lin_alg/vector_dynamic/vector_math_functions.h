@@ -158,6 +158,45 @@ template <typename T> Vector<T> sin(const Vector<T>& vin)
     return v;
 }
 
+template <typename T> Vector<T> tan(const Vector<T>& vin)
+{
+    DVS_ASSERT(vin.size() > 0);
+    Vector<T> v(vin.size());
+    for (size_t k = 0; k < vin.size(); k++)
+    {
+        v(k) = std::tan(vin(k));
+    }
+
+    return v;
+}
+
+template <typename T> Vector<T> atan(const Vector<T>& vin)
+{
+    DVS_ASSERT(vin.size() > 0);
+    Vector<T> v(vin.size());
+    for (size_t k = 0; k < vin.size(); k++)
+    {
+        v(k) = std::atan(vin(k));
+    }
+
+    return v;
+}
+
+template <typename T> Vector<T> atan2(const Vector<T>& y_vec, const Vector<T>& x_vec)
+{
+    DVS_ASSERT(y_vec.size() > 0);
+    DVS_ASSERT(y_vec.size() == x_vec.size());
+
+    Vector<T> v(x_vec.size());
+
+    for (size_t k = 0; k < x_vec.size(); k++)
+    {
+        v(k) = std::atan2(y_vec(k), x_vec(k));
+    }
+
+    return v;
+}
+
 template <typename T> Vector<T> linspaceFromBoundariesAndCount(const T x0, const T x1, const size_t num_values)
 {
     DVS_ASSERT(num_values > 0);

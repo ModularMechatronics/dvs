@@ -18,11 +18,12 @@ Pre release:
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
-- Add protection from "NaN" of axes calculation
 - Grid lines when invalid/inf axes limits
 - Make it so that shader code and font data can be reached when the application is at arbitrary location
+- If min and max values for a dimension are equal, all axes lines disappear
 
 Post release:
+- Add protection from "NaN" of axes calculation
 - Plot pane width scaling for line width and point size, so that larger and smaller sizes can be acheived than default
 - Finish point selector, specifically all different type's selector functions
 - Zoom with rect only if certain button is pressed

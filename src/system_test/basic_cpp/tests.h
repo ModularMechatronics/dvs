@@ -1840,6 +1840,28 @@ void testAxesSquare()
     axesSquare();
 }
 
+void testNan()
+{
+    openProjectFile("../../project_files/exp0.dvs");
+
+    const size_t num_elements = 100;
+    Vector<double> x(num_elements), y(num_elements);
+
+    x = linspaceFromBoundariesAndCount(0.0, 1.0, 10U);
+    y = dvs::sin(x);
+
+    setCurrentElement("p1");
+    clearView();
+
+    x(4U) = NAN;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        x(k) = NAN;
+    }
+    plot(x, y, properties::LineWidth(20));
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -1871,6 +1893,7 @@ void addTests()
     addTest("cpp", "basic", "draw_cubes", testDrawCubes);
     addTest("cpp", "basic", "create_new_element", testCreateNewElement);
     addTest("cpp", "basic", "axes_square", testAxesSquare);
+    addTest("cpp", "basic", "nan", testNan);
 }
 
 }  // namespace basic_cpp
