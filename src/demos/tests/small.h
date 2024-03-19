@@ -134,6 +134,83 @@ inline RGB888 calculateColormapJet(double value)
                   static_cast<std::uint8_t>(g * 255.0),
                   static_cast<std::uint8_t>(b * 255.0)};
 }
+
+RGB888 calculateColormapJetSoft(double value)
+{
+    if (value < 0.0)
+    {
+        value = 0.0;
+    }
+    else if (value >= 1.0)
+    {
+        value = 0.99999;
+    }
+
+    double full_range_value = value * 10.0;
+    double integer_part = floor(full_range_value);
+    double fraction_part = full_range_value - integer_part;
+
+    double r = 0.0, g = 0.0, b = 0.0;
+
+    switch (int(integer_part))
+    {
+        case 0:
+            r = 0.3686274509803922 - fraction_part * 0.17254901960784316;
+            g = 0.30980392156862746 + fraction_part * 0.22352941176470587;
+            b = 0.6352941176470588 + fraction_part * 0.10588235294117654;
+            break;
+        case 1:
+            r = 0.19607843137254902 + fraction_part * 0.203921568627451;
+            g = 0.5333333333333333 + fraction_part * 0.22745098039215683;
+            b = 0.7411764705882353 - fraction_part * 0.09411764705882353;
+            break;
+        case 2:
+            r = 0.4 + fraction_part * 0.2705882352941176;
+            g = 0.7607843137254902 + fraction_part * 0.10588235294117654;
+            b = 0.6470588235294118 - fraction_part * 0.0039215686274509665;
+            break;
+        case 3:
+            r = 0.6705882352941176 + fraction_part * 0.2313725490196079;
+            g = 0.8666666666666667 + fraction_part * 0.09411764705882353;
+            b = 0.6431372549019608 - fraction_part * 0.04705882352941182;
+            break;
+        case 4:
+            r = 0.9019607843137255 + fraction_part * 0.0980392156862745;
+            g = 0.9607843137254902 + fraction_part * 0.039215686274509776;
+            b = 0.596078431372549 + fraction_part * 0.15294117647058825;
+            break;
+        case 5:
+            r = 1.0 - fraction_part * 0.0039215686274509665;
+            g = 1.0 - fraction_part * 0.1215686274509804;
+            b = 0.7490196078431373 - fraction_part * 0.20392156862745103;
+            break;
+        case 6:
+            r = 0.996078431372549 - fraction_part * 0.0039215686274509665;
+            g = 0.8784313725490196 - fraction_part * 0.196078431372549;
+            b = 0.5450980392156862 - fraction_part * 0.16470588235294115;
+            break;
+        case 7:
+            r = 0.9921568627450981 - fraction_part * 0.03529411764705881;
+            g = 0.6823529411764706 - fraction_part * 0.25490196078431376;
+            b = 0.3803921568627451 - fraction_part * 0.11764705882352938;
+            break;
+        case 8:
+            r = 0.9568627450980393 - fraction_part * 0.1215686274509804;
+            g = 0.42745098039215684 - fraction_part * 0.18431372549019606;
+            b = 0.2627450980392157 + fraction_part * 0.047058823529411764;
+            break;
+        case 9:
+            r = 0.8352941176470589 - fraction_part * 0.21568627450980393;
+            g = 0.24313725490196078 - fraction_part * 0.2392156862745098;
+            b = 0.30980392156862746 - fraction_part * 0.05098039215686273;
+            break;
+    }
+
+    return RGB888{static_cast<std::uint8_t>(r * 255.0),
+                  static_cast<std::uint8_t>(g * 255.0),
+                  static_cast<std::uint8_t>(b * 255.0)};
+}
+
 }  // namespace
 
 void testLorenz()
@@ -2425,8 +2502,70 @@ void testChaos()
 
 void testColorfulScatter()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.dvs";
     openProjectFile(project_file_path);
+
+    // TODO: When running this demo, uncomment the "black edge" in scatter_shader.fs for "DISC"
+
+    const size_t num_elements = 12020;
+    Vector<double> x(num_elements), y(num_elements);
+    Vector<double> point_sizes(num_elements);
+    Vector<RGB888> colorp(num_elements);
+
+    const auto rnd = []() -> double { return static_cast<double>(rand() % 1001) / 1000.0; };
+
+    const double g = 5.0;
+
+    std::mt19937 gen{std::random_device{}()};
+    std::normal_distribution<> dist;
+
+    Vec2d mn{0.0, 28.0};
+    Matrixd sigma{2U, 2U};
+    sigma(0, 0) = 1.0;
+    sigma(0, 1) = 0.1;
+    sigma(1, 0) = 0.1;
+    sigma(1, 1) = 1.0;
+
+    double max_dist = 0.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const Vec2d rnd_val = sigma * Vec2d{dist(gen), dist(gen)} + mn;
+
+        const double xk = rnd_val.x;
+        const double yk = rnd_val.y - rnd_val.x * rnd_val.x;
+        x(k) = rnd_val.x;
+        y(k) = yk;
+
+        const double dx = xk - mn.x;
+        const double dy = yk - mn.y;
+        const double d = dx * dx + dy * dy;
+        if (d > max_dist)
+        {
+            max_dist = d;
+        }
+    }
+
+    max_dist = 40.0;
+
+    for (size_t k = 0; k < num_elements; k++)
+    {
+        const double xk = x(k);
+        const double yk = y(k);
+
+        const double dx = xk - mn.x;
+        const double dy = yk - mn.y;
+        const double d = dx * dx + dy * dy;
+
+        point_sizes(k) = 4.0 * d / max_dist;
+        colorp(k) = calculateColormapJetSoft(d / max_dist);
+    }
+
+    setCurrentElement("p_view_0");
+    clearView();
+    // setAxesBoxScaleFactor({1.0, 1.0, 1.0});
+
+    scatter(x, y, colorp, properties::ScatterStyle::DISC);
 }
 
 }  // namespace small

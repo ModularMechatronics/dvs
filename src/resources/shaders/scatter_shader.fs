@@ -47,6 +47,8 @@ void main()
     float a = 1.0;
     // Default scatter_mode == 0 is square mode, which requires no modifications
 
+    vec3 color_to_use = fragment_color;
+
     if(scatter_mode == 1) // Circle
     {
         vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
@@ -64,9 +66,10 @@ void main()
         {
             discard;
         }
-        // else if((squared_dist <= 1.0) && (squared_dist > 0.85))
+        // else if(squared_dist > 0.65)
         // {
-        //     a = 1.0 - squared_dist;
+        //     // a = 1.0 - squared_dist; // Blurred edge
+        //     color_to_use = vec3(0.0, 0.0, 0.0); // Black edge
         // }
     }
     else if(scatter_mode == 3) // Plus
@@ -96,6 +99,6 @@ void main()
         }
     }
 
-    color = vec4(fragment_color, a);
+    color = vec4(color_to_use, a);
 		
 }

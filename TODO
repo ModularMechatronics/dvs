@@ -2,7 +2,6 @@ Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Fix number formatting and grid vectors system
 - Bug when creating starting various simulations, a new window appears with an element with the same name as the first window (for series.dvs amongst others)
-- Demo: Hundreds of runs of some chaos dynamic system (bicycle, double pendulum) with slightly different initial conditions, drawns as plot lines from top to bottom, with color indicating the initial condition
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Change name of application to duoplot
 - Add all keybindings to the help pane
