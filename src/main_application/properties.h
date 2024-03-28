@@ -22,7 +22,7 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::LINE_STYLE;
     }
-    else if (std::is_same<T, dvs::properties::Color>::value)
+    else if (std::is_same<T, dvs::internal::ColorInternal>::value)
     {
         return dvs::internal::PropertyType::COLOR;
     }

@@ -72,7 +72,7 @@ public:
     double min_z_;
     double max_z_;
     double z_range_;
-    std::vector<Vector<RGB888>> colors_;
+    std::vector<Vector<properties::Color>> colors_;
     std::vector<MarbleState> marble_states_;
     std::vector<ItemId> ids_;
 
@@ -99,7 +99,7 @@ public:
 
         for (int k = 0; k < num_marbles; k++)
         {
-            Vector<RGB888>& col_vec = colors_[k];
+            Vector<properties::Color>& col_vec = colors_[k];
             col_vec.resize(marble_.indices.size());
 
             std::function<RGBTripletf(float)> colormap_func = calculateColormapViridis;
@@ -144,13 +144,13 @@ public:
                 const double z_val = (z0 + z1 + z2) / 3.0;
                 const double norm_val = (z_val - min_z_) / z_range_;
                 const RGBTripletf c = colormap_func(norm_val);
-                col_vec(i) = RGB888(c.red * 255, c.green * 255, c.blue * 255);
+                col_vec(i) = properties::Color(c.red * 255, c.green * 255, c.blue * 255);
             }
         }
 
         for (size_t k = 0; k < ids_.size(); k++)
         {
-            Vector<RGB888>& col_vec = colors_[k];
+            Vector<properties::Color>& col_vec = colors_[k];
 
             drawMesh(marble_.x, marble_.y, marble_.z, marble_.indices, col_vec, ids_[k], properties::EdgeColor::NONE);
         }

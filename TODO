@@ -1,6 +1,6 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
-- Fix number formatting and grid vectors system
+- Fix number formatting and grid vectors system (1.0, 1e10, -0.24234, -2.7345e2)
 - Bug when creating starting various simulations, a new window appears with an element with the same name as the first window (for series.dvs amongst others)
 - Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
 - Change name of application to duoplot
@@ -10,18 +10,20 @@ Pre release:
 - Stairs is grey? Or without color
 - Investigate weird bug not being able to set colors properly for realTimePlot
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
-- Behaviour when starting a plot when not project is loaded, or element doesn't exist (basically like when one uses matplotlib, it shall be usable right out of the box)
 - Fix case for plot/plot3 when two adjacent points are equal. If first two points of plot2 is the same, there will be a division by zero
 - Delete RGB888 and replace with Color
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
-- Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 - Grid lines when invalid/inf axes limits
 - Make it so that shader code and font data can be reached when the application is at arbitrary location
 - If min and max values for a dimension are equal, all axes lines disappear
+- Add "SILHOUETTE" flag for scatter
+- Make sure APPENDABLE is working for scatter, scatter3, plot, plot3
+- Move "FAST_PLOT" flag to "not_ready" namespace
 
 Post release:
+- Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 - Add protection from "NaN" of axes calculation
 - Plot pane width scaling for line width and point size, so that larger and smaller sizes can be acheived than default
 - Finish point selector, specifically all different type's selector functions

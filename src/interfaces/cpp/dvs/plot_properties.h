@@ -177,18 +177,18 @@ enum class ScatterStyle : uint8_t
     CROSS
 };
 
-struct Color : internal::PropertyBase
+struct Color
 {
     uint8_t red, green, blue;
 
-    Color() : internal::PropertyBase{internal::PropertyType::COLOR} {}
+    Color() {}
 
     explicit Color(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
-        : internal::PropertyBase{internal::PropertyType::COLOR}, red{red_}, green{green_}, blue{blue_}
+        : red{red_}, green{green_}, blue{blue_}
     {
     }
 
-    Color(const internal::ColorT color) : internal::PropertyBase{internal::PropertyType::COLOR}
+    Color(const internal::ColorT color)
     {
         Color c{};
 
@@ -228,6 +228,17 @@ struct Color : internal::PropertyBase
         blue = c.blue;
     }
 
+    Color& operator=(const internal::ColorT color)
+    {
+        Color c{color};
+
+        red = c.red;
+        green = c.green;
+        blue = c.blue;
+
+        return *this;
+    }
+
     static constexpr internal::ColorT RED = internal::ColorT::RED;
     static constexpr internal::ColorT GREEN = internal::ColorT::GREEN;
     static constexpr internal::ColorT BLUE = internal::ColorT::BLUE;
@@ -238,6 +249,16 @@ struct Color : internal::PropertyBase
     static constexpr internal::ColorT WHITE = internal::ColorT::WHITE;
     static constexpr internal::ColorT GRAY = internal::ColorT::GRAY;
 };
+
+inline bool operator==(const Color& lhs, const Color& rhs)
+{
+    return (lhs.red == rhs.red) && (lhs.green == rhs.green) && (lhs.blue == rhs.blue);
+}
+
+inline bool operator!=(const Color& lhs, const Color& rhs)
+{
+    return !(lhs == rhs);
+}
 
 struct EdgeColor : internal::PropertyBase
 {
@@ -550,9 +571,69 @@ namespace not_ready
 constexpr internal::PropertyFlag UPDATABLE = internal::PropertyFlag::UPDATABLE;
 constexpr internal::PropertyFlag SELECTABLE = internal::PropertyFlag::SELECTABLE;
 
-}
+}  // namespace not_ready
 
 }  // namespace properties
+
+namespace internal
+{
+
+struct ColorInternal : PropertyBase
+{
+    uint8_t red, green, blue;
+
+    ColorInternal() : PropertyBase{PropertyType::COLOR} {}
+    ColorInternal(const properties::Color& col)
+        : PropertyBase{PropertyType::COLOR}, red{col.red}, green{col.green}, blue{col.blue}
+    {
+    }
+
+    explicit ColorInternal(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
+        : internal::PropertyBase{internal::PropertyType::COLOR}, red{red_}, green{green_}, blue{blue_}
+    {
+    }
+
+    ColorInternal(const internal::ColorT color) : internal::PropertyBase{internal::PropertyType::COLOR}
+    {
+        ColorInternal c{};
+
+        switch (color)
+        {
+            case internal::ColorT::RED:
+                c = ColorInternal{255, 0, 0};
+                break;
+            case internal::ColorT::GREEN:
+                c = ColorInternal{0, 255, 0};
+                break;
+            case internal::ColorT::BLUE:
+                c = ColorInternal{0, 0, 255};
+                break;
+            case internal::ColorT::CYAN:
+                c = ColorInternal{0, 255, 255};
+                break;
+            case internal::ColorT::MAGENTA:
+                c = ColorInternal{255, 0, 255};
+                break;
+            case internal::ColorT::YELLOW:
+                c = ColorInternal{255, 255, 0};
+                break;
+            case internal::ColorT::BLACK:
+                c = ColorInternal{0, 0, 0};
+                break;
+            case internal::ColorT::WHITE:
+                c = ColorInternal{255, 255, 255};
+                break;
+            case internal::ColorT::GRAY:
+                c = ColorInternal{127, 127, 127};
+                break;
+        }
+
+        red = c.red;
+        green = c.green;
+        blue = c.blue;
+    }
+};
+}  // namespace internal
 
 }  // namespace dvs
 

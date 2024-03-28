@@ -25,7 +25,7 @@ inline uint8_t numBytes(const properties::Transform& obj);
 inline uint8_t numBytes(const properties::Name& obj);
 inline uint8_t numBytes(const properties::LineStyle& obj);
 inline uint8_t numBytes(const properties::ScatterStyle& obj);
-inline uint8_t numBytes(const properties::Color& obj);
+inline uint8_t numBytes(const internal::ColorInternal& obj);
 inline uint8_t numBytes(const properties::EdgeColor& obj);
 inline uint8_t numBytes(const properties::FaceColor& obj);
 inline uint8_t numBytes(const properties::ColorMap& obj);
@@ -45,7 +45,7 @@ inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj,
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::Name& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::LineStyle& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::ScatterStyle& prop);
-inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::Color& prop);
+inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const internal::ColorInternal& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::EdgeColor& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::FaceColor& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::ColorMap& prop);
@@ -63,7 +63,8 @@ inline void deserializeFromCommunicationHeaderObject(properties::Alpha& prop, co
 inline void deserializeFromCommunicationHeaderObject(properties::ZOffset& prop, const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::Transform& prop, const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::Name& prop, const CommunicationHeaderObject& obj);
-inline void deserializeFromCommunicationHeaderObject(properties::Color& prop, const CommunicationHeaderObject& obj);
+inline void deserializeFromCommunicationHeaderObject(internal::ColorInternal& prop,
+                                                     const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::EdgeColor& prop, const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::FaceColor& prop, const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::LineStyle& prop, const CommunicationHeaderObject& obj);

@@ -309,15 +309,17 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
     if (input_params.has_color)
     {
-        const RGB888* input_data_rgb;
+        const properties::Color* input_data_rgb;
 
         if (input_params.has_point_sizes)
         {
-            input_data_rgb = reinterpret_cast<const RGB888* const>(input_data_dt_z + 2U * input_params.num_elements);
+            input_data_rgb =
+                reinterpret_cast<const properties::Color* const>(input_data_dt_z + 2U * input_params.num_elements);
         }
         else
         {
-            input_data_rgb = reinterpret_cast<const RGB888* const>(input_data_dt_z + input_params.num_elements);
+            input_data_rgb =
+                reinterpret_cast<const properties::Color* const>(input_data_dt_z + input_params.num_elements);
         }
 
         converted_data->color_ptr = new float[3 * input_params.num_elements];

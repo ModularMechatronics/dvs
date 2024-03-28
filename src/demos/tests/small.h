@@ -13,7 +13,7 @@ namespace small
 namespace
 {
 
-RGB888 calculateColormapViridis(double value)
+properties::Color calculateColormapViridis(double value)
 {
     if (value < 0.0)
     {
@@ -74,12 +74,12 @@ RGB888 calculateColormapViridis(double value)
             break;
     }
 
-    return RGB888{static_cast<std::uint8_t>(r * 255.0),
-                  static_cast<std::uint8_t>(g * 255.0),
-                  static_cast<std::uint8_t>(b * 255.0)};
+    return properties::Color{static_cast<std::uint8_t>(r * 255.0),
+                             static_cast<std::uint8_t>(g * 255.0),
+                             static_cast<std::uint8_t>(b * 255.0)};
 }
 
-inline RGB888 calculateColormapJet(double value)
+inline properties::Color calculateColormapJet(double value)
 {
     if (value < 0.0)
     {
@@ -130,12 +130,12 @@ inline RGB888 calculateColormapJet(double value)
             break;
     }
 
-    return RGB888{static_cast<std::uint8_t>(r * 255.0),
-                  static_cast<std::uint8_t>(g * 255.0),
-                  static_cast<std::uint8_t>(b * 255.0)};
+    return properties::Color{static_cast<std::uint8_t>(r * 255.0),
+                             static_cast<std::uint8_t>(g * 255.0),
+                             static_cast<std::uint8_t>(b * 255.0)};
 }
 
-RGB888 calculateColormapJetSoft(double value)
+properties::Color calculateColormapJetSoft(double value)
 {
     if (value < 0.0)
     {
@@ -206,9 +206,9 @@ RGB888 calculateColormapJetSoft(double value)
             break;
     }
 
-    return RGB888{static_cast<std::uint8_t>(r * 255.0),
-                  static_cast<std::uint8_t>(g * 255.0),
-                  static_cast<std::uint8_t>(b * 255.0)};
+    return properties::Color{static_cast<std::uint8_t>(r * 255.0),
+                             static_cast<std::uint8_t>(g * 255.0),
+                             static_cast<std::uint8_t>(b * 255.0)};
 }
 
 }  // namespace
@@ -224,7 +224,7 @@ void testLorenz()
     const size_t num_its = 50000;
 
     Vector<float> x(num_its), y(num_its), z(num_its);
-    Vector<RGB888> colorp(num_its);
+    Vector<properties::Color> colorp(num_its);
 
     float x0 = 1.0f;
     float y0 = 1.0f;
@@ -431,7 +431,7 @@ void testFakeContour()
         for (std::int32_t c = 0; c < num_cols; c++)
         {
             const double mapped_value = std::floor(num_values * (z(r, c) - min_val) / (max_val - min_val)) / num_values;
-            const RGB888 col = calculateColormapViridis(mapped_value);
+            const properties::Color col = calculateColormapViridis(mapped_value);
             img(r, c, 0) = col.red;
             img(r, c, 1) = col.green;
             img(r, c, 2) = col.blue;
@@ -440,7 +440,7 @@ void testFakeContour()
 
     ImageRGB<std::uint8_t> img2 = img;
 
-    RGB888 segment_color = RGB888{img(0, 0, 0), img(0, 0, 1), img(0, 0, 2)};
+    properties::Color segment_color = properties::Color{img(0, 0, 0), img(0, 0, 1), img(0, 0, 2)};
 
     std::int64_t idx = 0;
     std::int64_t current_row = 0, current_col = 0;
@@ -455,11 +455,11 @@ void testFakeContour()
     {
         for (std::int32_t c = 1; c < (num_cols - 1U); c++)
         {
-            const RGB888 col{img(r, c, 0), img(r, c, 1), img(r, c, 2)};
-            const RGB888 col_left{img(r, c - 1, 0), img(r, c - 1, 1), img(r, c - 1, 2)};
-            const RGB888 col_right{img(r, c + 1, 0), img(r, c + 1, 1), img(r, c + 1, 2)};
-            const RGB888 col_up{img(r - 1, c, 0), img(r - 1, c, 1), img(r - 1, c, 2)};
-            const RGB888 col_down{img(r + 1, c, 0), img(r + 1, c, 1), img(r + 1, c, 2)};
+            const properties::Color col{img(r, c, 0), img(r, c, 1), img(r, c, 2)};
+            const properties::Color col_left{img(r, c - 1, 0), img(r, c - 1, 1), img(r, c - 1, 2)};
+            const properties::Color col_right{img(r, c + 1, 0), img(r, c + 1, 1), img(r, c + 1, 2)};
+            const properties::Color col_up{img(r - 1, c, 0), img(r - 1, c, 1), img(r - 1, c, 2)};
+            const properties::Color col_down{img(r + 1, c, 0), img(r + 1, c, 1), img(r + 1, c, 2)};
             if (((col == col_left) && (col == col_right) && (col == col_up) && (col == col_down)))
             {
                 img2(r, c, 0) = 0;
@@ -477,7 +477,7 @@ void testFakeContour()
         img(current_row, current_col, 2) = 255;
 
         // Get the color of the current pixel
-        const RGB888 current_color = RGB888{
+        const properties::Color current_color = properties::Color{
             img(current_row, current_col, 0), img(current_row, current_col, 1), img(current_row, current_col, 2)};
 
         // Get the next pixel
@@ -601,7 +601,7 @@ void testScatterVaryingSize()
     const size_t num_elements = 200;
     Vector<double> x(num_elements), y(num_elements), z(num_elements);
     Vector<double> point_sizes(num_elements);
-    Vector<RGB888> colorp(num_elements);
+    Vector<properties::Color> colorp(num_elements);
 
     double t = 0.0;
     double r = 1.0;
@@ -1289,7 +1289,7 @@ void testCubeImage()
 
     Vector<double> x(num_cubes), y(num_cubes), z(num_cubes);
 
-    Vector<RGB888> colors{num_cubes};
+    Vector<properties::Color> colors{num_cubes};
 
     const size_t img_height = input_img.height();
     const size_t img_width = input_img.width();
@@ -1307,7 +1307,7 @@ void testCubeImage()
             y(idx) = static_cast<double>(r) * 1.05 - 0.5;
             z(idx) = 0.0;
 
-            colors(idx) = RGB888{input_img(r, c, 0), input_img(r, c, 1), input_img(r, c, 2)};
+            colors(idx) = properties::Color{input_img(r, c, 0), input_img(r, c, 1), input_img(r, c, 2)};
         }
     }
 
@@ -1606,7 +1606,7 @@ void testThreeBodyProblem()
         Vector<double> vec_vy;
         Vector<double> vec_vz;
 
-        Vector<RGB888> colors;
+        Vector<properties::Color> colors;
     };
 
     std::vector<Body> bodies;
@@ -1646,7 +1646,7 @@ void testThreeBodyProblem()
             body.vec_vy(i) = 0.0;
             body.vec_vz(i) = 0.0;
 
-            body.colors(i) = RGB888{255, 255, 255};
+            body.colors(i) = properties::Color{255, 255, 255};
         }
 
         bodies.push_back(body);
@@ -1950,7 +1950,7 @@ void testBouncingBalls()
         double c;
 
         properties::Color col;
-        RGB888 rgb_val;
+        properties::Color rgb_val;
 
         Vector<double> vec_x;
         Vector<double> vec_y;
@@ -2043,7 +2043,7 @@ void testBouncingBalls()
     };
 
     Vector<double> xb{n_balls}, yb{n_balls};
-    Vector<RGB888> cols{n_balls};
+    Vector<properties::Color> cols{n_balls};
 
     const float lw = 3.0f;
 
@@ -2510,7 +2510,7 @@ void testColorfulScatter()
     const size_t num_elements = 12020;
     Vector<double> x(num_elements), y(num_elements);
     Vector<double> point_sizes(num_elements);
-    Vector<RGB888> colorp(num_elements);
+    Vector<properties::Color> colorp(num_elements);
 
     const auto rnd = []() -> double { return static_cast<double>(rand() % 1001) / 1000.0; };
 

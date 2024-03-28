@@ -81,19 +81,19 @@ void testSlingPlot()
     Vector<float> vx{num_particles};
     Vector<float> vy{num_particles};
 
-    Vector<RGB888> colors{num_particles};
+    Vector<properties::Color> colors{num_particles};
 
     for (size_t k = 0; k < num_particles; ++k)
     {
         if (k == 0)
         {
-            colors(k) = RGB888{0U, 0U, 0U};
+            colors(k) = properties::Color{0U, 0U, 0U};
         }
         else
         {
             const float value = static_cast<float>(k - 1U) / static_cast<float>(num_particles - 2U);
             const RGBTripletf color_val = calculateColormapJetBright(value);
-            colors(k) = RGB888(color_val.red * 255.0f, color_val.green * 255.0f, color_val.blue * 255.0f);
+            colors(k) = properties::Color(color_val.red * 255.0f, color_val.green * 255.0f, color_val.blue * 255.0f);
         }
     }
 

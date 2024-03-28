@@ -222,14 +222,14 @@ inline void deserializeFromCommunicationHeaderObject(properties::ScatterStyle& p
     prop = static_cast<properties::ScatterStyle>(obj.data[1U]);
 }
 
-/////////////// Color ///////////////
-inline uint8_t numBytes(const properties::Color& obj)
+/////////////// ColorInternal ///////////////
+inline uint8_t numBytes(const internal::ColorInternal& obj)
 {
     static_cast<void>(obj);
     return sizeof(uint8_t) + 3U * sizeof(uint8_t);
 }
 
-inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::Color& prop)
+inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const internal::ColorInternal& prop)
 {
     obj.size = numBytes(prop);
     obj.data[0U] = static_cast<uint8_t>(prop.getPropertyType());
@@ -238,7 +238,8 @@ inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj,
     obj.data[3U] = prop.blue;
 }
 
-inline void deserializeFromCommunicationHeaderObject(properties::Color& prop, const CommunicationHeaderObject& obj)
+inline void deserializeFromCommunicationHeaderObject(internal::ColorInternal& prop,
+                                                     const CommunicationHeaderObject& obj)
 {
     prop.setPropertyType(static_cast<PropertyType>(obj.data[0U]));
     prop.red = obj.data[1U];

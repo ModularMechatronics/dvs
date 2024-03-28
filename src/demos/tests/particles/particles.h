@@ -164,9 +164,9 @@ private:
     Polygon o_outer_letter_;
     Polygon o_inner_letter_;
 
-    Vector<RGB888> output_color_;
+    Vector<properties::Color> output_color_;
 
-    void assignForLetter(const Vector<Point2f>& points, const Polygon& polygon, const RGB888& col)
+    void assignForLetter(const Vector<Point2f>& points, const Polygon& polygon, const properties::Color& col)
     {
         const Vec2f min_vec = polygon.getMinVec();
         const Vec2f max_vec = polygon.getMaxVec();
@@ -203,7 +203,7 @@ public:
         o_inner_letter_ = Polygon(boundaries_[4]);*/
     }
 
-    VectorConstView<RGB888> getColors() const
+    VectorConstView<properties::Color> getColors() const
     {
         return output_color_.constView();
     }
@@ -214,19 +214,19 @@ public:
 
         for (size_t k = 0; k < points.size(); k++)
         {
-            output_color_(k) = RGB888{0, 0, 0};
+            output_color_(k) = properties::Color{0, 0, 0};
         }
 
         for (size_t k = 0; k < polygons_.size(); k++)
         {
-            assignForLetter(points, polygons_[k], RGB888{255, 0, 0});
+            assignForLetter(points, polygons_[k], properties::Color{255, 0, 0});
         }
 
-        /*assignForLetter(points, p_outer_letter_, RGB888{255, 0, 0});
-        assignForLetter(points, p_inner_letter_, RGB888{0, 0, 0});
-        assignForLetter(points, l_letter_, RGB888{0, 255, 0});
-        assignForLetter(points, o_outer_letter_, RGB888{0, 0, 255});
-        assignForLetter(points, o_inner_letter_, RGB888{0, 0, 0});*/
+        /*assignForLetter(points, p_outer_letter_, properties::Color{255, 0, 0});
+        assignForLetter(points, p_inner_letter_, properties::Color{0, 0, 0});
+        assignForLetter(points, l_letter_, properties::Color{0, 255, 0});
+        assignForLetter(points, o_outer_letter_, properties::Color{0, 0, 255});
+        assignForLetter(points, o_inner_letter_, properties::Color{0, 0, 0});*/
     }
 };
 
@@ -235,7 +235,7 @@ class PointAssignerImg
 private:
     ImageRGBA<std::uint8_t> img_;
 
-    Vector<RGB888> output_color_;
+    Vector<properties::Color> output_color_;
 
     void readShapeImage(const std::string bin_path, ImageRGBA<std::uint8_t>& output_img)
     {
@@ -286,7 +286,7 @@ public:
         readShapeImage(img_path, img_);
     }
 
-    VectorConstView<RGB888> getColors() const
+    VectorConstView<properties::Color> getColors() const
     {
         return output_color_.constView();
     }
@@ -307,7 +307,7 @@ public:
 
         for (size_t k = 0; k < points.size(); k++)
         {
-            output_color_(k) = RGB888(0, 0, 0);
+            output_color_(k) = properties::Color(0, 0, 0);
         }
 
         const double x_scale = img_.numCols() / (max_bnd.x - min_bnd.x);
@@ -333,7 +333,7 @@ public:
                 continue;
             }
 
-            output_color_(k) = RGB888{img_(num_rows_minus_one - r, c, 2),
+            output_color_(k) = properties::Color{img_(num_rows_minus_one - r, c, 2),
                                       img_(num_rows_minus_one - r, c, 1),
                                       img_(num_rows_minus_one - r, c, 0)};
         }
@@ -359,7 +359,7 @@ private:
 
     b2World world_;
     b2ParticleSystem* particle_system_;
-    Vector<RGB888> color_;
+    Vector<properties::Color> color_;
 
     Vector<b2Vec2> vertices_;
     b2Body* ground_;
@@ -481,7 +481,7 @@ public:
 
             auto const c = color_maps::jet(theta);
 
-            color_(k) = RGB888{c.red, c.green, c.blue};*/
+            color_(k) = properties::Color{c.red, c.green, c.blue};*/
         }
 
         world_.Step(0.01f, 8, 3);
@@ -497,7 +497,7 @@ public:
         return VectorConstView<float>{y_pos_, num_particles_};
     }
 
-    VectorConstView<RGB888> getColorView() const
+    VectorConstView<properties::Color> getColorView() const
     {
         return color_.constView();
     }
@@ -578,7 +578,7 @@ void runTest()
 
     const auto colors = point_assigner.getColors();
 
-    VectorConstView<RGB888> new_color_view{colors.data() + 1, colors.size() - 1U};
+    VectorConstView<properties::Color> new_color_view{colors.data() + 1, colors.size() - 1U};
 
     if (0)
     {
@@ -629,7 +629,7 @@ void testBasicOld()
 
     const auto colors = pa.getColors();
 
-    VectorConstView<RGB888> new_color_view{colors.data() + 1, colors.size() - 1U};
+    VectorConstView<properties::Color> new_color_view{colors.data() + 1, colors.size() - 1U};
 
     if (0)
     {
@@ -681,7 +681,7 @@ void testBasicTmp()
 
     Vector<Point2f> polygon_points{num_polygon_points};
     Vector<float> xr{num_points}, yr{num_points};
-    Vector<RGB888> colors{num_points};
+    Vector<properties::Color> colors{num_points};
 
     const auto r_fun = []() -> float {
         const float r = static_cast<float>(rand() % 1001) / 500.0 - 1.0;
@@ -704,11 +704,11 @@ void testBasicTmp()
     {
         if (polygon.pointIsInPolygon({xr(k), yr(k)}))
         {
-            colors(k) = RGB888(255, 0, 0);
+            colors(k) = properties::Color(255, 0, 0);
         }
         else
         {
-            colors(k) = RGB888(0, 0, 0);
+            colors(k) = properties::Color(0, 0, 0);
         }
     }
 

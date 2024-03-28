@@ -407,8 +407,8 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
     if (input_params.has_color)
     {
-        const MatrixConstView<RGB888> colors{
-            reinterpret_cast<const RGB888*>(&(input_data[3 * input_params.num_bytes_for_one_vec])),
+        const MatrixConstView<properties::Color> colors{
+            reinterpret_cast<const properties::Color*>(&(input_data[3 * input_params.num_bytes_for_one_vec])),
             input_params.dims.rows,
             input_params.dims.cols};
 

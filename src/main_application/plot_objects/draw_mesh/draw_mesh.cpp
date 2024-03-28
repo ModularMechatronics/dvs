@@ -285,8 +285,8 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
     if (input_params.has_color)
     {
-        VectorConstView<RGB888> colors{
-            reinterpret_cast<const RGB888*>(
+        VectorConstView<properties::Color> colors{
+            reinterpret_cast<const properties::Color*>(
                 &(input_data[input_params.num_vertices * input_params.num_bytes_per_element * 3 +
                              input_params.num_indices * 3U * sizeof(std::uint32_t)])),
             input_params.num_indices};
@@ -297,7 +297,7 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
         size_t idx = 0U;
         for (size_t k = 0; k < input_params.num_indices; k++)
         {
-            const RGB888& current_color = colors(k);
+            const properties::Color& current_color = colors(k);
 
             const float red = static_cast<float>(current_color.red) / 255.0f;
             const float green = static_cast<float>(current_color.green) / 255.0f;
@@ -404,8 +404,8 @@ std::shared_ptr<const ConvertedData> convertDataSeparateVectors(const uint8_t* c
 
     if (input_params.has_color)
     {
-        VectorConstView<RGB888> colors{
-            reinterpret_cast<const RGB888*>(
+        VectorConstView<properties::Color> colors{
+            reinterpret_cast<const properties::Color*>(
                 &(input_data[input_params.num_vertices * input_params.num_bytes_per_element * 3 +
                              input_params.num_indices * 3U * sizeof(std::uint32_t)])),
             input_params.num_indices};
@@ -415,7 +415,7 @@ std::shared_ptr<const ConvertedData> convertDataSeparateVectors(const uint8_t* c
         size_t idx = 0U;
         for (size_t k = 0; k < input_params.num_indices; k++)
         {
-            const RGB888& current_color = colors(k);
+            const properties::Color& current_color = colors(k);
 
             const float red = static_cast<float>(current_color.red) / 255.0f;
             const float green = static_cast<float>(current_color.green) / 255.0f;

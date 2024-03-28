@@ -11,7 +11,7 @@ using namespace dvs;
 namespace basic_cpp
 {
 
-RGB888 colorMapJet(const float value)
+properties::Color colorMapJet(const float value)
 {
     float _val = value;
     if (_val < 0.0)
@@ -63,7 +63,8 @@ RGB888 colorMapJet(const float value)
             break;
     }
 
-    return RGB888(static_cast<uint8_t>(r * 255.0f), static_cast<uint8_t>(g * 255.0f), static_cast<uint8_t>(b * 255.0f));
+    return properties::Color(
+        static_cast<uint8_t>(r * 255.0f), static_cast<uint8_t>(g * 255.0f), static_cast<uint8_t>(b * 255.0f));
 }
 
 void testOpenProjectFile()
@@ -89,7 +90,7 @@ void testSurf()
 {
     const int num_rows = 200, num_cols = 250;
     Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
-    Matrix<RGB888> color(num_rows, num_cols);
+    Matrix<properties::Color> color(num_rows, num_cols);
 
     const double inc = 0.4;
     const float nr = (num_rows - 100U);
@@ -449,7 +450,7 @@ void testPlot()
 
     const size_t num_points = 7;
     Vector<float> xp(num_points), yp(num_points), zp(num_points);
-    Vector<RGB888> colorp(num_points);
+    Vector<properties::Color> colorp(num_points);
 
     xp(0) = 0.0;
     xp(1) = 1.0;
@@ -467,13 +468,13 @@ void testPlot()
     yp(5) = 2.0;
     yp(6) = 2.0;
 
-    colorp(0) = RGB888{255, 0, 0};
-    colorp(1) = RGB888{255, 255, 0};
-    colorp(2) = RGB888{255, 0, 255};
-    colorp(3) = RGB888{0, 255, 0};
-    colorp(4) = RGB888{0, 255, 255};
-    colorp(5) = RGB888{0, 0, 0};
-    colorp(6) = RGB888{0, 0, 255};
+    colorp(0) = properties::Color{255, 0, 0};
+    colorp(1) = properties::Color{255, 255, 0};
+    colorp(2) = properties::Color{255, 0, 255};
+    colorp(3) = properties::Color{0, 255, 0};
+    colorp(4) = properties::Color{0, 255, 255};
+    colorp(5) = properties::Color{0, 0, 0};
+    colorp(6) = properties::Color{0, 0, 255};
 
     zp.fill(0.01f);
 
@@ -536,7 +537,7 @@ void testPlot()
     x.resize(num_elements * 10);
     y.resize(num_elements * 10);
     z.resize(num_elements * 10);
-    Vector<RGB888> color(num_elements * 10);
+    Vector<properties::Color> color(num_elements * 10);
 
     for (size_t k = 0; k < (num_elements * 10); k++)
     {
@@ -1690,7 +1691,7 @@ void testScreenshot()
 {
     const int num_rows = 200, num_cols = 250;
     Matrix<double> x(num_rows, num_cols), y(num_rows, num_cols), z(num_rows, num_cols);
-    Matrix<RGB888> color(num_rows, num_cols);
+    Matrix<properties::Color> color(num_rows, num_cols);
 
     const double inc = 0.4;
     const float nr = (num_rows - 100U);
@@ -1847,7 +1848,7 @@ void testNan()
     const size_t num_elements = 100;
     Vector<double> x(num_elements), y(num_elements);
 
-    x = linspaceFromBoundariesAndCount(0.0, 1.0, 10U);
+    x = linspaceFromBoundariesAndCount(0.0, 1.0, num_elements);
     y = dvs::sin(x);
 
     setCurrentElement("p1");

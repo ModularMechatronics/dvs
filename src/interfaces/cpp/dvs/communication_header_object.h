@@ -211,9 +211,9 @@ struct CommunicationHeaderObject
         return lw;
     }
 
-    template <> properties::Color as() const
+    template <> internal::ColorInternal as() const
     {
-        properties::Color color;
+        internal::ColorInternal color;
         deserializeFromCommunicationHeaderObject(color, *this);
         return color;
     }

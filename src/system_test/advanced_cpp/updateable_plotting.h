@@ -144,7 +144,7 @@ void testScatter2DAppendable()
     const size_t num_new_points = 20;
 
     Vector<double> x{num_new_points}, y{num_new_points};
-    Vector<RGB888> colorp(num_new_points);
+    Vector<properties::Color> colorp(num_new_points);
     double y_offset = 0.0;
 
     setProperties(properties::ID0,
@@ -191,7 +191,7 @@ void testScatter3DAppendable()
     const size_t num_new_points = 20;
 
     Vector<double> x{num_new_points}, y{num_new_points}, z{num_new_points};
-    Vector<RGB888> colorp(num_new_points);
+    Vector<properties::Color> colorp(num_new_points);
     double y_offset = 0.0;
 
     setProperties(properties::ID0,
@@ -237,7 +237,7 @@ void testFastPlot2Appendable()
     const size_t num_new_points = 20;
 
     Vector<double> x{num_new_points}, y{num_new_points};
-    Vector<RGB888> colorp(num_new_points);
+    Vector<properties::Color> colorp(num_new_points);
     double y_offset = 0.0;
 
     setProperties(properties::ID0, properties::BufferSize(60), properties::Color::BLUE);

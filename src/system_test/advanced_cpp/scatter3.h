@@ -32,12 +32,12 @@ void testWithColorVec()
     const Vector<double> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
     const Vector<double> y = dvs::sin(x);
     const Vector<double> z = dvs::cos(x);
-    Vector<RGB888> color(num_elements);
+    Vector<properties::Color> color(num_elements);
 
     for (size_t k = 0; k < num_elements; k++)
     {
         const uint8_t k8 = k;
-        color(k) = RGB888{k8, static_cast<uint8_t>(255U - k8), static_cast<uint8_t>(127U + k8 * 2U)};
+        color(k) = properties::Color{k8, static_cast<uint8_t>(255U - k8), static_cast<uint8_t>(127U + k8 * 2U)};
     }
 
     setCurrentElement("p_view_0");

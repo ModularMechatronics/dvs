@@ -18,7 +18,7 @@ void initializeMatrices(Matrix<float>& x, Matrix<float>& y, const float d)
     }
 }
 
-RGB888 calculateColormapRainbow(double value)
+properties::Color calculateColormapRainbow(double value)
 {
     if(value < 0.0)
     {
@@ -64,10 +64,10 @@ RGB888 calculateColormapRainbow(double value)
         break;
     }
 
-    return RGB888{static_cast<std::uint8_t>(r * 255.0), static_cast<std::uint8_t>(g * 255.0), static_cast<std::uint8_t>(b * 255.0)};
+    return properties::Color{static_cast<std::uint8_t>(r * 255.0), static_cast<std::uint8_t>(g * 255.0), static_cast<std::uint8_t>(b * 255.0)};
 }
 
-void stepSimulation(Matrix<float>& x, Matrix<float>& y, Matrix<float>& vx, Matrix<float>& vy, Matrix<RGB888>& color, Matrix<float>& x0, Matrix<float>& y0, const float d)
+void stepSimulation(Matrix<float>& x, Matrix<float>& y, Matrix<float>& vx, Matrix<float>& vy, Matrix<properties::Color>& color, Matrix<float>& x0, Matrix<float>& y0, const float d)
 {
     const float h = 0.01f;
     const float K = 0.5f;
@@ -176,7 +176,7 @@ void testBasic()
     const size_t num_particles = num_rows * num_cols;
 
     Matrix<float> x(num_rows, num_cols), y(num_rows, num_cols);
-    Matrix<RGB888> color(num_rows, num_cols);
+    Matrix<properties::Color> color(num_rows, num_cols);
     const float d = 0.05f;
 
     initializeMatrices(x, y, d);
@@ -198,7 +198,7 @@ void testBasic()
     placeBumpAt(vx, vy, 100, 200, num_rows, num_cols, 200, 0.01f);
 
     const VectorConstView<float> x_vec(x.data(), x.numElements()), y_vec(y.data(), y.numElements());
-    const VectorConstView<RGB888> color_view(color.data(), color.numElements());
+    const VectorConstView<properties::Color> color_view(color.data(), color.numElements());
 
     axis({0.0, 0.0}, {20.0, 20.0});
     

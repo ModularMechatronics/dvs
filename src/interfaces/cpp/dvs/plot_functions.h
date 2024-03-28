@@ -47,7 +47,7 @@ void plot(const VectorConstView<T>& x, const VectorConstView<T>& y, const Us&...
 }
 
 template <typename T, typename... Us>
-void plot(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color, const Us&... settings)
+void plot(const Vector<T>& x, const Vector<T>& y, const Vector<properties::Color>& color, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -66,7 +66,7 @@ void plot(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color, c
 template <typename T, typename... Us>
 void plot(const VectorConstView<T>& x,
           const VectorConstView<T>& y,
-          const VectorConstView<RGB888>& color,
+          const VectorConstView<properties::Color>& color,
           const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT2};
@@ -309,28 +309,12 @@ void plot3(const VectorConstView<T>& x, const VectorConstView<T>& y, const Vecto
     internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, z);
 }
 
-/*
-
 template <typename T, typename... Us>
-void plot(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color, const Us&... settings)
-{
-    internal::CommunicationHeader hdr{internal::Function::PLOT2};
-    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
-    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(x.size()));
-    hdr.append(internal::CommunicationHeaderObjectType::HAS_COLOR, internal::toUInt8(1));
-    hdr.extend(settings...);
-
-    if (hdr.hasPropertyFlag(internal::PropertyFlag::FAST_PLOT))
-    {
-        DVS_LOG_WARNING() << "Property FAST_PLOT not available when using function \"plot\" with color vector!";
-    }
-
-    internal::sendHeaderAndData(internal::getSendFunction(), hdr, x, y, color);
-}*/
-
-template <typename T, typename... Us>
-void plot3(
-    const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<RGB888>& color, const Us&... settings)
+void plot3(const Vector<T>& x,
+           const Vector<T>& y,
+           const Vector<T>& z,
+           const Vector<properties::Color>& color,
+           const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -350,7 +334,7 @@ template <typename T, typename... Us>
 void plot3(const VectorConstView<T>& x,
            const VectorConstView<T>& y,
            const VectorConstView<T>& z,
-           const VectorConstView<RGB888>& color,
+           const VectorConstView<properties::Color>& color,
            const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::PLOT3};
@@ -411,7 +395,7 @@ void scatter(const Vector<T>& x, const Vector<T>& y, const Vector<T>& point_size
 }
 
 template <typename T, typename... Us>
-void scatter(const Vector<T>& x, const Vector<T>& y, const Vector<RGB888>& color, const Us&... settings)
+void scatter(const Vector<T>& x, const Vector<T>& y, const Vector<properties::Color>& color, const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER2};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -426,7 +410,7 @@ template <typename T, typename... Us>
 void scatter(const Vector<T>& x,
              const Vector<T>& y,
              const Vector<T>& point_sizes,
-             const Vector<RGB888>& color,
+             const Vector<properties::Color>& color,
              const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER2};
@@ -442,7 +426,7 @@ void scatter(const Vector<T>& x,
 template <typename T, typename... Us>
 void scatter(const Vector<T>& x,
              const Vector<T>& y,
-             const Vector<RGB888>& color,
+             const Vector<properties::Color>& color,
              const Vector<T>& point_sizes,
              const Us&... settings)
 {
@@ -459,7 +443,7 @@ void scatter(const Vector<T>& x,
 template <typename T, typename... Us>
 void scatter(const VectorConstView<T>& x,
              const VectorConstView<T>& y,
-             const VectorConstView<RGB888>& color,
+             const VectorConstView<properties::Color>& color,
              const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER2};
@@ -522,8 +506,11 @@ void scatter3(const VectorConstView<T>& x,
 }
 
 template <typename T, typename... Us>
-void scatter3(
-    const Vector<T>& x, const Vector<T>& y, const Vector<T>& z, const Vector<RGB888>& color, const Us&... settings)
+void scatter3(const Vector<T>& x,
+              const Vector<T>& y,
+              const Vector<T>& z,
+              const Vector<properties::Color>& color,
+              const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER3};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -538,7 +525,7 @@ template <typename T, typename... Us>
 void scatter3(const Vector<T>& x,
               const Vector<T>& y,
               const Vector<T>& z,
-              const Vector<RGB888>& color,
+              const Vector<properties::Color>& color,
               const Vector<T>& point_sizes,
               const Us&... settings)
 {
@@ -557,7 +544,7 @@ void scatter3(const Vector<T>& x,
               const Vector<T>& y,
               const Vector<T>& z,
               const Vector<T>& point_sizes,
-              const Vector<RGB888>& color,
+              const Vector<properties::Color>& color,
               const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SCATTER3};
@@ -612,8 +599,11 @@ void surf(const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& z, const Us&.
 }
 
 template <typename T, typename... Us>
-void surf(
-    const Matrix<T>& x, const Matrix<T>& y, const Matrix<T>& z, const Matrix<RGB888>& color, const Us&... settings)
+void surf(const Matrix<T>& x,
+          const Matrix<T>& y,
+          const Matrix<T>& z,
+          const Matrix<properties::Color>& color,
+          const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::SURF};
     hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::typeToDataTypeEnum<T>());
@@ -834,7 +824,7 @@ void drawMesh(const Vector<T>& x,
 template <typename T, typename... Us>
 void drawMesh(const Vector<Point3<T>>& vertices,
               const Vector<IndexTriplet>& indices,
-              const Vector<RGB888>& colors,
+              const Vector<properties::Color>& colors,
               const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::DRAW_MESH};
@@ -854,7 +844,7 @@ void drawMesh(const Vector<T>& x,
               const Vector<T>& y,
               const Vector<T>& z,
               const Vector<IndexTriplet>& indices,
-              const Vector<RGB888>& colors,
+              const Vector<properties::Color>& colors,
               const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::DRAW_MESH_SEPARATE_VECTORS};
@@ -872,7 +862,7 @@ void drawMesh(const Vector<T>& x,
 template <typename T, typename... Us>
 void drawMesh(const VectorConstView<Point3<T>>& vertices,
               const VectorConstView<IndexTriplet>& indices,
-              const VectorConstView<RGB888>& colors,
+              const VectorConstView<properties::Color>& colors,
               const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::DRAW_MESH};
@@ -892,7 +882,7 @@ void drawMesh(const VectorConstView<T>& x,
               const VectorConstView<T>& y,
               const VectorConstView<T>& z,
               const VectorConstView<IndexTriplet>& indices,
-              const VectorConstView<RGB888>& colors,
+              const VectorConstView<properties::Color>& colors,
               const Us&... settings)
 {
     internal::CommunicationHeader hdr{internal::Function::DRAW_MESH_SEPARATE_VECTORS};
@@ -1212,7 +1202,7 @@ template <typename T, typename... Us>
 void drawCubes(const VectorConstView<T>& x,
                const VectorConstView<T>& y,
                const VectorConstView<T>& z,
-               const VectorConstView<RGB888>& colors,
+               const VectorConstView<properties::Color>& colors,
                const T side_length,
                const Us&... settings)
 {
@@ -1223,7 +1213,7 @@ void drawCubes(const VectorConstView<T>& x,
     const T size = side_length / static_cast<T>(2.0);
 
     Vector<T> x_new(num_points), y_new(num_points), z_new(num_points);
-    Vector<RGB888> colors_new{num_triangles};
+    Vector<properties::Color> colors_new{num_triangles};
     Vector<IndexTriplet> indices(num_triangles);
 
     size_t points_idx{0U};
@@ -1234,7 +1224,7 @@ void drawCubes(const VectorConstView<T>& x,
         const T x_i = x(i);
         const T y_i = y(i);
         const T z_i = z(i);
-        const RGB888 col_i = colors(i);
+        const properties::Color col_i = colors(i);
 
         // XY plane
         // First triangle, positive xy plane, lower triangle
@@ -1480,7 +1470,7 @@ template <typename T, typename... Us>
 void drawCubes(const Vector<T>& x,
                const Vector<T>& y,
                const Vector<T>& z,
-               const Vector<RGB888>& colors,
+               const Vector<properties::Color>& colors,
                const T side_length,
                const Us&... settings)
 {

@@ -153,7 +153,8 @@ public:
 
         if ((props.hasProperty(PropertyType::COLOR)))
         {
-            const Color col = props.getProperty<Color>();
+            const internal::ColorInternal col{props.getProperty<internal::ColorInternal>()};
+
             color = RGBTripletf{static_cast<float>(col.red) / 255.0f,
                                 static_cast<float>(col.green) / 255.0f,
                                 static_cast<float>(col.blue) / 255.0f};

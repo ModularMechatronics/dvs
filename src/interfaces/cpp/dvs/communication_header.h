@@ -273,7 +273,9 @@ private:
                           std::is_same<PropertyFlag, U>::value || std::is_same<ItemId, U>::value ||
                           std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
                           std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value ||
-                          std::is_same<properties::ColorMap, U>::value || std::is_same<properties::LineStyle, U>::value,
+                          std::is_same<properties::ColorMap, U>::value ||
+                          std::is_same<properties::LineStyle, U>::value || std::is_same<properties::Color, U>::value ||
+                          std::is_same<properties::Color, U>::value,
                       "Incorrect type!");
         DVS_ASSERT(sizeof(U) <= kCommunicationHeaderObjectDataSize) << "Object too big!";
 
@@ -288,11 +290,18 @@ private:
             const ItemId f = *reinterpret_cast<const ItemId* const>(&obj);
             append(CommunicationHeaderObjectType::ITEM_ID, f);
         }
+        else if (std::is_same<properties::Color, U>::value)
+        {
+            const properties::Color c = *reinterpret_cast<const properties::Color* const>(&obj);
+            const internal::ColorInternal ci{c};
+            appendProperty(ci);
+        }
         else if (std::is_same<ColorT, U>::value)
         {
             const ColorT ct = *reinterpret_cast<const ColorT* const>(&obj);
             const properties::Color c{ct};
-            appendProperty(c);
+            const internal::ColorInternal ci{c};
+            appendProperty(ci);
         }
         else if (std::is_same<EdgeColorT, U>::value)
         {
@@ -330,55 +339,12 @@ private:
                           std::is_same<PropertyFlag, U>::value || std::is_same<ItemId, U>::value ||
                           std::is_same<ColorT, U>::value || std::is_same<EdgeColorT, U>::value ||
                           std::is_same<FaceColorT, U>::value || std::is_same<properties::ScatterStyle, U>::value ||
-                          std::is_same<properties::ColorMap, U>::value || std::is_same<properties::LineStyle, U>::value,
+                          std::is_same<properties::ColorMap, U>::value ||
+                          std::is_same<properties::LineStyle, U>::value || std::is_same<properties::Color, U>::value,
                       "Incorrect type!");
         static_assert(sizeof(U) <= kCommunicationHeaderObjectDataSize, "Object too big!");
 
-        if (std::is_same<U, PropertyFlag>::value)
-        {
-            const PropertyFlag f = *reinterpret_cast<const PropertyFlag* const>(&obj);
-
-            flags_[static_cast<uint8_t>(f)] = 1;
-        }
-        else if (std::is_same<ItemId, U>::value)
-        {
-            const ItemId f = *reinterpret_cast<const ItemId* const>(&obj);
-            append(CommunicationHeaderObjectType::ITEM_ID, f);
-        }
-        else if (std::is_same<ColorT, U>::value)
-        {
-            const ColorT ct = *reinterpret_cast<const ColorT* const>(&obj);
-            const properties::Color c{ct};
-            appendProperty(c);
-        }
-        else if (std::is_same<EdgeColorT, U>::value)
-        {
-            const EdgeColorT ct = *reinterpret_cast<const EdgeColorT* const>(&obj);
-            const properties::EdgeColor c{ct};
-            appendProperty(c);
-        }
-        else if (std::is_same<FaceColorT, U>::value)
-        {
-            const FaceColorT ct = *reinterpret_cast<const FaceColorT* const>(&obj);
-            const properties::FaceColor c{ct};
-            appendProperty(c);
-        }
-        else if (std::is_same<properties::ScatterStyle, U>::value)
-        {
-            appendEnumProperty(obj, PropertyType::SCATTER_STYLE);
-        }
-        else if (std::is_same<properties::ColorMap, U>::value)
-        {
-            appendEnumProperty(obj, PropertyType::COLOR_MAP);
-        }
-        else if (std::is_same<properties::LineStyle, U>::value)
-        {
-            appendEnumProperty(obj, PropertyType::LINE_STYLE);
-        }
-        else
-        {
-            appendProperty(obj);
-        }
+        extendInternal(obj);
 
         extendInternal(other_objs...);
     }
