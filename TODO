@@ -2,7 +2,7 @@ Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Fix number formatting and grid vectors system (1.0, 1e10, -0.24234, -2.7345e2)
 - Bug when creating starting various simulations, a new window appears with an element with the same name as the first window (for series.dvs amongst others)
-- Implement sockets for Windows: https://stackoverflow.com/questions/39338588/is-udp-a-reliable-protocol-for-ipc
+- Support for Windows and Linux
 - Change name of application to duoplot
 - Add all keybindings to the help pane
 - Solve all TODOs
@@ -10,8 +10,6 @@ Pre release:
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
-- Grid lines when invalid/inf axes limits
-- If min and max values for a dimension are equal, all axes lines disappear
 - Add "SILHOUETTE" flag for scatter
 - Make sure APPENDABLE is working for scatter, scatter3, plot, plot3
 - Move "FAST_PLOT" flag to "not_ready" namespace?
