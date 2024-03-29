@@ -119,7 +119,7 @@ struct CommunicationHeaderObject
         }
     }
 
-    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const properties::Name& input_data)
+    CommunicationHeaderObject(const CommunicationHeaderObjectType input_type, const properties::Label& input_data)
         : type{input_type}, size{static_cast<uint8_t>(input_data.length + 1U)}
     {
         serializeToCommunicationHeaderObject(*this, input_data);
@@ -189,11 +189,11 @@ struct CommunicationHeaderObject
         return pb;
     }
 
-    template <> properties::Name as() const
+    template <> properties::Label as() const
     {
-        properties::Name name;
-        deserializeFromCommunicationHeaderObject(name, *this);
-        return name;
+        properties::Label label;
+        deserializeFromCommunicationHeaderObject(label, *this);
+        return label;
     }
 
     template <> properties::Alpha as() const

@@ -1487,18 +1487,18 @@ void testPidTuner()
 
         setCurrentElement("p_view_0");
 
-        plot(t, x, properties::LineWidth(7.0f), properties::Name("Position"));
-        plot(t, vx, properties::LineWidth(7.0f), properties::Name("Velocity"));
+        plot(t, x, properties::LineWidth(7.0f), properties::Label("Position"));
+        plot(t, vx, properties::LineWidth(7.0f), properties::Label("Velocity"));
         plot(start_stop_x,
              ref_vec_y,
              properties::LineWidth(3.0f),
              properties::Color::BLACK,
-             properties::Name("Reference"));
+             properties::Label("Reference"));
         plot(start_stop_x,
              l_vec_y,
              properties::LineWidth(3.0f),
              properties::Color::BLACK,
-             properties::Name("Position equilibrium state"));
+             properties::Label("Position equilibrium state"));
         plot(Vd{Vid{t(ss_idx), t(ss_idx)}},
              Vd{Vid{0.0, 2.0}},
              properties::LineWidth(7.0f),
@@ -1523,7 +1523,7 @@ void testPidTuner()
              Vd{Vid{-sim_params.error_bound, sim_params.error_bound}},
              properties::LineWidth(7.0f),
              properties::Color{255, 127, 0});
-        plot(t, x - sim_params.r, properties::LineWidth(7.0f), properties::Name("Velocity"));
+        plot(t, x - sim_params.r, properties::LineWidth(7.0f), properties::Label("Velocity"));
 
         flushCurrentElement();
         softClearView();

@@ -64,7 +64,7 @@ inline void setCurrentElement(const std::string& name)
     }
 
     internal::CommunicationHeader hdr{internal::Function::SET_CURRENT_ELEMENT};
-    hdr.append(internal::CommunicationHeaderObjectType::ELEMENT_NAME, properties::Name(name.c_str()));
+    hdr.append(internal::CommunicationHeaderObjectType::ELEMENT_NAME, properties::Label(name.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
@@ -243,7 +243,7 @@ inline void setTitle(const std::string& title)
     }
 
     internal::CommunicationHeader hdr{internal::Function::SET_TITLE};
-    hdr.append(internal::CommunicationHeaderObjectType::TITLE_STRING, properties::Name(title.c_str()));
+    hdr.append(internal::CommunicationHeaderObjectType::TITLE_STRING, properties::Label(title.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
@@ -282,7 +282,7 @@ inline void setTransform(const ItemId id,
 inline void openProjectFile(const std::string& file_path)
 {
     internal::CommunicationHeader hdr{internal::Function::OPEN_PROJECT_FILE};
-    hdr.append(internal::CommunicationHeaderObjectType::PROJECT_FILE_NAME, properties::Name(file_path.c_str()));
+    hdr.append(internal::CommunicationHeaderObjectType::PROJECT_FILE_NAME, properties::Label(file_path.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }
@@ -291,7 +291,7 @@ inline void openProjectFile(const std::string& file_path)
 inline void screenshot(const std::string& base_path)
 {
     internal::CommunicationHeader hdr{internal::Function::SCREENSHOT};
-    hdr.append(internal::CommunicationHeaderObjectType::SCREENSHOT_BASE_PATH, properties::Name(base_path.c_str()));
+    hdr.append(internal::CommunicationHeaderObjectType::SCREENSHOT_BASE_PATH, properties::Label(base_path.c_str()));
 
     internal::sendHeaderOnly(internal::getSendFunction(), hdr);
 }

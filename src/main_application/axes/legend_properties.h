@@ -19,7 +19,7 @@ enum class LegendType
 
 struct LegendProperties
 {
-    std::string_view name;
+    std::string_view label;
     LegendType type;
     RGBTripletf color;
     RGBTripletf edge_color;

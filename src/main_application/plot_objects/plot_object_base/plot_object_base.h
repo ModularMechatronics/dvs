@@ -26,7 +26,7 @@ using namespace dvs::internal;
 using namespace dvs::properties;
 
 constexpr size_t kDefaultBufferSize = 500U;
-constexpr char* const kDefaultName = "";
+constexpr char* const kDefaultLabel = "";
 constexpr RGBTripletf kDefaultEdgeColor{0.0f, 0.0f, 0.0f};
 constexpr float kDefaultZOffset{0.0f};
 constexpr ScatterStyle kDefaultScatterStyle{ScatterStyle::CIRCLE};
@@ -147,7 +147,7 @@ public:
 
         if ((props.hasProperty(PropertyType::NAME)))
         {
-            name = std::string(props.getProperty<Name>().data);
+            label = std::string(props.getProperty<Label>().data);
             has_properties_ = true;
         }
 
@@ -214,7 +214,7 @@ public:
     {
         has_properties_ = false;
 
-        name = OptionalParameter<std::string>{kDefaultName};
+        label = OptionalParameter<std::string>{kDefaultLabel};
 
         scatter_style = OptionalParameter<ScatterStyle>{kDefaultScatterStyle};
         line_style = OptionalParameter<LineStyle>{kDefaultLineStyle};
@@ -257,7 +257,7 @@ public:
         overwritePropertyFromOtherIfPresent(line_width, props.line_width);
         overwritePropertyFromOtherIfPresent(point_size, props.point_size);
         overwritePropertyFromOtherIfPresent(z_offset, props.z_offset);
-        overwritePropertyFromOtherIfPresent(name, props.name);
+        overwritePropertyFromOtherIfPresent(label, props.label);
         overwritePropertyFromOtherIfPresent(color, props.color);
         overwritePropertyFromOtherIfPresent(distance_from, props.distance_from);
         overwritePropertyFromOtherIfPresent(custom_transform, props.custom_transform);
@@ -296,7 +296,7 @@ public:
     }
 
     // Properties
-    OptionalParameter<std::string> name{kDefaultName};
+    OptionalParameter<std::string> label{kDefaultLabel};
 
     OptionalParameter<ScatterStyle> scatter_style{kDefaultScatterStyle};
     OptionalParameter<LineStyle> line_style{kDefaultLineStyle};
@@ -441,7 +441,7 @@ protected:
     ShaderCollection shader_collection_;
 
     // Properties
-    std::string name_;
+    std::string label_;
 
     RGBTripletf color_;
     bool has_color_;
@@ -482,7 +482,7 @@ protected:
     bool interpolate_colormap_;
     bool is_appendable_;
 
-    bool has_name_;
+    bool has_label_;
 
     ItemId id_;
 
@@ -531,12 +531,12 @@ public:
     std::pair<Vec3d, Vec3d> getMinMaxVectors();
 
     bool isPersistent() const;
-    std::string getName() const;
+    std::string getLabel() const;
 
     virtual LegendProperties getLegendProperties() const
     {
         LegendProperties lp;
-        lp.name = name_;
+        lp.label = label_;
 
         return lp;
     }
@@ -546,9 +546,9 @@ public:
                                    const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                    const PropertiesData& properties_data);
 
-    bool hasName()
+    bool hasLabel()
     {
-        return has_name_;
+        return has_label_;
     }
 
     virtual void modifyShader();

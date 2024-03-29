@@ -963,21 +963,21 @@ void testLegend()
     clearView();
 
     axis({-32.0, 0.0, -2.0}, {32.0, 110.0, 2.0});
-    plot(x0, y0, properties::Color(212, 14, 55), properties::Name("AAAaaaBBBbbb"));
-    plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
-    plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
-    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
+    plot(x0, y0, properties::Color(212, 14, 55), properties::Label("AAAaaaBBBbbb"));
+    plot(x1, y1, properties::Color(12, 255, 55), properties::Label("sig0"));
+    plot(x2, y2, properties::Color(127, 14, 255), properties::Label("ej0293e2?rq430#€pqigj"));
+    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Label("SURF"));
     surf(x,
          y,
          z + 1.0,
          properties::EdgeColor(255, 255, 255),
          properties::ColorMap::JET,
-         properties::Name("SURF_COLOR_MAP"));
-    scatter(x0, y0, properties::Color(255, 0, 0), properties::Name("Scatter"));
+         properties::Label("SURF_COLOR_MAP"));
+    scatter(x0, y0, properties::Color(255, 0, 0), properties::Label("Scatter"));
     scatter(x1,
             y1,
             properties::Color(255, 0, 255),
-            properties::Name("Scatter"),
+            properties::Label("Scatter"),
             properties::PointSize(40),
             properties::ScatterStyle::CROSS);
     showLegend();
@@ -986,21 +986,21 @@ void testLegend()
     clearView();
 
     axis({-32.0, 0.0, -2.0}, {32.0, 110.0, 2.0});
-    plot(x0, y0, properties::Color(212, 14, 55), properties::Name("AAAaaaBBBbbb"));
-    plot(x1, y1, properties::Color(12, 255, 55), properties::Name("sig0"));
-    plot(x2, y2, properties::Color(127, 14, 255), properties::Name("ej0293e2?rq430#€pqigj"));
-    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Name("SURF"));
-    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET, properties::Name("SURF_COLOR_MAP"));
+    plot(x0, y0, properties::Color(212, 14, 55), properties::Label("AAAaaaBBBbbb"));
+    plot(x1, y1, properties::Color(12, 255, 55), properties::Label("sig0"));
+    plot(x2, y2, properties::Color(127, 14, 255), properties::Label("ej0293e2?rq430#€pqigj"));
+    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::FaceColor(255, 0, 0), properties::Label("SURF"));
+    surf(x, y, z + 1.0, properties::EdgeColor(0, 0, 0), properties::ColorMap::JET, properties::Label("SURF_COLOR_MAP"));
     showLegend();
 
     setCurrentElement("p_view_2");
     clearView();
 
-    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::JET, properties::Name("Jet"));
-    surf(x + 1.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::HSV, properties::Name("Rainbow"));
-    surf(x + 2.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::MAGMA, properties::Name("Magma"));
-    surf(x + 3.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::VIRIDIS, properties::Name("Viridis"));
-    surf(x + 4.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::PASTEL, properties::Name("Pastel"));
+    surf(x, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::JET, properties::Label("Jet"));
+    surf(x + 1.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::HSV, properties::Label("Rainbow"));
+    surf(x + 2.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::MAGMA, properties::Label("Magma"));
+    surf(x + 3.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::VIRIDIS, properties::Label("Viridis"));
+    surf(x + 4.0, y, z, properties::EdgeColor(0, 255, 0), properties::ColorMap::PASTEL, properties::Label("Pastel"));
 
     showLegend();
 }

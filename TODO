@@ -15,9 +15,10 @@ Pre release:
 - Add "SILHOUETTE" flag for scatter
 - Make sure APPENDABLE is working for scatter, scatter3, plot, plot3
 - Move "FAST_PLOT" flag to "not_ready" namespace?
-- properties::Name -> properties::Label
+- Begin able to set window and element size and position from interface
 
 Post release:
+- Replace "OptionalParameter" with std::optional
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 - Add protection from "NaN" of axes calculation
 - Plot pane width scaling for line width and point size, so that larger and smaller sizes can be acheived than default

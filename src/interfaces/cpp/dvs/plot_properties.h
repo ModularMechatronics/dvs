@@ -121,7 +121,7 @@ struct Transform : internal::PropertyBase
     }
 };
 
-class Name : public internal::PropertyBase
+class Label : public internal::PropertyBase
 {
 private:
     // Number of characters that the name can contain (excluding null termination)
@@ -132,18 +132,18 @@ public:
     uint8_t length;
     char data[kDataFullLength];
 
-    Name() : internal::PropertyBase{internal::PropertyType::NAME}
+    Label() : internal::PropertyBase{internal::PropertyType::NAME}
     {
         data[0] = '\0';
         length = 0;
     }
 
-    explicit Name(const char* const name) : internal::PropertyBase{internal::PropertyType::NAME}
+    explicit Label(const char* const name) : internal::PropertyBase{internal::PropertyType::NAME}
     {
         DVS_ASSERT(name) << "Input name string is null!";
         const size_t len = internal::safeStringLenCheck(name, kMaxLength);
 
-        DVS_ASSERT(len <= kMaxLength) << "Name can't be more than 100 characters!";
+        DVS_ASSERT(len <= kMaxLength) << "Label can't be more than 100 characters!";
         length = len;
 
         std::memcpy(data, name, len);
@@ -157,9 +157,9 @@ public:
     }
 };
 
-inline bool operator==(const Name& n0, const Name& n1)
+inline bool operator==(const Label& l0, const Label& l1)
 {
-    return strcmp(n0.data, n1.data) == 0;
+    return strcmp(l0.data, l1.data) == 0;
 }
 
 enum class LineStyle : uint8_t

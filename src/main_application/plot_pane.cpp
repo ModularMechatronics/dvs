@@ -277,7 +277,8 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     }
     else if (fcn == Function::SET_TITLE)
     {
-        const std::string pane_title = hdr.get(CommunicationHeaderObjectType::TITLE_STRING).as<properties::Name>().data;
+        const std::string pane_title =
+            hdr.get(CommunicationHeaderObjectType::TITLE_STRING).as<properties::Label>().data;
         axes_renderer_->setTitle(pane_title);
     }
     else if (fcn == Function::SET_OBJECT_TRANSFORM)

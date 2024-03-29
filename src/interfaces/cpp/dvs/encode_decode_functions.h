@@ -160,13 +160,13 @@ inline void deserializeFromCommunicationHeaderObject(properties::Transform& prop
     idx += sizeof(double);
 }
 
-/////////////// Name ///////////////
-inline uint8_t numBytes(const properties::Name& obj)
+/////////////// Label ///////////////
+inline uint8_t numBytes(const properties::Label& obj)
 {
     return sizeof(uint8_t) + sizeof(uint8_t) + static_cast<uint8_t>(obj.length);
 }
 
-inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::Name& prop)
+inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::Label& prop)
 {
     obj.size = numBytes(prop);
     obj.data[0U] = static_cast<uint8_t>(prop.getPropertyType());
@@ -174,7 +174,7 @@ inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj,
     std::memcpy(obj.data + 2U, prop.data, prop.length);
 }
 
-inline void deserializeFromCommunicationHeaderObject(properties::Name& prop, const CommunicationHeaderObject& obj)
+inline void deserializeFromCommunicationHeaderObject(properties::Label& prop, const CommunicationHeaderObject& obj)
 {
     prop.resetData();
     prop.setPropertyType(static_cast<PropertyType>(obj.data[0U]));

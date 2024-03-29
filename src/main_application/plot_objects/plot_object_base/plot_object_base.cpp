@@ -142,10 +142,10 @@ void PlotObjectBase::updateProperties(const PropertiesData& properties_data)
         has_distance_from_ = true;
     }
 
-    if (!properties_data.name.has_default_value)
+    if (!properties_data.label.has_default_value)
     {
-        name_ = properties_data.name.data;
-        has_name_ = true;
+        label_ = properties_data.label.data;
+        has_label_ = true;
     }
 
     if (!properties_data.color.has_default_value)
@@ -232,9 +232,9 @@ bool PlotObjectBase::isPersistent() const
     return is_persistent_;
 }
 
-std::string PlotObjectBase::getName() const
+std::string PlotObjectBase::getLabel() const
 {
-    return name_;
+    return label_;
 }
 
 std::pair<Vec3d, Vec3d> PlotObjectBase::getMinMaxVectors()
@@ -325,14 +325,14 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
         has_distance_from_ = false;
     }
 
-    if (!properties_data.name.has_default_value)
+    if (!properties_data.label.has_default_value)
     {
-        name_ = properties_data.name.data;
-        has_name_ = true;
+        label_ = properties_data.label.data;
+        has_label_ = true;
     }
     else
     {
-        has_name_ = false;
+        has_label_ = false;
     }
 
     if (!properties_data.color.has_default_value)

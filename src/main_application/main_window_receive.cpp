@@ -16,11 +16,11 @@ void MainWindow::setCurrentElement(const ReceivedData& received_data)
     const CommunicationHeader& hdr = received_data.getCommunicationHeader();
 
     const std::string current_element_name =
-        hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME).as<properties::Name>().data;
+        hdr.get(CommunicationHeaderObjectType::ELEMENT_NAME).as<properties::Label>().data;
 
     if (current_element_name.length() == 0)
     {
-        DVS_LOG_WARNING() << "Name string had zero length!";
+        DVS_LOG_WARNING() << "Label string had zero length!";
         return;
     }
 
@@ -192,8 +192,9 @@ void MainWindow::handleGuiManipulation(ReceivedData& received_data)
     const Function fcn = received_data.getFunction();
 
     const CommunicationHeader& hdr{received_data.getCommunicationHeader()};
-    const std::string handle_string = hdr.get(CommunicationHeaderObjectType::HANDLE_STRING).as<properties::Name>().data;
-    const std::string label = hdr.get(CommunicationHeaderObjectType::LABEL).as<properties::Name>().data;
+    const std::string handle_string =
+        hdr.get(CommunicationHeaderObjectType::HANDLE_STRING).as<properties::Label>().data;
+    const std::string label = hdr.get(CommunicationHeaderObjectType::LABEL).as<properties::Label>().data;
 
     gui_elements_[handle_string]->setLabel(label);
 }
@@ -209,14 +210,14 @@ void MainWindow::manageReceivedData(ReceivedData& received_data)
         {
             const CommunicationHeader& hdr = received_data.getCommunicationHeader();
             queued_project_file_name_ =
-                hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Name>().data;
+                hdr.get(CommunicationHeaderObjectType::PROJECT_FILE_NAME).as<properties::Label>().data;
             open_project_file_queued_ = true;
         }
         else if (fcn == Function::SCREENSHOT)
         {
             const CommunicationHeader& hdr = received_data.getCommunicationHeader();
             std::string screenshot_base_path =
-                hdr.get(CommunicationHeaderObjectType::SCREENSHOT_BASE_PATH).as<properties::Name>().data;
+                hdr.get(CommunicationHeaderObjectType::SCREENSHOT_BASE_PATH).as<properties::Label>().data;
             performScreenshot(screenshot_base_path);
         }
         else if (fcn == Function::QUERY_FOR_SYNC_OF_GUI_DATA)

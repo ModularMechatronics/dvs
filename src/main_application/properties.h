@@ -10,7 +10,7 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::ALPHA;
     }
-    else if (std::is_same<T, dvs::properties::Name>::value)
+    else if (std::is_same<T, dvs::properties::Label>::value)
     {
         return dvs::internal::PropertyType::NAME;
     }

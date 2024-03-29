@@ -44,8 +44,8 @@ public:
     void setLabel(const std::string& label) const
     {
         internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_LABEL};
-        hdr.append(internal::CommunicationHeaderObjectType::LABEL, properties::Name(label.c_str()));
-        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::LABEL, properties::Label(label.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Label(handle_string_.c_str()));
 
         internal::sendHeaderOnly(internal::getSendFunction(), hdr);
     }
@@ -53,7 +53,7 @@ public:
     void setEnabled() const
     {
         internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_ENABLED};
-        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Label(handle_string_.c_str()));
 
         internal::sendHeaderOnly(internal::getSendFunction(), hdr);
     }
@@ -61,7 +61,7 @@ public:
     void setDisabled() const
     {
         internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_DISABLED};
-        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Label(handle_string_.c_str()));
 
         internal::sendHeaderOnly(internal::getSendFunction(), hdr);
     }
@@ -69,7 +69,7 @@ public:
     void setMinValue(const std::int32_t min_value) const
     {
         internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_MIN_VALUE};
-        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Label(handle_string_.c_str()));
         hdr.append(internal::CommunicationHeaderObjectType::INT32, toInt32(min_value));
 
         internal::sendHeaderOnly(internal::getSendFunction(), hdr);
@@ -78,7 +78,7 @@ public:
     void setMaxValue(const std::int32_t max_value) const
     {
         internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_MAX_VALUE};
-        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Label(handle_string_.c_str()));
         hdr.append(internal::CommunicationHeaderObjectType::INT32, toInt32(max_value));
 
         internal::sendHeaderOnly(internal::getSendFunction(), hdr);
@@ -87,7 +87,7 @@ public:
     void setValue(const std::int32_t value) const
     {
         internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_VALUE};
-        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Label(handle_string_.c_str()));
         hdr.append(internal::CommunicationHeaderObjectType::INT32, toInt32(value));
 
         internal::sendHeaderOnly(internal::getSendFunction(), hdr);
@@ -96,7 +96,7 @@ public:
     void setStepSize(const std::int32_t step_size) const
     {
         internal::CommunicationHeader hdr{internal::Function::SET_GUI_ELEMENT_STEP};
-        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Name(handle_string_.c_str()));
+        hdr.append(internal::CommunicationHeaderObjectType::HANDLE_STRING, properties::Label(handle_string_.c_str()));
         hdr.append(internal::CommunicationHeaderObjectType::INT32, toInt32(step_size));
 
         internal::sendHeaderOnly(internal::getSendFunction(), hdr);
