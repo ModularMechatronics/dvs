@@ -2243,7 +2243,7 @@ void testSeries()
     float azimuth = 30.0f;
 
     const auto f_rotate_all = [&]() -> void {
-        for (size_t k = 0; k <= current_element; k++)
+        for (size_t k = 0; k < current_element; k++)
         {
             const std::string element_name = "p" + std::to_string(k);
             setCurrentElement(element_name);

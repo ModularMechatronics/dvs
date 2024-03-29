@@ -481,6 +481,32 @@ std::pair<Vec3d, Vec3d> PlotDataHandler::getMinMaxVectors() const
             max_vec.z += 1.0;
         }
 
+        if (std::isnan(min_vec.x))
+        {
+            min_vec.x = -1.0;
+        }
+        if (std::isnan(min_vec.y))
+        {
+            min_vec.y = -1.0;
+        }
+        if (std::isnan(min_vec.z))
+        {
+            min_vec.z = -1.0;
+        }
+
+        if (std::isnan(max_vec.x))
+        {
+            max_vec.x = 1.0;
+        }
+        if (std::isnan(max_vec.y))
+        {
+            max_vec.y = 1.0;
+        }
+        if (std::isnan(max_vec.z))
+        {
+            max_vec.z = 1.0;
+        }
+
         return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
     }
 }

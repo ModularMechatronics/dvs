@@ -1,7 +1,6 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
 - Fix number formatting and grid vectors system (1.0, 1e10, -0.24234, -2.7345e2)
-- Bug when creating starting various simulations, a new window appears with an element with the same name as the first window (for series.dvs amongst others)
 - Support for Windows and Linux
 - Change name of application to duoplot
 - Add all keybindings to the help pane
@@ -16,6 +15,7 @@ Pre release:
 - Begin able to set window and element size and position from interface
 
 Post release:
+- When changing project file, all elements probably don't get updated in the main window version of the element handles
 - Replace "OptionalParameter" with std::optional
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
 - Add protection from "NaN" of axes calculation

@@ -1808,7 +1808,7 @@ void testAxesSquare()
     y = dvs::sin(t);
     z = 2.0 * t / (2.0 * M_PI) - 1.0;
 
-    setCurrentElement("p0");
+    setCurrentElement("p_view_0");
     clearView();
 
     axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
@@ -1816,7 +1816,7 @@ void testAxesSquare()
     view(32, 45);
     axesSquare();
 
-    setCurrentElement("p1");
+    setCurrentElement("p_view_1");
     clearView();
 
     axis({-1.0, -1.0, -1.0}, {1.0, 2.0, 1.0});
@@ -1824,14 +1824,14 @@ void testAxesSquare()
     view(32, 45);
     axesSquare();
 
-    setCurrentElement("p2");
+    setCurrentElement("p_view_2");
     clearView();
 
     axis({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
     plot3(x, y, z, properties::LineWidth(20));
     view(32, 45);
 
-    setCurrentElement("p3");
+    setCurrentElement("p1");
     clearView();
 
     axis({-100.0, -100.0, -1.0}, {100.0, 100.0, 1.0});
