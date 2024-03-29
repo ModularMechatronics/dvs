@@ -46,7 +46,6 @@ struct Converter
 Stairs::Stairs(const CommunicationHeader& hdr,
                ReceivedData& received_data,
                const std::shared_ptr<const ConvertedDataBase>& converted_data,
-
                const PlotObjectAttributes& plot_object_attributes,
                const PropertiesData& properties_data,
                const ShaderCollection& shader_collection,

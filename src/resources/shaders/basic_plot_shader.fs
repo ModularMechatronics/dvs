@@ -1,6 +1,6 @@
 #version 330
 
-out vec3 color;
+out vec4 output_color;
 in vec3 fragment_color;
 in vec4 coord_out;
 
@@ -41,7 +41,6 @@ void main()
          discard;
       }
    }
-   color = fragment_color;
 
-		
+   output_color = vec4(fragment_color, 1.0);
 }

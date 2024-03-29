@@ -706,7 +706,7 @@ void testStairs()
     setCurrentElement("p_view_0");
     clearView();
 
-    stairs(xf, yf, properties::Color(21, 14, 55), properties::LineWidth(2));
+    stairs(xf, yf, properties::Color(21, 14, 255), properties::LineWidth(2));
     plot(xf, yf, properties::Color(21, 14, 255), properties::LineWidth(2));
     scatter(xf, yf, properties::Color(255, 0, 0), properties::PointSize(10));
 }
