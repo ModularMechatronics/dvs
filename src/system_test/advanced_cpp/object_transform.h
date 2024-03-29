@@ -205,6 +205,10 @@ void testBasic3D()
     changeTranslation(scale, r_mat, translation, Vec3d{0.05, 0.0, 0.0}, 50);
     changeTranslation(scale, r_mat, translation, Vec3d{0.0, 0.05, 0.0}, 50);
     changeTranslation(scale, r_mat, translation, Vec3d{0.0, 0.0, 0.05}, 50);
+
+    changeRotation(scale, r_mat, translation, Vec3d{0.0, 0.0, -0.01}, 50);
+    changeRotation(scale, r_mat, translation, Vec3d{0.0, -0.01, 0.0}, 50);
+    changeRotation(scale, r_mat, translation, Vec3d{-0.01, 0.0, 0.0}, 50);
 }
 
 void addTests()

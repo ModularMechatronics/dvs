@@ -6,7 +6,6 @@ Pre release:
 - Change name of application to duoplot
 - Add all keybindings to the help pane
 - Solve all TODOs
-- Validate that the properties::Transform is correct, getting invalid rotation for some cases
 - Fix case for plot/plot3 when two adjacent points are equal. If first two points of plot2 is the same, there will be a division by zero
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
@@ -16,6 +15,7 @@ Pre release:
 - Add "SILHOUETTE" flag for scatter
 - Make sure APPENDABLE is working for scatter, scatter3, plot, plot3
 - Move "FAST_PLOT" flag to "not_ready" namespace?
+- properties::Name -> properties::Label
 
 Post release:
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?

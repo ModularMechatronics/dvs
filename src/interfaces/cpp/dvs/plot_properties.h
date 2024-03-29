@@ -121,14 +121,16 @@ struct Transform : internal::PropertyBase
     }
 };
 
-struct Name : internal::PropertyBase
+class Name : public internal::PropertyBase
 {
+private:
     // Number of characters that the name can contain (excluding null termination)
-    static constexpr size_t max_length = 100U;
-    static constexpr size_t data_full_length = max_length + 1U;  // +1 for null termination
+    static constexpr size_t kMaxLength = 100U;
+    static constexpr size_t kDataFullLength = kMaxLength + 1U;  // +1 for null termination
 
-    char data[data_full_length];
+public:
     uint8_t length;
+    char data[kDataFullLength];
 
     Name() : internal::PropertyBase{internal::PropertyType::NAME}
     {
@@ -139,9 +141,9 @@ struct Name : internal::PropertyBase
     explicit Name(const char* const name) : internal::PropertyBase{internal::PropertyType::NAME}
     {
         DVS_ASSERT(name) << "Input name string is null!";
-        const size_t len = internal::safeStringLenCheck(name, max_length);
+        const size_t len = internal::safeStringLenCheck(name, kMaxLength);
 
-        DVS_ASSERT(len <= max_length) << "Name can't be more than 100 characters!";
+        DVS_ASSERT(len <= kMaxLength) << "Name can't be more than 100 characters!";
         length = len;
 
         std::memcpy(data, name, len);
@@ -150,7 +152,7 @@ struct Name : internal::PropertyBase
 
     void resetData()
     {
-        std::memset(data, 0, data_full_length);
+        std::memset(data, 0, kDataFullLength);
         length = 0;
     }
 };
