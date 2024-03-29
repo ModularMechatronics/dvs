@@ -5,7 +5,6 @@
 
 #include <iostream>
 
-#include "dvs/base_types.h"
 #include "dvs/enumerations.h"
 #include "dvs/logging.h"
 #include "dvs/math/math.h"

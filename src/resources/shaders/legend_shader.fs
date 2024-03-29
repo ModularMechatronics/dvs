@@ -4,7 +4,7 @@ in vec3 fragment_color;
 uniform int scatter_mode;
 uniform int color_map_selection;
 
-out vec3 color;
+out vec4 color;
 
 vec3 calculateColormapRainbow(float value)
 {
@@ -317,31 +317,31 @@ void main()
    {
       if(color_map_selection == 1)
       {
-         color = calculateColormapJet(fragment_color.r);
+         color = vec4(calculateColormapJet(fragment_color.r), 1.0);
       }
       else if(color_map_selection == 2)
       {
-         color = calculateColormapRainbow(fragment_color.r);
+         color = vec4(calculateColormapRainbow(fragment_color.r), 1.0);
       }
       else if(color_map_selection == 3)
       {
-         color = calculateColormapMagma(fragment_color.r);
+         color = vec4(calculateColormapMagma(fragment_color.r), 1.0);
       }
       else if(color_map_selection == 4)
       {
-         color = calculateColormapViridis(fragment_color.r);
+         color = vec4(calculateColormapViridis(fragment_color.r), 1.0);
       }
       else if(color_map_selection == 5)
       {
-         color = calculateColormapRainbowPastel(fragment_color.r);
+         color = vec4(calculateColormapRainbowPastel(fragment_color.r), 1.0);
       }
       else
       {
-         color = calculateColormapJet(fragment_color.r);
+         color = vec4(calculateColormapJet(fragment_color.r), 1.0);
       }
    }
    else
    {
-      color = fragment_color;
+      color = vec4(fragment_color, 1.0);
    }
 }

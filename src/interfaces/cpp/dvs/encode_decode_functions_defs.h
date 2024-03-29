@@ -8,7 +8,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include "dvs/base_types.h"
 #include "dvs/plot_properties.h"
 
 namespace dvs

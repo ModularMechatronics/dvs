@@ -1,7 +1,6 @@
 #ifndef DVS_ENCODE_DECODE_FUNCTIONS_H
 #define DVS_ENCODE_DECODE_FUNCTIONS_H
 
-#include "dvs/base_types.h"
 #include "dvs/plot_properties.h"
 
 namespace dvs

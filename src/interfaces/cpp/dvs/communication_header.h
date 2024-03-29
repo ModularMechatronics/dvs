@@ -8,7 +8,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include "dvs/base_types.h"
 #include "dvs/communication_header_object.h"
 #include "dvs/constants.h"
 #include "dvs/encode_decode_functions.h"

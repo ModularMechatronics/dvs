@@ -8,7 +8,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include "dvs/base_types.h"
 #include "dvs/constants.h"
 #include "dvs/encode_decode_functions_defs.h"
 #include "dvs/enumerations.h"

@@ -7,7 +7,7 @@ uniform float axes_height;
 uniform float radius;
 uniform vec3 vertex_color;
 
-out vec3 color;
+out vec4 color;
 
 void main()
 {
@@ -56,7 +56,7 @@ void main()
    }
    else
    {
-      color = vertex_color;
+      color = vec4(vertex_color, 1.0);
    }
    
 }

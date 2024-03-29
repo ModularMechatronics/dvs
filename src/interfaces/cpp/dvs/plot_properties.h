@@ -633,6 +633,16 @@ struct ColorInternal : PropertyBase
         blue = c.blue;
     }
 };
+
+struct Dimension2D
+{
+    uint32_t rows;
+    uint32_t cols;
+
+    Dimension2D() : rows(0), cols(0) {}
+    Dimension2D(const size_t r, const size_t c) : rows(r), cols(c) {}
+};
+
 }  // namespace internal
 
 }  // namespace dvs

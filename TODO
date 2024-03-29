@@ -6,21 +6,16 @@ Pre release:
 - Change name of application to duoplot
 - Add all keybindings to the help pane
 - Solve all TODOs
-- In python, "dvs.line_collection3(x, y, z, color=dvs.properties.Color(1, 0, 1))" does not work, line is transparent, same with plot_collection/plot_collection3 when not specifying colors and plotting twice
-- Stairs is grey? Or without color
-- Investigate weird bug not being able to set colors properly for realTimePlot
 - Validate that the properties::Transform is correct, getting invalid rotation for some cases
 - Fix case for plot/plot3 when two adjacent points are equal. If first two points of plot2 is the same, there will be a division by zero
-- Delete RGB888 and replace with Color
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
 - Grid lines when invalid/inf axes limits
-- Make it so that shader code and font data can be reached when the application is at arbitrary location
 - If min and max values for a dimension are equal, all axes lines disappear
 - Add "SILHOUETTE" flag for scatter
 - Make sure APPENDABLE is working for scatter, scatter3, plot, plot3
-- Move "FAST_PLOT" flag to "not_ready" namespace
+- Move "FAST_PLOT" flag to "not_ready" namespace?
 
 Post release:
 - Check what happens when plotting multiple 2D things sequentially, do they overlap properly?
