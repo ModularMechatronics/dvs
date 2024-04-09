@@ -207,9 +207,6 @@ void testScatter()
         const float xf = r * std::cos(phi);
         const float yf = r * std::sin(phi);
 
-        // const float xf = 2.0f * static_cast<float>(rand() % 1001) / 1000.0f - 1.0f;
-        // const float yf = 2.0f * static_cast<float>(rand() % 1001) / 1000.0f - 1.0f;
-
         x(k) = xf;
         y(k) = yf;
     }
@@ -311,6 +308,65 @@ void testScatter3()
              properties::ColorMap::JET,
              properties::PointSize(13),
              properties::ScatterStyle::CIRCLE);
+
+    setCurrentElement("w1_p_view_0");
+    clearView();
+
+    const size_t new_new_num_elements = 100;
+
+    x.resize(new_new_num_elements);
+    y.resize(new_new_num_elements);
+    z.resize(new_new_num_elements);
+
+    float t = 0.0;
+
+    for (size_t k = 0; k < new_new_num_elements; k++)
+    {
+        x(k) = t;
+        y(k) = std::sin(2.0 * t);
+        z(k) = std::cos(t);
+
+        t = t + 0.1;
+    }
+
+    plot3(x, y, z, properties::Color(212, 14, 55));
+    scatter3(x, y, z, properties::Color(12, 14, 55));
+    scatter3(x, y, z + 2.0, properties::Color::BLACK, properties::PointSize(11));
+    scatter3(x, y, z + 4.0, properties::Color::CYAN, properties::PointSize(12), properties::ScatterStyle::SQUARE);
+    scatter3(x, y, z + 6.0, properties::Color::MAGENTA, properties::PointSize(13), properties::ScatterStyle::DISC);
+    scatter3(x, y, z + 8.0, properties::Color::BLUE, properties::PointSize(14), properties::ScatterStyle::PLUS);
+    scatter3(x, y, z + 10.0, properties::Color::RED, properties::PointSize(14), properties::ScatterStyle::CROSS);
+
+    scatter3(x,
+             y,
+             z + 12.0,
+             properties::Color::BLUE,
+             properties::PointSize(50),
+             properties::Silhouette{0, 0, 0, 0.1f},
+             properties::ScatterStyle::DISC);
+
+    scatter3(x,
+             y,
+             z + 14.0,
+             properties::Color::BLUE,
+             properties::PointSize(50),
+             properties::Silhouette{127, 127, 127, 0.5f},
+             properties::ScatterStyle::DISC);
+
+    scatter3(x,
+             y,
+             z + 16.0,
+             properties::Color::BLUE,
+             properties::PointSize(50),
+             properties::Silhouette{127, 127, 127, 0.9f},
+             properties::ScatterStyle::DISC);
+    scatter3(x,
+             y,
+             z + 18.0,
+             properties::Color::BLUE,
+             properties::PointSize(50),
+             properties::Silhouette{255, 0, 0},
+             properties::ScatterStyle::DISC);
 }
 
 void testPlotCollection()

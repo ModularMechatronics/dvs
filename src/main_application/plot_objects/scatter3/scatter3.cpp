@@ -250,8 +250,8 @@ void Scatter3D::modifyShader()
     {
         shader_collection_.scatter_shader.uniform_handles.has_silhouette.setInt(1);
         shader_collection_.scatter_shader.uniform_handles.silhouette_color.setColor(silhouette_);
-        shader_collection_.scatter_shader.uniform_handles.squared_silhouette_percentage.setFloat(
-            silhouette_percentage_ * silhouette_percentage_);
+        const float s = 1.0f - silhouette_percentage_;
+        shader_collection_.scatter_shader.uniform_handles.squared_silhouette_percentage.setFloat(s * s);
     }
     else
     {
