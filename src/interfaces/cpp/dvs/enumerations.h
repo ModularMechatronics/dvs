@@ -75,6 +75,7 @@ enum class PropertyType : uint8_t
     COLOR,
     EDGE_COLOR,
     FACE_COLOR,
+    SILHOUETTE,
     COLOR_MAP,
     POINT_SIZE,
     BUFFER_SIZE,
@@ -223,6 +224,19 @@ enum class EdgeColorT : uint8_t
     WHITE,
     GRAY,
     NONE
+};
+
+enum class SilhouetteT : uint8_t
+{
+    RED,
+    GREEN,
+    BLUE,
+    CYAN,
+    MAGENTA,
+    YELLOW,
+    BLACK,
+    WHITE,
+    GRAY
 };
 
 }  // namespace internal

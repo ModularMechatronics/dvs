@@ -428,6 +428,96 @@ struct FaceColor : internal::PropertyBase
     static constexpr internal::FaceColorT NONE = internal::FaceColorT::NONE;
 };
 
+struct Silhouette : internal::PropertyBase
+{
+    uint8_t red, green, blue;
+    float percentage;
+
+    Silhouette() : internal::PropertyBase{internal::PropertyType::SILHOUETTE} {}
+
+    explicit Silhouette(const uint8_t red_, const uint8_t green_, const uint8_t blue_)
+        : internal::PropertyBase{internal::PropertyType::SILHOUETTE},
+          red{red_},
+          green{green_},
+          blue{blue_},
+          percentage{0.1f}
+    {
+    }
+
+    // Percentage is a number in the range [0.0, 1.0]
+    explicit Silhouette(const uint8_t red_, const uint8_t green_, const uint8_t blue_, const float percentage_)
+        : internal::PropertyBase{internal::PropertyType::SILHOUETTE},
+          red{red_},
+          green{green_},
+          blue{blue_},
+          percentage{percentage_}
+    {
+    }
+
+    Silhouette(const internal::SilhouetteT silhouette)
+    {
+        Silhouette s{};
+
+        switch (silhouette)
+        {
+            case internal::SilhouetteT::RED:
+                s = Silhouette{255, 0, 0};
+                break;
+            case internal::SilhouetteT::GREEN:
+                s = Silhouette{0, 255, 0};
+                break;
+            case internal::SilhouetteT::BLUE:
+                s = Silhouette{0, 0, 255};
+                break;
+            case internal::SilhouetteT::CYAN:
+                s = Silhouette{0, 255, 255};
+                break;
+            case internal::SilhouetteT::MAGENTA:
+                s = Silhouette{255, 0, 255};
+                break;
+            case internal::SilhouetteT::YELLOW:
+                s = Silhouette{255, 255, 0};
+                break;
+            case internal::SilhouetteT::BLACK:
+                s = Silhouette{0, 0, 0};
+                break;
+            case internal::SilhouetteT::WHITE:
+                s = Silhouette{255, 255, 255};
+                break;
+            case internal::SilhouetteT::GRAY:
+                s = Silhouette{127, 127, 127};
+                break;
+        }
+
+        red = s.red;
+        green = s.green;
+        blue = s.blue;
+    }
+
+    Silhouette& operator=(const internal::SilhouetteT silhouette)
+    {
+        Silhouette s{silhouette};
+
+        red = s.red;
+        green = s.green;
+        blue = s.blue;
+
+        percentage = s.percentage;
+
+        return *this;
+    }
+
+    static constexpr internal::SilhouetteT RED = internal::SilhouetteT::RED;
+    static constexpr internal::SilhouetteT GREEN = internal::SilhouetteT::GREEN;
+    static constexpr internal::SilhouetteT BLUE = internal::SilhouetteT::BLUE;
+    static constexpr internal::SilhouetteT CYAN = internal::SilhouetteT::CYAN;
+    static constexpr internal::SilhouetteT MAGENTA = internal::SilhouetteT::MAGENTA;
+    static constexpr internal::SilhouetteT YELLOW = internal::SilhouetteT::YELLOW;
+    static constexpr internal::SilhouetteT BLACK = internal::SilhouetteT::BLACK;
+    static constexpr internal::SilhouetteT WHITE = internal::SilhouetteT::WHITE;
+    static constexpr internal::SilhouetteT GRAY = internal::SilhouetteT::GRAY;
+};
+
 enum class ColorMap : uint8_t
 {
     JET,

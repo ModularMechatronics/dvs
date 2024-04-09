@@ -62,6 +62,10 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
     {
         return dvs::internal::PropertyType::TRANSFORM;
     }
+    else if (std::is_same<T, dvs::properties::Silhouette>::value)
+    {
+        return dvs::internal::PropertyType::SILHOUETTE;
+    }
     else
     {
         throw std::runtime_error("Invalid property template!");

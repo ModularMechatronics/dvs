@@ -55,13 +55,14 @@ class PropertyType(Enum):
     COLOR = 7
     EDGE_COLOR = 8
     FACE_COLOR = 9
-    COLOR_MAP = 10
-    POINT_SIZE = 11
-    BUFFER_SIZE = 12
-    SCATTER_STYLE = 13
-    PROPERTY_FLAG = 14
-    ITEM_ID = 15
-    UNKNOWN = 16
+    SILHOUETTE = 10
+    COLOR_MAP = 11
+    POINT_SIZE = 12
+    BUFFER_SIZE = 13
+    SCATTER_STYLE = 14
+    PROPERTY_FLAG = 15
+    ITEM_ID = 16
+    UNKNOWN = 17
     _TRANSMISSION_DATA_TYPE = np.uint8
 
 

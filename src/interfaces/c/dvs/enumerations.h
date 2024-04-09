@@ -57,6 +57,7 @@ typedef enum S_PropertyType
     PT_COLOR,
     PT_EDGE_COLOR,
     PT_FACE_COLOR,
+    PT_SILHOUETTE,
     PT_COLOR_MAP,
     PT_POINT_SIZE,
     PT_BUFFER_SIZE,

@@ -4,6 +4,9 @@ out vec4 color;
 in vec3 fragment_color;
 in vec4 coord_out;
 
+uniform int has_silhouette;
+uniform vec3 silhouette_color;
+uniform float squared_silhouette_percentage;
 uniform int use_clip_plane;
 uniform vec4 clip_plane0;
 uniform vec4 clip_plane1;
@@ -66,11 +69,11 @@ void main()
         {
             discard;
         }
-        // else if(squared_dist > 0.65)
-        // {
-        //     // a = 1.0 - squared_dist; // Blurred edge
-        //     color_to_use = vec3(0.0, 0.0, 0.0); // Black edge
-        // }
+        else if(has_silhouette == 1 && squared_dist > squared_silhouette_percentage)
+        {
+            // a = 1.0 - squared_dist; // Blurred edge
+            color_to_use = silhouette_color;
+        }
     }
     else if(scatter_mode == 3) // Plus
     {

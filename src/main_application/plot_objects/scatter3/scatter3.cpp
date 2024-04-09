@@ -246,6 +246,18 @@ void Scatter3D::modifyShader()
         shader_collection_.scatter_shader.base_uniform_handles.has_point_sizes_vec.setInt(0);
     }
 
+    if (has_silhouette_)
+    {
+        shader_collection_.scatter_shader.uniform_handles.has_silhouette.setInt(1);
+        shader_collection_.scatter_shader.uniform_handles.silhouette_color.setColor(silhouette_);
+        shader_collection_.scatter_shader.uniform_handles.squared_silhouette_percentage.setFloat(
+            silhouette_percentage_ * silhouette_percentage_);
+    }
+    else
+    {
+        shader_collection_.scatter_shader.uniform_handles.has_silhouette.setInt(0);
+    }
+
     if (has_color_)
     {
         shader_collection_.scatter_shader.base_uniform_handles.has_color_vec.setInt(1);

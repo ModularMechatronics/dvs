@@ -27,6 +27,7 @@ inline uint8_t numBytes(const properties::ScatterStyle& obj);
 inline uint8_t numBytes(const internal::ColorInternal& obj);
 inline uint8_t numBytes(const properties::EdgeColor& obj);
 inline uint8_t numBytes(const properties::FaceColor& obj);
+inline uint8_t numBytes(const properties::Silhouette& obj);
 inline uint8_t numBytes(const properties::ColorMap& obj);
 inline uint8_t numBytes(const properties::PointSize& obj);
 inline uint8_t numBytes(const properties::DistanceFrom& obj);
@@ -46,6 +47,7 @@ inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj,
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::ScatterStyle& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const internal::ColorInternal& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::EdgeColor& prop);
+inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::Silhouette& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::FaceColor& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::ColorMap& prop);
 inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::PointSize& prop);
@@ -66,6 +68,7 @@ inline void deserializeFromCommunicationHeaderObject(internal::ColorInternal& pr
                                                      const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::EdgeColor& prop, const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::FaceColor& prop, const CommunicationHeaderObject& obj);
+inline void deserializeFromCommunicationHeaderObject(properties::Silhouette& prop, const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::LineStyle& prop, const CommunicationHeaderObject& obj);
 inline void deserializeFromCommunicationHeaderObject(properties::ScatterStyle& prop,
                                                      const CommunicationHeaderObject& obj);

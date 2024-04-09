@@ -298,6 +298,32 @@ inline void deserializeFromCommunicationHeaderObject(properties::FaceColor& prop
     prop.use_color = obj.data[4U];
 }
 
+/////////////// Silhouette ///////////////
+inline uint8_t numBytes(const properties::Silhouette& obj)
+{
+    static_cast<void>(obj);
+    return sizeof(uint8_t) + 4U * sizeof(uint8_t);
+}
+
+inline void serializeToCommunicationHeaderObject(CommunicationHeaderObject& obj, const properties::Silhouette& prop)
+{
+    obj.size = numBytes(prop);
+    obj.data[0U] = static_cast<uint8_t>(prop.getPropertyType());
+    obj.data[1U] = prop.red;
+    obj.data[2U] = prop.green;
+    obj.data[3U] = prop.blue;
+    obj.data[4U] = static_cast<std::uint8_t>(prop.percentage * 255.0);
+}
+
+inline void deserializeFromCommunicationHeaderObject(properties::Silhouette& prop, const CommunicationHeaderObject& obj)
+{
+    prop.setPropertyType(static_cast<PropertyType>(obj.data[0U]));
+    prop.red = obj.data[1U];
+    prop.green = obj.data[2U];
+    prop.blue = obj.data[3U];
+    prop.percentage = static_cast<float>(obj.data[4U]) / 255.0;
+}
+
 /////////////// ColorMap ///////////////
 inline uint8_t numBytes(const properties::ColorMap& obj)
 {

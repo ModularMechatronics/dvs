@@ -63,6 +63,9 @@ void ScatterShader::setUniformHandles()
     uniform_handles.has_distance_from = Uniform(program_id_, "has_distance_from");
     uniform_handles.distance_from_type = Uniform(program_id_, "distance_from_type");
     uniform_handles.color_map_selection = Uniform(program_id_, "color_map_selection");
+    uniform_handles.has_silhouette = Uniform(program_id_, "has_silhouette");
+    uniform_handles.silhouette_color = Uniform(program_id_, "silhouette_color");
+    uniform_handles.squared_silhouette_percentage = Uniform(program_id_, "squared_silhouette_percentage");
 }
 
 DrawMeshShader::DrawMeshShader(const std::string& vertex_shader,

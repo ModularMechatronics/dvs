@@ -28,6 +28,9 @@ using namespace dvs::properties;
 constexpr size_t kDefaultBufferSize = 500U;
 constexpr char* const kDefaultLabel = "";
 constexpr RGBTripletf kDefaultEdgeColor{0.0f, 0.0f, 0.0f};
+constexpr RGBTripletf kDefaultSilhouette{0.0f, 0.0f, 0.0f};
+constexpr bool kDefaultHasSilhouette{false};
+constexpr float kDefaultSilhouettePercentage{0.01f};
 constexpr float kDefaultZOffset{0.0f};
 constexpr ScatterStyle kDefaultScatterStyle{ScatterStyle::CIRCLE};
 constexpr LineStyle kDefaultLineStyle{LineStyle::SOLID};
@@ -208,6 +211,19 @@ public:
             }
             has_properties_ = true;
         }
+
+        if (props.hasProperty(PropertyType::SILHOUETTE))
+        {
+            const Silhouette s = props.getProperty<Silhouette>();
+
+            silhouette = RGBTripletf{static_cast<float>(s.red) / 255.0f,
+                                     static_cast<float>(s.green) / 255.0f,
+                                     static_cast<float>(s.blue) / 255.0f};
+
+            silhouette_percentage = s.percentage;
+            has_silhouette = true;
+            has_properties_ = true;
+        }
     }
 
     void clear()
@@ -233,6 +249,10 @@ public:
 
         face_color = OptionalParameter<RGBTripletf>{};
         no_faces = kDefaultNoFaces;
+
+        silhouette = OptionalParameter<RGBTripletf>{};
+        has_silhouette = kDefaultHasSilhouette;
+        silhouette_percentage = kDefaultSilhouettePercentage;
 
         color_map = OptionalParameter<ColorMap>{};
 
@@ -279,6 +299,15 @@ public:
             has_properties_ = true;
         }
 
+        if (!props.silhouette.has_default_value)
+        {
+            silhouette = props.silhouette.data;
+            has_silhouette = true;
+            silhouette_percentage = props.silhouette_percentage;
+
+            has_properties_ = true;
+        }
+
         is_persistent = is_persistent || props.is_persistent;
         is_updateable = is_updateable || props.is_updateable;
         is_appendable = is_appendable || props.is_appendable;
@@ -315,6 +344,10 @@ public:
 
     OptionalParameter<RGBTripletf> face_color;
     bool no_faces{kDefaultNoFaces};
+
+    OptionalParameter<RGBTripletf> silhouette{kDefaultSilhouette};
+    float silhouette_percentage{kDefaultSilhouettePercentage};
+    bool has_silhouette;
 
     OptionalParameter<ColorMap> color_map;
 
@@ -450,6 +483,10 @@ protected:
     RGBTripletf edge_color_;
     RGBTripletf face_color_;
     size_t buffer_size_;
+
+    bool has_silhouette_;
+    float silhouette_percentage_;
+    RGBTripletf silhouette_;
 
     bool has_distance_from_;
     DistanceFrom distance_from_;

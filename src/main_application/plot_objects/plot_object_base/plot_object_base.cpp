@@ -37,6 +37,7 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
 
     has_face_color_ = true;
     has_edge_color_ = true;
+    has_silhouette_ = false;
 
     assignProperties(properties_data, color_picker);
 }
@@ -170,6 +171,13 @@ void PlotObjectBase::updateProperties(const PropertiesData& properties_data)
             edge_color_ = properties_data.edge_color.data;
             has_edge_color_ = true;
         }
+    }
+
+    if (!properties_data.silhouette.has_default_value)
+    {
+        has_silhouette_ = properties_data.has_silhouette;
+        silhouette_percentage_ = properties_data.silhouette_percentage;
+        silhouette_ = properties_data.silhouette.data;
     }
 
     if (!properties_data.face_color.has_default_value)
@@ -388,6 +396,13 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
     {
         face_color_ = color_picker.getNextFaceColor();
         has_face_color_ = true;
+    }
+
+    if (!properties_data.silhouette.has_default_value)
+    {
+        has_silhouette_ = properties_data.has_silhouette;
+        silhouette_percentage_ = properties_data.silhouette_percentage;
+        silhouette_ = properties_data.silhouette.data;
     }
 }
 

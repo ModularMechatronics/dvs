@@ -167,6 +167,33 @@ void testScatter()
     scatter(x, y + 4.0, properties::Color::BLUE, properties::PointSize(14), properties::ScatterStyle::PLUS);
     scatter(x, y + 5.0, properties::Color::RED, properties::PointSize(14), properties::ScatterStyle::CROSS);
 
+    scatter(x,
+            y + 8.0,
+            properties::Color::BLUE,
+            properties::PointSize(50),
+            properties::Silhouette{0, 0, 0, 0.1f},
+            properties::ScatterStyle::DISC);
+
+    scatter(x,
+            y + 9.0,
+            properties::Color::BLUE,
+            properties::PointSize(50),
+            properties::Silhouette{127, 127, 127, 0.5f},
+            properties::ScatterStyle::DISC);
+
+    scatter(x,
+            y + 10.0,
+            properties::Color::BLUE,
+            properties::PointSize(50),
+            properties::Silhouette{127, 127, 127, 0.9f},
+            properties::ScatterStyle::DISC);
+    scatter(x,
+            y + 11.0,
+            properties::Color::BLUE,
+            properties::PointSize(50),
+            properties::Silhouette{255, 0, 0},
+            properties::ScatterStyle::DISC);
+
     const size_t new_num_elements = 500;
 
     x.resize(new_num_elements);

@@ -231,6 +231,13 @@ struct CommunicationHeaderObject
         return color;
     }
 
+    template <> properties::Silhouette as() const
+    {
+        properties::Silhouette s;
+        deserializeFromCommunicationHeaderObject(s, *this);
+        return s;
+    }
+
     template <> properties::ScatterStyle as() const
     {
         properties::ScatterStyle style;

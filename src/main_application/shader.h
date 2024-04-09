@@ -232,6 +232,9 @@ public:
         Uniform has_distance_from;
         Uniform distance_from_type;
         Uniform color_map_selection;
+        Uniform has_silhouette;
+        Uniform silhouette_color;
+        Uniform squared_silhouette_percentage;
     };
 
     UniformHandles uniform_handles;
