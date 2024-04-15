@@ -4,6 +4,7 @@
 #include "tests/ad_dataset/ad_dataset.h"
 #include "tests/boxes/boxes.h"
 #include "tests/car/car.h"
+#include "tests/duoplot_text/duoplot_text.h"
 #include "tests/fake_fem.h"
 #include "tests/gui/gui.h"
 #include "tests/hexagon_rods.h"

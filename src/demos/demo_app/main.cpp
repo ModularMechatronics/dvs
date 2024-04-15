@@ -12,7 +12,7 @@ std::map<std::string, StringFunctionMap> fcns;
 
 void displayHelp()
 {
-    std::cout << "Usage: ./test-app [-h, --help, help] [\033[32m<category>\033[0m \033[33m<test name>\033[0m]"
+    std::cout << "Usage: ./demos [-h, --help, help] [\033[32m<category>\033[0m \033[33m<test name>\033[0m]"
               << std::endl;
     std::map<std::string, StringFunctionMap>::iterator outer_it;
 
@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
     fcns["slam"] = StringFunctionMap{{"basic", slam::testBasic}};
     fcns["gui"] = StringFunctionMap{{"basic", gui_test::testBasic}, {"dynamic_system", gui_test::testDynamicSystem}};
     fcns["marbles"] = StringFunctionMap{{"basic", marbles::testBasic}};
+    fcns["duoplot_text"] = StringFunctionMap{{"basic", duoplot_text::testBasic}};
     fcns["small"] = small_functions;
 
     if (argc == 1)
