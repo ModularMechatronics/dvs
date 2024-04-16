@@ -1,0 +1,96 @@
+{
+    "windows": [
+        {
+            "height": 316.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "handle_string": "hello_python",
+                            "height": 1.0,
+                            "type": "PLOT_PANE",
+                            "width": 0.5,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "handle_string": "hello_c",
+                            "height": 1.0,
+                            "type": "PLOT_PANE",
+                            "width": 0.5,
+                            "x": 0.5,
+                            "y": 0.0
+                        }
+                    ],
+                    "name": "primary_view"
+                }
+            ],
+            "width": 456.0,
+            "x": 0.0,
+            "y": 23.0
+        },
+        {
+            "height": 210.0,
+            "name": "Window 2",
+            "tabs": [
+                {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "handle_string": "hello_cpp",
+                            "height": 1.0,
+                            "type": "PLOT_PANE",
+                            "width": 0.5,
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    ],
+                    "name": "Tab 0"
+                }
+            ],
+            "width": 456.0,
+            "x": 0.0,
+            "y": 339.0
+        }
+    ]
+}

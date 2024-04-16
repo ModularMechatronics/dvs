@@ -117,7 +117,7 @@ def scatter3(
             enums.CommunicationHeaderObjectType.DATA_TYPE,
             internal.np_data_type_to_data_type(x[0].__class__),
         )
-    
+
     new_props = {}
 
     colors = None

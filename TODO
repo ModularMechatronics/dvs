@@ -6,15 +6,12 @@ Pre release:
 - Add all keybindings to the help pane
 - Solve all TODOs
 - Demos:
-  * Adding a new tab and window
-  * Adding a new plot object
-  * Moving elements around and changing size
-  * In the same demo where elements and windows are added, show a terminal below
-    that plots from C, C++ and python
+  * Interactive application where gui elements are present, first dvs is started from one terminal, then the gui backend application from another terminal. Maybe have the gui elements added "as we go" in the dvs window
 - Fix case for plot/plot3 when two adjacent points are equal. If first two points of plot2 is the same, there will be a division by zero
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
+- Dont create new plot pane in newly created window
 - Make sure APPENDABLE is working for scatter, scatter3, plot, plot3
 - Move "FAST_PLOT" flag to "not_ready" namespace?
 - Begin able to set window and element size and position from interface

@@ -211,4 +211,34 @@ void axis2D(const Vec2d min_bound, const Vec2d max_bound)
     sendHeader(getSendFunction(), &hdr);
 }
 
+void setTitle(const char* const title)
+{
+    if (title == NULL || title[0] == '\0')
+    {
+        return;
+    }
+
+    CommunicationHeader hdr;
+    initCommunicationHeader(&hdr, F_SET_TITLE);
+
+    CommunicationHeaderObject* const current_obj = hdr.objects + hdr.obj_idx;
+
+    current_obj->type = CHOT_TITLE_STRING;
+
+    const size_t name_length = strnlen(title, 100U);
+    current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)name_length;
+
+    memset(current_obj->data, 0, kMaxNumFunctionHeaderBytes);
+
+    current_obj->data[0U] = PT_NAME;
+    current_obj->data[1U] = name_length;
+    memcpy(current_obj->data + 2U, title, name_length);
+
+    appendObjectIndexToCommunicationHeaderObjectLookupTable(&(hdr.objects_lut), CHOT_TITLE_STRING, hdr.obj_idx);
+
+    hdr.obj_idx += 1;
+
+    sendHeader(getSendFunction(), &hdr);
+}
+
 #endif  // DVS_PLOT_FUNCTIONS_H

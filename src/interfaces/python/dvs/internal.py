@@ -378,7 +378,13 @@ class CommunicationHeader:
         for key, val in self.objects:
             bts += key.value.to_bytes(2, sys.byteorder)
 
-            if key == CommunicationHeaderObjectType.ELEMENT_NAME:
+            # TODO: This is a temporary fix since SIZE_OF_FUNCTION_HEADER_OBJECT
+            # doesn't yet accept arguments, it's a hard coded size for each
+            # object type
+            if key in (
+                CommunicationHeaderObjectType.ELEMENT_NAME,
+                CommunicationHeaderObjectType.TITLE_STRING,
+            ):
                 bts += (SIZE_OF_FUNCTION_HEADER_OBJECT[key] + len(val)).to_bytes(
                     1, sys.byteorder
                 )
@@ -403,7 +409,9 @@ class CommunicationHeader:
 
         return bts
 
+
 socket_fd = None
+
 
 def initialize_tcp_socket():
     global socket_fd
@@ -413,6 +421,7 @@ def initialize_tcp_socket():
 
     socket_fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socket_fd.connect((TCP_IP, PORT_NUM))
+
 
 def send_with_tcp(bts: bytearray):
     global socket_fd

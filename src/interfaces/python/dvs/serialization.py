@@ -169,7 +169,11 @@ FUNCTION_HEADER_OBJECT_SERIALIZATION_FUNCTION = {
     CommunicationHeaderObjectType.TRANSLATION_VECTOR: None,
     CommunicationHeaderObjectType.ROTATION_MATRIX: None,
     CommunicationHeaderObjectType.PROJECT_FILE_NAME: None,
-    CommunicationHeaderObjectType.TITLE_STRING: None,
+    CommunicationHeaderObjectType.TITLE_STRING: lambda x: PropertyType.NAME.value.to_bytes(
+        1, sys.byteorder
+    )
+    + len(x).to_bytes(1, sys.byteorder)
+    + x.encode("utf-8"),
     CommunicationHeaderObjectType.POS2D: None,
     CommunicationHeaderObjectType.FIGURE_NUM: None,
     CommunicationHeaderObjectType.PARENT_NAME: None,
@@ -211,7 +215,7 @@ SIZE_OF_FUNCTION_HEADER_OBJECT = {
     CommunicationHeaderObjectType.TRANSLATION_VECTOR: None,
     CommunicationHeaderObjectType.ROTATION_MATRIX: None,
     CommunicationHeaderObjectType.PROJECT_FILE_NAME: None,
-    CommunicationHeaderObjectType.TITLE_STRING: None,
+    CommunicationHeaderObjectType.TITLE_STRING: 2,
     CommunicationHeaderObjectType.POS2D: None,
     CommunicationHeaderObjectType.FIGURE_NUM: None,
     CommunicationHeaderObjectType.PARENT_NAME: None,
