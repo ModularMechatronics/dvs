@@ -117,7 +117,7 @@ def test_plot2_demo():
     duoplot.set_current_element("p_view_0")
     duoplot.clear_view()
 
-    """theta = np.linspace(-10.0, 10.0, 500, dtype=np.float32)
+    theta = np.linspace(-10.0, 10.0, 500, dtype=np.float32)
 
     PLOT2D_FUNCTION_NAMES = [
         q
@@ -131,14 +131,14 @@ def test_plot2_demo():
         duoplot.set_title(plot_fun)
 
         duoplot.plot(x, y)
-        # input("Press Enter to continue...")"""
+        input("Press Enter to continue...")
 
 
 def test_plot3_demo():
     duoplot.set_current_element("p_view_0")
     duoplot.clear_view()
 
-    """theta = np.linspace(-10.0, 10.0, 500, dtype=np.float32)
+    theta = np.linspace(-10.0, 10.0, 500, dtype=np.float32)
 
     PLOT2D_FUNCTION_NAMES = [
         q
@@ -151,7 +151,7 @@ def test_plot3_demo():
         duoplot.clear_view()
 
         duoplot.plot3(x, y, z)
-        input("Press Enter to continue...")"""
+        input("Press Enter to continue...")
 
 
 def test_series_demo():

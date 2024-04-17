@@ -644,7 +644,7 @@ def draw_point(
     internal.send_header_and_data(internal.send_with_tcp, hdr, x, y, z)"""
 
 
-def imshow(
+"""def imshow(
     x: Union[np.array, List[List], Tuple[Tuple]],
     y: Union[np.array, List[List], Tuple[Tuple]],
     z: Union[np.array, List[List], Tuple[Tuple]],
@@ -674,7 +674,7 @@ def imshow(
     hdr.append_properties(props_kw)
 
     internal.send_header_and_data(internal.send_with_tcp, hdr, x, y, z)
-
+"""
 
 """
 
