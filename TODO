@@ -4,6 +4,9 @@ Pre release:
 - Support for Windows and Linux
 - Change name of application to duoplot
 - Add all keybindings to the help pane
+- Delete element for slider (and probably other gui elements) doesn't work
+- Adding a slider with the wrong aspect ratio of the window still gives crap result, with a vertical slider
+  that is unmovable...
 - Solve all TODOs
 - Demos:
   * Interactive application where gui elements are present, first dvs is started from one terminal, then the gui backend application from another terminal. Maybe have the gui elements added "as we go" in the dvs window
