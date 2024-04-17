@@ -651,8 +651,6 @@ void MainWindow::newWindowWithoutFileModification()
                                                wxSize(kMainWindowWidth, kMainWindowButtonHeight),
                                                0,
                                                [this](const std::string& f) -> void { toggleWindowVisibility(f); }));
-
-    gui_window->createNewPlotPane();
 }
 
 void MainWindow::newWindowWithoutFileModification(const std::string& element_handle_string)
