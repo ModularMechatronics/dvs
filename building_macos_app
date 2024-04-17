@@ -1,0 +1,11 @@
+# Generate XCode project with
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES="x86_64" -G Xcode ..
+
+For the target "dvs", set the correct target version of macOS.
+
+Build the dvs application.
+
+Export the binary to the duoplot.app/Contents/MacOS folder
+
+# Then run
+xattr -rc /Applications/duoplot.app

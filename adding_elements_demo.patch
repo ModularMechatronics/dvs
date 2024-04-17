@@ -1,0 +1,75 @@
+diff --git a/src/interfaces/cpp/dvs/internal.h b/src/interfaces/cpp/dvs/internal.h
+index 6c181d65..dbe53c42 100644
+--- a/src/interfaces/cpp/dvs/internal.h
++++ b/src/interfaces/cpp/dvs/internal.h
+@@ -118,7 +118,7 @@ inline void initializeTcpSocket(const uint64_t port_num)
+
+     if (connect(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
+     {
+-        DVS_LOG_WARNING() << "Failed to connect! Is receiving application running?";
++        // DVS_LOG_WARNING() << "Failed to connect! Is receiving application running?";
+         return;
+     }
+ }
+@@ -154,7 +154,7 @@ inline void sendThroughTcpInterface(const UInt8ArrayView& input_array, const uin
+
+     if (connect(tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
+     {
+-        DVS_LOG_WARNING() << "Failed to connect! Is receiving application running?";
++        // DVS_LOG_WARNING() << "Failed to connect! Is receiving application running?";
+         return;
+     }
+
+diff --git a/src/main_application/gui_tab.cpp b/src/main_application/gui_tab.cpp
+index e8b21b45..49693c1f 100644
+--- a/src/main_application/gui_tab.cpp
++++ b/src/main_application/gui_tab.cpp
+@@ -395,10 +395,10 @@ void WindowTab::setMinXPos(const int min_x_pos)
+ void WindowTab::createNewPlotPane()
+ {
+     std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
+-    pp_settings->x = 0.1;
+-    pp_settings->y = 0;
+-    pp_settings->width = 0.4;
+-    pp_settings->height = 0.4;
++    pp_settings->x = 0.0;
++    pp_settings->y = 0.0;
++    pp_settings->width = 0.5;
++    pp_settings->height = 1.0;
+     pp_settings->handle_string = "element-" + std::to_string(current_element_idx_);
+     pp_settings->title = pp_settings->handle_string;
+
+diff --git a/src/main_application/gui_window.cpp b/src/main_application/gui_window.cpp
+index dfc0738c..1b7def54 100644
+--- a/src/main_application/gui_window.cpp
++++ b/src/main_application/gui_window.cpp
+@@ -890,6 +890,10 @@ void GuiWindow::createNewPlotPaneCallbackFunction(wxCommandEvent& WXUNUSED(event
+             const std::shared_ptr<PlotPaneSettings> pp_settings = std::make_shared<PlotPaneSettings>();
+             pp_settings->handle_string = element_handle_string;
+             pp_settings->title = ret_fields.at("title");
++            pp_settings->x = 0.0;
++            pp_settings->y = 0.0;
++            pp_settings->width = 0.5;
++            pp_settings->height = 1.0;
+
+             (*q)->createNewPlotPane(pp_settings);
+             notify_main_window_about_modification_();
+diff --git a/src/main_application/main_window.cpp b/src/main_application/main_window.cpp
+index 29251dc8..ca48c632 100644
+--- a/src/main_application/main_window.cpp
++++ b/src/main_application/main_window.cpp
+@@ -610,10 +610,10 @@ void MainWindow::newWindowWithoutFileModification()
+ {
+     WindowSettings window_settings;
+     window_settings.name = "Window " + std::to_string(current_window_num_);
+-    window_settings.x = 30;
+-    window_settings.y = 30;
+-    window_settings.width = 600;
+-    window_settings.height = 628;
++    window_settings.x = 0;
++    window_settings.y = 23 + 316;
++    window_settings.width = 456;
++    window_settings.height = (316 * 2) / 3;
+
+     GuiWindow* gui_window = new GuiWindow(this,
+                                           window_settings,

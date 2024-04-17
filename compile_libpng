@@ -1,0 +1,12 @@
+mkdir libpng
+cd libpng
+
+1.6.40
+wget https://download.sourceforge.net/libpng/libpng-1.6.40.tar.gz
+wget https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz
+
+tar xvfz libpng-1.6.37.tar.gz
+cd libpng-1.6.37
+
+./configure --prefix=/Users/danielpi/work/dvs/libpng/libpng_output --with-pic=yes
+make

@@ -1,0 +1,25 @@
+-isysroot= =/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
+
+/Users/danielpi/MacOSX-SDKs
+
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.1.5.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.10.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.11.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.12.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.13.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.14.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.15.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.2.8.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.3.0.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.3.9.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.4u.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.5.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.6.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.7.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.8.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX10.9.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX11.0.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX11.1.sdk
+-isysroot=/Users/danielpi/MacOSX-SDKs/MacOSX11.3.sdk
+
+-isysroot==/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk
