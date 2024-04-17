@@ -7,12 +7,12 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "line2d.h"
 #include "misc/rgb_triplet.h"
 #include "rapidxml.hpp"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace particles
 {

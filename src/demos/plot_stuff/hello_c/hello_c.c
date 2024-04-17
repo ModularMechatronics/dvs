@@ -1,5 +1,5 @@
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
 int main()
 {

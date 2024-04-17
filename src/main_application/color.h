@@ -1,5 +1,5 @@
-#ifndef DVS_COLOR_H
-#define DVS_COLOR_H
+#ifndef DUOPLOT_COLOR_H
+#define DUOPLOT_COLOR_H
 
 enum class Color_t
 {

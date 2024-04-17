@@ -6,8 +6,8 @@
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 
-#include "dvs/enumerations.h"
-#include "dvs/logging.h"
+#include "duoplot/enumerations.h"
+#include "duoplot/logging.h"
 #include "misc/rgb_triplet.h"
 #include "project_state/helper_functions.h"
 
@@ -24,7 +24,7 @@ struct ElementSettings
 
     int z_order;
 
-    dvs::GuiElementType type;
+    duoplot::GuiElementType type;
 
     ElementSettings();
     explicit ElementSettings(const nlohmann::json& j);

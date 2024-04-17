@@ -8,7 +8,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-#include "dvs/logging.h"
+#include "duoplot/logging.h"
 #include "filesystem.h"
 
 struct AppPreferences
@@ -39,7 +39,7 @@ public:
             catch (const std::exception& e)
             {
                 is_valid_ = false;
-                DVS_LOG_ERROR() << "Error reading configuration file \"" << configuration_file_path_
+                DUOPLOT_LOG_ERROR() << "Error reading configuration file \"" << configuration_file_path_
                                 << "\"! Returning empty value.";
                 return data;
             }
@@ -50,13 +50,13 @@ public:
             }
             catch (const std::exception& e)
             {
-                DVS_LOG_ERROR() << "Error reading value for key " << key << "! Returning empty value.";
+                DUOPLOT_LOG_ERROR() << "Error reading value for key " << key << "! Returning empty value.";
             }
             return data;
         }
         else
         {
-            DVS_LOG_ERROR() << "Tried calling ConfigurationAgent::readValue(" << key
+            DUOPLOT_LOG_ERROR() << "Tried calling ConfigurationAgent::readValue(" << key
                             << ") for invalid ConfigurationAgent!";
             T data = 0;
             return data;
@@ -76,7 +76,7 @@ public:
             }
             catch (const std::exception& e)
             {
-                DVS_LOG_ERROR() << "Failed to overwrite configuration.json at \"" << configuration_file_path_
+                DUOPLOT_LOG_ERROR() << "Failed to overwrite configuration.json at \"" << configuration_file_path_
                                 << "\". Exception: " << e.what() << ". Exiting.";
                 is_valid_ = false;
                 return;
@@ -84,7 +84,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "Tried calling ConfigurationAgent::writeValue(" << key
+            DUOPLOT_LOG_ERROR() << "Tried calling ConfigurationAgent::writeValue(" << key
                             << ") for invalid ConfigurationAgent!";
         }
     }

@@ -6,8 +6,8 @@
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 
-#include "dvs/enumerations.h"
-#include "dvs/logging.h"
+#include "duoplot/enumerations.h"
+#include "duoplot/logging.h"
 #include "misc/rgb_triplet.h"
 
 constexpr RGBTriplet<float> hexToRgbTripletf(const std::uint32_t hex_val)
@@ -20,99 +20,99 @@ constexpr RGBTriplet<float> hexToRgbTripletf(const std::uint32_t hex_val)
         static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f, static_cast<float>(b) / 255.0f};
 }
 
-inline dvs::GuiElementType parseGuiElementType(const nlohmann::json& j)
+inline duoplot::GuiElementType parseGuiElementType(const nlohmann::json& j)
 {
     const std::string type_string = j["type"];
 
     if (type_string == "BUTTON")
     {
-        return dvs::GuiElementType::Button;
+        return duoplot::GuiElementType::Button;
     }
     else if (type_string == "SLIDER")
     {
-        return dvs::GuiElementType::Slider;
+        return duoplot::GuiElementType::Slider;
     }
     else if (type_string == "CHECKBOX")
     {
-        return dvs::GuiElementType::Checkbox;
+        return duoplot::GuiElementType::Checkbox;
     }
     else if (type_string == "EDITABLE_TEXT")
     {
-        return dvs::GuiElementType::EditableText;
+        return duoplot::GuiElementType::EditableText;
     }
     else if (type_string == "DROPDOWN_MENU")
     {
-        return dvs::GuiElementType::DropdownMenu;
+        return duoplot::GuiElementType::DropdownMenu;
     }
     else if (type_string == "LISTBOX")
     {
-        return dvs::GuiElementType::ListBox;
+        return duoplot::GuiElementType::ListBox;
     }
     else if (type_string == "RADIO_BUTTON_GROUP")
     {
-        return dvs::GuiElementType::RadioButtonGroup;
+        return duoplot::GuiElementType::RadioButtonGroup;
     }
     else if (type_string == "TEXT_LABEL")
     {
-        return dvs::GuiElementType::TextLabel;
+        return duoplot::GuiElementType::TextLabel;
     }
     else if (type_string == "STATIC_BOX")
     {
-        return dvs::GuiElementType::StaticBox;
+        return duoplot::GuiElementType::StaticBox;
     }
     else if (type_string == "PLOT_PANE")
     {
-        return dvs::GuiElementType::PlotPane;
+        return duoplot::GuiElementType::PlotPane;
     }
     else
     {
-        return dvs::GuiElementType::Unknown;
+        return duoplot::GuiElementType::Unknown;
     }
 }
 
-inline std::string guiElementTypeToString(const dvs::GuiElementType& type)
+inline std::string guiElementTypeToString(const duoplot::GuiElementType& type)
 {
     std::string res;
 
     switch (type)
     {
-        case dvs::GuiElementType::Button: {
+        case duoplot::GuiElementType::Button: {
             res = "BUTTON";
             break;
         }
-        case dvs::GuiElementType::Slider: {
+        case duoplot::GuiElementType::Slider: {
             res = "SLIDER";
             break;
         }
-        case dvs::GuiElementType::Checkbox: {
+        case duoplot::GuiElementType::Checkbox: {
             res = "CHECKBOX";
             break;
         }
-        case dvs::GuiElementType::EditableText: {
+        case duoplot::GuiElementType::EditableText: {
             res = "EDITABLE_TEXT";
             break;
         }
-        case dvs::GuiElementType::DropdownMenu: {
+        case duoplot::GuiElementType::DropdownMenu: {
             res = "DROPDOWN_MENU";
             break;
         }
-        case dvs::GuiElementType::ListBox: {
+        case duoplot::GuiElementType::ListBox: {
             res = "LISTBOX";
             break;
         }
-        case dvs::GuiElementType::RadioButtonGroup: {
+        case duoplot::GuiElementType::RadioButtonGroup: {
             res = "RADIO_BUTTON_GROUP";
             break;
         }
-        case dvs::GuiElementType::TextLabel: {
+        case duoplot::GuiElementType::TextLabel: {
             res = "TEXT_LABEL";
             break;
         }
-        case dvs::GuiElementType::StaticBox: {
+        case duoplot::GuiElementType::StaticBox: {
             res = "STATIC_BOX";
             break;
         }
-        case dvs::GuiElementType::PlotPane: {
+        case duoplot::GuiElementType::PlotPane: {
             res = "PLOT_PANE";
             break;
         }

@@ -6,10 +6,10 @@
 #include <string>
 #include <vector>
 
-#include "dvs/math/math.h"
-#include "dvs/math/pre_defs.h"
+#include "duoplot/math/math.h"
+#include "duoplot/math/pre_defs.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 class TestMathFunctions : public testing::Test
 {

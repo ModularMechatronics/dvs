@@ -30,6 +30,6 @@ bool MainApp::OnInit()
 
 int MainApp::OnExit()
 {
-    DVS_LOG_INFO() << "Exit from MainApp::OnExit!";
+    DUOPLOT_LOG_INFO() << "Exit from MainApp::OnExit!";
     return true;
 }

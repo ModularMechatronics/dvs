@@ -8,10 +8,10 @@
 #include <utility>
 #include <vector>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "tests/slam/color_maps.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace slam
 {
@@ -248,7 +248,7 @@ void showOneFrame(const std::string base_path, const size_t frame_num)
 
 void testRunSavedDataFromPython()
 {
-    const std::string project_file_path = "../../project_files/slam.dvs";
+    const std::string project_file_path = "../../project_files/slam.duoplot";
     const std::string base_path = "/Users/danielpi/work/dvs/slam_output/";
 
     // /Users/danielpi/work/dvs/slam_output

@@ -3,10 +3,10 @@
 
 #include <unistd.h>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "utils.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace append_properties
 {
@@ -16,7 +16,7 @@ void testBasic()
     const size_t num_elements = 100;
 
     const Vector<double> x = linspaceFromBoundariesAndCount<double>(0.0, 5.0, num_elements);
-    const Vector<double> y = dvs::sin(x);
+    const Vector<double> y = duoplot::sin(x);
 
     setCurrentElement("p_view_0");
     clearView();

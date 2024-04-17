@@ -6,11 +6,11 @@
 #include <string>
 #include <vector>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
-using namespace dvs::internal;
-using namespace dvs::properties;
+using namespace duoplot;
+using namespace duoplot::internal;
+using namespace duoplot::properties;
 
 DataType sizeToSignedDataType(const size_t size)
 {

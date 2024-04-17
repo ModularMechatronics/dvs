@@ -5,7 +5,7 @@ namespace gui_test
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/demo/gui_demo0.dvs";
+    const std::string project_file_path = "../../project_files/demo/gui_demo0.duoplot";
 
     openProjectFile(project_file_path);
 
@@ -28,9 +28,9 @@ void testBasic()
         softClearView();
     };
 
-    dvs::gui::registerGuiCallback("slider0", [&plot_data](const dvs::gui::SliderHandle& gui_element_handle) -> void {
-        const dvs::gui::SliderHandle slider1 = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider1");
-        const dvs::gui::SliderHandle slider2 = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider2");
+    duoplot::gui::registerGuiCallback("slider0", [&plot_data](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
+        const duoplot::gui::SliderHandle slider1 = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider1");
+        const duoplot::gui::SliderHandle slider2 = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider2");
 
         const double v0 = static_cast<double>(gui_element_handle.getValue()) / 100.0;
         const double v1 = static_cast<double>(slider1.getValue()) / 100.0;
@@ -39,9 +39,9 @@ void testBasic()
         plot_data(v0, v1, v2);
     });
 
-    dvs::gui::registerGuiCallback("slider1", [&plot_data](const dvs::gui::SliderHandle& gui_element_handle) -> void {
-        const dvs::gui::SliderHandle slider0 = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider0");
-        const dvs::gui::SliderHandle slider2 = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider2");
+    duoplot::gui::registerGuiCallback("slider1", [&plot_data](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
+        const duoplot::gui::SliderHandle slider0 = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider0");
+        const duoplot::gui::SliderHandle slider2 = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider2");
 
         const double v0 = static_cast<double>(slider0.getValue()) / 100.0;
         const double v1 = static_cast<double>(gui_element_handle.getValue()) / 100.0;
@@ -50,9 +50,9 @@ void testBasic()
         plot_data(v0, v1, v2);
     });
 
-    dvs::gui::registerGuiCallback("slider2", [&plot_data](const dvs::gui::SliderHandle& gui_element_handle) -> void {
-        const dvs::gui::SliderHandle slider0 = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider0");
-        const dvs::gui::SliderHandle slider1 = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider1");
+    duoplot::gui::registerGuiCallback("slider2", [&plot_data](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
+        const duoplot::gui::SliderHandle slider0 = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider0");
+        const duoplot::gui::SliderHandle slider1 = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider1");
 
         const double v0 = static_cast<double>(slider0.getValue()) / 100.0;
         const double v1 = static_cast<double>(slider1.getValue()) / 100.0;
@@ -61,7 +61,7 @@ void testBasic()
         plot_data(v0, v1, v2);
     });
 
-    dvs::gui::startGuiReceiveThread();
+    duoplot::gui::startGuiReceiveThread();
 
     std::cout << "Instructions:" << std::endl << "\"q\": Exits application" << std::endl;
 
@@ -103,7 +103,7 @@ bool operator!=(const SimParams& lhs, const SimParams& rhs)
 
 void testDynamicSystem()
 {
-    const std::string project_file_path = "../../project_files/demo/gui_demo0.dvs";
+    const std::string project_file_path = "../../project_files/demo/gui_demo0.duoplot";
 
     openProjectFile(project_file_path);
 
@@ -173,12 +173,12 @@ void testDynamicSystem()
 
     const auto mv = [](const int val) -> double { return static_cast<double>(val) / 100.0; };
 
-    dvs::gui::registerGuiCallback("slider_m", [&sim_params, &mv](const dvs::gui::SliderHandle& s_m) -> void {
-        // const dvs::gui::SliderHandle s_m = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_m");
-        const dvs::gui::SliderHandle s_c = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_c");
-        const dvs::gui::SliderHandle s_ks = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ks");
-        const dvs::gui::SliderHandle s_freq = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_freq");
-        const dvs::gui::SliderHandle s_amp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_amp");
+    duoplot::gui::registerGuiCallback("slider_m", [&sim_params, &mv](const duoplot::gui::SliderHandle& s_m) -> void {
+        // const duoplot::gui::SliderHandle s_m = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_m");
+        const duoplot::gui::SliderHandle s_c = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_c");
+        const duoplot::gui::SliderHandle s_ks = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ks");
+        const duoplot::gui::SliderHandle s_freq = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_freq");
+        const duoplot::gui::SliderHandle s_amp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_amp");
 
         sim_params.m = mv(s_m.getValue()) * 10.0 + 0.5;
         sim_params.c = 2.0 * mv(s_c.getValue()) + 1.0;
@@ -187,12 +187,12 @@ void testDynamicSystem()
         sim_params.amp = 100.0 * mv(s_amp.getValue()) + 1.0;
     });
 
-    dvs::gui::registerGuiCallback("slider_c", [&sim_params, &mv](const dvs::gui::SliderHandle& s_c) -> void {
-        const dvs::gui::SliderHandle s_m = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_m");
-        // const dvs::gui::SliderHandle s_c = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_c");
-        const dvs::gui::SliderHandle s_ks = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ks");
-        const dvs::gui::SliderHandle s_freq = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_freq");
-        const dvs::gui::SliderHandle s_amp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_amp");
+    duoplot::gui::registerGuiCallback("slider_c", [&sim_params, &mv](const duoplot::gui::SliderHandle& s_c) -> void {
+        const duoplot::gui::SliderHandle s_m = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_m");
+        // const duoplot::gui::SliderHandle s_c = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_c");
+        const duoplot::gui::SliderHandle s_ks = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ks");
+        const duoplot::gui::SliderHandle s_freq = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_freq");
+        const duoplot::gui::SliderHandle s_amp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_amp");
 
         sim_params.m = mv(s_m.getValue()) * 10.0 + 0.5;
         sim_params.c = 2.0 * mv(s_c.getValue()) + 1.0;
@@ -201,12 +201,12 @@ void testDynamicSystem()
         sim_params.amp = 100.0 * mv(s_amp.getValue()) + 1.0;
     });
 
-    dvs::gui::registerGuiCallback("slider_ks", [&sim_params, &mv](const dvs::gui::SliderHandle& s_ks) -> void {
-        const dvs::gui::SliderHandle s_m = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_m");
-        const dvs::gui::SliderHandle s_c = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_c");
-        // const dvs::gui::SliderHandle s_ks = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ks");
-        const dvs::gui::SliderHandle s_freq = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_freq");
-        const dvs::gui::SliderHandle s_amp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_amp");
+    duoplot::gui::registerGuiCallback("slider_ks", [&sim_params, &mv](const duoplot::gui::SliderHandle& s_ks) -> void {
+        const duoplot::gui::SliderHandle s_m = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_m");
+        const duoplot::gui::SliderHandle s_c = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_c");
+        // const duoplot::gui::SliderHandle s_ks = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ks");
+        const duoplot::gui::SliderHandle s_freq = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_freq");
+        const duoplot::gui::SliderHandle s_amp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_amp");
 
         sim_params.m = mv(s_m.getValue()) * 10.0 + 0.5;
         sim_params.c = 2.0 * mv(s_c.getValue()) + 1.0;
@@ -215,12 +215,12 @@ void testDynamicSystem()
         sim_params.amp = 100.0 * mv(s_amp.getValue()) + 1.0;
     });
 
-    dvs::gui::registerGuiCallback("slider_freq", [&sim_params, &mv](const dvs::gui::SliderHandle& s_freq) -> void {
-        const dvs::gui::SliderHandle s_m = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_m");
-        const dvs::gui::SliderHandle s_c = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_c");
-        const dvs::gui::SliderHandle s_ks = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ks");
-        // const dvs::gui::SliderHandle s_freq = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_freq");
-        const dvs::gui::SliderHandle s_amp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_amp");
+    duoplot::gui::registerGuiCallback("slider_freq", [&sim_params, &mv](const duoplot::gui::SliderHandle& s_freq) -> void {
+        const duoplot::gui::SliderHandle s_m = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_m");
+        const duoplot::gui::SliderHandle s_c = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_c");
+        const duoplot::gui::SliderHandle s_ks = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ks");
+        // const duoplot::gui::SliderHandle s_freq = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_freq");
+        const duoplot::gui::SliderHandle s_amp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_amp");
 
         sim_params.m = mv(s_m.getValue()) * 10.0 + 0.5;
         sim_params.c = 2.0 * mv(s_c.getValue()) + 1.0;
@@ -229,12 +229,12 @@ void testDynamicSystem()
         sim_params.amp = 100.0 * mv(s_amp.getValue()) + 1.0;
     });
 
-    dvs::gui::registerGuiCallback("slider_amp", [&sim_params, &mv](const dvs::gui::SliderHandle& s_amp) -> void {
-        const dvs::gui::SliderHandle s_m = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_m");
-        const dvs::gui::SliderHandle s_c = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_c");
-        const dvs::gui::SliderHandle s_ks = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ks");
-        const dvs::gui::SliderHandle s_freq = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_freq");
-        // const dvs::gui::SliderHandle s_amp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_amp");
+    duoplot::gui::registerGuiCallback("slider_amp", [&sim_params, &mv](const duoplot::gui::SliderHandle& s_amp) -> void {
+        const duoplot::gui::SliderHandle s_m = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_m");
+        const duoplot::gui::SliderHandle s_c = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_c");
+        const duoplot::gui::SliderHandle s_ks = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ks");
+        const duoplot::gui::SliderHandle s_freq = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_freq");
+        // const duoplot::gui::SliderHandle s_amp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_amp");
 
         sim_params.m = mv(s_m.getValue()) * 10.0 + 0.5;
         sim_params.c = 2.0 * mv(s_c.getValue()) + 1.0;
@@ -243,7 +243,7 @@ void testDynamicSystem()
         sim_params.amp = 100.0 * mv(s_amp.getValue()) + 1.0;
     });
 
-    dvs::gui::startGuiReceiveThread();
+    duoplot::gui::startGuiReceiveThread();
 
     std::cout << "Instructions:" << std::endl << "\"q\": Exits application" << std::endl;
 

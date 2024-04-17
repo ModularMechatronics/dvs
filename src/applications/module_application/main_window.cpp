@@ -199,7 +199,7 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
 
         if (q == gui_elements_.end())
         {
-            DVS_LOG_ERROR() << "Could not find gui element with handle string: " << handle_string
+            DUOPLOT_LOG_ERROR() << "Could not find gui element with handle string: " << handle_string
                             << ", returning empty object.";
             return GuiElement{};
         }
@@ -216,7 +216,7 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
 
         if (q == timers_.end())
         {
-            DVS_LOG_ERROR() << "Could not find timer with handle string: " << handle_string
+            DUOPLOT_LOG_ERROR() << "Could not find timer with handle string: " << handle_string
                             << ", returning empty object.";
             return Timer{};
         }
@@ -286,7 +286,7 @@ void MainWindow::createGuiElements(const std::string& path_to_layout_file)
                 {
                     if (elem_callback != nullptr)
                     {
-                        DVS_LOG_WARNING()
+                        DUOPLOT_LOG_WARNING()
                             << "TextLabel does not support having a callback function. No callback will be added";
                     }
                     setupStaticText(StaticTextAttributes{elem}, elem_callback);

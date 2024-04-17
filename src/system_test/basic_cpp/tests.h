@@ -3,10 +3,10 @@
 
 #include <algorithm>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "utils.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace basic_cpp
 {
@@ -70,12 +70,12 @@ properties::Color colorMapJet(const float value)
 void testOpenProjectFile()
 {
     const std::string base_path = "/Users/danielpi/work/dvs/project_files/";
-    const std::vector<std::string> project_files = {"ad_dataset.dvs",
-                                                    "car.dvs",
-                                                    "exp0.dvs"
-                                                    "imu.dvs",
-                                                    "legend.dvs",
-                                                    "particles.dvs"};
+    const std::vector<std::string> project_files = {"ad_dataset.duoplot",
+                                                    "car.duoplot",
+                                                    "exp0.duoplot"
+                                                    "imu.duoplot",
+                                                    "legend.duoplot",
+                                                    "particles.duoplot"};
 
     for (const auto& pf : project_files)
     {
@@ -83,7 +83,7 @@ void testOpenProjectFile()
         usleep(1000 * 100);
     }
 
-    openProjectFile(base_path + "exp0.dvs");
+    openProjectFile(base_path + "exp0.duoplot");
 }
 
 void testSurf()
@@ -762,7 +762,7 @@ void testStem()
     const size_t num_elements = 30;
 
     const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
-    const Vector<float> y = dvs::sin(x);
+    const Vector<float> y = duoplot::sin(x);
 
     setCurrentElement("p_view_0");
     clearView();
@@ -796,7 +796,7 @@ void testStairs()
 
 void testPlot3()
 {
-    openProjectFile("../../project_files/exp0.dvs");
+    openProjectFile("../../project_files/exp0.duoplot");
     setCurrentElement("p_view_0");
     clearView();
 
@@ -1141,7 +1141,7 @@ void testSetProperties()
     const size_t num_elements = 30;
 
     const Vector<float> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
-    const Vector<float> y = dvs::sin(x);
+    const Vector<float> y = duoplot::sin(x);
 
     setCurrentElement("p_view_0");
     clearView();
@@ -1472,7 +1472,7 @@ void testBackground()
 
 void testPointSelector()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 500;
@@ -1503,7 +1503,7 @@ void testPointSelector()
 
 void testPointSelectorWithExcludeSelection()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 500;
@@ -1534,7 +1534,7 @@ void testPointSelectorWithExcludeSelection()
 
 void testPlot2DashedLine()
 {
-    const std::string project_file_path = "../../project_files/dashed_lines.dvs";
+    const std::string project_file_path = "../../project_files/dashed_lines.duoplot";
     openProjectFile(project_file_path);
 
     const auto prepare_element = [](const std::string& element_name) -> void {
@@ -1730,7 +1730,7 @@ void testPlot2DashedLine()
 
 void testSetTitle()
 {
-    const std::string project_file_path = "../../project_files/exp0.dvs";
+    const std::string project_file_path = "../../project_files/exp0.duoplot";
     openProjectFile(project_file_path);
 
     setCurrentElement("p_view_0");
@@ -1860,11 +1860,11 @@ void testDrawCubes()
 
 void testCreateNewElement()
 {
-    const std::string project_file_path = "../../project_files/exp0.dvs";
+    const std::string project_file_path = "../../project_files/exp0.duoplot";
     openProjectFile(project_file_path);
 
     const Vector<double> t = linspaceFromBoundariesAndCount(0.0, 2.0 * M_PI, 1000);
-    const Vector<double> x = dvs::cos(t);
+    const Vector<double> x = duoplot::cos(t);
 
     setCurrentElement("p_view_0");
     clearView();
@@ -1887,8 +1887,8 @@ void testAxesSquare()
 
     t = linspaceFromBoundariesAndCount(0.0, 2.0 * M_PI, num_elements);
 
-    x = dvs::cos(t);
-    y = dvs::sin(t);
+    x = duoplot::cos(t);
+    y = duoplot::sin(t);
     z = 2.0 * t / (2.0 * M_PI) - 1.0;
 
     setCurrentElement("p_view_0");
@@ -1926,13 +1926,13 @@ void testAxesSquare()
 
 void testNan()
 {
-    openProjectFile("../../project_files/exp0.dvs");
+    openProjectFile("../../project_files/exp0.duoplot");
 
     const size_t num_elements = 100;
     Vector<double> x(num_elements), y(num_elements);
 
     x = linspaceFromBoundariesAndCount(0.0, 1.0, num_elements);
-    y = dvs::sin(x);
+    y = duoplot::sin(x);
 
     setCurrentElement("p1");
     clearView();

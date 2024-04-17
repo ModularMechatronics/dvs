@@ -3,7 +3,7 @@
 
 #include <assert.h>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
 void testInitMaps()
 {

@@ -215,7 +215,7 @@ properties::Color calculateColormapJetSoft(double value)
 
 void testLorenz()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const Vec3f p0{8.5f, 8.5f, 27.0f};
@@ -281,7 +281,7 @@ void testLorenz()
 
 void testBump()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const int num_rows = 70, num_cols = 70;
@@ -312,7 +312,7 @@ void testBump()
 void testScatterColorMap()
 {
     // TOOD: To use white plot box
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const int num_rows = 70, num_cols = 70;
@@ -368,7 +368,7 @@ void testScatterSamples()
 
     mean_val /= static_cast<float>(x.size());
 
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
     disableScaleOnRotation();
 
@@ -384,7 +384,7 @@ void testScatterSamples()
 
 void testFakeContour()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const std::int32_t num_rows = 100, num_cols = 100;
@@ -415,12 +415,12 @@ void testFakeContour()
         }
     }
 
-    double min_val = dvs::min(z);
-    double max_val = dvs::max(z);
+    double min_val = duoplot::min(z);
+    double max_val = duoplot::max(z);
 
     z = z + (std::abs(min_val) * 2.0);
-    min_val = dvs::min(z);
-    max_val = dvs::max(z);
+    min_val = duoplot::min(z);
+    max_val = duoplot::max(z);
 
     ImageRGB<std::uint8_t> img(num_rows, num_cols);
 
@@ -506,7 +506,7 @@ void testFakeContour()
 
 void testStocks()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 1000;
@@ -544,7 +544,7 @@ void testStocks()
 
 void testScatterCluster()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 1000, num_cluester = 6;
@@ -595,7 +595,7 @@ void testScatterCluster()
 
 void testScatterVaryingSize()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 200;
@@ -629,7 +629,7 @@ void testScatterVaryingSize()
 
 void testScatterSmallPoints()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 50000;
@@ -669,7 +669,7 @@ void testScatterSmallPoints()
 
 void testTransparentFillBelowPlot()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 1000;
@@ -812,7 +812,7 @@ void testTransparentFillBelowPlot()
 
 void testTransitioningSurfs()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_rows = 100, num_cols = 100;
@@ -846,25 +846,25 @@ void testTransitioningSurfs()
 
     const Matrix<double> rd = x - 0.5;
     const Matrix<double> cd = y - 0.5;
-    const Matrix<double> r_val = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 10.0;
+    const Matrix<double> r_val = duoplot::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 10.0;
 
-    surfaces(0) = dvs::sin(r_val) / r_val;
+    surfaces(0) = duoplot::sin(r_val) / r_val;
 
-    const Matrix<double> r_val1 = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 20.0;
+    const Matrix<double> r_val1 = duoplot::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 20.0;
 
-    surfaces(1) = dvs::sin(r_val1) / r_val1;
+    surfaces(1) = duoplot::sin(r_val1) / r_val1;
 
-    const Matrix<double> r_val2 = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 30.0;
+    const Matrix<double> r_val2 = duoplot::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 30.0;
 
     surfaces(2) = elementWiseMultiply(rd, rd) - elementWiseMultiply(cd, cd);
 
-    const Matrix<double> r_val3 = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 40.0;
+    const Matrix<double> r_val3 = duoplot::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 40.0;
 
     surfaces(3) = elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd);
 
-    const Matrix<double> r_val4 = dvs::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 50.0;
+    const Matrix<double> r_val4 = duoplot::sqrt(elementWiseMultiply(rd, rd) + elementWiseMultiply(cd, cd)) * 50.0;
 
-    surfaces(4) = dvs::sin(r_val4) / r_val4;
+    surfaces(4) = duoplot::sin(r_val4) / r_val4;
 
     /////////////////////////////////////////////////////////////////////////
     //////////////////////////// Create surfaces ////////////////////////////
@@ -912,9 +912,9 @@ void testIsoSurfaces()
     Matrix<double> u{uv_mats.first}, v{uv_mats.second};
 
     const Matrix<double> r = 2.0 + sin(7.0 * u + 5.0 * v);
-    // const Matrix<double> x = elementWiseMultiply(r, elementWiseMultiply(dvs::cos(u), dvs::sin(v)));
-    // const Matrix<double> y = elementWiseMultiply(r, elementWiseMultiply(dvs::sin(u), dvs::sin(v)));
-    // const Matrix<double> z = elementWiseMultiply(r, dvs::cos(v));
+    // const Matrix<double> x = elementWiseMultiply(r, elementWiseMultiply(duoplot::cos(u), duoplot::sin(v)));
+    // const Matrix<double> y = elementWiseMultiply(r, elementWiseMultiply(duoplot::sin(u), duoplot::sin(v)));
+    // const Matrix<double> z = elementWiseMultiply(r, duoplot::cos(v));
 
     const Matrix<double> x = elementWiseMultiply(u, sin(v));
     const Matrix<double> y = elementWiseMultiply(-u, cos(v));
@@ -931,7 +931,7 @@ void testIsoSurfaces()
 
 void testHyperboloid()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
     const size_t n_elems{100U};
 
@@ -955,12 +955,12 @@ void testHyperboloid()
 
         // if(f < )
 
-        // const Matrix<double> x = a * elementWiseMultiply(dvs::sqrt(f + v2), cos(theta));
-        // const Matrix<double> y = b * elementWiseMultiply(dvs::sqrt(f + v2), sin(theta));
+        // const Matrix<double> x = a * elementWiseMultiply(duoplot::sqrt(f + v2), cos(theta));
+        // const Matrix<double> y = b * elementWiseMultiply(duoplot::sqrt(f + v2), sin(theta));
         // const Matrix<double> z = c * sinh(v);
 
-        const Matrix<double> x = a * elementWiseMultiply(dvs::sqrt(f + v2), dvs::cos(theta));
-        const Matrix<double> y = b * elementWiseMultiply(dvs::sqrt(f + v2), dvs::sin(theta));
+        const Matrix<double> x = a * elementWiseMultiply(duoplot::sqrt(f + v2), duoplot::cos(theta));
+        const Matrix<double> y = b * elementWiseMultiply(duoplot::sqrt(f + v2), duoplot::sin(theta));
         const Matrix<double> z = c * sinh(v);
 
         return {x, y, z};
@@ -1016,7 +1016,7 @@ void testHyperboloid()
     }
 
     usleep(1000U * 1000U * 6U);
-    openProjectFile("../../project_files/small_bright.dvs");
+    openProjectFile("../../project_files/small_bright.duoplot");
 
     setCurrentElement("p_view_0");
     clearView();
@@ -1053,7 +1053,7 @@ void testHyperboloid()
 
 void testSphere()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
     const size_t n_elems{30U};
 
@@ -1065,8 +1065,8 @@ void testSphere()
     Matrix<double> r{n_elems, n_elems};
     r.fill(1.0);
 
-    const Matrix<double> x = elementWiseMultiply(elementWiseMultiply(r, dvs::sin(theta)), dvs::cos(phi));
-    const Matrix<double> y = elementWiseMultiply(elementWiseMultiply(r, dvs::sin(theta)), dvs::sin(phi));
+    const Matrix<double> x = elementWiseMultiply(elementWiseMultiply(r, duoplot::sin(theta)), duoplot::cos(phi));
+    const Matrix<double> y = elementWiseMultiply(elementWiseMultiply(r, duoplot::sin(theta)), duoplot::sin(phi));
     const Matrix<double> z = elementWiseMultiply(r, cos(theta));
 
     setCurrentElement("p_view_0");
@@ -1078,7 +1078,7 @@ void testLinesAndDots()
 {
     // IMPORTANT: For this demo, set minimum_y_pos_ = 0; in "plot_pane.cpp"
     // and remove the showing of handle. Also set the snapping angle to 0.0
-    const std::string project_file_path = "../../project_files/lines_and_dots.dvs";
+    const std::string project_file_path = "../../project_files/lines_and_dots.duoplot";
     openProjectFile(project_file_path);
 
     const double size_bias = debug_value_args::getValue<double>("size-bias", 3.0);
@@ -1202,7 +1202,7 @@ void testLinesAndDots()
 
 void testLissaJous()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t n_elements = 700;
@@ -1269,7 +1269,7 @@ void testLissaJous()
 
 void testCubeImage()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     ImageRGBA<std::uint8_t> input_img{10, 10};
@@ -1321,7 +1321,7 @@ void testCubeImage()
 
 void testFilteringWithSliders()
 {
-    const std::string project_file_path = "../../project_files/slider_and_plot.dvs";
+    const std::string project_file_path = "../../project_files/slider_and_plot.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_elements = 1000U;
@@ -1338,7 +1338,7 @@ void testFilteringWithSliders()
         y_n(k) += r * 0.1;
     }
 
-    dvs::gui::registerGuiCallback("slider0", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("slider0", [&](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
         const double val0 = static_cast<double>(gui_element_handle.getValue()) / 100.0;
 
         Vector<double> y_f = y_n;
@@ -1356,7 +1356,7 @@ void testFilteringWithSliders()
         softClearView();
     });
 
-    dvs::gui::startGuiReceiveThread();
+    duoplot::gui::startGuiReceiveThread();
 
     setCurrentElement("p_view_0");
     clearView();
@@ -1373,7 +1373,7 @@ void testFilteringWithSliders()
 
 void testPidTuner()
 {
-    const std::string project_file_path = "../../project_files/3_sliders_and_plot.dvs";
+    const std::string project_file_path = "../../project_files/3_sliders_and_plot.duoplot";
     openProjectFile(project_file_path);
 
     struct SimParams
@@ -1482,7 +1482,7 @@ void testPidTuner()
         using Vd = Vector<double>;
         using Vid = VectorInitializer<double>;
 
-        dvs::gui::getGuiElementHandle<dvs::gui::TextLabelHandle>("tl_rt").setLabel("Rise time: " +
+        duoplot::gui::getGuiElementHandle<duoplot::gui::TextLabelHandle>("tl_rt").setLabel("Rise time: " +
                                                                                    std::to_string(t(ss_idx)));
 
         setCurrentElement("p_view_0");
@@ -1529,25 +1529,25 @@ void testPidTuner()
         softClearView();
     };
 
-    dvs::gui::registerGuiCallback("slider_kp", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("slider_kp", [&](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
         const double val_kp = gui_element_handle.getNormalizedValue();
-        const double val_ki = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ki").getNormalizedValue();
-        const double val_kd = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kd").getNormalizedValue();
+        const double val_ki = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
+        const double val_kd = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
 
         plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
     });
 
-    dvs::gui::registerGuiCallback("slider_ki", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
-        const double val_kp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kp").getNormalizedValue();
+    duoplot::gui::registerGuiCallback("slider_ki", [&](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
+        const double val_kp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
         const double val_ki = gui_element_handle.getNormalizedValue();
-        const double val_kd = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kd").getNormalizedValue();
+        const double val_kd = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
 
         plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
     });
 
-    dvs::gui::registerGuiCallback("slider_kd", [&](const dvs::gui::SliderHandle& gui_element_handle) -> void {
-        const double val_kp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kp").getNormalizedValue();
-        const double val_ki = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ki").getNormalizedValue();
+    duoplot::gui::registerGuiCallback("slider_kd", [&](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
+        const double val_kp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
+        const double val_ki = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
         const double val_kd = gui_element_handle.getNormalizedValue();
 
         plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
@@ -1555,7 +1555,7 @@ void testPidTuner()
 
     run_sim(sim_params, x, vx);
 
-    dvs::gui::startGuiReceiveThread();
+    duoplot::gui::startGuiReceiveThread();
 
     setCurrentElement("p_view_0");
     clearView();
@@ -1567,9 +1567,9 @@ void testPidTuner()
     waitForFlush();
     axis({0.0, -0.5}, {t(end_idx), 0.5});
 
-    const double val_kp = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kp").getNormalizedValue();
-    const double val_ki = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_ki").getNormalizedValue();
-    const double val_kd = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider_kd").getNormalizedValue();
+    const double val_kp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
+    const double val_ki = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
+    const double val_kd = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
 
     plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
 
@@ -1581,7 +1581,7 @@ void testPidTuner()
 
 void testThreeBodyProblem()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     struct Body
@@ -1827,7 +1827,7 @@ void testThreeBodyProblem()
 
 void testSwirls()
 {
-    const std::string project_file_path = "../../project_files/demo_white.dvs";
+    const std::string project_file_path = "../../project_files/demo_white.duoplot";
     openProjectFile(project_file_path);
 
     const size_t n_its = 500U;
@@ -1836,10 +1836,10 @@ void testSwirls()
     const double t_end = 2.0 * M_PI;
 
     const Vector<double> t = linspaceFromBoundariesAndCount<double>(0.0, t_end, n_elems);
-    const Vectord xc = dvs::sin(t);
-    const Vectord yc = dvs::cos(t);
+    const Vectord xc = duoplot::sin(t);
+    const Vectord yc = duoplot::cos(t);
 
-    const Vectord xs = dvs::sin(t + xc / 4.0);
+    const Vectord xs = duoplot::sin(t + xc / 4.0);
 
     const auto col = properties::Color::BLACK;
     const auto lw = properties::LineWidth(1.0f);
@@ -1924,7 +1924,7 @@ void testSwirls()
 
 void testBouncingBalls()
 {
-    const std::string project_file_path = "../../project_files/demo_black.dvs";
+    const std::string project_file_path = "../../project_files/demo_black.duoplot";
     openProjectFile(project_file_path);
 
     const size_t n_balls = 50U;
@@ -1934,8 +1934,8 @@ void testBouncingBalls()
     const double radius2 = radius * radius;
 
     const Vector<double> t = linspaceFromBoundariesAndCount<double>(0.0, 2.0 * M_PI, 100U);
-    const Vectord xc = radius * dvs::sin(t);
-    const Vectord yc = radius * dvs::cos(t);
+    const Vectord xc = radius * duoplot::sin(t);
+    const Vectord yc = radius * duoplot::cos(t);
 
     struct Ball
     {
@@ -2169,7 +2169,7 @@ std::function<double(double, double)> f_klein = [](const double x, const double 
 
 void testSeries()
 {
-    const std::string project_file_path = "../../project_files/series.dvs";
+    const std::string project_file_path = "../../project_files/series.duoplot";
     openProjectFile(project_file_path);
 
     const size_t n_size = 100;
@@ -2277,7 +2277,7 @@ void testSeries()
 
 void testTopology()
 {
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small.duoplot";
     openProjectFile(project_file_path);
 
     const size_t n_size = 100;
@@ -2460,7 +2460,7 @@ void testTopology()
 
 void testChaos()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t n_its = 100U;
@@ -2502,7 +2502,7 @@ void testChaos()
 
 void testColorfulScatter()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     // TODO: When running this demo, uncomment the "black edge" in scatter_shader.fs for "DISC"

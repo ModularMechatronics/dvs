@@ -68,7 +68,7 @@ void drawGrid()
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/joints.dvs";
+    const std::string project_file_path = "../../project_files/joints.duoplot";
 
     openProjectFile(project_file_path);
 

@@ -6,12 +6,12 @@
 #include <string>
 #include <vector>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
-using namespace dvs::internal;
+using namespace duoplot;
+using namespace duoplot::internal;
 
-namespace prp = dvs::properties;
+namespace prp = duoplot::properties;
 
 class TestCommunicationHeader : public testing::Test
 {
@@ -99,21 +99,21 @@ TEST_F(TestCommunicationHeader, TestBasic)
             case CommunicationHeaderObjectType::PROPERTY:
                 switch (values[k].as<PropertyBase>().getPropertyType())
                 {
-                    case dvs::internal::PropertyType::COLOR:
+                    case duoplot::internal::PropertyType::COLOR:
                         ASSERT_EQ(values[k].as<prp::Color>().red, col.red);
                         ASSERT_EQ(values[k].as<prp::Color>().green, col.green);
                         ASSERT_EQ(values[k].as<prp::Color>().blue, col.blue);
                         break;
-                    case dvs::internal::PropertyType::ALPHA:
+                    case duoplot::internal::PropertyType::ALPHA:
                         ASSERT_EQ(values[k].as<prp::Alpha>().data, alpha.data);
                         break;
-                    case dvs::internal::PropertyType::LINE_WIDTH:
+                    case duoplot::internal::PropertyType::LINE_WIDTH:
                         ASSERT_EQ(values[k].as<prp::LineWidth>().data, lw.data);
                         break;
-                    case dvs::internal::PropertyType::PERSISTENT:
+                    case duoplot::internal::PropertyType::PERSISTENT:
                         ASSERT_EQ(values[k].as<PropertyType>(), prp::PERSISTENT);
                         break;
-                    case dvs::internal::PropertyType::POINT_SIZE:
+                    case duoplot::internal::PropertyType::POINT_SIZE:
                         ASSERT_EQ(values[k].as<prp::PointSize>().data, ps.data);
                         break;
                     default:

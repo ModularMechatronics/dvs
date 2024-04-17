@@ -4,12 +4,12 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "dvs/math/math.h"
+#include "duoplot/math/math.h"
 #include "gui_window.h"
 #include "main_window.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 
-using namespace dvs::internal;
+using namespace duoplot::internal;
 
 void MainWindow::setCurrentElement(const ReceivedData& received_data)
 {
@@ -20,7 +20,7 @@ void MainWindow::setCurrentElement(const ReceivedData& received_data)
 
     if (current_element_name.length() == 0)
     {
-        DVS_LOG_WARNING() << "Label string had zero length!";
+        DUOPLOT_LOG_WARNING() << "Label string had zero length!";
         return;
     }
 
@@ -248,7 +248,7 @@ void MainWindow::tcpReceiveThreadFunction()
         /*std::atomic<bool> received_data_has_been_moved = false;
 
         std::thread local_thread([this, &received_data, &received_data_has_been_moved] {
-            // DVS_LOG_DEBUG() << "In thread!";
+            // DUOPLOT_LOG_DEBUG() << "In thread!";
             ReceivedData local_received_data{std::move(received_data)};
             received_data_has_been_moved = true;
             manageReceivedData(local_received_data);

@@ -5,6 +5,7 @@ Pre release:
 - Change name of application to duoplot
 - Add all keybindings to the help pane
 - Delete element for slider (and probably other gui elements) doesn't work
+- Clean up and sanitize CMakeLists.txt files, so that they are "neat"
 - Adding a slider with the wrong aspect ratio of the window still gives crap result, with a vertical slider
   that is unmovable...
 - Solve all TODOs

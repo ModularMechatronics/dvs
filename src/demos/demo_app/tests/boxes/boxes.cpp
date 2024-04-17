@@ -296,7 +296,7 @@ RigidBody* placeCubeAt(PhysicsWorld* world,
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/boxes.dvs";
+    const std::string project_file_path = "../../project_files/boxes.duoplot";
     openProjectFile(project_file_path);
 
     PhysicsCommon physicsCommon;

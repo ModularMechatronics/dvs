@@ -3,7 +3,7 @@
 #include <ctime>
 #include <iomanip>
 
-#include "dvs/internal.h"
+#include "duoplot/internal.h"
 #include "events.h"
 #include "globals.h"
 #include "main_window.h"
@@ -138,15 +138,15 @@ GuiWindow::GuiWindow(
     popup_menu_element_ = new wxMenu(wxT(""));
     popup_menu_tab_ = new wxMenu(wxT(""));
 
-    std::vector<std::pair<dvs_ids::DvsIds, wxString>> items{{dvs_ids::NEW_PLOT_PANE, "Plot pane"},
-                                                            {dvs_ids::NEW_BUTTON, "Button"},
-                                                            {dvs_ids::NEW_SLIDER, "Slider"},
-                                                            {dvs_ids::NEW_LIST_BOX, "List box"},
-                                                            {dvs_ids::NEW_EDITABLE_TEXT, "Editable Text"},
-                                                            {dvs_ids::NEW_DROP_DOWN_MENU, "Drop Down Menu"},
-                                                            {dvs_ids::NEW_RADIO_BUTTON_GROUP, "Radio Button Group"},
-                                                            {dvs_ids::NEW_CHECK_BOX, "Checkbox"},
-                                                            {dvs_ids::NEW_TEXT_LABEL, "Text label"}};
+    std::vector<std::pair<duoplot_ids::DuoplotIds, wxString>> items{{duoplot_ids::NEW_PLOT_PANE, "Plot pane"},
+                                                            {duoplot_ids::NEW_BUTTON, "Button"},
+                                                            {duoplot_ids::NEW_SLIDER, "Slider"},
+                                                            {duoplot_ids::NEW_LIST_BOX, "List box"},
+                                                            {duoplot_ids::NEW_EDITABLE_TEXT, "Editable Text"},
+                                                            {duoplot_ids::NEW_DROP_DOWN_MENU, "Drop Down Menu"},
+                                                            {duoplot_ids::NEW_RADIO_BUTTON_GROUP, "Radio Button Group"},
+                                                            {duoplot_ids::NEW_CHECK_BOX, "Checkbox"},
+                                                            {duoplot_ids::NEW_TEXT_LABEL, "Text label"}};
 
     for (const auto& item : items)
     {
@@ -156,100 +156,100 @@ GuiWindow::GuiWindow(
     }
 
     popup_menu_window_->AppendSeparator();
-    popup_menu_window_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
+    popup_menu_window_->Append(duoplot_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_window_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_window_->AppendSeparator();
-    popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
-    popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
-    popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
-    popup_menu_window_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
+    popup_menu_window_->AppendRadioItem(duoplot_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
+    popup_menu_window_->AppendRadioItem(duoplot_ids::TOGGLE_TO_PAN, wxT("Pan"));
+    popup_menu_window_->AppendRadioItem(duoplot_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
+    popup_menu_window_->AppendRadioItem(duoplot_ids::TOGGLE_TO_SELECT, wxT("Select"));
 
     popup_menu_window_->AppendSeparator();
-    popup_menu_window_->Append(dvs_ids::PRINT_GUI_CODE, wxT("Print gui code"));
+    popup_menu_window_->Append(duoplot_ids::PRINT_GUI_CODE, wxT("Print gui code"));
 
     popup_menu_window_->AppendSeparator();
     popup_menu_window_->Append(callback_id_ + 2, wxT("New window"));
-    popup_menu_window_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
+    popup_menu_window_->Append(duoplot_ids::NEW_TAB, wxT("New tab"));
 
     popup_menu_window_->AppendSubMenu(new_element_menu_window_, wxT("New element"));
 
-    popup_menu_element_->Append(dvs_ids::EDIT_ELEMENT_NAME, wxT("Edit element"));
-    popup_menu_element_->Append(dvs_ids::DELETE_ELEMENT, wxT("Delete element"));
-    popup_menu_element_->Append(dvs_ids::TOGGLE_PROJECTION_MODE, wxT("Toggle projection mode"));
-    popup_menu_element_->Append(dvs_ids::RAISE_ELEMENT, wxT("Raise"));
-    popup_menu_element_->Append(dvs_ids::LOWER_ELEMENT, wxT("Lower"));
+    popup_menu_element_->Append(duoplot_ids::EDIT_ELEMENT_NAME, wxT("Edit element"));
+    popup_menu_element_->Append(duoplot_ids::DELETE_ELEMENT, wxT("Delete element"));
+    popup_menu_element_->Append(duoplot_ids::TOGGLE_PROJECTION_MODE, wxT("Toggle projection mode"));
+    popup_menu_element_->Append(duoplot_ids::RAISE_ELEMENT, wxT("Raise"));
+    popup_menu_element_->Append(duoplot_ids::LOWER_ELEMENT, wxT("Lower"));
     popup_menu_element_->AppendSeparator();
-    popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
-    popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
-    popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
-    popup_menu_element_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
+    popup_menu_element_->AppendRadioItem(duoplot_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
+    popup_menu_element_->AppendRadioItem(duoplot_ids::TOGGLE_TO_PAN, wxT("Pan"));
+    popup_menu_element_->AppendRadioItem(duoplot_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
+    popup_menu_element_->AppendRadioItem(duoplot_ids::TOGGLE_TO_SELECT, wxT("Select"));
 
     popup_menu_element_->AppendSeparator();
-    popup_menu_element_->Append(dvs_ids::PRINT_GUI_CODE, wxT("Print gui code"));
+    popup_menu_element_->Append(duoplot_ids::PRINT_GUI_CODE, wxT("Print gui code"));
 
     popup_menu_element_->AppendSeparator();
-    popup_menu_element_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
+    popup_menu_element_->Append(duoplot_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_element_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_element_->AppendSeparator();
     popup_menu_element_->Append(callback_id_ + 2, wxT("New window"));
-    popup_menu_element_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
+    popup_menu_element_->Append(duoplot_ids::NEW_TAB, wxT("New tab"));
     popup_menu_element_->AppendSubMenu(new_element_menu_element_, wxT("New element"));
 
-    popup_menu_tab_->Append(dvs_ids::EDIT_TAB_NAME, wxT("Edit tab name"));
-    popup_menu_tab_->Append(dvs_ids::DELETE_TAB, wxT("Delete tab"));
+    popup_menu_tab_->Append(duoplot_ids::EDIT_TAB_NAME, wxT("Edit tab name"));
+    popup_menu_tab_->Append(duoplot_ids::DELETE_TAB, wxT("Delete tab"));
     popup_menu_tab_->AppendSeparator();
-    popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
-    popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_PAN, wxT("Pan"));
-    popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
-    popup_menu_tab_->AppendRadioItem(dvs_ids::TOGGLE_TO_SELECT, wxT("Select"));
+    popup_menu_tab_->AppendRadioItem(duoplot_ids::TOGGLE_TO_ZOOM, wxT("Zoom"));
+    popup_menu_tab_->AppendRadioItem(duoplot_ids::TOGGLE_TO_PAN, wxT("Pan"));
+    popup_menu_tab_->AppendRadioItem(duoplot_ids::TOGGLE_TO_ROTATE, wxT("Rotate"));
+    popup_menu_tab_->AppendRadioItem(duoplot_ids::TOGGLE_TO_SELECT, wxT("Select"));
 
     popup_menu_tab_->AppendSeparator();
-    popup_menu_tab_->Append(dvs_ids::PRINT_GUI_CODE, wxT("Print gui code"));
+    popup_menu_tab_->Append(duoplot_ids::PRINT_GUI_CODE, wxT("Print gui code"));
 
     popup_menu_tab_->AppendSeparator();
-    popup_menu_tab_->Append(dvs_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
+    popup_menu_tab_->Append(duoplot_ids::EDIT_WINDOW_NAME, wxT("Edit window name"));
     popup_menu_tab_->Append(callback_id_ + 1, wxT("Delete window"));
     popup_menu_tab_->AppendSeparator();
     popup_menu_tab_->Append(callback_id_ + 2, wxT("New window"));
-    popup_menu_tab_->Append(dvs_ids::NEW_TAB, wxT("New tab"));
+    popup_menu_tab_->Append(duoplot_ids::NEW_TAB, wxT("New tab"));
     popup_menu_tab_->AppendSubMenu(new_element_menu_tab_, wxT("New element"));
 
     getMenuItemFromString(popup_menu_window_, "Rotate")->Check(true);
     getMenuItemFromString(popup_menu_element_, "Rotate")->Check(true);
     getMenuItemFromString(popup_menu_tab_, "Rotate")->Check(true);
 
-    Bind(wxEVT_MENU, &GuiWindow::editWindowName, this, dvs_ids::EDIT_WINDOW_NAME);
+    Bind(wxEVT_MENU, &GuiWindow::editWindowName, this, duoplot_ids::EDIT_WINDOW_NAME);
     Bind(wxEVT_MENU, &MainWindow::deleteWindow, static_cast<MainWindow*>(main_window_), callback_id_ + 1);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, static_cast<MainWindow*>(main_window_), callback_id_ + 2);
-    Bind(wxEVT_MENU, &GuiWindow::newTab, this, dvs_ids::NEW_TAB);
+    Bind(wxEVT_MENU, &GuiWindow::newTab, this, duoplot_ids::NEW_TAB);
 
-    Bind(wxEVT_MENU, &GuiWindow::createNewPlotPaneCallbackFunction, this, dvs_ids::NEW_PLOT_PANE);
-    Bind(wxEVT_MENU, &GuiWindow::createNewButtonCallbackFunction, this, dvs_ids::NEW_BUTTON);
-    Bind(wxEVT_MENU, &GuiWindow::createNewSliderCallbackFunction, this, dvs_ids::NEW_SLIDER);
-    Bind(wxEVT_MENU, &GuiWindow::createNewListBoxCallbackFunction, this, dvs_ids::NEW_LIST_BOX);
-    Bind(wxEVT_MENU, &GuiWindow::createNewEditableTextCallbackFunction, this, dvs_ids::NEW_EDITABLE_TEXT);
-    Bind(wxEVT_MENU, &GuiWindow::createNewDropdownMenuCallbackFunction, this, dvs_ids::NEW_DROP_DOWN_MENU);
-    Bind(wxEVT_MENU, &GuiWindow::createNewRadioButtonGroupCallbackFunction, this, dvs_ids::NEW_RADIO_BUTTON_GROUP);
-    Bind(wxEVT_MENU, &GuiWindow::createNewCheckboxCallbackFunction, this, dvs_ids::NEW_CHECK_BOX);
-    Bind(wxEVT_MENU, &GuiWindow::createNewTextLabelCallbackFunction, this, dvs_ids::NEW_TEXT_LABEL);
+    Bind(wxEVT_MENU, &GuiWindow::createNewPlotPaneCallbackFunction, this, duoplot_ids::NEW_PLOT_PANE);
+    Bind(wxEVT_MENU, &GuiWindow::createNewButtonCallbackFunction, this, duoplot_ids::NEW_BUTTON);
+    Bind(wxEVT_MENU, &GuiWindow::createNewSliderCallbackFunction, this, duoplot_ids::NEW_SLIDER);
+    Bind(wxEVT_MENU, &GuiWindow::createNewListBoxCallbackFunction, this, duoplot_ids::NEW_LIST_BOX);
+    Bind(wxEVT_MENU, &GuiWindow::createNewEditableTextCallbackFunction, this, duoplot_ids::NEW_EDITABLE_TEXT);
+    Bind(wxEVT_MENU, &GuiWindow::createNewDropdownMenuCallbackFunction, this, duoplot_ids::NEW_DROP_DOWN_MENU);
+    Bind(wxEVT_MENU, &GuiWindow::createNewRadioButtonGroupCallbackFunction, this, duoplot_ids::NEW_RADIO_BUTTON_GROUP);
+    Bind(wxEVT_MENU, &GuiWindow::createNewCheckboxCallbackFunction, this, duoplot_ids::NEW_CHECK_BOX);
+    Bind(wxEVT_MENU, &GuiWindow::createNewTextLabelCallbackFunction, this, duoplot_ids::NEW_TEXT_LABEL);
 
-    Bind(wxEVT_MENU, &GuiWindow::editElementName, this, dvs_ids::EDIT_ELEMENT_NAME);
-    Bind(wxEVT_MENU, &GuiWindow::deleteElement, this, dvs_ids::DELETE_ELEMENT);
+    Bind(wxEVT_MENU, &GuiWindow::editElementName, this, duoplot_ids::EDIT_ELEMENT_NAME);
+    Bind(wxEVT_MENU, &GuiWindow::deleteElement, this, duoplot_ids::DELETE_ELEMENT);
 
-    Bind(wxEVT_MENU, &GuiWindow::toggleToZoomCallback, this, dvs_ids::TOGGLE_TO_ZOOM);
-    Bind(wxEVT_MENU, &GuiWindow::toggleToPanCallback, this, dvs_ids::TOGGLE_TO_PAN);
-    Bind(wxEVT_MENU, &GuiWindow::toggleToRotateCallback, this, dvs_ids::TOGGLE_TO_ROTATE);
-    Bind(wxEVT_MENU, &GuiWindow::toggleToSelectCallback, this, dvs_ids::TOGGLE_TO_SELECT);
+    Bind(wxEVT_MENU, &GuiWindow::toggleToZoomCallback, this, duoplot_ids::TOGGLE_TO_ZOOM);
+    Bind(wxEVT_MENU, &GuiWindow::toggleToPanCallback, this, duoplot_ids::TOGGLE_TO_PAN);
+    Bind(wxEVT_MENU, &GuiWindow::toggleToRotateCallback, this, duoplot_ids::TOGGLE_TO_ROTATE);
+    Bind(wxEVT_MENU, &GuiWindow::toggleToSelectCallback, this, duoplot_ids::TOGGLE_TO_SELECT);
 
-    Bind(wxEVT_MENU, &GuiWindow::toggleProjectionMode, this, dvs_ids::TOGGLE_PROJECTION_MODE);
-    Bind(wxEVT_MENU, &GuiWindow::raiseElement, this, dvs_ids::RAISE_ELEMENT);
-    Bind(wxEVT_MENU, &GuiWindow::lowerElement, this, dvs_ids::LOWER_ELEMENT);
-    Bind(wxEVT_MENU, &GuiWindow::editTabName, this, dvs_ids::EDIT_TAB_NAME);
-    Bind(wxEVT_MENU, &GuiWindow::deleteTab, this, dvs_ids::DELETE_TAB);
+    Bind(wxEVT_MENU, &GuiWindow::toggleProjectionMode, this, duoplot_ids::TOGGLE_PROJECTION_MODE);
+    Bind(wxEVT_MENU, &GuiWindow::raiseElement, this, duoplot_ids::RAISE_ELEMENT);
+    Bind(wxEVT_MENU, &GuiWindow::lowerElement, this, duoplot_ids::LOWER_ELEMENT);
+    Bind(wxEVT_MENU, &GuiWindow::editTabName, this, duoplot_ids::EDIT_TAB_NAME);
+    Bind(wxEVT_MENU, &GuiWindow::deleteTab, this, duoplot_ids::DELETE_TAB);
     Bind(wxEVT_KEY_DOWN, &GuiWindow::keyPressedCallback, this);
     Bind(wxEVT_KEY_UP, &GuiWindow::keyReleasedCallback, this);
 
-    Bind(wxEVT_MENU, &GuiWindow::printGuiCode, this, dvs_ids::PRINT_GUI_CODE);
+    Bind(wxEVT_MENU, &GuiWindow::printGuiCode, this, duoplot_ids::PRINT_GUI_CODE);
 
     Bind(wxEVT_CLOSE_WINDOW, &GuiWindow::OnClose, this);
     Bind(wxEVT_SIZE, &GuiWindow::OnSize, this);
@@ -976,17 +976,17 @@ std::map<std::string, std::pair<std::string, std::string>> transformElementSetti
     std::map<std::string, std::pair<std::string, std::string>> ret_fields;
     ret_fields["handle_string"] = {"Handle string", element_settings->handle_string};
 
-    if (element_settings->type == dvs::GuiElementType::Button)
+    if (element_settings->type == duoplot::GuiElementType::Button)
     {
         std::shared_ptr<ButtonSettings> bs = std::dynamic_pointer_cast<ButtonSettings>(element_settings);
         ret_fields["label"] = {"Label", bs->label};
     }
-    else if (element_settings->type == dvs::GuiElementType::Checkbox)
+    else if (element_settings->type == duoplot::GuiElementType::Checkbox)
     {
         std::shared_ptr<CheckboxSettings> cs = std::dynamic_pointer_cast<CheckboxSettings>(element_settings);
         ret_fields["label"] = {"Label", cs->label};
     }
-    else if (element_settings->type == dvs::GuiElementType::Slider)
+    else if (element_settings->type == duoplot::GuiElementType::Slider)
     {
         std::shared_ptr<SliderSettings> ss = std::dynamic_pointer_cast<SliderSettings>(element_settings);
         // ret_fields["is_horizontal"] = {"Is horizontal", ss->is_horizontal ? "true" : "false"};
@@ -994,7 +994,7 @@ std::map<std::string, std::pair<std::string, std::string>> transformElementSetti
         ret_fields["max_value"] = {"Max value", std::to_string(ss->max_value)};
         ret_fields["min_value"] = {"Min value", std::to_string(ss->min_value)};
     }
-    else if (element_settings->type == dvs::GuiElementType::PlotPane)
+    else if (element_settings->type == duoplot::GuiElementType::PlotPane)
     {
         std::shared_ptr<PlotPaneSettings> pps = std::dynamic_pointer_cast<PlotPaneSettings>(element_settings);
         ret_fields["title"] = {"Title", pps->title};

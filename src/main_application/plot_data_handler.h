@@ -7,14 +7,14 @@
 #include "axes/legend_properties.h"
 #include "color_picker.h"
 #include "communication/received_data.h"
-#include "dvs/internal.h"
-#include "dvs/math/math.h"
+#include "duoplot/internal.h"
+#include "duoplot/math/math.h"
 #include "input_data.h"
 #include "misc/rgb_triplet.h"
 #include "properties.h"
 
-using namespace dvs;
-using namespace dvs::internal;
+using namespace duoplot;
+using namespace duoplot::internal;
 
 class PlotObjectBase;
 struct ShaderCollection;

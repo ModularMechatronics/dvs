@@ -8,9 +8,9 @@
 #include <nlohmann/json.hpp>
 #include <tuple>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace gui_test
 {

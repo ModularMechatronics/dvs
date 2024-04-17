@@ -6,7 +6,7 @@ void DynamicModule::loadModule(const std::string& path_to_module_library)
 
     if ((!lib_ptr_) || (lib_ptr_ == NULL) || (lib_ptr_ == 0) || (lib_ptr_ == nullptr))
     {
-        DVS_LOG_ERROR() << "Library not loaded!";
+        DUOPLOT_LOG_ERROR() << "Library not loaded!";
         return;
     }
 
@@ -14,7 +14,7 @@ void DynamicModule::loadModule(const std::string& path_to_module_library)
 
     if (error_str != NULL)
     {
-        DVS_LOG_ERROR() << "Error: " << error_str;
+        DUOPLOT_LOG_ERROR() << "Error: " << error_str;
         return;
     }
 
@@ -24,7 +24,7 @@ void DynamicModule::loadModule(const std::string& path_to_module_library)
     if ((!register_callbacks_function_) || (register_callbacks_function_ == NULL) ||
         (register_callbacks_function_ == 0) || (register_callbacks_function_ == nullptr))
     {
-        DVS_LOG_ERROR() << "Function not loaded!";
+        DUOPLOT_LOG_ERROR() << "Function not loaded!";
     }
 
     error_str = dlerror();
@@ -32,7 +32,7 @@ void DynamicModule::loadModule(const std::string& path_to_module_library)
     if (error_str != NULL)
     {
         register_callbacks_function_ = nullptr;
-        DVS_LOG_ERROR() << "Error: " << error_str;
+        DUOPLOT_LOG_ERROR() << "Error: " << error_str;
         return;
     }
 }
@@ -64,6 +64,6 @@ void DynamicModule::registerCallbacks(std::map<std::string, GuiElementCallback>&
     }
     else
     {
-        DVS_LOG_ERROR() << "No valid function to register callbacks!";
+        DUOPLOT_LOG_ERROR() << "No valid function to register callbacks!";
     }
 }

@@ -6,9 +6,9 @@
 #include <string>
 #include <vector>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 using Mat = Matrix<int>;
 

@@ -1,9 +1,9 @@
 #ifndef DEMOS_TESTS_DUOPLOT_TEXT_H_
 #define DEMOS_TESTS_DUOPLOT_TEXT_H_
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace duoplot_text
 {
@@ -138,7 +138,7 @@ properties::Color calculateColormapJetSoft_duoplot_text(double value)
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/small_bright.dvs";
+    const std::string project_file_path = "../../project_files/small_bright.duoplot";
     openProjectFile(project_file_path);
 
     ImageRGBA<std::uint8_t> img;

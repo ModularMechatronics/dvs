@@ -13,34 +13,34 @@ ConfigurationAgent::~ConfigurationAgent() {}
 
 ConfigurationAgent::ConfigurationAgent() : is_valid_{true}
 {
-    const dvs::filesystem::path dvs_dir_path{getConfigDir()};
+    const duoplot::filesystem::path duoplot_dir_path{getConfigDir()};
 
-    if (!dvs::filesystem::exists(dvs_dir_path))
+    if (!duoplot::filesystem::exists(duoplot_dir_path))
     {
-        DVS_LOG_INFO() << "dvs dir does not exist, creating...";
+        DUOPLOT_LOG_INFO() << "duoplot dir does not exist, creating...";
         try
         {
-            dvs::filesystem::create_directory(dvs_dir_path);
+            duoplot::filesystem::create_directory(duoplot_dir_path);
         }
         catch (const std::exception& e)
         {
-            DVS_LOG_ERROR() << "Failed to create dvs directory at \"" << dvs_dir_path << "\". Exception: " << e.what();
+            DUOPLOT_LOG_ERROR() << "Failed to create duoplot directory at \"" << duoplot_dir_path << "\". Exception: " << e.what();
             is_valid_ = false;
             return;
         }
     }
-    configuration_file_path_ = dvs::filesystem::path(dvs_dir_path / "configuration.json");
+    configuration_file_path_ = duoplot::filesystem::path(duoplot_dir_path / "configuration.json");
 
-    if (!dvs::filesystem::exists(configuration_file_path_))
+    if (!duoplot::filesystem::exists(configuration_file_path_))
     {
-        DVS_LOG_INFO() << "The file \"" << configuration_file_path_ << "\" file does not exist, creating...";
+        DUOPLOT_LOG_INFO() << "The file \"" << configuration_file_path_ << "\" file does not exist, creating...";
         try
         {
             createEmptyConfigurationFile();
         }
         catch (const std::exception& e)
         {
-            DVS_LOG_ERROR() << "Failed to create configuration file at \"" << configuration_file_path_
+            DUOPLOT_LOG_ERROR() << "Failed to create configuration file at \"" << configuration_file_path_
                             << "\". Exception: " << e.what();
             is_valid_ = false;
             return;
@@ -56,7 +56,7 @@ ConfigurationAgent::ConfigurationAgent() : is_valid_{true}
         }
         catch (const std::exception& e)
         {
-            DVS_LOG_WARNING() << "Error reading existing configuration file \"" << configuration_file_path_
+            DUOPLOT_LOG_WARNING() << "Error reading existing configuration file \"" << configuration_file_path_
                               << "\". Exception: " << e.what() << ". Creating a new one.";
         }
 
@@ -68,7 +68,7 @@ ConfigurationAgent::ConfigurationAgent() : is_valid_{true}
             }
             catch (const std::exception& e)
             {
-                DVS_LOG_ERROR() << "Failed to create configuration.json at \"" << configuration_file_path_
+                DUOPLOT_LOG_ERROR() << "Failed to create configuration.json at \"" << configuration_file_path_
                                 << "\". Exception: " << e.what() << ". Exiting.";
                 is_valid_ = false;
                 return;
@@ -93,14 +93,14 @@ bool ConfigurationAgent::hasKey(const std::string& key)
         }
         catch (const std::exception& e)
         {
-            DVS_LOG_ERROR() << "Error calling ConfigurationAgent::hasKey(" << key << ") in configuration file \""
+            DUOPLOT_LOG_ERROR() << "Error calling ConfigurationAgent::hasKey(" << key << ") in configuration file \""
                             << configuration_file_path_ << "\".";
             return 0;
         }
     }
     else
     {
-        DVS_LOG_ERROR() << "Tried calling ConfigurationAgent::hasKey(" << key << ") for invalid ConfigurationAgent!";
+        DUOPLOT_LOG_ERROR() << "Tried calling ConfigurationAgent::hasKey(" << key << ") for invalid ConfigurationAgent!";
         return false;
     }
 }

@@ -5,15 +5,15 @@
 
 #include <iostream>
 
-#include "dvs/enumerations.h"
-#include "dvs/logging.h"
-#include "dvs/math/math.h"
+#include "duoplot/enumerations.h"
+#include "duoplot/logging.h"
+#include "duoplot/math/math.h"
 #include "main_application/plot_objects/utils.h"
 #include "misc/rgb_triplet.h"
 #include "opengl_low_level/opengl_header.h"
 
-using namespace dvs::internal;
-using namespace dvs;
+using namespace duoplot::internal;
+using namespace duoplot;
 
 inline size_t getNumDimensionsFromFunction(const Function fcn)
 {
@@ -109,7 +109,7 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
             break;
         case DataType::INT64:
             gl_type = GL_FLOAT;
-            DVS_ASSERT(false);  // Haven't fround int64 in opengl enums yet...
+            DUOPLOT_ASSERT(false);  // Haven't fround int64 in opengl enums yet...
             break;
         case DataType::UINT8:
             gl_type = GL_UNSIGNED_BYTE;
@@ -121,7 +121,7 @@ inline GLint dataTypeToGLInt(const DataType& data_type)
             gl_type = GL_UNSIGNED_INT;
             break;
         case DataType::UINT64:
-            DVS_ASSERT(false);  // Haven't fround uint64 in opengl enums yet...
+            DUOPLOT_ASSERT(false);  // Haven't fround uint64 in opengl enums yet...
             gl_type = GL_FLOAT;
             break;
         case DataType::UNKNOWN:
@@ -148,13 +148,13 @@ std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectorsInternal(uint8_t* const data_b
     std::tie<double, double>(min_vec.x, max_vec.x) = x.findMinMax();
     std::tie<double, double>(min_vec.y, max_vec.y) = y.findMinMax();
     std::tie<double, double>(min_vec.z, max_vec.z) = z.findMinMax();
-    /*min_vec.x = dvs::min(x);
-    min_vec.y = dvs::min(y);
-    min_vec.z = dvs::min(z);
+    /*min_vec.x = duoplot::min(x);
+    min_vec.y = duoplot::min(y);
+    min_vec.z = duoplot::min(z);
 
-    max_vec.x = dvs::max(x);
-    max_vec.y = dvs::max(y);
-    max_vec.z = dvs::max(z);*/
+    max_vec.x = duoplot::max(x);
+    max_vec.y = duoplot::max(y);
+    max_vec.z = duoplot::max(z);*/
 
     return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
 }

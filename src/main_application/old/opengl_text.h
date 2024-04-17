@@ -3,9 +3,9 @@
 
 #include <string>
 
-#include "dvs/math/math.h"
+#include "duoplot/math/math.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 /*void drawTextFromBottomRight(const std::string s, float x, float y);
 void drawTextFromBottomLeft(const std::string s, float x, float y);

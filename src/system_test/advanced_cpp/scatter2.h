@@ -1,10 +1,10 @@
 #ifndef TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SCATTER2_H_
 #define TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SCATTER2_H_
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "utils.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace scatter2
 {
@@ -13,7 +13,7 @@ void testWithVectorView()
 {
     const size_t num_elements = 100;
     const Vector<double> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
-    const Vector<double> y = dvs::sin(x);
+    const Vector<double> y = duoplot::sin(x);
 
     const VectorConstView<double> xv = x.constView();
     const VectorConstView<double> yv = y.constView();
@@ -28,7 +28,7 @@ void testWithColorVec()
 {
     const size_t num_elements = 100;
     const Vector<double> x = linspaceFromBoundariesAndCount<float>(0.0f, 5.0f, num_elements);
-    const Vector<double> y = dvs::sin(x);
+    const Vector<double> y = duoplot::sin(x);
     Vector<properties::Color> color(num_elements);
 
     for (size_t k = 0; k < num_elements; k++)

@@ -1,9 +1,9 @@
 #ifndef DEMOS_MARBLE_H
 #define DEMOS_MARBLE_H
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace marbles
 {

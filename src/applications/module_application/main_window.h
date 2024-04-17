@@ -228,7 +228,7 @@ public:
     {
         if(is_running_)
         {
-            DVS_LOG_WARNING() << "Timer is already running. Ignoring start() call.";
+            DUOPLOT_LOG_WARNING() << "Timer is already running. Ignoring start() call.";
         }
         else
         {
@@ -242,7 +242,7 @@ public:
     {
         if(is_running_)
         {
-            DVS_LOG_WARNING() << "Timer is already running. Ignoring runOnce() call.";
+            DUOPLOT_LOG_WARNING() << "Timer is already running. Ignoring runOnce() call.";
         }
         else
         {
@@ -255,7 +255,7 @@ public:
     {
         if(is_running_)
         {
-            DVS_LOG_WARNING() << "Timer is already running. Ignoring runOnce() call.";
+            DUOPLOT_LOG_WARNING() << "Timer is already running. Ignoring runOnce() call.";
         }
         else
         {

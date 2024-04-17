@@ -90,8 +90,8 @@ set(CPP_SOURCE_FILES main.cpp
                      properties.cpp)
 
 
-add_executable(dvs ${CPP_SOURCE_FILES})
-target_link_libraries(dvs ${wxWidgets_LIBRARIES}
+add_executable(duoplot ${CPP_SOURCE_FILES})
+target_link_libraries(duoplot ${wxWidgets_LIBRARIES}
                           ${OPENGL_LIBRARIES}
                           ${GLUT_LIBRARY}
                           ${PLATFORM_LIBRARIES}

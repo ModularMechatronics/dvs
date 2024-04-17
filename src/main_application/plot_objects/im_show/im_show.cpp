@@ -2,7 +2,7 @@
 
 #include "outer_converter.h"
 
-using namespace dvs::internal;
+using namespace duoplot::internal;
 
 namespace
 {

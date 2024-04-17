@@ -3,10 +3,10 @@
 
 #include <unistd.h>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "utils.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace object_transform
 {

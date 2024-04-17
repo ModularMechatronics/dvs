@@ -2,15 +2,15 @@
 
 #include <iostream>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "utils.h"
 
 void printValues()
 {
-    const dvs::gui::SliderHandle slider = dvs::gui::getGuiElementHandle<dvs::gui::SliderHandle>("slider0");
-    const dvs::gui::ButtonHandle button0 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button0");
-    const dvs::gui::ButtonHandle button1 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button1");
-    const dvs::gui::CheckboxHandle checkbox = dvs::gui::getGuiElementHandle<dvs::gui::CheckboxHandle>("checkbox0");
+    const duoplot::gui::SliderHandle slider = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider0");
+    const duoplot::gui::ButtonHandle button0 = duoplot::gui::getGuiElementHandle<duoplot::gui::ButtonHandle>("button0");
+    const duoplot::gui::ButtonHandle button1 = duoplot::gui::getGuiElementHandle<duoplot::gui::ButtonHandle>("button1");
+    const duoplot::gui::CheckboxHandle checkbox = duoplot::gui::getGuiElementHandle<duoplot::gui::CheckboxHandle>("checkbox0");
 
     std::cout << "slider value: " << slider.getValue() << std::endl;
     std::cout << "checkbox is checked: " << checkbox.getIsChecked() << std::endl;
@@ -18,7 +18,7 @@ void printValues()
 
 void changeGuiFromClientApp()
 {
-    const dvs::gui::ButtonHandle button0 = dvs::gui::getGuiElementHandle<dvs::gui::ButtonHandle>("button0");
+    const duoplot::gui::ButtonHandle button0 = duoplot::gui::getGuiElementHandle<duoplot::gui::ButtonHandle>("button0");
     button0.setLabel("New label");
 }
 
@@ -26,23 +26,23 @@ void firstTest()
 {
     std::cout << "Registering callbacks!" << std::endl;
 
-    dvs::gui::registerGuiCallback("slider0", [](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("slider0", [](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"slider0\" value: " << gui_element_handle.getValue() << std::endl;
     });
 
-    dvs::gui::registerGuiCallback("button0", [](const dvs::gui::ButtonHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("button0", [](const duoplot::gui::ButtonHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"button0\" pressed: " << gui_element_handle.getIsPressed() << std::endl;
     });
 
-    dvs::gui::registerGuiCallback("button1", [](const dvs::gui::ButtonHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("button1", [](const duoplot::gui::ButtonHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"button1\" pressed: " << gui_element_handle.getIsPressed() << std::endl;
     });
 
-    dvs::gui::registerGuiCallback("checkbox0", [](const dvs::gui::CheckboxHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("checkbox0", [](const duoplot::gui::CheckboxHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"checkbox0\" pressed: " << gui_element_handle.getIsChecked() << std::endl;
     });
 
-    dvs::gui::registerGuiCallback("listbox0", [](const dvs::gui::ListBoxHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("listbox0", [](const duoplot::gui::ListBoxHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"listbox0\" selected: " << gui_element_handle.getSelectedElement()
                   << std::endl;
 
@@ -52,7 +52,7 @@ void firstTest()
         }
     });
 
-    dvs::gui::registerGuiCallback("text_entry", [](const dvs::gui::EditableTextHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("text_entry", [](const duoplot::gui::EditableTextHandle& gui_element_handle) -> void {
         if (gui_element_handle.getEnterPressed())
         {
             std::cout << "Callback function: \"text_entry\": Enter pressed with text \"" << gui_element_handle.getText()
@@ -64,7 +64,7 @@ void firstTest()
         }
     });
 
-    dvs::gui::registerGuiCallback("ddm0", [](const dvs::gui::DropdownMenuHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("ddm0", [](const duoplot::gui::DropdownMenuHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"ddm0\" selected: " << gui_element_handle.getSelectedElement() << std::endl;
 
         for (const std::string elem : gui_element_handle.getElements())
@@ -73,7 +73,7 @@ void firstTest()
         }
     });
 
-    dvs::gui::registerGuiCallback("rbg0", [](const dvs::gui::RadioButtonGroupHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback("rbg0", [](const duoplot::gui::RadioButtonGroupHandle& gui_element_handle) -> void {
         std::cout << "Callback function: \"rbg0\" selected: " << std::endl;
         std::cout << "Selected idx: " << gui_element_handle.getSelectedButtonIdx() << std::endl;
 
@@ -86,7 +86,7 @@ void firstTest()
     });
 
     std::cout << "Starting GUI thread!" << std::endl;
-    dvs::gui::startGuiReceiveThread();
+    duoplot::gui::startGuiReceiveThread();
 
     std::cout << "Instructions:" << std::endl
               << "\"q\": Exits application" << std::endl

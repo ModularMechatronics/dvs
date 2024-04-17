@@ -1,9 +1,9 @@
 #ifndef DEMOS_TESTS_KLEIN_H_
 #define DEMOS_TESTS_KLEIN_H_
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace klein
 {

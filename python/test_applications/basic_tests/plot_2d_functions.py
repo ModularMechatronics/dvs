@@ -213,11 +213,3 @@ def square_wave_spiral(theta):
     y = r * y * np.sin(y)
     return x, y
 
-
-def spirograph(r):
-    l = 2
-    R = 1
-    t = np.linspace(0, 2 * np.pi, 1000)
-    x = (R - r) * np.cos(t) + l * np.cos((R - r) / r * t)
-    y = (R - r) * np.sin(t) - l * np.sin((R - r) / r * t)
-    return x, y

@@ -2,7 +2,7 @@
 void testHyperboloid()
 {
     // Grid lines disappear when this function is plotted
-    const std::string project_file_path = "../../project_files/small.dvs";
+    const std::string project_file_path = "../../project_files/small.duoplot";
     openProjectFile(project_file_path);
     const size_t n_elems{100U};
 

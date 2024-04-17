@@ -7,14 +7,14 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "helper_functions.h"
 #include "line2d.h"
 #include "misc/rgb_triplet.h"
 #include "polygon.h"
 #include "rapidxml.hpp"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace particles
 {
@@ -549,7 +549,7 @@ void testBasic()
 
 void runTest()
 {
-    const std::string project_file_path = "../../project_files/particles.dvs";
+    const std::string project_file_path = "../../project_files/particles.duoplot";
 
     openProjectFile(project_file_path);
 
@@ -603,7 +603,7 @@ void runTest()
 
 void testBasicOld()
 {
-    const std::string project_file_path = "../../project_files/particles.dvs";
+    const std::string project_file_path = "../../project_files/particles.duoplot";
 
     openProjectFile(project_file_path);
 

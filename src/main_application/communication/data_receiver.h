@@ -24,10 +24,10 @@
 #include <string>
 
 #include "communication/received_data.h"
-#include "dvs/constants.h"
-#include "dvs/internal.h"
-#include "dvs/math/math.h"
-#include "dvs/timing.h"
+#include "duoplot/constants.h"
+#include "duoplot/internal.h"
+#include "duoplot/math/math.h"
+#include "duoplot/timing.h"
 
 class DataReceiver
 {

@@ -8,9 +8,9 @@
 #include "axes/legend_properties.h"
 #include "color_picker.h"
 #include "communication/received_data.h"
-#include "dvs/internal.h"
-#include "dvs/math/math.h"
-#include "dvs/math/math.h"
+#include "duoplot/internal.h"
+#include "duoplot/math/math.h"
+#include "duoplot/math/math.h"
 #include "input_data.h"
 #include "misc/rgb_triplet.h"
 #include "properties.h"
@@ -55,7 +55,7 @@ public:
                  const PlotObjectAttributes& plot_object_attributes,
                  const PropertiesData& properties_data,
                  const std::shared_ptr<const ConvertedDataBase>& converted_data);
-    std::pair<dvs::Vec3<double>, bool> getClosestPoint(const Line3D<double>& line, const bool has_query_line);
+    std::pair<duoplot::Vec3<double>, bool> getClosestPoint(const Line3D<double>& line, const bool has_query_line);
 };
 
 #endif  // POINT_SELECTION_H

@@ -8,8 +8,8 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "dvs/constants.h"
-#include "dvs/math/math.h"
+#include "duoplot/constants.h"
+#include "duoplot/math/math.h"
 #include "events.h"
 #include "filesystem.h"
 #include "globals.h"
@@ -28,7 +28,7 @@ int getNextFreeElementNumber()
 }
 }  // namespace element_number_counter
 
-using namespace dvs::internal;
+using namespace duoplot::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 130), wxSize(kMainWindowWidth, 150), wxNO_BORDER), data_receiver_{}
@@ -49,7 +49,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     open_project_file_queued_ = false;
     new_window_queued_ = false;
 
-    window_callback_id_ = dvs_ids::WINDOW_TOGGLE;
+    window_callback_id_ = duoplot_ids::WINDOW_TOGGLE;
 
     configuration_agent_ = new ConfigurationAgent();
 
@@ -117,7 +117,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 #endif
 
     if (configuration_agent_->hasKey("last_opened_file") &&
-        dvs::filesystem::exists(configuration_agent_->readValue<std::string>("last_opened_file")))
+        duoplot::filesystem::exists(configuration_agent_->readValue<std::string>("last_opened_file")))
     {
         save_manager_ = new SaveManager(configuration_agent_->readValue<std::string>("last_opened_file"));
     }
@@ -283,15 +283,15 @@ void MainWindow::printGuiCallbackCode()
 
             for (const std::shared_ptr<ElementSettings>& es : ts.elements)
             {
-                const dvs::GuiElementType type{es->type};
+                const duoplot::GuiElementType type{es->type};
                 if(type == GuiElementType::Unknown || type == GuiElementType::PlotPane)
                 {
                     continue;
                 }
                 const std::string handle_string{es->handle_string};
 
-                const std::string get_function_text = "    const dvs::gui::" +
-                    guiElementTypeToGuiHandleString(type) + " " + handle_string + " = dvs::gui::getGuiElementHandle<dvs::gui::" + guiElementTypeToGuiHandleString(type) + ">(\"" + handle_string + "\");\n";
+                const std::string get_function_text = "    const duoplot::gui::" +
+                    guiElementTypeToGuiHandleString(type) + " " + handle_string + " = duoplot::gui::getGuiElementHandle<duoplot::gui::" + guiElementTypeToGuiHandleString(type) + ">(\"" + handle_string + "\");\n";
 
                 push_text_to_cmdl_output_window_(Color_t::BLACK, get_function_text);
             }
@@ -320,14 +320,14 @@ void MainWindow::printGuiCallbackCode()
 
             for (const std::shared_ptr<ElementSettings>& es : ts.elements)
             {
-                const dvs::GuiElementType type{es->type};
+                const duoplot::GuiElementType type{es->type};
                 if(type == GuiElementType::Unknown || type == GuiElementType::PlotPane || type == GuiElementType::TextLabel)
                 {
                     continue;
                 }
                 const std::string handle_string{es->handle_string};
 
-                const std::string cb_function_text = "    dvs::gui::registerGuiCallback(\"" + handle_string + "\", [](const " + guiElementTypeToGuiHandleString(type) + "& gui_element_handle) -> void {\n"
+                const std::string cb_function_text = "    duoplot::gui::registerGuiCallback(\"" + handle_string + "\", [](const " + guiElementTypeToGuiHandleString(type) + "& gui_element_handle) -> void {\n"
                 + getCallbackFunctionUseFromType(type) +
                     "    });\n\n";
                 push_text_to_cmdl_output_window_(Color_t::BLACK, cb_function_text);
@@ -335,7 +335,7 @@ void MainWindow::printGuiCallbackCode()
         }
     }
 
-    push_text_to_cmdl_output_window_(Color_t::BLACK, "    dvs::gui::startGuiReceiveThread();\n");
+    push_text_to_cmdl_output_window_(Color_t::BLACK, "    duoplot::gui::startGuiReceiveThread();\n");
 
     push_text_to_cmdl_output_window_(Color_t::BLACK, "    // Other client code here...\n");
 
@@ -580,9 +580,9 @@ void MainWindow::performScreenshot(const std::string& screenshot_base_path)
     const std::string final_path =
         screenshot_base_path.back() == '/' ? screenshot_base_path : screenshot_base_path + "/";
 
-    if (!dvs::filesystem::exists(final_path))
+    if (!duoplot::filesystem::exists(final_path))
     {
-        dvs::filesystem::create_directory(final_path);
+        duoplot::filesystem::create_directory(final_path);
     }
 
     for (auto we : windows_)
@@ -752,7 +752,7 @@ void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::saveProjectAs()
 {
-    wxFileDialog open_file_dialog(this, _("Choose file to save to"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_SAVE);
+    wxFileDialog open_file_dialog(this, _("Choose file to save to"), "", "", "duoplot files (*.duoplot)|*.duoplot", wxFD_SAVE);
     if (open_file_dialog.ShowModal() == wxID_CANCEL)
     {
         return;
@@ -916,7 +916,7 @@ void MainWindow::openExistingFile()
     }
 
     wxFileDialog open_file_dialog(
-        this, _("Open dvs file"), "", "", "dvs files (*.dvs)|*.dvs", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        this, _("Open duoplot file"), "", "", "duoplot files (*.duoplot)|*.duoplot", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (open_file_dialog.ShowModal() == wxID_CANCEL)
     {
         return;
