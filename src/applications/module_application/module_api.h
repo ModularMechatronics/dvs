@@ -46,7 +46,7 @@ inline std::string guiElementTypeToString(const GuiElementType& gui_element_type
         case GuiElementType::TextLabel:
             return "TextLabel";
         default:
-            DVS_LOG_ERROR() << "Unknown GuiElementType! Returning empty string.";
+            DUOPLOT_LOG_ERROR() << "Unknown GuiElementType! Returning empty string.";
             return std::string{};
     }
 }
@@ -144,7 +144,7 @@ private:
     {
         if (internal_timer_ == nullptr)
         {
-            DVS_LOG_ERROR() << "Internal timer pointer is nullptr in function \e[1m\033[36m" << function_name
+            DUOPLOT_LOG_ERROR() << "Internal timer pointer is nullptr in function \e[1m\033[36m" << function_name
                             << "\033[0m!\e[0m Did you attempt to use a non existent element?";
             return false;
         }
@@ -304,7 +304,7 @@ protected:
     {
         if (gui_element_ == nullptr)
         {
-            DVS_LOG_ERROR() << "Internal gui element pointer is nullptr for \e[1m\033[36m" << class_name
+            DUOPLOT_LOG_ERROR() << "Internal gui element pointer is nullptr for \e[1m\033[36m" << class_name
                             << "\033[0m\e[0m in function \e[1m\033[36m" << function_name
                             << "\033[0m!\e[0m Did you attempt to use a non existent element?";
             return false;
@@ -677,7 +677,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+            DUOPLOT_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a slider! Returning empty object.";
             return Slider{};
         }
@@ -691,7 +691,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+            DUOPLOT_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a button! Returning empty object.";
             return Button{};
         }
@@ -705,7 +705,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+            DUOPLOT_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a checkbox! Returning empty object.";
             return CheckBox{};
         }
@@ -719,7 +719,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+            DUOPLOT_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a radiobuttongroup! Returning empty object.";
             return RadioButtonGroup{};
         }
@@ -733,7 +733,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+            DUOPLOT_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a dropdownmenu! Returning empty object.";
             return DropDownMenu{};
         }
@@ -747,7 +747,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+            DUOPLOT_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a listbox! Returning empty object.";
             return ListBox{};
         }
@@ -761,7 +761,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+            DUOPLOT_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not an editabletext! Returning empty object.";
             return EditableText{};
         }
@@ -775,7 +775,7 @@ public:
         }
         else
         {
-            DVS_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
+            DUOPLOT_LOG_ERROR() << "GuiElement with handle string: " << gui_element_->getHandleString()
                             << " is not a textlabel! Returning empty object.";
             return TextLabel{};
         }
@@ -794,7 +794,7 @@ inline void InternalGuiElement::callback()
     }
     else
     {
-        DVS_LOG_ERROR() << "No callback function set for GuiElement with handle string: " << getHandleString();
+        DUOPLOT_LOG_ERROR() << "No callback function set for GuiElement with handle string: " << getHandleString();
     }
 }
 }  // namespace api_internal

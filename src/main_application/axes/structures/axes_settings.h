@@ -5,10 +5,10 @@
 
 #include <string>
 
-#include "dvs/math/math.h"
+#include "duoplot/math/math.h"
 #include "misc/rgb_triplet.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 struct AxesSettings
 {

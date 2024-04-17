@@ -4,8 +4,8 @@
 #include <string>
 #include <string_view>
 
-#include "dvs/enumerations.h"
-#include "dvs/plot_properties.h"
+#include "duoplot/enumerations.h"
+#include "duoplot/plot_properties.h"
 #include "misc/rgb_triplet.h"
 
 // TODO: This should be filled in plot_object_base and the individual object types
@@ -24,13 +24,13 @@ struct LegendProperties
     RGBTripletf color;
     RGBTripletf edge_color;
     RGBTripletf face_color;
-    dvs::properties::ColorMap color_map;
+    duoplot::properties::ColorMap color_map;
     bool has_color_map;
 
     float point_size;
-    dvs::properties::ScatterStyle scatter_style;
+    duoplot::properties::ScatterStyle scatter_style;
 
-    // dvs::properties::LineStyle line_style;
+    // duoplot::properties::LineStyle line_style;
 };
 
 #endif  // MAIN_APPLICATION_AXES_LEGEND_PROPERTIES_H_

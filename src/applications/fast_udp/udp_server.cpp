@@ -118,7 +118,7 @@ void UdpServer::receiveAndGetData()
         auto t2 = high_resolution_clock::now();
         duration<double, std::milli> ms_double = t2 - t1;
 
-        DVS_LOG_INFO() << "Received " << i << " packets, took: " << ms_double.count();
+        DUOPLOT_LOG_INFO() << "Received " << i << " packets, took: " << ms_double.count();
     }
 
     const UInt8ArrayView array_view{reinterpret_cast<uint8_t*>(receive_buffer_), num_received_bytes_total};

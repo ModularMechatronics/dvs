@@ -8,9 +8,9 @@
 #include <nlohmann/json.hpp>
 #include <tuple>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace imu
 {
@@ -298,7 +298,7 @@ void testBasic()
     const auto [xcyl, ycyl, zcyl] = unzipVectors(cylinder_pts_indices.points);
     const auto [xcone, ycone, zcone] = unzipVectors(cone_pts_indices.points);
 
-    const std::string project_file_path = "../../project_files/imu.dvs";
+    const std::string project_file_path = "../../project_files/imu.duoplot";
 
     openProjectFile(project_file_path);
 

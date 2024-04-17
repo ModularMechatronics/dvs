@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "dvs/internal.h"
-#include "dvs/math/math.h"
+#include "duoplot/internal.h"
+#include "duoplot/math/math.h"
 #include "misc/rgb_triplet.h"
 #include "opengl_low_level/opengl_header.h"
 
@@ -43,15 +43,15 @@ public:
         glUniform3f(handle_, col.red, col.green, col.blue);
     }
 
-    void setVec(const dvs::Vec3f& v)
+    void setVec(const duoplot::Vec3f& v)
     {
         glUniform3f(handle_, v.x, v.y, v.z);
     }
 
-    void setVec(const dvs::Vec3d& v)
+    void setVec(const duoplot::Vec3d& v)
     {
         // TODO: Is this correct? Vec3d is double precision, but glUniform3f takes floats
-        dvs::Vec3d vf{v.x, v.y, v.z};
+        duoplot::Vec3d vf{v.x, v.y, v.z};
         glUniform3f(handle_, vf.x, vf.y, vf.z);
     }
 

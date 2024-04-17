@@ -4,10 +4,10 @@
 #include <cstddef>
 #include <vector>
 
-#include "dvs/math/math.h"
+#include "duoplot/math/math.h"
 #include "misc/color_map.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 void drawLines3D(const Vectord& x_values, const Vectord& y_values, const Vectord& z_values);
 void drawTriangle3D(const Vec3d& v0, const Vec3d& v1, const Vec3d& v2);

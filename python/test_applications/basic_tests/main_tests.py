@@ -1,4 +1,4 @@
-import dvs
+import duoplot
 import numpy as np
 
 import pylas
@@ -11,32 +11,32 @@ import pywavefront
 import os
 
 
-def setup_dvs_view():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+def setup_duoplot_view():
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
 
 
 def test_scatter():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
 
     for i in range(0, 100):
-        dvs.soft_clear_view()
+        duoplot.soft_clear_view()
         x = np.linspace(0, 3, 100, dtype=np.float32)
         y = np.sin(x * 5.0 + 0.1 * i)
 
-        dvs.view(0, 90)
-        dvs.scatter(x, y)
+        duoplot.view(0, 90)
+        duoplot.scatter(x, y)
 
 
 def test_plot():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
 
     x = np.linspace(0, 3, 500, dtype=np.float32)
     y = np.sin(x * 5.0)
 
-    """dvs.plot(
+    """duoplot.plot(
         x,
         y,
         # name="Hello", # TODO: Name is probably broken, name size is not included in SIZE_OF_PROPERTY
@@ -45,77 +45,77 @@ def test_plot():
         point_size=13,
         buffer_size=500,
         z_offset=0.1,
-        edge_color=dvs.properties.EdgeColor(0.1, 0.2, 0.3),
-        face_color=dvs.properties.FaceColor(0.1, 0.2, 0.3),
-        color=dvs.properties.Color(0.1, 0.2, 0.3),
-        distance_from=dvs.properties.DistanceFrom.x(0.1, 0.2, 0.3),
-        color_map=dvs.properties.ColorMap.JET,
-        scatter_style=dvs.properties.ScatterStyle.CIRCLE,
-        line_style=dvs.properties.LineStyle.DASHED,
-        transform=dvs.properties.Transform(np.eye(3), np.eye(3), np.zeros(3)),
+        edge_color=duoplot.properties.EdgeColor(0.1, 0.2, 0.3),
+        face_color=duoplot.properties.FaceColor(0.1, 0.2, 0.3),
+        color=duoplot.properties.Color(0.1, 0.2, 0.3),
+        distance_from=duoplot.properties.DistanceFrom.x(0.1, 0.2, 0.3),
+        color_map=duoplot.properties.ColorMap.JET,
+        scatter_style=duoplot.properties.ScatterStyle.CIRCLE,
+        line_style=duoplot.properties.LineStyle.DASHED,
+        transform=duoplot.properties.Transform(np.eye(3), np.eye(3), np.zeros(3)),
     )"""
 
-    """dvs.plot(
+    """duoplot.plot(
         x,
         y,
-        color_map=dvs.properties.ColorMap.JET,
+        color_map=duoplot.properties.ColorMap.JET,
         point_size=13,
         buffer_size=500,
         z_offset=0.1,
     )"""
-    dvs.plot(x, y, line_width=13, color=dvs.properties.Color.CYAN)
-    dvs.scatter(x, y, point_size=23, color=dvs.properties.Color.BLACK)
+    duoplot.plot(x, y, line_width=13, color=duoplot.properties.Color.CYAN)
+    duoplot.scatter(x, y, point_size=23, color=duoplot.properties.Color.BLACK)
 
 
 def test_plot3():
-    dvs.set_current_element("p_view_0")
+    duoplot.set_current_element("p_view_0")
 
-    dvs.clear_view()
+    duoplot.clear_view()
     x = np.linspace(0, 3, 100, dtype=np.float32)
     y = np.sin(x * 5.0)
     z = np.cos(x * 5.0)
 
-    dvs.axis([-10, -10, -10], [10, 10, 10])
-    dvs.view(0, 90)
-    dvs.plot3(x, y, z)
+    duoplot.axis([-10, -10, -10], [10, 10, 10])
+    duoplot.view(0, 90)
+    duoplot.plot3(x, y, z)
 
 
 def test_scatter():
-    dvs.set_current_element("p_view_0")
+    duoplot.set_current_element("p_view_0")
 
-    dvs.clear_view()
+    duoplot.clear_view()
     x = np.linspace(0, 3, 100, dtype=np.float32)
     y = np.sin(x * 5.0)
-    dvs.scatter(x, y)
+    duoplot.scatter(x, y)
 
 
 def test_scatter3():
-    dvs.set_current_element("p_view_0")
+    duoplot.set_current_element("p_view_0")
 
-    dvs.clear_view()
+    duoplot.clear_view()
     x = np.linspace(0, 3, 100, dtype=np.float32)
     y = np.sin(x * 5.0)
     z = np.cos(x * 5.0)
-    dvs.scatter3(x, y, z)
+    duoplot.scatter3(x, y, z)
 
 
 def test_surf():
-    dvs.set_current_element("p_view_0")
+    duoplot.set_current_element("p_view_0")
 
-    dvs.clear_view()
+    duoplot.clear_view()
     x = np.linspace(-0.1, 3, 100, dtype=np.float32)
     y = np.linspace(-0.1, 3, 100, dtype=np.float32)
     x, y = np.meshgrid(x, y)
     r = np.sqrt(x * x + y * y)
     z = np.sin(r * 10.0) / (r * 10.0)
 
-    dvs.view(0, 90)
-    dvs.surf(x, y, z)
+    duoplot.view(0, 90)
+    duoplot.surf(x, y, z)
 
 
 def test_plot2_demo():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
 
     theta = np.linspace(-10.0, 10.0, 500, dtype=np.float32)
 
@@ -127,15 +127,16 @@ def test_plot2_demo():
 
     for idx, plot_fun in enumerate(PLOT2D_FUNCTION_NAMES):
         x, y = eval("plot_2d_functions." + plot_fun + "(theta)")
-        dvs.clear_view()
+        duoplot.clear_view()
+        duoplot.set_title(plot_fun)
 
-        dvs.plot(x, y)
+        duoplot.plot(x, y)
         input("Press Enter to continue...")
 
 
 def test_plot3_demo():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
 
     theta = np.linspace(-10.0, 10.0, 500, dtype=np.float32)
 
@@ -147,22 +148,22 @@ def test_plot3_demo():
 
     for idx, plot_fun in enumerate(PLOT2D_FUNCTION_NAMES):
         x, y, z = eval("plot_3d_functions." + plot_fun + "(theta)")
-        dvs.clear_view()
+        duoplot.clear_view()
 
-        dvs.plot3(x, y, z)
+        duoplot.plot3(x, y, z)
         input("Press Enter to continue...")
 
 
 def test_series_demo():
-    # dvs.open_project_file("./project_files/series.dvs") # TODO: Open this file for this test
+    # duoplot.open_project_file("./project_files/series.duoplot") # TODO: Open this file for this test
 
     for i in range(0, 15):
-        dvs.set_current_element("p" + str(i))
-        dvs.clear_view()
-        # dvs.disable_scale_on_rotation()
-        dvs.view(30, 33)
-        dvs.axes_square()
-        dvs.axis(dvs.Vec3D(1.0, 1.0, -1.0), dvs.Vec3D(3.0, 3.0, 1.0))
+        duoplot.set_current_element("p" + str(i))
+        duoplot.clear_view()
+        # duoplot.disable_scale_on_rotation()
+        duoplot.view(30, 33)
+        duoplot.axes_square()
+        duoplot.axis(duoplot.Vec3D(1.0, 1.0, -1.0), duoplot.Vec3D(3.0, 3.0, 1.0))
 
     x = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
     y = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
@@ -177,13 +178,13 @@ def test_series_demo():
     SURF_FUNCTION_NAMES = [q for q in reversed(SURF_FUNCTION_NAMES)]
 
     color_maps = [
-        dvs.properties.ColorMap.MAGMA,
-        dvs.properties.ColorMap.VIRIDIS,
-        dvs.properties.ColorMap.JET_SOFT,
-        dvs.properties.ColorMap.JET_BRIGHT,
-        dvs.properties.ColorMap.PASTEL,
-        dvs.properties.ColorMap.HSV,
-        dvs.properties.ColorMap.JET,
+        duoplot.properties.ColorMap.MAGMA,
+        duoplot.properties.ColorMap.VIRIDIS,
+        duoplot.properties.ColorMap.JET_SOFT,
+        duoplot.properties.ColorMap.JET_BRIGHT,
+        duoplot.properties.ColorMap.PASTEL,
+        duoplot.properties.ColorMap.HSV,
+        duoplot.properties.ColorMap.JET,
     ]
 
     for idx, surf_fun in enumerate(SURF_FUNCTION_NAMES):
@@ -191,18 +192,18 @@ def test_series_demo():
             break
 
         print(surf_fun)
-        dvs.set_current_element("p" + str(idx))
+        duoplot.set_current_element("p" + str(idx))
         z = eval("surf_functions." + surf_fun + "(x, y)")
-        dvs.soft_clear_view()
+        duoplot.soft_clear_view()
 
         cm = color_maps[idx % len(color_maps)]
         if idx < 2:
-            dvs.surf(x, y, z, color_map=cm)
+            duoplot.surf(x, y, z, color_map=cm)
         else:
-            dvs.surf(x, y, z, color_map=cm, edge_color=dvs.properties.EdgeColor.NONE)
+            duoplot.surf(x, y, z, color_map=cm, edge_color=duoplot.properties.EdgeColor.NONE)
 
         # for _ in range(40):
-        #     dvs.view(curr_angle, 40)
+        #     duoplot.view(curr_angle, 40)
         #     time.sleep(0.01)
         #     curr_angle = next_angle(curr_angle)
 
@@ -228,33 +229,33 @@ def test_series_demo():
     curr_angle = 0
 
     color_maps = [
-        dvs.properties.ColorMap.JET,
-        dvs.properties.ColorMap.HSV,
-        dvs.properties.ColorMap.MAGMA,
-        dvs.properties.ColorMap.VIRIDIS,
-        dvs.properties.ColorMap.PASTEL,
-        dvs.properties.ColorMap.JET_SOFT,
-        dvs.properties.ColorMap.JET_BRIGHT,
+        duoplot.properties.ColorMap.JET,
+        duoplot.properties.ColorMap.HSV,
+        duoplot.properties.ColorMap.MAGMA,
+        duoplot.properties.ColorMap.VIRIDIS,
+        duoplot.properties.ColorMap.PASTEL,
+        duoplot.properties.ColorMap.JET_SOFT,
+        duoplot.properties.ColorMap.JET_BRIGHT,
     ]
 
     for idx, surf_fun in enumerate(SURF_FUNCTION_NAMES):
         z = eval("surf_functions." + surf_fun + "(x, y)")
-        dvs.soft_clear_view()
+        duoplot.soft_clear_view()
 
-        # dvs.surf(x, y, z, color_map=properties.ColorMap.JET_SOFT)
+        # duoplot.surf(x, y, z, color_map=properties.ColorMap.JET_SOFT)
         cm = color_maps[idx % len(color_maps)]
-        dvs.surf(x, y, z, color_map=cm)
+        duoplot.surf(x, y, z, color_map=cm)
 
         for _ in range(40):
-            dvs.view(curr_angle, 40)
+            duoplot.view(curr_angle, 40)
             time.sleep(0.01)
             curr_angle = next_angle(curr_angle)"""
 
 
 def test_surf_demo():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
-    dvs.disable_scale_on_rotation()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
+    duoplot.disable_scale_on_rotation()
 
     x = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
     y = np.linspace(-4.0, 4.0, 100, dtype=np.float32)
@@ -278,33 +279,33 @@ def test_surf_demo():
     curr_angle = 0
 
     color_maps = [
-        dvs.properties.ColorMap.JET,
-        dvs.properties.ColorMap.HSV,
-        dvs.properties.ColorMap.MAGMA,
-        dvs.properties.ColorMap.VIRIDIS,
-        dvs.properties.ColorMap.PASTEL,
-        dvs.properties.ColorMap.JET_SOFT,
-        dvs.properties.ColorMap.JET_BRIGHT,
+        duoplot.properties.ColorMap.JET,
+        duoplot.properties.ColorMap.HSV,
+        duoplot.properties.ColorMap.MAGMA,
+        duoplot.properties.ColorMap.VIRIDIS,
+        duoplot.properties.ColorMap.PASTEL,
+        duoplot.properties.ColorMap.JET_SOFT,
+        duoplot.properties.ColorMap.JET_BRIGHT,
     ]
 
     for idx, surf_fun in enumerate(SURF_FUNCTION_NAMES):
         z = eval("surf_functions." + surf_fun + "(x, y)")
-        dvs.soft_clear_view()
+        duoplot.soft_clear_view()
 
-        # dvs.surf(x, y, z, color_map=properties.ColorMap.JET_SOFT)
+        # duoplot.surf(x, y, z, color_map=properties.ColorMap.JET_SOFT)
         cm = color_maps[idx % len(color_maps)]
-        dvs.surf(x, y, z, color_map=cm)
+        duoplot.surf(x, y, z, color_map=cm)
 
         for _ in range(40):
-            dvs.view(curr_angle, 40)
+            duoplot.view(curr_angle, 40)
             time.sleep(0.01)
             curr_angle = next_angle(curr_angle)
 
 
 def test_imshow():
-    dvs.set_current_element("p_view_0")
+    duoplot.set_current_element("p_view_0")
 
-    dvs.clear_view()
+    duoplot.clear_view()
     x = np.linspace(-0.1, 3, 100, dtype=np.float32)
     y = np.linspace(-0.1, 3, 100, dtype=np.float32)
     x, y = np.meshgrid(x, y)
@@ -322,27 +323,27 @@ def test_imshow():
     q[1, :, :] = zg
     q[2, :, :] = zb
 
-    dvs.axis([-10, -10, -10], [10, 10, 10])
-    dvs.view(0, 90)
-    dvs.imshow(q)
+    duoplot.axis([-10, -10, -10], [10, 10, 10])
+    duoplot.view(0, 90)
+    duoplot.imshow(q)
 
 
 def test_draw_mesh():
-    setup_dvs_view()
+    setup_duoplot_view()
 
     vertices = [
-        dvs.Point3D(0.0, 0.0, 0.0),
-        dvs.Point3D(1.0, 0.0, 0.0),
-        dvs.Point3D(0.5, -1.0, 1.0),
-        dvs.Point3D(0.0, 0.0, 0.0),
-        dvs.Point3D(-1.0, 0.0, 0.0),
-        dvs.Point3D(0.0, 1.0, 1.0),
-        dvs.Point3D(0.0, 0.0, 0.0),
-        dvs.Point3D(-1.0, 0.0, 0.0),
-        dvs.Point3D(0.0, 1.0, -1.0),
-        dvs.Point3D(0.0, 0.0, 0.0),
-        dvs.Point3D(1.0, 0.0, 0.0),
-        dvs.Point3D(0.5, -1.0, -1.0),
+        duoplot.Point3D(0.0, 0.0, 0.0),
+        duoplot.Point3D(1.0, 0.0, 0.0),
+        duoplot.Point3D(0.5, -1.0, 1.0),
+        duoplot.Point3D(0.0, 0.0, 0.0),
+        duoplot.Point3D(-1.0, 0.0, 0.0),
+        duoplot.Point3D(0.0, 1.0, 1.0),
+        duoplot.Point3D(0.0, 0.0, 0.0),
+        duoplot.Point3D(-1.0, 0.0, 0.0),
+        duoplot.Point3D(0.0, 1.0, -1.0),
+        duoplot.Point3D(0.0, 0.0, 0.0),
+        duoplot.Point3D(1.0, 0.0, 0.0),
+        duoplot.Point3D(0.5, -1.0, -1.0),
     ]
 
     vertices2 = np.array(
@@ -363,48 +364,48 @@ def test_draw_mesh():
     )
 
     indices = [
-        dvs.IndexTriplet(0, 1, 2),
-        dvs.IndexTriplet(3, 4, 5),
-        dvs.IndexTriplet(6, 7, 8),
-        dvs.IndexTriplet(9, 10, 11),
+        duoplot.IndexTriplet(0, 1, 2),
+        duoplot.IndexTriplet(3, 4, 5),
+        duoplot.IndexTriplet(6, 7, 8),
+        duoplot.IndexTriplet(9, 10, 11),
     ]
 
-    dvs.draw_mesh(vertices, indices)
+    duoplot.draw_mesh(vertices, indices)
 
     vertices2[:, 0] = vertices2[:, 0] + 2.0
-    dvs.draw_mesh(
+    duoplot.draw_mesh(
         vertices2,
         indices,
-        edge_color=dvs.properties.EdgeColor(0, 0, 0),
-        face_color=dvs.properties.FaceColor(1.0, 0, 0.9),
+        edge_color=duoplot.properties.EdgeColor(0, 0, 0),
+        face_color=duoplot.properties.FaceColor(1.0, 0, 0.9),
     )
 
     vertices2[:, 2] = vertices2[:, 2] - 2.0
-    dvs.draw_mesh(
+    duoplot.draw_mesh(
         vertices2,
         indices,
-        edge_color=dvs.properties.EdgeColor(0, 0, 0),
-        face_color=dvs.properties.FaceColor(0.0, 0, 0.9),
+        edge_color=duoplot.properties.EdgeColor(0, 0, 0),
+        face_color=duoplot.properties.FaceColor(0.0, 0, 0.9),
     )
 
 
 def test_line_collection():
-    setup_dvs_view()
+    setup_duoplot_view()
 
     x = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
     y = [0.0, 0.0, 1.0, 1.0, 2.0, 2.0, 3.0, 3.0]
     z = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
 
-    dvs.line_collection(x, y, color=dvs.properties.Color(1, 0, 1))
+    duoplot.line_collection(x, y, color=duoplot.properties.Color(1, 0, 1))
 
-    dvs.line_collection3(x, y, z, color=dvs.properties.Color(1, 0, 1))
+    duoplot.line_collection3(x, y, z, color=duoplot.properties.Color(1, 0, 1))
 
 
 def test_plot_collection():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
-    dvs.set_current_element("p1")
-    dvs.clear_view()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
+    duoplot.set_current_element("p1")
+    duoplot.clear_view()
 
     x = []
     y = []
@@ -413,7 +414,7 @@ def test_plot_collection():
     yl = []
     zl = []
 
-    dvs.soft_clear_view()
+    duoplot.soft_clear_view()
 
     for _ in range(0, 5):
         t = np.linspace(0, 3, 100, dtype=np.float32)
@@ -427,76 +428,76 @@ def test_plot_collection():
         yl.append((yp + 1.0).tolist())
         zl.append((zp + 1.0).tolist())
 
-        dvs.set_current_element("p_view_0")
+        duoplot.set_current_element("p_view_0")
 
-        dvs.scatter(
+        duoplot.scatter(
             xp,
             yp,
-            color=dvs.properties.Color(
+            color=duoplot.properties.Color(
                 np.random.rand(), np.random.rand(), np.random.rand()
             ),
         )
 
-        dvs.scatter(
+        duoplot.scatter(
             xp + 1.0,
             yp + 1.0,
-            color=dvs.properties.Color(
+            color=duoplot.properties.Color(
                 np.random.rand(), np.random.rand(), np.random.rand()
             ),
         )
 
-        dvs.set_current_element("p1")
-        dvs.scatter3(
+        duoplot.set_current_element("p1")
+        duoplot.scatter3(
             xp,
             yp,
             zp,
-            color=dvs.properties.Color(
+            color=duoplot.properties.Color(
                 np.random.rand(), np.random.rand(), np.random.rand()
             ),
         )
 
-        dvs.scatter3(
+        duoplot.scatter3(
             xp + 1.0,
             yp + 1.0,
             zp + 1.0,
-            color=dvs.properties.Color(
+            color=duoplot.properties.Color(
                 np.random.rand(), np.random.rand(), np.random.rand()
             ),
         )
 
-    dvs.set_current_element("p_view_0")
+    duoplot.set_current_element("p_view_0")
 
-    dvs.plot_collection(x, y, color=dvs.properties.Color.RED)
-    dvs.plot_collection(xl, yl, color=dvs.properties.Color.RED)
+    duoplot.plot_collection(x, y, color=duoplot.properties.Color.RED)
+    duoplot.plot_collection(xl, yl, color=duoplot.properties.Color.RED)
 
-    dvs.set_current_element("p1")
+    duoplot.set_current_element("p1")
 
-    dvs.plot_collection3(x, y, z, color=dvs.properties.Color.RED)
-    dvs.plot_collection3(xl, yl, zl, color=dvs.properties.Color.RED)
+    duoplot.plot_collection3(x, y, z, color=duoplot.properties.Color.RED)
+    duoplot.plot_collection3(xl, yl, zl, color=duoplot.properties.Color.RED)
 
 
 def test_stairs():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
 
     x = np.linspace(0, 3, 500, dtype=np.float32)
     y = np.sin(x * 5.0)
 
-    dvs.plot(x, y, color=dvs.properties.Color.CYAN)
-    dvs.scatter(x, y, color=dvs.properties.Color.BLACK)
-    dvs.stairs(x, y, color=dvs.properties.Color.RED)
+    duoplot.plot(x, y, color=duoplot.properties.Color.CYAN)
+    duoplot.scatter(x, y, color=duoplot.properties.Color.BLACK)
+    duoplot.stairs(x, y, color=duoplot.properties.Color.RED)
 
 
 def test_stem():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
 
     x = np.linspace(0, 3, 500, dtype=np.float32)
     y = np.sin(x * 5.0)
 
-    dvs.plot(x, y, color=dvs.properties.Color.CYAN)
-    dvs.scatter(x, y, point_size=13, color=dvs.properties.Color.BLACK)
-    dvs.stem(x, y, color=dvs.properties.Color.RED)
+    duoplot.plot(x, y, color=duoplot.properties.Color.CYAN)
+    duoplot.scatter(x, y, point_size=13, color=duoplot.properties.Color.BLACK)
+    duoplot.stem(x, y, color=duoplot.properties.Color.RED)
 
 
 def color_map_jet(d, colors):
@@ -650,9 +651,9 @@ def color_map_jet(d, colors):
 
 
 def test_3d_obj():
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
-    dvs.wait_for_flush()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
+    duoplot.wait_for_flush()
 
     x = np.linspace(0, 3, 500, dtype=np.float32)
     y = np.sin(x * 5.0)
@@ -665,20 +666,20 @@ def test_3d_obj():
     bb = pywavefront.Wavefront(duck_path, create_materials=False, collect_faces=True)
     vertices = np.array(bb.vertices, dtype=np.float32)
 
-    dvs.axes_square()
+    duoplot.axes_square()
     z = 2
-    dvs.axis([-2, -2, z - 2], [2, 2, z + 2])
-    dvs.view(-30, 30)
-    dvs.disable_scale_on_rotation()
-    dvs.global_illumination(dvs.Vec3D(2.0, 2.0, 2.0))
+    duoplot.axis([-2, -2, z - 2], [2, 2, z + 2])
+    duoplot.view(-30, 30)
+    duoplot.disable_scale_on_rotation()
+    duoplot.global_illumination(duoplot.Vec3D(2.0, 2.0, 2.0))
 
     num_faces = len(bb.mesh_list[0].faces)
 
-    indices = num_faces * [dvs.IndexTriplet(0, 0, 0)]
+    indices = num_faces * [duoplot.IndexTriplet(0, 0, 0)]
     faces = bb.mesh_list[0].faces
 
     for i in range(0, num_faces):
-        indices[i] = dvs.IndexTriplet(
+        indices[i] = duoplot.IndexTriplet(
             faces[i][0],
             faces[i][1],
             faces[i][2],
@@ -755,12 +756,12 @@ def test_3d_obj():
             decay = 1.01
             amplitude = 0.3
 
-            dvs.scatter3(
+            duoplot.scatter3(
                 vertices[:, 0],
                 vertices[:, 1],
                 vertices[:, 2],
                 colors=point_colors,
-                scatter_style=dvs.properties.ScatterStyle.DISC,
+                scatter_style=duoplot.properties.ScatterStyle.DISC,
                 point_size=5,
             )
 
@@ -769,50 +770,50 @@ def test_3d_obj():
             do = point_x_distances + offset
             color_map_jet(do - np.floor(do), point_colors)
 
-            dvs.draw_mesh(
+            duoplot.draw_mesh(
                 vertices,
                 indices,
-                face_color=dvs.properties.FaceColor.NONE,
+                face_color=duoplot.properties.FaceColor.NONE,
             )
-            dvs.scatter3(
+            duoplot.scatter3(
                 vertices[:, 0],
                 vertices[:, 1],
                 vertices[:, 2],
                 colors=point_colors,
-                scatter_style=dvs.properties.ScatterStyle.DISC,
+                scatter_style=duoplot.properties.ScatterStyle.DISC,
                 point_size=5,
             )
 
         elif i > 600:
             # Draw with only edges
-            dvs.draw_mesh(
+            duoplot.draw_mesh(
                 vertices,
                 indices,
-                face_color=dvs.properties.FaceColor.NONE,
+                face_color=duoplot.properties.FaceColor.NONE,
             )
         elif i > 375:
             # Draw with edges
-            dvs.draw_mesh(vertices, indices, colors=colors)
+            duoplot.draw_mesh(vertices, indices, colors=colors)
         else:
             # Draw without edges
-            dvs.draw_mesh(
+            duoplot.draw_mesh(
                 vertices,
                 indices,
                 colors=colors,
-                edge_color=dvs.properties.EdgeColor.NONE,
+                edge_color=duoplot.properties.EdgeColor.NONE,
             )
 
-        dvs.flush_current_element()
+        duoplot.flush_current_element()
 
         phase = phase + 0.1
-        dvs.view(azimuth, np.sin(t_elevation) * 10)
+        duoplot.view(azimuth, np.sin(t_elevation) * 10)
         t_elevation += 0.01
 
         azimuth -= 0.5
         if azimuth < -180.0:
             azimuth = 180.0
 
-        dvs.soft_clear_view()
+        duoplot.soft_clear_view()
 
 
 def test_las_file():
@@ -850,20 +851,20 @@ def test_las_file():
         min_val = np.min([x_interval[0], y_interval[0], z_interval[0]])
         max_val = np.max([x_interval[1], y_interval[1], z_interval[1]])
 
-        dvs.set_current_element("p_view_0")
-        dvs.clear_view()
-        dvs.axes_square()
-        dvs.disable_scale_on_rotation()
+        duoplot.set_current_element("p_view_0")
+        duoplot.clear_view()
+        duoplot.axes_square()
+        duoplot.disable_scale_on_rotation()
 
-        dvs.axis([min_val, min_val, min_val], [max_val, max_val, max_val])
+        duoplot.axis([min_val, min_val, min_val], [max_val, max_val, max_val])
 
-        dvs.scatter3(
+        duoplot.scatter3(
             x,
             y,
             z,
             colors=colors,
-            color=dvs.properties.Color(0, 0, 0),
-            scatter_style=dvs.properties.ScatterStyle.DISC,
+            color=duoplot.properties.Color(0, 0, 0),
+            scatter_style=duoplot.properties.ScatterStyle.DISC,
             point_size=3,
         )
 
@@ -871,7 +872,7 @@ def test_las_file():
 def test_3d_map():
     import trimesh
 
-    map_path = "/Users/danielpi/work/dvs/map_data/map3d.glb"
+    map_path = "/Users/danielpi/work/duoplot/map_data/map3d.glb"
     glbd = trimesh.load(map_path)
 
     vertices = None
@@ -898,7 +899,7 @@ def test_3d_map():
 
     vertices = vertices.T
     indices = [
-        dvs.IndexTriplet(np.uint32(q[0]), np.uint32(q[1]), np.uint32(q[2]))
+        duoplot.IndexTriplet(np.uint32(q[0]), np.uint32(q[1]), np.uint32(q[2]))
         for q in faces
     ]
 
@@ -924,63 +925,63 @@ def test_3d_map():
 
     colors_new = np.array(colors_new)
 
-    dvs.set_current_element("p_view_0")
-    dvs.clear_view()
+    duoplot.set_current_element("p_view_0")
+    duoplot.clear_view()
 
-    dvs.axes_square()
-    dvs.disable_scale_on_rotation()
+    duoplot.axes_square()
+    duoplot.disable_scale_on_rotation()
 
-    dvs.global_illumination(dvs.Vec3D(2.0, 2.0, 2.0))
+    duoplot.global_illumination(duoplot.Vec3D(2.0, 2.0, 2.0))
 
     zo = -10.0
     s = 1.0
-    dvs.axis(
-        dvs.Vec3D(0.0, 0.0, 0.0 + zo), dvs.Vec3D(80.0 * s, 80.0 * s, 20.0 * s + zo)
+    duoplot.axis(
+        duoplot.Vec3D(0.0, 0.0, 0.0 + zo), duoplot.Vec3D(80.0 * s, 80.0 * s, 20.0 * s + zo)
     )
 
-    dvs.draw_mesh(
+    duoplot.draw_mesh(
         vertices_new,
         indices,
         colors=colors_new,
-        edge_color=dvs.properties.EdgeColor.NONE,
+        edge_color=duoplot.properties.EdgeColor.NONE,
     )
 
-    dvs.soft_clear_view()
+    duoplot.soft_clear_view()
     azimuth = -180.0
 
     for i in range(0, 1000):
         time.sleep(0.01)
-        dvs.view(azimuth, 21.0)
+        duoplot.view(azimuth, 21.0)
 
         azimuth += 0.4
         if azimuth > 180.0:
             azimuth = -180.0
 
         if i == 300:
-            dvs.draw_mesh(
+            duoplot.draw_mesh(
                 vertices_new,
                 indices,
                 colors=colors_new,
-                edge_color=dvs.properties.EdgeColor.BLACK,
+                edge_color=duoplot.properties.EdgeColor.BLACK,
             )
 
-            dvs.soft_clear_view()
+            duoplot.soft_clear_view()
         elif i == 500:
-            dvs.draw_mesh(
+            duoplot.draw_mesh(
                 vertices_new,
                 indices,
-                edge_color=dvs.properties.EdgeColor.BLACK,
-                color_map=dvs.properties.ColorMap.JET_SOFT,
+                edge_color=duoplot.properties.EdgeColor.BLACK,
+                color_map=duoplot.properties.ColorMap.JET_SOFT,
             )
 
-            dvs.soft_clear_view()
+            duoplot.soft_clear_view()
         elif i == 900:
 
-            dvs.draw_mesh(
+            duoplot.draw_mesh(
                 vertices_new,
                 indices,
-                edge_color=dvs.properties.EdgeColor.NONE,
-                color_map=dvs.properties.ColorMap.JET_SOFT,
+                edge_color=duoplot.properties.EdgeColor.NONE,
+                color_map=duoplot.properties.ColorMap.JET_SOFT,
             )
 
-            dvs.soft_clear_view()
+            duoplot.soft_clear_view()

@@ -1,9 +1,9 @@
 #ifndef DEMOS_TESTS_WAVE_EQUATION_H_
 #define DEMOS_TESTS_WAVE_EQUATION_H_
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace wave_equation
 {
@@ -171,7 +171,7 @@ float getMax(const MatrixConstView<float>& m)
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_rows = 200, num_cols = 200, num_its = 2000;

@@ -5,12 +5,12 @@
 
 #include "axes/axes.h"
 #include "axes/axes_side_configuration.h"
-#include "dvs/enumerations.h"
-#include "dvs/math/math.h"
+#include "duoplot/enumerations.h"
+#include "duoplot/math/math.h"
 #include "events.h"
 #include "platform_paths.h"
 
-using namespace dvs::internal;
+using namespace duoplot::internal;
 
 wxGLAttributes PlotPane::getGLAttributes() const
 {
@@ -182,7 +182,7 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
                                const PlotObjectAttributes& plot_object_attributes,
                                const PropertiesData& properties_data)
 {
-    const dvs::internal::CommunicationHeader& hdr = received_data.getCommunicationHeader();
+    const duoplot::internal::CommunicationHeader& hdr = received_data.getCommunicationHeader();
     const Function fcn = hdr.getFunction();
 
     if (fcn == Function::AXES_2D)

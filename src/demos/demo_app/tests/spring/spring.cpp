@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace spring_structure
 {
@@ -523,7 +523,7 @@ SpringStructure::SpringStructure(const std::string& conn_file_name,
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     float c = 4.0f;   // Exterior dampening

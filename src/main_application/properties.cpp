@@ -2,9 +2,9 @@
 
 #include <algorithm>
 
-using namespace dvs;
-using namespace dvs::internal;
-using namespace dvs::properties;
+using namespace duoplot;
+using namespace duoplot::internal;
+using namespace duoplot::properties;
 
 Properties::Properties()
 {

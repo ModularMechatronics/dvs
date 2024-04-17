@@ -3,17 +3,17 @@
 
 #include <unistd.h>
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "utils.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace axes_proportions
 {
 
 void testBasic()
 {
-    openProjectFile("../../project_files/exp0.dvs");
+    openProjectFile("../../project_files/exp0.duoplot");
     const double xp = 1.0, yp = 2.0;
     Vector<double> x{VectorInitializer<double>{-xp, xp, xp, -xp, -xp, xp, xp, -xp}};
     Vector<double> y{VectorInitializer<double>{-yp, -yp, yp, yp, -yp, -yp, yp, yp}};

@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "debug_value_args.h"
-#include "dvs/logging.h"
+#include "duoplot/logging.h"
 #include "main_window.h"
 
 class MainApp : public wxApp
@@ -43,6 +43,6 @@ bool MainApp::OnInit()
 int MainApp::OnExit()
 {
     main_window->destroy();
-    DVS_LOG_INFO() << "Exit from MainApp::OnExit!";
+    DUOPLOT_LOG_INFO() << "Exit from MainApp::OnExit!";
     return this->wxApp::OnExit();
 }

@@ -42,7 +42,7 @@ struct ConvertedData : ConvertedDataBase
     ConvertedData(ConvertedData&& other) = delete;
     ConvertedData& operator=(ConvertedData&& other) = delete;
 
-    std::pair<dvs::Vec3<double>, double> getClosestPoint(const Line3D<double>& line) const override
+    std::pair<duoplot::Vec3<double>, double> getClosestPoint(const Line3D<double>& line) const override
     {
         double min_dist = std::numeric_limits<double>::max();
 
@@ -159,7 +159,7 @@ void Scatter3D::appendNewData(ReceivedData& received_data,
 
     if ((num_added_elements_ + num_elements_) > buffer_size_)
     {
-        DVS_LOG_ERROR() << "Buffer overflow!";
+        DUOPLOT_LOG_ERROR() << "Buffer overflow!";
         return;
     }
 

@@ -15,7 +15,7 @@
 #include "platform_paths.h"
 #include "shader.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace
 {

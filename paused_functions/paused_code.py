@@ -137,7 +137,7 @@ def test_draw_polygon_from_4_points():
     p2 = Point3D(1.0, 1.0, 2.0)
     p3 = Point3D(0.0, 1.0, 3.0)
 
-    dvs.draw_polygon_from_4_points(p0, p1, p2, p3)
+    duoplot.draw_polygon_from_4_points(p0, p1, p2, p3)
 
 
 def test_draw_triangle():
@@ -167,7 +167,7 @@ def test_draw_triangles():
                                     Point3D(rp[0][1], rp[1][1], rp[2][1]),
                                     Point3D(rp[0][2], rp[1][2], rp[2][2])))
 
-    dvs.draw_triangles(triangles)
+    duoplot.draw_triangles(triangles)
 
 
 
@@ -198,7 +198,7 @@ def test_draw_line():
     setup_dvs_view()  # TODO: <- Move to main.py
     line = Line3D(Point3D(0.1, 0.2, 0.3), Vec3D(1.1, 1.2, 1.3))
 
-    dvs.draw_line(line, 0.1, 5.7)
+    duoplot.draw_line(line, 0.1, 5.7)
 
 
 def test_draw_line_2d():
@@ -206,21 +206,21 @@ def test_draw_line_2d():
 
     line = PLine2D(Point2D(0.1, 0.2), Vec2D(1.1, 1.2))
 
-    dvs.draw_line_2d(line, 0.1, 5.7)
+    duoplot.draw_line_2d(line, 0.1, 5.7)
 
 
 def test_draw_line_2d_between_x_values():
     setup_dvs_view()
 
     line = HLine2D(0.1, 0.2, 0.3)
-    dvs.draw_line_2d_between_x_values(line, 0.1, 4.0)
+    duoplot.draw_line_2d_between_x_values(line, 0.1, 4.0)
 
 
 def test_draw_line_2d_between_y_values():
     setup_dvs_view()
 
     line = HLine2D(0.1, 0.2, 0.3)
-    dvs.draw_line_2d_between_y_values(line, 0.5, 3.0)
+    duoplot.draw_line_2d_between_y_values(line, 0.5, 3.0)
 
 
 def test_draw_line_between_points():
@@ -232,9 +232,9 @@ def test_draw_line_between_points():
     p0_2 = Point3D(p0.x, p0.y)
     p1_2 = Point3D(p1.x, p1.y)
 
-    dvs.draw_line_between_points(p0, p1)
+    duoplot.draw_line_between_points(p0, p1)
 
-    dvs.draw_line_between_points(p0_2, p1_2)
+    duoplot.draw_line_between_points(p0_2, p1_2)
 
 
 def hold_on(name: str):

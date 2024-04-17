@@ -42,22 +42,22 @@ inline void stopTimer()
 
 }  // namespace timing
 
-#define DVS_TIC() dvs::timing::startTimer()
+#define DUOPLOT_TIC() duoplot::timing::startTimer()
 
-#define DVS_TOC_MS(msg)                                                                                                \
+#define DUOPLOT_TOC_MS(msg)                                                                                                \
     {                                                                                                                  \
-        dvs::timing::stopTimer();                                                                                      \
-        int64_t delta_seconds = dvs::timing::_Var_stop_seconds() - dvs::timing::_Var_start_seconds();                  \
-        int64_t delta_microseconds = dvs::timing::_Var_stop_micro_seconds() - dvs::timing::_Var_start_micro_seconds(); \
+        duoplot::timing::stopTimer();                                                                                      \
+        int64_t delta_seconds = duoplot::timing::_Var_stop_seconds() - duoplot::timing::_Var_start_seconds();                  \
+        int64_t delta_microseconds = duoplot::timing::_Var_stop_micro_seconds() - duoplot::timing::_Var_start_micro_seconds(); \
         int64_t delta_time = delta_seconds * 1000000 + delta_microseconds;                                             \
-        DVS_LOG_DEBUG() << msg << static_cast<float>(delta_time) / 1000.0f << " ms";                                   \
+        DUOPLOT_LOG_DEBUG() << msg << static_cast<float>(delta_time) / 1000.0f << " ms";                                   \
     }
 
-#define DVS_TOC_US(msg)                                                                                                \
+#define DUOPLOT_TOC_US(msg)                                                                                                \
     {                                                                                                                  \
-        dvs::timing::stopTimer();                                                                                      \
-        int64_t delta_seconds = dvs::timing::_Var_stop_seconds() - dvs::timing::_Var_start_seconds();                  \
-        int64_t delta_microseconds = dvs::timing::_Var_stop_micro_seconds() - dvs::timing::_Var_start_micro_seconds(); \
+        duoplot::timing::stopTimer();                                                                                      \
+        int64_t delta_seconds = duoplot::timing::_Var_stop_seconds() - duoplot::timing::_Var_start_seconds();                  \
+        int64_t delta_microseconds = duoplot::timing::_Var_stop_micro_seconds() - duoplot::timing::_Var_start_micro_seconds(); \
         int64_t delta_time = delta_seconds * 1000000 + delta_microseconds;                                             \
-        DVS_LOG_DEBUG() << msg << delta_time << " us";                                                                 \
+        DUOPLOT_LOG_DEBUG() << msg << delta_time << " us";                                                                 \
     }

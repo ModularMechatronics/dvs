@@ -9,8 +9,8 @@
 #include <queue>
 
 #include "communication/received_data.h"
-#include "dvs/enumerations.h"
-#include "dvs/math/math.h"
+#include "duoplot/enumerations.h"
+#include "duoplot/math/math.h"
 #include "gui_element.h"
 #include "project_state/project_settings.h"
 

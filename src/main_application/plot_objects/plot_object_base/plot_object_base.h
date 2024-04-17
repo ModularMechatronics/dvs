@@ -12,18 +12,18 @@
 #include "axes/legend_properties.h"
 #include "color_picker.h"
 #include "communication/received_data.h"
-#include "dvs/enumerations.h"
-#include "dvs/math/math.h"
-#include "dvs/plot_properties.h"
+#include "duoplot/enumerations.h"
+#include "duoplot/math/math.h"
+#include "duoplot/plot_properties.h"
 #include "misc/rgb_triplet.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_objects/utils.h"
 #include "properties.h"
 #include "shader.h"
 
-using namespace dvs;
-using namespace dvs::internal;
-using namespace dvs::properties;
+using namespace duoplot;
+using namespace duoplot::internal;
+using namespace duoplot::properties;
 
 constexpr size_t kDefaultBufferSize = 500U;
 constexpr char* const kDefaultLabel = "";
@@ -368,7 +368,7 @@ struct ConvertedDataBase
     Function function;
 
     virtual ~ConvertedDataBase() {}
-    virtual std::pair<dvs::Vec3<double>, double> getClosestPoint(const Line3D<double>& line) const
+    virtual std::pair<duoplot::Vec3<double>, double> getClosestPoint(const Line3D<double>& line) const
     {
         std::cout << "Called base function!" << std::endl;
         return {Vec3<double>{0.0, 0.0, 0.0}, std::numeric_limits<double>::max()};

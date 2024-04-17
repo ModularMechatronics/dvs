@@ -6,11 +6,11 @@
 #include <array>
 
 #include "debug_value_reader.h"
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 // #include <box2d/b2_prismatic_joint.h>
 // src/externals/box2d/include/box2d/b2_prismatic_joint.h
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace boxes
 {

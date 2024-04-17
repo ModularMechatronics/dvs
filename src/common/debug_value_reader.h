@@ -12,7 +12,7 @@ namespace debug_value_reader
 
 namespace internal
 {
-constexpr char* kDebugFilePath = "/Users/danielpi/.config/dvs_debug_values.json";
+constexpr char* kDebugFilePath = "/Users/danielpi/.config/duoplot_debug_values.json";
 
 inline bool& Variable_file_has_been_read()
 {

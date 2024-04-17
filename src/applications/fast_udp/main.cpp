@@ -51,7 +51,7 @@ void threadFunction()
     const UInt8ArrayView array_view(input_data, total_num_bytes_global);
 
     sendThroughUdpInterfaceNew(array_view);
-    DVS_LOG_INFO() << "Transmission finished!";
+    DUOPLOT_LOG_INFO() << "Transmission finished!";
 }
 
 int main(int argc, char** argv)
@@ -68,16 +68,16 @@ int main(int argc, char** argv)
     UdpServer udp_server{dvs::internal::kUdpPortNum};
 
     udp_server.receiveAndGetData();
-    DVS_LOG_DEBUG() << "Received finished!";
+    DUOPLOT_LOG_DEBUG() << "Received finished!";
 
     /*while (true)
     {
-        DVS_LOG_INFO() << "From main!";
+        DUOPLOT_LOG_INFO() << "From main!";
         delayMs(1000);
     }*/
 
     // sendThroughUdpInterface(const UInt8ArrayView& input_array)
 
-    DVS_LOG_DEBUG() << "Debug!";
+    DUOPLOT_LOG_DEBUG() << "Debug!";
     t0.join();
 }

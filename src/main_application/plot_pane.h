@@ -10,8 +10,8 @@
 #include "axes/axes.h"
 #include "communication/data_receiver.h"
 #include "communication/received_data.h"
-#include "dvs/internal.h"
-#include "dvs/math/math.h"
+#include "duoplot/internal.h"
+#include "duoplot/math/math.h"
 #include "gui_element.h"
 #include "input_data.h"
 #include "opengl_low_level/opengl_header.h"
@@ -49,7 +49,7 @@ private:
     std::queue<std::unique_ptr<InputData>> queued_data_;
     std::queue<std::unique_ptr<InputData>> flush_queue_;
 
-    dvs::Vec3<double> closest_point_;
+    duoplot::Vec3<double> closest_point_;
     bool should_render_point_selection_;
 
     wxWindow* getParent() const override

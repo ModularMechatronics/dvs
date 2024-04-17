@@ -26,7 +26,7 @@ if __name__ == "__main__":
         else:
             if fn_name == "all":
                 for fn in FUNCTION_NAMES:
-                    eval("main_tests.test_" + fn + "()")
+                    eval("main_tests." + fn + "()")
             elif ("test_" + fn_name) in FUNCTION_NAMES:
                 eval("main_tests.test_" + fn_name + "()")
             else:

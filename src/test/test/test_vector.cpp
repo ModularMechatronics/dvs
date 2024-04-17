@@ -1,4 +1,4 @@
-#include <dvs/dvs.h>
+#include <duoplot/duoplot.h>
 #include <gtest/gtest.h>
 
 #include <cmath>
@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-using namespace dvs;
+using namespace duoplot;
 
 class TestVector : public testing::Test
 {
@@ -21,8 +21,8 @@ TEST_F(TestVector, TestZipUnzip3)
 {
     const size_t num_elements = 143;
     const Vector<double> x = linspaceFromBoundariesAndCount(0.1, 1.2, num_elements);
-    const Vector<double> y = dvs::sin(x);
-    const Vector<double> z = dvs::cos(x);
+    const Vector<double> y = duoplot::sin(x);
+    const Vector<double> z = duoplot::cos(x);
 
     const Vector<Vec3<double>> zipped_vec = zip(x.constView(), y.constView(), z.constView());
     const auto [xu, yu, zu] = unzip(zipped_vec.constView());
@@ -43,7 +43,7 @@ TEST_F(TestVector, TestZipUnzip2)
 {
     const size_t num_elements = 143;
     const Vector<double> x = linspaceFromBoundariesAndCount(0.1, 1.2, num_elements);
-    const Vector<double> y = dvs::sin(x);
+    const Vector<double> y = duoplot::sin(x);
 
     const Vector<Vec2<double>> zipped_vec = zip(x.constView(), y.constView());
     const auto [xu, yu] = unzip(zipped_vec.constView());

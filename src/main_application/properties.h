@@ -1,70 +1,70 @@
 #ifndef MAIN_APPLICATION_PROPERTIES_H_
 #define MAIN_APPLICATION_PROPERTIES_H_
 
-#include "dvs/internal.h"
-#include "dvs/math/math.h"
+#include "duoplot/internal.h"
+#include "duoplot/math/math.h"
 
-template <typename T> dvs::internal::PropertyType templateToPropertyType()
+template <typename T> duoplot::internal::PropertyType templateToPropertyType()
 {
-    if (std::is_same<T, dvs::properties::Alpha>::value)
+    if (std::is_same<T, duoplot::properties::Alpha>::value)
     {
-        return dvs::internal::PropertyType::ALPHA;
+        return duoplot::internal::PropertyType::ALPHA;
     }
-    else if (std::is_same<T, dvs::properties::Label>::value)
+    else if (std::is_same<T, duoplot::properties::Label>::value)
     {
-        return dvs::internal::PropertyType::NAME;
+        return duoplot::internal::PropertyType::NAME;
     }
-    else if (std::is_same<T, dvs::properties::LineWidth>::value)
+    else if (std::is_same<T, duoplot::properties::LineWidth>::value)
     {
-        return dvs::internal::PropertyType::LINE_WIDTH;
+        return duoplot::internal::PropertyType::LINE_WIDTH;
     }
-    else if (std::is_same<T, dvs::properties::LineStyle>::value)
+    else if (std::is_same<T, duoplot::properties::LineStyle>::value)
     {
-        return dvs::internal::PropertyType::LINE_STYLE;
+        return duoplot::internal::PropertyType::LINE_STYLE;
     }
-    else if (std::is_same<T, dvs::internal::ColorInternal>::value)
+    else if (std::is_same<T, duoplot::internal::ColorInternal>::value)
     {
-        return dvs::internal::PropertyType::COLOR;
+        return duoplot::internal::PropertyType::COLOR;
     }
-    else if (std::is_same<T, dvs::properties::EdgeColor>::value)
+    else if (std::is_same<T, duoplot::properties::EdgeColor>::value)
     {
-        return dvs::internal::PropertyType::EDGE_COLOR;
+        return duoplot::internal::PropertyType::EDGE_COLOR;
     }
-    else if (std::is_same<T, dvs::properties::FaceColor>::value)
+    else if (std::is_same<T, duoplot::properties::FaceColor>::value)
     {
-        return dvs::internal::PropertyType::FACE_COLOR;
+        return duoplot::internal::PropertyType::FACE_COLOR;
     }
-    else if (std::is_same<T, dvs::properties::ColorMap>::value)
+    else if (std::is_same<T, duoplot::properties::ColorMap>::value)
     {
-        return dvs::internal::PropertyType::COLOR_MAP;
+        return duoplot::internal::PropertyType::COLOR_MAP;
     }
-    else if (std::is_same<T, dvs::properties::ScatterStyle>::value)
+    else if (std::is_same<T, duoplot::properties::ScatterStyle>::value)
     {
-        return dvs::internal::PropertyType::SCATTER_STYLE;
+        return duoplot::internal::PropertyType::SCATTER_STYLE;
     }
-    else if (std::is_same<T, dvs::properties::PointSize>::value)
+    else if (std::is_same<T, duoplot::properties::PointSize>::value)
     {
-        return dvs::internal::PropertyType::POINT_SIZE;
+        return duoplot::internal::PropertyType::POINT_SIZE;
     }
-    else if (std::is_same<T, dvs::properties::BufferSize>::value)
+    else if (std::is_same<T, duoplot::properties::BufferSize>::value)
     {
-        return dvs::internal::PropertyType::BUFFER_SIZE;
+        return duoplot::internal::PropertyType::BUFFER_SIZE;
     }
-    else if (std::is_same<T, dvs::properties::DistanceFrom>::value)
+    else if (std::is_same<T, duoplot::properties::DistanceFrom>::value)
     {
-        return dvs::internal::PropertyType::DISTANCE_FROM;
+        return duoplot::internal::PropertyType::DISTANCE_FROM;
     }
-    else if (std::is_same<T, dvs::properties::ZOffset>::value)
+    else if (std::is_same<T, duoplot::properties::ZOffset>::value)
     {
-        return dvs::internal::PropertyType::Z_OFFSET;
+        return duoplot::internal::PropertyType::Z_OFFSET;
     }
-    else if (std::is_same<T, dvs::properties::Transform>::value)
+    else if (std::is_same<T, duoplot::properties::Transform>::value)
     {
-        return dvs::internal::PropertyType::TRANSFORM;
+        return duoplot::internal::PropertyType::TRANSFORM;
     }
-    else if (std::is_same<T, dvs::properties::Silhouette>::value)
+    else if (std::is_same<T, duoplot::properties::Silhouette>::value)
     {
-        return dvs::internal::PropertyType::SILHOUETTE;
+        return duoplot::internal::PropertyType::SILHOUETTE;
     }
     else
     {
@@ -75,20 +75,20 @@ template <typename T> dvs::internal::PropertyType templateToPropertyType()
 class Properties
 {
 private:
-    dvs::internal::CommunicationHeader::PropertiesArray props_;
-    dvs::internal::PropertyLookupTable props_lut_;
-    dvs::internal::CommunicationHeader::FlagsArray flags_;
+    duoplot::internal::CommunicationHeader::PropertiesArray props_;
+    duoplot::internal::PropertyLookupTable props_lut_;
+    duoplot::internal::CommunicationHeader::FlagsArray flags_;
 
 public:
     Properties();
-    Properties(const dvs::internal::CommunicationHeader& hdr);
-    bool hasProperty(const dvs::internal::PropertyType tp) const;
-    bool hasFlag(const dvs::internal::PropertyFlag f) const;
+    Properties(const duoplot::internal::CommunicationHeader& hdr);
+    bool hasProperty(const duoplot::internal::PropertyType tp) const;
+    bool hasFlag(const duoplot::internal::PropertyFlag f) const;
     void appendAndOverwriteProperties(const Properties& other_props);
 
     template <typename T> T getProperty() const
     {
-        const dvs::internal::PropertyType tp = templateToPropertyType<T>();
+        const duoplot::internal::PropertyType tp = templateToPropertyType<T>();
 
         const uint8_t idx = props_lut_.data[static_cast<uint8_t>(tp)];
 

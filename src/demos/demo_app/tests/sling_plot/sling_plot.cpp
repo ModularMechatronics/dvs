@@ -1,12 +1,12 @@
 #include "tests/sling_plot/sling_plot.h"
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "tests/slam/color_maps.h"
 
 namespace sling_plot
 {
 
-using namespace dvs;
+using namespace duoplot;
 
 void updateSling(Vector<float>& x, Vector<float>& y, Vector<float>& vx, Vector<float>& vy)
 {
@@ -69,7 +69,7 @@ void updateSling(Vector<float>& x, Vector<float>& y, Vector<float>& vx, Vector<f
 
 void testSlingPlot()
 {
-    const std::string project_file_path = "../../project_files/sling_plot.dvs";
+    const std::string project_file_path = "../../project_files/sling_plot.duoplot";
     openProjectFile(project_file_path);
 
     const size_t num_particles = 10U;

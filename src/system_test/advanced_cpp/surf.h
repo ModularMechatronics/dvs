@@ -1,10 +1,10 @@
 #ifndef TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SURF_H_
 #define TEST_APPLICATIONS_ADVANCED_TESTS_CPP_TESTS_SURF_H_
 
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "utils.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 namespace surf_ns
 {

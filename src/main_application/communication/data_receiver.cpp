@@ -1,12 +1,12 @@
 #include "communication/data_receiver.h"
 
-#include "dvs/fillable_uint8_array.h"
+#include "duoplot/fillable_uint8_array.h"
 
 DataReceiver::DataReceiver()
 {
     tcp_sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
 
-    // Set reuse address that's already in use (probably by exited dvs instance)
+    // Set reuse address that's already in use (probably by exited duoplot instance)
     int true_val = 1;
     setsockopt(tcp_sockfd_, SOL_SOCKET, SO_REUSEADDR, &true_val, sizeof(int));
 
@@ -14,7 +14,7 @@ DataReceiver::DataReceiver()
 
     tcp_servaddr_.sin_family = AF_INET;
     tcp_servaddr_.sin_addr.s_addr = htonl(INADDR_ANY);
-    tcp_servaddr_.sin_port = htons(dvs::internal::kTcpPortNum);
+    tcp_servaddr_.sin_port = htons(duoplot::internal::kTcpPortNum);
 
     if ((bind(tcp_sockfd_, (struct sockaddr*)&tcp_servaddr_, sizeof(tcp_servaddr_))) != 0)
     {
@@ -84,7 +84,7 @@ ReceivedData DataReceiver::receiveAndGetDataFromTcp()
     uint64_t received_magic_num;
     std::memcpy(&received_magic_num, rec_buffer + 1, sizeof(uint64_t));  // +1 because first byte is endianness
 
-    if (received_magic_num != dvs::internal::kMagicNumber)
+    if (received_magic_num != duoplot::internal::kMagicNumber)
     {
         close(tcp_connfd_);
         throw std::runtime_error("Invalid magic number received!");

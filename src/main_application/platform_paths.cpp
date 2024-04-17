@@ -94,31 +94,31 @@ static std::pair<std::string, bool> getHomeDirPath()
 
     if (!username_and_status.second)
     {
-        DVS_LOG_ERROR() << "Failed to get login name! Exiting...";
+        DUOPLOT_LOG_ERROR() << "Failed to get login name! Exiting...";
         is_valid_ = false;
         return;
     }
-    const dvs::filesystem::path home_dir_path("/home/" + username_and_status.first);
+    const duoplot::filesystem::path home_dir_path("/home/" + username_and_status.first);
 
-    const dvs::filesystem::path config_dir_path{home_dir_path / dvs::filesystem::path{configuration_folder_name}};
+    const duoplot::filesystem::path config_dir_path{home_dir_path / duoplot::filesystem::path{configuration_folder_name}};
 
-    if (!dvs::filesystem::exists(config_dir_path))
+    if (!duoplot::filesystem::exists(config_dir_path))
     {
-        DVS_LOG_INFO() << config_dir_path << " dir does not exist, creating...";
+        DUOPLOT_LOG_INFO() << config_dir_path << " dir does not exist, creating...";
         try
         {
-            dvs::filesystem::create_directory(config_dir_path);
+            duoplot::filesystem::create_directory(config_dir_path);
         }
         catch (const std::exception& e)
         {
-            DVS_LOG_ERROR() << "Failed to create config directory at \"" << config_dir_path
+            DUOPLOT_LOG_ERROR() << "Failed to create config directory at \"" << config_dir_path
                             << "\". Exception: " << e.what();
             is_valid_ = false;
             return;
         }
     }
 
-    const dvs::filesystem::path dvs_dir_path{config_dir_path / dvs::filesystem::path{"dvs"}};
+    const duoplot::filesystem::path duoplot_dir_path{config_dir_path / duoplot::filesystem::path{"duoplot"}};
 #endif
 
 #ifdef PLATFORM_APPLE_M
@@ -126,7 +126,7 @@ static std::pair<std::string, bool> getHomeDirPath()
 #endif
 
 #ifdef PLATFORM_WINDOWS_M
-    const dvs::filesystem::path config_dir_path{home_dir_path / dvs::filesystem::path{configuration_folder_name}};
+    const duoplot::filesystem::path config_dir_path{home_dir_path / duoplot::filesystem::path{configuration_folder_name}};
 #endif
 
 */
@@ -175,10 +175,10 @@ std::string getConfigDirRoot()
     return "/Users/" + getUsername() + "/Library/Preferences";
 }
 
-dvs::filesystem::path getConfigDir()
+duoplot::filesystem::path getConfigDir()
 {
     // The path received from getConfigDirRoot() is assumed to exist
-    return dvs::filesystem::path{getConfigDirRoot() / dvs::filesystem::path{"dvs"}};
+    return duoplot::filesystem::path{getConfigDirRoot() / duoplot::filesystem::path{"duoplot"}};
 }
 
 std::string getApplicationRootPath()

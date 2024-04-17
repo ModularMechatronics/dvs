@@ -1,7 +1,7 @@
 #include "ad_dataset.h"
 
 #include <curses.h>
-#include <dvs/timing.h>
+#include <duoplot/timing.h>
 
 #include <algorithm>
 #include <filesystem>
@@ -12,7 +12,7 @@ namespace ad_dataset
 
 DatasetReaderFast::DatasetReaderFast(const std::string& dataset_file)
 {
-    auto t0 = dvs::timing::getTimeNow();
+    auto t0 = duoplot::timing::getTimeNow();
     std::ifstream input_file(dataset_file, std::ios::binary);
 
     input_file.read(reinterpret_cast<char*>(&total_num_bytes_), sizeof(size_t));
@@ -28,9 +28,9 @@ DatasetReaderFast::DatasetReaderFast(const std::string& dataset_file)
     input_file.read(reinterpret_cast<char*>(file_raw_data_), total_num_bytes_);
 
     readFiles();
-    auto t1 = dvs::timing::getTimeNow();
+    auto t1 = duoplot::timing::getTimeNow();
 
-    std::cout << "Read in time: " << dvs::timing::timePointsToMsDouble(t0, t1) << std::endl;
+    std::cout << "Read in time: " << duoplot::timing::timePointsToMsDouble(t0, t1) << std::endl;
 }
 
 void DatasetReaderFast::readFiles()
@@ -349,7 +349,7 @@ std::vector<std::pair<Vector<float>, Vector<float>>> generateCircles(const size_
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/ad_dataset.dvs";
+    const std::string project_file_path = "../../project_files/ad_dataset.duoplot";
 
     DatasetReaderBase* dataset_reader;
     const bool use_fast_reader = true;
@@ -396,15 +396,15 @@ void testBasic()
     bool should_run_free = false;
     int current_frame = 0;
 
-    dvs::gui::startGuiReceiveThread();
+    duoplot::gui::startGuiReceiveThread();
 
-    dvs::gui::registerGuiCallback(
-        "slider0", [&should_run_free, &current_frame](const dvs::gui::SliderHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback(
+        "slider0", [&should_run_free, &current_frame](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
             current_frame = gui_element_handle.getValue();
         });
 
-    dvs::gui::registerGuiCallback(
-        "button0", [&should_run_free, &current_frame](const dvs::gui::ButtonHandle& gui_element_handle) -> void {
+    duoplot::gui::registerGuiCallback(
+        "button0", [&should_run_free, &current_frame](const duoplot::gui::ButtonHandle& gui_element_handle) -> void {
             should_run_free = !should_run_free;
 
             std::cout << "Current frame: " << current_frame << std::endl;

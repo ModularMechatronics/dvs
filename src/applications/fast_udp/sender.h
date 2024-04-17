@@ -127,7 +127,7 @@ inline void sendThroughUdpInterfaceNew(const UInt8ArrayView& input_array)
 
         duration<double, std::milli> ms_double = t2 - t1;
 
-        DVS_LOG_DEBUG() << "Sent " << i << " packets, took: " << ms_double.count() << "ms";
+        DUOPLOT_LOG_DEBUG() << "Sent " << i << " packets, took: " << ms_double.count() << "ms";
     }
     else
     {

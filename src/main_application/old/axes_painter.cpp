@@ -5,10 +5,10 @@
 #include "axes/plot_box/plot_box_grid_numbers.h"
 #include "axes/plot_box/plot_box_outline.h"
 #include "axes/plot_box/plot_box_walls.h"
-#include "dvs/math/math.h"
+#include "duoplot/math/math.h"
 #include "misc/misc.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 AxesPainter::AxesPainter(const AxesSettings& axes_settings) : axes_settings_(axes_settings) {}
 

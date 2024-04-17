@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "cb_tests.h"
-#include "dvs/dvs.h"
+#include "duoplot/duoplot.h"
 #include "tests.h"
 
 int main()

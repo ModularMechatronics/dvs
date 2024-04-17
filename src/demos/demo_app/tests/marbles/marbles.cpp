@@ -297,7 +297,7 @@ void drawGrid()
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/small_demo.dvs";
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
 
     setCurrentElement("p_view_0");

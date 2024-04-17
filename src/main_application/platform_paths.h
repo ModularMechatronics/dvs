@@ -6,6 +6,6 @@
 #include "filesystem.h"
 
 std::string getResourcesPathString();
-dvs::filesystem::path getConfigDir();
+duoplot::filesystem::path getConfigDir();
 
 #endif  // PLATFORM_PATHS_H

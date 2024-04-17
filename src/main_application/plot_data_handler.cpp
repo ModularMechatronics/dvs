@@ -1,7 +1,7 @@
 #include "main_application/plot_data_handler.h"
 
-#include "dvs/math/math.h"
-#include "dvs/utils.h"
+#include "duoplot/math/math.h"
+#include "duoplot/utils.h"
 #include "misc/rgb_triplet.h"
 #include "plot_objects/plot_object_base/plot_object_base.h"
 #include "plot_objects/plot_objects.h"
@@ -443,7 +443,7 @@ std::pair<Vec3d, Vec3d> PlotDataHandler::getMinMaxVectors() const
 
         const Vectord v{VectorInitializer{diff_vec.x, diff_vec.y, diff_vec.z}};
 
-        const double largest_diff = dvs::max(v);
+        const double largest_diff = duoplot::max(v);
 
         // If some of the axes turns out to have a very small difference
         // between min and max, we have to modify this

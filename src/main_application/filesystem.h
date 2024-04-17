@@ -3,7 +3,7 @@
 
 #ifdef PLATFORM_LINUX_M
 #include <experimental/filesystem>
-namespace dvs
+namespace duoplot
 {
 namespace filesystem = std::experimental::filesystem;
 }
@@ -11,7 +11,7 @@ namespace filesystem = std::experimental::filesystem;
 
 #ifdef PLATFORM_APPLE_M
 #include <filesystem>
-namespace dvs
+namespace duoplot
 {
 namespace filesystem = std::filesystem;
 }

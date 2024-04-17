@@ -8,9 +8,9 @@ wxDECLARE_EVENT(NO_ELEMENT_SELECTED, wxCommandEvent);
 wxDECLARE_EVENT(CHILD_WINDOW_IN_FOCUS_EVENT, wxCommandEvent);
 wxDECLARE_EVENT(NEW_EVENT, wxCommandEvent);
 
-namespace dvs_ids
+namespace duoplot_ids
 {
-enum DvsIds : uint16_t
+enum DuoplotIds : uint16_t
 {
     EDITING_DONE = wxID_HIGHEST,
     ADD_TAB,

@@ -1,11 +1,11 @@
-import dvs
+import duoplot
 import numpy as np
 
 
 def main():
-    dvs.set_current_element("hello_python")
-    dvs.clear_view()
-    dvs.set_title("Hello from Python!")
+    duoplot.set_current_element("hello_python")
+    duoplot.clear_view()
+    duoplot.set_title("Hello from Python!")
 
     x = np.linspace(-1.5, 1.5, 100, dtype=np.float32)
     y = np.linspace(-1.5, 1.5, 100, dtype=np.float32)
@@ -13,14 +13,14 @@ def main():
     r = np.sqrt(x * x + y * y)
     z = np.sin(r * 10.0) / (r * 10.0)
 
-    dvs.view(-50, 18)
-    dvs.surf(x, y, z)
+    duoplot.view(-50, 18)
+    duoplot.surf(x, y, z)
 
 
 """
 To run this, the warning printouts for the communication should be commented out
 
-# Make sure paths to shader, images etc are correct so that dvs can be executed from anywhere
+# Make sure paths to shader, images etc are correct so that duoplot can be executed from anywhere
 
 # Pre commands
 bash
@@ -36,7 +36,7 @@ cp src/build/demos/plot_stuff/hello_c hello_c
 
 # From /Users/danielpi/work/dvs:
 myCommand & echo $!
-cd src/build && ./main_application/dvs &
+cd src/build && ./main_application/duoplot &
 cd ../..
 
 python3 hello_python.py

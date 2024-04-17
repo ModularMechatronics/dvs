@@ -166,7 +166,7 @@ void placeBumpAt(
 
 void testBasic()
 {
-    const std::string project_file_path = "../../project_files/particle_field.dvs";
+    const std::string project_file_path = "../../project_files/particle_field.duoplot";
     openProjectFile(project_file_path);
 
     setCurrentElement("p_view_0");

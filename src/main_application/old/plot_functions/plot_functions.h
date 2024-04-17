@@ -3,10 +3,10 @@
 
 #include <utility>
 
-#include "dvs/math/math.h"
+#include "duoplot/math/math.h"
 #include "misc/color_map.h"
 
-using namespace dvs;
+using namespace duoplot;
 
 void plot(const Vectord& x, const Vectord& y);
 void plot3(const Vectord& x, const Vectord& y, const Vectord& z);
