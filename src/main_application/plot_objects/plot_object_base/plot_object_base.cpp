@@ -252,7 +252,7 @@ std::pair<Vec3d, Vec3d> PlotObjectBase::getMinMaxVectors()
         min_max_calculated_ = true;
         findMinMax();
     }
-    return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
+    return std::pair<Vec3d, Vec3d>(min_vec_, max_vec_);
 }
 
 size_t PlotObjectBase::getNumDimensions() const

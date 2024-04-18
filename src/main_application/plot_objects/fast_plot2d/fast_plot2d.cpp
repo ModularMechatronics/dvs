@@ -116,13 +116,13 @@ void FastPlot2D::findMinMax()
     std::tie<Vec2d, Vec2d>(min_vec_2d, max_vec_2d) =
         findMinMaxFromTwoVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 
-    min_vec.x = min_vec_2d.x;
-    min_vec.y = min_vec_2d.y;
-    min_vec.z = -1.0;
+    min_vec_.x = min_vec_2d.x;
+    min_vec_.y = min_vec_2d.y;
+    min_vec_.z = -1.0;
 
-    max_vec.x = max_vec_2d.x;
-    max_vec.y = max_vec_2d.y;
-    max_vec.z = 1.0;
+    max_vec_.x = max_vec_2d.x;
+    max_vec_.y = max_vec_2d.y;
+    max_vec_.z = 1.0;
 }
 
 void FastPlot2D::render()

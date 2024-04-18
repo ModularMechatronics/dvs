@@ -65,7 +65,7 @@ LineCollection3D::LineCollection3D(const CommunicationHeader& hdr,
 
 void LineCollection3D::findMinMax()
 {
-    std::tie<Vec3d, Vec3d>(min_vec, max_vec) =
+    std::tie<Vec3d, Vec3d>(min_vec_, max_vec_) =
         findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 }
 

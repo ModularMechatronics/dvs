@@ -148,13 +148,6 @@ std::pair<Vec3d, Vec3d> findMinMaxFromThreeVectorsInternal(uint8_t* const data_b
     std::tie<double, double>(min_vec.x, max_vec.x) = x.findMinMax();
     std::tie<double, double>(min_vec.y, max_vec.y) = y.findMinMax();
     std::tie<double, double>(min_vec.z, max_vec.z) = z.findMinMax();
-    /*min_vec.x = duoplot::min(x);
-    min_vec.y = duoplot::min(y);
-    min_vec.z = duoplot::min(z);
-
-    max_vec.x = duoplot::max(x);
-    max_vec.y = duoplot::max(y);
-    max_vec.z = duoplot::max(z);*/
 
     return std::pair<Vec3d, Vec3d>(min_vec, max_vec);
 }

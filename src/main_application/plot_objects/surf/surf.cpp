@@ -102,7 +102,7 @@ void Surf::findMinMax()
 {
     if (!min_max_calculated_)
     {
-        std::tie<Vec3d, Vec3d>(min_vec, max_vec) =
+        std::tie<Vec3d, Vec3d>(min_vec_, max_vec_) =
             findMinMaxFromThreeMatrices(data_ptr_, dims_.rows, dims_.cols, num_bytes_for_one_vec_, data_type_);
     }
 }
@@ -156,8 +156,8 @@ void Surf::render()
 
     shader_collection_.draw_mesh_shader.uniform_handles.edge_color.setColor(edge_color_);
     shader_collection_.draw_mesh_shader.uniform_handles.face_color.setColor(face_color_);
-    shader_collection_.draw_mesh_shader.base_uniform_handles.min_z.setFloat(min_vec.z);
-    shader_collection_.draw_mesh_shader.base_uniform_handles.max_z.setFloat(max_vec.z);
+    shader_collection_.draw_mesh_shader.base_uniform_handles.min_z.setFloat(min_vec_.z);
+    shader_collection_.draw_mesh_shader.base_uniform_handles.max_z.setFloat(max_vec_.z);
     shader_collection_.draw_mesh_shader.base_uniform_handles.alpha.setFloat(alpha_);
 
     if (has_color_)

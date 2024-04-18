@@ -468,8 +468,8 @@ protected:
     Function function_;
     DataType data_type_;
 
-    Vec3d min_vec;
-    Vec3d max_vec;
+    Vec3d min_vec_;
+    Vec3d max_vec_;
     bool min_max_calculated_;
     ShaderCollection shader_collection_;
 

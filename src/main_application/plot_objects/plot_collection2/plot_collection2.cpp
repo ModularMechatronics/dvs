@@ -133,8 +133,8 @@ PlotCollection2D::PlotCollection2D(const CommunicationHeader& hdr,
 
     num_points_ = converted_data_local->num_points;
 
-    min_vec = Vec3d{converted_data_local->min_vec.x, converted_data_local->min_vec.y, -1.0};
-    max_vec = Vec3d{converted_data_local->max_vec.x, converted_data_local->max_vec.y, 1.0};
+    min_vec_ = Vec3d{converted_data_local->min_vec.x, converted_data_local->min_vec.y, -1.0};
+    max_vec_ = Vec3d{converted_data_local->max_vec.x, converted_data_local->max_vec.y, 1.0};
 
     vertex_buffer_.addBuffer(converted_data_local->data_ptr, num_points_, 2);
 }

@@ -73,13 +73,13 @@ struct Converter
 
 void ImShow::findMinMax()
 {
-    min_vec.x = 0;
-    min_vec.y = 0;
-    min_vec.z = -1.0;
+    min_vec_.x = 0;
+    min_vec_.y = 0;
+    min_vec_.z = -1.0;
 
-    max_vec.x = width_;
-    max_vec.y = height_;
-    max_vec.z = 1.0;
+    max_vec_.x = width_;
+    max_vec_.y = height_;
+    max_vec_.z = 1.0;
 }
 
 ImShow::ImShow(const CommunicationHeader& hdr,

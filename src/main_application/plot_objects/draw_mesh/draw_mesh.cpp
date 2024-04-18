@@ -111,19 +111,19 @@ DrawMesh::DrawMesh(const CommunicationHeader& hdr,
 
 void DrawMesh::findMinMax()
 {
-    min_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
-    max_vec = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
+    min_vec_ = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
+    max_vec_ = {points_ptr_[0], points_ptr_[1], points_ptr_[2]};
 
     for (size_t k = 0; k < (num_indices_ * 3 * 3); k += 3)
     {
         const Point3d current_point(points_ptr_[k], points_ptr_[k + 1], points_ptr_[k + 2]);
-        min_vec.x = std::min(current_point.x, min_vec.x);
-        min_vec.y = std::min(current_point.y, min_vec.y);
-        min_vec.z = std::min(current_point.z, min_vec.z);
+        min_vec_.x = std::min(current_point.x, min_vec_.x);
+        min_vec_.y = std::min(current_point.y, min_vec_.y);
+        min_vec_.z = std::min(current_point.z, min_vec_.z);
 
-        max_vec.x = std::max(current_point.x, max_vec.x);
-        max_vec.y = std::max(current_point.y, max_vec.y);
-        max_vec.z = std::max(current_point.z, max_vec.z);
+        max_vec_.x = std::max(current_point.x, max_vec_.x);
+        max_vec_.y = std::max(current_point.y, max_vec_.y);
+        max_vec_.z = std::max(current_point.z, max_vec_.z);
     }
 }
 
@@ -135,8 +135,8 @@ void DrawMesh::render()
 
     shader_collection_.draw_mesh_shader.uniform_handles.edge_color.setColor(edge_color_);
     shader_collection_.draw_mesh_shader.uniform_handles.face_color.setColor(face_color_);
-    shader_collection_.draw_mesh_shader.base_uniform_handles.min_z.setFloat(min_vec.z);
-    shader_collection_.draw_mesh_shader.base_uniform_handles.max_z.setFloat(max_vec.z);
+    shader_collection_.draw_mesh_shader.base_uniform_handles.min_z.setFloat(min_vec_.z);
+    shader_collection_.draw_mesh_shader.base_uniform_handles.max_z.setFloat(max_vec_.z);
     shader_collection_.draw_mesh_shader.base_uniform_handles.alpha.setFloat(alpha_);
 
     if (has_color_)

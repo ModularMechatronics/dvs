@@ -535,6 +535,10 @@ void testPlot()
     Vector<float> xp(num_points), yp(num_points), zp(num_points);
     Vector<properties::Color> colorp(num_points);
 
+    Vector<float> x_some_equal(8U), y_some_equal(8U);
+    Vector<properties::Color> color_some_equal(8U);
+    Vector<float> x_all_equal(3U), y_all_equal(3U);
+
     xp(0) = 0.0;
     xp(1) = 1.0;
     xp(2) = 2.2;
@@ -565,11 +569,11 @@ void testPlot()
     clearView();
 
     axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    plot(xp, yp, colorp, properties::LineWidth(20), properties::Color(200, 200, 200));
-    scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
+    // plot(xp, yp, colorp, properties::LineWidth(20), properties::Color(200, 200, 200));
+    // scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
-    plot3(xp, yp, zp, properties::LineWidth(60), properties::Color(0, 255, 0));
+    // plot3(xp, yp, zp, properties::LineWidth(60), properties::Color(0, 255, 0));
 
     view(0, 90);
 
@@ -590,8 +594,46 @@ void testPlot()
     yp(4) = 4.0;
     yp(5) = 2.0;
 
+    x_some_equal(0) = 0.0f;
+    x_some_equal(1) = 0.0f;
+    x_some_equal(2) = 1.0f;
+    x_some_equal(3) = 1.0f;
+    x_some_equal(4) = 2.0f;
+    x_some_equal(5) = 2.0f;
+    x_some_equal(6) = 3.0f;
+    x_some_equal(7) = 3.0f;
+
+    y_some_equal(0) = -1.0f;
+    y_some_equal(1) = -1.0f;
+    y_some_equal(2) = -1.5f;
+    y_some_equal(3) = -1.5f;
+    y_some_equal(4) = -1.7f;
+    y_some_equal(5) = -1.7f;
+    y_some_equal(6) = -1.8f;
+    y_some_equal(7) = -1.8f;
+
+    color_some_equal(0) = properties::Color(255, 0, 0);     // [0.0f, -1.0f], Red,      Point will be added
+    color_some_equal(1) = properties::Color(0, 255, 0);     // [0.0f, -1.0f], Green
+    color_some_equal(2) = properties::Color(0, 0, 255);     // [1.0f, -1.5f], Blue,     Point will be added
+    color_some_equal(3) = properties::Color(255, 255, 0);   // [1.0f, -1.5f], Yellow
+    color_some_equal(4) = properties::Color(255, 0, 255);   // [2.0f, -1.7f], Magenta,  Point will be added
+    color_some_equal(5) = properties::Color(255, 255, 255); // [2.0f, -1.7f], White
+    color_some_equal(6) = properties::Color(0, 255, 255);   // [3.0f, -1.8f], Cyan,     Point will be added
+    color_some_equal(7) = properties::Color(0, 0, 0);       // [3.0f, -1.8f], Black
+
+    x_all_equal(0) = 0.0f;
+    x_all_equal(1) = 0.0f;
+    x_all_equal(2) = 0.0f;
+
+    y_all_equal(0) = -1.0f;
+    y_all_equal(1) = -1.0f;
+    y_all_equal(2) = -1.0f;
+
     axis({-2.0, -2.0, -1.0}, {6.0, 6.0, 1.0});
-    plot(xp, yp, properties::LineWidth(50), properties::Color(200, 200, 200));
+    // plot(xp, yp, properties::LineWidth(50), properties::Color(200, 200, 200));
+    plot(x_some_equal, y_some_equal, properties::LineWidth(50), properties::Color::RED);
+    plot(x_some_equal, y_some_equal + 2.0f, color_some_equal, properties::LineWidth(50));
+    plot(x_all_equal, y_all_equal, properties::LineWidth(50), properties::Color::BLUE);
     view(0, 90);
 
     setCurrentElement("p_view_1");
@@ -802,6 +844,10 @@ void testPlot3()
 
     const size_t num_points = 6;
     Vector<float> xp(num_points), yp(num_points), zp(num_points);
+    Vector<float> x_some_equal(8U), y_some_equal(8U), z_some_equal(8U);
+    Vector<properties::Color> color_some_equal(8U);
+    Vector<float> x_all_equal(3U), y_all_equal(3U), z_all_equal(3U);
+
 
     xp(0) = 0.0;
     xp(1) = 1.0;
@@ -853,6 +899,52 @@ void testPlot3()
 
     plot3(x, y, z, properties::Color(212, 14, 55), properties::LineWidth(1));
     plot3(xf + 0.1f, yf, zf, properties::Color(21, 14, 55), properties::LineWidth(7));
+
+    setCurrentElement("p_view_2");
+    clearView();
+
+    x_some_equal(0) = 0.0f;
+    x_some_equal(1) = 0.0f;
+    x_some_equal(2) = 1.0f;
+    x_some_equal(3) = 1.0f;
+    x_some_equal(4) = 2.0f;
+    x_some_equal(5) = 2.0f;
+    x_some_equal(6) = 3.0f;
+    x_some_equal(7) = 3.0f;
+
+    y_some_equal(0) = -1.0f;
+    y_some_equal(1) = -1.0f;
+    y_some_equal(2) = -1.5f;
+    y_some_equal(3) = -1.5f;
+    y_some_equal(4) = -1.7f;
+    y_some_equal(5) = -1.7f;
+    y_some_equal(6) = -1.8f;
+    y_some_equal(7) = -1.8f;
+
+    z_some_equal.fill(0.0f);
+
+    color_some_equal(0) = properties::Color(255, 0, 0);     // [0.0f, -1.0f], Red,      Point will be added
+    color_some_equal(1) = properties::Color(0, 255, 0);     // [0.0f, -1.0f], Green
+    color_some_equal(2) = properties::Color(0, 0, 255);     // [1.0f, -1.5f], Blue,     Point will be added
+    color_some_equal(3) = properties::Color(255, 255, 0);   // [1.0f, -1.5f], Yellow
+    color_some_equal(4) = properties::Color(255, 0, 255);   // [2.0f, -1.7f], Magenta,  Point will be added
+    color_some_equal(5) = properties::Color(255, 255, 255); // [2.0f, -1.7f], White
+    color_some_equal(6) = properties::Color(0, 255, 255);   // [3.0f, -1.8f], Cyan,     Point will be added
+    color_some_equal(7) = properties::Color(0, 0, 0);       // [3.0f, -1.8f], Black
+
+    x_all_equal(0) = 0.0f;
+    x_all_equal(1) = 0.0f;
+    x_all_equal(2) = 0.0f;
+
+    y_all_equal(0) = -1.0f;
+    y_all_equal(1) = -1.0f;
+    y_all_equal(2) = -1.0f;
+    z_all_equal.fill(0.0f);
+
+    axis({-2.0, -2.0, -1.0}, {6.0, 6.0, 1.0});
+    plot3(x_some_equal, y_some_equal, z_some_equal, properties::LineWidth(50), properties::Color::RED);
+    plot3(x_some_equal, y_some_equal + 2.0f, z_some_equal, color_some_equal, properties::LineWidth(50));
+    plot3(x_all_equal, y_all_equal, z_all_equal, properties::LineWidth(50), properties::Color::BLUE);
 }
 
 void testFastPlot3()

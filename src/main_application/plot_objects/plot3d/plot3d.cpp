@@ -123,6 +123,14 @@ Plot3D::Plot3D(const CommunicationHeader& hdr,
         throw std::runtime_error("Invalid function type for Plot3D!");
     }
 
+    is_valid_ = true;
+
+    if(converted_data == nullptr)
+    {
+        is_valid_ = false;
+        return;
+    }
+
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
     num_points_ = converted_data_local->num_points;
@@ -141,12 +149,29 @@ Plot3D::Plot3D(const CommunicationHeader& hdr,
 
 void Plot3D::findMinMax()
 {
-    std::tie<Vec3d, Vec3d>(min_vec, max_vec) =
+    if(!is_valid_)
+    {
+        min_vec_.x = -1.0;
+        min_vec_.y = -1.0;
+        min_vec_.z = -1.0;
+
+        max_vec_.x = 1.0;
+        max_vec_.y = 1.0;
+        max_vec_.z = 1.0;
+        return;
+    }
+
+    std::tie<Vec3d, Vec3d>(min_vec_, max_vec_) =
         findMinMaxFromThreeVectors(data_ptr_, num_elements_, num_bytes_for_one_vec_, data_type_);
 }
 
 void Plot3D::render()
 {
+    if(!is_valid_)
+    {
+        return;
+    }
+
     shader_collection_.plot_3d_shader.use();
     shader_collection_.plot_3d_shader.uniform_handles.half_line_width.setFloat(line_width_ / 3.0f);
     shader_collection_.plot_3d_shader.base_uniform_handles.alpha.setFloat(alpha_);
@@ -184,8 +209,98 @@ std::shared_ptr<const ConvertedDataBase> Plot3D::convertRawData(const Communicat
 namespace
 {
 template <typename T>
-std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params_original)
 {
+    const T* const input_data_dt = reinterpret_cast<const T* const>(input_data);
+
+    float* sanitized_input_x = new float[input_params_original.num_elements];
+    float* sanitized_input_y = new float[input_params_original.num_elements];
+    float* sanitized_input_z = new float[input_params_original.num_elements];
+
+    size_t total_num_points = 1U;
+
+    float x_last_valid_point = static_cast<float>(input_data_dt[0]);
+    float y_last_valid_point = static_cast<float>(input_data_dt[input_params_original.num_elements]);
+    float z_last_valid_point = static_cast<float>(input_data_dt[input_params_original.num_elements * 2U]);
+
+    sanitized_input_x[0U] = x_last_valid_point;
+    sanitized_input_y[0U] = y_last_valid_point;
+    sanitized_input_z[0U] = z_last_valid_point;
+
+    properties::Color* sanitized_color_input{nullptr};
+
+    if(input_params_original.has_color)
+    {
+        sanitized_color_input = new properties::Color[input_params_original.num_elements];
+        const properties::Color* const input_data_rgb =
+            reinterpret_cast<const properties::Color* const>(input_data_dt + 3U * input_params_original.num_elements);
+
+        sanitized_color_input[0U] = input_data_rgb[0U];
+
+        for(size_t k = 1U; k < input_params_original.num_elements; k++)
+        {
+            const float xk = static_cast<float>(input_data_dt[k]);
+            const float yk = static_cast<float>(input_data_dt[input_params_original.num_elements + k]);
+            const float zk = static_cast<float>(input_data_dt[input_params_original.num_elements * 2U + k]);
+            const properties::Color color_k = input_data_rgb[k];
+
+            if(x_last_valid_point == xk && y_last_valid_point == yk && z_last_valid_point == zk)
+            {
+                continue;
+            }
+
+            sanitized_input_x[total_num_points] = xk;
+            sanitized_input_y[total_num_points] = yk;
+            sanitized_input_z[total_num_points] = zk;
+            sanitized_color_input[total_num_points] = color_k;
+
+            x_last_valid_point = xk;
+            y_last_valid_point = yk;
+            z_last_valid_point = zk;
+
+            total_num_points++;
+        }
+    }
+    else
+    {
+        for(size_t k = 1U; k < input_params_original.num_elements; k++)
+        {
+            const float xk = static_cast<float>(input_data_dt[k]);
+            const float yk = static_cast<float>(input_data_dt[input_params_original.num_elements + k]);
+            const float zk = static_cast<float>(input_data_dt[input_params_original.num_elements * 2U + k]);
+
+            if(x_last_valid_point == xk && y_last_valid_point == yk && z_last_valid_point == zk)
+            {
+                continue;
+            }
+
+            sanitized_input_x[total_num_points] = xk;
+            sanitized_input_y[total_num_points] = yk;
+            sanitized_input_z[total_num_points] = zk;
+
+            x_last_valid_point = xk;
+            y_last_valid_point = yk;
+            z_last_valid_point = zk;
+
+            total_num_points++;
+        }
+    }
+
+    if(total_num_points == 1U)
+    {
+        delete[] sanitized_input_x;
+        delete[] sanitized_input_y;
+        delete[] sanitized_input_z;
+        if(input_params_original.has_color)
+        {
+            delete[] sanitized_color_input;
+        }
+        return nullptr;
+    }
+
+    InputParams input_params{input_params_original};
+    input_params.num_elements = total_num_points;
+
     const size_t num_segments = input_params.num_elements - 1U;
     const size_t num_triangles = num_segments * 2U + (num_segments - 1U) * 2U;
     const size_t num_points = num_triangles * 3U;
@@ -217,21 +332,19 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
     std::vector<Points> pts;
     pts.resize(input_params.num_elements);
 
-    const T* const input_data_dt = reinterpret_cast<const T* const>(input_data);
-
     {
         // First segment
-        const T p1x = input_data_dt[0];
-        const T p1y = input_data_dt[input_params.num_elements];
-        const T p1z = input_data_dt[input_params.num_elements * 2];
+        const float p1x = sanitized_input_x[0U];
+        const float p1y = sanitized_input_y[0U];
+        const float p1z = sanitized_input_z[0U];
 
-        const T p2x = input_data_dt[1];
-        const T p2y = input_data_dt[input_params.num_elements + 1];
-        const T p2z = input_data_dt[input_params.num_elements * 2 + 1];
+        const float p2x = sanitized_input_x[1U];
+        const float p2y = sanitized_input_y[1U];
+        const float p2z = sanitized_input_z[1U];
 
-        const T vx = p2x - p1x;
-        const T vy = p2y - p1y;
-        const T vz = p2z - p1z;
+        const float vx = p2x - p1x;
+        const float vy = p2y - p1y;
+        const float vz = p2z - p1z;
 
         converted_data->px[0] = p1x;
         converted_data->py[0] = p1y;
@@ -252,17 +365,17 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
     {
         // Last segment
-        const T p0x = input_data_dt[input_params.num_elements - 2];
-        const T p0y = input_data_dt[2 * input_params.num_elements - 2];
-        const T p0z = input_data_dt[3 * input_params.num_elements - 2];
+        const float p0x = sanitized_input_x[input_params.num_elements - 2];
+        const float p0y = sanitized_input_y[input_params.num_elements - 2];
+        const float p0z = sanitized_input_z[input_params.num_elements - 2];
 
-        const T p1x = input_data_dt[input_params.num_elements - 1];
-        const T p1y = input_data_dt[2 * input_params.num_elements - 1];
-        const T p1z = input_data_dt[3 * input_params.num_elements - 1];
+        const float p1x = sanitized_input_x[input_params.num_elements - 1];
+        const float p1y = sanitized_input_y[input_params.num_elements - 1];
+        const float p1z = sanitized_input_z[input_params.num_elements - 1];
 
-        const T vx = p1x - p0x;
-        const T vy = p1y - p0y;
-        const T vz = p1z - p0z;
+        const float vx = p1x - p0x;
+        const float vy = p1y - p0y;
+        const float vz = p1z - p0z;
 
         converted_data->px[input_params.num_elements - 1U] = p1x;
         converted_data->py[input_params.num_elements - 1U] = p1y;
@@ -284,17 +397,17 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
     // Segments inbetween
     for (size_t k = 1; k < (input_params.num_elements - 1); k++)
     {
-        const T p0x = input_data_dt[k - 1];
-        const T p0y = input_data_dt[input_params.num_elements + k - 1];
-        const T p0z = input_data_dt[2 * input_params.num_elements + k - 1];
+        const float p0x = sanitized_input_x[k - 1];
+        const float p0y = sanitized_input_y[k - 1];
+        const float p0z = sanitized_input_z[k - 1];
 
-        const T p1x = input_data_dt[k];
-        const T p1y = input_data_dt[input_params.num_elements + k];
-        const T p1z = input_data_dt[2 * input_params.num_elements + k];
+        const float p1x = sanitized_input_x[k];
+        const float p1y = sanitized_input_y[k];
+        const float p1z = sanitized_input_z[k];
 
-        const T p2x = input_data_dt[k + 1];
-        const T p2y = input_data_dt[input_params.num_elements + k + 1];
-        const T p2z = input_data_dt[2 * input_params.num_elements + k + 1];
+        const float p2x = sanitized_input_x[k + 1];
+        const float p2y = sanitized_input_y[k + 1];
+        const float p2z = sanitized_input_z[k + 1];
 
         converted_data->px[k] = p1x;
         converted_data->py[k] = p1y;
@@ -579,21 +692,19 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
     if (input_params.has_color)
     {
-        const properties::Color* const input_data_rgb =
-            reinterpret_cast<const properties::Color* const>(input_data_dt + 3U * input_params.num_elements);
         converted_data->color_data = new float[3 * num_points];
 
         idx = 0;
 
         for (size_t k = 1; k < input_params.num_elements - 1; k++)
         {
-            const RGBTripletf color_k{static_cast<float>(input_data_rgb[k].red) / 255.0f,
-                                      static_cast<float>(input_data_rgb[k].green) / 255.0f,
-                                      static_cast<float>(input_data_rgb[k].blue) / 255.0f};
+            const RGBTripletf color_k{static_cast<float>(sanitized_color_input[k].red) / 255.0f,
+                                      static_cast<float>(sanitized_color_input[k].green) / 255.0f,
+                                      static_cast<float>(sanitized_color_input[k].blue) / 255.0f};
 
-            const RGBTripletf color_k_1{static_cast<float>(input_data_rgb[k - 1].red) / 255.0f,
-                                        static_cast<float>(input_data_rgb[k - 1].green) / 255.0f,
-                                        static_cast<float>(input_data_rgb[k - 1].blue) / 255.0f};
+            const RGBTripletf color_k_1{static_cast<float>(sanitized_color_input[k - 1].red) / 255.0f,
+                                        static_cast<float>(sanitized_color_input[k - 1].green) / 255.0f,
+                                        static_cast<float>(sanitized_color_input[k - 1].blue) / 255.0f};
             // v0
             converted_data->color_data[idx] = color_k_1.red;
             converted_data->color_data[idx + 1] = color_k_1.green;
@@ -657,13 +768,13 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
             idx += 36;
         }
 
-        const RGBTripletf color_k{static_cast<float>(input_data_rgb[input_params.num_elements - 1].red) / 255.0f,
-                                  static_cast<float>(input_data_rgb[input_params.num_elements - 1].green) / 255.0f,
-                                  static_cast<float>(input_data_rgb[input_params.num_elements - 1].blue) / 255.0f};
+        const RGBTripletf color_k{static_cast<float>(sanitized_color_input[input_params.num_elements - 1].red) / 255.0f,
+                                  static_cast<float>(sanitized_color_input[input_params.num_elements - 1].green) / 255.0f,
+                                  static_cast<float>(sanitized_color_input[input_params.num_elements - 1].blue) / 255.0f};
 
-        const RGBTripletf color_k_1{static_cast<float>(input_data_rgb[input_params.num_elements - 2].red) / 255.0f,
-                                    static_cast<float>(input_data_rgb[input_params.num_elements - 2].green) / 255.0f,
-                                    static_cast<float>(input_data_rgb[input_params.num_elements - 2].blue) / 255.0f};
+        const RGBTripletf color_k_1{static_cast<float>(sanitized_color_input[input_params.num_elements - 2].red) / 255.0f,
+                                    static_cast<float>(sanitized_color_input[input_params.num_elements - 2].green) / 255.0f,
+                                    static_cast<float>(sanitized_color_input[input_params.num_elements - 2].blue) / 255.0f};
         // v0
         converted_data->color_data[idx] = color_k_1.red;
         converted_data->color_data[idx + 1] = color_k_1.green;
@@ -693,7 +804,12 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
         converted_data->color_data[idx + 15] = color_k_1.red;
         converted_data->color_data[idx + 16] = color_k_1.green;
         converted_data->color_data[idx + 17] = color_k_1.blue;
+
+        delete[] sanitized_color_input;
     }
+
+    delete[] sanitized_input_x;
+    delete[] sanitized_input_y;
 
     return std::shared_ptr<const ConvertedData>{converted_data};
 }

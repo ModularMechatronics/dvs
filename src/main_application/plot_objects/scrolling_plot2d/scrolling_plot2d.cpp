@@ -82,13 +82,13 @@ ScrollingPlot2D::ScrollingPlot2D(const CommunicationHeader& hdr,
 
 void ScrollingPlot2D::findMinMax()
 {
-    min_vec.x = -1.0;
-    min_vec.y = -1.0;
-    min_vec.z = -1.0;
+    min_vec_.x = -1.0;
+    min_vec_.y = -1.0;
+    min_vec_.z = -1.0;
 
-    max_vec.x = 1.0;
-    max_vec.y = 1.0;
-    max_vec.z = 1.0;
+    max_vec_.x = 1.0;
+    max_vec_.y = 1.0;
+    max_vec_.z = 1.0;
 }
 
 void ScrollingPlot2D::render()

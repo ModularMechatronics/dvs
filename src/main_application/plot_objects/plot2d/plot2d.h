@@ -45,6 +45,8 @@ private:
     Vec3f first_point_;
     Vec3f second_point_;
 
+    bool is_valid_;
+
     size_t num_points_;
 
     void findMinMax() override;

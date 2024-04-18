@@ -139,8 +139,8 @@ PlotCollection3D::PlotCollection3D(const CommunicationHeader& hdr,
 
     num_points_ = converted_data_local->num_points;
 
-    min_vec = converted_data_local->min_vec;
-    max_vec = converted_data_local->max_vec;
+    min_vec_ = converted_data_local->min_vec;
+    max_vec_ = converted_data_local->max_vec;
 
     vertex_buffer_.addBuffer(converted_data_local->data_ptr, num_points_, 3);
 }

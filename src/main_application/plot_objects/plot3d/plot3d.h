@@ -36,6 +36,7 @@ private:
     VertexBuffer vertex_buffer_;
 
     size_t num_points_;
+    bool is_valid_;
 
     void findMinMax() override;
 };
