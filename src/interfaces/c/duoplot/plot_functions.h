@@ -8,14 +8,15 @@
 #include "duoplot/communication_header.h"
 #include "duoplot/internal.h"
 #include "duoplot/math/math.h"
+#include "duoplot/pp.h"
 #include "duoplot/structures.h"
 
-void plotFunction3D(const Vector* const x,
-                    const Vector* const y,
-                    const Vector* const z,
-                    const Function fcn,
-                    const CommunicationHeaderObject first_prop,
-                    ...)
+DUOPLOT_WEAK void plotFunction3D(const Vector* const x,
+                                 const Vector* const y,
+                                 const Vector* const z,
+                                 const Function fcn,
+                                 const CommunicationHeaderObject first_prop,
+                                 ...)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, fcn);
@@ -28,7 +29,7 @@ void plotFunction3D(const Vector* const x,
     sendHeaderAndThreeVectors(getSendFunction(), x, y, z, &hdr);
 }
 
-void plotFunction2D(
+DUOPLOT_WEAK void plotFunction2D(
     const Vector* const x, const Vector* const y, const Function fcn, const CommunicationHeaderObject first_prop, ...)
 {
     CommunicationHeader hdr;
@@ -42,11 +43,11 @@ void plotFunction2D(
     sendHeaderAndTwoVectors(getSendFunction(), x, y, &hdr);
 }
 
-void surfFunction(const Matrix* const x,
-                  const Matrix* const y,
-                  const Matrix* const z,
-                  const CommunicationHeaderObject first_prop,
-                  ...)
+DUOPLOT_WEAK void surfFunction(const Matrix* const x,
+                               const Matrix* const y,
+                               const Matrix* const z,
+                               const CommunicationHeaderObject first_prop,
+                               ...)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_SURF);
@@ -62,10 +63,10 @@ void surfFunction(const Matrix* const x,
     sendHeaderAndThreeMatrices(getSendFunction(), x, y, z, &hdr);
 }
 
-void drawMeshFunction(const Point3dArray vertices,
-                      const IndexTripletArray indices,
-                      const CommunicationHeaderObject first_prop,
-                      ...)
+DUOPLOT_WEAK void drawMeshFunction(const Point3dArray vertices,
+                                   const IndexTripletArray indices,
+                                   const CommunicationHeaderObject first_prop,
+                                   ...)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_DRAW_MESH);
@@ -85,7 +86,7 @@ void drawMeshFunction(const Point3dArray vertices,
                                &hdr);
 }
 
-void imShowFunction(const ImageC3* const img, const CommunicationHeaderObject first_prop, ...)
+DUOPLOT_WEAK void imShowFunction(const ImageC3* const img, const CommunicationHeaderObject first_prop, ...)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_IM_SHOW);
@@ -121,7 +122,7 @@ void imShowFunction(const ImageC3* const img, const CommunicationHeaderObject fi
 #define scatter3(x, y, z, ...) \
     plotFunction3D((Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, ##__VA_ARGS__, getLastCommHdrObj())
 
-void setCurrentElement(const char* const name)
+DUOPLOT_WEAK void setCurrentElement(const char* const name)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_SET_CURRENT_ELEMENT);
@@ -146,7 +147,7 @@ void setCurrentElement(const char* const name)
     sendHeader(getSendFunction(), &hdr);
 }
 
-void clearView()
+DUOPLOT_WEAK void clearView()
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_CLEAR);
@@ -154,7 +155,7 @@ void clearView()
     sendHeader(getSendFunction(), &hdr);
 }
 
-void softClearView()
+DUOPLOT_WEAK void softClearView()
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_SOFT_CLEAR);
@@ -162,7 +163,7 @@ void softClearView()
     sendHeader(getSendFunction(), &hdr);
 }
 
-void view(const float azimuth, const float elevation)
+DUOPLOT_WEAK void view(const float azimuth, const float elevation)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_VIEW);
@@ -173,7 +174,7 @@ void view(const float azimuth, const float elevation)
     sendHeader(getSendFunction(), &hdr);
 }
 
-void axis(const Vec3d min_bound, const Vec3d max_bound)
+DUOPLOT_WEAK void axis(const Vec3d min_bound, const Vec3d max_bound)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_AXES_3D);
@@ -191,7 +192,7 @@ void axis(const Vec3d min_bound, const Vec3d max_bound)
     sendHeader(getSendFunction(), &hdr);
 }
 
-void axis2D(const Vec2d min_bound, const Vec2d max_bound)
+DUOPLOT_WEAK void axis2D(const Vec2d min_bound, const Vec2d max_bound)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_AXES_3D);
@@ -211,7 +212,7 @@ void axis2D(const Vec2d min_bound, const Vec2d max_bound)
     sendHeader(getSendFunction(), &hdr);
 }
 
-void setTitle(const char* const title)
+DUOPLOT_WEAK void setTitle(const char* const title)
 {
     if (title == NULL || title[0] == '\0')
     {

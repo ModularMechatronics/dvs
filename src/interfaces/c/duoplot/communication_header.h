@@ -8,6 +8,7 @@
 #include "duoplot/communication_header_object.h"
 #include "duoplot/enumerations.h"
 #include "duoplot/plot_properties.h"
+#include "duoplot/pp.h"
 
 #define kMaxNumHeaderObjects 30
 
@@ -22,14 +23,13 @@ typedef struct S_CommunicationHeaderObjectLookupTable
 
 #define NUM_FLAGS ((uint8_t)(PF_UNKNOWN) + 1U)
 
-void initCommunicationHeaderObjectLookupTable(CommunicationHeaderObjectLookupTable* const lut)
+DUOPLOT_WEAK void initCommunicationHeaderObjectLookupTable(CommunicationHeaderObjectLookupTable* const lut)
 {
     memset(lut->data, 255U, COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE);
 }
 
-void appendObjectIndexToCommunicationHeaderObjectLookupTable(CommunicationHeaderObjectLookupTable* const lut,
-                                                             const CommunicationHeaderObjectType type,
-                                                             const uint8_t idx)
+DUOPLOT_WEAK void appendObjectIndexToCommunicationHeaderObjectLookupTable(
+    CommunicationHeaderObjectLookupTable* const lut, const CommunicationHeaderObjectType type, const uint8_t idx)
 {
     lut->data[(uint8_t)(type)] = idx;
 }
@@ -39,14 +39,14 @@ typedef struct S_PropertyLookupTable
     uint8_t data[PROPERTY_LOOKUP_TABLE_SIZE];
 } PropertyLookupTable;
 
-void initPropertyLookupTable(PropertyLookupTable* const lut)
+DUOPLOT_WEAK void initPropertyLookupTable(PropertyLookupTable* const lut)
 {
     memset(lut->data, 255U, PROPERTY_LOOKUP_TABLE_SIZE);
 }
 
-void appendPropertyIndexToPropertyLookupTable(PropertyLookupTable* const props_lut,
-                                              const PropertyType type,
-                                              const uint8_t idx)
+DUOPLOT_WEAK void appendPropertyIndexToPropertyLookupTable(PropertyLookupTable* const props_lut,
+                                                           const PropertyType type,
+                                                           const uint8_t idx)
 {
     props_lut->data[(uint8_t)type] = idx;
 }
@@ -64,7 +64,7 @@ typedef struct S_CommunicationHeader
 
 } CommunicationHeader;
 
-void initCommunicationHeader(CommunicationHeader* const hdr, const Function function)
+DUOPLOT_WEAK void initCommunicationHeader(CommunicationHeader* const hdr, const Function function)
 {
     hdr->function = function;
     hdr->obj_idx = 0U;
@@ -76,7 +76,7 @@ void initCommunicationHeader(CommunicationHeader* const hdr, const Function func
     initPropertyLookupTable(&(hdr->props_lut));
 }
 
-void appendProperty(CommunicationHeader* const hdr, const CommunicationHeaderObject* const prop)
+DUOPLOT_WEAK void appendProperty(CommunicationHeader* const hdr, const CommunicationHeaderObject* const prop)
 {
     if ((hdr->prop_idx + 1U) == kMaxNumHeaderObjects)
     {

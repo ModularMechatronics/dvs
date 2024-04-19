@@ -20,15 +20,16 @@
 #include "duoplot/constants.h"
 #include "duoplot/gui_element_map.h"
 #include "duoplot/internal.h"
+#include "duoplot/pp.h"
 
-int* internal_getTcpSocket()
+DUOPLOT_WEAK int* internal_getTcpSocket()
 {
     static int tcp_sockfd;
 
     return &tcp_sockfd;
 }
 
-void internal_initTcpSocket()
+DUOPLOT_WEAK void internal_initTcpSocket()
 {
     int* tcp_sockfd = internal_getTcpSocket();
     struct sockaddr_in tcp_servaddr;
@@ -60,7 +61,7 @@ void internal_initTcpSocket()
     }
 }
 
-void internal_queryForSyncOfGuiData()
+DUOPLOT_WEAK void internal_queryForSyncOfGuiData()
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_QUERY_FOR_SYNC_OF_GUI_DATA);
@@ -74,7 +75,7 @@ typedef struct S_ReceivedGuiData
     uint64_t num_data_bytes;
 } ReceivedGuiData;
 
-ReceivedGuiData internal_receiveGuiData()
+DUOPLOT_WEAK ReceivedGuiData internal_receiveGuiData()
 {
     const int* const tcp_sockfd = internal_getTcpSocket();
 
@@ -118,63 +119,63 @@ ReceivedGuiData internal_receiveGuiData()
     return received_data;
 }
 
-GuiElementMap* getGuiElementHandles()
+DUOPLOT_WEAK GuiElementMap* getGuiElementHandles()
 {
     static GuiElementMap gui_element_handles;
 
     return &gui_element_handles;
 }
 
-ButtonCallbackFunctionMap* getButtonCallbackFunctionMap()
+DUOPLOT_WEAK ButtonCallbackFunctionMap* getButtonCallbackFunctionMap()
 {
     static ButtonCallbackFunctionMap button_callback_function_map;
 
     return &button_callback_function_map;
 }
 
-SliderCallbackFunctionMap* getSliderCallbackFunctionMap()
+DUOPLOT_WEAK SliderCallbackFunctionMap* getSliderCallbackFunctionMap()
 {
     static SliderCallbackFunctionMap slider_callback_function_map;
 
     return &slider_callback_function_map;
 }
 
-ListBoxCallbackFunctionMap* getListBoxCallbackFunctionMap()
+DUOPLOT_WEAK ListBoxCallbackFunctionMap* getListBoxCallbackFunctionMap()
 {
     static ListBoxCallbackFunctionMap list_box_handle_callback_function_map;
 
     return &list_box_handle_callback_function_map;
 }
 
-DropdownMenuCallbackFunctionMap* getDropdownMenuCallbackFunctionMap()
+DUOPLOT_WEAK DropdownMenuCallbackFunctionMap* getDropdownMenuCallbackFunctionMap()
 {
     static DropdownMenuCallbackFunctionMap dropdown_menu_handle_callback_function_map;
 
     return &dropdown_menu_handle_callback_function_map;
 }
 
-CheckboxCallbackFunctionMap* getCheckboxCallbackFunctionMap()
+DUOPLOT_WEAK CheckboxCallbackFunctionMap* getCheckboxCallbackFunctionMap()
 {
     static CheckboxCallbackFunctionMap checkbox_handle_callback_function_map;
 
     return &checkbox_handle_callback_function_map;
 }
 
-RadioButtonGroupCallbackFunctionMap* getRadioButtonGroupCallbackFunctionMap()
+DUOPLOT_WEAK RadioButtonGroupCallbackFunctionMap* getRadioButtonGroupCallbackFunctionMap()
 {
     static RadioButtonGroupCallbackFunctionMap radiobutton_group_handle_callback_function_map;
 
     return &radiobutton_group_handle_callback_function_map;
 }
 
-EditableTextCallbackFunctionMap* getEditableTextCallbackFunctionMap()
+DUOPLOT_WEAK EditableTextCallbackFunctionMap* getEditableTextCallbackFunctionMap()
 {
     static EditableTextCallbackFunctionMap editable_text_handle_callback_function_map;
 
     return &editable_text_handle_callback_function_map;
 }
 
-void initDataStructures(const size_t initial_size)
+DUOPLOT_WEAK void initDataStructures(const size_t initial_size)
 {
     GuiElementMap* const gui_element_handles = getGuiElementHandles();
     initGuiElementHandleContainerMap(gui_element_handles, initial_size);
@@ -204,12 +205,12 @@ void initDataStructures(const size_t initial_size)
     initEditableTextCallbackFunctionMap(editable_text_handle_callback_function_map, initial_size);
 }
 
-void updateButtonState(ButtonInternalHandle* const handle, const UInt8Array* data_view)
+DUOPLOT_WEAK void updateButtonState(ButtonInternalHandle* const handle, const UInt8Array* data_view)
 {
     handle->is_pressed = data_view->data[0];
 }
 
-void updateSliderState(SliderInternalHandle* const handle, const UInt8Array* data_view)
+DUOPLOT_WEAK void updateSliderState(SliderInternalHandle* const handle, const UInt8Array* data_view)
 {
     memcpy(&handle->state.min_value, data_view->data, sizeof(int32_t));
     memcpy(&handle->state.max_value, data_view->data + sizeof(int32_t), sizeof(int32_t));
@@ -217,7 +218,7 @@ void updateSliderState(SliderInternalHandle* const handle, const UInt8Array* dat
     memcpy(&handle->state.value, data_view->data + 3U * sizeof(int32_t), sizeof(int32_t));
 }
 
-void updateTextLabelState(TextLabelInternalHandle* const handle, const UInt8Array* data_view)
+DUOPLOT_WEAK void updateTextLabelState(TextLabelInternalHandle* const handle, const UInt8Array* data_view)
 {
     const uint8_t text_length = data_view->data[0];
 
@@ -229,7 +230,7 @@ void updateTextLabelState(TextLabelInternalHandle* const handle, const UInt8Arra
     handle->text[text_length] = '\0';
 }
 
-void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* data_view)
+DUOPLOT_WEAK void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* data_view)
 {
     ListBoxState* const state = &(handle->state);
     destroyListOfStrings(&(state->elements));
@@ -273,7 +274,7 @@ void updateListBoxState(ListBoxInternalHandle* const handle, const UInt8Array* d
     }
 }
 
-void updateDropdownMenuState(DropdownMenuInternalHandle* const handle, const UInt8Array* data_view)
+DUOPLOT_WEAK void updateDropdownMenuState(DropdownMenuInternalHandle* const handle, const UInt8Array* data_view)
 {
     DropdownMenuState* const state = &(handle->state);
     destroyListOfStrings(&(state->elements));
@@ -317,12 +318,12 @@ void updateDropdownMenuState(DropdownMenuInternalHandle* const handle, const UIn
     }
 }
 
-void updateCheckboxState(CheckboxInternalHandle* const handle, const UInt8Array* data_view)
+DUOPLOT_WEAK void updateCheckboxState(CheckboxInternalHandle* const handle, const UInt8Array* data_view)
 {
     handle->is_checked = data_view->data[0];
 }
 
-void updateRadioButtonGroupState(RadioButtonGroupInternalHandle* const handle, const UInt8Array* data_view)
+DUOPLOT_WEAK void updateRadioButtonGroupState(RadioButtonGroupInternalHandle* const handle, const UInt8Array* data_view)
 {
     size_t idx = 0U;
 
@@ -349,7 +350,7 @@ void updateRadioButtonGroupState(RadioButtonGroupInternalHandle* const handle, c
     }
 }
 
-void updateEditableTextState(EditableTextInternalHandle* const handle, const UInt8Array* data_view)
+DUOPLOT_WEAK void updateEditableTextState(EditableTextInternalHandle* const handle, const UInt8Array* data_view)
 {
     const uint8_t* const data_ptr = data_view->data;
     handle->enter_pressed = data_ptr[0];
@@ -363,7 +364,7 @@ void updateEditableTextState(EditableTextInternalHandle* const handle, const UIn
     memcpy(handle->text, data_ptr + idx, text_length);
 }
 
-BaseHandle* internal_createButton(const char* const handle_string, const UInt8Array* const data_view)
+DUOPLOT_WEAK BaseHandle* internal_createButton(const char* const handle_string, const UInt8Array* const data_view)
 {
     ButtonInternalHandle* const button = (ButtonInternalHandle*)malloc(sizeof(ButtonInternalHandle));
 
@@ -382,7 +383,7 @@ BaseHandle* internal_createButton(const char* const handle_string, const UInt8Ar
     return handle;
 }
 
-BaseHandle* internal_createSlider(const char* const handle_string, const UInt8Array* const data_view)
+DUOPLOT_WEAK BaseHandle* internal_createSlider(const char* const handle_string, const UInt8Array* const data_view)
 {
     SliderInternalHandle* const slider = (SliderInternalHandle*)malloc(sizeof(SliderInternalHandle));
 
@@ -401,7 +402,7 @@ BaseHandle* internal_createSlider(const char* const handle_string, const UInt8Ar
     return handle;
 }
 
-BaseHandle* internal_createListBox(const char* const handle_string, const UInt8Array* const data_view)
+DUOPLOT_WEAK BaseHandle* internal_createListBox(const char* const handle_string, const UInt8Array* const data_view)
 {
     ListBoxInternalHandle* const list_box = (ListBoxInternalHandle*)malloc(sizeof(ListBoxInternalHandle));
 
@@ -424,7 +425,7 @@ BaseHandle* internal_createListBox(const char* const handle_string, const UInt8A
     return handle;
 }
 
-BaseHandle* internal_createDropdownMenu(const char* const handle_string, const UInt8Array* const data_view)
+DUOPLOT_WEAK BaseHandle* internal_createDropdownMenu(const char* const handle_string, const UInt8Array* const data_view)
 {
     DropdownMenuInternalHandle* const dropdown_menu =
         (DropdownMenuInternalHandle*)malloc(sizeof(DropdownMenuInternalHandle));
@@ -448,7 +449,7 @@ BaseHandle* internal_createDropdownMenu(const char* const handle_string, const U
     return handle;
 }
 
-BaseHandle* internal_createCheckbox(const char* const handle_string, const UInt8Array* const data_view)
+DUOPLOT_WEAK BaseHandle* internal_createCheckbox(const char* const handle_string, const UInt8Array* const data_view)
 {
     CheckboxInternalHandle* const checkbox = (CheckboxInternalHandle*)malloc(sizeof(CheckboxInternalHandle));
 
@@ -467,7 +468,8 @@ BaseHandle* internal_createCheckbox(const char* const handle_string, const UInt8
     return handle;
 }
 
-BaseHandle* internal_createRadioButtonGroup(const char* const handle_string, const UInt8Array* const data_view)
+DUOPLOT_WEAK BaseHandle* internal_createRadioButtonGroup(const char* const handle_string,
+                                                         const UInt8Array* const data_view)
 {
     RadioButtonGroupInternalHandle* const radiobutton_group =
         (RadioButtonGroupInternalHandle*)malloc(sizeof(RadioButtonGroupInternalHandle));
@@ -487,7 +489,7 @@ BaseHandle* internal_createRadioButtonGroup(const char* const handle_string, con
     return handle;
 }
 
-BaseHandle* internal_createEditableText(const char* const handle_string, const UInt8Array* const data_view)
+DUOPLOT_WEAK BaseHandle* internal_createEditableText(const char* const handle_string, const UInt8Array* const data_view)
 {
     EditableTextInternalHandle* const editable_text =
         (EditableTextInternalHandle*)malloc(sizeof(EditableTextInternalHandle));
@@ -507,7 +509,7 @@ BaseHandle* internal_createEditableText(const char* const handle_string, const U
     return handle;
 }
 
-BaseHandle* internal_createTextLabel(const char* const handle_string, const UInt8Array* const data_view)
+DUOPLOT_WEAK BaseHandle* internal_createTextLabel(const char* const handle_string, const UInt8Array* const data_view)
 {
     TextLabelInternalHandle* const text_label = (TextLabelInternalHandle*)malloc(sizeof(TextLabelInternalHandle));
 
@@ -526,9 +528,9 @@ BaseHandle* internal_createTextLabel(const char* const handle_string, const UInt
     return handle;
 }
 
-void populateGuiElementWithData(const GuiElementType type,
-                                const char* const handle_string,
-                                const UInt8Array* const data_view)
+DUOPLOT_WEAK void populateGuiElementWithData(const GuiElementType type,
+                                             const char* const handle_string,
+                                             const UInt8Array* const data_view)
 {
     GuiElementMap* gui_element_handles = getGuiElementHandles();
 
@@ -622,7 +624,7 @@ void populateGuiElementWithData(const GuiElementType type,
     }
 }
 
-void updateGuiState(const ReceivedGuiData* received_gui_data)
+DUOPLOT_WEAK void updateGuiState(const ReceivedGuiData* received_gui_data)
 {
     size_t idx = 0U;
 
@@ -660,7 +662,7 @@ void updateGuiState(const ReceivedGuiData* received_gui_data)
     free(handle_string);
 }
 
-ButtonHandle getButtonHandle(const char* const handle_string)
+DUOPLOT_WEAK ButtonHandle getButtonHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
@@ -687,7 +689,7 @@ ButtonHandle getButtonHandle(const char* const handle_string)
     return button_handle;
 }
 
-SliderHandle getSliderHandle(const char* const handle_string)
+DUOPLOT_WEAK SliderHandle getSliderHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
@@ -714,7 +716,7 @@ SliderHandle getSliderHandle(const char* const handle_string)
     return slider_handle;
 }
 
-ListBoxHandle getListBoxHandle(const char* const handle_string)
+DUOPLOT_WEAK ListBoxHandle getListBoxHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
@@ -741,7 +743,7 @@ ListBoxHandle getListBoxHandle(const char* const handle_string)
     return list_box_handle;
 }
 
-DropdownMenuHandle getDropdownMenuHandle(const char* const handle_string)
+DUOPLOT_WEAK DropdownMenuHandle getDropdownMenuHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
@@ -768,7 +770,7 @@ DropdownMenuHandle getDropdownMenuHandle(const char* const handle_string)
     return dropdown_menu_handle;
 }
 
-CheckboxHandle getCheckboxHandle(const char* const handle_string)
+DUOPLOT_WEAK CheckboxHandle getCheckboxHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
@@ -795,7 +797,7 @@ CheckboxHandle getCheckboxHandle(const char* const handle_string)
     return checkbox_handle;
 }
 
-RadioButtonGroupHandle getRadioButtonGroupHandle(const char* const handle_string)
+DUOPLOT_WEAK RadioButtonGroupHandle getRadioButtonGroupHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
@@ -822,7 +824,7 @@ RadioButtonGroupHandle getRadioButtonGroupHandle(const char* const handle_string
     return radiobutton_group_handle;
 }
 
-EditableTextHandle getEditableTextHandle(const char* const handle_string)
+DUOPLOT_WEAK EditableTextHandle getEditableTextHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
@@ -849,7 +851,7 @@ EditableTextHandle getEditableTextHandle(const char* const handle_string)
     return editable_text_handle;
 }
 
-TextLabelHandle getTextLabelHandle(const char* const handle_string)
+DUOPLOT_WEAK TextLabelHandle getTextLabelHandle(const char* const handle_string)
 {
     GuiElementMap* const gui_element_map = getGuiElementHandles();
 
@@ -876,7 +878,7 @@ TextLabelHandle getTextLabelHandle(const char* const handle_string)
     return text_label_handle;
 }
 
-void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)
+DUOPLOT_WEAK void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)
 {
     size_t idx = 0U;
 
@@ -980,7 +982,7 @@ void callGuiCallbackFunction(const ReceivedGuiData* received_gui_data)
     }
 }
 
-void internal_waitForSyncForAllGuiElements()
+DUOPLOT_WEAK void internal_waitForSyncForAllGuiElements()
 {
     printf("Waiting for duoplot application to send GUI state...\n");
     const ReceivedGuiData received_data = internal_receiveGuiData();
@@ -1033,7 +1035,8 @@ void internal_waitForSyncForAllGuiElements()
     free(received_data.data);
 }
 
-void registerButtonCallback(const char* const handle_string, void (*button_callback_function)(const ButtonHandle))
+DUOPLOT_WEAK void registerButtonCallback(const char* const handle_string,
+                                         void (*button_callback_function)(const ButtonHandle))
 {
     ButtonCallbackFunctionMap* const button_callback_function_map = getButtonCallbackFunctionMap();
 
@@ -1045,7 +1048,8 @@ void registerButtonCallback(const char* const handle_string, void (*button_callb
     insertElementIntoButtonCallbackFunctionMap(button_callback_function_map, handle_string, button_callback_function);
 }
 
-void registerSliderCallback(const char* const handle_string, void (*slider_callback_function)(const SliderHandle))
+DUOPLOT_WEAK void registerSliderCallback(const char* const handle_string,
+                                         void (*slider_callback_function)(const SliderHandle))
 {
     SliderCallbackFunctionMap* const slider_callback_function_map = getSliderCallbackFunctionMap();
 
@@ -1057,7 +1061,8 @@ void registerSliderCallback(const char* const handle_string, void (*slider_callb
     insertElementIntoSliderCallbackFunctionMap(slider_callback_function_map, handle_string, slider_callback_function);
 }
 
-void registerListBoxCallback(const char* const handle_string, void (*list_box_callback_function)(const ListBoxHandle))
+DUOPLOT_WEAK void registerListBoxCallback(const char* const handle_string,
+                                          void (*list_box_callback_function)(const ListBoxHandle))
 {
     ListBoxCallbackFunctionMap* const list_box_callback_function_map = getListBoxCallbackFunctionMap();
 
@@ -1070,8 +1075,8 @@ void registerListBoxCallback(const char* const handle_string, void (*list_box_ca
         list_box_callback_function_map, handle_string, list_box_callback_function);
 }
 
-void registerDropdownMenuCallback(const char* const handle_string,
-                                  void (*dropdown_menu_callback_function)(const DropdownMenuHandle))
+DUOPLOT_WEAK void registerDropdownMenuCallback(const char* const handle_string,
+                                               void (*dropdown_menu_callback_function)(const DropdownMenuHandle))
 {
     DropdownMenuCallbackFunctionMap* const dropdown_menu_callback_function_map = getDropdownMenuCallbackFunctionMap();
 
@@ -1084,7 +1089,8 @@ void registerDropdownMenuCallback(const char* const handle_string,
         dropdown_menu_callback_function_map, handle_string, dropdown_menu_callback_function);
 }
 
-void registerCheckboxCallback(const char* const handle_string, void (*checkbox_callback_function)(const CheckboxHandle))
+DUOPLOT_WEAK void registerCheckboxCallback(const char* const handle_string,
+                                           void (*checkbox_callback_function)(const CheckboxHandle))
 {
     CheckboxCallbackFunctionMap* const checkbox_callback_function_map = getCheckboxCallbackFunctionMap();
 
@@ -1097,8 +1103,8 @@ void registerCheckboxCallback(const char* const handle_string, void (*checkbox_c
         checkbox_callback_function_map, handle_string, checkbox_callback_function);
 }
 
-void registerRadioButtonGroupCallback(const char* const handle_string,
-                                      void (*radiobutton_group_callback_function)(const RadioButtonGroupHandle))
+DUOPLOT_WEAK void registerRadioButtonGroupCallback(
+    const char* const handle_string, void (*radiobutton_group_callback_function)(const RadioButtonGroupHandle))
 {
     RadioButtonGroupCallbackFunctionMap* const radiobutton_group_callback_function_map =
         getRadioButtonGroupCallbackFunctionMap();
@@ -1112,8 +1118,8 @@ void registerRadioButtonGroupCallback(const char* const handle_string,
         radiobutton_group_callback_function_map, handle_string, radiobutton_group_callback_function);
 }
 
-void registerEditableTextCallback(const char* const handle_string,
-                                  void (*editable_text_callback_function)(const EditableTextHandle))
+DUOPLOT_WEAK void registerEditableTextCallback(const char* const handle_string,
+                                               void (*editable_text_callback_function)(const EditableTextHandle))
 {
     EditableTextCallbackFunctionMap* const editable_text_callback_function_map = getEditableTextCallbackFunctionMap();
 

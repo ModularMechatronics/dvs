@@ -5,13 +5,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "duoplot/pp.h"
+
 typedef struct S_ListOfStrings
 {
     char** elements;
     size_t size;
 } ListOfStrings;
 
-ListOfStrings createListOfStrings(const size_t size)
+DUOPLOT_WEAK ListOfStrings createListOfStrings(const size_t size)
 {
     ListOfStrings list_of_strings;
 
@@ -26,7 +28,7 @@ ListOfStrings createListOfStrings(const size_t size)
     return list_of_strings;
 }
 
-void destroyListOfStrings(ListOfStrings* const list_of_strings)
+DUOPLOT_WEAK void destroyListOfStrings(ListOfStrings* const list_of_strings)
 {
     for (size_t k = 0; k < list_of_strings->size; k++)
     {

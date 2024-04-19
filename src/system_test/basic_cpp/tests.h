@@ -569,11 +569,11 @@ void testPlot()
     clearView();
 
     axis({-1.0, -1.0, -1.0}, {5.0, 5.0, 1.0});
-    // plot(xp, yp, colorp, properties::LineWidth(20), properties::Color(200, 200, 200));
-    // scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
+    plot(xp, yp, colorp, properties::LineWidth(20), properties::Color(200, 200, 200));
+    scatter3(xp, yp, zp, properties::PointSize(10), properties::Color(255, 0, 0));
 
     zp.fill(-0.01f);
-    // plot3(xp, yp, zp, properties::LineWidth(60), properties::Color(0, 255, 0));
+    plot3(xp, yp, zp, properties::LineWidth(60), properties::Color(0, 255, 0));
 
     view(0, 90);
 

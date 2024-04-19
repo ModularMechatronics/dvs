@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "duoplot/math/matrix/matrix_instantiation.h"
+#include "duoplot/pp.h"
 
 #define AT_MAT_ROW_COL(mat, row, col) mat.data[row * mat.num_cols + col]
 
@@ -25,8 +26,8 @@
         }                                                   \
     }
 
-MatrixPairD meshgridD(
-    const double x0, const double x1, const double y0, const double y1, const size_t xn, const size_t yn)
+DUOPLOT_WEAK MatrixPairD
+meshgridD(const double x0, const double x1, const double y0, const double y1, const size_t xn, const size_t yn)
 {
     MatrixD xm = createMatrixD(yn, xn);
     MatrixD ym = createMatrixD(yn, xn);
@@ -56,7 +57,7 @@ MatrixPairD meshgridD(
     return mp;
 }
 
-MatrixD matrix_sinD(const MatrixD mat)
+DUOPLOT_WEAK MatrixD matrix_sinD(const MatrixD mat)
 {
     MatrixD mat_out = createMatrixD(mat.num_rows, mat.num_cols);
 
@@ -71,7 +72,7 @@ MatrixD matrix_sinD(const MatrixD mat)
     return mat_out;
 }
 
-MatrixD matrix_cosD(const MatrixD mat)
+DUOPLOT_WEAK MatrixD matrix_cosD(const MatrixD mat)
 {
     MatrixD mat_out = createMatrixD(mat.num_rows, mat.num_cols);
 
@@ -86,7 +87,7 @@ MatrixD matrix_cosD(const MatrixD mat)
     return mat_out;
 }
 
-MatrixD matrix_elementWiseMultiplyD(const MatrixD m0, const MatrixD m1)
+DUOPLOT_WEAK MatrixD matrix_elementWiseMultiplyD(const MatrixD m0, const MatrixD m1)
 {
     MatrixD mat_out = createMatrixD(m0.num_rows, m0.num_cols);
 

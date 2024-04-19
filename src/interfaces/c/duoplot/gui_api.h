@@ -7,8 +7,9 @@
 #include <stdlib.h>
 
 #include "duoplot/gui_internal.h"
+#include "duoplot/pp.h"
 
-int32_t getSliderValue(const SliderHandle slider_handle)
+DUOPLOT_WEAK int32_t getSliderValue(const SliderHandle slider_handle)
 {
     if (slider_handle.__handle == NULL)
     {
@@ -19,7 +20,7 @@ int32_t getSliderValue(const SliderHandle slider_handle)
     return slider_handle.__handle->state.value;
 }
 
-int32_t getSliderMinValue(const SliderHandle slider_handle)
+DUOPLOT_WEAK int32_t getSliderMinValue(const SliderHandle slider_handle)
 {
     if (slider_handle.__handle == NULL)
     {
@@ -30,7 +31,7 @@ int32_t getSliderMinValue(const SliderHandle slider_handle)
     return slider_handle.__handle->state.min_value;
 }
 
-int32_t getSliderMaxValue(const SliderHandle slider_handle)
+DUOPLOT_WEAK int32_t getSliderMaxValue(const SliderHandle slider_handle)
 {
     if (slider_handle.__handle == NULL)
     {
@@ -41,7 +42,7 @@ int32_t getSliderMaxValue(const SliderHandle slider_handle)
     return slider_handle.__handle->state.max_value;
 }
 
-int32_t getSliderStepSize(const SliderHandle slider_handle)
+DUOPLOT_WEAK int32_t getSliderStepSize(const SliderHandle slider_handle)
 {
     if (slider_handle.__handle == NULL)
     {
@@ -52,7 +53,7 @@ int32_t getSliderStepSize(const SliderHandle slider_handle)
     return slider_handle.__handle->state.step_size;
 }
 
-SliderState getSliderCurrentState(const SliderHandle slider_handle)
+DUOPLOT_WEAK SliderState getSliderCurrentState(const SliderHandle slider_handle)
 {
     if (slider_handle.__handle == NULL)
     {
@@ -69,7 +70,7 @@ SliderState getSliderCurrentState(const SliderHandle slider_handle)
     return slider_handle.__handle->state;
 }
 
-ListOfStrings getListBoxElements(const ListBoxHandle list_box_handle)
+DUOPLOT_WEAK ListOfStrings getListBoxElements(const ListBoxHandle list_box_handle)
 {
     ListOfStrings list_of_strings;
 
@@ -86,7 +87,7 @@ ListOfStrings getListBoxElements(const ListBoxHandle list_box_handle)
     return list_box_handle.__handle->state.elements;
 }
 
-char* getListBoxSelectedElement(const ListBoxHandle list_box_handle)
+DUOPLOT_WEAK char* getListBoxSelectedElement(const ListBoxHandle list_box_handle)
 {
     if (list_box_handle.__handle == NULL)
     {
@@ -97,7 +98,7 @@ char* getListBoxSelectedElement(const ListBoxHandle list_box_handle)
     return list_box_handle.__handle->state.selected_element;
 }
 
-char* getDropdownMenuSelectedElement(const DropdownMenuHandle drop_down_menu_handle)
+DUOPLOT_WEAK char* getDropdownMenuSelectedElement(const DropdownMenuHandle drop_down_menu_handle)
 {
     if (drop_down_menu_handle.__handle == NULL)
     {
@@ -108,7 +109,7 @@ char* getDropdownMenuSelectedElement(const DropdownMenuHandle drop_down_menu_han
     return drop_down_menu_handle.__handle->state.selected_element;
 }
 
-ListOfStrings getDropdownMenuElements(const DropdownMenuHandle drop_down_menu_handle)
+DUOPLOT_WEAK ListOfStrings getDropdownMenuElements(const DropdownMenuHandle drop_down_menu_handle)
 {
     ListOfStrings list_of_strings;
 
@@ -125,7 +126,7 @@ ListOfStrings getDropdownMenuElements(const DropdownMenuHandle drop_down_menu_ha
     return drop_down_menu_handle.__handle->state.elements;
 }
 
-ListOfStrings getRadioButtonGroupButtonNames(const RadioButtonGroupHandle radio_button_group_handle)
+DUOPLOT_WEAK ListOfStrings getRadioButtonGroupButtonNames(const RadioButtonGroupHandle radio_button_group_handle)
 {
     ListOfStrings list_of_strings;
 
@@ -142,7 +143,7 @@ ListOfStrings getRadioButtonGroupButtonNames(const RadioButtonGroupHandle radio_
     return radio_button_group_handle.__handle->buttons;
 }
 
-int32_t getRadioButtonGroupSelectedButtonIdx(const RadioButtonGroupHandle radio_button_group_handle)
+DUOPLOT_WEAK int32_t getRadioButtonGroupSelectedButtonIdx(const RadioButtonGroupHandle radio_button_group_handle)
 {
     if (radio_button_group_handle.__handle == NULL)
     {
@@ -153,7 +154,7 @@ int32_t getRadioButtonGroupSelectedButtonIdx(const RadioButtonGroupHandle radio_
     return radio_button_group_handle.__handle->selected_button_idx;
 }
 
-char* getEditableTextValue(const EditableTextHandle editable_text_handle)
+DUOPLOT_WEAK char* getEditableTextValue(const EditableTextHandle editable_text_handle)
 {
     if (editable_text_handle.__handle == NULL)
     {
@@ -164,7 +165,7 @@ char* getEditableTextValue(const EditableTextHandle editable_text_handle)
     return editable_text_handle.__handle->text;
 }
 
-char* getTextLabelValue(const TextLabelHandle text_label_handle)
+DUOPLOT_WEAK char* getTextLabelValue(const TextLabelHandle text_label_handle)
 {
     if (text_label_handle.__handle == NULL)
     {
@@ -175,7 +176,7 @@ char* getTextLabelValue(const TextLabelHandle text_label_handle)
     return text_label_handle.__handle->text;
 }
 
-bool getIsCheckBoxChecked(const CheckboxHandle checkbox_handle)
+DUOPLOT_WEAK bool getIsCheckBoxChecked(const CheckboxHandle checkbox_handle)
 {
     if (checkbox_handle.__handle == NULL)
     {
@@ -186,7 +187,7 @@ bool getIsCheckBoxChecked(const CheckboxHandle checkbox_handle)
     return checkbox_handle.__handle->is_checked;
 }
 
-void setTextLabelValue(const TextLabelHandle text_label_handle, const char* const new_value)
+DUOPLOT_WEAK void setTextLabelValue(const TextLabelHandle text_label_handle, const char* const new_value)
 {
     if (text_label_handle.__handle == NULL)
     {
@@ -243,7 +244,7 @@ void setTextLabelValue(const TextLabelHandle text_label_handle, const char* cons
     sendHeader(getSendFunction(), &hdr);
 }
 
-char* internal_getNullString()
+DUOPLOT_WEAK char* internal_getNullString()
 {
     static char* null_str = "NULL";
     return null_str;
@@ -251,7 +252,7 @@ char* internal_getNullString()
 
 #define GET_HANDLE_STRING(handle) (handle.__handle == NULL ? internal_getNullString() : handle.__handle->handle_string)
 
-void* queryThreadFunction(void* vargp)
+DUOPLOT_WEAK void* queryThreadFunction(void* vargp)
 {
     usleep(1000U * 100U);
     internal_queryForSyncOfGuiData();
@@ -259,7 +260,7 @@ void* queryThreadFunction(void* vargp)
     return NULL;
 }
 
-void* receiveThreadFunction(void* vargp)
+DUOPLOT_WEAK void* receiveThreadFunction(void* vargp)
 {
     // TODO: Fix case where client app has already been updated once,
     // and then duoplot restarts and tries to submit gui data again.
@@ -282,7 +283,7 @@ void* receiveThreadFunction(void* vargp)
     return NULL;
 }
 
-__attribute__((weak)) void startGuiReceiveThread()
+DUOPLOT_WEAK void startGuiReceiveThread()
 {
     initDataStructures(20U);
 

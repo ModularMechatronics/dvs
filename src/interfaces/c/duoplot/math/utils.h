@@ -4,8 +4,9 @@
 #include <stdint.h>
 
 #include "duoplot/enumerations.h"
+#include "duoplot/pp.h"
 
-size_t dataTypeToNumBytes(const DataType dt)
+DUOPLOT_WEAK size_t dataTypeToNumBytes(const DataType dt)
 {
     switch (dt)
     {

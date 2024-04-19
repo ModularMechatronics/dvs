@@ -15,6 +15,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "duoplot/pp.h"
+
 #define DUOPLOT_PORT_NUM 9547
 
 typedef struct S_SocketStructure
@@ -24,7 +26,7 @@ typedef struct S_SocketStructure
     socklen_t client_len;
 } SocketStructure;
 
-SocketStructure createSocket(const int port_num)
+DUOPLOT_WEAK SocketStructure createSocket(const int port_num)
 {
     SocketStructure sock_struct;
     sock_struct.file_descr = socket(AF_INET, SOCK_DGRAM, 0);
@@ -38,7 +40,7 @@ SocketStructure createSocket(const int port_num)
     return sock_struct;
 }
 
-int receiveData(SocketStructure* sock_struct, char data[256])
+DUOPLOT_WEAK int receiveData(SocketStructure* sock_struct, char data[256])
 {
     struct sockaddr* tx_addr_ptr = (struct sockaddr*)&(sock_struct->tx_addr);
     const int num_received_bytes =
@@ -46,7 +48,7 @@ int receiveData(SocketStructure* sock_struct, char data[256])
     return num_received_bytes;
 }
 
-void sendData(SocketStructure* sock_struct, const uint8_t* const data, const uint64_t num_bytes)
+DUOPLOT_WEAK void sendData(SocketStructure* sock_struct, const uint8_t* const data, const uint64_t num_bytes)
 {
     struct sockaddr* tx_addr_ptr = (struct sockaddr*)&(sock_struct->tx_addr);
     sendto(sock_struct->file_descr, data, num_bytes, 0, tx_addr_ptr, sizeof(sock_struct->tx_addr));

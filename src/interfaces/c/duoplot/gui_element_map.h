@@ -7,10 +7,11 @@
 #include <string.h>
 
 #include "duoplot/internal_gui_element_handle.h"
+#include "duoplot/pp.h"
 #include "duoplot/uint8_array.h"
 #include "gui_element_callback_types.h"
 
-char* createAndCopyString(const char* const str)
+DUOPLOT_WEAK char* createAndCopyString(const char* const str)
 {
     const size_t string_length = strlen(str);
 
@@ -171,7 +172,7 @@ typedef struct S_EditableTextCallbackFunctionMap
     INIT_MAP(__map, __initial_size, __map_value_type);
 
 // GuiElementMap
-void initGuiElementHandleContainerMap(GuiElementMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void initGuiElementHandleContainerMap(GuiElementMap* const map, const size_t initial_size)
 {
     map->keys = (char**)malloc(initial_size * sizeof(char*));
     map->values = (BaseHandle**)malloc(initial_size * sizeof(BaseHandle*));
@@ -185,9 +186,9 @@ void initGuiElementHandleContainerMap(GuiElementMap* const map, const size_t ini
     }
 }
 
-void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* const map,
-                                                   const char* const handle_string,
-                                                   BaseHandle* handle)
+DUOPLOT_WEAK void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* const map,
+                                                                const char* const handle_string,
+                                                                BaseHandle* handle)
 {
     for (size_t k = 0; k < map->size; k++)
     {
@@ -225,7 +226,7 @@ void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* const map,
     map->size = new_size;
 }
 
-BaseHandle* getGuiElementHandleContainer(const char* const handle_string, const GuiElementMap* const map)
+DUOPLOT_WEAK BaseHandle* getGuiElementHandleContainer(const char* const handle_string, const GuiElementMap* const map)
 {
     BaseHandle* ret_val = NULL;
 
@@ -245,8 +246,8 @@ BaseHandle* getGuiElementHandleContainer(const char* const handle_string, const 
     return ret_val;
 }
 
-bool isGuiElementHandleContainerKeyInMap(const char* const handle_string,
-                                         const GuiElementMap* const gui_element_handles)
+DUOPLOT_WEAK bool isGuiElementHandleContainerKeyInMap(const char* const handle_string,
+                                                      const GuiElementMap* const gui_element_handles)
 {
     bool is_in_map = false;
     if (!handle_string || !gui_element_handles || !(gui_element_handles->keys) || handle_string[0] == '\0')
@@ -267,7 +268,7 @@ bool isGuiElementHandleContainerKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetGuiElementHandleContainerMap(GuiElementMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void resetGuiElementHandleContainerMap(GuiElementMap* const map, const size_t initial_size)
 {
     free(map->keys);
     free(map->values);
@@ -275,28 +276,28 @@ void resetGuiElementHandleContainerMap(GuiElementMap* const map, const size_t in
 }
 
 // ButtonCallbackFunctionMap
-void initButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void initButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map, const size_t initial_size)
 {
     INIT_MAP(map, initial_size, ButtonCallbackFunction);
 }
 
-void insertElementIntoButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map,
-                                                const char* const handle_string,
-                                                ButtonCallbackFunction const callback_function)
+DUOPLOT_WEAK void insertElementIntoButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map,
+                                                             const char* const handle_string,
+                                                             ButtonCallbackFunction const callback_function)
 {
     INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, ButtonCallbackFunction);
 }
 
-ButtonCallbackFunction getButtonCallbackFunction(const char* const handle_string,
-                                                 const ButtonCallbackFunctionMap* const map)
+DUOPLOT_WEAK ButtonCallbackFunction getButtonCallbackFunction(const char* const handle_string,
+                                                              const ButtonCallbackFunctionMap* const map)
 {
     ButtonCallbackFunction ret_val = NULL;
     GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-bool isButtonCallbackFunctionKeyInMap(const char* const handle_string,
-                                      const ButtonCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool isButtonCallbackFunctionKeyInMap(const char* const handle_string,
+                                                   const ButtonCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
@@ -305,34 +306,34 @@ bool isButtonCallbackFunctionKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void resetButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map, const size_t initial_size)
 {
     RESET_MAP(map, initial_size, ButtonCallbackFunction);
 }
 
 // SliderCallbackFunctionMap
-void initSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void initSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map, const size_t initial_size)
 {
     INIT_MAP(map, initial_size, SliderCallbackFunction);
 }
 
-void insertElementIntoSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map,
-                                                const char* const handle_string,
-                                                SliderCallbackFunction const callback_function)
+DUOPLOT_WEAK void insertElementIntoSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map,
+                                                             const char* const handle_string,
+                                                             SliderCallbackFunction const callback_function)
 {
     INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, SliderCallbackFunction);
 }
 
-SliderCallbackFunction getSliderCallbackFunction(const char* const handle_string,
-                                                 const SliderCallbackFunctionMap* const map)
+DUOPLOT_WEAK SliderCallbackFunction getSliderCallbackFunction(const char* const handle_string,
+                                                              const SliderCallbackFunctionMap* const map)
 {
     SliderCallbackFunction ret_val = NULL;
     GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-bool isSliderCallbackFunctionKeyInMap(const char* const handle_string,
-                                      const SliderCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool isSliderCallbackFunctionKeyInMap(const char* const handle_string,
+                                                   const SliderCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
@@ -341,34 +342,34 @@ bool isSliderCallbackFunctionKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void resetSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map, const size_t initial_size)
 {
     RESET_MAP(map, initial_size, SliderCallbackFunction);
 }
 
 // ListBoxCallbackFunctionMap
-void initListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void initListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map, const size_t initial_size)
 {
     INIT_MAP(map, initial_size, ListBoxCallbackFunction);
 }
 
-void insertElementIntoListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map,
-                                                 const char* const handle_string,
-                                                 ListBoxCallbackFunction const callback_function)
+DUOPLOT_WEAK void insertElementIntoListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map,
+                                                              const char* const handle_string,
+                                                              ListBoxCallbackFunction const callback_function)
 {
     INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, ListBoxCallbackFunction);
 }
 
-ListBoxCallbackFunction getListBoxCallbackFunction(const char* const handle_string,
-                                                   const ListBoxCallbackFunctionMap* const map)
+DUOPLOT_WEAK ListBoxCallbackFunction getListBoxCallbackFunction(const char* const handle_string,
+                                                                const ListBoxCallbackFunctionMap* const map)
 {
     ListBoxCallbackFunction ret_val = NULL;
     GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-bool isListBoxCallbackFunctionKeyInMap(const char* const handle_string,
-                                       const ListBoxCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool isListBoxCallbackFunctionKeyInMap(const char* const handle_string,
+                                                    const ListBoxCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
@@ -377,34 +378,35 @@ bool isListBoxCallbackFunctionKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void resetListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map, const size_t initial_size)
 {
     RESET_MAP(map, initial_size, ListBoxCallbackFunction);
 }
 
 // DropdownMenuCallbackFunctionMap
-void initDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void initDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map,
+                                                      const size_t initial_size)
 {
     INIT_MAP(map, initial_size, DropdownMenuCallbackFunction);
 }
 
-void insertElementIntoDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map,
-                                                      const char* const handle_string,
-                                                      DropdownMenuCallbackFunction const callback_function)
+DUOPLOT_WEAK void insertElementIntoDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map,
+                                                                   const char* const handle_string,
+                                                                   DropdownMenuCallbackFunction const callback_function)
 {
     INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, DropdownMenuCallbackFunction);
 }
 
-DropdownMenuCallbackFunction getDropdownMenuCallbackFunction(const char* const handle_string,
-                                                             const DropdownMenuCallbackFunctionMap* const map)
+DUOPLOT_WEAK DropdownMenuCallbackFunction
+getDropdownMenuCallbackFunction(const char* const handle_string, const DropdownMenuCallbackFunctionMap* const map)
 {
     DropdownMenuCallbackFunction ret_val = NULL;
     GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-bool isDropdownMenuCallbackFunctionKeyInMap(const char* const handle_string,
-                                            const DropdownMenuCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool isDropdownMenuCallbackFunctionKeyInMap(
+    const char* const handle_string, const DropdownMenuCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
@@ -413,34 +415,35 @@ bool isDropdownMenuCallbackFunctionKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void resetDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map,
+                                                       const size_t initial_size)
 {
     RESET_MAP(map, initial_size, DropdownMenuCallbackFunction);
 }
 
 // CheckboxCallbackFunctionMap
-void initCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void initCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map, const size_t initial_size)
 {
     INIT_MAP(map, initial_size, CheckboxCallbackFunction);
 }
 
-void insertElementIntoCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map,
-                                                  const char* const handle_string,
-                                                  CheckboxCallbackFunction const callback_function)
+DUOPLOT_WEAK void insertElementIntoCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map,
+                                                               const char* const handle_string,
+                                                               CheckboxCallbackFunction const callback_function)
 {
     INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, CheckboxCallbackFunction);
 }
 
-CheckboxCallbackFunction getCheckboxCallbackFunction(const char* const handle_string,
-                                                     const CheckboxCallbackFunctionMap* const map)
+DUOPLOT_WEAK CheckboxCallbackFunction getCheckboxCallbackFunction(const char* const handle_string,
+                                                                  const CheckboxCallbackFunctionMap* const map)
 {
     CheckboxCallbackFunction ret_val = NULL;
     GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-bool isCheckboxCallbackFunctionKeyInMap(const char* const handle_string,
-                                        const CheckboxCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool isCheckboxCallbackFunctionKeyInMap(const char* const handle_string,
+                                                     const CheckboxCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
@@ -449,25 +452,27 @@ bool isCheckboxCallbackFunctionKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void resetCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map, const size_t initial_size)
 {
     RESET_MAP(map, initial_size, CheckboxCallbackFunction);
 }
 
 // RadioButtonGroupCallbackFunctionMap
-void initRadioButtonGroupCallbackFunctionMap(RadioButtonGroupCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void initRadioButtonGroupCallbackFunctionMap(RadioButtonGroupCallbackFunctionMap* const map,
+                                                          const size_t initial_size)
 {
     INIT_MAP(map, initial_size, RadioButtonGroupCallbackFunction);
 }
 
-void insertElementIntoRadioButtonGroupCallbackFunctionMap(RadioButtonGroupCallbackFunctionMap* const map,
-                                                          const char* const handle_string,
-                                                          RadioButtonGroupCallbackFunction const callback_function)
+DUOPLOT_WEAK void insertElementIntoRadioButtonGroupCallbackFunctionMap(
+    RadioButtonGroupCallbackFunctionMap* const map,
+    const char* const handle_string,
+    RadioButtonGroupCallbackFunction const callback_function)
 {
     INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, RadioButtonGroupCallbackFunction);
 }
 
-RadioButtonGroupCallbackFunction getRadioButtonGroupCallbackFunction(
+DUOPLOT_WEAK RadioButtonGroupCallbackFunction getRadioButtonGroupCallbackFunction(
     const char* const handle_string, const RadioButtonGroupCallbackFunctionMap* const map)
 {
     RadioButtonGroupCallbackFunction ret_val = NULL;
@@ -475,8 +480,8 @@ RadioButtonGroupCallbackFunction getRadioButtonGroupCallbackFunction(
     return ret_val;
 }
 
-bool isRadioButtonGroupCallbackFunctionKeyInMap(const char* const handle_string,
-                                                const RadioButtonGroupCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool isRadioButtonGroupCallbackFunctionKeyInMap(
+    const char* const handle_string, const RadioButtonGroupCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
@@ -485,34 +490,36 @@ bool isRadioButtonGroupCallbackFunctionKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetRadioButtonGroupCallbackFunctionMap(RadioButtonGroupCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void resetRadioButtonGroupCallbackFunctionMap(RadioButtonGroupCallbackFunctionMap* const map,
+                                                           const size_t initial_size)
 {
     RESET_MAP(map, initial_size, RadioButtonGroupCallbackFunction);
 }
 
 // EditableTextCallbackFunctionMap
-void initEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void initEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map,
+                                                      const size_t initial_size)
 {
     INIT_MAP(map, initial_size, EditableTextCallbackFunction);
 }
 
-void insertElementIntoEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map,
-                                                      const char* const handle_string,
-                                                      EditableTextCallbackFunction const callback_function)
+DUOPLOT_WEAK void insertElementIntoEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map,
+                                                                   const char* const handle_string,
+                                                                   EditableTextCallbackFunction const callback_function)
 {
     INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, EditableTextCallbackFunction);
 }
 
-EditableTextCallbackFunction getEditableTextCallbackFunction(const char* const handle_string,
-                                                             const EditableTextCallbackFunctionMap* const map)
+DUOPLOT_WEAK EditableTextCallbackFunction
+getEditableTextCallbackFunction(const char* const handle_string, const EditableTextCallbackFunctionMap* const map)
 {
     EditableTextCallbackFunction ret_val = NULL;
     GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-bool isEditableTextCallbackFunctionKeyInMap(const char* const handle_string,
-                                            const EditableTextCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool isEditableTextCallbackFunctionKeyInMap(
+    const char* const handle_string, const EditableTextCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
@@ -521,7 +528,8 @@ bool isEditableTextCallbackFunctionKeyInMap(const char* const handle_string,
     return is_in_map;
 }
 
-void resetEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void resetEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map,
+                                                       const size_t initial_size)
 {
     RESET_MAP(map, initial_size, EditableTextCallbackFunction);
 }

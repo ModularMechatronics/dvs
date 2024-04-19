@@ -8,14 +8,15 @@
 #include "duoplot/communication_header.h"
 #include "duoplot/internal.h"
 #include "duoplot/math/math.h"
+#include "duoplot/pp.h"
 #include "duoplot/structures.h"
 #include "duoplot/uint8_array.h"
 
-const uint64_t kMagicNumber = 0xdeadbeefcafebabe;
-const uint64_t kMaxNumBytesForOneTransmission = 1380;
-const uint64_t kTcpPortNum = 9755;
+#define kMagicNumber ((uint64_t)0xDEADBEEFCAFEBABE)
+#define kMaxNumBytesForOneTransmission ((uint64_t)1380U)
+#define kTcpPortNum ((uint64_t)9755U)
 
-uint8_t isBigEndian()
+DUOPLOT_WEAK uint8_t isBigEndian()
 {
     const uint32_t x = 1;
     const uint8_t* const ptr = (uint8_t*)(&x);
@@ -30,7 +31,7 @@ uint8_t isBigEndian()
     }
 }
 
-uint64_t minVal(const uint64_t v0, const uint64_t v1)
+DUOPLOT_WEAK uint64_t minVal(const uint64_t v0, const uint64_t v1)
 {
     if (v0 < v1)
     {
@@ -42,19 +43,19 @@ uint64_t minVal(const uint64_t v0, const uint64_t v1)
     }
 }
 
-int* getSocketFileDescriptor()
+DUOPLOT_WEAK int* getSocketFileDescriptor()
 {
     static int sock_file_descr = -1;
     return &sock_file_descr;
 }
 
-bool* getIsInitialized()
+DUOPLOT_WEAK bool* getIsInitialized()
 {
     static bool is_initialized = false;
     return &is_initialized;
 }
 
-void initializeTcpSocket()
+DUOPLOT_WEAK void initializeTcpSocket()
 {
     int* const tcp_sockfd = getSocketFileDescriptor();
     struct sockaddr_in tcp_servaddr;
@@ -73,7 +74,7 @@ void initializeTcpSocket()
     }
 }
 
-void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
+DUOPLOT_WEAK void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
 {
     if (!(*getIsInitialized()))
     {
@@ -114,7 +115,7 @@ void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_
         (__hdr)->obj_idx += 1;                                                                                      \
     }
 
-void appendDims(CommunicationHeader* hdr, const CommunicationHeaderObjectType type, const Dimension2D dims)
+DUOPLOT_WEAK void appendDims(CommunicationHeader* hdr, const CommunicationHeaderObjectType type, const Dimension2D dims)
 {
     CommunicationHeaderObject* const current_obj = hdr->objects + hdr->obj_idx;
     current_obj->type = type;
@@ -127,7 +128,7 @@ void appendDims(CommunicationHeader* hdr, const CommunicationHeaderObjectType ty
 
 typedef void (*SendFunction)(const uint8_t* const, const uint64_t);
 
-SendFunction getSendFunction()
+DUOPLOT_WEAK SendFunction getSendFunction()
 {
     return sendThroughTcpInterface;
 }
@@ -135,7 +136,7 @@ SendFunction getSendFunction()
 #define COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE uint16_t
 #define COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE uint8_t
 
-int countNumHeaderBytes(const CommunicationHeader* const hdr)
+DUOPLOT_WEAK int countNumHeaderBytes(const CommunicationHeader* const hdr)
 {
     // 2 for first two bytes, that indicates how many objects and
     // props there will be in the buffer
@@ -167,7 +168,7 @@ int countNumHeaderBytes(const CommunicationHeader* const hdr)
     return s;
 }
 
-void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const buffer)
+DUOPLOT_WEAK void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const buffer)
 {
     size_t idx = 0U;
     buffer[idx] = (uint8_t)(hdr->obj_idx);
@@ -221,10 +222,10 @@ void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const b
     memcpy(buffer + idx, hdr->flags, NUM_FLAGS);
 }
 
-void sendHeaderAndByteArray(SendFunction send_function,
-                            const uint8_t* const array,
-                            const size_t num_bytes_from_array,
-                            CommunicationHeader* hdr)
+DUOPLOT_WEAK void sendHeaderAndByteArray(SendFunction send_function,
+                                         const uint8_t* const array,
+                                         const size_t num_bytes_from_array,
+                                         CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
 
@@ -238,7 +239,8 @@ void sendHeaderAndByteArray(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
+    const uint64_t magic_num = kMagicNumber;
+    memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
@@ -255,12 +257,12 @@ void sendHeaderAndByteArray(SendFunction send_function,
     free(data_blob);
 }
 
-void sendHeaderAndTwoByteArrays(SendFunction send_function,
-                                const uint8_t* const array0,
-                                const size_t num_bytes_from_array0,
-                                const uint8_t* const array1,
-                                const size_t num_bytes_from_array1,
-                                CommunicationHeader* hdr)
+DUOPLOT_WEAK void sendHeaderAndTwoByteArrays(SendFunction send_function,
+                                             const uint8_t* const array0,
+                                             const size_t num_bytes_from_array0,
+                                             const uint8_t* const array1,
+                                             const size_t num_bytes_from_array1,
+                                             CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
 
@@ -275,7 +277,8 @@ void sendHeaderAndTwoByteArrays(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
+    const uint64_t magic_num = kMagicNumber;
+    memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
@@ -295,10 +298,10 @@ void sendHeaderAndTwoByteArrays(SendFunction send_function,
     free(data_blob);
 }
 
-void sendHeaderAndTwoVectors(SendFunction send_function,
-                             const Vector* const x,
-                             const Vector* const y,
-                             CommunicationHeader* hdr)
+DUOPLOT_WEAK void sendHeaderAndTwoVectors(SendFunction send_function,
+                                          const Vector* const x,
+                                          const Vector* const y,
+                                          CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_vector = x->num_elements * x->num_bytes_per_element;
@@ -315,7 +318,8 @@ void sendHeaderAndTwoVectors(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
+    const uint64_t magic_num = kMagicNumber;
+    memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
@@ -335,11 +339,11 @@ void sendHeaderAndTwoVectors(SendFunction send_function,
     free(data_blob);
 }
 
-void sendHeaderAndThreeMatrices(SendFunction send_function,
-                                const Matrix* const x,
-                                const Matrix* const y,
-                                const Matrix* const z,
-                                CommunicationHeader* hdr)
+DUOPLOT_WEAK void sendHeaderAndThreeMatrices(SendFunction send_function,
+                                             const Matrix* const x,
+                                             const Matrix* const y,
+                                             const Matrix* const z,
+                                             CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_matrix = x->num_rows * x->num_cols * x->num_bytes_per_element;
@@ -356,7 +360,8 @@ void sendHeaderAndThreeMatrices(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
+    const uint64_t magic_num = kMagicNumber;
+    memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
@@ -379,11 +384,11 @@ void sendHeaderAndThreeMatrices(SendFunction send_function,
     free(data_blob);
 }
 
-void sendHeaderAndThreeVectors(SendFunction send_function,
-                               const Vector* const x,
-                               const Vector* const y,
-                               const Vector* const z,
-                               CommunicationHeader* hdr)
+DUOPLOT_WEAK void sendHeaderAndThreeVectors(SendFunction send_function,
+                                            const Vector* const x,
+                                            const Vector* const y,
+                                            const Vector* const z,
+                                            CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_vector = x->num_elements * x->num_bytes_per_element;
@@ -400,7 +405,8 @@ void sendHeaderAndThreeVectors(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
+    const uint64_t magic_num = kMagicNumber;
+    memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
@@ -423,7 +429,7 @@ void sendHeaderAndThreeVectors(SendFunction send_function,
     free(data_blob);
 }
 
-void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
+DUOPLOT_WEAK void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
 
@@ -437,7 +443,8 @@ void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    memcpy(data_blob + idx, &kMagicNumber, sizeof(uint64_t));
+    const uint64_t magic_num = kMagicNumber;
+    memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
@@ -451,7 +458,7 @@ void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
     free(data_blob);
 }
 
-bool internal_isSubstringInString(const char* const substring, const char* const string)
+DUOPLOT_WEAK bool internal_isSubstringInString(const char* const substring, const char* const string)
 {
     if (substring == NULL || string == NULL)
     {
@@ -492,7 +499,7 @@ bool internal_isSubstringInString(const char* const substring, const char* const
     return false;
 }
 
-bool internal_stringEndsWith(const char* const str, const char* const suffix)
+DUOPLOT_WEAK bool internal_stringEndsWith(const char* const str, const char* const suffix)
 {
     if (str == NULL || suffix == NULL)
     {
@@ -522,7 +529,7 @@ bool internal_stringEndsWith(const char* const str, const char* const suffix)
     return true;
 }
 
-bool internal_isDuoplotRunning()
+DUOPLOT_WEAK bool internal_isDuoplotRunning()
 {
     char path[1035];
 

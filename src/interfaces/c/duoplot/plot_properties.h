@@ -3,10 +3,11 @@
 
 #include "duoplot/communication_header_object.h"
 #include "duoplot/enumerations.h"
+#include "duoplot/pp.h"
 
 #define PROPERTY_TYPE_SERIALIZATION_TYPE uint8_t
 
-CommunicationHeaderObject Color(const uint8_t red, const uint8_t green, const uint8_t blue)
+DUOPLOT_WEAK CommunicationHeaderObject Color(const uint8_t red, const uint8_t green, const uint8_t blue)
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -21,7 +22,7 @@ CommunicationHeaderObject Color(const uint8_t red, const uint8_t green, const ui
     return hdr_obj;
 }
 
-CommunicationHeaderObject FaceColor(const uint8_t red, const uint8_t green, const uint8_t blue)
+DUOPLOT_WEAK CommunicationHeaderObject FaceColor(const uint8_t red, const uint8_t green, const uint8_t blue)
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -36,7 +37,7 @@ CommunicationHeaderObject FaceColor(const uint8_t red, const uint8_t green, cons
     return hdr_obj;
 }
 
-CommunicationHeaderObject EdgeColor(const uint8_t red, const uint8_t green, const uint8_t blue)
+DUOPLOT_WEAK CommunicationHeaderObject EdgeColor(const uint8_t red, const uint8_t green, const uint8_t blue)
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -51,7 +52,7 @@ CommunicationHeaderObject EdgeColor(const uint8_t red, const uint8_t green, cons
     return hdr_obj;
 }
 
-CommunicationHeaderObject ColorMapJet()
+DUOPLOT_WEAK CommunicationHeaderObject ColorMapJet()
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -63,7 +64,7 @@ CommunicationHeaderObject ColorMapJet()
     return hdr_obj;
 }
 
-CommunicationHeaderObject ColorMapHsv()
+DUOPLOT_WEAK CommunicationHeaderObject ColorMapHsv()
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -75,7 +76,7 @@ CommunicationHeaderObject ColorMapHsv()
     return hdr_obj;
 }
 
-CommunicationHeaderObject ColorMapMagma()
+DUOPLOT_WEAK CommunicationHeaderObject ColorMapMagma()
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -89,7 +90,7 @@ CommunicationHeaderObject ColorMapMagma()
     return hdr_obj;
 }
 
-CommunicationHeaderObject ColorMapViridis()
+DUOPLOT_WEAK CommunicationHeaderObject ColorMapViridis()
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -101,7 +102,7 @@ CommunicationHeaderObject ColorMapViridis()
     return hdr_obj;
 }
 
-CommunicationHeaderObject ColorMapPastel()
+DUOPLOT_WEAK CommunicationHeaderObject ColorMapPastel()
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -113,7 +114,7 @@ CommunicationHeaderObject ColorMapPastel()
     return hdr_obj;
 }
 
-CommunicationHeaderObject ColorMapJetSoft()
+DUOPLOT_WEAK CommunicationHeaderObject ColorMapJetSoft()
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -125,7 +126,7 @@ CommunicationHeaderObject ColorMapJetSoft()
     return hdr_obj;
 }
 
-CommunicationHeaderObject ColorMapJetBright()
+DUOPLOT_WEAK CommunicationHeaderObject ColorMapJetBright()
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -137,7 +138,7 @@ CommunicationHeaderObject ColorMapJetBright()
     return hdr_obj;
 }
 
-CommunicationHeaderObject Alpha(const float alpha)
+DUOPLOT_WEAK CommunicationHeaderObject Alpha(const float alpha)
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -149,7 +150,7 @@ CommunicationHeaderObject Alpha(const float alpha)
     return hdr_obj;
 }
 
-CommunicationHeaderObject PointSize(const int8_t point_size)
+DUOPLOT_WEAK CommunicationHeaderObject PointSize(const int8_t point_size)
 {
     CommunicationHeaderObject hdr_obj;
 
@@ -161,7 +162,7 @@ CommunicationHeaderObject PointSize(const int8_t point_size)
     return hdr_obj;
 }
 
-CommunicationHeaderObject LineWidth(const uint8_t line_width)
+DUOPLOT_WEAK CommunicationHeaderObject LineWidth(const uint8_t line_width)
 {
     CommunicationHeaderObject hdr_obj;
 

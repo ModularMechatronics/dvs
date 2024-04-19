@@ -5,7 +5,7 @@
 #include "duoplot/math/vector/vector_cast.h"
 #include "duoplot/math/vector/vector_instantiation.h"
 
-VectorF vector_linspaceFromPointsAndCountF(const double x0, const double x1, const size_t num_elements)
+DUOPLOT_WEAK VectorF vector_linspaceFromPointsAndCountF(const double x0, const double x1, const size_t num_elements)
 {
     VectorF vec = createVectorF(num_elements);
     const double dx = (x1 - x0) / ((double)(num_elements - 1));
@@ -20,7 +20,7 @@ VectorF vector_linspaceFromPointsAndCountF(const double x0, const double x1, con
     return vec;
 }
 
-VectorF vector_sinF(const VectorF vec)
+DUOPLOT_WEAK VectorF vector_sinF(const VectorF vec)
 {
     VectorF vec_out = createVectorF(vec.num_elements);
     for (size_t k = 0; k < vec.num_elements; k++)
@@ -31,7 +31,7 @@ VectorF vector_sinF(const VectorF vec)
     return vec_out;
 }
 
-VectorF vector_cosF(const VectorF vec)
+DUOPLOT_WEAK VectorF vector_cosF(const VectorF vec)
 {
     VectorF vec_out = createVectorF(vec.num_elements);
     for (size_t k = 0; k < vec.num_elements; k++)
