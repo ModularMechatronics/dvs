@@ -6,15 +6,12 @@
 
 #include "duoplot/communication.h"
 #include "duoplot/communication_header.h"
+#include "duoplot/constants.h"
 #include "duoplot/internal.h"
 #include "duoplot/math/math.h"
 #include "duoplot/pp.h"
 #include "duoplot/structures.h"
 #include "duoplot/uint8_array.h"
-
-#define kMagicNumber ((uint64_t)0xDEADBEEFCAFEBABE)
-#define kMaxNumBytesForOneTransmission ((uint64_t)1380U)
-#define kTcpPortNum ((uint64_t)9755U)
 
 DUOPLOT_WEAK uint8_t isBigEndian()
 {
@@ -66,7 +63,7 @@ DUOPLOT_WEAK void initializeTcpSocket()
 
     tcp_servaddr.sin_family = AF_INET;
     tcp_servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    tcp_servaddr.sin_port = htons(kTcpPortNum);
+    tcp_servaddr.sin_port = htons(DUOPLOT_TCP_PORT_NUM);
 
     if (connect(*tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
     {
@@ -239,7 +236,7 @@ DUOPLOT_WEAK void sendHeaderAndByteArray(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = kMagicNumber;
+    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
@@ -277,7 +274,7 @@ DUOPLOT_WEAK void sendHeaderAndTwoByteArrays(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = kMagicNumber;
+    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
@@ -318,7 +315,7 @@ DUOPLOT_WEAK void sendHeaderAndTwoVectors(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = kMagicNumber;
+    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
@@ -360,7 +357,7 @@ DUOPLOT_WEAK void sendHeaderAndThreeMatrices(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = kMagicNumber;
+    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
@@ -405,7 +402,7 @@ DUOPLOT_WEAK void sendHeaderAndThreeVectors(SendFunction send_function,
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = kMagicNumber;
+    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
@@ -443,7 +440,7 @@ DUOPLOT_WEAK void sendHeader(SendFunction send_function, CommunicationHeader* hd
     data_blob[idx] = isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = kMagicNumber;
+    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 

@@ -82,7 +82,7 @@ DUOPLOT_WEAK CommunicationHeaderObject ColorMapMagma()
 
     hdr_obj.type = CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
-    memset(hdr_obj.data, 0, kMaxNumFunctionHeaderBytes);
+    memset(hdr_obj.data, 0, DUOPLOT_MAX_NUM_FUNCTION_HEADER_BYTES);
 
     hdr_obj.data[0U] = (PROPERTY_TYPE_SERIALIZATION_TYPE)PT_COLOR_MAP;
     hdr_obj.data[1U] = (uint8_t)CM_MAGMA;

@@ -4,16 +4,15 @@
 #include <limits.h>
 #include <stdint.h>
 
+#include "duoplot/constants.h"
 #include "duoplot/enumerations.h"
 #include "duoplot/pp.h"
-
-#define kMaxNumFunctionHeaderBytes SCHAR_MAX
 
 typedef struct S_CommunicationHeaderObject
 {
     CommunicationHeaderObjectType type;
     uint8_t num_bytes;
-    uint8_t data[kMaxNumFunctionHeaderBytes];
+    uint8_t data[DUOPLOT_MAX_NUM_FUNCTION_HEADER_BYTES];
 } CommunicationHeaderObject;
 
 DUOPLOT_WEAK CommunicationHeaderObject getLastCommHdrObj()

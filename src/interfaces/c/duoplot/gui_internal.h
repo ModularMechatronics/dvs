@@ -44,7 +44,7 @@ DUOPLOT_WEAK void internal_initTcpSocket()
 
     tcp_servaddr.sin_family = AF_INET;
     tcp_servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    tcp_servaddr.sin_port = htons(GUI_TCP_PORT_NUM);
+    tcp_servaddr.sin_port = htons(DUOPLOT_GUI_TCP_PORT_NUM);
 
     int ret_val = bind(*tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr));
 

@@ -211,7 +211,7 @@ DUOPLOT_WEAK void setTextLabelValue(const TextLabelHandle text_label_handle, con
         const size_t label_length = strnlen(new_value, 100U);
         current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)label_length;
 
-        memset(current_obj->data, 0, kMaxNumFunctionHeaderBytes);
+        memset(current_obj->data, 0, DUOPLOT_MAX_NUM_FUNCTION_HEADER_BYTES);
 
         current_obj->data[0U] = PT_NAME;
         current_obj->data[1U] = label_length;
@@ -230,7 +230,7 @@ DUOPLOT_WEAK void setTextLabelValue(const TextLabelHandle text_label_handle, con
         const size_t handle_string_length = strnlen(text_label_handle.__handle->handle_string, 100U);
         current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)handle_string_length;
 
-        memset(current_obj->data, 0, kMaxNumFunctionHeaderBytes);
+        memset(current_obj->data, 0, DUOPLOT_MAX_NUM_FUNCTION_HEADER_BYTES);
 
         current_obj->data[0U] = PT_NAME;
         current_obj->data[1U] = handle_string_length;

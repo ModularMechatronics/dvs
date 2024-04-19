@@ -10,8 +10,6 @@
 #include "duoplot/plot_properties.h"
 #include "duoplot/pp.h"
 
-#define kMaxNumHeaderObjects 30
-
 #define COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE ((uint8_t)(CHOT_UNKNOWN) + 1U)
 #define PROPERTY_LOOKUP_TABLE_SIZE ((uint8_t)(PT_UNKNOWN) + 1U)
 
@@ -53,8 +51,8 @@ DUOPLOT_WEAK void appendPropertyIndexToPropertyLookupTable(PropertyLookupTable* 
 
 typedef struct S_CommunicationHeader
 {
-    CommunicationHeaderObject objects[kMaxNumHeaderObjects];
-    CommunicationHeaderObject props[kMaxNumHeaderObjects];
+    CommunicationHeaderObject objects[DUOPLOT_MAX_NUM_HEADER_OBJECTS];
+    CommunicationHeaderObject props[DUOPLOT_MAX_NUM_HEADER_OBJECTS];
     Function function;
     size_t obj_idx;
     size_t prop_idx;
@@ -78,7 +76,7 @@ DUOPLOT_WEAK void initCommunicationHeader(CommunicationHeader* const hdr, const 
 
 DUOPLOT_WEAK void appendProperty(CommunicationHeader* const hdr, const CommunicationHeaderObject* const prop)
 {
-    if ((hdr->prop_idx + 1U) == kMaxNumHeaderObjects)
+    if ((hdr->prop_idx + 1U) == DUOPLOT_MAX_NUM_HEADER_OBJECTS)
     {
         printf("Tried to append header objects to full CommunicationHeader!\n");
         exit(0);

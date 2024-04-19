@@ -134,7 +134,7 @@ DUOPLOT_WEAK void setCurrentElement(const char* const name)
     const size_t name_length = strnlen(name, 100U);
     current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)name_length;
 
-    memset(current_obj->data, 0, kMaxNumFunctionHeaderBytes);
+    memset(current_obj->data, 0, DUOPLOT_MAX_NUM_FUNCTION_HEADER_BYTES);
 
     current_obj->data[0U] = PT_NAME;
     current_obj->data[1U] = name_length;
@@ -229,7 +229,7 @@ DUOPLOT_WEAK void setTitle(const char* const title)
     const size_t name_length = strnlen(title, 100U);
     current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)name_length;
 
-    memset(current_obj->data, 0, kMaxNumFunctionHeaderBytes);
+    memset(current_obj->data, 0, DUOPLOT_MAX_NUM_FUNCTION_HEADER_BYTES);
 
     current_obj->data[0U] = PT_NAME;
     current_obj->data[1U] = name_length;
