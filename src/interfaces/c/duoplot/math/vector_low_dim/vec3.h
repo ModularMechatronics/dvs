@@ -5,189 +5,189 @@
 
 #include "duoplot/pp.h"
 
-typedef struct S_Vec3d
+typedef struct S_Vec3D
 {
     double x;
     double y;
     double z;
-} Vec3d;
+} Vec3D;
 
-typedef struct S_Vec3f
+typedef struct S_Vec3F
 {
     float x;
     float y;
     float z;
-} Vec3f;
+} Vec3F;
 
-typedef struct S_Vec3s8
+typedef struct S_Vec3S8
 {
     int8_t x;
     int8_t y;
     int8_t z;
-} Vec3s8;
+} Vec3S8;
 
-typedef struct S_Vec3s16
+typedef struct S_Vec3S16
 {
     int16_t x;
     int16_t y;
     int16_t z;
-} Vec3s16;
+} Vec3S16;
 
-typedef struct S_Vec3s32
+typedef struct S_Vec3S32
 {
     int32_t x;
     int32_t y;
     int32_t z;
-} Vec3s32;
+} Vec3S32;
 
-typedef struct S_Vec3s64
+typedef struct S_Vec3S64
 {
     int64_t x;
     int64_t y;
     int64_t z;
-} Vec3s64;
+} Vec3S64;
 
-typedef struct S_Vec3u8
+typedef struct S_Vec3U8
 {
     uint8_t x;
     uint8_t y;
     uint8_t z;
-} Vec3u8;
+} Vec3U8;
 
-typedef struct S_Vec3u16
+typedef struct S_Vec3U16
 {
     uint16_t x;
     uint16_t y;
     uint16_t z;
-} Vec3u16;
+} Vec3U16;
 
-typedef struct S_Vec3u32
+typedef struct S_Vec3U32
 {
     uint32_t x;
     uint32_t y;
     uint32_t z;
-} Vec3u32;
+} Vec3U32;
 
-typedef struct S_Vec3u64
+typedef struct S_Vec3U64
 {
     uint64_t x;
     uint64_t y;
     uint64_t z;
-} Vec3u64;
+} Vec3U64;
 
-#define Point3d Vec3d
-#define Point3f Vec3f
-#define Point3s8 Vec3s8
-#define Point3s16 Vec3s16
-#define Point3s32 Vec3s32
-#define Point3s64 Vec3s64
-#define Point3u8 Vec3u8
-#define Point3u16 Vec3u16
-#define Point3u32 Vec3u32
-#define Point3u64 Vec3u64
+#define Point3D Vec3D
+#define Point3F Vec3F
+#define Point3S8 Vec3S8
+#define Point3S16 Vec3S16
+#define Point3S32 Vec3S32
+#define Point3S64 Vec3S64
+#define Point3U8 Vec3U8
+#define Point3U16 Vec3U16
+#define Point3U32 Vec3U32
+#define Point3U64 Vec3U64
 
-DUOPLOT_WEAK Vec3d createVec3d(const double x, const double y, const double z)
+DUOPLOT_WEAK Vec3D createVec3D(const double x, const double y, const double z)
 {
-    const Vec3d v = {x, y, z};
+    const Vec3D v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3f createVec3f(const float x, const float y, const float z)
+DUOPLOT_WEAK Vec3F createVec3F(const float x, const float y, const float z)
 {
-    const Vec3f v = {x, y, z};
+    const Vec3F v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3s8 createVec3s8(const int8_t x, const int8_t y, const int8_t z)
+DUOPLOT_WEAK Vec3S8 createVec3S8(const int8_t x, const int8_t y, const int8_t z)
 {
-    const Vec3s8 v = {x, y, z};
+    const Vec3S8 v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3s16 createVec3s16(const int16_t x, const int16_t y, const int16_t z)
+DUOPLOT_WEAK Vec3S16 createVec3S16(const int16_t x, const int16_t y, const int16_t z)
 {
-    const Vec3s16 v = {x, y, z};
+    const Vec3S16 v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3s32 createVec3s32(const int32_t x, const int32_t y, const int32_t z)
+DUOPLOT_WEAK Vec3S32 createVec3S32(const int32_t x, const int32_t y, const int32_t z)
 {
-    const Vec3s32 v = {x, y, z};
+    const Vec3S32 v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3s64 createVec3s64(const int64_t x, const int64_t y, const int64_t z)
+DUOPLOT_WEAK Vec3S64 createVec3S64(const int64_t x, const int64_t y, const int64_t z)
 {
-    const Vec3s64 v = {x, y, z};
+    const Vec3S64 v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3u8 createVec3u8(const uint8_t x, const uint8_t y, const uint8_t z)
+DUOPLOT_WEAK Vec3U8 createVec3U8(const uint8_t x, const uint8_t y, const uint8_t z)
 {
-    const Vec3u8 v = {x, y, z};
+    const Vec3U8 v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3u16 createVec3u16(const uint16_t x, const uint16_t y, const uint16_t z)
+DUOPLOT_WEAK Vec3U16 createVec3U16(const uint16_t x, const uint16_t y, const uint16_t z)
 {
-    const Vec3u16 v = {x, y, z};
+    const Vec3U16 v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3u32 createVec3u32(const uint32_t x, const uint32_t y, const uint32_t z)
+DUOPLOT_WEAK Vec3U32 createVec3U32(const uint32_t x, const uint32_t y, const uint32_t z)
 {
-    const Vec3u32 v = {x, y, z};
+    const Vec3U32 v = {x, y, z};
     return v;
 }
 
-DUOPLOT_WEAK Vec3u64 createVec3u64(const uint64_t x, const uint64_t y, const uint64_t z)
+DUOPLOT_WEAK Vec3U64 createVec3U64(const uint64_t x, const uint64_t y, const uint64_t z)
 {
-    const Vec3u64 v = {x, y, z};
+    const Vec3U64 v = {x, y, z};
     return v;
 }
 
-#define createPoint3d createVec3d
-#define createPoint3f createVec3f
-#define createPoint3s8 createVec3s8
-#define createPoint3s16 createVec3s16
-#define createPoint3s32 createVec3s32
-#define createPoint3s64 createVec3s64
-#define createPoint3u8 createVec3u8
-#define createPoint3u16 createVec3u16
-#define createPoint3u32 createVec3u32
-#define createPoint3u64 createVec3u64
+#define createPoint3D createVec3D
+#define createPoint3F createVec3F
+#define createPoint3S8 createVec3S8
+#define createPoint3S16 createVec3S16
+#define createPoint3S32 createVec3S32
+#define createPoint3S64 createVec3S64
+#define createPoint3U8 createVec3U8
+#define createPoint3U16 createVec3U16
+#define createPoint3U32 createVec3U32
+#define createPoint3U64 createVec3U64
 
-typedef struct S_Vec3dArray
+typedef struct S_Vec3DArray
 {
-    Vec3d* elements;
+    Vec3D* elements;
     size_t num_elements;
-} Vec3dArray;
+} Vec3DArray;
 
-typedef struct S_Vec3fArray
+typedef struct S_Vec3FArray
 {
-    Vec3f* elements;
+    Vec3F* elements;
     size_t num_elements;
-} Vec3fArray;
+} Vec3FArray;
 
-DUOPLOT_WEAK Vec3dArray createVec3dArray(const size_t num_elements)
+DUOPLOT_WEAK Vec3DArray createVec3DArray(const size_t num_elements)
 {
-    Vec3dArray array;
-    array.elements = malloc(sizeof(Vec3d) * num_elements);
+    Vec3DArray array;
+    array.elements = malloc(sizeof(Vec3D) * num_elements);
     array.num_elements = num_elements;
 
     return array;
 }
 
-DUOPLOT_WEAK Vec3fArray createVec3fArray(const size_t num_elements)
+DUOPLOT_WEAK Vec3FArray createVec3FArray(const size_t num_elements)
 {
-    Vec3fArray array;
-    array.elements = malloc(sizeof(Vec3f) * num_elements);
+    Vec3FArray array;
+    array.elements = malloc(sizeof(Vec3F) * num_elements);
     array.num_elements = num_elements;
 
     return array;
 }
 
-#define Point3dArray Vec3dArray
-#define Point3fArray Vec3fArray
+#define Point3DArray Vec3DArray
+#define Point3FArray Vec3FArray
 
 #endif  // DUOPLOT_MATH_VECTOR_LOW_DIM_VEC3_H_

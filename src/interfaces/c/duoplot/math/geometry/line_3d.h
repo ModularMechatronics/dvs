@@ -5,8 +5,8 @@
 
 typedef struct S_Line3DD
 {
-    Point3d p;
-    Vec3d v;
+    Point3D p;
+    Vec3D v;
 } Line3DD;
 
 #endif  // DUOPLOT_MATH_GEOMETRY_LINE_3D_H_

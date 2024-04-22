@@ -10,25 +10,25 @@
 
 typedef struct S_Triangle3DF
 {
-    Point3f p0;
-    Point3f p1;
-    Point3f p2;
+    Point3F p0;
+    Point3F p1;
+    Point3F p2;
 } Triangle3DF;
 
 typedef struct S_Triangle3DD
 {
-    Point3d p0;
-    Point3d p1;
-    Point3d p2;
+    Point3D p0;
+    Point3D p1;
+    Point3D p2;
 } Triangle3DD;
 
-DUOPLOT_WEAK Triangle3DD createTriangle3DD(const Point3d p0, const Point3d p1, const Point3d p2)
+DUOPLOT_WEAK Triangle3DD createTriangle3DD(const Point3D p0, const Point3D p1, const Point3D p2)
 {
     const Triangle3DD t = {p0, p1, p2};
     return t;
 }
 
-DUOPLOT_WEAK Triangle3DF createTriangle3DF(const Point3f p0, const Point3f p1, const Point3f p2)
+DUOPLOT_WEAK Triangle3DF createTriangle3DF(const Point3F p0, const Point3F p1, const Point3F p2)
 {
     const Triangle3DF t = {p0, p1, p2};
     return t;

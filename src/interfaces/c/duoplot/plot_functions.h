@@ -63,7 +63,7 @@ DUOPLOT_WEAK void surfFunction(const Matrix* const x,
     sendHeaderAndThreeMatrices(getSendFunction(), x, y, z, &hdr);
 }
 
-DUOPLOT_WEAK void drawMeshFunction(const Point3dArray vertices,
+DUOPLOT_WEAK void drawMeshFunction(const Point3DArray vertices,
                                    const IndexTripletArray indices,
                                    const CommunicationHeaderObject first_prop,
                                    ...)
@@ -174,15 +174,15 @@ DUOPLOT_WEAK void view(const float azimuth, const float elevation)
     sendHeader(getSendFunction(), &hdr);
 }
 
-DUOPLOT_WEAK void axis(const Vec3d min_bound, const Vec3d max_bound)
+DUOPLOT_WEAK void axis(const Vec3D min_bound, const Vec3D max_bound)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_AXES_3D);
 
     typedef struct S_Bnd3D
     {
-        Vec3d min_bnd;
-        Vec3d max_bnd;
+        Vec3D min_bnd;
+        Vec3D max_bnd;
     } Bnd3D;
 
     const Bnd3D bnd = {min_bound, max_bound};
@@ -192,18 +192,18 @@ DUOPLOT_WEAK void axis(const Vec3d min_bound, const Vec3d max_bound)
     sendHeader(getSendFunction(), &hdr);
 }
 
-DUOPLOT_WEAK void axis2D(const Vec2d min_bound, const Vec2d max_bound)
+DUOPLOT_WEAK void axis2D(const Vec2D min_bound, const Vec2D max_bound)
 {
     CommunicationHeader hdr;
     initCommunicationHeader(&hdr, F_AXES_3D);
 
     typedef struct S_Bnd3D
     {
-        Vec3d min_bnd;
-        Vec3d max_bnd;
+        Vec3D min_bnd;
+        Vec3D max_bnd;
     } Bnd3D;
-    const Vec3d v0 = {min_bound.x, min_bound.y, 0.0};
-    const Vec3d v1 = {max_bound.x, max_bound.y, 0.0};
+    const Vec3D v0 = {min_bound.x, min_bound.y, 0.0};
+    const Vec3D v1 = {max_bound.x, max_bound.y, 0.0};
 
     const Bnd3D bnd = {v0, v1};
 

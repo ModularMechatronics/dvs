@@ -12,8 +12,8 @@ void testPlot()
 
     setCurrentElement("p_view_0");
     clearView();
-    const Vec3d min_vec = {-1.0, -1.0, -1.0};
-    const Vec3d max_vec = {1.0, 1.0, 2.0};
+    const Vec3D min_vec = {-1.0, -1.0, -1.0};
+    const Vec3D max_vec = {1.0, 1.0, 2.0};
     axis(min_vec, max_vec);
 
     plot(x, y, Color(0, 0, 255), LineWidth(53));
@@ -80,10 +80,10 @@ void testSurf()
 
 /*void testDrawPolygonFrom4Points()
 {
-    Point3d p0 = {0.0, 0.0, 0.0};
-    Point3d p1 = {0.0, 1.0, 1.0};
-    Point3d p2 = {1.0, 1.0, 2.0};
-    Point3d p3 = {0.0, 2.0, 0.6};
+    Point3D p0 = {0.0, 0.0, 0.0};
+    Point3D p1 = {0.0, 1.0, 1.0};
+    Point3D p2 = {1.0, 1.0, 2.0};
+    Point3D p3 = {0.0, 2.0, 0.6};
 
     setCurrentElement("view_02");
     clearView();
@@ -93,8 +93,8 @@ void testSurf()
 
 void testDrawLine3D()
 {
-    const Point3d p0 = createPoint3d(0.0, 0.0, 0.0);
-    const Point3d p1 = createPoint3d(1.0, 1.0, 1.0);
+    const Point3D p0 = createPoint3D(0.0, 0.0, 0.0);
+    const Point3D p1 = createPoint3D(1.0, 1.0, 1.0);
 
     const Line3DD line = {p0, p1};
 
@@ -193,8 +193,8 @@ void testImShow()
 
 /*void testDrawLineBetweenPoints()
 {
-    const Point3d p0 = {0.1, 0.1, 0.1};
-    const Point3d p1 = {1.0, 2.0, 3.0};
+    const Point3D p0 = {0.1, 0.1, 0.1};
+    const Point3D p1 = {1.0, 2.0, 3.0};
 
     const Point2d p0_2 = {p0.x, p0.y};
     const Point2d p1_2 = {p1.x, p1.y};

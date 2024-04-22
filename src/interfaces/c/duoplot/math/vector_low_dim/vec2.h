@@ -3,17 +3,17 @@
 
 #include <stdint.h>
 
-typedef struct S_Vec2f
+typedef struct S_Vec2F
 {
     float x;
     float y;
-} Vec2f;
+} Vec2F;
 
-typedef struct S_Vec2d
+typedef struct S_Vec2D
 {
     double x;
     double y;
-} Vec2d;
+} Vec2D;
 
 typedef struct S_VecXYd
 {
@@ -33,8 +33,8 @@ typedef struct S_VecYZd
     double z;
 } VecYZd;
 
-#define Point2f Vec2f
-#define Point2d Vec2d
+#define Point2f Vec2F
+#define Point2d Vec2D
 
 #define PointXYd VecXYd
 #define PointXZd VecXZd
