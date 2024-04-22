@@ -3,14 +3,12 @@ Pre release:
 - Fix number formatting and grid vectors system (1.0, 1e10, -0.24234, -2.7345e2)
 - Support for Windows and Linux
 - Add all keybindings to the help pane
-- Delete element for slider (and probably other gui elements) doesn't work
 - Clean up and sanitize CMakeLists.txt files, so that they are "neat"
 - Finish python interface (and delete old C++ reference code in duoplot.py)
 - Adding a slider with the wrong aspect ratio of the window still gives crap result, with a vertical slider
   that is unmovable...
 - Solve all TODOs
 - Change createVec3dArray and all similar functions to use capital letter for type
-- Align constants naming style and collect them in one place for c interface
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline

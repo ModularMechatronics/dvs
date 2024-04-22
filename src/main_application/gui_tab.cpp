@@ -737,17 +737,31 @@ void WindowTab::notifyChildrenOnKeyReleased(const char key)
 
 bool WindowTab::deleteElementIfItExists(const std::string& element_handle_string)
 {
-    auto q = std::find_if(plot_panes_.begin(),
-                          plot_panes_.end(),
-                          [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
-                              return elem->getHandleString() == element_handle_string;
-                          });
+    auto q_plot_panes = std::find_if(plot_panes_.begin(),
+                                     plot_panes_.end(),
+                                     [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                                         return elem->getHandleString() == element_handle_string;
+                                     });
 
-    if (plot_panes_.end() != q)
+    auto q_gui_elements = std::find_if(gui_elements_.begin(),
+                                       gui_elements_.end(),
+                                       [&element_handle_string](const ApplicationGuiElement* const elem) -> bool {
+                                           return elem->getHandleString() == element_handle_string;
+                                       });
+
+    if (plot_panes_.end() != q_plot_panes)
     {
-        delete (*q);
+        delete (*q_plot_panes);
         z_order_queue_.eraseElement(element_handle_string);
-        plot_panes_.erase(q);
+        plot_panes_.erase(q_plot_panes);
+        notify_main_window_element_deleted_(element_handle_string);
+        return true;
+    }
+    if (gui_elements_.end() != q_gui_elements)
+    {
+        delete (*q_gui_elements);
+        z_order_queue_.eraseElement(element_handle_string);
+        gui_elements_.erase(q_gui_elements);
         notify_main_window_element_deleted_(element_handle_string);
         return true;
     }

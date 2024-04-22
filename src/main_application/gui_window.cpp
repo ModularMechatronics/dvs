@@ -138,15 +138,16 @@ GuiWindow::GuiWindow(
     popup_menu_element_ = new wxMenu(wxT(""));
     popup_menu_tab_ = new wxMenu(wxT(""));
 
-    std::vector<std::pair<duoplot_ids::DuoplotIds, wxString>> items{{duoplot_ids::NEW_PLOT_PANE, "Plot pane"},
-                                                            {duoplot_ids::NEW_BUTTON, "Button"},
-                                                            {duoplot_ids::NEW_SLIDER, "Slider"},
-                                                            {duoplot_ids::NEW_LIST_BOX, "List box"},
-                                                            {duoplot_ids::NEW_EDITABLE_TEXT, "Editable Text"},
-                                                            {duoplot_ids::NEW_DROP_DOWN_MENU, "Drop Down Menu"},
-                                                            {duoplot_ids::NEW_RADIO_BUTTON_GROUP, "Radio Button Group"},
-                                                            {duoplot_ids::NEW_CHECK_BOX, "Checkbox"},
-                                                            {duoplot_ids::NEW_TEXT_LABEL, "Text label"}};
+    std::vector<std::pair<duoplot_ids::DuoplotIds, wxString>> items{
+        {duoplot_ids::NEW_PLOT_PANE, "Plot pane"},
+        {duoplot_ids::NEW_BUTTON, "Button"},
+        {duoplot_ids::NEW_SLIDER, "Slider"},
+        {duoplot_ids::NEW_LIST_BOX, "List box"},
+        {duoplot_ids::NEW_EDITABLE_TEXT, "Editable Text"},
+        {duoplot_ids::NEW_DROP_DOWN_MENU, "Drop Down Menu"},
+        {duoplot_ids::NEW_RADIO_BUTTON_GROUP, "Radio Button Group"},
+        {duoplot_ids::NEW_CHECK_BOX, "Checkbox"},
+        {duoplot_ids::NEW_TEXT_LABEL, "Text label"}};
 
     for (const auto& item : items)
     {
