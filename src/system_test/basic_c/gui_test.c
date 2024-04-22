@@ -3,125 +3,127 @@
 #include "basic_c/tests.h"
 #include "duoplot/duoplot.h"
 
-void slider0Callback(const SliderHandle gui_element_handle)
+void slider0Callback(const duoplot_SliderHandle gui_element_handle)
 {
-    const SliderHandle slider = getSliderHandle("slider0");
+    const duoplot_SliderHandle slider = duoplot_getSliderHandle("slider0");
 
-    printf("Callback function: \"%s\": %i\n", GET_HANDLE_STRING(gui_element_handle), getSliderValue(slider));
+    printf("Callback function: \"%s\": %i\n",
+           DUOPLOT_GET_HANDLE_STRING(gui_element_handle),
+           duoplot_getSliderValue(slider));
 
-    const TextLabelHandle text_label = getTextLabelHandle("text_label0");
+    const duoplot_TextLabelHandle text_label = duoplot_getTextLabelHandle("text_label0");
 
     char text[100];
-    sprintf(text, "Slider value: %i\n", getSliderValue(slider));
+    sprintf(text, "Slider value: %i\n", duoplot_getSliderValue(slider));
 
-    setTextLabelValue(text_label, text);
+    duoplot_setTextLabelValue(text_label, text);
 }
 
-void button0Callback(const ButtonHandle gui_element_handle)
+void button0Callback(const duoplot_ButtonHandle gui_element_handle)
 {
-    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
+    printf("Callback function: \"%s\"\n", DUOPLOT_GET_HANDLE_STRING(gui_element_handle));
 }
 
-void listBoxCallback(const ListBoxHandle gui_element_handle)
+void listBoxCallback(const duoplot_ListBoxHandle gui_element_handle)
 {
-    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
-    printf("Selected element: %s\n", getListBoxSelectedElement(gui_element_handle));
+    printf("Callback function: \"%s\"\n", DUOPLOT_GET_HANDLE_STRING(gui_element_handle));
+    printf("Selected element: %s\n", duoplot_getListBoxSelectedElement(gui_element_handle));
 
-    for (size_t k = 0U; k < getListBoxElements(gui_element_handle).size; k++)
+    for (size_t k = 0U; k < duoplot_getListBoxElements(gui_element_handle).size; k++)
     {
-        printf("Element %zu: %s\n", k, getListBoxElements(gui_element_handle).elements[k]);
+        printf("Element %zu: %s\n", k, duoplot_getListBoxElements(gui_element_handle).elements[k]);
     }
 }
 
-void dropDownMenuCallback(const DropdownMenuHandle gui_element_handle)
+void dropDownMenuCallback(const duoplot_DropdownMenuHandle gui_element_handle)
 {
-    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
-    printf("Selected element: %s\n", getDropdownMenuSelectedElement(gui_element_handle));
+    printf("Callback function: \"%s\"\n", DUOPLOT_GET_HANDLE_STRING(gui_element_handle));
+    printf("Selected element: %s\n", duoplot_getDropdownMenuSelectedElement(gui_element_handle));
 
-    for (size_t k = 0U; k < getDropdownMenuElements(gui_element_handle).size; k++)
+    for (size_t k = 0U; k < duoplot_getDropdownMenuElements(gui_element_handle).size; k++)
     {
-        printf("Element %zu: %s\n", k, getDropdownMenuElements(gui_element_handle).elements[k]);
+        printf("Element %zu: %s\n", k, duoplot_getDropdownMenuElements(gui_element_handle).elements[k]);
     }
 }
 
-void radioButtonsCallback(const RadioButtonGroupHandle gui_element_handle)
+void radioButtonsCallback(const duoplot_RadioButtonGroupHandle gui_element_handle)
 {
-    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
-    printf("Selected element idx: %i\n", getRadioButtonGroupSelectedButtonIdx(gui_element_handle));
+    printf("Callback function: \"%s\"\n", DUOPLOT_GET_HANDLE_STRING(gui_element_handle));
+    printf("Selected element idx: %i\n", duoplot_getRadioButtonGroupSelectedButtonIdx(gui_element_handle));
 
-    for (size_t k = 0U; k < getRadioButtonGroupButtonNames(gui_element_handle).size; k++)
+    for (size_t k = 0U; k < duoplot_getRadioButtonGroupButtonNames(gui_element_handle).size; k++)
     {
-        printf("Element %zu: %s\n", k, getRadioButtonGroupButtonNames(gui_element_handle).elements[k]);
+        printf("Element %zu: %s\n", k, duoplot_getRadioButtonGroupButtonNames(gui_element_handle).elements[k]);
     }
 }
-void editableTextCallback(const EditableTextHandle gui_element_handle)
+void editableTextCallback(const duoplot_EditableTextHandle gui_element_handle)
 {
-    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
-    printf("Text: %s\n", getEditableTextValue(gui_element_handle));
+    printf("Callback function: \"%s\"\n", DUOPLOT_GET_HANDLE_STRING(gui_element_handle));
+    printf("Text: %s\n", duoplot_getEditableTextValue(gui_element_handle));
 }
 
-void checkboxCallback(const CheckboxHandle gui_element_handle)
+void checkboxCallback(const duoplot_CheckboxHandle gui_element_handle)
 {
-    printf("Callback function: \"%s\"\n", GET_HANDLE_STRING(gui_element_handle));
-    printf("Checked: %i\n", getIsCheckBoxChecked(gui_element_handle));
+    printf("Callback function: \"%s\"\n", DUOPLOT_GET_HANDLE_STRING(gui_element_handle));
+    printf("Checked: %i\n", duoplot_getIsCheckBoxChecked(gui_element_handle));
 }
 
 void printValues()
 {
-    const SliderHandle slider = getSliderHandle("slider0");
-    const ListBoxHandle list_box = getListBoxHandle("listbox0");
-    const DropdownMenuHandle drop_down_menu = getDropdownMenuHandle("ddm0");
+    const duoplot_SliderHandle slider = duoplot_getSliderHandle("slider0");
+    const duoplot_ListBoxHandle list_box = duoplot_getListBoxHandle("listbox0");
+    const duoplot_DropdownMenuHandle drop_down_menu = duoplot_getDropdownMenuHandle("ddm0");
 
-    const TextLabelHandle text_label = getTextLabelHandle("text_label0");
+    const duoplot_TextLabelHandle text_label = duoplot_getTextLabelHandle("text_label0");
 
-    printf("Text label: %s\n", getTextLabelValue(text_label));
+    printf("Text label: %s\n", duoplot_getTextLabelValue(text_label));
 
-    printf("Listbox size: %zu\n", getListBoxElements(list_box).size);
+    printf("Listbox size: %zu\n", duoplot_getListBoxElements(list_box).size);
 
-    for (size_t k = 0U; k < getListBoxElements(list_box).size; k++)
+    for (size_t k = 0U; k < duoplot_getListBoxElements(list_box).size; k++)
     {
-        printf("Element %zu: %s\n", k, getListBoxElements(list_box).elements[k]);
+        printf("Element %zu: %s\n", k, duoplot_getListBoxElements(list_box).elements[k]);
     }
-    printf("Selected element: %s\n", getListBoxSelectedElement(list_box));
+    printf("Selected element: %s\n", duoplot_getListBoxSelectedElement(list_box));
 
-    printf("Slider value: %i\n", getSliderValue(slider));
+    printf("Slider value: %i\n", duoplot_getSliderValue(slider));
 
-    const RadioButtonGroupHandle rb_h = getRadioButtonGroupHandle("rbg0");
-    printf("Selected element idx: %i\n", getRadioButtonGroupSelectedButtonIdx(rb_h));
+    const duoplot_RadioButtonGroupHandle rb_h = duoplot_getRadioButtonGroupHandle("rbg0");
+    printf("Selected element idx: %i\n", duoplot_getRadioButtonGroupSelectedButtonIdx(rb_h));
 
-    for (size_t k = 0U; k < getRadioButtonGroupButtonNames(rb_h).size; k++)
+    for (size_t k = 0U; k < duoplot_getRadioButtonGroupButtonNames(rb_h).size; k++)
     {
-        printf("Button %zu: %s\n", k, getRadioButtonGroupButtonNames(rb_h).elements[k]);
-    }
-
-    const EditableTextHandle et_h = getEditableTextHandle("text_entry");
-    printf("Text: %s\n", getEditableTextValue(et_h));
-
-    const CheckboxHandle cb_h = getCheckboxHandle("checkbox0");
-    printf("Checked: %i\n", getIsCheckBoxChecked(cb_h));
-
-    printf("DropdownMenu size: %zu\n", getDropdownMenuElements(drop_down_menu).size);
-
-    for (size_t k = 0U; k < getDropdownMenuElements(drop_down_menu).size; k++)
-    {
-        printf("Element %zu: %s\n", k, getDropdownMenuElements(drop_down_menu).elements[k]);
+        printf("Button %zu: %s\n", k, duoplot_getRadioButtonGroupButtonNames(rb_h).elements[k]);
     }
 
-    printf("Selected element: %s\n", getDropdownMenuSelectedElement(drop_down_menu));
+    const duoplot_EditableTextHandle et_h = duoplot_getEditableTextHandle("text_entry");
+    printf("Text: %s\n", duoplot_getEditableTextValue(et_h));
+
+    const duoplot_CheckboxHandle cb_h = duoplot_getCheckboxHandle("checkbox0");
+    printf("Checked: %i\n", duoplot_getIsCheckBoxChecked(cb_h));
+
+    printf("DropdownMenu size: %zu\n", duoplot_getDropdownMenuElements(drop_down_menu).size);
+
+    for (size_t k = 0U; k < duoplot_getDropdownMenuElements(drop_down_menu).size; k++)
+    {
+        printf("Element %zu: %s\n", k, duoplot_getDropdownMenuElements(drop_down_menu).elements[k]);
+    }
+
+    printf("Selected element: %s\n", duoplot_getDropdownMenuSelectedElement(drop_down_menu));
 }
 
 void testGUIBasic()
 {
-    startGuiReceiveThread();
+    duoplot_startGuiReceiveThread();
 
-    registerButtonCallback("button0", button0Callback);
-    registerSliderCallback("slider0", slider0Callback);
+    duoplot_registerButtonCallback("button0", button0Callback);
+    duoplot_registerSliderCallback("slider0", slider0Callback);
 
-    registerListBoxCallback("listbox0", listBoxCallback);
-    registerDropdownMenuCallback("ddm0", dropDownMenuCallback);
-    registerCheckboxCallback("checkbox0", checkboxCallback);
-    registerRadioButtonGroupCallback("rbg0", radioButtonsCallback);
-    registerEditableTextCallback("text_entry", editableTextCallback);
+    duoplot_registerListBoxCallback("listbox0", listBoxCallback);
+    duoplot_registerDropdownMenuCallback("ddm0", dropDownMenuCallback);
+    duoplot_registerCheckboxCallback("checkbox0", checkboxCallback);
+    duoplot_registerRadioButtonGroupCallback("rbg0", radioButtonsCallback);
+    duoplot_registerEditableTextCallback("text_entry", editableTextCallback);
 
     char input_array[1000];
 

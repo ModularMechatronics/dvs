@@ -4,138 +4,134 @@
 #include "duoplot/enumerations.h"
 #include "duoplot/list_of_strings.h"
 
-typedef struct S_BaseHandle
+typedef struct S_duoplot_internal_BaseHandle
 {
     GuiElementType type;
     char* handle_string;
-} BaseHandle;
+} duoplot_internal_BaseHandle;
 
-// Gui element state types
-
-typedef struct S_SliderState
+typedef struct S_duoplot_SliderState
 {
     int32_t min_value;
     int32_t max_value;
     int32_t step_size;
     int32_t value;
-} SliderState;
+} duoplot_SliderState;
 
-typedef struct S_ListBoxState
+typedef struct S_duoplot_ListBoxState
 {
-    ListOfStrings elements;
+    duoplot_ListOfStrings elements;
     char* selected_element;
-} ListBoxState;
+} duoplot_ListBoxState;
 
-typedef struct S_DropdownMenuState
+typedef struct S_duoplot_DropdownMenuState
 {
-    ListOfStrings elements;
+    duoplot_ListOfStrings elements;
     char* selected_element;
-} DropdownMenuState;
+} duoplot_DropdownMenuState;
 
-// Gui element internal handle types
-
-typedef struct S_ButtonInternalHandle
+typedef struct S_duoplot_ButtonInternalHandle
 {
     GuiElementType type;
     char* handle_string;
     bool is_pressed;
-} ButtonInternalHandle;
+} duoplot_internal_ButtonInternalHandle;
 
-typedef struct S_ListBoxInternalHandle
+typedef struct S_duoplot_ListBoxInternalHandle
 {
     GuiElementType type;
     char* handle_string;
 
-    ListBoxState state;
-} ListBoxInternalHandle;
+    duoplot_ListBoxState state;
+} duoplot_internal_ListBoxInternalHandle;
 
-typedef struct S_SliderInternalHandle
+typedef struct S_duoplot_SliderInternalHandle
 {
     GuiElementType type;
     char* handle_string;
-    SliderState state;
-} SliderInternalHandle;
+    duoplot_SliderState state;
+} duoplot_internal_SliderInternalHandle;
 
-typedef struct S_TextLabelInternalHandle
+typedef struct S_duoplot_TextLabelInternalHandle
 {
     GuiElementType type;
     char* handle_string;
     char* text;
-} TextLabelInternalHandle;
+} duoplot_internal_TextLabelInternalHandle;
 
-typedef struct S_DropdownMenuInternalHandle
+typedef struct S_duoplot_DropdownMenuInternalHandle
 {
     GuiElementType type;
     char* handle_string;
 
-    DropdownMenuState state;
-} DropdownMenuInternalHandle;
+    duoplot_DropdownMenuState state;
+} duoplot_internal_DropdownMenuInternalHandle;
 
-typedef struct S_CheckboxInternalHandle
+typedef struct S_duoplot_CheckboxInternalHandle
 {
     GuiElementType type;
     char* handle_string;
     bool is_checked;
-} CheckboxInternalHandle;
+} duoplot_internal_CheckboxInternalHandle;
 
-typedef struct S_RadioButtonGroupInternalHandle
+typedef struct S_duoplot_RadioButtonGroupInternalHandle
 {
     GuiElementType type;
     char* handle_string;
 
-    ListOfStrings buttons;
+    duoplot_ListOfStrings buttons;
     int32_t selected_button_idx;
 } RadioButtonGroupInternalHandle;
 
-typedef struct S_EditableTextInternalHandle
+typedef struct S_duoplot_EditableTextInternalHandle
 {
     GuiElementType type;
     char* handle_string;
     char* text;
     bool enter_pressed;
-} EditableTextInternalHandle;
+} duoplot_internal_EditableTextInternalHandle;
 
 // Gui element handle types
 
-typedef struct S_ButtonHandle
+typedef struct S_duoplot_ButtonHandle
 {
-    ButtonInternalHandle* __handle;
-} ButtonHandle;
+    duoplot_internal_ButtonInternalHandle* __handle;
+} duoplot_ButtonHandle;
 
-typedef struct S_SliderHandle
+typedef struct S_duoplot_SliderHandle
 {
-    SliderInternalHandle* __handle;
-} SliderHandle;
+    duoplot_internal_SliderInternalHandle* __handle;
+} duoplot_SliderHandle;
 
-typedef struct S_ListBoxHandle
+typedef struct S_duoplot_ListBoxHandle
 {
-    ListBoxInternalHandle* __handle;
-} ListBoxHandle;
+    duoplot_internal_ListBoxInternalHandle* __handle;
+} duoplot_ListBoxHandle;
 
-typedef struct S_DropdownMenuHandle
+typedef struct S_duoplot_DropdownMenuHandle
 {
-    DropdownMenuInternalHandle* __handle;
+    duoplot_internal_DropdownMenuInternalHandle* __handle;
 
-} DropdownMenuHandle;
+} duoplot_DropdownMenuHandle;
 
-typedef struct S_CheckboxHandle
+typedef struct S_duoplot_CheckboxHandle
 {
-    CheckboxInternalHandle* __handle;
-} CheckboxHandle;
+    duoplot_internal_CheckboxInternalHandle* __handle;
+} duoplot_CheckboxHandle;
 
-typedef struct S_RadioButtonGroupHandle
+typedef struct S_duoplot_RadioButtonGroupHandle
 {
     RadioButtonGroupInternalHandle* __handle;
-} RadioButtonGroupHandle;
+} duoplot_RadioButtonGroupHandle;
 
-typedef struct S_EditableTextHandle
+typedef struct S_duoplot_EditableTextHandle
 {
-    EditableTextInternalHandle* __handle;
-} EditableTextHandle;
+    duoplot_internal_EditableTextInternalHandle* __handle;
+} duoplot_EditableTextHandle;
 
-typedef struct S_TextLabelHandle
+typedef struct S_duoplot_TextLabelHandle
 {
-    TextLabelInternalHandle* __handle;
-} TextLabelHandle;
+    duoplot_internal_TextLabelInternalHandle* __handle;
+} duoplot_TextLabelHandle;
 
 #endif  // DUOPLOT_INTERNAL_GUI_ELEMENT_HANDLE_H

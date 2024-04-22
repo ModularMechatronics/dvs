@@ -8,7 +8,7 @@ DUOPLOT_WEAK Vector createVector(const size_t num_elements, const DataType data_
 {
     Vector vec;
     vec.data_type = data_type;
-    vec.num_bytes_per_element = dataTypeToNumBytes(data_type);
+    vec.num_bytes_per_element = duoplot_internal_dataTypeToNumBytes(data_type);
     vec.num_elements = num_elements;
     vec.data = (uint8_t*)malloc(num_elements * vec.num_bytes_per_element);
 

@@ -12,12 +12,12 @@ typedef struct S_CommunicationHeaderObject
 {
     CommunicationHeaderObjectType type;
     uint8_t num_bytes;
-    uint8_t data[DUOPLOT_MAX_NUM_FUNCTION_HEADER_BYTES];
-} CommunicationHeaderObject;
+    uint8_t data[DUOPLOT_INTERNAL_MAX_NUM_FUNCTION_HEADER_BYTES];
+} duoplot_internal_CommunicationHeaderObject;
 
-DUOPLOT_WEAK CommunicationHeaderObject getLastCommHdrObj()
+DUOPLOT_WEAK duoplot_internal_CommunicationHeaderObject duoplot_internal_getLastCommHdrObj()
 {
-    CommunicationHeaderObject obj;
+    duoplot_internal_CommunicationHeaderObject obj;
     obj.type = CHOT_UNKNOWN;
 
     return obj;

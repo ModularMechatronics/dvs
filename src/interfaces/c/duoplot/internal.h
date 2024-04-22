@@ -13,7 +13,7 @@
 #include "duoplot/structures.h"
 #include "duoplot/uint8_array.h"
 
-DUOPLOT_WEAK uint8_t isBigEndian()
+DUOPLOT_WEAK uint8_t duoplot_internal_isBigEndian()
 {
     const uint32_t x = 1;
     const uint8_t* const ptr = (uint8_t*)(&x);
@@ -28,7 +28,7 @@ DUOPLOT_WEAK uint8_t isBigEndian()
     }
 }
 
-DUOPLOT_WEAK uint64_t minVal(const uint64_t v0, const uint64_t v1)
+DUOPLOT_WEAK uint64_t duoplot_internal_minVal(const uint64_t v0, const uint64_t v1)
 {
     if (v0 < v1)
     {
@@ -40,21 +40,21 @@ DUOPLOT_WEAK uint64_t minVal(const uint64_t v0, const uint64_t v1)
     }
 }
 
-DUOPLOT_WEAK int* getSocketFileDescriptor()
+DUOPLOT_WEAK int* duoplot_internal_getSocketFileDescriptor()
 {
     static int sock_file_descr = -1;
     return &sock_file_descr;
 }
 
-DUOPLOT_WEAK bool* getIsInitialized()
+DUOPLOT_WEAK bool* duoplot_internal_getIsInitialized()
 {
     static bool is_initialized = false;
     return &is_initialized;
 }
 
-DUOPLOT_WEAK void initializeTcpSocket()
+DUOPLOT_WEAK void duoplot_internal_initializeTcpSocket()
 {
-    int* const tcp_sockfd = getSocketFileDescriptor();
+    int* const tcp_sockfd = duoplot_internal_getSocketFileDescriptor();
     struct sockaddr_in tcp_servaddr;
 
     *tcp_sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -63,7 +63,7 @@ DUOPLOT_WEAK void initializeTcpSocket()
 
     tcp_servaddr.sin_family = AF_INET;
     tcp_servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    tcp_servaddr.sin_port = htons(DUOPLOT_TCP_PORT_NUM);
+    tcp_servaddr.sin_port = htons(DUOPLOT_INTERNAL_TCP_PORT_NUM);
 
     if (connect(*tcp_sockfd, (struct sockaddr*)&tcp_servaddr, sizeof(tcp_servaddr)) == (-1))
     {
@@ -71,15 +71,15 @@ DUOPLOT_WEAK void initializeTcpSocket()
     }
 }
 
-DUOPLOT_WEAK void sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
+DUOPLOT_WEAK void duoplot_internal_sendThroughTcpInterface(const uint8_t* const data_blob, const uint64_t num_bytes)
 {
-    if (!(*getIsInitialized()))
+    if (!(*duoplot_internal_getIsInitialized()))
     {
-        initializeTcpSocket();
-        (*getIsInitialized()) = true;
+        duoplot_internal_initializeTcpSocket();
+        (*duoplot_internal_getIsInitialized()) = true;
     }
 
-    int* const tcp_sockfd = getSocketFileDescriptor();
+    int* const tcp_sockfd = duoplot_internal_getSocketFileDescriptor();
 
     const uint64_t num_bytes_to_send = num_bytes;
 
@@ -87,53 +87,56 @@ DUOPLOT_WEAK void sendThroughTcpInterface(const uint8_t* const data_blob, const 
     write(*tcp_sockfd, data_blob, num_bytes);
 }
 
-#define APPEND_PROPERTIES(__hdr, __first_prop)                 \
-    {                                                          \
-        va_list __args;                                        \
-        va_start(__args, __first_prop);                        \
-                                                               \
-        CommunicationHeaderObject __prp = __first_prop;        \
-        while (__prp.type != CHOT_UNKNOWN)                     \
-        {                                                      \
-            appendProperty(&__hdr, &__prp);                    \
-            __prp = va_arg(__args, CommunicationHeaderObject); \
-        }                                                      \
-        va_end(__args);                                        \
+#define DUOPLOT_INTERNAL_APPEND_PROPERTIES(__hdr, __first_prop)                 \
+    {                                                                           \
+        va_list __args;                                                         \
+        va_start(__args, __first_prop);                                         \
+                                                                                \
+        duoplot_internal_CommunicationHeaderObject __prp = __first_prop;        \
+        while (__prp.type != CHOT_UNKNOWN)                                      \
+        {                                                                       \
+            duoplot_internal_appendProperty(&__hdr, &__prp);                    \
+            __prp = va_arg(__args, duoplot_internal_CommunicationHeaderObject); \
+        }                                                                       \
+        va_end(__args);                                                         \
     }
 
-#define APPEND_OBJ(__hdr, __type, __val, __target_data_type)                                                        \
-    {                                                                                                               \
-        CommunicationHeaderObject* const __current_obj = (__hdr)->objects + (__hdr)->obj_idx;                       \
-        __current_obj->type = __type;                                                                               \
-        __current_obj->num_bytes = sizeof(__target_data_type);                                                      \
-        __target_data_type __tmp_val = __val;                                                                       \
-        memcpy(__current_obj->data, &__tmp_val, sizeof(__target_data_type));                                        \
-        appendObjectIndexToCommunicationHeaderObjectLookupTable(&((__hdr)->objects_lut), __type, (__hdr)->obj_idx); \
-        (__hdr)->obj_idx += 1;                                                                                      \
+#define DUOPLOT_INTERNAL_APPEND_OBJ(__hdr, __type, __val, __target_data_type)                                  \
+    {                                                                                                          \
+        duoplot_internal_CommunicationHeaderObject* const __current_obj = (__hdr)->objects + (__hdr)->obj_idx; \
+        __current_obj->type = __type;                                                                          \
+        __current_obj->num_bytes = sizeof(__target_data_type);                                                 \
+        __target_data_type __tmp_val = __val;                                                                  \
+        memcpy(__current_obj->data, &__tmp_val, sizeof(__target_data_type));                                   \
+        duoplot_internal_appendObjectIndexToCommunicationHeaderObjectLookupTable(                              \
+            &((__hdr)->objects_lut), __type, (__hdr)->obj_idx);                                                \
+        (__hdr)->obj_idx += 1;                                                                                 \
     }
 
-DUOPLOT_WEAK void appendDims(CommunicationHeader* hdr, const CommunicationHeaderObjectType type, const Dimension2D dims)
+DUOPLOT_WEAK void duoplot_internal_appendDims(duoplot_internal_CommunicationHeader* hdr,
+                                              const CommunicationHeaderObjectType type,
+                                              const duoplot_internal_Dimension2D dims)
 {
-    CommunicationHeaderObject* const current_obj = hdr->objects + hdr->obj_idx;
+    duoplot_internal_CommunicationHeaderObject* const current_obj = hdr->objects + hdr->obj_idx;
     current_obj->type = type;
     current_obj->num_bytes = 2U * sizeof(uint32_t);
     memcpy(current_obj->data, &(dims.rows), sizeof(uint32_t));
     memcpy(current_obj->data + sizeof(uint32_t), &(dims.cols), sizeof(uint32_t));
-    appendObjectIndexToCommunicationHeaderObjectLookupTable(&(hdr->objects_lut), type, hdr->obj_idx);
+    duoplot_internal_appendObjectIndexToCommunicationHeaderObjectLookupTable(&(hdr->objects_lut), type, hdr->obj_idx);
     hdr->obj_idx += 1;
 }
 
 typedef void (*SendFunction)(const uint8_t* const, const uint64_t);
 
-DUOPLOT_WEAK SendFunction getSendFunction()
+DUOPLOT_WEAK SendFunction duoplot_internal_getSendFunction()
 {
-    return sendThroughTcpInterface;
+    return duoplot_internal_sendThroughTcpInterface;
 }
 
 #define COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE uint16_t
 #define COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE uint8_t
 
-DUOPLOT_WEAK int countNumHeaderBytes(const CommunicationHeader* const hdr)
+DUOPLOT_WEAK int duoplot_internal_countNumHeaderBytes(const duoplot_internal_CommunicationHeader* const hdr)
 {
     // 2 for first two bytes, that indicates how many objects and
     // props there will be in the buffer
@@ -142,10 +145,10 @@ DUOPLOT_WEAK int countNumHeaderBytes(const CommunicationHeader* const hdr)
     s += sizeof(uint8_t);
 
     // Object look up table
-    s += COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE;
+    s += DUOPLOT_INTERNAL_COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE;
 
     // Properties look up table
-    s += PROPERTY_LOOKUP_TABLE_SIZE;
+    s += DUOPLOT_INTERNAL_PROPERTY_LOOKUP_TABLE_SIZE;
 
     const size_t base_size = sizeof(COMMUNICATION_HEADER_OBJECT_TYPE_TRANSMISSION_TYPE) +
                              sizeof(COMMUNICATION_HEADER_OBJECT_NUM_BYTES_TRANSMISSION_TYPE);
@@ -160,12 +163,13 @@ DUOPLOT_WEAK int countNumHeaderBytes(const CommunicationHeader* const hdr)
         s += base_size + hdr->props[k].num_bytes;
     }
 
-    s += NUM_FLAGS;
+    s += DUOPLOT_INTERNAL_NUM_FLAGS;
 
     return s;
 }
 
-DUOPLOT_WEAK void fillBufferWithHeader(const CommunicationHeader* const hdr, uint8_t* const buffer)
+DUOPLOT_WEAK void duoplot_internal_fillBufferWithHeader(const duoplot_internal_CommunicationHeader* const hdr,
+                                                        uint8_t* const buffer)
 {
     size_t idx = 0U;
     buffer[idx] = (uint8_t)(hdr->obj_idx);
@@ -178,15 +182,15 @@ DUOPLOT_WEAK void fillBufferWithHeader(const CommunicationHeader* const hdr, uin
     idx++;
 
     // Objects look up table
-    memcpy(buffer + idx, hdr->objects_lut.data, COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE);
-    idx += COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE;
+    memcpy(buffer + idx, hdr->objects_lut.data, DUOPLOT_INTERNAL_COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE);
+    idx += DUOPLOT_INTERNAL_COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE;
 
     // Properties look up table
-    memcpy(buffer + idx, hdr->props_lut.data, PROPERTY_LOOKUP_TABLE_SIZE);
-    idx += PROPERTY_LOOKUP_TABLE_SIZE;
+    memcpy(buffer + idx, hdr->props_lut.data, DUOPLOT_INTERNAL_PROPERTY_LOOKUP_TABLE_SIZE);
+    idx += DUOPLOT_INTERNAL_PROPERTY_LOOKUP_TABLE_SIZE;
 
     // Objects
-    const CommunicationHeaderObject* const objects = hdr->objects;
+    const duoplot_internal_CommunicationHeaderObject* const objects = hdr->objects;
 
     for (size_t k = 0; k < hdr->obj_idx; k++)
     {
@@ -202,7 +206,7 @@ DUOPLOT_WEAK void fillBufferWithHeader(const CommunicationHeader* const hdr, uin
     }
 
     // Properties
-    const CommunicationHeaderObject* const props = hdr->props;
+    const duoplot_internal_CommunicationHeaderObject* const props = hdr->props;
 
     for (size_t k = 0; k < hdr->prop_idx; k++)
     {
@@ -216,15 +220,15 @@ DUOPLOT_WEAK void fillBufferWithHeader(const CommunicationHeader* const hdr, uin
         idx += props[k].num_bytes;
     }
 
-    memcpy(buffer + idx, hdr->flags, NUM_FLAGS);
+    memcpy(buffer + idx, hdr->flags, DUOPLOT_INTERNAL_NUM_FLAGS);
 }
 
-DUOPLOT_WEAK void sendHeaderAndByteArray(SendFunction send_function,
-                                         const uint8_t* const array,
-                                         const size_t num_bytes_from_array,
-                                         CommunicationHeader* hdr)
+DUOPLOT_WEAK void duoplot_internal_sendHeaderAndByteArray(SendFunction send_function,
+                                                          const uint8_t* const array,
+                                                          const size_t num_bytes_from_array,
+                                                          duoplot_internal_CommunicationHeader* hdr)
 {
-    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+    const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
@@ -233,17 +237,17 @@ DUOPLOT_WEAK void sendHeaderAndByteArray(SendFunction send_function,
     uint8_t* const data_blob = malloc(num_bytes);
 
     uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
+    data_blob[idx] = duoplot_internal_isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
+    const uint64_t magic_num = DUOPLOT_INTERNAL_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, data_blob + idx);
+    duoplot_internal_fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(&(data_blob[idx]), array, num_bytes_from_array);
@@ -254,14 +258,14 @@ DUOPLOT_WEAK void sendHeaderAndByteArray(SendFunction send_function,
     free(data_blob);
 }
 
-DUOPLOT_WEAK void sendHeaderAndTwoByteArrays(SendFunction send_function,
-                                             const uint8_t* const array0,
-                                             const size_t num_bytes_from_array0,
-                                             const uint8_t* const array1,
-                                             const size_t num_bytes_from_array1,
-                                             CommunicationHeader* hdr)
+DUOPLOT_WEAK void duoplot_internal_sendHeaderAndTwoByteArrays(SendFunction send_function,
+                                                              const uint8_t* const array0,
+                                                              const size_t num_bytes_from_array0,
+                                                              const uint8_t* const array1,
+                                                              const size_t num_bytes_from_array1,
+                                                              duoplot_internal_CommunicationHeader* hdr)
 {
-    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+    const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
@@ -271,17 +275,17 @@ DUOPLOT_WEAK void sendHeaderAndTwoByteArrays(SendFunction send_function,
     uint8_t* const data_blob = malloc(num_bytes);
 
     uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
+    data_blob[idx] = duoplot_internal_isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
+    const uint64_t magic_num = DUOPLOT_INTERNAL_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, data_blob + idx);
+    duoplot_internal_fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(&(data_blob[idx]), array0, num_bytes_from_array0);
@@ -295,12 +299,12 @@ DUOPLOT_WEAK void sendHeaderAndTwoByteArrays(SendFunction send_function,
     free(data_blob);
 }
 
-DUOPLOT_WEAK void sendHeaderAndTwoVectors(SendFunction send_function,
-                                          const Vector* const x,
-                                          const Vector* const y,
-                                          CommunicationHeader* hdr)
+DUOPLOT_WEAK void duoplot_internal_sendHeaderAndTwoVectors(SendFunction send_function,
+                                                           const Vector* const x,
+                                                           const Vector* const y,
+                                                           duoplot_internal_CommunicationHeader* hdr)
 {
-    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+    const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_vector = x->num_elements * x->num_bytes_per_element;
 
     const uint64_t num_bytes_from_object = 2U * num_bytes_one_vector + num_bytes_hdr;
@@ -312,17 +316,17 @@ DUOPLOT_WEAK void sendHeaderAndTwoVectors(SendFunction send_function,
     uint8_t* const data_blob = malloc(num_bytes);
 
     uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
+    data_blob[idx] = duoplot_internal_isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
+    const uint64_t magic_num = DUOPLOT_INTERNAL_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, data_blob + idx);
+    duoplot_internal_fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(data_blob + idx, x->data, num_bytes_one_vector);
@@ -336,13 +340,13 @@ DUOPLOT_WEAK void sendHeaderAndTwoVectors(SendFunction send_function,
     free(data_blob);
 }
 
-DUOPLOT_WEAK void sendHeaderAndThreeMatrices(SendFunction send_function,
-                                             const Matrix* const x,
-                                             const Matrix* const y,
-                                             const Matrix* const z,
-                                             CommunicationHeader* hdr)
+DUOPLOT_WEAK void duoplot_internal_sendHeaderAndThreeMatrices(SendFunction send_function,
+                                                              const Matrix* const x,
+                                                              const Matrix* const y,
+                                                              const Matrix* const z,
+                                                              duoplot_internal_CommunicationHeader* hdr)
 {
-    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+    const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_matrix = x->num_rows * x->num_cols * x->num_bytes_per_element;
 
     const uint64_t num_bytes_from_object = 3U * num_bytes_one_matrix + num_bytes_hdr;
@@ -354,17 +358,17 @@ DUOPLOT_WEAK void sendHeaderAndThreeMatrices(SendFunction send_function,
     uint8_t* const data_blob = malloc(num_bytes);
 
     uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
+    data_blob[idx] = duoplot_internal_isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
+    const uint64_t magic_num = DUOPLOT_INTERNAL_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, data_blob + idx);
+    duoplot_internal_fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(&(data_blob[idx]), x->data, num_bytes_one_matrix);
@@ -381,13 +385,13 @@ DUOPLOT_WEAK void sendHeaderAndThreeMatrices(SendFunction send_function,
     free(data_blob);
 }
 
-DUOPLOT_WEAK void sendHeaderAndThreeVectors(SendFunction send_function,
-                                            const Vector* const x,
-                                            const Vector* const y,
-                                            const Vector* const z,
-                                            CommunicationHeader* hdr)
+DUOPLOT_WEAK void duoplot_internal_sendHeaderAndThreeVectors(SendFunction send_function,
+                                                             const Vector* const x,
+                                                             const Vector* const y,
+                                                             const Vector* const z,
+                                                             duoplot_internal_CommunicationHeader* hdr)
 {
-    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+    const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
     const uint64_t num_bytes_one_vector = x->num_elements * x->num_bytes_per_element;
 
     const uint64_t num_bytes_from_object = 3 * num_bytes_one_vector + num_bytes_hdr;
@@ -399,17 +403,17 @@ DUOPLOT_WEAK void sendHeaderAndThreeVectors(SendFunction send_function,
     uint8_t* const data_blob = malloc(num_bytes);
 
     uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
+    data_blob[idx] = duoplot_internal_isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
+    const uint64_t magic_num = DUOPLOT_INTERNAL_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, data_blob + idx);
+    duoplot_internal_fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     memcpy(&(data_blob[idx]), x->data, num_bytes_one_vector);
@@ -426,9 +430,9 @@ DUOPLOT_WEAK void sendHeaderAndThreeVectors(SendFunction send_function,
     free(data_blob);
 }
 
-DUOPLOT_WEAK void sendHeader(SendFunction send_function, CommunicationHeader* hdr)
+DUOPLOT_WEAK void duoplot_internal_sendHeader(SendFunction send_function, duoplot_internal_CommunicationHeader* hdr)
 {
-    const uint64_t num_bytes_hdr = countNumHeaderBytes(hdr);
+    const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
 
     // + 1 bytes for endianness byte
     // + 2 * sizeof(uint64_t) for magic number and number of bytes in transfer
@@ -437,17 +441,17 @@ DUOPLOT_WEAK void sendHeader(SendFunction send_function, CommunicationHeader* hd
     uint8_t* const data_blob = malloc(num_bytes);
 
     uint64_t idx = 0;
-    data_blob[idx] = isBigEndian();
+    data_blob[idx] = duoplot_internal_isBigEndian();
     idx += 1;
 
-    const uint64_t magic_num = DUOPLOT_MAGIC_NUMBER;
+    const uint64_t magic_num = DUOPLOT_INTERNAL_MAGIC_NUMBER;
     memcpy(data_blob + idx, &magic_num, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
     memcpy(data_blob + idx, &num_bytes, sizeof(uint64_t));
     idx += sizeof(uint64_t);
 
-    fillBufferWithHeader(hdr, data_blob + idx);
+    duoplot_internal_fillBufferWithHeader(hdr, data_blob + idx);
     idx += num_bytes_hdr;
 
     send_function(data_blob, num_bytes);
@@ -455,7 +459,7 @@ DUOPLOT_WEAK void sendHeader(SendFunction send_function, CommunicationHeader* hd
     free(data_blob);
 }
 
-DUOPLOT_WEAK bool internal_isSubstringInString(const char* const substring, const char* const string)
+DUOPLOT_WEAK bool duoplot_internal_isSubstringInString(const char* const substring, const char* const string)
 {
     if (substring == NULL || string == NULL)
     {
@@ -496,7 +500,7 @@ DUOPLOT_WEAK bool internal_isSubstringInString(const char* const substring, cons
     return false;
 }
 
-DUOPLOT_WEAK bool internal_stringEndsWith(const char* const str, const char* const suffix)
+DUOPLOT_WEAK bool duoplot_internal_stringEndsWith(const char* const str, const char* const suffix)
 {
     if (str == NULL || suffix == NULL)
     {
@@ -526,7 +530,7 @@ DUOPLOT_WEAK bool internal_stringEndsWith(const char* const str, const char* con
     return true;
 }
 
-DUOPLOT_WEAK bool internal_isDuoplotRunning()
+DUOPLOT_WEAK bool duoplot_internal_isDuoplotRunning()
 {
     char path[1035];
 
@@ -545,11 +549,13 @@ DUOPLOT_WEAK bool internal_isDuoplotRunning()
         {
             continue;
         }
-        else if (!internal_isSubstringInString("duoplotplot", path) || internal_isSubstringInString("grep", path))
+        else if (!duoplot_internal_isSubstringInString("duoplotplot", path) ||
+                 duoplot_internal_isSubstringInString("grep", path))
         {
             continue;
         }
-        else if (internal_stringEndsWith(path, "duoplot\n") || internal_stringEndsWith(path, "duoplot &\n"))
+        else if (duoplot_internal_stringEndsWith(path, "duoplot\n") ||
+                 duoplot_internal_stringEndsWith(path, "duoplot &\n"))
         {
             duoplot_running = true;
             break;

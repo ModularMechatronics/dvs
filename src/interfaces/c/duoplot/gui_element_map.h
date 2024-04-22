@@ -11,7 +11,7 @@
 #include "duoplot/uint8_array.h"
 #include "gui_element_callback_types.h"
 
-DUOPLOT_WEAK char* createAndCopyString(const char* const str)
+DUOPLOT_WEAK char* duoplot_internal_createAndCopyString(const char* const str)
 {
     const size_t string_length = strlen(str);
 
@@ -23,71 +23,71 @@ DUOPLOT_WEAK char* createAndCopyString(const char* const str)
     return new_string;
 }
 
-typedef struct S_GuiElementMap
+typedef struct S_duoplot_internal_GuiElementMap
 {
     char** keys;
-    BaseHandle** values;
+    duoplot_internal_BaseHandle** values;
 
     size_t size;
-} GuiElementMap;
+} duoplot_internal_GuiElementMap;
 
-typedef struct S_ButtonCallbackMap
+typedef struct S_duoplot_internal_ButtonCallbackMap
 {
     char** keys;
-    ButtonCallbackFunction* values;
+    duoplot_ButtonCallbackFunction* values;
 
     size_t size;
-} ButtonCallbackFunctionMap;
+} duoplot_internal_ButtonCallbackFunctionMap;
 
-typedef struct S_SliderCallbackFunctionMap
+typedef struct S_duoplot_internal_SliderCallbackFunctionMap
 {
     char** keys;
-    SliderCallbackFunction* values;
+    duoplot_SliderCallbackFunction* values;
 
     size_t size;
-} SliderCallbackFunctionMap;
+} duoplot_internal_SliderCallbackFunctionMap;
 
-typedef struct S_ListBoxCallbackFunctionMap
+typedef struct S_duoplot_internal_ListBoxCallbackFunctionMap
 {
     char** keys;
-    ListBoxCallbackFunction* values;
+    duoplot_ListBoxCallbackFunction* values;
 
     size_t size;
-} ListBoxCallbackFunctionMap;
+} duoplot_internal_ListBoxCallbackFunctionMap;
 
-typedef struct S_DropdownMenuCallbackFunctionMap
+typedef struct S_duoplot_internal_DropdownMenuCallbackFunctionMap
 {
     char** keys;
-    DropdownMenuCallbackFunction* values;
+    duoplot_DropdownMenuCallbackFunction* values;
 
     size_t size;
-} DropdownMenuCallbackFunctionMap;
+} duoplot_internal_DropdownMenuCallbackFunctionMap;
 
-typedef struct S_CheckboxCallbackFunctionMap
+typedef struct S_duoplot_internal_CheckboxCallbackFunctionMap
 {
     char** keys;
-    CheckboxCallbackFunction* values;
+    duoplot_CheckboxCallbackFunction* values;
 
     size_t size;
-} CheckboxCallbackFunctionMap;
+} duoplot_internal_CheckboxCallbackFunctionMap;
 
-typedef struct S_RadioButtonGroupCallbackFunctionMap
+typedef struct S_duoplot_internal_RadioButtonGroupCallbackFunctionMap
 {
     char** keys;
-    RadioButtonGroupCallbackFunction* values;
+    duoplot_RadioButtonGroupCallbackFunction* values;
 
     size_t size;
-} RadioButtonGroupCallbackFunctionMap;
+} duoplot_internal_RadioButtonGroupCallbackFunctionMap;
 
-typedef struct S_EditableTextCallbackFunctionMap
+typedef struct S_duoplot_internal_EditableTextCallbackFunctionMap
 {
     char** keys;
-    EditableTextCallbackFunction* values;
+    duoplot_EditableTextCallbackFunction* values;
 
     size_t size;
-} EditableTextCallbackFunctionMap;
+} duoplot_internal_EditableTextCallbackFunctionMap;
 
-#define INIT_MAP(__map, __initial_size, __map_value_type)                                 \
+#define DUOPLOT_INTERNAL_INIT_MAP(__map, __initial_size, __map_value_type)                \
     __map->keys = (char**)malloc(__initial_size * sizeof(char*));                         \
     __map->values = (__map_value_type*)malloc(__initial_size * sizeof(__map_value_type)); \
                                                                                           \
@@ -99,43 +99,43 @@ typedef struct S_EditableTextCallbackFunctionMap
         __map->values[k] = NULL;                                                          \
     }
 
-#define INSERT_ELEMENT_INTO_MAP(__map, __handle_string, __value, __map_value_type)                 \
-    for (size_t k = 0; k < __map->size; k++)                                                       \
-    {                                                                                              \
-        if (__map->keys[k] == NULL)                                                                \
-        {                                                                                          \
-            __map->keys[k] = (char*)malloc((strlen(__handle_string) + 1) * sizeof(char));          \
-            __map->keys[k] = strcpy(__map->keys[k], __handle_string);                              \
-            __map->values[k] = __value;                                                            \
-            return;                                                                                \
-        }                                                                                          \
-    }                                                                                              \
-    size_t new_size = __map->size * 2U;                                                            \
-    char** tmp_keys = (char**)malloc(new_size * sizeof(char*));                                    \
-    __map_value_type* tmp_values = (__map_value_type*)malloc(new_size * sizeof(__map_value_type)); \
-    for (size_t k = 0; k < new_size; k++)                                                          \
-    {                                                                                              \
-        if (k < __map->size)                                                                       \
-        {                                                                                          \
-            tmp_keys[k] = __map->keys[k];                                                          \
-            tmp_values[k] = __map->values[k];                                                      \
-        }                                                                                          \
-        else                                                                                       \
-        {                                                                                          \
-            tmp_keys[k] = NULL;                                                                    \
-            tmp_values[k] = NULL;                                                                  \
-        }                                                                                          \
-    }                                                                                              \
-    tmp_keys[__map->size] = (char*)malloc((strlen(__handle_string) + 1) * sizeof(char));           \
-    strcpy(tmp_keys[__map->size], __handle_string);                                                \
-    tmp_values[__map->size] = __value;                                                             \
-    free(__map->keys);                                                                             \
-    free(__map->values);                                                                           \
-    __map->keys = tmp_keys;                                                                        \
-    __map->values = tmp_values;                                                                    \
+#define DUOPLOT_INTERNAL_INSERT_ELEMENT_INTO_MAP(__map, __handle_string, __value, __map_value_type) \
+    for (size_t k = 0; k < __map->size; k++)                                                        \
+    {                                                                                               \
+        if (__map->keys[k] == NULL)                                                                 \
+        {                                                                                           \
+            __map->keys[k] = (char*)malloc((strlen(__handle_string) + 1) * sizeof(char));           \
+            __map->keys[k] = strcpy(__map->keys[k], __handle_string);                               \
+            __map->values[k] = __value;                                                             \
+            return;                                                                                 \
+        }                                                                                           \
+    }                                                                                               \
+    size_t new_size = __map->size * 2U;                                                             \
+    char** tmp_keys = (char**)malloc(new_size * sizeof(char*));                                     \
+    __map_value_type* tmp_values = (__map_value_type*)malloc(new_size * sizeof(__map_value_type));  \
+    for (size_t k = 0; k < new_size; k++)                                                           \
+    {                                                                                               \
+        if (k < __map->size)                                                                        \
+        {                                                                                           \
+            tmp_keys[k] = __map->keys[k];                                                           \
+            tmp_values[k] = __map->values[k];                                                       \
+        }                                                                                           \
+        else                                                                                        \
+        {                                                                                           \
+            tmp_keys[k] = NULL;                                                                     \
+            tmp_values[k] = NULL;                                                                   \
+        }                                                                                           \
+    }                                                                                               \
+    tmp_keys[__map->size] = (char*)malloc((strlen(__handle_string) + 1) * sizeof(char));            \
+    strcpy(tmp_keys[__map->size], __handle_string);                                                 \
+    tmp_values[__map->size] = __value;                                                              \
+    free(__map->keys);                                                                              \
+    free(__map->values);                                                                            \
+    __map->keys = tmp_keys;                                                                         \
+    __map->values = tmp_values;                                                                     \
     __map->size = new_size;
 
-#define GET_ELEMENT_FROM_MAP(__map, __handle_string, __ret_val)                     \
+#define DUOPLOT_INTERNAL_GET_ELEMENT_FROM_MAP(__map, __handle_string, __ret_val)    \
     if (!__handle_string || !__map || !(__map->keys) || __handle_string[0] == '\0') \
     {                                                                               \
         return NULL;                                                                \
@@ -149,7 +149,7 @@ typedef struct S_EditableTextCallbackFunctionMap
         }                                                                           \
     }
 
-#define IS_ELEMENT_IN_MAP(__map, __handle_string, __ret_val)                        \
+#define DUOPLOT_INTERNAL_IS_ELEMENT_IN_MAP(__map, __handle_string, __ret_val)       \
     if (!__handle_string || !__map || !(__map->keys) || __handle_string[0] == '\0') \
     {                                                                               \
         __ret_val = false;                                                          \
@@ -166,16 +166,17 @@ typedef struct S_EditableTextCallbackFunctionMap
         }                                                                           \
     }
 
-#define RESET_MAP(__map, __initial_size, __map_value_type) \
-    free(__map->keys);                                     \
-    free(__map->values);                                   \
-    INIT_MAP(__map, __initial_size, __map_value_type);
+#define DUOPLOT_INTERNAL_RESET_MAP(__map, __initial_size, __map_value_type) \
+    free(__map->keys);                                                      \
+    free(__map->values);                                                    \
+    DUOPLOT_INTERNAL_INIT_MAP(__map, __initial_size, __map_value_type);
 
-// GuiElementMap
-DUOPLOT_WEAK void initGuiElementHandleContainerMap(GuiElementMap* const map, const size_t initial_size)
+// duoplot_internal_GuiElementMap
+DUOPLOT_WEAK void duoplot_internal_initGuiElementHandleContainerMap(duoplot_internal_GuiElementMap* const map,
+                                                                    const size_t initial_size)
 {
     map->keys = (char**)malloc(initial_size * sizeof(char*));
-    map->values = (BaseHandle**)malloc(initial_size * sizeof(BaseHandle*));
+    map->values = (duoplot_internal_BaseHandle**)malloc(initial_size * sizeof(duoplot_internal_BaseHandle*));
 
     map->size = initial_size;
 
@@ -186,9 +187,8 @@ DUOPLOT_WEAK void initGuiElementHandleContainerMap(GuiElementMap* const map, con
     }
 }
 
-DUOPLOT_WEAK void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* const map,
-                                                                const char* const handle_string,
-                                                                BaseHandle* handle)
+DUOPLOT_WEAK void duoplot_internal_insertElementIntoGuiElementHandleContainerMap(
+    duoplot_internal_GuiElementMap* const map, const char* const handle_string, duoplot_internal_BaseHandle* handle)
 {
     for (size_t k = 0; k < map->size; k++)
     {
@@ -202,7 +202,8 @@ DUOPLOT_WEAK void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* c
     }
     size_t new_size = map->size * 2U;
     char** tmp_keys = (char**)malloc(new_size * sizeof(char*));
-    BaseHandle** tmp_values = (BaseHandle**)malloc(new_size * sizeof(BaseHandle*));
+    duoplot_internal_BaseHandle** tmp_values =
+        (duoplot_internal_BaseHandle**)malloc(new_size * sizeof(duoplot_internal_BaseHandle*));
     for (size_t k = 0; k < new_size; k++)
     {
         if (k < map->size)
@@ -226,9 +227,10 @@ DUOPLOT_WEAK void insertElementIntoGuiElementHandleContainerMap(GuiElementMap* c
     map->size = new_size;
 }
 
-DUOPLOT_WEAK BaseHandle* getGuiElementHandleContainer(const char* const handle_string, const GuiElementMap* const map)
+DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_getGuiElementHandleContainer(
+    const char* const handle_string, const duoplot_internal_GuiElementMap* const map)
 {
-    BaseHandle* ret_val = NULL;
+    duoplot_internal_BaseHandle* ret_val = NULL;
 
     if (!handle_string || !map || !(map->keys) || handle_string[0] == '\0')
     {
@@ -246,8 +248,8 @@ DUOPLOT_WEAK BaseHandle* getGuiElementHandleContainer(const char* const handle_s
     return ret_val;
 }
 
-DUOPLOT_WEAK bool isGuiElementHandleContainerKeyInMap(const char* const handle_string,
-                                                      const GuiElementMap* const gui_element_handles)
+DUOPLOT_WEAK bool duoplot_internal_isGuiElementHandleContainerKeyInMap(
+    const char* const handle_string, const duoplot_internal_GuiElementMap* const gui_element_handles)
 {
     bool is_in_map = false;
     if (!handle_string || !gui_element_handles || !(gui_element_handles->keys) || handle_string[0] == '\0')
@@ -268,270 +270,289 @@ DUOPLOT_WEAK bool isGuiElementHandleContainerKeyInMap(const char* const handle_s
     return is_in_map;
 }
 
-DUOPLOT_WEAK void resetGuiElementHandleContainerMap(GuiElementMap* const map, const size_t initial_size)
+DUOPLOT_WEAK void duoplot_internal_resetGuiElementHandleContainerMap(duoplot_internal_GuiElementMap* const map,
+                                                                     const size_t initial_size)
 {
     free(map->keys);
     free(map->values);
-    initGuiElementHandleContainerMap(map, initial_size);
+    duoplot_internal_initGuiElementHandleContainerMap(map, initial_size);
 }
 
-// ButtonCallbackFunctionMap
-DUOPLOT_WEAK void initButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map, const size_t initial_size)
+// duoplot_internal_ButtonCallbackFunctionMap
+DUOPLOT_WEAK void duoplot_internal_initButtonCallbackFunctionMap(duoplot_internal_ButtonCallbackFunctionMap* const map,
+                                                                 const size_t initial_size)
 {
-    INIT_MAP(map, initial_size, ButtonCallbackFunction);
+    DUOPLOT_INTERNAL_INIT_MAP(map, initial_size, duoplot_ButtonCallbackFunction);
 }
 
-DUOPLOT_WEAK void insertElementIntoButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map,
-                                                             const char* const handle_string,
-                                                             ButtonCallbackFunction const callback_function)
-{
-    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, ButtonCallbackFunction);
-}
-
-DUOPLOT_WEAK ButtonCallbackFunction getButtonCallbackFunction(const char* const handle_string,
-                                                              const ButtonCallbackFunctionMap* const map)
-{
-    ButtonCallbackFunction ret_val = NULL;
-    GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
-    return ret_val;
-}
-
-DUOPLOT_WEAK bool isButtonCallbackFunctionKeyInMap(const char* const handle_string,
-                                                   const ButtonCallbackFunctionMap* const gui_element_handles)
-{
-    bool is_in_map = false;
-
-    IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
-
-    return is_in_map;
-}
-
-DUOPLOT_WEAK void resetButtonCallbackFunctionMap(ButtonCallbackFunctionMap* const map, const size_t initial_size)
-{
-    RESET_MAP(map, initial_size, ButtonCallbackFunction);
-}
-
-// SliderCallbackFunctionMap
-DUOPLOT_WEAK void initSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map, const size_t initial_size)
-{
-    INIT_MAP(map, initial_size, SliderCallbackFunction);
-}
-
-DUOPLOT_WEAK void insertElementIntoSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map,
-                                                             const char* const handle_string,
-                                                             SliderCallbackFunction const callback_function)
-{
-    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, SliderCallbackFunction);
-}
-
-DUOPLOT_WEAK SliderCallbackFunction getSliderCallbackFunction(const char* const handle_string,
-                                                              const SliderCallbackFunctionMap* const map)
-{
-    SliderCallbackFunction ret_val = NULL;
-    GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
-    return ret_val;
-}
-
-DUOPLOT_WEAK bool isSliderCallbackFunctionKeyInMap(const char* const handle_string,
-                                                   const SliderCallbackFunctionMap* const gui_element_handles)
-{
-    bool is_in_map = false;
-
-    IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
-
-    return is_in_map;
-}
-
-DUOPLOT_WEAK void resetSliderCallbackFunctionMap(SliderCallbackFunctionMap* const map, const size_t initial_size)
-{
-    RESET_MAP(map, initial_size, SliderCallbackFunction);
-}
-
-// ListBoxCallbackFunctionMap
-DUOPLOT_WEAK void initListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map, const size_t initial_size)
-{
-    INIT_MAP(map, initial_size, ListBoxCallbackFunction);
-}
-
-DUOPLOT_WEAK void insertElementIntoListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map,
-                                                              const char* const handle_string,
-                                                              ListBoxCallbackFunction const callback_function)
-{
-    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, ListBoxCallbackFunction);
-}
-
-DUOPLOT_WEAK ListBoxCallbackFunction getListBoxCallbackFunction(const char* const handle_string,
-                                                                const ListBoxCallbackFunctionMap* const map)
-{
-    ListBoxCallbackFunction ret_val = NULL;
-    GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
-    return ret_val;
-}
-
-DUOPLOT_WEAK bool isListBoxCallbackFunctionKeyInMap(const char* const handle_string,
-                                                    const ListBoxCallbackFunctionMap* const gui_element_handles)
-{
-    bool is_in_map = false;
-
-    IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
-
-    return is_in_map;
-}
-
-DUOPLOT_WEAK void resetListBoxCallbackFunctionMap(ListBoxCallbackFunctionMap* const map, const size_t initial_size)
-{
-    RESET_MAP(map, initial_size, ListBoxCallbackFunction);
-}
-
-// DropdownMenuCallbackFunctionMap
-DUOPLOT_WEAK void initDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map,
-                                                      const size_t initial_size)
-{
-    INIT_MAP(map, initial_size, DropdownMenuCallbackFunction);
-}
-
-DUOPLOT_WEAK void insertElementIntoDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map,
-                                                                   const char* const handle_string,
-                                                                   DropdownMenuCallbackFunction const callback_function)
-{
-    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, DropdownMenuCallbackFunction);
-}
-
-DUOPLOT_WEAK DropdownMenuCallbackFunction
-getDropdownMenuCallbackFunction(const char* const handle_string, const DropdownMenuCallbackFunctionMap* const map)
-{
-    DropdownMenuCallbackFunction ret_val = NULL;
-    GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
-    return ret_val;
-}
-
-DUOPLOT_WEAK bool isDropdownMenuCallbackFunctionKeyInMap(
-    const char* const handle_string, const DropdownMenuCallbackFunctionMap* const gui_element_handles)
-{
-    bool is_in_map = false;
-
-    IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
-
-    return is_in_map;
-}
-
-DUOPLOT_WEAK void resetDropdownMenuCallbackFunctionMap(DropdownMenuCallbackFunctionMap* const map,
-                                                       const size_t initial_size)
-{
-    RESET_MAP(map, initial_size, DropdownMenuCallbackFunction);
-}
-
-// CheckboxCallbackFunctionMap
-DUOPLOT_WEAK void initCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map, const size_t initial_size)
-{
-    INIT_MAP(map, initial_size, CheckboxCallbackFunction);
-}
-
-DUOPLOT_WEAK void insertElementIntoCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map,
-                                                               const char* const handle_string,
-                                                               CheckboxCallbackFunction const callback_function)
-{
-    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, CheckboxCallbackFunction);
-}
-
-DUOPLOT_WEAK CheckboxCallbackFunction getCheckboxCallbackFunction(const char* const handle_string,
-                                                                  const CheckboxCallbackFunctionMap* const map)
-{
-    CheckboxCallbackFunction ret_val = NULL;
-    GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
-    return ret_val;
-}
-
-DUOPLOT_WEAK bool isCheckboxCallbackFunctionKeyInMap(const char* const handle_string,
-                                                     const CheckboxCallbackFunctionMap* const gui_element_handles)
-{
-    bool is_in_map = false;
-
-    IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
-
-    return is_in_map;
-}
-
-DUOPLOT_WEAK void resetCheckboxCallbackFunctionMap(CheckboxCallbackFunctionMap* const map, const size_t initial_size)
-{
-    RESET_MAP(map, initial_size, CheckboxCallbackFunction);
-}
-
-// RadioButtonGroupCallbackFunctionMap
-DUOPLOT_WEAK void initRadioButtonGroupCallbackFunctionMap(RadioButtonGroupCallbackFunctionMap* const map,
-                                                          const size_t initial_size)
-{
-    INIT_MAP(map, initial_size, RadioButtonGroupCallbackFunction);
-}
-
-DUOPLOT_WEAK void insertElementIntoRadioButtonGroupCallbackFunctionMap(
-    RadioButtonGroupCallbackFunctionMap* const map,
+DUOPLOT_WEAK void duoplot_internal_insertElementIntoButtonCallbackFunctionMap(
+    duoplot_internal_ButtonCallbackFunctionMap* const map,
     const char* const handle_string,
-    RadioButtonGroupCallbackFunction const callback_function)
+    duoplot_ButtonCallbackFunction const callback_function)
 {
-    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, RadioButtonGroupCallbackFunction);
+    DUOPLOT_INTERNAL_INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, duoplot_ButtonCallbackFunction);
 }
 
-DUOPLOT_WEAK RadioButtonGroupCallbackFunction getRadioButtonGroupCallbackFunction(
-    const char* const handle_string, const RadioButtonGroupCallbackFunctionMap* const map)
+DUOPLOT_WEAK duoplot_ButtonCallbackFunction duoplot_internal_getButtonCallbackFunction(
+    const char* const handle_string, const duoplot_internal_ButtonCallbackFunctionMap* const map)
 {
-    RadioButtonGroupCallbackFunction ret_val = NULL;
-    GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
+    duoplot_ButtonCallbackFunction ret_val = NULL;
+    DUOPLOT_INTERNAL_GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-DUOPLOT_WEAK bool isRadioButtonGroupCallbackFunctionKeyInMap(
-    const char* const handle_string, const RadioButtonGroupCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool duoplot_internal_isButtonCallbackFunctionKeyInMap(
+    const char* const handle_string, const duoplot_internal_ButtonCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
-    IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
+    DUOPLOT_INTERNAL_IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
 
     return is_in_map;
 }
 
-DUOPLOT_WEAK void resetRadioButtonGroupCallbackFunctionMap(RadioButtonGroupCallbackFunctionMap* const map,
-                                                           const size_t initial_size)
+DUOPLOT_WEAK void duoplot_internal_resetButtonCallbackFunctionMap(duoplot_internal_ButtonCallbackFunctionMap* const map,
+                                                                  const size_t initial_size)
 {
-    RESET_MAP(map, initial_size, RadioButtonGroupCallbackFunction);
+    DUOPLOT_INTERNAL_RESET_MAP(map, initial_size, duoplot_ButtonCallbackFunction);
 }
 
-// EditableTextCallbackFunctionMap
-DUOPLOT_WEAK void initEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map,
-                                                      const size_t initial_size)
+// duoplot_internal_SliderCallbackFunctionMap
+DUOPLOT_WEAK void duoplot_internal_initSliderCallbackFunctionMap(duoplot_internal_SliderCallbackFunctionMap* const map,
+                                                                 const size_t initial_size)
 {
-    INIT_MAP(map, initial_size, EditableTextCallbackFunction);
+    DUOPLOT_INTERNAL_INIT_MAP(map, initial_size, duoplot_SliderCallbackFunction);
 }
 
-DUOPLOT_WEAK void insertElementIntoEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map,
-                                                                   const char* const handle_string,
-                                                                   EditableTextCallbackFunction const callback_function)
+DUOPLOT_WEAK void duoplot_internal_insertElementIntoSliderCallbackFunctionMap(
+    duoplot_internal_SliderCallbackFunctionMap* const map,
+    const char* const handle_string,
+    duoplot_SliderCallbackFunction const callback_function)
 {
-    INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, EditableTextCallbackFunction);
+    DUOPLOT_INTERNAL_INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, duoplot_SliderCallbackFunction);
 }
 
-DUOPLOT_WEAK EditableTextCallbackFunction
-getEditableTextCallbackFunction(const char* const handle_string, const EditableTextCallbackFunctionMap* const map)
+DUOPLOT_WEAK duoplot_SliderCallbackFunction duoplot_internal_getSliderCallbackFunction(
+    const char* const handle_string, const duoplot_internal_SliderCallbackFunctionMap* const map)
 {
-    EditableTextCallbackFunction ret_val = NULL;
-    GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
+    duoplot_SliderCallbackFunction ret_val = NULL;
+    DUOPLOT_INTERNAL_GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
     return ret_val;
 }
 
-DUOPLOT_WEAK bool isEditableTextCallbackFunctionKeyInMap(
-    const char* const handle_string, const EditableTextCallbackFunctionMap* const gui_element_handles)
+DUOPLOT_WEAK bool duoplot_internal_isSliderCallbackFunctionKeyInMap(
+    const char* const handle_string, const duoplot_internal_SliderCallbackFunctionMap* const gui_element_handles)
 {
     bool is_in_map = false;
 
-    IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
+    DUOPLOT_INTERNAL_IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
 
     return is_in_map;
 }
 
-DUOPLOT_WEAK void resetEditableTextCallbackFunctionMap(EditableTextCallbackFunctionMap* const map,
-                                                       const size_t initial_size)
+DUOPLOT_WEAK void duoplot_internal_resetSliderCallbackFunctionMap(duoplot_internal_SliderCallbackFunctionMap* const map,
+                                                                  const size_t initial_size)
 {
-    RESET_MAP(map, initial_size, EditableTextCallbackFunction);
+    DUOPLOT_INTERNAL_RESET_MAP(map, initial_size, duoplot_SliderCallbackFunction);
+}
+
+// duoplot_internal_ListBoxCallbackFunctionMap
+DUOPLOT_WEAK void duoplot_internal_initListBoxCallbackFunctionMap(
+    duoplot_internal_ListBoxCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_INIT_MAP(map, initial_size, duoplot_ListBoxCallbackFunction);
+}
+
+DUOPLOT_WEAK void duoplot_internal_insertElementIntoListBoxCallbackFunctionMap(
+    duoplot_internal_ListBoxCallbackFunctionMap* const map,
+    const char* const handle_string,
+    duoplot_ListBoxCallbackFunction const callback_function)
+{
+    DUOPLOT_INTERNAL_INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, duoplot_ListBoxCallbackFunction);
+}
+
+DUOPLOT_WEAK duoplot_ListBoxCallbackFunction duoplot_internal_getListBoxCallbackFunction(
+    const char* const handle_string, const duoplot_internal_ListBoxCallbackFunctionMap* const map)
+{
+    duoplot_ListBoxCallbackFunction ret_val = NULL;
+    DUOPLOT_INTERNAL_GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
+    return ret_val;
+}
+
+DUOPLOT_WEAK bool duoplot_internal_isListBoxCallbackFunctionKeyInMap(
+    const char* const handle_string, const duoplot_internal_ListBoxCallbackFunctionMap* const gui_element_handles)
+{
+    bool is_in_map = false;
+
+    DUOPLOT_INTERNAL_IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
+
+    return is_in_map;
+}
+
+DUOPLOT_WEAK void duoplot_internal_resetListBoxCallbackFunctionMap(
+    duoplot_internal_ListBoxCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_RESET_MAP(map, initial_size, duoplot_ListBoxCallbackFunction);
+}
+
+// duoplot_internal_DropdownMenuCallbackFunctionMap
+DUOPLOT_WEAK void duoplot_internal_initDropdownMenuCallbackFunctionMap(
+    duoplot_internal_DropdownMenuCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_INIT_MAP(map, initial_size, duoplot_DropdownMenuCallbackFunction);
+}
+
+DUOPLOT_WEAK void duoplot_internal_insertElementIntoDropdownMenuCallbackFunctionMap(
+    duoplot_internal_DropdownMenuCallbackFunctionMap* const map,
+    const char* const handle_string,
+    duoplot_DropdownMenuCallbackFunction const callback_function)
+{
+    DUOPLOT_INTERNAL_INSERT_ELEMENT_INTO_MAP(
+        map, handle_string, callback_function, duoplot_DropdownMenuCallbackFunction);
+}
+
+DUOPLOT_WEAK duoplot_DropdownMenuCallbackFunction duoplot_internal_getDropdownMenuCallbackFunction(
+    const char* const handle_string, const duoplot_internal_DropdownMenuCallbackFunctionMap* const map)
+{
+    duoplot_DropdownMenuCallbackFunction ret_val = NULL;
+    DUOPLOT_INTERNAL_GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
+    return ret_val;
+}
+
+DUOPLOT_WEAK bool duoplot_internal_isDropdownMenuCallbackFunctionKeyInMap(
+    const char* const handle_string, const duoplot_internal_DropdownMenuCallbackFunctionMap* const gui_element_handles)
+{
+    bool is_in_map = false;
+
+    DUOPLOT_INTERNAL_IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
+
+    return is_in_map;
+}
+
+DUOPLOT_WEAK void duoplot_internal_resetDropdownMenuCallbackFunctionMap(
+    duoplot_internal_DropdownMenuCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_RESET_MAP(map, initial_size, duoplot_DropdownMenuCallbackFunction);
+}
+
+// duoplot_internal_CheckboxCallbackFunctionMap
+DUOPLOT_WEAK void duoplot_internal_initCheckboxCallbackFunctionMap(
+    duoplot_internal_CheckboxCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_INIT_MAP(map, initial_size, duoplot_CheckboxCallbackFunction);
+}
+
+DUOPLOT_WEAK void duoplot_internal_insertElementIntoCheckboxCallbackFunctionMap(
+    duoplot_internal_CheckboxCallbackFunctionMap* const map,
+    const char* const handle_string,
+    duoplot_CheckboxCallbackFunction const callback_function)
+{
+    DUOPLOT_INTERNAL_INSERT_ELEMENT_INTO_MAP(map, handle_string, callback_function, duoplot_CheckboxCallbackFunction);
+}
+
+DUOPLOT_WEAK duoplot_CheckboxCallbackFunction duoplot_internal_getCheckboxCallbackFunction(
+    const char* const handle_string, const duoplot_internal_CheckboxCallbackFunctionMap* const map)
+{
+    duoplot_CheckboxCallbackFunction ret_val = NULL;
+    DUOPLOT_INTERNAL_GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
+    return ret_val;
+}
+
+DUOPLOT_WEAK bool duoplot_internal_isCheckboxCallbackFunctionKeyInMap(
+    const char* const handle_string, const duoplot_internal_CheckboxCallbackFunctionMap* const gui_element_handles)
+{
+    bool is_in_map = false;
+
+    DUOPLOT_INTERNAL_IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
+
+    return is_in_map;
+}
+
+DUOPLOT_WEAK void duoplot_internal_resetCheckboxCallbackFunctionMap(
+    duoplot_internal_CheckboxCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_RESET_MAP(map, initial_size, duoplot_CheckboxCallbackFunction);
+}
+
+// duoplot_internal_RadioButtonGroupCallbackFunctionMap
+DUOPLOT_WEAK void duoplot_internal_initRadioButtonGroupCallbackFunctionMap(
+    duoplot_internal_RadioButtonGroupCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_INIT_MAP(map, initial_size, duoplot_RadioButtonGroupCallbackFunction);
+}
+
+DUOPLOT_WEAK void duoplot_internal_insertElementIntoRadioButtonGroupCallbackFunctionMap(
+    duoplot_internal_RadioButtonGroupCallbackFunctionMap* const map,
+    const char* const handle_string,
+    duoplot_RadioButtonGroupCallbackFunction const callback_function)
+{
+    DUOPLOT_INTERNAL_INSERT_ELEMENT_INTO_MAP(
+        map, handle_string, callback_function, duoplot_RadioButtonGroupCallbackFunction);
+}
+
+DUOPLOT_WEAK duoplot_RadioButtonGroupCallbackFunction duoplot_internal_getRadioButtonGroupCallbackFunction(
+    const char* const handle_string, const duoplot_internal_RadioButtonGroupCallbackFunctionMap* const map)
+{
+    duoplot_RadioButtonGroupCallbackFunction ret_val = NULL;
+    DUOPLOT_INTERNAL_GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
+    return ret_val;
+}
+
+DUOPLOT_WEAK bool duoplot_internal_isRadioButtonGroupCallbackFunctionKeyInMap(
+    const char* const handle_string,
+    const duoplot_internal_RadioButtonGroupCallbackFunctionMap* const gui_element_handles)
+{
+    bool is_in_map = false;
+
+    DUOPLOT_INTERNAL_IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
+
+    return is_in_map;
+}
+
+DUOPLOT_WEAK void duoplot_internal_resetRadioButtonGroupCallbackFunctionMap(
+    duoplot_internal_RadioButtonGroupCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_RESET_MAP(map, initial_size, duoplot_RadioButtonGroupCallbackFunction);
+}
+
+// duoplot_internal_EditableTextCallbackFunctionMap
+DUOPLOT_WEAK void duoplot_internal_initEditableTextCallbackFunctionMap(
+    duoplot_internal_EditableTextCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_INIT_MAP(map, initial_size, duoplot_EditableTextCallbackFunction);
+}
+
+DUOPLOT_WEAK void duoplot_internal_insertElementIntoEditableTextCallbackFunctionMap(
+    duoplot_internal_EditableTextCallbackFunctionMap* const map,
+    const char* const handle_string,
+    duoplot_EditableTextCallbackFunction const callback_function)
+{
+    DUOPLOT_INTERNAL_INSERT_ELEMENT_INTO_MAP(
+        map, handle_string, callback_function, duoplot_EditableTextCallbackFunction);
+}
+
+DUOPLOT_WEAK duoplot_EditableTextCallbackFunction duoplot_internal_getEditableTextCallbackFunction(
+    const char* const handle_string, const duoplot_internal_EditableTextCallbackFunctionMap* const map)
+{
+    duoplot_EditableTextCallbackFunction ret_val = NULL;
+    DUOPLOT_INTERNAL_GET_ELEMENT_FROM_MAP(map, handle_string, ret_val);
+    return ret_val;
+}
+
+DUOPLOT_WEAK bool duoplot_internal_isEditableTextCallbackFunctionKeyInMap(
+    const char* const handle_string, const duoplot_internal_EditableTextCallbackFunctionMap* const gui_element_handles)
+{
+    bool is_in_map = false;
+
+    DUOPLOT_INTERNAL_IS_ELEMENT_IN_MAP(gui_element_handles, handle_string, is_in_map);
+
+    return is_in_map;
+}
+
+DUOPLOT_WEAK void duoplot_internal_resetEditableTextCallbackFunctionMap(
+    duoplot_internal_EditableTextCallbackFunctionMap* const map, const size_t initial_size)
+{
+    DUOPLOT_INTERNAL_RESET_MAP(map, initial_size, duoplot_EditableTextCallbackFunction);
 }
 
 #endif  // DUOPLOT_MAP_H

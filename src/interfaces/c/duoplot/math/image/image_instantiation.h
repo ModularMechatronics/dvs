@@ -9,7 +9,7 @@ DUOPLOT_WEAK ImageC1 createImageC1(const size_t num_rows, const size_t num_cols,
 {
     ImageC1 img;
     img.data_type = data_type;
-    img.num_bytes_per_element = dataTypeToNumBytes(data_type);
+    img.num_bytes_per_element = duoplot_internal_dataTypeToNumBytes(data_type);
     img.num_rows = num_rows;
     img.num_cols = num_cols;
     img.data = (uint8_t*)malloc(num_rows * num_cols * img.num_bytes_per_element);
@@ -153,7 +153,7 @@ DUOPLOT_WEAK ImageC3 createImageC3(const size_t num_rows, const size_t num_cols,
 {
     ImageC3 img;
     img.data_type = data_type;
-    img.num_bytes_per_element = dataTypeToNumBytes(data_type);
+    img.num_bytes_per_element = duoplot_internal_dataTypeToNumBytes(data_type);
     img.num_rows = num_rows;
     img.num_cols = num_cols;
     img.data = (uint8_t*)malloc(3 * num_rows * num_cols * img.num_bytes_per_element);

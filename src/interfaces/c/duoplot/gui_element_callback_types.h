@@ -10,14 +10,14 @@
 #include "duoplot/internal_gui_element_handle.h"
 #include "duoplot/uint8_array.h"
 
-typedef void (*ButtonCallbackFunction)(const ButtonHandle);
-typedef void (*SliderCallbackFunction)(const SliderHandle);
-typedef void (*ListBoxCallbackFunction)(const ListBoxHandle);
-typedef void (*DropdownMenuCallbackFunction)(const DropdownMenuHandle);
-typedef void (*CheckboxCallbackFunction)(const CheckboxHandle);
-typedef void (*RadioButtonGroupCallbackFunction)(const RadioButtonGroupHandle);
-typedef void (*EditableTextCallbackFunction)(const EditableTextHandle);
+typedef void (*duoplot_ButtonCallbackFunction)(const duoplot_ButtonHandle);
+typedef void (*duoplot_SliderCallbackFunction)(const duoplot_SliderHandle);
+typedef void (*duoplot_ListBoxCallbackFunction)(const duoplot_ListBoxHandle);
+typedef void (*duoplot_DropdownMenuCallbackFunction)(const duoplot_DropdownMenuHandle);
+typedef void (*duoplot_CheckboxCallbackFunction)(const duoplot_CheckboxHandle);
+typedef void (*duoplot_RadioButtonGroupCallbackFunction)(const duoplot_RadioButtonGroupHandle);
+typedef void (*duoplot_EditableTextCallbackFunction)(const duoplot_EditableTextHandle);
 
-#define TO_BASE_HANDLE_PTR(button_handle) ((BaseHandle*)(&(button_handle)))
+#define DUOPLOT_INTERNAL_TO_BASE_HANDLE_PTR(button_handle) ((duoplot_internal_BaseHandle*)(&(button_handle)))
 
 #endif  // GUI_ELEMENT_CALLBACK_TYPES_H

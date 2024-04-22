@@ -7,15 +7,15 @@
 
 #include "duoplot/pp.h"
 
-typedef struct S_ListOfStrings
+typedef struct S_duoplot_ListOfStrings
 {
     char** elements;
     size_t size;
-} ListOfStrings;
+} duoplot_ListOfStrings;
 
-DUOPLOT_WEAK ListOfStrings createListOfStrings(const size_t size)
+DUOPLOT_WEAK duoplot_ListOfStrings duoplot_createListOfStrings(const size_t size)
 {
-    ListOfStrings list_of_strings;
+    duoplot_ListOfStrings list_of_strings;
 
     list_of_strings.size = size;
     list_of_strings.elements = (char**)malloc(size * sizeof(char*));
@@ -28,7 +28,7 @@ DUOPLOT_WEAK ListOfStrings createListOfStrings(const size_t size)
     return list_of_strings;
 }
 
-DUOPLOT_WEAK void destroyListOfStrings(ListOfStrings* const list_of_strings)
+DUOPLOT_WEAK void duoplot_destroyListOfStrings(duoplot_ListOfStrings* const list_of_strings)
 {
     for (size_t k = 0; k < list_of_strings->size; k++)
     {

@@ -19,16 +19,16 @@
 
 #define DUOPLOT_PORT_NUM 9547
 
-typedef struct S_SocketStructure
+typedef struct S_duoplot_internal_SocketStructure
 {
     int file_descr;
     struct sockaddr_in tx_addr;
     socklen_t client_len;
-} SocketStructure;
+} duoplot_internal_SocketStructure;
 
-DUOPLOT_WEAK SocketStructure createSocket(const int port_num)
+DUOPLOT_WEAK duoplot_internal_SocketStructure duoplot_internal_createSocket(const int port_num)
 {
-    SocketStructure sock_struct;
+    duoplot_internal_SocketStructure sock_struct;
     sock_struct.file_descr = socket(AF_INET, SOCK_DGRAM, 0);
     sock_struct.client_len = sizeof(sock_struct.tx_addr);
 
@@ -40,7 +40,7 @@ DUOPLOT_WEAK SocketStructure createSocket(const int port_num)
     return sock_struct;
 }
 
-DUOPLOT_WEAK int receiveData(SocketStructure* sock_struct, char data[256])
+DUOPLOT_WEAK int duoplot_internal_receiveData(duoplot_internal_SocketStructure* sock_struct, char data[256])
 {
     struct sockaddr* tx_addr_ptr = (struct sockaddr*)&(sock_struct->tx_addr);
     const int num_received_bytes =
@@ -48,7 +48,9 @@ DUOPLOT_WEAK int receiveData(SocketStructure* sock_struct, char data[256])
     return num_received_bytes;
 }
 
-DUOPLOT_WEAK void sendData(SocketStructure* sock_struct, const uint8_t* const data, const uint64_t num_bytes)
+DUOPLOT_WEAK void duoplot_internal_sendData(duoplot_internal_SocketStructure* sock_struct,
+                                            const uint8_t* const data,
+                                            const uint64_t num_bytes)
 {
     struct sockaddr* tx_addr_ptr = (struct sockaddr*)&(sock_struct->tx_addr);
     sendto(sock_struct->file_descr, data, num_bytes, 0, tx_addr_ptr, sizeof(sock_struct->tx_addr));

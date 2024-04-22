@@ -9,7 +9,7 @@ DUOPLOT_WEAK Matrix createMatrix(const size_t num_rows, const size_t num_cols, c
 {
     Matrix mat;
     mat.data_type = data_type;
-    mat.num_bytes_per_element = dataTypeToNumBytes(data_type);
+    mat.num_bytes_per_element = duoplot_internal_dataTypeToNumBytes(data_type);
     mat.num_rows = num_rows;
     mat.num_cols = num_cols;
     mat.data = (uint8_t*)malloc(num_rows * num_cols * mat.num_bytes_per_element);
