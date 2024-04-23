@@ -15,7 +15,7 @@ DUOPLOT_WEAK void duoplot_internal_plotFunction3D(const Vector* const x,
                                                   const Vector* const y,
                                                   const Vector* const z,
                                                   const Function fcn,
-                                                  const duoplot_internal_CommunicationHeaderObject first_prop,
+                                                  const duoplot_Property first_prop,
                                                   ...)
 {
     duoplot_internal_CommunicationHeader hdr;
@@ -29,11 +29,8 @@ DUOPLOT_WEAK void duoplot_internal_plotFunction3D(const Vector* const x,
     duoplot_internal_sendHeaderAndThreeVectors(duoplot_internal_getSendFunction(), x, y, z, &hdr);
 }
 
-DUOPLOT_WEAK void duoplot_internal_plotFunction2D(const Vector* const x,
-                                                  const Vector* const y,
-                                                  const Function fcn,
-                                                  const duoplot_internal_CommunicationHeaderObject first_prop,
-                                                  ...)
+DUOPLOT_WEAK void duoplot_internal_plotFunction2D(
+    const Vector* const x, const Vector* const y, const Function fcn, const duoplot_Property first_prop, ...)
 {
     duoplot_internal_CommunicationHeader hdr;
     duoplot_internal_initCommunicationHeader(&hdr, fcn);
@@ -46,11 +43,8 @@ DUOPLOT_WEAK void duoplot_internal_plotFunction2D(const Vector* const x,
     duoplot_internal_sendHeaderAndTwoVectors(duoplot_internal_getSendFunction(), x, y, &hdr);
 }
 
-DUOPLOT_WEAK void duoplot_internal_surfFunction(const Matrix* const x,
-                                                const Matrix* const y,
-                                                const Matrix* const z,
-                                                const duoplot_internal_CommunicationHeaderObject first_prop,
-                                                ...)
+DUOPLOT_WEAK void duoplot_internal_surfFunction(
+    const Matrix* const x, const Matrix* const y, const Matrix* const z, const duoplot_Property first_prop, ...)
 {
     duoplot_internal_CommunicationHeader hdr;
     duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_SURF);
@@ -58,7 +52,8 @@ DUOPLOT_WEAK void duoplot_internal_surfFunction(const Matrix* const x,
     duoplot_internal_Dimension2D dims = {x->num_rows, x->num_cols};
 
     DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_DATA_TYPE, x->data_type, uint8_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, x->num_rows * x->num_cols, uint32_t);  // Needed?
+    DUOPLOT_INTERNAL_APPEND_OBJ(
+        &hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, x->num_rows * x->num_cols, uint32_t);  // Needed?
     duoplot_internal_appendDims(&hdr, DUOPLOT_INTERNAL_CHOT_DIMENSION_2D, dims);
 
     DUOPLOT_INTERNAL_APPEND_PROPERTIES(hdr, first_prop);
@@ -68,7 +63,7 @@ DUOPLOT_WEAK void duoplot_internal_surfFunction(const Matrix* const x,
 
 DUOPLOT_WEAK void duoplot_internal_drawMeshFunction(const Point3DArray vertices,
                                                     const IndexTripletArray indices,
-                                                    const duoplot_internal_CommunicationHeaderObject first_prop,
+                                                    const duoplot_Property first_prop,
                                                     ...)
 {
     duoplot_internal_CommunicationHeader hdr;
@@ -89,9 +84,7 @@ DUOPLOT_WEAK void duoplot_internal_drawMeshFunction(const Point3DArray vertices,
                                                 &hdr);
 }
 
-DUOPLOT_WEAK void duoplot_internal_imShowFunction(const ImageC3* const img,
-                                                  const duoplot_internal_CommunicationHeaderObject first_prop,
-                                                  ...)
+DUOPLOT_WEAK void duoplot_internal_imShowFunction(const ImageC3* const img, const duoplot_Property first_prop, ...)
 {
     duoplot_internal_CommunicationHeader hdr;
     duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_IM_SHOW);
@@ -100,7 +93,8 @@ DUOPLOT_WEAK void duoplot_internal_imShowFunction(const ImageC3* const img,
 
     DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_DATA_TYPE, img->data_type, uint8_t);
     DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_CHANNELS, 3, uint8_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, img->num_rows * img->num_cols, uint32_t);  // Needed?
+    DUOPLOT_INTERNAL_APPEND_OBJ(
+        &hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, img->num_rows * img->num_cols, uint32_t);  // Needed?
     duoplot_internal_appendDims(&hdr, DUOPLOT_INTERNAL_CHOT_DIMENSION_2D, dims);
 
     DUOPLOT_INTERNAL_APPEND_PROPERTIES(hdr, first_prop);
@@ -130,13 +124,21 @@ DUOPLOT_WEAK void duoplot_internal_imShowFunction(const ImageC3* const img,
     duoplot_internal_plotFunction2D( \
         (Vector*)&x, (Vector*)&y, DUOPLOT_INTERNAL_F_SCATTER2, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
 
-#define duoplot_plot3(x, y, z, ...)  \
-    duoplot_internal_plotFunction3D( \
-        (Vector*)&x, (Vector*)&y, (Vector*)&z, DUOPLOT_INTERNAL_F_PLOT3, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
+#define duoplot_plot3(x, y, z, ...)                           \
+    duoplot_internal_plotFunction3D((Vector*)&x,              \
+                                    (Vector*)&y,              \
+                                    (Vector*)&z,              \
+                                    DUOPLOT_INTERNAL_F_PLOT3, \
+                                    ##__VA_ARGS__,            \
+                                    duoplot_internal_getLastCommHdrObj())
 
-#define duoplot_scatter3(x, y, z, ...) \
-    duoplot_internal_plotFunction3D(   \
-        (Vector*)&x, (Vector*)&y, (Vector*)&z, DUOPLOT_INTERNAL_F_SCATTER3, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
+#define duoplot_scatter3(x, y, z, ...)                           \
+    duoplot_internal_plotFunction3D((Vector*)&x,                 \
+                                    (Vector*)&y,                 \
+                                    (Vector*)&z,                 \
+                                    DUOPLOT_INTERNAL_F_SCATTER3, \
+                                    ##__VA_ARGS__,               \
+                                    duoplot_internal_getLastCommHdrObj())
 
 DUOPLOT_WEAK void duoplot_setCurrentElement(const char* const name)
 {

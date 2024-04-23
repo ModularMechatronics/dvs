@@ -181,9 +181,11 @@ void testImShow()
         }
     }
 
+    const duoplot_Property p = duoplot_Alpha(0.3);
+
     duoplot_setCurrentElement("p_view_0");
     duoplot_clearView();
-    duoplot_imShow(img3, duoplot_Color(255, 0, 11));
+    duoplot_imShow(img3, p);
 
     // TODO:
     // duoplot_setCurrentElement("view_01");

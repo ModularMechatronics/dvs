@@ -5,6 +5,8 @@
 
 #include "duoplot/duoplot.h"
 
+#define DUOPLOT_INTERNAL_TO_BASE_HANDLE_PTR(button_handle) ((duoplot_internal_BaseHandle*)(&(button_handle)))
+
 void testInitMaps()
 {
     const size_t num_elements = 20U;

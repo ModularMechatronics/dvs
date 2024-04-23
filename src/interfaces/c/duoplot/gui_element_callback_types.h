@@ -18,6 +18,4 @@ typedef void (*duoplot_CheckboxCallbackFunction)(const duoplot_CheckboxHandle);
 typedef void (*duoplot_RadioButtonGroupCallbackFunction)(const duoplot_RadioButtonGroupHandle);
 typedef void (*duoplot_EditableTextCallbackFunction)(const duoplot_EditableTextHandle);
 
-#define DUOPLOT_INTERNAL_TO_BASE_HANDLE_PTR(button_handle) ((duoplot_internal_BaseHandle*)(&(button_handle)))
-
 #endif  // GUI_ELEMENT_CALLBACK_TYPES_H

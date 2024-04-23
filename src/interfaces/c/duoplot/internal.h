@@ -87,18 +87,19 @@ DUOPLOT_WEAK void duoplot_internal_sendThroughTcpInterface(const uint8_t* const 
     write(*tcp_sockfd, data_blob, num_bytes);
 }
 
-#define DUOPLOT_INTERNAL_APPEND_PROPERTIES(__hdr, __first_prop)                 \
-    {                                                                           \
-        va_list __args;                                                         \
-        va_start(__args, __first_prop);                                         \
-                                                                                \
-        duoplot_internal_CommunicationHeaderObject __prp = __first_prop;        \
-        while (__prp.type != CHOT_UNKNOWN)                                      \
-        {                                                                       \
-            duoplot_internal_appendProperty(&__hdr, &__prp);                    \
-            __prp = va_arg(__args, duoplot_internal_CommunicationHeaderObject); \
-        }                                                                       \
-        va_end(__args);                                                         \
+#define DUOPLOT_INTERNAL_APPEND_PROPERTIES(__hdr, __first_prop)                                                        \
+    {                                                                                                                  \
+        va_list __args;                                                                                                \
+        va_start(__args, __first_prop);                                                                                \
+                                                                                                                       \
+        duoplot_Property __prp = __first_prop;                                                                         \
+        duoplot_internal_CommunicationHeaderObject* __obj_ptr = (duoplot_internal_CommunicationHeaderObject*)(&__prp); \
+        while (__obj_ptr->type != CHOT_UNKNOWN)                                                                        \
+        {                                                                                                              \
+            duoplot_internal_appendProperty(&__hdr, __obj_ptr);                                                        \
+            __prp = va_arg(__args, duoplot_Property);                                                                  \
+        }                                                                                                              \
+        va_end(__args);                                                                                                \
     }
 
 #define DUOPLOT_INTERNAL_APPEND_OBJ(__hdr, __type, __val, __target_data_type)                                  \

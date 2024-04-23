@@ -11,8 +11,6 @@ Pre release:
 - Remove "src/interfaces/c/duoplot/communication.h", doesn't seem to be used?
 - In C interface, plot properties should return type "Property" or something, instead of CommuncationHeaderObject
 - In C interface, plot properties that do not take anything, can they be constants? What about flags?
-- all C functions should start with "duoplot_", and all internal functions should start with "duoplot_internal_"
-- Remove "TO_BASE_HANDLE_PTR" in C interface (not used)
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
