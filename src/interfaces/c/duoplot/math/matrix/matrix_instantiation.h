@@ -5,9 +5,9 @@
 #include "duoplot/math/utils.h"
 #include "duoplot/pp.h"
 
-DUOPLOT_WEAK Matrix createMatrix(const size_t num_rows, const size_t num_cols, const DataType data_type)
+DUOPLOT_WEAK duoplot_Matrix duoplot_createMatrix(const size_t num_rows, const size_t num_cols, const DataType data_type)
 {
-    Matrix mat;
+    duoplot_Matrix mat;
     mat.data_type = data_type;
     mat.num_bytes_per_element = duoplot_internal_dataTypeToNumBytes(data_type);
     mat.num_rows = num_rows;
@@ -19,133 +19,133 @@ DUOPLOT_WEAK Matrix createMatrix(const size_t num_rows, const size_t num_cols, c
 
 #define freeMatrix(mat) free(mat.data)
 
-DUOPLOT_WEAK MatrixF createMatrixF(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixF duoplot_createMatrixF(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_FLOAT);
-    MatrixF ret_mat = *(MatrixF*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_FLOAT);
+    duoplot_MatrixF ret_mat = *(duoplot_MatrixF*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixD createMatrixD(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixD duoplot_createMatrixD(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_DOUBLE);
-    MatrixD ret_mat = *(MatrixD*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_DOUBLE);
+    duoplot_MatrixD ret_mat = *(duoplot_MatrixD*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixS8 createMatrixS8(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixS8 duoplot_createMatrixS8(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT8);
-    MatrixS8 ret_mat = *(MatrixS8*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT8);
+    duoplot_MatrixS8 ret_mat = *(duoplot_MatrixS8*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixS16 createMatrixS16(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixS16 duoplot_createMatrixS16(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT16);
-    MatrixS16 ret_mat = *(MatrixS16*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT16);
+    duoplot_MatrixS16 ret_mat = *(duoplot_MatrixS16*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixS32 createMatrixS32(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixS32 duoplot_createMatrixS32(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT32);
-    MatrixS32 ret_mat = *(MatrixS32*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT32);
+    duoplot_MatrixS32 ret_mat = *(duoplot_MatrixS32*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixS64 createMatrixS64(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixS64 duoplot_createMatrixS64(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT64);
-    MatrixS64 ret_mat = *(MatrixS64*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT64);
+    duoplot_MatrixS64 ret_mat = *(duoplot_MatrixS64*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixU8 createMatrixU8(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixU8 duoplot_createMatrixU8(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT8);
-    MatrixU8 ret_mat = *(MatrixU8*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT8);
+    duoplot_MatrixU8 ret_mat = *(duoplot_MatrixU8*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixU16 createMatrixU16(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixU16 duoplot_createMatrixU16(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT16);
-    MatrixU16 ret_mat = *(MatrixU16*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT16);
+    duoplot_MatrixU16 ret_mat = *(duoplot_MatrixU16*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixU32 createMatrixU32(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixU32 duoplot_createMatrixU32(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT32);
-    MatrixU32 ret_mat = *(MatrixU32*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT32);
+    duoplot_MatrixU32 ret_mat = *(duoplot_MatrixU32*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixU64 createMatrixU64(const size_t num_rows, const size_t num_cols)
+DUOPLOT_WEAK duoplot_MatrixU64 duoplot_createMatrixU64(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT64);
-    MatrixU64 ret_mat = *(MatrixU64*)(&mat);
+    duoplot_Matrix mat = duoplot_createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT64);
+    duoplot_MatrixU64 ret_mat = *(duoplot_MatrixU64*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixF toMatrixF(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixF duoplot_toMatrixF(const duoplot_Matrix mat)
 {
-    MatrixF ret_mat = *(MatrixF*)(&mat);
+    duoplot_MatrixF ret_mat = *(duoplot_MatrixF*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixD toMatrixD(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixD duoplot_toMatrixD(const duoplot_Matrix mat)
 {
-    MatrixD ret_mat = *(MatrixD*)(&mat);
+    duoplot_MatrixD ret_mat = *(duoplot_MatrixD*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixS8 toMatrixS8(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixS8 duoplot_toMatrixS8(const duoplot_Matrix mat)
 {
-    MatrixS8 ret_mat = *(MatrixS8*)(&mat);
+    duoplot_MatrixS8 ret_mat = *(duoplot_MatrixS8*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixS16 toMatrixS16(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixS16 duoplot_toMatrixS16(const duoplot_Matrix mat)
 {
-    MatrixS16 ret_mat = *(MatrixS16*)(&mat);
+    duoplot_MatrixS16 ret_mat = *(duoplot_MatrixS16*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixS32 toMatrixS32(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixS32 duoplot_toMatrixS32(const duoplot_Matrix mat)
 {
-    MatrixS32 ret_mat = *(MatrixS32*)(&mat);
+    duoplot_MatrixS32 ret_mat = *(duoplot_MatrixS32*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixS64 toMatrixS64(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixS64 duoplot_toMatrixS64(const duoplot_Matrix mat)
 {
-    MatrixS64 ret_mat = *(MatrixS64*)(&mat);
+    duoplot_MatrixS64 ret_mat = *(duoplot_MatrixS64*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixU8 toMatrixU8(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixU8 duoplot_toMatrixU8(const duoplot_Matrix mat)
 {
-    MatrixU8 ret_mat = *(MatrixU8*)(&mat);
+    duoplot_MatrixU8 ret_mat = *(duoplot_MatrixU8*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixU16 toMatrixU16(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixU16 duoplot_toMatrixU16(const duoplot_Matrix mat)
 {
-    MatrixU16 ret_mat = *(MatrixU16*)(&mat);
+    duoplot_MatrixU16 ret_mat = *(duoplot_MatrixU16*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixU32 toMatrixU32(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixU32 duoplot_toMatrixU32(const duoplot_Matrix mat)
 {
-    MatrixU32 ret_mat = *(MatrixU32*)(&mat);
+    duoplot_MatrixU32 ret_mat = *(duoplot_MatrixU32*)(&mat);
     return ret_mat;
 }
 
-DUOPLOT_WEAK MatrixU64 toMatrixU64(const Matrix mat)
+DUOPLOT_WEAK duoplot_MatrixU64 duoplot_toMatrixU64(const duoplot_Matrix mat)
 {
-    MatrixU64 ret_mat = *(MatrixU64*)(&mat);
+    duoplot_MatrixU64 ret_mat = *(duoplot_MatrixU64*)(&mat);
     return ret_mat;
 }
 

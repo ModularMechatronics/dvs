@@ -3,41 +3,41 @@
 
 #include <stdint.h>
 
-typedef struct S_Vec2F
+typedef struct S_duoplot_Vec2F
 {
     float x;
     float y;
-} Vec2F;
+} duoplot_Vec2F;
 
-typedef struct S_Vec2D
+typedef struct S_duoplot_Vec2D
 {
     double x;
     double y;
-} Vec2D;
+} duoplot_Vec2D;
 
-typedef struct S_VecXYd
+typedef struct S_duoplot_VecXYD
 {
     double x;
     double y;
-} VecXYd;
+} duoplot_VecXYD;
 
-typedef struct S_VecXZd
+typedef struct S_duoplot_VecXZD
 {
     double x;
     double z;
-} VecXZd;
+} duoplot_VecXZD;
 
-typedef struct S_VecYZd
+typedef struct S_duoplot_VecYZD
 {
     double y;
     double z;
-} VecYZd;
+} duoplot_VecYZD;
 
-#define Point2f Vec2F
-#define Point2d Vec2D
+#define duoplot_Point2F duoplot_Vec2F
+#define duoplot_Point2D duoplot_Vec2D
 
-#define PointXYd VecXYd
-#define PointXZd VecXZd
-#define PointYZd VecYZd
+#define duoplot_PointXYD duoplot_VecXYD
+#define duoplot_PointXZD duoplot_VecXZD
+#define duoplot_PointYZD duoplot_VecYZD
 
 #endif  // DUOPLOT_MATH_VECTOR_LOW_DIM_VEC2_H_

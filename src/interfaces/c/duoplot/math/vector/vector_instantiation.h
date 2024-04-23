@@ -4,9 +4,9 @@
 #include "duoplot/math/utils.h"
 #include "duoplot/math/vector/vector_types.h"
 
-DUOPLOT_WEAK Vector createVector(const size_t num_elements, const DataType data_type)
+DUOPLOT_WEAK duoplot_Vector duoplot_createVector(const size_t num_elements, const DataType data_type)
 {
-    Vector vec;
+    duoplot_Vector vec;
     vec.data_type = data_type;
     vec.num_bytes_per_element = duoplot_internal_dataTypeToNumBytes(data_type);
     vec.num_elements = num_elements;
@@ -17,143 +17,143 @@ DUOPLOT_WEAK Vector createVector(const size_t num_elements, const DataType data_
 
 #define freeVector(vec) free(vec.data)
 
-DUOPLOT_WEAK VectorF createVectorF(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorF duoplot_createVectorF(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_FLOAT);
-    VectorF ret_vec = *(VectorF*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_FLOAT);
+    duoplot_VectorF ret_vec = *(duoplot_VectorF*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorD createVectorD(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorD duoplot_createVectorD(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_DOUBLE);
-    VectorD ret_vec = *(VectorD*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_DOUBLE);
+    duoplot_VectorD ret_vec = *(duoplot_VectorD*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorS8 createVectorS8(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_createVectorS8(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_INT8);
-    VectorS8 ret_vec = *(VectorS8*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_INT8);
+    duoplot_VectorS8 ret_vec = *(duoplot_VectorS8*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorS16 createVectorS16(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_createVectorS16(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_INT16);
-    VectorS16 ret_vec = *(VectorS16*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_INT16);
+    duoplot_VectorS16 ret_vec = *(duoplot_VectorS16*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorS32 createVectorS32(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_createVectorS32(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_INT32);
-    VectorS32 ret_vec = *(VectorS32*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_INT32);
+    duoplot_VectorS32 ret_vec = *(duoplot_VectorS32*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorS64 createVectorS64(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_createVectorS64(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_INT64);
-    VectorS64 ret_vec = *(VectorS64*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_INT64);
+    duoplot_VectorS64 ret_vec = *(duoplot_VectorS64*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorU8 createVectorU8(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_createVectorU8(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_UINT8);
-    VectorU8 ret_vec = *(VectorU8*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_UINT8);
+    duoplot_VectorU8 ret_vec = *(duoplot_VectorU8*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorU16 createVectorU16(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_createVectorU16(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_UINT16);
-    VectorU16 ret_vec = *(VectorU16*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_UINT16);
+    duoplot_VectorU16 ret_vec = *(duoplot_VectorU16*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorU32 createVectorU32(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_createVectorU32(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_UINT32);
-    VectorU32 ret_vec = *(VectorU32*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_UINT32);
+    duoplot_VectorU32 ret_vec = *(duoplot_VectorU32*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorU64 createVectorU64(const size_t num_elements)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_createVectorU64(const size_t num_elements)
 {
-    Vector vec = createVector(num_elements, DUOPLOT_INTERNAL_DT_UINT64);
-    VectorU64 ret_vec = *(VectorU64*)(&vec);
+    duoplot_Vector vec = duoplot_createVector(num_elements, DUOPLOT_INTERNAL_DT_UINT64);
+    duoplot_VectorU64 ret_vec = *(duoplot_VectorU64*)(&vec);
 
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorF toVectorF(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorF duoplot_toVectorF(const duoplot_Vector vec)
 {
-    VectorF ret_vec = *(VectorF*)(&vec);
+    duoplot_VectorF ret_vec = *(duoplot_VectorF*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorD toVectorD(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorD duoplot_toVectorD(const duoplot_Vector vec)
 {
-    VectorD ret_vec = *(VectorD*)(&vec);
+    duoplot_VectorD ret_vec = *(duoplot_VectorD*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorS8 toVectorS8(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_toVectorS8(const duoplot_Vector vec)
 {
-    VectorS8 ret_vec = *(VectorS8*)(&vec);
+    duoplot_VectorS8 ret_vec = *(duoplot_VectorS8*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorS16 toVectorS16(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_toVectorS16(const duoplot_Vector vec)
 {
-    VectorS16 ret_vec = *(VectorS16*)(&vec);
+    duoplot_VectorS16 ret_vec = *(duoplot_VectorS16*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorS32 toVectorS32(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_toVectorS32(const duoplot_Vector vec)
 {
-    VectorS32 ret_vec = *(VectorS32*)(&vec);
+    duoplot_VectorS32 ret_vec = *(duoplot_VectorS32*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorS64 toVectorS64(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_toVectorS64(const duoplot_Vector vec)
 {
-    VectorS64 ret_vec = *(VectorS64*)(&vec);
+    duoplot_VectorS64 ret_vec = *(duoplot_VectorS64*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorU8 toVectorU8(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_toVectorU8(const duoplot_Vector vec)
 {
-    VectorU8 ret_vec = *(VectorU8*)(&vec);
+    duoplot_VectorU8 ret_vec = *(duoplot_VectorU8*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorU16 toVectorU16(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_toVectorU16(const duoplot_Vector vec)
 {
-    VectorU16 ret_vec = *(VectorU16*)(&vec);
+    duoplot_VectorU16 ret_vec = *(duoplot_VectorU16*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorU32 toVectorU32(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_toVectorU32(const duoplot_Vector vec)
 {
-    VectorU32 ret_vec = *(VectorU32*)(&vec);
+    duoplot_VectorU32 ret_vec = *(duoplot_VectorU32*)(&vec);
     return ret_vec;
 }
 
-DUOPLOT_WEAK VectorU64 toVectorU64(const Vector vec)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_toVectorU64(const duoplot_Vector vec)
 {
-    VectorU64 ret_vec = *(VectorU64*)(&vec);
+    duoplot_VectorU64 ret_vec = *(duoplot_VectorU64*)(&vec);
     return ret_vec;
 }
 

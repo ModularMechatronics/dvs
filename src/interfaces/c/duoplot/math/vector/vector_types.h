@@ -1,108 +1,108 @@
-#ifndef DUOPLOT_MATH_VECTOR_VECTOR_TYPES_H_
-#define DUOPLOT_MATH_VECTOR_VECTOR_TYPES_H_
+#ifndef DUOPLOT_MATH_VECTOR_VECTOR_TYPES_H
+#define DUOPLOT_MATH_VECTOR_VECTOR_TYPES_H
 
 #include <stdint.h>
 
 #include "duoplot/enumerations.h"
 
-typedef struct S_Vector
+typedef struct S_duoplot_Vector
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     uint8_t* data;
 
-} Vector;
+} duoplot_Vector;
 
-typedef struct S_VectorF
+typedef struct S_duoplot_VectorF
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     float* data;
 
-} VectorF;
+} duoplot_VectorF;
 
-typedef struct S_VectorD
+typedef struct S_duoplot_VectorD
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     double* data;
 
-} VectorD;
+} duoplot_VectorD;
 
-typedef struct S_VectorS8
+typedef struct S_duoplot_VectorS8
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     int8_t* data;
 
-} VectorS8;
+} duoplot_VectorS8;
 
-typedef struct S_VectorS16
+typedef struct S_duoplot_VectorS16
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     int16_t* data;
 
-} VectorS16;
+} duoplot_VectorS16;
 
-typedef struct S_VectorS32
+typedef struct S_duoplot_VectorS32
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     int32_t* data;
 
-} VectorS32;
+} duoplot_VectorS32;
 
-typedef struct S_VectorS64
+typedef struct S_duoplot_VectorS64
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     int64_t* data;
 
-} VectorS64;
+} duoplot_VectorS64;
 
 //
-typedef struct S_VectorU8
+typedef struct S_duoplot_VectorU8
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     uint8_t* data;
 
-} VectorU8;
+} duoplot_VectorU8;
 
-typedef struct S_VectorU16
+typedef struct S_duoplot_VectorU16
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     uint16_t* data;
 
-} VectorU16;
+} duoplot_VectorU16;
 
-typedef struct S_VectorU32
+typedef struct S_duoplot_VectorU32
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     uint32_t* data;
 
-} VectorU32;
+} duoplot_VectorU32;
 
-typedef struct S_VectorU64
+typedef struct S_duoplot_VectorU64
 {
     DataType data_type;
     size_t num_bytes_per_element;
     size_t num_elements;
     uint64_t* data;
 
-} VectorU64;
+} duoplot_VectorU64;
 
-#endif  // DUOPLOT_MATH_VECTOR_VECTOR_TYPES_H_
+#endif  // DUOPLOT_MATH_VECTOR_VECTOR_TYPES_H

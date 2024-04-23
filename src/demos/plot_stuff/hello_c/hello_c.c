@@ -4,13 +4,13 @@
 int main()
 {
     const size_t num_rows = 100, num_cols = 100;
-    const MatrixPairD mp = meshgridD(0.0, 4.0, 1.0, 5.0, num_cols, num_rows);
+    const duoplot_MatrixPairD mp = duoplot_meshgridD(0.0, 4.0, 1.0, 5.0, num_cols, num_rows);
 
-    const MatrixD x = mp.m0, y = mp.m1;
+    const duoplot_MatrixD x = mp.m0, y = mp.m1;
 
-    const MatrixD rx = matrix_sinD(x);
-    const MatrixD ry = matrix_cosD(y);
-    const MatrixD z = matrix_elementWiseMultiplyD(rx, ry);
+    const duoplot_MatrixD rx = duoplot_matrix_sinD(x);
+    const duoplot_MatrixD ry = duoplot_matrix_cosD(y);
+    const duoplot_MatrixD z = duoplot_matrix_elementWiseMultiplyD(rx, ry);
 
     duoplot_setCurrentElement("hello_c");
     duoplot_clearView();

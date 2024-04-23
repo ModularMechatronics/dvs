@@ -3,17 +3,17 @@
 
 #include "duoplot/math/vector_low_dim/vec2.h"
 
-typedef struct S_PLine2DD
+typedef struct S_duoplot_duoplot_PLine2DD
 {
-    Point2d p;
-    Vec2D v;
-} PLine2DD;
+    duoplot_Point2D p;
+    duoplot_Vec2D v;
+} duoplot_PLine2DD;
 
-typedef struct S_HLine2DD
+typedef struct S_duoplot_HLine2DD
 {
     double a;
     double b;
     double c;
-} HLine2DD;
+} duoplot_HLine2DD;
 
 #endif  // DUOPLOT_MATH_GEOMETRY_LINE_2D_H_

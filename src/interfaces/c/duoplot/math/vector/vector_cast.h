@@ -7,9 +7,9 @@
 #include "duoplot/math/vector/vector_types.h"
 #include "duoplot/pp.h"
 
-DUOPLOT_WEAK VectorD castVectorFToVectorD(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorFToVectorD(const duoplot_VectorF input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -18,9 +18,9 @@ DUOPLOT_WEAK VectorD castVectorFToVectorD(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorFToVectorS8(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorFToVectorS8(const duoplot_VectorF input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -29,9 +29,9 @@ DUOPLOT_WEAK VectorS8 castVectorFToVectorS8(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorFToVectorS16(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorFToVectorS16(const duoplot_VectorF input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -40,9 +40,9 @@ DUOPLOT_WEAK VectorS16 castVectorFToVectorS16(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorFToVectorS32(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorFToVectorS32(const duoplot_VectorF input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -51,9 +51,9 @@ DUOPLOT_WEAK VectorS32 castVectorFToVectorS32(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorFToVectorS64(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorFToVectorS64(const duoplot_VectorF input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -62,9 +62,9 @@ DUOPLOT_WEAK VectorS64 castVectorFToVectorS64(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorFToVectorU8(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorFToVectorU8(const duoplot_VectorF input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -73,9 +73,9 @@ DUOPLOT_WEAK VectorU8 castVectorFToVectorU8(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorFToVectorU16(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorFToVectorU16(const duoplot_VectorF input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -84,9 +84,9 @@ DUOPLOT_WEAK VectorU16 castVectorFToVectorU16(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorFToVectorU32(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorFToVectorU32(const duoplot_VectorF input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -95,9 +95,9 @@ DUOPLOT_WEAK VectorU32 castVectorFToVectorU32(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorFToVectorU64(const VectorF input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorFToVectorU64(const duoplot_VectorF input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -106,9 +106,9 @@ DUOPLOT_WEAK VectorU64 castVectorFToVectorU64(const VectorF input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorDToVectorF(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorDToVectorF(const duoplot_VectorD input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -117,9 +117,9 @@ DUOPLOT_WEAK VectorF castVectorDToVectorF(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorDToVectorS8(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorDToVectorS8(const duoplot_VectorD input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -128,9 +128,9 @@ DUOPLOT_WEAK VectorS8 castVectorDToVectorS8(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorDToVectorS16(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorDToVectorS16(const duoplot_VectorD input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -139,9 +139,9 @@ DUOPLOT_WEAK VectorS16 castVectorDToVectorS16(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorDToVectorS32(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorDToVectorS32(const duoplot_VectorD input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -150,9 +150,9 @@ DUOPLOT_WEAK VectorS32 castVectorDToVectorS32(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorDToVectorS64(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorDToVectorS64(const duoplot_VectorD input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -161,9 +161,9 @@ DUOPLOT_WEAK VectorS64 castVectorDToVectorS64(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorDToVectorU8(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorDToVectorU8(const duoplot_VectorD input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -172,9 +172,9 @@ DUOPLOT_WEAK VectorU8 castVectorDToVectorU8(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorDToVectorU16(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorDToVectorU16(const duoplot_VectorD input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -183,9 +183,9 @@ DUOPLOT_WEAK VectorU16 castVectorDToVectorU16(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorDToVectorU32(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorDToVectorU32(const duoplot_VectorD input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -194,9 +194,9 @@ DUOPLOT_WEAK VectorU32 castVectorDToVectorU32(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorDToVectorU64(const VectorD input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorDToVectorU64(const duoplot_VectorD input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -205,9 +205,9 @@ DUOPLOT_WEAK VectorU64 castVectorDToVectorU64(const VectorD input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorS8ToVectorF(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorS8ToVectorF(const duoplot_VectorS8 input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -216,9 +216,9 @@ DUOPLOT_WEAK VectorF castVectorS8ToVectorF(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorD castVectorS8ToVectorD(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorS8ToVectorD(const duoplot_VectorS8 input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -227,9 +227,9 @@ DUOPLOT_WEAK VectorD castVectorS8ToVectorD(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorS8ToVectorS16(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorS8ToVectorS16(const duoplot_VectorS8 input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -238,9 +238,9 @@ DUOPLOT_WEAK VectorS16 castVectorS8ToVectorS16(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorS8ToVectorS32(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorS8ToVectorS32(const duoplot_VectorS8 input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -249,9 +249,9 @@ DUOPLOT_WEAK VectorS32 castVectorS8ToVectorS32(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorS8ToVectorS64(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorS8ToVectorS64(const duoplot_VectorS8 input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -260,9 +260,9 @@ DUOPLOT_WEAK VectorS64 castVectorS8ToVectorS64(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorS8ToVectorU8(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorS8ToVectorU8(const duoplot_VectorS8 input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -271,9 +271,9 @@ DUOPLOT_WEAK VectorU8 castVectorS8ToVectorU8(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorS8ToVectorU16(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorS8ToVectorU16(const duoplot_VectorS8 input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -282,9 +282,9 @@ DUOPLOT_WEAK VectorU16 castVectorS8ToVectorU16(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorS8ToVectorU32(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorS8ToVectorU32(const duoplot_VectorS8 input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -293,9 +293,9 @@ DUOPLOT_WEAK VectorU32 castVectorS8ToVectorU32(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorS8ToVectorU64(const VectorS8 input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorS8ToVectorU64(const duoplot_VectorS8 input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -304,9 +304,9 @@ DUOPLOT_WEAK VectorU64 castVectorS8ToVectorU64(const VectorS8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorS16ToVectorF(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorS16ToVectorF(const duoplot_VectorS16 input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -315,9 +315,9 @@ DUOPLOT_WEAK VectorF castVectorS16ToVectorF(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorD castVectorS16ToVectorD(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorS16ToVectorD(const duoplot_VectorS16 input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -326,9 +326,9 @@ DUOPLOT_WEAK VectorD castVectorS16ToVectorD(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorS16ToVectorS8(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorS16ToVectorS8(const duoplot_VectorS16 input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -337,9 +337,9 @@ DUOPLOT_WEAK VectorS8 castVectorS16ToVectorS8(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorS16ToVectorS32(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorS16ToVectorS32(const duoplot_VectorS16 input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -348,9 +348,9 @@ DUOPLOT_WEAK VectorS32 castVectorS16ToVectorS32(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorS16ToVectorS64(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorS16ToVectorS64(const duoplot_VectorS16 input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -359,9 +359,9 @@ DUOPLOT_WEAK VectorS64 castVectorS16ToVectorS64(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorS16ToVectorU8(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorS16ToVectorU8(const duoplot_VectorS16 input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -370,9 +370,9 @@ DUOPLOT_WEAK VectorU8 castVectorS16ToVectorU8(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorS16ToVectorU16(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorS16ToVectorU16(const duoplot_VectorS16 input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -381,9 +381,9 @@ DUOPLOT_WEAK VectorU16 castVectorS16ToVectorU16(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorS16ToVectorU32(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorS16ToVectorU32(const duoplot_VectorS16 input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -392,9 +392,9 @@ DUOPLOT_WEAK VectorU32 castVectorS16ToVectorU32(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorS16ToVectorU64(const VectorS16 input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorS16ToVectorU64(const duoplot_VectorS16 input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -403,9 +403,9 @@ DUOPLOT_WEAK VectorU64 castVectorS16ToVectorU64(const VectorS16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorS32ToVectorF(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorS32ToVectorF(const duoplot_VectorS32 input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -414,9 +414,9 @@ DUOPLOT_WEAK VectorF castVectorS32ToVectorF(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorD castVectorS32ToVectorD(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorS32ToVectorD(const duoplot_VectorS32 input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -425,9 +425,9 @@ DUOPLOT_WEAK VectorD castVectorS32ToVectorD(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorS32ToVectorS8(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorS32ToVectorS8(const duoplot_VectorS32 input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -436,9 +436,9 @@ DUOPLOT_WEAK VectorS8 castVectorS32ToVectorS8(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorS32ToVectorS16(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorS32ToVectorS16(const duoplot_VectorS32 input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -447,9 +447,9 @@ DUOPLOT_WEAK VectorS16 castVectorS32ToVectorS16(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorS32ToVectorS64(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorS32ToVectorS64(const duoplot_VectorS32 input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -458,9 +458,9 @@ DUOPLOT_WEAK VectorS64 castVectorS32ToVectorS64(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorS32ToVectorU8(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorS32ToVectorU8(const duoplot_VectorS32 input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -469,9 +469,9 @@ DUOPLOT_WEAK VectorU8 castVectorS32ToVectorU8(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorS32ToVectorU16(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorS32ToVectorU16(const duoplot_VectorS32 input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -480,9 +480,9 @@ DUOPLOT_WEAK VectorU16 castVectorS32ToVectorU16(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorS32ToVectorU32(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorS32ToVectorU32(const duoplot_VectorS32 input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -491,9 +491,9 @@ DUOPLOT_WEAK VectorU32 castVectorS32ToVectorU32(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorS32ToVectorU64(const VectorS32 input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorS32ToVectorU64(const duoplot_VectorS32 input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -502,9 +502,9 @@ DUOPLOT_WEAK VectorU64 castVectorS32ToVectorU64(const VectorS32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorS64ToVectorF(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorS64ToVectorF(const duoplot_VectorS64 input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -513,9 +513,9 @@ DUOPLOT_WEAK VectorF castVectorS64ToVectorF(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorD castVectorS64ToVectorD(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorS64ToVectorD(const duoplot_VectorS64 input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -524,9 +524,9 @@ DUOPLOT_WEAK VectorD castVectorS64ToVectorD(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorS64ToVectorS8(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorS64ToVectorS8(const duoplot_VectorS64 input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -535,9 +535,9 @@ DUOPLOT_WEAK VectorS8 castVectorS64ToVectorS8(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorS64ToVectorS16(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorS64ToVectorS16(const duoplot_VectorS64 input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -546,9 +546,9 @@ DUOPLOT_WEAK VectorS16 castVectorS64ToVectorS16(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorS64ToVectorS32(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorS64ToVectorS32(const duoplot_VectorS64 input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -557,9 +557,9 @@ DUOPLOT_WEAK VectorS32 castVectorS64ToVectorS32(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorS64ToVectorU8(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorS64ToVectorU8(const duoplot_VectorS64 input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -568,9 +568,9 @@ DUOPLOT_WEAK VectorU8 castVectorS64ToVectorU8(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorS64ToVectorU16(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorS64ToVectorU16(const duoplot_VectorS64 input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -579,9 +579,9 @@ DUOPLOT_WEAK VectorU16 castVectorS64ToVectorU16(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorS64ToVectorU32(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorS64ToVectorU32(const duoplot_VectorS64 input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -590,9 +590,9 @@ DUOPLOT_WEAK VectorU32 castVectorS64ToVectorU32(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorS64ToVectorU64(const VectorS64 input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorS64ToVectorU64(const duoplot_VectorS64 input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -601,9 +601,9 @@ DUOPLOT_WEAK VectorU64 castVectorS64ToVectorU64(const VectorS64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorU8ToVectorF(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorU8ToVectorF(const duoplot_VectorU8 input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -612,9 +612,9 @@ DUOPLOT_WEAK VectorF castVectorU8ToVectorF(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorD castVectorU8ToVectorD(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorU8ToVectorD(const duoplot_VectorU8 input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -623,9 +623,9 @@ DUOPLOT_WEAK VectorD castVectorU8ToVectorD(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorU8ToVectorS8(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorU8ToVectorS8(const duoplot_VectorU8 input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -634,9 +634,9 @@ DUOPLOT_WEAK VectorS8 castVectorU8ToVectorS8(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorU8ToVectorS16(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorU8ToVectorS16(const duoplot_VectorU8 input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -645,9 +645,9 @@ DUOPLOT_WEAK VectorS16 castVectorU8ToVectorS16(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorU8ToVectorS32(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorU8ToVectorS32(const duoplot_VectorU8 input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -656,9 +656,9 @@ DUOPLOT_WEAK VectorS32 castVectorU8ToVectorS32(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorU8ToVectorS64(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorU8ToVectorS64(const duoplot_VectorU8 input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -667,9 +667,9 @@ DUOPLOT_WEAK VectorS64 castVectorU8ToVectorS64(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorU8ToVectorU16(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorU8ToVectorU16(const duoplot_VectorU8 input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -678,9 +678,9 @@ DUOPLOT_WEAK VectorU16 castVectorU8ToVectorU16(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorU8ToVectorU32(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorU8ToVectorU32(const duoplot_VectorU8 input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -689,9 +689,9 @@ DUOPLOT_WEAK VectorU32 castVectorU8ToVectorU32(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorU8ToVectorU64(const VectorU8 input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorU8ToVectorU64(const duoplot_VectorU8 input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -700,9 +700,9 @@ DUOPLOT_WEAK VectorU64 castVectorU8ToVectorU64(const VectorU8 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorU16ToVectorF(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorU16ToVectorF(const duoplot_VectorU16 input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -711,9 +711,9 @@ DUOPLOT_WEAK VectorF castVectorU16ToVectorF(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorD castVectorU16ToVectorD(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorU16ToVectorD(const duoplot_VectorU16 input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -722,9 +722,9 @@ DUOPLOT_WEAK VectorD castVectorU16ToVectorD(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorU16ToVectorS8(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorU16ToVectorS8(const duoplot_VectorU16 input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -733,9 +733,9 @@ DUOPLOT_WEAK VectorS8 castVectorU16ToVectorS8(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorU16ToVectorS16(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorU16ToVectorS16(const duoplot_VectorU16 input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -744,9 +744,9 @@ DUOPLOT_WEAK VectorS16 castVectorU16ToVectorS16(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorU16ToVectorS32(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorU16ToVectorS32(const duoplot_VectorU16 input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -755,9 +755,9 @@ DUOPLOT_WEAK VectorS32 castVectorU16ToVectorS32(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorU16ToVectorS64(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorU16ToVectorS64(const duoplot_VectorU16 input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -766,9 +766,9 @@ DUOPLOT_WEAK VectorS64 castVectorU16ToVectorS64(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorU16ToVectorU8(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorU16ToVectorU8(const duoplot_VectorU16 input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -777,9 +777,9 @@ DUOPLOT_WEAK VectorU8 castVectorU16ToVectorU8(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorU16ToVectorU32(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorU16ToVectorU32(const duoplot_VectorU16 input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -788,9 +788,9 @@ DUOPLOT_WEAK VectorU32 castVectorU16ToVectorU32(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorU16ToVectorU64(const VectorU16 input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorU16ToVectorU64(const duoplot_VectorU16 input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -799,9 +799,9 @@ DUOPLOT_WEAK VectorU64 castVectorU16ToVectorU64(const VectorU16 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorU32ToVectorF(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorU32ToVectorF(const duoplot_VectorU32 input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -810,9 +810,9 @@ DUOPLOT_WEAK VectorF castVectorU32ToVectorF(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorD castVectorU32ToVectorD(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorU32ToVectorD(const duoplot_VectorU32 input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -821,9 +821,9 @@ DUOPLOT_WEAK VectorD castVectorU32ToVectorD(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorU32ToVectorS8(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorU32ToVectorS8(const duoplot_VectorU32 input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -832,9 +832,9 @@ DUOPLOT_WEAK VectorS8 castVectorU32ToVectorS8(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorU32ToVectorS16(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorU32ToVectorS16(const duoplot_VectorU32 input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -843,9 +843,9 @@ DUOPLOT_WEAK VectorS16 castVectorU32ToVectorS16(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorU32ToVectorS32(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorU32ToVectorS32(const duoplot_VectorU32 input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -854,9 +854,9 @@ DUOPLOT_WEAK VectorS32 castVectorU32ToVectorS32(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorU32ToVectorS64(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorU32ToVectorS64(const duoplot_VectorU32 input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -865,9 +865,9 @@ DUOPLOT_WEAK VectorS64 castVectorU32ToVectorS64(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorU32ToVectorU8(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorU32ToVectorU8(const duoplot_VectorU32 input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -876,9 +876,9 @@ DUOPLOT_WEAK VectorU8 castVectorU32ToVectorU8(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorU32ToVectorU16(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorU32ToVectorU16(const duoplot_VectorU32 input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -887,9 +887,9 @@ DUOPLOT_WEAK VectorU16 castVectorU32ToVectorU16(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU64 castVectorU32ToVectorU64(const VectorU32 input)
+DUOPLOT_WEAK duoplot_VectorU64 duoplot_castVectorU32ToVectorU64(const duoplot_VectorU32 input)
 {
-    VectorU64 output = createVectorU64(input.num_elements);
+    duoplot_VectorU64 output = duoplot_createVectorU64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -898,9 +898,9 @@ DUOPLOT_WEAK VectorU64 castVectorU32ToVectorU64(const VectorU32 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorF castVectorU64ToVectorF(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorF duoplot_castVectorU64ToVectorF(const duoplot_VectorU64 input)
 {
-    VectorF output = createVectorF(input.num_elements);
+    duoplot_VectorF output = duoplot_createVectorF(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -909,9 +909,9 @@ DUOPLOT_WEAK VectorF castVectorU64ToVectorF(const VectorU64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorD castVectorU64ToVectorD(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorD duoplot_castVectorU64ToVectorD(const duoplot_VectorU64 input)
 {
-    VectorD output = createVectorD(input.num_elements);
+    duoplot_VectorD output = duoplot_createVectorD(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -920,9 +920,9 @@ DUOPLOT_WEAK VectorD castVectorU64ToVectorD(const VectorU64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS8 castVectorU64ToVectorS8(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorS8 duoplot_castVectorU64ToVectorS8(const duoplot_VectorU64 input)
 {
-    VectorS8 output = createVectorS8(input.num_elements);
+    duoplot_VectorS8 output = duoplot_createVectorS8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -931,9 +931,9 @@ DUOPLOT_WEAK VectorS8 castVectorU64ToVectorS8(const VectorU64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS16 castVectorU64ToVectorS16(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorS16 duoplot_castVectorU64ToVectorS16(const duoplot_VectorU64 input)
 {
-    VectorS16 output = createVectorS16(input.num_elements);
+    duoplot_VectorS16 output = duoplot_createVectorS16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -942,9 +942,9 @@ DUOPLOT_WEAK VectorS16 castVectorU64ToVectorS16(const VectorU64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS32 castVectorU64ToVectorS32(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorS32 duoplot_castVectorU64ToVectorS32(const duoplot_VectorU64 input)
 {
-    VectorS32 output = createVectorS32(input.num_elements);
+    duoplot_VectorS32 output = duoplot_createVectorS32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -953,9 +953,9 @@ DUOPLOT_WEAK VectorS32 castVectorU64ToVectorS32(const VectorU64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorS64 castVectorU64ToVectorS64(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorS64 duoplot_castVectorU64ToVectorS64(const duoplot_VectorU64 input)
 {
-    VectorS64 output = createVectorS64(input.num_elements);
+    duoplot_VectorS64 output = duoplot_createVectorS64(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -964,9 +964,9 @@ DUOPLOT_WEAK VectorS64 castVectorU64ToVectorS64(const VectorU64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU8 castVectorU64ToVectorU8(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorU8 duoplot_castVectorU64ToVectorU8(const duoplot_VectorU64 input)
 {
-    VectorU8 output = createVectorU8(input.num_elements);
+    duoplot_VectorU8 output = duoplot_createVectorU8(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -975,9 +975,9 @@ DUOPLOT_WEAK VectorU8 castVectorU64ToVectorU8(const VectorU64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU16 castVectorU64ToVectorU16(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorU16 duoplot_castVectorU64ToVectorU16(const duoplot_VectorU64 input)
 {
-    VectorU16 output = createVectorU16(input.num_elements);
+    duoplot_VectorU16 output = duoplot_createVectorU16(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];
@@ -986,9 +986,9 @@ DUOPLOT_WEAK VectorU16 castVectorU64ToVectorU16(const VectorU64 input)
     return output;
 }
 
-DUOPLOT_WEAK VectorU32 castVectorU64ToVectorU32(const VectorU64 input)
+DUOPLOT_WEAK duoplot_VectorU32 duoplot_castVectorU64ToVectorU32(const duoplot_VectorU64 input)
 {
-    VectorU32 output = createVectorU32(input.num_elements);
+    duoplot_VectorU32 output = duoplot_createVectorU32(input.num_elements);
     for (size_t k = 0; k < input.num_elements; k++)
     {
         output.data[k] = input.data[k];

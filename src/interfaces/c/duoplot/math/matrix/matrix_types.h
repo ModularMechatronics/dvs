@@ -5,7 +5,7 @@
 
 #include "duoplot/enumerations.h"
 
-typedef struct S_Matrix
+typedef struct S_duoplot_Matrix
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -13,9 +13,9 @@ typedef struct S_Matrix
     size_t num_cols;
     uint8_t* data;
 
-} Matrix;
+} duoplot_Matrix;
 
-typedef struct S_MatrixF
+typedef struct S_duoplot_MatrixF
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -23,9 +23,9 @@ typedef struct S_MatrixF
     size_t num_cols;
     float* data;
 
-} MatrixF;
+} duoplot_MatrixF;
 
-typedef struct S_MatrixD
+typedef struct S_duoplot_MatrixD
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -33,9 +33,9 @@ typedef struct S_MatrixD
     size_t num_cols;
     double* data;
 
-} MatrixD;
+} duoplot_MatrixD;
 
-typedef struct S_MatrixS8
+typedef struct S_duoplot_MatrixS8
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -43,9 +43,9 @@ typedef struct S_MatrixS8
     size_t num_cols;
     int8_t* data;
 
-} MatrixS8;
+} duoplot_MatrixS8;
 
-typedef struct S_MatrixS16
+typedef struct S_duoplot_MatrixS16
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -53,9 +53,9 @@ typedef struct S_MatrixS16
     size_t num_cols;
     int16_t* data;
 
-} MatrixS16;
+} duoplot_MatrixS16;
 
-typedef struct S_MatrixS32
+typedef struct S_duoplot_MatrixS32
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -63,9 +63,9 @@ typedef struct S_MatrixS32
     size_t num_cols;
     int32_t* data;
 
-} MatrixS32;
+} duoplot_MatrixS32;
 
-typedef struct S_MatrixS64
+typedef struct S_duoplot_MatrixS64
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -73,9 +73,9 @@ typedef struct S_MatrixS64
     size_t num_cols;
     int64_t* data;
 
-} MatrixS64;
+} duoplot_MatrixS64;
 
-typedef struct S_MatrixU8
+typedef struct S_duoplot_MatrixU8
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -83,9 +83,9 @@ typedef struct S_MatrixU8
     size_t num_cols;
     uint8_t* data;
 
-} MatrixU8;
+} duoplot_MatrixU8;
 
-typedef struct S_MatrixU16
+typedef struct S_duoplot_MatrixU16
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -93,9 +93,9 @@ typedef struct S_MatrixU16
     size_t num_cols;
     uint16_t* data;
 
-} MatrixU16;
+} duoplot_MatrixU16;
 
-typedef struct S_MatrixU32
+typedef struct S_duoplot_MatrixU32
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -103,9 +103,9 @@ typedef struct S_MatrixU32
     size_t num_cols;
     uint32_t* data;
 
-} MatrixU32;
+} duoplot_MatrixU32;
 
-typedef struct S_MatrixU64
+typedef struct S_duoplot_MatrixU64
 {
     DataType data_type;
     size_t num_bytes_per_element;
@@ -113,18 +113,18 @@ typedef struct S_MatrixU64
     size_t num_cols;
     uint64_t* data;
 
-} MatrixU64;
+} duoplot_MatrixU64;
 
-typedef struct S_MatrixPair
+typedef struct S_duoplot_MatrixPair
 {
-    Matrix m0;
-    Matrix m1;
+    duoplot_Matrix m0;
+    duoplot_Matrix m1;
 } MatrixPair;
 
-typedef struct S_MatrixPairD
+typedef struct S_duoplot_MatrixPairD
 {
-    MatrixD m0;
-    MatrixD m1;
-} MatrixPairD;
+    duoplot_MatrixD m0;
+    duoplot_MatrixD m1;
+} duoplot_MatrixPairD;
 
 #endif  // DUOPLOT_MATH_MATRIX_MATRIX_TYPES_H_

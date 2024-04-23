@@ -301,8 +301,8 @@ DUOPLOT_WEAK void duoplot_internal_sendHeaderAndTwoByteArrays(SendFunction send_
 }
 
 DUOPLOT_WEAK void duoplot_internal_sendHeaderAndTwoVectors(SendFunction send_function,
-                                                           const Vector* const x,
-                                                           const Vector* const y,
+                                                           const duoplot_Vector* const x,
+                                                           const duoplot_Vector* const y,
                                                            duoplot_internal_CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
@@ -342,9 +342,9 @@ DUOPLOT_WEAK void duoplot_internal_sendHeaderAndTwoVectors(SendFunction send_fun
 }
 
 DUOPLOT_WEAK void duoplot_internal_sendHeaderAndThreeMatrices(SendFunction send_function,
-                                                              const Matrix* const x,
-                                                              const Matrix* const y,
-                                                              const Matrix* const z,
+                                                              const duoplot_Matrix* const x,
+                                                              const duoplot_Matrix* const y,
+                                                              const duoplot_Matrix* const z,
                                                               duoplot_internal_CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
@@ -387,9 +387,9 @@ DUOPLOT_WEAK void duoplot_internal_sendHeaderAndThreeMatrices(SendFunction send_
 }
 
 DUOPLOT_WEAK void duoplot_internal_sendHeaderAndThreeVectors(SendFunction send_function,
-                                                             const Vector* const x,
-                                                             const Vector* const y,
-                                                             const Vector* const z,
+                                                             const duoplot_Vector* const x,
+                                                             const duoplot_Vector* const y,
+                                                             const duoplot_Vector* const z,
                                                              duoplot_internal_CommunicationHeader* hdr)
 {
     const uint64_t num_bytes_hdr = duoplot_internal_countNumHeaderBytes(hdr);
