@@ -57,7 +57,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_EdgeColor(const uint8_t red, const uint8_t
     return *prop;
 }
 
-DUOPLOT_WEAK duoplot_Property duoplot_ColorMapJet()
+DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapJet()
 {
     duoplot_internal_CommunicationHeaderObject hdr_obj;
 
@@ -71,7 +71,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_ColorMapJet()
     return *prop;
 }
 
-DUOPLOT_WEAK duoplot_Property duoplot_ColorMapHsv()
+DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapHsv()
 {
     duoplot_internal_CommunicationHeaderObject hdr_obj;
 
@@ -85,7 +85,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_ColorMapHsv()
     return *prop;
 }
 
-DUOPLOT_WEAK duoplot_Property duoplot_ColorMapMagma()
+DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapMagma()
 {
     duoplot_internal_CommunicationHeaderObject hdr_obj;
 
@@ -101,7 +101,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_ColorMapMagma()
     return *prop;
 }
 
-DUOPLOT_WEAK duoplot_Property duoplot_ColorMapViridis()
+DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapViridis()
 {
     duoplot_internal_CommunicationHeaderObject hdr_obj;
 
@@ -115,7 +115,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_ColorMapViridis()
     return *prop;
 }
 
-DUOPLOT_WEAK duoplot_Property duoplot_ColorMapPastel()
+DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapPastel()
 {
     duoplot_internal_CommunicationHeaderObject hdr_obj;
 
@@ -129,7 +129,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_ColorMapPastel()
     return *prop;
 }
 
-DUOPLOT_WEAK duoplot_Property duoplot_ColorMapJetSoft()
+DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapJetSoft()
 {
     duoplot_internal_CommunicationHeaderObject hdr_obj;
 
@@ -143,7 +143,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_ColorMapJetSoft()
     return *prop;
 }
 
-DUOPLOT_WEAK duoplot_Property duoplot_ColorMapJetBright()
+DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapJetBright()
 {
     duoplot_internal_CommunicationHeaderObject hdr_obj;
 
@@ -198,4 +198,43 @@ DUOPLOT_WEAK duoplot_Property duoplot_LineWidth(const uint8_t line_width)
 
     return *prop;
 }
+
+#define duoplot_Color_RED duoplot_Color(255, 0, 0)
+#define duoplot_Color_GREEN duoplot_Color(0, 255, 0)
+#define duoplot_Color_BLUE duoplot_Color(0, 0, 255)
+#define duoplot_Color_BLACK duoplot_Color(0, 0, 0)
+#define duoplot_Color_WHITE duoplot_Color(255, 255, 255)
+#define duoplot_Color_YELLOW duoplot_Color(255, 255, 0)
+#define duoplot_Color_CYAN duoplot_Color(0, 255, 255)
+#define duoplot_Color_MAGENTA duoplot_Color(255, 0, 255)
+#define duoplot_Color_GREY duoplot_Color(127, 127, 127)
+
+#define duoplot_FaceColor_RED duoplot_FaceColor(255, 0, 0)
+#define duoplot_FaceColor_GREEN duoplot_FaceColor(0, 255, 0)
+#define duoplot_FaceColor_BLUE duoplot_FaceColor(0, 0, 255)
+#define duoplot_FaceColor_BLACK duoplot_FaceColor(0, 0, 0)
+#define duoplot_FaceColor_WHITE duoplot_FaceColor(255, 255, 255)
+#define duoplot_FaceColor_YELLOW duoplot_FaceColor(255, 255, 0)
+#define duoplot_FaceColor_CYAN duoplot_FaceColor(0, 255, 255)
+#define duoplot_FaceColor_MAGENTA duoplot_FaceColor(255, 0, 255)
+#define duoplot_FaceColor_GREY duoplot_FaceColor(127, 127, 127)
+
+#define duoplot_EdgeColor_RED duoplot_EgeColor(255, 0, 0)
+#define duoplot_EdgeColor_GREEN duoplot_EgeColor(0, 255, 0)
+#define duoplot_EdgeColor_BLUE duoplot_EgeColor(0, 0, 255)
+#define duoplot_EdgeColor_BLACK duoplot_EgeColor(0, 0, 0)
+#define duoplot_EdgeColor_WHITE duoplot_EgeColor(255, 255, 255)
+#define duoplot_EdgeColor_YELLOW duoplot_EgeColor(255, 255, 0)
+#define duoplot_EdgeColor_CYAN duoplot_EgeColor(0, 255, 255)
+#define duoplot_EdgeColor_MAGENTA duoplot_EgeColor(255, 0, 255)
+#define duoplot_EdgeColor_GREY duoplot_EgeColor(127, 127, 127)
+
+#define duoplot_ColorMap_JET duoplot_internal_ColorMapJet()
+#define duoplot_ColorMap_HSV duoplot_internal_ColorMapHsv()
+#define duoplot_ColorMap_MAGMA duoplot_internal_ColorMapMagma()
+#define duoplot_ColorMap_VIRIDIS duoplot_internal_ColorMapViridis()
+#define duoplot_ColorMap_PASTEL duoplot_internal_ColorMapPastel()
+#define duoplot_ColorMap_JET_SOFT duoplot_internal_ColorMapJetSoft()
+#define duoplot_ColorMap_JET_BRIGHT duoplot_internal_ColorMapJetBright()
+
 #endif  // DUOPLOT_PLOT_PROPERTIES_H_

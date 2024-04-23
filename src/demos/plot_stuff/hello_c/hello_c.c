@@ -12,12 +12,12 @@ int main()
     const MatrixD ry = matrix_cosD(y);
     const MatrixD z = matrix_elementWiseMultiplyD(rx, ry);
 
-    setCurrentElement("hello_c");
-    clearView();
+    duoplot_setCurrentElement("hello_c");
+    duoplot_clearView();
 
-    surf(x, y, z, ColorMapJetSoft(), Alpha(0.7));
-    setTitle("Hello from C!");
-    view(-128, 23);
+    duoplot_surf(x, y, z, duoplot_ColorMap_JET_SOFT, duoplot_Alpha(0.7));
+    duoplot_setTitle("Hello from C!");
+    duoplot_view(-128, 23);
 
     free(x.data);
     free(y.data);
