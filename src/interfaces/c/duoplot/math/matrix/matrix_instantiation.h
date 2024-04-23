@@ -21,70 +21,70 @@ DUOPLOT_WEAK Matrix createMatrix(const size_t num_rows, const size_t num_cols, c
 
 DUOPLOT_WEAK MatrixF createMatrixF(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_FLOAT);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_FLOAT);
     MatrixF ret_mat = *(MatrixF*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixD createMatrixD(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_DOUBLE);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_DOUBLE);
     MatrixD ret_mat = *(MatrixD*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixS8 createMatrixS8(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_INT8);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT8);
     MatrixS8 ret_mat = *(MatrixS8*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixS16 createMatrixS16(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_INT16);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT16);
     MatrixS16 ret_mat = *(MatrixS16*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixS32 createMatrixS32(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_INT32);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT32);
     MatrixS32 ret_mat = *(MatrixS32*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixS64 createMatrixS64(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_INT64);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT64);
     MatrixS64 ret_mat = *(MatrixS64*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixU8 createMatrixU8(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_UINT8);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT8);
     MatrixU8 ret_mat = *(MatrixU8*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixU16 createMatrixU16(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_UINT16);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT16);
     MatrixU16 ret_mat = *(MatrixU16*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixU32 createMatrixU32(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_UINT32);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT32);
     MatrixU32 ret_mat = *(MatrixU32*)(&mat);
     return ret_mat;
 }
 
 DUOPLOT_WEAK MatrixU64 createMatrixU64(const size_t num_rows, const size_t num_cols)
 {
-    Matrix mat = createMatrix(num_rows, num_cols, DT_UINT64);
+    Matrix mat = createMatrix(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT64);
     MatrixU64 ret_mat = *(MatrixU64*)(&mat);
     return ret_mat;
 }

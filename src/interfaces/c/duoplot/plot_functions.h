@@ -21,8 +21,8 @@ DUOPLOT_WEAK void duoplot_internal_plotFunction3D(const Vector* const x,
     duoplot_internal_CommunicationHeader hdr;
     duoplot_internal_initCommunicationHeader(&hdr, fcn);
 
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_DATA_TYPE, x->data_type, uint8_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_DATA_TYPE, x->data_type, uint8_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
 
     DUOPLOT_INTERNAL_APPEND_PROPERTIES(hdr, first_prop);
 
@@ -38,8 +38,8 @@ DUOPLOT_WEAK void duoplot_internal_plotFunction2D(const Vector* const x,
     duoplot_internal_CommunicationHeader hdr;
     duoplot_internal_initCommunicationHeader(&hdr, fcn);
 
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_DATA_TYPE, x->data_type, uint8_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_DATA_TYPE, x->data_type, uint8_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, x->num_elements, uint32_t);
 
     DUOPLOT_INTERNAL_APPEND_PROPERTIES(hdr, first_prop);
 
@@ -53,13 +53,13 @@ DUOPLOT_WEAK void duoplot_internal_surfFunction(const Matrix* const x,
                                                 ...)
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_SURF);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_SURF);
 
     duoplot_internal_Dimension2D dims = {x->num_rows, x->num_cols};
 
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_DATA_TYPE, x->data_type, uint8_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_NUM_ELEMENTS, x->num_rows * x->num_cols, uint32_t);  // Needed?
-    duoplot_internal_appendDims(&hdr, CHOT_DIMENSION_2D, dims);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_DATA_TYPE, x->data_type, uint8_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, x->num_rows * x->num_cols, uint32_t);  // Needed?
+    duoplot_internal_appendDims(&hdr, DUOPLOT_INTERNAL_CHOT_DIMENSION_2D, dims);
 
     DUOPLOT_INTERNAL_APPEND_PROPERTIES(hdr, first_prop);
 
@@ -72,12 +72,12 @@ DUOPLOT_WEAK void duoplot_internal_drawMeshFunction(const Point3DArray vertices,
                                                     ...)
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_DRAW_MESH);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_DRAW_MESH);
 
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_DATA_TYPE, DT_DOUBLE, uint8_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_NUM_ELEMENTS, indices.num_elements, uint32_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_NUM_VERTICES, vertices.num_elements, uint32_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_NUM_INDICES, indices.num_elements, uint32_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_DATA_TYPE, DUOPLOT_INTERNAL_DT_DOUBLE, uint8_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, indices.num_elements, uint32_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_VERTICES, vertices.num_elements, uint32_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_INDICES, indices.num_elements, uint32_t);
 
     DUOPLOT_INTERNAL_APPEND_PROPERTIES(hdr, first_prop);
 
@@ -94,14 +94,14 @@ DUOPLOT_WEAK void duoplot_internal_imShowFunction(const ImageC3* const img,
                                                   ...)
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_IM_SHOW);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_IM_SHOW);
 
     duoplot_internal_Dimension2D dims = {img->num_rows, img->num_cols};
 
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_DATA_TYPE, img->data_type, uint8_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_NUM_CHANNELS, 3, uint8_t);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_NUM_ELEMENTS, img->num_rows * img->num_cols, uint32_t);  // Needed?
-    duoplot_internal_appendDims(&hdr, CHOT_DIMENSION_2D, dims);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_DATA_TYPE, img->data_type, uint8_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_CHANNELS, 3, uint8_t);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_NUM_ELEMENTS, img->num_rows * img->num_cols, uint32_t);  // Needed?
+    duoplot_internal_appendDims(&hdr, DUOPLOT_INTERNAL_CHOT_DIMENSION_2D, dims);
 
     DUOPLOT_INTERNAL_APPEND_PROPERTIES(hdr, first_prop);
 
@@ -124,40 +124,40 @@ DUOPLOT_WEAK void duoplot_internal_imShowFunction(const ImageC3* const img,
 
 #define duoplot_plot(x, y, ...)      \
     duoplot_internal_plotFunction2D( \
-        (Vector*)&x, (Vector*)&y, F_PLOT2, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
+        (Vector*)&x, (Vector*)&y, DUOPLOT_INTERNAL_F_PLOT2, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
 
 #define duoplot_scatter(x, y, ...)   \
     duoplot_internal_plotFunction2D( \
-        (Vector*)&x, (Vector*)&y, F_SCATTER2, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
+        (Vector*)&x, (Vector*)&y, DUOPLOT_INTERNAL_F_SCATTER2, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
 
 #define duoplot_plot3(x, y, z, ...)  \
     duoplot_internal_plotFunction3D( \
-        (Vector*)&x, (Vector*)&y, (Vector*)&z, F_PLOT3, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
+        (Vector*)&x, (Vector*)&y, (Vector*)&z, DUOPLOT_INTERNAL_F_PLOT3, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
 
 #define duoplot_scatter3(x, y, z, ...) \
     duoplot_internal_plotFunction3D(   \
-        (Vector*)&x, (Vector*)&y, (Vector*)&z, F_SCATTER3, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
+        (Vector*)&x, (Vector*)&y, (Vector*)&z, DUOPLOT_INTERNAL_F_SCATTER3, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
 
 DUOPLOT_WEAK void duoplot_setCurrentElement(const char* const name)
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_SET_CURRENT_ELEMENT);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_SET_CURRENT_ELEMENT);
 
     duoplot_internal_CommunicationHeaderObject* const current_obj = hdr.objects + hdr.obj_idx;
 
-    current_obj->type = CHOT_ELEMENT_NAME;
+    current_obj->type = DUOPLOT_INTERNAL_CHOT_ELEMENT_NAME;
 
     const size_t name_length = strnlen(name, 100U);
     current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)name_length;
 
     memset(current_obj->data, 0, DUOPLOT_INTERNAL_MAX_NUM_FUNCTION_HEADER_BYTES);
 
-    current_obj->data[0U] = PT_NAME;
+    current_obj->data[0U] = DUOPLOT_INTERNAL_PT_NAME;
     current_obj->data[1U] = name_length;
     memcpy(current_obj->data + 2U, name, name_length);
 
     duoplot_internal_appendObjectIndexToCommunicationHeaderObjectLookupTable(
-        &(hdr.objects_lut), CHOT_ELEMENT_NAME, hdr.obj_idx);
+        &(hdr.objects_lut), DUOPLOT_INTERNAL_CHOT_ELEMENT_NAME, hdr.obj_idx);
 
     hdr.obj_idx += 1;
 
@@ -167,7 +167,7 @@ DUOPLOT_WEAK void duoplot_setCurrentElement(const char* const name)
 DUOPLOT_WEAK void duoplot_clearView()
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_CLEAR);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_CLEAR);
 
     duoplot_internal_sendHeader(duoplot_internal_getSendFunction(), &hdr);
 }
@@ -175,7 +175,7 @@ DUOPLOT_WEAK void duoplot_clearView()
 DUOPLOT_WEAK void duoplot_softClearView()
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_SOFT_CLEAR);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_SOFT_CLEAR);
 
     duoplot_internal_sendHeader(duoplot_internal_getSendFunction(), &hdr);
 }
@@ -183,10 +183,10 @@ DUOPLOT_WEAK void duoplot_softClearView()
 DUOPLOT_WEAK void duoplot_view(const float azimuth, const float elevation)
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_VIEW);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_VIEW);
 
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_AZIMUTH, azimuth, float);
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_ELEVATION, elevation, float);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_AZIMUTH, azimuth, float);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_ELEVATION, elevation, float);
 
     duoplot_internal_sendHeader(duoplot_internal_getSendFunction(), &hdr);
 }
@@ -194,7 +194,7 @@ DUOPLOT_WEAK void duoplot_view(const float azimuth, const float elevation)
 DUOPLOT_WEAK void duoplot_axis(const Vec3D min_bound, const Vec3D max_bound)
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_AXES_3D);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_AXES_3D);
 
     typedef struct S_Bnd3D
     {
@@ -204,7 +204,7 @@ DUOPLOT_WEAK void duoplot_axis(const Vec3D min_bound, const Vec3D max_bound)
 
     const Bnd3D bnd = {min_bound, max_bound};
 
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
 
     duoplot_internal_sendHeader(duoplot_internal_getSendFunction(), &hdr);
 }
@@ -212,7 +212,7 @@ DUOPLOT_WEAK void duoplot_axis(const Vec3D min_bound, const Vec3D max_bound)
 DUOPLOT_WEAK void duoplot_axis2D(const Vec2D min_bound, const Vec2D max_bound)
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_AXES_3D);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_AXES_3D);
 
     typedef struct S_Bnd3D
     {
@@ -224,7 +224,7 @@ DUOPLOT_WEAK void duoplot_axis2D(const Vec2D min_bound, const Vec2D max_bound)
 
     const Bnd3D bnd = {v0, v1};
 
-    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, CHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
+    DUOPLOT_INTERNAL_APPEND_OBJ(&hdr, DUOPLOT_INTERNAL_CHOT_AXIS_MIN_MAX_VEC, bnd, Bnd3D);
 
     duoplot_internal_sendHeader(duoplot_internal_getSendFunction(), &hdr);
 }
@@ -237,23 +237,23 @@ DUOPLOT_WEAK void duoplot_setTitle(const char* const title)
     }
 
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_SET_TITLE);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_SET_TITLE);
 
     duoplot_internal_CommunicationHeaderObject* const current_obj = hdr.objects + hdr.obj_idx;
 
-    current_obj->type = CHOT_TITLE_STRING;
+    current_obj->type = DUOPLOT_INTERNAL_CHOT_TITLE_STRING;
 
     const size_t name_length = strnlen(title, 100U);
     current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)name_length;
 
     memset(current_obj->data, 0, DUOPLOT_INTERNAL_MAX_NUM_FUNCTION_HEADER_BYTES);
 
-    current_obj->data[0U] = PT_NAME;
+    current_obj->data[0U] = DUOPLOT_INTERNAL_PT_NAME;
     current_obj->data[1U] = name_length;
     memcpy(current_obj->data + 2U, title, name_length);
 
     duoplot_internal_appendObjectIndexToCommunicationHeaderObjectLookupTable(
-        &(hdr.objects_lut), CHOT_TITLE_STRING, hdr.obj_idx);
+        &(hdr.objects_lut), DUOPLOT_INTERNAL_CHOT_TITLE_STRING, hdr.obj_idx);
 
     hdr.obj_idx += 1;
 

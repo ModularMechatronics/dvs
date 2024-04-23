@@ -2,7 +2,7 @@
 void testMisc()
 {
     const size_t num_elements = 10;
-    Vector v = createVector(num_elements, DT_FLOAT);
+    Vector v = createVector(num_elements, DUOPLOT_INTERNAL_DT_FLOAT);
     VectorF v2 = toVectorF(v);
     VectorF v1 = createVectorF(num_elements);
     VectorF vq = vector_linspaceFromPointsAndCountF(0.1, 0.8, num_elements);

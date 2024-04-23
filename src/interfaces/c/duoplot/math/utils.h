@@ -10,34 +10,34 @@ DUOPLOT_WEAK size_t duoplot_internal_dataTypeToNumBytes(const DataType dt)
 {
     switch (dt)
     {
-        case DT_FLOAT:
+        case DUOPLOT_INTERNAL_DT_FLOAT:
             return sizeof(float);
             break;
-        case DT_DOUBLE:
+        case DUOPLOT_INTERNAL_DT_DOUBLE:
             return sizeof(double);
             break;
-        case DT_UINT8:
+        case DUOPLOT_INTERNAL_DT_UINT8:
             return sizeof(uint8_t);
             break;
-        case DT_UINT16:
+        case DUOPLOT_INTERNAL_DT_UINT16:
             return sizeof(uint16_t);
             break;
-        case DT_UINT32:
+        case DUOPLOT_INTERNAL_DT_UINT32:
             return sizeof(uint32_t);
             break;
-        case DT_UINT64:
+        case DUOPLOT_INTERNAL_DT_UINT64:
             return sizeof(uint64_t);
             break;
-        case DT_INT8:
+        case DUOPLOT_INTERNAL_DT_INT8:
             return sizeof(int8_t);
             break;
-        case DT_INT16:
+        case DUOPLOT_INTERNAL_DT_INT16:
             return sizeof(int16_t);
             break;
-        case DT_INT32:
+        case DUOPLOT_INTERNAL_DT_INT32:
             return sizeof(int32_t);
             break;
-        case DT_INT64:
+        case DUOPLOT_INTERNAL_DT_INT64:
             return sizeof(int64_t);
             break;
         default:

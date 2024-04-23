@@ -64,7 +64,7 @@ DUOPLOT_WEAK void duoplot_internal_initTcpSocket()
 DUOPLOT_WEAK void duoplot_internal_queryForSyncOfGuiData()
 {
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_QUERY_FOR_SYNC_OF_GUI_DATA);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_QUERY_FOR_SYNC_OF_GUI_DATA);
 
     duoplot_internal_sendHeader(duoplot_internal_getSendFunction(), &hdr);
 }
@@ -390,7 +390,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createButton(
     strcpy(button->handle_string, handle_string);
     button->handle_string[handle_string_length] = '\0';  // Null-terminate string
 
-    button->type = GUI_ET_BUTTON;
+    button->type = DUOPLOT_INTERNAL_GUI_ET_BUTTON;
 
     duoplot_internal_updateButtonState(button, data_view);
 
@@ -411,7 +411,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createSlider(
     strcpy(slider->handle_string, handle_string);
     slider->handle_string[handle_string_length] = '\0';  // Null-terminate string
 
-    slider->type = GUI_ET_SLIDER;
+    slider->type = DUOPLOT_INTERNAL_GUI_ET_SLIDER;
 
     duoplot_internal_updateSliderState(slider, data_view);
 
@@ -432,7 +432,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createListBox(
     strcpy(list_box->handle_string, handle_string);
     list_box->handle_string[handle_string_length] = '\0';  // Null-terminate string
 
-    list_box->type = GUI_ET_LIST_BOX;
+    list_box->type = DUOPLOT_INTERNAL_GUI_ET_LIST_BOX;
 
     duoplot_internal_BaseHandle* const handle = (duoplot_internal_BaseHandle*)list_box;
 
@@ -457,7 +457,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createDropdownMenu(
     strcpy(dropdown_menu->handle_string, handle_string);
     dropdown_menu->handle_string[handle_string_length] = '\0';  // Null-terminate string
 
-    dropdown_menu->type = GUI_ET_DROPDOWN_MENU;
+    dropdown_menu->type = DUOPLOT_INTERNAL_GUI_ET_DROPDOWN_MENU;
 
     duoplot_internal_BaseHandle* const handle = (duoplot_internal_BaseHandle*)dropdown_menu;
 
@@ -482,7 +482,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createCheckbox(
     strcpy(checkbox->handle_string, handle_string);
     checkbox->handle_string[handle_string_length] = '\0';  // Null-terminate string
 
-    checkbox->type = GUI_ET_CHECKBOX;
+    checkbox->type = DUOPLOT_INTERNAL_GUI_ET_CHECKBOX;
 
     duoplot_internal_BaseHandle* const handle = (duoplot_internal_BaseHandle*)checkbox;
 
@@ -503,7 +503,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createRadioButtonGrou
     strcpy(radiobutton_group->handle_string, handle_string);
     radiobutton_group->handle_string[handle_string_length] = '\0';  // Null-terminate string
 
-    radiobutton_group->type = GUI_ET_RADIO_BUTTON_GROUP;
+    radiobutton_group->type = DUOPLOT_INTERNAL_GUI_ET_RADIO_BUTTON_GROUP;
 
     duoplot_internal_BaseHandle* const handle = (duoplot_internal_BaseHandle*)radiobutton_group;
 
@@ -524,7 +524,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createEditableText(
     strcpy(editable_text->handle_string, handle_string);
     editable_text->handle_string[handle_string_length] = '\0';  // Null-terminate string
 
-    editable_text->type = GUI_ET_EDITABLE_TEXT;
+    editable_text->type = DUOPLOT_INTERNAL_GUI_ET_EDITABLE_TEXT;
 
     duoplot_internal_BaseHandle* const handle = (duoplot_internal_BaseHandle*)editable_text;
 
@@ -545,7 +545,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createTextLabel(
     strcpy(text_label->handle_string, handle_string);
     text_label->handle_string[handle_string_length] = '\0';  // Null-terminate string
 
-    text_label->type = GUI_ET_TEXT_LABEL;
+    text_label->type = DUOPLOT_INTERNAL_GUI_ET_TEXT_LABEL;
 
     duoplot_internal_BaseHandle* const handle = (duoplot_internal_BaseHandle*)text_label;
 
@@ -574,37 +574,37 @@ DUOPLOT_WEAK void duoplot_internal_populateGuiElementWithData(const GuiElementTy
                 return;
             }
 
-            if (type == GUI_ET_BUTTON)
+            if (type == DUOPLOT_INTERNAL_GUI_ET_BUTTON)
             {
                 duoplot_internal_updateButtonState((duoplot_internal_ButtonInternalHandle*)handle, data_view);
             }
-            else if (type == GUI_ET_CHECKBOX)
+            else if (type == DUOPLOT_INTERNAL_GUI_ET_CHECKBOX)
             {
                 duoplot_internal_updateCheckboxState((duoplot_internal_CheckboxInternalHandle*)handle, data_view);
             }
-            else if (type == GUI_ET_SLIDER)
+            else if (type == DUOPLOT_INTERNAL_GUI_ET_SLIDER)
             {
                 duoplot_internal_updateSliderState((duoplot_internal_SliderInternalHandle*)handle, data_view);
             }
-            else if (type == GUI_ET_TEXT_LABEL)
+            else if (type == DUOPLOT_INTERNAL_GUI_ET_TEXT_LABEL)
             {
                 duoplot_internal_updateTextLabelState((duoplot_internal_TextLabelInternalHandle*)handle, data_view);
             }
-            else if (type == GUI_ET_LIST_BOX)
+            else if (type == DUOPLOT_INTERNAL_GUI_ET_LIST_BOX)
             {
                 duoplot_internal_updateListBoxState((duoplot_internal_ListBoxInternalHandle*)handle, data_view);
             }
-            else if (type == GUI_ET_EDITABLE_TEXT)
+            else if (type == DUOPLOT_INTERNAL_GUI_ET_EDITABLE_TEXT)
             {
                 duoplot_internal_updateEditableTextState((duoplot_internal_EditableTextInternalHandle*)handle,
                                                          data_view);
             }
-            else if (type == GUI_ET_DROPDOWN_MENU)
+            else if (type == DUOPLOT_INTERNAL_GUI_ET_DROPDOWN_MENU)
             {
                 duoplot_internal_updateDropdownMenuState((duoplot_internal_DropdownMenuInternalHandle*)handle,
                                                          data_view);
             }
-            else if (type == GUI_ET_RADIO_BUTTON_GROUP)
+            else if (type == DUOPLOT_INTERNAL_GUI_ET_RADIO_BUTTON_GROUP)
             {
                 duoplot_internal_updateRadioButtonGroupState((RadioButtonGroupInternalHandle*)handle, data_view);
             }
@@ -614,35 +614,35 @@ DUOPLOT_WEAK void duoplot_internal_populateGuiElementWithData(const GuiElementTy
     {
         duoplot_internal_BaseHandle* handle = NULL;
         // Key is not in map, create new element
-        if (type == GUI_ET_BUTTON)
+        if (type == DUOPLOT_INTERNAL_GUI_ET_BUTTON)
         {
             handle = (duoplot_internal_BaseHandle*)duoplot_internal_createButton(handle_string, data_view);
         }
-        else if (type == GUI_ET_SLIDER)
+        else if (type == DUOPLOT_INTERNAL_GUI_ET_SLIDER)
         {
             handle = (duoplot_internal_BaseHandle*)duoplot_internal_createSlider(handle_string, data_view);
         }
-        else if (type == GUI_ET_LIST_BOX)
+        else if (type == DUOPLOT_INTERNAL_GUI_ET_LIST_BOX)
         {
             handle = (duoplot_internal_BaseHandle*)duoplot_internal_createListBox(handle_string, data_view);
         }
-        else if (type == GUI_ET_DROPDOWN_MENU)
+        else if (type == DUOPLOT_INTERNAL_GUI_ET_DROPDOWN_MENU)
         {
             handle = (duoplot_internal_BaseHandle*)duoplot_internal_createDropdownMenu(handle_string, data_view);
         }
-        else if (type == GUI_ET_CHECKBOX)
+        else if (type == DUOPLOT_INTERNAL_GUI_ET_CHECKBOX)
         {
             handle = (duoplot_internal_BaseHandle*)duoplot_internal_createCheckbox(handle_string, data_view);
         }
-        else if (type == GUI_ET_RADIO_BUTTON_GROUP)
+        else if (type == DUOPLOT_INTERNAL_GUI_ET_RADIO_BUTTON_GROUP)
         {
             handle = (duoplot_internal_BaseHandle*)duoplot_internal_createRadioButtonGroup(handle_string, data_view);
         }
-        else if (type == GUI_ET_EDITABLE_TEXT)
+        else if (type == DUOPLOT_INTERNAL_GUI_ET_EDITABLE_TEXT)
         {
             handle = (duoplot_internal_BaseHandle*)duoplot_internal_createEditableText(handle_string, data_view);
         }
-        else if (type == GUI_ET_TEXT_LABEL)
+        else if (type == DUOPLOT_INTERNAL_GUI_ET_TEXT_LABEL)
         {
             handle = (duoplot_internal_BaseHandle*)duoplot_internal_createTextLabel(handle_string, data_view);
         }
@@ -709,7 +709,7 @@ DUOPLOT_WEAK duoplot_ButtonHandle duoplot_getButtonHandle(const char* const hand
         (duoplot_internal_ButtonInternalHandle*)duoplot_internal_getGuiElementHandleContainer(handle_string,
                                                                                               gui_element_map);
 
-    if (gui_elem->type != GUI_ET_BUTTON)
+    if (gui_elem->type != DUOPLOT_INTERNAL_GUI_ET_BUTTON)
     {
         printf("Gui element with handle string %s is not a button!\n", handle_string);
         return button_handle;
@@ -737,7 +737,7 @@ DUOPLOT_WEAK duoplot_SliderHandle duoplot_getSliderHandle(const char* const hand
         (duoplot_internal_SliderInternalHandle*)duoplot_internal_getGuiElementHandleContainer(handle_string,
                                                                                               gui_element_map);
 
-    if (gui_elem->type != GUI_ET_SLIDER)
+    if (gui_elem->type != DUOPLOT_INTERNAL_GUI_ET_SLIDER)
     {
         printf("Gui element with handle string %s is not a slider!\n", handle_string);
         return slider_handle;
@@ -765,7 +765,7 @@ DUOPLOT_WEAK duoplot_ListBoxHandle duoplot_getListBoxHandle(const char* const ha
         (duoplot_internal_ListBoxInternalHandle*)duoplot_internal_getGuiElementHandleContainer(handle_string,
                                                                                                gui_element_map);
 
-    if (gui_elem->type != GUI_ET_LIST_BOX)
+    if (gui_elem->type != DUOPLOT_INTERNAL_GUI_ET_LIST_BOX)
     {
         printf("Gui element with handle string %s is not a slider!\n", handle_string);
         return list_box_handle;
@@ -793,7 +793,7 @@ DUOPLOT_WEAK duoplot_DropdownMenuHandle duoplot_getDropdownMenuHandle(const char
         (duoplot_internal_DropdownMenuInternalHandle*)duoplot_internal_getGuiElementHandleContainer(handle_string,
                                                                                                     gui_element_map);
 
-    if (gui_elem->type != GUI_ET_DROPDOWN_MENU)
+    if (gui_elem->type != DUOPLOT_INTERNAL_GUI_ET_DROPDOWN_MENU)
     {
         printf("Gui element with handle string %s is not a slider!\n", handle_string);
         return dropdown_menu_handle;
@@ -821,7 +821,7 @@ DUOPLOT_WEAK duoplot_CheckboxHandle duoplot_getCheckboxHandle(const char* const 
         (duoplot_internal_CheckboxInternalHandle*)duoplot_internal_getGuiElementHandleContainer(handle_string,
                                                                                                 gui_element_map);
 
-    if (gui_elem->type != GUI_ET_CHECKBOX)
+    if (gui_elem->type != DUOPLOT_INTERNAL_GUI_ET_CHECKBOX)
     {
         printf("Gui element with handle string %s is not a slider!\n", handle_string);
         return checkbox_handle;
@@ -848,7 +848,7 @@ DUOPLOT_WEAK duoplot_RadioButtonGroupHandle duoplot_getRadioButtonGroupHandle(co
     RadioButtonGroupInternalHandle* const gui_elem =
         (RadioButtonGroupInternalHandle*)duoplot_internal_getGuiElementHandleContainer(handle_string, gui_element_map);
 
-    if (gui_elem->type != GUI_ET_RADIO_BUTTON_GROUP)
+    if (gui_elem->type != DUOPLOT_INTERNAL_GUI_ET_RADIO_BUTTON_GROUP)
     {
         printf("Gui element with handle string %s is not a slider!\n", handle_string);
         return radiobutton_group_handle;
@@ -876,7 +876,7 @@ DUOPLOT_WEAK duoplot_EditableTextHandle duoplot_getEditableTextHandle(const char
         (duoplot_internal_EditableTextInternalHandle*)duoplot_internal_getGuiElementHandleContainer(handle_string,
                                                                                                     gui_element_map);
 
-    if (gui_elem->type != GUI_ET_EDITABLE_TEXT)
+    if (gui_elem->type != DUOPLOT_INTERNAL_GUI_ET_EDITABLE_TEXT)
     {
         printf("Gui element with handle string %s is not a slider!\n", handle_string);
         return editable_text_handle;
@@ -904,7 +904,7 @@ DUOPLOT_WEAK duoplot_TextLabelHandle duoplot_getTextLabelHandle(const char* cons
         (duoplot_internal_TextLabelInternalHandle*)duoplot_internal_getGuiElementHandleContainer(handle_string,
                                                                                                  gui_element_map);
 
-    if (gui_elem->type != GUI_ET_TEXT_LABEL)
+    if (gui_elem->type != DUOPLOT_INTERNAL_GUI_ET_TEXT_LABEL)
     {
         printf("Gui element with handle string %s is not a slider!\n", handle_string);
         return text_label_handle;
@@ -940,7 +940,7 @@ DUOPLOT_WEAK void duoplot_internal_callGuiCallbackFunction(const duoplot_interna
     payload_data_view.data = raw_data + idx;
     payload_data_view.size = payload_size;
 
-    if (type == GUI_ET_BUTTON)
+    if (type == DUOPLOT_INTERNAL_GUI_ET_BUTTON)
     {
         duoplot_internal_ButtonCallbackFunctionMap* const button_callback_function_map =
             duoplot_internal_getButtonCallbackFunctionMap();
@@ -952,7 +952,7 @@ DUOPLOT_WEAK void duoplot_internal_callGuiCallbackFunction(const duoplot_interna
             cb_fun(duoplot_getButtonHandle(handle_string));
         }
     }
-    else if (type == GUI_ET_SLIDER)
+    else if (type == DUOPLOT_INTERNAL_GUI_ET_SLIDER)
     {
         duoplot_internal_SliderCallbackFunctionMap* const slider_callback_function_map =
             duoplot_internal_getSliderCallbackFunctionMap();
@@ -964,7 +964,7 @@ DUOPLOT_WEAK void duoplot_internal_callGuiCallbackFunction(const duoplot_interna
             cb_fun(duoplot_getSliderHandle(handle_string));
         }
     }
-    else if (type == GUI_ET_LIST_BOX)
+    else if (type == DUOPLOT_INTERNAL_GUI_ET_LIST_BOX)
     {
         duoplot_internal_ListBoxCallbackFunctionMap* const list_box_callback_function_map =
             duoplot_internal_getListBoxCallbackFunctionMap();
@@ -976,7 +976,7 @@ DUOPLOT_WEAK void duoplot_internal_callGuiCallbackFunction(const duoplot_interna
             cb_fun(duoplot_getListBoxHandle(handle_string));
         }
     }
-    else if (type == GUI_ET_DROPDOWN_MENU)
+    else if (type == DUOPLOT_INTERNAL_GUI_ET_DROPDOWN_MENU)
     {
         duoplot_internal_DropdownMenuCallbackFunctionMap* const dropdown_menu_callback_function_map =
             duoplot_internal_getDropdownMenuCallbackFunctionMap();
@@ -988,7 +988,7 @@ DUOPLOT_WEAK void duoplot_internal_callGuiCallbackFunction(const duoplot_interna
             cb_fun(duoplot_getDropdownMenuHandle(handle_string));
         }
     }
-    else if (type == GUI_ET_CHECKBOX)
+    else if (type == DUOPLOT_INTERNAL_GUI_ET_CHECKBOX)
     {
         duoplot_internal_CheckboxCallbackFunctionMap* const checkbox_callback_function_map =
             duoplot_internal_getCheckboxCallbackFunctionMap();
@@ -1000,7 +1000,7 @@ DUOPLOT_WEAK void duoplot_internal_callGuiCallbackFunction(const duoplot_interna
             cb_fun(duoplot_getCheckboxHandle(handle_string));
         }
     }
-    else if (type == GUI_ET_RADIO_BUTTON_GROUP)
+    else if (type == DUOPLOT_INTERNAL_GUI_ET_RADIO_BUTTON_GROUP)
     {
         duoplot_internal_RadioButtonGroupCallbackFunctionMap* const radiobutton_group_callback_function_map =
             duoplot_internal_getRadioButtonGroupCallbackFunctionMap();
@@ -1013,7 +1013,7 @@ DUOPLOT_WEAK void duoplot_internal_callGuiCallbackFunction(const duoplot_interna
             cb_fun(duoplot_getRadioButtonGroupHandle(handle_string));
         }
     }
-    else if (type == GUI_ET_EDITABLE_TEXT)
+    else if (type == DUOPLOT_INTERNAL_GUI_ET_EDITABLE_TEXT)
     {
         duoplot_internal_EditableTextCallbackFunctionMap* const editable_text_callback_function_map =
             duoplot_internal_getEditableTextCallbackFunctionMap();

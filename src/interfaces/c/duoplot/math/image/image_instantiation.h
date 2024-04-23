@@ -21,70 +21,70 @@ DUOPLOT_WEAK ImageC1 createImageC1(const size_t num_rows, const size_t num_cols,
 
 DUOPLOT_WEAK ImageC1F createImageC1F(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_FLOAT);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_FLOAT);
     ImageC1F ret_img = *(ImageC1F*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1D createImageC1D(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_DOUBLE);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_DOUBLE);
     ImageC1D ret_img = *(ImageC1D*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1S8 createImageC1S8(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_INT8);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT8);
     ImageC1S8 ret_img = *(ImageC1S8*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1S16 createImageC1S16(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_INT16);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT16);
     ImageC1S16 ret_img = *(ImageC1S16*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1S32 createImageC1S32(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_INT32);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT32);
     ImageC1S32 ret_img = *(ImageC1S32*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1S64 createImageC1S64(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_INT64);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT64);
     ImageC1S64 ret_img = *(ImageC1S64*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1U8 createImageC1U8(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_UINT8);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT8);
     ImageC1U8 ret_img = *(ImageC1U8*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1U16 createImageC1U16(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_UINT16);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT16);
     ImageC1U16 ret_img = *(ImageC1U16*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1U32 createImageC1U32(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_UINT32);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT32);
     ImageC1U32 ret_img = *(ImageC1U32*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC1U64 createImageC1U64(const size_t num_rows, const size_t num_cols)
 {
-    ImageC1 img = createImageC1(num_rows, num_cols, DT_UINT64);
+    ImageC1 img = createImageC1(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT64);
     ImageC1U64 ret_img = *(ImageC1U64*)(&img);
     return ret_img;
 }
@@ -163,70 +163,70 @@ DUOPLOT_WEAK ImageC3 createImageC3(const size_t num_rows, const size_t num_cols,
 
 DUOPLOT_WEAK ImageC3F createImageC3F(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_FLOAT);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_FLOAT);
     ImageC3F ret_img = *(ImageC3F*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3D createImageC3D(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_DOUBLE);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_DOUBLE);
     ImageC3D ret_img = *(ImageC3D*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3S8 createImageC3S8(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_INT8);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT8);
     ImageC3S8 ret_img = *(ImageC3S8*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3S16 createImageC3S16(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_INT16);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT16);
     ImageC3S16 ret_img = *(ImageC3S16*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3S32 createImageC3S32(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_INT32);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT32);
     ImageC3S32 ret_img = *(ImageC3S32*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3S64 createImageC3S64(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_INT64);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_INT64);
     ImageC3S64 ret_img = *(ImageC3S64*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3U8 createImageC3U8(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_UINT8);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT8);
     ImageC3U8 ret_img = *(ImageC3U8*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3U16 createImageC3U16(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_UINT16);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT16);
     ImageC3U16 ret_img = *(ImageC3U16*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3U32 createImageC3U32(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_UINT32);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT32);
     ImageC3U32 ret_img = *(ImageC3U32*)(&img);
     return ret_img;
 }
 
 DUOPLOT_WEAK ImageC3U64 createImageC3U64(const size_t num_rows, const size_t num_cols)
 {
-    ImageC3 img = createImageC3(num_rows, num_cols, DT_UINT64);
+    ImageC3 img = createImageC3(num_rows, num_cols, DUOPLOT_INTERNAL_DT_UINT64);
     ImageC3U64 ret_img = *(ImageC3U64*)(&img);
     return ret_img;
 }

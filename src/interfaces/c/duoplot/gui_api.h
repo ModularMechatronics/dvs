@@ -205,24 +205,24 @@ DUOPLOT_WEAK void duoplot_setTextLabelValue(const duoplot_TextLabelHandle text_l
     }
 
     duoplot_internal_CommunicationHeader hdr;
-    duoplot_internal_initCommunicationHeader(&hdr, F_SET_GUI_ELEMENT_LABEL);
+    duoplot_internal_initCommunicationHeader(&hdr, DUOPLOT_INTERNAL_F_SET_GUI_ELEMENT_LABEL);
 
     {
         duoplot_internal_CommunicationHeaderObject* const current_obj = hdr.objects + hdr.obj_idx;
 
-        current_obj->type = CHOT_LABEL;
+        current_obj->type = DUOPLOT_INTERNAL_CHOT_LABEL;
 
         const size_t label_length = strnlen(new_value, 100U);
         current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)label_length;
 
         memset(current_obj->data, 0, DUOPLOT_INTERNAL_MAX_NUM_FUNCTION_HEADER_BYTES);
 
-        current_obj->data[0U] = PT_NAME;
+        current_obj->data[0U] = DUOPLOT_INTERNAL_PT_NAME;
         current_obj->data[1U] = label_length;
         memcpy(current_obj->data + 2U, new_value, label_length);
 
         duoplot_internal_appendObjectIndexToCommunicationHeaderObjectLookupTable(
-            &(hdr.objects_lut), CHOT_LABEL, hdr.obj_idx);
+            &(hdr.objects_lut), DUOPLOT_INTERNAL_CHOT_LABEL, hdr.obj_idx);
 
         hdr.obj_idx += 1;
     }
@@ -230,19 +230,19 @@ DUOPLOT_WEAK void duoplot_setTextLabelValue(const duoplot_TextLabelHandle text_l
     {
         duoplot_internal_CommunicationHeaderObject* const current_obj = hdr.objects + hdr.obj_idx;
 
-        current_obj->type = CHOT_HANDLE_STRING;
+        current_obj->type = DUOPLOT_INTERNAL_CHOT_HANDLE_STRING;
 
         const size_t handle_string_length = strnlen(text_label_handle.__handle->handle_string, 100U);
         current_obj->num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + (uint8_t)handle_string_length;
 
         memset(current_obj->data, 0, DUOPLOT_INTERNAL_MAX_NUM_FUNCTION_HEADER_BYTES);
 
-        current_obj->data[0U] = PT_NAME;
+        current_obj->data[0U] = DUOPLOT_INTERNAL_PT_NAME;
         current_obj->data[1U] = handle_string_length;
         memcpy(current_obj->data + 2U, text_label_handle.__handle->handle_string, handle_string_length);
 
         duoplot_internal_appendObjectIndexToCommunicationHeaderObjectLookupTable(
-            &(hdr.objects_lut), CHOT_HANDLE_STRING, hdr.obj_idx);
+            &(hdr.objects_lut), DUOPLOT_INTERNAL_CHOT_HANDLE_STRING, hdr.obj_idx);
 
         hdr.obj_idx += 1;
     }

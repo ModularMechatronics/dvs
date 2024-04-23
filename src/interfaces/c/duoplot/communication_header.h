@@ -11,7 +11,7 @@
 #include "duoplot/pp.h"
 
 #define DUOPLOT_INTERNAL_COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE ((uint8_t)(CHOT_UNKNOWN) + 1U)
-#define DUOPLOT_INTERNAL_PROPERTY_LOOKUP_TABLE_SIZE ((uint8_t)(PT_UNKNOWN) + 1U)
+#define DUOPLOT_INTERNAL_PROPERTY_LOOKUP_TABLE_SIZE ((uint8_t)(DUOPLOT_INTERNAL_PT_UNKNOWN) + 1U)
 
 typedef struct S_duoplot_internal_CommunicationHeaderObjectLookupTable
 {
@@ -19,7 +19,7 @@ typedef struct S_duoplot_internal_CommunicationHeaderObjectLookupTable
 
 } duoplot_internal_CommunicationHeaderObjectLookupTable;
 
-#define DUOPLOT_INTERNAL_NUM_FLAGS ((uint8_t)(PF_UNKNOWN) + 1U)
+#define DUOPLOT_INTERNAL_NUM_FLAGS ((uint8_t)(PDUOPLOT_INTERNAL_F_UNKNOWN) + 1U)
 
 DUOPLOT_WEAK void initduoplot_internal_CommunicationHeaderObjectLookupTable(
     duoplot_internal_CommunicationHeaderObjectLookupTable* const lut)
