@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "duoplot/communication.h"
 #include "duoplot/communication_header.h"
 #include "duoplot/constants.h"
 #include "duoplot/internal.h"
