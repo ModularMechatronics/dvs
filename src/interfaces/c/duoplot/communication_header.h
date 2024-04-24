@@ -10,7 +10,7 @@
 #include "duoplot/plot_properties.h"
 #include "duoplot/pp.h"
 
-#define DUOPLOT_INTERNAL_COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE ((uint8_t)(CHOT_UNKNOWN) + 1U)
+#define DUOPLOT_INTERNAL_COMMUNICATION_HEADER_OBJECT_LOOKUP_TABLE_SIZE ((uint8_t)(DUOPLOT_INTERNAL_CHOT_UNKNOWN) + 1U)
 #define DUOPLOT_INTERNAL_PROPERTY_LOOKUP_TABLE_SIZE ((uint8_t)(DUOPLOT_INTERNAL_PT_UNKNOWN) + 1U)
 
 typedef struct S_duoplot_internal_CommunicationHeaderObjectLookupTable
@@ -19,7 +19,7 @@ typedef struct S_duoplot_internal_CommunicationHeaderObjectLookupTable
 
 } duoplot_internal_CommunicationHeaderObjectLookupTable;
 
-#define DUOPLOT_INTERNAL_NUM_FLAGS ((uint8_t)(PDUOPLOT_INTERNAL_F_UNKNOWN) + 1U)
+#define DUOPLOT_INTERNAL_NUM_FLAGS ((uint8_t)(DUOPLOT_INTERNAL_PF_UNKNOWN) + 1U)
 
 DUOPLOT_WEAK void initduoplot_internal_CommunicationHeaderObjectLookupTable(
     duoplot_internal_CommunicationHeaderObjectLookupTable* const lut)
@@ -29,7 +29,7 @@ DUOPLOT_WEAK void initduoplot_internal_CommunicationHeaderObjectLookupTable(
 
 DUOPLOT_WEAK void duoplot_internal_appendObjectIndexToCommunicationHeaderObjectLookupTable(
     duoplot_internal_CommunicationHeaderObjectLookupTable* const lut,
-    const CommunicationHeaderObjectType type,
+    const duoplot_internal_CommunicationHeaderObjectType type,
     const uint8_t idx)
 {
     lut->data[(uint8_t)(type)] = idx;
@@ -55,7 +55,7 @@ typedef struct S_duoplot_internal_CommunicationHeader
 {
     duoplot_internal_CommunicationHeaderObject objects[DUOPLOT_INTERNAL_MAX_NUM_HEADER_OBJECTS];
     duoplot_internal_CommunicationHeaderObject props[DUOPLOT_INTERNAL_MAX_NUM_HEADER_OBJECTS];
-    Function function;
+    duoplot_internal_Function function;
     size_t obj_idx;
     size_t prop_idx;
     duoplot_internal_CommunicationHeaderObjectLookupTable objects_lut;
@@ -65,7 +65,7 @@ typedef struct S_duoplot_internal_CommunicationHeader
 } duoplot_internal_CommunicationHeader;
 
 DUOPLOT_WEAK void duoplot_internal_initCommunicationHeader(duoplot_internal_CommunicationHeader* const hdr,
-                                                           const Function function)
+                                                           const duoplot_internal_Function function)
 {
     hdr->function = function;
     hdr->obj_idx = 0U;

@@ -6,7 +6,7 @@
 
 typedef struct S_duoplot_internal_BaseHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
 } duoplot_internal_BaseHandle;
 
@@ -32,14 +32,14 @@ typedef struct S_duoplot_DropdownMenuState
 
 typedef struct S_duoplot_ButtonInternalHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
     bool is_pressed;
 } duoplot_internal_ButtonInternalHandle;
 
 typedef struct S_duoplot_ListBoxInternalHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
 
     duoplot_ListBoxState state;
@@ -47,21 +47,21 @@ typedef struct S_duoplot_ListBoxInternalHandle
 
 typedef struct S_duoplot_SliderInternalHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
     duoplot_SliderState state;
 } duoplot_internal_SliderInternalHandle;
 
 typedef struct S_duoplot_TextLabelInternalHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
     char* text;
 } duoplot_internal_TextLabelInternalHandle;
 
 typedef struct S_duoplot_DropdownMenuInternalHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
 
     duoplot_DropdownMenuState state;
@@ -69,14 +69,14 @@ typedef struct S_duoplot_DropdownMenuInternalHandle
 
 typedef struct S_duoplot_CheckboxInternalHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
     bool is_checked;
 } duoplot_internal_CheckboxInternalHandle;
 
 typedef struct S_duoplot_RadioButtonGroupInternalHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
 
     duoplot_ListOfStrings buttons;
@@ -85,7 +85,7 @@ typedef struct S_duoplot_RadioButtonGroupInternalHandle
 
 typedef struct S_duoplot_EditableTextInternalHandle
 {
-    GuiElementType type;
+    duoplot_internal_GuiElementType type;
     char* handle_string;
     char* text;
     bool enter_pressed;

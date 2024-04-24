@@ -5,7 +5,9 @@
 #include "duoplot/math/utils.h"
 #include "duoplot/pp.h"
 
-DUOPLOT_WEAK duoplot_Matrix duoplot_createMatrix(const size_t num_rows, const size_t num_cols, const DataType data_type)
+DUOPLOT_WEAK duoplot_Matrix duoplot_createMatrix(const size_t num_rows,
+                                                 const size_t num_cols,
+                                                 const duoplot_internal_DataType data_type)
 {
     duoplot_Matrix mat;
     mat.data_type = data_type;

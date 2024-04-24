@@ -10,7 +10,7 @@
 
 typedef struct S_duoplot_internal_CommunicationHeaderObject
 {
-    CommunicationHeaderObjectType type;
+    duoplot_internal_CommunicationHeaderObjectType type;
     uint8_t num_bytes;
     uint8_t data[DUOPLOT_INTERNAL_MAX_NUM_FUNCTION_HEADER_BYTES];
 } duoplot_internal_CommunicationHeaderObject;
@@ -23,7 +23,7 @@ typedef struct S_duoplot_Property
 DUOPLOT_WEAK duoplot_Property duoplot_internal_getLastCommHdrObj()
 {
     duoplot_internal_CommunicationHeaderObject obj;
-    obj.type = CHOT_UNKNOWN;
+    obj.type = DUOPLOT_INTERNAL_CHOT_UNKNOWN;
 
     const duoplot_Property* const prop = (duoplot_Property*)(&obj);
 

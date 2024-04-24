@@ -4,7 +4,7 @@
 #include "duoplot/math/utils.h"
 #include "duoplot/math/vector/vector_types.h"
 
-DUOPLOT_WEAK duoplot_Vector duoplot_createVector(const size_t num_elements, const DataType data_type)
+DUOPLOT_WEAK duoplot_Vector duoplot_createVector(const size_t num_elements, const duoplot_internal_DataType data_type)
 {
     duoplot_Vector vec;
     vec.data_type = data_type;

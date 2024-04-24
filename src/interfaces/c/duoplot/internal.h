@@ -93,7 +93,7 @@ DUOPLOT_WEAK void duoplot_internal_sendThroughTcpInterface(const uint8_t* const 
                                                                                                                        \
         duoplot_Property __prp = __first_prop;                                                                         \
         duoplot_internal_CommunicationHeaderObject* __obj_ptr = (duoplot_internal_CommunicationHeaderObject*)(&__prp); \
-        while (__obj_ptr->type != CHOT_UNKNOWN)                                                                        \
+        while (__obj_ptr->type != DUOPLOT_INTERNAL_CHOT_UNKNOWN)                                                       \
         {                                                                                                              \
             duoplot_internal_appendProperty(&__hdr, __obj_ptr);                                                        \
             __prp = va_arg(__args, duoplot_Property);                                                                  \
@@ -114,7 +114,7 @@ DUOPLOT_WEAK void duoplot_internal_sendThroughTcpInterface(const uint8_t* const 
     }
 
 DUOPLOT_WEAK void duoplot_internal_appendDims(duoplot_internal_CommunicationHeader* hdr,
-                                              const CommunicationHeaderObjectType type,
+                                              const duoplot_internal_CommunicationHeaderObjectType type,
                                               const duoplot_internal_Dimension2D dims)
 {
     duoplot_internal_CommunicationHeaderObject* const current_obj = hdr->objects + hdr->obj_idx;

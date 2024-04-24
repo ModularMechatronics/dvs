@@ -6,7 +6,7 @@
 #include "duoplot/enumerations.h"
 #include "duoplot/pp.h"
 
-DUOPLOT_WEAK size_t duoplot_internal_dataTypeToNumBytes(const DataType dt)
+DUOPLOT_WEAK size_t duoplot_internal_dataTypeToNumBytes(const duoplot_internal_DataType dt)
 {
     switch (dt)
     {

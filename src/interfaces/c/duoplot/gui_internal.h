@@ -554,7 +554,7 @@ DUOPLOT_WEAK duoplot_internal_BaseHandle* duoplot_internal_createTextLabel(
     return handle;
 }
 
-DUOPLOT_WEAK void duoplot_internal_populateGuiElementWithData(const GuiElementType type,
+DUOPLOT_WEAK void duoplot_internal_populateGuiElementWithData(const duoplot_internal_GuiElementType type,
                                                               const char* const handle_string,
                                                               const duoplot_internal_UInt8Array* const data_view)
 {
@@ -661,7 +661,7 @@ DUOPLOT_WEAK void duoplot_internal_updateGuiState(const duoplot_internal_Receive
     uint8_t* const raw_data = received_gui_data->data;
 
     // Receive[1]: Gui element type (uint8_t)
-    const GuiElementType type = (GuiElementType)(raw_data[idx]);
+    const duoplot_internal_GuiElementType type = (duoplot_internal_GuiElementType)(raw_data[idx]);
     idx += sizeof(uint8_t);
 
     // Receive[2]: Handle string length (uint8_t)
@@ -921,7 +921,7 @@ DUOPLOT_WEAK void duoplot_internal_callGuiCallbackFunction(const duoplot_interna
 
     uint8_t* const raw_data = received_gui_data->data;
 
-    const GuiElementType type = (GuiElementType)(raw_data[idx]);
+    const duoplot_internal_GuiElementType type = (duoplot_internal_GuiElementType)(raw_data[idx]);
     idx += sizeof(uint8_t);
 
     const uint8_t handle_string_length = (uint8_t)(raw_data[idx]);
@@ -1044,7 +1044,7 @@ DUOPLOT_WEAK void duoplot_internal_waitForSyncForAllGuiElements()
     for (size_t k = 0; k < num_gui_objects; k++)
     {
         // Receive[1]: Gui element type (uint8_t)
-        const GuiElementType type = (GuiElementType)(raw_data[idx]);
+        const duoplot_internal_GuiElementType type = (duoplot_internal_GuiElementType)(raw_data[idx]);
         idx += sizeof(uint8_t);
 
         // Receive[2]: Handle string length (uint8_t)

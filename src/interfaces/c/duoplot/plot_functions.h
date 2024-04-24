@@ -14,7 +14,7 @@
 DUOPLOT_WEAK void duoplot_internal_plotFunction3D(const duoplot_Vector* const x,
                                                   const duoplot_Vector* const y,
                                                   const duoplot_Vector* const z,
-                                                  const Function fcn,
+                                                  const duoplot_internal_Function fcn,
                                                   const duoplot_Property first_prop,
                                                   ...)
 {
@@ -31,7 +31,7 @@ DUOPLOT_WEAK void duoplot_internal_plotFunction3D(const duoplot_Vector* const x,
 
 DUOPLOT_WEAK void duoplot_internal_plotFunction2D(const duoplot_Vector* const x,
                                                   const duoplot_Vector* const y,
-                                                  const Function fcn,
+                                                  const duoplot_internal_Function fcn,
                                                   const duoplot_Property first_prop,
                                                   ...)
 {

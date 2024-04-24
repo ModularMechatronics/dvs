@@ -10,7 +10,6 @@ Pre release:
   that is unmovable...
 - Solve all TODOs
 - Remove "src/interfaces/c/duoplot/communication.h", doesn't seem to be used?
-- In C interface, plot properties that do not take anything, can they be constants? What about flags?
 - Align names of Image types in C interface with that of C++ interface
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles

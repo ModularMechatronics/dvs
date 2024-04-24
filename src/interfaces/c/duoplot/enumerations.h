@@ -42,8 +42,8 @@ typedef enum S_duoplot_internal_CommunicationHeaderObjectType
     DUOPLOT_INTERNAL_CHOT_PROPERTY,
     DUOPLOT_INTERNAL_CHOT_ITEM_ID,
     DUOPLOT_INTERNAL_CHOT_NUM_NAMES,
-    CHOT_UNKNOWN
-} CommunicationHeaderObjectType;
+    DUOPLOT_INTERNAL_CHOT_UNKNOWN
+} duoplot_internal_CommunicationHeaderObjectType;
 
 typedef enum S_duoplot_internal_PropertyType
 {
@@ -141,7 +141,7 @@ typedef enum S_duoplot_internal_Function
     DUOPLOT_INTERNAL_F_SET_GUI_ELEMENT_VALUE,
     DUOPLOT_INTERNAL_F_SET_GUI_ELEMENT_STEP,
     DUOPLOT_INTERNAL_F_UNKNOWN
-} Function;
+} duoplot_internal_Function;
 
 typedef enum S_duoplot_internal_DataType
 {
@@ -156,7 +156,7 @@ typedef enum S_duoplot_internal_DataType
     DUOPLOT_INTERNAL_DT_UINT32,
     DUOPLOT_INTERNAL_DT_UINT64,
     DUOPLOT_INTERNAL_DT_UNKNOWN
-} DataType;
+} duoplot_internal_DataType;
 
 typedef enum S_duoplot_internal_ColorMapT
 {
@@ -168,7 +168,7 @@ typedef enum S_duoplot_internal_ColorMapT
     DUOPLOT_INTERNAL_CM_JET_SOFT,
     DUOPLOT_INTERNAL_CM_JET_BRIGHT,
     DUOPLOT_INTERNAL_CM_UNKNOWN
-} ColorMapT;
+} duoplot_internal_ColorMapT;
 
 typedef enum S_duoplot_internal_DistanceFromType
 {
@@ -179,7 +179,7 @@ typedef enum S_duoplot_internal_DistanceFromType
     DUOPLOT_INTERNAL_DFT_XZ,
     DUOPLOT_INTERNAL_DFT_YZ,
     DUOPLOT_INTERNAL_DFT_XYZ
-} DistanceFromType;
+} duoplot_internal_DistanceFromType;
 
 typedef enum S_duoplot_PropertyFlag
 {
@@ -190,7 +190,7 @@ typedef enum S_duoplot_PropertyFlag
     DUOPLOT_INTERNAL_PF_FAST_PLOT,
     DUOPLOT_INTERNAL_PF_EXCLUDE_FROM_SELECTION,
     DUOPLOT_INTERNAL_PF_SELECTABLE,
-    PDUOPLOT_INTERNAL_F_UNKNOWN
+    DUOPLOT_INTERNAL_PF_UNKNOWN
 } duoplot_PropertyFlag;
 
 typedef enum S_duoplot_internal_GuiElementType
@@ -206,6 +206,6 @@ typedef enum S_duoplot_internal_GuiElementType
     DUOPLOT_INTERNAL_GUI_ET_STATIC_BOX,
     DUOPLOT_INTERNAL_GUI_ET_PLOT_PANE,
     DUOPLOT_INTERNAL_GUI_ET_UNKNOWN
-} GuiElementType;
+} duoplot_internal_GuiElementType;
 
 #endif  // DUOPLOT_ENUMERATIONS_H_

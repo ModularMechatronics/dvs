@@ -7,7 +7,7 @@
 
 DUOPLOT_WEAK duoplot_ImageC1 duoplot_createImageC1(const size_t num_rows,
                                                    const size_t num_cols,
-                                                   const DataType data_type)
+                                                   const duoplot_internal_DataType data_type)
 {
     duoplot_ImageC1 img;
     img.data_type = data_type;
@@ -153,7 +153,7 @@ DUOPLOT_WEAK duoplot_ImageC1U64 duoplot_toImageC1U64(const duoplot_ImageC1 img)
 
 DUOPLOT_WEAK duoplot_ImageC3 duoplot_createImageC3(const size_t num_rows,
                                                    const size_t num_cols,
-                                                   const DataType data_type)
+                                                   const duoplot_internal_DataType data_type)
 {
     duoplot_ImageC3 img;
     img.data_type = data_type;
