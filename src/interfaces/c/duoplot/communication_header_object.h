@@ -12,6 +12,7 @@ typedef struct S_duoplot_internal_CommunicationHeaderObject
 {
     duoplot_internal_CommunicationHeaderObjectType type;
     uint8_t num_bytes;
+    uint8_t is_flag;
     uint8_t data[DUOPLOT_INTERNAL_MAX_NUM_FUNCTION_HEADER_BYTES];
 } duoplot_internal_CommunicationHeaderObject;
 

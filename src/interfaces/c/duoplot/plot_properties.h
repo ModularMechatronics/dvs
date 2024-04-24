@@ -12,6 +12,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_Color(const uint8_t red, const uint8_t gre
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + 3U * sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
 
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_COLOR;
     hdr_obj.data[1U] = red;
@@ -29,6 +30,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_FaceColor_None()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + 3U * sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_FACE_COLOR;
     hdr_obj.data[1U] = 0U;
     hdr_obj.data[2U] = 0U;
@@ -46,6 +49,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_EdgeColor_None()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + 3U * sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_EDGE_COLOR;
     hdr_obj.data[1U] = 0U;
     hdr_obj.data[2U] = 0U;
@@ -63,6 +68,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_FaceColor(const uint8_t red, const uint8_t
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + 3U * sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_FACE_COLOR;
     hdr_obj.data[1U] = red;
     hdr_obj.data[2U] = green;
@@ -80,6 +87,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_EdgeColor(const uint8_t red, const uint8_t
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + 3U * sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_EDGE_COLOR;
     hdr_obj.data[1U] = red;
     hdr_obj.data[2U] = green;
@@ -97,6 +106,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapJet()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_COLOR_MAP;
     hdr_obj.data[1U] = (uint8_t)DUOPLOT_INTERNAL_CM_JET;
 
@@ -111,6 +122,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapHsv()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_COLOR_MAP;
     hdr_obj.data[1U] = (uint8_t)DUOPLOT_INTERNAL_CM_HSV;
 
@@ -125,6 +138,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapMagma()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     memset(hdr_obj.data, 0, DUOPLOT_INTERNAL_MAX_NUM_FUNCTION_HEADER_BYTES);
 
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_COLOR_MAP;
@@ -141,6 +156,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapViridis()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_COLOR_MAP;
     hdr_obj.data[1U] = (uint8_t)DUOPLOT_INTERNAL_CM_VIRIDIS;
 
@@ -155,6 +172,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapPastel()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_COLOR_MAP;
     hdr_obj.data[1U] = (uint8_t)DUOPLOT_INTERNAL_CM_PASTEL;
 
@@ -169,6 +188,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapJetSoft()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_COLOR_MAP;
     hdr_obj.data[1U] = (uint8_t)DUOPLOT_INTERNAL_CM_JET_SOFT;
 
@@ -183,6 +204,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_internal_ColorMapJetBright()
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_COLOR_MAP;
     hdr_obj.data[1U] = (uint8_t)DUOPLOT_INTERNAL_CM_JET_BRIGHT;
 
@@ -197,6 +220,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_Alpha(const float alpha)
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(float);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_ALPHA;
     memcpy(hdr_obj.data + 1U, &alpha, sizeof(float));
 
@@ -211,6 +236,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_PointSize(const int8_t point_size)
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_POINT_SIZE;
     hdr_obj.data[1U] = point_size;
 
@@ -225,6 +252,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_LineWidth(const uint8_t line_width)
 
     hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
     hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 0U;
+
     hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_LINE_WIDTH;
     hdr_obj.data[1U] = line_width;
 
@@ -232,6 +261,29 @@ DUOPLOT_WEAK duoplot_Property duoplot_LineWidth(const uint8_t line_width)
 
     return *prop;
 }
+
+DUOPLOT_WEAK duoplot_Property duoplot_internal_Flag(const duoplot_PropertyFlag flag)
+{
+    duoplot_internal_CommunicationHeaderObject hdr_obj;
+
+    hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
+    hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t);
+    hdr_obj.is_flag = 1U;
+
+    hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)flag;
+
+    const duoplot_Property* const prop = (duoplot_Property*)(&hdr_obj);
+
+    return *prop;
+}
+
+#define duoplot_Flag_PERSISTENT duoplot_internal_Flag(DUOPLOT_INTERNAL_PF_PERSISTENT)
+#define duoplot_Flag_APPENDABLE duoplot_internal_Flag(DUOPLOT_INTERNAL_PF_APPENDABLE)
+#define duoplot_Flag_INTERPOLATE_COLORMAP duoplot_internal_Flag(DUOPLOT_INTERNAL_PF_INTERPOLATE_COLORMAP)
+#define duoplot_Flag_UPDATABLE duoplot_internal_Flag(DUOPLOT_INTERNAL_PF_UPDATABLE)
+#define duoplot_Flag_FAST_PLOT duoplot_internal_Flag(DUOPLOT_INTERNAL_PF_FAST_PLOT)
+#define duoplot_Flag_EXCLUDE_FROM_SELECTION duoplot_internal_Flag(DUOPLOT_INTERNAL_PF_EXCLUDE_FROM_SELECTION)
+#define duoplot_Flag_SELECTABLE duoplot_internal_Flag(DUOPLOT_INTERNAL_PF_SELECTABLE)
 
 #define duoplot_Color_RED duoplot_Color(255, 0, 0)
 #define duoplot_Color_GREEN duoplot_Color(0, 255, 0)

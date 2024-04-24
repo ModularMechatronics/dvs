@@ -80,17 +80,24 @@ DUOPLOT_WEAK void duoplot_internal_initCommunicationHeader(duoplot_internal_Comm
 DUOPLOT_WEAK void duoplot_internal_appendProperty(duoplot_internal_CommunicationHeader* const hdr,
                                                   const duoplot_internal_CommunicationHeaderObject* const prop)
 {
-    if ((hdr->prop_idx + 1U) == DUOPLOT_INTERNAL_MAX_NUM_HEADER_OBJECTS)
+    if (prop->is_flag == 1U)
     {
-        printf("Tried to append header objects to full duoplot_internal_CommunicationHeader!\n");
-        exit(0);
+        hdr->flags[prop->data[0]] = 1U;
     }
+    else
+    {
+        if ((hdr->prop_idx + 1U) == DUOPLOT_INTERNAL_MAX_NUM_HEADER_OBJECTS)
+        {
+            printf("Tried to append header objects to full duoplot_internal_CommunicationHeader!\n");
+            exit(0);
+        }
 
-    const PropertyType pt = (PropertyType)(prop->data[0]);
+        const PropertyType pt = (PropertyType)(prop->data[0]);
 
-    hdr->props[hdr->prop_idx] = *prop;
-    duoplot_internal_appendPropertyIndexToPropertyLookupTable(&(hdr->props_lut), pt, hdr->prop_idx);
-    hdr->prop_idx = hdr->prop_idx + 1;
+        hdr->props[hdr->prop_idx] = *prop;
+        duoplot_internal_appendPropertyIndexToPropertyLookupTable(&(hdr->props_lut), pt, hdr->prop_idx);
+        hdr->prop_idx = hdr->prop_idx + 1;
+    }
 }
 
 #endif  // DUOPLOT_COMMUNICATION_HEADER_H

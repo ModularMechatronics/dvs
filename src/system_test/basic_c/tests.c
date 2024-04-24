@@ -13,10 +13,10 @@ void testPlot()
     duoplot_setCurrentElement("p_view_0");
     duoplot_clearView();
     const duoplot_Vec3D min_vec = {-1.0, -1.0, -1.0};
-    const duoplot_Vec3D max_vec = {1.0, 1.0, 2.0};
+    const duoplot_Vec3D max_vec = {12.0, 1.0, 2.0};
     duoplot_axis(min_vec, max_vec);
 
-    duoplot_plot(x, y, duoplot_Color(0, 0, 255), duoplot_LineWidth(53));
+    duoplot_plot(x, y, duoplot_Color_BLUE, duoplot_LineWidth(53), duoplot_Alpha(0.7f));
 }
 
 void testPlot3()
