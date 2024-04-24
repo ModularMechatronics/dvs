@@ -8,45 +8,45 @@
 #include "duoplot/math/vector_low_dim/vec3.h"
 #include "duoplot/pp.h"
 
-typedef struct S_duoplot_Triangle3DF
+typedef struct S_duoplot_Triangle3F
 {
     duoplot_Point3F p0;
     duoplot_Point3F p1;
     duoplot_Point3F p2;
-} duoplot_Triangle3DF;
+} duoplot_Triangle3F;
 
-typedef struct S_duoplot_Triangle3DD
+typedef struct S_duoplot_Triangle3D
 {
     duoplot_Point3D p0;
     duoplot_Point3D p1;
     duoplot_Point3D p2;
-} duoplot_Triangle3DD;
+} duoplot_Triangle3D;
 
-typedef struct S_duoplot_Triangle3DDArray
+typedef struct S_duoplot_Triangle3DArray
 {
-    duoplot_Triangle3DD* elements;
+    duoplot_Triangle3D* elements;
     size_t num_elements;
-} duoplot_Triangle3DDArray;
+} duoplot_Triangle3DArray;
 
-typedef struct S_duoplot_Triangle3DFArray
+typedef struct S_duoplot_Triangle3FArray
 {
-    duoplot_Triangle3DF* elements;
+    duoplot_Triangle3F* elements;
     size_t num_elements;
-} duoplot_Triangle3DFArray;
+} duoplot_Triangle3FArray;
 
-DUOPLOT_WEAK duoplot_Triangle3DFArray duoplot_createTriangle3DFArray(const size_t num_elements)
+DUOPLOT_WEAK duoplot_Triangle3FArray duoplot_createTriangle3FArray(const size_t num_elements)
 {
-    duoplot_Triangle3DFArray array;
-    array.elements = malloc(sizeof(duoplot_Triangle3DF) * num_elements);
+    duoplot_Triangle3FArray array;
+    array.elements = malloc(sizeof(duoplot_Triangle3F) * num_elements);
     array.num_elements = num_elements;
 
     return array;
 }
 
-DUOPLOT_WEAK duoplot_Triangle3DDArray duoplot_createTriangle3DDArray(const size_t num_elements)
+DUOPLOT_WEAK duoplot_Triangle3DArray duoplot_createTriangle3DArray(const size_t num_elements)
 {
-    duoplot_Triangle3DDArray array;
-    array.elements = malloc(sizeof(duoplot_Triangle3DD) * num_elements);
+    duoplot_Triangle3DArray array;
+    array.elements = malloc(sizeof(duoplot_Triangle3D) * num_elements);
     array.num_elements = num_elements;
 
     return array;

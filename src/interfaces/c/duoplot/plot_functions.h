@@ -84,7 +84,7 @@ DUOPLOT_WEAK void duoplot_internal_drawMeshFunction(const duoplot_Point3DArray v
 
     duoplot_internal_sendHeaderAndTwoByteArrays(duoplot_internal_getSendFunction(),
                                                 (uint8_t*)(vertices.elements),
-                                                vertices.num_elements * sizeof(duoplot_Triangle3DD),
+                                                vertices.num_elements * sizeof(duoplot_Triangle3D),
                                                 (uint8_t*)(indices.elements),
                                                 indices.num_elements * sizeof(duoplot_IndexTriplet),
                                                 &hdr);

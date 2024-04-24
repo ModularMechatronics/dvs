@@ -23,6 +23,40 @@ DUOPLOT_WEAK duoplot_Property duoplot_Color(const uint8_t red, const uint8_t gre
     return *prop;
 }
 
+DUOPLOT_WEAK duoplot_Property duoplot_internal_FaceColor_None()
+{
+    duoplot_internal_CommunicationHeaderObject hdr_obj;
+
+    hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
+    hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + 3U * sizeof(uint8_t);
+    hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_FACE_COLOR;
+    hdr_obj.data[1U] = 0U;
+    hdr_obj.data[2U] = 0U;
+    hdr_obj.data[3U] = 0U;
+    hdr_obj.data[4U] = 0U;
+
+    const duoplot_Property* const prop = (duoplot_Property*)(&hdr_obj);
+
+    return *prop;
+}
+
+DUOPLOT_WEAK duoplot_Property duoplot_internal_EdgeColor_None()
+{
+    duoplot_internal_CommunicationHeaderObject hdr_obj;
+
+    hdr_obj.type = DUOPLOT_INTERNAL_CHOT_PROPERTY;
+    hdr_obj.num_bytes = sizeof(uint8_t) + sizeof(uint8_t) + 3U * sizeof(uint8_t);
+    hdr_obj.data[0U] = (DUOPLOT_INTERNAL_PROPERTY_TYPE_SERIALIZATION_TYPE)DUOPLOT_INTERNAL_PT_EDGE_COLOR;
+    hdr_obj.data[1U] = 0U;
+    hdr_obj.data[2U] = 0U;
+    hdr_obj.data[3U] = 0U;
+    hdr_obj.data[4U] = 0U;
+
+    const duoplot_Property* const prop = (duoplot_Property*)(&hdr_obj);
+
+    return *prop;
+}
+
 DUOPLOT_WEAK duoplot_Property duoplot_FaceColor(const uint8_t red, const uint8_t green, const uint8_t blue)
 {
     duoplot_internal_CommunicationHeaderObject hdr_obj;
@@ -33,7 +67,7 @@ DUOPLOT_WEAK duoplot_Property duoplot_FaceColor(const uint8_t red, const uint8_t
     hdr_obj.data[1U] = red;
     hdr_obj.data[2U] = green;
     hdr_obj.data[3U] = blue;
-    hdr_obj.data[4U] = 1U;  // TODO: use_color
+    hdr_obj.data[4U] = 1U;
 
     const duoplot_Property* const prop = (duoplot_Property*)(&hdr_obj);
 
@@ -236,5 +270,8 @@ DUOPLOT_WEAK duoplot_Property duoplot_LineWidth(const uint8_t line_width)
 #define duoplot_ColorMap_PASTEL duoplot_internal_ColorMapPastel()
 #define duoplot_ColorMap_JET_SOFT duoplot_internal_ColorMapJetSoft()
 #define duoplot_ColorMap_JET_BRIGHT duoplot_internal_ColorMapJetBright()
+
+#define duoplot_FaceColor_NONE duoplot_internal_FaceColor_None()
+#define duoplot_EdgeColor_NONE duoplot_internal_EdgeColor_None()
 
 #endif  // DUOPLOT_PLOT_PROPERTIES_H_

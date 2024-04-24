@@ -4,12 +4,12 @@ Pre release:
 - Support for Windows and Linux
 - Add all keybindings to the help pane
 - Clean up and sanitize CMakeLists.txt files, so that they are "neat"
-- Finish python interface (and delete old C++ reference code in duoplot.py)
+- In python interface, delete old C++ reference code in duoplot.py
+- GUI interface might be broken for C interface?
 - Adding a slider with the wrong aspect ratio of the window still gives crap result, with a vertical slider
   that is unmovable...
 - Solve all TODOs
 - Remove "src/interfaces/c/duoplot/communication.h", doesn't seem to be used?
-- In C interface, plot properties should return type "Property" or something, instead of CommuncationHeaderObject
 - In C interface, plot properties that do not take anything, can they be constants? What about flags?
 - Align names of Image types in C interface with that of C++ interface
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
