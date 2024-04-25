@@ -7,8 +7,8 @@
 void testPlot()
 {
     const size_t num_elements = 100;
-    duoplot_VectorF x = duoplot_vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
-    duoplot_VectorF y = duoplot_vector_sinF(x);
+    duoplot_VectorF x = duoplot_Vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
+    duoplot_VectorF y = duoplot_Vector_sinF(x);
 
     duoplot_setCurrentElement("p_view_0");
     duoplot_clearView();
@@ -22,9 +22,9 @@ void testPlot()
 void testPlot3()
 {
     const size_t num_elements = 100;
-    duoplot_VectorF x = duoplot_vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
-    duoplot_VectorF y = duoplot_vector_sinF(x);
-    duoplot_VectorF z = duoplot_vector_cosF(x);
+    duoplot_VectorF x = duoplot_Vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
+    duoplot_VectorF y = duoplot_Vector_sinF(x);
+    duoplot_VectorF z = duoplot_Vector_cosF(x);
 
     duoplot_setCurrentElement("p_view_0");
     duoplot_clearView();
@@ -34,8 +34,8 @@ void testPlot3()
 void testScatter()
 {
     const size_t num_elements = 100;
-    duoplot_VectorF x = duoplot_vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
-    duoplot_VectorF y = duoplot_vector_sinF(x);
+    duoplot_VectorF x = duoplot_Vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
+    duoplot_VectorF y = duoplot_Vector_sinF(x);
 
     duoplot_setCurrentElement("p_view_0");
     duoplot_clearView();
@@ -45,9 +45,9 @@ void testScatter()
 void testScatter3()
 {
     const size_t num_elements = 100;
-    duoplot_VectorF x = duoplot_vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
-    duoplot_VectorF y = duoplot_vector_sinF(x);
-    duoplot_VectorF z = duoplot_vector_cosF(x);
+    duoplot_VectorF x = duoplot_Vector_linspaceFromPointsAndCountF(0.1, 10.8, num_elements);
+    duoplot_VectorF y = duoplot_Vector_sinF(x);
+    duoplot_VectorF z = duoplot_Vector_cosF(x);
 
     duoplot_setCurrentElement("p_view_0");
     duoplot_clearView();
@@ -61,9 +61,9 @@ void testSurf()
 
     const duoplot_MatrixD x = mp.m0, y = mp.m1;
 
-    const duoplot_MatrixD rx = duoplot_matrix_sinD(x);
-    const duoplot_MatrixD ry = duoplot_matrix_cosD(y);
-    const duoplot_MatrixD z = duoplot_matrix_elementWiseMultiplyD(rx, ry);
+    const duoplot_MatrixD rx = duoplot_Matrix_sinD(x);
+    const duoplot_MatrixD ry = duoplot_Matrix_cosD(y);
+    const duoplot_MatrixD z = duoplot_Matrix_elementWiseMultiplyD(rx, ry);
 
     duoplot_setCurrentElement("p_view_0");
     duoplot_clearView();

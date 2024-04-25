@@ -57,7 +57,7 @@ duoplot_meshgridD(const double x0, const double x1, const double y0, const doubl
     return mp;
 }
 
-DUOPLOT_WEAK duoplot_MatrixD duoplot_matrix_sinD(const duoplot_MatrixD mat)
+DUOPLOT_WEAK duoplot_MatrixD duoplot_Matrix_sinD(const duoplot_MatrixD mat)
 {
     duoplot_MatrixD mat_out = duoplot_createMatrixD(mat.num_rows, mat.num_cols);
 
@@ -72,7 +72,7 @@ DUOPLOT_WEAK duoplot_MatrixD duoplot_matrix_sinD(const duoplot_MatrixD mat)
     return mat_out;
 }
 
-DUOPLOT_WEAK duoplot_MatrixD duoplot_matrix_cosD(const duoplot_MatrixD mat)
+DUOPLOT_WEAK duoplot_MatrixD duoplot_Matrix_cosD(const duoplot_MatrixD mat)
 {
     duoplot_MatrixD mat_out = duoplot_createMatrixD(mat.num_rows, mat.num_cols);
 
@@ -87,7 +87,7 @@ DUOPLOT_WEAK duoplot_MatrixD duoplot_matrix_cosD(const duoplot_MatrixD mat)
     return mat_out;
 }
 
-DUOPLOT_WEAK duoplot_MatrixD duoplot_matrix_elementWiseMultiplyD(const duoplot_MatrixD m0, const duoplot_MatrixD m1)
+DUOPLOT_WEAK duoplot_MatrixD duoplot_Matrix_elementWiseMultiplyD(const duoplot_MatrixD m0, const duoplot_MatrixD m1)
 {
     duoplot_MatrixD mat_out = duoplot_createMatrixD(m0.num_rows, m0.num_cols);
 
