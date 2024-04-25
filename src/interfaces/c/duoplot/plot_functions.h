@@ -90,7 +90,7 @@ DUOPLOT_WEAK void duoplot_internal_drawMeshFunction(const duoplot_Point3DArray v
                                                 &hdr);
 }
 
-DUOPLOT_WEAK void duoplot_internal_imShowFunction(const duoplot_ImageC3* const img,
+DUOPLOT_WEAK void duoplot_internal_imShowFunction(const duoplot_ImageRGB* const img,
                                                   const duoplot_Property first_prop,
                                                   ...)
 {
@@ -115,7 +115,7 @@ DUOPLOT_WEAK void duoplot_internal_imShowFunction(const duoplot_ImageC3* const i
 }
 
 #define duoplot_imShow(img, ...) \
-    duoplot_internal_imShowFunction((duoplot_ImageC3*)&img, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
+    duoplot_internal_imShowFunction((duoplot_ImageRGB*)&img, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())
 
 #define duoplot_drawMesh(vertices, indices, ...) \
     duoplot_internal_drawMeshFunction(vertices, indices, ##__VA_ARGS__, duoplot_internal_getLastCommHdrObj())

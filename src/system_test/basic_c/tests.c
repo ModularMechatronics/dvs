@@ -151,8 +151,8 @@ void testDrawPlaneYZ()
 void testImShow()
 {
     const uint32_t num_rows = 800, num_cols = 800;
-    duoplot_ImageC3F img3 = duoplot_createImageC3F(num_rows, num_cols);
-    duoplot_ImageC1F img1 = duoplot_createImageC1F(num_rows, num_cols);
+    duoplot_ImageRGBF img3 = duoplot_createImageRGBF(num_rows, num_cols);
+    duoplot_ImageGrayF img1 = duoplot_createImageGrayF(num_rows, num_cols);
 
     const double max_val = num_rows * num_cols;
     const size_t num_elements = num_rows * num_cols;

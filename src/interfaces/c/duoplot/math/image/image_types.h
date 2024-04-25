@@ -5,7 +5,7 @@
 
 #include "duoplot/enumerations.h"
 
-typedef struct S_duoplot_ImageC1
+typedef struct S_duoplot_ImageGray
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -13,9 +13,9 @@ typedef struct S_duoplot_ImageC1
     size_t num_cols;
     uint8_t* data;
 
-} duoplot_ImageC1;
+} duoplot_ImageGray;
 
-typedef struct S_duoplot_ImageC1F
+typedef struct S_duoplot_ImageGrayF
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -23,9 +23,9 @@ typedef struct S_duoplot_ImageC1F
     size_t num_cols;
     float* data;
 
-} duoplot_ImageC1F;
+} duoplot_ImageGrayF;
 
-typedef struct S_duoplot_ImageC1D
+typedef struct S_duoplot_ImageGrayD
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -33,9 +33,9 @@ typedef struct S_duoplot_ImageC1D
     size_t num_cols;
     double* data;
 
-} duoplot_ImageC1D;
+} duoplot_ImageGrayD;
 
-typedef struct S_duoplot_ImageC1S8
+typedef struct S_duoplot_ImageGrayS8
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -43,9 +43,9 @@ typedef struct S_duoplot_ImageC1S8
     size_t num_cols;
     int8_t* data;
 
-} duoplot_ImageC1S8;
+} duoplot_ImageGrayS8;
 
-typedef struct S_duoplot_ImageC1S16
+typedef struct S_duoplot_ImageGrayS16
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -53,9 +53,9 @@ typedef struct S_duoplot_ImageC1S16
     size_t num_cols;
     int16_t* data;
 
-} duoplot_ImageC1S16;
+} duoplot_ImageGrayS16;
 
-typedef struct S_duoplot_ImageC1S32
+typedef struct S_duoplot_ImageGrayS32
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -63,9 +63,9 @@ typedef struct S_duoplot_ImageC1S32
     size_t num_cols;
     int32_t* data;
 
-} duoplot_ImageC1S32;
+} duoplot_ImageGrayS32;
 
-typedef struct S_duoplot_ImageC1S64
+typedef struct S_duoplot_ImageGrayS64
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -73,9 +73,9 @@ typedef struct S_duoplot_ImageC1S64
     size_t num_cols;
     int64_t* data;
 
-} duoplot_ImageC1S64;
+} duoplot_ImageGrayS64;
 
-typedef struct S_duoplot_ImageC1U8
+typedef struct S_duoplot_ImageGrayU8
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -83,9 +83,9 @@ typedef struct S_duoplot_ImageC1U8
     size_t num_cols;
     uint8_t* data;
 
-} duoplot_ImageC1U8;
+} duoplot_ImageGrayU8;
 
-typedef struct S_duoplot_ImageC1U16
+typedef struct S_duoplot_ImageGrayU16
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -93,9 +93,9 @@ typedef struct S_duoplot_ImageC1U16
     size_t num_cols;
     uint16_t* data;
 
-} duoplot_ImageC1U16;
+} duoplot_ImageGrayU16;
 
-typedef struct S_duoplot_ImageC1U32
+typedef struct S_duoplot_ImageGrayU32
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -103,9 +103,9 @@ typedef struct S_duoplot_ImageC1U32
     size_t num_cols;
     uint32_t* data;
 
-} duoplot_ImageC1U32;
+} duoplot_ImageGrayU32;
 
-typedef struct S_duoplot_ImageC1U64
+typedef struct S_duoplot_ImageGrayU64
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -113,9 +113,9 @@ typedef struct S_duoplot_ImageC1U64
     size_t num_cols;
     uint64_t* data;
 
-} duoplot_ImageC1U64;
+} duoplot_ImageGrayU64;
 
-typedef struct S_duoplot_ImageC3
+typedef struct S_duoplot_ImageRGB
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -123,9 +123,9 @@ typedef struct S_duoplot_ImageC3
     size_t num_cols;
     uint8_t* data;
 
-} duoplot_ImageC3;
+} duoplot_ImageRGB;
 
-typedef struct S_duoplot_ImageC3F
+typedef struct S_duoplot_ImageRGBF
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -133,9 +133,9 @@ typedef struct S_duoplot_ImageC3F
     size_t num_cols;
     float* data;
 
-} duoplot_ImageC3F;
+} duoplot_ImageRGBF;
 
-typedef struct S_duoplot_ImageC3D
+typedef struct S_duoplot_ImageRGBD
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -143,9 +143,9 @@ typedef struct S_duoplot_ImageC3D
     size_t num_cols;
     double* data;
 
-} duoplot_ImageC3D;
+} duoplot_ImageRGBD;
 
-typedef struct S_duoplot_ImageC3S8
+typedef struct S_duoplot_ImageRGBS8
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -153,9 +153,9 @@ typedef struct S_duoplot_ImageC3S8
     size_t num_cols;
     int8_t* data;
 
-} duoplot_ImageC3S8;
+} duoplot_ImageRGBS8;
 
-typedef struct S_duoplot_ImageC3S16
+typedef struct S_duoplot_ImageRGBS16
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -163,9 +163,9 @@ typedef struct S_duoplot_ImageC3S16
     size_t num_cols;
     int16_t* data;
 
-} duoplot_ImageC3S16;
+} duoplot_ImageRGBS16;
 
-typedef struct S_duoplot_ImageC3S32
+typedef struct S_duoplot_ImageRGBS32
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -173,9 +173,9 @@ typedef struct S_duoplot_ImageC3S32
     size_t num_cols;
     int32_t* data;
 
-} duoplot_ImageC3S32;
+} duoplot_ImageRGBS32;
 
-typedef struct S_duoplot_ImageC3S64
+typedef struct S_duoplot_ImageRGBS64
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -183,9 +183,9 @@ typedef struct S_duoplot_ImageC3S64
     size_t num_cols;
     int64_t* data;
 
-} duoplot_ImageC3S64;
+} duoplot_ImageRGBS64;
 
-typedef struct S_duoplot_ImageC3U8
+typedef struct S_duoplot_ImageRGBU8
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -193,9 +193,9 @@ typedef struct S_duoplot_ImageC3U8
     size_t num_cols;
     uint8_t* data;
 
-} duoplot_ImageC3U8;
+} duoplot_ImageRGBU8;
 
-typedef struct S_duoplot_ImageC3U16
+typedef struct S_duoplot_ImageRGBU16
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -203,9 +203,9 @@ typedef struct S_duoplot_ImageC3U16
     size_t num_cols;
     uint16_t* data;
 
-} duoplot_ImageC3U16;
+} duoplot_ImageRGBU16;
 
-typedef struct S_duoplot_ImageC3U32
+typedef struct S_duoplot_ImageRGBU32
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -213,9 +213,9 @@ typedef struct S_duoplot_ImageC3U32
     size_t num_cols;
     uint32_t* data;
 
-} duoplot_ImageC3U32;
+} duoplot_ImageRGBU32;
 
-typedef struct S_duoplot_ImageC3U64
+typedef struct S_duoplot_ImageRGBU64
 {
     duoplot_internal_DataType data_type;
     size_t num_bytes_per_element;
@@ -223,6 +223,6 @@ typedef struct S_duoplot_ImageC3U64
     size_t num_cols;
     uint64_t* data;
 
-} duoplot_ImageC3U64;
+} duoplot_ImageRGBU64;
 
 #endif  // DUOPLOT_MATH_IMAGE_IMAGE_TYPES_H_
