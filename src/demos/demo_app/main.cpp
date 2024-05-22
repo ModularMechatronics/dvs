@@ -74,6 +74,7 @@ int main(int argc, char* argv[])
                                       {"filtering_with_slider", small::testFilteringWithSliders},
                                       {"pid_tuner", small::testPidTuner},
                                       {"three_body_problem", small::testThreeBodyProblem},
+                                      {"solar_system", small::testSolarSystem},
                                       {"swirls", small::testSwirls},
                                       {"bouncing_balls", small::testBouncingBalls},
                                       {"series", small::testSeries},

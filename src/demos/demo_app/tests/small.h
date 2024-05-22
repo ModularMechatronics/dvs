@@ -1483,7 +1483,7 @@ void testPidTuner()
         using Vid = VectorInitializer<double>;
 
         duoplot::gui::getGuiElementHandle<duoplot::gui::TextLabelHandle>("tl_rt").setLabel("Rise time: " +
-                                                                                   std::to_string(t(ss_idx)));
+                                                                                           std::to_string(t(ss_idx)));
 
         setCurrentElement("p_view_0");
 
@@ -1531,23 +1531,29 @@ void testPidTuner()
 
     duoplot::gui::registerGuiCallback("slider_kp", [&](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
         const double val_kp = gui_element_handle.getNormalizedValue();
-        const double val_ki = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
-        const double val_kd = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
+        const double val_ki =
+            duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
+        const double val_kd =
+            duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
 
         plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
     });
 
     duoplot::gui::registerGuiCallback("slider_ki", [&](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
-        const double val_kp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
+        const double val_kp =
+            duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
         const double val_ki = gui_element_handle.getNormalizedValue();
-        const double val_kd = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
+        const double val_kd =
+            duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
 
         plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
     });
 
     duoplot::gui::registerGuiCallback("slider_kd", [&](const duoplot::gui::SliderHandle& gui_element_handle) -> void {
-        const double val_kp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
-        const double val_ki = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
+        const double val_kp =
+            duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
+        const double val_ki =
+            duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
         const double val_kd = gui_element_handle.getNormalizedValue();
 
         plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
@@ -1567,9 +1573,12 @@ void testPidTuner()
     waitForFlush();
     axis({0.0, -0.5}, {t(end_idx), 0.5});
 
-    const double val_kp = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
-    const double val_ki = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
-    const double val_kd = duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
+    const double val_kp =
+        duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kp").getNormalizedValue();
+    const double val_ki =
+        duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_ki").getNormalizedValue();
+    const double val_kd =
+        duoplot::gui::getGuiElementHandle<duoplot::gui::SliderHandle>("slider_kd").getNormalizedValue();
 
     plot_data(val_kp, val_ki, val_kd, sim_params, t, x, vx);
 
@@ -1580,6 +1589,205 @@ void testPidTuner()
 }
 
 void testThreeBodyProblem()
+{
+    const std::string project_file_path = "../../project_files/demo_black.duoplot";
+    openProjectFile(project_file_path);
+
+    struct Body
+    {
+        double x;
+        double y;
+        double vx;
+        double vy;
+        double ax;
+        double ay;
+
+        double m;
+
+        double min_vel;
+        double max_vel;
+
+        Vec3d F;
+
+        Vector<double> vec_x;
+        Vector<double> vec_y;
+
+        properties::Color ball_color;
+        properties::Color track_color;
+    };
+
+    std::vector<Body> bodies;
+
+    const size_t n_bodies = 3U;
+    const size_t n_its = 1000U;
+
+    assert(n_bodies == 3U && "Stuff is hardcoded to 3 bodies");
+
+    double theta = 0.0;
+
+    const auto f_rand = [] { return 2.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5); };
+
+    for (size_t k = 0; k < n_bodies; k++)
+    {
+        Body body;
+
+        body.x = std::cos(theta);
+        body.y = std::sin(theta);
+
+        body.vx = 0.05 * std::cos(theta + 3.0 * M_PI / 2.0) + f_rand();
+        body.vy = 0.05 * std::sin(theta + 3.0 * M_PI / 2.0) + f_rand();
+
+        theta += 2.0 * M_PI / static_cast<double>(n_bodies);
+
+        body.m = 0.5;
+
+        body.vec_x.resize(n_its);
+        body.vec_y.resize(n_its);
+
+        for (size_t i = 0; i < n_its; i++)
+        {
+            body.vec_x(i) = 0.0;
+            body.vec_y(i) = 0.0;
+        }
+
+        bodies.push_back(body);
+    }
+
+    bodies[0].ball_color = properties::Color{200, 0, 0};
+    bodies[1].ball_color = properties::Color{0, 200, 0};
+    bodies[2].ball_color = properties::Color{0, 0, 200};
+
+    bodies[0].track_color = properties::Color{255, 100, 100};
+    bodies[1].track_color = properties::Color{100, 255, 100};
+    bodies[2].track_color = properties::Color{100, 100, 255};
+
+    // bodies[0].m = 1.5;
+    // bodies[1].m = 2.0;
+    // bodies[2].m = 2.0;
+
+    const auto plot_bodies = [](const std::vector<Body>& bodies, const size_t it) -> void {
+        const size_t num_bodies = bodies.size();
+
+        Vector<double> x(num_bodies), y(num_bodies);
+        Vector<properties::Color> scatter_colors(num_bodies);
+
+        double y0 = 0.0;
+
+        for (size_t k = 0; k < num_bodies; k++)
+        {
+            x(k) = bodies[k].vec_x(it);
+            y(k) = bodies[k].vec_y(it);
+            y0 += y(k);
+            scatter_colors(k) = bodies[k].ball_color;
+        }
+
+        y0 /= 3.0;
+
+        axis({-2.0, -2.0 + y0, -4.0}, {2.0, 2.0 + y0, 4.0});
+
+        scatter(
+            x, y, scatter_colors, properties::ScatterStyle::DISC, properties::PointSize(20), properties::Color::BLACK);
+
+        if (it != 0U)
+        {
+            for (size_t k = 0; k < num_bodies; k++)
+            {
+                const VectorConstView x_vec{bodies[k].vec_x.data(), it + 1U};
+                const VectorConstView y_vec{bodies[k].vec_y.data(), it + 1U};
+
+                plot(x_vec, y_vec, bodies[k].track_color, properties::LineWidth(2.0f));
+            }
+        }
+
+        flushCurrentElement();
+    };
+
+    setCurrentElement("p0");
+    clearView();
+    axesSquare();
+    disableScaleOnRotation();
+    axis({-2.0, -2.0, -4.0}, {2.0, 2.0, 4.0});
+    view(-20, 47);
+
+    const double h = debug_value_args::getValue<double>("h", 0.01);
+    const double damping = 0.0001;
+    const double G = debug_value_args::getValue<double>("g", 1.0);
+
+    const auto update_body = [&](Body& body_to_update, const Body& other_body) -> void {
+        const double dx = body_to_update.x - other_body.x;
+        const double dy = body_to_update.y - other_body.y;
+
+        const double dx2 = dx * dx;
+        const double dy2 = dy * dy;
+
+        const double r = std::sqrt(dx2 + dy2);
+
+        body_to_update.ax += -G * other_body.m * dx / (r * r * r);
+        body_to_update.ay += -G * other_body.m * dy / (r * r * r);
+    };
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        for (size_t i = 0; i < n_bodies; i++)
+        {
+            Body& body_to_update = bodies[i];
+
+            for (size_t j = 0; j < n_bodies; j++)
+            {
+                if (i == j)
+                {
+                    continue;
+                }
+
+                const Body& other_body = bodies[j];
+
+                body_to_update.F.x = 0.0;
+                body_to_update.F.y = 0.0;
+
+                body_to_update.ax = 0.0;
+                body_to_update.ay = 0.0;
+
+                update_body(body_to_update, other_body);
+            }
+
+            if (std::abs(body_to_update.ax) > 10.0)
+            {
+                body_to_update.ax = 10.0 * body_to_update.ax / std::abs(body_to_update.ax);
+            }
+            if (std::abs(body_to_update.ay) > 10.0)
+            {
+                body_to_update.ay = 10.0 * body_to_update.ay / std::abs(body_to_update.ay);
+            }
+
+            body_to_update.vx += h * body_to_update.ax;
+            body_to_update.vy += h * body_to_update.ay;
+
+            body_to_update.x += h * body_to_update.vx;
+            body_to_update.y += h * body_to_update.vy;
+
+            body_to_update.vec_x(k) = body_to_update.x;
+            body_to_update.vec_y(k) = body_to_update.y;
+
+            // body_i.vx *= (1.0 - damping);
+            // body_i.vy *= (1.0 - damping);
+        }
+    }
+
+    disableAutomaticAxesAdjustment();
+    disableScaleOnRotation();
+    waitForFlush();
+
+    view(0, -90);
+
+    for (size_t k = 0; k < n_its; k++)
+    {
+        plot_bodies(bodies, k);
+
+        softClearView();
+    }
+}
+
+void testSolarSystem()
 {
     const std::string project_file_path = "../../project_files/small_demo.duoplot";
     openProjectFile(project_file_path);
@@ -1691,6 +1899,8 @@ void testThreeBodyProblem()
 
     setCurrentElement("p_view_0");
     clearView();
+    axesSquare();
+    disableScaleOnRotation();
     axis({-2.0, -2.0, -4.0}, {2.0, 2.0, 4.0});
     view(-20, 47);
 
@@ -1798,7 +2008,7 @@ void testThreeBodyProblem()
             const double v_k = v(k);
             const double v_n = (v_k - body_i.min_vel) / delta;
 
-            body_i.colors(k) = calculateColormapJet(v_n);
+            body_i.colors(k) = calculateColormapJetSoft(v_n);
         }
     }
 
