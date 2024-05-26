@@ -1,10 +1,19 @@
-#ifndef DEMOS_ARGS_H
-#define DEMOS_ARGS_H
+#ifndef COMMON_DEBUG_VALUE_ARGS_H
+#define COMMON_DEBUG_VALUE_ARGS_H
 
 #include <cstdint>
 #include <map>
 #include <string>
 #include <type_traits>
+
+/*
+* Usage:
+* If the following has been added in the code:
+const double size_bias = debug_value_args::getValue<double>("size-bias", 3.0);
+
+
+* ./binary_name --size-bias 4.0 -q 3
+*/
 
 namespace debug_value_args
 {
@@ -280,4 +289,4 @@ template <> inline bool getValue(const std::string& arg_name, const bool& defaul
 
 }  // namespace debug_value_args
 
-#endif  // DEMOS_ARGS_H
+#endif  // COMMON_DEBUG_VALUE_ARGS_H

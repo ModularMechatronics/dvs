@@ -1741,9 +1741,6 @@ void testThreeBodyProblem()
 
                 const Body& other_body = bodies[j];
 
-                body_to_update.F.x = 0.0;
-                body_to_update.F.y = 0.0;
-
                 body_to_update.ax = 0.0;
                 body_to_update.ay = 0.0;
 
@@ -1789,8 +1786,12 @@ void testThreeBodyProblem()
 
 void testSolarSystem()
 {
-    const std::string project_file_path = "../../project_files/small_demo.duoplot";
+    const std::string project_file_path = "../../project_files/demo_white.duoplot";
     openProjectFile(project_file_path);
+
+    // Run with
+    // ./demos/demo_app/demos small solar_system -g 5 -h 0.05 --ampl 8 --its 400 --lw 3
+    // Show with perspective view
 
     struct Body
     {
@@ -1800,6 +1801,9 @@ void testSolarSystem()
         double vx;
         double vy;
         double vz;
+        double ax;
+        double ay;
+        double az;
         double m;
 
         double min_vel;
@@ -1819,8 +1823,13 @@ void testSolarSystem()
 
     std::vector<Body> bodies;
 
-    const size_t n_bodies = 4;
-    const size_t n_its = 500;
+    const size_t n_bodies = 3;
+    const size_t n_its = debug_value_args::getValue<uint64_t>("its", 500U);
+
+    const auto f_rand = [] { return 2.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5); };
+
+    const double ampl = debug_value_args::getValue<double>("ampl", 5.0);
+    const double body_mass = debug_value_args::getValue<double>("body_mass", 5.0);
 
     for (size_t k = 0; k < n_bodies; k++)
     {
@@ -1830,11 +1839,12 @@ void testSolarSystem()
         body.y = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
         body.z = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
 
-        body.vx = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
-        body.vy = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
-        body.vz = 5.0 * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        body.vx = ampl * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        body.vy = ampl * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
+        body.vz = ampl * (static_cast<double>(rand() % 1001) / 1000.0 - 0.5);
 
-        body.m = (static_cast<double>(rand() % 1001) / 1000.0 + 0.5) * 0.1;
+        // body.m = (static_cast<double>(rand() % 1001) / 1000.0 + 0.5) * 0.1;
+        body.m = body_mass;
 
         body.vec_x.resize(n_its);
         body.vec_y.resize(n_its);
@@ -1860,7 +1870,9 @@ void testSolarSystem()
         bodies.push_back(body);
     }
 
-    const auto plot_bodies = [](const std::vector<Body>& bodies, const size_t it) -> void {
+    const double lw = debug_value_args::getValue<double>("lw", 5.0);
+
+    const auto plot_bodies = [&lw](const std::vector<Body>& bodies, const size_t it) -> void {
         const size_t num_bodies = bodies.size();
 
         Vector<double> x(num_bodies), y(num_bodies), z(num_bodies);
@@ -1877,8 +1889,8 @@ void testSolarSystem()
         yc(0) = 0.0;
         zc(0) = 0.0;
 
-        scatter3(x, y, z, properties::ScatterStyle::DISC, properties::PointSize(20));
-        scatter3(xc, yc, zc, properties::ScatterStyle::DISC, properties::PointSize(50), properties::Color::BLUE);
+        scatter3(x, y, z, properties::ScatterStyle::DISC, properties::PointSize(20), properties::Color(125, 196, 207));
+        scatter3(xc, yc, zc, properties::ScatterStyle::DISC, properties::PointSize(50), properties::Color::BLACK);
 
         if (it != 0U)
         {
@@ -1890,7 +1902,7 @@ void testSolarSystem()
 
                 const VectorConstView cols{bodies[k].colors.data(), it + 1U};
 
-                plot3(x_vec, y_vec, z_vec, cols, properties::LineWidth(10.0f));
+                plot3(x_vec, y_vec, z_vec, cols, properties::LineWidth(lw));
             }
         }
 
@@ -1904,9 +1916,9 @@ void testSolarSystem()
     axis({-2.0, -2.0, -4.0}, {2.0, 2.0, 4.0});
     view(-20, 47);
 
-    const double h = 0.05;
+    const double h = debug_value_args::getValue<double>("h", 0.05);
     const double damping = 0.0001;
-    const double G = 5.0;
+    const double G = debug_value_args::getValue<double>("g", 5.0);
 
     Body center_body;
     center_body.x = 0.0;
@@ -1915,9 +1927,9 @@ void testSolarSystem()
     center_body.m = 10.0;
 
     const auto update_body = [&](Body& body_to_update, const Body& other_body) -> void {
-        const double dx = other_body.x - body_to_update.x;
-        const double dy = other_body.y - body_to_update.y;
-        const double dz = other_body.z - body_to_update.z;
+        const double dx = body_to_update.x - other_body.x;
+        const double dy = body_to_update.y - other_body.y;
+        const double dz = body_to_update.z - other_body.z;
 
         const double dx2 = dx * dx;
         const double dy2 = dy * dy;
@@ -1925,29 +1937,16 @@ void testSolarSystem()
 
         const double r = std::sqrt(dx2 + dy2 + dz2);
 
-        const double r2 = r * r;
-
-        double F = G * body_to_update.m * other_body.m / r2;
-
-        const double dx_normalized = dx / r;
-        const double dy_normalized = dy / r;
-        const double dz_normalized = dz / r;
-
-        if (r < 1.0)
-        {
-            F = G * body_to_update.m * other_body.m * r2;
-        }
-
-        body_to_update.F.x += F * dx_normalized;
-        body_to_update.F.y += F * dy_normalized;
-        body_to_update.F.z += F * dz_normalized;
+        body_to_update.ax += -G * other_body.m * dx / (r * r * r);
+        body_to_update.ay += -G * other_body.m * dy / (r * r * r);
+        body_to_update.az += -G * other_body.m * dz / (r * r * r);
     };
 
     for (size_t k = 0; k < n_its; k++)
     {
         for (size_t i = 0; i < n_bodies; i++)
         {
-            Body& body_i = bodies[i];
+            Body& body_to_update = bodies[i];
 
             for (size_t j = 0; j < n_bodies; j++)
             {
@@ -1956,31 +1955,40 @@ void testSolarSystem()
                     continue;
                 }
 
-                const Body& body_j = bodies[j];
+                const Body& other_body = bodies[j];
 
-                body_i.F.x = 0.0;
-                body_i.F.y = 0.0;
-                body_i.F.z = 0.0;
+                body_to_update.ax = 0.0;
+                body_to_update.ay = 0.0;
+                body_to_update.az = 0.0;
 
-                update_body(body_i, body_j);
-                update_body(body_i, center_body);
+                update_body(body_to_update, other_body);
+                update_body(body_to_update, center_body);
             }
 
-            body_i.vx += h * body_i.F.x / body_i.m;
-            body_i.vy += h * body_i.F.y / body_i.m;
-            body_i.vz += h * body_i.F.z / body_i.m;
+            if (std::abs(body_to_update.ax) > 10.0)
+            {
+                body_to_update.ax = 10.0 * body_to_update.ax / std::abs(body_to_update.ax);
+            }
+            if (std::abs(body_to_update.ay) > 10.0)
+            {
+                body_to_update.ay = 10.0 * body_to_update.ay / std::abs(body_to_update.ay);
+            }
+            if (std::abs(body_to_update.az) > 10.0)
+            {
+                body_to_update.az = 10.0 * body_to_update.az / std::abs(body_to_update.az);
+            }
 
-            body_i.x += h * body_i.vx;
-            body_i.y += h * body_i.vy;
-            body_i.z += h * body_i.vz;
+            body_to_update.vx += h * body_to_update.ax;
+            body_to_update.vy += h * body_to_update.ay;
+            body_to_update.vz += h * body_to_update.az;
 
-            body_i.vec_x(k) = body_i.x;
-            body_i.vec_y(k) = body_i.y;
-            body_i.vec_z(k) = body_i.z;
+            body_to_update.x += h * body_to_update.vx;
+            body_to_update.y += h * body_to_update.vy;
+            body_to_update.z += h * body_to_update.vz;
 
-            body_i.vx *= (1.0 - damping);
-            body_i.vy *= (1.0 - damping);
-            body_i.vz *= (1.0 - damping);
+            body_to_update.vec_x(k) = body_to_update.x;
+            body_to_update.vec_y(k) = body_to_update.y;
+            body_to_update.vec_z(k) = body_to_update.z;
         }
     }
 
