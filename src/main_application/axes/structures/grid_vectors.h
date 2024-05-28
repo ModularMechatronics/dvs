@@ -23,6 +23,10 @@ struct GridVector
     static constexpr std::uint8_t kMaxNumGridNumbers = 30;
     std::array<double, kMaxNumGridNumbers> data;
     size_t num_valid_values;
+    double min_value;
+    double max_value;
+    double grid_spacing;
+    double range;
 };
 
 struct GridVectors

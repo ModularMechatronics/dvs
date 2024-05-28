@@ -1,6 +1,5 @@
 Pre release:
 - Remove tray icon and bring back old menu (But check how it works for Windows/Linux first, with windowless application)
-- Fix number formatting and grid vectors system (1.0, 1e10, -0.24234, -2.7345e2)
 - Support for Windows and Linux
 - Add all keybindings to the help pane
 - Clean up and sanitize CMakeLists.txt files, so that they are "neat"
@@ -9,6 +8,7 @@ Pre release:
 - Adding a slider with the wrong aspect ratio of the window still gives crap result, with a vertical slider
   that is unmovable...
 - Solve all TODOs
+- If the the axes is on some large number (like 11396), zooming in a lot doesn't show the last digits, it shows only 11396.1 repeatedly
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline

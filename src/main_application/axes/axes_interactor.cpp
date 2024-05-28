@@ -444,7 +444,7 @@ void AxesInteractor::setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec)
            static_cast<double>(num_lines - 1);
 }
 
-GridVector generateAxisVector(
+void generateAxisVector(
     const double min_val, const double max_val, const double num_lines, const double offset, GridVector& ret_vec)
 {
     const double d = max_val - min_val;
@@ -473,13 +473,18 @@ GridVector generateAxisVector(
     }
 
     DUOPLOT_ASSERT(vec.size() <= GridVector::kMaxNumGridNumbers);
+    DUOPLOT_ASSERT(vec.size() > 1U);
+
+    ret_vec.grid_spacing = d_inc;
+    ret_vec.min_value = vec[0];
+    ret_vec.max_value = vec[vec.size() - 1U];
+    ret_vec.range = ret_vec.max_value - ret_vec.min_value;
     ret_vec.num_valid_values = vec.size();
+
     for (size_t k = 0; k < vec.size(); k++)
     {
         ret_vec.data[k] = vec[k];
     }
-
-    return ret_vec;
 }
 
 GridVectors AxesInteractor::generateGridVectors()

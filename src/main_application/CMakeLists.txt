@@ -89,6 +89,7 @@ set(CPP_SOURCE_FILES main.cpp
 
                      properties.cpp)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${REPO_DIR}/src/build/)
 
 add_executable(duoplot ${CPP_SOURCE_FILES})
 target_link_libraries(duoplot ${wxWidgets_LIBRARIES}

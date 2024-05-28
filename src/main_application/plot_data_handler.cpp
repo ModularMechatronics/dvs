@@ -439,30 +439,6 @@ std::pair<Vec3d, Vec3d> PlotDataHandler::getMinMaxVectors() const
             max_vec.z = 1.0;
         }
 
-        const Vec3d diff_vec = max_vec - min_vec;
-
-        const Vectord v{VectorInitializer{diff_vec.x, diff_vec.y, diff_vec.z}};
-
-        const double largest_diff = duoplot::max(v);
-
-        // If some of the axes turns out to have a very small difference
-        // between min and max, we have to modify this
-        if (diff_vec.x < largest_diff * 0.01)
-        {
-            min_vec.x = -largest_diff * 0.01;
-            max_vec.x = largest_diff * 0.01;
-        }
-        if (diff_vec.y < largest_diff * 0.01)
-        {
-            min_vec.y = -largest_diff * 0.01;
-            max_vec.y = largest_diff * 0.01;
-        }
-        if (diff_vec.z < largest_diff * 0.01)
-        {
-            min_vec.z = -largest_diff * 0.01;
-            max_vec.z = largest_diff * 0.01;
-        }
-
         if (min_vec.x == max_vec.x)
         {
             min_vec.x -= 1.0;

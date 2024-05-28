@@ -99,7 +99,7 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
 
     is_valid_ = true;
 
-    if(converted_data == nullptr)
+    if (converted_data == nullptr)
     {
         is_valid_ = false;
         return;
@@ -146,7 +146,7 @@ Plot2D::Plot2D(const CommunicationHeader& hdr,
 
 void Plot2D::findMinMax()
 {
-    if(!is_valid_)
+    if (!is_valid_)
     {
         min_vec_.x = -1.0;
         min_vec_.y = -1.0;
@@ -173,7 +173,7 @@ void Plot2D::findMinMax()
 
 void Plot2D::render()
 {
-    if(!is_valid_)
+    if (!is_valid_)
     {
         return;
     }
@@ -224,7 +224,7 @@ void Plot2D::updateWithNewData(ReceivedData& received_data,
                                const std::shared_ptr<const ConvertedDataBase>& converted_data,
                                const PropertiesData& properties_data)
 {
-    if(!is_valid_)
+    if (!is_valid_)
     {
         return;
     }
@@ -257,7 +257,8 @@ LegendProperties Plot2D::getLegendProperties() const
 namespace
 {
 template <typename T>
-std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data, const InputParams& input_params_original)
+std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data,
+                                                 const InputParams& input_params_original)
 {
     const T* const input_data_dt = reinterpret_cast<const T* const>(input_data);
 
@@ -274,7 +275,7 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
     properties::Color* sanitized_color_input{nullptr};
 
-    if(input_params_original.has_color)
+    if (input_params_original.has_color)
     {
         sanitized_color_input = new properties::Color[input_params_original.num_elements];
         const properties::Color* const input_data_rgb =
@@ -282,13 +283,13 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
 
         sanitized_color_input[0U] = input_data_rgb[0U];
 
-        for(size_t k = 1U; k < input_params_original.num_elements; k++)
+        for (size_t k = 1U; k < input_params_original.num_elements; k++)
         {
             const float xk = static_cast<float>(input_data_dt[k]);
             const float yk = static_cast<float>(input_data_dt[input_params_original.num_elements + k]);
             const properties::Color color_k = input_data_rgb[k];
 
-            if(x_last_valid_point == xk && y_last_valid_point == yk)
+            if (x_last_valid_point == xk && y_last_valid_point == yk)
             {
                 continue;
             }
@@ -305,12 +306,12 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
     }
     else
     {
-        for(size_t k = 1U; k < input_params_original.num_elements; k++)
+        for (size_t k = 1U; k < input_params_original.num_elements; k++)
         {
             const float xk = static_cast<float>(input_data_dt[k]);
             const float yk = static_cast<float>(input_data_dt[input_params_original.num_elements + k]);
 
-            if(x_last_valid_point == xk && y_last_valid_point == yk)
+            if (x_last_valid_point == xk && y_last_valid_point == yk)
             {
                 continue;
             }
@@ -325,11 +326,11 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
         }
     }
 
-    if(total_num_points == 1U)
+    if (total_num_points == 1U)
     {
         delete[] sanitized_input_x;
         delete[] sanitized_input_y;
-        if(input_params_original.has_color)
+        if (input_params_original.has_color)
         {
             delete[] sanitized_color_input;
         }
@@ -783,13 +784,15 @@ std::shared_ptr<const ConvertedData> convertData(const uint8_t* const input_data
             idx += 36;
         }
 
-        const RGBTripletf color_k{static_cast<float>(sanitized_color_input[input_params.num_elements - 1].red) / 255.0f,
-                                  static_cast<float>(sanitized_color_input[input_params.num_elements - 1].green) / 255.0f,
-                                  static_cast<float>(sanitized_color_input[input_params.num_elements - 1].blue) / 255.0f};
+        const RGBTripletf color_k{
+            static_cast<float>(sanitized_color_input[input_params.num_elements - 1].red) / 255.0f,
+            static_cast<float>(sanitized_color_input[input_params.num_elements - 1].green) / 255.0f,
+            static_cast<float>(sanitized_color_input[input_params.num_elements - 1].blue) / 255.0f};
 
-        const RGBTripletf color_k_1{static_cast<float>(sanitized_color_input[input_params.num_elements - 2].red) / 255.0f,
-                                    static_cast<float>(sanitized_color_input[input_params.num_elements - 2].green) / 255.0f,
-                                    static_cast<float>(sanitized_color_input[input_params.num_elements - 2].blue) / 255.0f};
+        const RGBTripletf color_k_1{
+            static_cast<float>(sanitized_color_input[input_params.num_elements - 2].red) / 255.0f,
+            static_cast<float>(sanitized_color_input[input_params.num_elements - 2].green) / 255.0f,
+            static_cast<float>(sanitized_color_input[input_params.num_elements - 2].blue) / 255.0f};
         // v0
         converted_data->color_data[idx] = color_k_1.red;
         converted_data->color_data[idx + 1] = color_k_1.green;

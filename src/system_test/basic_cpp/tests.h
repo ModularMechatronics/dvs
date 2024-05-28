@@ -612,14 +612,14 @@ void testPlot()
     y_some_equal(6) = -1.8f;
     y_some_equal(7) = -1.8f;
 
-    color_some_equal(0) = properties::Color(255, 0, 0);     // [0.0f, -1.0f], Red,      Point will be added
-    color_some_equal(1) = properties::Color(0, 255, 0);     // [0.0f, -1.0f], Green
-    color_some_equal(2) = properties::Color(0, 0, 255);     // [1.0f, -1.5f], Blue,     Point will be added
-    color_some_equal(3) = properties::Color(255, 255, 0);   // [1.0f, -1.5f], Yellow
-    color_some_equal(4) = properties::Color(255, 0, 255);   // [2.0f, -1.7f], Magenta,  Point will be added
-    color_some_equal(5) = properties::Color(255, 255, 255); // [2.0f, -1.7f], White
-    color_some_equal(6) = properties::Color(0, 255, 255);   // [3.0f, -1.8f], Cyan,     Point will be added
-    color_some_equal(7) = properties::Color(0, 0, 0);       // [3.0f, -1.8f], Black
+    color_some_equal(0) = properties::Color(255, 0, 0);      // [0.0f, -1.0f], Red,      Point will be added
+    color_some_equal(1) = properties::Color(0, 255, 0);      // [0.0f, -1.0f], Green
+    color_some_equal(2) = properties::Color(0, 0, 255);      // [1.0f, -1.5f], Blue,     Point will be added
+    color_some_equal(3) = properties::Color(255, 255, 0);    // [1.0f, -1.5f], Yellow
+    color_some_equal(4) = properties::Color(255, 0, 255);    // [2.0f, -1.7f], Magenta,  Point will be added
+    color_some_equal(5) = properties::Color(255, 255, 255);  // [2.0f, -1.7f], White
+    color_some_equal(6) = properties::Color(0, 255, 255);    // [3.0f, -1.8f], Cyan,     Point will be added
+    color_some_equal(7) = properties::Color(0, 0, 0);        // [3.0f, -1.8f], Black
 
     x_all_equal(0) = 0.0f;
     x_all_equal(1) = 0.0f;
@@ -848,7 +848,6 @@ void testPlot3()
     Vector<properties::Color> color_some_equal(8U);
     Vector<float> x_all_equal(3U), y_all_equal(3U), z_all_equal(3U);
 
-
     xp(0) = 0.0;
     xp(1) = 1.0;
     xp(2) = 2.2;
@@ -923,14 +922,14 @@ void testPlot3()
 
     z_some_equal.fill(0.0f);
 
-    color_some_equal(0) = properties::Color(255, 0, 0);     // [0.0f, -1.0f], Red,      Point will be added
-    color_some_equal(1) = properties::Color(0, 255, 0);     // [0.0f, -1.0f], Green
-    color_some_equal(2) = properties::Color(0, 0, 255);     // [1.0f, -1.5f], Blue,     Point will be added
-    color_some_equal(3) = properties::Color(255, 255, 0);   // [1.0f, -1.5f], Yellow
-    color_some_equal(4) = properties::Color(255, 0, 255);   // [2.0f, -1.7f], Magenta,  Point will be added
-    color_some_equal(5) = properties::Color(255, 255, 255); // [2.0f, -1.7f], White
-    color_some_equal(6) = properties::Color(0, 255, 255);   // [3.0f, -1.8f], Cyan,     Point will be added
-    color_some_equal(7) = properties::Color(0, 0, 0);       // [3.0f, -1.8f], Black
+    color_some_equal(0) = properties::Color(255, 0, 0);      // [0.0f, -1.0f], Red,      Point will be added
+    color_some_equal(1) = properties::Color(0, 255, 0);      // [0.0f, -1.0f], Green
+    color_some_equal(2) = properties::Color(0, 0, 255);      // [1.0f, -1.5f], Blue,     Point will be added
+    color_some_equal(3) = properties::Color(255, 255, 0);    // [1.0f, -1.5f], Yellow
+    color_some_equal(4) = properties::Color(255, 0, 255);    // [2.0f, -1.7f], Magenta,  Point will be added
+    color_some_equal(5) = properties::Color(255, 255, 255);  // [2.0f, -1.7f], White
+    color_some_equal(6) = properties::Color(0, 255, 255);    // [3.0f, -1.8f], Cyan,     Point will be added
+    color_some_equal(7) = properties::Color(0, 0, 0);        // [3.0f, -1.8f], Black
 
     x_all_equal(0) = 0.0f;
     x_all_equal(1) = 0.0f;
@@ -2038,6 +2037,36 @@ void testNan()
     plot(x, y, properties::LineWidth(20));
 }
 
+void testDifferentAxesScaling()
+{
+    openProjectFile("../../project_files/exp0.duoplot");
+
+    const size_t num_elements = 100;
+    Vector<double> x(num_elements), y(num_elements);
+
+    const std::vector<std::string> element_names{
+        "p_view_0", "p1", "p_view_1", "p_view_2", "s_view_0", "s_view_1", "s_view_2", "w1_p_view_0", "w1_p_view_1"};
+
+    // const std::vector<std::string> element_names{"p_view_0"};
+
+    const std::vector<double> multipliers{1e-3, 1e-6, 1e-9, 1e12, 1e15, 1e38, 1e-21, 1e-24, 1e-27};
+
+    x = linspaceFromBoundariesAndCount(-1.0 * M_PI, 1.0 * M_PI, num_elements);
+    y = duoplot::sin(x);
+
+    for (size_t k = 0; k < element_names.size(); k++)
+    {
+        const std::string en = element_names[k];
+        Vector<double> x_scaled = x * multipliers[k];
+        Vector<double> y_scaled = y * multipliers[k];
+        setCurrentElement(en);
+        clearView();
+        setTitle(std::to_string(std::log10(multipliers[k])));
+
+        plot(x_scaled, y_scaled, properties::LineWidth(20));
+    }
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -2070,6 +2099,7 @@ void addTests()
     addTest("cpp", "basic", "create_new_element", testCreateNewElement);
     addTest("cpp", "basic", "axes_square", testAxesSquare);
     addTest("cpp", "basic", "nan", testNan);
+    addTest("cpp", "basic", "axes_numbers", testDifferentAxesScaling);
 }
 
 }  // namespace basic_cpp
