@@ -14,6 +14,7 @@
 #include "tests/marbles/marbles.h"
 #include "tests/particle_field/particle_field.h"
 #include "tests/particles/particles.h"
+#include "tests/particles_density/particles_density.h"
 #include "tests/slam/slam.h"
 #include "tests/sling_plot/sling_plot.h"
 #include "tests/small.h"

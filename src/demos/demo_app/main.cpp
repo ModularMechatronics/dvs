@@ -45,6 +45,8 @@ int main(int argc, char* argv[])
 
     StringFunctionMap particles_functions{{"basic", particles::testBasic}};
 
+    StringFunctionMap particles_density_functions{{"basic", particles_density::testBasic}};
+
     StringFunctionMap fake_fem_functions{{"basic", fake_fem::testBasic}};
 
     StringFunctionMap imu_functions{{"basic", imu::testBasic}};
@@ -88,6 +90,7 @@ int main(int argc, char* argv[])
     fcns["spring_structure"] = spring_structure_functions;
     fcns["sphere"] = sphere_functions;
     fcns["particles"] = particles_functions;
+    fcns["particles_density"] = particles_density_functions;
     fcns["fake_fem"] = fake_fem_functions;
     fcns["imu"] = imu_functions;
     fcns["ad_dataset"] = ad_dataset_functions;

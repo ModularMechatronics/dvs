@@ -19,6 +19,7 @@ add_executable(demos main.cpp
                      tests/sphere/sphere_subdivision/face.cpp
                      tests/sphere/sphere_subdivision/point.cpp
                      tests/sphere/sphere_subdivision/subdivisor.cpp
+                     tests/particles_density/particles_density.cpp
                      tests/joints/joints.cpp
                      tests/gui/gui.cpp
                      tests/marbles/marbles.cpp
@@ -29,6 +30,6 @@ add_executable(demos main.cpp
                      tests/ad_dataset/ad_dataset.cpp)
 
 target_link_libraries(demos 
-        ${REPO_DIR}/src/externals/liquidfun/liquidfun/Box2D/Box2D/Release/libliquidfun.a
+        ${REPO_DIR}/src/externals/liquidfun/liquidfun/Box2D/Box2D/Debug/libliquidfun.a
         ${REPO_DIR}/src/externals/reactphysics3d/build/libreactphysics3d.a
         -lncurses)
