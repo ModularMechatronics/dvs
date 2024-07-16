@@ -1,15 +1,25 @@
 #include "particles_density.h"
 #include "tests/slam/color_maps.h"
 
+#include <array>
+
 namespace particles_density
 {
-
 
 constexpr size_t num_steps = 3200;
 const Vec2f min_bnd{-4.0f, 0.0f};
 const Vec2f max_bnd{4.0f, 26.0f};
 constexpr float radius = 0.025f;
 float start_y = -10.0f;
+constexpr size_t kNumDensities{7U};
+
+constexpr size_t kNumRows{781U};
+constexpr size_t kNumCols{456U};
+
+constexpr int32_t kKernelSize{15};
+constexpr int32_t kHalfKernelSize{kKernelSize / 2};
+
+using ArrayType = std::array<float, kNumDensities>;
 
 struct ParticleEjector
 {
@@ -157,6 +167,7 @@ ParticleSystem::ParticleSystem(const Vec2f min_bnd, const Vec2f max_bnd)
 
     // std::vector<float> densities{0.001, 0.003, 0.005, 0.007, 0.09, 0.01, 0.05};
     std::vector<float> densities{0.001, 0.005, 0.01, 0.05, 0.09, 0.12, 0.15};
+    assert(densities.size() == kNumDensities);
 
     float y_pos = 3.0;
     for(float density : densities)
@@ -236,24 +247,155 @@ properties::Color toColor(const RGBTripletf& col)
         static_cast<std::uint8_t>(col.blue * 255.0f)};
 }
 
+Matrix<float> createKernel(const size_t size, const float s, const float a)
+{
+    assert((size % 2) == 1);
+
+    const int32_t size_32 = size;
+    const int32_t half_size = size_32 / 2;
+
+    Matrix<float> kernel{size, size};
+
+    for(int32_t x = -half_size; x <= half_size; x++)
+    {
+        for(int32_t y = -half_size; y <= half_size; y++)
+        {
+            const float r = static_cast<float>(x * x + y * y);
+            kernel(y + half_size, x + half_size) = a * std::exp(-s * r);
+        }
+    }
+
+    return kernel;
+}
+
+void renderImage(const ParticleSystem& ps,
+                 ImageRGBA<uint8_t>& img,
+                 const Vec2f& scale,
+                 const Vec2f& offset,
+                 const std::vector<properties::Color>& colors,
+                 Matrix<ArrayType>& count_mat,
+                 const Matrix<float>& kernel)
+{
+    const int32_t num_rows = img.numRows();
+    const int32_t num_cols = img.numCols();
+
+    const float num_rows_1 = num_rows - 1;
+    const float num_cols_1 = num_cols - 1;
+
+    const Vec2f half_scale = scale / 2.0f;
+
+    size_t idx = 0U;
+
+    const VectorConstView<float> x = ps.getXView();
+    const VectorConstView<float> y = ps.getYView();
+
+    for(const auto grp : ps.groups_)
+    {
+        const size_t num_particles = grp->GetParticleCount();
+        const size_t offset_idx = grp->GetBufferIndex();
+
+        const auto col = colors[idx];
+
+        const VectorConstView<float> xg = VectorConstView<float>{x.data() + offset_idx, num_particles};
+        const VectorConstView<float> yg = VectorConstView<float>{y.data() + offset_idx, num_particles};
+
+        const properties::Color cl = colors[idx];
+
+        for(size_t k = 0; k < num_particles; k++)
+        {
+            const int32_t center_col = (num_cols_1 * (xg(k) - offset.x) / scale.x + 0.5f);
+            const int32_t center_row = num_rows_1 - (num_rows_1 * (yg(k) - offset.y) / scale.y + 0.5f);
+
+            for(int32_t x = -kHalfKernelSize; x <= kHalfKernelSize; x++)
+            {
+                for(int32_t y = -kHalfKernelSize; y <= kHalfKernelSize; y++)
+                {
+                    const int32_t column = center_col + x;
+                    const int32_t row = center_row + y;
+
+                    if(column >= 0 && column < num_cols && row >= 0 && row < num_rows)
+                    {
+                        ArrayType& current_array{count_mat(row, column)};
+                        current_array[idx] += kernel(y + kHalfKernelSize, x + kHalfKernelSize);
+                    }
+                }
+            }
+        }        
+
+        idx++;
+    }
+
+    for(size_t r = 0; r < num_rows; r++)
+    {
+        for(size_t c = 0; c < num_cols; c++)
+        {
+            const ArrayType& current_array{count_mat(r, c)};
+            // Find max and max index
+            float max_val = 0.0f;
+            size_t max_idx = 0U;
+            for(size_t k = 0; k < kNumDensities; k++)
+            {
+                if(current_array[k] > max_val)
+                {
+                    max_val = current_array[k];
+                    max_idx = k;
+                }
+            }
+
+            if(max_val > 1.0f)
+            {
+                img(r, c, 0) = colors[max_idx].red;
+                img(r, c, 1) = colors[max_idx].green;
+                img(r, c, 2) = colors[max_idx].blue;
+                img(r, c, 3) = 255U;
+            }
+        }
+    }
+}
+
 void testBasic()
 {
     const std::string project_file_path = "../../project_files/small_demo.duoplot";
 
+    ImageRGBA<uint8_t> img{kNumRows, kNumCols};
+    ImageRGBA<uint8_t> blank_img{kNumRows, kNumCols};
+    Matrix<ArrayType> count_matrix{kNumRows, kNumCols};
+    Matrix<ArrayType> blank_count_matrix{kNumRows, kNumCols};
+
+    for(size_t r = 0; r < kNumRows; r++)
+    {
+        for(size_t c = 0; c < kNumCols; c++)
+        {
+            blank_img(r, c, 0) = 0U;
+            blank_img(r, c, 1) = 0U;
+            blank_img(r, c, 2) = 0U;
+            blank_img(r, c, 3) = 0U;
+
+            for(size_t k = 0; k < kNumDensities; k++)
+            {
+                blank_count_matrix(r, c)[k] = 0.0f;
+            }
+        }
+    }
+
     openProjectFile(project_file_path);
 
-    // 456, 781
+    const Matrix<float> kernel{createKernel(kKernelSize, 0.1f, 1.0f)};
+    std::pair<Matrix<float>, Matrix<float>> xy_mats = meshGrid<float>(-1.0f, 1.0f, -1.0f, 1.0f, kKernelSize, kKernelSize);
 
     setCurrentElement("p_view_0");
     clearView();
+
     waitForFlush();
     setAxesBoxScaleFactor({1.0, 1.0, 1.0});
-    // axis({-2.0, -1.712719}, {2.0, 1.712719});
     
-    // axis({-2.0, -2.0}, {2.0, 2.0});
+    // axis({0.0, 0.0}, {kNumCols, kNumRows});
     axis({-2.0, -3.425438 + 1.425438}, {2.0, 3.425438 + 1.425438});
-    
-    // axis({-2.3, -2.3}, {2.3, 2.3});
+    const float x_interval = 4.0f;
+    const float y_interval = 2.0 * 3.425438;
+
+    const float x_min = -2.0;
+    const float y_min = -3.425438 + 1.425438;
 
     ParticleSystem ps{min_bnd, max_bnd};
 
@@ -261,7 +403,7 @@ void testBasic()
     const VectorConstView<float> y = ps.getYView();
 
     std::vector<properties::Color> colors;
-    
+
     for(size_t k = 0; k < ps.groups_.size(); k++)
     {
         const float d = static_cast<float>(k) / static_cast<float>(ps.groups_.size() - 1U);
@@ -274,28 +416,48 @@ void testBasic()
 
         size_t idx = 0U;
 
-        // if(k == ((num_steps * 3U) / 4U))
-        // {
-        //     ps.changeDensity();
-        // }
-
-        for(const auto grp : ps.groups_)
+        if(k < 1200)
         {
-            const size_t num_particles = grp->GetParticleCount();
 
-            const size_t offset = grp->GetBufferIndex();
+            for(const auto grp : ps.groups_)
+            {
+                const size_t num_particles = grp->GetParticleCount();
 
-            const auto col = colors[idx];
+                const size_t offset = grp->GetBufferIndex();
 
-            const VectorConstView<float> xg = VectorConstView<float>{x.data() + offset, num_particles};
-            const VectorConstView<float> yg = VectorConstView<float>{y.data() + offset, num_particles};
+                const auto col = colors[idx];
 
-            scatter(xg, yg, properties::ScatterStyle::DISC, properties::PointSize(10), col, properties::Silhouette{0U, 0U, 0U, 0.1f});
-            
+                const VectorConstView<float> xg = VectorConstView<float>{x.data() + offset, num_particles};
+                const VectorConstView<float> yg = VectorConstView<float>{y.data() + offset, num_particles};
 
-            idx++;
+                scatter(xg, yg, properties::ScatterStyle::DISC, properties::PointSize(10), col, properties::Silhouette{0U, 0U, 0U, 0.1f});
+
+                idx++;
+            }
         }
+        else
+        {
 
+            if(k == 1400)
+            {
+                ps.changeDensity();
+            }
+            count_matrix = blank_count_matrix;
+            img = blank_img;
+            renderImage(ps,
+                img,
+                {x_interval, y_interval},
+                {x_min, y_min},
+                colors,
+                count_matrix,
+                kernel);
+
+            imShow(img,
+                properties::Transform{
+                    diagMatrix<double>({x_interval / kNumCols, y_interval / kNumRows, 1.0}),
+                    rotationMatrixZ<double>(0),
+                    {-x_interval / 2.0f, -(-4.85*0.0 + -3.425438 * 0.0 + 0.0*1.425438 + 2.0), 0.0}});
+        }
         flushCurrentElement();
         softClearView();
     }

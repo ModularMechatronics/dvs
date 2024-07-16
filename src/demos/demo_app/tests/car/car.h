@@ -16,7 +16,7 @@ namespace car
 
 ImageRGBA<uint8_t> readCarImage(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue)
 {
-    const std::string bin_path = "../demos/tests/car/car.bin";
+    const std::string bin_path = "../demos/demo_app/tests/car/car.bin";
     std::ifstream input(bin_path, std::ios::binary);
 
     std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
