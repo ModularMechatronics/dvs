@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include <cstring>
+#include <array>
 #include <iostream>
 
 #include "duoplot/logging.h"

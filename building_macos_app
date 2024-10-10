@@ -9,3 +9,6 @@ Export the binary to the duoplot.app/Contents/MacOS folder
 
 # Then run
 xattr -rc /Applications/duoplot.app
+
+
+For seeing how to include an icon, build the wxWidgets example "shaped", and see how the shaped.app is structured

@@ -8,7 +8,6 @@
 #include "duoplot/enumerations.h"
 #include "duoplot/logging.h"
 #include "duoplot/math/math.h"
-#include "main_application/plot_objects/utils.h"
 #include "misc/rgb_triplet.h"
 #include "opengl_low_level/opengl_header.h"
 

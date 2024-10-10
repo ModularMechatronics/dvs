@@ -26,7 +26,7 @@ libpng is required for mac
 
 Macos:
 
-./configure --with-opengl --with-osx_cocoa --disable-shared --disable-dynamicloader --enable-svg=off --enable-unicode --with-opengl --with-osx_cocoa --with-zlib --disable-precomp-headers --with-macosx-version-min=10.15 --enable-debug
+./configure --with-opengl --with-osx_cocoa --disable-shared --disable-dynamicloader --enable-svg=off --enable-unicode --with-opengl --with-osx_cocoa --with-zlib --disable-precomp-headers --with-macosx-version-min=10.15 --enable-debug --enable-monolithic
 
 ./configure --with-opengl \
 --with-osx_cocoa \

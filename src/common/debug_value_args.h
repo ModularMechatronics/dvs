@@ -10,7 +10,7 @@
 * Usage:
 * If the following has been added in the code:
 const double size_bias = debug_value_args::getValue<double>("size-bias", 3.0);
-
+const uint64_t q = debug_value_args::getValue<double>("q", 14234);
 
 * ./binary_name --size-bias 4.0 -q 3
 */

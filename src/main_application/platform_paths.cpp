@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <vector>
+#include <array>
 
 // #include <iomanip>
 #ifdef PLATFORM_LINUX_M

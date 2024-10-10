@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 void PlotPaneBackground::render(const float pane_width, const float pane_height)
 {
