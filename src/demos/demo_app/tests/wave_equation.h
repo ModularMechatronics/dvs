@@ -189,7 +189,9 @@ void testBasic()
 
     setCurrentElement("p_view_0");
     clearView();
-    // globalIllumination({1.0, 1.0, 1.0});
+    globalIllumination({1.0, 1.0, 1.0});
+    disableScaleOnRotation();
+    axesSquare();
 
     const double z_max = 0.05;
     axis({0.0, 0.0, -z_max}, {1.0, 1.0, z_max});

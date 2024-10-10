@@ -125,6 +125,9 @@ void evalKlein(const Matrix<float>& u,
 
 void testBasic()
 {
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
+    openProjectFile(project_file_path);
+
     const size_t nu = 50, nv = 50;
 
     std::pair<Matrix<float>, Matrix<float>> uv_mats = meshGrid<float>(0.0f, M_PI, 0.0f, 2.0f * M_PI, nv, nu);
@@ -142,15 +145,23 @@ void testBasic()
 
     setCurrentElement("p_view_0");
     clearView();
+    disableScaleOnRotation();
+    axesSquare();
 
     evalKlein(u_mat, v_mat, x, y, z, 0.0f, 0.0f, klein_params, unitMatrix<float>(3, 3));
 
-    scatter3(vx, vy, vz, properties::Color::RED);
-    plot3(vx, vy, vz, properties::Color::BLUE);
+    // scatter3(vx, vy, vz, properties::Color::RED);
+    // plot3(vx, vy, vz, properties::Color::BLUE);
+
+    scatter3(vx, vy, vz);
+    plot3(vx, vy, vz);
 }
 
 void testAdvanced0()
 {
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
+    openProjectFile(project_file_path);
+
     const size_t nu = 50, nv = 50;
     const size_t num_its = 100;
 
@@ -169,6 +180,8 @@ void testAdvanced0()
 
     setCurrentElement("p_view_0");
     clearView();
+    disableScaleOnRotation();
+    axesSquare();
     waitForFlush();
     float u_offset = 0.0f, v_offset = 0.0f;
 
@@ -190,6 +203,9 @@ void testAdvanced0()
 
 void testAdvanced1()
 {
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
+    openProjectFile(project_file_path);
+
     const size_t nu = 50, nv = 50;
     const size_t num_triangles = nu * nv * 2;
     const size_t num_its = 1;
@@ -233,6 +249,8 @@ void testAdvanced1()
 
     setCurrentElement("p_view_0");
     clearView();
+    disableScaleOnRotation();
+    axesSquare();
     float u_offset = 0.0f, v_offset = 0.0f;
 
     float t = 0.0f;

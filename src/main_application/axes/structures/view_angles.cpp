@@ -1,17 +1,17 @@
 #include "axes/structures/view_angles.h"
 
 ViewAngles::ViewAngles()
-    : azimuth_(0.0), snapped_azimuth_(0.0), elevation_(0.0), snapped_elevation_(0.0), angle_limit_(5.0 * M_PI / 180.0)
+    : azimuth_(0.0), snapped_azimuth_(0.0), elevation_(0.0), snapped_elevation_(0.0), angle_limit_(0.0 * M_PI / 180.0)
 {
 }
 
 ViewAngles::ViewAngles(const double azimuth, const double elevation, const double angle_limit)
-    : angle_limit_(angle_limit)
+    : angle_limit_(0.0f)
 {
     setAngles(azimuth, elevation);
 }
 
-ViewAngles::ViewAngles(const double azimuth, const double elevation) : angle_limit_(5.0 * M_PI / 180.0)
+ViewAngles::ViewAngles(const double azimuth, const double elevation) : angle_limit_(0.0 * M_PI / 180.0)
 {
     setAngles(azimuth, elevation);
 }
@@ -28,7 +28,7 @@ double ViewAngles::getAngleLimit() const
 
 void ViewAngles::setAngleLimit(const double snap_angle)
 {
-    angle_limit_ = snap_angle;
+    angle_limit_ = 0.0;
 }
 
 void ViewAngles::setSnapAngles()

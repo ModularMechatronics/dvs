@@ -818,7 +818,7 @@ def test_3d_obj():
 
 def test_las_file():
     f_name = "Africa_Palace.las"
-    f_name = "laman_mahkota.laz"
+    # f_name = "laman_mahkota.laz"
 
     las_path = "../../../misc_data/" + f_name
 
@@ -828,7 +828,7 @@ def test_las_file():
     with pylas.open(las_path) as fh:
         las = fh.read()
 
-        stride = 10
+        stride = 50
 
         x = las.x[0::stride]
         y = las.y[0::stride]
@@ -872,7 +872,7 @@ def test_las_file():
 def test_3d_map():
     import trimesh
 
-    map_path = "/Users/danielpi/work/duoplot/map_data/map3d.glb"
+    map_path = "/Users/danielpi/work/dvs/map_data/map3d.glb"
     glbd = trimesh.load(map_path)
 
     vertices = None

@@ -215,7 +215,7 @@ properties::Color calculateColormapJetSoft(double value)
 
 void testLorenz()
 {
-    const std::string project_file_path = "../../project_files/small_demo.duoplot";
+    const std::string project_file_path = "../../project_files/small_bright.duoplot";
     openProjectFile(project_file_path);
 
     const Vec3f p0{8.5f, 8.5f, 27.0f};

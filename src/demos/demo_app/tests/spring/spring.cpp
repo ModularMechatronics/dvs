@@ -535,7 +535,7 @@ void testBasic()
     float K = 100000.0f;  // Exterior spring constant
     float h = 0.0001f;    // Time step
 
-    const std::string base_path = "../demos/tests/spring/data/";
+    const std::string base_path = "../demos/demo_app/tests/spring/data/";
 
     /*
     ball_chain
@@ -579,6 +579,7 @@ void testBasic()
     waitForFlush();
 
     axis({-4.0, -4.0, -4.0}, {4.0, 4.0, 4.0});
+    view(-44, 16);
 
     for (size_t k = 0; k < 1000; k++)
     {

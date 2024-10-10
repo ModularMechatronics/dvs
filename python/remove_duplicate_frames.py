@@ -76,5 +76,6 @@ def remove_duplicate_frames(mov_file_path):
 
 if __name__ == "__main__":
     remove_duplicate_frames(
-        "/Users/danielpi/Desktop/Screen Recording 2023-11-28 at 12.29.23.mov"
+        # "/Users/danielpi/Desktop/Screen Recording 2023-11-28 at 12.29.23.mov"
+        "/Users/danielpi/Desktop/Water.mov"
     )

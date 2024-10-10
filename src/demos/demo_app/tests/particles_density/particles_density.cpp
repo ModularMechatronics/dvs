@@ -282,8 +282,6 @@ void renderImage(const ParticleSystem& ps,
     const float num_rows_1 = num_rows - 1;
     const float num_cols_1 = num_cols - 1;
 
-    const Vec2f half_scale = scale / 2.0f;
-
     size_t idx = 0U;
 
     const VectorConstView<float> x = ps.getXView();
@@ -416,7 +414,7 @@ void testBasic()
 
         size_t idx = 0U;
 
-        if(k < 1200)
+        if(true)
         {
 
             for(const auto grp : ps.groups_)

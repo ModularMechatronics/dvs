@@ -48,6 +48,7 @@ GuiWindow::GuiWindow(
       print_gui_callback_code_{print_gui_callback_code},
       help_pane_{this, wxPoint(150, 150), wxSize(100, 100), this->GetSize()}
 {
+    this->SetLabel("");
     project_name_ = project_name;
     main_window_ = main_window;
     current_tab_num_ = 0;
@@ -547,7 +548,7 @@ void GuiWindow::updateLabel()
         save_string = "*";
     }
     // this->SetLabel(name_ + " [" + project_name_ + save_string + "]");
-    this->SetLabel(name_);  // TODO: For demos, don't show project name
+    // this->SetLabel(name_);  // TODO: For demos, don't show project name
 }
 
 void GuiWindow::setName(const std::string& new_name)

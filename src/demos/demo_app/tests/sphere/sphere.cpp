@@ -406,6 +406,10 @@ void testBasic()
     yl.fill(0.0f);
     zl.fill(0.0f);
 
+    const std::string project_file_path = "../../project_files/small_demo.duoplot";
+
+    openProjectFile(project_file_path);
+
     setCurrentElement("p_view_0");
     clearView();
     disableScaleOnRotation();

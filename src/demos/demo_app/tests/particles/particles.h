@@ -278,7 +278,7 @@ private:
 public:
     PointAssignerImg()
     {
-        readShapeImage("/Users/danielpi/work/dvs/src/demos/tests/particles/img.bin", img_);
+        readShapeImage("/Users/danielpi/work/dvs/src/demos/demo_app/tests/particles/img.bin", img_);
     }
 
     PointAssignerImg(const std::string& img_path)
@@ -526,7 +526,7 @@ public:
 
 Vector<Point2f> readSavedFile()
 {
-    const std::string text_data = readTextFile("../demos/tests/points.txt");
+    const std::string text_data = readTextFile("../demos/demo_app/tests/points.txt");
 
     return splitPointsString(text_data, 1.0, 0.0, 0.0, 1.0);
 }
