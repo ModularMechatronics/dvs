@@ -9,6 +9,7 @@ Pre release:
   that is unmovable...
 - Solve all TODOs
 - If the the axes is on some large number (like 11396), zooming in a lot doesn't show the last digits, it shows only 11396.1 repeatedly
+- Potential bug in ImShow, where it's black if image4 (alpha) is used? Was present for particle sim demo
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline

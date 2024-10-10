@@ -90,7 +90,6 @@ ImShow::ImShow(const CommunicationHeader& hdr,
                const ShaderCollection& shader_collection,
                ColorPicker& color_picker)
     : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker)
-
 {
     if (function_ != Function::IM_SHOW)
     {
@@ -174,6 +173,7 @@ ImShow::ImShow(const CommunicationHeader& hdr,
     else if ((num_channels_ == 2) || (num_channels_ == 4))
     {
         gl_channel_format = GL_RGBA;
+        shader_collection_.img_plot_shader.uniform_handles.use_global_alpha.setInt(0);
     }
     else
     {
