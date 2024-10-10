@@ -67,8 +67,6 @@ private:
     double query_point_screen_x_;
     double query_point_screen_y_;
 
-    Vec3d inc0;
-
     // Functions
     void changePan(const double dx, const double dy, const MouseInteractionAxis mia);
     void changeZoom(const double dy, const MouseInteractionAxis mia);

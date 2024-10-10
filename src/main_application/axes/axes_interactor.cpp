@@ -35,9 +35,9 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
 
     is_image_view_ = false;
 
-    const size_t num_lines = axes_settings_.num_axes_ticks;
-    inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
-           static_cast<double>(num_lines - 1);
+    // const size_t num_lines = axes_settings_.num_axes_ticks;
+    // inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
+    //        static_cast<double>(num_lines - 1);
     mouse_pressed_ = false;
     show_legend_ = false;
 }
@@ -300,7 +300,7 @@ void AxesInteractor::changeRotation(const double dx, const double dy, const Mous
     view_angles_.changeAnglesWithDelta(dx * sa.x, dy * sa.y);
 }
 
-double changeIncrement(const double scale, const double inc, const size_t num_lines)
+/*double changeIncrement(const double scale, const double inc, const size_t num_lines)
 {
     double new_inc = inc;
     if ((scale / inc) < static_cast<double>(num_lines) / 2.0)
@@ -312,7 +312,7 @@ double changeIncrement(const double scale, const double inc, const size_t num_li
         new_inc = inc * 2.0;
     }
     return new_inc;
-}
+}*/
 
 void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
 {
@@ -370,10 +370,10 @@ void AxesInteractor::changeZoom(const double dy, const MouseInteractionAxis mia)
     axes_limits_.setMin(axes_limits_.getMin() - inc_vec);
     axes_limits_.setMax(axes_limits_.getMax() + inc_vec);
 
-    const size_t num_lines = axes_settings_.num_axes_ticks;
-    inc0.x = changeIncrement(s.x, inc0.x, num_lines);
-    inc0.y = changeIncrement(s.y, inc0.y, num_lines);
-    inc0.z = changeIncrement(s.z, inc0.z, num_lines);
+    // const size_t num_lines = axes_settings_.num_axes_ticks;
+    // inc0.x = changeIncrement(s.x, inc0.x, num_lines);
+    // inc0.y = changeIncrement(s.y, inc0.y, num_lines);
+    // inc0.z = changeIncrement(s.z, inc0.z, num_lines);
 }
 
 void AxesInteractor::changePan(const double dx, const double dy, const MouseInteractionAxis mia)
@@ -428,9 +428,9 @@ void AxesInteractor::setAxesLimits(const Vec3d& min_vec, const Vec3d& max_vec)
     default_axes_limits_ = axes_limits_;
 
     // TODO: Remove below?
-    const size_t num_lines = axes_settings_.num_axes_ticks;
-    inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
-           static_cast<double>(num_lines - 1);
+    // const size_t num_lines = axes_settings_.num_axes_ticks;
+    // inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
+    //        static_cast<double>(num_lines - 1);
 }
 
 void AxesInteractor::setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec)
@@ -439,39 +439,47 @@ void AxesInteractor::setAxesLimits(const Vec2d& min_vec, const Vec2d& max_vec)
         AxesLimits({min_vec.x, min_vec.y, axes_limits_.getMin().z}, {max_vec.x, max_vec.y, axes_limits_.getMax().z});
     default_axes_limits_ = axes_limits_;
 
-    const size_t num_lines = axes_settings_.num_axes_ticks;
-    inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
-           static_cast<double>(num_lines - 1);
+    // const size_t num_lines = axes_settings_.num_axes_ticks;
+    // inc0 = 0.9999999999 * (default_axes_limits_.getMax() - default_axes_limits_.getMin()) /
+    //        static_cast<double>(num_lines - 1);
 }
 
 void generateAxisVector(
-    const double min_val, const double max_val, const double num_lines, const double offset, GridVector& ret_vec)
+    const double min_val, const double max_val, const double num_lines, const double axes_center, GridVector& ret_vec)
 {
-    const double d = max_val - min_val;
+    const double interval_scale = max_val - min_val;
 
-    const double d_inc = std::pow(2.0, std::floor(std::log2(d / num_lines)));
+    const double d_inc = std::pow(2.0, std::floor(std::log2(interval_scale / num_lines)));
     double val = min_val - std::fmod(min_val, d_inc);
 
     std::vector<double> vec;
     vec.reserve(num_lines);
 
-    int it = 0;
+    size_t it = 0U;
 
     while (val < max_val)
     {
         if (val > min_val)
         {
-            vec.push_back(val - offset);
+            vec.push_back(val - axes_center);
         }
         val = val + d_inc;
         it++;
-        if (it > static_cast<int>(num_lines * 3))
+        if (it > (static_cast<size_t>(num_lines) * 3U))
         {
             std::cout << "ERROR: Number of lines grew a lot!" << std::endl;
             break;
         }
     }
 
+    if (vec.size() < 1U)
+    {
+        std::cout << "Hllo" << std::endl;
+    }
+    if (vec.size() > GridVector::kMaxNumGridNumbers)
+    {
+        std::cout << "Hllo" << std::endl;
+    }
     DUOPLOT_ASSERT(vec.size() <= GridVector::kMaxNumGridNumbers);
     DUOPLOT_ASSERT(vec.size() > 1U);
 
@@ -481,10 +489,15 @@ void generateAxisVector(
     ret_vec.range = ret_vec.max_value - ret_vec.min_value;
     ret_vec.num_valid_values = vec.size();
 
+    ret_vec.mean = 0.0;
+
     for (size_t k = 0; k < vec.size(); k++)
     {
         ret_vec.data[k] = vec[k];
+        ret_vec.mean += ret_vec.data[k];
     }
+
+    ret_vec.mean /= static_cast<double>(ret_vec.num_valid_values);
 }
 
 GridVectors AxesInteractor::generateGridVectors()

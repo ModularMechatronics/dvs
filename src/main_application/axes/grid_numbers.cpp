@@ -106,6 +106,34 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
     const bool cond2 =
         ((azimuth <= 0) && (azimuth >= (-M_PI / 2.0))) || ((azimuth >= (M_PI / 2.0)) && (azimuth <= (M_PI)));
 
+    /*std::cout << "------------------------" << std::endl;
+
+    const double mn = axes_center.x + gv.x.mean;
+    const double ratio = (axes_center.x / gv.x.range);
+
+    std::cout << "gv.x.mean = " << gv.x.mean << std::endl;
+    std::cout << "axes_center.x = " << axes_center.x << std::endl;
+    std::cout << "mn = " << mn << std::endl;
+    std::cout << "Range = " << gv.x.range << std::endl;
+    {
+        std::ostringstream out;
+        out.precision(20);
+        out << std::fixed << ratio;
+        std::cout << "Ratio u/r = " << out.str() << std::endl;
+    }
+
+    std::array<double, GridVector::kMaxNumGridNumbers> tmp_data;
+
+    double mean_val = 0.0;
+
+    for (size_t k = 0; k < gv.x.num_valid_values; k++)
+    {
+        tmp_data[k] = gv.x.data[k] + axes_center.x;
+        mean_val += tmp_data[k];
+    }
+
+    mean_val /= static_cast<double>(gv.x.num_valid_values);*/
+
     for (size_t k = 0; k < gv.x.num_valid_values; k++)
     {
         const double x = gv.x.data[k];
@@ -113,6 +141,35 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
 
         const glm::vec3 v_projected = glm::project(v3, view_model, projection, v_viewport);
         const std::string val = formatNumber(gv.x.data[k] + axes_center.x, 3);
+
+        /*if (ratio > 50000 || true)
+        {
+            std::ostringstream out;
+            out.precision(20);
+            // out << std::fixed << axes_center.x << " + " << (gv.x.data[k]);
+            out << std::fixed << (gv.x.data[k]);
+
+            std::cout << out.str() << std::endl;
+
+            const glm::vec3 v(0.0f, y * 1.2, z * 1.2);
+
+            const glm::vec3 v_projected = glm::project(v, view_model, projection, v_viewport);
+
+            text_renderer.renderTextFromRightCenter(
+                formatNumber(axes_center.x, 3) + " +", v_projected[0], v_projected[1], kTextScale, width, height);
+
+            // val = formatNumber(gv.x.data[k] - gv.x.mean, 3U);
+            val = formatNumber(gv.x.data[k] - gv.x.mean, 3U);
+        }
+        else
+        {
+            std::ostringstream out;
+            out.precision(20);
+            // out << std::fixed << gv.x.data[k] + axes_center.x;
+            out << std::fixed << (gv.x.data[k]);
+            std::cout << out.str() << std::endl;
+        }*/
+
         text_renderer.renderTextFromCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         /*if (cond2)
         {
@@ -123,6 +180,7 @@ void drawXAxisNumbers(const TextRenderer& text_renderer,
             text_renderer.renderTextFromLeftCenter(val, v_projected[0], v_projected[1], kTextScale, width, height);
         }*/
     }
+    // std::cout << std::endl << std::endl;
 }
 
 void drawYAxisNumbers(const TextRenderer& text_renderer,

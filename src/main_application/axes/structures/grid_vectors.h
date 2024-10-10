@@ -26,6 +26,7 @@ struct GridVector
     double min_value;
     double max_value;
     double grid_spacing;
+    double mean;
     double range;
 };
 
