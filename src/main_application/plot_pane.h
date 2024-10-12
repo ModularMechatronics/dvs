@@ -16,7 +16,10 @@
 #include "input_data.h"
 #include "opengl_low_level/opengl_header.h"
 #include "plot_data_handler.h"
+#include "plot_objects/stream_object_base/stream_object_base.h"
 #include "point_selection.h"
+#include "serial_interface/definitions.h"
+#include "serial_interface/object_types.h"
 
 class PlotPane : public wxGLCanvas, public ApplicationGuiElement
 {
@@ -77,6 +80,10 @@ private:
     }
 
     void fillGuiPayload(FillableUInt8Array& output_array) const override {}
+    void initSubscribedStreams();
+
+    std::map<TopicId, StreamObjectBase*> subscribed_streams_;
+    std::vector<std::pair<TopicId, std::shared_ptr<objects::BaseObject>>> new_objects_;
 
 public:
     PlotPane(wxNotebookPage* parent,  // TODO: wxNotebookPage is obsolete, should be wxWindow/wxFrame?
@@ -97,6 +104,7 @@ public:
 
     void setHandleString(const std::string& new_name) override;
     void pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue);
+    void pushStreamData(const TopicId topic_id, const std::shared_ptr<objects::BaseObject>& obj);
 
     void render(wxPaintEvent& evt);
 

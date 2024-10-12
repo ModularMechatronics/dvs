@@ -31,6 +31,8 @@
 #include "project_state/configuration_agent.h"
 #include "project_state/project_settings.h"
 #include "project_state/save_manager.h"
+#include "serial_interface/object_types.h"
+#include "serial_interface/serial_interface.h"
 #include "tab_button.h"
 #include "tray_icon.h"
 #include "window_button.h"
@@ -41,6 +43,7 @@ class MainWindow : public wxFrame
 {
 private:
     DataReceiver data_receiver_;
+    SerialInterface serial_interface_;
     SaveManager* save_manager_;
     ConfigurationAgent* configuration_agent_;
     std::mutex receive_mtx_;
@@ -72,6 +75,8 @@ private:
     int current_window_num_;
     CustomTaskBarIcon* task_bar_;
     int window_callback_id_;
+    bool serial_device_is_ready_for_new_data_{false};
+    std::map<TopicId, std::vector<PlotPane*>> plot_pane_subscriptions_;
 
     bool window_initialization_in_progress_;
 
@@ -136,6 +141,9 @@ private:
     void mainWindowFlushMultipleElements(const ReceivedData& received_data);
     void addActionToQueue(ReceivedData& received_data);
     void setIsFileSavedForAllWindows(const bool file_saved);
+    void pushNewDataToQueue(const TopicId topic_id, const std::shared_ptr<objects::BaseObject>& obj);
+    void handleSerialData();
+
     wxMenuBar* createMainMenuBar();
 
     wxMenuBar* menu_bar_;

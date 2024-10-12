@@ -4,12 +4,15 @@
 #include <fstream>
 #include <memory>
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <stdexcept>
 
 #include "duoplot/enumerations.h"
 #include "duoplot/logging.h"
+#include "duoplot/plot_properties.h"
 #include "misc/rgb_triplet.h"
 #include "project_state/helper_functions.h"
+#include "serial_interface/definitions.h"
 
 extern RGBTriplet<float> kMainWindowBackgroundColor;
 
@@ -40,6 +43,35 @@ struct ElementSettings
 
 bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const std::shared_ptr<ElementSettings>& rhs);
 
+enum class StreamType
+{
+    PLOT,
+    PLOT3D,
+    SCATTER,
+    SCATTER3D,
+    UNKNOWN
+};
+
+struct SubscribedStreamSettings
+{
+    TopicId topic_id{kUnknownTopicId};
+    StreamType stream_type{StreamType::UNKNOWN};
+    float alpha{1.0f};
+    uint8_t line_width{1U};
+    uint8_t point_size{1U};
+    std::optional<duoplot::properties::Color> color{std::nullopt};
+    duoplot::properties::LineStyle line_style{duoplot::properties::LineStyle::SOLID};
+    duoplot::properties::ScatterStyle scatter_style{duoplot::properties::ScatterStyle::CIRCLE};
+    std::string label{};
+
+    SubscribedStreamSettings() = default;
+    explicit SubscribedStreamSettings(const nlohmann::json& j);
+
+    bool operator==(const SubscribedStreamSettings& other) const;
+
+    nlohmann::json toJson() const;
+};
+
 struct PlotPaneSettings : ElementSettings
 {
     PlotPaneSettings();
@@ -69,6 +101,7 @@ struct PlotPaneSettings : ElementSettings
     };
 
     ProjectionMode projection_mode;
+    std::vector<SubscribedStreamSettings> subscribed_streams;
 
     void parsePlotPaneSettings(const nlohmann::json& j);
 

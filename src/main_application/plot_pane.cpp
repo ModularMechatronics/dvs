@@ -9,6 +9,7 @@
 #include "duoplot/math/math.h"
 #include "events.h"
 #include "platform_paths.h"
+#include "plot_objects/stream_objects/plot2d/plot2d.h"
 
 using namespace duoplot::internal;
 
@@ -137,6 +138,41 @@ PlotPane::PlotPane(
 
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
     current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
+
+    initSubscribedStreams();
+}
+
+void PlotPane::pushStreamData(const TopicId topic_id, const std::shared_ptr<objects::BaseObject>& obj)
+{
+    new_objects_.push_back(std::make_pair(topic_id, obj));
+}
+
+void PlotPane::initSubscribedStreams()
+{
+    for (const SubscribedStreamSettings& subscribed_stream : plot_pane_settings_->subscribed_streams)
+    {
+        if (subscribed_stream.stream_type == StreamType::PLOT)
+        {
+            subscribed_streams_[subscribed_stream.topic_id] = new Plot2DStream(subscribed_stream, shader_collection_);
+            std::cout << "Creating plot for " << getHandleString() << ", " << subscribed_stream.topic_id << std::endl;
+        }
+        else if (subscribed_stream.stream_type == StreamType::PLOT3D)
+        {
+            std::cout << "Creating plot3d" << std::endl;
+        }
+        else if (subscribed_stream.stream_type == StreamType::SCATTER)
+        {
+            std::cout << "Creating scatter" << std::endl;
+        }
+        else if (subscribed_stream.stream_type == StreamType::SCATTER3D)
+        {
+            std::cout << "Creating scatter3d" << std::endl;
+        }
+        else
+        {
+            std::cout << "Unknown stream type!" << std::endl;
+        }
+    }
 }
 
 void PlotPane::updateSizeFromParent(const wxSize& parent_size)
@@ -314,7 +350,7 @@ void PlotPane::pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue)
 
 void PlotPane::update()
 {
-    if (!queued_data_.empty())
+    if (!queued_data_.empty() || new_objects_.size() > 0U)
     {
         Refresh();
     }
@@ -823,6 +859,17 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
     processActionQueue();
 
+    for (auto& [topic_id, obj] : new_objects_)
+    {
+        if (subscribed_streams_.find(topic_id) == subscribed_streams_.end())
+        {
+            continue;
+        }
+
+        subscribed_streams_.find(topic_id)->second->appendNewData(obj);
+    }
+    new_objects_.clear();
+
     /*if (pending_clear_)
     {
         pending_clear_ = false;
@@ -883,6 +930,10 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
     axes_renderer_->plotBegin();
 
     plot_data_handler_->render();
+    for (auto& [topic_id, stream] : subscribed_streams_)
+    {
+        stream->render();
+    }
 
     axes_renderer_->plotEnd();
 

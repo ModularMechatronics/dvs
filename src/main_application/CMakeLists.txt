@@ -63,6 +63,9 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_objects/surf/surf.cpp
                      plot_objects/scrolling_plot2d/scrolling_plot2d.cpp
 
+                     plot_objects/stream_object_base/stream_object_base.cpp
+                     plot_objects/stream_objects/plot2d/plot2d.cpp
+
                      globals.cpp
 
                      project_state/configuration_agent.cpp
@@ -86,6 +89,10 @@ set(CPP_SOURCE_FILES main.cpp
                      color_picker.cpp
                      main_window.cpp
                      main_window_receive.cpp
+
+                     serial_interface/serial_port.cpp
+                     serial_interface/serial_interface.cpp
+                     serial_interface/raw_data_frame.cpp
 
                      properties.cpp)
 

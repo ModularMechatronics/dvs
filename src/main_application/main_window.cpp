@@ -16,6 +16,7 @@
 #include "gui_window.h"
 #include "platform_paths.h"
 
+
 namespace element_number_counter
 {
 int counter = 0;
@@ -31,12 +32,15 @@ int getNextFreeElementNumber()
 using namespace duoplot::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
-    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 130), wxSize(kMainWindowWidth, 150), wxNO_BORDER), data_receiver_{}
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 130), wxSize(kMainWindowWidth, 150), wxNO_BORDER),
+      data_receiver_{},
+      serial_interface_{"/dev/tty.usbmodem142102", 115200}
 {
 #ifndef PLATFORM_APPLE_M
     Show();
 #endif
 
+    serial_interface_.start();
     shutdown_in_progress_ = false;
 
     first_window_button_offset_ =
@@ -424,10 +428,15 @@ wxMenuBar* MainWindow::createMainMenuBar()
     file_menu_->Append(wxID_SAVE, _T("&Save"));
     file_menu_->Append(wxID_SAVEAS, _T("&Save As..."));
 
-    file_menu_->AppendSeparator();
-    // file_menu_->Append(wxID_HELP_INDEX, _T("Quit"));
-
     menu_bar_tmp->Append(file_menu_, _T("&File"));
+
+    /*wxMenu* project_settings = new wxMenu();
+    project_settings->AppendCheckItem(wxID_NEW, wxT("&Listen to serial port"));
+    project_settings->Append(wxID_NEW, _T("&Serial port settings..."));
+    file_menu_->AppendSeparator();
+    project_settings->AppendCheckItem(wxID_NEW, wxT("&Listen to local IPC"));
+
+    menu_bar_tmp->Append(project_settings, _T("&Project Settings"));*/
 
     windows_menu_ = new wxMenu();
     windows_menu_->Append(wxID_HELP_CONTENTS, "New window");
@@ -510,6 +519,29 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
         std::vector<ApplicationGuiElement*> pps = we->getPlotPanes();
         for (const auto& ge : pps)
         {
+            const std::shared_ptr<ElementSettings> element_settings = ge->getElementSettings();
+            std::shared_ptr<PlotPaneSettings> plot_pane_settings =
+                std::dynamic_pointer_cast<PlotPaneSettings>(element_settings);
+
+            for (const SubscribedStreamSettings& subscribed_stream : plot_pane_settings->subscribed_streams)
+            {
+                if (plot_pane_subscriptions_.count(subscribed_stream.topic_id) > 0)
+                {
+                    std::cout << "Topic " << subscribed_stream.topic_id << " already exists in list, adding "
+                              << ge->getHandleString() << " to it." << std::endl;
+                    plot_pane_subscriptions_[subscribed_stream.topic_id].push_back(dynamic_cast<PlotPane*>(ge));
+                }
+                else
+                {
+                    std::cout << "Topic " << subscribed_stream.topic_id
+                              << " doesn't exist in list, creating new list and adding " << ge->getHandleString()
+                              << " to it." << std::endl;
+                    std::vector<PlotPane*> pps;
+                    pps.push_back(dynamic_cast<PlotPane*>(ge));
+                    plot_pane_subscriptions_[subscribed_stream.topic_id] = pps;
+                }
+            }
+
             plot_panes_[ge->getHandleString()] = ge;
         }
         std::vector<ApplicationGuiElement*> ges = we->getGuiElements();
@@ -750,7 +782,8 @@ void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::saveProjectAs()
 {
-    wxFileDialog open_file_dialog(this, _("Choose file to save to"), "", "", "duoplot files (*.duoplot)|*.duoplot", wxFD_SAVE);
+    wxFileDialog open_file_dialog(
+        this, _("Choose file to save to"), "", "", "duoplot files (*.duoplot)|*.duoplot", wxFD_SAVE);
     if (open_file_dialog.ShowModal() == wxID_CANCEL)
     {
         return;

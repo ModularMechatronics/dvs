@@ -56,9 +56,15 @@ public:
         setElementPositionAndSize();
     }
 
-    void keyPressedElementSpecific(const char key) override {}
+    void keyPressedElementSpecific(const char key) override
+    {
+        static_cast<void>(key);
+    }
 
-    void keyReleasedElementSpecific(const char key) override {}
+    void keyReleasedElementSpecific(const char key) override
+    {
+        static_cast<void>(key);
+    }
 
     wxPoint getPosition() const override
     {
