@@ -147,6 +147,19 @@ void PlotPane::pushStreamData(const TopicId topic_id, const std::shared_ptr<obje
     new_objects_.push_back(std::make_pair(topic_id, obj));
 }
 
+void PlotPane::pushStreamData(const TopicId topic_id, const std::vector<std::shared_ptr<objects::BaseObject>>& objects)
+{
+    if (new_objects2_.find(topic_id) == new_objects2_.end())
+    {
+        new_objects2_[topic_id] = objects;
+    }
+    else
+    {
+        new_objects2_[topic_id].insert(new_objects2_[topic_id].end(), objects.begin(), objects.end());
+    }
+    // std::vector<std::pair<TopicId, std::shared_ptr<objects::BaseObject>>> new_objects_;
+}
+
 void PlotPane::initSubscribedStreams()
 {
     for (const SubscribedStreamSettings& subscribed_stream : plot_pane_settings_->subscribed_streams)
@@ -350,7 +363,7 @@ void PlotPane::pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue)
 
 void PlotPane::update()
 {
-    if (!queued_data_.empty() || new_objects_.size() > 0U)
+    if (!queued_data_.empty() || new_objects_.size() > 0U || new_objects2_.size() > 0U)
     {
         Refresh();
     }
@@ -859,7 +872,18 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
     processActionQueue();
 
-    for (auto& [topic_id, obj] : new_objects_)
+    // new_objects2_
+    // std::map<TopicId, std::vector<std::shared_ptr<objects::BaseObject>>> new_objects2_;
+    for (auto& [topic_id, objects] : new_objects2_)
+    {
+        if (subscribed_streams_.find(topic_id) == subscribed_streams_.end())
+        {
+            continue;
+        }
+
+        subscribed_streams_.find(topic_id)->second->appendNewData(objects);
+    }
+    /*for (auto& [topic_id, obj] : new_objects_)
     {
         if (subscribed_streams_.find(topic_id) == subscribed_streams_.end())
         {
@@ -867,7 +891,8 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
         }
 
         subscribed_streams_.find(topic_id)->second->appendNewData(obj);
-    }
+    }*/
+    new_objects2_.clear();
     new_objects_.clear();
 
     /*if (pending_clear_)

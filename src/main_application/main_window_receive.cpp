@@ -266,15 +266,9 @@ void MainWindow::tcpReceiveThreadFunction()
 
 void MainWindow::pushNewDataToQueue(const TopicId topic_id, const std::shared_ptr<objects::BaseObject>& obj)
 {
-    if (plot_pane_subscriptions_.find(topic_id) == plot_pane_subscriptions_.end())
+    if (objects_temporary_storage_.find(topic_id) != objects_temporary_storage_.end())
     {
-        return;
-    }
-
-    const std::vector<PlotPane*> plot_panes_to_push_data_to = plot_pane_subscriptions_[topic_id];
-    for (PlotPane* const plot_pane : plot_panes_to_push_data_to)
-    {
-        plot_pane->pushStreamData(topic_id, obj);
+        objects_temporary_storage_.at(topic_id).push_back(obj);
     }
 }
 
@@ -381,13 +375,21 @@ void MainWindow::handleSerialData()
             std::cout << std::endl;
             std::cout << "Error: Did not read all data!" << std::endl;
         }
-
-        // objects_queue.enqueue(std::move(received_object));
     }
 
-    if (raw_data_frames.size() > 0)
+    for (auto& [topic_id, objects] : objects_temporary_storage_)
     {
-        // std::cout << std::endl;
+        if (plot_pane_subscriptions_.find(topic_id) == plot_pane_subscriptions_.end())
+        {
+            continue;
+        }
+
+        const std::vector<PlotPane*>& plot_panes_to_push_data_to = plot_pane_subscriptions_[topic_id];
+        for (PlotPane* const plot_pane : plot_panes_to_push_data_to)
+        {
+            plot_pane->pushStreamData(topic_id, objects);
+        }
+        objects.clear();
     }
 }
 

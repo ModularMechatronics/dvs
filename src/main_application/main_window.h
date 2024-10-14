@@ -77,6 +77,7 @@ private:
     int window_callback_id_;
     bool serial_device_is_ready_for_new_data_{false};
     std::map<TopicId, std::vector<PlotPane*>> plot_pane_subscriptions_;
+    std::map<TopicId, std::vector<std::shared_ptr<objects::BaseObject>>> objects_temporary_storage_;
 
     bool window_initialization_in_progress_;
 

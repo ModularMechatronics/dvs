@@ -540,6 +540,9 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
                     pps.push_back(dynamic_cast<PlotPane*>(ge));
                     plot_pane_subscriptions_[subscribed_stream.topic_id] = pps;
                 }
+
+                objects_temporary_storage_[subscribed_stream.topic_id] =
+                    std::vector<std::shared_ptr<objects::BaseObject>>();
             }
 
             plot_panes_[ge->getHandleString()] = ge;
