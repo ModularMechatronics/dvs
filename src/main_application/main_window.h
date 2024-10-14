@@ -91,6 +91,8 @@ private:
     std::function<void(const Color_t, const std::string&)> push_text_to_cmdl_output_window_;
     std::function<void(void)> print_gui_callback_code_;
 
+    uint64_t time_at_start_;
+
     void printGuiCallbackCode();
 
     void OnReceiveTimer(wxTimerEvent&);

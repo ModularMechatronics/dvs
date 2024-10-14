@@ -8,15 +8,13 @@ class Plot2DStream : public StreamObjectBase
 {
 private:
     float* points_ptr_;
-    float* dt_vec_;
     size_t previous_buffer_size_;
     size_t current_idx_;
     GLuint sp_vertex_buffer_, sp_vertex_buffer_array_;
     size_t num_elements_to_draw_{0U};
 
-    float xval{0.0f};
-
     RGBTripletf color_{0.0f, 0.0f, 0.0f};
+    uint64_t previous_timestamp_{0U};
 
 public:
     Plot2DStream();

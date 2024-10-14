@@ -8,22 +8,12 @@ Plot2DStream::Plot2DStream(const SubscribedStreamSettings& subscribed_stream_set
                            const ShaderCollection& shader_collection)
     : StreamObjectBase(subscribed_stream_settings, shader_collection)
 {
-    num_elements_to_draw_ = 1U;
+    num_elements_to_draw_ = 0U;
 
     points_ptr_ = new float[kStreamBufferSize * 2U];
-    dt_vec_ = new float[kStreamBufferSize];
 
     const size_t num_bytes = kStreamBufferSize * 2U * sizeof(float);
     std::memset(points_ptr_, 0, num_bytes);
-    std::memset(dt_vec_, 0, num_bytes / 2U);
-
-    float t = 0.0f;
-    for (size_t k = 0; k < kStreamBufferSize; k += 2U)
-    {
-        points_ptr_[k] = t;
-        points_ptr_[k + 1U] = std::sin(t);
-        t += 0.1f;
-    }
 
     glGenVertexArrays(1, &sp_vertex_buffer_array_);
     glBindVertexArray(sp_vertex_buffer_array_);
@@ -50,7 +40,6 @@ Plot2DStream::Plot2DStream(const SubscribedStreamSettings& subscribed_stream_set
 
 void Plot2DStream::appendNewData(const std::vector<std::shared_ptr<objects::BaseObject>>& obj)
 {
-    std::cout << obj.size() << std::endl;
     for (size_t k = 0; k < obj.size(); k++)
     {
         appendNewData(obj[k]);
@@ -59,59 +48,43 @@ void Plot2DStream::appendNewData(const std::vector<std::shared_ptr<objects::Base
 
 void Plot2DStream::appendNewData(const std::shared_ptr<objects::BaseObject>& obj)
 {
-    const float value = static_cast<objects::Float*>(obj.get())->value();
-    // std::cout << this << ", " << obj->topicId() << ": " << value << std::endl;
-    // TODO: Should receive vector of new objects?
-
-    /////
     num_elements_to_draw_ =
         (num_elements_to_draw_ + 1U) > kStreamBufferSize ? kStreamBufferSize : (num_elements_to_draw_ + 1U);
-    int64_t idx = 0;
-    const int64_t num_samples_2 = kStreamBufferSize * 2;
-    const int64_t num_samples = kStreamBufferSize;
 
-    // Shuffle dt
-    for (size_t k = 0; k < (kStreamBufferSize - 1U); k++)
+    const int64_t num_samples_2 = kStreamBufferSize * 2;
+    const uint64_t timestamp = obj->timestamp();
+
+    float dt;
+
+    if (timestamp >= previous_timestamp_)
     {
-        points_ptr_[(num_samples_2 - idx) - 1] = points_ptr_[(num_samples_2 - idx) - 3];
-        // points_ptr_[(num_samples_2 - idx) - 2] = points_ptr_[(num_samples_2 - idx) - 4];
-        idx += 2;
+        dt = 0.001f * static_cast<float>(timestamp - previous_timestamp_);
+    }
+    else
+    {
+        // Overflow has occured
+        constexpr uint64_t kMaxTimestamp = 0xFFFFFFFFU;  // The timestamp received from the microcontroller is 32-bit
+        dt = 0.001f * static_cast<float>((kMaxTimestamp - previous_timestamp_) + timestamp);
     }
 
-    idx = 0;
-    constexpr float dt = 0.1f;
-    for (size_t k = 0; k < kStreamBufferSize; k++)
+    int64_t idx = static_cast<uint64_t>(num_samples_2) - 1;
+
+    for (size_t k = 0; k < (kStreamBufferSize - 1); k++)
     {
-        points_ptr_[idx] = static_cast<float>(k) * dt;
-        idx += 2;
+        points_ptr_[idx] = points_ptr_[idx - 2];
+        points_ptr_[idx - 1] = points_ptr_[idx - 3] + dt;
+        idx -= 2;
     }
 
     points_ptr_[0U] = 0.0f;
-    points_ptr_[1U] = value;
+    points_ptr_[1U] = static_cast<objects::Float*>(obj.get())->value();
 
-    /*
-
-    kStreamBufferSize = 5
-    0 1 2 3 4 5 6 7 8 9
-    t x t x t x t x t x
-    t   t   t   t   t
-
-    num_samples_2 == 10
-    idx == 0
-    num_samples_2 - idx - 1 == 9
-    num_samples_2 - idx - 3 == 7
-
-    num_samples_2 - idx - 2 == 8
-    num_samples_2 - idx - 4 == 6
-
-    Most recent t value is at 0, and that's also the most recent data value
-
-    */
-
-    const size_t num_bytes_to_replace = kStreamBufferSize * 2U * sizeof(float);
+    constexpr size_t num_bytes_to_replace = kStreamBufferSize * 2U * sizeof(float);
 
     glBindBuffer(GL_ARRAY_BUFFER, sp_vertex_buffer_);
     glBufferSubData(GL_ARRAY_BUFFER, 0, num_bytes_to_replace, points_ptr_);
+
+    previous_timestamp_ = timestamp;
 }
 
 void Plot2DStream::render()

@@ -17,6 +17,7 @@ Pre release:
 - Move "FAST_PLOT" flag to "not_ready" namespace?
 
 Post release:
+- Arbitrary 2D primitives for the plot pane, in pixel coorinates (or -1 to 1), to draw rect, box, circle, text etc.
 - Begin able to set window and element size and position from interface
 - When changing project file, all elements probably don't get updated in the main window version of the element handles
 - Replace "OptionalParameter" with std::optional

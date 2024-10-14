@@ -15,10 +15,14 @@ class BaseObject
 protected:
     TopicId topic_id_;
     ObjectType object_type_;
+    uint64_t timestamp_;
 
 public:
     BaseObject() = delete;
-    BaseObject(const ObjectType object_type, const TopicId topic_id) : topic_id_{topic_id}, object_type_{object_type} {}
+    BaseObject(const ObjectType object_type, const TopicId topic_id, const uint64_t timestamp)
+        : topic_id_{topic_id}, object_type_{object_type}, timestamp_{timestamp}
+    {
+    }
 
     ~BaseObject() = default;
 
@@ -30,6 +34,11 @@ public:
     {
         return object_type_;
     }
+
+    uint64_t timestamp() const
+    {
+        return timestamp_;
+    }
 };
 
 class Number : public BaseObject
@@ -39,8 +48,8 @@ protected:
 
 public:
     Number() = delete;
-    Number(const NumberDataType number_data_type, const TopicId topic_id)
-        : BaseObject{ObjectType::kNumber, topic_id}, number_data_type_{number_data_type}
+    Number(const NumberDataType number_data_type, const TopicId topic_id, const uint64_t timestamp)
+        : BaseObject{ObjectType::kNumber, topic_id, timestamp}, number_data_type_{number_data_type}
     {
     }
 
@@ -59,7 +68,8 @@ private:
 
 public:
     Float() = delete;
-    Float(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kFloat, topic_id)
+    Float(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kFloat, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }
@@ -79,7 +89,8 @@ private:
 
 public:
     Double() = delete;
-    Double(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kDouble, topic_id)
+    Double(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kDouble, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }
@@ -97,7 +108,8 @@ private:
 
 public:
     UInt8() = delete;
-    UInt8(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kUInt8, topic_id)
+    UInt8(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kUInt8, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }
@@ -115,7 +127,8 @@ private:
 
 public:
     UInt16() = delete;
-    UInt16(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kUInt16, topic_id)
+    UInt16(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kUInt16, topic_id, timestamp)
     {
         buffered_reader.readUInt16(value_);
     }
@@ -133,7 +146,8 @@ private:
 
 public:
     UInt32() = delete;
-    UInt32(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kUInt32, topic_id)
+    UInt32(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kUInt32, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }
@@ -151,7 +165,8 @@ private:
 
 public:
     UInt64() = delete;
-    UInt64(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kUInt64, topic_id)
+    UInt64(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kUInt64, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }
@@ -169,7 +184,8 @@ private:
 
 public:
     Int8() = delete;
-    Int8(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kInt8, topic_id)
+    Int8(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kInt8, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }
@@ -187,7 +203,8 @@ private:
 
 public:
     Int16() = delete;
-    Int16(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kInt16, topic_id)
+    Int16(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kInt16, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }
@@ -205,7 +222,8 @@ private:
 
 public:
     Int32() = delete;
-    Int32(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kInt32, topic_id)
+    Int32(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kInt32, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }
@@ -223,7 +241,8 @@ private:
 
 public:
     Int64() = delete;
-    Int64(BufferedReader& buffered_reader, const TopicId topic_id) : Number(NumberDataType::kInt64, topic_id)
+    Int64(BufferedReader& buffered_reader, const TopicId topic_id, const uint64_t timestamp)
+        : Number(NumberDataType::kInt64, topic_id, timestamp)
     {
         buffered_reader.read(value_);
     }

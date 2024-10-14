@@ -89,6 +89,7 @@ set(CPP_SOURCE_FILES main.cpp
                      color_picker.cpp
                      main_window.cpp
                      main_window_receive.cpp
+                     main_window_serial.cpp
 
                      serial_interface/serial_port.cpp
                      serial_interface/serial_interface.cpp

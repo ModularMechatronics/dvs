@@ -66,6 +66,19 @@
                                         "line_style": "solid",
                                         "line_width": 3.5,
                                         "label": "Acceleration Y"
+                                    },
+                                    {
+                                        "topic_id": 4,
+                                        "stream_type": "plot",
+                                        "color": {
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        },
+                                        "alpha": 0.1,
+                                        "line_style": "solid",
+                                        "line_width": 3.5,
+                                        "label": "Acceleration Y"
                                     }
                                 ],
                                 "subscribed_streams2": [
@@ -150,12 +163,12 @@
                                 ],
                                 "subscribed_streams": [
                                     {
-                                        "topic_id": 4,
+                                        "topic_id": 3,
                                         "stream_type": "plot",
                                         "color": {
-                                            "b": 0.699999988079071,
-                                            "g": 0.699999988079071,
-                                            "r": 0.699999988079071
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 0.0
                                         },
                                         "alpha": 0.1,
                                         "line_style": "solid",

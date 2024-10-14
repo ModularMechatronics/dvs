@@ -4,6 +4,7 @@
 #include <wx/wfstream.h>
 #include <wx/wxprec.h>
 
+#include <chrono>
 #include <csignal>
 #include <iostream>
 #include <stdexcept>
@@ -15,7 +16,6 @@
 #include "globals.h"
 #include "gui_window.h"
 #include "platform_paths.h"
-
 
 namespace element_number_counter
 {
@@ -78,6 +78,10 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     };
 
     print_gui_callback_code_ = [this]() { printGuiCallbackCode(); };
+
+    time_at_start_ = static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
+            .count());
 
     SetMenuBar(menu_bar_);
     wxMenuBar::MacSetCommonMenuBar(menu_bar_);
