@@ -58,6 +58,10 @@ TabSettings::TabSettings(const nlohmann::json& j)
         {
             elements.emplace_back(std::make_shared<RadioButtonGroupSettings>(j["elements"][k]));
         }
+        else if (type == duoplot::GuiElementType::ScrollingText)
+        {
+            elements.emplace_back(std::make_shared<ScrollingTextSettings>(j["elements"][k]));
+        }
         else if (type == duoplot::GuiElementType::TextLabel)
         {
             elements.emplace_back(std::make_shared<TextLabelSettings>(j["elements"][k]));
@@ -207,6 +211,13 @@ bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const s
         case duoplot::GuiElementType::StaticBox: {
             const std::shared_ptr<StaticBoxSettings> lhs_casted = std::dynamic_pointer_cast<StaticBoxSettings>(lhs);
             const std::shared_ptr<StaticBoxSettings> rhs_casted = std::dynamic_pointer_cast<StaticBoxSettings>(rhs);
+            return *lhs_casted == *rhs_casted;
+        }
+        case duoplot::GuiElementType::ScrollingText: {
+            const std::shared_ptr<ScrollingTextSettings> lhs_casted =
+                std::dynamic_pointer_cast<ScrollingTextSettings>(lhs);
+            const std::shared_ptr<ScrollingTextSettings> rhs_casted =
+                std::dynamic_pointer_cast<ScrollingTextSettings>(rhs);
             return *lhs_casted == *rhs_casted;
         }
         default: {

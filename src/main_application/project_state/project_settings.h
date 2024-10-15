@@ -52,6 +52,38 @@ enum class StreamType
     UNKNOWN
 };
 
+struct SubscribedTextStreamSettings
+{
+    TopicId topic_id{kUnknownTopicId};
+
+    std::optional<RGBTripletf> text_color{std::nullopt};
+
+    SubscribedTextStreamSettings();
+    explicit SubscribedTextStreamSettings(const nlohmann::json& j);
+
+    bool operator==(const SubscribedTextStreamSettings& other) const;
+    bool operator!=(const SubscribedTextStreamSettings& other) const;
+
+    nlohmann::json toJson() const;
+};
+
+struct ScrollingTextSettings : ElementSettings
+{
+    ScrollingTextSettings();
+    explicit ScrollingTextSettings(const nlohmann::json& j);
+
+    std::string title;
+    bool print_timestamp;
+    bool print_topic_id;
+
+    std::vector<SubscribedTextStreamSettings> subscribed_streams;
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const ScrollingTextSettings& other) const;
+    bool operator!=(const ScrollingTextSettings& other) const;
+};
+
 struct SubscribedStreamSettings
 {
     TopicId topic_id{kUnknownTopicId};

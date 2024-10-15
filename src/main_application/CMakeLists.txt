@@ -95,6 +95,12 @@ set(CPP_SOURCE_FILES main.cpp
                      serial_interface/serial_interface.cpp
                      serial_interface/raw_data_frame.cpp
 
+                     topic_text_output_window.cpp
+
+                     text_stream_objects/text_stream_object_base.cpp
+
+                     project_state/scrolling_text_settings.cpp
+
                      properties.cpp)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${REPO_DIR}/src/build/)

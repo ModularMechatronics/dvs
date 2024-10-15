@@ -167,7 +167,6 @@ void PlotPane::initSubscribedStreams()
         if (subscribed_stream.stream_type == StreamType::PLOT)
         {
             subscribed_streams_[subscribed_stream.topic_id] = new Plot2DStream(subscribed_stream, shader_collection_);
-            std::cout << "Creating plot for " << getHandleString() << ", " << subscribed_stream.topic_id << std::endl;
         }
         else if (subscribed_stream.stream_type == StreamType::PLOT3D)
         {

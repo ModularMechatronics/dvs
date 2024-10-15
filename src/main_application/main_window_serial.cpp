@@ -1,3 +1,4 @@
+#include "gui_elements.h"
 #include "main_window.h"
 
 using namespace duoplot::internal;
@@ -99,8 +100,13 @@ void MainWindow::handleSerialData()
                 {
                     obj = std::make_shared<objects::UInt64>(reader, topic_id, timestamp);
                 }
+            }
+            else if (ObjectType::kString == object_type)
+            {
+                std::string s(reinterpret_cast<const char* const>(reader.data() + reader.idx()));
+                reader.advance(s.size() + 1U);
 
-                // objects::printObjectData(obj);
+                streams_of_strings_[topic_id].push_back({timestamp, s});
             }
 
             if (topic_id == 0xFFFEU)
@@ -134,7 +140,7 @@ void MainWindow::handleSerialData()
 
     for (auto& [topic_id, objects] : objects_temporary_storage_)
     {
-        if (plot_pane_subscriptions_.find(topic_id) == plot_pane_subscriptions_.end())
+        if (plot_pane_subscriptions_.find(topic_id) == plot_pane_subscriptions_.end() || objects.empty())
         {
             continue;
         }
@@ -145,5 +151,30 @@ void MainWindow::handleSerialData()
             plot_pane->pushStreamData(topic_id, objects);
         }
         objects.clear();
+    }
+
+    for (auto& [topic_id, strings] : streams_of_strings_)
+    {
+        const std::string t_id = std::to_string(topic_id);
+        for (const std::string& s : strings)
+        {
+            topic_text_output_window_->pushNewText(Color_t::RED, t_id);
+            topic_text_output_window_->pushNewText(Color_t::BLACK, ": " + s + "\n");
+        }
+
+        if (stream_of_strings_subscriptions_.find(topic_id) == stream_of_strings_subscriptions_.end() ||
+            strings.empty())
+        {
+            continue;
+        }
+
+        const std::vector<ScrollingTextGuiElement*>& text_elements_to_push_data_to =
+            stream_of_strings_subscriptions_[topic_id];
+        for (ScrollingTextGuiElement* text_element : text_elements_to_push_data_to)
+        {
+            text_element->pushNewText(topic_id, strings);
+        }
+
+        strings.clear();
     }
 }

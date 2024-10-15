@@ -329,6 +329,54 @@ nlohmann::json SubscribedStreamSettings::toJson() const
 {
     nlohmann::json j;
 
+    if (line_style == duoplot::properties::LineStyle::SOLID)
+    {
+        j["line_style"] = "solid";
+    }
+    else if (line_style == duoplot::properties::LineStyle::DASHED)
+    {
+        j["line_style"] = "dashed";
+    }
+    else if (line_style == duoplot::properties::LineStyle::SHORT_DASHED)
+    {
+        j["line_style"] = "short_dashed";
+    }
+    else if (line_style == duoplot::properties::LineStyle::LONG_DASHED)
+    {
+        j["line_style"] = "LONG_DASHED";
+    }
+
+    else if (scatter_style == duoplot::properties::ScatterStyle::SQUARE)
+    {
+        j["scatter_style"] = "square";
+    }
+    else if (scatter_style == duoplot::properties::ScatterStyle::CIRCLE)
+    {
+        j["scatter_style"] = "circle";
+    }
+    else if (scatter_style == duoplot::properties::ScatterStyle::DISC)
+    {
+        j["scatter_style"] = "disc";
+    }
+    else if (scatter_style == duoplot::properties::ScatterStyle::PLUS)
+    {
+        j["scatter_style"] = "plus";
+    }
+    else if (scatter_style == duoplot::properties::ScatterStyle::CROSS)
+    {
+        j["scatter_style"] = "cross";
+    }
+
+    j["topic_id"] = topic_id;
+    j["stream_type"] = stream_type;
+    j["alpha"] = alpha;
+    j["line_width"] = line_width;
+    j["point_size"] = point_size;
+    j["color"] = colorToJsonObj(RGBTripletf{static_cast<float>(color.value().red) / 255.0f,
+                                            static_cast<float>(color.value().green) / 255.0f,
+                                            static_cast<float>(color.value().blue) / 255.0f});
+    j["label"] = label;
+
     return j;
 }
 

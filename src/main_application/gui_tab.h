@@ -52,6 +52,7 @@ private:
     std::string name_;
     std::vector<PlotPane*> plot_panes_;
     std::vector<ApplicationGuiElement*> gui_elements_;
+    std::vector<ScrollingTextGuiElement*> scrolling_text_elements_;
     wxFrame* parent_window_;
     std::function<void(const char key)> notify_main_window_key_pressed_;
     std::function<void(const char key)> notify_main_window_key_released_;
@@ -88,6 +89,7 @@ public:
     ~WindowTab();
     std::vector<ApplicationGuiElement*> getPlotPanes() const;
     std::vector<ApplicationGuiElement*> getGuiElements() const;
+    std::vector<ScrollingTextGuiElement*> getScrollingTexts() const;
     std::vector<ApplicationGuiElement*> getAllGuiElements() const;
     void updateAllElements();
     void setMinXPos(const int min_x_pos);
@@ -102,6 +104,7 @@ public:
     void createNewEditableText(const std::shared_ptr<ElementSettings>& element_settings);
     void createDropdownMenu(const std::shared_ptr<ElementSettings>& element_settings);
     void createRadioButtonGroup(const std::shared_ptr<ElementSettings>& element_settings);
+    void createScrollingText(const std::shared_ptr<ElementSettings>& element_settings);
     void show();
     void hide();
     void updateSizeFromParent(const wxSize new_size) const;

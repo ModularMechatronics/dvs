@@ -319,6 +319,19 @@ std::vector<ApplicationGuiElement*> GuiWindow::getGuiElements() const
     return gui_elements;
 }
 
+std::vector<ScrollingTextGuiElement*> GuiWindow::getScrollingTexts() const
+{
+    std::vector<ScrollingTextGuiElement*> gui_elements;
+
+    for (const auto& tab : tabs_)
+    {
+        std::vector<ScrollingTextGuiElement*> tab_gui_elements = tab->getScrollingTexts();
+        gui_elements.insert(gui_elements.end(), tab_gui_elements.begin(), tab_gui_elements.end());
+    }
+
+    return gui_elements;
+}
+
 std::vector<ApplicationGuiElement*> GuiWindow::getPlotPanes() const
 {
     std::vector<ApplicationGuiElement*> plot_panes;

@@ -34,10 +34,12 @@
 #include "serial_interface/object_types.h"
 #include "serial_interface/serial_interface.h"
 #include "tab_button.h"
+#include "topic_text_output_window.h"
 #include "tray_icon.h"
 #include "window_button.h"
 
 class GuiWindow;
+class ScrollingTextGuiElement;
 
 class MainWindow : public wxFrame
 {
@@ -49,10 +51,12 @@ private:
     std::mutex receive_mtx_;
 
     CmdlOutputWindow* cmdl_output_window_;
+    TopicTextOutputWindow* topic_text_output_window_;
 
     std::thread* tcp_receive_thread_;
     std::map<std::string, ApplicationGuiElement*> plot_panes_;
     std::map<std::string, ApplicationGuiElement*> gui_elements_;
+    std::map<std::string, ScrollingTextGuiElement*> scrolling_text_elements_;
 
     std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
 
@@ -76,8 +80,10 @@ private:
     CustomTaskBarIcon* task_bar_;
     int window_callback_id_;
     bool serial_device_is_ready_for_new_data_{false};
+    std::map<TopicId, std::vector<ScrollingTextGuiElement*>> stream_of_strings_subscriptions_;
     std::map<TopicId, std::vector<PlotPane*>> plot_pane_subscriptions_;
     std::map<TopicId, std::vector<std::shared_ptr<objects::BaseObject>>> objects_temporary_storage_;
+    std::map<TopicId, std::vector<std::pair<uint64_t, std::string>>> streams_of_strings_;
 
     bool window_initialization_in_progress_;
 
@@ -115,6 +121,8 @@ private:
     bool hasWindowWithName(const std::string& window_name);
     void preferencesCallback(wxCommandEvent& event);
     void preferences();
+
+    void handleTopicOutputWindow(wxCommandEvent& event);
 
     void windowNameChanged(const std::string& old_name, const std::string& new_name);
 

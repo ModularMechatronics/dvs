@@ -64,6 +64,10 @@ inline duoplot::GuiElementType parseGuiElementType(const nlohmann::json& j)
     {
         return duoplot::GuiElementType::PlotPane;
     }
+    else if (type_string == "SCROLLING_TEXT")
+    {
+        return duoplot::GuiElementType::ScrollingText;
+    }
     else
     {
         return duoplot::GuiElementType::Unknown;
@@ -114,6 +118,10 @@ inline std::string guiElementTypeToString(const duoplot::GuiElementType& type)
         }
         case duoplot::GuiElementType::PlotPane: {
             res = "PLOT_PANE";
+            break;
+        }
+        case duoplot::GuiElementType::ScrollingText: {
+            res = "SCROLLING_TEXT";
             break;
         }
         default: {

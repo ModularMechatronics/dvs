@@ -441,6 +441,10 @@ StaticBoxSettings::StaticBoxSettings(const nlohmann::json& j_data) : ElementSett
             {
                 elements.push_back(std::make_shared<RadioButtonGroupSettings>(j_element));
             }
+            else if (ge_type == duoplot::GuiElementType::ScrollingText)
+            {
+                elements.push_back(std::make_shared<ScrollingTextSettings>(j_element));
+            }
             else if (ge_type == duoplot::GuiElementType::TextLabel)
             {
                 elements.push_back(std::make_shared<TextLabelSettings>(j_element));
