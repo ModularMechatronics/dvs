@@ -49,6 +49,7 @@ enum class StreamType
     PLOT3D,
     SCATTER,
     SCATTER3D,
+    STAIRS,
     UNKNOWN
 };
 

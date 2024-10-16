@@ -65,6 +65,8 @@ set(CPP_SOURCE_FILES main.cpp
 
                      plot_objects/stream_object_base/stream_object_base.cpp
                      plot_objects/stream_objects/plot2d/plot2d.cpp
+                     plot_objects/stream_objects/scatter/scatter.cpp
+                     plot_objects/stream_objects/stairs/stairs.cpp
 
                      globals.cpp
 

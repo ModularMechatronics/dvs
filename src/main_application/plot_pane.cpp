@@ -9,7 +9,7 @@
 #include "duoplot/math/math.h"
 #include "events.h"
 #include "platform_paths.h"
-#include "plot_objects/stream_objects/plot2d/plot2d.h"
+#include "plot_objects/stream_objects/stream_objects.h"
 
 using namespace duoplot::internal;
 
@@ -174,7 +174,11 @@ void PlotPane::initSubscribedStreams()
         }
         else if (subscribed_stream.stream_type == StreamType::SCATTER)
         {
-            std::cout << "Creating scatter" << std::endl;
+            subscribed_streams_[subscribed_stream.topic_id] = new ScatterStream(subscribed_stream, shader_collection_);
+        }
+        else if (subscribed_stream.stream_type == StreamType::STAIRS)
+        {
+            subscribed_streams_[subscribed_stream.topic_id] = new StairsStream(subscribed_stream, shader_collection_);
         }
         else if (subscribed_stream.stream_type == StreamType::SCATTER3D)
         {

@@ -17,7 +17,6 @@
 #include "gui_window.h"
 #include "platform_paths.h"
 
-
 namespace element_number_counter
 {
 int counter = 0;

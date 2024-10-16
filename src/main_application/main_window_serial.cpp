@@ -155,12 +155,12 @@ void MainWindow::handleSerialData()
 
     for (auto& [topic_id, strings] : streams_of_strings_)
     {
-        const std::string t_id = std::to_string(topic_id);
+        /*const std::string t_id = std::to_string(topic_id);
         for (const std::string& s : strings)
         {
             topic_text_output_window_->pushNewText(Color_t::RED, t_id);
             topic_text_output_window_->pushNewText(Color_t::BLACK, ": " + s + "\n");
-        }
+        }*/
 
         if (stream_of_strings_subscriptions_.find(topic_id) == stream_of_strings_subscriptions_.end() ||
             strings.empty())

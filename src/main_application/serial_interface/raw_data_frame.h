@@ -32,7 +32,8 @@ public:
     {
         return size_;
     }
-    uint8_t* data() const
+
+    const uint8_t* data() const
     {
         return data_;
     }
@@ -80,7 +81,7 @@ public:
         return idx_ == size_;
     }
 
-    const uint8_t* const data() const
+    const uint8_t* data() const
     {
         return buffer_;
     }

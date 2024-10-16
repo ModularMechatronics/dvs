@@ -103,9 +103,23 @@
                                 "projection_mode": "orthographic",
                                 "subscribed_streams": [
                                     {
-                                        "topic_id": 0,
-                                        "stream_type": "plot",
+                                        "topic_id": 13,
+                                        "stream_type": "stairs",
                                         "label": "Acceleration X",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        }
+                                    }
+                                ],
+                                "subscribed_streams2": [
+                                    {
+                                        "topic_id": 12,
+                                        "stream_type": "scatter",
+                                        "label": "Acceleration X",
+                                        "point_size": 10,
                                         "color": {
                                             "b": 1.0,
                                             "g": 0.0,
@@ -126,7 +140,7 @@
                                     },
                                     {
                                         "topic_id": 4,
-                                        "stream_type": "plot",
+                                        "stream_type": "stairs",
                                         "color": {
                                             "b": 1.0,
                                             "g": 0.0,
@@ -142,8 +156,8 @@
                             "handle_string": "p_view_0",
                             "height": 0.48288974165916443,
                             "type": "PLOT_PANE",
-                            "width": 0.5,
-                            "x": 0.5,
+                            "width": 1.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         {

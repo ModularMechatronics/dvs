@@ -234,6 +234,10 @@ SubscribedStreamSettings::SubscribedStreamSettings(const nlohmann::json& j)
         {
             stream_type = StreamType::SCATTER3D;
         }
+        else if (stream_type_str == "stairs")
+        {
+            stream_type = StreamType::STAIRS;
+        }
         else
         {
             throw std::runtime_error("Invalid option for \"stream_type\": \"" + stream_type_str + "\"");
