@@ -43,7 +43,7 @@ struct ElementSettings
 
 bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const std::shared_ptr<ElementSettings>& rhs);
 
-enum class StreamType
+enum class StreamType : uint8_t
 {
     PLOT,
     PLOT3D,
@@ -146,7 +146,24 @@ struct PlotPaneSettings : ElementSettings
     bool operator!=(const PlotPaneSettings& other) const;
 };
 
-struct ButtonSettings : public ElementSettings
+using GuiElementId = uint16_t;
+
+struct GuiElementSettings : public ElementSettings
+{
+    bool publish_to_local{true};
+    bool publish_to_serial{false};
+    GuiElementId id{0U};
+
+    GuiElementSettings();
+    explicit GuiElementSettings(const nlohmann::json& j);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const GuiElementSettings& other) const;
+    bool operator!=(const GuiElementSettings& other) const;
+};
+
+struct ButtonSettings : public GuiElementSettings
 {
     std::string label;
 
@@ -159,7 +176,7 @@ struct ButtonSettings : public ElementSettings
     bool operator!=(const ButtonSettings& other) const;
 };
 
-struct CheckboxSettings : public ElementSettings
+struct CheckboxSettings : public GuiElementSettings
 {
     std::string label;
 
@@ -172,7 +189,7 @@ struct CheckboxSettings : public ElementSettings
     bool operator!=(const CheckboxSettings& other) const;
 };
 
-struct EditableTextSettings : public ElementSettings
+struct EditableTextSettings : public GuiElementSettings
 {
     std::string init_value;
 
@@ -185,7 +202,7 @@ struct EditableTextSettings : public ElementSettings
     bool operator!=(const EditableTextSettings& other) const;
 };
 
-struct DropdownMenuSettings : public ElementSettings
+struct DropdownMenuSettings : public GuiElementSettings
 {
     std::string initially_selected_item;
     std::vector<std::string> elements;
@@ -199,7 +216,7 @@ struct DropdownMenuSettings : public ElementSettings
     bool operator!=(const DropdownMenuSettings& other) const;
 };
 
-struct ListBoxSettings : public ElementSettings
+struct ListBoxSettings : public GuiElementSettings
 {
     std::vector<std::string> elements;
 
@@ -225,7 +242,7 @@ struct RadioButtonSettings
     bool operator!=(const RadioButtonSettings& other) const;
 };
 
-struct RadioButtonGroupSettings : public ElementSettings
+struct RadioButtonGroupSettings : public GuiElementSettings
 {
     std::string label;
     std::vector<RadioButtonSettings> radio_buttons;
@@ -239,7 +256,7 @@ struct RadioButtonGroupSettings : public ElementSettings
     bool operator!=(const RadioButtonGroupSettings& other) const;
 };
 
-struct TextLabelSettings : public ElementSettings
+struct TextLabelSettings : public GuiElementSettings
 {
     std::string label;
 
@@ -252,7 +269,7 @@ struct TextLabelSettings : public ElementSettings
     bool operator!=(const TextLabelSettings& other) const;
 };
 
-struct SliderSettings : public ElementSettings
+struct SliderSettings : public GuiElementSettings
 {
     int min_value;
     int max_value;

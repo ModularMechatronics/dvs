@@ -206,42 +206,36 @@ nlohmann::json PlotPaneSettings::toJson() const
 
 SubscribedStreamSettings::SubscribedStreamSettings(const nlohmann::json& j)
 {
-    if (j.contains("topic_id"))
-    {
-        topic_id = j["topic_id"];
-    }
+    topic_id = j["topic_id"];
 
-    if (j.contains("stream_type"))
+    const std::string stream_type_str = j["stream_type"];
+    if (stream_type_str == "unknown")
     {
-        const std::string stream_type_str = j["stream_type"];
-        if (stream_type_str == "unknown")
-        {
-            stream_type = StreamType::UNKNOWN;
-        }
-        else if (stream_type_str == "plot")
-        {
-            stream_type = StreamType::PLOT;
-        }
-        else if (stream_type_str == "scatter")
-        {
-            stream_type = StreamType::SCATTER;
-        }
-        else if (stream_type_str == "plot3d")
-        {
-            stream_type = StreamType::PLOT3D;
-        }
-        else if (stream_type_str == "scatter3d")
-        {
-            stream_type = StreamType::SCATTER3D;
-        }
-        else if (stream_type_str == "stairs")
-        {
-            stream_type = StreamType::STAIRS;
-        }
-        else
-        {
-            throw std::runtime_error("Invalid option for \"stream_type\": \"" + stream_type_str + "\"");
-        }
+        stream_type = StreamType::UNKNOWN;
+    }
+    else if (stream_type_str == "plot")
+    {
+        stream_type = StreamType::PLOT;
+    }
+    else if (stream_type_str == "scatter")
+    {
+        stream_type = StreamType::SCATTER;
+    }
+    else if (stream_type_str == "plot3d")
+    {
+        stream_type = StreamType::PLOT3D;
+    }
+    else if (stream_type_str == "scatter3d")
+    {
+        stream_type = StreamType::SCATTER3D;
+    }
+    else if (stream_type_str == "stairs")
+    {
+        stream_type = StreamType::STAIRS;
+    }
+    else
+    {
+        throw std::runtime_error("Invalid option for \"stream_type\": \"" + stream_type_str + "\"");
     }
 
     if (j.contains("alpha"))
@@ -333,6 +327,36 @@ nlohmann::json SubscribedStreamSettings::toJson() const
 {
     nlohmann::json j;
 
+    if (stream_type == StreamType::UNKNOWN)
+    {
+        j["stream_type"] = "unknown";
+    }
+    else if (stream_type == StreamType::PLOT)
+    {
+        j["stream_type"] = "plot";
+    }
+    else if (stream_type == StreamType::SCATTER)
+    {
+        j["stream_type"] = "scatter";
+    }
+    else if (stream_type == StreamType::PLOT3D)
+    {
+        j["stream_type"] = "plot3d";
+    }
+    else if (stream_type == StreamType::SCATTER3D)
+    {
+        j["stream_type"] = "scatter3d";
+    }
+    else if (stream_type == StreamType::STAIRS)
+    {
+        j["stream_type"] = "stairs";
+    }
+    else
+    {
+        throw std::runtime_error("Invalid option for \"stream_type\": \"" +
+                                 std::to_string(static_cast<uint8_t>(stream_type)) + "\"");
+    }
+
     if (line_style == duoplot::properties::LineStyle::SOLID)
     {
         j["line_style"] = "solid";
@@ -372,7 +396,6 @@ nlohmann::json SubscribedStreamSettings::toJson() const
     }
 
     j["topic_id"] = topic_id;
-    j["stream_type"] = stream_type;
     j["alpha"] = alpha;
     j["line_width"] = line_width;
     j["point_size"] = point_size;

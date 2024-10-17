@@ -17,6 +17,7 @@
 #include "gui_window.h"
 #include "platform_paths.h"
 
+
 namespace element_number_counter
 {
 int counter = 0;
@@ -48,6 +49,11 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
 
     SetBackgroundColour(RGBTripletfToWxColour(kMainWindowBackgroundColor));
 
+    serial_array_ = new uint8_t[kSerialSendBufferSize];
+    gui_transfer_state_ = GuiTransferState::Idle;
+    idle_counter_ = 0;
+    num_iterations_without_control_message_ = 0;
+
     static_cast<void>(cmdl_args);
     window_initialization_in_progress_ = true;
     open_project_file_queued_ = false;
@@ -74,7 +80,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     cmdl_output_window_->Hide();
 
     topic_text_output_window_ = new TopicTextOutputWindow();
-    topic_text_output_window_->Hide();
+    topic_text_output_window_->Show();
 
     push_text_to_cmdl_output_window_ = [this](const Color_t col, const std::string& text) -> void {
         cmdl_output_window_->pushNewText(col, text);
@@ -85,6 +91,9 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     time_at_start_ = static_cast<uint64_t>(
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
             .count());
+    time_of_receive_control_message_ = 0;
+    time_of_sending_gui_data_ = 0;
+    control_state_ = 0U;
 
     SetMenuBar(menu_bar_);
     wxMenuBar::MacSetCommonMenuBar(menu_bar_);

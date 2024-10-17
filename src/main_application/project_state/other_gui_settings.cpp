@@ -1,6 +1,49 @@
 #include "project_state/project_settings.h"
 
-ButtonSettings::ButtonSettings() : ElementSettings{}, label{""}
+GuiElementSettings::GuiElementSettings() : ElementSettings{}, publish_to_local{true}, publish_to_serial{false}, id{0U}
+{
+}
+
+GuiElementSettings::GuiElementSettings(const nlohmann::json& j)
+    : ElementSettings{j}, publish_to_local{true}, publish_to_serial{false}, id{0U}
+{
+    if (j.contains("element_specific_settings"))
+    {
+        const nlohmann::json j_ess = j["element_specific_settings"];
+        publish_to_local = getOptionalValue(j_ess, "publish_to_local", true);
+        publish_to_serial = getOptionalValue(j_ess, "publish_to_serial", false);
+        if (publish_to_serial)
+        {
+            id = j_ess["id"];
+        }
+    }
+}
+
+bool GuiElementSettings::operator==(const GuiElementSettings& other) const
+{
+    return ElementSettings::operator==(other) && publish_to_local == other.publish_to_local &&
+           publish_to_serial == other.publish_to_serial;
+}
+
+bool GuiElementSettings::operator!=(const GuiElementSettings& other) const
+{
+    return !(*this == other);
+}
+
+nlohmann::json GuiElementSettings::toJson() const
+{
+    nlohmann::json j = ElementSettings::toJson();
+    j["element_specific_settings"]["publish_to_local"] = publish_to_local;
+    j["element_specific_settings"]["publish_to_serial"] = publish_to_serial;
+
+    if (publish_to_serial)
+    {
+        j["element_specific_settings"]["id"] = id;
+    }
+    return j;
+}
+
+ButtonSettings::ButtonSettings() : GuiElementSettings{}, label{""}
 {
     x = 0.0;
     y = 0.0;
@@ -9,7 +52,7 @@ ButtonSettings::ButtonSettings() : ElementSettings{}, label{""}
     type = duoplot::GuiElementType::Button;
 }
 
-ButtonSettings::ButtonSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}
+ButtonSettings::ButtonSettings(const nlohmann::json& j_data) : GuiElementSettings{j_data}, label{""}
 {
     if (!j_data.contains("element_specific_settings"))
     {
@@ -32,12 +75,12 @@ bool ButtonSettings::operator!=(const ButtonSettings& other) const
 
 nlohmann::json ButtonSettings::toJson() const
 {
-    nlohmann::json j = ElementSettings::toJson();
+    nlohmann::json j = GuiElementSettings::toJson();
     j["element_specific_settings"]["label"] = label;
     return j;
 }
 
-CheckboxSettings::CheckboxSettings() : ElementSettings{}, label{""}
+CheckboxSettings::CheckboxSettings() : GuiElementSettings{}, label{""}
 {
     x = 0.0;
     y = 0.0;
@@ -45,7 +88,7 @@ CheckboxSettings::CheckboxSettings() : ElementSettings{}, label{""}
     height = 0.4;
     type = duoplot::GuiElementType::Checkbox;
 }
-CheckboxSettings::CheckboxSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}
+CheckboxSettings::CheckboxSettings(const nlohmann::json& j_data) : GuiElementSettings{j_data}, label{""}
 {
     if (!j_data.contains("element_specific_settings"))
     {
@@ -57,7 +100,7 @@ CheckboxSettings::CheckboxSettings(const nlohmann::json& j_data) : ElementSettin
 }
 bool CheckboxSettings::operator==(const CheckboxSettings& other) const
 {
-    return ElementSettings::operator==(other) && label == other.label;
+    return GuiElementSettings::operator==(other) && label == other.label;
 }
 
 bool CheckboxSettings::operator!=(const CheckboxSettings& other) const
@@ -67,12 +110,12 @@ bool CheckboxSettings::operator!=(const CheckboxSettings& other) const
 
 nlohmann::json CheckboxSettings::toJson() const
 {
-    nlohmann::json j = ElementSettings::toJson();
+    nlohmann::json j = GuiElementSettings::toJson();
     j["element_specific_settings"]["label"] = label;
     return j;
 }
 
-EditableTextSettings::EditableTextSettings() : ElementSettings{}, init_value{""}
+EditableTextSettings::EditableTextSettings() : GuiElementSettings{}, init_value{""}
 {
     x = 0.0;
     y = 0.0;
@@ -80,7 +123,7 @@ EditableTextSettings::EditableTextSettings() : ElementSettings{}, init_value{""}
     height = 0.4;
     type = duoplot::GuiElementType::EditableText;
 }
-EditableTextSettings::EditableTextSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, init_value{""}
+EditableTextSettings::EditableTextSettings(const nlohmann::json& j_data) : GuiElementSettings{j_data}, init_value{""}
 {
     if (!j_data.contains("element_specific_settings"))
     {
@@ -93,7 +136,7 @@ EditableTextSettings::EditableTextSettings(const nlohmann::json& j_data) : Eleme
 
 bool EditableTextSettings::operator==(const EditableTextSettings& other) const
 {
-    return ElementSettings::operator==(other) && init_value == other.init_value;
+    return GuiElementSettings::operator==(other) && init_value == other.init_value;
 }
 
 bool EditableTextSettings::operator!=(const EditableTextSettings& other) const
@@ -103,12 +146,12 @@ bool EditableTextSettings::operator!=(const EditableTextSettings& other) const
 
 nlohmann::json EditableTextSettings::toJson() const
 {
-    nlohmann::json j = ElementSettings::toJson();
+    nlohmann::json j = GuiElementSettings::toJson();
     j["element_specific_settings"]["init_value"] = init_value;
     return j;
 }
 
-DropdownMenuSettings::DropdownMenuSettings() : ElementSettings{}, initially_selected_item{""}, elements{}
+DropdownMenuSettings::DropdownMenuSettings() : GuiElementSettings{}, initially_selected_item{""}, elements{}
 {
     x = 0.0;
     y = 0.0;
@@ -117,7 +160,7 @@ DropdownMenuSettings::DropdownMenuSettings() : ElementSettings{}, initially_sele
     type = duoplot::GuiElementType::DropdownMenu;
 }
 DropdownMenuSettings::DropdownMenuSettings(const nlohmann::json& j_data)
-    : ElementSettings{j_data}, initially_selected_item{""}, elements{}
+    : GuiElementSettings{j_data}, initially_selected_item{""}, elements{}
 {
     if (!j_data.contains("element_specific_settings"))
     {
@@ -154,7 +197,7 @@ DropdownMenuSettings::DropdownMenuSettings(const nlohmann::json& j_data)
 
 bool DropdownMenuSettings::operator==(const DropdownMenuSettings& other) const
 {
-    return ElementSettings::operator==(other) && initially_selected_item == other.initially_selected_item;
+    return GuiElementSettings::operator==(other) && initially_selected_item == other.initially_selected_item;
 }
 
 bool DropdownMenuSettings::operator!=(const DropdownMenuSettings& other) const
@@ -164,13 +207,13 @@ bool DropdownMenuSettings::operator!=(const DropdownMenuSettings& other) const
 
 nlohmann::json DropdownMenuSettings::toJson() const
 {
-    nlohmann::json j = ElementSettings::toJson();
+    nlohmann::json j = GuiElementSettings::toJson();
     j["element_specific_settings"]["initially_selected_item"] = initially_selected_item;
     j["element_specific_settings"]["elements"] = elements;
     return j;
 }
 
-ListBoxSettings::ListBoxSettings() : ElementSettings{}, elements{}
+ListBoxSettings::ListBoxSettings() : GuiElementSettings{}, elements{}
 {
     x = 0.0;
     y = 0.0;
@@ -178,7 +221,7 @@ ListBoxSettings::ListBoxSettings() : ElementSettings{}, elements{}
     height = 0.4;
     type = duoplot::GuiElementType::ListBox;
 }
-ListBoxSettings::ListBoxSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, elements{}
+ListBoxSettings::ListBoxSettings(const nlohmann::json& j_data) : GuiElementSettings{j_data}, elements{}
 {
     if (!j_data.contains("element_specific_settings"))
     {
@@ -198,7 +241,7 @@ ListBoxSettings::ListBoxSettings(const nlohmann::json& j_data) : ElementSettings
 
 bool ListBoxSettings::operator==(const ListBoxSettings& other) const
 {
-    return ElementSettings::operator==(other);
+    return GuiElementSettings::operator==(other);
 }
 
 bool ListBoxSettings::operator!=(const ListBoxSettings& other) const
@@ -208,7 +251,7 @@ bool ListBoxSettings::operator!=(const ListBoxSettings& other) const
 
 nlohmann::json ListBoxSettings::toJson() const
 {
-    nlohmann::json j = ElementSettings::toJson();
+    nlohmann::json j = GuiElementSettings::toJson();
     j["element_specific_settings"]["elements"] = elements;
     return j;
 }
@@ -236,9 +279,9 @@ nlohmann::json RadioButtonSettings::toJson() const
     return j;
 }
 
-RadioButtonGroupSettings::RadioButtonGroupSettings() : ElementSettings{}, label{""} {}
+RadioButtonGroupSettings::RadioButtonGroupSettings() : GuiElementSettings{}, label{""} {}
 RadioButtonGroupSettings::RadioButtonGroupSettings(const nlohmann::json& j_data)
-    : ElementSettings{j_data}, label{""}, radio_buttons{}
+    : GuiElementSettings{j_data}, label{""}, radio_buttons{}
 {
     if (!j_data.contains("element_specific_settings"))
     {
@@ -262,7 +305,7 @@ bool RadioButtonGroupSettings::operator==(const RadioButtonGroupSettings& other)
     {
         all_equal = all_equal && radio_buttons[i] == other.radio_buttons[i];
     }
-    return ElementSettings::operator==(other) && label == other.label && all_equal;
+    return GuiElementSettings::operator==(other) && label == other.label && all_equal;
 }
 
 bool RadioButtonGroupSettings::operator!=(const RadioButtonGroupSettings& other) const
@@ -272,7 +315,7 @@ bool RadioButtonGroupSettings::operator!=(const RadioButtonGroupSettings& other)
 
 nlohmann::json RadioButtonGroupSettings::toJson() const
 {
-    nlohmann::json j = ElementSettings::toJson();
+    nlohmann::json j = GuiElementSettings::toJson();
     j["element_specific_settings"]["label"] = label;
     for (const RadioButtonSettings& radio_button : radio_buttons)
     {
@@ -281,7 +324,7 @@ nlohmann::json RadioButtonGroupSettings::toJson() const
     return j;
 }
 
-TextLabelSettings::TextLabelSettings() : ElementSettings{}, label{""}
+TextLabelSettings::TextLabelSettings() : GuiElementSettings{}, label{""}
 {
     x = 0.0;
     y = 0.0;
@@ -289,7 +332,7 @@ TextLabelSettings::TextLabelSettings() : ElementSettings{}, label{""}
     height = 0.4;
     type = duoplot::GuiElementType::TextLabel;
 }
-TextLabelSettings::TextLabelSettings(const nlohmann::json& j_data) : ElementSettings{j_data}, label{""}
+TextLabelSettings::TextLabelSettings(const nlohmann::json& j_data) : GuiElementSettings{j_data}, label{""}
 {
     if (!j_data.contains("element_specific_settings"))
     {
@@ -302,7 +345,7 @@ TextLabelSettings::TextLabelSettings(const nlohmann::json& j_data) : ElementSett
 
 bool TextLabelSettings::operator==(const TextLabelSettings& other) const
 {
-    return ElementSettings::operator==(other) && label == other.label;
+    return GuiElementSettings::operator==(other) && label == other.label;
 }
 
 bool TextLabelSettings::operator!=(const TextLabelSettings& other) const
@@ -312,13 +355,13 @@ bool TextLabelSettings::operator!=(const TextLabelSettings& other) const
 
 nlohmann::json TextLabelSettings::toJson() const
 {
-    nlohmann::json j = ElementSettings::toJson();
+    nlohmann::json j = GuiElementSettings::toJson();
     j["element_specific_settings"]["label"] = label;
     return j;
 }
 
 SliderSettings::SliderSettings()
-    : ElementSettings{}, min_value{0}, max_value{100}, init_value{0}, step_size{1}, is_horizontal{true}
+    : GuiElementSettings{}, min_value{0}, max_value{100}, init_value{0}, step_size{1}, is_horizontal{true}
 {
     x = 0.0;
     y = 0.0;
@@ -327,7 +370,7 @@ SliderSettings::SliderSettings()
     type = duoplot::GuiElementType::Slider;
 }
 
-SliderSettings::SliderSettings(const nlohmann::json& j_data) : ElementSettings{j_data}
+SliderSettings::SliderSettings(const nlohmann::json& j_data) : GuiElementSettings{j_data}
 {
     if (j_data.contains("element_specific_settings"))
     {
@@ -373,7 +416,7 @@ SliderSettings::SliderSettings(const nlohmann::json& j_data) : ElementSettings{j
 
 bool SliderSettings::operator==(const SliderSettings& other) const
 {
-    return ElementSettings::operator==(other) && min_value == other.min_value && max_value == other.max_value &&
+    return GuiElementSettings::operator==(other) && min_value == other.min_value && max_value == other.max_value &&
            init_value == other.init_value && step_size == other.step_size && is_horizontal == other.is_horizontal;
 }
 
@@ -384,7 +427,7 @@ bool SliderSettings::operator!=(const SliderSettings& other) const
 
 nlohmann::json SliderSettings::toJson() const
 {
-    nlohmann::json j = ElementSettings::toJson();
+    nlohmann::json j = GuiElementSettings::toJson();
     j["element_specific_settings"]["min"] = min_value;
     j["element_specific_settings"]["max"] = max_value;
     j["element_specific_settings"]["init_value"] = init_value;
@@ -392,9 +435,6 @@ nlohmann::json SliderSettings::toJson() const
     // j["element_specific_settings"]["style"] = is_horizontal ? "horizontal" : "vertical";
     return j;
 }
-
-// std::string label;
-// std::vector<std::shared_ptr<ElementSettings>> elements;
 
 StaticBoxSettings::StaticBoxSettings() : label{""}, elements{}
 {

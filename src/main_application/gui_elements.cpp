@@ -28,6 +28,10 @@ ButtonGuiElement::ButtonGuiElement(
 {
     is_pressed_ = false;
 
+    publish_to_local_ = std::dynamic_pointer_cast<ButtonSettings>(element_settings)->publish_to_local;
+    publish_to_serial_ = std::dynamic_pointer_cast<ButtonSettings>(element_settings)->publish_to_serial;
+    id_ = std::dynamic_pointer_cast<ButtonSettings>(element_settings)->id;
+
     this->Bind(wxEVT_BUTTON, &ButtonGuiElement::buttonEvent, this);
 
     Bind(wxEVT_KEY_DOWN, &ApplicationGuiElement::keyPressedCallback, this);
@@ -45,7 +49,25 @@ ButtonGuiElement::ButtonGuiElement(
 
 void ButtonGuiElement::buttonEvent(wxCommandEvent& event)
 {
-    sendGuiData();
+    if (publish_to_local_)
+    {
+        sendGuiData();
+    }
+}
+
+void ButtonGuiElement::sendDataToSerialInterface() const
+{
+    /*
+    ## Events
+    Button, [pressed, released]
+    Slider, [released at new value]
+    Checkbox [checked, unchecked]
+    EditableText [text changed]
+    DropdownMenu [selected item]
+    ListBox [selected item]
+    RadioButtonGroup [selected radio button]
+    */
+    // TODO: Implement
 }
 
 void ButtonGuiElement::setLabel(const std::string& new_label)
@@ -106,6 +128,10 @@ SliderGuiElement::SliderGuiElement(
 
     Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
 
+    publish_to_local_ = std::dynamic_pointer_cast<SliderSettings>(element_settings)->publish_to_local;
+    publish_to_serial_ = std::dynamic_pointer_cast<SliderSettings>(element_settings)->publish_to_serial;
+    id_ = std::dynamic_pointer_cast<SliderSettings>(element_settings)->id;
+
     value_text_ = new wxStaticText(parent, wxID_ANY, std::to_string(slider_value_));
     min_text_ = new wxStaticText(
         parent, wxID_ANY, std::to_string(std::dynamic_pointer_cast<SliderSettings>(element_settings)->min_value));
@@ -150,7 +176,10 @@ void SliderGuiElement::sliderEvent(wxCommandEvent& event)
 
     slider_value_ = new_value;
 
-    sendGuiData();
+    if (publish_to_local_)
+    {
+        sendGuiData();
+    }
 }
 
 void SliderGuiElement::setElementPositionAndSize()

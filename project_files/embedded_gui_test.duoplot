@@ -1,0 +1,138 @@
+{
+    "windows": [
+        {
+            "height": 560.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "element_specific_settings": {
+                                "subscribed_streams": [
+                                    {
+                                        "alpha": 0.10000000149011612,
+                                        "color": {
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 0.0
+                                        },
+                                        "label": "Button",
+                                        "line_style": "solid",
+                                        "line_width": 3,
+                                        "point_size": 1,
+                                        "stream_type": "stairs",
+                                        "topic_id": 4
+                                    },
+                                    {
+                                        "alpha": 0.10000000149011612,
+                                        "color": {
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        },
+                                        "label": "Read back slider value",
+                                        "line_style": "solid",
+                                        "line_width": 3,
+                                        "point_size": 1,
+                                        "stream_type": "stairs",
+                                        "topic_id": 3
+                                    },
+                                    {
+                                        "alpha": 0.10000000149011612,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        },
+                                        "label": "Sine wave",
+                                        "line_style": "solid",
+                                        "line_width": 3,
+                                        "point_size": 1,
+                                        "stream_type": "stairs",
+                                        "topic_id": 1
+                                    }
+                                ]
+                            },
+                            "handle_string": "p1",
+                            "height": 0.8264151215553284,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.17358490824699402,
+                            "z_order": 0
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "Edge button",
+                                "publish_to_local": false,
+                                "publish_to_serial": true,
+                                "id": 0
+                            },
+                            "handle_string": "edge_button",
+                            "height": 0.09433962404727936,
+                            "type": "BUTTON",
+                            "width": 0.06093750149011612,
+                            "x": 0.0234375,
+                            "y": 0.06981132179498672
+                        },
+                        {
+                            "element_specific_settings": {
+                                "label": "Held button",
+                                "publish_to_local": false,
+                                "publish_to_serial": true,
+                                "id": 1
+                            },
+                            "handle_string": "held_button",
+                            "height": 0.0584905669093132,
+                            "type": "BUTTON",
+                            "width": 0.04726562649011612,
+                            "x": 0.10234375298023224,
+                            "y": 0.06603773683309555
+                        },
+                        {
+                            "element_specific_settings": {
+                                "init_value": 0,
+                                "max": 1000,
+                                "min": 0,
+                                "step_size": 1,
+                                "publish_to_local": false,
+                                "publish_to_serial": true,
+                                "id": 2
+                            },
+                            "handle_string": "slider0",
+                            "height": 0.056603774428367615,
+                            "type": "SLIDER",
+                            "width": 0.11992187798023224,
+                            "x": 0.20781250298023224,
+                            "y": 0.062264151871204376
+                        }
+                    ],
+                    "name": "primary_view"
+                }
+            ],
+            "width": 2560.0,
+            "x": 0.0,
+            "y": 810.0
+        }
+    ]
+}

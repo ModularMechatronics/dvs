@@ -12,6 +12,7 @@
 
 #include <atomic>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
@@ -20,6 +21,7 @@
 #include <utility>
 #include <vector>
 
+#include "buffered_writer.h"
 #include "close_button.h"
 #include "cmdl_output_window.h"
 #include "communication/data_receiver.h"
@@ -41,6 +43,15 @@
 class GuiWindow;
 class ScrollingTextGuiElement;
 
+enum class GuiTransferState : uint8_t
+{
+    Idle = 0U,
+    SendingGuiData = 1U,
+    WaitingForControlMessage = 2U
+};
+
+constexpr size_t kSerialSendBufferSize{1024U};
+
 class MainWindow : public wxFrame
 {
 private:
@@ -56,9 +67,15 @@ private:
     std::thread* tcp_receive_thread_;
     std::map<std::string, ApplicationGuiElement*> plot_panes_;
     std::map<std::string, ApplicationGuiElement*> gui_elements_;
+    std::map<GuiElementId, std::shared_ptr<GuiElementState>> gui_elements_states_;
     std::map<std::string, ScrollingTextGuiElement*> scrolling_text_elements_;
 
     std::map<std::string, std::queue<std::unique_ptr<InputData>>> queued_data_;
+
+    uint8_t* serial_array_;
+    GuiTransferState gui_transfer_state_;
+    uint32_t idle_counter_;
+    uint32_t num_iterations_without_control_message_;
 
     CloseButton* close_button_;
     CloseButton* minimize_button_;
@@ -79,7 +96,6 @@ private:
     int current_window_num_;
     CustomTaskBarIcon* task_bar_;
     int window_callback_id_;
-    bool serial_device_is_ready_for_new_data_{false};
     std::map<TopicId, std::vector<ScrollingTextGuiElement*>> stream_of_strings_subscriptions_;
     std::map<TopicId, std::vector<PlotPane*>> plot_pane_subscriptions_;
     std::map<TopicId, std::vector<std::shared_ptr<objects::BaseObject>>> objects_temporary_storage_;
@@ -98,6 +114,9 @@ private:
     std::function<void(void)> print_gui_callback_code_;
 
     uint64_t time_at_start_;
+    uint64_t time_of_receive_control_message_;
+    uint64_t time_of_sending_gui_data_;
+    uint8_t control_state_;
 
     void printGuiCallbackCode();
 
@@ -162,6 +181,7 @@ private:
 
     void toggleWindowVisibilityCallback(wxCommandEvent& event);
     void exitApplication(wxCommandEvent& event);
+    void updateSerialDeviceAboutGuiState();
 
 public:
     MainWindow();

@@ -19,6 +19,8 @@ class ButtonGuiElement : public wxButton, public ApplicationGuiElement
 {
 private:
     bool is_pressed_;
+    bool publish_to_local_;
+    bool publish_to_serial_;
 
 public:
     ButtonGuiElement(wxFrame* parent,
@@ -126,6 +128,8 @@ public:
     }
 
     void setLabel(const std::string& new_label) override;
+
+    void sendDataToSerialInterface() const;
 };
 
 class SliderGuiElement : public wxSlider, public ApplicationGuiElement
@@ -136,6 +140,9 @@ private:
     wxStaticText* min_text_;
     wxStaticText* max_text_;
     bool is_horizontal_;
+
+    bool publish_to_local_;
+    bool publish_to_serial_;
 
     int getStyle(const std::shared_ptr<ElementSettings>& element_settings) const;
 

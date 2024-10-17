@@ -3,6 +3,96 @@
 
 using namespace duoplot::internal;
 
+void MainWindow::updateSerialDeviceAboutGuiState()
+{
+    if (gui_transfer_state_ == GuiTransferState::Idle)
+    {
+        if (idle_counter_ == 100)
+        {
+            idle_counter_ = 0;
+
+            BufferedWriter buffered_writer{serial_array_, kSerialSendBufferSize};
+
+            buffered_writer.advance(sizeof(uint16_t));  // For the payload which is at the start, but is not yet known
+            uint16_t num_bytes_to_write = 0U;
+
+            // Send full state
+            for (const auto& ge : gui_elements_)
+            {
+                const std::shared_ptr<GuiElementSettings> gui_element_settings =
+                    std::dynamic_pointer_cast<GuiElementSettings>(ge.second->getElementSettings());
+
+                const std::shared_ptr<GuiElementState> gui_element_state = ge.second->getGuiElementState();
+
+                buffered_writer.write(gui_element_settings->id);
+                num_bytes_to_write += sizeof(GuiElementId);
+                num_bytes_to_write += gui_element_state->serializeToSerialBuffer(buffered_writer);
+            }
+
+            std::memcpy(serial_array_, &num_bytes_to_write, sizeof(uint16_t));
+            serial_interface_.publishData(buffered_writer.data(), num_bytes_to_write + sizeof(num_bytes_to_write));
+        }
+        idle_counter_++;
+    }
+    else if (gui_transfer_state_ == GuiTransferState::SendingGuiData)
+    {
+        BufferedWriter buffered_writer{serial_array_, kSerialSendBufferSize};
+
+        buffered_writer.advance(sizeof(uint16_t));  // For the payload which is at the start, but is not yet known
+        uint16_t num_bytes_to_write = 0U;
+
+        for (const auto& ge : gui_elements_)
+        {
+            const std::shared_ptr<GuiElementSettings> gui_element_settings =
+                std::dynamic_pointer_cast<GuiElementSettings>(ge.second->getElementSettings());
+
+            const std::shared_ptr<GuiElementState> gui_element_state = ge.second->getGuiElementState();
+
+            bool state_has_changed = false;
+
+            if (gui_elements_states_.find(gui_element_settings->id) != gui_elements_states_.end())
+            {
+                // GuiState already exists in map
+                if (!gui_elements_states_[gui_element_settings->id]->isEqual(gui_element_state))
+                {
+                    state_has_changed = true;
+                    gui_elements_states_.at(gui_element_settings->id) = gui_element_state;
+                }
+            }
+            else
+            {
+                // GuiState does not exist in map
+                state_has_changed = true;
+                gui_elements_states_.insert({gui_element_settings->id, gui_element_state});
+            }
+
+            if (state_has_changed)
+            {
+                buffered_writer.write(gui_element_settings->id);
+                num_bytes_to_write += sizeof(GuiElementId);
+                num_bytes_to_write += gui_element_state->serializeToSerialBuffer(buffered_writer);
+            }
+        }
+
+        if (num_bytes_to_write == 0U)
+        {
+            control_state_ = 0U;
+            return;
+        }
+        else
+        {
+            std::memcpy(serial_array_, &num_bytes_to_write, sizeof(uint16_t));
+            serial_interface_.publishData(buffered_writer.data(), num_bytes_to_write + 2U);
+
+            time_of_sending_gui_data_ = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
+                                                                  std::chrono::system_clock::now().time_since_epoch())
+                                                                  .count());
+            control_state_ = 2U;
+            gui_transfer_state_ = GuiTransferState::WaitingForControlMessage;
+        }
+    }
+}
+
 void MainWindow::pushNewDataToQueue(const TopicId topic_id, const std::shared_ptr<objects::BaseObject>& obj)
 {
     if (objects_temporary_storage_.find(topic_id) != objects_temporary_storage_.end())
@@ -10,6 +100,8 @@ void MainWindow::pushNewDataToQueue(const TopicId topic_id, const std::shared_pt
         objects_temporary_storage_.at(topic_id).push_back(obj);
     }
 }
+
+int i = 0;
 
 void MainWindow::handleSerialData()
 {
@@ -107,74 +199,89 @@ void MainWindow::handleSerialData()
                 reader.advance(s.size() + 1U);
 
                 streams_of_strings_[topic_id].push_back({timestamp, s});
+                continue;  // TODO: Added this here without testing it with string streams from device
             }
 
             if (topic_id == 0xFFFEU)
             {
                 const uint8_t value = static_cast<objects::UInt8*>(obj.get())->value();
-                if (value == 0U && !serial_device_is_ready_for_new_data_)
+
+                // Waiting for control message
+                if (value == 0U)
                 {
-                    // TODO: Even if this is sort of only handled correctly here, there might be "old" data in the
-                    // unread serial buffer that will push for a new update of the GUI, even though it was never
-                    // requested by the device
-                    // pushGuiDataToSerialInterface();
-                    serial_device_is_ready_for_new_data_ = true;
+                    control_state_ = 1U;
+                    gui_transfer_state_ = GuiTransferState::SendingGuiData;
                 }
             }
             else
             {
                 pushNewDataToQueue(topic_id, obj);
             }
-        }
 
-        if (!reader.hasReadToEnd())
-        {
-            for (size_t k = 0; k < raw_data_frame.size(); k++)
+            if (!reader.hasReadToEnd())
             {
-                std::cout << "0x" << std::hex << static_cast<int>(raw_data_frame.data()[k]) << std::dec << " ";
+                for (size_t k = 0; k < raw_data_frame.size(); k++)
+                {
+                    std::cout << "0x" << std::hex << static_cast<int>(raw_data_frame.data()[k]) << std::dec << " ";
+                }
+                std::cout << std::endl;
+                std::cout << "Error: Did not read all data!" << std::endl;
             }
-            std::cout << std::endl;
-            std::cout << "Error: Did not read all data!" << std::endl;
-        }
-    }
-
-    for (auto& [topic_id, objects] : objects_temporary_storage_)
-    {
-        if (plot_pane_subscriptions_.find(topic_id) == plot_pane_subscriptions_.end() || objects.empty())
-        {
-            continue;
         }
 
-        const std::vector<PlotPane*>& plot_panes_to_push_data_to = plot_pane_subscriptions_[topic_id];
-        for (PlotPane* const plot_pane : plot_panes_to_push_data_to)
+        for (auto& [topic_id, objects] : objects_temporary_storage_)
         {
-            plot_pane->pushStreamData(topic_id, objects);
-        }
-        objects.clear();
-    }
+            if (plot_pane_subscriptions_.find(topic_id) == plot_pane_subscriptions_.end() || objects.empty())
+            {
+                continue;
+            }
 
-    for (auto& [topic_id, strings] : streams_of_strings_)
-    {
-        /*const std::string t_id = std::to_string(topic_id);
-        for (const std::string& s : strings)
-        {
-            topic_text_output_window_->pushNewText(Color_t::RED, t_id);
-            topic_text_output_window_->pushNewText(Color_t::BLACK, ": " + s + "\n");
-        }*/
-
-        if (stream_of_strings_subscriptions_.find(topic_id) == stream_of_strings_subscriptions_.end() ||
-            strings.empty())
-        {
-            continue;
+            const std::vector<PlotPane*>& plot_panes_to_push_data_to = plot_pane_subscriptions_[topic_id];
+            for (PlotPane* const plot_pane : plot_panes_to_push_data_to)
+            {
+                plot_pane->pushStreamData(topic_id, objects);
+            }
+            objects.clear();
         }
 
-        const std::vector<ScrollingTextGuiElement*>& text_elements_to_push_data_to =
-            stream_of_strings_subscriptions_[topic_id];
-        for (ScrollingTextGuiElement* text_element : text_elements_to_push_data_to)
+        for (auto& [topic_id, strings] : streams_of_strings_)
         {
-            text_element->pushNewText(topic_id, strings);
+            const std::string t_id = std::to_string(topic_id);
+            for (const std::pair<uint64_t, std::string>& s : strings)
+            {
+                topic_text_output_window_->pushNewText(Color_t::RED, t_id);
+                topic_text_output_window_->pushNewText(Color_t::BLACK, ": " + s.second + "\n");
+            }
+
+            if (stream_of_strings_subscriptions_.find(topic_id) == stream_of_strings_subscriptions_.end() ||
+                strings.empty())
+            {
+                strings.clear();
+                continue;
+            }
+            else
+            {
+                const std::vector<ScrollingTextGuiElement*>& text_elements_to_push_data_to =
+                    stream_of_strings_subscriptions_[topic_id];
+                for (ScrollingTextGuiElement* text_element : text_elements_to_push_data_to)
+                {
+                    text_element->pushNewText(topic_id, strings);
+                }
+                strings.clear();
+            }
         }
 
-        strings.clear();
+        if (gui_transfer_state_ == GuiTransferState::WaitingForControlMessage)
+        {
+            num_iterations_without_control_message_++;
+        }
+
+        if (num_iterations_without_control_message_ > 100)
+        {
+            gui_transfer_state_ = GuiTransferState::Idle;
+            num_iterations_without_control_message_ = 0;
+        }
+
+        updateSerialDeviceAboutGuiState();
     }
 }
