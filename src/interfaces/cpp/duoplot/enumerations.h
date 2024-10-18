@@ -271,6 +271,7 @@ enum class GuiElementType : std::uint8_t
     TextLabel,
     StaticBox,
     PlotPane,
+    ScrollingText,
     Unknown
 };
 

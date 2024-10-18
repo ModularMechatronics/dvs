@@ -4,12 +4,15 @@
 #include <fstream>
 #include <memory>
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <stdexcept>
 
 #include "duoplot/enumerations.h"
 #include "duoplot/logging.h"
+#include "duoplot/plot_properties.h"
 #include "misc/rgb_triplet.h"
 #include "project_state/helper_functions.h"
+#include "serial_interface/definitions.h"
 
 extern RGBTriplet<float> kMainWindowBackgroundColor;
 
@@ -40,6 +43,68 @@ struct ElementSettings
 
 bool areDerivedElementEqual(const std::shared_ptr<ElementSettings>& lhs, const std::shared_ptr<ElementSettings>& rhs);
 
+enum class StreamType : uint8_t
+{
+    PLOT,
+    PLOT3D,
+    SCATTER,
+    SCATTER3D,
+    STAIRS,
+    UNKNOWN
+};
+
+struct SubscribedTextStreamSettings
+{
+    TopicId topic_id{kUnknownTopicId};
+
+    std::optional<RGBTripletf> text_color{std::nullopt};
+
+    SubscribedTextStreamSettings();
+    explicit SubscribedTextStreamSettings(const nlohmann::json& j);
+
+    bool operator==(const SubscribedTextStreamSettings& other) const;
+    bool operator!=(const SubscribedTextStreamSettings& other) const;
+
+    nlohmann::json toJson() const;
+};
+
+struct ScrollingTextSettings : ElementSettings
+{
+    ScrollingTextSettings();
+    explicit ScrollingTextSettings(const nlohmann::json& j);
+
+    std::string title;
+    bool print_timestamp;
+    bool print_topic_id;
+
+    std::vector<SubscribedTextStreamSettings> subscribed_streams;
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const ScrollingTextSettings& other) const;
+    bool operator!=(const ScrollingTextSettings& other) const;
+};
+
+struct SubscribedStreamSettings
+{
+    TopicId topic_id{kUnknownTopicId};
+    StreamType stream_type{StreamType::UNKNOWN};
+    float alpha{1.0f};
+    uint8_t line_width{1U};
+    uint8_t point_size{1U};
+    std::optional<duoplot::properties::Color> color{std::nullopt};
+    duoplot::properties::LineStyle line_style{duoplot::properties::LineStyle::SOLID};
+    duoplot::properties::ScatterStyle scatter_style{duoplot::properties::ScatterStyle::CIRCLE};
+    std::string label{};
+
+    SubscribedStreamSettings() = default;
+    explicit SubscribedStreamSettings(const nlohmann::json& j);
+
+    bool operator==(const SubscribedStreamSettings& other) const;
+
+    nlohmann::json toJson() const;
+};
+
 struct PlotPaneSettings : ElementSettings
 {
     PlotPaneSettings();
@@ -69,6 +134,7 @@ struct PlotPaneSettings : ElementSettings
     };
 
     ProjectionMode projection_mode;
+    std::vector<SubscribedStreamSettings> subscribed_streams;
 
     void parsePlotPaneSettings(const nlohmann::json& j);
 
@@ -80,7 +146,24 @@ struct PlotPaneSettings : ElementSettings
     bool operator!=(const PlotPaneSettings& other) const;
 };
 
-struct ButtonSettings : public ElementSettings
+using GuiElementId = uint16_t;
+
+struct GuiElementSettings : public ElementSettings
+{
+    bool publish_to_local{true};
+    bool publish_to_serial{false};
+    GuiElementId id{0U};
+
+    GuiElementSettings();
+    explicit GuiElementSettings(const nlohmann::json& j);
+
+    nlohmann::json toJson() const override;
+
+    bool operator==(const GuiElementSettings& other) const;
+    bool operator!=(const GuiElementSettings& other) const;
+};
+
+struct ButtonSettings : public GuiElementSettings
 {
     std::string label;
 
@@ -93,7 +176,7 @@ struct ButtonSettings : public ElementSettings
     bool operator!=(const ButtonSettings& other) const;
 };
 
-struct CheckboxSettings : public ElementSettings
+struct CheckboxSettings : public GuiElementSettings
 {
     std::string label;
 
@@ -106,7 +189,7 @@ struct CheckboxSettings : public ElementSettings
     bool operator!=(const CheckboxSettings& other) const;
 };
 
-struct EditableTextSettings : public ElementSettings
+struct EditableTextSettings : public GuiElementSettings
 {
     std::string init_value;
 
@@ -119,7 +202,7 @@ struct EditableTextSettings : public ElementSettings
     bool operator!=(const EditableTextSettings& other) const;
 };
 
-struct DropdownMenuSettings : public ElementSettings
+struct DropdownMenuSettings : public GuiElementSettings
 {
     std::string initially_selected_item;
     std::vector<std::string> elements;
@@ -133,7 +216,7 @@ struct DropdownMenuSettings : public ElementSettings
     bool operator!=(const DropdownMenuSettings& other) const;
 };
 
-struct ListBoxSettings : public ElementSettings
+struct ListBoxSettings : public GuiElementSettings
 {
     std::vector<std::string> elements;
 
@@ -159,7 +242,7 @@ struct RadioButtonSettings
     bool operator!=(const RadioButtonSettings& other) const;
 };
 
-struct RadioButtonGroupSettings : public ElementSettings
+struct RadioButtonGroupSettings : public GuiElementSettings
 {
     std::string label;
     std::vector<RadioButtonSettings> radio_buttons;
@@ -173,7 +256,7 @@ struct RadioButtonGroupSettings : public ElementSettings
     bool operator!=(const RadioButtonGroupSettings& other) const;
 };
 
-struct TextLabelSettings : public ElementSettings
+struct TextLabelSettings : public GuiElementSettings
 {
     std::string label;
 
@@ -186,7 +269,7 @@ struct TextLabelSettings : public ElementSettings
     bool operator!=(const TextLabelSettings& other) const;
 };
 
-struct SliderSettings : public ElementSettings
+struct SliderSettings : public GuiElementSettings
 {
     int min_value;
     int max_value;

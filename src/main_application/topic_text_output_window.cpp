@@ -1,4 +1,4 @@
-#include "cmdl_output_window.h"
+#include "topic_text_output_window.h"
 
 #include <ostream>
 
@@ -6,6 +6,8 @@
 #include "project_state/project_settings.h"
 #include "tab_button.h"
 
+namespace
+{
 wxColour ColorToWxColour(const Color_t col)
 {
     switch (col)
@@ -44,7 +46,10 @@ wxColour ColorToWxColour(const Color_t col)
     }
 }
 
-CmdlOutputWindow::CmdlOutputWindow() : wxFrame(nullptr, wxID_ANY, "Output", wxDefaultPosition, wxSize(800, 600))
+}  // namespace
+
+TopicTextOutputWindow::TopicTextOutputWindow()
+    : wxFrame(nullptr, wxID_ANY, "Output", wxDefaultPosition, wxSize(800, 600))
 {
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     text_ctrl_ = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY);
@@ -60,11 +65,11 @@ CmdlOutputWindow::CmdlOutputWindow() : wxFrame(nullptr, wxID_ANY, "Output", wxDe
 
     SetBackgroundColour(RGBTripletfToWxColour(kMainWindowBackgroundColor));
 
-    Bind(wxEVT_SIZE, &CmdlOutputWindow::OnSize, this);
-    Bind(wxEVT_CLOSE_WINDOW, &CmdlOutputWindow::OnClose, this);
+    Bind(wxEVT_SIZE, &TopicTextOutputWindow::OnSize, this);
+    Bind(wxEVT_CLOSE_WINDOW, &TopicTextOutputWindow::OnClose, this);
 }
 
-void CmdlOutputWindow::pushNewText(const Color_t col, const std::string& text)
+void TopicTextOutputWindow::pushNewText(const Color_t col, const std::string& text)
 {
     text_ctrl_->SetDefaultStyle(ColorToWxColour(col));
     std::ostream stream(text_ctrl_);
@@ -72,20 +77,20 @@ void CmdlOutputWindow::pushNewText(const Color_t col, const std::string& text)
     stream.flush();
 }
 
-void CmdlOutputWindow::OnClose(wxCloseEvent& event)
+void TopicTextOutputWindow::OnClose(wxCloseEvent& event)
 {
     Hide();
 }
 
-void CmdlOutputWindow::clear()
+void TopicTextOutputWindow::clear()
 {
     text_ctrl_->Clear();
 }
 
-void CmdlOutputWindow::OnSize(wxSizeEvent& event)
+void TopicTextOutputWindow::OnSize(wxSizeEvent& event)
 {
     wxFrame::OnSize(event);
     // const wxSize new_size = event.GetSize();
 }
 
-CmdlOutputWindow::~CmdlOutputWindow() {}
+TopicTextOutputWindow::~TopicTextOutputWindow() {}

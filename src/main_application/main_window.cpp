@@ -4,6 +4,7 @@
 #include <wx/wfstream.h>
 #include <wx/wxprec.h>
 
+#include <chrono>
 #include <csignal>
 #include <iostream>
 #include <stdexcept>
@@ -15,6 +16,7 @@
 #include "globals.h"
 #include "gui_window.h"
 #include "platform_paths.h"
+
 
 namespace element_number_counter
 {
@@ -31,18 +33,26 @@ int getNextFreeElementNumber()
 using namespace duoplot::internal;
 
 MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
-    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 130), wxSize(kMainWindowWidth, 150), wxNO_BORDER), data_receiver_{}
+    : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 130), wxSize(kMainWindowWidth, 150), wxNO_BORDER),
+      data_receiver_{},
+      serial_interface_{"/dev/tty.usbmodem142102", 115200}
 {
 #ifndef PLATFORM_APPLE_M
     Show();
 #endif
 
+    serial_interface_.start();
     shutdown_in_progress_ = false;
 
     first_window_button_offset_ =
         kNewWindowButtonHeight + kNewWindowButtonPreOffset + kNewWindowButtonPostOffset + kMainWindowTopMargin;
 
     SetBackgroundColour(RGBTripletfToWxColour(kMainWindowBackgroundColor));
+
+    serial_array_ = new uint8_t[kSerialSendBufferSize];
+    gui_transfer_state_ = GuiTransferState::Idle;
+    idle_counter_ = 0;
+    num_iterations_without_control_message_ = 0;
 
     static_cast<void>(cmdl_args);
     window_initialization_in_progress_ = true;
@@ -69,11 +79,21 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     cmdl_output_window_ = new CmdlOutputWindow();
     cmdl_output_window_->Hide();
 
+    topic_text_output_window_ = new TopicTextOutputWindow();
+    topic_text_output_window_->Show();
+
     push_text_to_cmdl_output_window_ = [this](const Color_t col, const std::string& text) -> void {
         cmdl_output_window_->pushNewText(col, text);
     };
 
     print_gui_callback_code_ = [this]() { printGuiCallbackCode(); };
+
+    time_at_start_ = static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
+            .count());
+    time_of_receive_control_message_ = 0;
+    time_of_sending_gui_data_ = 0;
+    control_state_ = 0U;
 
     SetMenuBar(menu_bar_);
     wxMenuBar::MacSetCommonMenuBar(menu_bar_);
@@ -84,6 +104,7 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(wxEVT_MENU, &MainWindow::saveProjectAsCallback, this, wxID_SAVEAS);
     // Bind(wxEVT_MENU, &MainWindow::exitApplication, this, wxID_HELP_INDEX);
     Bind(wxEVT_MENU, &MainWindow::newWindowCallback, this, wxID_HELP_CONTENTS);
+    Bind(wxEVT_MENU, &MainWindow::handleTopicOutputWindow, this, wxID_HELP_PROCEDURES);
 
     task_bar_->setOnMenuExitCallback([this]() -> void { this->destroy(); });
     task_bar_->setOnMenuFileNew([this]() -> void { newProject(); });
@@ -198,6 +219,18 @@ MainWindow::MainWindow(const std::vector<std::string>& cmdl_args)
     Bind(wxEVT_LEFT_DOWN, &MainWindow::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &MainWindow::mouseLeftReleased, this);
     Bind(wxEVT_MOTION, &MainWindow::mouseMoved, this);
+}
+
+void MainWindow::handleTopicOutputWindow(wxCommandEvent& WXUNUSED(event))
+{
+    if (topic_text_output_window_->IsShown())
+    {
+        topic_text_output_window_->Hide();
+    }
+    else
+    {
+        topic_text_output_window_->Show();
+    }
 }
 
 void MainWindow::exitApplication(wxCommandEvent& WXUNUSED(event))
@@ -424,12 +457,19 @@ wxMenuBar* MainWindow::createMainMenuBar()
     file_menu_->Append(wxID_SAVE, _T("&Save"));
     file_menu_->Append(wxID_SAVEAS, _T("&Save As..."));
 
-    file_menu_->AppendSeparator();
-    // file_menu_->Append(wxID_HELP_INDEX, _T("Quit"));
-
     menu_bar_tmp->Append(file_menu_, _T("&File"));
 
+    /*wxMenu* project_settings = new wxMenu();
+    project_settings->AppendCheckItem(wxID_NEW, wxT("&Listen to serial port"));
+    project_settings->Append(wxID_NEW, _T("&Serial port settings..."));
+    file_menu_->AppendSeparator();
+    project_settings->AppendCheckItem(wxID_NEW, wxT("&Listen to local IPC"));
+
+    menu_bar_tmp->Append(project_settings, _T("&Project Settings"));*/
+
     windows_menu_ = new wxMenu();
+    windows_menu_->Append(wxID_HELP_PROCEDURES, "Command line output");
+    windows_menu_->AppendSeparator();
     windows_menu_->Append(wxID_HELP_CONTENTS, "New window");
     windows_menu_->AppendSeparator();
 
@@ -507,11 +547,74 @@ void MainWindow::setupWindows(const ProjectSettings& project_settings)
     this->SetSize(wxSize(kMainWindowWidth, kMainWindowButtonHeight * windows_.size() + first_window_button_offset_));
     for (auto we : windows_)
     {
+        // Plot Panes
         std::vector<ApplicationGuiElement*> pps = we->getPlotPanes();
         for (const auto& ge : pps)
         {
+            const std::shared_ptr<ElementSettings> element_settings = ge->getElementSettings();
+            std::shared_ptr<PlotPaneSettings> plot_pane_settings =
+                std::dynamic_pointer_cast<PlotPaneSettings>(element_settings);
+
+            for (const SubscribedStreamSettings& subscribed_stream : plot_pane_settings->subscribed_streams)
+            {
+                if (plot_pane_subscriptions_.count(subscribed_stream.topic_id) > 0)
+                {
+                    std::cout << "Topic " << subscribed_stream.topic_id << " already exists in list, adding "
+                              << ge->getHandleString() << " to it." << std::endl;
+                    plot_pane_subscriptions_[subscribed_stream.topic_id].push_back(dynamic_cast<PlotPane*>(ge));
+                }
+                else
+                {
+                    std::cout << "Topic " << subscribed_stream.topic_id
+                              << " doesn't exist in list, creating new list and adding " << ge->getHandleString()
+                              << " to it." << std::endl;
+                    std::vector<PlotPane*> pps;
+                    pps.push_back(dynamic_cast<PlotPane*>(ge));
+                    plot_pane_subscriptions_[subscribed_stream.topic_id] = pps;
+                }
+
+                objects_temporary_storage_[subscribed_stream.topic_id] =
+                    std::vector<std::shared_ptr<objects::BaseObject>>();
+            }
+
             plot_panes_[ge->getHandleString()] = ge;
         }
+
+        // Scrolling texts elements
+
+        std::vector<ScrollingTextGuiElement*> scrolling_text_gui_elements = we->getScrollingTexts();
+
+        for (const auto& ge : scrolling_text_gui_elements)
+        {
+            const std::shared_ptr<ElementSettings> element_settings = ge->getElementSettings();
+            std::shared_ptr<ScrollingTextSettings> scrolling_text_settings =
+                std::dynamic_pointer_cast<ScrollingTextSettings>(element_settings);
+
+            for (const SubscribedTextStreamSettings& subscribed_stream : scrolling_text_settings->subscribed_streams)
+            {
+                if (stream_of_strings_subscriptions_.count(subscribed_stream.topic_id) > 0)
+                {
+                    std::cout << "Topic " << subscribed_stream.topic_id << " already exists in list, adding "
+                              << ge->getHandleString() << " to it." << std::endl;
+                    stream_of_strings_subscriptions_[subscribed_stream.topic_id].push_back(ge);
+                }
+                else
+                {
+                    std::cout << "Topic " << subscribed_stream.topic_id
+                              << " doesn't exist in list, creating new list and adding " << ge->getHandleString()
+                              << " to it." << std::endl;
+                    std::vector<ScrollingTextGuiElement*> stges;
+                    stges.push_back(ge);
+                    stream_of_strings_subscriptions_[subscribed_stream.topic_id] = stges;
+                }
+
+                streams_of_strings_[subscribed_stream.topic_id] = std::vector<std::pair<uint64_t, std::string>>();
+            }
+
+            scrolling_text_elements_[ge->getHandleString()] = ge;
+        }
+
+        // General GUI Elements
         std::vector<ApplicationGuiElement*> ges = we->getGuiElements();
         for (const auto& ge : ges)
         {
@@ -750,7 +853,8 @@ void MainWindow::saveProjectAsCallback(wxCommandEvent& WXUNUSED(event))
 
 void MainWindow::saveProjectAs()
 {
-    wxFileDialog open_file_dialog(this, _("Choose file to save to"), "", "", "duoplot files (*.duoplot)|*.duoplot", wxFD_SAVE);
+    wxFileDialog open_file_dialog(
+        this, _("Choose file to save to"), "", "", "duoplot files (*.duoplot)|*.duoplot", wxFD_SAVE);
     if (open_file_dialog.ShowModal() == wxID_CANCEL)
     {
         return;

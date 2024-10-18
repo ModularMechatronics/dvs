@@ -60,6 +60,8 @@ protected:
     std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)> notify_tab_about_editing_;
     std::function<void(const Color_t, const std::string&)> push_text_to_cmdl_output_window_;
 
+    GuiElementId id_;
+
     int minimum_x_pos_;
     int minimum_y_pos_;
 

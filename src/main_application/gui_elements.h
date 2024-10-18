@@ -2,6 +2,7 @@
 #define MAIN_APPLICATION_GUI_ELEMENTS_H_
 
 #include <wx/notebook.h>
+#include <wx/textctrl.h>
 #include <wx/wx.h>
 
 #include <functional>
@@ -18,6 +19,8 @@ class ButtonGuiElement : public wxButton, public ApplicationGuiElement
 {
 private:
     bool is_pressed_;
+    bool publish_to_local_;
+    bool publish_to_serial_;
 
 public:
     ButtonGuiElement(wxFrame* parent,
@@ -56,9 +59,15 @@ public:
         setElementPositionAndSize();
     }
 
-    void keyPressedElementSpecific(const char key) override {}
+    void keyPressedElementSpecific(const char key) override
+    {
+        static_cast<void>(key);
+    }
 
-    void keyReleasedElementSpecific(const char key) override {}
+    void keyReleasedElementSpecific(const char key) override
+    {
+        static_cast<void>(key);
+    }
 
     wxPoint getPosition() const override
     {
@@ -119,6 +128,8 @@ public:
     }
 
     void setLabel(const std::string& new_label) override;
+
+    void sendDataToSerialInterface() const;
 };
 
 class SliderGuiElement : public wxSlider, public ApplicationGuiElement
@@ -129,6 +140,9 @@ private:
     wxStaticText* min_text_;
     wxStaticText* max_text_;
     bool is_horizontal_;
+
+    bool publish_to_local_;
+    bool publish_to_serial_;
 
     int getStyle(const std::shared_ptr<ElementSettings>& element_settings) const;
 
@@ -902,6 +916,114 @@ public:
             std::make_shared<RadioButtonGroupState>(element_settings_->handle_string, buttons_, selected_idx_);
 
         return radio_button_group_state;
+    }
+};
+
+class ScrollingTextGuiElement : public wxTextCtrl, public ApplicationGuiElement
+{
+private:
+    std::map<TopicId, wxColor> topic_id_to_color_;
+    wxColor black_color_;
+    bool print_timestamp_;
+    bool print_topic_id_;
+
+public:
+    ScrollingTextGuiElement(
+        wxFrame* parent,
+        const std::shared_ptr<ElementSettings>& element_settings,
+        const std::function<void(const char key)>& notify_main_window_key_pressed,
+        const std::function<void(const char key)>& notify_main_window_key_released,
+        const std::function<void(const wxPoint pos, const std::string& elem_name)>&
+            notify_parent_window_right_mouse_pressed,
+        const std::function<void()>& notify_main_window_about_modification,
+        const std::function<void(const wxPoint& pos, const wxSize& size, const bool is_editing)>&
+            notify_tab_about_editing,
+        const std::function<void(const Color_t, const std::string&)>& push_text_to_cmdl_output_window,
+        const wxPoint& pos,
+        const wxSize& size);
+
+    void setMinXPos(const int min_x_pos) override
+    {
+        minimum_x_pos_ = min_x_pos;
+        setElementPositionAndSize();
+    }
+
+    void updateElementSettings(const std::map<std::string, std::string>& new_settings) override;
+
+    void keyPressedElementSpecific(const char key) override {}
+
+    void keyReleasedElementSpecific(const char key) override {}
+
+    std::uint64_t getGuiPayloadSize() const override
+    {
+        std::uint64_t total_num_bytes = 0U;
+
+        /*total_num_bytes += sizeof(std::uint16_t);  // Number of buttons
+        total_num_bytes += sizeof(std::uint32_t);  // Selected button
+
+        for (const auto& button : buttons_)
+        {
+            total_num_bytes += sizeof(std::uint8_t) + button.length();
+        }*/
+
+        return total_num_bytes;
+    }
+
+    void fillGuiPayload(FillableUInt8Array& output_array) const override
+    {
+        /*output_array.fillWithStaticType(selected_idx_);
+
+        output_array.fillWithStaticType(static_cast<std::uint16_t>(buttons_.size()));
+
+        for (const auto& button : buttons_)
+        {
+            output_array.fillWithStaticType(static_cast<std::uint8_t>(button.length()));
+            output_array.fillWithDataFromPointer(button.data(), button.length());
+        }*/
+    }
+
+    void updateSizeFromParent(const wxSize& parent_size) override
+    {
+        setElementPositionAndSize();
+    }
+
+    wxPoint getPosition() const override
+    {
+        return this->GetPosition();
+    }
+
+    wxSize getSize() const override
+    {
+        return this->GetSize();
+    }
+
+    wxWindow* getParent() const override
+    {
+        return this->GetParent();
+    }
+
+    void setPosition(const wxPoint& new_pos) override
+    {
+        this->SetPosition(new_pos);
+    }
+
+    void setSize(const wxSize& new_size) override;
+
+    void hide() override
+    {
+        Hide();
+    }
+
+    void show() override
+    {
+        Show();
+    }
+
+    void pushNewText(const TopicId topic_id, const std::vector<std::pair<uint64_t, std::string>>& strings);
+
+    std::shared_ptr<GuiElementState> getGuiElementState() const override
+    {
+        return nullptr;
     }
 };
 

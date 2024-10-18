@@ -1,5 +1,6 @@
 #include <unistd.h>
 
+#include <chrono>
 #include <csignal>
 #include <iostream>
 #include <stdexcept>
@@ -34,6 +35,8 @@ void MainWindow::setCurrentElement(const ReceivedData& received_data)
 
 void MainWindow::OnReceiveTimer(wxTimerEvent&)
 {
+    handleSerialData();
+
     try
     {
         receiveData();

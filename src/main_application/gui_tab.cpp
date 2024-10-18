@@ -289,6 +289,27 @@ WindowTab::WindowTab(wxFrame* parent_window,
             radio_button_group->updateSizeFromParent(parent_window_->GetSize());
             gui_elements_.push_back(radio_button_group);
         }
+        else if (elem_settings->type == duoplot::GuiElementType::ScrollingText)
+        {
+            auto const [elem_pos, elem_size] =
+                getPosAndSizeInPixelCoords(parent_window_->GetSize(), elem_settings.get());
+
+            ScrollingTextGuiElement* const scrolling_text =
+                new ScrollingTextGuiElement(parent_window_,
+                                            elem_settings,
+                                            notify_main_window_key_pressed,
+                                            notify_main_window_key_released,
+                                            notify_parent_window_right_mouse_pressed,
+                                            notify_main_window_about_modification,
+                                            notify_tab_about_editing_,
+                                            push_text_to_cmdl_output_window_,
+                                            elem_pos,
+                                            elem_size);
+
+            scrolling_text->setMinXPos(element_x_offset_);
+            scrolling_text->updateSizeFromParent(parent_window_->GetSize());
+            scrolling_text_elements_.push_back(scrolling_text);
+        }
 
         current_element_idx_++;
     }
@@ -344,6 +365,11 @@ WindowTab::~WindowTab()
 std::vector<ApplicationGuiElement*> WindowTab::getGuiElements() const
 {
     return gui_elements_;
+}
+
+std::vector<ScrollingTextGuiElement*> WindowTab::getScrollingTexts() const
+{
+    return scrolling_text_elements_;
 }
 
 std::vector<ApplicationGuiElement*> WindowTab::getPlotPanes() const
@@ -604,6 +630,27 @@ void WindowTab::createRadioButtonGroup(const std::shared_ptr<ElementSettings>& e
     gui_elements_.push_back(radio_button_group);
 }
 
+void WindowTab::createScrollingText(const std::shared_ptr<ElementSettings>& element_settings)
+{
+    auto const [elem_pos, elem_size] = getPosAndSizeInPixelCoords(parent_window_->GetSize(), element_settings.get());
+
+    ScrollingTextGuiElement* const scrolling_text =
+        new ScrollingTextGuiElement(parent_window_,
+                                    element_settings,
+                                    notify_main_window_key_pressed_,
+                                    notify_main_window_key_released_,
+                                    notify_parent_window_right_mouse_pressed_,
+                                    notify_main_window_about_modification_,
+                                    notify_tab_about_editing_,
+                                    push_text_to_cmdl_output_window_,
+                                    elem_pos,
+                                    elem_size);
+
+    scrolling_text->setMinXPos(element_x_offset_);
+    scrolling_text->updateSizeFromParent(parent_window_->GetSize());
+    scrolling_text_elements_.push_back(scrolling_text);
+}
+
 void WindowTab::show()
 {
     for (auto const& pp : plot_panes_)
@@ -640,6 +687,11 @@ void WindowTab::updateSizeFromParent(const wxSize new_size) const
     for (auto const& elem : gui_elements_)
     {
         elem->updateSizeFromParent(new_size);
+    }
+
+    for (auto const& scrolling_text : scrolling_text_elements_)
+    {
+        scrolling_text->updateSizeFromParent(new_size);
     }
 }
 

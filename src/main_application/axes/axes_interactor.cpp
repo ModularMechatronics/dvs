@@ -26,7 +26,7 @@ AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int wind
     current_window_width = window_width;
     current_window_height = window_height;
 
-    view_angles_ = ViewAngles(0.0 * M_PI / 180.0, 0.0 * M_PI / 180.0, 5.0 * M_PI / 180.0);
+    view_angles_ = ViewAngles(0.0 * M_PI / 180.0, 90.0 * M_PI / 180.0, 5.0 * M_PI / 180.0);
     default_view_angles_ = view_angles_;
 
     axes_settings_ = axes_settings;

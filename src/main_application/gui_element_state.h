@@ -1,8 +1,10 @@
 #ifndef GUI_ELEMENT_STATE_H
 #define GUI_ELEMENT_STATE_H
 
+#include "buffered_writer.h"
 #include "duoplot/enumerations.h"
 #include "duoplot/fillable_uint8_array.h"
+#include "project_state/project_settings.h"
 
 class GuiElementState
 {
@@ -30,6 +32,27 @@ public:
         output_array.fillWithStaticType(static_cast<std::uint8_t>(handle_string_.length()));
         output_array.fillWithDataFromPointer(handle_string_.data(), handle_string_.length());
     }
+
+    virtual uint16_t serializeToSerialBuffer(BufferedWriter& buffered_writer) const
+    {
+        return 0;
+        // ...
+    }
+
+    std::string getHandleString() const
+    {
+        return handle_string_;
+    }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const
+    {
+        return other != nullptr && type_ == other->getType() && handle_string_ == other->getHandleString();
+    }
+
+    duoplot::GuiElementType getType() const
+    {
+        return type_;
+    }
 };
 
 class CheckboxState : public GuiElementState
@@ -55,6 +78,23 @@ public:
         GuiElementState::serializeToBuffer(output_array);
         output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));  // Payload size
         output_array.fillWithStaticType(static_cast<std::uint8_t>(is_checked_));
+    }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const override
+    {
+        if (!GuiElementState::isEqual(other))
+        {
+            return false;
+        }
+        else
+        {
+            std::shared_ptr<CheckboxState> other_checkbox = std::dynamic_pointer_cast<CheckboxState>(other);
+            if (other_checkbox == nullptr)
+            {
+                return false;
+            }
+            return is_checked_ == other_checkbox->is_checked_;
+        }
     }
 };
 
@@ -103,6 +143,34 @@ public:
         output_array.fillWithStaticType(static_cast<std::int32_t>(value_));
         output_array.fillWithStaticType(static_cast<std::uint8_t>(is_horizontal_));
     }
+
+    uint16_t serializeToSerialBuffer(BufferedWriter& buffered_writer) const override
+    {
+        buffered_writer.write(value_);
+        return sizeof(int32_t);
+    }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const override
+    {
+        if (!GuiElementState::isEqual(other))
+        {
+            return false;
+        }
+        else
+        {
+            std::shared_ptr<SliderState> other_slider = std::dynamic_pointer_cast<SliderState>(other);
+            if (other_slider == nullptr)
+            {
+                return false;
+            }
+            return value_ == other_slider->value_;
+        }
+    }
+
+    std::int32_t getValue() const
+    {
+        return value_;
+    }
 };
 
 class ButtonState : public GuiElementState
@@ -129,6 +197,35 @@ public:
 
         output_array.fillWithStaticType(static_cast<std::uint32_t>(1U));  // Payload size
         output_array.fillWithStaticType(static_cast<std::uint8_t>(is_pressed_));
+    }
+
+    uint16_t serializeToSerialBuffer(BufferedWriter& buffered_writer) const override
+    {
+        const uint16_t is_pressed = static_cast<uint16_t>(is_pressed_);
+        buffered_writer.write(is_pressed);
+        return sizeof(uint16_t);
+    }
+
+    bool isPressed() const
+    {
+        return is_pressed_;
+    }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const override
+    {
+        if (!GuiElementState::isEqual(other))
+        {
+            return false;
+        }
+        else
+        {
+            std::shared_ptr<ButtonState> other_button = std::dynamic_pointer_cast<ButtonState>(other);
+            if (other_button == nullptr)
+            {
+                return false;
+            }
+            return is_pressed_ == other_button->is_pressed_;
+        }
     }
 };
 
@@ -157,6 +254,23 @@ public:
         output_array.fillWithStaticType(static_cast<std::uint32_t>(label_.length() + 1U));  // Payload size
         output_array.fillWithStaticType(static_cast<std::uint8_t>(label_.length()));
         output_array.fillWithDataFromPointer(label_.data(), label_.length());
+    }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const override
+    {
+        if (!GuiElementState::isEqual(other))
+        {
+            return false;
+        }
+        else
+        {
+            std::shared_ptr<TextLabelState> other_text_label = std::dynamic_pointer_cast<TextLabelState>(other);
+            if (other_text_label == nullptr)
+            {
+                return false;
+            }
+            return label_ == other_text_label->label_;
+        }
     }
 };
 
@@ -217,6 +331,23 @@ public:
             output_array.fillWithDataFromPointer(element.data(), element.length());
         }
     }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const override
+    {
+        if (!GuiElementState::isEqual(other))
+        {
+            return false;
+        }
+        else
+        {
+            std::shared_ptr<ListBoxState> other_list_box = std::dynamic_pointer_cast<ListBoxState>(other);
+            if (other_list_box == nullptr)
+            {
+                return false;
+            }
+            return elements_ == other_list_box->elements_ && selected_element_ == other_list_box->selected_element_;
+        }
+    }
 };
 
 class EditableTextState : public GuiElementState
@@ -228,7 +359,9 @@ private:
 public:
     EditableTextState() = delete;
     EditableTextState(const std::string& handle_string, const bool enter_pressed, const std::string& text)
-        : GuiElementState{duoplot::GuiElementType::EditableText, handle_string}, enter_pressed_{enter_pressed}, text_{text}
+        : GuiElementState{duoplot::GuiElementType::EditableText, handle_string},
+          enter_pressed_{enter_pressed},
+          text_{text}
     {
     }
     ~EditableTextState() override {}
@@ -251,6 +384,24 @@ public:
         output_array.fillWithStaticType(static_cast<std::uint8_t>(enter_pressed_));
         output_array.fillWithStaticType(static_cast<std::uint8_t>(text_.length()));
         output_array.fillWithDataFromPointer(text_.data(), text_.length());
+    }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const override
+    {
+        if (!GuiElementState::isEqual(other))
+        {
+            return false;
+        }
+        else
+        {
+            std::shared_ptr<EditableTextState> other_editable_text =
+                std::dynamic_pointer_cast<EditableTextState>(other);
+            if (other_editable_text == nullptr)
+            {
+                return false;
+            }
+            return text_ == other_editable_text->text_;
+        }
     }
 };
 
@@ -311,6 +462,24 @@ public:
             output_array.fillWithDataFromPointer(element.data(), element.length());
         }
     }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const override
+    {
+        if (!GuiElementState::isEqual(other))
+        {
+            return false;
+        }
+        else
+        {
+            std::shared_ptr<DropdownMenuState> other_dropdown_menu =
+                std::dynamic_pointer_cast<DropdownMenuState>(other);
+            if (other_dropdown_menu == nullptr)
+            {
+                return false;
+            }
+            return selected_element_ == other_dropdown_menu->selected_element_;
+        }
+    }
 };
 
 class RadioButtonGroupState : public GuiElementState
@@ -369,6 +538,24 @@ public:
         {
             output_array.fillWithStaticType(static_cast<std::uint8_t>(button.length()));
             output_array.fillWithDataFromPointer(button.data(), button.length());
+        }
+    }
+
+    virtual bool isEqual(const std::shared_ptr<GuiElementState>& other) const override
+    {
+        if (!GuiElementState::isEqual(other))
+        {
+            return false;
+        }
+        else
+        {
+            std::shared_ptr<RadioButtonGroupState> other_radio_button_group =
+                std::dynamic_pointer_cast<RadioButtonGroupState>(other);
+            if (other_radio_button_group == nullptr)
+            {
+                return false;
+            }
+            return selected_button_ == other_radio_button_group->selected_button_;
         }
     }
 };

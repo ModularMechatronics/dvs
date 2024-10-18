@@ -158,6 +158,7 @@ public:
 
     void updateAllElements();
     std::vector<ApplicationGuiElement*> getGuiElements() const;
+    std::vector<ScrollingTextGuiElement*> getScrollingTexts() const;
     std::vector<ApplicationGuiElement*> getPlotPanes() const;
     std::vector<ApplicationGuiElement*> getAllGuiElements() const;
 

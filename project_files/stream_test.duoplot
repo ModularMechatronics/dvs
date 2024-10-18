@@ -1,0 +1,256 @@
+{
+    "windows": [
+        {
+            "height": 1345.0,
+            "name": "Window 0",
+            "tabs": [
+                {
+                    "button_clicked_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_normal_color": {
+                        "b": 0.8199999928474426,
+                        "g": 0.8899999856948853,
+                        "r": 0.6819999814033508
+                    },
+                    "button_selected_color": {
+                        "b": 0.7799999713897705,
+                        "g": 0.8510000109672546,
+                        "r": 0.6430000066757202
+                    },
+                    "button_text_color": {
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "elements": [
+                        {
+                            "element_specific_settings": {
+                                "subscribed_streams": [
+                                    {
+                                        "topic_id": 101,
+                                        "label": "Debug output Module X",
+                                        "text_color": {
+                                            "r": 1.0,
+                                            "g": 0.0,
+                                            "b": 0.0
+                                        }
+                                    }
+                                ]
+                            },
+                            "handle_string": "text_stream0",
+                            "height": 0.23,
+                            "type": "SCROLLING_TEXT",
+                            "width": 0.45,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "element_specific_settings": {
+                                "subscribed_streams": [
+                                    {
+                                        "topic_id": 101,
+                                        "label": "Debug output Module X",
+                                        "text_color": {
+                                            "r": 1.0,
+                                            "g": 0.0,
+                                            "b": 0.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 102,
+                                        "label": "Debug output Module Y",
+                                        "text_color": {
+                                            "r": 0.0,
+                                            "g": 0.0,
+                                            "b": 1.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 103,
+                                        "label": "Debug output Module Z"
+                                    }
+                                ],
+                                "print_timestamp": false,
+                                "print_topic_id": false
+                            },
+                            "handle_string": "text_stream1",
+                            "height": 0.23,
+                            "type": "SCROLLING_TEXT",
+                            "width": 0.45,
+                            "x": 0.0,
+                            "y": 0.25
+                        },
+                        {
+                            "element_specific_settings": {
+                                "axes_letters_color": {
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "axes_numbers_color": {
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "grid_color": {
+                                    "b": 0.699999988079071,
+                                    "g": 0.699999988079071,
+                                    "r": 0.699999988079071
+                                },
+                                "projection_mode": "orthographic",
+                                "subscribed_streams": [
+                                    {
+                                        "topic_id": 1,
+                                        "stream_type": "stairs",
+                                        "label": "Sin float",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 2,
+                                        "stream_type": "stairs",
+                                        "label": "Sin Int8",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 3,
+                                        "stream_type": "stairs",
+                                        "label": "Sin UInt8",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
+                                            "r": 0.0
+                                        }
+                                    }
+                                ],
+                                "subscribed_streams2": [
+                                    {
+                                        "topic_id": 12,
+                                        "stream_type": "scatter",
+                                        "label": "Acceleration X",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 0.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 1,
+                                        "stream_type": "plot",
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 1.0,
+                                            "r": 0.0
+                                        },
+                                        "line_style": "solid",
+                                        "line_width": 3.5,
+                                        "label": "Acceleration Y"
+                                    },
+                                    {
+                                        "topic_id": 4,
+                                        "stream_type": "stairs",
+                                        "color": {
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        },
+                                        "alpha": 0.1,
+                                        "line_style": "solid",
+                                        "line_width": 3.5,
+                                        "label": "Acceleration Y"
+                                    }
+                                ]
+                            },
+                            "handle_string": "p_view_0",
+                            "height": 0.48288974165916443,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        {
+                            "element_specific_settings": {
+                                "axes_letters_color": {
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "axes_numbers_color": {
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "grid_color": {
+                                    "b": 0.699999988079071,
+                                    "g": 0.699999988079071,
+                                    "r": 0.699999988079071
+                                },
+                                "projection_mode": "orthographic",
+                                "subscribed_streams": [
+                                    {
+                                        "topic_id": 4,
+                                        "stream_type": "stairs",
+                                        "label": "Sin float",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 5,
+                                        "stream_type": "stairs",
+                                        "label": "Sin Int8",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
+                                            "r": 0.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 6,
+                                        "stream_type": "stairs",
+                                        "label": "Sin UInt8",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        }
+                                    }
+                                ]
+                            },
+                            "handle_string": "p1",
+                            "height": 0.5049429535865784,
+                            "type": "PLOT_PANE",
+                            "width": 1.0,
+                            "x": 0.0,
+                            "y": 0.48973384499549866,
+                            "z_order": 0
+                        }
+                    ],
+                    "name": "primary_view"
+                }
+            ],
+            "width": 2560.0,
+            "x": 0.0,
+            "y": 25.0
+        }
+    ]
+}

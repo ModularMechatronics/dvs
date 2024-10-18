@@ -28,7 +28,8 @@ PlotPaneSettings::PlotPaneSettings()
       clipping_on{kClippingOnDefault},
       snap_view_to_axes{kSnapViewToAxesDefault},
       pane_radius{kPaneRadiusDefault},
-      projection_mode{ProjectionMode::ORTHOGRAPHIC}
+      projection_mode{ProjectionMode::ORTHOGRAPHIC},
+      subscribed_streams{}
 {
     x = 0.0;
     y = 0.0;
@@ -53,6 +54,7 @@ void PlotPaneSettings::defaultInitializeAllSettings()
     snap_view_to_axes = kSnapViewToAxesDefault;
     pane_radius = kPaneRadiusDefault;
     projection_mode = ProjectionMode::ORTHOGRAPHIC;
+    subscribed_streams = {};
 }
 
 PlotPaneSettings::PlotPaneSettings(const nlohmann::json& j) : ElementSettings{j}
@@ -69,7 +71,7 @@ bool PlotPaneSettings::operator==(const PlotPaneSettings& other) const
            grid_on == other.grid_on && plot_box_on == other.plot_box_on && axes_numbers_on == other.axes_numbers_on &&
            axes_letters_on == other.axes_letters_on && clipping_on == other.clipping_on &&
            snap_view_to_axes == other.snap_view_to_axes && pane_radius == other.pane_radius &&
-           projection_mode == other.projection_mode;
+           projection_mode == other.projection_mode && subscribed_streams == other.subscribed_streams;
 }
 
 bool PlotPaneSettings::operator!=(const PlotPaneSettings& other) const
@@ -124,6 +126,14 @@ void PlotPaneSettings::parsePlotPaneSettings(const nlohmann::json& j)
     else
     {
         projection_mode = ProjectionMode::ORTHOGRAPHIC;
+    }
+
+    if (j_ess.contains("subscribed_streams"))
+    {
+        for (size_t k = 0; k < j_ess["subscribed_streams"].size(); k++)
+        {
+            subscribed_streams.push_back(SubscribedStreamSettings(j_ess["subscribed_streams"][k]));
+        }
     }
 
     if (j_ess.contains("title"))
@@ -183,5 +193,223 @@ nlohmann::json PlotPaneSettings::toJson() const
         j["element_specific_settings"]["projection_mode"] = "perspective";
     }
 
+    if (!subscribed_streams.empty())
+    {
+        for (const auto& ss : subscribed_streams)
+        {
+            j["element_specific_settings"]["subscribed_streams"].push_back(ss.toJson());
+        }
+    }
+
     return j;
+}
+
+SubscribedStreamSettings::SubscribedStreamSettings(const nlohmann::json& j)
+{
+    topic_id = j["topic_id"];
+
+    const std::string stream_type_str = j["stream_type"];
+    if (stream_type_str == "unknown")
+    {
+        stream_type = StreamType::UNKNOWN;
+    }
+    else if (stream_type_str == "plot")
+    {
+        stream_type = StreamType::PLOT;
+    }
+    else if (stream_type_str == "scatter")
+    {
+        stream_type = StreamType::SCATTER;
+    }
+    else if (stream_type_str == "plot3d")
+    {
+        stream_type = StreamType::PLOT3D;
+    }
+    else if (stream_type_str == "scatter3d")
+    {
+        stream_type = StreamType::SCATTER3D;
+    }
+    else if (stream_type_str == "stairs")
+    {
+        stream_type = StreamType::STAIRS;
+    }
+    else
+    {
+        throw std::runtime_error("Invalid option for \"stream_type\": \"" + stream_type_str + "\"");
+    }
+
+    if (j.contains("alpha"))
+    {
+        alpha = j["alpha"];
+    }
+
+    if (j.contains("line_width"))
+    {
+        line_width = j["line_width"];
+    }
+
+    if (j.contains("point_size"))
+    {
+        point_size = j["point_size"];
+    }
+
+    if (j.contains("color"))
+    {
+        const RGBTripletf rgbt{jsonObjToColor(j["color"])};
+        color = duoplot::properties::Color{static_cast<uint8_t>(rgbt.red * 255.0f),
+                                           static_cast<uint8_t>(rgbt.green * 255.0f),
+                                           static_cast<uint8_t>(rgbt.blue * 255.0f)};
+    }
+
+    if (j.contains("line_style"))
+    {
+        const std::string line_style_str = j["line_style"];
+
+        if (line_style_str == "solid")
+        {
+            line_style = duoplot::properties::LineStyle::SOLID;
+        }
+        else if (line_style_str == "dashed")
+        {
+            line_style = duoplot::properties::LineStyle::DASHED;
+        }
+        else if (line_style_str == "short_dashed")
+        {
+            line_style = duoplot::properties::LineStyle::SHORT_DASHED;
+        }
+        else if (line_style_str == "long_dashed")
+        {
+            line_style = duoplot::properties::LineStyle::LONG_DASHED;
+        }
+        else
+        {
+            throw std::runtime_error("Invalid option for \"line_style\": \"" + line_style_str + "\"");
+        }
+    }
+
+    if (j.contains("scatter_style"))
+    {
+        const std::string scatter_style_str = j["scatter_style"];
+
+        if (scatter_style_str == "square")
+        {
+            scatter_style = duoplot::properties::ScatterStyle::SQUARE;
+        }
+        else if (scatter_style_str == "circle")
+        {
+            scatter_style = duoplot::properties::ScatterStyle::CIRCLE;
+        }
+        else if (scatter_style_str == "disc")
+        {
+            scatter_style = duoplot::properties::ScatterStyle::DISC;
+        }
+        else if (scatter_style_str == "plus")
+        {
+            scatter_style = duoplot::properties::ScatterStyle::PLUS;
+        }
+        else if (scatter_style_str == "cross")
+        {
+            scatter_style = duoplot::properties::ScatterStyle::CROSS;
+        }
+        else
+        {
+            throw std::runtime_error("Invalid option for \"scatter_style\": \"" + scatter_style_str + "\"");
+        }
+    }
+
+    if (j.contains("label"))
+    {
+        label = j["label"];
+    }
+}
+
+nlohmann::json SubscribedStreamSettings::toJson() const
+{
+    nlohmann::json j;
+
+    if (stream_type == StreamType::UNKNOWN)
+    {
+        j["stream_type"] = "unknown";
+    }
+    else if (stream_type == StreamType::PLOT)
+    {
+        j["stream_type"] = "plot";
+    }
+    else if (stream_type == StreamType::SCATTER)
+    {
+        j["stream_type"] = "scatter";
+    }
+    else if (stream_type == StreamType::PLOT3D)
+    {
+        j["stream_type"] = "plot3d";
+    }
+    else if (stream_type == StreamType::SCATTER3D)
+    {
+        j["stream_type"] = "scatter3d";
+    }
+    else if (stream_type == StreamType::STAIRS)
+    {
+        j["stream_type"] = "stairs";
+    }
+    else
+    {
+        throw std::runtime_error("Invalid option for \"stream_type\": \"" +
+                                 std::to_string(static_cast<uint8_t>(stream_type)) + "\"");
+    }
+
+    if (line_style == duoplot::properties::LineStyle::SOLID)
+    {
+        j["line_style"] = "solid";
+    }
+    else if (line_style == duoplot::properties::LineStyle::DASHED)
+    {
+        j["line_style"] = "dashed";
+    }
+    else if (line_style == duoplot::properties::LineStyle::SHORT_DASHED)
+    {
+        j["line_style"] = "short_dashed";
+    }
+    else if (line_style == duoplot::properties::LineStyle::LONG_DASHED)
+    {
+        j["line_style"] = "LONG_DASHED";
+    }
+
+    else if (scatter_style == duoplot::properties::ScatterStyle::SQUARE)
+    {
+        j["scatter_style"] = "square";
+    }
+    else if (scatter_style == duoplot::properties::ScatterStyle::CIRCLE)
+    {
+        j["scatter_style"] = "circle";
+    }
+    else if (scatter_style == duoplot::properties::ScatterStyle::DISC)
+    {
+        j["scatter_style"] = "disc";
+    }
+    else if (scatter_style == duoplot::properties::ScatterStyle::PLUS)
+    {
+        j["scatter_style"] = "plus";
+    }
+    else if (scatter_style == duoplot::properties::ScatterStyle::CROSS)
+    {
+        j["scatter_style"] = "cross";
+    }
+
+    j["topic_id"] = topic_id;
+    j["alpha"] = alpha;
+    j["line_width"] = line_width;
+    j["point_size"] = point_size;
+    j["color"] = colorToJsonObj(RGBTripletf{static_cast<float>(color.value().red) / 255.0f,
+                                            static_cast<float>(color.value().green) / 255.0f,
+                                            static_cast<float>(color.value().blue) / 255.0f});
+    j["label"] = label;
+
+    return j;
+}
+
+bool SubscribedStreamSettings::operator==(const SubscribedStreamSettings& other) const
+{
+    return other.topic_id == topic_id && other.stream_type == stream_type && other.alpha == alpha &&
+           other.line_width == line_width && other.point_size == point_size && other.color == color &&
+           other.line_style == line_style && other.scatter_style == scatter_style && other.label == label;
 }

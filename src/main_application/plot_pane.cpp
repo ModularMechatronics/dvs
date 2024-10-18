@@ -9,6 +9,7 @@
 #include "duoplot/math/math.h"
 #include "events.h"
 #include "platform_paths.h"
+#include "plot_objects/stream_objects/stream_objects.h"
 
 using namespace duoplot::internal;
 
@@ -137,6 +138,51 @@ PlotPane::PlotPane(
 
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
     current_mouse_interaction_axis_ = MouseInteractionAxis::ALL;
+
+    initSubscribedStreams();
+}
+
+void PlotPane::pushStreamData(const TopicId topic_id, const std::vector<std::shared_ptr<objects::BaseObject>>& objects)
+{
+    if (new_objects_.find(topic_id) == new_objects_.end())
+    {
+        new_objects_[topic_id] = objects;
+    }
+    else
+    {
+        new_objects_[topic_id].insert(new_objects_[topic_id].end(), objects.begin(), objects.end());
+    }
+}
+
+void PlotPane::initSubscribedStreams()
+{
+    for (const SubscribedStreamSettings& subscribed_stream : plot_pane_settings_->subscribed_streams)
+    {
+        if (subscribed_stream.stream_type == StreamType::PLOT)
+        {
+            subscribed_streams_[subscribed_stream.topic_id] = new Plot2DStream(subscribed_stream, shader_collection_);
+        }
+        else if (subscribed_stream.stream_type == StreamType::PLOT3D)
+        {
+            std::cout << "Creating plot3d" << std::endl;
+        }
+        else if (subscribed_stream.stream_type == StreamType::SCATTER)
+        {
+            subscribed_streams_[subscribed_stream.topic_id] = new ScatterStream(subscribed_stream, shader_collection_);
+        }
+        else if (subscribed_stream.stream_type == StreamType::STAIRS)
+        {
+            subscribed_streams_[subscribed_stream.topic_id] = new StairsStream(subscribed_stream, shader_collection_);
+        }
+        else if (subscribed_stream.stream_type == StreamType::SCATTER3D)
+        {
+            std::cout << "Creating scatter3d" << std::endl;
+        }
+        else
+        {
+            std::cout << "Unknown stream type!" << std::endl;
+        }
+    }
 }
 
 void PlotPane::updateSizeFromParent(const wxSize& parent_size)
@@ -314,7 +360,7 @@ void PlotPane::pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue)
 
 void PlotPane::update()
 {
-    if (!queued_data_.empty())
+    if (!queued_data_.empty() || new_objects_.size() > 0U)
     {
         Refresh();
     }
@@ -823,6 +869,17 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
 
     processActionQueue();
 
+    for (auto& [topic_id, objects] : new_objects_)
+    {
+        if (subscribed_streams_.find(topic_id) == subscribed_streams_.end())
+        {
+            continue;
+        }
+
+        subscribed_streams_.find(topic_id)->second->appendNewData(objects);
+    }
+    new_objects_.clear();
+
     /*if (pending_clear_)
     {
         pending_clear_ = false;
@@ -883,6 +940,10 @@ void PlotPane::render(wxPaintEvent& WXUNUSED(evt))
     axes_renderer_->plotBegin();
 
     plot_data_handler_->render();
+    for (auto& [topic_id, stream] : subscribed_streams_)
+    {
+        stream->render();
+    }
 
     axes_renderer_->plotEnd();
 
