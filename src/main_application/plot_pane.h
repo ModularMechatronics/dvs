@@ -83,8 +83,7 @@ private:
     void initSubscribedStreams();
 
     std::map<TopicId, StreamObjectBase*> subscribed_streams_;
-    std::vector<std::pair<TopicId, std::shared_ptr<objects::BaseObject>>> new_objects_;
-    std::map<TopicId, std::vector<std::shared_ptr<objects::BaseObject>>> new_objects2_;
+    std::map<TopicId, std::vector<std::shared_ptr<objects::BaseObject>>> new_objects_;
 
 public:
     PlotPane(wxNotebookPage* parent,  // TODO: wxNotebookPage is obsolete, should be wxWindow/wxFrame?
@@ -105,7 +104,6 @@ public:
 
     void setHandleString(const std::string& new_name) override;
     void pushQueue(std::queue<std::unique_ptr<InputData>>& new_queue);
-    void pushStreamData(const TopicId topic_id, const std::shared_ptr<objects::BaseObject>& obj);
     void pushStreamData(const TopicId topic_id, const std::vector<std::shared_ptr<objects::BaseObject>>& obj);
 
     void render(wxPaintEvent& evt);

@@ -15,8 +15,8 @@
 
 AxesInteractor::AxesInteractor(const AxesSettings& axes_settings, const int window_height, const int window_width)
 {
-    const Vec3d min_vec = Vec3d(0.0, -3.0, -1.0);
-    const Vec3d max_vec = Vec3d(3.0, 3.0, 1.0);
+    const Vec3d min_vec = Vec3d(-1.0, -1.0, -1.0);
+    const Vec3d max_vec = Vec3d(1.0, 1.0, 1.0);
 
     has_query_points_ = false;
     axes_limits_ = AxesLimits(min_vec, max_vec);
