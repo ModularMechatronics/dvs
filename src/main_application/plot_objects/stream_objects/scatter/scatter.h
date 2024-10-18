@@ -8,8 +8,6 @@ class ScatterStream : public StreamObjectBase
 {
 private:
     float* points_ptr_;
-    size_t previous_buffer_size_;
-    size_t current_idx_;
     GLuint sp_vertex_buffer_, sp_vertex_buffer_array_;
     size_t num_elements_to_draw_{0U};
     float point_size_;

@@ -1,5 +1,7 @@
 #include "plot_objects/stream_objects/plot2d/plot2d.h"
 
+#include "plot_objects/stream_objects/conversion_function.h"
+
 Plot2DStream::Plot2DStream() {}
 
 constexpr size_t kStreamBufferSize{500U};
@@ -77,7 +79,7 @@ void Plot2DStream::appendNewData(const std::shared_ptr<objects::BaseObject>& obj
     }
 
     points_ptr_[0U] = 0.0f;
-    points_ptr_[1U] = static_cast<objects::Float*>(obj.get())->value();
+    points_ptr_[1U] = getFloatValue(obj);
 
     constexpr size_t num_bytes_to_replace = kStreamBufferSize * 2U * sizeof(float);
 

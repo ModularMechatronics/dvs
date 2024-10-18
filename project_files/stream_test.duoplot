@@ -103,14 +103,36 @@
                                 "projection_mode": "orthographic",
                                 "subscribed_streams": [
                                     {
-                                        "topic_id": 13,
+                                        "topic_id": 1,
                                         "stream_type": "stairs",
-                                        "label": "Acceleration X",
+                                        "label": "Sin float",
                                         "point_size": 10,
                                         "color": {
                                             "b": 0.0,
                                             "g": 0.0,
                                             "r": 1.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 2,
+                                        "stream_type": "stairs",
+                                        "label": "Sin Int8",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 1.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 3,
+                                        "stream_type": "stairs",
+                                        "label": "Sin UInt8",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
+                                            "r": 0.0
                                         }
                                     }
                                 ],
@@ -180,16 +202,37 @@
                                 "projection_mode": "orthographic",
                                 "subscribed_streams": [
                                     {
-                                        "topic_id": 3,
-                                        "stream_type": "plot",
+                                        "topic_id": 4,
+                                        "stream_type": "stairs",
+                                        "label": "Sin float",
+                                        "point_size": 10,
                                         "color": {
                                             "b": 1.0,
                                             "g": 0.0,
+                                            "r": 1.0
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 5,
+                                        "stream_type": "stairs",
+                                        "label": "Sin Int8",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
                                             "r": 0.0
-                                        },
-                                        "alpha": 0.1,
-                                        "line_style": "solid",
-                                        "line_width": 3.5
+                                        }
+                                    },
+                                    {
+                                        "topic_id": 6,
+                                        "stream_type": "stairs",
+                                        "label": "Sin UInt8",
+                                        "point_size": 10,
+                                        "color": {
+                                            "b": 0.0,
+                                            "g": 0.0,
+                                            "r": 1.0
+                                        }
                                     }
                                 ]
                             },

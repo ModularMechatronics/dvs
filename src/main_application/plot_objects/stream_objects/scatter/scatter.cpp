@@ -1,5 +1,7 @@
 #include "plot_objects/stream_objects/scatter/scatter.h"
 
+#include "plot_objects/stream_objects/conversion_function.h"
+
 ScatterStream::ScatterStream() {}
 
 constexpr size_t kStreamBufferSize{500U};
@@ -79,7 +81,7 @@ void ScatterStream::appendNewData(const std::shared_ptr<objects::BaseObject>& ob
     }
 
     points_ptr_[0U] = 0.0f;
-    points_ptr_[1U] = static_cast<objects::Float*>(obj.get())->value();
+    points_ptr_[1U] = getFloatValue(obj);
 
     constexpr size_t num_bytes_to_replace = kStreamBufferSize * 2U * sizeof(float);
 

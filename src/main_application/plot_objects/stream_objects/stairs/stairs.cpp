@@ -1,5 +1,7 @@
 #include "plot_objects/stream_objects/stairs/stairs.h"
 
+#include "plot_objects/stream_objects/conversion_function.h"
+
 StairsStream::StairsStream() {}
 
 constexpr size_t kStreamBufferSize{500U};
@@ -52,7 +54,6 @@ void StairsStream::appendNewData(const std::shared_ptr<objects::BaseObject>& obj
     num_elements_to_draw_ =
         (num_elements_to_draw_ + 2U) > kTotalNumPoints ? kTotalNumPoints : (num_elements_to_draw_ + 2U);
 
-    const int64_t num_samples_2 = kTotalNumPoints * 2;
     const uint64_t current_timestamp = obj->timestamp();
 
     float dt;
@@ -80,7 +81,8 @@ void StairsStream::appendNewData(const std::shared_ptr<objects::BaseObject>& obj
         idx -= 1;
     }
 
-    const float value = static_cast<objects::Float*>(obj.get())->value();
+    const float value = getFloatValue(obj);
+
     points_ptr_[1].t = dt;
     points_ptr_[1].value = value;
 

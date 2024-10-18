@@ -101,8 +101,6 @@ void MainWindow::pushNewDataToQueue(const TopicId topic_id, const std::shared_pt
     }
 }
 
-int i = 0;
-
 void MainWindow::handleSerialData()
 {
     std::vector<RawDataFrame> raw_data_frames{serial_interface_.extractRawDataFrames()};
