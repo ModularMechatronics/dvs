@@ -46,10 +46,10 @@ FastPlot2D::FastPlot2D(const CommunicationHeader& hdr,
                        ReceivedData& received_data,
                        const std::shared_ptr<const ConvertedDataBase>& converted_data,
                        const PlotObjectAttributes& plot_object_attributes,
-                       const PropertiesData& properties_data,
+                       const UserSuppliedProperties& user_supplied_properties,
                        const ShaderCollection& shader_collection,
                        ColorPicker& color_picker)
-    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, user_supplied_properties, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINE_STRIP}
 {
     if (function_ != Function::FAST_PLOT2)
@@ -63,9 +63,9 @@ FastPlot2D::FastPlot2D(const CommunicationHeader& hdr,
 
     num_added_elements_ = 0;
 
-    if (properties_data.is_appendable)
+    if (user_supplied_properties.is_appendable)
     {
-        vertex_buffer_.addExpandableBuffer<float>(properties_data.buffer_size.data, 2);
+        vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.data, 2);
 
         vertex_buffer_.updateBufferData(0U, converted_data_local->points_ptr, num_elements_, 2U, num_added_elements_);
     }
@@ -80,7 +80,7 @@ FastPlot2D::FastPlot2D(const CommunicationHeader& hdr,
 void FastPlot2D::appendNewData(ReceivedData& received_data,
                                const CommunicationHeader& hdr,
                                const std::shared_ptr<const ConvertedDataBase>& converted_data,
-                               const PropertiesData& properties_data)
+                               const UserSuppliedProperties& user_supplied_properties)
 {
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
@@ -99,7 +99,7 @@ void FastPlot2D::appendNewData(ReceivedData& received_data,
 
 std::shared_ptr<const ConvertedDataBase> FastPlot2D::convertRawData(const CommunicationHeader& hdr,
                                                                     const PlotObjectAttributes& attributes,
-                                                                    const PropertiesData& properties_data,
+                                                                    const UserSuppliedProperties& user_supplied_properties,
                                                                     const uint8_t* const data_ptr)
 {
     const InputParams input_params{attributes.num_elements};

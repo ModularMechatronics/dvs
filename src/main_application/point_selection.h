@@ -13,7 +13,6 @@
 #include "duoplot/math/math.h"
 #include "input_data.h"
 #include "misc/rgb_triplet.h"
-#include "properties.h"
 
 class PointSelection
 {
@@ -23,18 +22,18 @@ private:
         PlotData() = default;
         PlotData(const CommunicationHeader& hdr_,
                  const PlotObjectAttributes& plot_object_attributes_,
-                 const PropertiesData& properties_data_,
+                 const UserSuppliedProperties& user_supplied_properties_,
                  const std::shared_ptr<const ConvertedDataBase>& converted_data_)
             : hdr{hdr_},
               plot_object_attributes{plot_object_attributes_},
-              properties_data{properties_data_},
+              user_supplied_properties{user_supplied_properties_},
               converted_data{converted_data_}
         {
         }
 
         CommunicationHeader hdr;
         PlotObjectAttributes plot_object_attributes;
-        PropertiesData properties_data;
+        UserSuppliedProperties user_supplied_properties;
         std::shared_ptr<const ConvertedDataBase> converted_data;
     };
 
@@ -53,7 +52,7 @@ public:
 
     void addData(const CommunicationHeader& hdr,
                  const PlotObjectAttributes& plot_object_attributes,
-                 const PropertiesData& properties_data,
+                 const UserSuppliedProperties& user_supplied_properties,
                  const std::shared_ptr<const ConvertedDataBase>& converted_data);
     std::pair<duoplot::Vec3<double>, bool> getClosestPoint(const Line3D<double>& line, const bool has_query_line);
 };

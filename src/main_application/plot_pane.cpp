@@ -226,7 +226,7 @@ PlotPane::~PlotPane()
 
 void PlotPane::addSettingsData(const ReceivedData& received_data,
                                const PlotObjectAttributes& plot_object_attributes,
-                               const PropertiesData& properties_data)
+                               const UserSuppliedProperties& user_supplied_properties)
 {
     const duoplot::internal::CommunicationHeader& hdr = received_data.getCommunicationHeader();
     const Function fcn = hdr.getFunction();
@@ -251,7 +251,7 @@ void PlotPane::addSettingsData(const ReceivedData& received_data,
     }
     else if (fcn == Function::PROPERTIES_EXTENSION)
     {
-        plot_data_handler_->propertiesExtension(plot_object_attributes.id, properties_data);
+        plot_data_handler_->propertiesExtension(plot_object_attributes.id, user_supplied_properties);
     }
     else if (fcn == Function::PROPERTIES_EXTENSION_MULTIPLE)
     {
@@ -700,13 +700,13 @@ bool viewShouldBeReset()
 
 void PlotPane::addPlotData(ReceivedData& received_data,
                            const PlotObjectAttributes& plot_object_attributes,
-                           const PropertiesData& properties_data,
+                           const UserSuppliedProperties& user_supplied_properties,
                            const std::shared_ptr<const ConvertedDataBase>& converted_data)
 {
     const CommunicationHeader& hdr = received_data.getCommunicationHeader();
 
-    plot_data_handler_->addData(hdr, plot_object_attributes, properties_data, received_data, converted_data);
-    point_selection_.addData(hdr, plot_object_attributes, properties_data, converted_data);
+    plot_data_handler_->addData(hdr, plot_object_attributes, user_supplied_properties, received_data, converted_data);
+    point_selection_.addData(hdr, plot_object_attributes, user_supplied_properties, converted_data);
 
     internal::Function fcn = hdr.getFunction();
 
@@ -795,15 +795,15 @@ void PlotPane::processActionQueue()
 
                     if (isPlotDataFunction(inner_fcn))
                     {
-                        auto [received_data, plot_object_attributes, properties_data, converted_data] =
+                        auto [received_data, plot_object_attributes, user_supplied_properties, converted_data] =
                             flush_queue_.front()->moveAllData();
-                        addPlotData(received_data, plot_object_attributes, properties_data, converted_data);
+                        addPlotData(received_data, plot_object_attributes, user_supplied_properties, converted_data);
                     }
                     else
                     {
-                        auto [received_data, plot_object_attributes, properties_data] =
+                        auto [received_data, plot_object_attributes, user_supplied_properties] =
                             flush_queue_.front()->moveAllDataButConvertedData();
-                        addSettingsData(received_data, plot_object_attributes, properties_data);
+                        addSettingsData(received_data, plot_object_attributes, user_supplied_properties);
                     }
 
                     flush_queue_.pop();
@@ -830,16 +830,16 @@ void PlotPane::processActionQueue()
         {
             if (isPlotDataFunction(fcn))
             {
-                auto [received_data, plot_object_attributes, properties_data, converted_data] =
+                auto [received_data, plot_object_attributes, user_supplied_properties, converted_data] =
                     queued_data_.front()->moveAllData();
 
-                addPlotData(received_data, plot_object_attributes, properties_data, converted_data);
+                addPlotData(received_data, plot_object_attributes, user_supplied_properties, converted_data);
             }
             else
             {
-                auto [received_data, plot_object_attributes, properties_data] =
+                auto [received_data, plot_object_attributes, user_supplied_properties] =
                     queued_data_.front()->moveAllDataButConvertedData();
-                addSettingsData(received_data, plot_object_attributes, properties_data);
+                addSettingsData(received_data, plot_object_attributes, user_supplied_properties);
             }
 
             queued_data_.pop();

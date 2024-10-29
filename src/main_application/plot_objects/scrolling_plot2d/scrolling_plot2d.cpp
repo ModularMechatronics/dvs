@@ -43,10 +43,10 @@ ScrollingPlot2D::ScrollingPlot2D(const CommunicationHeader& hdr,
                                  const std::shared_ptr<const ConvertedDataBase>& converted_data,
 
                                  const PlotObjectAttributes& plot_object_attributes,
-                                 const PropertiesData& properties_data,
+                                 const UserSuppliedProperties& user_supplied_properties,
                                  const ShaderCollection& shader_collection,
                                  ColorPicker& color_picker)
-    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker)
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, user_supplied_properties, shader_collection, color_picker)
 {
     if (function_ != Function::REAL_TIME_PLOT)
     {
@@ -120,7 +120,7 @@ LegendProperties ScrollingPlot2D::getLegendProperties() const
 
 std::shared_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const CommunicationHeader& hdr,
                                                                          const PlotObjectAttributes& attributes,
-                                                                         const PropertiesData& properties_data,
+                                                                         const UserSuppliedProperties& user_supplied_properties,
                                                                          const uint8_t* const data_ptr)
 {
     const InputParams input_params{};
@@ -134,15 +134,15 @@ std::shared_ptr<const ConvertedDataBase> ScrollingPlot2D::convertRawData(const C
 void ScrollingPlot2D::updateWithNewData(ReceivedData& received_data,
                                         const CommunicationHeader& hdr,
                                         const std::shared_ptr<const ConvertedDataBase>& converted_data,
-                                        const PropertiesData& properties_data)
+                                        const UserSuppliedProperties& user_supplied_properties)
 {
     static_cast<void>(hdr);
 
     const ConvertedData* const converted_data_local = static_cast<const ConvertedData* const>(converted_data.get());
 
-    if (properties_data.hasProperties())
+    if (user_supplied_properties.hasProperties())
     {
-        updateProperties(properties_data);
+        updateProperties(user_supplied_properties);
     }
 
     if (previous_buffer_size_ != buffer_size_)

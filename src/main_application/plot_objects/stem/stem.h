@@ -19,7 +19,7 @@ public:
          const std::shared_ptr<const ConvertedDataBase>& converted_data,
 
          const PlotObjectAttributes& plot_object_attributes,
-         const PropertiesData& properties_data,
+         const UserSuppliedProperties& user_supplied_properties,
          const ShaderCollection& shader_collection,
          ColorPicker& color_picker);
     ~Stem();
@@ -31,7 +31,7 @@ public:
 
     static std::shared_ptr<const ConvertedDataBase> convertRawData(const CommunicationHeader& hdr,
                                                                    const PlotObjectAttributes& attributes,
-                                                                   const PropertiesData& properties_data,
+                                                                   const UserSuppliedProperties& user_supplied_properties,
                                                                    const uint8_t* const data_ptr);
 
 private:

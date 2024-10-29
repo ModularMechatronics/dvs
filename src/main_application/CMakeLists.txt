@@ -103,7 +103,7 @@ set(CPP_SOURCE_FILES main.cpp
 
                      project_state/scrolling_text_settings.cpp
 
-                     properties.cpp)
+                     user_supplied_properties.cpp)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${REPO_DIR}/src/build/)
 

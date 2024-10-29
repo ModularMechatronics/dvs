@@ -68,7 +68,7 @@ private:
     void processActionQueue();
     void addPlotData(ReceivedData& received_data,
                      const PlotObjectAttributes& plot_object_attributes,
-                     const PropertiesData& properties_data,
+                     const UserSuppliedProperties& user_supplied_properties,
                      const std::shared_ptr<const ConvertedDataBase>& converted_data);
 
     wxGLAttributes getGLAttributes() const;
@@ -113,7 +113,7 @@ public:
     void updateSizeFromParent(const wxSize& parent_size) override;
     void addSettingsData(const ReceivedData& received_data,
                          const PlotObjectAttributes& plot_object_attributes,
-                         const PropertiesData& properties_data);
+                         const UserSuppliedProperties& user_supplied_properties);
     // void show() override;
     // void hide() override;
     // void destroy() override;

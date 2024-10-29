@@ -15,25 +15,25 @@ public:
     InputData(ReceivedData& received_data);
     InputData(ReceivedData& received_data,
               const PlotObjectAttributes& plot_object_attributes,
-              const PropertiesData& properties_data);
+              const UserSuppliedProperties& user_supplied_properties);
     InputData(ReceivedData& received_data,
               const std::shared_ptr<const ConvertedDataBase>& converted_data,
               const PlotObjectAttributes& plot_object_attributes,
-              const PropertiesData& properties_data);
+              const UserSuppliedProperties& user_supplied_properties);
 
     internal::Function getFunction() const;
 
-    std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData, std::shared_ptr<const ConvertedDataBase>>
+    std::tuple<ReceivedData, PlotObjectAttributes, UserSuppliedProperties, std::shared_ptr<const ConvertedDataBase>>
     moveAllData();
 
-    std::tuple<ReceivedData, PlotObjectAttributes, PropertiesData> moveAllDataButConvertedData();
+    std::tuple<ReceivedData, PlotObjectAttributes, UserSuppliedProperties> moveAllDataButConvertedData();
 
 private:
     ReceivedData received_data_;
     internal::Function function_;
     std::shared_ptr<const ConvertedDataBase> converted_data_;
     PlotObjectAttributes plot_object_attributes_;
-    PropertiesData properties_data_;
+    UserSuppliedProperties user_supplied_properties_;
 };
 
 #endif  // INPUT_DATA_H_

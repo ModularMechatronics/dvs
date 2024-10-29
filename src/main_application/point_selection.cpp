@@ -12,10 +12,10 @@ PointSelection::PointSelection()
 
 void PointSelection::addData(const CommunicationHeader& hdr,
                              const PlotObjectAttributes& plot_object_attributes,
-                             const PropertiesData& properties_data,
+                             const UserSuppliedProperties& user_supplied_properties,
                              const std::shared_ptr<const ConvertedDataBase>& converted_data)
 {
-    if (properties_data.exclude_from_selection)
+    if (user_supplied_properties.exclude_from_selection)
     {
         return;
     }
@@ -26,7 +26,7 @@ void PointSelection::addData(const CommunicationHeader& hdr,
         pending_soft_clear_ = false;
     }
 
-    plot_datas_.emplace_back(hdr, plot_object_attributes, properties_data, converted_data);
+    plot_datas_.emplace_back(hdr, plot_object_attributes, user_supplied_properties, converted_data);
 }
 
 void PointSelection::deletePlotObject(const ItemId id)
@@ -79,7 +79,7 @@ void PointSelection::softClear()
     std::vector<PlotData> new_plot_datas;
     for (size_t k = 0; k < plot_datas_.size(); k++)
     {
-        if (plot_datas_[k].properties_data.is_persistent)
+        if (plot_datas_[k].user_supplied_properties.is_persistent)
         {
             new_plot_datas.push_back(plot_datas_[k]);
         }

@@ -11,7 +11,6 @@
 #include "duoplot/math/math.h"
 #include "input_data.h"
 #include "misc/rgb_triplet.h"
-#include "properties.h"
 
 using namespace duoplot;
 using namespace duoplot::internal;
@@ -32,8 +31,8 @@ public:
     std::vector<PlotObjectBase*> plot_datas_;
     std::vector<PlotObjectBase*> old_plot_datas_;
 
-    std::vector<Properties> awaiting_properties_;
-    std::vector<PropertiesData> awaiting_properties_data_;
+    // std::vector<Properties> awaiting_properties_;
+    std::vector<UserSuppliedProperties> awaiting_user_supplied_properties_;
     PlotDataHandler(const ShaderCollection& shader_collection);
     ~PlotDataHandler();
     void clear();
@@ -41,7 +40,7 @@ public:
     void render();
     void addData(const CommunicationHeader& hdr,
                  const PlotObjectAttributes& plot_object_attributes,
-                 const PropertiesData& properties_data,
+                 const UserSuppliedProperties& user_supplied_properties,
                  ReceivedData& received_data,
                  const std::shared_ptr<const ConvertedDataBase>& converted_data);
     void setTransform(const ItemId id,
@@ -49,7 +48,7 @@ public:
                       const Vec3<double>& translation,
                       const MatrixFixed<double, 3, 3>& scale);
     std::vector<LegendProperties> getLegendStrings() const;
-    void propertiesExtension(const ItemId id, const PropertiesData& properties_data);
+    void propertiesExtension(const ItemId id, const UserSuppliedProperties& user_supplied_properties);
     void propertiesExtensionMultiple(const ReceivedData& received_data);
     void deletePlotObject(const ItemId id);
 };

@@ -3,7 +3,7 @@
 PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
                                const CommunicationHeader& hdr,
                                const PlotObjectAttributes& plot_object_attributes,
-                               const PropertiesData& properties_data,
+                               const UserSuppliedProperties& user_supplied_properties,
                                const ShaderCollection& shader_collection,
                                ColorPicker& color_picker)
     : received_data_(std::move(received_data)), shader_collection_{shader_collection}
@@ -39,12 +39,12 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
     has_edge_color_ = true;
     has_silhouette_ = false;
 
-    assignProperties(properties_data, color_picker);
+    assignProperties(user_supplied_properties, color_picker);
 }
 
 void PlotObjectBase::postInitialize(ReceivedData& received_data,
                                     const CommunicationHeader& hdr,
-                                    const PropertiesData& properties_data)
+                                    const UserSuppliedProperties& user_supplied_properties)
 {
     received_data_ = std::move(received_data);
     data_ptr_ = received_data_.payloadData();
@@ -75,120 +75,120 @@ void PlotObjectBase::postInitialize(ReceivedData& received_data,
 
     num_bytes_for_one_vec_ = num_bytes_per_element_ * num_elements_;
 
-    updateProperties(properties_data);
+    updateProperties(user_supplied_properties);
 }
 
-void PlotObjectBase::updateProperties(const PropertiesData& properties_data)
+void PlotObjectBase::updateProperties(const UserSuppliedProperties& user_supplied_properties)
 {
     // Flags
-    is_persistent_ = is_persistent_ || properties_data.is_persistent;
-    interpolate_colormap_ = interpolate_colormap_ || properties_data.interpolate_colormap;
-    is_updateable_ = is_updateable_ || properties_data.is_updateable;
-    is_appendable_ = is_appendable_ || properties_data.is_appendable;
+    is_persistent_ = is_persistent_ || user_supplied_properties.is_persistent;
+    interpolate_colormap_ = interpolate_colormap_ || user_supplied_properties.interpolate_colormap;
+    is_updateable_ = is_updateable_ || user_supplied_properties.is_updateable;
+    is_appendable_ = is_appendable_ || user_supplied_properties.is_appendable;
 
     dynamic_or_static_usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
     // Properties
-    if (!properties_data.alpha.has_default_value)
+    if (!user_supplied_properties.alpha.has_default_value)
     {
-        alpha_ = properties_data.alpha.data;
+        alpha_ = user_supplied_properties.alpha.data;
     }
 
-    if (!properties_data.buffer_size.has_default_value)
+    if (!user_supplied_properties.buffer_size.has_default_value)
     {
-        buffer_size_ = properties_data.buffer_size.data;
+        buffer_size_ = user_supplied_properties.buffer_size.data;
     }
 
-    if (!properties_data.scatter_style.has_default_value)
+    if (!user_supplied_properties.scatter_style.has_default_value)
     {
-        scatter_style_ = properties_data.scatter_style.data;
+        scatter_style_ = user_supplied_properties.scatter_style.data;
     }
 
-    if ((!properties_data.line_style.has_default_value) && (properties_data.line_style.data != LineStyle::SOLID))
+    if ((!user_supplied_properties.line_style.has_default_value) && (user_supplied_properties.line_style.data != LineStyle::SOLID))
     {
         has_line_style_ = true;
-        line_style_ = properties_data.line_style.data;
+        line_style_ = user_supplied_properties.line_style.data;
     }
     else
     {
         has_line_style_ = false;
     }
 
-    if (!properties_data.line_width.has_default_value)
+    if (!user_supplied_properties.line_width.has_default_value)
     {
-        line_width_ = properties_data.line_width.data;
+        line_width_ = user_supplied_properties.line_width.data;
     }
 
-    if (!properties_data.point_size.has_default_value)
+    if (!user_supplied_properties.point_size.has_default_value)
     {
-        point_size_ = properties_data.point_size.data;
+        point_size_ = user_supplied_properties.point_size.data;
     }
 
-    if (!properties_data.z_offset.has_default_value)
+    if (!user_supplied_properties.z_offset.has_default_value)
     {
-        z_offset_ = properties_data.z_offset.data;
+        z_offset_ = user_supplied_properties.z_offset.data;
     }
 
-    if (!properties_data.custom_transform.has_default_value)
+    if (!user_supplied_properties.custom_transform.has_default_value)
     {
         has_custom_transform_ = true;
-        setTransform(properties_data.custom_transform.data.rotation,
-                     properties_data.custom_transform.data.translation,
-                     properties_data.custom_transform.data.scale);
+        setTransform(user_supplied_properties.custom_transform.data.rotation,
+                     user_supplied_properties.custom_transform.data.translation,
+                     user_supplied_properties.custom_transform.data.scale);
     }
 
-    if (!properties_data.distance_from.has_default_value)
+    if (!user_supplied_properties.distance_from.has_default_value)
     {
-        distance_from_ = properties_data.distance_from.data;
+        distance_from_ = user_supplied_properties.distance_from.data;
         has_distance_from_ = true;
     }
 
-    if (!properties_data.label.has_default_value)
+    if (!user_supplied_properties.label.has_default_value)
     {
-        label_ = properties_data.label.data;
+        label_ = user_supplied_properties.label.data;
         has_label_ = true;
     }
 
-    if (!properties_data.color.has_default_value)
+    if (!user_supplied_properties.color.has_default_value)
     {
-        color_ = properties_data.color.data;
+        color_ = user_supplied_properties.color.data;
     }
 
-    if (!properties_data.color_map.has_default_value)
+    if (!user_supplied_properties.color_map.has_default_value)
     {
-        color_map_ = properties_data.color_map.data;
+        color_map_ = user_supplied_properties.color_map.data;
         has_color_map_ = true;
     }
 
-    if (!properties_data.edge_color.has_default_value)
+    if (!user_supplied_properties.edge_color.has_default_value)
     {
-        if (properties_data.no_edges)
+        if (user_supplied_properties.no_edges)
         {
             has_edge_color_ = false;
         }
         else
         {
-            edge_color_ = properties_data.edge_color.data;
+            edge_color_ = user_supplied_properties.edge_color.data;
             has_edge_color_ = true;
         }
     }
 
-    if (!properties_data.silhouette.has_default_value)
+    if (!user_supplied_properties.silhouette.has_default_value)
     {
-        has_silhouette_ = properties_data.has_silhouette;
-        silhouette_percentage_ = properties_data.silhouette_percentage;
-        silhouette_ = properties_data.silhouette.data;
+        has_silhouette_ = user_supplied_properties.has_silhouette;
+        silhouette_percentage_ = user_supplied_properties.silhouette_percentage;
+        silhouette_ = user_supplied_properties.silhouette.data;
     }
 
-    if (!properties_data.face_color.has_default_value)
+    if (!user_supplied_properties.face_color.has_default_value)
     {
-        if (properties_data.no_faces)
+        if (user_supplied_properties.no_faces)
         {
             has_face_color_ = false;
         }
         else
         {
-            face_color_ = properties_data.face_color.data;
+            face_color_ = user_supplied_properties.face_color.data;
             has_face_color_ = true;
         }
     }
@@ -282,60 +282,60 @@ void PlotObjectBase::setTransform(const MatrixFixed<double, 3, 3>& rotation,
     }
 }
 
-void PlotObjectBase::assignProperties(const PropertiesData& properties_data, ColorPicker& color_picker)
+void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplied_properties, ColorPicker& color_picker)
 {
     // Flags
-    is_persistent_ = properties_data.is_persistent;
-    interpolate_colormap_ = properties_data.interpolate_colormap;
-    is_updateable_ = properties_data.is_updateable;
-    is_appendable_ = properties_data.is_appendable;
+    is_persistent_ = user_supplied_properties.is_persistent;
+    interpolate_colormap_ = user_supplied_properties.interpolate_colormap;
+    is_updateable_ = user_supplied_properties.is_updateable;
+    is_appendable_ = user_supplied_properties.is_appendable;
 
-    dynamic_or_static_usage_ = properties_data.dynamic_or_static_usage;
+    dynamic_or_static_usage_ = user_supplied_properties.dynamic_or_static_usage;
 
     // Properties
-    alpha_ = properties_data.alpha.data;
-    buffer_size_ = properties_data.buffer_size.data;
-    scatter_style_ = properties_data.scatter_style.data;
-    line_width_ = properties_data.line_width.data;
-    point_size_ = properties_data.point_size.data;
+    alpha_ = user_supplied_properties.alpha.data;
+    buffer_size_ = user_supplied_properties.buffer_size.data;
+    scatter_style_ = user_supplied_properties.scatter_style.data;
+    line_width_ = user_supplied_properties.line_width.data;
+    point_size_ = user_supplied_properties.point_size.data;
 
-    z_offset_ = properties_data.z_offset.data;
+    z_offset_ = user_supplied_properties.z_offset.data;
 
-    if ((!properties_data.line_style.has_default_value) && (properties_data.line_style.data != LineStyle::SOLID))
+    if ((!user_supplied_properties.line_style.has_default_value) && (user_supplied_properties.line_style.data != LineStyle::SOLID))
     {
         has_line_style_ = true;
-        line_style_ = properties_data.line_style.data;
+        line_style_ = user_supplied_properties.line_style.data;
     }
     else
     {
         has_line_style_ = false;
     }
 
-    if (!properties_data.custom_transform.has_default_value)
+    if (!user_supplied_properties.custom_transform.has_default_value)
     {
         has_custom_transform_ = true;
-        setTransform(properties_data.custom_transform.data.rotation,
-                     properties_data.custom_transform.data.translation,
-                     properties_data.custom_transform.data.scale);
+        setTransform(user_supplied_properties.custom_transform.data.rotation,
+                     user_supplied_properties.custom_transform.data.translation,
+                     user_supplied_properties.custom_transform.data.scale);
     }
     else
     {
         has_custom_transform_ = false;
     }
 
-    if (!properties_data.distance_from.has_default_value)
+    if (!user_supplied_properties.distance_from.has_default_value)
     {
         has_distance_from_ = true;
-        distance_from_ = properties_data.distance_from.data;
+        distance_from_ = user_supplied_properties.distance_from.data;
     }
     else
     {
         has_distance_from_ = false;
     }
 
-    if (!properties_data.label.has_default_value)
+    if (!user_supplied_properties.label.has_default_value)
     {
-        label_ = properties_data.label.data;
+        label_ = user_supplied_properties.label.data;
         has_label_ = true;
     }
     else
@@ -343,18 +343,18 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
         has_label_ = false;
     }
 
-    if (!properties_data.color.has_default_value)
+    if (!user_supplied_properties.color.has_default_value)
     {
-        color_ = properties_data.color.data;
+        color_ = user_supplied_properties.color.data;
     }
     else
     {
         color_ = color_picker.getNextColor();
     }
 
-    if (!properties_data.color_map.has_default_value)
+    if (!user_supplied_properties.color_map.has_default_value)
     {
-        color_map_ = properties_data.color_map.data;
+        color_map_ = user_supplied_properties.color_map.data;
         has_color_map_ = true;
     }
     else
@@ -362,16 +362,16 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
         has_color_map_ = false;
     }
 
-    if (!properties_data.edge_color.has_default_value)
+    if (!user_supplied_properties.edge_color.has_default_value)
     {
-        if (properties_data.no_edges)
+        if (user_supplied_properties.no_edges)
         {
             has_edge_color_ = false;
         }
         else
         {
             has_edge_color_ = true;
-            edge_color_ = properties_data.edge_color.data;
+            edge_color_ = user_supplied_properties.edge_color.data;
         }
     }
     else
@@ -380,16 +380,16 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
         has_edge_color_ = true;
     }
 
-    if (!properties_data.face_color.has_default_value)
+    if (!user_supplied_properties.face_color.has_default_value)
     {
-        if (properties_data.no_faces)
+        if (user_supplied_properties.no_faces)
         {
             has_face_color_ = false;
         }
         else
         {
             has_face_color_ = true;
-            face_color_ = properties_data.face_color.data;
+            face_color_ = user_supplied_properties.face_color.data;
         }
     }
     else
@@ -398,22 +398,22 @@ void PlotObjectBase::assignProperties(const PropertiesData& properties_data, Col
         has_face_color_ = true;
     }
 
-    if (!properties_data.silhouette.has_default_value)
+    if (!user_supplied_properties.silhouette.has_default_value)
     {
-        has_silhouette_ = properties_data.has_silhouette;
-        silhouette_percentage_ = properties_data.silhouette_percentage;
-        silhouette_ = properties_data.silhouette.data;
+        has_silhouette_ = user_supplied_properties.has_silhouette;
+        silhouette_percentage_ = user_supplied_properties.silhouette_percentage;
+        silhouette_ = user_supplied_properties.silhouette.data;
     }
 }
 
 void PlotObjectBase::updateWithNewData(ReceivedData& received_data,
                                        const CommunicationHeader& hdr,
                                        const std::shared_ptr<const ConvertedDataBase>& converted_data,
-                                       const PropertiesData& properties_data)
+                                       const UserSuppliedProperties& user_supplied_properties)
 {
     static_cast<void>(received_data);
     static_cast<void>(hdr);
-    static_cast<void>(properties_data);
+    static_cast<void>(user_supplied_properties);
 }
 
 void PlotObjectBase::throwIfNotUpdateable() const
@@ -427,7 +427,7 @@ void PlotObjectBase::throwIfNotUpdateable() const
 void PlotObjectBase::appendNewData(ReceivedData& received_data,
                                    const CommunicationHeader& hdr,
                                    const std::shared_ptr<const ConvertedDataBase>& converted_data,
-                                   const PropertiesData& properties_data)
+                                   const UserSuppliedProperties& user_supplied_properties)
 {
     std::cout << "appendNewData not implemented for this object!" << std::endl;
 }

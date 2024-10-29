@@ -118,10 +118,10 @@ PlotCollection2D::PlotCollection2D(const CommunicationHeader& hdr,
                                    const std::shared_ptr<const ConvertedDataBase>& converted_data,
 
                                    const PlotObjectAttributes& plot_object_attributes,
-                                   const PropertiesData& properties_data,
+                                   const UserSuppliedProperties& user_supplied_properties,
                                    const ShaderCollection& shader_collection,
                                    ColorPicker& color_picker)
-    : PlotObjectBase(received_data, hdr, plot_object_attributes, properties_data, shader_collection, color_picker),
+    : PlotObjectBase(received_data, hdr, plot_object_attributes, user_supplied_properties, shader_collection, color_picker),
       vertex_buffer_{OGLPrimitiveType::LINES}
 {
     if (function_ != Function::PLOT_COLLECTION2)
@@ -141,7 +141,7 @@ PlotCollection2D::PlotCollection2D(const CommunicationHeader& hdr,
 
 std::shared_ptr<const ConvertedDataBase> PlotCollection2D::convertRawData(const CommunicationHeader& hdr,
                                                                           const PlotObjectAttributes& attributes,
-                                                                          const PropertiesData& properties_data,
+                                                                          const UserSuppliedProperties& user_supplied_properties,
                                                                           const uint8_t* const data_ptr)
 
 {

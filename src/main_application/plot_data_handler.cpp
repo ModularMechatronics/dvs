@@ -10,8 +10,8 @@
 PlotDataHandler::PlotDataHandler(const ShaderCollection& shader_collection)
     : pending_soft_clear_(false), shader_collection_{shader_collection}
 {
-    awaiting_properties_.resize(UINT8_MAX);
-    awaiting_properties_data_.resize(UINT8_MAX);
+    // awaiting_properties_.resize(UINT8_MAX);
+    awaiting_user_supplied_properties_.resize(UINT8_MAX);
 }
 
 void PlotDataHandler::clear()
@@ -53,7 +53,7 @@ void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_d
 {
     const std::uint8_t num_property_sets{received_data.payloadData()[0]};
 
-    const std::uint8_t* const prop_data{received_data.payloadData() + 1U};
+    const std::uint8_t* const raw_user_supplied_properties_data{received_data.payloadData() + 1U};
 
     std::size_t idx{0U};
 
@@ -62,11 +62,11 @@ void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_d
         CommunicationHeader hdr{internal::Function::PROPERTIES_EXTENSION_MULTIPLE};
         // For each property set
         // Num properties in prop set
-        const std::uint8_t num_props{prop_data[idx]};
+        const std::uint8_t num_props{raw_user_supplied_properties_data[idx]};
         idx += 1U;
 
         ItemId id;
-        std::memcpy(&id, prop_data + idx, sizeof(ItemId));
+        std::memcpy(&id, raw_user_supplied_properties_data + idx, sizeof(ItemId));
         idx += sizeof(ItemId);
 
         hdr.append(CommunicationHeaderObjectType::ITEM_ID, id);
@@ -75,44 +75,44 @@ void PlotDataHandler::propertiesExtensionMultiple(const ReceivedData& received_d
         {
             CommunicationHeaderObject obj;
             obj.type = CommunicationHeaderObjectType::PROPERTY;
-            obj.size = prop_data[idx];
+            obj.size = raw_user_supplied_properties_data[idx];
 
             idx += 1U;
-            std::memcpy(obj.data, prop_data + idx, obj.size);
+            std::memcpy(obj.data, raw_user_supplied_properties_data + idx, obj.size);
 
             idx += obj.size;
 
             hdr.appendPropertyFromRawObject(obj);
         }
 
-        const PropertiesData prop_data{hdr};
+        const UserSuppliedProperties user_supplied_properties{hdr};
 
         const auto q = std::find_if(plot_datas_.begin(),
                                     plot_datas_.end(),
                                     [&id](const PlotObjectBase* const pd) -> bool { return pd->getId() == id; });
         if (q == plot_datas_.end())
         {
-            awaiting_properties_data_[static_cast<int>(id)].appendProperties(prop_data);
+            awaiting_user_supplied_properties_[static_cast<int>(id)].appendProperties(user_supplied_properties);
         }
         else
         {
-            (*q)->updateProperties(prop_data);
+            (*q)->updateProperties(user_supplied_properties);
         }
     }
 }
 
-void PlotDataHandler::propertiesExtension(const ItemId id, const PropertiesData& properties_data)
+void PlotDataHandler::propertiesExtension(const ItemId id, const UserSuppliedProperties& user_supplied_properties)
 {
     const auto q = std::find_if(plot_datas_.begin(), plot_datas_.end(), [&id](const PlotObjectBase* const pd) -> bool {
         return pd->getId() == id;
     });
     if (q == plot_datas_.end())
     {
-        awaiting_properties_data_[static_cast<int>(id)].appendProperties(properties_data);
+        awaiting_user_supplied_properties_[static_cast<int>(id)].appendProperties(user_supplied_properties);
     }
     else
     {
-        (*q)->updateProperties(properties_data);
+        (*q)->updateProperties(user_supplied_properties);
     }
 }
 
@@ -131,7 +131,7 @@ void PlotDataHandler::deletePlotObject(const ItemId id)
 
 void PlotDataHandler::addData(const CommunicationHeader& hdr,
                               const PlotObjectAttributes& plot_object_attributes,
-                              const PropertiesData& properties_data,
+                              const UserSuppliedProperties& user_supplied_properties,
                               ReceivedData& received_data,
                               const std::shared_ptr<const ConvertedDataBase>& converted_data)
 {
@@ -148,16 +148,16 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
         old_plot_datas_.clear();
     }
 
-    PropertiesData props_data;
+    UserSuppliedProperties full_user_supplied_properties;
 
     if (hdr.hasObjectWithType(CommunicationHeaderObjectType::ITEM_ID))
     {
         const ItemId id = hdr.value<ItemId>();
 
-        if (awaiting_properties_data_[static_cast<int>(id)].hasProperties())
+        if (awaiting_user_supplied_properties_[static_cast<int>(id)].hasProperties())
         {
-            props_data.appendProperties(awaiting_properties_data_[static_cast<int>(id)]);
-            awaiting_properties_data_[static_cast<int>(id)].clear();
+            full_user_supplied_properties.appendProperties(awaiting_user_supplied_properties_[static_cast<int>(id)]);
+            awaiting_user_supplied_properties_[static_cast<int>(id)].clear();
         }
 
         const auto q = std::find_if(plot_datas_.begin(),
@@ -166,22 +166,22 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
 
         if (q != plot_datas_.end())
         {
-            props_data.appendProperties(properties_data);
+            full_user_supplied_properties.appendProperties(user_supplied_properties);
 
             if ((*q)->isAppendable())
             {
-                (*q)->appendNewData(received_data, hdr, converted_data, props_data);
+                (*q)->appendNewData(received_data, hdr, converted_data, full_user_supplied_properties);
             }
             else if ((*q)->isUpdateable())
             {
-                (*q)->updateWithNewData(received_data, hdr, converted_data, props_data);
+                (*q)->updateWithNewData(received_data, hdr, converted_data, full_user_supplied_properties);
             }
 
             return;
         }
     }
 
-    props_data.appendProperties(properties_data);
+    full_user_supplied_properties.appendProperties(user_supplied_properties);
 
     switch (hdr.getFunction())
     {
@@ -190,7 +190,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                            received_data,
                                                                            converted_data,
                                                                            plot_object_attributes,
-                                                                           props_data,
+                                                                           full_user_supplied_properties,
                                                                            shader_collection_,
                                                                            color_picker_)));
             break;
@@ -200,7 +200,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                            received_data,
                                                                            converted_data,
                                                                            plot_object_attributes,
-                                                                           props_data,
+                                                                           full_user_supplied_properties,
                                                                            shader_collection_,
                                                                            color_picker_)));
             break;
@@ -210,7 +210,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                            received_data,
                                                                            converted_data,
                                                                            plot_object_attributes,
-                                                                           props_data,
+                                                                           full_user_supplied_properties,
                                                                            shader_collection_,
                                                                            color_picker_)));
             break;
@@ -220,7 +220,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                                received_data,
                                                                                converted_data,
                                                                                plot_object_attributes,
-                                                                               props_data,
+                                                                               full_user_supplied_properties,
                                                                                shader_collection_,
                                                                                color_picker_)));
             break;
@@ -230,7 +230,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                                received_data,
                                                                                converted_data,
                                                                                plot_object_attributes,
-                                                                               props_data,
+                                                                               full_user_supplied_properties,
                                                                                shader_collection_,
                                                                                color_picker_)));
             break;
@@ -240,7 +240,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                                      received_data,
                                                                                      converted_data,
                                                                                      plot_object_attributes,
-                                                                                     props_data,
+                                                                                     full_user_supplied_properties,
                                                                                      shader_collection_,
                                                                                      color_picker_)));
             break;
@@ -250,7 +250,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                                      received_data,
                                                                                      converted_data,
                                                                                      plot_object_attributes,
-                                                                                     props_data,
+                                                                                     full_user_supplied_properties,
                                                                                      shader_collection_,
                                                                                      color_picker_)));
             break;
@@ -260,7 +260,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                          received_data,
                                                                          converted_data,
                                                                          plot_object_attributes,
-                                                                         props_data,
+                                                                         full_user_supplied_properties,
                                                                          shader_collection_,
                                                                          color_picker_)));
             break;
@@ -270,7 +270,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                               received_data,
                                                                               converted_data,
                                                                               plot_object_attributes,
-                                                                              props_data,
+                                                                              full_user_supplied_properties,
                                                                               shader_collection_,
                                                                               color_picker_)));
             break;
@@ -280,7 +280,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                               received_data,
                                                                               converted_data,
                                                                               plot_object_attributes,
-                                                                              props_data,
+                                                                              full_user_supplied_properties,
                                                                               shader_collection_,
                                                                               color_picker_)));
             break;
@@ -290,7 +290,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                          received_data,
                                                                          converted_data,
                                                                          plot_object_attributes,
-                                                                         props_data,
+                                                                         full_user_supplied_properties,
                                                                          shader_collection_,
                                                                          color_picker_)));
             break;
@@ -300,7 +300,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                            received_data,
                                                                            converted_data,
                                                                            plot_object_attributes,
-                                                                           props_data,
+                                                                           full_user_supplied_properties,
                                                                            shader_collection_,
                                                                            color_picker_)));
             break;
@@ -310,7 +310,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                                      received_data,
                                                                                      converted_data,
                                                                                      plot_object_attributes,
-                                                                                     props_data,
+                                                                                     full_user_supplied_properties,
                                                                                      shader_collection_,
                                                                                      color_picker_)));
             break;
@@ -320,7 +320,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                                      received_data,
                                                                                      converted_data,
                                                                                      plot_object_attributes,
-                                                                                     props_data,
+                                                                                     full_user_supplied_properties,
                                                                                      shader_collection_,
                                                                                      color_picker_)));
             break;
@@ -331,7 +331,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                              received_data,
                                                                              converted_data,
                                                                              plot_object_attributes,
-                                                                             props_data,
+                                                                             full_user_supplied_properties,
                                                                              shader_collection_,
                                                                              color_picker_)));
             break;
@@ -341,7 +341,7 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                                     received_data,
                                                                                     converted_data,
                                                                                     plot_object_attributes,
-                                                                                    props_data,
+                                                                                    full_user_supplied_properties,
                                                                                     shader_collection_,
                                                                                     color_picker_)));
             break;
