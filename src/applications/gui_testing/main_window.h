@@ -32,6 +32,9 @@ private:
 public:
     MainWindow();
     ~MainWindow();
+
+    void OnSize(wxSizeEvent& event);
+    void DpiChanged(wxDPIChangedEvent& event);
 };
 
 #endif  // MAIN_WINDOW_H

@@ -30,7 +30,9 @@ SimpleShader::SimpleShader(const std::string& vertex_shader, const std::string& 
 
 void SimpleShader::setUniformHandles()
 {
-    
+    uniform_handles.pane_width = Uniform(program_id_, "pane_width");
+    uniform_handles.pane_height = Uniform(program_id_, "pane_height");
+    uniform_handles.shader_mode = Uniform(program_id_, "shader_mode");
 }
 
 Plot3DShader::Plot3DShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)

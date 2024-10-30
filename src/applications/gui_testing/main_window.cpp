@@ -14,16 +14,31 @@
 
 using namespace duoplot;
 
-MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "", wxPoint(30, 30), wxSize(500, 500))
+MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "", wxPoint(300, 600), wxSize(500, 500))
 {
     gui_pane_ = new GuiPane(this);
-    update_timer_.Bind(wxEVT_TIMER, &MainWindow::timerFunction, this);
-    update_timer_.Start(20);
+    Bind(wxEVT_SIZE, &MainWindow::OnSize, this);
+    Bind(wxEVT_DPI_CHANGED, &MainWindow::DpiChanged, this);
 }
 
 MainWindow::~MainWindow() {}
 
-void MainWindow::timerFunction(wxTimerEvent&)
-{
+void MainWindow::timerFunction(wxTimerEvent&) {}
 
+void MainWindow::OnSize(wxSizeEvent& event)
+{
+    wxFrame::OnSize(event);
+    const wxSize new_size = event.GetSize();
+
+    // gui_pane_->UpdateSizeFromParent(new_size);
+}
+
+void MainWindow::DpiChanged(wxDPIChangedEvent& event)
+{
+    std::cout << "DPI changed!" << std::endl;
+    const wxSize old_dpi = event.GetOldDPI();
+    const wxSize new_dpi = event.GetNewDPI();
+
+    std::cout << "Old DPI: " << old_dpi.GetWidth() << " " << old_dpi.GetHeight() << std::endl;
+    std::cout << "New DPI: " << new_dpi.GetWidth() << " " << new_dpi.GetHeight() << std::endl;
 }

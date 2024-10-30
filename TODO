@@ -17,8 +17,13 @@ Pre release:
 - Move "FAST_PLOT" flag to "not_ready" namespace?
 - Text viewer just showing the most recent value of a topic, both numerical and text. Maybe both a separate window, and separate text labels for individual topics
 - Rename "stream_type" in project files to "plot_type" or something
+- Change name of ItemId to ObjectId?
+- Implement std::optional for PlotObjectAttributes and PlotProperties
+- PlotProperties -> UserProperties in duoplot application
+- 
 
 Post release:
+- Implement GL_DOUBLE, software based and Opengl based when supported, or hack (https://prideout.net/emulating-double-precision, https://godotengine.org/article/emulating-double-precision-gpu-render-large-worlds/)
 - Filters to scrolling text
 - Arbitrary 2D primitives for the plot pane, in pixel coorinates (or -1 to 1), to draw rect, box, circle, text etc.
 - Begin able to set window and element size and position from interface

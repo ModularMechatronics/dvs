@@ -207,7 +207,7 @@ void AxesRenderer::renderTitle()
 
 void AxesRenderer::renderInteractionLetter()
 {
-    return;  // TODO: For demo, interafction letter is not used
+    return;  // TODO: For demo, interaction letter is not used
     shader_collection_.text_shader.use();
 
     glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);

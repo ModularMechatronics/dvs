@@ -11,7 +11,7 @@
 #include "opengl_low_level/opengl_header.h"
 #include "text_rendering.h"
 
-const float kTextScale{0.00035f};
+const float kTextScale{0.00045f};
 
 void drawXLetter(const TextRenderer& text_renderer,
                  const glm::mat4& view_model,

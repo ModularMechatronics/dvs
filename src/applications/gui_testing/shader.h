@@ -1,44 +1,15 @@
 #ifndef MAIN_APPLICATION_SHADER_H_
 #define MAIN_APPLICATION_SHADER_H_
 
+#include <OpenGL/gl3.h>
+
 #include <glm/glm.hpp>
 #include <stdexcept>
 #include <string>
 
-#include <OpenGL/gl3.h>
-
 #include "duoplot/internal.h"
 #include "duoplot/math/math.h"
-
-template <typename T> struct RGBTriplet
-{
-    T red;
-    T green;
-    T blue;
-
-    constexpr RGBTriplet() = default;
-    constexpr RGBTriplet(const T red_, const T green_, const T blue_) : red(red_), green(green_), blue(blue_) {}
-
-    RGBTriplet(const uint32_t hex_color_code)
-    {
-        red = static_cast<float>((hex_color_code >> 16) & 0xFF) / 255.0f;
-        green = static_cast<float>((hex_color_code >> 8) & 0xFF) / 255.0f;
-        blue = static_cast<float>(hex_color_code & 0xFF) / 255.0f;
-    }
-
-    bool operator==(const RGBTriplet& other) const
-    {
-        return (red == other.red) && (green == other.green) && (blue == other.blue);
-    }
-
-    bool operator!=(const RGBTriplet& other) const
-    {
-        return !(*this == other);
-    }
-};
-
-using RGBTripletf = RGBTriplet<float>;
-
+#include "rgbtriplet.h"
 
 enum class ShaderSource
 {
@@ -195,6 +166,9 @@ public:
 
     struct UniformHandles
     {
+        Uniform pane_width;
+        Uniform pane_height;
+        Uniform shader_mode;
     };
 
     UniformHandles uniform_handles;

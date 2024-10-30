@@ -6,7 +6,10 @@ include_directories(${REPO_DIR}/src/interfaces/cpp)
 
 set(CPP_SOURCE_FILES main.cpp
                      gui_pane.cpp
+                     gui_pane_events.cpp
+                     gui_element.cpp
                      shader.cpp
+                     button.cpp
                      main_window.cpp)
 
 add_executable(gui_test ${CPP_SOURCE_FILES})
@@ -14,4 +17,4 @@ target_link_libraries(gui_test ${wxWidgets_LIBRARIES}
                                     ${OPENGL_LIBRARIES}
                                     ${GLUT_LIBRARY}
                                     ${PLATFORM_LIBRARIES}
-                                    /Users/danielpi/work/dvs/src/externals/freetype/build/libfreetype.a)
+                                    ${REPO_DIR}/src/externals/freetype/build/libfreetype.a)

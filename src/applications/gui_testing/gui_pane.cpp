@@ -54,7 +54,7 @@ template <typename T> T createShader(const std::string& base_path, const std::st
 
 void GuiPane::initShaders()
 {
-    const std::string base_path{"/Users/danielpi/work/dvs/src/resources/shaders/"};
+    const std::string base_path{"../resources/shaders/"};
 
     shader_collection_.plot_box_shader = createShader<ShaderBase>(base_path, "plot_box_shader");
     shader_collection_.pane_background_shader = createShader<ShaderBase>(base_path, "pane_background");
@@ -69,63 +69,185 @@ void GuiPane::initShaders()
     shader_collection_.simple_shader = createShader<SimpleShader>(base_path, "simple_shader");
 }
 
-GuiPane::GuiPane(wxFrame* parent)
-    : wxGLCanvas(parent, getGLAttributes()),
-      m_context(getContext())
+void GuiPane::sendElementToBackCallback(wxCommandEvent& WXUNUSED(event))
 {
+    if (right_clicked_element_ != nullptr)
+    {
+        // Find index of the element
+        const auto element_it = std::find(gui_elements_.begin(), gui_elements_.end(), right_clicked_element_);
+        if (element_it == gui_elements_.end())
+        {
+            throw std::runtime_error("Element not found!");
+        }
+
+        const int64_t element_index = std::distance(gui_elements_.begin(), element_it);
+
+        if (element_index == 0)
+        {
+            // Already at the back
+            return;
+        }
+
+        std::copy_backward(
+            gui_elements_.begin(), gui_elements_.begin() + element_index, gui_elements_.begin() + element_index + 1);
+        gui_elements_.front() = right_clicked_element_;
+
+        //
+        const wxPoint mouse_pos = wxGetMousePosition() - this->GetScreenPosition();
+        const std::vector<std::shared_ptr<GuiElement>>::reverse_iterator potentially_hovered_element =
+            std::find_if(gui_elements_.rbegin(), gui_elements_.rend(), [&mouse_pos](const auto& element) {
+                return element->PointIsWithin(mouse_pos);
+            });
+
+        if (potentially_hovered_element != gui_elements_.rend())
+        {
+            if (current_hovered_element_ != nullptr)
+            {
+                // current_hovered_element_->mouseExited(event);
+            }
+            current_hovered_element_ = *potentially_hovered_element;
+
+            if (control_pressed_)
+            {
+                const ChangeDirection change_dir = current_hovered_element_->GetDirectionFromMouse(mouse_pos);
+                setCursor(change_dir);
+            }
+            else
+            {
+                wxSetCursor(wxCursor(wxCURSOR_ARROW));
+            }
+        }
+        else
+        {
+            // current_hovered_element_->mouseExited(event);
+            current_hovered_element_ = nullptr;
+            wxSetCursor(wxCursor(wxCURSOR_ARROW));
+        }
+    }
+    else
+    {
+        throw std::runtime_error("No element to send to back!");
+    }
+}
+
+void GuiPane::bringElementToFrontCallback(wxCommandEvent& WXUNUSED(event))
+{
+    if (right_clicked_element_ != nullptr)
+    {
+        // Find index of the element
+        const auto element_it = std::find(gui_elements_.begin(), gui_elements_.end(), right_clicked_element_);
+        if (element_it == gui_elements_.end())
+        {
+            return;
+        }
+
+        const int64_t element_index = std::distance(gui_elements_.begin(), element_it);
+
+        if (element_index == (static_cast<int64_t>(gui_elements_.size()) - 1))
+        {
+            // Already at the front
+            return;
+        }
+
+        std::copy(
+            gui_elements_.begin() + element_index + 1, gui_elements_.end(), gui_elements_.begin() + element_index);
+        gui_elements_.back() = right_clicked_element_;
+    }
+    else
+    {
+        throw std::runtime_error("No element to bring to front!");
+    }
+}
+
+GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_ANY), m_context_(getContext())
+{
+    control_pressed_ = false;
+    left_mouse_pressed_ = false;
+    right_mouse_pressed_ = false;
+
+    popup_menu_ = new wxMenu(wxT(""));
+
+    popup_menu_->Append(EventIds::BRING_TO_FRONT, wxT("Bring to front"));
+    popup_menu_->Append(EventIds::SEND_TO_BACK, wxT("Send to back"));
+
+    interaction_state_ = InteractionState::Hoovering;
+
+    change_direction_at_press_ = ChangeDirection::NONE;
+
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    Show();
-    SetSize(wxSize(300, 300));
-
-    wxGLCanvas::SetCurrent(*m_context);
+    wxGLCanvas::SetCurrent(*m_context_);
     initShaders();
-    glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-
-    /*Bind(wxEVT_RIGHT_DOWN, &ApplicationGuiElement::mouseRightPressed, this);
-    Bind(wxEVT_MIDDLE_DOWN, &GuiPane::mouseMiddlePressed, this);
-
-    Bind(wxEVT_MIDDLE_UP, &GuiPane::mouseMiddleReleased, this);
-    Bind(wxEVT_RIGHT_UP, &ApplicationGuiElement::mouseRightReleased, this);*/
+    glClearColor(0.0, 0.5, 0.4, 0.0f);
 
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_PROGRAM_POINT_SIZE);
 
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 
-    /*Bind(wxEVT_LEFT_DOWN, &ApplicationGuiElement::mouseLeftPressed, this);
-    Bind(wxEVT_MOTION, &ApplicationGuiElement::mouseMovedOverItem, this);
-    Bind(wxEVT_LEFT_UP, &ApplicationGuiElement::mouseLeftReleased, this);
+    Bind(wxEVT_MENU, &GuiPane::bringElementToFrontCallback, this, EventIds::BRING_TO_FRONT);
+    Bind(wxEVT_MENU, &GuiPane::sendElementToBackCallback, this, EventIds::SEND_TO_BACK);
 
-    Bind(wxEVT_KEY_DOWN, &ApplicationGuiElement::keyPressedCallback, this);
-    Bind(wxEVT_KEY_UP, &ApplicationGuiElement::keyReleasedCallback, this);*/
+    Bind(wxEVT_LEFT_DOWN, &GuiPane::mouseLeftPressed, this);
+    Bind(wxEVT_LEFT_UP, &GuiPane::mouseLeftReleased, this);
+    Bind(wxEVT_RIGHT_DOWN, &GuiPane::mouseRightPressed, this);
+    Bind(wxEVT_RIGHT_UP, &GuiPane::mouseRightReleased, this);
+
+    Bind(wxEVT_MOTION, &GuiPane::mouseMoved, this);
+    Bind(wxEVT_ENTER_WINDOW, &GuiPane::mouseEntered, this);
+    Bind(wxEVT_LEAVE_WINDOW, &GuiPane::mouseExited, this);
+
+    Bind(wxEVT_KEY_DOWN, &GuiPane::keyPressedCallback, this);
+    Bind(wxEVT_KEY_UP, &GuiPane::keyReleasedCallback, this);
+
+    Bind(wxEVT_SIZE, &GuiPane::OnSize, this);
+
     Bind(wxEVT_PAINT, &GuiPane::render, this);
-    // Bind(wxEVT_ENTER_WINDOW, &ApplicationGuiElement::mouseEnteredElement, this);
-    // Bind(wxEVT_LEAVE_WINDOW, &ApplicationGuiElement::mouseLeftElement, this);
-    shader_collection_.basic_plot_shader.use();
-    shader_collection_.basic_plot_shader.base_uniform_handles.use_clip_plane.setInt(0);
 
-    const float sw = 3.0f;
-    orth_projection_mat_ = glm::ortho(-sw, sw, -sw, sw, 0.1f, 100.0f);
-    persp_projection_mat_ = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 100.0f);
+    shader_collection_.simple_shader.use();
+    shader_collection_.simple_shader.base_uniform_handles.use_clip_plane.setInt(0);
 
-    projection_mat_ = persp_projection_mat_;
+    int16_t z_order = 0;
 
-    // Camera matrix
-    view_mat_ = glm::lookAt(glm::vec3(0, -6.0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-    model_mat_ = glm::mat4(1.0f);
-    scale_mat_ = glm::mat4(1.0f);
+    gui_elements_.push_back(
+        std::make_shared<GuiElement>(10.0f, 10.0f, 50.0f, 50.0f, "top left", z_order, RGBTripletf(0.6f, 0.5f, 0.0f)));
+    z_order++;
 
-    window_scale_mat_ = glm::mat4(1.0f);
-    scale_vector_ = Vec3d(2.5, 2.5, 2.5);
+    gui_elements_.push_back(
+        std::make_shared<GuiElement>(400.0f, 10.0f, 50.0f, 50.0f, "top right", z_order, RGBTripletf(0.6f, 0.5f, 0.0f)));
+    z_order++;
 
-    orth_scale_vector_ = Vec3d(2.5, 2.5, 2.5);
-    persp_scale_vector_ = Vec3d(2.5, 2.5, 2.5);
+    gui_elements_.push_back(std::make_shared<GuiElement>(
+        10.0f, 400.0f, 50.0f, 50.0f, "bottom left", z_order, RGBTripletf(0.6f, 0.5f, 0.0f)));
+    z_order++;
 
-    gui_element_ = new GuiElement(0.0f, 0.0f, 0.2f, 0.3f);
+    gui_elements_.push_back(std::make_shared<GuiElement>(
+        400.0f, 400.0f, 50.0f, 50.0f, "bottom right", z_order, RGBTripletf(0.6f, 0.5f, 0.0f)));
+    z_order++;
 
-    receive_timer_.Bind(wxEVT_TIMER, &GuiPane::TimerFunc, this);
-    receive_timer_.Start(20);
+    gui_elements_.push_back(std::make_shared<GuiElement>(
+        10.0f, 200.0f, 50.0f, 50.0f, "Overlapping left", z_order, RGBTripletf(1.0f, 0.0f, 0.0f)));
+    z_order++;
+
+    gui_elements_.push_back(std::make_shared<GuiElement>(
+        30.0f, 210.0f, 50.0f, 50.0f, "Overlapping right", z_order, RGBTripletf(0.0f, 1.0f, 0.0f)));
+    z_order++;
+
+    gui_elements_.push_back(std::make_shared<GuiElement>(
+        200.0f, 200.0f, 50.0f, 50.0f, "Precisely adjacent left", z_order, RGBTripletf(1.0f, 0.0f, 0.0f)));
+    z_order++;
+
+    gui_elements_.push_back(std::make_shared<GuiElement>(
+        250.0f, 210.0f, 50.0f, 50.0f, "Precisely adjacent right", z_order, RGBTripletf(0.0f, 1.0f, 0.0f)));
+    z_order++;
+
+    current_hovered_element_ = nullptr;
+    current_pressed_element_ = nullptr;
+
+    glEnable(GL_MULTISAMPLE);
+
+    update_timer_.Bind(wxEVT_TIMER, &GuiPane::TimerFunc, this);
+    update_timer_.Start(20);
 }
 
 void GuiPane::TimerFunc(wxTimerEvent&)
@@ -133,9 +255,25 @@ void GuiPane::TimerFunc(wxTimerEvent&)
     Refresh();
 }
 
+void GuiPane::OnSize(wxSizeEvent& event)
+{
+    const wxSize new_size = event.GetSize();
+    // std::cout << "Size event: " << new_size.GetWidth() << " " << new_size.GetHeight() << std::endl;
+
+    shader_collection_.simple_shader.use();
+    shader_collection_.simple_shader.uniform_handles.pane_width.setFloat(static_cast<float>(new_size.GetWidth()));
+    shader_collection_.simple_shader.uniform_handles.pane_height.setFloat(static_cast<float>(new_size.GetHeight()));
+    shader_collection_.simple_shader.uniform_handles.shader_mode.setInt(static_cast<int>(0));
+
+    for (auto& gui_element_ : gui_elements_)
+    {
+        gui_element_->UpdateSizeFromParent(new_size);
+    }
+}
+
 GuiPane::~GuiPane()
 {
-    delete m_context;
+    delete m_context_;
 }
 
 void GuiPane::refresh()
@@ -150,80 +288,24 @@ void GuiPane::render(wxPaintEvent& WXUNUSED(evt))
         return;
     }
 
-    std::cout << "Render" << std::endl;
+    // std::cout << "Rendering" << std::endl;
 
-    wxGLCanvas::SetCurrent(*m_context);
+    wxGLCanvas::SetCurrent(*m_context_);
     wxPaintDC(this);  // TODO: Can be removed?
-
-    glClearColor(0.0, 0.6, 0.5, 0.0f);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shader_collection_.simple_shader.use();
-    shader_collection_.simple_shader.base_uniform_handles.vertex_color.setColor(RGBTripletf(0.6f, 0.5f, 0.0f));
+    // shader_collection_.simple_shader.base_uniform_handles.vertex_color.setColor(RGBTripletf(0.6f, 0.5f, 0.0f));
 
-    gui_element_->render();
-
-    /*processActionQueue();
-
-    glEnable(GL_MULTISAMPLE);
-
-    const RGBTripletf color_vec{plot_pane_settings_->background_color};
-    glClearColor(color_vec.red, color_vec.green, color_vec.blue, 0.0f);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    if (viewShouldBeReset())
+    for (auto& gui_element_ : gui_elements_)
     {
-        axes_interactor_.resetView();
+        shader_collection_.simple_shader.base_uniform_handles.vertex_color.setColor(gui_element_->getColor());
+        gui_element_->render();
     }
-
-    axes_interactor_.updateWindowSize(getWidth(), getHeight());
-
-    if (wxGetKeyState(static_cast<wxKeyCode>('y')) || wxGetKeyState(static_cast<wxKeyCode>('Y')))
-    {
-        legend_scale_factor_ -= 0.05;
-    }
-    else if (wxGetKeyState(static_cast<wxKeyCode>('u')) || wxGetKeyState(static_cast<wxKeyCode>('U')))
-    {
-        legend_scale_factor_ += 0.05;
-    }
-
-    const Vec2f pane_size(GetSize().x, GetSize().y);
-
-    const AxesSideConfiguration axes_side_configuration{axes_interactor_.getViewAngles(), perspective_projection_};
-
-    const Vec2f mouse_pos_at_press(mouse_pos_at_press_.x, mouse_pos_at_press_.y);
-    const Vec2f current_mouse_pos(current_mouse_pos_.x, current_mouse_pos_.y);
-
-    // axes_renderer_->render();
-    glEnable(GL_DEPTH_TEST);  // TODO: Put in "plotBegin" and "plotEnd"?
-    axes_renderer_->plotBegin();
-
-    plot_data_handler_->render();
-
-    axes_renderer_->plotEnd();
-
-    if (axes_interactor_.getQueryPoint().has_query_point)
-    {
-        bool has_closest_point = false;
-
-        std::tie(closest_point_, has_closest_point) = point_selection_.getClosestPoint(
-            axes_renderer_->getLine(), axes_interactor_.getQueryPoint().has_query_point);
-
-        if (has_closest_point)
-        {
-            should_render_point_selection_ = true;
-        }
-    }
-
-    if (should_render_point_selection_)
-    {
-        axes_renderer_->renderPointSelection(closest_point_);
-    }
-
-    glDisable(GL_DEPTH_TEST);*/
 
     // glFlush();
     SwapBuffers();
 }
+
+void GuiPane::UpdateSizeFromParent(const wxSize new_size) {}
