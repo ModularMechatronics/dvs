@@ -75,7 +75,14 @@ void GuiPane::keyReleasedCallback(wxKeyEvent& evt)
     if (evt.GetKeyCode() == 308)
     {
         control_pressed_ = false;
-        wxSetCursor(wxCursor(wxCURSOR_ARROW));
+        if (current_hovered_element_ != nullptr)
+        {
+            wxSetCursor(wxCursor(wxCURSOR_HAND));
+        }
+        else
+        {
+            wxSetCursor(wxCursor(wxCURSOR_ARROW));
+        }
 
         if (interaction_state_ == InteractionState::EditingObject)
         {
@@ -161,12 +168,47 @@ void GuiPane::mouseLeftReleased(wxMouseEvent& event)
         }
         else
         {
-            wxSetCursor(wxCursor(wxCURSOR_ARROW));
+            wxSetCursor(wxCursor(wxCURSOR_HAND));
         }
     }
     else
     {
         wxSetCursor(wxCursor(wxCURSOR_ARROW));
+    }
+}
+
+void GuiPane::mouseLeftDoubleClicked(wxMouseEvent& event)
+{
+    left_mouse_pressed_ = true;
+
+    const std::vector<std::shared_ptr<GuiElement>>::reverse_iterator pressed_object =
+        std::find_if(gui_elements_.rbegin(), gui_elements_.rend(), [&event](const auto& element) {
+            return element->PointIsWithin(event.GetPosition());
+        });
+
+    if (pressed_object != gui_elements_.rend())
+    {
+        current_pressed_element_ = *pressed_object;
+        current_hovered_element_ = nullptr;
+
+        if (control_pressed_)
+        {
+            // Editing element
+            change_direction_at_press_ = current_pressed_element_->GetDirectionFromMouse(event.GetPosition());
+            interaction_state_ = InteractionState::EditingObject;
+            setCursor(change_direction_at_press_);
+        }
+        else
+        {
+            // Interacting with element
+            interaction_state_ = InteractionState::Interacting;
+            current_pressed_element_->mousePressed(event);
+        }
+    }
+    else
+    {
+        change_direction_at_press_ = ChangeDirection::NONE;
+        interaction_state_ = InteractionState::Dragging;
     }
 }
 
@@ -231,6 +273,10 @@ void GuiPane::mouseMoved(wxMouseEvent& event)
                     current_hovered_element_->GetDirectionFromMouse(event.GetPosition());
                 setCursor(change_direction);
             }
+            else
+            {
+                wxSetCursor(wxCursor(wxCURSOR_HAND));
+            }
         }
         else
         {
@@ -265,7 +311,7 @@ void GuiPane::mouseEntered(wxMouseEvent& event)
             }
             else
             {
-                wxSetCursor(wxCursor(wxCURSOR_ARROW));
+                wxSetCursor(wxCursor(wxCURSOR_HAND));
             }
         }
         else
@@ -339,7 +385,7 @@ void GuiPane::setCursor(const ChangeDirection change_direction)
             wxSetCursor(wxCursor(wxCURSOR_SIZENWSE));
             break;
         case ChangeDirection::MIDDLE:
-            wxSetCursor(wxCursor(wxCURSOR_HAND));
+            wxSetCursor(wxCursor(wxCURSOR_SIZING));
             break;
         default:
             wxSetCursor(wxCursor(wxCURSOR_ARROW));

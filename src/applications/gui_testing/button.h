@@ -10,8 +10,11 @@ class Button : public GuiElement
 private:
     // std::string text_;
     // std::function<void()> callback_;
-    RGBTripletf color_;
     std::string label_;
+    std::function<void(uint64_t)> button_pressed_callback_;
+    std::function<void(uint64_t)> button_released_callback_;
+
+    VertexBuffer vertex_buffer_2_;
 
 public:
     Button(const float x,
@@ -19,13 +22,15 @@ public:
            const float width,
            const float height,
            const std::string label,
-           const RGBTripletf& color);
+           const RGBTripletf& color,
+           const std::function<void(uint64_t)>& button_pressed_callback,
+           const std::function<void(uint64_t)>& button_released_callback);
+    ~Button();
+    void mousePressed(wxMouseEvent& event) override;
+    void mouseReleased(wxMouseEvent& event) override;
 
-    /*void render() const override
-    {
-        // GuiElement::render();
-        // Render text
-    }*/
+    void render() const override;
+    void updateVertexBuffer() override;
 };
 
 #endif  // DUOPLOT_BUTTON_H

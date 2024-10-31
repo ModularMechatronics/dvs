@@ -159,6 +159,59 @@ void GuiPane::bringElementToFrontCallback(wxCommandEvent& WXUNUSED(event))
     }
 }
 
+void GuiPane::bringElementForwardCallback(wxCommandEvent& WXUNUSED(event))
+{
+    if (right_clicked_element_ != nullptr)
+    {
+        // Find index of the element
+        const auto element_it = std::find(gui_elements_.begin(), gui_elements_.end(), right_clicked_element_);
+        if (element_it == gui_elements_.end())
+        {
+            return;
+        }
+
+        const int64_t element_index = std::distance(gui_elements_.begin(), element_it);
+
+        if (element_index == (static_cast<int64_t>(gui_elements_.size()) - 1))
+        {
+            // Already at the front
+            return;
+        }
+
+        std::swap(gui_elements_[element_index], gui_elements_[element_index + 1]);
+    }
+    else
+    {
+        throw std::runtime_error("No element to bring forward!");
+    }
+}
+
+void GuiPane::sendElementBackwardCallback(wxCommandEvent& WXUNUSED(event))
+{
+    if (right_clicked_element_ != nullptr)
+    {
+        // Find index of the element
+        const auto element_it = std::find(gui_elements_.begin(), gui_elements_.end(), right_clicked_element_);
+        if (element_it == gui_elements_.end())
+        {
+            return;
+        }
+
+        const int64_t element_index = std::distance(gui_elements_.begin(), element_it);
+
+        if (element_index == 0)
+        {
+            // Already at the back
+            return;
+        }
+        std::swap(gui_elements_[element_index], gui_elements_[element_index - 1]);
+    }
+    else
+    {
+        throw std::runtime_error("No element to send backward!");
+    }
+}
+
 GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_ANY), m_context_(getContext())
 {
     control_pressed_ = false;
@@ -169,6 +222,8 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
 
     popup_menu_->Append(EventIds::BRING_TO_FRONT, wxT("Bring to front"));
     popup_menu_->Append(EventIds::SEND_TO_BACK, wxT("Send to back"));
+    popup_menu_->Append(EventIds::BRING_FORWARD, wxT("Bring forward"));
+    popup_menu_->Append(EventIds::SEND_BACKWARD, wxT("Send backward"));
 
     interaction_state_ = InteractionState::Hoovering;
 
@@ -188,8 +243,13 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
     Bind(wxEVT_MENU, &GuiPane::bringElementToFrontCallback, this, EventIds::BRING_TO_FRONT);
     Bind(wxEVT_MENU, &GuiPane::sendElementToBackCallback, this, EventIds::SEND_TO_BACK);
 
+    Bind(wxEVT_MENU, &GuiPane::bringElementForwardCallback, this, EventIds::BRING_FORWARD);
+    Bind(wxEVT_MENU, &GuiPane::sendElementBackwardCallback, this, EventIds::SEND_BACKWARD);
+
     Bind(wxEVT_LEFT_DOWN, &GuiPane::mouseLeftPressed, this);
     Bind(wxEVT_LEFT_UP, &GuiPane::mouseLeftReleased, this);
+    Bind(wxEVT_LEFT_DCLICK, &GuiPane::mouseLeftDoubleClicked, this);
+
     Bind(wxEVT_RIGHT_DOWN, &GuiPane::mouseRightPressed, this);
     Bind(wxEVT_RIGHT_UP, &GuiPane::mouseRightReleased, this);
 
@@ -207,39 +267,45 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
     shader_collection_.simple_shader.use();
     shader_collection_.simple_shader.base_uniform_handles.use_clip_plane.setInt(0);
 
-    int16_t z_order = 0;
+    gui_elements_.push_back(
+        std::make_shared<GuiElement>(10.0f, 10.0f, 50.0f, 50.0f, "top left", RGBTripletf(0.6f, 0.5f, 0.0f)));
 
     gui_elements_.push_back(
-        std::make_shared<GuiElement>(10.0f, 10.0f, 50.0f, 50.0f, "top left", z_order, RGBTripletf(0.6f, 0.5f, 0.0f)));
-    z_order++;
+        std::make_shared<GuiElement>(400.0f, 10.0f, 50.0f, 50.0f, "top right", RGBTripletf(0.6f, 0.5f, 0.0f)));
 
     gui_elements_.push_back(
-        std::make_shared<GuiElement>(400.0f, 10.0f, 50.0f, 50.0f, "top right", z_order, RGBTripletf(0.6f, 0.5f, 0.0f)));
-    z_order++;
+        std::make_shared<GuiElement>(10.0f, 400.0f, 50.0f, 50.0f, "bottom left", RGBTripletf(0.6f, 0.5f, 0.0f)));
+
+    gui_elements_.push_back(
+        std::make_shared<GuiElement>(400.0f, 400.0f, 50.0f, 50.0f, "bottom right", RGBTripletf(0.6f, 0.5f, 0.0f)));
 
     gui_elements_.push_back(std::make_shared<GuiElement>(
-        10.0f, 400.0f, 50.0f, 50.0f, "bottom left", z_order, RGBTripletf(0.6f, 0.5f, 0.0f)));
-    z_order++;
+        10.0f, 200.0f, 50.0f, 50.0f, "Overlapping left 0", RGBTripletf(1.0f, 0.0f, 0.0f) * 0.8));
 
     gui_elements_.push_back(std::make_shared<GuiElement>(
-        400.0f, 400.0f, 50.0f, 50.0f, "bottom right", z_order, RGBTripletf(0.6f, 0.5f, 0.0f)));
-    z_order++;
+        30.0f, 210.0f, 50.0f, 50.0f, "Overlapping left 1", RGBTripletf(0.0f, 1.0f, 0.0f) * 0.8));
 
     gui_elements_.push_back(std::make_shared<GuiElement>(
-        10.0f, 200.0f, 50.0f, 50.0f, "Overlapping left", z_order, RGBTripletf(1.0f, 0.0f, 0.0f)));
-    z_order++;
+        40.0f, 220.0f, 50.0f, 50.0f, "Overlapping left 2", RGBTripletf(0.0f, 1.0f, 1.0f) * 0.8));
 
     gui_elements_.push_back(std::make_shared<GuiElement>(
-        30.0f, 210.0f, 50.0f, 50.0f, "Overlapping right", z_order, RGBTripletf(0.0f, 1.0f, 0.0f)));
-    z_order++;
+        50.0f, 230.0f, 50.0f, 50.0f, "Overlapping left 3", RGBTripletf(1.0f, 0.0f, 1.0f) * 0.8));
 
     gui_elements_.push_back(std::make_shared<GuiElement>(
-        200.0f, 200.0f, 50.0f, 50.0f, "Precisely adjacent left", z_order, RGBTripletf(1.0f, 0.0f, 0.0f)));
-    z_order++;
+        200.0f, 200.0f, 50.0f, 50.0f, "Precisely adjacent left", RGBTripletf(1.0f, 0.0f, 0.0f)));
 
     gui_elements_.push_back(std::make_shared<GuiElement>(
-        250.0f, 210.0f, 50.0f, 50.0f, "Precisely adjacent right", z_order, RGBTripletf(0.0f, 1.0f, 0.0f)));
-    z_order++;
+        250.0f, 210.0f, 50.0f, 50.0f, "Precisely adjacent right", RGBTripletf(0.0f, 1.0f, 0.0f)));
+
+    gui_elements_.push_back(std::make_shared<Button>(
+        400.0f,
+        210.0f,
+        50.0f,
+        50.0f,
+        "Button",
+        RGBTripletf(1.0f, 1.0f, 1.0f),
+        [](uint64_t id) { std::cout << "Button pressed: " << id << std::endl; },
+        [](uint64_t id) { std::cout << "Button released: " << id << std::endl; }));
 
     current_hovered_element_ = nullptr;
     current_pressed_element_ = nullptr;

@@ -24,7 +24,9 @@ using namespace duoplot;
 enum EventIds : uint16_t
 {
     BRING_TO_FRONT = wxID_HIGHEST,
-    SEND_TO_BACK
+    SEND_TO_BACK,
+    BRING_FORWARD,
+    SEND_BACKWARD
 };
 
 enum class InteractionState : uint8_t
@@ -66,6 +68,7 @@ private:
 
     void TimerFunc(wxTimerEvent&);
 
+    void mouseLeftDoubleClicked(wxMouseEvent& event);
     void mouseLeftPressed(wxMouseEvent& event);
     void mouseLeftReleased(wxMouseEvent& event);
     void mouseMoved(wxMouseEvent& event);
@@ -79,6 +82,8 @@ private:
     void setCursor(const ChangeDirection change_direction);
     void sendElementToBackCallback(wxCommandEvent& WXUNUSED(event));
     void bringElementToFrontCallback(wxCommandEvent& WXUNUSED(event));
+    void bringElementForwardCallback(wxCommandEvent& WXUNUSED(event));
+    void sendElementBackwardCallback(wxCommandEvent& WXUNUSED(event));
 
     void OnSize(wxSizeEvent& event);
 

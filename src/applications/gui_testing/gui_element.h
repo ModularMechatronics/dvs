@@ -3,6 +3,7 @@
 
 #include <wx/wx.h>
 
+#include <functional>
 #include <string>
 
 #include "rgbtriplet.h"
@@ -36,10 +37,11 @@ protected:
 
     float parent_width_;
     float parent_height_;
-    uint16_t z_order_;
 
     VertexBuffer vertex_buffer_;
     RGBTripletf color_;
+
+    virtual void updateVertexBuffer();
 
 public:
     GuiElement() = default;
@@ -48,21 +50,21 @@ public:
                const float width,
                const float height,
                const std::string& name,
-               const uint16_t z_order,
                const RGBTripletf& color);
 
     void UpdateSizeFromParent(const wxSize new_size);
     bool PointIsWithin(const wxPoint pt) const;
 
-    void render() const;
+    virtual void render() const;
 
     void mouseEntered(wxMouseEvent& event);
     void mouseExited(wxMouseEvent& event);
     void mouseExited(wxPoint& exit_point);
     void mouseMoved(wxMouseEvent& event, const wxPoint& delta_vec);
     void mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec);
-    void mousePressed(wxMouseEvent& event);
-    void mouseReleased(wxMouseEvent& event);
+    // TODO: Catch double click, that probably why clicking fast doesn't work
+    virtual void mousePressed(wxMouseEvent& event);
+    virtual void mouseReleased(wxMouseEvent& event);
     ChangeDirection GetDirectionFromMouse(const wxPoint pt) const;
     void ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction);
 
@@ -70,24 +72,6 @@ public:
     {
         return color_;
     }
-
-    void bringToFront()
-    {
-        // z_order_ = 0;
-    }
-
-    void sendToBack()
-    {
-        // z_order_ = 1000;
-    }
-
-    uint16_t zOrder() const
-    {
-        return z_order_;
-    }
-
-    void ChangeSize(const float delta_width, const float delta_height, const ChangeDirection direction);
-    void ChangePosition(const float delta_x, const float delta_y);
 };
 
 #endif

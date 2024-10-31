@@ -7,7 +7,6 @@ GuiElement::GuiElement(const float x,
                        const float width,
                        const float height,
                        const std::string& name,
-                       const uint16_t z_order,
                        const RGBTripletf& color)
     : x_{x},
       y_{y},
@@ -15,7 +14,6 @@ GuiElement::GuiElement(const float x,
       height_{height},
       vertex_buffer_{OGLPrimitiveType::TRIANGLES},
       name_{name},
-      z_order_{z_order},
       color_{color},
       parent_width_{100.0f},
       parent_height_{100.0f}
@@ -37,42 +35,6 @@ GuiElement::GuiElement(const float x,
     // clang-format on
 
     vertex_buffer_.addBuffer(vertices, 6, 2, GL_DYNAMIC_DRAW);
-}
-
-void GuiElement::ChangeSize(const float delta_width, const float delta_height, const ChangeDirection direction)
-{
-    switch (direction)
-    {
-        case ChangeDirection::UP:
-            height_ += delta_height;
-            y_ -= delta_height;
-            break;
-        case ChangeDirection::DOWN:
-            height_ -= delta_height;
-            break;
-        case ChangeDirection::LEFT:
-            width_ -= delta_width;
-            break;
-        case ChangeDirection::RIGHT:
-            width_ += delta_width;
-            break;
-        case ChangeDirection::LEFT_UP:
-            height_ += delta_height;
-            width_ -= delta_width;
-            break;
-        case ChangeDirection::LEFT_DOWN:
-            height_ -= delta_height;
-            width_ -= delta_width;
-            break;
-        case ChangeDirection::RIGHT_UP:
-            height_ += delta_height;
-            width_ += delta_width;
-            break;
-        case ChangeDirection::RIGHT_DOWN:
-            height_ -= delta_height;
-            width_ += delta_width;
-            break;
-    }
 }
 
 /*
@@ -235,6 +197,11 @@ void GuiElement::ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirec
         y_ = y_before;
     }
 
+    updateVertexBuffer();
+}
+
+void GuiElement::updateVertexBuffer()
+{
     // clang-format off
     const float vertices[] = {// First triangle
                               x_ , y_,
@@ -257,27 +224,6 @@ void GuiElement::mousePressed(wxMouseEvent& event)
 void GuiElement::mouseReleased(wxMouseEvent& event)
 {
     std::cout << "Mouse released for element \"" << name_ << "\"" << std::endl;
-}
-
-void GuiElement::ChangePosition(const float delta_x, const float delta_y)
-{
-    x_ += delta_x;
-    y_ += delta_y;
-
-    std::cout << "Changing position to: " << x_ << " " << y_ << std::endl;
-
-    // clang-format off
-    const float vertices[] = {// First triangle
-                              x_ , y_,
-                              x_ + width_, y_,
-                              x_ + width_, y_ + height_,
-                              // Second triangle
-                              x_, y_,
-                              x_, y_ + height_,
-                              x_ + width_, y_ + height_};
-    // clang-format on
-
-    vertex_buffer_.updateBufferData(0, vertices, 6, 2);
 }
 
 void GuiElement::render() const
@@ -315,20 +261,20 @@ static int i = 0;
 
 void GuiElement::mouseMoved(wxMouseEvent& event, const wxPoint& delta_vec)
 {
-    color_.blue = color_.blue + 0.01f;
+    /*color_.blue = color_.blue + 0.01f;
     if (color_.blue > 1.0f)
     {
         color_.blue = 0.0f;
-    }
+    }*/
 
     i++;
 }
 
 void GuiElement::mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec)
 {
-    color_.red = color_.red + 0.01f;
+    /*color_.red = color_.red + 0.01f;
     if (color_.red > 1.0f)
     {
         color_.red = 0.0f;
-    }
+    }*/
 }
