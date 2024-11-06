@@ -20,7 +20,7 @@ Pre release:
 - Change name of ItemId to ObjectId?
 - Implement std::optional for PlotObjectAttributes and PlotProperties
 - PlotProperties -> UserProperties in duoplot application
-- 
+- All gui elements should have a setting that makes their size or position scale with window size
 
 Post release:
 - Implement GL_DOUBLE, software based and Opengl based when supported, or hack (https://prideout.net/emulating-double-precision, https://godotengine.org/article/emulating-double-precision-gpu-render-large-worlds/)

@@ -10,6 +10,7 @@ set(CPP_SOURCE_FILES main.cpp
                      gui_element.cpp
                      shader.cpp
                      button.cpp
+                     slider.cpp
                      main_window.cpp)
 
 add_executable(gui_test ${CPP_SOURCE_FILES})

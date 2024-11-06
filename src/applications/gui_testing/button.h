@@ -15,6 +15,11 @@ private:
     std::function<void(uint64_t)> button_released_callback_;
 
     VertexBuffer vertex_buffer_2_;
+    size_t num_points_to_render_;
+
+    float* points_;
+
+    void changeButtonPoints();
 
 public:
     Button(const float x,

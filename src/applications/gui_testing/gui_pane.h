@@ -17,6 +17,7 @@
 #include "button.h"
 #include "gui_element.h"
 #include "shader.h"
+#include "slider.h"
 #include "vertex_buffer.h"
 
 using namespace duoplot;
@@ -52,6 +53,8 @@ private:
     bool control_pressed_;
     bool left_mouse_pressed_;
     bool right_mouse_pressed_;
+
+    std::function<void(RGBTripletf)> set_shader_color_;
 
     wxTimer update_timer_;
 

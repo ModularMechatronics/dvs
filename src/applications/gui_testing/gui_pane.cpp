@@ -225,6 +225,10 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
     popup_menu_->Append(EventIds::BRING_FORWARD, wxT("Bring forward"));
     popup_menu_->Append(EventIds::SEND_BACKWARD, wxT("Send backward"));
 
+    set_shader_color_ = [this](const RGBTripletf color) {
+        shader_collection_.simple_shader.base_uniform_handles.vertex_color.setColor(color);
+    };
+
     interaction_state_ = InteractionState::Hoovering;
 
     change_direction_at_press_ = ChangeDirection::NONE;
@@ -233,7 +237,8 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
 
     wxGLCanvas::SetCurrent(*m_context_);
     initShaders();
-    glClearColor(0.0, 0.5, 0.4, 0.0f);
+    const RGBTripletf background_color{0xC9E4DEU};
+    glClearColor(background_color.red, background_color.green, background_color.blue, 0.0f);
 
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -298,14 +303,33 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
         250.0f, 210.0f, 50.0f, 50.0f, "Precisely adjacent right", RGBTripletf(0.0f, 1.0f, 0.0f)));
 
     gui_elements_.push_back(std::make_shared<Button>(
-        400.0f,
-        210.0f,
-        50.0f,
-        50.0f,
+        700.0f,
+        410.0f,
+        70.0f,
+        40.0f,
         "Button",
         RGBTripletf(1.0f, 1.0f, 1.0f),
-        [](uint64_t id) { std::cout << "Button pressed: " << id << std::endl; },
-        [](uint64_t id) { std::cout << "Button released: " << id << std::endl; }));
+        [](const uint64_t id) { std::cout << "Button pressed: " << id << std::endl; },
+        [](const uint64_t id) { std::cout << "Button released: " << id << std::endl; }));
+
+    gui_elements_.push_back(std::make_shared<Slider>(
+        700.0f,
+        510.0f,
+        250.0f,
+        30.0f,
+        -13,
+        10,
+        34,
+        Slider::SliderType::HORIZONTAL,
+        set_shader_color_,
+        "Slider",
+        RGBTripletf(1.0f, 1.0f, 1.0f),
+        [](const uint64_t id, const int32_t new_value) {
+            std::cout << "Slider dragged, new value: " << new_value << std::endl;
+        },
+        [](const uint64_t id, const int32_t new_value) {
+            std::cout << "Slider final value: " << new_value << std::endl;
+        }));
 
     current_hovered_element_ = nullptr;
     current_pressed_element_ = nullptr;
@@ -367,6 +391,9 @@ void GuiPane::render(wxPaintEvent& WXUNUSED(evt))
     for (auto& gui_element_ : gui_elements_)
     {
         shader_collection_.simple_shader.base_uniform_handles.vertex_color.setColor(gui_element_->getColor());
+        shader_collection_.simple_shader.uniform_handles.shader_mode.setInt(
+            static_cast<int32_t>(gui_element_->GetShaderMode()));
+
         gui_element_->render();
     }
 

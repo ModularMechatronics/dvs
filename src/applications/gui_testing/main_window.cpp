@@ -14,7 +14,7 @@
 
 using namespace duoplot;
 
-MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "", wxPoint(300, 600), wxSize(500, 500))
+MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "", wxPoint(300, 30), wxSize(1400, 900))
 {
     gui_pane_ = new GuiPane(this);
     Bind(wxEVT_SIZE, &MainWindow::OnSize, this);

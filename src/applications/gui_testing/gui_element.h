@@ -23,6 +23,13 @@ enum class ChangeDirection : uint8_t
     NONE
 };
 
+enum class ShaderMode : int32_t
+{
+    NORMAL,
+    BUTTON,
+    SLIDER
+};
+
 class GuiElement
 {
 protected:
@@ -34,6 +41,8 @@ protected:
     uint64_t id_;
 
     std::string name_;
+
+    ShaderMode shader_mode_{ShaderMode::NORMAL};
 
     float parent_width_;
     float parent_height_;
@@ -60,13 +69,18 @@ public:
     void mouseEntered(wxMouseEvent& event);
     void mouseExited(wxMouseEvent& event);
     void mouseExited(wxPoint& exit_point);
-    void mouseMoved(wxMouseEvent& event, const wxPoint& delta_vec);
-    void mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec);
+    virtual void mouseMoved(wxMouseEvent& event, const wxPoint& delta_vec);
+    virtual void mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec);
     // TODO: Catch double click, that probably why clicking fast doesn't work
     virtual void mousePressed(wxMouseEvent& event);
     virtual void mouseReleased(wxMouseEvent& event);
     ChangeDirection GetDirectionFromMouse(const wxPoint pt) const;
     void ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction);
+
+    ShaderMode GetShaderMode() const
+    {
+        return shader_mode_;
+    }
 
     RGBTripletf getColor() const
     {
