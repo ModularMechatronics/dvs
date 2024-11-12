@@ -131,9 +131,6 @@ ChangeDirection GuiElement::GetDirectionFromMouse(const wxPoint pt) const
     }
 }
 
-constexpr float kMinWidth = 10.0f;
-constexpr float kMinHeight = 10.0f;
-
 void GuiElement::ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction)
 {
     const float x_before = x_;

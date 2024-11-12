@@ -9,7 +9,7 @@ constexpr size_t kNumPointsPerCorner = (kNumTrianglesPerCorner)*3U;
 constexpr size_t kNumTrianglesForRectangularParts = 2U * 3U;
 constexpr size_t kTotalNumPoints = kNumPointsPerCorner * 4U + 3U * kNumTrianglesForRectangularParts;
 
-constexpr float kCornerRadius = 3.0f;
+constexpr float kCornerRadius = 6.0f;
 namespace
 {
 const RGBTripletf kButtonColor{0x58CBDDU};
@@ -30,87 +30,73 @@ Button::Button(const float x,
     : GuiElement(x, y, width, height, "BUTTON", color),
       label_(label),
       button_pressed_callback_(button_pressed_callback),
+      button_buffer_(kTotalNumPoints * 2U),
       button_released_callback_(button_released_callback),
       vertex_buffer_2_(OGLPrimitiveType::TRIANGLES)
 {
-    points_ = new float[kTotalNumPoints * 2U];
     shader_mode_ = ShaderMode::BUTTON;
     color_ = kButtonColor;
 
-    std::memset(points_, 0, kTotalNumPoints * 2U * sizeof(float));
+    std::memset(button_buffer_.data(), 0, kTotalNumPoints * 2U * sizeof(float));
 
     changeButtonPoints();
 
-    vertex_buffer_2_.addBuffer(points_, num_points_to_render_, 2, GL_DYNAMIC_DRAW);
+    vertex_buffer_2_.addBuffer(button_buffer_.data(), num_points_to_render_, 2, GL_DYNAMIC_DRAW);
 }
 
 Button::~Button() {}
 
 void Button::changeButtonPoints()
 {
-    size_t idx = 0U;
+    button_buffer_.reset();
 
-    const auto set_points = [this, &idx](
-                                const float x_left, const float x_right, const float y_top, const float y_bottom) {
-        const Vec2f bottom_left{x_ + x_left, y_ + y_bottom};
-        const Vec2f bottom_right{x_ + x_right, y_ + y_bottom};
+    // Center rectangle
+    PutRectangleIntoBuffer(button_buffer_, x_ + kCornerRadius, y_, width_ - 2.0f * kCornerRadius, height_);
 
-        const Vec2f top_left{x_ + x_left, y_ + y_top};
-        const Vec2f top_right{x_ + x_right, y_ + y_top};
+    // Left rectangle
+    PutRectangleIntoBuffer(button_buffer_, x_, y_ + kCornerRadius, kCornerRadius, height_ - 2.0f * kCornerRadius);
 
-        using Triangle = std::array<Vec2f, 3>;
+    // Right rectangle
+    PutRectangleIntoBuffer(
+        button_buffer_, x_ + width_ - kCornerRadius, y_ + kCornerRadius, kCornerRadius, height_ - 2.0f * kCornerRadius);
 
-        const std::array<Triangle, 2> triangles{Triangle{top_left, top_right, bottom_left},
-                                                Triangle{bottom_left, top_right, bottom_right}};
+    // Top left corner
+    PutCircleSegmentIntoBuffer(button_buffer_,
+                               x_ + kCornerRadius,
+                               y_ + kCornerRadius,
+                               kCornerRadius,
+                               M_PI / 2.0f,
+                               M_PI,
+                               kNumTrianglesPerCorner);
 
-        for (const auto& corner_points : triangles)
-        {
-            for (const auto& corner_point : corner_points)
-            {
-                points_[idx] = corner_point.x;
-                points_[idx + 1U] = corner_point.y;
-                idx += 2U;
-            }
-        }
-    };
+    // Top right corner
+    PutCircleSegmentIntoBuffer(button_buffer_,
+                               x_ + width_ - kCornerRadius,
+                               y_ + kCornerRadius,
+                               kCornerRadius,
+                               0.0f,
+                               M_PI / 2.0f,
+                               kNumTrianglesPerCorner);
 
-    set_points(kCornerRadius, width_ - kCornerRadius, 0.0f, height_);
-    set_points(width_ - kCornerRadius, width_, kCornerRadius, height_ - kCornerRadius);
-    set_points(0.0f, kCornerRadius, kCornerRadius, height_ - kCornerRadius);
+    // Bottom right corner
+    PutCircleSegmentIntoBuffer(button_buffer_,
+                               x_ + width_ - kCornerRadius,
+                               y_ + height_ - kCornerRadius,
+                               kCornerRadius,
+                               3.0f * M_PI / 2.0f,
+                               2.0f * M_PI,
+                               kNumTrianglesPerCorner);
 
-    constexpr float kAngleInc = (M_PI / 2.0f) / (static_cast<float>(kNumTrianglesPerCorner));
+    // Bottom left corner
+    PutCircleSegmentIntoBuffer(button_buffer_,
+                               x_ + kCornerRadius,
+                               y_ + height_ - kCornerRadius,
+                               kCornerRadius,
+                               M_PI,
+                               3.0f * M_PI / 2.0f,
+                               kNumTrianglesPerCorner);
 
-    const auto add_corner_triangles =
-        [this, &idx](const float x_center, const float y_center, const float theta0, const float angle_inc) -> void {
-        float theta = theta0;
-        for (size_t k = 0; k < kNumTrianglesPerCorner; ++k)
-        {
-            points_[idx] = x_center;
-            points_[idx + 1U] = y_center;
-
-            const float x_pt = kCornerRadius * std::cos(theta);
-            const float y_pt = kCornerRadius * std::sin(theta);
-
-            points_[idx + 2U] = x_center + x_pt;
-            points_[idx + 3U] = y_center + y_pt;
-
-            theta += angle_inc;
-            const float x_pt_next = kCornerRadius * std::cos(theta);
-            const float y_pt_next = kCornerRadius * std::sin(theta);
-
-            points_[idx + 4U] = x_center + x_pt_next;
-            points_[idx + 5U] = y_center + y_pt_next;
-
-            idx += 6U;
-        }
-    };
-
-    add_corner_triangles(x_ + width_ - kCornerRadius, y_ + height_ - kCornerRadius, 0.0f, kAngleInc);
-    add_corner_triangles(x_ + kCornerRadius, y_ + height_ - kCornerRadius, M_PI / 2.0f, kAngleInc);
-    add_corner_triangles(x_ + kCornerRadius, y_ + kCornerRadius, M_PI, kAngleInc);
-    add_corner_triangles(x_ + width_ - kCornerRadius, y_ + kCornerRadius, 3.0f * M_PI / 2.0f, kAngleInc);
-
-    num_points_to_render_ = idx / 2U;
+    num_points_to_render_ = button_buffer_.idx() / 2U;
 }
 
 void Button::mousePressed(wxMouseEvent& event)
@@ -137,7 +123,7 @@ void Button::updateVertexBuffer()
 {
     changeButtonPoints();
 
-    vertex_buffer_2_.updateBufferData(0, points_, num_points_to_render_, 2);
+    vertex_buffer_2_.updateBufferData(0, button_buffer_.data(), num_points_to_render_, 2);
 }
 
 void Button::render() const

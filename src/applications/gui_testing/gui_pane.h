@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "button.h"
+#include "checkbox.h"
 #include "gui_element.h"
 #include "shader.h"
 #include "slider.h"

@@ -17,7 +17,7 @@ private:
     VertexBuffer vertex_buffer_2_;
     size_t num_points_to_render_;
 
-    float* points_;
+    BufferedVector button_buffer_;
 
     void changeButtonPoints();
 

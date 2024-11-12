@@ -18,4 +18,8 @@ void main()
     {
         output_color = vec4(fragment_color, 1.0);
     }
+    else if (shader_mode == int(3))  // Checkbox
+    {
+        output_color = vec4(fragment_color, 1.0);
+    }
 }

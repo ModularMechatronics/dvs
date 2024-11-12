@@ -272,7 +272,7 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
     shader_collection_.simple_shader.use();
     shader_collection_.simple_shader.base_uniform_handles.use_clip_plane.setInt(0);
 
-    gui_elements_.push_back(
+    /*gui_elements_.push_back(
         std::make_shared<GuiElement>(10.0f, 10.0f, 50.0f, 50.0f, "top left", RGBTripletf(0.6f, 0.5f, 0.0f)));
 
     gui_elements_.push_back(
@@ -300,7 +300,7 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
         200.0f, 200.0f, 50.0f, 50.0f, "Precisely adjacent left", RGBTripletf(1.0f, 0.0f, 0.0f)));
 
     gui_elements_.push_back(std::make_shared<GuiElement>(
-        250.0f, 210.0f, 50.0f, 50.0f, "Precisely adjacent right", RGBTripletf(0.0f, 1.0f, 0.0f)));
+        250.0f, 210.0f, 50.0f, 50.0f, "Precisely adjacent right", RGBTripletf(0.0f, 1.0f, 0.0f)));*/
 
     gui_elements_.push_back(std::make_shared<Button>(
         700.0f,
@@ -316,7 +316,7 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
         700.0f,
         510.0f,
         250.0f,
-        30.0f,
+        60.0f,
         -13,
         10,
         34,
@@ -330,6 +330,17 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
         [](const uint64_t id, const int32_t new_value) {
             std::cout << "Slider final value: " << new_value << std::endl;
         }));
+
+    gui_elements_.push_back(std::make_shared<Checkbox>(400.0f,
+                                                       510.0f,
+                                                       120.0f,
+                                                       120.0f,
+                                                       "Checkbox",
+                                                       RGBTripletf(1.0f, 1.0f, 1.0f),
+                                                       [](const uint64_t id, const bool new_state) {
+                                                           std::cout << "Checkbox " << id
+                                                                     << " state changed: " << new_state << std::endl;
+                                                       }));
 
     current_hovered_element_ = nullptr;
     current_pressed_element_ = nullptr;

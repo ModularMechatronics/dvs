@@ -6,8 +6,12 @@
 #include <functional>
 #include <string>
 
+#include "opengl_primitives.h"
 #include "rgbtriplet.h"
 #include "vertex_buffer.h"
+
+constexpr float kMinWidth = 10.0f;
+constexpr float kMinHeight = 10.0f;
 
 enum class ChangeDirection : uint8_t
 {
@@ -27,7 +31,8 @@ enum class ShaderMode : int32_t
 {
     NORMAL,
     BUTTON,
-    SLIDER
+    SLIDER,
+    CHECKBOX
 };
 
 class GuiElement
@@ -71,11 +76,10 @@ public:
     void mouseExited(wxPoint& exit_point);
     virtual void mouseMoved(wxMouseEvent& event, const wxPoint& delta_vec);
     virtual void mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec);
-    // TODO: Catch double click, that probably why clicking fast doesn't work
     virtual void mousePressed(wxMouseEvent& event);
     virtual void mouseReleased(wxMouseEvent& event);
     ChangeDirection GetDirectionFromMouse(const wxPoint pt) const;
-    void ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction);
+    virtual void ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction);
 
     ShaderMode GetShaderMode() const
     {

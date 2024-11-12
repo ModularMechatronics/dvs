@@ -39,4 +39,13 @@ void main()
 
         fragment_color = vertex_color;
     }
+    else if (shader_mode == int(3))  // Checkbox
+    {
+        gl_Position = vec4(2.0 * in_vertex.x / (pane_width - 1.0) - 1.0,
+                           1.0 - 2.0 * in_vertex.y / (pane_height - 1.0),
+                           in_vertex.z,
+                           1.0);
+
+        fragment_color = vertex_color;
+    }
 }

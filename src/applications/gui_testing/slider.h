@@ -15,8 +15,6 @@ public:
     };
 
 private:
-    // std::string text_;
-    // std::function<void()> callback_;
     std::string label_;
     std::function<void(const uint64_t, const int32_t)> slider_changed_value_callback_;
     std::function<void(const uint64_t, const int32_t)> slider_final_value_callback_;
@@ -26,8 +24,8 @@ private:
     size_t num_line_points_to_render_;
     size_t num_circle_points_to_render_;
 
-    float* line_points_;
-    float* circle_points_;
+    BufferedVector line_buffer_;
+    BufferedVector circle_buffer_;
 
     int32_t min_val_;
     int32_t max_val_;
@@ -57,6 +55,7 @@ public:
     void mousePressed(wxMouseEvent& event) override;
     void mouseReleased(wxMouseEvent& event) override;
     void mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec) override;
+    void ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction) override;
 
     void render() const override;
     void updateVertexBuffer() override;

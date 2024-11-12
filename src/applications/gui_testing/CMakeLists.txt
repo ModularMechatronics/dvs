@@ -8,9 +8,11 @@ set(CPP_SOURCE_FILES main.cpp
                      gui_pane.cpp
                      gui_pane_events.cpp
                      gui_element.cpp
+                     opengl_primitives.cpp
                      shader.cpp
                      button.cpp
                      slider.cpp
+                     checkbox.cpp
                      main_window.cpp)
 
 add_executable(gui_test ${CPP_SOURCE_FILES})
