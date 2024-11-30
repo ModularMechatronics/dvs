@@ -117,13 +117,13 @@ Scatter3D::Scatter3D(const CommunicationHeader& hdr,
 
     if (user_supplied_properties.is_appendable)
     {
-        vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.data, 3);
+        vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.value_or(kDefaultBufferSize), 3);
 
         vertex_buffer_.updateBufferData(0U, converted_data_local->points_ptr, num_elements_, 3U, num_added_elements_);
 
         if (has_color_)
         {
-            vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.data, 3);
+            vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.value_or(kDefaultBufferSize), 3);
             vertex_buffer_.updateBufferData(
                 1U, converted_data_local->color_ptr, num_elements_, 3U, num_added_elements_);
         }

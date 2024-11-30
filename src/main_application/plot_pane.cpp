@@ -74,6 +74,7 @@ void PlotPane::initShaders()
     shader_collection_.scatter_shader = createShader<ScatterShader>(base_path, "scatter_shader");
     shader_collection_.draw_mesh_shader = createShader<DrawMeshShader>(base_path, "draw_mesh_shader");
     shader_collection_.legend_shader = createShader<ShaderBase>(base_path, "legend_shader");
+    shader_collection_.screen_space_shader = createShader<ShaderBase>(base_path, "screen_space_shader");
 }
 
 PlotPane::PlotPane(

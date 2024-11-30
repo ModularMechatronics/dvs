@@ -188,7 +188,7 @@ protected:
 
     ItemId id_;
 
-    void assignProperties(const UserSuppliedProperties& user_supplied_properties, ColorPicker& color_picker);
+    void initializeProperties(const UserSuppliedProperties& user_supplied_properties, ColorPicker& color_picker);
     virtual void findMinMax() = 0;
 
     void postInitialize(ReceivedData& received_data,

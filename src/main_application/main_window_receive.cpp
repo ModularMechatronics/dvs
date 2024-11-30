@@ -74,6 +74,11 @@ std::shared_ptr<const ConvertedDataBase> convertPlotObjectData(const Communicati
             converted_data = Plot3D::convertRawData(hdr, attributes, user_supplied_properties, received_data.payloadData());
             break;
 
+        case Function::SCREEN_SPACE_PRIMITIVE:
+            converted_data = ScreenSpacePrimitive::convertRawData(hdr, attributes, user_supplied_properties,
+                                                                  received_data.payloadData());
+            break;
+
         case Function::FAST_PLOT2:
             converted_data = FastPlot2D::convertRawData(hdr, attributes, user_supplied_properties, received_data.payloadData());
             break;

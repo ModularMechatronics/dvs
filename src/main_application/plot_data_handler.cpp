@@ -10,7 +10,6 @@
 PlotDataHandler::PlotDataHandler(const ShaderCollection& shader_collection)
     : pending_soft_clear_(false), shader_collection_{shader_collection}
 {
-    // awaiting_properties_.resize(UINT8_MAX);
     awaiting_user_supplied_properties_.resize(UINT8_MAX);
 }
 
@@ -215,6 +214,15 @@ void PlotDataHandler::addData(const CommunicationHeader& hdr,
                                                                            color_picker_)));
             break;
 
+        case Function::SCREEN_SPACE_PRIMITIVE:
+            plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new ScreenSpacePrimitive(hdr,
+                                                                                       received_data,
+                                                                                       converted_data,
+                                                                                       plot_object_attributes,
+                                                                                       full_user_supplied_properties,
+                                                                                       shader_collection_,
+                                                                                       color_picker_)));
+            break;
         case Function::FAST_PLOT2:
             plot_datas_.push_back(dynamic_cast<PlotObjectBase*>(new FastPlot2D(hdr,
                                                                                received_data,

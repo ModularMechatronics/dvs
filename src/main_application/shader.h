@@ -270,6 +270,7 @@ struct ShaderCollection
     ImShowShader img_plot_shader;
     DrawMeshShader draw_mesh_shader;
     ShaderBase legend_shader;
+    ShaderBase screen_space_shader;
 };
 
 #endif  // MAIN_APPLICATION_SHADER_H_

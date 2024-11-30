@@ -9,6 +9,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <optional>
 
 #include "axes/legend_properties.h"
 #include "color_picker.h"
@@ -119,27 +120,6 @@ template <typename T> duoplot::internal::PropertyType templateToPropertyType()
 
 class UserSuppliedProperties
 {
-public:
-    template <typename T> struct OptionalParameter
-    {
-        bool has_default_value;
-        T data;
-
-        OptionalParameter() : has_default_value{true} {}
-        OptionalParameter(const T& data_in) : has_default_value{true}, data{data_in} {}
-
-        OptionalParameter<T>& operator=(const T& data_in)
-        {
-            static_assert(!std::is_same<OptionalParameter, T>::value,
-                          "Assert to guard that this operator is used correctly");
-
-            has_default_value = false;
-            data = data_in;
-
-            return *this;
-        }
-    };
-
 private:
     bool has_properties_;
 
@@ -148,11 +128,11 @@ private:
     duoplot::internal::CommunicationHeader::FlagsArray flags_;
 
     template <typename T>
-    void overwritePropertyFromOtherIfPresent(OptionalParameter<T>& local, const OptionalParameter<T> other)
+    void overwritePropertyFromOtherIfPresent(std::optional<T>& local, const std::optional<T> other)
     {
-        if (!other.has_default_value)
+        if (other.has_value())
         {
-            local = other.data;
+            local = other.value();
             has_properties_ = true;
         }
     }
@@ -207,35 +187,35 @@ public:
 
 
     // Properties
-    OptionalParameter<std::string> label{kDefaultLabel};
+    std::optional<std::string> label{std::nullopt};
 
-    OptionalParameter<ScatterStyle> scatter_style{kDefaultScatterStyle};
-    OptionalParameter<LineStyle> line_style{kDefaultLineStyle};
+    std::optional<ScatterStyle> scatter_style{std::nullopt};
+    std::optional<LineStyle> line_style{std::nullopt};
 
-    OptionalParameter<float> z_offset{kDefaultZOffset};
-    OptionalParameter<float> alpha{kDefaultAlpha};
-    OptionalParameter<float> line_width{kDefaultLineWidth};
-    OptionalParameter<float> point_size{kDefaultPointSize};
+    std::optional<float> z_offset{std::nullopt};
+    std::optional<float> alpha{std::nullopt};
+    std::optional<float> line_width{std::nullopt};
+    std::optional<float> point_size{std::nullopt};
 
-    OptionalParameter<uint16_t> buffer_size{kDefaultBufferSize};
+    std::optional<uint16_t> buffer_size{std::nullopt};
 
-    OptionalParameter<RGBTripletf> color;
+    std::optional<RGBTripletf> color{std::nullopt};
 
-    OptionalParameter<RGBTripletf> edge_color{kDefaultEdgeColor};
+    std::optional<RGBTripletf> edge_color{std::nullopt};
     bool no_edges{kDefaultNoEdges};
 
-    OptionalParameter<RGBTripletf> face_color;
+    std::optional<RGBTripletf> face_color;
     bool no_faces{kDefaultNoFaces};
 
-    OptionalParameter<RGBTripletf> silhouette{kDefaultSilhouette};
+    std::optional<RGBTripletf> silhouette{kDefaultSilhouette};
     float silhouette_percentage{kDefaultSilhouettePercentage};
     bool has_silhouette;
 
-    OptionalParameter<ColorMap> color_map;
+    std::optional<ColorMap> color_map;
 
-    OptionalParameter<DistanceFrom> distance_from;
+    std::optional<DistanceFrom> distance_from;
 
-    OptionalParameter<Transform> custom_transform;
+    std::optional<Transform> custom_transform;
 
     bool is_persistent{kDefaultIsPersistent};
     bool is_updateable{kDefaultIsUpdateable};

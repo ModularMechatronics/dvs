@@ -621,7 +621,7 @@ void AxesRenderer::updateStates(const AxesLimits& axes_limits,
     current_mouse_interaction_axis_ = current_mouse_interaction_axis;
     axes_side_configuration_ = axes_side_configuration;
 
-    rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * rotationMatrixX(-view_angles_.getSnappedElevation());
+    const Matrix<double> rot_mat = rotationMatrixZ(-view_angles_.getSnappedAzimuth()) * rotationMatrixX(-view_angles_.getSnappedElevation());
 
     for (int r = 0; r < 3; r++)
     {

@@ -53,3 +53,4 @@ hello_c
 hello_cpp
 hello_python.py
 some_separate_app
+src/applications/text_rendering/glfw

@@ -39,7 +39,7 @@ PlotObjectBase::PlotObjectBase(ReceivedData& received_data,
     has_edge_color_ = true;
     has_silhouette_ = false;
 
-    assignProperties(user_supplied_properties, color_picker);
+    initializeProperties(user_supplied_properties, color_picker);
 }
 
 void PlotObjectBase::postInitialize(ReceivedData& received_data,
@@ -89,78 +89,78 @@ void PlotObjectBase::updateProperties(const UserSuppliedProperties& user_supplie
     dynamic_or_static_usage_ = is_updateable_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 
     // Properties
-    if (!user_supplied_properties.alpha.has_default_value)
+    if (user_supplied_properties.alpha.has_value())
     {
-        alpha_ = user_supplied_properties.alpha.data;
+        alpha_ = user_supplied_properties.alpha.value();
     }
 
-    if (!user_supplied_properties.buffer_size.has_default_value)
+    if (user_supplied_properties.buffer_size.has_value())
     {
-        buffer_size_ = user_supplied_properties.buffer_size.data;
+        buffer_size_ = user_supplied_properties.buffer_size.value();
     }
 
-    if (!user_supplied_properties.scatter_style.has_default_value)
+    if (user_supplied_properties.scatter_style.has_value())
     {
-        scatter_style_ = user_supplied_properties.scatter_style.data;
+        scatter_style_ = user_supplied_properties.scatter_style.value();
     }
 
-    if ((!user_supplied_properties.line_style.has_default_value) && (user_supplied_properties.line_style.data != LineStyle::SOLID))
+    if ((user_supplied_properties.line_style.has_value()) && (user_supplied_properties.line_style.value() != LineStyle::SOLID))
     {
         has_line_style_ = true;
-        line_style_ = user_supplied_properties.line_style.data;
+        line_style_ = user_supplied_properties.line_style.value();
     }
     else
     {
         has_line_style_ = false;
     }
 
-    if (!user_supplied_properties.line_width.has_default_value)
+    if (user_supplied_properties.line_width.has_value())
     {
-        line_width_ = user_supplied_properties.line_width.data;
+        line_width_ = user_supplied_properties.line_width.value();
     }
 
-    if (!user_supplied_properties.point_size.has_default_value)
+    if (user_supplied_properties.point_size.has_value())
     {
-        point_size_ = user_supplied_properties.point_size.data;
+        point_size_ = user_supplied_properties.point_size.value();
     }
 
-    if (!user_supplied_properties.z_offset.has_default_value)
+    if (user_supplied_properties.z_offset.has_value())
     {
-        z_offset_ = user_supplied_properties.z_offset.data;
+        z_offset_ = user_supplied_properties.z_offset.value();
     }
 
-    if (!user_supplied_properties.custom_transform.has_default_value)
+    if (user_supplied_properties.custom_transform.has_value())
     {
         has_custom_transform_ = true;
-        setTransform(user_supplied_properties.custom_transform.data.rotation,
-                     user_supplied_properties.custom_transform.data.translation,
-                     user_supplied_properties.custom_transform.data.scale);
+        setTransform(user_supplied_properties.custom_transform.value().rotation,
+                     user_supplied_properties.custom_transform.value().translation,
+                     user_supplied_properties.custom_transform.value().scale);
     }
 
-    if (!user_supplied_properties.distance_from.has_default_value)
+    if (user_supplied_properties.distance_from.has_value())
     {
-        distance_from_ = user_supplied_properties.distance_from.data;
+        distance_from_ = user_supplied_properties.distance_from.value();
         has_distance_from_ = true;
     }
 
-    if (!user_supplied_properties.label.has_default_value)
+    if (user_supplied_properties.label.has_value())
     {
-        label_ = user_supplied_properties.label.data;
+        label_ = user_supplied_properties.label.value();
         has_label_ = true;
     }
 
-    if (!user_supplied_properties.color.has_default_value)
+    if (user_supplied_properties.color.has_value())
     {
-        color_ = user_supplied_properties.color.data;
+        color_ = user_supplied_properties.color.value();
     }
 
-    if (!user_supplied_properties.color_map.has_default_value)
+    if (user_supplied_properties.color_map.has_value())
     {
-        color_map_ = user_supplied_properties.color_map.data;
+        color_map_ = user_supplied_properties.color_map.value();
         has_color_map_ = true;
     }
 
-    if (!user_supplied_properties.edge_color.has_default_value)
+    if (user_supplied_properties.edge_color.has_value())
     {
         if (user_supplied_properties.no_edges)
         {
@@ -168,19 +168,19 @@ void PlotObjectBase::updateProperties(const UserSuppliedProperties& user_supplie
         }
         else
         {
-            edge_color_ = user_supplied_properties.edge_color.data;
+            edge_color_ = user_supplied_properties.edge_color.value();
             has_edge_color_ = true;
         }
     }
 
-    if (!user_supplied_properties.silhouette.has_default_value)
+    if (user_supplied_properties.silhouette.has_value())
     {
         has_silhouette_ = user_supplied_properties.has_silhouette;
         silhouette_percentage_ = user_supplied_properties.silhouette_percentage;
-        silhouette_ = user_supplied_properties.silhouette.data;
+        silhouette_ = user_supplied_properties.silhouette.value();
     }
 
-    if (!user_supplied_properties.face_color.has_default_value)
+    if (user_supplied_properties.face_color.has_value())
     {
         if (user_supplied_properties.no_faces)
         {
@@ -188,7 +188,7 @@ void PlotObjectBase::updateProperties(const UserSuppliedProperties& user_supplie
         }
         else
         {
-            face_color_ = user_supplied_properties.face_color.data;
+            face_color_ = user_supplied_properties.face_color.value();
             has_face_color_ = true;
         }
     }
@@ -219,7 +219,7 @@ bool isPlotDataFunction(const Function fcn)
            (fcn == Function::SCATTER2) || (fcn == Function::SCATTER3) || (fcn == Function::SURF) ||
            (fcn == Function::IM_SHOW) || (fcn == Function::PLOT_COLLECTION2) || (fcn == Function::PLOT_COLLECTION3) ||
            (fcn == Function::DRAW_MESH_SEPARATE_VECTORS) || (fcn == Function::DRAW_MESH) ||
-           (fcn == Function::REAL_TIME_PLOT);
+           (fcn == Function::REAL_TIME_PLOT) || (fcn == Function::SCREEN_SPACE_PRIMITIVE);
 }
 
 void PlotObjectBase::modifyShader()
@@ -282,7 +282,7 @@ void PlotObjectBase::setTransform(const MatrixFixed<double, 3, 3>& rotation,
     }
 }
 
-void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplied_properties, ColorPicker& color_picker)
+void PlotObjectBase::initializeProperties(const UserSuppliedProperties& user_supplied_properties, ColorPicker& color_picker)
 {
     // Flags
     is_persistent_ = user_supplied_properties.is_persistent;
@@ -293,49 +293,49 @@ void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplie
     dynamic_or_static_usage_ = user_supplied_properties.dynamic_or_static_usage;
 
     // Properties
-    alpha_ = user_supplied_properties.alpha.data;
-    buffer_size_ = user_supplied_properties.buffer_size.data;
-    scatter_style_ = user_supplied_properties.scatter_style.data;
-    line_width_ = user_supplied_properties.line_width.data;
-    point_size_ = user_supplied_properties.point_size.data;
+    alpha_ = user_supplied_properties.alpha.value_or(kDefaultAlpha);
+    buffer_size_ = user_supplied_properties.buffer_size.value_or(kDefaultBufferSize);
+    scatter_style_ = user_supplied_properties.scatter_style.value_or(kDefaultScatterStyle);
+    line_width_ = user_supplied_properties.line_width.value_or(kDefaultLineWidth);
+    point_size_ = user_supplied_properties.point_size.value_or(kDefaultPointSize);
 
-    z_offset_ = user_supplied_properties.z_offset.data;
+    z_offset_ = user_supplied_properties.z_offset.value_or(kDefaultZOffset);
 
-    if ((!user_supplied_properties.line_style.has_default_value) && (user_supplied_properties.line_style.data != LineStyle::SOLID))
+    /*if ((user_supplied_properties.line_style.has_value()) && (user_supplied_properties.line_style.value() != LineStyle::SOLID))
     {
         has_line_style_ = true;
-        line_style_ = user_supplied_properties.line_style.data;
+        line_style_ = user_supplied_properties.line_style.value();
     }
     else
     {
         has_line_style_ = false;
-    }
+    }*/
 
-    if (!user_supplied_properties.custom_transform.has_default_value)
+    if (user_supplied_properties.custom_transform.has_value())
     {
         has_custom_transform_ = true;
-        setTransform(user_supplied_properties.custom_transform.data.rotation,
-                     user_supplied_properties.custom_transform.data.translation,
-                     user_supplied_properties.custom_transform.data.scale);
+        setTransform(user_supplied_properties.custom_transform.value().rotation,
+                     user_supplied_properties.custom_transform.value().translation,
+                     user_supplied_properties.custom_transform.value().scale);
     }
     else
     {
         has_custom_transform_ = false;
     }
 
-    if (!user_supplied_properties.distance_from.has_default_value)
+    if (user_supplied_properties.distance_from.has_value())
     {
         has_distance_from_ = true;
-        distance_from_ = user_supplied_properties.distance_from.data;
+        distance_from_ = user_supplied_properties.distance_from.value();
     }
     else
     {
         has_distance_from_ = false;
     }
 
-    if (!user_supplied_properties.label.has_default_value)
+    if (user_supplied_properties.label.has_value())
     {
-        label_ = user_supplied_properties.label.data;
+        label_ = user_supplied_properties.label.value();
         has_label_ = true;
     }
     else
@@ -343,18 +343,18 @@ void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplie
         has_label_ = false;
     }
 
-    if (!user_supplied_properties.color.has_default_value)
+    if (user_supplied_properties.color.has_value())
     {
-        color_ = user_supplied_properties.color.data;
+        color_ = user_supplied_properties.color.value();
     }
     else
     {
         color_ = color_picker.getNextColor();
     }
 
-    if (!user_supplied_properties.color_map.has_default_value)
+    if (user_supplied_properties.color_map.has_value())
     {
-        color_map_ = user_supplied_properties.color_map.data;
+        color_map_ = user_supplied_properties.color_map.value();
         has_color_map_ = true;
     }
     else
@@ -362,7 +362,7 @@ void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplie
         has_color_map_ = false;
     }
 
-    if (!user_supplied_properties.edge_color.has_default_value)
+    if (user_supplied_properties.edge_color.has_value())
     {
         if (user_supplied_properties.no_edges)
         {
@@ -371,7 +371,7 @@ void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplie
         else
         {
             has_edge_color_ = true;
-            edge_color_ = user_supplied_properties.edge_color.data;
+            edge_color_ = user_supplied_properties.edge_color.value();
         }
     }
     else
@@ -380,7 +380,7 @@ void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplie
         has_edge_color_ = true;
     }
 
-    if (!user_supplied_properties.face_color.has_default_value)
+    if (user_supplied_properties.face_color.has_value())
     {
         if (user_supplied_properties.no_faces)
         {
@@ -389,7 +389,7 @@ void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplie
         else
         {
             has_face_color_ = true;
-            face_color_ = user_supplied_properties.face_color.data;
+            face_color_ = user_supplied_properties.face_color.value();
         }
     }
     else
@@ -398,11 +398,11 @@ void PlotObjectBase::assignProperties(const UserSuppliedProperties& user_supplie
         has_face_color_ = true;
     }
 
-    if (!user_supplied_properties.silhouette.has_default_value)
+    if (user_supplied_properties.silhouette.has_value())
     {
         has_silhouette_ = user_supplied_properties.has_silhouette;
         silhouette_percentage_ = user_supplied_properties.silhouette_percentage;
-        silhouette_ = user_supplied_properties.silhouette.data;
+        silhouette_ = user_supplied_properties.silhouette.value();
     }
 }
 

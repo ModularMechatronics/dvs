@@ -231,7 +231,7 @@ std::shared_ptr<const ConvertedDataBase> ImShow::convertRawData(const Communicat
 {
     const InputParams input_params{attributes.num_channels,
                                    attributes.dims,
-                                   user_supplied_properties.z_offset.data,
+                                   user_supplied_properties.z_offset.value_or(kDefaultZOffset),
                                    attributes.data_type,
                                    attributes.num_bytes_per_element};
 

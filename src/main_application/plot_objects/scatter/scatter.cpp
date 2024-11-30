@@ -86,13 +86,13 @@ Scatter2D::Scatter2D(const CommunicationHeader& hdr,
 
     if (user_supplied_properties.is_appendable)
     {
-        vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.data, 3);
+        vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.value_or(kDefaultBufferSize), 3);
 
         vertex_buffer_.updateBufferData(0U, converted_data_local->points_ptr, num_elements_, 3U, num_added_elements_);
 
         if (has_color_)
         {
-            vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.data, 3);
+            vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.value_or(kDefaultBufferSize), 3);
             vertex_buffer_.updateBufferData(
                 1U, converted_data_local->color_data, num_elements_, 3U, num_added_elements_);
         }
@@ -249,7 +249,7 @@ std::shared_ptr<const ConvertedDataBase> Scatter2D::convertRawData(const Communi
                                    attributes.num_bytes_for_one_vec,
                                    attributes.has_color,
                                    attributes.has_point_sizes,
-                                   user_supplied_properties.z_offset.data};
+                                   user_supplied_properties.z_offset.value_or(kDefaultZOffset)};
 
     std::shared_ptr<const ConvertedDataBase> converted_data_base{
         applyConverter<ConvertedData>(data_ptr, attributes.data_type, Converter{}, input_params)};

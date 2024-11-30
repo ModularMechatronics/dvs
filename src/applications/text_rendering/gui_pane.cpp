@@ -58,7 +58,8 @@ void GuiPane::initShaders()
 
     shader_collection_.plot_box_shader = createShader<ShaderBase>(base_path, "plot_box_shader");
     shader_collection_.pane_background_shader = createShader<ShaderBase>(base_path, "pane_background");
-    shader_collection_.text_shader = createShader<TextShader>(base_path, "text");
+    shader_collection_.text_shader = createShader<TextShader>(base_path, "text_test");
+    shader_collection_.new_text_shader = createShader<NewTextShader>(base_path, "new_text_shader");
     shader_collection_.basic_plot_shader = createShader<ShaderBase>(base_path, "basic_plot_shader");
     shader_collection_.plot_2d_shader = createShader<Plot2DShader>(base_path, "plot_2d_shader");
     shader_collection_.plot_3d_shader = createShader<Plot3DShader>(base_path, "plot_3d_shader");
@@ -80,20 +81,23 @@ GuiPane::GuiPane(wxFrame* parent)
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this);  // TODO: Can be removed?
     initShaders();
-    shader_collection_.text_shader.use();
+    shader_collection_.new_text_shader.use();
+    glUniform1i(shader_collection_.new_text_shader.uniform_handles.text_sampler, 0);
     text_renderer_ = new TextRenderer();
 
     glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
     
     glEnable(GL_DEPTH_CLAMP);
-    initFreetype();
+    // initFreetype();
 
-    glUniform1i(shader_collection_.text_shader.uniform_handles.text_sampler, 0);
+    // glUniform1i(shader_collection_.text_shader.uniform_handles.text_sampler, 0);
 
-    glEnable(GL_MULTISAMPLE);
-    glEnable(GL_PROGRAM_POINT_SIZE);
+    shader_collection_.new_text_shader.use();
+    
+    // glEnable(GL_MULTISAMPLE);
+    // glEnable(GL_PROGRAM_POINT_SIZE);
 
-    glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+    // glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 
     Bind(wxEVT_PAINT, &GuiPane::render, this);
 
@@ -124,17 +128,26 @@ void GuiPane::render(wxPaintEvent& WXUNUSED(evt))
     }
 
     wxGLCanvas::SetCurrent(*m_context);
-    wxPaintDC(this);  // TODO: Can be removed?
+    wxPaintDC(this);
 
-    glClearColor(0.0, 0.6, 0.5, 0.0f);
+    glClearColor(0.1, 0.5, 0.5, 1.0);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    shader_collection_.text_shader.use();
+    /*glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 0.0, 0.0, 0.0);
+    wxSize size = GetSize();
+    // std::cout << "Size: " << size.GetWidth() << " " << size.GetHeight() << std::endl;
+    shader_collection_.text_shader.uniform_handles.pane_width.setFloat(size.GetWidth());
+    shader_collection_.text_shader.uniform_handles.pane_height.setFloat(size.GetHeight());
 
-    glUniform3f(shader_collection_.text_shader.uniform_handles.text_color, 1.0, 0.0, 0.0);
+    // text_renderer_->renderTextFromLeftCenter("A,a\"^jlghyk-lp1q2{3}4[5]6(78)9@0", -0.95, 0.0, 0.0003f, 500, 478);
+    text_renderer_->renderTextTest('A', -0.95, -0.95, 0.0003f, 500, 478);*/
 
-    text_renderer_->renderTextFromLeftCenter("A,a\"^jlghyk-lp1q2{3}4[5]6(78)9@0", -0.95, 0.0, 0.0003f, 500, 478);
+    shader_collection_.new_text_shader.use();
+    shader_collection_.new_text_shader.uniform_handles.zoomscale.setFloat(1.0f);
+
+    text_renderer_->renderTextNew("Helloooo", -0.95, -0.95, 0.0003f, 500, 478);
 
     /*float size = 0.0005f, y = -0.9f;
 

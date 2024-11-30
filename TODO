@@ -13,7 +13,6 @@ Pre release:
 - Rename everything with "element" to "view", e.g. setCurrentElement -> setCurrentView, because "element" was chosen when other types of gui elements were considered, thus the general name. Check if setting current gui element is needed for other gui element types (button, text field, drop down), might not be necessary since all information can be passed in one function call, thus no need to set state
 - If setCurrentElement -> setCurrentView, view -> setViewAngles/viewAngles
 - Adding another .c file using the c interface creates linker error for duplicated functions -> make inline
-- Make sure APPENDABLE is working for scatter, scatter3, plot, plot3
 - Move "FAST_PLOT" flag to "not_ready" namespace?
 - Text viewer just showing the most recent value of a topic, both numerical and text. Maybe both a separate window, and separate text labels for individual topics
 - Rename "stream_type" in project files to "plot_type" or something
@@ -22,8 +21,14 @@ Pre release:
 - PlotProperties -> UserProperties in duoplot application
 - All gui elements should have a setting that makes their size or position scale with window size
 - Semi transparent overlay when resizing, showing the different resizing zones, maybe indicating which zones that are disabled, if one is resizing a lets say, horizontal slider, where height cannot be resized
+- setCurrentElement -> setActiveElement
+- Should probably rename "element" to view in "setActiveElement", because the plot view is the only type of element that's gonna be state based, all others are going to be handle based
+- Remove "APPENDABLE" and "UPDATEABLE" option for now
 
 Post release:
+- Add handle based interface for plot views
+- Finish "APPENDABLE" and "UPDATEABLE" options
+- Template duoplot configurations, with examples to compile and run
 - Implement GL_DOUBLE, software based and Opengl based when supported, or hack (https://prideout.net/emulating-double-precision, https://godotengine.org/article/emulating-double-precision-gpu-render-large-worlds/)
 - Filters to scrolling text
 - Arbitrary 2D primitives for the plot pane, in pixel coorinates (or -1 to 1), to draw rect, box, circle, text etc.

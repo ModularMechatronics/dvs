@@ -6,17 +6,20 @@
 #include <string_view>
 
 #include "duoplot/math/math.h"
+#include "opengl_textrendering/font_atlas.h"
+#include "opengl_textrendering/label_text_store.h"
 
 #include <OpenGL/gl3.h>
 
 class TextRenderer
 {
 private:
-    unsigned int vao, vbo;
+    unsigned int vao_, vbo_;
+    label_text_store label_store_;
 
 public:
     TextRenderer();
-    void renderTextFromCenter(const std::string_view& text,
+    /*void renderTextFromCenter(const std::string_view& text,
                               float x,
                               float y,
                               float scale,
@@ -34,6 +37,15 @@ public:
                                   float scale,
                                   const float axes_width,
                                   const float axes_height) const;
+    void renderTextTest(
+        const char c_val, float x, float y, float scale, const float axes_width, const float axes_height) const;*/
+    
+    void renderTextNew(const std::string_view& text,
+                                  float x,
+                                  float y,
+                                  float scale,
+                                  const float axes_width,
+                                  const float axes_height);
 };
 
 bool initFreetype();

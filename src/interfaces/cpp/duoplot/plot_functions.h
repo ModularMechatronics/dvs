@@ -1742,6 +1742,33 @@ void drawCube(const T x, const T y, const T z, const T size, const Us&... settin
     drawCubes(x_vec, y_vec, z_vec, size, settings...);
 }
 
+template <typename... Us>
+void drawScreenSpaceCoordinates(const Vector<std::array<Point2f, 3U>>& triangles, const Us&... settings)
+{
+    internal::CommunicationHeader hdr{internal::Function::SCREEN_SPACE_PRIMITIVE};
+    hdr.append(internal::CommunicationHeaderObjectType::DATA_TYPE, internal::DataType::FLOAT);
+    hdr.append(internal::CommunicationHeaderObjectType::NUM_ELEMENTS, internal::toUInt32(triangles.size()));
+
+    hdr.extend(settings...);
+
+    internal::sendHeaderAndData(internal::getSendFunction(), hdr, triangles);
+}
+
+template <typename... Us>
+void drawScreenSpaceRect(const float x_upper_left, const float y_upper_left, const float width, const float height, const Us&... settings)
+{
+    using Triangle = std::array<Point2f, 3U>;
+
+    const Triangle t0{Point2f{x_upper_left, y_upper_left},
+                Point2f{x_upper_left + width, y_upper_left},
+                Point2f{x_upper_left + width, y_upper_left + height}};
+    const Triangle t1{Point2f{x_upper_left, y_upper_left},
+                Point2f{x_upper_left, y_upper_left + height},
+                Point2f{x_upper_left + width, y_upper_left + height}};
+    const Vector<Triangle> triangles{VectorInitializer<Triangle>{t0, t1}};
+    drawScreenSpaceCoordinates(triangles, settings...);
+}
+
 }  // namespace duoplot
 
 #endif  // DUOPLOT_PLOT_FUNCTIONS_H

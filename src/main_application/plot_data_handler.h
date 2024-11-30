@@ -31,7 +31,6 @@ public:
     std::vector<PlotObjectBase*> plot_datas_;
     std::vector<PlotObjectBase*> old_plot_datas_;
 
-    // std::vector<Properties> awaiting_properties_;
     std::vector<UserSuppliedProperties> awaiting_user_supplied_properties_;
     PlotDataHandler(const ShaderCollection& shader_collection);
     ~PlotDataHandler();

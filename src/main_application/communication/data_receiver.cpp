@@ -45,8 +45,8 @@ ReceivedData DataReceiver::receiveAndGetDataFromTcp()
     }
 
     size_t num_expected_bytes = 0U;
-    const ssize_t num_read_bytes0 = read(tcp_connfd_, &num_expected_bytes, sizeof(uint64_t));
-    if(num_read_bytes0 == 0 || num_expected_bytes == 0)
+    const ssize_t num_read_bytes = read(tcp_connfd_, &num_expected_bytes, sizeof(uint64_t));
+    if(num_read_bytes == 0 || num_expected_bytes == 0)
     {
         is_connected_ = false;
         close(tcp_connfd_);

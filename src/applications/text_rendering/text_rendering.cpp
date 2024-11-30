@@ -15,7 +15,7 @@
 
 using namespace duoplot;
 
-namespace
+namespace tr
 {
 struct Character
 {
@@ -30,7 +30,10 @@ struct Character
     unsigned int increment;
 };
 
-std::map<GLchar, Character> characters;
+}  // namespace
+
+
+std::map<GLchar, tr::Character> characters;
 
 bool is_initialized = false;
 
@@ -38,22 +41,29 @@ const std::string kFontPath = "/Users/danielpi/work/dvs/src/resources/fonts/Robo
 
 constexpr float kTextScaleParameter = 1000.0f;
 
-}  // namespace
-
 TextRenderer::TextRenderer()
 {
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    /*glGenVertexArrays(1, &vao_);
+    glGenBuffers(1, &vbo_);
+    glBindVertexArray(vao_);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    glBindVertexArray(0);*/
+
+    label_store_.init();
+
+    label_store_.add_text("Length = 98.76532101", glm::vec2(-0.8, -0.3), glm::vec3(1.0f, 1.0f, 0.0f), 1.0f, 45, 0.0004f);
+    label_store_.add_text("Pulled Pork Sandwich!!", glm::vec2(-0.4, 0), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, -15, 0.0003f);
+    label_store_.add_text("Hello", glm::vec2(-0.8, 0.3), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5.0f, 0.0003f);
+
+	label_store_.set_buffers();
+
 }
 
-void TextRenderer::renderTextFromCenter(
+/*void TextRenderer::renderTextFromCenter(
     const std::string_view& text, float x, float y, float scale, const float axes_width, const float axes_height) const
 {
     const Vec2f text_size = calculateStringSize(text, scale, axes_width, axes_height);
@@ -72,25 +82,24 @@ void TextRenderer::renderTextFromLeftCenter(
 {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     const Vec2f text_size = calculateStringSize(text, scale, axes_width, axes_height);
     y -= text_size.y / 2.0f;
 
     glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(vao);
+    glBindVertexArray(vao_);
 
     const float sx = kTextScaleParameter / axes_width;
     const float sy = kTextScaleParameter / axes_height;
 
     for (size_t k = 0; k < text.length(); k++)
     {
-        const Character& ch = characters[text[k]];
+        const tr::Character& ch = characters[text[k]];
 
         float xpos = x + ch.bitmap_left * scale;
         // float ypos = y + (ch.bitmap_top - static_cast<signed int>(ch.bitmap_rows)) * scale;
         float ypos = y + ch.diff * 0.0005f;
-
 
         const float w = ch.bitmap_width * scale * sx;
         const float h = ch.bitmap_rows * scale * sy;
@@ -105,7 +114,7 @@ void TextRenderer::renderTextFromLeftCenter(
 
         glBindTexture(GL_TEXTURE_2D, ch.texture_id);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -120,6 +129,71 @@ void TextRenderer::renderTextFromLeftCenter(
 
     glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
+}
+
+void TextRenderer::renderTextTest(
+    const char c_val, float x, float y, float scale, const float axes_width, const float axes_height) const
+{
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(vao_);
+
+    const float sx = kTextScaleParameter / axes_width;
+    const float sy = kTextScaleParameter / axes_height;
+
+    const tr::Character& ch = characters[c_val];
+
+    float xpos = x;
+    float ypos = y;
+
+    const float w = ch.bitmap_width * scale * sx;
+    const float h = ch.bitmap_rows * scale * sy;
+
+    const float xy_size = 1.0f;
+    const float uv_size = 1.0f;
+
+    const float vertices[6][4] = {{-xy_size, xy_size, 0.0f, 0.0f},
+                                    {-xy_size, -xy_size, 0.0f, uv_size},
+                                    {xy_size, -xy_size, uv_size, uv_size},
+
+                                    {-xy_size, xy_size, 0.0f, 0.0f},
+                                    {xy_size, -xy_size, uv_size, uv_size},
+                                    {xy_size, xy_size, uv_size, 0.0f}};
+
+    glBindTexture(GL_TEXTURE_2D, ch.texture_id);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
+}*/
+
+void TextRenderer::renderTextNew(const std::string_view& text,
+                                  float x,
+                                  float y,
+                                  float scale,
+                                  const float axes_width,
+                                  const float axes_height)
+{
+    // glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
+    label_store_.paint_text();
+
+    // glDisable(GL_CULL_FACE);
+    // glDisable(GL_BLEND);
 }
 
 bool initFreetype()
@@ -150,10 +224,8 @@ bool initFreetype()
             std::cout << "Could not load glyph '" << c << "'" << std::endl;
             continue;
         }
-        // face->glyph->metrics.ascent;
-        // std::cout << "Ascent: " << face->size->metrics.ascender << " for character " << c << std::endl;
-        // std::cout <<  c << ": " << static_cast<float>(face->glyph->metrics.horiBearingY) << std::endl;
-        std::cout <<  c << ": " << (static_cast<float>(face->glyph->bitmap_top) - static_cast<float>(face->glyph->bitmap.rows)) << std::endl;
+
+        // std::cout <<  c << ": " << (static_cast<float>(face->glyph->bitmap_top) - static_cast<float>(face->glyph->bitmap.rows)) << std::endl;
 
         unsigned int texture;
         glGenTextures(1, &texture);
@@ -173,7 +245,7 @@ bool initFreetype()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        const Character character = {texture,
+        const tr::Character character = {texture,
                                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
                                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
                                face->glyph->bitmap.width,
@@ -182,7 +254,7 @@ bool initFreetype()
                                face->glyph->bitmap_top,
                                static_cast<signed int>(static_cast<float>(face->glyph->bitmap_top) - static_cast<float>(face->glyph->bitmap.rows)),
                                static_cast<unsigned int>(face->glyph->advance.x)};
-        characters.insert(std::pair<char, Character>(c, character));
+        characters.insert(std::pair<char, tr::Character>(c, character));
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -214,7 +286,7 @@ Vec2f calculateStringSize(const std::string_view& text,
 
     float x_min, x_max, y_min, y_max;
 
-    Character ch = characters[text[0]];
+    tr::Character ch = characters[text[0]];
 
     x_min = ch.bearing.x * scale;
     x_max = x_min;
@@ -223,7 +295,7 @@ Vec2f calculateStringSize(const std::string_view& text,
 
     for (size_t k = 0; k < text.length(); k++)
     {
-        const Character& ch = characters[text[k]];
+        const tr::Character& ch = characters[text[k]];
 
         const float xpos = x + ch.bearing.x * scale;
         const float ypos = -(ch.size.y - ch.bearing.y) * scale;

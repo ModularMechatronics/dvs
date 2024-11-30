@@ -62,6 +62,7 @@ set(CPP_SOURCE_FILES main.cpp
                      plot_objects/stairs/stairs.cpp
                      plot_objects/surf/surf.cpp
                      plot_objects/scrolling_plot2d/scrolling_plot2d.cpp
+                     plot_objects/screen_space_primitive/screen_space_primitive.cpp
 
                      plot_objects/stream_object_base/stream_object_base.cpp
                      plot_objects/stream_objects/plot2d/plot2d.cpp
@@ -103,7 +104,9 @@ set(CPP_SOURCE_FILES main.cpp
 
                      project_state/scrolling_text_settings.cpp
 
-                     user_supplied_properties.cpp)
+                     user_supplied_properties.cpp
+
+                     graphic_window.cpp)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${REPO_DIR}/src/build/)
 

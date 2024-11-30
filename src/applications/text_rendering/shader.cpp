@@ -108,7 +108,29 @@ void TextShader::setUniformHandles()
 {
     uniform_handles.text_sampler = glGetUniformLocation(program_id_, "text_sampler");
     uniform_handles.text_color = glGetUniformLocation(program_id_, "text_color");
+    uniform_handles.pane_width = Uniform(program_id_, "pane_width");
+    uniform_handles.pane_height = Uniform(program_id_, "pane_height");
+    uniform_handles.offset_x = Uniform(program_id_, "offset_x");
+    uniform_handles.offset_y = Uniform(program_id_, "offset_y");
 }
+
+NewTextShader::NewTextShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
+    : ShaderBase(vertex_shader, fragment_shader, src)
+{
+    setUniformHandles();
+}
+
+void NewTextShader::setUniformHandles()
+{
+    uniform_handles.text_sampler = glGetUniformLocation(program_id_, "u_Texture");
+    uniform_handles.text_color = glGetUniformLocation(program_id_, "text_color");
+    uniform_handles.pane_width = Uniform(program_id_, "pane_width");
+    uniform_handles.pane_height = Uniform(program_id_, "pane_height");
+    uniform_handles.offset_x = Uniform(program_id_, "offset_x");
+    uniform_handles.offset_y = Uniform(program_id_, "offset_y");
+    uniform_handles.zoomscale = Uniform(program_id_, "zoomscale");
+}
+
 
 ShaderBase::ShaderBase(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src)
 {

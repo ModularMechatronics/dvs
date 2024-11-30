@@ -157,35 +157,35 @@ void UserSuppliedProperties::clear()
 {
     has_properties_ = false;
 
-    label = OptionalParameter<std::string>{kDefaultLabel};
+    label = std::nullopt;
 
-    scatter_style = OptionalParameter<ScatterStyle>{kDefaultScatterStyle};
-    line_style = OptionalParameter<LineStyle>{kDefaultLineStyle};
+    scatter_style = std::nullopt;
+    line_style = std::nullopt;
 
-    z_offset = OptionalParameter<float>{kDefaultZOffset};
-    alpha = OptionalParameter<float>{kDefaultAlpha};
-    line_width = OptionalParameter<float>{kDefaultLineWidth};
-    point_size = OptionalParameter<float>{kDefaultPointSize};
+    z_offset = std::nullopt;
+    alpha = std::nullopt;
+    line_width = std::nullopt;
+    point_size = std::nullopt;
 
-    buffer_size = OptionalParameter<uint16_t>{kDefaultBufferSize};
+    buffer_size = std::nullopt;
 
-    color = OptionalParameter<RGBTripletf>{};
+    color = std::nullopt;
 
-    edge_color = OptionalParameter<RGBTripletf>{kDefaultEdgeColor};
+    edge_color = std::nullopt;
     no_edges = kDefaultNoEdges;
 
-    face_color = OptionalParameter<RGBTripletf>{};
+    face_color = std::nullopt;
     no_faces = kDefaultNoFaces;
 
-    silhouette = OptionalParameter<RGBTripletf>{};
+    silhouette = std::nullopt;
     has_silhouette = kDefaultHasSilhouette;
     silhouette_percentage = kDefaultSilhouettePercentage;
 
-    color_map = OptionalParameter<ColorMap>{};
+    color_map = std::nullopt;
 
-    distance_from = OptionalParameter<DistanceFrom>{};
+    distance_from = std::nullopt;
 
-    custom_transform = OptionalParameter<Transform>{};
+    custom_transform = std::nullopt;
 
     is_persistent = kDefaultIsPersistent;
     is_updateable = kDefaultIsUpdateable;
@@ -210,25 +210,25 @@ void UserSuppliedProperties::appendProperties(const UserSuppliedProperties& prop
     overwritePropertyFromOtherIfPresent(custom_transform, props.custom_transform);
     overwritePropertyFromOtherIfPresent(color_map, props.color_map);
 
-    if (!props.edge_color.has_default_value)
+    if (props.edge_color.has_value())
     {
-        edge_color = props.edge_color.data;
+        edge_color = props.edge_color.value();
         no_edges = props.no_edges;
 
         has_properties_ = true;
     }
 
-    if (!props.face_color.has_default_value)
+    if (props.face_color.has_value())
     {
-        face_color = props.face_color.data;
+        face_color = props.face_color.value();
         no_faces = props.no_faces;
 
         has_properties_ = true;
     }
 
-    if (!props.silhouette.has_default_value)
+    if (props.silhouette.has_value())
     {
-        silhouette = props.silhouette.data;
+        silhouette = props.silhouette.value();
         has_silhouette = true;
         silhouette_percentage = props.silhouette_percentage;
 

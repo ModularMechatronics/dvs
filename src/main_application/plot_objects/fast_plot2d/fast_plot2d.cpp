@@ -65,7 +65,7 @@ FastPlot2D::FastPlot2D(const CommunicationHeader& hdr,
 
     if (user_supplied_properties.is_appendable)
     {
-        vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.data, 2);
+        vertex_buffer_.addExpandableBuffer<float>(user_supplied_properties.buffer_size.value_or(kDefaultBufferSize), 2);
 
         vertex_buffer_.updateBufferData(0U, converted_data_local->points_ptr, num_elements_, 2U, num_added_elements_);
     }

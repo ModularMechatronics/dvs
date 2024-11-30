@@ -56,8 +56,6 @@ private:
     glm::mat4 scale_mat_;
     glm::mat4 window_scale_mat_;
 
-    Matrix<double> rot_mat;
-
     float width_, height_;
     Vec3d scale_for_window_;
     bool axes_square_;

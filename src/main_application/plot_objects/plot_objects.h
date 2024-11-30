@@ -19,6 +19,7 @@
 #include "plot_objects/im_show/im_show.h"
 #include "plot_objects/draw_mesh/draw_mesh.h"
 #include "plot_objects/scrolling_plot2d/scrolling_plot2d.h"
+#include "plot_objects/screen_space_primitive/screen_space_primitive.h"
 
 // clang-format on
 

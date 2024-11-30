@@ -2067,6 +2067,27 @@ void testDifferentAxesScaling()
     }
 }
 
+void testDifferentScreenSpacePrimitive()
+{
+    openProjectFile("../../project_files/exp0.duoplot");
+
+    setCurrentElement("p_view_0");
+    clearView();
+
+    drawScreenSpaceRect(0.0, 0.0, 0.5, 0.5, properties::Color(255, 0, 0));
+
+    setCurrentElement("p1");
+    clearView();
+
+    drawScreenSpaceRect(0.0, 0.0, 1.0, 1.0, properties::Color::BLACK);
+    drawScreenSpaceRect(-1.0, -1.0, 1.0, 1.0, properties::Color::GREEN);
+
+    setCurrentElement("p_view_1");
+    clearView();
+
+    drawScreenSpaceRect(0.0, 0.0, 0.99, 0.99, properties::Color::MAGENTA);
+}
+
 void addTests()
 {
     addTest("cpp", "basic", "scatter", testScatter);
@@ -2100,6 +2121,7 @@ void addTests()
     addTest("cpp", "basic", "axes_square", testAxesSquare);
     addTest("cpp", "basic", "nan", testNan);
     addTest("cpp", "basic", "axes_numbers", testDifferentAxesScaling);
+    addTest("cpp", "basic", "screen_space_primitive", testDifferentScreenSpacePrimitive);
 }
 
 }  // namespace basic_cpp

@@ -299,6 +299,33 @@ public:
     {
         GLint text_sampler;
         GLint text_color;
+        Uniform pane_width;
+        Uniform pane_height;
+        Uniform offset_x;
+        Uniform offset_y;
+    };
+
+    UniformHandles uniform_handles;
+};
+
+class NewTextShader : public ShaderBase
+{
+private:
+    void setUniformHandles();
+
+public:
+    NewTextShader() = default;
+    NewTextShader(const std::string& vertex_shader, const std::string& fragment_shader, const ShaderSource src);
+
+    struct UniformHandles
+    {
+        GLint text_sampler;
+        GLint text_color;
+        Uniform pane_width;
+        Uniform pane_height;
+        Uniform offset_x;
+        Uniform offset_y;
+        Uniform zoomscale;
     };
 
     UniformHandles uniform_handles;
@@ -317,6 +344,7 @@ struct ShaderCollection
     DrawMeshShader draw_mesh_shader;
     ShaderBase legend_shader;
     SimpleShader simple_shader;
+    NewTextShader new_text_shader;
 };
 
 #endif  // MAIN_APPLICATION_SHADER_H_

@@ -82,3 +82,5 @@ add_subdirectory(demos/plot_stuff)
 add_subdirectory(main_application)
 add_subdirectory(test)
 add_subdirectory(applications/module_application)
+
+add_subdirectory(applications/text_rendering/glfw)
