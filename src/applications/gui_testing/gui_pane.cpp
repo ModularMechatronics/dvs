@@ -302,13 +302,15 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
     gui_elements_.push_back(std::make_shared<GuiElement>(
         250.0f, 210.0f, 50.0f, 50.0f, "Precisely adjacent right", RGBTripletf(0.0f, 1.0f, 0.0f)));*/
 
+    // RectangularButtonConfiguration{700.0f, 410.0f, 70.0f, 40.0f},
+    // RoundedRectangleButtonConfiguration{700.0f, 410.0f, 70.0f, 40.0f, 10.0f},
+    // RoundedBarButtonConfiguration{700.0f, 410.0f, 70.0f, 40.0f},
+    // CircularButtonConfiguration{700.0f, 410.0f, 40.0f},
     gui_elements_.push_back(std::make_shared<Button>(
-        700.0f,
-        410.0f,
-        70.0f,
-        40.0f,
+        RoundedRectangleButtonConfiguration{700.0f, 410.0f, 70.0f, 40.0f, 10.0f},
         "Button",
         RGBTripletf(1.0f, 1.0f, 1.0f),
+        set_shader_color_,
         [](const uint64_t id) { std::cout << "Button pressed: " << id << std::endl; },
         [](const uint64_t id) { std::cout << "Button released: " << id << std::endl; }));
 
@@ -320,7 +322,7 @@ GuiPane::GuiPane(wxFrame* parent) : wxGLCanvas(parent, getGLAttributes(), wxID_A
         -13,
         10,
         34,
-        Slider::SliderType::HORIZONTAL,
+        Slider::SliderDirection::HORIZONTAL,
         set_shader_color_,
         "Slider",
         RGBTripletf(1.0f, 1.0f, 1.0f),

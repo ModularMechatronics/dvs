@@ -2,11 +2,232 @@
 
 #include <cmath>
 
-#include "duoplot/internal.h"
-#include "duoplot/math/math.h"
 #include "rgbtriplet.h"
 
 using namespace duoplot;
+
+void PutTriangleIntoBuffer(BufferedVector& buffered_vector, const Vec2f& p0, const Vec2f& p1, const Vec2f& p2)
+{
+    const size_t idx = buffered_vector.idx();
+
+    buffered_vector.data()[idx] = p0.x;
+    buffered_vector.data()[idx + 1U] = p0.y;
+
+    buffered_vector.data()[idx + 2U] = p1.x;
+    buffered_vector.data()[idx + 3U] = p1.y;
+
+    buffered_vector.data()[idx + 4U] = p2.x;
+    buffered_vector.data()[idx + 5U] = p2.y;
+
+    buffered_vector.incrementIdx(6U);
+}
+
+void Put4PointPolygonIntoBuffer(
+    BufferedVector& buffered_vector, const Vec2f& p0, const Vec2f& p1, const Vec2f& p2, const Vec2f& p3)
+{
+    const size_t idx = buffered_vector.idx();
+
+    buffered_vector.data()[idx] = p0.x;
+    buffered_vector.data()[idx + 1U] = p0.y;
+
+    buffered_vector.data()[idx + 2U] = p1.x;
+    buffered_vector.data()[idx + 3U] = p1.y;
+
+    buffered_vector.data()[idx + 4U] = p2.x;
+    buffered_vector.data()[idx + 5U] = p2.y;
+
+    buffered_vector.data()[idx + 6U] = p2.x;
+    buffered_vector.data()[idx + 7U] = p2.y;
+
+    buffered_vector.incrementIdx(8U);
+}
+
+void PutRoundedBarIntoBuffer(BufferedVector& buffered_vector,
+                             const float x_top_left,
+                             const float y_top_left,
+                             const float bar_length,
+                             const float bar_thickness,
+                             const bool horizontal,
+                             const size_t num_triangles_per_edge)
+{
+    const float edge_radius = bar_thickness / 2.0f;
+
+    if (horizontal)
+    {
+        PutRectangleIntoBuffer(
+            buffered_vector, x_top_left + edge_radius, y_top_left, bar_length - 2.0f * edge_radius, bar_thickness);
+
+        PutCircleSegmentIntoBuffer(buffered_vector,
+                                   x_top_left + bar_length - edge_radius,
+                                   y_top_left + bar_thickness / 2.0f,
+                                   edge_radius,
+                                   -M_PI / 2.0f,
+                                   M_PI / 2.0f,
+                                   num_triangles_per_edge);
+
+        PutCircleSegmentIntoBuffer(buffered_vector,
+                                   x_top_left + edge_radius,
+                                   y_top_left + bar_thickness / 2.0f,
+                                   edge_radius,
+                                   M_PI / 2.0f,
+                                   3.0f * M_PI / 2.0f,
+                                   num_triangles_per_edge);
+    }
+    else
+    {
+        // Vertical
+        PutRectangleIntoBuffer(
+            buffered_vector, x_top_left, y_top_left + edge_radius, bar_thickness, bar_length - 2.0f * edge_radius);
+
+        PutCircleSegmentIntoBuffer(buffered_vector,
+                                   x_top_left + bar_thickness / 2.0f,
+                                   y_top_left + bar_length - edge_radius,
+                                   edge_radius,
+                                   0.0f,
+                                   M_PI,
+                                   num_triangles_per_edge);
+
+        PutCircleSegmentIntoBuffer(buffered_vector,
+                                   x_top_left + bar_thickness / 2.0f,
+                                   y_top_left + edge_radius,
+                                   edge_radius,
+                                   M_PI,
+                                   2.0f * M_PI,
+                                   num_triangles_per_edge);
+    }
+}
+
+void PutRoundedRectangleEdgeIntoBuffer(BufferedVector& buffered_vector,
+                                       const float x_top_left,
+                                       const float y_top_left,
+                                       const float width,
+                                       const float height,
+                                       const float edge_thickness,
+                                       const float corner_radius,
+                                       const size_t num_triangles_per_corner)
+{
+    // Top rectangle
+    PutRectangleIntoBuffer(
+        buffered_vector, x_top_left + corner_radius, y_top_left, width - 2.0f * corner_radius, edge_thickness);
+
+    // Left rectangle
+    PutRectangleIntoBuffer(
+        buffered_vector, x_top_left, y_top_left + corner_radius, edge_thickness, height - 2.0f * corner_radius);
+
+    // Right rectangle
+    PutRectangleIntoBuffer(buffered_vector,
+                           x_top_left + width - edge_thickness,
+                           y_top_left + corner_radius,
+                           edge_thickness,
+                           height - 2.0f * corner_radius);
+
+    // Bottom rectangle
+    PutRectangleIntoBuffer(buffered_vector,
+                           x_top_left + corner_radius,
+                           y_top_left + height - edge_thickness,
+                           width - 2.0f * corner_radius,
+                           edge_thickness);
+
+    // Top left corner
+    PutCircularCurveSegmentIntoBuffer(buffered_vector,
+                                      x_top_left + corner_radius,
+                                      y_top_left + corner_radius,
+                                      corner_radius - edge_thickness,
+                                      corner_radius,
+                                      M_PI / 2.0f,
+                                      M_PI,
+                                      num_triangles_per_corner);
+
+    // Top right corner
+    PutCircularCurveSegmentIntoBuffer(buffered_vector,
+                                      x_top_left + width - corner_radius,
+                                      y_top_left + corner_radius,
+                                      corner_radius - edge_thickness,
+                                      corner_radius,
+                                      0.0f,
+                                      M_PI / 2.0f,
+                                      num_triangles_per_corner);
+
+    // Bottom right corner
+    PutCircularCurveSegmentIntoBuffer(buffered_vector,
+                                      x_top_left + width - corner_radius,
+                                      y_top_left + height - corner_radius,
+                                      corner_radius - edge_thickness,
+                                      corner_radius,
+                                      0.0f,
+                                      -M_PI / 2.0f,
+                                      num_triangles_per_corner);
+
+    // Bottom left corner
+    PutCircularCurveSegmentIntoBuffer(buffered_vector,
+                                      x_top_left + corner_radius,
+                                      y_top_left + height - corner_radius,
+                                      corner_radius - edge_thickness,
+                                      corner_radius,
+                                      M_PI,
+                                      3.0f * M_PI / 2.0f,
+                                      num_triangles_per_corner);
+}
+
+void PutRoundedRectangleIntoBuffer(BufferedVector& buffered_vector,
+                                   const float x_top_left,
+                                   const float y_top_left,
+                                   const float width,
+                                   const float height,
+                                   const float corner_radius,
+                                   const size_t num_triangles_per_corner)
+{
+    // Center rectangle
+    PutRectangleIntoBuffer(
+        buffered_vector, x_top_left + corner_radius, y_top_left, width - 2.0f * corner_radius, height);
+
+    // Left rectangle
+    PutRectangleIntoBuffer(
+        buffered_vector, x_top_left, y_top_left + corner_radius, corner_radius, height - 2.0f * corner_radius);
+
+    // Right rectangle
+    PutRectangleIntoBuffer(buffered_vector,
+                           x_top_left + width - corner_radius,
+                           y_top_left + corner_radius,
+                           corner_radius,
+                           height - 2.0f * corner_radius);
+
+    // Top left corner
+    PutCircleSegmentIntoBuffer(buffered_vector,
+                               x_top_left + corner_radius,
+                               y_top_left + corner_radius,
+                               corner_radius,
+                               M_PI / 2.0f,
+                               M_PI,
+                               num_triangles_per_corner);
+
+    // Top right corner
+    PutCircleSegmentIntoBuffer(buffered_vector,
+                               x_top_left + width - corner_radius,
+                               y_top_left + corner_radius,
+                               corner_radius,
+                               0.0f,
+                               M_PI / 2.0f,
+                               num_triangles_per_corner);
+
+    // Bottom right corner
+    PutCircleSegmentIntoBuffer(buffered_vector,
+                               x_top_left + width - corner_radius,
+                               y_top_left + height - corner_radius,
+                               corner_radius,
+                               3.0f * M_PI / 2.0f,
+                               2.0f * M_PI,
+                               num_triangles_per_corner);
+
+    // Bottom left corner
+    PutCircleSegmentIntoBuffer(buffered_vector,
+                               x_top_left + corner_radius,
+                               y_top_left + height - corner_radius,
+                               corner_radius,
+                               M_PI,
+                               3.0f * M_PI / 2.0f,
+                               num_triangles_per_corner);
+}
 
 void PutCircularCurveSegmentIntoBuffer(BufferedVector& buffered_vector,
                                        const float x_center,

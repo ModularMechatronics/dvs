@@ -8,7 +8,7 @@
 class Slider : public GuiElement
 {
 public:
-    enum class SliderType
+    enum class SliderDirection
     {
         HORIZONTAL,
         VERTICAL
@@ -30,12 +30,20 @@ private:
     int32_t min_val_;
     int32_t max_val_;
     int32_t current_val_;
-    SliderType type_;
+    SliderDirection slider_direction_;
+
+    float bar_thickness_{10.0f};
 
     std::function<void(RGBTripletf)> set_shader_color_;
 
     void updatePoints();
     void updateCirclePoints();
+
+    void UpdatePositionOrSize(const float delta_x,
+                              const float delta_y,
+                              const float delta_width,
+                              const float delta_height,
+                              const ChangeDirection change_direction) override;
 
 public:
     Slider(const float x,
@@ -45,7 +53,7 @@ public:
            const int32_t min_val,
            const int32_t max_val,
            const int32_t init_val,
-           const SliderType type,
+           const SliderDirection slider_direction,
            const std::function<void(RGBTripletf)> set_shader_color,
            const std::string label,
            const RGBTripletf& color,
@@ -55,7 +63,7 @@ public:
     void mousePressed(wxMouseEvent& event) override;
     void mouseReleased(wxMouseEvent& event) override;
     void mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec) override;
-    void ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction) override;
+    // void ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction) override;
 
     void render() const override;
     void updateVertexBuffer() override;

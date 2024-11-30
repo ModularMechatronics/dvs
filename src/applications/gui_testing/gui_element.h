@@ -57,6 +57,12 @@ protected:
 
     virtual void updateVertexBuffer();
 
+    virtual void UpdatePositionOrSize(const float delta_x,
+                                      const float delta_y,
+                                      const float delta_width,
+                                      const float delta_height,
+                                      const ChangeDirection change_direction);
+
 public:
     GuiElement() = default;
     GuiElement(const float x,

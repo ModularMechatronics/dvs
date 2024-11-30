@@ -12,8 +12,11 @@ constexpr size_t kTotalNumPoints = kNumPointsPerEdge * 2U + 3U * kNumTrianglesFo
 constexpr size_t kNumCircleTriangles = 20U;
 constexpr size_t kNumCirclePoints = kNumCircleTriangles * 3U;
 
-constexpr float kEdgeRadius = 10.0f;
+constexpr float kEdgeRadius = 20.0f;
+constexpr float kEdgeMargin = 20.0f;
 constexpr float kCircleRadius = 7.0f;
+constexpr float kMinSliderThickness = 5.0f;
+constexpr float kMinSliderHeight = 20.0f;
 
 namespace
 {
@@ -31,7 +34,7 @@ Slider::Slider(const float x,
                const int32_t min_val,
                const int32_t max_val,
                const int32_t init_val,
-               const SliderType type,
+               const SliderDirection slider_direction,
                const std::function<void(RGBTripletf)> set_shader_color,
                const std::string label,
                const RGBTripletf& color,
@@ -46,19 +49,21 @@ Slider::Slider(const float x,
       max_val_(max_val),
       circle_buffer_(kNumCirclePoints * 2U),
       line_buffer_{kTotalNumPoints * 2U},
-      type_(type),
+      slider_direction_(slider_direction),
       current_val_(init_val),
       vertex_buffer_line_(OGLPrimitiveType::TRIANGLES),
       vertex_buffer_circle_(OGLPrimitiveType::TRIANGLES)
 {
     current_val_ = std::clamp(current_val_, min_val_, max_val_);
-    height_ = kEdgeRadius * 2.0f;
+    bar_thickness_ = kMinSliderThickness;
 
-    /*if (type_ == SliderType::VERTICAL)
+    height_ = std::max(bar_thickness_ + 20.0f, kMinSliderHeight);
+
+    /*if (type_ == SliderDirection::VERTICAL)
     {
         width_ = 30.0f;
     }
-    else if (type_ == SliderType::HORIZONTAL)
+    else if (type_ == SliderDirection::HORIZONTAL)
     {
         height_ = 30.0f;
     }
@@ -87,8 +92,9 @@ void Slider::updateCirclePoints()
     circle_buffer_.reset();
     const float x_offset = static_cast<float>(current_val_ - min_val_) / static_cast<float>(max_val_ - min_val_);
 
+    const float edge_radius = bar_thickness_ / 2.0f;
     PutCircleIntoBuffer(circle_buffer_,
-                        x_ + kEdgeRadius + (width_ - kEdgeRadius * 2.0f) * x_offset,
+                        x_ + edge_radius + kEdgeMargin + (width_ - (edge_radius + kEdgeMargin) * 2.0f) * x_offset,
                         y_ + height_ / 2.0f,
                         kCircleRadius,
                         kNumCircleTriangles);
@@ -96,93 +102,60 @@ void Slider::updateCirclePoints()
     num_circle_points_to_render_ = circle_buffer_.idx() / 2U;
 }
 
-void Slider::ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction)
+void Slider::UpdatePositionOrSize(const float delta_x,
+                                  const float delta_y,
+                                  const float delta_width,
+                                  const float delta_height,
+                                  const ChangeDirection change_direction)
 {
     const float x_before = x_;
     const float y_before = y_;
-    const float width_before = width_;
-    const float height_before = height_;
 
-    switch (change_direction)
+    if (slider_direction_ == SliderDirection::HORIZONTAL)
     {
-        case ChangeDirection::UP:
-            // height_ -= delta_vec.y;
-            // y_ += delta_vec.y;
-            break;
-        case ChangeDirection::DOWN:
-            // height_ += delta_vec.y;
-            break;
-        case ChangeDirection::LEFT:
-            x_ += delta_vec.x;
-            width_ -= delta_vec.x;
-            break;
-        case ChangeDirection::RIGHT:
-            width_ += delta_vec.x;
-            break;
-        case ChangeDirection::LEFT_UP:
-            // height_ -= delta_vec.y;
-            // y_ += delta_vec.y;
-            x_ += delta_vec.x;
-            width_ -= delta_vec.x;
-            break;
-        case ChangeDirection::LEFT_DOWN:
-            // height_ += delta_vec.y;
-            x_ += delta_vec.x;
-            width_ -= delta_vec.x;
-            break;
-        case ChangeDirection::RIGHT_UP:
-            // height_ -= delta_vec.y;
-            // y_ += delta_vec.y;
-            width_ += delta_vec.x;
-            break;
-        case ChangeDirection::RIGHT_DOWN:
-            // height_ += delta_vec.y;
-            width_ += delta_vec.x;
-            break;
-        case ChangeDirection::MIDDLE:
-            x_ += delta_vec.x;
-            y_ += delta_vec.y;
-            break;
-        default:
-            assert(false && "Shouldn't end up here!");
-            break;
-    }
+        x_ += delta_x;
+        y_ += delta_y;
+        width_ += delta_width;
+        bar_thickness_ += delta_height;
 
-    if (width_ < kMinWidth)
-    {
-        width_ = kMinWidth;
-        x_ = x_before;
-    }
-    if (height_ < kMinHeight)
-    {
-        height_ = kMinHeight;
-        y_ = y_before;
-    }
+        if (width_ < kMinWidth)
+        {
+            width_ = kMinWidth;
+            x_ = x_before;
+        }
 
-    updateVertexBuffer();
+        if (bar_thickness_ < kMinSliderThickness)
+        {
+            bar_thickness_ = kMinSliderThickness;
+            y_ = y_before;
+        }
+
+        height_ = std::max(bar_thickness_ + 20.0f, kMinSliderHeight);
+    }
+    else
+    {
+    }
 }
 
 void Slider::updatePoints()
 {
     line_buffer_.reset();
 
-    PutRectangleIntoBuffer(line_buffer_, x_ + kEdgeRadius, y_, width_ - 2.0f * kEdgeRadius, kEdgeRadius * 2.0f);
+    const float edge_radius = bar_thickness_ / 2.0f;
 
-    PutCircleSegmentIntoBuffer(line_buffer_,
-                               x_ + width_ - kEdgeRadius,
-                               y_ + height_ / 2.0f,
-                               kEdgeRadius,
-                               -M_PI / 2.0f,
-                               M_PI / 2.0f,
-                               kNumTrianglesPerEdge);
-
-    PutCircleSegmentIntoBuffer(line_buffer_,
-                               x_ + kEdgeRadius,
-                               y_ + height_ / 2.0f,
-                               kEdgeRadius,
-                               M_PI / 2.0f,
-                               3.0f * M_PI / 2.0f,
-                               kNumTrianglesPerEdge);
+    if (slider_direction_ == SliderDirection::HORIZONTAL)
+    {
+        PutRoundedBarIntoBuffer(line_buffer_,
+                                x_ + kEdgeMargin,
+                                y_ + height_ / 2.0f - edge_radius,
+                                width_ - 2.0f * kEdgeMargin,
+                                bar_thickness_,
+                                true,
+                                kNumTrianglesPerEdge);
+    }
+    else
+    {
+    }
 
     num_line_points_to_render_ = line_buffer_.idx() / 2U;
 }
@@ -190,8 +163,12 @@ void Slider::updatePoints()
 void Slider::mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec)
 {
     const wxPoint pos = event.GetPosition();
-    const float normalized_pos =
-        std::clamp(static_cast<float>(pos.x - x_ - kEdgeRadius) / (width_ - kEdgeRadius * 2.0f), 0.0f, 1.0f);
+
+    const float edge_radius = bar_thickness_ / 2.0f;
+    const float normalized_pos = std::clamp(
+        static_cast<float>(pos.x - x_ - (edge_radius + kEdgeMargin)) / (width_ - (edge_radius + kEdgeMargin) * 2.0f),
+        0.0f,
+        1.0f);
 
     const int32_t new_val = static_cast<int32_t>(normalized_pos * static_cast<float>(max_val_ - min_val_)) + min_val_;
     if (new_val == current_val_)
@@ -212,8 +189,12 @@ void Slider::mouseDragged(wxMouseEvent& event, const wxPoint& delta_vec)
 void Slider::mousePressed(wxMouseEvent& event)
 {
     const wxPoint pos = event.GetPosition();
-    const float normalized_pos =
-        std::clamp(static_cast<float>(pos.x - x_ - kEdgeRadius) / (width_ - kEdgeRadius * 2.0f), 0.0f, 1.0f);
+
+    const float edge_radius = bar_thickness_ / 2.0f;
+    const float normalized_pos = std::clamp(
+        static_cast<float>(pos.x - x_ - (edge_radius + kEdgeMargin)) / (width_ - (edge_radius + kEdgeMargin) * 2.0f),
+        0.0f,
+        1.0f);
 
     const int32_t new_val = static_cast<int32_t>(normalized_pos * static_cast<float>(max_val_ - min_val_)) + min_val_;
     if (new_val == current_val_)

@@ -133,68 +133,83 @@ ChangeDirection GuiElement::GetDirectionFromMouse(const wxPoint pt) const
 
 void GuiElement::ChangePositionOrSize(const wxPoint delta_vec, const ChangeDirection change_direction)
 {
-    const float x_before = x_;
-    const float y_before = y_;
-    const float width_before = width_;
-    const float height_before = height_;
+    float delta_x = 0.0f, delta_y = 0.0f, delta_width = 0.0f, delta_height = 0.0f;
 
     switch (change_direction)
     {
         case ChangeDirection::UP:
-            height_ -= delta_vec.y;
-            y_ += delta_vec.y;
+            delta_height -= delta_vec.y;
+            delta_y += delta_vec.y;
             break;
         case ChangeDirection::DOWN:
-            height_ += delta_vec.y;
+            delta_height += delta_vec.y;
             break;
         case ChangeDirection::LEFT:
-            x_ += delta_vec.x;
-            width_ -= delta_vec.x;
+            delta_x += delta_vec.x;
+            delta_width -= delta_vec.x;
             break;
         case ChangeDirection::RIGHT:
-            width_ += delta_vec.x;
+            delta_width += delta_vec.x;
             break;
         case ChangeDirection::LEFT_UP:
-            height_ -= delta_vec.y;
-            y_ += delta_vec.y;
-            x_ += delta_vec.x;
-            width_ -= delta_vec.x;
+            delta_height -= delta_vec.y;
+            delta_y += delta_vec.y;
+            delta_x += delta_vec.x;
+            delta_width -= delta_vec.x;
             break;
         case ChangeDirection::LEFT_DOWN:
-            height_ += delta_vec.y;
-            x_ += delta_vec.x;
-            width_ -= delta_vec.x;
+            delta_height += delta_vec.y;
+            delta_x += delta_vec.x;
+            delta_width -= delta_vec.x;
             break;
         case ChangeDirection::RIGHT_UP:
-            height_ -= delta_vec.y;
-            y_ += delta_vec.y;
-            width_ += delta_vec.x;
+            delta_height -= delta_vec.y;
+            delta_y += delta_vec.y;
+            delta_width += delta_vec.x;
             break;
         case ChangeDirection::RIGHT_DOWN:
-            height_ += delta_vec.y;
-            width_ += delta_vec.x;
+            delta_height += delta_vec.y;
+            delta_width += delta_vec.x;
             break;
         case ChangeDirection::MIDDLE:
-            x_ += delta_vec.x;
-            y_ += delta_vec.y;
+            delta_x += delta_vec.x;
+            delta_y += delta_vec.y;
             break;
         default:
             assert(false && "Shouldn't end up here!");
             break;
     }
 
+    UpdatePositionOrSize(delta_x, delta_y, delta_width, delta_height, change_direction);
+
+    updateVertexBuffer();
+}
+
+void GuiElement::UpdatePositionOrSize(const float delta_x,
+                                      const float delta_y,
+                                      const float delta_width,
+                                      const float delta_height,
+                                      const ChangeDirection change_direction)
+{
+    const float x_before = x_;
+    const float y_before = y_;
+
+    x_ += delta_x;
+    y_ += delta_y;
+    width_ += delta_width;
+    height_ += delta_height;
+
     if (width_ < kMinWidth)
     {
         width_ = kMinWidth;
         x_ = x_before;
     }
+
     if (height_ < kMinHeight)
     {
         height_ = kMinHeight;
         y_ = y_before;
     }
-
-    updateVertexBuffer();
 }
 
 void GuiElement::updateVertexBuffer()

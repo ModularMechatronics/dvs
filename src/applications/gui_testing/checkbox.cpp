@@ -50,65 +50,8 @@ void Checkbox::changeCheckboxPoints()
 {
     checkbox_buffer_.reset();
 
-    // Top rectangle
-    PutRectangleIntoBuffer(checkbox_buffer_, x_ + kCornerRadius, y_, width_ - 2.0f * kCornerRadius, kEdgeThickness);
-
-    // Left rectangle
-    PutRectangleIntoBuffer(checkbox_buffer_, x_, y_ + kCornerRadius, kEdgeThickness, height_ - 2.0f * kCornerRadius);
-
-    // Right rectangle
-    PutRectangleIntoBuffer(checkbox_buffer_,
-                           x_ + width_ - kEdgeThickness,
-                           y_ + kCornerRadius,
-                           kEdgeThickness,
-                           height_ - 2.0f * kCornerRadius);
-
-    // Bottom rectangle
-    PutRectangleIntoBuffer(checkbox_buffer_,
-                           x_ + kCornerRadius,
-                           y_ + height_ - kEdgeThickness,
-                           width_ - 2.0f * kCornerRadius,
-                           kEdgeThickness);
-
-    // Top left corner
-    PutCircularCurveSegmentIntoBuffer(checkbox_buffer_,
-                                      x_ + kCornerRadius,
-                                      y_ + kCornerRadius,
-                                      kCornerRadius - kEdgeThickness,
-                                      kCornerRadius,
-                                      M_PI / 2.0f,
-                                      M_PI,
-                                      kNumRectanglesPerCorner);
-
-    // Top right corner
-    PutCircularCurveSegmentIntoBuffer(checkbox_buffer_,
-                                      x_ + width_ - kCornerRadius,
-                                      y_ + kCornerRadius,
-                                      kCornerRadius - kEdgeThickness,
-                                      kCornerRadius,
-                                      0.0f,
-                                      M_PI / 2.0f,
-                                      kNumRectanglesPerCorner);
-
-    // Bottom right corner
-    PutCircularCurveSegmentIntoBuffer(checkbox_buffer_,
-                                      x_ + width_ - kCornerRadius,
-                                      y_ + height_ - kCornerRadius,
-                                      kCornerRadius - kEdgeThickness,
-                                      kCornerRadius,
-                                      0.0f,
-                                      -M_PI / 2.0f,
-                                      kNumRectanglesPerCorner);
-
-    // Bottom left corner
-    PutCircularCurveSegmentIntoBuffer(checkbox_buffer_,
-                                      x_ + kCornerRadius,
-                                      y_ + height_ - kCornerRadius,
-                                      kCornerRadius - kEdgeThickness,
-                                      kCornerRadius,
-                                      M_PI,
-                                      3.0f * M_PI / 2.0f,
-                                      kNumRectanglesPerCorner);
+    PutRoundedRectangleEdgeIntoBuffer(
+        checkbox_buffer_, x_, y_, width_, height_, kEdgeThickness, kCornerRadius, kNumRectanglesPerCorner);
 
     num_points_to_render_ = checkbox_buffer_.idx() / 2U;
 }
